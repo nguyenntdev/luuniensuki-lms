@@ -1,0 +1,16 @@
+.git
+.gitignore
+.github
+node_modules
+__pycache__
+*.pyc
+*.pyo
+venv
+.env
+.pytest_cache
+tests
+docs
+*.md
+docker-compose.yml
+docker-compose.prod.yml
+TASK_*.md

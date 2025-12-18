@@ -1,0 +1,848 @@
+[
+  {
+    "id": "urn_cao_dinh_01",
+    "name_vi": "Cao Đỉnh",
+    "name_en": "The Urn of Height",
+    "urn_location": "Cao Đỉnh",
+    "category": "kien_truc",
+    "rarity": "legendary",
+    "description_short": "Thụy hiệu 'Cao' của vua Gia Long - người sáng lập triều Nguyễn",
+    "description_educational": "Chữ 'Cao' là thụy hiệu (tên tôn vinh) của vua Gia Long (1762-1820), vị hoàng đế sáng lập triều Nguyễn và thống nhất đất nước sau nhiều thế kỷ chia cắt. Cao Đỉnh được đúc vào năm 1835 dưới triều vua Minh Mạng để tưởng nhớ công lao to lớn của vua cha. Trên bề mặt đỉnh, chữ 'Cao' được chạm khắc nổi bật với nét chữ Hán uy nghiêm, thể hiện sự tôn kính của con cháu đối với tổ tiên. Xung quanh chữ 'Cao' là các họa tiết rồng phượng, mây vân và cảnh vật thiên nhiên, tượng trưng cho sự thịnh vượng và bền vững của triều đại. Cao Đỉnh không chỉ là một tác phẩm nghệ thuật đúc đồng tinh xảo mà còn là biểu tượng của lòng hiếu thảo và sự kế thừa truyền thống trong văn hóa Việt Nam.",
+    "historical_context": "Cửu Đỉnh được vua Minh Mạng cho đúc từ năm 1835 đến 1837, lấy cảm hứng từ Cửu Đỉnh của nhà Hạ ở Trung Quốc. Cao Đỉnh là đỉnh đầu tiên trong chín chiếc, dành riêng để tôn vinh vua Gia Long - người đã dẹp yên loạn Tây Sơn, thống nhất đất nước và mở ra triều đại Nguyễn kéo dài 143 năm (1802-1945). Việc đúc Cửu Đỉnh thể hiện khát vọng của vua Minh Mạng về một triều đại vững mạnh, trường tồn như chín chiếc đỉnh đồng bất diệt.",
+    "symbolism": "Chữ 'Cao' không chỉ là tên thụy hiệu mà còn mang ý nghĩa 'cao quý', 'cao cả', thể hiện đức độ và công lao vĩ đại của vua Gia Long. Trong văn hóa Việt Nam, việc đặt tên thụy hiệu cho vua sau khi băng hà là truyền thống quan trọng, thể hiện lòng tôn kính và ghi nhớ công đức của bậc tiền nhân. Cao Đỉnh đặt ở vị trí trung tâm trong Cửu Đỉnh, khẳng định vai trò nền tảng của vua Gia Long đối với triều Nguyễn.",
+    "fun_fact": "Cao Đỉnh nặng khoảng 2.600 kg và cao 2,3 mét, là một trong những chiếc đỉnh lớn nhất. Để đúc Cửu Đỉnh, vua Minh Mạng đã thu thập đồng từ khắp cả nước, bao gồm cả vũ khí, đồ dùng cũ và đồng tiền. Điều này tượng trưng cho sự đoàn kết của toàn dân trong việc xây dựng quốc gia.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Chữ 'Cao' trên Cao Đỉnh là thụy hiệu của vị vua nào?",
+        "options": [
+          "A. Vua Gia Long",
+          "B. Vua Minh Mạng",
+          "C. Vua Thiệu Trị",
+          "D. Vua Tự Đức"
+        ],
+        "correct_answer": "A. Vua Gia Long",
+        "difficulty": 1,
+        "explanation": "Chữ 'Cao' là thụy hiệu của vua Gia Long, người sáng lập triều Nguyễn. Cao Đỉnh được vua Minh Mạng cho đúc để tưởng nhớ công lao của vua cha."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Cửu Đỉnh được đúc vào thời gian nào?",
+        "options": [
+          "A. 1802-1805",
+          "B. 1820-1825",
+          "C. 1835-1837",
+          "D. 1850-1855"
+        ],
+        "correct_answer": "C. 1835-1837",
+        "difficulty": 2,
+        "explanation": "Cửu Đỉnh được vua Minh Mạng cho đúc từ năm 1835 đến 1837, sau khi vua Gia Long băng hà (1820) và vua Minh Mạng đã củng cố được triều đại."
+      },
+      {
+        "type": "true_false",
+        "question": "Cao Đỉnh là chiếc đỉnh lớn nhất trong Cửu Đỉnh.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 2,
+        "explanation": "Cao Đỉnh là một trong những chiếc đỉnh lớn nhất nhưng không phải lớn nhất. Các đỉnh trong Cửu Đỉnh có kích thước tương đương nhau, mỗi chiếc nặng khoảng 2.500-2.600 kg."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_cao_dinh_01_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/CAO ĐỈNH.jpg"
+  },
+  {
+    "id": "urn_cao_dinh_02",
+    "name_vi": "Long",
+    "name_en": "Dragon",
+    "urn_location": "Cao Đỉnh",
+    "category": "linh_thu",
+    "rarity": "legendary",
+    "description_short": "Con rồng - biểu tượng tối cao của quyền lực hoàng đế và sức mạnh thiên nhiên",
+    "description_educational": "Rồng là linh vật thiêng nhất trong văn hóa Việt Nam và Đông Á, đại diện cho quyền lực tối cao của hoàng đế. Trên Cao Đỉnh, hình ảnh rồng được chạm khắc tinh xảo với thân uốn lượn mềm mại, vảy rồng sắc nét từng chi tiết, và móng vuốt mạnh mẽ. Rồng Việt Nam có đặc điểm riêng biệt: thân dài, không cánh nhưng có thể bay nhờ sức mạnh thần thánh, thường gắn liền với nước và mây. Trong triết học phương Đông, rồng tượng trưng cho sự kết hợp giữa trời và đất, giữa âm và dương, là biểu tượng của sự sinh sôi và phồn thịnh. Vua Gia Long đã chọn hình ảnh rồng cho Cao Đỉnh để khẳng định vị thế của triều đại Nguyễn là chính thống kế thừa các triều đại trước. Hình ảnh rồng trên Cửu Đỉnh không chỉ thể hiện uy quyền hoàng gia mà còn là lời khẳng định về nguồn gốc thần thoại của dân tộc Việt - con rồng cháu tiên.",
+    "historical_context": "Cao Đỉnh được đúc vào năm 1835 dưới triều Minh Mạng, dành riêng để tưởng nhớ vua Gia Long - người sáng lập triều Nguyễn. Hình ảnh rồng trên đỉnh này không chỉ là biểu tượng hoàng quyền mà còn thể hiện khát vọng thống nhất đất nước sau nhiều thế kỷ chia cắt. Trong lịch sử Việt Nam, chỉ hoàng đế mới được sử dụng hình ảnh rồng năm móng, còn các quan lại và hoàng tử chỉ được dùng rồng bốn móng hoặc ba móng. Điều này thể hiện sự phân biệt đẳng cấp nghiêm ngặt trong xã hội phong kiến.",
+    "symbolism": "Trong văn hóa Việt Nam, rồng là con vật linh thiêng nhất trong Tứ Linh (Long - Lân - Quy - Phụng), đại diện cho sức mạnh, trí tuệ, may mắn và quyền lực. Người Việt tự hào gọi mình là 'con rồng cháu tiên', xuất phát từ truyền thuyết Lạc Long Quân và Âu Cơ. Rồng còn tượng trưng cho sự bảo vệ và phù hộ đất nước, là linh vật giữ gìn hòa bình và thịnh vượng. Trên Cửu Đỉnh, rồng được khắc họa với tư thế uy nghiêm, thể hiện sức mạnh bảo vệ giang sơn và quyền lực tối cao của hoàng đế.",
+    "fun_fact": "Khác với rồng phương Tây có cánh và phun lửa, rồng Việt Nam có thân dài, không cánh nhưng có thể bay nhờ sức mạnh thần thánh. Rồng Việt thường gắn liền với nước và mây, tượng trưng cho sự sinh sôi và phồn thịnh. Theo truyền thuyết, rồng có thể biến hóa vô cùng: lớn thì che cả bầu trời, nhỏ thì ẩn trong hạt cát. Điều thú vị là rồng Việt Nam có râu dài và sừng hươu, khác biệt với rồng Trung Quốc.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Rồng trên Cao Đỉnh tượng trưng cho điều gì?",
+        "options": [
+          "A. Sức mạnh quân sự",
+          "B. Quyền lực hoàng đế",
+          "C. Sự giàu có",
+          "D. Trí tuệ học vấn"
+        ],
+        "correct_answer": "B. Quyền lực hoàng đế",
+        "difficulty": 1,
+        "explanation": "Rồng là biểu tượng tối cao của hoàng quyền trong văn hóa Việt Nam. Chỉ hoàng đế mới được sử dụng hình ảnh rồng năm móng, thể hiện quyền lực tuyệt đối."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Người Việt Nam tự hào gọi mình là gì?",
+        "options": [
+          "A. Con rồng cháu tiên",
+          "B. Con lân cháu phượng",
+          "C. Con rùa cháu rồng",
+          "D. Con phượng cháu lân"
+        ],
+        "correct_answer": "A. Con rồng cháu tiên",
+        "difficulty": 1,
+        "explanation": "Người Việt tự hào gọi mình là 'con rồng cháu tiên', xuất phát từ truyền thuyết Lạc Long Quân (rồng) và Âu Cơ (tiên), thể hiện nguồn gốc thần thoại của dân tộc."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Rồng Việt Nam khác rồng phương Tây ở điểm nào?",
+        "options": [
+          "A. Rồng Việt có cánh và phun lửa",
+          "B. Rồng Việt không cánh, gắn liền với nước và mây",
+          "C. Rồng Việt có hai đầu",
+          "D. Rồng Việt không có móng vuốt"
+        ],
+        "correct_answer": "B. Rồng Việt không cánh, gắn liền với nước và mây",
+        "difficulty": 2,
+        "explanation": "Khác với rồng phương Tây có cánh và phun lửa, rồng Việt Nam có thân dài, không cánh nhưng có thể bay nhờ sức mạnh thần thánh, thường gắn liền với nước và mây."
+      },
+      {
+        "type": "true_false",
+        "question": "Chỉ hoàng đế mới được sử dụng hình ảnh rồng năm móng.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Đúng",
+        "difficulty": 2,
+        "explanation": "Trong lịch sử Việt Nam, chỉ hoàng đế mới được sử dụng hình ảnh rồng năm móng. Các quan lại và hoàng tử chỉ được dùng rồng bốn móng hoặc ba móng, thể hiện sự phân biệt đẳng cấp."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_cao_dinh_02_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/LONG.jpg"
+  },
+  {
+    "id": "urn_cao_dinh_03",
+    "name_vi": "Ba La Mật",
+    "name_en": "Jackfruit (Paramita)",
+    "urn_location": "Cao Đỉnh",
+    "category": "thao_moc",
+    "rarity": "uncommon",
+    "description_short": "Cây mít (Ba La Mật) - biểu tượng của sự sung túc và phồn thịnh trong văn hóa nông nghiệp Việt Nam",
+    "description_educational": "Ba La Mật là tên Hán Việt của cây mít (Artocarpus heterophyllus), một loài cây ăn quả đặc trưng của vùng nhiệt đới Đông Nam Á. Trên Cao Đỉnh, hình ảnh cây mít được khắc họa với những trái mít to lớn, lá xanh tươi và thân cây vững chãi, thể hiện sự sung túc và phồn thịnh của đất nước. Mít là loại cây ăn quả quen thuộc trong các làng quê Việt Nam, thường được trồng quanh nhà, bên ao, tạo bóng mát và cho trái quanh năm. Trái mít có thể nặng tới 30-40kg, là loại trái cây lớn nhất mọc trên cây trên thế giới. Trong văn hóa Việt Nam, cây mít tượng trưng cho sự bền bỉ, lâu dài và khả năng sinh sản mạnh mẽ. Việc khắc họa cây mít trên Cửu Đỉnh thể hiện sự trân trọng của triều đình đối với nền nông nghiệp - nền tảng kinh tế của đất nước. Tên gọi 'Ba La Mật' còn mang ý nghĩa Phật giáo, liên quan đến 'Bát Nhã Ba La Mật Đa' (Prajñāpāramitā), thể hiện sự giao thoa văn hóa Phật giáo trong xã hội Việt Nam thời phong kiến.",
+    "historical_context": "Cây mít có nguồn gốc từ Ấn Độ và được du nhập vào Việt Nam từ rất sớm, trở thành một phần không thể thiếu trong đời sống nông thôn. Vào thời triều Nguyễn, nông nghiệp là nền tảng kinh tế chính, và các loại cây ăn quả như mít, chuối, dừa được coi trọng. Việc khắc họa cây mít trên Cao Đỉnh phản ánh chính sách 'trọng nông' của triều đình, khuyến khích người dân phát triển sản xuất nông nghiệp. Cây mít cũng xuất hiện trong nhiều ca dao, tục ngữ Việt Nam, thể hiện sự gắn bó sâu sắc với đời sống văn hóa dân gian.",
+    "symbolism": "Trong văn hóa Việt Nam, cây mít tượng trưng cho sự sung túc, phồn thịnh và đoàn tụ. Trái mít to lớn với hàng trăm múi cùng chung một trái biểu trưng cho sự đoàn kết, sum họp của gia đình và cộng đồng. Gỗ mít cứng chắc, bền lâu, thường được dùng làm đồ thờ cúng và đồ gỗ cao cấp, tượng trưng cho sự trường tồn. Lá mít xanh tươi quanh năm, thể hiện sức sống bền bỉ. Trong Phật giáo, tên 'Ba La Mật' gắn liền với khái niệm 'đến bờ giác ngộ', mang ý nghĩa tâm linh sâu sắc.",
+    "fun_fact": "Trái mít là loại trái cây lớn nhất mọc trên cây trên thế giới, có thể nặng tới 50kg! Một điều thú vị là mít có hai loại chính: mít tố (cơm mềm, ngọt) và mít nghệ (cơm giòn, thơm). Người Việt Nam sử dụng mít rất đa dạng: ăn tươi, làm mứt, nấu chè, thậm chí hạt mít còn có thể luộc ăn như hạt dẻ. Gỗ mít được coi là loại gỗ quý, có màu vàng đẹp và rất bền, thường được dùng để chạm khắc tượng Phật và đồ thờ cúng.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Cây mít trên Cao Đỉnh tượng trưng cho điều gì?",
+        "options": [
+          "A. Quyền lực hoàng gia",
+          "B. Sự sung túc và phồn thịnh",
+          "C. Trí tuệ và học vấn",
+          "D. Sức mạnh quân sự"
+        ],
+        "correct_answer": "B. Sự sung túc và phồn thịnh",
+        "difficulty": 1,
+        "explanation": "Cây mít với trái to lớn tượng trưng cho sự sung túc, phồn thịnh và đoàn kết trong văn hóa nông nghiệp Việt Nam. Việc khắc họa cây mít trên Cửu Đỉnh thể hiện sự trân trọng của triều đình đối với nền nông nghiệp."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Trái mít có đặc điểm gì đặc biệt?",
+        "options": [
+          "A. Là loại trái cây nhỏ nhất thế giới",
+          "B. Là loại trái cây lớn nhất mọc trên cây trên thế giới",
+          "C. Chỉ có ở Việt Nam",
+          "D. Chỉ có thể ăn khi nấu chín"
+        ],
+        "correct_answer": "B. Là loại trái cây lớn nhất mọc trên cây trên thế giới",
+        "difficulty": 2,
+        "explanation": "Trái mít là loại trái cây lớn nhất mọc trên cây trên thế giới, có thể nặng tới 50kg. Đây là một đặc điểm nổi bật khiến mít trở thành biểu tượng của sự sung túc."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "'Ba La Mật' trong Phật giáo có ý nghĩa gì?",
+        "options": [
+          "A. Tên của một vị Phật",
+          "B. Liên quan đến 'đến bờ giác ngộ'",
+          "C. Tên của một ngôi chùa",
+          "D. Tên của một kinh Phật"
+        ],
+        "correct_answer": "B. Liên quan đến 'đến bờ giác ngộ'",
+        "difficulty": 3,
+        "explanation": "Tên 'Ba La Mật' gắn liền với 'Bát Nhã Ba La Mật Đa' (Prajñāpāramitā) trong Phật giáo, có nghĩa là 'đến bờ giác ngộ', thể hiện sự giao thoa văn hóa Phật giáo trong xã hội Việt Nam."
+      },
+      {
+        "type": "true_false",
+        "question": "Gỗ mít được coi là loại gỗ quý, thường dùng để chạm khắc tượng Phật.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Đúng",
+        "difficulty": 2,
+        "explanation": "Gỗ mít có màu vàng đẹp, cứng chắc và rất bền, được coi là loại gỗ quý, thường được sử dụng để chạm khắc tượng Phật và làm đồ thờ cúng cao cấp."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_cao_dinh_03_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/BA LA MẬT.jpg"
+  },
+  {
+    "id": "urn_cao_dinh_04",
+    "name_vi": "Canh",
+    "name_en": "Rice",
+    "urn_location": "Cao Đỉnh",
+    "category": "nong_nghiep",
+    "rarity": "common",
+    "description_short": "Lúa tẻ - nguồn lương thực chính yếu nuôi sống người Việt từ ngàn xưa",
+    "description_educational": "Canh là tên Hán Việt chỉ lúa tẻ (Oryza sativa), loại cây lương thực quan trọng nhất trong nền văn minh lúa nước của người Việt và khu vực Đông Nam Á. Khác với lúa nếp (thường dùng làm bánh, đồ xôi cúng lễ), lúa tẻ là nguồn lương thực hàng ngày, nuôi sống bao thế hệ. Hình ảnh cây lúa trĩu hạt được chạm khắc trên Cao Đỉnh không chỉ thể hiện sự no ấm, phồn thịnh mà còn là lời nhắc nhở của triều đình về tầm quan trọng của 'nông vi bản' (lấy nông nghiệp làm gốc). Trong xã hội phong kiến, sự ổn định của vương triều phụ thuộc rất lớn vào sự no đủ của người dân, và cây lúa chính là thước đo của sự bình an đó. Việc khắc hình cây lúa lên đỉnh cao nhất (Cao Đỉnh) cho thấy vua Minh Mạng đặt sự an nguy của lê dân và nền nông nghiệp lên hàng đầu, ngang hàng với các biểu tượng quyền lực khác.",
+    "historical_context": "Vào đầu triều Nguyễn, sau nhiều năm chiến tranh loạn lạc, việc khôi phục sản xuất nông nghiệp là ưu tiên hàng đầu. Vua Gia Long và sau đó là Minh Mạng đã ban hành nhiều chính sách khuyến nông, khai hoang, lập ấp (như công cuộc khẩn hoang vùng Đồng bằng sông Cửu Long). Hình ảnh cây lúa tẻ trên Cao Đỉnh là sự ghi nhận công lao của người nông dân và khẳng định cam kết của triều đình trong việc bảo đảm an ninh lương thực quốc gia.",
+    "symbolism": "Cây lúa tẻ tượng trưng cho sự no ấm, bình an và ổn định. Hạt gạo được ví là 'hạt ngọc trời', kết tinh từ mồ hôi công sức của con người và tinh túy của đất trời. Trong tâm thức người Việt, lúa gạo không chỉ là thức ăn mà còn là lễ vật dâng cúng tổ tiên, thể hiện lòng biết ơn nguồn cội. Bông lúa trĩu hạt cúi đầu còn là bài học về sự khiêm cung của người quân tử.",
+    "fun_fact": "Việt Nam là cái nôi của nền văn minh lúa nước và hiện là một trong những quốc gia xuất khẩu gạo hàng đầu thế giới. Có hàng ngàn giống lúa tẻ khác nhau, thích nghi với nhiều điều kiện thổ nhưỡng. Ngày xưa, 'cơm tẻ' là biểu tượng của bữa ăn hàng ngày, còn 'xôi nếp' thường dành cho dịp lễ tết, nên có câu 'nếp tẻ đều có' để chỉ sự đầy đủ, sung túc.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Chữ 'Canh' trên Cao Đỉnh chỉ loại cây gì?",
+        "options": [
+          "A. Lúa nếp",
+          "B. Lúa tẻ",
+          "C. Ngô",
+          "D. Khoai lang"
+        ],
+        "correct_answer": "B. Lúa tẻ",
+        "difficulty": 1,
+        "explanation": "'Canh' là tên Hán Việt chỉ lúa tẻ, nguồn lương thực chính hàng ngày của người Việt."
+      },
+      {
+        "type": "true_false",
+        "question": "Lúa tẻ được khắc trên Cao Đỉnh để thể hiện chính sách 'nông vi bản' của triều Nguyễn.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Đúng",
+        "difficulty": 2,
+        "explanation": "Đúng. Việc khắc lúa tẻ lên đỉnh cao nhất thể hiện sự coi trọng nông nghiệp là gốc rễ của sự ổn định quốc gia."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Biệt danh nào thường được dùng để gọi hạt gạo trong văn hóa Việt?",
+        "options": [
+          "A. Hạt vàng",
+          "B. Hạt ngọc trời",
+          "C. Hạt bạc",
+          "D. Hạt kim cương"
+        ],
+        "correct_answer": "B. Hạt ngọc trời",
+        "difficulty": 1,
+        "explanation": "Người Việt ví hạt gạo là 'hạt ngọc trời' để thể hiện sự trân quý đối với nguồn lương thực nuôi sống con người."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_cao_dinh_04_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/CANH.jpg"
+  },
+  {
+    "id": "urn_cao_dinh_05",
+    "name_vi": "Thông",
+    "name_en": "Scallion",
+    "urn_location": "Cao Đỉnh",
+    "category": "thao_moc",
+    "rarity": "common",
+    "description_short": "Cây hành - loại gia vị quen thuộc, tượng trưng cho khí dương và sự thông suốt",
+    "description_educational": "Chữ 'Thông' (蔥) ở đây chỉ cây hành, một loại rau gia vị không thể thiếu trong ẩm thực Việt Nam, chứ không phải cây thông (tùng). Cây hành có tính nóng, vị cay, thuộc dương, có tác dụng giải cảm, làm ấm cơ thể. Trong y học cổ truyền và ẩm thực, hành đóng vai trò cân bằng âm dương cho món ăn. Việc khắc cây hành trên Cao Đỉnh - chiếc đỉnh tôn vinh vua Gia Long - có thể mang ý nghĩa về sự 'thông suốt', minh mẫn và khả năng điều hòa, quản trị đất nước. Nó cũng cho thấy sự quan tâm của triều đình đến những sản vật gần gũi, thiết thực nhất trong đời sống dân sinh, không chỉ là những thứ cao sang quyền quý.",
+    "historical_context": "Vào thế kỷ 19, các loại gia vị như hành, tỏi, tiêu, ớt đóng vai trò quan trọng trong việc bảo quản thực phẩm và chữa bệnh thông thường cho binh lính và người dân. Việc đưa một loại rau gia vị bình dị lên 'bảo vật quốc gia' như Cửu Đỉnh thể hiện cái nhìn thực tế và bao quát của vua Minh Mạng: trân trọng mọi nguồn lợi của đất nước, dù nhỏ bé.",
+    "symbolism": "Trong văn hóa, hành (蔥) đồng âm với 'thông' (của thông minh, thông suốt). Do đó, cây hành còn là biểu tượng của trí tuệ, sự sáng suốt và sự hanh thông trong mọi việc. Hành có tính sinh trưởng mạnh, dễ trồng, tượng trưng cho sức sống mãnh liệt và khả năng thích nghi của người Việt.",
+    "fun_fact": "Bạn có biết rằng hành lá chứa nhiều vitamin C và chất chống oxy hóa? Trong dân gian Việt Nam, bát cháo hành không chỉ là món ăn giải cảm hiệu quả (như trong tác phẩm Chí Phèo) mà còn là biểu tượng của tình người ấm áp. Việc khắc cây hành lên đỉnh đồng uy nghiêm là một nét độc đáo, cho thấy sự gần gũi giữa triều đình và đời sống dân dã.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Chữ 'Thông' trên Cao Đỉnh chỉ loại cây gì?",
+        "options": [
+          "A. Cây thông (gỗ)",
+          "B. Cây hành (gia vị)",
+          "C. Cây tùng",
+          "D. Cây trúc"
+        ],
+        "correct_answer": "B. Cây hành (gia vị)",
+        "difficulty": 2,
+        "explanation": "Chữ 'Thông' (蔥) trên Cửu Đỉnh là cây hành, một loại gia vị, phân biệt với cây tùng (thông gỗ)."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Cây hành có ý nghĩa biểu tượng gì nhờ hiện tượng đồng âm?",
+        "options": [
+          "A. Sự giàu có",
+          "B. Sự trường thọ",
+          "C. Sự thông minh, thông suốt",
+          "D. Sự quyền lực"
+        ],
+        "correct_answer": "C. Sự thông minh, thông suốt",
+        "difficulty": 2,
+        "explanation": "Hành (蔥) đồng âm với 'thông' trong thông minh, thông suốt, mang ý nghĩa chúc tụng trí tuệ và sự thuận lợi."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_cao_dinh_05_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/THÔNG.jpg"
+  },
+  {
+    "id": "urn_cao_dinh_06",
+    "name_vi": "Tử Vi Hoa",
+    "name_en": "Crape Myrtle",
+    "urn_location": "Cao Đỉnh",
+    "category": "thao_moc",
+    "rarity": "uncommon",
+    "description_short": "Hoa tường vi - loài hoa sắc tím hồng rực rỡ, biểu tượng của sự thịnh vượng và bảo vệ",
+    "description_educational": "Tử Vi Hoa hay hoa tường vi (Lagerstroemia) là loài hoa thân gỗ, nở thành từng chùm lớn với màu sắc rực rỡ từ hồng, tím đến trắng. Trên Cao Đỉnh, hoa tường vi được chạm khắc tinh tế, thể hiện vẻ đẹp thanh tao nhưng cũng đầy sức sống. Loài hoa này thường được trồng trong các cung điện, đền đài và khuôn viên quyền quý thời xưa. Tên gọi 'Tử Vi' còn liên quan đến chòm sao Tử Vi trong thiên văn học phương Đông, ngôi sao chủ về quyền lực và vận mệnh đế vương. Do đó, loài hoa này mang hàm ý về sự bảo trợ của thần linh đối với hoàng tộc và sự trường tồn của vương triều.",
+    "historical_context": "Hoa tường vi rất được ưa chuộng trong kiến trúc cảnh quan cung đình Huế. Với khả năng chịu hạn tốt và nở hoa rực rỡ vào mùa hè, nó tượng trưng cho sức sống bền bỉ vượt qua khắc nghiệt. Việc chọn khắc hoa tường vi lên Cao Đỉnh cho thấy gu thẩm mỹ tinh tế của người xưa và mong muốn vương triều luôn rực rỡ như hoa.",
+    "symbolism": "Màu tím hồng của tường vi (Tử) thường gắn liền với sự cao quý, huyền bí. Trong phong thủy, cây tường vi được cho là có khả năng xua đuổi tà khí, mang lại sự bình an cho gia chủ. Nó cũng tượng trưng cho tình yêu chung thủy và sự gắn bó keo sơn trong gia đình.",
+    "fun_fact": "Cây tường vi có thân rất nhẵn, vỏ cây thường bong ra từng mảng, nên ở một số nơi còn gọi là 'cây sờ cù' (vì sờ vào trơn láng như cù lét). Mặc dù có vẻ ngoài mong manh, cánh hoa mỏng như giấy, nhưng tường vi lại có sức sống rất mãnh liệt và thời gian nở hoa kéo dài nhiều tháng.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Hoa Tử Vi (Tường Vi) thường có màu gì?",
+        "options": [
+          "A. Chỉ màu trắng",
+          "B. Hồng, tím, trắng",
+          "C. Chỉ màu vàng",
+          "D. Xanh dương"
+        ],
+        "correct_answer": "B. Hồng, tím, trắng",
+        "difficulty": 1,
+        "explanation": "Hoa tường vi có nhiều màu sắc rực rỡ, phổ biến nhất là các sắc độ hồng và tím."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Tên 'Tử Vi' của loài hoa này gợi liên tưởng đến điều gì trong văn hóa phương Đông?",
+        "options": [
+          "A. Một loại thuốc quý",
+          "B. Chòm sao Tử Vi (đế vương)",
+          "C. Một món ăn cung đình",
+          "D. Một loại vải lụa"
+        ],
+        "correct_answer": "B. Chòm sao Tử Vi (đế vương)",
+        "difficulty": 3,
+        "explanation": "Tên hoa gợi nhắc đến sao Tử Vi, ngôi sao chủ mệnh đế vương trong tử vi đẩu số, mang ý nghĩa quyền quý."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_cao_dinh_06_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/TỬ VI HOA.jpg"
+  },
+  {
+    "id": "urn_cao_dinh_07",
+    "name_vi": "Trĩ",
+    "name_en": "Pheasant",
+    "urn_location": "Cao Đỉnh",
+    "category": "dong_vat",
+    "rarity": "rare",
+    "description_short": "Chim trĩ - loài chim có bộ lông lộng lẫy, biểu tượng của vẻ đẹp vương giả và điềm lành",
+    "description_educational": "Chim trĩ (Phasianidae) là loài chim có bộ lông đuôi dài và màu sắc sặc sỡ, thường được ví với vẻ đẹp của phượng hoàng trong đời thực. Trong hệ thống quan phục triều Nguyễn, hình ảnh chim trĩ được dùng để trang trí trên áo mũ của các quan văn, biểu thị cho sự nho nhã, văn hay chữ tốt. Trên Cao Đỉnh, chim trĩ được khắc họa với dáng vẻ kiêu sa, đuôi dài uốn lượn, tượng trưng cho vẻ đẹp văn hóa và sự thịnh trị của triều đại. Người xưa tin rằng chim trĩ xuất hiện là điềm báo của thánh nhân ra đời hoặc đất nước thái bình.",
+    "historical_context": "Chim trĩ là một trong 12 huy hiệu trên áo cổn (loại long bào trang trọng nhất) của vua chúa phương Đông. Triều Nguyễn rất chú trọng đến lễ nghi và trang phục, nên hình ảnh chim trĩ xuất hiện nhiều trong nghệ thuật cung đình. Nó đại diện cho 'Văn' (văn hóa, văn học), bổ sung cho 'Võ' (sức mạnh quân sự), tạo nên sự cân bằng trong trị quốc.",
+    "symbolism": "Chim trĩ tượng trưng cho sự son sắt, thủy chung (vì trĩ thường đi có đôi). Ngoài ra, với bộ lông lộng lẫy, trĩ còn là biểu tượng của vinh hoa phú quý và tước lộc (chức tước, bổng lộc). Trong văn học, 'trĩ' thường đi đôi với 'thần' (con sò lớn) để chỉ sự biến hóa của vạn vật theo mùa.",
+    "fun_fact": "Chim trĩ có tập tính rất thú vị: khi gặp nguy hiểm, chúng thường chui đầu vào bụi rậm nhưng để hở phần đuôi dài sặc sỡ ra ngoài. Trong tự nhiên, chim trĩ trống đẹp hơn chim mái rất nhiều để thu hút bạn tình. Lông trĩ dài và đẹp thường được dùng để trang trí mũ mão của các tướng lĩnh trong tuồng cổ.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Chim trĩ thường được dùng làm biểu tượng cho quan lại thuộc ban nào?",
+        "options": [
+          "A. Quan Võ",
+          "B. Quan Văn",
+          "C. Thái giám",
+          "D. Ngự y"
+        ],
+        "correct_answer": "B. Quan Văn",
+        "difficulty": 2,
+        "explanation": "Chim trĩ với vẻ đẹp nho nhã thường là biểu tượng trên phẩm phục của quan văn, trong khi các loài thú dữ như hổ, báo thường đại diện cho quan võ."
+      },
+      {
+        "type": "true_false",
+        "question": "Chim trĩ được xem là điềm báo của đất nước thái bình.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Đúng",
+        "difficulty": 2,
+        "explanation": "Cổ nhân tin rằng chim trĩ là loài chim lành, sự xuất hiện của nó báo hiệu điềm lành và sự thịnh trị."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_cao_dinh_07_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/TRĨ.jpg"
+  },
+  {
+    "id": "urn_cao_dinh_08",
+    "name_vi": "Đông Hải",
+    "name_en": "East Sea",
+    "urn_location": "Cao Đỉnh",
+    "category": "dia_ly",
+    "rarity": "epic",
+    "description_short": "Biển Đông - vùng biển rộng lớn, cửa ngõ giao thương và chủ quyền thiêng liêng của Đại Nam",
+    "description_educational": "Đông Hải tức Biển Đông, vùng biển bao la nằm ở phía đông nước ta, là nguồn sống và không gian sinh tồn của dân tộc Việt từ ngàn xưa. Việc khắc hình ảnh Biển Đông lên Cao Đỉnh - chiếc đỉnh cao quý nhất - là một tuyên bố đanh thép về chủ quyền biển đảo của vua Minh Mạng và triều Nguyễn. Hình ảnh sóng nước mênh mông cuộn trào trên đỉnh đồng thể hiện sự hùng vĩ của thiên nhiên và khát vọng vươn ra biển lớn. Biển Đông không chỉ cung cấp tôm cá, muối, hải sản mà còn là tuyến đường giao thương huyết mạch kết nối Đại Nam với thế giới bên ngoài. Đây là minh chứng lịch sử quan trọng khẳng định tư duy hướng biển của cha ông ta.",
+    "historical_context": "Dưới triều Nguyễn, đặc biệt là thời Minh Mạng, hoạt động thực thi chủ quyền trên biển rất mạnh mẽ. Vua thường xuyên cử các đội hùng binh Hoàng Sa, Bắc Hải ra đo đạc, cắm mốc và vẽ bản đồ tại hai quần đảo Hoàng Sa và Trường Sa. Việc khắc 'Đông Hải' lên Cửu Đỉnh năm 1835 là một hành động khẳng định chủ quyền lãnh thổ quốc gia bằng văn bản hình ảnh (visual text) có giá trị pháp lý cao nhất thời bấy giờ.",
+    "symbolism": "Biển Đông tượng trưng cho sự bao la, khoáng đạt và nguồn tài nguyên vô tận. Nó cũng đại diện cho những hiểm nguy, thử thách mà dân tộc phải vượt qua (bão tố, giặc ngoại xâm). Trong phong thủy, nước (Thủy) là yếu tố mang lại tài lộc, sự lưu thông và thịnh vượng.",
+    "fun_fact": "Biển Đông là một trong những biển lớn nhất thế giới. Trên Cửu Đỉnh, không chỉ có Biển Đông mà còn có Nam Hải (Biển Nam) và Tây Hải (Biển Tây), cho thấy sự am hiểu tường tận về địa lý biển đảo của người xưa. Hình ảnh sóng nước trên đỉnh được chạm khắc rất sinh động, có lớp lang, thể hiện kỹ thuật đúc đồng đỉnh cao.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Việc khắc 'Đông Hải' lên Cao Đỉnh có ý nghĩa quan trọng gì về mặt lịch sử?",
+        "options": [
+          "A. Để trang trí cho đẹp",
+          "B. Khẳng định chủ quyền biển đảo quốc gia",
+          "C. Đánh dấu nơi vua hay đi nghỉ mát",
+          "D. Thể hiện kỹ thuật đúc đồng"
+        ],
+        "correct_answer": "B. Khẳng định chủ quyền biển đảo quốc gia",
+        "difficulty": 1,
+        "explanation": "Đây là bằng chứng lịch sử quan trọng khẳng định ý thức và hành động thực thi chủ quyền của triều Nguyễn đối với vùng biển đảo của Tổ quốc."
+      },
+      {
+        "type": "true_false",
+        "question": "Vua Minh Mạng là người rất chú trọng đến việc đo đạc và vẽ bản đồ biển đảo.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Đúng",
+        "difficulty": 1,
+        "explanation": "Vua Minh Mạng đã cử nhiều đoàn khảo sát ra Hoàng Sa, Trường Sa để cắm mốc chủ quyền và vẽ bản đồ chi tiết."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_cao_dinh_08_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/ĐÔNG HẢI.jpg"
+  },
+  {
+    "id": "urn_cao_dinh_09",
+    "name_vi": "Vĩnh Tế Hà",
+    "name_en": "Vinh Te Canal",
+    "urn_location": "Cao Đỉnh",
+    "category": "dia_ly",
+    "rarity": "epic",
+    "description_short": "Kênh Vĩnh Tế - công trình thủy lợi vĩ đại nhất thời Nguyễn, biểu tượng của sức mạnh chinh phục thiên nhiên",
+    "description_educational": "Vĩnh Tế Hà là con kênh đào lớn nhất trong lịch sử phong kiến Việt Nam, chạy dọc biên giới Tây Nam (An Giang - Kiên Giang ngày nay). Kênh được khởi công năm 1819 dưới thời Gia Long và hoàn thành năm 1824 thời Minh Mạng, do danh tướng Thoại Ngọc Hầu chỉ huy. Việc khắc hình ảnh kênh Vĩnh Tế lên Cao Đỉnh là sự ghi nhận công lao to lớn của hàng vạn dân binh đã đổ mồ hôi, xương máu để đào kênh. Con kênh này có ý nghĩa chiến lược cực kỳ quan trọng: vừa là hào lũy bảo vệ biên giới, vừa giúp thau chua rửa phèn, phát triển nông nghiệp và giao thông đường thủy cho cả vùng Tứ giác Long Xuyên.",
+    "historical_context": "Kênh dài gần 90km, rộng 30m, được đào hoàn toàn bằng thủ công trong điều kiện khắc nghiệt 'muỗi kêu như sáo thổi, đỉa lội tựa bánh canh'. Tên kênh được vua Gia Long đặt theo tên vợ của Thoại Ngọc Hầu là bà Châu Thị Vĩnh Tế, để tôn vinh đức hạnh của bà. Đây là một ngoại lệ hiếm hoi trong lịch sử khi tên một phụ nữ được đặt cho một công trình quốc gia và khắc lên bảo vật triều đình.",
+    "symbolism": "Kênh Vĩnh Tế biểu trưng cho ý chí dời non lấp biển của người Việt, khả năng cải tạo thiên nhiên để phục vụ cuộc sống. Nó cũng là biểu tượng của sự trấn giữ biên cương và tầm nhìn chiến lược về an ninh quốc phòng của các vua đầu triều Nguyễn.",
+    "fun_fact": "Khi đào kênh, người xưa đã dùng những cây tre dài để làm 'thước ngắm' kẻ đường thẳng tắp trên vùng đất hoang vu. Kênh Vĩnh Tế thẳng đến mức đứng từ đầu này có thể nhìn thấy ánh đuốc ở đầu kia (theo truyền thuyết). Đây là một kỳ tích về kỹ thuật trắc đạc thời bấy giờ.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Kênh Vĩnh Tế được đặt theo tên của ai?",
+        "options": [
+          "A. Vua Gia Long",
+          "B. Danh tướng Thoại Ngọc Hầu",
+          "C. Bà Châu Thị Vĩnh Tế (vợ Thoại Ngọc Hầu)",
+          "D. Một vị thần sông"
+        ],
+        "correct_answer": "C. Bà Châu Thị Vĩnh Tế (vợ Thoại Ngọc Hầu)",
+        "difficulty": 2,
+        "explanation": "Vua Gia Long đã ban tên kênh theo tên vợ của người chỉ huy đào kênh để vinh danh đức hạnh của bà."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Vai trò chính của kênh Vĩnh Tế là gì?",
+        "options": [
+          "A. Chỉ để tưới tiêu",
+          "B. Chỉ để đi lại",
+          "C. Quốc phòng, giao thông và thủy lợi",
+          "D. Làm cảnh quan du lịch"
+        ],
+        "correct_answer": "C. Quốc phòng, giao thông và thủy lợi",
+        "difficulty": 2,
+        "explanation": "Kênh Vĩnh Tế có vai trò đa năng: là hào phòng thủ biên giới, tuyến giao thông thủy huyết mạch và công trình thủy lợi quan trọng."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_cao_dinh_09_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/VĨNH TẾ HÀ.jpg"
+  },
+  {
+    "id": "urn_cao_dinh_10",
+    "name_vi": "Nhật",
+    "name_en": "The Sun",
+    "urn_location": "Cao Đỉnh",
+    "category": "thien_van",
+    "rarity": "legendary",
+    "description_short": "Mặt trời - thái dương, nguồn gốc của sự sống và biểu tượng của đấng quân vương",
+    "description_educational": "Nhật (Mặt trời) là hình ảnh thiên văn quan trọng nhất, được khắc ở vị trí trang trọng trên Cao Đỉnh. Trong quan niệm phương Đông, mặt trời là 'Thái Dương', đại diện cho khí Dương cực thịnh, nguồn năng lượng vĩnh cửu nuôi dưỡng vạn vật. Mặt trời cũng là biểu tượng của Hoàng đế (Thiên tử - con trời), người thay trời hành đạo, mang ánh sáng văn minh và công lý đến cho muôn dân. Hình ảnh mặt trời trên đỉnh thường được thể hiện dưới dạng đĩa tròn tỏa sáng hoặc chim quạ ba chân (Tam túc ô) trong vòng tròn, tượng trưng cho huyền thoại.",
+    "historical_context": "Triều Nguyễn, cũng như các triều đại phong kiến khác, coi vua là trung tâm của vũ trụ nhân gian, như mặt trời là trung tâm của bầu trời. Việc đặt hình tượng Mặt trời lên đỉnh cao nhất (Cao Đỉnh) khẳng định quyền lực tập trung tuyệt đối của nhà vua và tính chính danh của triều đại.",
+    "symbolism": "Mặt trời tượng trưng cho sự thật, sự minh bạch (quang minh chính đại), trí tuệ và sự giác ngộ. Nó xua tan bóng tối, tà ác và mang lại sự sống ấm áp. Trong cặp phạm trù Âm - Dương, Mặt trời (Nhật) đi đôi với Mặt trăng (Nguyệt), tạo nên sự cân bằng hoàn hảo của vũ trụ.",
+    "fun_fact": "Trên Cửu Đỉnh, Mặt trời (Nhật) ở Cao Đỉnh đối ứng với Mặt trăng (Nguyệt) ở Nhân Đỉnh. Điều này thể hiện triết lý 'Nhật Nguyệt trùng minh' (Mặt trời mặt trăng cùng chiếu sáng), ám chỉ thời đại thái bình thịnh trị, vua sáng tôi hiền.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Trong văn hóa phong kiến, Mặt trời là biểu tượng của ai?",
+        "options": [
+          "A. Hoàng hậu",
+          "B. Hoàng đế",
+          "C. Tể tướng",
+          "D. Thái tử"
+        ],
+        "correct_answer": "B. Hoàng đế",
+        "difficulty": 1,
+        "explanation": "Mặt trời (Thái dương) là biểu tượng của khí Dương và quyền lực tối cao, đại diện cho Hoàng đế."
+      },
+      {
+        "type": "true_false",
+        "question": "Hình ảnh Mặt trời trên Cao Đỉnh thường đi cặp với Mặt trăng trên Nhân Đỉnh.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Đúng",
+        "difficulty": 2,
+        "explanation": "Đây là sự sắp xếp có chủ ý theo triết lý Âm Dương và vũ trụ quan của người xưa."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_cao_dinh_10_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/NHẬT.jpg"
+  },
+  {
+    "id": "urn_cao_dinh_11",
+    "name_vi": "Ngưu Chữ Giang",
+    "name_en": "Ben Nghe River",
+    "urn_location": "Cao Đỉnh",
+    "category": "dia_ly",
+    "rarity": "rare",
+    "description_short": "Sông Bến Nghé - huyết mạch giao thông và thương mại sầm uất của vùng đất Gia Định xưa",
+    "description_educational": "Ngưu Chữ Giang tức sông Bến Nghé (hay rạch Bến Nghé) tại Sài Gòn - Gia Định. Tên gọi 'Ngưu Chữ' (Bến Trâu) xuất phát từ giai thoại bến nước này xưa kia thường có trâu ra uống nước, hoặc do hình dáng sông giống bụng trâu. Đây là tuyến đường thủy quan trọng bậc nhất, cửa ngõ giao thương của vùng đất Nam Bộ trù phú. Việc khắc sông Bến Nghé lên Cao Đỉnh cho thấy tầm nhìn của triều Nguyễn về vai trò chiến lược kinh tế và quốc phòng của vùng đất Sài Gòn - Gia Định đối với cả nước. Dòng sông này đã chứng kiến quá trình khai phá, xây dựng và bảo vệ vùng đất phương Nam của cha ông ta.",
+    "historical_context": "Sài Gòn - Gia Định là nơi phát tích cơ nghiệp của chúa Nguyễn trong công cuộc Nam tiến. Bến Nghé là nơi tàu thuyền buôn bán tấp nập, tạo nên câu ca 'Nhà Bè nước chảy chia hai, ai về Gia Định Đồng Nai thì về'. Sự hiện diện của nó trên Cửu Đỉnh khẳng định sự thống nhất toàn vẹn lãnh thổ từ Bắc chí Nam.",
+    "symbolism": "Sông Bến Nghé tượng trưng cho sự phồn vinh của thương mại, sự giao lưu văn hóa và sự mở mang bờ cõi. Dòng sông hiền hòa nhưng cũng là chứng nhân lịch sử kiên cường của người dân Nam Bộ.",
+    "fun_fact": "Có truyền thuyết kể rằng tên 'Bến Nghé' là do tiếng cá sấu kêu ban đêm nghe như tiếng trâu nghé (trâu con). Dù nguồn gốc tên gọi là gì, Bến Nghé vẫn luôn là một địa danh thân thương và quan trọng trong tâm thức người Sài Gòn.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Ngưu Chữ Giang là tên chữ của con sông nào ngày nay?",
+        "options": [
+          "A. Sông Hồng",
+          "B. Sông Hương",
+          "C. Sông (Rạch) Bến Nghé",
+          "D. Sông Cửu Long"
+        ],
+        "correct_answer": "C. Sông (Rạch) Bến Nghé",
+        "difficulty": 2,
+        "explanation": "Ngưu Chữ nghĩa là Bến Trâu, tên chữ Hán của Bến Nghé."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Sông Bến Nghé thuộc vùng đất nào?",
+        "options": [
+          "A. Thăng Long - Hà Nội",
+          "B. Phú Xuân - Huế",
+          "C. Gia Định - Sài Gòn",
+          "D. Phố Hiến - Hưng Yên"
+        ],
+        "correct_answer": "C. Gia Định - Sài Gòn",
+        "difficulty": 1,
+        "explanation": "Bến Nghé là địa danh nổi tiếng của vùng đất Sài Gòn - Gia Định xưa."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_cao_dinh_11_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/NGƯU CHỮ GIANG.jpg"
+  },
+  {
+    "id": "urn_cao_dinh_12",
+    "name_vi": "Thiên Tôn Sơn",
+    "name_en": "Thien Ton Mountain",
+    "urn_location": "Cao Đỉnh",
+    "category": "dia_ly",
+    "rarity": "rare",
+    "description_short": "Núi Thiên Tôn - ngọn núi thiêng tại vùng đất quý hương Gia Miêu, cội nguồn của vương triều Nguyễn",
+    "description_educational": "Thiên Tôn Sơn là ngọn núi nằm ở thôn Gia Miêu, huyện Hà Trung, tỉnh Thanh Hóa. Đây được coi là đất 'quý hương', nơi phát tích của dòng họ Nguyễn (Nguyễn Kim, Nguyễn Hoàng). Việc khắc núi Thiên Tôn lên Cao Đỉnh thể hiện đạo lý 'uống nước nhớ nguồn', sự tri ân của các vua Nguyễn đối với tổ quán và nơi khởi nghiệp của cha ông. Ngọn núi này được xem là trấn sơn, giữ gìn long mạch và vượng khí cho cả vương triều. Trong tâm thức phong kiến, sự bền vững của triều đại gắn liền với sự linh thiêng của đất tổ.",
+    "historical_context": "Vua Gia Long và Minh Mạng đều đã từng về bái yết lăng miếu tổ tiên tại vùng Gia Miêu Ngoại Trang này. Núi Thiên Tôn không chỉ là địa danh địa lý mà còn là không gian thiêng liêng, nơi thờ phụng các bậc tiên đế.",
+    "symbolism": "Núi Thiên Tôn tượng trưng cho cội nguồn, nền tảng vững chắc và sự kết nối giữa quá khứ với hiện tại. Tên gọi 'Thiên Tôn' (Cháu Trời/Đạo Trời tôn quý) cũng mang hàm ý về sự chính danh và mệnh trời của dòng họ cai trị.",
+    "fun_fact": "Vùng đất Hà Trung, Thanh Hóa không chỉ là quê hương nhà Nguyễn mà còn liên quan đến nhiều triều đại khác trong lịch sử Việt Nam (như nhà Hồ, nhà Lê). Địa thế núi sông ở đây được các thầy phong thủy xưa đánh giá là 'địa linh nhân kiệt'.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Núi Thiên Tôn nằm ở tỉnh nào?",
+        "options": [
+          "A. Thừa Thiên Huế",
+          "B. Thanh Hóa",
+          "C. Nghệ An",
+          "D. Quảng Nam"
+        ],
+        "correct_answer": "B. Thanh Hóa",
+        "difficulty": 2,
+        "explanation": "Núi Thiên Tôn nằm ở huyện Hà Trung, Thanh Hóa, là quê gốc của các chúa Nguyễn và vua Nguyễn."
+      },
+      {
+        "type": "true_false",
+        "question": "Núi Thiên Tôn được khắc lên Cao Đỉnh vì đây là nơi vua Gia Long sinh ra.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 3,
+        "explanation": "Núi Thiên Tôn là đất tổ (quý hương) của dòng họ Nguyễn, nơi phát tích tổ tiên, chứ không phải nơi vua Gia Long sinh ra (vua sinh tại Huế hoặc trong thời gian lưu lạc)."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_cao_dinh_12_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/THIÊN TÔN SƠN.jpg"
+  },
+  {
+    "id": "urn_cao_dinh_13",
+    "name_vi": "Thiết Mộc",
+    "name_en": "Ironwood",
+    "urn_location": "Cao Đỉnh",
+    "category": "thao_moc",
+    "rarity": "rare",
+    "description_short": "Cây gỗ lim - loài gỗ tứ thiết, biểu tượng của sự cứng cỏi và trường tồn",
+    "description_educational": "Thiết Mộc (cây gỗ sắt) thường được hiểu là cây gỗ Lim (Erythrophleum fordii), đứng đầu trong nhóm 'tứ thiết' (đinh, lim, sến, táu) của Việt Nam. Đây là loài cây thân gỗ lớn, chất gỗ cực kỳ cứng, nặng, không bị mối mọt, thường được dùng để làm cột đình, chùa, cung điện và đóng tàu thuyền chiến. Việc khắc Thiết Mộc lên Cao Đỉnh tôn vinh nguồn tài nguyên rừng phong phú của nước Nam và phẩm chất kiên định, vững chãi của quốc gia. Những cột gỗ lim hàng trăm năm tuổi trong Đại Nội Huế là minh chứng sống động cho giá trị của loài cây này.",
+    "historical_context": "Trong công cuộc xây dựng kinh thành Huế và hạm đội thủy quân, gỗ lim đóng vai trò tối quan trọng. Triều đình có những quy định nghiêm ngặt về việc khai thác và bảo vệ các khu rừng gỗ quý. Thiết mộc trên đỉnh đồng là sự ghi nhận vai trò của tài nguyên rừng trong kiến thiết đất nước.",
+    "symbolism": "Gỗ lim (Thiết mộc) tượng trưng cho sự trường thọ, sức mạnh nội tại và khả năng chống chọi với thời gian. Nó đại diện cho cốt cách cứng cỏi, không khuất phục của người quân tử và sự vững bền của xã tắc.",
+    "fun_fact": "Gỗ lim cứng đến mức khi khô, đinh đóng vào có thể bị cong mà gỗ không nứt. Người xưa có câu 'thương cho roi cho vọt, ghét cho ngọt cho bùi' nhưng với gỗ lim thì 'cứng như lim'. Tuy nhiên, dân gian cũng kiêng dùng gỗ lim làm giường ngủ vì quan niệm gỗ có tính độc hoặc mang năng lượng quá mạnh.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Thiết Mộc trong nhóm 'tứ thiết' thường chỉ loại gỗ nào?",
+        "options": [
+          "A. Gỗ mít",
+          "B. Gỗ lim",
+          "C. Gỗ thông",
+          "D. Gỗ xoan"
+        ],
+        "correct_answer": "B. Gỗ lim",
+        "difficulty": 2,
+        "explanation": "Thiết mộc (gỗ sắt) là tên gọi tôn xưng độ cứng của gỗ lim, loại gỗ quý hàng đầu."
+      },
+      {
+        "type": "true_false",
+        "question": "Gỗ lim thường được dùng để làm cột đình, chùa vì độ bền cao.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Đúng",
+        "difficulty": 1,
+        "explanation": "Nhờ đặc tính cứng, không mối mọt, gỗ lim là lựa chọn số một cho các công trình kiến trúc cổ cần sự trường tồn."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_cao_dinh_13_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/THIẾT MỘC.jpg"
+  },
+  {
+    "id": "urn_cao_dinh_14",
+    "name_vi": "Hổ",
+    "name_en": "Tiger",
+    "urn_location": "Cao Đỉnh",
+    "category": "dong_vat",
+    "rarity": "epic",
+    "description_short": "Hổ - chúa sơn lâm, biểu tượng của sức mạnh oai phong và khả năng trấn tà",
+    "description_educational": "Hổ (Cọp, Hùm, Ông Ba Mươi) là chúa tể của rừng xanh, loài vật tượng trưng cho sức mạnh, sự dũng mãnh và uy quyền trong thế giới tự nhiên. Trên Cao Đỉnh, hình ảnh con hổ được chạm khắc với cơ bắp cuộn nổi, dáng vẻ uy nghi, sẵn sàng vồ mồi. Trong văn hóa quân sự, hổ là biểu tượng của các võ tướng (Hổ tướng), đại diện cho khí phách hiên ngang và khả năng chiến đấu phi thường. Người Việt vừa sợ vừa kính nể hổ, thường lập miếu thờ và gọi một cách tôn kính là 'Ông', 'Ngài'. Sự hiện diện của hổ trên đỉnh đồng mang ý nghĩa trấn áp tà khí, bảo vệ sự bình yên cho vương triều.",
+    "historical_context": "Triều Nguyễn có tổ chức các trận đấu giữa Voi và Hổ tại Hổ Quyền (Huế) để rèn luyện tinh thần chiến đấu và giải trí cho hoàng gia. Mặc dù voi thường thắng (do được hỗ trợ), nhưng hổ luôn được nể trọng vì sự hung dữ và sức mạnh. Hổ trên Cao Đỉnh khẳng định sức mạnh quân sự và uy thế của quốc gia.",
+    "symbolism": "Hổ tượng trưng cho dương khí, sự quyết đoán và quyền lực thực tế (khác với Rồng là quyền lực thần thánh). Hổ còn là linh vật trấn giữ phương Tây (Bạch Hổ) trong tứ tượng. Trong dân gian, tranh 'Ngũ Hổ' được treo để trừ tà ma.",
+    "fun_fact": "Tại sao gọi hổ là 'Ông Ba Mươi'? Có nhiều cách giải thích, một trong số đó là lệ xưa ai săn được hổ thì được vua thưởng 30 quan tiền, nhưng cũng bị phạt đánh 30 roi để 'xoa dịu' linh hồn ông hổ. Hoặc do hổ hay về làng vào đêm 30 Tết.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Hổ được xem là biểu tượng của tầng lớp nào trong triều đình?",
+        "options": [
+          "A. Quan Văn",
+          "B. Quan Võ (Võ tướng)",
+          "C. Phi tần",
+          "D. Nông dân"
+        ],
+        "correct_answer": "B. Quan Võ (Võ tướng)",
+        "difficulty": 1,
+        "explanation": "Với sức mạnh và sự dũng mãnh, hổ là biểu tượng tiêu biểu cho các võ tướng (Hổ tướng, Hổ phù)."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Đấu trường nổi tiếng nào ở Huế là nơi diễn ra các trận đấu giữa Voi và Hổ?",
+        "options": [
+          "A. Đấu trường La Mã",
+          "B. Hổ Quyền",
+          "C. Văn Miếu",
+          "D. Đàn Nam Giao"
+        ],
+        "correct_answer": "B. Hổ Quyền",
+        "difficulty": 2,
+        "explanation": "Hổ Quyền là di tích độc đáo tại Huế, nơi từng tổ chức các trận tử chiến giữa voi và hổ dưới triều Nguyễn."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_cao_dinh_14_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/HỔ.jpg"
+  },
+  {
+    "id": "urn_cao_dinh_15",
+    "name_vi": "Đa Tác Thuyền",
+    "name_en": "Merchant Ship",
+    "urn_location": "Cao Đỉnh",
+    "category": "giao_thuong",
+    "rarity": "uncommon",
+    "description_short": "Đa Tác Thuyền - loại thuyền buồm đi biển cỡ lớn, minh chứng cho kỹ thuật đóng tàu và giao thương hàng hải",
+    "description_educational": "Đa Tác Thuyền là tên gọi chỉ một loại thuyền buồm lớn, có khả năng đi biển dài ngày, vận chuyển hàng hóa hoặc dùng trong quân sự. Hình ảnh con thuyền trên Cao Đỉnh với cánh buồm no gió lướt trên sóng nước thể hiện khát vọng vươn ra biển lớn và năng lực hàng hải của người Việt xưa. Dưới triều Nguyễn, kỹ thuật đóng tàu đã có những bước tiến bộ vượt bậc, tiếp thu cả công nghệ phương Tây. Những con thuyền này đóng vai trò huyết mạch trong việc giao thương với các nước trong khu vực và bảo vệ hải đảo. Tên gọi 'Đa Tác' có thể hàm ý về sự đa năng, công phu trong chế tác hoặc 'nhiều công dụng'.",
+    "historical_context": "Vua Gia Long và Minh Mạng rất chú trọng phát triển thủy quân và thương cảng. Các thuyền buôn của triều đình (phái bộ) thường xuyên đi đến Singapore, Batavia (Indonesia), thậm chí sang cả phương Tây để buôn bán và mua vũ khí. Hình ảnh thuyền trên Cửu Đỉnh là sự tôn vinh ngành đóng tàu và kinh tế biển.",
+    "symbolism": "Con thuyền là biểu tượng của sự thuận buồm xuôi gió, sự di chuyển và giao lưu. Nó mang theo hy vọng về những chuyến đi bình an, mang về tài lộc và tri thức mới. Thuyền cũng tượng trưng cho sự chở che, nâng đỡ (như thuyền bát nhã trong Phật giáo).",
+    "fun_fact": "Thuyền bè thời Nguyễn không chỉ dùng gỗ thường mà còn dùng các loại gỗ quý chịu nước tốt. Kỹ thuật ghép ván, trát dầu của thợ thủ công Việt Nam rất khéo léo, giúp thuyền chịu được sóng gió Biển Đông.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Đa Tác Thuyền trên Cao Đỉnh đại diện cho phương tiện gì?",
+        "options": [
+          "A. Xe ngựa",
+          "B. Thuyền buồm đi biển",
+          "C. Kiệu rước",
+          "D. Bè tre"
+        ],
+        "correct_answer": "B. Thuyền buồm đi biển",
+        "difficulty": 1,
+        "explanation": "Đa Tác Thuyền là loại thuyền buồm lớn, có khả năng đi biển, phục vụ giao thương và quân sự."
+      },
+      {
+        "type": "true_false",
+        "question": "Triều Nguyễn không quan tâm đến việc phát triển kỹ thuật đóng tàu.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Ngược lại, triều Nguyễn rất chú trọng phát triển thủy quân và kỹ thuật đóng tàu, thậm chí học hỏi cả kỹ thuật phương Tây."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_cao_dinh_15_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/ĐA TÁC THUYỀN.jpg"
+  },
+  {
+    "id": "urn_cao_dinh_16",
+    "name_vi": "Đại Bác",
+    "name_en": "Cannon",
+    "urn_location": "Cao Đỉnh",
+    "category": "vo_bi",
+    "rarity": "epic",
+    "description_short": "Súng đại bác - hỏa khí uy lực, thần hộ mệnh của kinh thành và biên cương",
+    "description_educational": "Đại Bác (Thần công) là loại hỏa khí hạng nặng, biểu tượng cho sức mạnh quân sự tối tân của triều Nguyễn. Hình ảnh khẩu pháo nòng dài đặt trên giá súng được khắc trên Cao Đỉnh thể hiện sự coi trọng của nhà vua đối với quốc phòng. Thời nhà Nguyễn, kỹ thuật đúc súng thần công đạt trình độ rất cao, nổi tiếng nhất là bộ 'Cửu vị thần công' (9 khẩu súng lớn) đặt trước Ngọ Môn. Đại bác không chỉ là vũ khí sát thương mà còn được coi là 'thần' bảo vệ kinh thành, thường được phong tước hiệu. Việc khắc vũ khí lên đỉnh đồng mang thông điệp răn đe kẻ thù và khẳng định khả năng bảo vệ độc lập dân tộc.",
+    "historical_context": "Vua Gia Long sau khi thống nhất đất nước đã cho thu thập binh khí nhà Tây Sơn để đúc Cửu vị thần công (1803). Đến thời Minh Mạng, công nghiệp quốc phòng tiếp tục được củng cố. Súng đại bác thời này thường đúc bằng đồng hoặc gang, hoa văn tinh xảo, là niềm tự hào của kỹ nghệ đúc đồng Việt Nam.",
+    "symbolism": "Đại bác tượng trưng cho sức mạnh, uy quyền chấn áp và sự bảo vệ an toàn tuyệt đối. Tiếng nổ của đại bác (trong các dịp lễ) được coi là tiếng sấm của triều đình, xua đuổi tà ma và báo hiệu sự uy nghiêm.",
+    "fun_fact": "Các khẩu thần công thời Nguyễn thường được đặt tên và phong tước (như Tướng quân). Mặc dù uy lực, nhưng Cửu vị thần công trước Ngọ Môn chưa bao giờ được dùng trong chiến trận thực tế mà chỉ mang tính biểu tượng và dùng trong nghi lễ.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Đại bác (Thần công) tượng trưng cho lĩnh vực nào?",
+        "options": [
+          "A. Nông nghiệp",
+          "B. Văn hóa",
+          "C. Quốc phòng, quân sự",
+          "D. Y tế"
+        ],
+        "correct_answer": "C. Quốc phòng, quân sự",
+        "difficulty": 1,
+        "explanation": "Đại bác là vũ khí hỏa lực mạnh, đại diện cho sức mạnh quân sự và khả năng bảo vệ đất nước."
+      },
+      {
+        "type": "true_false",
+        "question": "Các khẩu thần công thời Nguyễn thường được phong tước hiệu như con người.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Đúng",
+        "difficulty": 2,
+        "explanation": "Đúng, triều đình thường phong tước (như Đại tướng quân) cho các khẩu súng lớn để thể hiện sự tôn trọng 'thần lực' của vũ khí."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_cao_dinh_16_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/ĐẠI BÁC.jpg"
+  },
+  {
+    "id": "urn_cao_dinh_17",
+    "name_vi": "Trầm Hương",
+    "name_en": "Agarwood",
+    "urn_location": "Cao Đỉnh",
+    "category": "thao_moc",
+    "rarity": "rare",
+    "description_short": "Trầm hương - 'Vua của các mùi hương', báu vật linh thiêng của núi rừng Việt Nam",
+    "description_educational": "Trầm hương là phần gỗ chứa nhựa thơm đặc biệt sinh ra từ cây Dó Bầu khi bị thương. Đây là một trong những sản vật quý giá nhất của Việt Nam, được mệnh danh là 'kỳ nam', 'khánh hội'. Trên Cao Đỉnh, hình ảnh cây trầm hương khẳng định sự giàu có về tài nguyên thiên nhiên quý hiếm của đất nước. Trầm hương có mùi thơm thanh tao, thoát tục, được dùng trong các nghi lễ tôn giáo, tế tự trời đất và làm thuốc quý. Giá trị của trầm hương thời xưa có thể sánh ngang với vàng, là cống phẩm quan trọng dâng lên triều đình.",
+    "historical_context": "Vùng đất miền Trung và Tây Nguyên nước ta nổi tiếng thế giới về trầm hương. Các thương nhân quốc tế từ Nhật Bản, Trung Quốc đến Trung Đông đều khao khát loại hương liệu này. Việc khắc Trầm hương lên đỉnh cao nhất cho thấy đây là niềm tự hào quốc gia, một báu vật đại diện cho tinh túy đất trời.",
+    "symbolism": "Trầm hương tượng trưng cho sự linh thiêng, sự kết nối giữa con người và thần linh. Nó cũng đại diện cho phẩm chất cao quý: 'đau thương dó biến thành trầm' - chịu đựng gian khổ (vết thương) để tỏa hương thơm cho đời. Mùi hương trầm có khả năng tịnh hóa tâm hồn, trừ tà khí.",
+    "fun_fact": "Không phải cây Dó Bầu nào cũng sinh ra trầm. Tỷ lệ tạo trầm trong tự nhiên rất thấp và mất hàng chục năm. Loại trầm thượng hạng gọi là Kỳ Nam, cực kỳ hiếm và đắt đỏ, được ví là 'ngậm ngải tìm trầm' để nói về sự gian nan khi đi tìm nó.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Trầm hương được hình thành từ loài cây nào?",
+        "options": [
+          "A. Cây Thông",
+          "B. Cây Dó Bầu",
+          "C. Cây Mít",
+          "D. Cây Quế"
+        ],
+        "correct_answer": "B. Cây Dó Bầu",
+        "difficulty": 2,
+        "explanation": "Trầm hương là phần gỗ chứa nhựa thơm sinh ra từ cây Dó Bầu khi cây bị tổn thương và tự chữa lành."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Câu thành ngữ nào nói về sự gian nan khi đi tìm trầm hương?",
+        "options": [
+          "A. Lên thác xuống ghềnh",
+          "B. Ngậm ngải tìm trầm",
+          "C. Chân cứng đá mềm",
+          "D. Một nắng hai sương"
+        ],
+        "correct_answer": "B. Ngậm ngải tìm trầm",
+        "difficulty": 2,
+        "explanation": "'Ngậm ngải tìm trầm' diễn tả sự vất vả, hiểm nguy và yếu tố may mắn tâm linh của những người đi rừng tìm kiếm loại gỗ quý này."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_cao_dinh_17_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/TRẦM HƯƠNG.jpg"
+  },
+  {
+    "id": "urn_cao_dinh_18",
+    "name_vi": "Miết",
+    "name_en": "Soft-shelled Turtle",
+    "urn_location": "Cao Đỉnh",
+    "category": "dong_vat",
+    "rarity": "common",
+    "description_short": "Con ba ba - loài thủy sinh quen thuộc, biểu tượng của sự kiên nhẫn và giá trị thực tiễn",
+    "description_educational": "Miết (tên Hán Việt) tức con ba ba, một loài bò sát thuộc bộ Rùa, sống ở các vùng nước ngọt, đầm hồ. Khác với rùa có mai cứng, ba ba có mai mềm và da trơn. Việc khắc hình con ba ba lên Cao Đỉnh - bên cạnh rồng, hổ, đại bác - cho thấy cái nhìn bao dung và thực tế của người xưa: trân trọng cả những loài vật bình dị nhưng có ích. Ba ba là nguồn thực phẩm bổ dưỡng, một vị thuốc trong đông y (tư âm bổ thận). Sự xuất hiện của nó hoàn thiện bức tranh về hệ sinh thái phong phú của sông ngòi Việt Nam.",
+    "historical_context": "Trong văn hóa ẩm thực và y học dân gian, ba ba luôn giữ vị trí quan trọng. Việc đưa loài vật này lên Cửu Đỉnh thể hiện sự quan tâm đến mọi khía cạnh đời sống dân sinh, từ cái ăn cái mặc đến sức khỏe. Nó cũng phản ánh sự đa dạng sinh học của vùng sông nước nhiệt đới.",
+    "symbolism": "Ba ba, giống như loài rùa, tượng trưng cho sự kiên nhẫn, ẩn nhẫn và tuổi thọ. Tuy nhiên, nó gần gũi với đời sống thường nhật hơn là ý nghĩa tâm linh thần thánh. Hình ảnh ba ba lặn ngụp trong nước gợi lên sự an nhiên tự tại.",
+    "fun_fact": "Ba ba là loài vật rất hung dữ khi bị đe dọa, vết cắn của nó rất đau và lâu nhả (dân gian hay dọa 'ba ba cắn thì trời gầm mới nhả'). Tuy nhiên, thịt ba ba lại rất ngon và được coi là đặc sản. Trên Cửu Đỉnh, ba ba được khắc họa rất chân thực, sinh động.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Con 'Miết' trên Cao Đỉnh là tên gọi khác của con vật nào?",
+        "options": [
+          "A. Con cua",
+          "B. Con rùa biển",
+          "C. Con ba ba",
+          "D. Con ếch"
+        ],
+        "correct_answer": "C. Con ba ba",
+        "difficulty": 1,
+        "explanation": "Miết là tên Hán Việt chỉ con ba ba, loài vật có mai mềm sống ở nước ngọt."
+      },
+      {
+        "type": "true_false",
+        "question": "Ba ba được khắc trên Cửu Đỉnh vì nó là một linh vật trong tứ linh.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Ba ba là loài vật đời thường, có giá trị thực phẩm và dược liệu, không phải là linh vật (như Long, Lân, Quy, Phụng). Rùa (Quy) mới là linh vật."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_cao_dinh_18_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/MIẾT.jpg"
+  }
+]

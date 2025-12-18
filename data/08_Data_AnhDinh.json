@@ -1,0 +1,785 @@
+[
+  {
+    "id": "urn_anh_dinh_01",
+    "name_vi": "Anh Đỉnh",
+    "name_en": "The Urn of Brilliance",
+    "urn_location": "Anh Đỉnh",
+    "category": "kien_truc",
+    "rarity": "legendary",
+    "description_short": "Anh Đỉnh - chiếc đỉnh tượng trưng cho tài năng xuất chúng và sự vinh hiển của vua Tự Đức.",
+    "description_educational": "Anh Đỉnh là chiếc đỉnh thứ tư trong Cửu Đỉnh, được đặt bên trái của Nhân Đỉnh (từ trong nhìn ra). Chữ 'Anh' (英) trong tên đỉnh có nghĩa là tài năng xuất chúng, tốt đẹp, hay tinh hoa (như trong từ anh hùng, anh minh). Đây là thụy hiệu của vua Tự Đức (1829-1883), vị vua có thời gian trị vì lâu nhất triều Nguyễn (36 năm). Vua Tự Đức nổi tiếng là người hay chữ, giỏi văn thơ, hiếu thảo nhưng cuộc đời ông cũng gắn liền với nhiều bi kịch và biến động lớn của lịch sử dân tộc khi thực dân Pháp bắt đầu xâm lược. Anh Đỉnh nặng khoảng 2.600kg, thể hiện mong muốn về một triều đại rực rỡ, hội tụ những gì tinh túy nhất của đất trời và con người.",
+    "historical_context": "Anh Đỉnh được đúc năm 1835, dự báo cho thế hệ vua thứ tư. Vua Tự Đức là người kế thừa ngai vàng trong bối cảnh đất nước bắt đầu đối mặt với họa ngoại xâm. Dù triều đại của ông gặp nhiều khó khăn, nhưng những giá trị văn hóa, sử học để lại (như bộ Khâm định Việt sử thông giám cương mục) vẫn rất đồ sộ.",
+    "symbolism": "Chữ 'Anh' tượng trưng cho vẻ đẹp của loài hoa (anh hoa) và tài năng vượt trội. Đặt tên đỉnh là Anh Đỉnh thể hiện kỳ vọng vào sự phát triển văn hóa và sự xuất hiện của những nhân tài kiệt xuất giúp nước.",
+    "fun_fact": "Vua Tự Đức là vị vua để lại nhiều bài thơ nhất trong lịch sử Việt Nam, được khắc rất nhiều trên các kiến trúc cung đình Huế. Lăng Tự Đức (Khiêm Lăng) cũng được đánh giá là lăng tẩm thơ mộng và đẹp nhất.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Anh Đỉnh ứng với thụy hiệu của vị vua nào?",
+        "options": [
+          "A. Vua Minh Mạng",
+          "B. Vua Thiệu Trị",
+          "C. Vua Tự Đức",
+          "D. Vua Đồng Khánh"
+        ],
+        "correct_answer": "C. Vua Tự Đức",
+        "difficulty": 1,
+        "explanation": "Anh Đỉnh là đỉnh thứ tư, tương ứng với vua Tự Đức (Dực Tông Anh Hoàng đế)."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Chữ 'Anh' trong tên đỉnh có ý nghĩa gì?",
+        "options": [
+          "A. Màu đỏ",
+          "B. Tài năng xuất chúng, tinh hoa",
+          "C. Sự giàu có",
+          "D. Sức mạnh cơ bắp"
+        ],
+        "correct_answer": "B. Tài năng xuất chúng, tinh hoa",
+        "difficulty": 1,
+        "explanation": "Anh trong 'anh hùng', 'tinh anh', chỉ sự vượt trội về tài năng và đức độ."
+      },
+      {
+        "type": "true_false",
+        "question": "Vua Tự Đức là vị vua có thời gian trị vì ngắn nhất triều Nguyễn.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Vua Tự Đức là vua trị vì lâu nhất triều Nguyễn (36 năm, từ 1847-1883)."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_anh_dinh_01_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/ANH%20DỈNH/ANH ĐỈNH.jpg"
+  },
+  {
+    "id": "urn_anh_dinh_02",
+    "name_vi": "Thiền",
+    "name_en": "Cicada",
+    "urn_location": "Anh Đỉnh",
+    "category": "dong_vat",
+    "rarity": "common",
+    "description_short": "Con ve sầu - nhạc sĩ mùa hè, biểu tượng của sự tái sinh và thanh khiết.",
+    "description_educational": "Thiền (Con ve sầu) là loài côn trùng quen thuộc gắn liền với mùa hạ ở Việt Nam. Tiếng ve kêu râm ran báo hiệu hè về, gợi lên bao cảm xúc bồi hồi. Ve sầu có vòng đời rất đặc biệt: ấu trùng sống nhiều năm dưới lòng đất, sau đó mới chui lên lột xác hóa thành ve, sống cuộc đời ngắn ngủi nhưng rực rỡ trên cành cây, chỉ uống sương mai và ca hát. Chính vì đặc điểm này, ve sầu (Thiền) được người xưa coi là biểu tượng của sự thanh khiết (uống sương), sự thoát tục và sự tái sinh (thoát xác). Hình ảnh ve sầu trên Anh Đỉnh được chạm khắc tinh tế, từng đường gân cánh mỏng manh hiện lên sống động trên nền đồng.",
+    "historical_context": "Trong văn hóa cổ, ngọc thiền (ve sầu bằng ngọc) thường được đặt trong miệng người đã khuất với mong ước về sự tái sinh ở thế giới bên kia. Trong thơ ca, tiếng ve thường gợi nỗi buồn ly biệt hoặc hoài niệm.",
+    "symbolism": "Ve sầu tượng trưng cho sự bất tử, sự phục sinh và sự thanh cao. Tiếng ve vang xa còn biểu thị cho danh tiếng lan truyền.",
+    "fun_fact": "Ve sầu đực mới là những 'ca sĩ' thực thụ, chúng có bộ phận phát thanh ở bụng để kêu gọi bạn tình. Ve sầu cái không kêu được nên còn gọi là 've câm'. Ve sầu lột xác (Kim thiền thoát xác) còn là một kế sách trong binh pháp (giả chết để trốn thoát).",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Con ve sầu (Thiền) thường tượng trưng cho điều gì trong văn hóa cổ?",
+        "options": [
+          "A. Sự lười biếng",
+          "B. Sự tái sinh và thanh khiết",
+          "C. Sự ồn ào",
+          "D. Sự phá hoại mùa màng"
+        ],
+        "correct_answer": "B. Sự tái sinh và thanh khiết",
+        "difficulty": 2,
+        "explanation": "Nhờ đặc tính lột xác và chỉ uống sương, ve sầu được coi là biểu tượng của sự tái sinh và thanh cao."
+      },
+      {
+        "type": "true_false",
+        "question": "Tất cả ve sầu đều biết kêu.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Chỉ có ve sầu đực mới có bộ phận phát ra tiếng kêu."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_anh_dinh_02_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/ANH%20DỈNH/THIỀN.jpg"
+  },
+  {
+    "id": "urn_anh_dinh_03",
+    "name_vi": "Tô Hợp",
+    "name_en": "Storax Tree",
+    "urn_location": "Anh Đỉnh",
+    "category": "thao_moc",
+    "rarity": "rare",
+    "description_short": "Cây Tô Hợp - loài cây cho nhựa thơm quý giá dùng làm thuốc và hương liệu.",
+    "description_educational": "Tô Hợp (Liquidambar formosana) hay còn gọi là cây Sau Sau, Bạch giao hương. Đây là loài cây thân gỗ lớn, lá hình chân vịt giống lá phong, chuyển màu đỏ rất đẹp vào mùa thu. Nhựa của cây (Tô hợp hương) là một vị thuốc quý và hương liệu đắt tiền, dùng để chữa bệnh (khai khiếu, giải uất) và chế tạo nước hoa. Việc khắc cây Tô Hợp lên Anh Đỉnh không chỉ ghi nhận vẻ đẹp của loài cây này mà còn tôn vinh giá trị y học và kinh tế của nó. Rừng cây Sau Sau vào mùa thay lá tạo nên cảnh quan thơ mộng không kém gì mùa thu phương Bắc.",
+    "historical_context": "Tô hợp hương từng là cống phẩm quan trọng. Trong y học cổ truyền, nó được dùng trong các bài thuốc cấp cứu trúng phong, đau ngực. Vua Minh Mạng rất quan tâm đến việc tìm kiếm và bảo tồn các loài dược liệu quý trong nước.",
+    "symbolism": "Cây Tô Hợp tượng trưng cho sự chữa lành và hương thơm đức hạnh. Sự thay đổi màu lá theo mùa cũng gợi lên quy luật tuần hoàn của thời gian và vẻ đẹp biến ảo của thiên nhiên.",
+    "fun_fact": "Quả của cây Sau Sau có hình cầu với nhiều gai nhỏ, trông như quả chôm chôm, khi khô rụng xuống thường được trẻ con nhặt chơi hoặc dùng làm thuốc. Lá non của cây có vị chát, chua nhẹ, có thể ăn sống như rau ghém với các món cuốn.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Cây Tô Hợp còn có tên gọi dân gian nào khác?",
+        "options": [
+          "A. Cây Bàng",
+          "B. Cây Sau Sau",
+          "C. Cây Đa",
+          "D. Cây Gạo"
+        ],
+        "correct_answer": "B. Cây Sau Sau",
+        "difficulty": 2,
+        "explanation": "Sau Sau là tên gọi phổ biến của cây Tô Hợp ở các vùng núi phía Bắc Việt Nam."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Nhựa cây Tô Hợp có công dụng gì?",
+        "options": [
+          "A. Dán gỗ",
+          "B. Làm thuốc và hương liệu",
+          "C. Làm sơn mài",
+          "D. Làm cao su"
+        ],
+        "correct_answer": "B. Làm thuốc và hương liệu",
+        "difficulty": 2,
+        "explanation": "Nhựa cây (Tô hợp hương) rất thơm, là vị thuốc quý và nguyên liệu làm hương."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_anh_dinh_03_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/ANH%20DỈNH/TÔ HỢP.jpg"
+  },
+  {
+    "id": "urn_anh_dinh_04",
+    "name_vi": "Uất Kim",
+    "name_en": "Turmeric",
+    "urn_location": "Anh Đỉnh",
+    "category": "thao_moc",
+    "rarity": "common",
+    "description_short": "Củ nghệ - 'Uất kim' vàng óng, gia vị và vị thuốc không thể thiếu trong mỗi gia đình.",
+    "description_educational": "Uất Kim (trong đông y gọi phần củ con là Uất kim, củ cái là Khương hoàng) chính là cây Nghệ (Curcuma longa). Đây là loài cây thân thảo, củ có màu vàng cam rực rỡ, chứa hoạt chất curcumin quý giá. Nghệ vừa là gia vị tạo màu và mùi thơm đặc trưng cho các món ăn (cá kho, cà ri, bánh xèo...), vừa là thần dược chữa bệnh dạ dày, làm lành vết thương, làm đẹp da cho phụ nữ. Tên 'Uất Kim' (Vàng uất tích) miêu tả màu vàng đậm đà ẩn giấu trong lòng đất. Việc khắc cây nghệ lên Anh Đỉnh thể hiện sự trân trọng đối với những cây thuốc nam gần gũi nhưng công dụng phi thường.",
+    "historical_context": "Nghệ đã được người Việt sử dụng hàng ngàn năm nay. Trong quân đội xưa, bột nghệ và vôi được dùng để chữa vết thương cho binh lính. Nghệ cũng là cây trồng kinh tế quan trọng ở nhiều vùng.",
+    "symbolism": "Màu vàng của nghệ tượng trưng cho hành Thổ (trung tâm), sự ôn hòa và chữa lành. Nó cũng biểu thị cho sự quý giá tiềm ẩn (vàng trong đất).",
+    "fun_fact": "Nghệ là thành phần chính tạo nên màu vàng của cà ri. Ngoài nghệ vàng, Việt Nam còn có nghệ đen (Nga truật) và nghệ trắng, mỗi loại có công dụng chữa bệnh khác nhau. Uất kim (củ nhánh) có tác dụng hành khí giải uất, còn Khương hoàng (củ cái) có tác dụng phá huyết.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Uất Kim là tên gọi một bộ phận của cây gì?",
+        "options": [
+          "A. Cây Gừng",
+          "B. Cây Nghệ",
+          "C. Cây Riềng",
+          "D. Cây Sả"
+        ],
+        "correct_answer": "B. Cây Nghệ",
+        "difficulty": 1,
+        "explanation": "Uất kim là tên đông y chỉ phần củ con (rễ củ) của cây nghệ."
+      },
+      {
+        "type": "true_false",
+        "question": "Nghệ chỉ được dùng làm gia vị nấu ăn, không có tác dụng chữa bệnh.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Nghệ là vị thuốc nổi tiếng chữa đau dạ dày, làm lành sẹo và đẹp da."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_anh_dinh_04_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/ANH%20DỈNH/UẤT KIM.jpg"
+  },
+  {
+    "id": "urn_anh_dinh_05",
+    "name_vi": "Tân Lang",
+    "name_en": "Areca Palm",
+    "urn_location": "Anh Đỉnh",
+    "category": "thao_moc",
+    "rarity": "common",
+    "description_short": "Cây cau - biểu tượng của tình yêu đôi lứa và văn hóa trầu cau.",
+    "description_educational": "Tân Lang là tên Hán Việt của cây Cau (Areca catechu). Cây cau có thân thẳng đứng, cao vút, không cành lá xum xuê ở dưới mà tập trung trên ngọn, tượng trưng cho sự ngay thẳng, khí tiết của người quân tử. Quả cau cùng với lá trầu và vôi tạo nên miếng trầu 'là đầu câu chuyện', mở đầu cho mọi lễ nghi cưới hỏi, giao tiếp của người Việt. Sự tích 'Trầu Cau' ca ngợi tình anh em, nghĩa phu thê son sắt. Hình ảnh cây cau trên Anh Đỉnh là sự tôn vinh nét đẹp văn hóa truyền thống sâu sắc của dân tộc.",
+    "historical_context": "Tục ăn trầu đã có từ thời Hùng Vương và phổ biến khắp Đông Nam Á. Ngày xưa, 'miếng trầu là đầu câu chuyện', vua chúa cũng dùng trầu cau để tiếp khách. Cây cau thường được trồng trước nhà ('Trước cau sau chuối') để đón gió mát và tạo cảnh quan trang nghiêm.",
+    "symbolism": "Cây cau (Tân lang) tượng trưng cho người chồng (Tân lang - Chàng rể), sự thủy chung và lòng ngay thẳng. Nó cũng biểu thị cho sự vươn lên mạnh mẽ, không khuất phục trước bão tố.",
+    "fun_fact": "Hoa cau có mùi thơm rất dịu và thanh khiết. Bẹ cau (mo cau) rụng xuống thường được người dân quê dùng làm quạt (quạt mo) hoặc gáo múc nước. Thân cau già rất cứng, dùng làm rui mè nhà tranh rất tốt.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Trong sự tích Trầu Cau, cây cau là hóa thân của ai?",
+        "options": [
+          "A. Người vợ",
+          "B. Người anh (Tân)",
+          "C. Người em (Lang)",
+          "D. Quan huyện"
+        ],
+        "correct_answer": "B. Người anh (Tân)",
+        "difficulty": 2,
+        "explanation": "Trong sự tích, người anh chết hóa thành cây cau, người em hóa đá vôi, người vợ hóa dây trầu."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Cây cau thường được trồng ở vị trí nào trong khuôn viên nhà truyền thống?",
+        "options": [
+          "A. Sau nhà",
+          "B. Trước nhà",
+          "C. Bên hông nhà",
+          "D. Trong nhà"
+        ],
+        "correct_answer": "B. Trước nhà",
+        "difficulty": 1,
+        "explanation": "Câu tục ngữ 'Trước cau sau chuối' chỉ kinh nghiệm bố trí cây trồng hợp phong thủy và khí hậu của người xưa."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_anh_dinh_05_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/ANH%20DỈNH/TÂN LANG.jpg"
+  },
+  {
+    "id": "urn_anh_dinh_06",
+    "name_vi": "Khôi Hạc",
+    "name_en": "Demoiselle Crane",
+    "urn_location": "Anh Đỉnh",
+    "category": "dong_vat",
+    "rarity": "rare",
+    "description_short": "Chim hạc - nhất phẩm điểu, biểu tượng của sự trường thọ và thanh cao.",
+    "description_educational": "Khôi Hạc (Chim hạc lớn/Hạc tiên) được coi là 'nhất phẩm điểu' - đứng đầu các loài chim (chỉ sau Phượng hoàng). Hạc có dáng đi thanh thoát, cổ cao, chân dài, bộ lông thường màu trắng hoặc xám tro. Trong văn hóa phương Đông, hạc là vật cưỡi của thần tiên, tượng trưng cho sự trường thọ (tùng hạc diên niên) và phẩm chất thanh cao, thoát tục của người quân tử. Hạc không ăn tạp, tiếng kêu lảnh lót thấu trời xanh. Hình ảnh Khôi Hạc trên Anh Đỉnh thể hiện ước vọng về một xã hội thịnh trị, nơi đạo đức và văn hóa được đề cao.",
+    "historical_context": "Hạc thường xuất hiện trên lưng rùa trong các đình chùa (Hạc ngự long quy), biểu thị sự hòa hợp âm dương và trường tồn. Trong triều đình, hình bổ tử (miếng vải vuông trước ngực áo quan) của quan văn nhất phẩm thường thêu hình chim hạc.",
+    "symbolism": "Hạc tượng trưng cho tuổi thọ, sự thông tuệ và cuộc sống ẩn dật thanh tao. Hạc còn biểu thị cho lòng trung thành và sự tận tụy.",
+    "fun_fact": "Mặc dù Hạc rất nổi tiếng trong văn hóa, nhưng loài Sếu đầu đỏ ở Tràm Chim (Đồng Tháp Mười) mới thực sự là loài chim quý hiếm ngoài đời thực có dáng vẻ giống hạc nhất ở Việt Nam. Hạc trong nghệ thuật thường được cách điệu hóa.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Chim Hạc là biểu tượng trên phẩm phục của quan lại cấp bậc nào?",
+        "options": [
+          "A. Quan võ nhất phẩm",
+          "B. Quan văn nhất phẩm",
+          "C. Lính canh",
+          "D. Quan huyện"
+        ],
+        "correct_answer": "B. Quan văn nhất phẩm",
+        "difficulty": 2,
+        "explanation": "Chim Hạc (Tiên hạc) là biểu tượng cao quý nhất dành cho quan văn đứng đầu triều đình."
+      },
+      {
+        "type": "true_false",
+        "question": "Hạc thường được gắn liền với cây Tùng để chúc thọ.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Đúng",
+        "difficulty": 1,
+        "explanation": "Tranh 'Tùng Hạc diên niên' (Cây tùng và chim hạc) là bức tranh chúc thọ phổ biến nhất."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_anh_dinh_06_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/ANH%20DỈNH/KHÔI HẠC.jpg"
+  },
+  {
+    "id": "urn_anh_dinh_07",
+    "name_vi": "Mai Khôi Hoa",
+    "name_en": "Rose",
+    "urn_location": "Anh Đỉnh",
+    "category": "thao_moc",
+    "rarity": "common",
+    "description_short": "Hoa hồng - 'Mai khôi' kiêu sa, hương sắc vẹn toàn.",
+    "description_educational": "Mai Khôi Hoa (hoặc Mân Côi/Hồng) chính là hoa hồng (Rosa). Tên gọi 'Mai Khôi' là cách gọi cổ, chỉ loại đá quý màu đỏ, sau dùng để chỉ loài hoa có màu đỏ thắm quyến rũ này. Hoa hồng có hương thơm nồng nàn, cánh hoa mịn màng xếp lớp nhưng thân lại có gai nhọn, tượng trưng cho vẻ đẹp kiêu sa nhưng khó chạm tới. Trên Anh Đỉnh, hoa hồng được khắc họa mềm mại, tôn vinh vẻ đẹp của thiên nhiên. Người xưa cũng dùng hoa hồng để làm thuốc (nụ hoa hồng khô chữa đau bụng, giải uất) và làm hương liệu, mỹ phẩm cung đình (nước hoa hồng, phấn nụ).",
+    "historical_context": "Dưới triều Nguyễn, các giống hồng quý (hồng nhung, hồng quế, hồng bạch) được trồng nhiều trong Thượng Uyển để vua chúa thưởng lãm. Tinh dầu hoa hồng là thứ xa xỉ phẩm.",
+    "symbolism": "Hoa hồng (Mai Khôi) tượng trưng cho tình yêu, sắc đẹp và sự phú quý. Gai của hoa hồng nhắc nhở rằng cái đẹp luôn cần được bảo vệ và không dễ gì chiếm đoạt.",
+    "fun_fact": "Tên 'Mai Khôi' (Mân Côi) còn được dùng trong Thiên Chúa giáo (Kinh Mân Côi - Chuỗi hoa hồng), cho thấy sự giao thoa văn hóa thú vị. Hoa hồng bản địa Việt Nam thường có bông nhỏ hơn nhưng hương thơm đậm đà hơn các giống hồng lai hiện đại.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Mai Khôi Hoa là tên gọi cổ của loài hoa nào?",
+        "options": [
+          "A. Hoa Mai",
+          "B. Hoa Đào",
+          "C. Hoa Hồng",
+          "D. Hoa Cúc"
+        ],
+        "correct_answer": "C. Hoa Hồng",
+        "difficulty": 1,
+        "explanation": "Mai Khôi (Mân Côi) là tên Hán Việt chỉ hoa hồng."
+      },
+      {
+        "type": "true_false",
+        "question": "Thân cây hoa hồng thường có gai.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Đúng",
+        "difficulty": 1,
+        "explanation": "Đây là đặc điểm nổi bật của loài hoa hồng: 'Hoa hồng nào mà chẳng có gai'."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_anh_dinh_07_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/ANH%20DỈNH/MAI KHÔI HOA.jpg"
+  },
+  {
+    "id": "urn_anh_dinh_08",
+    "name_vi": "Ngân Hán",
+    "name_en": "The Milky Way",
+    "urn_location": "Anh Đỉnh",
+    "category": "thien_van",
+    "rarity": "legendary",
+    "description_short": "Dải Ngân Hà - sông bạc trên trời, cầu nối của Ngưu Lang Chức Nữ.",
+    "description_educational": "Ngân Hán (hay Thiên Hà, Ngân Hà) là dải sáng vắt ngang bầu trời đêm, được người xưa hình dung như một dòng sông bạc (Ngân: bạc, Hán: sông) chảy giữa các vì sao. Trong thần thoại Á Đông, Ngân Hà gắn liền với sự tích Ngưu Lang - Chức Nữ, đôi vợ chồng bị chia cắt đôi bờ sông Ngân và chỉ được gặp nhau một lần mỗi năm vào ngày Thất Tịch (7/7 âm lịch) qua cầu Ô Thước. Hình ảnh Ngân Hán trên Anh Đỉnh thể hiện sự quan sát tinh tế về vũ trụ và trí tưởng tượng lãng mạn của người xưa. Nó đại diện cho sự bao la, bí ẩn của bầu trời và những quy luật thiên văn huyền diệu.",
+    "historical_context": "Việc quan sát Ngân Hà giúp người xưa định hướng và xác định mùa vụ. Sự sáng tỏ hay mờ nhạt của sông Ngân cũng được các quan Khâm Thiên Giám dùng để dự báo thời tiết và vận mệnh.",
+    "symbolism": "Ngân Hán tượng trưng cho sự chia xa, nỗi nhớ mong nhưng cũng là niềm hy vọng về sự đoàn tụ. Nó là ranh giới giữa cõi trần và cõi tiên.",
+    "fun_fact": "Thực chất, Ngân Hà là thiên hà chứa Hệ Mặt Trời của chúng ta, gồm hàng tỷ ngôi sao. Nhìn từ Trái Đất, nó giống như một dải sữa (Milky Way) đổ tràn trên bầu trời đêm.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Ngân Hán gắn liền với truyền thuyết nào?",
+        "options": [
+          "A. Sơn Tinh Thủy Tinh",
+          "B. Ngưu Lang Chức Nữ",
+          "C. Hằng Nga Hậu Nghệ",
+          "D. Chú Cuội cung trăng"
+        ],
+        "correct_answer": "B. Ngưu Lang Chức Nữ",
+        "difficulty": 1,
+        "explanation": "Sông Ngân Hà là nơi chia cắt Ngưu Lang và Chức Nữ trong truyền thuyết."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Chữ 'Ngân' trong Ngân Hán có nghĩa là gì?",
+        "options": [
+          "A. Vàng",
+          "B. Bạc",
+          "C. Đồng",
+          "D. Sắt"
+        ],
+        "correct_answer": "B. Bạc",
+        "difficulty": 2,
+        "explanation": "Ngân Hán nghĩa là Sông Bạc."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_anh_dinh_08_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/ANH%20DỈNH/NGÂN HÁN.jpg"
+  },
+  {
+    "id": "urn_anh_dinh_09",
+    "name_vi": "Mã Giang",
+    "name_en": "Ma River",
+    "urn_location": "Anh Đỉnh",
+    "category": "dia_ly",
+    "rarity": "epic",
+    "description_short": "Sông Mã - dòng sông hùng vĩ của núi rừng Tây Bắc và Thanh Hóa.",
+    "description_educational": "Mã Giang (Sông Mã) là con sông lớn bắt nguồn từ Tây Bắc, chảy qua Lào rồi về Thanh Hóa đổ ra biển. Sông Mã nổi tiếng với dòng chảy xiết, ghềnh thác hiểm trở, gắn liền với hình ảnh đoàn quân Tây Tiến hào hùng sau này. Tên 'Sông Mã' được cho là do tiếng nước chảy mạnh như tiếng ngựa hí (Mã: ngựa), hoặc do nước sông chảy xiết nhanh như ngựa phi. Việc khắc Mã Giang lên Anh Đỉnh khẳng định chủ quyền lãnh thổ miền Tây và ghi nhận vai trò quan trọng của dòng sông này trong lịch sử và đời sống cư dân Thanh Hóa - vùng đất phát tích của nhà Nguyễn.",
+    "historical_context": "Thanh Hóa là đất tổ của các chúa Nguyễn (Gia Miêu Ngoại Trang). Sông Mã là huyết mạch giao thông và thủy lợi của vùng này. 'Sông Mã gầm lên khúc độc hành' đã trở thành biểu tượng của sự dữ dội và kiêu hãnh.",
+    "symbolism": "Sông Mã tượng trưng cho sức mạnh hoang dã, sự kiên cường và ý chí bất khuất. Dòng sông cũng bồi đắp phù sa tạo nên đồng bằng trù phú.",
+    "fun_fact": "Sông Mã là nơi có đặc sản 'Cá Lăng sông Mã' nổi tiếng. Đây cũng là dòng sông duy nhất ở Việt Nam chảy sang nước bạn Lào rồi lại quay về Việt Nam.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Sông Mã chảy qua tỉnh nào là chủ yếu?",
+        "options": [
+          "A. Nghệ An",
+          "B. Thanh Hóa",
+          "C. Quảng Bình",
+          "D. Nam Định"
+        ],
+        "correct_answer": "B. Thanh Hóa",
+        "difficulty": 1,
+        "explanation": "Sông Mã là con sông lớn nhất và quan trọng nhất của tỉnh Thanh Hóa."
+      },
+      {
+        "type": "true_false",
+        "question": "Sông Mã được đặt tên như vậy vì nó chảy êm đềm như nhung.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Sông Mã nổi tiếng hung dữ, chảy xiết, tên gọi gợi liên tưởng đến con ngựa (Mã)."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_anh_dinh_09_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/ANH%20DỈNH/MÃ GIANG.jpg"
+  },
+  {
+    "id": "urn_anh_dinh_10",
+    "name_vi": "Bắc Đẩu",
+    "name_en": "The Big Dipper",
+    "urn_location": "Anh Đỉnh",
+    "category": "thien_van",
+    "rarity": "legendary",
+    "description_short": "Sao Bắc Đẩu - chòm sao chỉ đường, biểu tượng của sự định hướng và quyền lực.",
+    "description_educational": "Bắc Đẩu (Bắc Đẩu Thất Tinh) là chòm sao gồm 7 ngôi sao sáng xếp thành hình cái gáo (hoặc cái đấu) nằm ở phương Bắc. Đây là chòm sao quan trọng nhất để xác định phương hướng (tìm sao Bắc Cực) trong hàng hải và đi lại ban đêm. Trong văn hóa tâm linh, Nam Tào (coi sổ sinh) và Bắc Đẩu (coi sổ tử) là hai vị thần thân cận của Ngọc Hoàng, nắm giữ vận mệnh con người. Trên Anh Đỉnh, chòm sao Bắc Đẩu được khắc rõ nét, thể hiện sự am hiểu thiên văn và niềm tin vào sự bảo trợ của thần linh đối với vương triều. Bắc Đẩu còn được ví như ngôi sao của bậc đế vương, mọi sao khác đều chầu về.",
+    "historical_context": "Người xưa quan niệm 'Thiên nhân tương cảm', nhìn sao Bắc Đẩu sáng hay tối, đổi màu hay không để đoán biết điềm lành dữ của quốc gia. Nó là kim chỉ nam cho cả nghĩa đen (phương hướng) và nghĩa bóng (đạo trị nước).",
+    "symbolism": "Sao Bắc Đẩu tượng trưng cho sự dẫn đường, công lý (xét xử sống chết) và quyền lực trung tâm. Nó là biểu tượng của sự ổn định và trường tồn.",
+    "fun_fact": "Hình dáng của Bắc Đẩu giống cái gáo múc nước. Trong 7 ngôi sao này, ngôi sao ở đầu gáo (Thiên Xu) và ngôi thứ hai (Thiên Tuyền) tạo thành đường thẳng chỉ về sao Bắc Cực (Polaris) - ngôi sao luôn đứng yên ở phương Bắc.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Chòm sao Bắc Đẩu gồm bao nhiêu ngôi sao chính?",
+        "options": [
+          "A. 5",
+          "B. 7",
+          "C. 9",
+          "D. 12"
+        ],
+        "correct_answer": "B. 7",
+        "difficulty": 1,
+        "explanation": "Bắc Đẩu Thất Tinh gồm 7 ngôi sao xếp hình cái gáo."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Sao Bắc Đẩu giúp người xưa xác định cái gì?",
+        "options": [
+          "A. Giờ giấc",
+          "B. Phương hướng (phương Bắc)",
+          "C. Độ mặn của biển",
+          "D. Hướng gió"
+        ],
+        "correct_answer": "B. Phương hướng (phương Bắc)",
+        "difficulty": 1,
+        "explanation": "Bắc Đẩu là chòm sao quan trọng nhất để tìm ra phương Bắc trong đêm."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_anh_dinh_10_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/ANH%20DỈNH/BẮC ĐẨU.jpg"
+  },
+  {
+    "id": "urn_anh_dinh_11",
+    "name_vi": "Lô Hà",
+    "name_en": "Lo River",
+    "urn_location": "Anh Đỉnh",
+    "category": "dia_ly",
+    "rarity": "rare",
+    "description_short": "Sông Lô - dòng sông lịch sử oai hùng nơi biên cương phía Bắc.",
+    "description_educational": "Lô Hà (Sông Lô) là một phụ lưu lớn của sông Hồng, chảy qua các tỉnh Hà Giang, Tuyên Quang, Phú Thọ. Sông Lô nổi tiếng với dòng nước trong xanh, cảnh sắc hùng vĩ và những chiến công lẫy lừng trong lịch sử giữ nước (như chiến thắng sông Lô năm 1947 sau này, và các trận thủy chiến thời phong kiến). Việc khắc Lô Hà lên Anh Đỉnh thể hiện sự bao quát lãnh thổ của triều Nguyễn tới tận vùng biên viễn phía Bắc. Dòng sông này đóng vai trò quan trọng trong việc giao thương lâm thổ sản từ miền núi xuống đồng bằng.",
+    "historical_context": "Thời Lê - Mạc, sông Lô là chiến trường ác liệt. Đến thời Nguyễn, đây là tuyến đường thủy huyết mạch kiểm soát vùng Đông Bắc. Tên 'Lô' có nghĩa là cái giỏ, có lẽ do địa thế sông.",
+    "symbolism": "Sông Lô tượng trưng cho sự hùng tráng, dòng chảy lịch sử và sự kiên cường bảo vệ biên cương. Màu nước xanh biếc của sông Lô cũng đi vào thi ca nhạc họa.",
+    "fun_fact": "Sông Lô đổ vào sông Hồng tại ngã ba Hạc (Việt Trì). Nơi đây được coi là đất tổ Hùng Vương. Sông Lô có trữ lượng cá chiên (một loại cá da trơn quý) rất lớn và ngon.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Sông Lô là phụ lưu của con sông nào?",
+        "options": [
+          "A. Sông Mã",
+          "B. Sông Đà",
+          "C. Sông Hồng",
+          "D. Sông Hương"
+        ],
+        "correct_answer": "C. Sông Hồng",
+        "difficulty": 2,
+        "explanation": "Sông Lô hợp lưu với sông Hồng tại ngã ba Hạc, Việt Trì."
+      },
+      {
+        "type": "true_false",
+        "question": "Sông Lô chảy qua vùng Đồng bằng sông Cửu Long.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Sông Lô chảy qua vùng núi và trung du phía Bắc Việt Nam."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_anh_dinh_11_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/ANH%20DỈNH/LÔ HÀ.jpg"
+  },
+  {
+    "id": "urn_anh_dinh_12",
+    "name_vi": "Hồng Sơn",
+    "name_en": "Hong Linh Mountain",
+    "urn_location": "Anh Đỉnh",
+    "category": "dia_ly",
+    "rarity": "epic",
+    "description_short": "Núi Hồng Lĩnh - biểu tượng thiêng liêng 'Hoan Châu đệ nhất danh thắng'.",
+    "description_educational": "Hồng Sơn (Núi Hồng Lĩnh) là dãy núi huyền thoại thuộc tỉnh Hà Tĩnh, được mệnh danh là hồn thiêng sông núi của xứ Nghệ. Núi có 99 ngọn, gắn liền với truyền thuyết 100 con chim phượng hoàng tìm nơi đậu (nhưng thiếu một ngọn nên bay đi). Hồng Lĩnh soi bóng xuống dòng sông Lam tạo nên bức tranh sơn thủy hữu tình tuyệt đẹp. Trên Anh Đỉnh, núi Hồng Lĩnh hiện lên uy nghi, trầm mặc. Đây là nơi hội tụ nhiều di tích lịch sử, chùa chiền (như Chùa Hương Tích) và là cái nôi của nhiều danh nhân văn hóa.",
+    "historical_context": "Vua Minh Mạng đã cho khắc Hồng Lĩnh vào danh sách các núi thiêng (được thờ tự) của đất nước. Núi là căn cứ địa quan trọng của nhiều cuộc khởi nghĩa trong lịch sử.",
+    "symbolism": "Núi Hồng Lĩnh tượng trưng cho khí phách kiên trung, hiếu học và tài hoa của con người xứ Nghệ. Số 99 ngọn núi biểu thị sự trường tồn và gần đạt đến sự hoàn hảo.",
+    "fun_fact": "Có câu ca 'Đường vô xứ Nghệ quanh quanh / Non xanh nước biếc như tranh họa đồ' chính là tả cảnh núi Hồng sông Lam. Chùa Hương Tích trên núi Hồng Lĩnh được mệnh danh là 'Hoan Châu đệ nhất danh lam'.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Núi Hồng Lĩnh thuộc tỉnh nào?",
+        "options": [
+          "A. Nghệ An",
+          "B. Hà Tĩnh",
+          "C. Quảng Bình",
+          "D. Thanh Hóa"
+        ],
+        "correct_answer": "B. Hà Tĩnh",
+        "difficulty": 1,
+        "explanation": "Núi Hồng Lĩnh nằm trên địa phận tỉnh Hà Tĩnh, là biểu tượng của vùng đất này."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Truyền thuyết núi Hồng Lĩnh gắn với loài chim nào?",
+        "options": [
+          "A. Chim Hạc",
+          "B. Chim Phượng Hoàng",
+          "C. Chim Công",
+          "D. Chim Đại Bàng"
+        ],
+        "correct_answer": "B. Chim Phượng Hoàng",
+        "difficulty": 2,
+        "explanation": "Truyền thuyết 99 ngọn núi và đàn phượng hoàng tìm đất đậu là câu chuyện nổi tiếng về Hồng Lĩnh."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_anh_dinh_12_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/ANH%20DỈNH/HỒNG SƠN.jpg"
+  },
+  {
+    "id": "urn_anh_dinh_13",
+    "name_vi": "Mã",
+    "name_en": "Horse",
+    "urn_location": "Anh Đỉnh",
+    "category": "dong_vat",
+    "rarity": "common",
+    "description_short": "Con ngựa - chiến mã trung thành, biểu tượng của sự thành công và tốc độ.",
+    "description_educational": "Mã (Con ngựa) là loài vật gắn bó mật thiết với con người trong chiến tranh và di chuyển. Ngựa tượng trưng cho sức bền, tốc độ và lòng trung thành tuyệt đối với chủ nhân. Trên Anh Đỉnh, hình ảnh con ngựa đang phi nước đại (Mã đáo) thể hiện khí thế hừng hực và sự thăng tiến. Trong quân đội triều Nguyễn, kỵ binh và tượng binh là hai binh chủng chủ lực. Ngựa chiến (chiến mã) được chăm sóc rất kỹ lưỡng. Hình tượng ngựa còn gắn với câu chúc 'Mã đáo thành công' - mong muốn mọi việc thuận lợi, nhanh chóng.",
+    "historical_context": "Ngựa dùng trong cung đình và quân đội thường được tuyển chọn từ các giống ngựa quý trong nước hoặc nhập từ nước ngoài (ngựa Bắc thảo). Hệ thống trạm ngựa (Trạm dịch) thời Nguyễn hoạt động rất hiệu quả để truyền tin tức.",
+    "symbolism": "Ngựa tượng trưng cho khí Dương, sự mạnh mẽ, tự do và thăng tiến. Nó cũng đại diện cho sự tận tụy và khả năng vượt qua đường xa gian khổ.",
+    "fun_fact": "Ngựa ngủ đứng. Một con ngựa khỏe có thể chạy với tốc độ 60-80km/h. Trong 12 con giáp, ngựa (Ngọ) ứng với giờ giữa trưa (11h-13h), lúc dương khí thịnh nhất.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Câu chúc 'Mã đáo thành công' liên quan đến con vật nào?",
+        "options": [
+          "A. Con Hổ",
+          "B. Con Rồng",
+          "C. Con Ngựa",
+          "D. Con Trâu"
+        ],
+        "correct_answer": "C. Con Ngựa",
+        "difficulty": 1,
+        "explanation": "Mã là ngựa. Mã đáo thành công nghĩa là ngựa quay về báo tin thắng lợi."
+      },
+      {
+        "type": "true_false",
+        "question": "Ngựa là phương tiện di chuyển chính của các trạm dịch thời xưa.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Đúng",
+        "difficulty": 1,
+        "explanation": "Hệ thống chuyển phát nhanh (trạm dịch) thời phong kiến dựa chủ yếu vào sức ngựa."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_anh_dinh_13_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/ANH%20DỈNH/MÃ.jpg"
+  },
+  {
+    "id": "urn_anh_dinh_14",
+    "name_vi": "Tang",
+    "name_en": "Mulberry",
+    "urn_location": "Anh Đỉnh",
+    "category": "nong_nghiep",
+    "rarity": "common",
+    "description_short": "Cây dâu tằm - nguồn gốc của nghề ươm tơ dệt lụa truyền thống.",
+    "description_educational": "Tang (Cây dâu tằm) là loài cây không thể thiếu trong nghề nông trang truyền thống: trồng dâu, nuôi tằm, dệt lụa. Hình ảnh cây dâu trên Anh Đỉnh tôn vinh nghề thủ công nghiệp và sự cần cù của người phụ nữ Việt Nam. Lá dâu dùng để nuôi tằm, quả dâu (tang thầm) ăn ngon và làm thuốc, vỏ rễ dâu (tang bạch bì) chữa ho, cành dâu (tang chi) chữa đau nhức xương khớp. Cây dâu gắn liền với đời sống vật chất và cả tâm linh (dùng roi dâu để trừ tà) của người dân. Sự hiện diện của nó khẳng định tầm quan trọng của ngành dệt may nước nhà.",
+    "historical_context": "Lụa tơ tằm Việt Nam từng là mặt hàng xuất khẩu giá trị trên Con đường tơ lụa trên biển. Các làng nghề trồng dâu nuôi tằm như Vạn Phúc, Tân Châu đã có từ lâu đời.",
+    "symbolism": "Cây dâu tượng trưng cho sự tần tảo, hi sinh và tình nghĩa vợ chồng (ruộng dâu nương dâu - bãi bể nương dâu). Nó cũng mang ý nghĩa trừ tà ma, bảo vệ trẻ em.",
+    "fun_fact": "Thành ngữ 'Bãi bể nương dâu' (Thương hải tang điền) dùng để chỉ sự thay đổi to lớn của cuộc đời và thế sự (biển xanh biến thành ruộng dâu và ngược lại).",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Lá của cây dâu tằm là thức ăn chính của con gì?",
+        "options": [
+          "A. Con Dế",
+          "B. Con Tằm",
+          "C. Con Ong",
+          "D. Con Kiến"
+        ],
+        "correct_answer": "B. Con Tằm",
+        "difficulty": 1,
+        "explanation": "Con tằm ăn lá dâu để nhả tơ, tạo nên nghề 'trồng dâu nuôi tằm'."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Trong dân gian, cành dâu thường được dùng để làm gì?",
+        "options": [
+          "A. Đánh bắt cá",
+          "B. Trừ tà ma",
+          "C. Làm củi đốt",
+          "D. Làm nhà"
+        ],
+        "correct_answer": "B. Trừ tà ma",
+        "difficulty": 2,
+        "explanation": "Người xưa thường đeo vòng dâu hoặc dùng roi dâu để bảo vệ trẻ em khỏi tà ma."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_anh_dinh_14_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/ANH%20DỈNH/TANG.jpg"
+  },
+  {
+    "id": "urn_anh_dinh_15",
+    "name_vi": "Kỳ",
+    "name_en": "Flag",
+    "urn_location": "Anh Đỉnh",
+    "category": "vo_bi",
+    "rarity": "common",
+    "description_short": "Lá cờ - hiệu lệnh quân sự và biểu tượng của quốc gia.",
+    "description_educational": "Kỳ (Lá cờ) là vật dụng quan trọng trong nghi lễ và quân sự. Trong chiến trận, lá cờ dùng để ra hiệu lệnh (tiến, lui, dàn trận), tập hợp binh sĩ và khích lệ tinh thần chiến đấu ('Cờ phấp phới', 'Trảm tướng đoạt kỳ'). Trên Anh Đỉnh, hình ảnh lá cờ tung bay trong gió thể hiện uy thế và sự chính quy của quân đội triều đình. Mỗi loại cờ có màu sắc và hình vẽ khác nhau (cờ rồng, cờ hổ, cờ ngũ hành...) quy định rõ cấp bậc và chức năng. Cờ còn là biểu tượng của chủ quyền lãnh thổ trên các vùng đất và biển đảo.",
+    "historical_context": "Triều Nguyễn có quy định rất nghiêm ngặt về cờ quạt, nghi trượng. Cờ Long tinh (cờ vàng hình chữ nhật, viền tua, giữa có hình rồng) là quốc kỳ của Đại Nam thời bấy giờ.",
+    "symbolism": "Lá cờ tượng trưng cho sự tập hợp, sự dẫn dắt và niềm tự hào. Giữ vững lá cờ là giữ vững tinh thần và danh dự.",
+    "fun_fact": "Trong các trò chơi dân gian như Cờ người, các quân cờ di chuyển theo hiệu lệnh cờ đuôi nheo. Thành ngữ 'Cờ đến tay ai người ấy phất' nói về việc nắm bắt cơ hội.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Trong quân sự xưa, lá cờ (Kỳ) có vai trò chính là gì?",
+        "options": [
+          "A. Che nắng",
+          "B. Ra hiệu lệnh và khích lệ tinh thần",
+          "C. Làm đẹp đội hình",
+          "D. Đựng đồ"
+        ],
+        "correct_answer": "B. Ra hiệu lệnh và khích lệ tinh thần",
+        "difficulty": 1,
+        "explanation": "Nhìn theo cờ hiệu để di chuyển đội hình là nguyên tắc sống còn trong chiến trận xưa."
+      },
+      {
+        "type": "true_false",
+        "question": "Mỗi đơn vị quân đội xưa đều có cờ hiệu riêng.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Đúng",
+        "difficulty": 1,
+        "explanation": "Để phân biệt và chỉ huy, các đơn vị đều có cờ với màu sắc hoặc chữ viết riêng."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_anh_dinh_15_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/ANH%20DỈNH/KỲ.jpg"
+  },
+  {
+    "id": "urn_anh_dinh_16",
+    "name_vi": "Hồ Điệp Tử",
+    "name_en": "Butterfly Shot",
+    "urn_location": "Anh Đỉnh",
+    "category": "vo_bi",
+    "rarity": "rare",
+    "description_short": "Đạn Hồ điệp - vũ khí nổ độc đáo, uy lực như đàn bướm bay tỏa.",
+    "description_educational": "Hồ Điệp Tử (Đạn bươm bướm) là một loại đạn pháo đặc biệt của quân đội nhà Nguyễn. Tên gọi này xuất phát từ cơ chế nổ hoặc hình dáng của đạn: khi bắn ra, đạn mẹ nổ tung phóng ra nhiều mảnh đạn nhỏ hoặc đạn con bay tản ra tứ phía như đàn bướm (hồ điệp) bay, gây sát thương diện rộng cho đội hình địch. Cũng có thể đây là một loại đạn chùm (grapeshot) hoặc đạn ria. Việc chế tạo được loại đạn này chứng tỏ trình độ kỹ thuật quân sự rất cao của người Việt thời đó. Hình ảnh trên đỉnh là sự ghi nhận những sáng tạo quốc phòng độc đáo.",
+    "historical_context": "Sách 'Binh chế chí' và các tài liệu quân sự triều Nguyễn có nhắc đến nhiều loại súng đạn, hỏa cầu phong phú. Hồ Điệp Tử là minh chứng cho tư duy chiến thuật 'lấy 1 địch 10', dùng hỏa lực diện rộng để chặn đứng quân thù đông đảo.",
+    "symbolism": "Tên gọi mỹ miều 'Hồ Điệp' (Bướm) tương phản với sức hủy diệt của vũ khí, gợi lên sự biến ảo khôn lường của chiến tranh. Nó tượng trưng cho sự lan tỏa và hiệu quả sát thương.",
+    "fun_fact": "Đây là một trong những loại vũ khí bí hiểm ít được biết đến. Nó cho thấy cha ông ta không chỉ dùng vũ khí thô sơ mà đã nghiên cứu các loại đạn dược phức tạp.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Hồ Điệp Tử là tên gọi của loại vũ khí nào?",
+        "options": [
+          "A. Một loại kiếm",
+          "B. Một loại đạn pháo nổ tỏa ra nhiều mảnh",
+          "C. Một loại thuyền chiến",
+          "D. Một loại áo giáp"
+        ],
+        "correct_answer": "B. Một loại đạn pháo nổ tỏa ra nhiều mảnh",
+        "difficulty": 2,
+        "explanation": "Đạn khi nổ tỏa ra như đàn bướm bay, gây sát thương rộng."
+      },
+      {
+        "type": "true_false",
+        "question": "Hồ Điệp Tử là tên một loài hoa độc.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Đây là tên một loại đạn (Tử ở đây là đạn/con, Hồ điệp là bướm)."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_anh_dinh_16_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/ANH%20DỈNH/HỒ ĐIỆP TỬ.jpg"
+  },
+  {
+    "id": "urn_anh_dinh_17",
+    "name_vi": "Nhiêm Xà",
+    "name_en": "Python",
+    "urn_location": "Anh Đỉnh",
+    "category": "dong_vat",
+    "rarity": "uncommon",
+    "description_short": "Con trăn - loài bò sát khổng lồ, biểu tượng của sức mạnh cuộn siết.",
+    "description_educational": "Nhiêm Xà (Con trăn) là loài bò sát lớn nhất trong họ nhà rắn, không có nọc độc nhưng có sức mạnh cơ bắp khủng khiếp. Trăn săn mồi bằng cách quấn chặt (siết) con mồi cho đến khi tắt thở rồi nuốt chửng. Ở Việt Nam có trăn đất và trăn gấm (trăn hoa) với kích thước rất lớn. Hình ảnh trăn trên Anh Đỉnh với thân mình cuộn khúc, da có vân hoa đẹp mắt, thể hiện sự uy nghi và sức mạnh tiềm ẩn của rừng già. Mỡ trăn, mật trăn và da trăn đều là những vị thuốc và sản phẩm có giá trị.",
+    "historical_context": "Trong tín ngưỡng dân gian, trăn thường được coi là 'Ông Trăn', 'Bà Trăn', có linh tính. Việc khắc trăn lên đỉnh bên cạnh các loài thú dữ khác như hổ, báo, tê giác làm phong phú thêm bức tranh sinh thái.",
+    "symbolism": "Trăn tượng trưng cho sự kiên nhẫn (rình mồi), sức mạnh mềm dẻo (nhu thắng cương) và khả năng nuốt trọn những điều to lớn. Nó cũng gợi lên vẻ đẹp bí ẩn và đáng sợ của thiên nhiên.",
+    "fun_fact": "Trăn có thể nhịn ăn hàng tháng trời sau một bữa no. Da trăn gấm có hoa văn hình mắt lưới rất đẹp, thường bị săn bắt để làm túi xách, giày dép, đàn nhị... khiến số lượng giảm sút nghiêm trọng.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Nhiêm Xà là tên gọi khác của con gì?",
+        "options": [
+          "A. Rắn hổ mang",
+          "B. Con Trăn",
+          "C. Con Lươn",
+          "D. Con Rết"
+        ],
+        "correct_answer": "B. Con Trăn",
+        "difficulty": 1,
+        "explanation": "Nhiêm Xà (Xà là rắn lớn) chỉ con trăn."
+      },
+      {
+        "type": "true_false",
+        "question": "Trăn giết con mồi bằng nọc độc.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Trăn không có nọc độc, nó giết mồi bằng cách siết chặt cho ngạt thở."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_anh_dinh_17_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/ANH%20DỈNH/NHIÊM XÀ.jpg"
+  },
+  {
+    "id": "urn_anh_dinh_18",
+    "name_vi": "Tử Mộc",
+    "name_en": "Lac Tree Host",
+    "urn_location": "Anh Đỉnh",
+    "category": "thao_moc",
+    "rarity": "rare",
+    "description_short": "Cây gỗ kiến - loài cây chủ nuôi cánh kiến đỏ, cho sản phẩm sơn cánh kiến quý giá.",
+    "description_educational": "Tử Mộc (Cây gỗ kiến/Cây chủ cánh kiến) là tên gọi chỉ các loài cây mà bọ cánh kiến đỏ (Laccifer lacca) ký sinh để tiết ra nhựa cánh kiến (lacquer/shellac). Đây có thể là cây Cọ phèn (Schleichera oleosa) hoặc một số loài cây rừng khác. Nhựa cánh kiến đỏ là nguyên liệu quý để chế biến véc-ni đánh bóng gỗ, làm chất cách điện, dược phẩm và nhuộm màu (màu đỏ). Việc khắc cây Tử Mộc lên Anh Đỉnh ghi nhận một nghề thủ công độc đáo và nguồn lợi lâm sản đặc biệt của Việt Nam. Tên 'Tử' (màu tím đỏ) có thể ám chỉ màu của nhựa cánh kiến.",
+    "historical_context": "Sơn cánh kiến (Shellac) từng là mặt hàng xuất khẩu quan trọng. Nghề nuôi thả cánh kiến đỏ ở các vùng núi phía Bắc và miền Trung đem lại thu nhập cao cho người dân. Nhựa cánh kiến được dùng để nhuộm răng đen, nhuộm vải và trang trí đồ gỗ.",
+    "symbolism": "Tử Mộc tượng trưng cho sự cống hiến thầm lặng (làm vật chủ cho loài khác) và giá trị kết tinh từ sự cộng sinh của thiên nhiên. Màu đỏ của cánh kiến tượng trưng cho may mắn.",
+    "fun_fact": "Cánh kiến đỏ thực chất là nhựa do con bọ cái tiết ra để bao bọc cơ thể và trứng. Để thu hoạch, người ta phải bẻ cả cành cây có bám nhựa. Shellac ngày nay vẫn được dùng để làm lớp phủ bóng cho kẹo, dược phẩm và nhạc cụ.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Tử Mộc (Cây gỗ kiến) liên quan đến sản phẩm gì?",
+        "options": [
+          "A. Mật ong",
+          "B. Nhựa cánh kiến (Sơn cánh kiến)",
+          "C. Trầm hương",
+          "D. Cao su"
+        ],
+        "correct_answer": "B. Nhựa cánh kiến (Sơn cánh kiến)",
+        "difficulty": 2,
+        "explanation": "Tử Mộc là cây chủ để nuôi bọ cánh kiến đỏ, thu hoạch nhựa cánh kiến."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Nhựa cánh kiến đỏ có màu gì?",
+        "options": [
+          "A. Xanh",
+          "B. Đỏ tím",
+          "C. Trắng",
+          "D. Đen"
+        ],
+        "correct_answer": "B. Đỏ tím",
+        "difficulty": 1,
+        "explanation": "Đúng như tên gọi (Tử: tía/đỏ), nhựa cánh kiến có màu đỏ đặc trưng."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_anh_dinh_18_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/ANH%20DỈNH/TỬ MỘC.jpg"
+  }
+]

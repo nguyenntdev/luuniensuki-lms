@@ -1,0 +1,432 @@
+"use client";
+
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useMemo, useState, useCallback } from "react";
+import toast from "react-hot-toast";
+
+import { getMotifDetail, getMotifQuiz, submitQuiz } from "@/lib/api";
+import { useAuthStore } from "@/stores/authStore";
+import { useMotifStore } from "@/stores/motifStore";
+
+export default function MotifQuizPage() {
+  const params = useParams();
+  const router = useRouter();
+  const motifId = useMemo(() => (typeof params?.motifId === "string" ? params.motifId : ""), [params]);
+
+  const token = useAuthStore((s) => s.accessToken);
+  const fetchMe = useAuthStore((s) => s.fetchMe);
+  const progressByMotifId = useMotifStore((s) => s.progressByMotifId);
+
+  const [motif, setMotif] = useState(null);
+  const [quiz, setQuiz] = useState(null);
+  const [answers, setAnswers] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
+  const [result, setResult] = useState(null);
+  const [startedAt, setStartedAt] = useState(null);
+
+  // New states for UX enhancements
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [elapsedTime, setElapsedTime] = useState(0);
+
+  // Check if motif is discovered
+  const motifProgress = progressByMotifId[motifId];
+  const isDiscovered = motifProgress?.status && motifProgress.status !== "hidden";
+
+  useEffect(() => {
+    if (token) fetchMe();
+  }, [token, fetchMe]);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      if (!motifId) return;
+      if (!token) return;
+
+      // Redirect if not discovered
+      if (!isDiscovered) {
+        setError("Bạn chưa khám phá họa tiết này. Hãy khám phá trên mô hình 3D trước!");
+        setTimeout(() => {
+          router.push("/explore");
+        }, 2000);
+        return;
+      }
+
+      setLoading(true);
+      setError(null);
+      setResult(null);
+      try {
+        const [motifRes, quizRes] = await Promise.all([getMotifDetail(motifId), getMotifQuiz({ token, motifId })]);
+        if (cancelled) return;
+        setMotif(motifRes);
+        setQuiz(quizRes);
+        setAnswers({});
+        setStartedAt(Date.now());
+        setElapsedTime(0);
+        setCurrentQuestionIndex(0);
+      } catch (err) {
+        if (!cancelled) setError(err instanceof Error ? err.message : String(err));
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [motifId, token, isDiscovered, router]);
+
+  // Timer effect
+  useEffect(() => {
+    if (!startedAt || result || submitting) return;
+    
+    const interval = setInterval(() => {
+      setElapsedTime(Math.floor((Date.now() - startedAt) / 1000));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [startedAt, result, submitting]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    if (result || loading || !quiz?.questions?.length) return;
+
+    function handleKeyDown(e) {
+      if (e.key === "ArrowRight") {
+        if (currentQuestionIndex < quiz.questions.length - 1) {
+          setCurrentQuestionIndex((prev) => prev + 1);
+        }
+      } else if (e.key === "ArrowLeft") {
+        if (currentQuestionIndex > 0) {
+          setCurrentQuestionIndex((prev) => prev - 1);
+        }
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [currentQuestionIndex, quiz, result, loading]);
+
+  function setAnswer(questionId, answer) {
+    setAnswers((prev) => ({ ...prev, [questionId]: answer }));
+  }
+
+  const handleNext = useCallback(() => {
+    if (quiz && currentQuestionIndex < quiz.questions.length - 1) {
+      setCurrentQuestionIndex((prev) => prev + 1);
+    }
+  }, [quiz, currentQuestionIndex]);
+
+  const handlePrev = useCallback(() => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex((prev) => prev - 1);
+    }
+  }, [currentQuestionIndex]);
+
+  async function handleSubmit() {
+    if (!token) return;
+    if (!quiz?.questions?.length) return;
+    setSubmitting(true);
+    setError(null);
+    setResult(null);
+    try {
+      const timeTakenSeconds = startedAt ? Math.max(0, Math.round((Date.now() - startedAt) / 1000)) : undefined;
+      const payloadAnswers = quiz.questions.map((q) => ({
+        question_id: q.id,
+        answer: answers[q.id] ?? "",
+      }));
+
+      const res = await submitQuiz({
+        token,
+        motifId,
+        answers: payloadAnswers,
+        timeTakenSeconds,
+      });
+      setResult(res);
+      
+      if (res.passed) {
+        toast.success(`✅ Chúc mừng! Bạn đã đạt ${res.score}/${res.max_score} điểm!`);
+        if (res.xp_awarded > 0) {
+            toast.success(`+${res.xp_awarded} XP`, { icon: '🌟' });
+        }
+      } else {
+        toast.error(`Bạn chưa đạt điểm đậu. Hãy thử lại!`);
+      }
+
+      useMotifStore.getState().applyProgressUpdate({
+        motifId,
+        status: res.status,
+        xpAwarded: res.xp_awarded,
+        totalXp: res.total_xp,
+      });
+      await fetchMe();
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setError(msg);
+      toast.error(`❌ Lỗi: ${msg}`);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  function formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  }
+
+  if (!token) {
+    return (
+      <main className="mx-auto max-w-4xl px-6 py-10">
+        <div className="rounded-xl border bg-card p-6">
+          <h1 className="text-xl font-display font-semibold">Bài kiểm tra</h1>
+          <p className="mt-2 text-sm text-muted-foreground">Vui lòng đăng nhập để làm bài kiểm tra.</p>
+          <div className="mt-4">
+            <Link href="/login" className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">
+              Đăng nhập
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  // Loading State
+  if (loading) {
+    return (
+      <main className="mx-auto max-w-4xl px-6 py-10">
+        <div className="text-center text-sm text-muted-foreground">Đang tải bài kiểm tra...</div>
+      </main>
+    );
+  }
+
+  // Error State
+  if (error) {
+    return (
+      <main className="mx-auto max-w-4xl px-6 py-10">
+        <div className="rounded-lg bg-destructive/10 p-4 text-sm text-destructive">{error}</div>
+        <button 
+          onClick={() => window.location.reload()}
+          className="mt-4 text-sm font-medium text-primary hover:text-primary/80"
+        >
+          Thử lại
+        </button>
+      </main>
+    );
+  }
+
+  // Result State
+  if (result) {
+    return (
+      <main className="mx-auto max-w-4xl px-6 py-10">
+        <div className="mb-6 flex items-center justify-between">
+          <h1 className="text-2xl font-display font-bold text-foreground">Kết quả bài kiểm tra</h1>
+          <Link href={`/motif/${motifId}`} className="text-sm font-medium text-primary hover:text-primary/80">
+            Quay lại bài học →
+          </Link>
+        </div>
+
+        <div className="overflow-hidden rounded-2xl border bg-card shadow-sm transition-all duration-500 ease-out">
+          <div className={`p-8 text-center ${result.passed ? 'bg-success/10' : 'bg-bronze/10'}`}>
+            <div className={`font-display tabular-nums text-5xl font-bold ${result.passed ? 'text-success' : 'text-bronze'}`}>
+              {result.percentage}%
+            </div>
+            <div className="mt-2 text-lg font-medium text-foreground">
+              {result.passed ? "Làm rất tốt!" : "Hãy tiếp tục luyện tập!"}
+            </div>
+            <div className="mt-1 text-sm text-muted-foreground">
+              Điểm: <span className="font-display tabular-nums">{result.score}</span>/
+              <span className="font-display tabular-nums">{result.max_score}</span> · +<span className="font-display tabular-nums">{result.xp_awarded}</span>{" "}
+              XP nhận được
+            </div>
+          </div>
+          
+          <div className="bg-card p-6">
+            <h3 className="mb-4 font-display font-semibold text-foreground">Xem lại câu trả lời</h3>
+            <div className="space-y-6">
+              {quiz?.questions.map((q, idx) => {
+                const qResult = result.results.find(r => r.question_id === q.id);
+                const isCorrect = qResult?.correct;
+                const explanation = qResult?.explanation;
+                
+                return (
+                  <div key={q.id} className="border-b border-border pb-4 last:border-0 last:pb-0">
+                    <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Câu hỏi <span className="font-display tabular-nums">{idx + 1}</span>
+                    </div>
+                    <div className="mt-1 font-medium text-foreground">{q.question_text}</div>
+                    <div className="mt-2 text-sm">
+                      <span className="text-muted-foreground">Câu trả lời của bạn: </span>
+                      <span className={`font-medium ${isCorrect ? 'text-success' : 'text-destructive'}`}>
+                        {answers[q.id] || <span className="italic text-muted">Bỏ qua</span>}
+                      </span>
+                      {!isCorrect && qResult?.correct_answer && (
+                         <span className="text-muted-foreground ml-2">
+                             (Đáp án đúng: <span className="text-success font-medium">{qResult.correct_answer}</span>)
+                         </span>
+                      )}
+                    </div>
+
+                    {explanation && (
+                       <div className={`mt-3 rounded-lg p-3 text-sm border ${
+                           isCorrect 
+                             ? "bg-success/10 text-success border-success/20" 
+                             : "bg-destructive/10 text-destructive border-destructive/20"
+                       }`}>
+                           <span className="font-semibold block mb-1">Giải thích:</span>
+                           {explanation}
+                       </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          
+          <div className="flex justify-center border-t border-border bg-muted/50 p-6">
+             <button
+              onClick={() => window.location.reload()}
+              className="rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              Làm lại bài kiểm tra
+            </button>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  // Active Quiz State
+  const currentQuestion = quiz?.questions?.[currentQuestionIndex];
+  const progressPercent = quiz?.questions?.length 
+    ? ((currentQuestionIndex + 1) / quiz.questions.length) * 100 
+    : 0;
+
+  return (
+    <main className="mx-auto max-w-3xl px-6 py-10">
+      {/* Header */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-display font-bold text-foreground">
+              {motif?.name ? `${motif.name} · Bài kiểm tra` : "Bài kiểm tra"}
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Câu hỏi <span className="font-display tabular-nums">{currentQuestionIndex + 1}</span> /{" "}
+              <span className="font-display tabular-nums">{quiz?.questions?.length ?? "—"}</span>
+            </p>
+          </div>
+          <div className="text-right">
+            <div className="font-display tabular-nums text-lg font-medium text-primary">
+              {formatTime(elapsedTime)}
+            </div>
+            <div className="text-xs text-muted-foreground">Thời gian đã trôi</div>
+          </div>
+        </div>
+        
+        {/* Progress Bar */}
+        <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-muted">
+          <div 
+            className="h-full bg-primary transition-all duration-300 ease-out"
+            style={{ width: `${progressPercent}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Question Card */}
+      {currentQuestion ? (
+        <div className="rounded-2xl border bg-card p-8 shadow-sm">
+          <h2 className="text-lg font-display font-medium text-foreground">{currentQuestion.question_text}</h2>
+
+          <div className="mt-6 space-y-3">
+            {Array.isArray(currentQuestion.options) && currentQuestion.options.length ? (
+              currentQuestion.options.map((opt) => {
+                const isSelected = (answers[currentQuestion.id] ?? "") === opt;
+                return (
+                  <label
+                    key={opt}
+                    className={`flex cursor-pointer items-center gap-3 rounded-xl border p-4 transition-all duration-200 ${
+                      isSelected
+                        ? "border-primary bg-primary/10 ring-1 ring-primary"
+                        : "border-border hover:bg-muted hover:border-input"
+                    }`}
+                  >
+                    <div className={`flex h-5 w-5 items-center justify-center rounded-full border ${
+                      isSelected ? "border-primary bg-primary" : "border-input bg-card"
+                    }`}>
+                      {isSelected && <div className="h-2 w-2 rounded-full bg-primary-foreground" />}
+                    </div>
+                    <input
+                      type="radio"
+                      name={`q-${currentQuestion.id}`}
+                      value={opt}
+                      checked={isSelected}
+                      onChange={() => setAnswer(currentQuestion.id, opt)}
+                      className="hidden"
+                    />
+                    <span className={`text-sm ${isSelected ? "font-medium text-primary" : "text-foreground"}`}>
+                      {opt}
+                    </span>
+                  </label>
+                );
+              })
+            ) : (
+              <div className="mt-4">
+                <input
+                  type="text"
+                  value={answers[currentQuestion.id] ?? ""}
+                  onChange={(e) => setAnswer(currentQuestion.id, e.target.value)}
+                  className="w-full rounded-xl border-input px-4 py-3 text-sm focus:border-primary focus:ring-primary bg-input"
+                  placeholder="Nhập câu trả lời tại đây..."
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      ) : null}
+
+      {/* Navigation */}
+      <div className="mt-8 flex items-center justify-between">
+        <button
+          onClick={handlePrev}
+          disabled={currentQuestionIndex === 0}
+          className={`rounded-lg px-6 py-2.5 text-sm font-medium transition-colors ${
+            currentQuestionIndex === 0
+              ? "cursor-not-allowed text-muted"
+              : "text-muted-foreground hover:bg-muted hover:text-foreground"
+          }`}
+        >
+          ← Câu trước
+        </button>
+
+        {currentQuestionIndex === (quiz?.questions?.length ?? 0) - 1 ? (
+          <button
+            onClick={handleSubmit}
+            disabled={submitting}
+            className={`rounded-lg px-8 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition-all ${
+              submitting
+                ? "cursor-wait bg-primary/50"
+                : "bg-primary hover:bg-primary/90 hover:shadow"
+            }`}
+          >
+            {submitting ? "Đang nộp..." : "Nộp bài"}
+          </button>
+        ) : (
+          <button
+            onClick={handleNext}
+            className="rounded-lg bg-primary px-8 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary/90 hover:shadow"
+          >
+            Câu tiếp →
+          </button>
+        )}
+      </div>
+
+      <div className="mt-8 text-center text-xs text-muted-foreground">
+        Dùng phím mũi tên để điều hướng · Điểm đậu:{" "}
+        <span className="font-display tabular-nums">{quiz?.pass_percent ?? "—"}</span>%
+      </div>
+    </main>
+  );
+}

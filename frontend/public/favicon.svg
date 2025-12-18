@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#D4A853;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#C9A227;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#B8860B;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="darkGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a1a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0d0d0d;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="url(#darkGradient)" stroke="url(#goldGradient)" stroke-width="8"/>
+  
+  <!-- Stylized Đỉnh (Urn) shape -->
+  <!-- Base/feet -->
+  <rect x="156" y="380" width="200" height="24" rx="4" fill="url(#goldGradient)"/>
+  
+  <!-- Lower body -->
+  <path d="M176 380 L176 320 Q176 300 196 300 L316 300 Q336 300 336 320 L336 380 Z" fill="url(#goldGradient)"/>
+  
+  <!-- Middle body (belly) -->
+  <ellipse cx="256" cy="260" rx="100" ry="60" fill="url(#goldGradient)"/>
+  
+  <!-- Upper body -->
+  <path d="M180 220 Q180 180 220 160 L292 160 Q332 180 332 220 L332 240 Q300 260 256 260 Q212 260 180 240 Z" fill="url(#goldGradient)"/>
+  
+  <!-- Neck -->
+  <rect x="216" y="130" width="80" height="35" rx="4" fill="url(#goldGradient)"/>
+  
+  <!-- Rim/opening -->
+  <ellipse cx="256" cy="130" rx="56" ry="16" fill="url(#goldGradient)"/>
+  <ellipse cx="256" cy="130" rx="40" ry="10" fill="#0d0d0d"/>
+  
+  <!-- Left handle -->
+  <path d="M160 240 Q120 240 120 280 Q120 320 160 320" stroke="url(#goldGradient)" stroke-width="16" fill="none" stroke-linecap="round"/>
+  
+  <!-- Right handle -->
+  <path d="M352 240 Q392 240 392 280 Q392 320 352 320" stroke="url(#goldGradient)" stroke-width="16" fill="none" stroke-linecap="round"/>
+  
+  <!-- Decorative patterns on belly -->
+  <circle cx="220" cy="260" r="8" fill="#0d0d0d" opacity="0.3"/>
+  <circle cx="256" cy="260" r="8" fill="#0d0d0d" opacity="0.3"/>
+  <circle cx="292" cy="260" r="8" fill="#0d0d0d" opacity="0.3"/>
+  
+  <!-- Shine effect -->
+  <ellipse cx="220" cy="200" rx="20" ry="30" fill="white" opacity="0.15"/>
+</svg>
+

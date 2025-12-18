@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+
+.env
+.env.*
+
+certbot/
+
+frontend/.next/
+frontend/node_modules/

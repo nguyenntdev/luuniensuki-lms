@@ -1,0 +1,772 @@
+[
+  {
+    "id": "urn_du_dinh_01",
+    "name_vi": "Dụ Đỉnh",
+    "name_en": "The Urn of Abundance",
+    "urn_location": "Dụ Đỉnh",
+    "category": "kien_truc",
+    "rarity": "legendary",
+    "description_short": "Dụ Đỉnh - ước vọng về sự giàu có, dư dả cho muôn dân.",
+    "description_educational": "Dụ Đỉnh là chiếc đỉnh thứ tám trong Cửu Đỉnh, nằm ở phía bên trái (đối diện với Huyền Đỉnh). Chữ 'Dụ' (裕) có nghĩa là giàu có, sung túc, dư dả (như trong từ 'phú dụ'). Khác với các đỉnh khác thường ứng với thụy hiệu của một vị vua, Dụ Đỉnh (và Huyền Đỉnh) được cho là dự báo cho các thế hệ vua tiếp theo hoặc mang ý nghĩa cầu mong sự thịnh vượng chung cho đất nước. Dụ Đỉnh nặng khoảng 2.000kg, thể hiện khát vọng về một quốc gia 'dân giàu, nước mạnh'.",
+    "historical_context": "Dụ Đỉnh đúc năm 1836. Sau vua Khải Định (Tuyên Đỉnh), nhà Nguyễn còn có vua Bảo Đại, nhưng triều đại đã suy tàn nên không có thêm miếu hiệu ứng với các đỉnh còn lại một cách rõ ràng.",
+    "symbolism": "Chữ 'Dụ' tượng trưng cho sự khoan dung, rộng lượng và sự thịnh vượng về vật chất lẫn tinh thần.",
+    "fun_fact": "Có giả thuyết cho rằng Dụ Đỉnh sau này được liên hệ với vua Bảo Đại, nhưng ông là vị vua thoái vị nên không có miếu hiệu chính thức để 'ứng' vào đỉnh theo quy tắc của các vua trước.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Chữ 'Dụ' trong tên Dụ Đỉnh có ý nghĩa gì?",
+        "options": [
+          "A. Buồn bã",
+          "B. Giàu có, dư dả, khoan dung",
+          "C. Dụ dỗ",
+          "D. Dũng cảm"
+        ],
+        "correct_answer": "B. Giàu có, dư dả, khoan dung",
+        "difficulty": 1,
+        "explanation": "Dụ trong 'Phú dụ' (giàu có) hoặc 'Khoan dụ' (rộng lượng)."
+      },
+      {
+        "type": "true_false",
+        "question": "Dụ Đỉnh ứng với thụy hiệu của vua Gia Long.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Vua Gia Long ứng với Cao Đỉnh. Dụ Đỉnh không ứng với thụy hiệu chính thức nào hoặc được coi là đỉnh 'chờ'."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_du_dinh_01_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/DU%20DINH/DU%20DINH.jpg"
+  },
+  {
+    "id": "urn_du_dinh_02",
+    "name_vi": "Anh Vũ",
+    "name_en": "Parrot",
+    "urn_location": "Dụ Đỉnh",
+    "category": "dong_vat",
+    "rarity": "common",
+    "description_short": "Chim Vẹt - sứ giả sắc màu, khéo léo và thông minh.",
+    "description_educational": "Anh Vũ (Chim Vẹt/Két) là loài chim có bộ lông sặc sỡ và chiếc mỏ quặp đặc trưng. Vẹt nổi tiếng với khả năng bắt chước tiếng người và các âm thanh khác rất tài tình. Ở Việt Nam có nhiều loài vẹt như vẹt ngực đỏ, vẹt đầu hồng... Chúng sống thành đàn, bay lượn tạo nên cảnh tượng vui mắt trong rừng già. Hình ảnh chim Anh Vũ trên Dụ Đỉnh thể hiện sự phong phú của thế giới sinh vật và vẻ đẹp tươi vui của thiên nhiên.",
+    "historical_context": "Chim Anh Vũ thường được các nước phương Nam cống nạp cho triều đình Trung Hoa xưa như một sản vật lạ. Ở Việt Nam, chúng cũng được nuôi làm cảnh trong cung vua phủ chúa.",
+    "symbolism": "Chim Vẹt tượng trưng cho tài ăn nói, màu sắc rực rỡ và điềm lành. Trong Phật giáo, chim Anh Vũ cũng xuất hiện trong các điển tích về lòng hiếu thảo.",
+    "fun_fact": "Vẹt là một trong những loài chim thông minh nhất thế giới, chúng có thể giải được các câu đố đơn giản và dùng công cụ.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Đặc điểm nổi bật nhất của chim Anh Vũ (Vẹt) là gì?",
+        "options": [
+          "A. Chạy rất nhanh",
+          "B. Biết bơi",
+          "C. Có thể bắt chước tiếng người",
+          "D. Săn mồi ban đêm"
+        ],
+        "correct_answer": "C. Có thể bắt chước tiếng người",
+        "difficulty": 1,
+        "explanation": "Khả năng 'nhại' tiếng của vẹt là đặc điểm nổi tiếng nhất."
+      },
+      {
+        "type": "true_false",
+        "question": "Chim Anh Vũ có mỏ thẳng và dài.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Vẹt có chiếc mỏ quặp, rất khỏe để cắn vỡ hạt cứng."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_du_dinh_02_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/DU%20DINH/ANH%20VŨ.jpg"
+  },
+  {
+    "id": "urn_du_dinh_03",
+    "name_vi": "Lê",
+    "name_en": "Pear",
+    "urn_location": "Dụ Đỉnh",
+    "category": "thao_moc",
+    "rarity": "common",
+    "description_short": "Quả Lê - vị ngọt thanh tao, sản vật vùng cao.",
+    "description_educational": "Lê (Pyrus) là loài cây ăn quả ôn đới, trồng nhiều ở các vùng núi cao phía Bắc Việt Nam (như Lạng Sơn, Cao Bằng). Quả lê có vỏ vàng hoặc nâu, thịt trắng, giòn, nhiều nước và có vị ngọt mát. Trong đông y, quả lê có tính mát, giúp nhuận phế, giảm ho, tiêu đờm. Hình ảnh quả lê trên Dụ Đỉnh cho thấy sự bao quát của triều đình đối với các sản vật đặc trưng của mọi vùng miền, từ đồng bằng đến miền núi.",
+    "historical_context": "Lê (mắc coọc) là đặc sản của vùng biên cương. Việc khắc nó lên đỉnh thể hiện chủ quyền và sự trân trọng tài nguyên vùng cao.",
+    "symbolism": "Cây lê tượng trưng cho sự thanh khiết (hoa lê trắng), tuổi thọ và tình cảm anh em (chia ngọt sẻ bùi).",
+    "fun_fact": "Hoa lê nở trắng xóa vào mùa xuân tạo nên cảnh sắc tuyệt đẹp cho núi rừng Tây Bắc, thường đi vào thơ ca ('Ngày xuân con én đưa thoi / Thiều quang chín chục đã ngoài sáu mươi / Cỏ non xanh tận chân trời / Cành lê trắng điểm một vài bông hoa' - Truyện Kiều).",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Ở Việt Nam, cây Lê được trồng chủ yếu ở vùng nào?",
+        "options": [
+          "A. Đồng bằng sông Cửu Long",
+          "B. Duyên hải miền Trung",
+          "C. Miền núi phía Bắc (Lạng Sơn, Cao Bằng)",
+          "D. Tây Nguyên"
+        ],
+        "correct_answer": "C. Miền núi phía Bắc (Lạng Sơn, Cao Bằng)",
+        "difficulty": 1,
+        "explanation": "Lê là cây ôn đới, ưa khí hậu mát mẻ của vùng núi cao."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Quả Lê có tác dụng gì trong y học?",
+        "options": [
+          "A. Gây nóng trong người",
+          "B. Nhuận phế, giảm ho, tiêu đờm",
+          "C. Làm tăng huyết áp",
+          "D. Gây mất ngủ"
+        ],
+        "correct_answer": "B. Nhuận phế, giảm ho, tiêu đờm",
+        "difficulty": 2,
+        "explanation": "Lê chưng đường phèn là bài thuốc trị ho khan rất tốt."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_du_dinh_03_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/DU%20DINH/LÊ.jpg"
+  },
+  {
+    "id": "urn_du_dinh_04",
+    "name_vi": "Phù Lưu",
+    "name_en": "Betel Pepper",
+    "urn_location": "Dụ Đỉnh",
+    "category": "thao_moc",
+    "rarity": "common",
+    "description_short": "Dây Trầu không - biểu tượng của tình nghĩa anh em, vợ chồng.",
+    "description_educational": "Phù Lưu (Cây Trầu không - Piper betle) là loài dây leo thân thảo, lá hình tim, có vị cay nồng. Trầu không cùng với cau và vôi tạo nên miếng trầu, nét văn hóa đặc sắc 'miếng trầu là đầu câu chuyện' của người Việt. Lá trầu còn có tính sát khuẩn cao, dùng để rửa vết thương, chữa nước ăn chân. Hình ảnh dây trầu leo quanh thân cau là biểu tượng bất hủ của sự gắn bó, thủy chung trong văn hóa dân gian.",
+    "historical_context": "Tục ăn trầu nhuộm răng đen là phong tục lâu đời của người Việt (để phân biệt với người phương Bắc). Trong các đám cưới, mâm trầu cau là sính lễ quan trọng nhất.",
+    "symbolism": "Trầu không tượng trưng cho sự vun đắp, che chở (lá trầu bao bọc miếng cau) và nghĩa tình son sắt (Sự tích Trầu Cau).",
+    "fun_fact": "Tên 'Phù Lưu' là tên cổ ít người biết. Người ta thường gọi là 'Trầu' (từ chữ Nôm) hoặc 'Trầu không'.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Lá Trầu không thường được dùng chung với quả gì?",
+        "options": [
+          "A. Quả Sung",
+          "B. Quả Cau",
+          "C. Quả Táo",
+          "D. Quả Ổi"
+        ],
+        "correct_answer": "B. Quả Cau",
+        "difficulty": 1,
+        "explanation": "Trầu và Cau là cặp đôi không thể tách rời trong tục ăn trầu."
+      },
+      {
+        "type": "true_false",
+        "question": "Lá Trầu không có tính sát khuẩn.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Đúng",
+        "difficulty": 1,
+        "explanation": "Tinh dầu trong lá trầu có khả năng diệt khuẩn, nấm rất tốt."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_du_dinh_04_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/DU%20DINH/PHÙ%20LƯU.jpg"
+  },
+  {
+    "id": "urn_du_dinh_05",
+    "name_vi": "Bạch Đầu",
+    "name_en": "White Bean",
+    "urn_location": "Dụ Đỉnh",
+    "category": "nong_nghiep",
+    "rarity": "common",
+    "description_short": "Đậu trắng - hạt ngọc của người ăn chay, món ngon thanh đạm.",
+    "description_educational": "Bạch Đầu (Đậu trắng/Bạch đậu) là một loại đậu có hạt màu trắng, giàu tinh bột và protein. Đậu trắng thường được dùng để nấu chè, nấu súp (như món súp đậu trắng hầm) hoặc làm nhân bánh. Trong ẩm thực, đậu trắng mang lại vị bùi, béo. Khắc Bạch Đầu lên đỉnh tiếp tục khẳng định sự quan tâm của triều đình đối với các loại lương thực, thực phẩm nuôi sống nhân dân.",
+    "historical_context": "Các loại đậu (ngũ cốc) luôn được coi trọng trong xã hội nông nghiệp. Đậu trắng cũng là nguồn thực phẩm dự trữ quan trọng.",
+    "symbolism": "Màu trắng của đậu tượng trưng cho sự tinh khiết. Hạt đậu biểu thị cho sự nảy mầm và tiềm năng phát triển.",
+    "fun_fact": "Có một loài chim cũng tên là 'Bạch đầu' (Bạch đầu ông) vì có chỏm lông trắng trên đầu, nhưng trong nhóm cây cối lương thực trên đỉnh thì đây là cây đậu.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Bạch Đầu trong nhóm cây lương thực là cây gì?",
+        "options": [
+          "A. Cây lúa",
+          "B. Cây đậu trắng",
+          "C. Cây ngô",
+          "D. Cây khoai"
+        ],
+        "correct_answer": "B. Cây đậu trắng",
+        "difficulty": 1,
+        "explanation": "Bạch là trắng, Đầu (Đậu) là đậu."
+      },
+      {
+        "type": "true_false",
+        "question": "Đậu trắng chứa nhiều protein thực vật.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Đúng",
+        "difficulty": 1,
+        "explanation": "Như các loại đậu khác, đậu trắng là nguồn đạm thực vật dồi dào."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_du_dinh_05_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/DU%20DINH/BẠCH%20ĐẦU.jpg"
+  },
+  {
+    "id": "urn_du_dinh_06",
+    "name_vi": "Thuần Hoa",
+    "name_en": "Hibiscus",
+    "urn_location": "Dụ Đỉnh",
+    "category": "thao_moc",
+    "rarity": "common",
+    "description_short": "Hoa Dâm Bụt - sắc đỏ rực rỡ nơi hàng rào quê hương.",
+    "description_educational": "Thuần Hoa (Hoa Dâm bụt/Bông bụt - Hibiscus rosa-sinensis) là loài cây bụi có hoa lớn màu đỏ tươi (hoặc hồng, vàng), nhụy dài nổi bật. Cây dâm bụt rất dễ trồng, thường được người dân trồng làm hàng rào xanh quanh nhà. Mặc dù ít hương thơm ('Hữu sắc vô hương'), nhưng vẻ đẹp rực rỡ và sức sống bền bỉ của nó khiến ai cũng phải chú ý. Lá và hoa dâm bụt cũng được dùng trong y học dân gian để chữa mụn nhọt, giải nhiệt.",
+    "historical_context": "Dâm bụt gắn liền với hình ảnh làng quê Việt Nam yên bình. Trong văn học, nó thường được ví von với vẻ đẹp phô trương nhưng thiếu chiều sâu, tuy nhiên trên Cửu Đỉnh nó được ghi nhận như một loài hoa đẹp của đất nước.",
+    "symbolism": "Hoa dâm bụt tượng trưng cho danh vọng vinh hiển (màu đỏ) và sự che chở (hàng rào). Cái tên 'Thuần' (trong sáng, ròng) có thể ngụ ý vẻ đẹp thuần khiết của màu đỏ.",
+    "fun_fact": "Ở Malaysia, hoa Dâm bụt là quốc hoa. Trẻ em Việt Nam xưa thường dùng hoa dâm bụt để chơi đồ hàng, làm lồng đèn.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Cây Thuần Hoa (Dâm bụt) thường được trồng để làm gì ở nông thôn?",
+        "options": [
+          "A. Lấy gỗ làm nhà",
+          "B. Làm hàng rào",
+          "C. Lấy quả ăn",
+          "D. Dệt vải"
+        ],
+        "correct_answer": "B. Làm hàng rào",
+        "difficulty": 1,
+        "explanation": "Hàng rào dâm bụt đỏ rực là hình ảnh quen thuộc của làng quê."
+      },
+      {
+        "type": "true_false",
+        "question": "Hoa Dâm bụt rất thơm.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Câu thành ngữ 'Hữu sắc vô hương' thường dùng để nói về hoa dâm bụt."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_du_dinh_06_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/DU%20DINH/THUẦN%20HOA.jpg"
+  },
+  {
+    "id": "urn_du_dinh_07",
+    "name_vi": "Tùng",
+    "name_en": "Pine Tree",
+    "urn_location": "Dụ Đỉnh",
+    "category": "thao_moc",
+    "rarity": "common",
+    "description_short": "Cây Tùng - khí phách hiên ngang, trường tồn cùng tuế nguyệt.",
+    "description_educational": "Tùng (Cây thông/Tùng) là loài cây lá kim, sống trên núi cao, đất đai khô cằn nhưng vẫn xanh tốt quanh năm. Cây tùng chịu được sương tuyết, bão gió, tượng trưng cho khí tiết của người quân tử: ngay thẳng, kiên cường, không khuất phục trước cường quyền hay nghịch cảnh. Tùng cũng là biểu tượng của sự trường thọ (Tùng hạc diên niên). Hình ảnh cây tùng cổ thụ hiên ngang trên Dụ Đỉnh là bài học về đạo đức và nhân cách.",
+    "historical_context": "Tùng, Cúc, Trúc, Mai là bộ Tứ quý nổi tiếng. Người xưa thường trồng tùng trong vườn hoặc chậu cảnh (bonsai) để thưởng lãm cốt cách của nó.",
+    "symbolism": "Tùng tượng trưng cho người quân tử, đấng trượng phu, sự trường tồn và khả năng vượt khó.",
+    "fun_fact": "Gỗ tùng (gỗ thông) có mùi thơm đặc trưng và được dùng nhiều trong xây dựng, làm đồ gia dụng. Nhựa thông cũng là một sản phẩm giá trị.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Cây Tùng tượng trưng cho phẩm chất gì của con người?",
+        "options": [
+          "A. Sự yếu đuối",
+          "B. Sự khôn vặt",
+          "C. Khí tiết quân tử, kiên cường",
+          "D. Sự lười biếng"
+        ],
+        "correct_answer": "C. Khí tiết quân tử, kiên cường",
+        "difficulty": 1,
+        "explanation": "Tùng chịu được sương gió lạnh giá mà vẫn xanh tươi."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Bộ Tứ quý gồm những cây nào?",
+        "options": [
+          "A. Tùng, Cúc, Trúc, Mai",
+          "B. Lan, Huệ, Hồng, Cúc",
+          "C. Mít, Dừa, Đu đủ, Xoài",
+          "D. Chanh, Cam, Quýt, Bưởi"
+        ],
+        "correct_answer": "A. Tùng, Cúc, Trúc, Mai",
+        "difficulty": 1,
+        "explanation": "Đây là 4 loài cây biểu tượng cho 4 mùa và các đức tính tốt đẹp."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_du_dinh_07_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/DU%20DINH/TÙNG.jpg"
+  },
+  {
+    "id": "urn_du_dinh_08",
+    "name_vi": "Hải Vân Quan",
+    "name_en": "Hai Van Pass Gate",
+    "urn_location": "Dụ Đỉnh",
+    "category": "kien_truc",
+    "rarity": "epic",
+    "description_short": "Hải Vân Quan - 'Thiên hạ đệ nhất hùng quan' giữa mây trời.",
+    "description_educational": "Hải Vân Quan là cửa ải nằm trên đỉnh đèo Hải Vân, ranh giới giữa Thừa Thiên Huế và Đà Nẵng. Được xây dựng từ thời Trần và trùng tu lớn vào năm Minh Mạng thứ 7 (1826), cửa ải này giữ vị trí chiến lược xung yếu trên con đường thiên lý Bắc Nam. Vua Lê Thánh Tông từng phong tặng nơi đây là 'Thiên hạ đệ nhất hùng quan'. Đứng từ đây có thể nhìn bao quát cả biển trời và núi non hùng vĩ. Khắc Hải Vân Quan lên đỉnh là khẳng định sự hiểm yếu và vẻ đẹp tráng lệ của non sông.",
+    "historical_context": "Hải Vân Quan là chốt chặn phòng thủ quan trọng bảo vệ Kinh đô Huế từ phía Nam. Nơi đây mây phủ quanh năm, tạo nên khung cảnh huyền ảo.",
+    "symbolism": "Hải Vân Quan tượng trưng cho sự hiểm trở, sự phân chia địa lý (khí hậu hai miền Nam - Bắc khác nhau qua đèo này) và quyền lực kiểm soát lãnh thổ.",
+    "fun_fact": "Trên cửa vòm của Hải Vân Quan quay về hướng Huế có biển đề 'Hải Vân Quan', cửa quay về hướng Đà Nẵng đề 'Thiên hạ đệ nhất hùng quan'.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Hải Vân Quan nằm trên đỉnh đèo nào?",
+        "options": [
+          "A. Đèo Ngang",
+          "B. Đèo Hải Vân",
+          "C. Đèo Cả",
+          "D. Đèo Cù Mông"
+        ],
+        "correct_answer": "B. Đèo Hải Vân",
+        "difficulty": 1,
+        "explanation": "Đèo Hải Vân (Đèo Mây) là ranh giới tự nhiên giữa Huế và Đà Nẵng."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Danh hiệu 'Thiên hạ đệ nhất hùng quan' được khắc ở đâu?",
+        "options": [
+          "A. Trên đỉnh núi Fansipan",
+          "B. Trên cửa ải Hải Vân Quan",
+          "C. Ở động Phong Nha",
+          "D. Ở Vịnh Hạ Long"
+        ],
+        "correct_answer": "B. Trên cửa ải Hải Vân Quan",
+        "difficulty": 2,
+        "explanation": "Vua Lê Thánh Tông là người đầu tiên phong tặng danh hiệu này."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_du_dinh_08_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/DU%20DINH/HẢI%20VÂN%20QUAN.jpg"
+  },
+  {
+    "id": "urn_du_dinh_09",
+    "name_vi": "Vĩnh Điện Hà",
+    "name_en": "Vinh Dien River",
+    "urn_location": "Dụ Đỉnh",
+    "category": "dia_ly",
+    "rarity": "rare",
+    "description_short": "Sông Vĩnh Điện - dòng sông nối liền di sản Quảng Nam.",
+    "description_educational": "Vĩnh Điện Hà là con sông chảy qua thị xã Điện Bàn, tỉnh Quảng Nam, nối sông Thu Bồn với sông Hàn (Đà Nẵng). Sông đóng vai trò quan trọng trong việc giao thương, vận chuyển hàng hóa giữa cảng Hội An và Đà Nẵng xưa kia. Vua Minh Mạng đã cho nạo vét dòng sông này để khơi thông huyết mạch kinh tế miền Trung. Tên 'Vĩnh Điện' mang ý nghĩa sự vững bền của vùng đất Điện Bàn.",
+    "historical_context": "Quảng Nam là vùng đất trù phú ('Đất Quảng Nam chưa mưa đã thấm'). Sông Vĩnh Điện giúp tưới tiêu cho những cánh đồng dâu, ruộng lúa xanh tốt.",
+    "symbolism": "Dòng sông tượng trưng cho sự kết nối, sự lưu thông và mạch sống của vùng đất.",
+    "fun_fact": "Sông Vĩnh Điện từng bị bồi lấp nhiều lần, việc khơi thông nó tốn nhiều công sức của triều đình và nhân dân.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Sông Vĩnh Điện chảy qua tỉnh nào?",
+        "options": [
+          "A. Quảng Ngãi",
+          "B. Quảng Nam",
+          "C. Bình Định",
+          "D. Phú Yên"
+        ],
+        "correct_answer": "B. Quảng Nam",
+        "difficulty": 1,
+        "explanation": "Sông thuộc địa phận thị xã Điện Bàn, Quảng Nam."
+      },
+      {
+        "type": "true_false",
+        "question": "Sông Vĩnh Điện nối liền sông Thu Bồn và sông Hàn.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Đúng",
+        "difficulty": 2,
+        "explanation": "Đây là tuyến đường thủy quan trọng kết nối hai hệ thống sông lớn."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_du_dinh_09_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/DU%20DINH/VĨNH%20ĐIỆN%20HÀ.jpg"
+  },
+  {
+    "id": "urn_du_dinh_10",
+    "name_vi": "Lôi",
+    "name_en": "Thunder",
+    "urn_location": "Dụ Đỉnh",
+    "category": "thien_van",
+    "rarity": "common",
+    "description_short": "Sấm - tiếng thét của bầu trời, hiệu lệnh của mưa.",
+    "description_educational": "Lôi (Sấm) là âm thanh vang rền do sự phóng điện trong các đám mây dông. Người xưa coi sấm là tiếng nói của Thiên lôi (Thần Sấm), thể hiện sự uy nghiêm và trừng phạt cái ác. Tiếng sấm đầu mùa (Xuân lôi) báo hiệu mưa thuận gió hòa, vạn vật sinh sôi. Hình ảnh Sấm trên Dụ Đỉnh thường được thể hiện bằng các đường vân xoắn ốc mạnh mẽ hoặc hình tượng trống sấm, tượng trưng cho uy quyền của nhà vua và sức mạnh thiên nhiên.",
+    "historical_context": "Trong nông nghiệp, 'Lúa chiêm lấp ló đầu bờ / Hễ nghe tiếng sấm phất cờ mà lên'. Sấm sét mang theo đạm khí trời giúp cây cối tốt tươi.",
+    "symbolism": "Sấm tượng trưng cho sự thức tỉnh, chấn động, uy lực và sự khởi đầu mới.",
+    "fun_fact": "Ánh sáng (chớp) đi nhanh hơn âm thanh (sấm), nên ta thường thấy chớp trước rồi mới nghe tiếng sấm.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Theo kinh nghiệm dân gian, tiếng sấm có tác dụng gì đối với cây lúa?",
+        "options": [
+          "A. Làm lúa chết",
+          "B. Giúp lúa phát triển nhanh (phất cờ mà lên)",
+          "C. Làm lúa bị sâu bệnh",
+          "D. Không có tác dụng gì"
+        ],
+        "correct_answer": "B. Giúp lúa phát triển nhanh (phất cờ mà lên)",
+        "difficulty": 1,
+        "explanation": "Sấm sét tạo ra phản ứng hóa học cố định đạm trong nước mưa, bón cho lúa."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Vị thần nào cai quản sấm sét trong thần thoại Việt Nam?",
+        "options": [
+          "A. Thần Gió",
+          "B. Thần Mưa",
+          "C. Thiên Lôi (Ông Sấm)",
+          "D. Hà Bá"
+        ],
+        "correct_answer": "C. Thiên Lôi (Ông Sấm)",
+        "difficulty": 1,
+        "explanation": "Thiên Lôi cầm búa tầm sét để trừng trị kẻ gian ác."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_du_dinh_10_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/DU%20DINH/LÔI.jpg"
+  },
+  {
+    "id": "urn_du_dinh_11",
+    "name_vi": "Vệ Giang",
+    "name_en": "Ve River",
+    "urn_location": "Dụ Đỉnh",
+    "category": "dia_ly",
+    "rarity": "rare",
+    "description_short": "Sông Vệ - dòng sông êm đềm tưới mát đồng ruộng Quảng Ngãi.",
+    "description_educational": "Vệ Giang (Sông Vệ) là một trong những con sông chính của tỉnh Quảng Ngãi. Sông chảy qua các vùng đồng bằng trù phú, cung cấp nước tưới cho nông nghiệp và là nguồn sống của cư dân đôi bờ. Dòng sông Vệ êm đềm, gắn liền với những rặng tre, bến nước, con đò, tạo nên vẻ đẹp bình dị của làng quê miền Trung. Việc khắc Vệ Giang lên đỉnh thể hiện sự quan tâm đến hệ thống thủy lợi và đời sống nông nghiệp của đất nước.",
+    "historical_context": "Quảng Ngãi nổi tiếng với nghề trồng mía làm đường, bờ xe nước. Sông Vệ góp phần quan trọng vào sự phát triển của các làng nghề này.",
+    "symbolism": "Sông Vệ tượng trưng cho sự nuôi dưỡng thầm lặng và sự gắn bó của con người với quê hương.",
+    "fun_fact": "Vùng hạ lưu sông Vệ có nhiều cồn bãi đẹp, là nơi trú ngụ của nhiều loài chim nước.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Sông Vệ là con sông thuộc tỉnh nào?",
+        "options": [
+          "A. Quảng Ngãi",
+          "B. Bình Định",
+          "C. Phú Yên",
+          "D. Khánh Hòa"
+        ],
+        "correct_answer": "A. Quảng Ngãi",
+        "difficulty": 1,
+        "explanation": "Sông Vệ cùng với sông Trà Khúc là hai sông lớn của Quảng Ngãi."
+      },
+      {
+        "type": "true_false",
+        "question": "Sông Vệ là một con sông rất hung dữ, quanh năm lũ lụt.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 2,
+        "explanation": "Sai. Sông Vệ chảy khá êm đềm, tuy cũng có lũ vào mùa mưa nhưng nhìn chung là dòng sông hiền hòa."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_du_dinh_11_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/DU%20DINH/VỆ%20GIANG.jpg"
+  },
+  {
+    "id": "urn_du_dinh_12",
+    "name_vi": "Đà Nẵng Hải Khẩu",
+    "name_en": "Da Nang Estuary",
+    "urn_location": "Dụ Đỉnh",
+    "category": "dia_ly",
+    "rarity": "epic",
+    "description_short": "Cửa biển Đà Nẵng - cửa Hàn, thương cảng sầm uất bậc nhất.",
+    "description_educational": "Đà Nẵng Hải Khẩu (Cửa biển Đà Nẵng/Cửa Hàn) là nơi sông Hàn đổ ra vịnh Đà Nẵng. Đây là một trong những hải cảng sâu và kín gió tốt nhất miền Trung, thuận lợi cho tàu thuyền lớn neo đậu. Từ thời nhà Nguyễn, Đà Nẵng đã trở thành thương cảng quốc tế quan trọng thay thế dần cho Hội An. Cửa biển này cũng có vị trí quân sự chiến lược (trận chiến Đà Nẵng 1858 chống Pháp). Khắc Đà Nẵng Hải Khẩu lên đỉnh là khẳng định tầm nhìn chiến lược về kinh tế biển và quốc phòng.",
+    "historical_context": "Năm 1835, vua Minh Mạng ra dụ chỉ quy định các tàu phương Tây chỉ được phép neo đậu và buôn bán tại cửa Hàn, biến nơi đây thành cửa ngõ giao thương độc tôn.",
+    "symbolism": "Cửa biển Đà Nẵng tượng trưng cho sự mở cửa, giao lưu hội nhập và sự phát triển năng động.",
+    "fun_fact": "Ngày nay, Đà Nẵng được mệnh danh là 'Thành phố của những cây cầu' bắc qua sông Hàn, ngay tại khu vực cửa biển này.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Cửa biển Đà Nẵng còn có tên gọi dân gian là gì?",
+        "options": [
+          "A. Cửa Tùng",
+          "B. Cửa Hàn",
+          "C. Cửa Lò",
+          "D. Cửa Hội"
+        ],
+        "correct_answer": "B. Cửa Hàn",
+        "difficulty": 1,
+        "explanation": "Do nằm ở cửa sông Hàn nên gọi là Cửa Hàn."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Sự kiện lịch sử nào gắn liền với cửa biển Đà Nẵng năm 1858?",
+        "options": [
+          "A. Chiến thắng Bạch Đằng",
+          "B. Liên quân Pháp - Tây Ban Nha nổ súng xâm lược Việt Nam",
+          "C. Nhật đảo chính Pháp",
+          "D. Cách mạng tháng Tám"
+        ],
+        "correct_answer": "B. Liên quân Pháp - Tây Ban Nha nổ súng xâm lược Việt Nam",
+        "difficulty": 2,
+        "explanation": "Đà Nẵng là nơi thực dân Pháp nổ phát súng đầu tiên xâm lược nước ta."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_du_dinh_12_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/DU%20DINH/ĐÀ%20NẴNG%20HẢI%20KHẨU.jpg"
+  },
+  {
+    "id": "urn_du_dinh_13",
+    "name_vi": "Thạch Thủ Ngư",
+    "name_en": "Grouper",
+    "urn_location": "Dụ Đỉnh",
+    "category": "dong_vat",
+    "rarity": "common",
+    "description_short": "Cá Mú/Cá Song - đặc sản biển quý giá, thịt thơm ngon.",
+    "description_educational": "Thạch Thủ Ngư (Cá đầu đá - thường được hiểu là Cá Mú/Cá Song hoặc Cá Lù đù). Cá Mú là loài cá biển sống ở các rạn san hô, hốc đá (Thạch), có thịt trắng, dai, ngọt, rất được ưa chuộng trong ẩm thực. Tên 'Thạch thủ' (đầu đá) có thể mô tả đặc điểm đầu to và cứng của loài cá này hoặc nơi sống của chúng. Đây là loài hải sản có giá trị kinh tế cao, được ngư dân đánh bắt và nuôi trồng nhiều. Hình ảnh cá trên đỉnh tôn vinh nguồn lợi thủy sản phong phú của biển Việt Nam.",
+    "historical_context": "Cá Mú hấp xì dầu, nấu cháo là những món ăn thượng hạng. Vùng biển miền Trung và Nam Bộ rất nổi tiếng với các loại cá Mú (mú đỏ, mú đen, mú nghệ).",
+    "symbolism": "Cá Mú tượng trưng cho sự giàu có của biển cả (kho vàng sống) và sức khỏe.",
+    "fun_fact": "Cá Mú là loài cá dữ, ăn thịt. Chúng có thể thay đổi giới tính từ cái sang đực khi trưởng thành.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Cá Mú (Thạch Thủ Ngư) thường sống ở môi trường nào?",
+        "options": [
+          "A. Ao hồ nước ngọt",
+          "B. Rạn san hô, hốc đá dưới biển",
+          "C. Trên cạn",
+          "D. Trong bùn lầy"
+        ],
+        "correct_answer": "B. Rạn san hô, hốc đá dưới biển",
+        "difficulty": 1,
+        "explanation": "Cá mú là loài cá rạn san hô điển hình."
+      },
+      {
+        "type": "true_false",
+        "question": "Thịt cá Mú rất dở và rẻ tiền.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Cá Mú là loại hải sản cao cấp, thịt rất ngon và đắt tiền."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_du_dinh_13_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/DU%20DINH/THẠCH%20THỦ%20NGƯ.jpg"
+  },
+  {
+    "id": "urn_du_dinh_14",
+    "name_vi": "Tử Tô",
+    "name_en": "Perilla",
+    "urn_location": "Dụ Đỉnh",
+    "category": "thao_moc",
+    "rarity": "common",
+    "description_short": "Tía Tô - rau gia vị giải cảm, màu tím đặc trưng.",
+    "description_educational": "Tử Tô (Cây Tía tô - Perilla frutescens) là loài cây thảo, lá có màu tím (tử) hoặc xanh tím, mép răng cưa, mùi thơm nồng đặc biệt. Tía tô là loại rau gia vị phổ biến ăn kèm với cháo, bún, gỏi. Trong đông y, tía tô (cả lá, cành, hạt) là vị thuốc quý chữa cảm cúm, ho, hen suyễn, an thai và giải độc cua cá. Hình ảnh cây tía tô trên Dụ Đỉnh thể hiện sự trân trọng những cây thuốc nam giản dị nhưng công hiệu.",
+    "historical_context": "Cháo hành tía tô là món ăn giải cảm kinh điển (như trong tác phẩm 'Chí Phèo'). Người Nhật cũng dùng tía tô (Shiso) rất nhiều trong ẩm thực (ăn sashimi).",
+    "symbolism": "Tía tô tượng trưng cho sự ấm áp, giải tỏa (giải cảm) và sự hòa hợp (khử mùi tanh, cân bằng món ăn).",
+    "fun_fact": "Lá tía tô có thể dùng để nhuộm màu thực phẩm (như làm mơ muối umeboshi) tạo ra màu đỏ tím rất đẹp.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Công dụng y học nổi tiếng nhất của lá Tía tô là gì?",
+        "options": [
+          "A. Chữa đau chân",
+          "B. Giải cảm, trừ hàn",
+          "C. Làm thuốc mê",
+          "D. Chữa cận thị"
+        ],
+        "correct_answer": "B. Giải cảm, trừ hàn",
+        "difficulty": 1,
+        "explanation": "Bát cháo tía tô nóng giúp ra mồ hôi, giải cảm rất tốt."
+      },
+      {
+        "type": "true_false",
+        "question": "Lá Tía tô có màu xanh hoàn toàn.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Lá tía tô thường có màu tím hoặc mặt trên xanh mặt dưới tím."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_du_dinh_14_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/DU%20DINH/TỬ%20TÔ.jpg"
+  },
+  {
+    "id": "urn_du_dinh_15",
+    "name_vi": "Ô Thuyền",
+    "name_en": "Raven Boat",
+    "urn_location": "Dụ Đỉnh",
+    "category": "vo_bi",
+    "rarity": "rare",
+    "description_short": "Ô Thuyền - chiến thuyền sơn đen, dũng mãnh trên biển.",
+    "description_educational": "Ô Thuyền (Thuyền đen) là loại thuyền chiến của thủy quân nhà Nguyễn, được sơn màu đen (Ô) từ thân đến cánh buồm để ngụy trang và tạo vẻ uy nghiêm. Thuyền có kích thước trung bình, trang bị nhiều tay chèo và súng thần công, chuyên dùng để tác chiến trên biển và các cửa sông lớn. Màu đen của thuyền giúp nó khó bị phát hiện vào ban đêm. Khắc Ô Thuyền lên đỉnh là ghi nhận sức mạnh và sự đa dạng của hạm đội hải quân triều Nguyễn.",
+    "historical_context": "Vua Gia Long đặt tên các loại thuyền theo màu sắc: Thanh thuyền (xanh), Xích thuyền (đỏ), Ô thuyền (đen)... để phân biệt các hạm đội.",
+    "symbolism": "Ô Thuyền tượng trưng cho sự bí mật, sức mạnh tiềm ẩn và kỷ luật quân đội (màu đen huyền bí).",
+    "fun_fact": "Sơn thuyền màu đen thường được làm từ nhựa cây sơn trộn với than muội, có tác dụng chống thấm nước và hà ăn rất tốt.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Đặc điểm nhận dạng của Ô Thuyền là gì?",
+        "options": [
+          "A. Sơn màu đỏ",
+          "B. Sơn màu đen",
+          "C. Sơn màu vàng",
+          "D. Không sơn"
+        ],
+        "correct_answer": "B. Sơn màu đen",
+        "difficulty": 1,
+        "explanation": "Ô có nghĩa là màu đen (như Ô thước, ngựa Ô)."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Ô Thuyền được dùng để làm gì?",
+        "options": [
+          "A. Chở lúa gạo",
+          "B. Chiến đấu trên biển",
+          "C. Đua thuyền giải trí",
+          "D. Rước dâu"
+        ],
+        "correct_answer": "B. Chiến đấu trên biển",
+        "difficulty": 1,
+        "explanation": "Đây là một loại thuyền chiến (chiến hạm) của triều đình."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_du_dinh_15_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/DU%20DINH/Ô%20THUYỀN.jpg"
+  },
+  {
+    "id": "urn_du_dinh_16",
+    "name_vi": "Phác Đao",
+    "name_en": "Podao",
+    "urn_location": "Dụ Đỉnh",
+    "category": "vo_bi",
+    "rarity": "common",
+    "description_short": "Phác Đao - vũ khí cán dài, uy lực của bộ binh.",
+    "description_educational": "Phác Đao (hoặc Phạc đao) là loại vũ khí lạnh có lưỡi đao to bản, sắc bén gắn trên một cán dài (cán gỗ hoặc sắt). Đây là vũ khí kết hợp giữa đao và thương, cho phép lính bộ binh có thể chém, bổ với lực rất mạnh, thậm chí có thể chặt chân ngựa của kỵ binh đối phương. Phác đao là vũ khí phổ biến trong quân đội phong kiến Á Đông. Hình ảnh Phác đao trên Dụ Đỉnh thể hiện khí thế mạnh mẽ và trang bị vũ khí đầy đủ của quân đội.",
+    "historical_context": "Trong võ thuật cổ truyền, bài 'Phác đao' là một bài binh khí uy dũng. Quân đội nhà Nguyễn dùng phác đao cho các đội vệ binh và lính thú.",
+    "symbolism": "Phác Đao tượng trưng cho sức mạnh tấn công, sự dũng cảm (xáp lá cà) và khả năng trấn áp kẻ thù.",
+    "fun_fact": "Lưỡi phác đao thường rộng hơn lưỡi thương, trọng lượng cũng nặng hơn nên đòi hỏi người sử dụng phải có sức khỏe tốt.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Phác Đao là loại vũ khí như thế nào?",
+        "options": [
+          "A. Dao găm nhỏ",
+          "B. Đao có cán dài",
+          "C. Kiếm hai lưỡi",
+          "D. Cung tên"
+        ],
+        "correct_answer": "B. Đao có cán dài",
+        "difficulty": 1,
+        "explanation": "Cán dài giúp tăng lực chém và tầm với."
+      },
+      {
+        "type": "true_false",
+        "question": "Phác Đao chủ yếu dùng để bắn từ xa.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Phác đao là vũ khí cận chiến dùng để chém, bổ."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_du_dinh_16_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/DU%20DINH/PHÁC%20ĐAO.jpg"
+  },
+  {
+    "id": "urn_du_dinh_17",
+    "name_vi": "Cáp",
+    "name_en": "Clam",
+    "urn_location": "Dụ Đỉnh",
+    "category": "dong_vat",
+    "rarity": "common",
+    "description_short": "Con Sò - sản vật vùi mình trong cát, ngon ngọt vị biển.",
+    "description_educational": "Cáp (Con Sò/Ngao) là tên gọi chung cho các loài nhuyễn thể hai mảnh vỏ sống ở vùng biển và cửa sông. Thịt sò giàu dinh dưỡng, là nguồn thực phẩm quan trọng của cư dân ven biển. Vỏ sò có thể dùng nung vôi hoặc làm đồ thủ công. Hình ảnh con Sò trên Dụ Đỉnh đại diện cho sự phong phú của hải sản và cuộc sống gắn liền với biển cả của người dân Việt Nam.",
+    "historical_context": "Sò huyết đầm Ô Loan (Phú Yên) là đặc sản tiến vua nổi tiếng. Các đống vỏ sò (cồn sò) tìm thấy trong di chỉ khảo cổ cho thấy người Việt cổ đã khai thác sò từ hàng ngàn năm trước.",
+    "symbolism": "Con Sò tượng trưng cho sự kín đáo, sự bảo vệ (vỏ cứng) và nguồn tài nguyên vô tận của biển.",
+    "fun_fact": "Chữ 'Cáp' (Sò) đồng âm với 'Hợp' (hòa hợp), nên sò cũng mang ý nghĩa may mắn, thuận hòa.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Con Cáp (Sò) thuộc nhóm động vật nào?",
+        "options": [
+          "A. Cá",
+          "B. Giáp xác (Tôm cua)",
+          "C. Nhuyễn thể hai mảnh vỏ",
+          "D. Bò sát"
+        ],
+        "correct_answer": "C. Nhuyễn thể hai mảnh vỏ",
+        "difficulty": 1,
+        "explanation": "Sò, nghêu, hến đều thuộc lớp hai mảnh vỏ."
+      },
+      {
+        "type": "true_false",
+        "question": "Vỏ sò không có tác dụng gì, chỉ vứt đi.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Vỏ sò nung vôi để ăn trầu, xây nhà hoặc làm đồ mỹ nghệ."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_du_dinh_17_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/DU%20DINH/CÁP.jpg"
+  },
+  {
+    "id": "urn_du_dinh_18",
+    "name_vi": "Dương",
+    "name_en": "Goat",
+    "urn_location": "Dụ Đỉnh",
+    "category": "dong_vat",
+    "rarity": "common",
+    "description_short": "Con Dê - biểu tượng của sự ôn hòa và lộc tài.",
+    "description_educational": "Dương (Con Dê) là loài gia súc được nuôi để lấy thịt và sữa. Dê có tính tình ôn hòa, nhanh nhẹn, thích leo trèo trên núi đá. Trong văn hóa, Dê (Mùi) là con giáp thứ 8, tượng trưng cho sự cát tường (chữ Dương và chữ Tường có bộ chữ giống nhau). 'Tam dương khai thái' là câu chúc xuân ý nghĩa, mong đợi những điều tốt lành, may mắn sẽ đến. Hình ảnh con Dê trên Dụ Đỉnh thể hiện sự thanh bình và sung túc của đời sống chăn nuôi.",
+    "historical_context": "Dê thường được dùng làm vật tế thần (Tam sinh: Trâu, Dê, Lợn) trong các nghi lễ quan trọng của triều đình (như tế Nam Giao).",
+    "symbolism": "Dê tượng trưng cho điềm lành, sự sinh sôi và tính nhẫn nại. Dê quỳ bú sữa mẹ còn là biểu tượng của lòng hiếu thảo.",
+    "fun_fact": "Dê có đồng tử mắt hình chữ nhật nằm ngang, giúp chúng có tầm nhìn rộng để phát hiện kẻ thù.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Trong 12 con giáp, con Dê (Mùi) đứng ở vị trí thứ mấy?",
+        "options": [
+          "A. 1",
+          "B. 6",
+          "C. 8",
+          "D. 12"
+        ],
+        "correct_answer": "C. 8",
+        "difficulty": 1,
+        "explanation": "Tý, Sửu, Dần, Mão, Thìn, Tỵ, Ngọ, Mùi (8)."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Câu chúc 'Tam dương khai thái' liên quan đến con vật nào?",
+        "options": [
+          "A. Con Cừu",
+          "B. Con Dê",
+          "C. Con Ngựa",
+          "D. Con Gà"
+        ],
+        "correct_answer": "B. Con Dê",
+        "difficulty": 2,
+        "explanation": "Tam dương (3 con dê) biểu thị cho tháng Giêng (tháng Dần), dương khí bắt đầu thịnh, mang lại may mắn."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_du_dinh_18_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/DU%20DINH/DƯƠNG.jpg"
+  }
+]

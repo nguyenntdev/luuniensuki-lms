@@ -1,0 +1,764 @@
+[
+  {
+    "id": "urn_huyen_dinh_01",
+    "name_vi": "Huyền Đỉnh",
+    "name_en": "The Urn of Mystery",
+    "urn_location": "Huyền Đỉnh",
+    "category": "kien_truc",
+    "rarity": "legendary",
+    "description_short": "Huyền Đỉnh - sự sâu sắc, huyền diệu và vĩnh cửu.",
+    "description_educational": "Huyền Đỉnh là chiếc đỉnh cuối cùng trong Cửu Đỉnh, nằm ở phía bên phải (đối diện với Dụ Đỉnh). Chữ 'Huyền' (玄) có nghĩa là màu đen, sâu xa, huyền diệu, u tịch (như trong 'Huyền bí', 'Huyền cơ'). Cũng giống như Dụ Đỉnh, Huyền Đỉnh không ứng với thụy hiệu của vị vua nào cụ thể vào thời điểm đúc, mà mang ý nghĩa về sự trường tồn, sâu sắc của triều đại và vũ trụ. Huyền Đỉnh nặng khoảng 1.900kg, hoàn thiện bộ Cửu Đỉnh uy nghi.",
+    "historical_context": "Huyền Đỉnh đúc năm 1836. Tên đỉnh gợi nhắc đến triết lý đạo Lão (Huyền chi hựu huyền) hoặc màu sắc của trời (Thiên huyền Địa hoàng). Đây là chiếc đỉnh khép lại công trình nghệ thuật vĩ đại của vua Minh Mạng.",
+    "symbolism": "Chữ 'Huyền' tượng trưng cho trời, phương Bắc, màu đen và sự sâu thẳm của trí tuệ. Đỉnh thể hiện sự kết thúc viên mãn và sự bí ẩn của tạo hóa.",
+    "fun_fact": "Vị trí của Huyền Đỉnh nằm ngoài cùng bên phải, tương ứng với Dụ Đỉnh bên trái, tạo thế cân bằng và bao quát toàn bộ không gian sân chầu.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Chữ 'Huyền' trong tên Huyền Đỉnh có ý nghĩa gì?",
+        "options": [
+          "A. Màu trắng, sáng sủa",
+          "B. Màu đen, sâu xa, huyền diệu",
+          "C. Màu đỏ, rực rỡ",
+          "D. Màu xanh, hy vọng"
+        ],
+        "correct_answer": "B. Màu đen, sâu xa, huyền diệu",
+        "difficulty": 1,
+        "explanation": "Huyền (như trong Huyền bí) chỉ màu đen hoặc sự sâu thẳm khó lường."
+      },
+      {
+        "type": "true_false",
+        "question": "Huyền Đỉnh là chiếc đỉnh lớn nhất trong Cửu Đỉnh.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Cao Đỉnh mới là đỉnh lớn nhất. Huyền Đỉnh là một trong những đỉnh nhỏ hơn."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_huyen_dinh_01_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/HUYỀN%20ĐỈNH.jpg"
+  },
+  {
+    "id": "urn_huyen_dinh_02",
+    "name_vi": "Ngũ Điệp Lan",
+    "name_en": "White Champaca",
+    "urn_location": "Huyền Đỉnh",
+    "category": "thao_moc",
+    "rarity": "common",
+    "description_short": "Hoa Ngọc Lan - hương thơm tinh khiết, dịu dàng.",
+    "description_educational": "Ngũ Điệp Lan (thường gọi là Ngọc Lan - Michelia alba) là loài cây thân gỗ, hoa màu trắng ngà, cánh thon dài, có mùi thơm nồng nàn rất quyến rũ. Cây Ngọc Lan thường được trồng trong sân chùa, đền hoặc vườn nhà để lấy bóng mát và hương thơm ('Thơm như ngọc lan'). Hoa ngọc lan còn được dùng để trưng bày trong đĩa, cài lên tóc hoặc chiết xuất tinh dầu nước hoa. Khắc Ngọc Lan lên đỉnh là tôn vinh vẻ đẹp thanh cao của loài hoa này.",
+    "historical_context": "Ngọc Lan có nguồn gốc từ Ấn Độ, du nhập vào Việt Nam từ lâu và trở thành loài cây quen thuộc. Trong cung đình Huế, Ngọc Lan được trồng nhiều để tạo hương thơm thanh khiết.",
+    "symbolism": "Ngọc Lan tượng trưng cho sự thánh thiện, lòng hiếu thảo và sự may mắn. Mùi hương của nó giúp thanh lọc tâm hồn.",
+    "fun_fact": "Mặc dù tên Hán Việt là 'Ngũ Điệp Lan' (Lan 5 cánh/bướm?), nhưng dân gian quen gọi là Ngọc Lan. Hoa của nó rất lâu tàn hương.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Hoa Ngọc Lan (Ngũ Điệp Lan) có màu gì?",
+        "options": [
+          "A. Màu đỏ",
+          "B. Màu tím",
+          "C. Màu trắng ngà",
+          "D. Màu xanh dương"
+        ],
+        "correct_answer": "C. Màu trắng ngà",
+        "difficulty": 1,
+        "explanation": "Hoa ngọc lan trắng muốt hoặc trắng ngà, rất thơm."
+      },
+      {
+        "type": "true_false",
+        "question": "Cây Ngọc Lan là loài cây thân leo.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Ngọc Lan là cây thân gỗ lớn, có thể cao hàng chục mét."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_huyen_dinh_02_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/NGỮ%20ĐIỆP%20LAN.jpg"
+  },
+  {
+    "id": "urn_huyen_dinh_03",
+    "name_vi": "Lệ Chi",
+    "name_en": "Lychee",
+    "urn_location": "Huyền Đỉnh",
+    "category": "thao_moc",
+    "rarity": "common",
+    "description_short": "Quả Vải - ngọt ngào hương vị mùa hè, đặc sản tiến vua.",
+    "description_educational": "Lệ Chi (Cây Vải/Quả Vải - Litchi chinensis) là loài cây ăn quả nhiệt đới nổi tiếng. Quả vải khi chín vỏ đỏ sần sùi, cùi trắng mọng nước, vị ngọt lịm. Vải thiều Thanh Hà (Hải Dương) là giống vải ngon nhất, hạt nhỏ, cùi dày. Vải là loại quả quý từng gây ra bao nỗi gian truân cho người dân trong lịch sử (nộp cống vải). Hình ảnh chùm vải trên Huyền Đỉnh gợi nhớ về vụ án Lệ Chi Viên (Vườn Vải) oan khuất của Nguyễn Trãi, nhưng cũng tôn vinh một sản vật tuyệt vời của đất Việt.",
+    "historical_context": "Dương Quý Phi đời Đường rất thích ăn vải, khiến đường sá vận chuyển vải từ phương Nam về Tràng An tấp nập ngựa xe ('Nhất kỵ hồng trần phi tử tiếu' - Một con ngựa bụi hồng phi tới làm phi tử cười).",
+    "symbolism": "Lệ Chi tượng trưng cho sự ngọt ngào, tình yêu và cả những bi kịch lịch sử. Cây vải cũng biểu thị sự sum suê con cháu.",
+    "fun_fact": "Vải sấy khô (vải khô) là một vị thuốc bổ và món ăn vặt ngon. Hạt vải (Lệ chi hạch) cũng được dùng làm thuốc chữa đau bụng.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Vụ án oan nổi tiếng trong lịch sử liên quan đến Nguyễn Trãi có tên là gì?",
+        "options": [
+          "A. Vụ án hồ Hoàn Kiếm",
+          "B. Vụ án Lệ Chi Viên (Vườn Vải)",
+          "C. Vụ án sông Tô Lịch",
+          "D. Vụ án núi Tản Viên"
+        ],
+        "correct_answer": "B. Vụ án Lệ Chi Viên (Vườn Vải)",
+        "difficulty": 1,
+        "explanation": "Lệ Chi Viên nghĩa là Vườn cây vải, nơi vua Lê Thái Tông băng hà đột ngột."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Vùng đất nào ở Việt Nam nổi tiếng với Vải thiều?",
+        "options": [
+          "A. Thanh Hà (Hải Dương) và Lục Ngạn (Bắc Giang)",
+          "B. Đà Lạt (Lâm Đồng)",
+          "C. Nha Trang (Khánh Hòa)",
+          "D. Châu Đốc (Ninh Thuận)"
+        ],
+        "correct_answer": "A. Thanh Hà (Hải Dương) và Lục Ngạn (Bắc Giang)",
+        "difficulty": 1,
+        "explanation": "Đây là hai vựa vải lớn và ngon nhất cả nước."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_huyen_dinh_03_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/LỆ%20CHI.jpg"
+  },
+  {
+    "id": "urn_huyen_dinh_04",
+    "name_vi": "Toán",
+    "name_en": "Garlic",
+    "urn_location": "Huyền Đỉnh",
+    "category": "thao_moc",
+    "rarity": "common",
+    "description_short": "Củ Tỏi - gia vị trừ tà, kháng sinh tự nhiên.",
+    "description_educational": "Toán (Cây Tỏi - Allium sativum) là loài cây gia vị thuộc họ Hành. Củ tỏi gồm nhiều tép, có mùi hăng nồng, vị cay. Tỏi là gia vị không thể thiếu trong nhiều món ăn (rau xào, nước chấm) và là vị thuốc kháng sinh tự nhiên cực mạnh, giúp tăng cường hệ miễn dịch, trị cảm cúm, sát trùng. Trong tín ngưỡng dân gian, tỏi còn được dùng để trừ tà ma, bùa ngải. Hình ảnh cây tỏi trên Huyền Đỉnh thể hiện sự trân trọng những giá trị thiết thực trong đời sống.",
+    "historical_context": "Tỏi Lý Sơn (Quảng Ngãi) nổi tiếng thơm ngon, tép nhỏ, trắng, được mệnh danh là 'Vương quốc tỏi'. Tỏi đen (tỏi lên men) ngày nay được coi là thần dược.",
+    "symbolism": "Củ tỏi tượng trưng cho sự bảo vệ (trừ tà), sức khỏe và sự nồng đượm. Nó là 'vũ khí' của người dân chống lại bệnh tật.",
+    "fun_fact": "Mùi hăng của tỏi là do hợp chất lưu huỳnh (allicin) được giải phóng khi tỏi bị đập dập hoặc cắt nhỏ. Chính chất này tạo nên công dụng chữa bệnh của tỏi.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Theo quan niệm dân gian, tỏi thường được dùng để làm gì ngoài việc nấu ăn?",
+        "options": [
+          "A. Làm đẹp da",
+          "B. Trừ tà ma, tránh gió độc",
+          "C. Nhuộm quần áo",
+          "D. Làm mực viết"
+        ],
+        "correct_answer": "B. Trừ tà ma, tránh gió độc",
+        "difficulty": 1,
+        "explanation": "Người xưa thường đeo tỏi cho trẻ em hoặc treo tỏi trước cửa để xua đuổi tà khí."
+      },
+      {
+        "type": "true_false",
+        "question": "Tỏi có tác dụng kháng khuẩn, tăng cường hệ miễn dịch.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Đúng",
+        "difficulty": 1,
+        "explanation": "Tỏi chứa allicin là một chất kháng sinh tự nhiên mạnh."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_huyen_dinh_04_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/TOÁN.jpg"
+  },
+  {
+    "id": "urn_huyen_dinh_05",
+    "name_vi": "Nam Sâm",
+    "name_en": "Southern Ginseng",
+    "urn_location": "Huyền Đỉnh",
+    "category": "thao_moc",
+    "rarity": "rare",
+    "description_short": "Sâm Nam - linh dược nước Nam, bồi bổ nguyên khí.",
+    "description_educational": "Nam Sâm (Sâm ta/Sâm Bố Chính/Đinh Lăng) là tên gọi chỉ các loài thảo dược có tác dụng bồi bổ giống nhân sâm nhưng mọc ở nước Nam. Nổi tiếng nhất thời xưa là Sâm Bố Chính (trồng ở Bố Trạch, Quảng Bình) được danh y Hải Thượng Lãn Ông khuyên dùng. Ngày nay, Sâm Ngọc Linh hay cây Đinh Lăng (Ginseng của người nghèo) cũng được gọi là Nam Sâm. Hình ảnh Nam Sâm trên đỉnh khẳng định quan điểm 'Nam dược trị Nam nhân' - dùng thuốc Nam chữa bệnh cho người Nam.",
+    "historical_context": "Sâm Bố Chính từng là cống phẩm tiến vua, được đánh giá có công dụng ngang ngửa với sâm Cao Ly (Triều Tiên) nếu biết cách chế biến.",
+    "symbolism": "Nam Sâm tượng trưng cho sức khỏe, sự trường thọ và niềm tự hào về nền y học cổ truyền dân tộc.",
+    "fun_fact": "Hải Thượng Lãn Ông đã dùng Sâm Bố Chính kết hợp với các vị thuốc khác để chữa khỏi bệnh cho nhiều người, chứng minh giá trị của thuốc Nam.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Câu nói nổi tiếng 'Nam dược trị Nam nhân' (Thuốc Nam chữa bệnh người Nam) là của ai?",
+        "options": [
+          "A. Tuệ Tĩnh",
+          "B. Hải Thượng Lãn Ông (Lê Hữu Trác)",
+          "C. Hoa Đà",
+          "D. Biển Thước"
+        ],
+        "correct_answer": "A. Tuệ Tĩnh",
+        "difficulty": 2,
+        "explanation": "Thiền sư Tuệ Tĩnh được tôn vinh là ông tổ của ngành thuốc Nam."
+      },
+      {
+        "type": "true_false",
+        "question": "Việt Nam không có loài sâm nào quý, phải nhập khẩu hoàn toàn.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Việt Nam có Sâm Ngọc Linh, Sâm Bố Chính, Sâm Lai Châu... đều là dược liệu rất quý."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_huyen_dinh_05_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/NAM%20SÂM.jpg"
+  },
+  {
+    "id": "urn_huyen_dinh_06",
+    "name_vi": "Miên",
+    "name_en": "Cotton",
+    "urn_location": "Huyền Đỉnh",
+    "category": "nong_nghiep",
+    "rarity": "common",
+    "description_short": "Cây Bông - nguyên liệu dệt vải, che thân ấm áp.",
+    "description_educational": "Miên (Cây Bông/Bông vải - Gossypium) là loài cây công nghiệp quan trọng, quả bông khi chín nứt ra để lộ những sợi bông trắng xốp bên trong. Sợi bông được kéo thành chỉ để dệt vải, may quần áo. Cây bông đã gắn bó với nghề dệt thủ công truyền thống của người Việt từ ngàn xưa. Khắc cây Bông lên Huyền Đỉnh thể hiện sự quan tâm đến nhu cầu 'mặc' ấm của nhân dân, bên cạnh nhu cầu 'ăn' (lúa gạo).",
+    "historical_context": "Trước khi có vải sợi tổng hợp, vải bông (cotton) là chất liệu chính để may mặc. Nghề trồng bông dệt vải rất phát triển ở các làng nghề như Nha Xá, Vạn Phúc.",
+    "symbolism": "Cây Bông tượng trưng cho sự ấm áp, sự che chở (manh áo) và sự mềm mại nhưng bền bỉ (sợi chỉ).",
+    "fun_fact": "Từ 'Miên' còn dùng để chỉ giấc ngủ (giấc miên man), có lẽ vì bông mềm mại như giấc ngủ êm đềm.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Sợi của cây Bông (Miên) được dùng để làm gì?",
+        "options": [
+          "A. Làm thức ăn",
+          "B. Kéo sợi dệt vải",
+          "C. Làm thuốc nổ",
+          "D. Xây nhà"
+        ],
+        "correct_answer": "B. Kéo sợi dệt vải",
+        "difficulty": 1,
+        "explanation": "Bông (cotton) là nguyên liệu dệt may phổ biến nhất thế giới."
+      },
+      {
+        "type": "true_false",
+        "question": "Quả bông khi chín có màu đỏ rực.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Quả bông khi chín nứt ra lộ lớp xơ bông màu trắng tinh."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_huyen_dinh_06_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/MIÊN.jpg"
+  },
+  {
+    "id": "urn_huyen_dinh_07",
+    "name_vi": "Thốc Thu",
+    "name_en": "Lesser Adjutant",
+    "urn_location": "Huyền Đỉnh",
+    "category": "dong_vat",
+    "rarity": "rare",
+    "description_short": "Chim Già Đẫy - loài chim kỳ lạ của vùng đất ngập nước.",
+    "description_educational": "Thốc Thu (Chim Già đẫy/Cò sói - Leptoptilos javanicus) là loài chim nước lớn thuộc họ Hạc, có cái đầu và cổ trụi lông (hói/thốc) trông rất già nua và khắc khổ, nên gọi là 'Già đẫy'. Chúng sống ở các vùng đất ngập nước, rừng tràm (như U Minh, Đồng Tháp Mười), ăn cá và sinh vật nhỏ. Hình ảnh loài chim có vẻ ngoài kỳ dị này trên đỉnh cho thấy sự đa dạng của hệ sinh thái đất ngập nước phương Nam.",
+    "historical_context": "Chim Già đẫy hiện là loài quý hiếm cần bảo tồn. Sự xuất hiện của chúng trên Cửu Đỉnh là tư liệu quý về sự phân bố loài này trong quá khứ.",
+    "symbolism": "Thốc Thu tượng trưng cho sự trường thọ (dáng vẻ già nua), sự điềm tĩnh và sự gắn bó với môi trường tự nhiên hoang dã.",
+    "fun_fact": "Cái túi da dưới cổ chim Già đẫy (túi khí) có thể phồng lên xẹp xuống, giúp chúng phát ra âm thanh lạ để giao tiếp.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Chim Thốc Thu (Già đẫy) có đặc điểm ngoại hình gì nổi bật?",
+        "options": [
+          "A. Bộ lông bảy sắc cầu vồng",
+          "B. Đầu và cổ trụi lông (hói)",
+          "C. Đuôi dài như chim công",
+          "D. Mỏ ngắn tí hon"
+        ],
+        "correct_answer": "B. Đầu và cổ trụi lông (hói)",
+        "difficulty": 2,
+        "explanation": "Đầu hói khiến chúng trông như những ông già, nên gọi là Già đẫy."
+      },
+      {
+        "type": "true_false",
+        "question": "Chim Già đẫy thường sống ở vùng núi cao khô hạn.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Chúng sống ở vùng đất ngập nước, đầm lầy để kiếm ăn."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_huyen_dinh_07_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/THỐC%20THU.jpg"
+  },
+  {
+    "id": "urn_huyen_dinh_08",
+    "name_vi": "Hồng",
+    "name_en": "Rainbow",
+    "urn_location": "Huyền Đỉnh",
+    "category": "thien_van",
+    "rarity": "common",
+    "description_short": "Cầu Vồng - nhịp cầu sắc màu nối đất với trời.",
+    "description_educational": "Hồng (Cầu vồng/Mống) là hiện tượng tán sắc ánh sáng mặt trời qua các giọt mưa, tạo thành dải màu rực rỡ trên bầu trời. Người xưa gọi cầu vồng là 'Hồng' hoặc 'Mống', coi đó là dấu hiệu của rồng uống nước hoặc sự giao hòa âm dương. Cầu vồng xuất hiện sau cơn mưa mang lại cảm giác tươi mới, hy vọng. Hình ảnh cầu vồng trên Huyền Đỉnh được chạm khắc cách điệu, thể hiện sự quan sát tinh tế các hiện tượng khí tượng.",
+    "historical_context": "Tục ngữ có câu 'Mống đông vồng tây, chẳng mưa dây cũng bão giật' dùng để dự báo thời tiết. Cầu vồng đôi (Mống cụt) cũng thường được nhắc đến.",
+    "symbolism": "Cầu vồng tượng trưng cho niềm hy vọng, sự nối kết (nhịp cầu), vẻ đẹp huyền ảo và sự bình yên sau giông bão.",
+    "fun_fact": "Cầu vồng thực chất là một vòng tròn khép kín, nhưng từ mặt đất ta thường chỉ nhìn thấy một nửa vòng cung.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Cầu Vồng thường xuất hiện khi nào?",
+        "options": [
+          "A. Giữa đêm khuya",
+          "B. Trước hoặc sau cơn mưa khi có nắng",
+          "C. Khi tuyết rơi",
+          "D. Khi trời tối đen như mực"
+        ],
+        "correct_answer": "B. Trước hoặc sau cơn mưa khi có nắng",
+        "difficulty": 1,
+        "explanation": "Cần có ánh nắng mặt trời chiếu qua các hạt mưa để tạo ra cầu vồng."
+      },
+      {
+        "type": "true_false",
+        "question": "Cầu vồng chỉ có 3 màu chính.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Cầu vồng có 7 màu cơ bản: Đỏ, Cam, Vàng, Lục, Lam, Chàm, Tím."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_huyen_dinh_08_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/HỒNG.jpg"
+  },
+  {
+    "id": "urn_huyen_dinh_09",
+    "name_vi": "Hậu Giang, Tiền Giang",
+    "name_en": "Mekong Delta Rivers",
+    "urn_location": "Huyền Đỉnh",
+    "category": "dia_ly",
+    "rarity": "epic",
+    "description_short": "Sông Tiền, Sông Hậu - chín rồng cuộn sóng phương Nam.",
+    "description_educational": "Tiền Giang và Hậu Giang là hai nhánh sông chính của sông Cửu Long (Mekong) chảy vào Việt Nam, bồi đắp nên vùng đồng bằng sông Cửu Long trù phú, vựa lúa lớn nhất cả nước. Sông Tiền và Sông Hậu mang lượng phù sa khổng lồ và nguồn thủy sản dồi dào, tạo nên nền văn minh sông nước miệt vườn độc đáo. Việc khắc cả hai dòng sông lên cùng một hình trên Huyền Đỉnh khẳng định chủ quyền lãnh thổ và tầm quan trọng sống còn của vùng đất Nam Bộ đối với quốc gia.",
+    "historical_context": "Vùng đất Nam Bộ được khai phá mạnh mẽ dưới thời các chúa Nguyễn. Hệ thống kênh rạch chằng chịt nối liền hai con sông này giúp giao thương và nông nghiệp phát triển rực rỡ.",
+    "symbolism": "Hai dòng sông tượng trưng cho sự giàu có, phì nhiêu và hào phóng của thiên nhiên (Cửu Long tranh châu). Nó là mạch máu của miền Nam.",
+    "fun_fact": "Sông Cửu Long đổ ra biển qua 9 cửa (nay đã bị bồi lấp bớt), được ví như 9 con rồng phun nước. Chợ nổi là nét văn hóa đặc trưng trên các dòng sông này.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Sông Tiền và Sông Hậu là hai nhánh của con sông lớn nào?",
+        "options": [
+          "A. Sông Hồng",
+          "B. Sông Đồng Nai",
+          "C. Sông Mê Kông (Cửu Long)",
+          "D. Sông Thu Bồn"
+        ],
+        "correct_answer": "C. Sông Mê Kông (Cửu Long)",
+        "difficulty": 1,
+        "explanation": "Sông Mê Kông khi vào Việt Nam chia làm 2 nhánh Tiền và Hậu."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Đồng bằng sông Cửu Long nổi tiếng là gì của cả nước?",
+        "options": [
+          "A. Vựa than đá",
+          "B. Vựa lúa, trái cây và thủy sản lớn nhất",
+          "C. Trung tâm công nghiệp nặng",
+          "D. Vùng núi cao hiểm trở"
+        ],
+        "correct_answer": "B. Vựa lúa, trái cây và thủy sản lớn nhất",
+        "difficulty": 1,
+        "explanation": "Nơi đây đóng góp phần lớn sản lượng gạo và trái cây xuất khẩu."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_huyen_dinh_09_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/HẬU%20GIANG%20-%20TIỀN%20GIANG.jpg"
+  },
+  {
+    "id": "urn_huyen_dinh_10",
+    "name_vi": "Vũ",
+    "name_en": "Rain",
+    "urn_location": "Huyền Đỉnh",
+    "category": "thien_van",
+    "rarity": "common",
+    "description_short": "Mưa - nguồn nước mát lành nuôi dưỡng sự sống.",
+    "description_educational": "Vũ (Mưa) là hiện tượng ngưng tụ hơi nước rơi xuống mặt đất. Đối với nền nông nghiệp lúa nước, mưa là yếu tố quan trọng bậc nhất ('Nhất nước, nhì phân...'). Mưa thuận gió hòa là ước mơ ngàn đời của người nông dân. Hình ảnh mưa trên Huyền Đỉnh được thể hiện bằng những vạch chấm rơi xuống, tượng trưng cho ân trạch của trời đất ban xuống trần gian, mang lại sự sinh sôi nảy nở.",
+    "historical_context": "Lễ Cầu đảo (cầu mưa) là nghi lễ quan trọng của triều đình khi gặp hạn hán. Vua đích thân lập đàn tế trời cầu mưa để cứu lúa, cứu dân.",
+    "symbolism": "Mưa tượng trưng cho sự gột rửa, tái sinh, sự mát lành và ân huệ (mưa móc).",
+    "fun_fact": "Mưa ngâu (tháng 7 âm lịch) gắn liền với sự tích Ngưu Lang Chức Nữ gặp nhau khóc tạo thành mưa. Mưa xuân lất phất giúp cây cối đâm chồi nảy lộc.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Trong câu tục ngữ về nông nghiệp 'Nhất nước, nhì phân, tam cần, tứ giống', yếu tố nào quan trọng nhất?",
+        "options": [
+          "A. Phân bón",
+          "B. Nước (Mưa/Thủy lợi)",
+          "C. Sức lao động",
+          "D. Giống cây"
+        ],
+        "correct_answer": "B. Nước (Mưa/Thủy lợi)",
+        "difficulty": 1,
+        "explanation": "Không có nước thì cây không thể sống được, nên nước (Vũ/Thủy) đứng đầu."
+      },
+      {
+        "type": "true_false",
+        "question": "Mưa axit là loại mưa tốt cho cây trồng.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Mưa axit do ô nhiễm môi trường gây hại cho cây cối và công trình."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_huyen_dinh_10_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/VŨ.jpg"
+  },
+  {
+    "id": "urn_huyen_dinh_11",
+    "name_vi": "Hoàng Sơn",
+    "name_en": "Hoang Son Mountain",
+    "urn_location": "Huyền Đỉnh",
+    "category": "dia_ly",
+    "rarity": "epic",
+    "description_short": "Đèo Ngang - Hoành Sơn quan, cửa ải thơ mộng và hiểm trở.",
+    "description_educational": "Hoàng Sơn (Núi Hoành Sơn/Đèo Ngang) là dãy núi chạy ngang ra biển, chia cắt Hà Tĩnh và Quảng Bình. Trên đỉnh đèo có Hoành Sơn Quan (Cổng trời), di tích lịch sử nổi tiếng. Đèo Ngang đi vào thơ ca với bài 'Qua Đèo Ngang' của Bà Huyện Thanh Quan ('Bước tới Đèo Ngang bóng xế tà...'). Đây là ranh giới tự nhiên và lịch sử quan trọng (thời Trịnh - Nguyễn phân tranh). Khắc Hoàng Sơn lên đỉnh là ghi nhận vẻ đẹp sơn thủy hữu tình và vị thế địa lý của nó.",
+    "historical_context": "Hoành Sơn Quan được xây dựng dưới thời vua Minh Mạng (1833). Người xưa có câu 'Hoành Sơn nhất đái, vạn đại dung thân' (Một dải Hoành Sơn, có thể dung thân muôn đời) - lời sấm Trạng Trình giúp chúa Nguyễn gây dựng cơ nghiệp đàng Trong.",
+    "symbolism": "Hoành Sơn tượng trưng cho sự chia cắt nhưng cũng là nơi nương tựa, che chở (bức tường thành tự nhiên). Nó gợi lên nỗi buồn hoài cổ.",
+    "fun_fact": "Đèo Ngang ngày nay đã có hầm đường bộ xuyên qua, nhưng nhiều du khách vẫn thích đi đường đèo để ngắm cảnh biển Vũng Chùa - Đảo Yến.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Bài thơ nổi tiếng nào miêu tả cảnh đẹp của Đèo Ngang (Hoành Sơn)?",
+        "options": [
+          "A. Bạn đến chơi nhà",
+          "B. Qua Đèo Ngang",
+          "C. Sông Lấp",
+          "D. Thu điếu"
+        ],
+        "correct_answer": "B. Qua Đèo Ngang",
+        "difficulty": 1,
+        "explanation": "Bài thơ của Bà Huyện Thanh Quan là kiệt tác thơ Nôm đường luật."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Đèo Ngang là ranh giới giữa hai tỉnh nào?",
+        "options": [
+          "A. Nghệ An - Hà Tĩnh",
+          "B. Hà Tĩnh - Quảng Bình",
+          "C. Quảng Bình - Quảng Trị",
+          "D. Quảng Trị - Thừa Thiên Huế"
+        ],
+        "correct_answer": "B. Hà Tĩnh - Quảng Bình",
+        "difficulty": 2,
+        "explanation": "Dãy Hoành Sơn đâm ra biển tạo thành Đèo Ngang ngăn cách hai tỉnh này."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_huyen_dinh_11_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/HOÀNG%20SƠN.jpg"
+  },
+  {
+    "id": "urn_huyen_dinh_12",
+    "name_vi": "Thao Hà",
+    "name_en": "Thao River",
+    "urn_location": "Huyền Đỉnh",
+    "category": "dia_ly",
+    "rarity": "rare",
+    "description_short": "Sông Thao - đoạn sông Hồng đỏ nặng phù sa chảy qua đất Tổ.",
+    "description_educational": "Thao Hà (Sông Thao) là tên gọi đoạn chính lưu của sông Hồng chảy qua địa phận tỉnh Phú Thọ (đất tổ Hùng Vương) và Yên Bái. Sông Thao nước chảy xiết, màu đỏ ngầu phù sa ('Sông Thao nước đục người đen'). Đây là dòng sông gắn liền với truyền thuyết Âu Cơ - Lạc Long Quân và các vua Hùng dựng nước. Hình ảnh Thao Hà trên đỉnh nhắc nhở về cội nguồn dân tộc và vùng đất trung du Bắc Bộ.",
+    "historical_context": "Chiến khu Vần - Hiền Lương bên sông Thao là căn cứ quan trọng trong kháng chiến. Sông Thao cũng đi vào bài hát 'Du kích sông Thao' nổi tiếng.",
+    "symbolism": "Sông Thao tượng trưng cho dòng máu Lạc Hồng, cội nguồn sức mạnh và sự trở về nguồn cội.",
+    "fun_fact": "Gọi là sông Thao nhưng thực chất nó là đoạn thượng nguồn của sông Hồng. Tại Việt Trì, sông Thao hợp lưu với sông Lô và sông Đà tạo thành sông Hồng rộng lớn chảy về xuôi.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Sông Thao chảy qua vùng đất nào được coi là Đất Tổ vua Hùng?",
+        "options": [
+          "A. Hà Nội",
+          "B. Phú Thọ",
+          "C. Thái Bình",
+          "D. Nam Định"
+        ],
+        "correct_answer": "B. Phú Thọ",
+        "difficulty": 1,
+        "explanation": "Đền Hùng (Việt Trì, Phú Thọ) nằm gần ngã ba sông, nơi sông Thao chảy qua."
+      },
+      {
+        "type": "true_false",
+        "question": "Sông Thao nước rất trong xanh.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Sông Thao (Sông Hồng) nổi tiếng với màu nước đỏ đục phù sa."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_huyen_dinh_12_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/THAO%20HÀ.jpg"
+  },
+  {
+    "id": "urn_huyen_dinh_13",
+    "name_vi": "Quế Đỏ",
+    "name_en": "Giant Water Bug",
+    "urn_location": "Huyền Đỉnh",
+    "category": "dong_vat",
+    "rarity": "rare",
+    "description_short": "Cà Cuống - hương vị nồng nàn của ẩm thực Hà thành.",
+    "description_educational": "Quế Đỏ (thường được hiểu là con Cà Cuống - Lethocerus indicus/Sâu Quế). Đây là loài côn trùng sống dưới nước, kích thước lớn. Con đực có túi tinh dầu ở ngực cho mùi thơm hăng cay giống mùi quế (nên gọi là Quế), rất đặc biệt. Tinh dầu cà cuống là gia vị 'quý tộc' không thể thiếu trong các món ăn tinh tế như bún thang, bánh cuốn Hà Nội. Hình ảnh Cà Cuống trên đỉnh tôn vinh nét văn hóa ẩm thực độc đáo và sự đa dạng sinh học.",
+    "historical_context": "Cà cuống từng là cống phẩm tiến vua ('Sơn hào hải vị'). Ngày nay, do môi trường ô nhiễm, cà cuống ngoài tự nhiên rất hiếm và trở thành đặc sản đắt đỏ.",
+    "symbolism": "Cà Cuống tượng trưng cho hương vị truyền thống, sự tinh túy (nhỏ mà có võ - túi hương) và ký ức về môi trường trong sạch.",
+    "fun_fact": "Chỉ có con cà cuống đực mới có bọng tinh dầu thơm để quyến rũ con cái. Một giọt tinh dầu cà cuống đủ làm dậy mùi cả bát nước chấm.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Tinh dầu Cà Cuống có mùi thơm giống loại gia vị nào?",
+        "options": [
+          "A. Mùi Hạt Tiêu",
+          "B. Mùi Quế",
+          "C. Mùi Gừng",
+          "D. Mùi Sả"
+        ],
+        "correct_answer": "B. Mùi Quế",
+        "difficulty": 1,
+        "explanation": "Chính vì mùi thơm giống quế nên nó còn được gọi là 'Sâu quế' hay 'Quế đỏ'."
+      },
+      {
+        "type": "true_false",
+        "question": "Con Cà Cuống cái mới có tinh dầu thơm.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 2,
+        "explanation": "Sai. Chỉ con đực mới có túi tinh dầu."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_huyen_dinh_13_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/QUẾ%20ĐỎ.jpg"
+  },
+  {
+    "id": "urn_huyen_dinh_14",
+    "name_vi": "Xa",
+    "name_en": "Carriage",
+    "urn_location": "Huyền Đỉnh",
+    "category": "vo_bi",
+    "rarity": "common",
+    "description_short": "Cỗ Xe - phương tiện di chuyển và vận tải quan trọng.",
+    "description_educational": "Xa (Xe/Cỗ xe) là phương tiện giao thông có bánh, dùng sức người hoặc súc vật (ngựa, trâu, bò) kéo. Trên Cửu Đỉnh, hình ảnh chiếc xe (có thể là xe tứ mã, xe bò hoặc xe đẩy) đại diện cho sự phát triển của giao thông vận tải và hậu cần (quân lương). 'Xa thư đồng văn' (xe cùng trục, sách cùng văn) là biểu tượng của sự thống nhất đất nước về mặt hành chính và văn hóa. Cỗ xe cũng thể hiện sự uy nghi của các chuyến tuần du của vua chúa.",
+    "historical_context": "Hệ thống đường Thiên lý (Quốc lộ 1 xưa) được nhà Nguyễn tu bổ để xe ngựa đi lại thông suốt Bắc Nam, phục vụ trạm dịch và vận chuyển hàng hóa.",
+    "symbolism": "Xa tượng trưng cho sự chuyển động, sự kết nối, thống nhất và quyền lực (cỗ xe vương giả).",
+    "fun_fact": "Thời xưa, quy định về màu sắc, kiểu dáng xe cho vua, quan lại và dân thường rất nghiêm ngặt để phân biệt đẳng cấp.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Thành ngữ 'Xa thư đồng văn' có ý nghĩa gì?",
+        "options": [
+          "A. Xe và sách giống nhau",
+          "B. Đất nước thống nhất (xe cùng cỡ trục, sách cùng chữ viết)",
+          "C. Đi xe đọc sách",
+          "D. Mua xe tặng sách"
+        ],
+        "correct_answer": "B. Đất nước thống nhất (xe cùng cỡ trục, sách cùng chữ viết)",
+        "difficulty": 2,
+        "explanation": "Đây là tư tưởng thống nhất giang sơn về mọi mặt của các triều đại phong kiến."
+      },
+      {
+        "type": "true_false",
+        "question": "Xa (Xe) thời xưa chủ yếu chạy bằng động cơ hơi nước.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Xe thời xưa dùng sức kéo của động vật (ngựa, trâu) hoặc sức người."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_huyen_dinh_14_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/XA.jpg"
+  },
+  {
+    "id": "urn_huyen_dinh_15",
+    "name_vi": "Mãng Xà",
+    "name_en": "Giant Snake",
+    "urn_location": "Huyền Đỉnh",
+    "category": "dong_vat",
+    "rarity": "epic",
+    "description_short": "Mãng Xà - loài rắn khổng lồ, linh vật huyền bí.",
+    "description_educational": "Mãng Xà (Rắn lớn/Trăn khổng lồ) là loài bò sát đáng sợ trong tự nhiên và truyền thuyết. Mãng xà thường được miêu tả với kích thước khổng lồ, có thể nuốt chửng thú lớn. Trong văn hóa dân gian (như Thạch Sanh chém Chằn tinh - Mãng xà), nó đại diện cho thế lực hắc ám, thiên tai cần bị chinh phục. Tuy nhiên, hình ảnh Mãng Xà trên đỉnh cũng thể hiện sự kính sợ của con người trước sức mạnh bí ẩn của rừng thiêng nước độc.",
+    "historical_context": "Vùng rừng núi Việt Nam xưa kia rất hoang vu, nhiều rắn rết. 'Rừng thiêng nước độc, thú bầy' là nỗi ám ảnh của người đi mở cõi.",
+    "symbolism": "Mãng Xà tượng trưng cho hiểm họa thiên nhiên, sự thử thách lòng dũng cảm và sức mạnh hoang dã. Trong y học, nọc rắn và thịt rắn lại là thuốc quý.",
+    "fun_fact": "Khác với Rồng (Long) là linh vật tưởng tượng, Mãng Xà thường dựa trên hình mẫu có thật là các loài trăn lớn (Trăn gấm, Trăn đất).",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Trong truyện cổ tích Thạch Sanh, nhân vật chính đã chiến đấu với con quái vật nào?",
+        "options": [
+          "A. Hồ Ly Tinh",
+          "B. Chằn Tinh (Mãng Xà)",
+          "C. Bạch Cốt Tinh",
+          "D. Nhện Tinh"
+        ],
+        "correct_answer": "B. Chằn Tinh (Mãng Xà)",
+        "difficulty": 1,
+        "explanation": "Thạch Sanh chém đầu chằn tinh (mãng xà) để cứu người."
+      },
+      {
+        "type": "true_false",
+        "question": "Mãng Xà là loài vật nhỏ bé, hiền lành.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Mãng xà là loài rắn lớn, hung dữ và nguy hiểm."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_huyen_dinh_15_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/MÃNG%20XÀ.jpg"
+  },
+  {
+    "id": "urn_huyen_dinh_16",
+    "name_vi": "Hỏa Phún Đồng",
+    "name_en": "Flamethrower",
+    "urn_location": "Huyền Đỉnh",
+    "category": "vo_bi",
+    "rarity": "rare",
+    "description_short": "Ống Phun Lửa - vũ khí hỏa công lợi hại.",
+    "description_educational": "Hỏa Phún Đồng (Ống đồng phun lửa) là một loại vũ khí hỏa công của quân đội nhà Nguyễn. Thiết bị này gồm một ống bằng đồng chứa thuốc súng và chất cháy, khi kích hoạt sẽ phun ra luồng lửa mạnh về phía địch, gây cháy và hoảng loạn. Đây là tiền thân của súng phun lửa hiện đại. Việc chế tạo được Hỏa Phún Đồng chứng tỏ trình độ kỹ thuật quân sự (nhất là về thuốc súng) của cha ông ta rất đáng nể.",
+    "historical_context": "Hồ Nguyên Trừng (thời Hồ) đã sáng chế ra Súng thần cơ. Đến thời Nguyễn, công nghệ hỏa khí tiếp tục được kế thừa và phát triển, kết hợp với kỹ thuật phương Tây.",
+    "symbolism": "Hỏa Phún Đồng tượng trưng cho sức mạnh hủy diệt của lửa, trí tuệ khoa học quân sự và khả năng áp chế kẻ thù.",
+    "fun_fact": "Loại vũ khí này rất hiệu quả trong các trận thủy chiến (đốt thuyền địch) hoặc công thành (đốt chòi canh).",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Hỏa Phún Đồng là loại vũ khí tấn công bằng gì?",
+        "options": [
+          "A. Bắn tên",
+          "B. Phun nước",
+          "C. Phun lửa",
+          "D. Ném đá"
+        ],
+        "correct_answer": "C. Phun lửa",
+        "difficulty": 1,
+        "explanation": "Hỏa là lửa, Phún là phun. Vũ khí dùng lửa để đốt cháy mục tiêu."
+      },
+      {
+        "type": "true_false",
+        "question": "Quân đội nhà Nguyễn chỉ sử dụng gươm giáo, không có hỏa khí.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Quân đội Nguyễn trang bị rất nhiều súng thần công, súng điểu thương và hỏa hổ (ống phun lửa)."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_huyen_dinh_16_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/HỎA%20PHÚN%20ĐỒNG.jpg"
+  },
+  {
+    "id": "urn_huyen_dinh_17",
+    "name_vi": "Sơn Mã",
+    "name_en": "Muntjac",
+    "urn_location": "Huyền Đỉnh",
+    "category": "dong_vat",
+    "rarity": "common",
+    "description_short": "Con Mang/Hoẵng - loài thú nhút nhát của rừng xanh.",
+    "description_educational": "Sơn Mã (Con Mang/Hoẵng - Muntiacus) là loài thú móng guốc nhỏ thuộc họ Hươu, sống phổ biến trong các khu rừng Việt Nam. Sơn Mã có bộ lông vàng sẫm, dáng đi nhanh nhẹn nhưng tính tình rất nhút nhát ('ngơ ngác như con nai vàng'). Tiếng kêu của chúng vang vọng trong rừng như tiếng chó sủa (nên tiếng Anh gọi là Barking Deer). Thịt mang là món ăn ngon, da dùng thuộc. Hình ảnh con mang trên đỉnh làm phong phú thêm bức tranh động vật rừng.",
+    "historical_context": "Săn bắt thú rừng (đi săn) là thú vui của vua chúa và quan lại xưa. Rừng cấm (Thượng uyển) thường thả nuôi nhiều hươu nai, mang.",
+    "symbolism": "Sơn Mã tượng trưng cho sự hiền lành, cảnh giác và tốc độ lẩn trốn. Trong thơ ca, nó gợi lên vẻ đẹp hoang sơ, tĩnh lặng của rừng chiều.",
+    "fun_fact": "Con Mang đực có cặp sừng ngắn và răng nanh dài chìa ra ngoài mép, dùng để tự vệ hoặc tranh giành lãnh thổ.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Sơn Mã (Con Mang) có đặc điểm tiếng kêu như thế nào?",
+        "options": [
+          "A. Hót líu lo",
+          "B. Gầm gừ như hổ",
+          "C. Kêu tác tác như chó sủa",
+          "D. Rống to như bò"
+        ],
+        "correct_answer": "C. Kêu tác tác như chó sủa",
+        "difficulty": 2,
+        "explanation": "Tiếng kêu đặc trưng khiến nó có tên tiếng Anh là Barking Deer (Hươu sủa)."
+      },
+      {
+        "type": "true_false",
+        "question": "Sơn Mã là loài động vật ăn thịt hung dữ.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Sơn Mã là động vật ăn cỏ, lá cây, rất nhút nhát."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_huyen_dinh_17_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/SƠN%20MÃ.jpg"
+  },
+  {
+    "id": "urn_huyen_dinh_18",
+    "name_vi": "Tất Mộc",
+    "name_en": "Lacquer Tree",
+    "urn_location": "Huyền Đỉnh",
+    "category": "thao_moc",
+    "rarity": "rare",
+    "description_short": "Cây Sơn - nhựa quý làm nên nghệ thuật sơn mài lộng lẫy.",
+    "description_educational": "Tất Mộc (Cây Sơn ta - Toxicodendron succedaneum) là loài cây công nghiệp đặc biệt, trồng để lấy nhựa (sơn). Nhựa sơn khi mới chích có màu trắng đục, sau chuyển màu nâu đen, dùng để chế biến thành sơn then, sơn cánh gián... phục vụ nghề sơn mài và sơn son thếp vàng đồ thờ cúng, hoành phi câu đối. Nghề sơn là một nghề độc hại (sơn ăn tùy mặt) nhưng tạo ra những tác phẩm nghệ thuật bền đẹp với thời gian. Khắc Tất Mộc lên đỉnh là tôn vinh nghề thủ công tinh xảo của dân tộc.",
+    "historical_context": "Sơn mài Việt Nam nổi tiếng thế giới. Các vật dụng trong cung đình Huế đều được sơn son thếp vàng lộng lẫy nhờ nhựa của loài cây này.",
+    "symbolism": "Cây Sơn tượng trưng cho sự bền bỉ, vẻ đẹp sang trọng (sơn son) và sự hy sinh (nhựa cây). Nó cũng nhắc nhở về sự cẩn trọng (sơn ăn da).",
+    "fun_fact": "Người ta thường phải kiêng kỵ khi đi lấy sơn hoặc tiếp xúc với sơn sống để tránh bị dị ứng nặng. Nhựa sơn ta rất bền, chịu được nước mặn và mối mọt.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Nhựa của cây Tất Mộc (Cây Sơn) được dùng để làm gì?",
+        "options": [
+          "A. Làm kẹo cao su",
+          "B. Làm sơn mài, sơn đồ gỗ",
+          "C. Làm thuốc trừ sâu",
+          "D. Làm gia vị"
+        ],
+        "correct_answer": "B. Làm sơn mài, sơn đồ gỗ",
+        "difficulty": 1,
+        "explanation": "Sơn ta là nguyên liệu chính của nghệ thuật sơn mài truyền thống."
+      },
+      {
+        "type": "true_false",
+        "question": "Tiếp xúc với nhựa sơn sống rất an toàn, không gây hại gì.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Nhựa sơn có thể gây dị ứng da nghiêm trọng (sơn ăn) đối với người cơ địa nhạy cảm."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_huyen_dinh_18_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/TẤT%20MỘC.jpg"
+  }
+]

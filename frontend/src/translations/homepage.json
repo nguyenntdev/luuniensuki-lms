@@ -1,0 +1,53 @@
+{
+  "home_page": {
+    "hero_section": {
+      "greeting_template": "Chào mừng trở lại, {display_name}!",
+      "subtext": "Hôm nay bạn muốn khám phá họa tiết nào?"
+    },
+    "quick_stats_section": {
+      "title": "Tổng quan",
+      "stats": {
+        "total_xp": {
+          "label": "Tổng XP",
+          "unit": "XP"
+        },
+        "motifs_discovered": {
+          "label": "Họa tiết đã khám phá",
+          "unit": "họa tiết"
+        },
+        "current_streak": {
+          "label": "Chuỗi ngày học",
+          "unit": "ngày"
+        },
+        "next_rank_progress": {
+          "label": "Tiến độ thăng hạng",
+          "tooltip": "XP cần thiết để đạt cấp độ tiếp theo"
+        }
+      }
+    },
+    "continue_learning_section": {
+      "title": "Tiếp tục hành trình",
+      "subtitle": "Các họa tiết bạn đang tìm hiểu",
+      "item_status_label": "Đang học",
+      "buttons": {
+        "continue_lesson": "Tiếp tục học",
+        "take_quiz": "Làm trắc nghiệm"
+      }
+    },
+    "recommended_motifs_section": {
+      "title": "Gợi ý cho bạn",
+      "subtitle": "Họa tiết chưa khám phá từ các bình bạn đã xem",
+      "buttons": {
+        "explore_now": "Khám phá ngay"
+      }
+    },
+    "achievement_highlights_section": {
+      "title": "Thành tích nổi bật",
+      "subtitle": "3 huy hiệu gần nhất của bạn",
+      "buttons": {
+        "view_all_achievements": "Xem tất cả thành tích"
+      }
+    }
+  }
+}
+

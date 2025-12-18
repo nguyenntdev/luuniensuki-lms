@@ -1,0 +1,59 @@
+{
+  "gallery": {
+    "card": {
+      "hover": {
+        "view": "Xem chi tiết",
+        "start": "Bắt đầu học",
+        "continue": "Tiếp tục học",
+        "review": "Ôn tập"
+      },
+      "tooltips": {
+        "locked": "Họa tiết này đang bị khóa. Hãy khám phá thêm để mở khóa!",
+        "progress": "Nhấn để tiếp tục lộ trình học của bạn."
+      }
+    },
+    "emptyStates": {
+      "profile": {
+        "title": "Hồ sơ chưa có dữ liệu",
+        "message": "Bạn chưa tham gia hoạt động nào. Hãy bắt đầu hành trình khám phá ngay hôm nay!"
+      },
+      "collection": {
+        "title": "Bộ sưu tập trống",
+        "message": "Bạn chưa sưu tập được họa tiết nào. Hãy khám phá không gian ảo để tìm kiếm các báu vật!",
+        "action": "Khám phá ngay"
+      }
+    },
+    "loading": {
+      "default": "Đang tải...",
+      "gallery": "Đang tải bộ sưu tập...",
+      "updating": "Đang cập nhật trạng thái..."
+    },
+    "status": {
+      "hidden": "Chưa khám phá",
+      "discovered": "Đã tìm thấy",
+      "learned": "Đã học",
+      "mastered": "Thành thạo"
+    },
+    "filters": {
+      "label": "Bộ lọc",
+      "searchPlaceholder": "Tìm kiếm họa tiết...",
+      "clear": "Xóa bộ lọc",
+      "groups": {
+        "status": "Trạng thái",
+        "category": "Loại họa tiết",
+        "location": "Địa điểm"
+      }
+    },
+    "sort": {
+      "label": "Sắp xếp theo",
+      "options": {
+        "newest": "Mới nhất",
+        "oldest": "Cũ nhất",
+        "nameAsc": "Tên (A-Z)",
+        "nameDesc": "Tên (Z-A)",
+        "progress": "Tiến độ học tập"
+      }
+    }
+  }
+}
+

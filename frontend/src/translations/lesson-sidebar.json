@@ -1,0 +1,68 @@
+{
+  "lessonSidebar": {
+    "tabs": {
+      "overview": {
+        "label": "Tổng Quan",
+        "tooltip": "Xem thông tin chung về họa tiết"
+      },
+      "lesson": {
+        "label": "Bài Học",
+        "tooltip": "Khám phá kiến thức chi tiết"
+      },
+      "quiz": {
+        "label": "Trắc Nghiệm",
+        "tooltip": "Kiểm tra kiến thức của bạn"
+      }
+    },
+    "content": {
+      "overview": {
+        "categoryLabel": "Danh mục",
+        "rarityLabel": "Độ hiếm",
+        "descriptionLabel": "Mô tả",
+        "imageAlt": "Hình ảnh chi tiết của họa tiết"
+      },
+      "lesson": {
+        "sections": {
+          "intro": "Giới thiệu",
+          "description": "Mô tả chi tiết",
+          "symbolism": "Ý nghĩa biểu tượng",
+          "historicalContext": "Bối cảnh lịch sử",
+          "funFact": "Có thể bạn chưa biết"
+        },
+        "navigation": {
+          "nextSection": "Phần tiếp theo",
+          "prevSection": "Phần trước",
+          "completeLesson": "Hoàn thành bài học"
+        }
+      },
+      "quiz": {
+        "questionLabel": "Câu hỏi",
+        "startBtn": "Bắt đầu làm bài",
+        "submitBtn": "Nộp bài",
+        "retryBtn": "Làm lại",
+        "scoreLabel": "Điểm số của bạn"
+      }
+    },
+    "states": {
+      "loading": "Đang tải dữ liệu...",
+      "empty": {
+        "overview": "Chưa có thông tin tổng quan cho họa tiết này.",
+        "lesson": "Nội dung bài học đang được cập nhật.",
+        "quiz": "Chưa có câu hỏi trắc nghiệm."
+      },
+      "disabled": {
+        "quizLocked": "Hãy hoàn thành bài học để mở khóa phần trắc nghiệm.",
+        "lessonLocked": "Bạn cần mở khóa họa tiết này trước khi xem bài học."
+      }
+    },
+    "accessibility": {
+      "tabActive": "Đang chọn",
+      "tabLocked": "Đã khóa",
+      "statusIcon": {
+        "locked": "Biểu tượng khóa",
+        "completed": "Đã hoàn thành"
+      }
+    }
+  }
+}
+
