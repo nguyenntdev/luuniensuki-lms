@@ -1,0 +1,102 @@
+[
+  {
+    "question_text": "Thuần Đỉnh được đúc để tôn vinh vị vua nào của triều Nguyễn?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Vua Thái Tổ (Nguyễn Hoàng)",
+    "options": ["Vua Gia Long", "Vua Thái Tổ (Nguyễn Hoàng)", "Vua Minh Mạng", "Vua Thiệu Trị"],
+    "explanation": "Thuần Đỉnh dâng tặng Thái Tổ Khoan Hoàng Đế (Nguyễn Hoàng), người khai sáng lãnh thổ Đàng Trong và là tổ tiên đầu tiên của các chúa Nguyễn."
+  },
+  {
+    "question_text": "Họa tiết 'Lân' trên Thuần Đỉnh tượng trưng cho điều gì?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Sự thịnh vượng và điềm lành",
+    "options": ["Quyền lực quân sự", "Sự thịnh vượng và điềm lành", "Sự trường thọ", "Trí tuệ"],
+    "explanation": "Lân (kỳ lân) là một trong tứ linh, tượng trưng cho sự thịnh vượng, hòa bình và điềm lành cho quốc gia."
+  },
+  {
+    "question_text": "Loài hoa nào được khắc trên Thuần Đỉnh, tượng trưng cho sự giàu sang?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Hoa mẫu đơn",
+    "options": ["Hoa sen", "Hoa mẫu đơn", "Hoa cúc", "Hoa mai"],
+    "explanation": "Hoa mẫu đơn là biểu tượng của sự giàu sang, phú quý và thịnh vượng trong văn hóa phương Đông."
+  },
+  {
+    "question_text": "Họa tiết 'Chuông' trên Thuần Đỉnh có ý nghĩa gì?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Biểu tượng của quyền lực và lễ nghi triều đình",
+    "options": ["Nhạc cụ giải trí", "Biểu tượng của quyền lực và lễ nghi triều đình", "Công cụ báo giờ", "Vật phẩm tôn giáo"],
+    "explanation": "Chuông là biểu tượng của quyền lực, lễ nghi triều đình và được sử dụng trong các nghi thức quan trọng."
+  },
+  {
+    "question_text": "Địa danh 'Phú Xuân' trên Thuần Đỉnh ngày nay là thành phố nào?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Huế",
+    "options": ["Đà Nẵng", "Huế", "Hội An", "Quảng Trị"],
+    "explanation": "Phú Xuân là tên cũ của thành phố Huế, kinh đô của triều Nguyễn."
+  },
+  {
+    "question_text": "Loại cây nào được khắc trên Thuần Đỉnh, tượng trưng cho sự thanh cao?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Cây cúc",
+    "options": ["Cây tre", "Cây cúc", "Cây mai", "Cây đào"],
+    "explanation": "Cây cúc tượng trưng cho sự thanh cao, kiên cường và là một trong 'tứ quý' (tùng, cúc, trúc, mai)."
+  },
+  {
+    "question_text": "Họa tiết 'Trống' trên Thuần Đỉnh thể hiện điều gì?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Sức mạnh quân sự và tinh thần chiến đấu",
+    "options": ["Nhạc cụ dân gian", "Sức mạnh quân sự và tinh thần chiến đấu", "Lễ hội truyền thống", "Nghệ thuật âm nhạc"],
+    "explanation": "Trống là biểu tượng của sức mạnh quân sự, tinh thần chiến đấu và được sử dụng để chỉ huy quân đội."
+  },
+  {
+    "question_text": "Loài chim nào được khắc trên Thuần Đỉnh, tượng trưng cho sự cao quý?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Công",
+    "options": ["Công", "Hạc", "Trĩ", "Ưng"],
+    "explanation": "Chim công là biểu tượng của sự cao quý, vẻ đẹp và thường xuất hiện trong các tác phẩm nghệ thuật cung đình."
+  },
+  {
+    "question_text": "Họa tiết 'Mai' trên Thuần Đỉnh mang ý nghĩa gì?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Sự kiên cường và tinh thần bất khuất",
+    "options": ["Sự giàu có", "Sự kiên cường và tinh thần bất khuất", "Mùa màng bội thu", "Sức khỏe dồi dào"],
+    "explanation": "Hoa mai tượng trưng cho sự kiên cường, tinh thần bất khuất trước nghịch cảnh và là một trong 'tứ quý'."
+  },
+  {
+    "question_text": "Địa danh 'Quảng Bình' trên Thuần Đỉnh có ý nghĩa lịch sử gì?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Vùng đất biên giới quan trọng giữa Đàng Trong và Đàng Ngoài",
+    "options": ["Nơi sinh của vua Gia Long", "Vùng đất biên giới quan trọng giữa Đàng Trong và Đàng Ngoài", "Nơi đúc Cửu Đỉnh", "Thủ đô đầu tiên"],
+    "explanation": "Quảng Bình là vùng đất biên giới quan trọng, nơi diễn ra nhiều trận chiến giữa Đàng Trong và Đàng Ngoài."
+  },
+  {
+    "question_text": "Thuần Đỉnh được đúc vào năm 1835-1837.",
+    "question_type": "true_false",
+    "correct_answer": "Đúng",
+    "explanation": "Thuần Đỉnh cùng với 8 đỉnh khác được đúc trong giai đoạn 1835-1837 dưới triều vua Minh Mạng."
+  },
+  {
+    "question_text": "Họa tiết trên Thuần Đỉnh chỉ có giá trị thẩm mỹ, không có ý nghĩa lịch sử.",
+    "question_type": "true_false",
+    "correct_answer": "Sai",
+    "explanation": "Các họa tiết trên Thuần Đỉnh đều mang ý nghĩa lịch sử sâu sắc, thể hiện lãnh thổ, thành tựu và quyền lực của triều Nguyễn."
+  },
+  {
+    "question_text": "Thuần Đỉnh là đỉnh lớn thứ hai sau Cao Đỉnh.",
+    "question_type": "true_false",
+    "correct_answer": "Sai",
+    "explanation": "Cao Đỉnh là đỉnh lớn nhất, các đỉnh còn lại có kích thước tương đương nhau."
+  },
+  {
+    "question_text": "Thuần Đỉnh được đặt ở phía Đông trong bố cục Cửu Đỉnh.",
+    "question_type": "true_false",
+    "correct_answer": "Đúng",
+    "explanation": "Thuần Đỉnh được đặt ở phía Đông, tượng trưng cho hướng Đông và vị trí quan trọng trong bố cục không gian."
+  },
+  {
+    "question_text": "Tất cả các họa tiết trên Thuần Đỉnh đều được khắc nổi bằng kỹ thuật đúc đồng.",
+    "question_type": "true_false",
+    "correct_answer": "Đúng",
+    "explanation": "Các họa tiết trên Cửu Đỉnh đều được tạo ra bằng kỹ thuật đúc đồng tinh xảo."
+  }
+]

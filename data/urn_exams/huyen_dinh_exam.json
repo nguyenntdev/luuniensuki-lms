@@ -1,0 +1,102 @@
+[
+  {
+    "question_text": "Huyền Đỉnh được đúc để tôn vinh vị vua nào của triều Nguyễn?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Vua Thế Tông (Nguyễn Phúc Trăn)",
+    "options": ["Vua Gia Long", "Vua Thế Tông (Nguyễn Phúc Trăn)", "Vua Minh Mạng", "Vua Thiệu Trị"],
+    "explanation": "Huyền Đỉnh dâng tặng Thế Tông Hiếu Nghĩa Hoàng Đế (Nguyễn Phúc Trăn), người có công trong việc củng cố Đàng Trong."
+  },
+  {
+    "question_text": "Họa tiết 'Rùa' trên Huyền Đỉnh tượng trưng cho điều gì?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Sự trường thọ và trí tuệ",
+    "options": ["Sức mạnh", "Sự trường thọ và trí tuệ", "Quyền lực", "Sự giàu có"],
+    "explanation": "Rùa (Quy) là một trong tứ linh, tượng trưng cho sự trường thọ, bền vững và trí tuệ."
+  },
+  {
+    "question_text": "Loài hoa nào được khắc trên Huyền Đỉnh, tượng trưng cho sự thanh cao?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Hoa sen",
+    "options": ["Hoa đào", "Hoa sen", "Hoa cúc", "Hoa mai"],
+    "explanation": "Hoa sen là biểu tượng của sự thanh cao, trong sạch 'xuất ô nhiễm nhi bất nhiễm'."
+  },
+  {
+    "question_text": "Họa tiết 'Trống Đồng' trên Huyền Đỉnh có ý nghĩa gì?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Di sản văn hóa cổ đại và bản sắc dân tộc",
+    "options": ["Nhạc cụ giải trí", "Di sản văn hóa cổ đại và bản sắc dân tộc", "Công cụ báo giờ", "Vật phẩm tôn giáo"],
+    "explanation": "Trống đồng là di sản văn hóa cổ đại của Việt Nam, biểu tượng của bản sắc dân tộc."
+  },
+  {
+    "question_text": "Địa danh 'Khánh Hòa' trên Huyền Đỉnh có ý nghĩa lịch sử gì?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Vùng đất quan trọng với sản vật quý như trầm hương",
+    "options": ["Nơi sinh của vua Gia Long", "Vùng đất quan trọng với sản vật quý như trầm hương", "Nơi đúc Cửu Đỉnh", "Thủ đô đầu tiên"],
+    "explanation": "Khánh Hòa là vùng đất nổi tiếng với sản vật quý như trầm hương, được gọi là 'xứ trầm hương'."
+  },
+  {
+    "question_text": "Loại cây nào được khắc trên Huyền Đỉnh, tượng trưng cho sự kiên cường?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Cây thông",
+    "options": ["Cây tre", "Cây thông", "Cây mai", "Cây đào"],
+    "explanation": "Cây thông (tùng) tượng trưng cho sự kiên cường, bất khuất và là một trong 'tứ quý'."
+  },
+  {
+    "question_text": "Họa tiết 'Cá' trên Huyền Đỉnh thể hiện điều gì?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Sự phong phú của nguồn lợi thủy sản",
+    "options": ["Nghệ thuật đánh cá", "Sự phong phú của nguồn lợi thủy sản", "Du lịch", "Giao thương"],
+    "explanation": "Cá là biểu tượng của sự phong phú về nguồn lợi thủy sản và đời sống ven biển."
+  },
+  {
+    "question_text": "Loài chim nào được khắc trên Huyền Đỉnh, tượng trưng cho sự thanh nhã?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Trĩ",
+    "options": ["Công", "Hạc", "Trĩ", "Ưng"],
+    "explanation": "Chim trĩ với bộ lông đuôi dài lộng lẫy tượng trưng cho sự thanh nhã và vẻ đẹp văn hóa."
+  },
+  {
+    "question_text": "Họa tiết 'Cây Dừa' trên Huyền Đỉnh mang ý nghĩa gì?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Cây đặc trưng của vùng ven biển miền Nam",
+    "options": ["Sự giàu có", "Cây đặc trưng của vùng ven biển miền Nam", "Mùa màng bội thu", "Sức khỏe dồi dào"],
+    "explanation": "Cây dừa là cây đặc trưng của vùng ven biển miền Nam Việt Nam và gắn liền với đời sống người dân."
+  },
+  {
+    "question_text": "Địa danh 'Ninh Thuận' trên Huyền Đỉnh có ý nghĩa lịch sử gì?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Vùng đất của người Chăm với văn hóa đặc sắc",
+    "options": ["Nơi sinh của vua Gia Long", "Vùng đất của người Chăm với văn hóa đặc sắc", "Nơi đúc Cửu Đỉnh", "Thủ đô đầu tiên"],
+    "explanation": "Ninh Thuận là vùng đất của người Chăm với văn hóa đặc sắc, được triều Nguyễn thống nhất."
+  },
+  {
+    "question_text": "Huyền Đỉnh được đúc vào năm 1835-1837.",
+    "question_type": "true_false",
+    "correct_answer": "Đúng",
+    "explanation": "Huyền Đỉnh cùng với 8 đỉnh khác được đúc trong giai đoạn 1835-1837 dưới triều vua Minh Mạng."
+  },
+  {
+    "question_text": "Họa tiết trên Huyền Đỉnh chỉ mô tả cảnh vật thiên nhiên.",
+    "question_type": "true_false",
+    "correct_answer": "Sai",
+    "explanation": "Các họa tiết trên Huyền Đỉnh đều mang ý nghĩa lịch sử, văn hóa và địa lý sâu sắc."
+  },
+  {
+    "question_text": "Huyền Đỉnh là đỉnh nhỏ nhất trong Cửu Đỉnh.",
+    "question_type": "true_false",
+    "correct_answer": "Sai",
+    "explanation": "Cao Đỉnh là đỉnh lớn nhất, các đỉnh còn lại có kích thước tương đương nhau."
+  },
+  {
+    "question_text": "Huyền Đỉnh được đặt ở phía Bắc trong bố cục Cửu Đỉnh.",
+    "question_type": "true_false",
+    "correct_answer": "Đúng",
+    "explanation": "Huyền Đỉnh được đặt ở phía Bắc, tượng trưng cho hướng Bắc và vị trí quan trọng trong bố cục."
+  },
+  {
+    "question_text": "Tất cả các họa tiết trên Huyền Đỉnh đều được khắc nổi bằng kỹ thuật đúc đồng.",
+    "question_type": "true_false",
+    "correct_answer": "Đúng",
+    "explanation": "Các họa tiết trên Cửu Đỉnh đều được tạo ra bằng kỹ thuật đúc đồng tinh xảo."
+  }
+]
