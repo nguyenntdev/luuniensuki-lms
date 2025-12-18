@@ -32,6 +32,7 @@ services:
     command: ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers"]
     volumes:
       - .:/app
+      - uploads:/app/uploads
     restart: unless-stopped
 
   web:
@@ -54,6 +55,7 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - /var/www/certbot:/var/www/certbot:ro
       - ./ban-duc-noi:/var/www/assets/ban-duc-noi:ro
+      - uploads:/var/www/assets/avatars:ro
     depends_on:
       - api
       - web
@@ -61,3 +63,4 @@ services:
 
 volumes:
   postgres_data:
+  uploads:
