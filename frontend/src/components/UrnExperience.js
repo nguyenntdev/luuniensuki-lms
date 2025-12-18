@@ -44,6 +44,17 @@ export default function UrnExperience({ urnSlug }) {
     return count;
   });
 
+  const progressByMotifId = useMotifStore((s) => s.progressByMotifId);
+
+  const allMotifsMastered = useMemo(() => {
+    const motifs = Object.keys(motifsById || {});
+    if (motifs.length === 0) return false;
+    return motifs.every((motifId) => {
+      const progress = progressByMotifId?.[motifId];
+      return progress?.status === "mastered";
+    });
+  }, [motifsById, progressByMotifId]);
+
   const urnMotifProgress = useMemo(() => {
     const total = Object.keys(motifsById || {}).length;
     const discovered = Math.min(discoveredCount, total);
@@ -71,6 +82,14 @@ export default function UrnExperience({ urnSlug }) {
             <Link href="/profile" className="rounded-md bg-white/10 px-3 py-2 text-sm hover:bg-white/15">
               Bảng Điều Khiển
             </Link>
+            {urnSlug && allMotifsMastered ? (
+              <Link
+                href={`/urns/${urnSlug}/exam`}
+                className="rounded-md bg-primary/90 px-3 py-2 text-sm font-medium hover:bg-primary"
+              >
+                🎓 Bài kiểm tra
+              </Link>
+            ) : null}
           </div>
 
           <div className="flex flex-wrap items-center justify-end gap-3 text-sm">

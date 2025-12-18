@@ -3,7 +3,7 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import { getMe, login, register } from "@/lib/api";
+import { normalizeUser, getMe, login, register } from "@/lib/api";
 
 export const useAuthStore = create(
   persist(
@@ -61,7 +61,16 @@ export const useAuthStore = create(
 
         try {
           const res = await getMe({ token });
-          set({ user: res.user, stats: res.stats });
+          set((state) => {
+            const prevUser = state.user;
+            const nextUser = res?.user ? normalizeUser(res.user, { fallbackUsername: prevUser?.username }) : res?.user;
+            const shouldMerge = prevUser?.id && nextUser?.id && prevUser.id === nextUser.id;
+
+            return {
+              user: shouldMerge ? { ...prevUser, ...nextUser } : nextUser,
+              stats: res.stats,
+            };
+          });
           return res;
         } catch (err) {
           set({ error: err instanceof Error ? err.message : String(err) });
@@ -71,13 +80,19 @@ export const useAuthStore = create(
     }),
     {
       name: "luuniensuki-auth",
-      version: 1,
+      version: 2,
       storage: createJSONStorage(() => localStorage),
+      migrate: (persistedState, version) => {
+        if (version >= 2) return persistedState;
+        const user = persistedState?.user;
+        if (!user) return persistedState;
+        return { ...persistedState, user: normalizeUser(user) };
+      },
       partialize: (state) => ({
         accessToken: state.accessToken,
         refreshToken: state.refreshToken,
+        user: state.user,
       }),
     }
   )
 );
-
