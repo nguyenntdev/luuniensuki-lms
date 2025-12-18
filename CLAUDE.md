@@ -347,7 +347,7 @@ All errors return structured JSON:
 When working on this project, use specialized AI tools for different tasks:
 
 - **Codex CLI (`codex`)**: Use for main tasks requiring code generation, designing, and refactoring
-- **Gemini CLI (`gemini`)**: Use with model `gemini-2.5-pro-preview-05-06` (must be this exact model) for:
+- **Gemini CLI (`gemini`)**: Use with model `gemini-3-pro-preview` (must be this exact model) for:
   - Finding documentation
   - Writing informational content
   - Generating long text
@@ -360,5 +360,5 @@ Example usage:
 codex "Refactor component X to use hooks"
 
 # Gemini for content/docs
-gemini -m gemini-2.5-pro-preview-05-06 "Write Vietnamese translations for navigation items"
+gemini -m gemini-3.0-pro-preview "Write Vietnamese translations for navigation items"
 ```
