@@ -26,3 +26,49 @@ def test_auth_register_duplicate_email(client):
     assert client.post("/api/v1/auth/register", json=payload).status_code == 201
     assert client.post("/api/v1/auth/register", json=payload).status_code == 409
 
+
+def test_change_password(client):
+    email = "bob@example.com"
+    old_password = "password123"
+    new_password = "newpassword123"
+
+    register = client.post(
+        "/api/v1/auth/register",
+        json={"email": email, "password": old_password, "display_name": "Bob"},
+    )
+    assert register.status_code == 201, register.text
+    access_token = register.json()["access_token"]
+
+    change = client.post(
+        "/api/v1/users/me/change-password",
+        headers={"Authorization": f"Bearer {access_token}"},
+        json={"current_password": old_password, "new_password": new_password},
+    )
+    assert change.status_code == 200, change.text
+    assert change.json() == {"message": "Password changed successfully"}
+
+    old_login = client.post("/api/v1/auth/login", json={"email": email, "password": old_password})
+    assert old_login.status_code == 401, old_login.text
+
+    new_login = client.post("/api/v1/auth/login", json={"email": email, "password": new_password})
+    assert new_login.status_code == 200, new_login.text
+
+
+def test_change_password_invalid_current_password(client):
+    email = "wrongpass@example.com"
+    password = "password123"
+
+    register = client.post(
+        "/api/v1/auth/register",
+        json={"email": email, "password": password, "display_name": "WrongPass"},
+    )
+    assert register.status_code == 201, register.text
+    access_token = register.json()["access_token"]
+
+    change = client.post(
+        "/api/v1/users/me/change-password",
+        headers={"Authorization": f"Bearer {access_token}"},
+        json={"current_password": "incorrect", "new_password": "newpassword123"},
+    )
+    assert change.status_code == 400, change.text
+    assert change.json()["detail"] == "Current password is incorrect"

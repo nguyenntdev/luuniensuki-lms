@@ -81,6 +81,7 @@ class User(Base):
     __tablename__ = "users"
     __table_args__ = (
         Index("idx_users_email", "email"),
+        Index("idx_users_username", "username"),
         Index("idx_users_role", "role"),
     )
 
@@ -89,6 +90,9 @@ class User(Base):
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     display_name: Mapped[str] = mapped_column(String(100), nullable=False)
     avatar_url: Mapped[Optional[str]] = mapped_column(Text)
+    bio: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    username: Mapped[Optional[str]] = mapped_column(String(50), unique=True, nullable=True)
+    is_profile_public: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("true"))
     role: Mapped[UserRole] = mapped_column(
         SAEnum(UserRole, name="user_role", native_enum=True),
         nullable=False,
@@ -119,6 +123,10 @@ class User(Base):
         back_populates="user",
         cascade="all, delete-orphan",
     )
+    urn_exam_attempts: Mapped[list[UrnExamAttempt]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
 
 
 class Urn(Base):
@@ -137,6 +145,14 @@ class Urn(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
 
     motifs: Mapped[list[Motif]] = relationship(
+        back_populates="urn",
+        cascade="all, delete-orphan",
+    )
+    exam_questions: Mapped[list[QuizQuestion]] = relationship(
+        back_populates="urn",
+        foreign_keys="QuizQuestion.urn_id",
+    )
+    urn_exams: Mapped[list[UrnExam]] = relationship(
         back_populates="urn",
         cascade="all, delete-orphan",
     )
@@ -312,6 +328,11 @@ class QuizQuestion(Base):
         ForeignKey("motifs.id", ondelete="CASCADE"),
         nullable=False,
     )
+    urn_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("urns.id", ondelete="CASCADE"),
+        nullable=True,
+    )
 
     question_type: Mapped[QuestionType] = mapped_column(
         SAEnum(QuestionType, name="question_type", native_enum=True),
@@ -329,6 +350,7 @@ class QuizQuestion(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
 
     motif: Mapped[Motif] = relationship(back_populates="quiz_questions")
+    urn: Mapped[Optional[Urn]] = relationship(back_populates="exam_questions", foreign_keys=[urn_id])
 
 
 class QuizAttempt(Base):
@@ -361,6 +383,59 @@ class QuizAttempt(Base):
 
     user: Mapped[User] = relationship(back_populates="quiz_attempts")
     motif: Mapped[Motif] = relationship(back_populates="quiz_attempts")
+
+
+class UrnExam(Base):
+    __tablename__ = "urn_exams"
+    __table_args__ = (Index("idx_urn_exams_urn", "urn_id"),)
+
+    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    urn_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("urns.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+
+    questions: Mapped[Any] = mapped_column(JSONB, nullable=False)
+    passing_score: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("80"))
+    xp_reward: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("100"))
+
+    urn: Mapped[Urn] = relationship(back_populates="urn_exams")
+    attempts: Mapped[list[UrnExamAttempt]] = relationship(
+        back_populates="urn_exam",
+        cascade="all, delete-orphan",
+    )
+
+
+class UrnExamAttempt(Base):
+    __tablename__ = "urn_exam_attempts"
+    __table_args__ = (
+        Index("idx_urn_exam_attempts_user", "user_id"),
+        Index("idx_urn_exam_attempts_exam", "urn_exam_id"),
+        Index("idx_urn_exam_attempts_passed", "passed"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    urn_exam_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("urn_exams.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+
+    score: Mapped[int] = mapped_column(Integer, nullable=False)
+    passed: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    time_taken: Mapped[Optional[int]] = mapped_column(Integer)
+    answers: Mapped[Any] = mapped_column(JSONB, nullable=False)
+
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+
+    user: Mapped[User] = relationship(back_populates="urn_exam_attempts")
+    urn_exam: Mapped[UrnExam] = relationship(back_populates="attempts")
 
 
 class Badge(Base):

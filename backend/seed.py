@@ -33,6 +33,7 @@ if __package__ in (None, ""):
     from backend.models import QuestionType
     from backend.models import QuizQuestion
     from backend.models import Urn
+    from backend.models import UrnExam
 else:
     from .models import Badge
     from .models import BadgeCategory
@@ -44,6 +45,7 @@ else:
     from .models import QuestionType
     from .models import QuizQuestion
     from .models import Urn
+    from .models import UrnExam
 
 
 URN_ORDER: dict[str, int] = {
@@ -581,6 +583,152 @@ def upsert_quiz_question(
     return existing
 
 
+def upsert_urn_exam(
+    session: Session,
+    *,
+    urn: Urn,
+    questions: list[dict[str, Any]],
+    passing_score: int | None = None,
+    xp_reward: int | None = None,
+) -> UrnExam:
+    existing = session.execute(select(UrnExam).where(UrnExam.urn_id == urn.id)).scalars().first()
+
+    if existing is None:
+        exam = UrnExam(
+            urn_id=urn.id,
+            questions=questions,
+        )
+        if passing_score is not None:
+            exam.passing_score = passing_score
+        if xp_reward is not None:
+            exam.xp_reward = xp_reward
+        session.add(exam)
+        session.flush()
+        return exam
+
+    existing.questions = questions
+    if passing_score is not None:
+        existing.passing_score = passing_score
+    if xp_reward is not None:
+        existing.xp_reward = xp_reward
+    session.flush()
+    return existing
+
+
+def seed_urn_exams(session: Session, *, exams_path: Path) -> None:
+    if not exams_path.exists():
+        print(f"Warning: Urn exam seed path {exams_path} does not exist.")
+        return
+
+    exam_files = sorted(exams_path.glob("*.json"))
+    if not exam_files:
+        print(f"Warning: No urn exam JSON files found in {exams_path}.")
+        return
+
+    for file_path in exam_files:
+        stem = file_path.stem
+        for suffix in ("_exam", "-exam"):
+            if stem.endswith(suffix):
+                stem = stem[: -len(suffix)]
+                break
+        urn_slug = slugify(stem)
+
+        urn = session.execute(select(Urn).where(Urn.slug == urn_slug)).scalar_one_or_none()
+        if urn is None:
+            print(f"Warning: No urn found for urn exam file {file_path} (expected slug={urn_slug!r}).")
+            continue
+
+        try:
+            payload = json.loads(file_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as exc:
+            print(f"Warning: Failed to parse urn exam JSON {file_path}: {exc}")
+            continue
+
+        passing_score: int | None = None
+        xp_reward: int | None = None
+        questions_raw: Any = payload
+
+        if isinstance(payload, dict):
+            questions_raw = payload.get("questions")
+            if "passing_score" in payload:
+                try:
+                    passing_score = int(payload["passing_score"])
+                except (TypeError, ValueError):
+                    print(f"Warning: Invalid passing_score in {file_path}: {payload.get('passing_score')!r}")
+            if "xp_reward" in payload:
+                try:
+                    xp_reward = int(payload["xp_reward"])
+                except (TypeError, ValueError):
+                    print(f"Warning: Invalid xp_reward in {file_path}: {payload.get('xp_reward')!r}")
+
+        if not isinstance(questions_raw, list):
+            print(f"Warning: Expected JSON array (or object with 'questions' array) in {file_path}")
+            continue
+
+        questions: list[dict[str, Any]] = []
+        for idx, raw in enumerate(questions_raw, start=1):
+            if not isinstance(raw, dict):
+                print(f"Warning: Skipping non-object question #{idx} in {file_path}")
+                continue
+
+            question_text = raw.get("question_text") or raw.get("question")
+            correct_answer = raw.get("correct_answer")
+            if not question_text or correct_answer is None:
+                print(f"Warning: Skipping invalid question #{idx} in {file_path} (missing text/answer)")
+                continue
+
+            q_type_raw = raw.get("question_type") or raw.get("type")
+            q_type, q_type_ok = coerce_enum(QuestionType, q_type_raw, QuestionType.multiple_choice)
+            if q_type_raw is not None and str(q_type_raw).strip() and not q_type_ok:
+                print(
+                    f"Warning: Unknown question type {q_type_raw!r} in {file_path} question #{idx}; "
+                    f"defaulting to {q_type.value!r}"
+                )
+
+            options = raw.get("options")
+            if options is not None and not isinstance(options, list):
+                print(f"Warning: Skipping invalid options in {file_path} question #{idx}")
+                continue
+            if isinstance(options, list):
+                options = [str(opt) for opt in options]
+
+            explanation_raw = raw.get("explanation")
+            explanation = explanation_raw.strip() if isinstance(explanation_raw, str) else None
+            if explanation == "":
+                explanation = None
+
+            normalized: dict[str, Any] = {
+                "question_text": str(question_text),
+                "question_type": q_type.value,
+                "correct_answer": str(correct_answer),
+            }
+            if options is not None:
+                normalized["options"] = options
+            if explanation is not None:
+                normalized["explanation"] = explanation
+
+            difficulty_raw = raw.get("difficulty")
+            if difficulty_raw is not None:
+                difficulty, difficulty_ok = coerce_difficulty(difficulty_raw, default=1)
+                normalized["difficulty"] = difficulty
+                if str(difficulty_raw).strip() and not difficulty_ok:
+                    print(f"Warning: Invalid difficulty {difficulty_raw!r} in {file_path} question #{idx}; using {difficulty}")
+
+            questions.append(normalized)
+
+        if not questions:
+            print(f"Warning: No valid questions found in {file_path}; skipping urn exam seed.")
+            continue
+
+        upsert_urn_exam(
+            session,
+            urn=urn,
+            questions=questions,
+            passing_score=passing_score,
+            xp_reward=xp_reward,
+        )
+
+
 def run_seed(config: SeedConfig, image_path: Path | None = None) -> None:
     engine = create_engine(config.database_url, pool_pre_ping=True)
     Base.metadata.create_all(engine)
@@ -768,6 +916,9 @@ def run_seed(config: SeedConfig, image_path: Path | None = None) -> None:
                     difficulty=difficulty,
                     explanation=explanation,
                 )
+
+        seed_root = config.seed_path if config.seed_path.is_dir() else config.seed_path.parent
+        seed_urn_exams(session, exams_path=seed_root / "urn_exams")
 
         session.commit()
 

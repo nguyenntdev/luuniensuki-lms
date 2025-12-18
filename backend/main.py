@@ -2,14 +2,20 @@ from __future__ import annotations
 
 import logging
 import math
+import re
+import unicodedata
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 from typing import Any, Optional
+import uuid as uuid_module
 from uuid import UUID
 
 from fastapi import Depends
+from fastapi import File
 from fastapi import FastAPI
 from fastapi import HTTPException
 from fastapi import Query
+from fastapi import UploadFile
 from fastapi import status
 from fastapi.exceptions import RequestValidationError
 from fastapi.security import OAuth2PasswordBearer
@@ -42,6 +48,8 @@ from .models import QuizAttempt
 from .models import QuizQuestion
 from .models import UnlockStatus
 from .models import Urn
+from .models import UrnExam
+from .models import UrnExamAttempt
 from .models import User
 from .models import UserRole
 from .models import UserBadge
@@ -55,6 +63,15 @@ DISCOVERY_XP = 25
 LESSON_XP = 50
 MASTERED_XP = 75
 QUIZ_PASS_PERCENT = 80
+URN_EXAM_PASS_PERCENT = 80
+URN_EXAM_PASS_XP = 300
+URN_EXAM_QUESTION_COUNT = 15
+
+USERNAME_REGEX = re.compile(r"^[a-zA-Z0-9_]{3,20}$")
+
+AVATAR_UPLOAD_DIR = Path('/app/uploads/avatars')
+ALLOWED_IMAGE_TYPES = {'image/jpeg', 'image/png', 'image/webp'}
+MAX_AVATAR_SIZE = 5 * 1024 * 1024
 
 BADGE_FIRST_DISCOVERY = "first-discovery"
 BADGE_FIRST_MASTERED = "first-mastered"
@@ -223,6 +240,7 @@ class UserOut(BaseModel):
     email: str
     display_name: str
     avatar_url: Optional[str] = None
+    username: Optional[str] = None
     role: str
     total_xp: int
 
@@ -236,6 +254,11 @@ class AuthRegisterRequest(BaseModel):
 class AuthLoginRequest(BaseModel):
     email: EmailStr
     password: str = Field(min_length=1, max_length=72)
+
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str = Field(..., min_length=8)
 
 
 class AuthResponse(BaseModel):
@@ -301,6 +324,7 @@ def register(payload: AuthRegisterRequest, db: Session = Depends(get_db)) -> Aut
             email=user.email,
             display_name=user.display_name,
             avatar_url=user.avatar_url,
+            username=user.username,
             role=user.role.value,
             total_xp=user.total_xp,
         ),
@@ -340,6 +364,7 @@ def login(payload: AuthLoginRequest, db: Session = Depends(get_db)) -> AuthRespo
             email=user.email,
             display_name=user.display_name,
             avatar_url=user.avatar_url,
+            username=user.username,
             role=user.role.value,
             total_xp=user.total_xp,
         ),
@@ -375,6 +400,7 @@ def me(current_user: User = Depends(get_current_user)) -> AuthMeResponse:
             email=current_user.email,
             display_name=current_user.display_name,
             avatar_url=current_user.avatar_url,
+            username=current_user.username,
             role=current_user.role.value,
             total_xp=current_user.total_xp,
         ),
@@ -385,6 +411,229 @@ def me(current_user: User = Depends(get_current_user)) -> AuthMeResponse:
             next_rank=(RankOut(**next_rank) if next_rank else None),
         ),
     )
+
+
+class UpdateProfileRequest(BaseModel):
+    display_name: Optional[str] = Field(None, min_length=2, max_length=100)
+    username: Optional[str] = None
+    bio: Optional[str] = Field(None, max_length=500)
+    is_profile_public: Optional[bool] = None
+
+
+class UpdateProfileResponse(BaseModel):
+    user: UserOut
+    message: str
+
+
+def _is_valid_display_name(display_name: str) -> bool:
+    normalized = unicodedata.normalize("NFC", display_name)
+    for character in normalized:
+        if character == " ":
+            continue
+        if "0" <= character <= "9":
+            continue
+        if unicodedata.category(character).startswith("L") and "LATIN" in unicodedata.name(character, ""):
+            continue
+        return False
+    return True
+
+
+@app.patch("/api/v1/users/me", response_model=UpdateProfileResponse)
+def update_profile(
+    request: UpdateProfileRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> UpdateProfileResponse:
+    if request.display_name is not None:
+        normalized_display_name = unicodedata.normalize("NFC", request.display_name)
+        if not _is_valid_display_name(normalized_display_name):
+            raise AppError(
+                code="INVALID_DISPLAY_NAME",
+                message="Display name must contain only letters, numbers, and spaces",
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
+        current_user.display_name = normalized_display_name
+
+    if request.username is not None:
+        if not USERNAME_REGEX.fullmatch(request.username):
+            raise AppError(
+                code="INVALID_USERNAME",
+                message="Username must be 3-20 characters and contain only letters, numbers, and underscores",
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
+
+        existing_user_id = db.execute(
+            select(User.id).where(User.username == request.username, User.id != current_user.id)
+        ).scalar_one_or_none()
+        if existing_user_id is not None:
+            raise AppError(
+                code="USERNAME_TAKEN",
+                message="Username already taken",
+                status_code=status.HTTP_409_CONFLICT,
+            )
+        current_user.username = request.username
+
+    if request.bio is not None:
+        current_user.bio = request.bio
+
+    if request.is_profile_public is not None:
+        current_user.is_profile_public = request.is_profile_public
+
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        if request.username is not None:
+            raise AppError(
+                code="USERNAME_TAKEN",
+                message="Username already taken",
+                status_code=status.HTTP_409_CONFLICT,
+            )
+        raise
+    db.refresh(current_user)
+
+    return UpdateProfileResponse(
+        user=UserOut(
+            id=current_user.id,
+            email=current_user.email,
+            display_name=current_user.display_name,
+            avatar_url=current_user.avatar_url,
+            username=current_user.username,
+            role=current_user.role.value,
+            total_xp=current_user.total_xp,
+        ),
+        message="Profile updated successfully",
+    )
+
+
+class PublicBadgeOut(BaseModel):
+    name: str
+    icon: str
+    description: Optional[str] = None
+
+
+class UserPublicStatsOut(BaseModel):
+    discovered_count: int
+    learned_count: int
+    mastered_count: int
+    quizzes_passed: int
+
+
+class UserPublicProfile(BaseModel):
+    id: UUID
+    username: str
+    display_name: str
+    avatar_url: Optional[str] = None
+    bio: Optional[str] = None
+    total_xp: int
+    rank: RankOut
+    badges: list[PublicBadgeOut]
+    certificates: list[Any] = Field(default_factory=list)
+    stats: UserPublicStatsOut
+
+
+@app.get("/api/v1/users/{user_id}/public", response_model=UserPublicProfile)
+def get_user_public_profile(user_id: UUID, db: Session = Depends(get_db)) -> UserPublicProfile:
+    user = db.get(User, user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if not user.is_profile_public:
+        raise HTTPException(status_code=403, detail="Profile is private")
+
+    current_rank, _, _ = _compute_rank(user.total_xp)
+
+    earned_badges = db.execute(
+        select(UserBadge)
+        .options(selectinload(UserBadge.badge))
+        .where(UserBadge.user_id == user.id)
+        .order_by(UserBadge.earned_at.desc())
+    ).scalars().all()
+
+    discovered_count = db.execute(
+        select(func.count(UserProgress.id))
+        .select_from(UserProgress)
+        .join(Motif, UserProgress.motif_id == Motif.id)
+        .where(
+            UserProgress.user_id == user.id,
+            Motif.is_active.is_(True),
+            UserProgress.status == UnlockStatus.discovered,
+        )
+    ).scalar_one()
+    learned_count = db.execute(
+        select(func.count(UserProgress.id))
+        .select_from(UserProgress)
+        .join(Motif, UserProgress.motif_id == Motif.id)
+        .where(
+            UserProgress.user_id == user.id,
+            Motif.is_active.is_(True),
+            UserProgress.status == UnlockStatus.learned,
+        )
+    ).scalar_one()
+    mastered_count = db.execute(
+        select(func.count(UserProgress.id))
+        .select_from(UserProgress)
+        .join(Motif, UserProgress.motif_id == Motif.id)
+        .where(
+            UserProgress.user_id == user.id,
+            Motif.is_active.is_(True),
+            UserProgress.status == UnlockStatus.mastered,
+        )
+    ).scalar_one()
+    quizzes_passed = db.execute(
+        select(func.count(QuizAttempt.id))
+        .select_from(QuizAttempt)
+        .join(Motif, QuizAttempt.motif_id == Motif.id)
+        .where(
+            QuizAttempt.user_id == user.id,
+            Motif.is_active.is_(True),
+            QuizAttempt.percentage >= QUIZ_PASS_PERCENT,
+        )
+    ).scalar_one()
+
+    username = user.username or (user.email or "").split("@", 1)[0] or str(user.id)
+
+    return UserPublicProfile(
+        id=user.id,
+        username=username,
+        display_name=user.display_name,
+        avatar_url=user.avatar_url,
+        bio=user.bio,
+        total_xp=user.total_xp,
+        rank=RankOut(**current_rank),
+        badges=[
+            PublicBadgeOut(
+                name=user_badge.badge.name,
+                icon=user_badge.badge.icon_url,
+                description=user_badge.badge.description,
+            )
+            for user_badge in earned_badges
+            if user_badge.badge is not None
+        ],
+        certificates=[],
+        stats=UserPublicStatsOut(
+            discovered_count=int(discovered_count or 0),
+            learned_count=int(learned_count or 0),
+            mastered_count=int(mastered_count or 0),
+            quizzes_passed=int(quizzes_passed or 0),
+        ),
+    )
+
+
+@app.get("/api/v1/u/{username_or_id}", response_model=UserPublicProfile)
+def get_user_public_profile_by_username_or_id(
+    username_or_id: str,
+    db: Session = Depends(get_db),
+) -> UserPublicProfile:
+    try:
+        user_id = UUID(username_or_id)
+    except ValueError:
+        user = db.execute(select(User.id).where(User.username == username_or_id)).scalar_one_or_none()
+        if user is None:
+            raise HTTPException(status_code=404, detail="User not found")
+        user_id = user
+
+    return get_user_public_profile(user_id=user_id, db=db)
 
 
 class UrnOut(BaseModel):
@@ -926,6 +1175,51 @@ def unlock_progress(
     )
 
 
+@app.post('/api/v1/users/me/avatar')
+async def upload_avatar(
+    file: UploadFile = File(...),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    try:
+        if file.content_type not in ALLOWED_IMAGE_TYPES:
+            raise AppError(
+                code="INVALID_IMAGE_TYPE",
+                message="Unsupported image type",
+                status_code=status.HTTP_400_BAD_REQUEST,
+                details={"content_type": file.content_type},
+            )
+
+        contents = await file.read(MAX_AVATAR_SIZE + 1)
+        if len(contents) > MAX_AVATAR_SIZE:
+            raise AppError(
+                code="AVATAR_TOO_LARGE",
+                message="Avatar file too large",
+                status_code=status.HTTP_400_BAD_REQUEST,
+                details={"max_bytes": MAX_AVATAR_SIZE},
+            )
+
+        extension_by_type = {
+            "image/jpeg": "jpg",
+            "image/png": "png",
+            "image/webp": "webp",
+        }
+        extension = extension_by_type[file.content_type]
+        filename = f"{current_user.id}_{uuid_module.uuid4()}.{extension}"
+
+        AVATAR_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+        destination = AVATAR_UPLOAD_DIR / filename
+        with destination.open("wb") as handle:
+            handle.write(contents)
+
+        current_user.avatar_url = f"/assets/avatars/{filename}"
+        db.commit()
+
+        return {"avatar_url": current_user.avatar_url}
+    finally:
+        await file.close()
+
+
 class CollectionItemOut(BaseModel):
     motif_id: UUID
     mesh_name: str
@@ -955,6 +1249,20 @@ class CollectionStatsOut(BaseModel):
 class UserCollectionResponse(BaseModel):
     items: list[CollectionItemOut]
     stats: CollectionStatsOut
+
+
+@app.post("/api/v1/users/me/change-password")
+def change_password(
+    request: ChangePasswordRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    if not verify_password(request.current_password, current_user.password_hash):
+        raise HTTPException(400, "Current password is incorrect")
+
+    current_user.password_hash = hash_password(request.new_password)
+    db.commit()
+    return {"message": "Password changed successfully"}
 
 
 @app.get("/api/v1/users/me/collection", response_model=UserCollectionResponse)
@@ -1445,6 +1753,252 @@ def submit_quiz(
         total_xp=current_user.total_xp,
         results=results,
     )
+
+
+def _select_urn_exam_questions(db: Session, *, urn: Urn) -> list[QuizQuestion]:
+    urn_questions = db.execute(
+        select(QuizQuestion)
+        .where(QuizQuestion.urn_id == urn.id, QuizQuestion.is_active.is_(True))
+        .order_by(QuizQuestion.created_at.asc(), QuizQuestion.id.asc())
+    ).scalars().all()
+    if len(urn_questions) >= URN_EXAM_QUESTION_COUNT:
+        return urn_questions[:URN_EXAM_QUESTION_COUNT]
+
+    motif_questions = db.execute(
+        select(QuizQuestion)
+        .join(Motif, QuizQuestion.motif_id == Motif.id)
+        .where(
+            Motif.urn_id == urn.id,
+            QuizQuestion.is_active.is_(True),
+            QuizQuestion.urn_id.is_(None),
+        )
+        .order_by(QuizQuestion.created_at.asc(), QuizQuestion.id.asc())
+    ).scalars().all()
+
+    return (urn_questions + motif_questions)[:URN_EXAM_QUESTION_COUNT]
+
+
+class UrnExamResponse(BaseModel):
+    urn_id: UUID
+    questions: list[QuizQuestionOut]
+    attempts: int
+    best_score: int
+    pass_percent: int
+
+
+@app.get("/api/v1/urns/{urn_slug}/exam", response_model=UrnExamResponse)
+def get_urn_exam(
+    urn_slug: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> UrnExamResponse:
+    urn = db.execute(select(Urn).where(Urn.slug == urn_slug)).scalar_one_or_none()
+    if urn is None:
+        raise HTTPException(status_code=404, detail="Urn not found")
+
+    questions = _select_urn_exam_questions(db, urn=urn)
+    if not questions:
+        raise HTTPException(status_code=404, detail="No exam questions found")
+
+    attempts, best_score = db.execute(
+        select(
+            func.count(UrnExamAttempt.id).label("attempts"),
+            func.coalesce(func.max(UrnExamAttempt.score), 0).label("best_score"),
+        )
+        .join(UrnExam, UrnExamAttempt.urn_exam_id == UrnExam.id)
+        .where(UrnExamAttempt.user_id == current_user.id, UrnExam.urn_id == urn.id)
+    ).one()
+
+    return UrnExamResponse(
+        urn_id=urn.id,
+        questions=[
+            QuizQuestionOut(
+                id=q.id,
+                question_type=q.question_type.value,
+                question_text=q.question_text,
+                options=[str(opt) for opt in q.options] if isinstance(q.options, list) else None,
+                target_mesh_name=q.target_mesh_name,
+                difficulty=max(1, int(q.difficulty or 1)),
+            )
+            for q in questions
+        ],
+        attempts=int(attempts or 0),
+        best_score=int(best_score or 0),
+        pass_percent=URN_EXAM_PASS_PERCENT,
+    )
+
+
+class UrnExamSubmitRequest(BaseModel):
+    answers: list[QuizAnswerIn]
+
+
+class UrnExamResultDetail(BaseModel):
+    question_id: UUID
+    correct: bool
+    correct_answer: str
+    user_answer: Optional[str] = None
+    explanation: Optional[str] = None
+
+
+class UrnExamSubmitResponse(BaseModel):
+    urn_id: UUID
+    score: int
+    max_score: int
+    percentage: int
+    passed: bool
+    xp_awarded: int
+    total_xp: int
+    results: list[UrnExamResultDetail]
+
+
+@app.post("/api/v1/urns/{urn_slug}/exam/submit", response_model=UrnExamSubmitResponse)
+def submit_urn_exam(
+    urn_slug: str,
+    payload: UrnExamSubmitRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> UrnExamSubmitResponse:
+    urn = db.execute(select(Urn).where(Urn.slug == urn_slug)).scalar_one_or_none()
+    if urn is None:
+        raise HTTPException(status_code=404, detail="Urn not found")
+
+    questions = _select_urn_exam_questions(db, urn=urn)
+    if not questions:
+        raise HTTPException(status_code=404, detail="No exam questions found")
+
+    answer_map: dict[UUID, str] = {}
+    for ans in payload.answers:
+        if ans.question_id in answer_map:
+            raise HTTPException(status_code=400, detail="Duplicate answer for a question")
+        answer_map[ans.question_id] = ans.answer
+
+    question_ids = {q.id for q in questions}
+    if set(answer_map.keys()) != question_ids:
+        raise HTTPException(status_code=400, detail="Answers must include all exam questions for this urn")
+
+    score = 0
+    max_score = len(questions)
+    results: list[UrnExamResultDetail] = []
+
+    for q in questions:
+        submitted = (answer_map.get(q.id) or "").strip()
+        expected = (q.correct_answer or "").strip()
+        is_correct = submitted == expected
+        if is_correct:
+            score += 1
+
+        results.append(
+            UrnExamResultDetail(
+                question_id=q.id,
+                correct=is_correct,
+                correct_answer=expected,
+                user_answer=submitted,
+                explanation=(q.explanation or "").strip() or None,
+            )
+        )
+
+    percentage = int(round((score / max_score) * 100)) if max_score > 0 else 0
+    passed = percentage >= URN_EXAM_PASS_PERCENT
+
+    total_xp_before = current_user.total_xp
+    now = datetime.now(timezone.utc)
+
+    if passed:
+        # Get urn_exam record
+        urn_exam = db.execute(select(UrnExam).where(UrnExam.urn_id == urn.id)).scalar_one_or_none()
+        if not urn_exam:
+            raise HTTPException(status_code=404, detail="Urn exam not found")
+
+        passed_before = db.execute(
+            select(func.count(UrnExamAttempt.id))
+            .join(UrnExam, UrnExamAttempt.urn_exam_id == UrnExam.id)
+            .where(
+                UrnExamAttempt.user_id == current_user.id,
+                UrnExam.urn_id == urn.id,
+                UrnExamAttempt.passed.is_(True),
+            )
+        ).scalar_one()
+        if int(passed_before or 0) == 0:
+            current_user.total_xp += URN_EXAM_PASS_XP
+
+    badge_bonus = 0
+    _update_streak(current_user, now)
+    if current_user.current_streak >= 7:
+        badge_bonus += _award_badge(db, user=current_user, badge_slug=BADGE_STREAK_7)
+    current_user.last_active_at = now
+
+    # Get urn_exam record for attempt
+    urn_exam = db.execute(select(UrnExam).where(UrnExam.urn_id == urn.id)).scalar_one_or_none()
+    if not urn_exam:
+        raise HTTPException(status_code=404, detail="Urn exam not found")
+
+    db.add(
+        UrnExamAttempt(
+            user_id=current_user.id,
+            urn_exam_id=urn_exam.id,
+            score=percentage,
+            passed=passed,
+            time_taken=payload.time_taken if hasattr(payload, 'time_taken') else None,
+            answers=[{"question_id": str(k), "answer": v} for k, v in answer_map.items()],
+        )
+    )
+
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Failed to submit exam")
+
+    return UrnExamSubmitResponse(
+        urn_id=urn.id,
+        score=score,
+        max_score=max_score,
+        percentage=percentage,
+        passed=passed,
+        xp_awarded=(current_user.total_xp - total_xp_before),
+        total_xp=current_user.total_xp,
+        results=results,
+    )
+
+
+class UrnExamAttemptOut(BaseModel):
+    id: UUID
+    urn_id: UUID
+    urn_slug: str
+    urn_name: str
+    score: int
+    max_score: int
+    percentage: int
+    passed: bool
+    completed_at: datetime
+
+
+@app.get("/api/v1/users/me/exam-attempts", response_model=list[UrnExamAttemptOut])
+def get_my_exam_attempts(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> list[UrnExamAttemptOut]:
+    rows = db.execute(
+        select(UrnExamAttempt, Urn)
+        .join(Urn, Urn.id == UrnExamAttempt.urn_id)
+        .where(UrnExamAttempt.user_id == current_user.id)
+        .order_by(UrnExamAttempt.completed_at.desc())
+    ).all()
+
+    return [
+        UrnExamAttemptOut(
+            id=attempt.id,
+            urn_id=urn.id,
+            urn_slug=urn.slug,
+            urn_name=urn.name,
+            score=attempt.score,
+            max_score=attempt.max_score,
+            percentage=attempt.percentage,
+            passed=attempt.passed,
+            completed_at=attempt.completed_at,
+        )
+        for attempt, urn in rows
+    ]
 
 
 # ============================================================
