@@ -30,6 +30,10 @@ This folder turns the high-level specs into **actionable, ticket-sized tasks**.
 11. Admin panel & admin APIs: `docs/plan/11_Admin_Panel.md`
 12. API docs + dev setup: `docs/plan/12_API_Docs_and_Dev_Setup.md`
 13. Detailed execution plan: `docs/plan/13_Execution_Plan_Detailed.md`
+14. Phase 1 checklist (core loop + certificates): `docs/plan/20_Phase1_Checklist.md`
+15. Phase 2 checklist (curriculum + quests): `docs/plan/21_Phase2_Checklist.md`
+16. Phase 3 checklist (admin/teacher + classes): `docs/plan/22_Phase3_Checklist.md`
+17. Phase 4 checklist (AI recommendations): `docs/plan/23_Phase4_Checklist.md`
 
 ## Definitions
 
