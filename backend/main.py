@@ -4,60 +4,59 @@ import logging
 import math
 import re
 import unicodedata
+import uuid as uuid_module
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Optional
-import uuid as uuid_module
 from uuid import UUID
 
-from fastapi import Depends
-from fastapi import File
-from fastapi import FastAPI
-from fastapi import HTTPException
-from fastapi import Query
-from fastapi import UploadFile
-from fastapi import status
+from fastapi import (
+    Depends,
+    FastAPI,
+    File,
+    HTTPException,
+    Query,
+    Request,
+    Response,
+    UploadFile,
+    status,
+)
 from fastapi.exceptions import RequestValidationError
 from fastapi.security import OAuth2PasswordBearer
-from starlette.exceptions import HTTPException as StarletteHTTPException
 from jose import JWTError, jwt
-from pydantic import BaseModel
-from pydantic import ConfigDict
-from pydantic import EmailStr
-from pydantic import Field
-from pydantic import model_validator
-from pydantic_settings import BaseSettings
-from pydantic_settings import SettingsConfigDict
-from sqlalchemy import create_engine
-from sqlalchemy import func
-from sqlalchemy import or_
-from sqlalchemy import select
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from sqlalchemy import create_engine, func, or_, select
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import Session
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import Session, selectinload, sessionmaker
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from .errors import AppError, app_exception_handler, http_exception_handler, validation_exception_handler
-from .models import Badge
-from .models import BadgeCategory
-from .models import LessonContent
-from .models import Motif
-from .models import MotifCategory
-from .models import QuestionType
-from .models import QuizAttempt
-from .models import QuizQuestion
-from .models import UnlockStatus
-from .models import Urn
-from .models import UrnExam
-from .models import UrnExamAttempt
-from .models import User
-from .models import UserRole
-from .models import UserBadge
-from .models import UserProgress
-from .security import create_jwt_token
-from .security import hash_password
-from .security import verify_password
-
+from .errors import (
+    AppError,
+    app_exception_handler,
+    http_exception_handler,
+    validation_exception_handler,
+)
+from .models import (
+    AnalyticsEvent,
+    Badge,
+    BadgeCategory,
+    LessonContent,
+    Motif,
+    MotifCategory,
+    QuestionType,
+    QuizAttempt,
+    QuizQuestion,
+    UnlockStatus,
+    Urn,
+    UrnExam,
+    UrnExamAttempt,
+    User,
+    UserBadge,
+    UserProgress,
+    UserRole,
+)
+from .security import create_jwt_token, hash_password, verify_password
 
 DISCOVERY_XP = 25
 LESSON_XP = 50
@@ -69,20 +68,20 @@ URN_EXAM_QUESTION_COUNT = 15
 
 USERNAME_REGEX = re.compile(r"^[a-zA-Z0-9_]{3,20}$")
 
-AVATAR_UPLOAD_DIR = Path('/app/uploads/avatars')
-ALLOWED_IMAGE_TYPES = {'image/jpeg', 'image/png', 'image/webp'}
+AVATAR_UPLOAD_DIR = Path("/app/uploads/avatars")
+ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp"}
 MAX_AVATAR_SIZE = 5 * 1024 * 1024
 
 BADGE_FIRST_DISCOVERY = "first-discovery"
 BADGE_FIRST_MASTERED = "first-mastered"
 BADGE_STREAK_7 = "streak-7"
-BADGE_COLLECTOR_10 = 'collector-10'
-BADGE_COLLECTOR_50 = 'collector-50'
-BADGE_EXPLORER_ALL_URNS = 'explorer-all-urns'
-BADGE_QUIZ_MASTER = 'quiz-master'
-BADGE_SPEED_DEMON = 'speed-demon'
-BADGE_PERFECT_SCORE = 'perfect-score'
-BADGE_EARLY_BIRD = 'early-bird'
+BADGE_COLLECTOR_10 = "collector-10"
+BADGE_COLLECTOR_50 = "collector-50"
+BADGE_EXPLORER_ALL_URNS = "explorer-all-urns"
+BADGE_QUIZ_MASTER = "quiz-master"
+BADGE_SPEED_DEMON = "speed-demon"
+BADGE_PERFECT_SCORE = "perfect-score"
+BADGE_EARLY_BIRD = "early-bird"
 
 XP_RANKS = [
     {"level": 1, "name": "Lính Mới", "xp": 0},
@@ -106,6 +105,12 @@ class Settings(BaseSettings):
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 60
     refresh_token_expire_days: int = 30
+    access_cookie_name: str = "luuniensuki_access"
+    refresh_cookie_name: str = "luuniensuki_refresh"
+    cookie_domain: Optional[str] = None
+    cookie_secure: bool = False
+    cookie_samesite: str = "lax"
+    cookie_path: str = "/"
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
@@ -132,7 +137,7 @@ app.add_exception_handler(AppError, app_exception_handler)
 app.add_exception_handler(StarletteHTTPException, http_exception_handler)
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login", auto_error=False)
 
 
 def _compute_rank(total_xp: int) -> tuple[dict, Optional[dict], int]:
@@ -174,13 +179,40 @@ def _update_streak(user: User, now: datetime) -> None:
     user.longest_streak = max(user.longest_streak, user.current_streak)
 
 
+def _record_analytics_event(
+    session: Session,
+    *,
+    user_id: UUID,
+    name: str,
+    payload: Optional[dict[str, Any]] = None,
+    path: Optional[str] = None,
+) -> None:
+    try:
+        session.add(
+            AnalyticsEvent(
+                user_id=user_id,
+                event_name=name,
+                payload=payload,
+                path=path,
+            )
+        )
+        session.commit()
+    except Exception:
+        session.rollback()
+        logger.warning("Failed to record analytics event", exc_info=True)
+
+
 def _award_badge(session: Session, *, user: User, badge_slug: str) -> int:
-    badge = session.execute(select(Badge).where(Badge.slug == badge_slug, Badge.is_active.is_(True))).scalar_one_or_none()
+    badge = session.execute(
+        select(Badge).where(Badge.slug == badge_slug, Badge.is_active.is_(True))
+    ).scalar_one_or_none()
     if badge is None:
         return 0
 
     existing = session.execute(
-        select(UserBadge).where(UserBadge.user_id == user.id, UserBadge.badge_id == badge.id)
+        select(UserBadge).where(
+            UserBadge.user_id == user.id, UserBadge.badge_id == badge.id
+        )
     ).scalar_one_or_none()
     if existing is not None:
         return 0
@@ -195,30 +227,85 @@ def _award_badge(session: Session, *, user: User, badge_slug: str) -> int:
 
 def _count_user_discoveries(session: Session, user_id) -> tuple[int, int]:
     """Returns (total_discovered_motifs, distinct_urns_with_discoveries)"""
-    from sqlalchemy import func, distinct
+    from sqlalchemy import distinct, func
 
     discovered = session.execute(
-        select(func.count(UserProgress.id))
-        .where(UserProgress.user_id == user_id, UserProgress.status != UnlockStatus.hidden)
+        select(func.count(UserProgress.id)).where(
+            UserProgress.user_id == user_id, UserProgress.status != UnlockStatus.hidden
+        )
     ).scalar_one()
     urns = session.execute(
         select(func.count(distinct(Motif.urn_id)))
         .select_from(UserProgress)
         .join(Motif, UserProgress.motif_id == Motif.id)
-        .where(UserProgress.user_id == user_id, UserProgress.status != UnlockStatus.hidden)
+        .where(
+            UserProgress.user_id == user_id, UserProgress.status != UnlockStatus.hidden
+        )
     ).scalar_one()
     return discovered, urns
 
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
+def _cookie_params() -> dict[str, Any]:
+    samesite = (settings.cookie_samesite or "lax").lower()
+    if samesite not in {"lax", "strict", "none"}:
+        samesite = "lax"
+    params: dict[str, Any] = {
+        "secure": settings.cookie_secure,
+        "samesite": samesite,
+        "path": settings.cookie_path,
+    }
+    if settings.cookie_domain:
+        params["domain"] = settings.cookie_domain
+    return params
+
+
+def _set_auth_cookies(
+    response: Response, *, access_token: str, refresh_token: str
+) -> None:
+    params = _cookie_params()
+    access_max_age = int(settings.access_token_expire_minutes) * 60
+    refresh_max_age = int(settings.refresh_token_expire_days) * 24 * 60 * 60
+    response.set_cookie(
+        settings.access_cookie_name,
+        access_token,
+        max_age=access_max_age,
+        httponly=True,
+        **params,
+    )
+    response.set_cookie(
+        settings.refresh_cookie_name,
+        refresh_token,
+        max_age=refresh_max_age,
+        httponly=True,
+        **params,
+    )
+
+
+def _clear_auth_cookies(response: Response) -> None:
+    params = _cookie_params()
+    response.delete_cookie(settings.access_cookie_name, **params)
+    response.delete_cookie(settings.refresh_cookie_name, **params)
+
+
+def get_current_user(
+    request: Request,
+    token: Optional[str] = Depends(oauth2_scheme),
+    db: Session = Depends(get_db),
+) -> User:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
 
+    raw_token = token or request.cookies.get(settings.access_cookie_name)
+    if not raw_token:
+        raise credentials_exception
+
     try:
-        payload = jwt.decode(token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm])
+        payload = jwt.decode(
+            raw_token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm]
+        )
         subject = payload.get("sub")
         token_type = payload.get("type")
         if not subject or token_type != "access":
@@ -243,134 +330,8 @@ class UserOut(BaseModel):
     username: Optional[str] = None
     role: str
     total_xp: int
-
-
-class AuthRegisterRequest(BaseModel):
-    email: EmailStr
-    password: str = Field(min_length=8, max_length=72)
-    display_name: str = Field(min_length=1, max_length=100)
-
-
-class AuthLoginRequest(BaseModel):
-    email: EmailStr
-    password: str = Field(min_length=1, max_length=72)
-
-
-class ChangePasswordRequest(BaseModel):
-    current_password: str
-    new_password: str = Field(..., min_length=8)
-
-
-class AuthResponse(BaseModel):
-    user: UserOut
-    access_token: str
-    refresh_token: str
-
-
-@app.post("/api/v1/auth/register", response_model=AuthResponse, status_code=status.HTTP_201_CREATED)
-def register(payload: AuthRegisterRequest, db: Session = Depends(get_db)) -> AuthResponse:
-    existing = db.execute(select(User).where(User.email == str(payload.email))).scalar_one_or_none()
-    if existing is not None:
-        raise AppError(
-            code="EMAIL_ALREADY_REGISTERED",
-            message="Email already registered",
-            status_code=status.HTTP_409_CONFLICT
-        )
-
-    user = User(
-        email=str(payload.email),
-        password_hash="",
-        display_name=payload.display_name,
-    )
-    try:
-        user.password_hash = hash_password(payload.password)
-    except ValueError:
-        raise AppError(
-            code="PASSWORD_TOO_LONG",
-            message="Password too long",
-            status_code=status.HTTP_400_BAD_REQUEST
-        )
-    db.add(user)
-    try:
-        db.commit()
-    except IntegrityError:
-        db.rollback()
-        raise AppError(
-            code="EMAIL_ALREADY_REGISTERED",
-            message="Email already registered",
-            status_code=status.HTTP_409_CONFLICT
-        )
-
-    db.refresh(user)
-
-    access_token = create_jwt_token(
-        subject=str(user.id),
-        secret_key=settings.jwt_secret_key,
-        algorithm=settings.jwt_algorithm,
-        expires_delta=timedelta(minutes=settings.access_token_expire_minutes),
-        extra_claims={"type": "access"},
-    )
-    refresh_token = create_jwt_token(
-        subject=str(user.id),
-        secret_key=settings.jwt_secret_key,
-        algorithm=settings.jwt_algorithm,
-        expires_delta=timedelta(days=settings.refresh_token_expire_days),
-        extra_claims={"type": "refresh"},
-    )
-
-    return AuthResponse(
-        user=UserOut(
-            id=user.id,
-            email=user.email,
-            display_name=user.display_name,
-            avatar_url=user.avatar_url,
-            username=user.username,
-            role=user.role.value,
-            total_xp=user.total_xp,
-        ),
-        access_token=access_token,
-        refresh_token=refresh_token,
-    )
-
-
-@app.post("/api/v1/auth/login", response_model=AuthResponse)
-def login(payload: AuthLoginRequest, db: Session = Depends(get_db)) -> AuthResponse:
-    user = db.execute(select(User).where(User.email == str(payload.email))).scalar_one_or_none()
-    if user is None or not verify_password(payload.password, user.password_hash):
-        raise AppError(
-            code="INVALID_CREDENTIALS",
-            message="Invalid email or password",
-            status_code=status.HTTP_401_UNAUTHORIZED
-        )
-
-    access_token = create_jwt_token(
-        subject=str(user.id),
-        secret_key=settings.jwt_secret_key,
-        algorithm=settings.jwt_algorithm,
-        expires_delta=timedelta(minutes=settings.access_token_expire_minutes),
-        extra_claims={"type": "access"},
-    )
-    refresh_token = create_jwt_token(
-        subject=str(user.id),
-        secret_key=settings.jwt_secret_key,
-        algorithm=settings.jwt_algorithm,
-        expires_delta=timedelta(days=settings.refresh_token_expire_days),
-        extra_claims={"type": "refresh"},
-    )
-
-    return AuthResponse(
-        user=UserOut(
-            id=user.id,
-            email=user.email,
-            display_name=user.display_name,
-            avatar_url=user.avatar_url,
-            username=user.username,
-            role=user.role.value,
-            total_xp=user.total_xp,
-        ),
-        access_token=access_token,
-        refresh_token=refresh_token,
-    )
+    starting_urn_id: Optional[UUID] = None
+    is_profile_public: bool
 
 
 class RankOut(BaseModel):
@@ -391,26 +352,205 @@ class AuthMeResponse(BaseModel):
     stats: UserStatsOut
 
 
-@app.get("/api/v1/auth/me", response_model=AuthMeResponse)
-def me(current_user: User = Depends(get_current_user)) -> AuthMeResponse:
-    current_rank, next_rank, xp_to_next = _compute_rank(current_user.total_xp)
+def _build_auth_me_response(user: User) -> AuthMeResponse:
+    current_rank, next_rank, xp_to_next = _compute_rank(user.total_xp)
     return AuthMeResponse(
         user=UserOut(
-            id=current_user.id,
-            email=current_user.email,
-            display_name=current_user.display_name,
-            avatar_url=current_user.avatar_url,
-            username=current_user.username,
-            role=current_user.role.value,
-            total_xp=current_user.total_xp,
+            id=user.id,
+            email=user.email,
+            display_name=user.display_name,
+            avatar_url=user.avatar_url,
+            username=user.username,
+            role=user.role.value,
+            total_xp=user.total_xp,
+            starting_urn_id=user.starting_urn_id,
+            is_profile_public=user.is_profile_public,
         ),
         stats=UserStatsOut(
-            total_xp=current_user.total_xp,
+            total_xp=user.total_xp,
             rank=RankOut(**current_rank),
             xp_to_next_rank=xp_to_next,
             next_rank=(RankOut(**next_rank) if next_rank else None),
         ),
     )
+
+
+class AuthRegisterRequest(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=8, max_length=72)
+    display_name: str = Field(min_length=1, max_length=100)
+
+
+class AuthLoginRequest(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=1, max_length=72)
+
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str = Field(..., min_length=8)
+
+
+@app.post(
+    "/api/v1/auth/register",
+    response_model=AuthMeResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+def register(
+    payload: AuthRegisterRequest,
+    response: Response,
+    db: Session = Depends(get_db),
+) -> AuthMeResponse:
+    existing = db.execute(
+        select(User).where(User.email == str(payload.email))
+    ).scalar_one_or_none()
+    if existing is not None:
+        raise AppError(
+            code="EMAIL_ALREADY_REGISTERED",
+            message="Email already registered",
+            status_code=status.HTTP_409_CONFLICT,
+        )
+
+    user = User(
+        email=str(payload.email),
+        password_hash="",
+        display_name=payload.display_name,
+    )
+    try:
+        user.password_hash = hash_password(payload.password)
+    except ValueError:
+        raise AppError(
+            code="PASSWORD_TOO_LONG",
+            message="Password too long",
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+    db.add(user)
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise AppError(
+            code="EMAIL_ALREADY_REGISTERED",
+            message="Email already registered",
+            status_code=status.HTTP_409_CONFLICT,
+        )
+
+    db.refresh(user)
+
+    access_token = create_jwt_token(
+        subject=str(user.id),
+        secret_key=settings.jwt_secret_key,
+        algorithm=settings.jwt_algorithm,
+        expires_delta=timedelta(minutes=settings.access_token_expire_minutes),
+        extra_claims={"type": "access"},
+    )
+    refresh_token = create_jwt_token(
+        subject=str(user.id),
+        secret_key=settings.jwt_secret_key,
+        algorithm=settings.jwt_algorithm,
+        expires_delta=timedelta(days=settings.refresh_token_expire_days),
+        extra_claims={"type": "refresh"},
+    )
+
+    _set_auth_cookies(response, access_token=access_token, refresh_token=refresh_token)
+    response.headers["Cache-Control"] = "no-store"
+    return _build_auth_me_response(user)
+
+
+@app.post("/api/v1/auth/login", response_model=AuthMeResponse)
+def login(
+    payload: AuthLoginRequest, response: Response, db: Session = Depends(get_db)
+) -> AuthMeResponse:
+    user = db.execute(
+        select(User).where(User.email == str(payload.email))
+    ).scalar_one_or_none()
+    if user is None or not verify_password(payload.password, user.password_hash):
+        raise AppError(
+            code="INVALID_CREDENTIALS",
+            message="Invalid email or password",
+            status_code=status.HTTP_401_UNAUTHORIZED,
+        )
+
+    access_token = create_jwt_token(
+        subject=str(user.id),
+        secret_key=settings.jwt_secret_key,
+        algorithm=settings.jwt_algorithm,
+        expires_delta=timedelta(minutes=settings.access_token_expire_minutes),
+        extra_claims={"type": "access"},
+    )
+    refresh_token = create_jwt_token(
+        subject=str(user.id),
+        secret_key=settings.jwt_secret_key,
+        algorithm=settings.jwt_algorithm,
+        expires_delta=timedelta(days=settings.refresh_token_expire_days),
+        extra_claims={"type": "refresh"},
+    )
+
+    _set_auth_cookies(response, access_token=access_token, refresh_token=refresh_token)
+    response.headers["Cache-Control"] = "no-store"
+    return _build_auth_me_response(user)
+
+
+@app.get("/api/v1/auth/me", response_model=AuthMeResponse)
+def me(current_user: User = Depends(get_current_user)) -> AuthMeResponse:
+    return _build_auth_me_response(current_user)
+
+
+@app.post("/api/v1/auth/refresh", response_model=AuthMeResponse)
+def refresh_session(
+    request: Request, response: Response, db: Session = Depends(get_db)
+) -> AuthMeResponse:
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
+    raw_token = request.cookies.get(settings.refresh_cookie_name)
+    if not raw_token:
+        raise credentials_exception
+
+    try:
+        payload = jwt.decode(
+            raw_token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm]
+        )
+        subject = payload.get("sub")
+        token_type = payload.get("type")
+        if not subject or token_type != "refresh":
+            raise credentials_exception
+        user_id = UUID(subject)
+    except (JWTError, ValueError):
+        raise credentials_exception
+
+    user = db.get(User, user_id)
+    if user is None:
+        raise credentials_exception
+
+    access_token = create_jwt_token(
+        subject=str(user.id),
+        secret_key=settings.jwt_secret_key,
+        algorithm=settings.jwt_algorithm,
+        expires_delta=timedelta(minutes=settings.access_token_expire_minutes),
+        extra_claims={"type": "access"},
+    )
+    refresh_token = create_jwt_token(
+        subject=str(user.id),
+        secret_key=settings.jwt_secret_key,
+        algorithm=settings.jwt_algorithm,
+        expires_delta=timedelta(days=settings.refresh_token_expire_days),
+        extra_claims={"type": "refresh"},
+    )
+
+    _set_auth_cookies(response, access_token=access_token, refresh_token=refresh_token)
+    response.headers["Cache-Control"] = "no-store"
+    return _build_auth_me_response(user)
+
+
+@app.post("/api/v1/auth/logout")
+def logout(response: Response) -> dict[str, bool]:
+    _clear_auth_cookies(response)
+    response.headers["Cache-Control"] = "no-store"
+    return {"success": True}
 
 
 class UpdateProfileRequest(BaseModel):
@@ -425,6 +565,22 @@ class UpdateProfileResponse(BaseModel):
     message: str
 
 
+class StartingPathRequest(BaseModel):
+    urn_id: Optional[UUID] = None
+    urn_slug: Optional[str] = None
+
+    @model_validator(mode="after")
+    def _validate_reference(self) -> "StartingPathRequest":
+        if self.urn_id is None and not self.urn_slug:
+            raise ValueError("Either urn_id or urn_slug is required.")
+        return self
+
+
+class StartingPathResponse(BaseModel):
+    starting_urn_id: UUID
+    starting_urn_slug: str
+
+
 def _is_valid_display_name(display_name: str) -> bool:
     normalized = unicodedata.normalize("NFC", display_name)
     for character in normalized:
@@ -432,7 +588,9 @@ def _is_valid_display_name(display_name: str) -> bool:
             continue
         if "0" <= character <= "9":
             continue
-        if unicodedata.category(character).startswith("L") and "LATIN" in unicodedata.name(character, ""):
+        if unicodedata.category(character).startswith(
+            "L"
+        ) and "LATIN" in unicodedata.name(character, ""):
             continue
         return False
     return True
@@ -463,7 +621,9 @@ def update_profile(
             )
 
         existing_user_id = db.execute(
-            select(User.id).where(User.username == request.username, User.id != current_user.id)
+            select(User.id).where(
+                User.username == request.username, User.id != current_user.id
+            )
         ).scalar_one_or_none()
         if existing_user_id is not None:
             raise AppError(
@@ -501,15 +661,57 @@ def update_profile(
             username=current_user.username,
             role=current_user.role.value,
             total_xp=current_user.total_xp,
+            starting_urn_id=current_user.starting_urn_id,
+            is_profile_public=current_user.is_profile_public,
         ),
         message="Profile updated successfully",
     )
+
+
+@app.post("/api/v1/users/me/starting-path", response_model=StartingPathResponse)
+def set_starting_path(
+    request: StartingPathRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> StartingPathResponse:
+    if request.urn_id is not None:
+        urn = db.get(Urn, request.urn_id)
+    else:
+        urn = db.execute(
+            select(Urn).where(Urn.slug == request.urn_slug)
+        ).scalar_one_or_none()
+
+    if urn is None:
+        urn = db.execute(
+            select(Urn).where(Urn.slug == request.urn_slug)
+        ).scalar_one_or_none()
+
+    if urn is None:
+        raise HTTPException(status_code=404, detail="Urn not found")
+
+    current_user.starting_urn_id = urn.id
+    db.commit()
+    db.refresh(current_user)
+
+    return StartingPathResponse(starting_urn_id=urn.id, starting_urn_slug=urn.slug)
 
 
 class PublicBadgeOut(BaseModel):
     name: str
     icon: str
     description: Optional[str] = None
+
+
+class PublicMotifOut(BaseModel):
+    id: UUID
+    name: str
+    category: str
+    rarity: str
+    status: str
+    thumbnail_url: Optional[str] = None
+    urn_id: UUID
+    urn_name: str
+    urn_slug: str
 
 
 class UserPublicStatsOut(BaseModel):
@@ -530,25 +732,34 @@ class UserPublicProfile(BaseModel):
     badges: list[PublicBadgeOut]
     certificates: list[Any] = Field(default_factory=list)
     stats: UserPublicStatsOut
+    motifs: list[PublicMotifOut] = Field(default_factory=list)
 
 
 @app.get("/api/v1/users/{user_id}/public", response_model=UserPublicProfile)
-def get_user_public_profile(user_id: UUID, db: Session = Depends(get_db)) -> UserPublicProfile:
+def get_user_public_profile(
+    user_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> UserPublicProfile:
     user = db.get(User, user_id)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
-    if not user.is_profile_public:
+    if not user.is_profile_public and user.id != current_user.id:
         raise HTTPException(status_code=403, detail="Profile is private")
 
     current_rank, _, _ = _compute_rank(user.total_xp)
 
-    earned_badges = db.execute(
-        select(UserBadge)
-        .options(selectinload(UserBadge.badge))
-        .where(UserBadge.user_id == user.id)
-        .order_by(UserBadge.earned_at.desc())
-    ).scalars().all()
+    earned_badges = (
+        db.execute(
+            select(UserBadge)
+            .options(selectinload(UserBadge.badge))
+            .where(UserBadge.user_id == user.id)
+            .order_by(UserBadge.earned_at.desc())
+        )
+        .scalars()
+        .all()
+    )
 
     discovered_count = db.execute(
         select(func.count(UserProgress.id))
@@ -591,6 +802,20 @@ def get_user_public_profile(user_id: UUID, db: Session = Depends(get_db)) -> Use
         )
     ).scalar_one()
 
+    unlocked_rows = db.execute(
+        select(UserProgress, Motif, Urn)
+        .join(Motif, UserProgress.motif_id == Motif.id)
+        .join(Urn, Motif.urn_id == Urn.id)
+        .where(
+            UserProgress.user_id == user.id,
+            Motif.is_active.is_(True),
+            UserProgress.status != UnlockStatus.hidden,
+        )
+        .order_by(
+            Urn.display_order.nulls_last(), Motif.display_order.nulls_last(), Motif.name
+        )
+    ).all()
+
     username = user.username or (user.email or "").split("@", 1)[0] or str(user.id)
 
     return UserPublicProfile(
@@ -617,23 +842,40 @@ def get_user_public_profile(user_id: UUID, db: Session = Depends(get_db)) -> Use
             mastered_count=int(mastered_count or 0),
             quizzes_passed=int(quizzes_passed or 0),
         ),
+        motifs=[
+            PublicMotifOut(
+                id=motif.id,
+                name=motif.name,
+                category=motif.category.value,
+                rarity=motif.rarity.value,
+                status=progress.status.value,
+                thumbnail_url=motif.thumbnail_url,
+                urn_id=urn.id,
+                urn_name=urn.name,
+                urn_slug=urn.slug,
+            )
+            for progress, motif, urn in unlocked_rows
+        ],
     )
 
 
 @app.get("/api/v1/u/{username_or_id}", response_model=UserPublicProfile)
 def get_user_public_profile_by_username_or_id(
     username_or_id: str,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> UserPublicProfile:
     try:
         user_id = UUID(username_or_id)
     except ValueError:
-        user = db.execute(select(User.id).where(User.username == username_or_id)).scalar_one_or_none()
+        user = db.execute(
+            select(User.id).where(User.username == username_or_id)
+        ).scalar_one_or_none()
         if user is None:
             raise HTTPException(status_code=404, detail="User not found")
         user_id = user
 
-    return get_user_public_profile(user_id=user_id, db=db)
+    return get_user_public_profile(user_id=user_id, current_user=current_user, db=db)
 
 
 class UrnOut(BaseModel):
@@ -642,6 +884,45 @@ class UrnOut(BaseModel):
     id: UUID
     slug: str
     name: str
+
+
+class AnalyticsEventIn(BaseModel):
+    name: str = Field(..., min_length=1, max_length=100)
+    payload: Optional[dict[str, Any]] = None
+    path: Optional[str] = None
+
+
+class AnalyticsEventsIn(BaseModel):
+    events: list[AnalyticsEventIn]
+
+
+class AnalyticsEventsOut(BaseModel):
+    success: bool
+    count: int
+
+
+@app.post("/api/v1/analytics/events", response_model=AnalyticsEventsOut)
+def ingest_analytics_events(
+    payload: AnalyticsEventsIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> AnalyticsEventsOut:
+    if not payload.events:
+        return AnalyticsEventsOut(success=True, count=0)
+
+    db.add_all(
+        [
+            AnalyticsEvent(
+                user_id=current_user.id,
+                event_name=event.name,
+                payload=event.payload,
+                path=event.path,
+            )
+            for event in payload.events
+        ]
+    )
+    db.commit()
+    return AnalyticsEventsOut(success=True, count=len(payload.events))
 
 
 class MotifOut(BaseModel):
@@ -669,19 +950,29 @@ class MotifsByUrnResponse(BaseModel):
 
 
 @app.get("/motifs/{urn_name}", response_model=MotifsByUrnResponse)
-def get_motifs_by_urn(urn_name: str, db: Session = Depends(get_db)) -> MotifsByUrnResponse:
+def get_motifs_by_urn(
+    urn_name: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> MotifsByUrnResponse:
     urn = db.execute(
-        select(Urn).where(or_(Urn.slug == urn_name, func.lower(Urn.name) == urn_name.lower()))
+        select(Urn).where(
+            or_(Urn.slug == urn_name, func.lower(Urn.name) == urn_name.lower())
+        )
     ).scalar_one_or_none()
     if urn is None:
         raise HTTPException(status_code=404, detail="Urn not found")
 
-    motifs = db.execute(
-        select(Motif)
-        .options(selectinload(Motif.lesson))
-        .where(Motif.urn_id == urn.id, Motif.is_active.is_(True))
-        .order_by(Motif.display_order.nulls_last(), Motif.name)
-    ).scalars().all()
+    motifs = (
+        db.execute(
+            select(Motif)
+            .options(selectinload(Motif.lesson))
+            .where(Motif.urn_id == urn.id, Motif.is_active.is_(True))
+            .order_by(Motif.display_order.nulls_last(), Motif.name)
+        )
+        .scalars()
+        .all()
+    )
 
     return MotifsByUrnResponse(
         urn=UrnOut.model_validate(urn),
@@ -723,7 +1014,9 @@ class UrnListItemOut(BaseModel):
 
 
 @app.get("/api/v1/urns", response_model=list[UrnListItemOut])
-def list_urns(db: Session = Depends(get_db)) -> list[UrnListItemOut]:
+def list_urns(
+    current_user: User = Depends(get_current_user), db: Session = Depends(get_db)
+) -> list[UrnListItemOut]:
     motif_counts = (
         select(Motif.urn_id, func.count(Motif.id).label("motif_count"))
         .where(Motif.is_active.is_(True))
@@ -773,17 +1066,25 @@ class UrnDetailResponse(BaseModel):
 
 
 @app.get("/api/v1/urns/{urn_slug}", response_model=UrnDetailResponse)
-def get_urn_detail(urn_slug: str, db: Session = Depends(get_db)) -> UrnDetailResponse:
+def get_urn_detail(
+    urn_slug: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> UrnDetailResponse:
     urn = db.execute(select(Urn).where(Urn.slug == urn_slug)).scalar_one_or_none()
     if urn is None:
         raise HTTPException(status_code=404, detail="Urn not found")
 
-    motifs = db.execute(
-        select(Motif)
-        .options(selectinload(Motif.lesson))
-        .where(Motif.urn_id == urn.id, Motif.is_active.is_(True))
-        .order_by(Motif.display_order.nulls_last(), Motif.name)
-    ).scalars().all()
+    motifs = (
+        db.execute(
+            select(Motif)
+            .options(selectinload(Motif.lesson))
+            .where(Motif.urn_id == urn.id, Motif.is_active.is_(True))
+            .order_by(Motif.display_order.nulls_last(), Motif.name)
+        )
+        .scalars()
+        .all()
+    )
 
     return UrnDetailResponse(
         urn=UrnDetailOut.model_validate(urn),
@@ -842,10 +1143,18 @@ class MotifDetailOut(BaseModel):
 
 
 @app.get("/api/v1/motifs/{motif_id}", response_model=MotifDetailOut)
-def get_motif_detail(motif_id: UUID, db: Session = Depends(get_db)) -> MotifDetailOut:
+def get_motif_detail(
+    motif_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> MotifDetailOut:
     motif = db.execute(
         select(Motif)
-        .options(selectinload(Motif.urn), selectinload(Motif.lesson), selectinload(Motif.quiz_questions))
+        .options(
+            selectinload(Motif.urn),
+            selectinload(Motif.lesson),
+            selectinload(Motif.quiz_questions),
+        )
         .where(Motif.id == motif_id, Motif.is_active.is_(True))
     ).scalar_one_or_none()
     if motif is None:
@@ -880,7 +1189,9 @@ class LessonCompleteResponse(BaseModel):
     total_xp: int
 
 
-@app.post("/api/v1/motifs/{motif_id}/complete-lesson", response_model=LessonCompleteResponse)
+@app.post(
+    "/api/v1/motifs/{motif_id}/complete-lesson", response_model=LessonCompleteResponse
+)
 def complete_lesson(
     motif_id: UUID,
     current_user: User = Depends(get_current_user),
@@ -896,7 +1207,9 @@ def complete_lesson(
     now = datetime.now(timezone.utc)
 
     progress = db.execute(
-        select(UserProgress).where(UserProgress.user_id == current_user.id, UserProgress.motif_id == motif.id)
+        select(UserProgress).where(
+            UserProgress.user_id == current_user.id, UserProgress.motif_id == motif.id
+        )
     ).scalar_one_or_none()
     discovered_before = db.execute(
         select(func.count(UserProgress.id)).where(
@@ -939,7 +1252,9 @@ def complete_lesson(
     badge_bonus = 0
     _update_streak(current_user, now)
     if was_locked and int(discovered_before or 0) == 0:
-        badge_bonus += _award_badge(db, user=current_user, badge_slug=BADGE_FIRST_DISCOVERY)
+        badge_bonus += _award_badge(
+            db, user=current_user, badge_slug=BADGE_FIRST_DISCOVERY
+        )
     if current_user.current_streak >= 7:
         badge_bonus += _award_badge(db, user=current_user, badge_slug=BADGE_STREAK_7)
 
@@ -949,7 +1264,10 @@ def complete_lesson(
         db.commit()
     except IntegrityError:
         db.rollback()
-        logger.warning("IntegrityError during complete-lesson; retrying fetch/update", exc_info=True)
+        logger.warning(
+            "IntegrityError during complete-lesson; retrying fetch/update",
+            exc_info=True,
+        )
         badge_bonus = 0
         discovered_before = db.execute(
             select(func.count(UserProgress.id)).where(
@@ -958,7 +1276,10 @@ def complete_lesson(
             )
         ).scalar_one()
         progress = db.execute(
-            select(UserProgress).where(UserProgress.user_id == current_user.id, UserProgress.motif_id == motif.id)
+            select(UserProgress).where(
+                UserProgress.user_id == current_user.id,
+                UserProgress.motif_id == motif.id,
+            )
         ).scalar_one()
         was_locked = progress.status == UnlockStatus.hidden
         if progress.status in (UnlockStatus.hidden, UnlockStatus.discovered):
@@ -973,11 +1294,28 @@ def complete_lesson(
             xp_awarded = max(xp_awarded, delta)
         _update_streak(current_user, now)
         if was_locked and int(discovered_before or 0) == 0:
-            badge_bonus += _award_badge(db, user=current_user, badge_slug=BADGE_FIRST_DISCOVERY)
+            badge_bonus += _award_badge(
+                db, user=current_user, badge_slug=BADGE_FIRST_DISCOVERY
+            )
         if current_user.current_streak >= 7:
-            badge_bonus += _award_badge(db, user=current_user, badge_slug=BADGE_STREAK_7)
+            badge_bonus += _award_badge(
+                db, user=current_user, badge_slug=BADGE_STREAK_7
+            )
         current_user.last_active_at = now
         db.commit()
+
+    _record_analytics_event(
+        db,
+        user_id=current_user.id,
+        name="lesson_completed",
+        payload={
+            "source": "server",
+            "motif_id": str(motif.id),
+            "urn_id": str(motif.urn_id),
+            "status": progress.status.value,
+            "xp_awarded": xp_awarded + badge_bonus,
+        },
+    )
 
     return LessonCompleteResponse(
         user_id=current_user.id,
@@ -1028,7 +1366,9 @@ def unlock_progress(
     if payload.motif_id is not None:
         motif = db.get(Motif, payload.motif_id)
     else:
-        motif = db.execute(select(Motif).where(Motif.mesh_name == payload.mesh_name)).scalar_one_or_none()
+        motif = db.execute(
+            select(Motif).where(Motif.mesh_name == payload.mesh_name)
+        ).scalar_one_or_none()
 
     if motif is None:
         raise HTTPException(status_code=404, detail="Motif not found")
@@ -1037,7 +1377,9 @@ def unlock_progress(
         raise HTTPException(status_code=400, detail="mesh_name does not match motif")
 
     if user.role.value == "guest" and not motif.is_demo:
-        raise HTTPException(status_code=403, detail="Guests can only unlock demo motifs")
+        raise HTTPException(
+            status_code=403, detail="Guests can only unlock demo motifs"
+        )
 
     # Note: tap_position validation removed - user clicks directly on hotspot spheres
     # which are already positioned at the correct motif location
@@ -1046,7 +1388,9 @@ def unlock_progress(
     now = datetime.now(timezone.utc)
 
     progress = db.execute(
-        select(UserProgress).where(UserProgress.user_id == user.id, UserProgress.motif_id == motif.id)
+        select(UserProgress).where(
+            UserProgress.user_id == user.id, UserProgress.motif_id == motif.id
+        )
     ).scalar_one_or_none()
     discovered_before = db.execute(
         select(func.count(UserProgress.id)).where(
@@ -1115,7 +1459,9 @@ def unlock_progress(
         db.commit()
     except IntegrityError:
         db.rollback()
-        logger.warning("IntegrityError during unlock; retrying fetch/update", exc_info=True)
+        logger.warning(
+            "IntegrityError during unlock; retrying fetch/update", exc_info=True
+        )
         badge_bonus = 0
         discovered_before = db.execute(
             select(func.count(UserProgress.id)).where(
@@ -1124,7 +1470,9 @@ def unlock_progress(
             )
         ).scalar_one()
         progress = db.execute(
-            select(UserProgress).where(UserProgress.user_id == user.id, UserProgress.motif_id == motif.id)
+            select(UserProgress).where(
+                UserProgress.user_id == user.id, UserProgress.motif_id == motif.id
+            )
         ).scalar_one()
         was_locked = progress.status == UnlockStatus.hidden
         if progress.status == UnlockStatus.hidden:
@@ -1161,7 +1509,9 @@ def unlock_progress(
         if discovered >= 50:
             badge_bonus += _award_badge(db, user=user, badge_slug=BADGE_COLLECTOR_50)
         if urns >= 9:
-            badge_bonus += _award_badge(db, user=user, badge_slug=BADGE_EXPLORER_ALL_URNS)
+            badge_bonus += _award_badge(
+                db, user=user, badge_slug=BADGE_EXPLORER_ALL_URNS
+            )
         user.last_active_at = now
         db.commit()
 
@@ -1175,7 +1525,7 @@ def unlock_progress(
     )
 
 
-@app.post('/api/v1/users/me/avatar')
+@app.post("/api/v1/users/me/avatar")
 async def upload_avatar(
     file: UploadFile = File(...),
     current_user: User = Depends(get_current_user),
@@ -1266,13 +1616,23 @@ def change_password(
 
 
 @app.get("/api/v1/users/me/collection", response_model=UserCollectionResponse)
-def get_my_collection(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)) -> UserCollectionResponse:
-    motifs = db.execute(
-        select(Motif)
-        .where(Motif.is_active.is_(True))
-        .order_by(Motif.display_order.nulls_last(), Motif.name)
-    ).scalars().all()
-    progress_entries = db.execute(select(UserProgress).where(UserProgress.user_id == current_user.id)).scalars().all()
+def get_my_collection(
+    current_user: User = Depends(get_current_user), db: Session = Depends(get_db)
+) -> UserCollectionResponse:
+    motifs = (
+        db.execute(
+            select(Motif)
+            .where(Motif.is_active.is_(True))
+            .order_by(Motif.display_order.nulls_last(), Motif.name)
+        )
+        .scalars()
+        .all()
+    )
+    progress_entries = (
+        db.execute(select(UserProgress).where(UserProgress.user_id == current_user.id))
+        .scalars()
+        .all()
+    )
     progress_by_motif_id = {p.motif_id: p for p in progress_entries}
 
     discovered = learned = mastered = 0
@@ -1309,7 +1669,9 @@ def get_my_collection(current_user: User = Depends(get_current_user), db: Sessio
         )
 
     total = len(motifs)
-    progress_percent = (quest_discovered / quest_total * 100.0) if quest_total > 0 else 0.0
+    progress_percent = (
+        (quest_discovered / quest_total * 100.0) if quest_total > 0 else 0.0
+    )
 
     return UserCollectionResponse(
         items=items,
@@ -1341,7 +1703,9 @@ def get_my_streak(current_user: User = Depends(get_current_user)) -> StreakRespo
     now = datetime.now(timezone.utc)
     days = None
     if current_user.last_active_at is not None:
-        days = (now.date() - current_user.last_active_at.astimezone(timezone.utc).date()).days
+        days = (
+            now.date() - current_user.last_active_at.astimezone(timezone.utc).date()
+        ).days
 
     return StreakResponse(
         current_streak=current_user.current_streak,
@@ -1361,7 +1725,7 @@ def use_my_streak_freeze(
         raise AppError(
             code="NO_STREAK_FREEZES",
             message="No streak freezes available",
-            status_code=status.HTTP_400_BAD_REQUEST
+            status_code=status.HTTP_400_BAD_REQUEST,
         )
 
     current_user.streak_freezes -= 1
@@ -1371,7 +1735,9 @@ def use_my_streak_freeze(
     now = datetime.now(timezone.utc)
     days = None
     if current_user.last_active_at is not None:
-        days = (now.date() - current_user.last_active_at.astimezone(timezone.utc).date()).days
+        days = (
+            now.date() - current_user.last_active_at.astimezone(timezone.utc).date()
+        ).days
 
     return StreakResponse(
         current_streak=current_user.current_streak,
@@ -1404,7 +1770,7 @@ def use_streak_freeze(
         raise AppError(
             code="NO_STREAK_FREEZES",
             message="No streak freezes available. You need to earn more freezes.",
-            status_code=status.HTTP_400_BAD_REQUEST
+            status_code=status.HTTP_400_BAD_REQUEST,
         )
 
     # Check if streak is actually at risk (missed yesterday)
@@ -1418,7 +1784,7 @@ def use_streak_freeze(
             raise AppError(
                 code="STREAK_NOT_AT_RISK",
                 message="Streak is not at risk. No need to use a freeze.",
-                status_code=status.HTTP_400_BAD_REQUEST
+                status_code=status.HTTP_400_BAD_REQUEST,
             )
 
     # Use the freeze
@@ -1434,7 +1800,7 @@ def use_streak_freeze(
         raise AppError(
             code="STREAK_UPDATE_FAILED",
             message="Failed to use streak freeze",
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
     return StreakFreezeResponse(
@@ -1460,13 +1826,19 @@ class UserBadgeOut(BaseModel):
 
 
 @app.get("/api/v1/users/me/badges", response_model=list[UserBadgeOut])
-def get_my_badges(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)) -> list[UserBadgeOut]:
-    badges = db.execute(
-        select(UserBadge)
-        .options(selectinload(UserBadge.badge))
-        .where(UserBadge.user_id == current_user.id)
-        .order_by(UserBadge.earned_at.desc())
-    ).scalars().all()
+def get_my_badges(
+    current_user: User = Depends(get_current_user), db: Session = Depends(get_db)
+) -> list[UserBadgeOut]:
+    badges = (
+        db.execute(
+            select(UserBadge)
+            .options(selectinload(UserBadge.badge))
+            .where(UserBadge.user_id == current_user.id)
+            .order_by(UserBadge.earned_at.desc())
+        )
+        .scalars()
+        .all()
+    )
 
     return [
         UserBadgeOut(
@@ -1494,13 +1866,21 @@ class LeaderboardEntryOut(BaseModel):
 
 
 @app.get("/api/v1/leaderboard", response_model=list[LeaderboardEntryOut])
-def get_leaderboard(limit: int = Query(50, ge=1, le=200), db: Session = Depends(get_db)) -> list[LeaderboardEntryOut]:
-    users = db.execute(
-        select(User)
-        .where(User.role != UserRole.guest)
-        .order_by(User.total_xp.desc(), User.created_at.asc())
-        .limit(limit)
-    ).scalars().all()
+def get_leaderboard(
+    limit: int = Query(50, ge=1, le=200),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> list[LeaderboardEntryOut]:
+    users = (
+        db.execute(
+            select(User)
+            .where(User.role != UserRole.guest)
+            .order_by(User.total_xp.desc(), User.created_at.asc())
+            .limit(limit)
+        )
+        .scalars()
+        .all()
+    )
 
     entries: list[LeaderboardEntryOut] = []
     for idx, user in enumerate(users, start=1):
@@ -1546,7 +1926,9 @@ def get_motif_quiz(
         raise HTTPException(status_code=404, detail="Motif not found")
 
     progress = db.execute(
-        select(UserProgress).where(UserProgress.user_id == current_user.id, UserProgress.motif_id == motif.id)
+        select(UserProgress).where(
+            UserProgress.user_id == current_user.id, UserProgress.motif_id == motif.id
+        )
     ).scalar_one_or_none()
 
     if progress is None or progress.status == UnlockStatus.hidden:
@@ -1554,11 +1936,17 @@ def get_motif_quiz(
     if progress.status == UnlockStatus.discovered:
         raise HTTPException(status_code=400, detail="Lesson not completed")
 
-    questions = db.execute(
-        select(QuizQuestion)
-        .where(QuizQuestion.motif_id == motif.id, QuizQuestion.is_active.is_(True))
-        .order_by(QuizQuestion.created_at.asc())
-    ).scalars().all()
+    status_before = progress.status
+
+    questions = (
+        db.execute(
+            select(QuizQuestion)
+            .where(QuizQuestion.motif_id == motif.id, QuizQuestion.is_active.is_(True))
+            .order_by(QuizQuestion.created_at.asc())
+        )
+        .scalars()
+        .all()
+    )
 
     return MotifQuizResponse(
         motif_id=motif.id,
@@ -1567,7 +1955,9 @@ def get_motif_quiz(
                 id=q.id,
                 question_type=q.question_type.value,
                 question_text=q.question_text,
-                options=[str(opt) for opt in q.options] if isinstance(q.options, list) else None,
+                options=[str(opt) for opt in q.options]
+                if isinstance(q.options, list)
+                else None,
                 target_mesh_name=q.target_mesh_name,
                 difficulty=max(1, int(q.difficulty or 1)),
             )
@@ -1623,7 +2013,9 @@ def submit_quiz(
         raise HTTPException(status_code=404, detail="Motif not found")
 
     progress = db.execute(
-        select(UserProgress).where(UserProgress.user_id == current_user.id, UserProgress.motif_id == motif.id)
+        select(UserProgress).where(
+            UserProgress.user_id == current_user.id, UserProgress.motif_id == motif.id
+        )
     ).scalar_one_or_none()
 
     if progress is None or progress.status == UnlockStatus.hidden:
@@ -1631,23 +2023,32 @@ def submit_quiz(
     if progress.status == UnlockStatus.discovered:
         raise HTTPException(status_code=400, detail="Lesson not completed")
 
-    questions = db.execute(
-        select(QuizQuestion)
-        .where(QuizQuestion.motif_id == motif.id, QuizQuestion.is_active.is_(True))
-        .order_by(QuizQuestion.created_at.asc())
-    ).scalars().all()
+    questions = (
+        db.execute(
+            select(QuizQuestion)
+            .where(QuizQuestion.motif_id == motif.id, QuizQuestion.is_active.is_(True))
+            .order_by(QuizQuestion.created_at.asc())
+        )
+        .scalars()
+        .all()
+    )
     if not questions:
         raise HTTPException(status_code=404, detail="No quiz questions found")
 
     answer_map: dict[UUID, str] = {}
     for ans in payload.answers:
         if ans.question_id in answer_map:
-            raise HTTPException(status_code=400, detail="Duplicate answer for a question")
+            raise HTTPException(
+                status_code=400, detail="Duplicate answer for a question"
+            )
         answer_map[ans.question_id] = ans.answer
 
     question_ids = {q.id for q in questions}
     if set(answer_map.keys()) != question_ids:
-        raise HTTPException(status_code=400, detail="Answers must include all quiz questions for this motif")
+        raise HTTPException(
+            status_code=400,
+            detail="Answers must include all quiz questions for this motif",
+        )
 
     score = 0
     max_score = len(questions)
@@ -1699,7 +2100,9 @@ def submit_quiz(
             current_user.total_xp += delta
 
         if int(mastered_before or 0) == 0:
-            badge_bonus += _award_badge(db, user=current_user, badge_slug=BADGE_FIRST_MASTERED)
+            badge_bonus += _award_badge(
+                db, user=current_user, badge_slug=BADGE_FIRST_MASTERED
+            )
 
     _update_streak(current_user, now)
     if current_user.current_streak >= 7:
@@ -1707,14 +2110,17 @@ def submit_quiz(
 
     # Check quiz badges
     if percentage == 100:
-        badge_bonus += _award_badge(db, user=current_user, badge_slug=BADGE_PERFECT_SCORE)
+        badge_bonus += _award_badge(
+            db, user=current_user, badge_slug=BADGE_PERFECT_SCORE
+        )
     if payload.time_taken_seconds is not None and payload.time_taken_seconds <= 30:
         badge_bonus += _award_badge(db, user=current_user, badge_slug=BADGE_SPEED_DEMON)
 
     # Count perfect quizzes for quiz-master
     perfect_count = db.execute(
-        select(func.count(QuizAttempt.id))
-        .where(QuizAttempt.user_id == current_user.id, QuizAttempt.percentage == 100)
+        select(func.count(QuizAttempt.id)).where(
+            QuizAttempt.user_id == current_user.id, QuizAttempt.percentage == 100
+        )
     ).scalar_one()
     if percentage == 100:
         perfect_count += 1
@@ -1729,7 +2135,9 @@ def submit_quiz(
             score=score,
             max_score=max_score,
             percentage=percentage,
-            answers=[{"question_id": str(k), "answer": v} for k, v in answer_map.items()],
+            answers=[
+                {"question_id": str(k), "answer": v} for k, v in answer_map.items()
+            ],
             time_taken_seconds=payload.time_taken_seconds,
         )
     )
@@ -1739,6 +2147,34 @@ def submit_quiz(
     except IntegrityError:
         db.rollback()
         raise HTTPException(status_code=500, detail="Failed to submit quiz")
+
+    _record_analytics_event(
+        db,
+        user_id=current_user.id,
+        name="quiz_completed",
+        payload={
+            "source": "server",
+            "motif_id": str(motif.id),
+            "urn_id": str(motif.urn_id),
+            "score": score,
+            "max_score": max_score,
+            "percentage": percentage,
+            "passed": passed,
+            "time_taken_seconds": payload.time_taken_seconds,
+        },
+    )
+    if passed and status_before != UnlockStatus.mastered:
+        _record_analytics_event(
+            db,
+            user_id=current_user.id,
+            name="motif_mastered",
+            payload={
+                "source": "server",
+                "motif_id": str(motif.id),
+                "urn_id": str(motif.urn_id),
+                "percentage": percentage,
+            },
+        )
 
     return QuizSubmitResponse(
         motif_id=motif.id,
@@ -1756,24 +2192,32 @@ def submit_quiz(
 
 
 def _select_urn_exam_questions(db: Session, *, urn: Urn) -> list[QuizQuestion]:
-    urn_questions = db.execute(
-        select(QuizQuestion)
-        .where(QuizQuestion.urn_id == urn.id, QuizQuestion.is_active.is_(True))
-        .order_by(QuizQuestion.created_at.asc(), QuizQuestion.id.asc())
-    ).scalars().all()
+    urn_questions = (
+        db.execute(
+            select(QuizQuestion)
+            .where(QuizQuestion.urn_id == urn.id, QuizQuestion.is_active.is_(True))
+            .order_by(QuizQuestion.created_at.asc(), QuizQuestion.id.asc())
+        )
+        .scalars()
+        .all()
+    )
     if len(urn_questions) >= URN_EXAM_QUESTION_COUNT:
         return urn_questions[:URN_EXAM_QUESTION_COUNT]
 
-    motif_questions = db.execute(
-        select(QuizQuestion)
-        .join(Motif, QuizQuestion.motif_id == Motif.id)
-        .where(
-            Motif.urn_id == urn.id,
-            QuizQuestion.is_active.is_(True),
-            QuizQuestion.urn_id.is_(None),
+    motif_questions = (
+        db.execute(
+            select(QuizQuestion)
+            .join(Motif, QuizQuestion.motif_id == Motif.id)
+            .where(
+                Motif.urn_id == urn.id,
+                QuizQuestion.is_active.is_(True),
+                QuizQuestion.urn_id.is_(None),
+            )
+            .order_by(QuizQuestion.created_at.asc(), QuizQuestion.id.asc())
         )
-        .order_by(QuizQuestion.created_at.asc(), QuizQuestion.id.asc())
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
 
     return (urn_questions + motif_questions)[:URN_EXAM_QUESTION_COUNT]
 
@@ -1816,7 +2260,9 @@ def get_urn_exam(
                 id=q.id,
                 question_type=q.question_type.value,
                 question_text=q.question_text,
-                options=[str(opt) for opt in q.options] if isinstance(q.options, list) else None,
+                options=[str(opt) for opt in q.options]
+                if isinstance(q.options, list)
+                else None,
                 target_mesh_name=q.target_mesh_name,
                 difficulty=max(1, int(q.difficulty or 1)),
             )
@@ -1830,6 +2276,7 @@ def get_urn_exam(
 
 class UrnExamSubmitRequest(BaseModel):
     answers: list[QuizAnswerIn]
+    time_taken_seconds: Optional[int] = None
 
 
 class UrnExamResultDetail(BaseModel):
@@ -1869,12 +2316,17 @@ def submit_urn_exam(
     answer_map: dict[UUID, str] = {}
     for ans in payload.answers:
         if ans.question_id in answer_map:
-            raise HTTPException(status_code=400, detail="Duplicate answer for a question")
+            raise HTTPException(
+                status_code=400, detail="Duplicate answer for a question"
+            )
         answer_map[ans.question_id] = ans.answer
 
     question_ids = {q.id for q in questions}
     if set(answer_map.keys()) != question_ids:
-        raise HTTPException(status_code=400, detail="Answers must include all exam questions for this urn")
+        raise HTTPException(
+            status_code=400,
+            detail="Answers must include all exam questions for this urn",
+        )
 
     score = 0
     max_score = len(questions)
@@ -1905,7 +2357,9 @@ def submit_urn_exam(
 
     if passed:
         # Get urn_exam record
-        urn_exam = db.execute(select(UrnExam).where(UrnExam.urn_id == urn.id)).scalar_one_or_none()
+        urn_exam = db.execute(
+            select(UrnExam).where(UrnExam.urn_id == urn.id)
+        ).scalar_one_or_none()
         if not urn_exam:
             raise HTTPException(status_code=404, detail="Urn exam not found")
 
@@ -1928,7 +2382,9 @@ def submit_urn_exam(
     current_user.last_active_at = now
 
     # Get urn_exam record for attempt
-    urn_exam = db.execute(select(UrnExam).where(UrnExam.urn_id == urn.id)).scalar_one_or_none()
+    urn_exam = db.execute(
+        select(UrnExam).where(UrnExam.urn_id == urn.id)
+    ).scalar_one_or_none()
     if not urn_exam:
         raise HTTPException(status_code=404, detail="Urn exam not found")
 
@@ -1938,8 +2394,10 @@ def submit_urn_exam(
             urn_exam_id=urn_exam.id,
             score=percentage,
             passed=passed,
-            time_taken=payload.time_taken if hasattr(payload, 'time_taken') else None,
-            answers=[{"question_id": str(k), "answer": v} for k, v in answer_map.items()],
+            time_taken=payload.time_taken_seconds,
+            answers=[
+                {"question_id": str(k), "answer": v} for k, v in answer_map.items()
+            ],
         )
     )
 
@@ -1967,10 +2425,8 @@ class UrnExamAttemptOut(BaseModel):
     urn_slug: str
     urn_name: str
     score: int
-    max_score: int
-    percentage: int
     passed: bool
-    completed_at: datetime
+    created_at: datetime
 
 
 @app.get("/api/v1/users/me/exam-attempts", response_model=list[UrnExamAttemptOut])
@@ -1979,10 +2435,11 @@ def get_my_exam_attempts(
     db: Session = Depends(get_db),
 ) -> list[UrnExamAttemptOut]:
     rows = db.execute(
-        select(UrnExamAttempt, Urn)
-        .join(Urn, Urn.id == UrnExamAttempt.urn_id)
+        select(UrnExamAttempt, UrnExam, Urn)
+        .join(UrnExam, UrnExamAttempt.urn_exam_id == UrnExam.id)
+        .join(Urn, UrnExam.urn_id == Urn.id)
         .where(UrnExamAttempt.user_id == current_user.id)
-        .order_by(UrnExamAttempt.completed_at.desc())
+        .order_by(UrnExamAttempt.created_at.desc())
     ).all()
 
     return [
@@ -1992,12 +2449,10 @@ def get_my_exam_attempts(
             urn_slug=urn.slug,
             urn_name=urn.name,
             score=attempt.score,
-            max_score=attempt.max_score,
-            percentage=attempt.percentage,
             passed=attempt.passed,
-            completed_at=attempt.completed_at,
+            created_at=attempt.created_at,
         )
-        for attempt, urn in rows
+        for attempt, exam, urn in rows
     ]
 
 
@@ -2035,9 +2490,13 @@ class RankListItemOut(BaseModel):
 
 
 @app.get("/api/v1/ranks", response_model=list[RankListItemOut])
-def list_ranks() -> list[RankListItemOut]:
-    """List all XP ranks (public)."""
-    return [RankListItemOut(level=r["level"], name=r["name"], xp=r["xp"]) for r in XP_RANKS]
+def list_ranks(
+    current_user: User = Depends(get_current_user),
+) -> list[RankListItemOut]:
+    """List all XP ranks."""
+    return [
+        RankListItemOut(level=r["level"], name=r["name"], xp=r["xp"]) for r in XP_RANKS
+    ]
 
 
 class BadgeListItemOut(BaseModel):
@@ -2051,21 +2510,26 @@ class BadgeListItemOut(BaseModel):
 
 
 @app.get("/api/v1/badges", response_model=list[BadgeListItemOut])
-def list_badges(db: Session = Depends(get_db)) -> list[BadgeListItemOut]:
-    """List all available badges (public)."""
-    badges = db.execute(
-        select(Badge).where(Badge.is_active.is_(True), Badge.is_secret.is_(False))
-    ).scalars().all()
-
+def list_badges(
+    current_user: User = Depends(get_current_user), db: Session = Depends(get_db)
+) -> list[BadgeListItemOut]:
+    """List all available badges."""
+    badges = (
+        db.execute(
+            select(Badge).where(Badge.is_active.is_(True), Badge.is_secret.is_(False))
+        )
+        .scalars()
+        .all()
+    )
     return [
         BadgeListItemOut(
-            slug=b.slug,
-            name=b.name,
-            name_en=b.name_en,
-            description=b.description,
-            icon_url=b.icon_url,
-            category=b.category.value,
-            xp_bonus=int(b.xp_bonus or 0),
+            slug=badge.slug,
+            name=badge.name,
+            name_en=badge.name_en,
+            description=badge.description,
+            icon_url=badge.icon_url,
+            category=badge.category.value,
+            xp_bonus=int(badge.xp_bonus or 0),
         )
-        for b in badges
+        for badge in badges
     ]

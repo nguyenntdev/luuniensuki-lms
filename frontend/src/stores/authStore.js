@@ -1,98 +1,141 @@
 "use client";
 
 import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
 
-import { normalizeUser, getMe, login, register } from "@/lib/api";
+import { ApiError, getMe, login, logout, normalizeUser, register } from "@/lib/api";
 
-export const useAuthStore = create(
-  persist(
-    (set, get) => ({
-      accessToken: null,
-      refreshToken: null,
-      user: null,
-      stats: null,
-      loading: false,
-      error: null,
+let bootstrapPromise = null;
 
-      isAuthenticated: () => Boolean(get().accessToken),
+function mergeUser(prevUser, nextUser) {
+  if (!nextUser) return nextUser;
+  const normalized = normalizeUser(nextUser, {
+    fallbackUsername: prevUser?.username,
+  });
+  if (prevUser?.id && normalized?.id && prevUser.id === normalized.id) {
+    return { ...prevUser, ...normalized };
+  }
+  return normalized;
+}
 
-      logout: () => set({ accessToken: null, refreshToken: null, user: null, stats: null, error: null }),
+export const useAuthStore = create((set, get) => ({
+  status: "checking",
+  user: null,
+  stats: null,
+  loading: false,
+  error: null,
 
-      register: async ({ email, password, displayName }) => {
-        set({ loading: true, error: null });
-        try {
-          const res = await register({ email, password, displayName });
-          set({
-            accessToken: res.access_token,
-            refreshToken: res.refresh_token,
-            user: res.user,
-            loading: false,
-          });
-          await get().fetchMe();
-          return res;
-        } catch (err) {
-          set({ loading: false, error: err instanceof Error ? err.message : String(err) });
-          throw err;
-        }
-      },
+  isAuthenticated: () => get().status === "authed",
 
-      login: async ({ email, password }) => {
-        set({ loading: true, error: null });
-        try {
-          const res = await login({ email, password });
-          set({
-            accessToken: res.access_token,
-            refreshToken: res.refresh_token,
-            user: res.user,
-            loading: false,
-          });
-          await get().fetchMe();
-          return res;
-        } catch (err) {
-          set({ loading: false, error: err instanceof Error ? err.message : String(err) });
-          throw err;
-        }
-      },
+  bootstrap: async () => {
+    if (bootstrapPromise) return bootstrapPromise;
 
-      fetchMe: async () => {
-        const token = get().accessToken;
-        if (!token) return null;
-
-        try {
-          const res = await getMe({ token });
-          set((state) => {
-            const prevUser = state.user;
-            const nextUser = res?.user ? normalizeUser(res.user, { fallbackUsername: prevUser?.username }) : res?.user;
-            const shouldMerge = prevUser?.id && nextUser?.id && prevUser.id === nextUser.id;
-
-            return {
-              user: shouldMerge ? { ...prevUser, ...nextUser } : nextUser,
-              stats: res.stats,
-            };
-          });
-          return res;
-        } catch (err) {
-          set({ error: err instanceof Error ? err.message : String(err) });
+    bootstrapPromise = (async () => {
+      set({ status: "checking" });
+      try {
+        const res = await getMe();
+        set((state) => ({
+          user: mergeUser(state.user, res?.user),
+          stats: res?.stats ?? null,
+          status: res?.user ? "authed" : "unauth",
+          error: null,
+        }));
+        return res;
+      } catch (err) {
+        if (err instanceof ApiError && err.status === 401) {
+          set({ user: null, stats: null, status: "unauth", error: null });
           return null;
         }
-      },
-    }),
-    {
-      name: "luuniensuki-auth",
-      version: 2,
-      storage: createJSONStorage(() => localStorage),
-      migrate: (persistedState, version) => {
-        if (version >= 2) return persistedState;
-        const user = persistedState?.user;
-        if (!user) return persistedState;
-        return { ...persistedState, user: normalizeUser(user) };
-      },
-      partialize: (state) => ({
-        accessToken: state.accessToken,
-        refreshToken: state.refreshToken,
-        user: state.user,
-      }),
+        set({
+          user: null,
+          stats: null,
+          status: "unauth",
+          error: err instanceof Error ? err.message : String(err),
+        });
+        return null;
+      } finally {
+        bootstrapPromise = null;
+      }
+    })();
+
+    return bootstrapPromise;
+  },
+
+  fetchMe: async () => {
+    try {
+      const res = await getMe();
+      set((state) => ({
+        user: mergeUser(state.user, res?.user),
+        stats: res?.stats ?? null,
+        status: res?.user ? "authed" : state.status,
+        error: null,
+      }));
+      return res;
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 401) {
+        set({ user: null, stats: null, status: "unauth" });
+        return null;
+      }
+      set({ error: err instanceof Error ? err.message : String(err) });
+      return null;
     }
-  )
-);
+  },
+
+  register: async ({ email, password, displayName }) => {
+    set({ loading: true, error: null });
+    try {
+      const res = await register({ email, password, displayName });
+      set((state) => ({
+        user: mergeUser(state.user, res?.user),
+        stats: res?.stats ?? null,
+        status: res?.user ? "authed" : "unauth",
+        loading: false,
+        error: null,
+      }));
+      return res;
+    } catch (err) {
+      set({
+        loading: false,
+        error: err instanceof Error ? err.message : String(err),
+      });
+      throw err;
+    }
+  },
+
+  login: async ({ email, password }) => {
+    set({ loading: true, error: null });
+    try {
+      const res = await login({ email, password });
+      set((state) => ({
+        user: mergeUser(state.user, res?.user),
+        stats: res?.stats ?? null,
+        status: res?.user ? "authed" : "unauth",
+        loading: false,
+        error: null,
+      }));
+      return res;
+    } catch (err) {
+      set({
+        loading: false,
+        error: err instanceof Error ? err.message : String(err),
+      });
+      throw err;
+    }
+  },
+
+  logout: async () => {
+    set({ loading: true, error: null });
+    try {
+      await logout();
+    } catch {
+      // ignore logout errors
+    } finally {
+      set({
+        user: null,
+        stats: null,
+        status: "unauth",
+        loading: false,
+        error: null,
+      });
+    }
+  },
+}));

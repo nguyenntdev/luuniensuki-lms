@@ -10,42 +10,43 @@ import unicodedata
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Any
-from typing import TypeVar
+from typing import Any, TypeVar
 from urllib.parse import quote
 
-from sqlalchemy import create_engine
-from sqlalchemy import select
-from sqlalchemy.orm import Session
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine, select
+from sqlalchemy.orm import Session, sessionmaker
 
 if __package__ in (None, ""):
     REPO_ROOT = Path(__file__).resolve().parents[1]
     sys.path.insert(0, str(REPO_ROOT))
 
-    from backend.models import Badge
-    from backend.models import BadgeCategory
-    from backend.models import Base
-    from backend.models import LessonContent
-    from backend.models import Motif
-    from backend.models import MotifCategory
-    from backend.models import MotifRarity
-    from backend.models import QuestionType
-    from backend.models import QuizQuestion
-    from backend.models import Urn
-    from backend.models import UrnExam
+    from backend.models import (
+        Badge,
+        BadgeCategory,
+        Base,
+        LessonContent,
+        Motif,
+        MotifCategory,
+        MotifRarity,
+        QuestionType,
+        QuizQuestion,
+        Urn,
+        UrnExam,
+    )
 else:
-    from .models import Badge
-    from .models import BadgeCategory
-    from .models import Base
-    from .models import LessonContent
-    from .models import Motif
-    from .models import MotifCategory
-    from .models import MotifRarity
-    from .models import QuestionType
-    from .models import QuizQuestion
-    from .models import Urn
-    from .models import UrnExam
+    from .models import (
+        Badge,
+        BadgeCategory,
+        Base,
+        LessonContent,
+        Motif,
+        MotifCategory,
+        MotifRarity,
+        QuestionType,
+        QuizQuestion,
+        Urn,
+        UrnExam,
+    )
 
 
 URN_ORDER: dict[str, int] = {
@@ -256,7 +257,9 @@ def coerce_enum(enum_cls: type[EnumT], raw: Any, default: EnumT) -> tuple[EnumT,
 
 
 def extract_json_array_from_markdown(markdown: str) -> list[dict[str, Any]]:
-    match = re.search(r"```json\s*(\[.*?\])\s*```", markdown, flags=re.IGNORECASE | re.DOTALL)
+    match = re.search(
+        r"```json\s*(\[.*?\])\s*```", markdown, flags=re.IGNORECASE | re.DOTALL
+    )
     if not match:
         raise ValueError("No ```json ... ``` array block found in seed markdown file.")
     data = json.loads(match.group(1))
@@ -305,7 +308,9 @@ def slug_variants(value: str) -> list[str]:
     return list(dict.fromkeys(variants))
 
 
-def resolve_thumbnail_url(image_map: dict[tuple[str, str], str], *, urn_slug: str, name_vi: str) -> str | None:
+def resolve_thumbnail_url(
+    image_map: dict[tuple[str, str], str], *, urn_slug: str, name_vi: str
+) -> str | None:
     target_slug = slugify(name_vi)
 
     alias = IMAGE_SLUG_ALIASES.get((urn_slug, target_slug))
@@ -342,12 +347,20 @@ class SeedConfig:
     model_base_url: str
 
 
-def upsert_urn(session: Session, *, name: str, model_base_url: str, thumbnail_url: str | None = None) -> Urn:
+def upsert_urn(
+    session: Session,
+    *,
+    name: str,
+    model_base_url: str,
+    thumbnail_url: str | None = None,
+) -> Urn:
     slug = slugify(name)
     display_order = URN_ORDER.get(slug, 0)
     is_demo = slug == "cao-dinh"
     model_filename = URN_MODEL_FILENAMES.get(slug)
-    model_url = f"{model_base_url.rstrip('/')}/{model_filename}" if model_filename else ""
+    model_url = (
+        f"{model_base_url.rstrip('/')}/{model_filename}" if model_filename else ""
+    )
 
     urn = session.execute(select(Urn).where(Urn.slug == slug)).scalar_one_or_none()
     if urn is None:
@@ -386,7 +399,9 @@ def upsert_badge(
     unlock_criteria: Any,
     is_secret: bool,
 ) -> Badge:
-    badge = session.execute(select(Badge).where(Badge.slug == slug)).scalar_one_or_none()
+    badge = session.execute(
+        select(Badge).where(Badge.slug == slug)
+    ).scalar_one_or_none()
     if badge is None:
         badge = Badge(
             slug=slug,
@@ -430,7 +445,11 @@ def scan_images(image_path: Path) -> dict[tuple[str, str], str]:
     base_url = f"/assets/{image_path.name}".rstrip("/")
 
     candidates: dict[tuple[str, str], list[str]] = {}
-    files = sorted(p for p in image_path.rglob("*") if p.is_file() and p.suffix.lower() in image_extensions)
+    files = sorted(
+        p
+        for p in image_path.rglob("*")
+        if p.is_file() and p.suffix.lower() in image_extensions
+    )
     print(f"Scanning images in {image_path}... ({len(files)} files)")
 
     for img_file in files:
@@ -451,10 +470,87 @@ def scan_images(image_path: Path) -> dict[tuple[str, str], str]:
         image_map[key] = urls[0]
         if len(urls) > 1:
             duplicates += len(urls) - 1
-            print(f"Warning: Multiple images match {key}: using {urls[0]} (ignored {len(urls) - 1})")
+            print(
+                f"Warning: Multiple images match {key}: using {urls[0]} (ignored {len(urls) - 1})"
+            )
 
     print(f"Found {len(image_map)} image mappings ({duplicates} duplicates).")
     return image_map
+
+
+def _collect_coordinate_files(coords_path: Path | None) -> list[Path]:
+    if coords_path is None:
+        return []
+    if coords_path.is_file():
+        return [coords_path]
+    if coords_path.is_dir():
+        return sorted(coords_path.glob("motif-coordinates-*.json"))
+    return []
+
+
+def seed_coordinates(session: Session, coords_path: Path | None) -> None:
+    files = _collect_coordinate_files(coords_path)
+    if not files:
+        return
+
+    total_updated = 0
+    total_skipped = 0
+    for file_path in files:
+        try:
+            raw = json.loads(file_path.read_text(encoding="utf-8"))
+        except Exception as exc:
+            print(f"Warning: Failed to read coordinates from {file_path}: {exc}")
+            continue
+
+        if not isinstance(raw, list):
+            print(f"Warning: Coordinates file {file_path} must be a list; skipping.")
+            continue
+
+        for item in raw:
+            if not isinstance(item, dict):
+                total_skipped += 1
+                continue
+
+            urn_slug = str(item.get("urn_slug") or "").strip()
+            motif_name = str(item.get("motif_name") or "").strip()
+            if not urn_slug or not motif_name:
+                total_skipped += 1
+                continue
+
+            urn = session.execute(
+                select(Urn).where(Urn.slug == urn_slug)
+            ).scalar_one_or_none()
+            if urn is None:
+                total_skipped += 1
+                continue
+
+            target_slug = slugify(motif_name)
+            motifs = (
+                session.execute(select(Motif).where(Motif.urn_id == urn.id))
+                .scalars()
+                .all()
+            )
+            motif = next((m for m in motifs if slugify(m.name) == target_slug), None)
+            if motif is None:
+                total_skipped += 1
+                continue
+
+            for field in ("pos_x", "pos_y", "pos_z", "bounding_radius"):
+                if field not in item:
+                    continue
+                value = item.get(field)
+                if value is None:
+                    continue
+                try:
+                    setattr(motif, field, float(value))
+                except (TypeError, ValueError):
+                    total_skipped += 1
+                    break
+            else:
+                total_updated += 1
+
+    if total_updated or total_skipped:
+        print(f"Applied {total_updated} coordinate updates ({total_skipped} skipped).")
 
 
 def upsert_motif(
@@ -469,7 +565,9 @@ def upsert_motif(
     display_order: int | None,
     thumbnail_url: str | None = None,
 ) -> Motif:
-    motif = session.execute(select(Motif).where(Motif.mesh_name == mesh_name)).scalar_one_or_none()
+    motif = session.execute(
+        select(Motif).where(Motif.mesh_name == mesh_name)
+    ).scalar_one_or_none()
     if motif is None:
         motif = Motif(
             urn_id=urn.id,
@@ -515,7 +613,9 @@ def upsert_lesson(
     fun_fact: str | None = None,
     is_ai_generated: bool = False,
 ) -> LessonContent:
-    lesson = session.execute(select(LessonContent).where(LessonContent.motif_id == motif.id)).scalar_one_or_none()
+    lesson = session.execute(
+        select(LessonContent).where(LessonContent.motif_id == motif.id)
+    ).scalar_one_or_none()
     if lesson is None:
         lesson = LessonContent(
             motif_id=motif.id,
@@ -591,7 +691,11 @@ def upsert_urn_exam(
     passing_score: int | None = None,
     xp_reward: int | None = None,
 ) -> UrnExam:
-    existing = session.execute(select(UrnExam).where(UrnExam.urn_id == urn.id)).scalars().first()
+    existing = (
+        session.execute(select(UrnExam).where(UrnExam.urn_id == urn.id))
+        .scalars()
+        .first()
+    )
 
     if existing is None:
         exam = UrnExam(
@@ -633,9 +737,13 @@ def seed_urn_exams(session: Session, *, exams_path: Path) -> None:
                 break
         urn_slug = slugify(stem)
 
-        urn = session.execute(select(Urn).where(Urn.slug == urn_slug)).scalar_one_or_none()
+        urn = session.execute(
+            select(Urn).where(Urn.slug == urn_slug)
+        ).scalar_one_or_none()
         if urn is None:
-            print(f"Warning: No urn found for urn exam file {file_path} (expected slug={urn_slug!r}).")
+            print(
+                f"Warning: No urn found for urn exam file {file_path} (expected slug={urn_slug!r})."
+            )
             continue
 
         try:
@@ -654,15 +762,21 @@ def seed_urn_exams(session: Session, *, exams_path: Path) -> None:
                 try:
                     passing_score = int(payload["passing_score"])
                 except (TypeError, ValueError):
-                    print(f"Warning: Invalid passing_score in {file_path}: {payload.get('passing_score')!r}")
+                    print(
+                        f"Warning: Invalid passing_score in {file_path}: {payload.get('passing_score')!r}"
+                    )
             if "xp_reward" in payload:
                 try:
                     xp_reward = int(payload["xp_reward"])
                 except (TypeError, ValueError):
-                    print(f"Warning: Invalid xp_reward in {file_path}: {payload.get('xp_reward')!r}")
+                    print(
+                        f"Warning: Invalid xp_reward in {file_path}: {payload.get('xp_reward')!r}"
+                    )
 
         if not isinstance(questions_raw, list):
-            print(f"Warning: Expected JSON array (or object with 'questions' array) in {file_path}")
+            print(
+                f"Warning: Expected JSON array (or object with 'questions' array) in {file_path}"
+            )
             continue
 
         questions: list[dict[str, Any]] = []
@@ -674,11 +788,15 @@ def seed_urn_exams(session: Session, *, exams_path: Path) -> None:
             question_text = raw.get("question_text") or raw.get("question")
             correct_answer = raw.get("correct_answer")
             if not question_text or correct_answer is None:
-                print(f"Warning: Skipping invalid question #{idx} in {file_path} (missing text/answer)")
+                print(
+                    f"Warning: Skipping invalid question #{idx} in {file_path} (missing text/answer)"
+                )
                 continue
 
             q_type_raw = raw.get("question_type") or raw.get("type")
-            q_type, q_type_ok = coerce_enum(QuestionType, q_type_raw, QuestionType.multiple_choice)
+            q_type, q_type_ok = coerce_enum(
+                QuestionType, q_type_raw, QuestionType.multiple_choice
+            )
             if q_type_raw is not None and str(q_type_raw).strip() and not q_type_ok:
                 print(
                     f"Warning: Unknown question type {q_type_raw!r} in {file_path} question #{idx}; "
@@ -687,13 +805,17 @@ def seed_urn_exams(session: Session, *, exams_path: Path) -> None:
 
             options = raw.get("options")
             if options is not None and not isinstance(options, list):
-                print(f"Warning: Skipping invalid options in {file_path} question #{idx}")
+                print(
+                    f"Warning: Skipping invalid options in {file_path} question #{idx}"
+                )
                 continue
             if isinstance(options, list):
                 options = [str(opt) for opt in options]
 
             explanation_raw = raw.get("explanation")
-            explanation = explanation_raw.strip() if isinstance(explanation_raw, str) else None
+            explanation = (
+                explanation_raw.strip() if isinstance(explanation_raw, str) else None
+            )
             if explanation == "":
                 explanation = None
 
@@ -712,12 +834,16 @@ def seed_urn_exams(session: Session, *, exams_path: Path) -> None:
                 difficulty, difficulty_ok = coerce_difficulty(difficulty_raw, default=1)
                 normalized["difficulty"] = difficulty
                 if str(difficulty_raw).strip() and not difficulty_ok:
-                    print(f"Warning: Invalid difficulty {difficulty_raw!r} in {file_path} question #{idx}; using {difficulty}")
+                    print(
+                        f"Warning: Invalid difficulty {difficulty_raw!r} in {file_path} question #{idx}; using {difficulty}"
+                    )
 
             questions.append(normalized)
 
         if not questions:
-            print(f"Warning: No valid questions found in {file_path}; skipping urn exam seed.")
+            print(
+                f"Warning: No valid questions found in {file_path}; skipping urn exam seed."
+            )
             continue
 
         upsert_urn_exam(
@@ -729,7 +855,11 @@ def seed_urn_exams(session: Session, *, exams_path: Path) -> None:
         )
 
 
-def run_seed(config: SeedConfig, image_path: Path | None = None) -> None:
+def run_seed(
+    config: SeedConfig,
+    image_path: Path | None = None,
+    coords_path: Path | None = None,
+) -> None:
     engine = create_engine(config.database_url, pool_pre_ping=True)
     Base.metadata.create_all(engine)
     SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
@@ -770,7 +900,9 @@ def run_seed(config: SeedConfig, image_path: Path | None = None) -> None:
                 slug=str(badge["slug"]),
                 name=str(badge["name"]),
                 name_en=(str(badge["name_en"]) if badge.get("name_en") else None),
-                description=(str(badge["description"]) if badge.get("description") else None),
+                description=(
+                    str(badge["description"]) if badge.get("description") else None
+                ),
                 icon_url=str(badge["icon_url"]),
                 category=badge["category"],
                 xp_bonus=int(badge.get("xp_bonus") or 0),
@@ -793,19 +925,31 @@ def run_seed(config: SeedConfig, image_path: Path | None = None) -> None:
             # Prefer scanned images over explicit thumbnail_url from seed
             thumbnail_url = None
             if image_map:
-                thumbnail_url = resolve_thumbnail_url(image_map, urn_slug=urn.slug, name_vi=name_vi)
+                thumbnail_url = resolve_thumbnail_url(
+                    image_map, urn_slug=urn.slug, name_vi=name_vi
+                )
                 if not thumbnail_url:
-                    print(f"Warning: No thumbnail match for urn={urn.slug!r} motif={name_vi!r}")
+                    print(
+                        f"Warning: No thumbnail match for urn={urn.slug!r} motif={name_vi!r}"
+                    )
             # Fallback to explicit thumbnail_url from seed data if no image match
             if not thumbnail_url:
                 thumbnail_url_raw = item.get("thumbnail_url")
-                thumbnail_url = str(thumbnail_url_raw).strip() if isinstance(thumbnail_url_raw, str) else None
+                thumbnail_url = (
+                    str(thumbnail_url_raw).strip()
+                    if isinstance(thumbnail_url_raw, str)
+                    else None
+                )
 
             display_order = parse_display_order(item.get("id")) or idx
 
             category_raw = item.get("category")
-            category_raw_text = str(category_raw).strip() if category_raw is not None else ""
-            category, category_ok = coerce_enum(MotifCategory, category_raw, MotifCategory.thao_moc)
+            category_raw_text = (
+                str(category_raw).strip() if category_raw is not None else ""
+            )
+            category, category_ok = coerce_enum(
+                MotifCategory, category_raw, MotifCategory.thao_moc
+            )
             if not category_raw_text:
                 print(
                     f"Warning: Missing category for motif mesh_name={mesh_name!r}; "
@@ -844,7 +988,9 @@ def run_seed(config: SeedConfig, image_path: Path | None = None) -> None:
             )
 
             description_short = item.get("description_short")
-            description_educational = item.get("description_educational") or description_short
+            description_educational = (
+                item.get("description_educational") or description_short
+            )
             if not description_educational:
                 print(f"Warning: Missing description for motif mesh_name={mesh_name!r}")
                 continue
@@ -874,19 +1020,25 @@ def run_seed(config: SeedConfig, image_path: Path | None = None) -> None:
                 question_text = quiz.get("question")
                 correct_answer = quiz.get("correct_answer")
                 if not question_text or not correct_answer:
-                    print(f"Warning: Invalid quiz question for motif mesh_name={mesh_name!r}")
+                    print(
+                        f"Warning: Invalid quiz question for motif mesh_name={mesh_name!r}"
+                    )
                     continue
 
                 options = quiz.get("options")
                 if options is not None and not isinstance(options, list):
-                    print(f"Warning: Invalid quiz question options for motif mesh_name={mesh_name!r}")
+                    print(
+                        f"Warning: Invalid quiz question options for motif mesh_name={mesh_name!r}"
+                    )
                     continue
                 if isinstance(options, list):
                     options = [str(opt) for opt in options]
 
                 # Map question type string to enum
                 q_type_raw = quiz.get("type")
-                q_type, q_type_ok = coerce_enum(QuestionType, q_type_raw, QuestionType.multiple_choice)
+                q_type, q_type_ok = coerce_enum(
+                    QuestionType, q_type_raw, QuestionType.multiple_choice
+                )
                 if q_type_raw is not None and str(q_type_raw).strip() and not q_type_ok:
                     print(
                         f"Warning: Unknown question type {q_type_raw!r} for motif mesh_name={mesh_name!r}; "
@@ -895,14 +1047,22 @@ def run_seed(config: SeedConfig, image_path: Path | None = None) -> None:
 
                 difficulty_raw = quiz.get("difficulty")
                 difficulty, difficulty_ok = coerce_difficulty(difficulty_raw, default=1)
-                if difficulty_raw is not None and str(difficulty_raw).strip() and not difficulty_ok:
+                if (
+                    difficulty_raw is not None
+                    and str(difficulty_raw).strip()
+                    and not difficulty_ok
+                ):
                     print(
                         f"Warning: Invalid difficulty {difficulty_raw!r} for motif mesh_name={mesh_name!r}; "
                         f"using {difficulty}"
                     )
 
                 explanation_raw = quiz.get("explanation")
-                explanation = explanation_raw.strip() if isinstance(explanation_raw, str) else None
+                explanation = (
+                    explanation_raw.strip()
+                    if isinstance(explanation_raw, str)
+                    else None
+                )
                 if explanation == "":
                     explanation = None
 
@@ -917,14 +1077,19 @@ def run_seed(config: SeedConfig, image_path: Path | None = None) -> None:
                     explanation=explanation,
                 )
 
-        seed_root = config.seed_path if config.seed_path.is_dir() else config.seed_path.parent
+        seed_root = (
+            config.seed_path if config.seed_path.is_dir() else config.seed_path.parent
+        )
         seed_urn_exams(session, exams_path=seed_root / "urn_exams")
+        seed_coordinates(session, coords_path)
 
         session.commit()
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Seed Luuniensuki PostgreSQL database from JSON/Markdown files")
+    parser = argparse.ArgumentParser(
+        description="Seed Luuniensuki PostgreSQL database from JSON/Markdown files"
+    )
     parser.add_argument(
         "--seed-path",
         default="data",
@@ -934,6 +1099,11 @@ def main() -> None:
         "--image-path",
         default="ban-duc-noi",
         help="Path to the directory containing embossed images (e.g., ban-duc-noi)",
+    )
+    parser.add_argument(
+        "--coords-path",
+        default=".",
+        help="Path to coordinates JSON file or a directory containing motif-coordinates-*.json",
     )
     args = parser.parse_args()
 
@@ -949,7 +1119,8 @@ def main() -> None:
             seed_path=Path(args.seed_path),
             model_base_url=model_base_url,
         ),
-        image_path=Path(args.image_path) if args.image_path else None
+        image_path=Path(args.image_path) if args.image_path else None,
+        coords_path=Path(args.coords_path) if args.coords_path else None,
     )
 
 

@@ -106,7 +106,9 @@ All errors return structured JSON:
 
 ### Authentication
 - JWT tokens with `type: "access"` or `type: "refresh"`
-- OAuth2PasswordBearer scheme, token in Authorization header
+- Tokens are stored in httpOnly cookies (`luuniensuki_access`, `luuniensuki_refresh`)
+- `/api/v1/auth/refresh` rotates cookies for silent renewal
+- OAuth2PasswordBearer header support is retained for tests/backward compatibility
 - Guest users (`role: "guest"`) can only access `is_demo: true` motifs
 - Access token expires in 60 minutes, refresh token in 30 days
 
@@ -126,15 +128,15 @@ All errors return structured JSON:
 ### AuthGate & Hydration Pattern
 - `AuthGate` component wraps all pages in `layout.jsx`
 - Public paths: `/login`, `/register` (defined in `PUBLIC_PATH_PREFIXES`)
-- Must wait for Zustand persist hydration before checking auth state
-- Uses `useAuthStore.persist.onFinishHydration()` callback
+- Calls `useAuthStore.bootstrap()` to resolve auth status via `/api/v1/auth/me`
 - Wrapped in `<Suspense>` to avoid Next.js static generation errors with `useSearchParams()`
 - Unauthenticated users redirected to `/login?returnUrl=<original-path>`
+- Server-side gating enforced in `frontend/middleware.ts` using access/refresh cookies
 
 ### Zustand Store Persistence
-- `authStore`: persists `accessToken`, `refreshToken` to localStorage key `luuniensuki-auth`
+- `authStore`: no token persistence; session is cookie-based
 - `motifStore`: persists `foundByMotifId`, `progressByMotifId` to localStorage key `luuniensuki-motif-progress`
-- Both use `createJSONStorage(() => localStorage)` with version tracking
+- `motifStore` uses `createJSONStorage(() => localStorage)` with version tracking
 
 ### Badge Award System
 - Badges are checked and awarded in `_award_badge()` function in `backend/main.py`
@@ -360,5 +362,5 @@ Example usage:
 codex "Refactor component X to use hooks"
 
 # Gemini for content/docs
-gemini -m gemini-3.0-pro-preview "Write Vietnamese translations for navigation items"
+gemini -m gemini-3.0-pro "Write Vietnamese translations for navigation items"
 ```

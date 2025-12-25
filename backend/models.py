@@ -5,24 +5,23 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Optional
 
-from sqlalchemy import Boolean
-from sqlalchemy import DateTime
+from sqlalchemy import (
+    Boolean,
+    DateTime,
+    Float,
+    ForeignKey,
+    Index,
+    Integer,
+    String,
+    Text,
+    UniqueConstraint,
+    func,
+    text,
+)
 from sqlalchemy import Enum as SAEnum
-from sqlalchemy import Float
-from sqlalchemy import ForeignKey
-from sqlalchemy import Index
-from sqlalchemy import Integer
-from sqlalchemy import String
-from sqlalchemy import Text
-from sqlalchemy import UniqueConstraint
-from sqlalchemy import func
-from sqlalchemy import text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
-from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
 class Base(DeclarativeBase):
@@ -83,27 +82,49 @@ class User(Base):
         Index("idx_users_email", "email"),
         Index("idx_users_username", "username"),
         Index("idx_users_role", "role"),
+        Index("idx_users_starting_urn", "starting_urn_id"),
     )
 
-    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
     email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     display_name: Mapped[str] = mapped_column(String(100), nullable=False)
     avatar_url: Mapped[Optional[str]] = mapped_column(Text)
     bio: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    username: Mapped[Optional[str]] = mapped_column(String(50), unique=True, nullable=True)
-    is_profile_public: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("true"))
+    username: Mapped[Optional[str]] = mapped_column(
+        String(50), unique=True, nullable=True
+    )
+    starting_urn_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("urns.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    is_profile_public: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("true")
+    )
     role: Mapped[UserRole] = mapped_column(
         SAEnum(UserRole, name="user_role", native_enum=True),
         nullable=False,
         server_default=text("'learner'"),
     )
-    total_xp: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("0"))
-    current_streak: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("0"))
-    longest_streak: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("0"))
-    streak_freezes: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("0"))
+    total_xp: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default=text("0")
+    )
+    current_streak: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default=text("0")
+    )
+    longest_streak: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default=text("0")
+    )
+    streak_freezes: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default=text("0")
+    )
     last_active_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
@@ -127,12 +148,18 @@ class User(Base):
         back_populates="user",
         cascade="all, delete-orphan",
     )
+    starting_urn: Mapped[Optional["Urn"]] = relationship(
+        "Urn",
+        foreign_keys=[starting_urn_id],
+    )
 
 
 class Urn(Base):
     __tablename__ = "urns"
 
-    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
     slug: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     name_han: Mapped[Optional[str]] = mapped_column(String(50))
@@ -141,8 +168,12 @@ class Urn(Base):
     model_url: Mapped[str] = mapped_column(Text, nullable=False)
     thumbnail_url: Mapped[Optional[str]] = mapped_column(Text)
     display_order: Mapped[int] = mapped_column(Integer, nullable=False)
-    is_demo: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("false"))
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    is_demo: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("false")
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
 
     motifs: Mapped[list[Motif]] = relationship(
         back_populates="urn",
@@ -158,6 +189,32 @@ class Urn(Base):
     )
 
 
+class AnalyticsEvent(Base):
+    __tablename__ = "analytics_events"
+    __table_args__ = (
+        Index("idx_analytics_user", "user_id"),
+        Index("idx_analytics_event_name", "event_name"),
+        Index("idx_analytics_created_at", "created_at"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    event_name: Mapped[str] = mapped_column(String(100), nullable=False)
+    path: Mapped[Optional[str]] = mapped_column(String(255))
+    payload: Mapped[Optional[Any]] = mapped_column(JSONB)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+    user: Mapped["User"] = relationship("User")
+
+
 class Motif(Base):
     __tablename__ = "motifs"
     __table_args__ = (
@@ -167,7 +224,9 @@ class Motif(Base):
         Index("idx_motifs_rarity", "rarity"),
     )
 
-    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
     urn_id: Mapped[uuid.UUID] = mapped_column(
         PG_UUID(as_uuid=True),
         ForeignKey("urns.id", ondelete="CASCADE"),
@@ -203,11 +262,17 @@ class Motif(Base):
     thumbnail_url: Mapped[Optional[str]] = mapped_column(Text)
     silhouette_url: Mapped[Optional[str]] = mapped_column(Text)
 
-    is_demo: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("false"))
-    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("true"))
+    is_demo: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("false")
+    )
+    is_active: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("true")
+    )
 
     display_order: Mapped[Optional[int]] = mapped_column(Integer)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
@@ -238,7 +303,9 @@ class Motif(Base):
 class LessonContent(Base):
     __tablename__ = "lesson_content"
 
-    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
     motif_id: Mapped[uuid.UUID] = mapped_column(
         PG_UUID(as_uuid=True),
         ForeignKey("motifs.id", ondelete="CASCADE"),
@@ -256,9 +323,13 @@ class LessonContent(Base):
     additional_images: Mapped[Optional[Any]] = mapped_column(JSONB)
     video_url: Mapped[Optional[str]] = mapped_column(Text)
 
-    is_ai_generated: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("false"))
+    is_ai_generated: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("false")
+    )
 
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
@@ -278,7 +349,9 @@ class UserProgress(Base):
         Index("idx_progress_status", "status"),
     )
 
-    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
     user_id: Mapped[uuid.UUID] = mapped_column(
         PG_UUID(as_uuid=True),
         ForeignKey("users.id", ondelete="CASCADE"),
@@ -297,16 +370,26 @@ class UserProgress(Base):
     )
 
     discovered_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
-    lesson_viewed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    lesson_viewed_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True)
+    )
     learned_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
     mastered_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
 
-    quiz_attempts: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("0"))
-    quiz_best_score: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("0"))
+    quiz_attempts: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default=text("0")
+    )
+    quiz_best_score: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default=text("0")
+    )
 
-    xp_earned: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("0"))
+    xp_earned: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default=text("0")
+    )
 
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
@@ -322,7 +405,9 @@ class QuizQuestion(Base):
     __tablename__ = "quiz_questions"
     __table_args__ = (Index("idx_quiz_q_motif", "motif_id"),)
 
-    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
     motif_id: Mapped[uuid.UUID] = mapped_column(
         PG_UUID(as_uuid=True),
         ForeignKey("motifs.id", ondelete="CASCADE"),
@@ -343,14 +428,22 @@ class QuizQuestion(Base):
     correct_answer: Mapped[str] = mapped_column(String(255), nullable=False)
     target_mesh_name: Mapped[Optional[str]] = mapped_column(String(100))
 
-    difficulty: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("1"))
+    difficulty: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default=text("1")
+    )
     explanation: Mapped[Optional[str]] = mapped_column(Text)
 
-    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("true"))
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    is_active: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("true")
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
 
     motif: Mapped[Motif] = relationship(back_populates="quiz_questions")
-    urn: Mapped[Optional[Urn]] = relationship(back_populates="exam_questions", foreign_keys=[urn_id])
+    urn: Mapped[Optional[Urn]] = relationship(
+        back_populates="exam_questions", foreign_keys=[urn_id]
+    )
 
 
 class QuizAttempt(Base):
@@ -360,7 +453,9 @@ class QuizAttempt(Base):
         Index("idx_quiz_attempts_motif", "motif_id"),
     )
 
-    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
     user_id: Mapped[uuid.UUID] = mapped_column(
         PG_UUID(as_uuid=True),
         ForeignKey("users.id", ondelete="CASCADE"),
@@ -379,7 +474,9 @@ class QuizAttempt(Base):
     answers: Mapped[Any] = mapped_column(JSONB, nullable=False)
     time_taken_seconds: Mapped[Optional[int]] = mapped_column(Integer)
 
-    completed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    completed_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
 
     user: Mapped[User] = relationship(back_populates="quiz_attempts")
     motif: Mapped[Motif] = relationship(back_populates="quiz_attempts")
@@ -389,7 +486,9 @@ class UrnExam(Base):
     __tablename__ = "urn_exams"
     __table_args__ = (Index("idx_urn_exams_urn", "urn_id"),)
 
-    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
     urn_id: Mapped[uuid.UUID] = mapped_column(
         PG_UUID(as_uuid=True),
         ForeignKey("urns.id", ondelete="CASCADE"),
@@ -397,8 +496,12 @@ class UrnExam(Base):
     )
 
     questions: Mapped[Any] = mapped_column(JSONB, nullable=False)
-    passing_score: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("80"))
-    xp_reward: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("100"))
+    passing_score: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default=text("80")
+    )
+    xp_reward: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default=text("100")
+    )
 
     urn: Mapped[Urn] = relationship(back_populates="urn_exams")
     attempts: Mapped[list[UrnExamAttempt]] = relationship(
@@ -415,7 +518,9 @@ class UrnExamAttempt(Base):
         Index("idx_urn_exam_attempts_passed", "passed"),
     )
 
-    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
     user_id: Mapped[uuid.UUID] = mapped_column(
         PG_UUID(as_uuid=True),
         ForeignKey("users.id", ondelete="CASCADE"),
@@ -432,7 +537,9 @@ class UrnExamAttempt(Base):
     time_taken: Mapped[Optional[int]] = mapped_column(Integer)
     answers: Mapped[Any] = mapped_column(JSONB, nullable=False)
 
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
 
     user: Mapped[User] = relationship(back_populates="urn_exam_attempts")
     urn_exam: Mapped[UrnExam] = relationship(back_populates="attempts")
@@ -441,7 +548,9 @@ class UrnExamAttempt(Base):
 class Badge(Base):
     __tablename__ = "badges"
 
-    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
     slug: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     name_en: Mapped[Optional[str]] = mapped_column(String(255))
@@ -452,12 +561,20 @@ class Badge(Base):
         SAEnum(BadgeCategory, name="badge_category", native_enum=True),
         nullable=False,
     )
-    xp_bonus: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("0"))
+    xp_bonus: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default=text("0")
+    )
     unlock_criteria: Mapped[Any] = mapped_column(JSONB, nullable=False)
 
-    is_secret: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("false"))
-    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("true"))
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    is_secret: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("false")
+    )
+    is_active: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("true")
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
 
     user_badges: Mapped[list[UserBadge]] = relationship(
         back_populates="badge",
@@ -472,7 +589,9 @@ class UserBadge(Base):
         Index("idx_user_badges_user", "user_id"),
     )
 
-    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
     user_id: Mapped[uuid.UUID] = mapped_column(
         PG_UUID(as_uuid=True),
         ForeignKey("users.id", ondelete="CASCADE"),
@@ -483,7 +602,9 @@ class UserBadge(Base):
         ForeignKey("badges.id", ondelete="CASCADE"),
         nullable=False,
     )
-    earned_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    earned_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
 
     user: Mapped[User] = relationship(back_populates="user_badges")
     badge: Mapped[Badge] = relationship(back_populates="user_badges")

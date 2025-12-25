@@ -1,15 +1,14 @@
-def _register_and_get_token(client, email="bob@example.com"):
+def _register_user(client, email="bob@example.com"):
     register = client.post(
         "/api/v1/auth/register",
         json={"email": email, "password": "password123", "display_name": "Bob"},
     )
     assert register.status_code == 201, register.text
-    return register.json()["access_token"]
+    return register
 
 
 def test_full_gameplay_flow(client, seeded_content):
-    token = _register_and_get_token(client)
-    headers = {"Authorization": f"Bearer {token}"}
+    _register_user(client)
 
     urns = client.get("/api/v1/urns")
     assert urns.status_code == 200, urns.text
@@ -31,21 +30,20 @@ def test_full_gameplay_flow(client, seeded_content):
 
     unlock = client.post(
         "/progress/unlock",
-        headers=headers,
         json={"motif_id": motif_id, "mesh_name": seeded_content["motif"].mesh_name},
     )
     assert unlock.status_code == 200, unlock.text
     assert unlock.json()["status"] == "discovered"
     assert unlock.json()["xp_awarded"] >= 25  # discovery + maybe badge bonus
 
-    quiz_locked = client.get(f"/api/v1/motifs/{motif_id}/quiz", headers=headers)
+    quiz_locked = client.get(f"/api/v1/motifs/{motif_id}/quiz")
     assert quiz_locked.status_code == 400
 
-    complete = client.post(f"/api/v1/motifs/{motif_id}/complete-lesson", headers=headers)
+    complete = client.post(f"/api/v1/motifs/{motif_id}/complete-lesson")
     assert complete.status_code == 200, complete.text
     assert complete.json()["status"] in ("learned", "mastered")
 
-    quiz = client.get(f"/api/v1/motifs/{motif_id}/quiz", headers=headers)
+    quiz = client.get(f"/api/v1/motifs/{motif_id}/quiz")
     assert quiz.status_code == 200, quiz.text
     assert "correct_answer" not in quiz.text
 
@@ -53,31 +51,41 @@ def test_full_gameplay_flow(client, seeded_content):
 
     wrong = client.post(
         "/api/v1/quizzes/submit",
-        headers=headers,
-        json={"motif_id": motif_id, "answers": [{"question_id": qid, "answer": "B. Rồng"}]},
+        json={
+            "motif_id": motif_id,
+            "answers": [{"question_id": qid, "answer": "B. Rồng"}],
+        },
     )
     assert wrong.status_code == 200, wrong.text
     assert wrong.json()["passed"] is False
     assert wrong.json()["status"] == "learned"
-    assert wrong.json()["results"][0]["explanation"] == "Đáp án đúng là Hổ: họa tiết mô tả con hổ."
+    assert (
+        wrong.json()["results"][0]["explanation"]
+        == "Đáp án đúng là Hổ: họa tiết mô tả con hổ."
+    )
 
     correct = client.post(
         "/api/v1/quizzes/submit",
-        headers=headers,
-        json={"motif_id": motif_id, "answers": [{"question_id": qid, "answer": "A. Hổ"}]},
+        json={
+            "motif_id": motif_id,
+            "answers": [{"question_id": qid, "answer": "A. Hổ"}],
+        },
     )
     assert correct.status_code == 200, correct.text
     assert correct.json()["passed"] is True
     assert correct.json()["status"] == "mastered"
-    assert correct.json()["results"][0]["explanation"] == "Đáp án đúng là Hổ: họa tiết mô tả con hổ."
+    assert (
+        correct.json()["results"][0]["explanation"]
+        == "Đáp án đúng là Hổ: họa tiết mô tả con hổ."
+    )
 
-    badges = client.get("/api/v1/users/me/badges", headers=headers)
+    badges = client.get("/api/v1/users/me/badges")
     assert badges.status_code == 200, badges.text
     badge_slugs = {b["badge"]["slug"] for b in badges.json()}
     assert "first-discovery" in badge_slugs
     assert "first-mastered" in badge_slugs
 
-    streak = client.get("/api/v1/users/me/streak", headers=headers)
+    streak = client.get("/api/v1/users/me/streak")
     assert streak.status_code == 200, streak.text
     assert streak.json()["current_streak"] >= 1
 
