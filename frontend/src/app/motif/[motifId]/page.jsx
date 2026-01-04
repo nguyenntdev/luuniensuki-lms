@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
-import { completeLesson, getMotifDetail } from "@/lib/api";
+import { completeLesson, getMotifDetail, logAnalyticsEvent } from "@/lib/api";
 import { useAuthStore } from "@/stores/authStore";
 import { useMotifStore } from "@/stores/motifStore";
 
@@ -51,6 +51,53 @@ export default function MotifLessonPage() {
     const [completing, setCompleting] = useState(false);
     const [error, setError] = useState(null);
     const [notice, setNotice] = useState(null);
+
+    const mediaItems = useMemo(() => {
+        const raw = motif?.lesson?.additional_images;
+        if (!Array.isArray(raw)) return [];
+        return raw
+            .map((item, idx) => {
+                if (typeof item === "string") {
+                    return {
+                        src: item,
+                        alt: `${motif?.name || "Hình ảnh"} ${idx + 1}`,
+                        caption: null,
+                    };
+                }
+                if (item && typeof item === "object") {
+                    const src =
+                        item.url ||
+                        item.src ||
+                        item.image_url ||
+                        item.image ||
+                        "";
+                    if (!src) return null;
+                    return {
+                        src,
+                        alt:
+                            item.alt ||
+                            item.caption ||
+                            `${motif?.name || "Hình ảnh"} ${idx + 1}`,
+                        caption: item.caption || item.title || null,
+                    };
+                }
+                return null;
+            })
+            .filter(Boolean);
+    }, [motif?.lesson?.additional_images, motif?.name]);
+
+    function trackMediaEvent(type) {
+        if (!motifId) return;
+        logAnalyticsEvent({
+            name: type,
+            payload: {
+                motif_id: motifId,
+                urn_id: motif?.urn?.id || null,
+                source: "client",
+            },
+            path: `/motif/${motifId}`,
+        }).catch(() => null);
+    }
 
     // Check if motif is discovered
     const motifProgress = progressByMotifId[motifId];
@@ -266,15 +313,95 @@ export default function MotifLessonPage() {
                             <div className="grid gap-6">
                                 {/* Main Lesson Text */}
                                 <div className="rounded-2xl border border-border bg-card p-6 md:p-8">
-                                    <h3 className="text-xl font-display font-bold text-foreground mb-4">
-                                        Bài Học
-                                    </h3>
+                                    <div className="flex items-center justify-between gap-3 mb-4">
+                                        <h3 className="text-xl font-display font-bold text-foreground">
+                                            Bài Học
+                                        </h3>
+                                        {motif.lesson?.is_ai_generated ? (
+                                            <span className="rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-700">
+                                                AI hỗ trợ
+                                            </span>
+                                        ) : null}
+                                    </div>
                                     <div className="prose prose-primary prose-sm sm:prose-base max-w-none text-muted-foreground leading-relaxed">
                                         {motif.lesson?.description ||
                                             motif.lesson?.intro_text ||
                                             "Chưa có nội dung bài học."}
                                     </div>
                                 </div>
+
+                                {(motif.lesson?.audio_narration_url ||
+                                    motif.lesson?.video_url) && (
+                                    <div className="rounded-2xl border border-border bg-card p-6 md:p-8 space-y-4">
+                                        <h3 className="text-lg font-display font-bold text-foreground">
+                                            Nội dung đa phương tiện
+                                        </h3>
+                                        {motif.lesson?.audio_narration_url && (
+                                            <div className="space-y-2">
+                                                <div className="text-sm font-medium text-muted-foreground">
+                                                    Nghe thuyết minh
+                                                </div>
+                                                <audio
+                                                    controls
+                                                    onPlay={() =>
+                                                        trackMediaEvent(
+                                                            "lesson_audio_play",
+                                                        )
+                                                    }
+                                                    className="w-full"
+                                                    src={
+                                                        motif.lesson
+                                                            .audio_narration_url
+                                                    }
+                                                />
+                                            </div>
+                                        )}
+                                        {motif.lesson?.video_url && (
+                                            <div className="space-y-2">
+                                                <div className="text-sm font-medium text-muted-foreground">
+                                                    Xem video
+                                                </div>
+                                                <video
+                                                    controls
+                                                    onPlay={() =>
+                                                        trackMediaEvent(
+                                                            "lesson_video_play",
+                                                        )
+                                                    }
+                                                    className="w-full rounded-xl border border-border bg-black"
+                                                    src={motif.lesson.video_url}
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {mediaItems.length > 0 && (
+                                    <div className="rounded-2xl border border-border bg-card p-6 md:p-8">
+                                        <h3 className="text-lg font-display font-bold text-foreground mb-4">
+                                            Hình ảnh bổ sung
+                                        </h3>
+                                        <div className="grid gap-4 sm:grid-cols-2">
+                                            {mediaItems.map((item, idx) => (
+                                                <figure
+                                                    key={`${item.src}-${idx}`}
+                                                    className="overflow-hidden rounded-xl border border-border bg-muted"
+                                                >
+                                                    <img
+                                                        src={item.src}
+                                                        alt={item.alt}
+                                                        className="h-48 w-full object-cover"
+                                                    />
+                                                    {item.caption ? (
+                                                        <figcaption className="px-3 py-2 text-xs text-muted-foreground">
+                                                            {item.caption}
+                                                        </figcaption>
+                                                    ) : null}
+                                                </figure>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
 
                                 {/* Historical Context */}
                                 {motif.lesson?.historical_context && (

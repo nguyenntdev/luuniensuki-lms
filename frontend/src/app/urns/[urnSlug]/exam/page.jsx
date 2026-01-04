@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 
-import { getUrnDetail, getUrnExam, submitUrnExam } from "@/lib/api";
+import { ApiError, getUrnDetail, getUrnExam, submitUrnExam } from "@/lib/api";
 import { useAuthStore } from "@/stores/authStore";
 
 const STORAGE_KEY_PREFIX = "luuniensuki:urn-exam";
@@ -36,6 +36,7 @@ export default function UrnExamPage() {
     const [loading, setLoading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState(null);
+    const [eligibility, setEligibility] = useState(null);
 
     useEffect(() => {
         let cancelled = false;
@@ -44,6 +45,7 @@ export default function UrnExamPage() {
 
             setLoading(true);
             setError(null);
+            setEligibility(null);
 
             try {
                 const urnRes = await getUrnDetail(urnSlug);
@@ -59,7 +61,17 @@ export default function UrnExamPage() {
                 }
             } catch (err) {
                 if (cancelled) return;
-                setError(err instanceof Error ? err.message : String(err));
+                if (
+                    err instanceof ApiError &&
+                    err.status === 403 &&
+                    err.data?.detail &&
+                    typeof err.data.detail === "object"
+                ) {
+                    setEligibility(err.data.detail);
+                    setError(err.data.detail.message || err.message);
+                } else {
+                    setError(err instanceof Error ? err.message : String(err));
+                }
             } finally {
                 if (!cancelled) setLoading(false);
             }
@@ -179,9 +191,21 @@ export default function UrnExamPage() {
 
             router.push(`/urns/${urnSlug}/exam/result`);
         } catch (err) {
-            const msg = err instanceof Error ? err.message : String(err);
-            setError(msg);
-            toast.error(`❌ Lỗi: ${msg}`);
+            if (
+                err instanceof ApiError &&
+                err.status === 403 &&
+                err.data?.detail &&
+                typeof err.data.detail === "object"
+            ) {
+                const msg = err.data.detail.message || err.message;
+                setEligibility(err.data.detail);
+                setError(msg);
+                toast.error(`❌ Lỗi: ${msg}`);
+            } else {
+                const msg = err instanceof Error ? err.message : String(err);
+                setError(msg);
+                toast.error(`❌ Lỗi: ${msg}`);
+            }
         } finally {
             setSubmitting(false);
         }
@@ -198,11 +222,33 @@ export default function UrnExamPage() {
     }
 
     if (error) {
+        const missingMotifs = Array.isArray(eligibility?.missing_motifs)
+            ? eligibility.missing_motifs
+            : [];
         return (
             <main className="mx-auto max-w-4xl px-6 py-10">
                 <div className="rounded-lg bg-destructive/10 p-4 text-sm text-destructive">
                     {error}
                 </div>
+                {missingMotifs.length ? (
+                    <div className="mt-4 rounded-lg border border-border bg-card p-4 text-sm text-foreground">
+                        <div className="font-semibold">
+                            Họa tiết chưa hoàn thành
+                        </div>
+                        <ul className="mt-2 list-disc space-y-1 pl-5 text-xs text-muted-foreground">
+                            {missingMotifs.slice(0, 6).map((motif) => (
+                                <li key={motif?.id || motif?.name}>
+                                    {motif?.name || "Họa tiết"}
+                                </li>
+                            ))}
+                        </ul>
+                        {missingMotifs.length > 6 ? (
+                            <div className="mt-2 text-xs text-muted-foreground">
+                                +{missingMotifs.length - 6} họa tiết khác
+                            </div>
+                        ) : null}
+                    </div>
+                ) : null}
                 <div className="mt-4 flex flex-wrap gap-3">
                     <button
                         onClick={() => window.location.reload()}

@@ -43,6 +43,13 @@ const STATUS_RANK = {
     mastered: 2,
 };
 
+const NEXT_ACTION_HINTS = {
+    hidden: "Khám phá họa tiết trên mô hình 3D.",
+    discovered: "Hoàn thành bài học để mở khóa quiz.",
+    learned: "Làm trắc nghiệm để thành thạo.",
+    mastered: "Chọn họa tiết tiếp theo để tiếp tục.",
+};
+
 const SIDEBAR_ANIMATION_MS = 320;
 
 function countWords(text) {
@@ -79,7 +86,7 @@ function ProgressStepper({ status }) {
     };
 
     return (
-        <div className="w-full rounded-xl border border-border bg-background/60 p-3">
+        <div className="w-full rounded-xl border border-border bg-background/40 p-3">
             <div className="grid grid-cols-3 items-start gap-0">
                 {PROGRESS_STEPS.map((step, idx) => {
                     const isLast = idx === lastStepIndex;
@@ -209,7 +216,7 @@ function ProgressStepper({ status }) {
 
 export default function LessonSidebar() {
     const router = useRouter();
-    const status = useAuthStore((s) => s.status);
+    const authStatus = useAuthStore((s) => s.status);
     const fetchMe = useAuthStore((s) => s.fetchMe);
 
     const sidebarOpen = useMotifStore((s) => s.sidebarOpen);
@@ -274,14 +281,16 @@ export default function LessonSidebar() {
     const isFound = Boolean(activeMotifId && foundByMotifId[activeMotifId]);
     const progress = activeMotifId ? progressByMotifId[activeMotifId] : null;
 
-    const status = useMemo(() => {
+    const progressStatus = useMemo(() => {
         const raw = progress?.status || (isFound ? "discovered" : "hidden");
         return STATUS_META[raw] ? raw : "hidden";
     }, [isFound, progress?.status]);
+    const nextActionHint =
+        NEXT_ACTION_HINTS[progressStatus] || "Tiếp tục hành trình của bạn.";
 
     const quizUnlocked = useMemo(
-        () => status === "learned" || status === "mastered",
-        [status],
+        () => progressStatus === "learned" || progressStatus === "mastered",
+        [progressStatus],
     );
 
     const lessonCacheRef = useRef(new Map());
@@ -386,14 +395,14 @@ export default function LessonSidebar() {
     );
 
     const quizDisabledReason = useMemo(() => {
-        if (status !== "authed") return "Đăng nhập để làm trắc nghiệm.";
+        if (authStatus !== "authed") return "Đăng nhập để làm trắc nghiệm.";
         if (!isFound) return "Họa tiết chưa được mở khóa.";
         if (!quizUnlocked) return "Hoàn thành bài học để mở khóa trắc nghiệm.";
         return null;
-    }, [isFound, quizUnlocked, status]);
+    }, [authStatus, isFound, quizUnlocked]);
 
     const handleCompleteLesson = useCallback(async () => {
-        if (status !== "authed" || !activeMotifId) return;
+        if (authStatus !== "authed" || !activeMotifId) return;
         if (completingLesson) return;
 
         setCompletingLesson(true);
@@ -417,7 +426,13 @@ export default function LessonSidebar() {
         } finally {
             setCompletingLesson(false);
         }
-    }, [activeMotifId, applyProgressUpdate, completingLesson, fetchMe, status]);
+    }, [
+        activeMotifId,
+        applyProgressUpdate,
+        authStatus,
+        completingLesson,
+        fetchMe,
+    ]);
 
     const handleTakeQuiz = useCallback(() => {
         if (!activeMotifId) return;
@@ -444,16 +459,16 @@ export default function LessonSidebar() {
 
             <aside
                 className={[
-                    "pointer-events-auto absolute right-0 top-0 h-full w-full max-w-[560px] bg-card shadow-2xl border-l border-border",
+                    "pointer-events-auto absolute right-0 top-0 h-full w-full max-w-[560px] bg-card/95 shadow-2xl border-l border-white/10 backdrop-blur-md",
                     "transform-gpu transition-transform duration-300 ease-out",
                     panelOpen ? "translate-x-0" : "translate-x-full",
                 ].join(" ")}
             >
                 <div className="flex h-full flex-col">
-                    <div className="flex items-start justify-between gap-4 border-b border-border p-5">
+                    <div className="flex items-start justify-between gap-4 border-b border-white/10 p-4">
                         <div className="min-w-0">
-                            <div className="mb-4">
-                                <ProgressStepper status={status} />
+                            <div className="mb-3">
+                                <ProgressStepper status={progressStatus} />
                             </div>
 
                             <h2 className="truncate text-xl font-display font-semibold text-foreground">
@@ -478,14 +493,14 @@ export default function LessonSidebar() {
                                     className={[
                                         "inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-medium",
                                         (
-                                            STATUS_META[status] ||
+                                            STATUS_META[progressStatus] ||
                                             STATUS_META.hidden
                                         ).className,
                                     ].join(" ")}
                                 >
                                     {
                                         (
-                                            STATUS_META[status] ||
+                                            STATUS_META[progressStatus] ||
                                             STATUS_META.hidden
                                         ).label
                                     }
@@ -501,8 +516,8 @@ export default function LessonSidebar() {
                         </button>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))]">
-                        {status !== "authed" ? (
+                    <div className="flex-1 overflow-y-auto p-4 pb-[calc(1.25rem+env(safe-area-inset-bottom))]">
+                        {authStatus !== "authed" ? (
                             <div className="mb-4 rounded-lg bg-bronze/10 p-3 text-sm text-bronze">
                                 Đăng nhập để lưu tiến trình của bạn.{" "}
                                 <Link
@@ -514,21 +529,30 @@ export default function LessonSidebar() {
                             </div>
                         ) : null}
 
+                        <div className="mb-3 rounded-lg border border-border bg-background/40 px-3 py-2">
+                            <div className="text-[10px] uppercase tracking-wide text-muted-foreground/80">
+                                Bước tiếp theo
+                            </div>
+                            <div className="mt-1 text-sm text-foreground">
+                                {nextActionHint}
+                            </div>
+                        </div>
+
                         <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                             <button
                                 type="button"
                                 onClick={handleCompleteLesson}
                                 disabled={
-                                    status !== "authed" || completingLesson
+                                    authStatus !== "authed" || completingLesson
                                 }
                                 className={[
-                                    "inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors",
-                                    status !== "authed" || completingLesson
+                                    "inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold transition-colors",
+                                    authStatus !== "authed" || completingLesson
                                         ? "bg-muted text-muted-foreground cursor-not-allowed"
                                         : "bg-primary text-primary-foreground hover:bg-primary/90",
                                 ].join(" ")}
                             >
-                                {status === "authed"
+                                {authStatus === "authed"
                                     ? completingLesson
                                         ? "Đang Lưu…"
                                         : "Hoàn Thành Bài Học"
@@ -540,7 +564,7 @@ export default function LessonSidebar() {
                                 onClick={handleTakeQuiz}
                                 disabled={Boolean(quizDisabledReason)}
                                 className={[
-                                    "inline-flex items-center justify-center rounded-xl border px-4 py-2.5 text-sm font-semibold transition-colors",
+                                    "inline-flex items-center justify-center rounded-lg border px-4 py-2 text-sm font-semibold transition-colors",
                                     quizDisabledReason
                                         ? "border-border bg-muted/50 text-muted-foreground cursor-not-allowed"
                                         : "border-border bg-card text-foreground hover:bg-muted",

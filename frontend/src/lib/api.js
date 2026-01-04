@@ -77,7 +77,7 @@ async function refreshSession() {
 
 export async function apiRequest(
     path,
-    { method = "GET", body, skipRefresh } = {},
+    { method = "GET", body, skipRefresh, cache = "no-store", keepalive } = {},
 ) {
     const headers = {};
     if (body) headers["content-type"] = "application/json";
@@ -86,8 +86,9 @@ export async function apiRequest(
         method,
         headers,
         body: body ? JSON.stringify(body) : undefined,
-        cache: "no-store",
+        cache,
         credentials: "include",
+        keepalive,
     });
 
     if (res.status === 401 && !skipRefresh) {
@@ -161,9 +162,18 @@ export function getUrns() {
     return apiRequest(`/api/v1/urns`);
 }
 
+export function getDashboardSummary() {
+    return apiRequest(`/api/v1/dashboard/summary`);
+}
+
 export function getUrnDetail(urnSlug) {
     const encoded = encodeURIComponent(urnSlug);
     return apiRequest(`/api/v1/urns/${encoded}`);
+}
+
+export function getUrnProgress({ urnSlug }) {
+    const encoded = encodeURIComponent(urnSlug);
+    return apiRequest(`/api/v1/urns/${encoded}/progress`);
 }
 
 export function getMotifDetail(motifId) {
@@ -329,9 +339,20 @@ export async function submitUrnExam({ urnSlug, answers, timeTakenSeconds }) {
             passed,
             pass_percent: exam?.pass_percent ?? URN_EXAM_PASS_PERCENT,
             time_taken_seconds: timeTakenSeconds ?? null,
+            certificate: null,
             results,
         };
     }
+}
+
+export function getLatestUrnExamAttempt({ urnSlug }) {
+    const encoded = encodeURIComponent(urnSlug);
+    return apiRequest(`/api/v1/urns/${encoded}/exam/attempts/latest`);
+}
+
+export function getCertificate({ code }) {
+    const encoded = encodeURIComponent(code);
+    return apiRequest(`/api/v1/certificates/${encoded}`);
 }
 
 export function getLeaderboard({ limit = 50 } = {}) {
@@ -371,17 +392,81 @@ export function setStartingPath({ urnId, urnSlug }) {
     });
 }
 
-export function logAnalyticsEvents({ events }) {
+const ANALYTICS_FLUSH_DELAY_MS = 1500;
+const ANALYTICS_MAX_BATCH = 10;
+let analyticsQueue = [];
+let analyticsFlushTimer = null;
+let analyticsFlushPromise = null;
+
+function scheduleAnalyticsFlush() {
+    if (typeof window === "undefined") return;
+    if (analyticsFlushTimer) return;
+
+    analyticsFlushTimer = window.setTimeout(() => {
+        analyticsFlushTimer = null;
+        flushAnalyticsQueue().catch(() => null);
+    }, ANALYTICS_FLUSH_DELAY_MS);
+}
+
+async function flushAnalyticsQueue({ keepalive = false } = {}) {
+    if (!analyticsQueue.length) return null;
+    if (analyticsFlushPromise) return analyticsFlushPromise;
+
+    const payload = analyticsQueue;
+    analyticsQueue = [];
+    analyticsFlushPromise = logAnalyticsEvents({
+        events: payload,
+        keepalive,
+    })
+        .catch((err) => {
+            analyticsQueue = payload.concat(analyticsQueue);
+            throw err;
+        })
+        .finally(() => {
+            analyticsFlushPromise = null;
+        });
+    return analyticsFlushPromise;
+}
+
+if (typeof window !== "undefined") {
+    const flushOnHide = () => {
+        flushAnalyticsQueue({ keepalive: true }).catch(() => null);
+    };
+
+    window.addEventListener("pagehide", flushOnHide);
+    window.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden") {
+            flushOnHide();
+        }
+    });
+}
+
+export function logAnalyticsEvents({ events, keepalive } = {}) {
+    if (!events?.length) {
+        return Promise.resolve({ success: true, count: 0 });
+    }
     return apiRequest(`/api/v1/analytics/events`, {
         method: "POST",
         body: { events },
+        keepalive,
     });
 }
 
 export function logAnalyticsEvent({ name, payload, path }) {
-    return logAnalyticsEvents({
-        events: [{ name, payload, path }],
-    });
+    if (!name) return Promise.resolve({ success: true, count: 0 });
+    if (typeof window === "undefined") {
+        return logAnalyticsEvents({
+            events: [{ name, payload, path }],
+        });
+    }
+
+    analyticsQueue.push({ name, payload, path });
+    if (analyticsQueue.length >= ANALYTICS_MAX_BATCH) {
+        return flushAnalyticsQueue();
+    }
+
+    scheduleAnalyticsFlush();
+    return Promise.resolve({ success: true, count: analyticsQueue.length });
 }
 
 const API_BASE = `${API_BASE_URL.replace(/\/$/, "")}/api/v1`;
@@ -412,5 +497,140 @@ export async function changePassword(data) {
     return apiRequest(`/api/v1/users/me/change-password`, {
         method: "POST",
         body: data,
+    });
+}
+
+export function getQuests() {
+    return apiRequest(`/api/v1/quests`);
+}
+
+export function getQuestDetail({ questSlug }) {
+    const encoded = encodeURIComponent(questSlug);
+    return apiRequest(`/api/v1/quests/${encoded}`);
+}
+
+export function startQuest({ questSlug }) {
+    const encoded = encodeURIComponent(questSlug);
+    return apiRequest(`/api/v1/quests/${encoded}/start`, { method: "POST" });
+}
+
+export function getQuestSummary() {
+    return apiRequest(`/api/v1/users/me/quest-summary`);
+}
+
+export function getClasses() {
+    return apiRequest(`/api/v1/classes`);
+}
+
+export function createClass({ name, description }) {
+    return apiRequest(`/api/v1/classes`, {
+        method: "POST",
+        body: { name, description },
+    });
+}
+
+export function getClassDetail({ classId }) {
+    const encoded = encodeURIComponent(classId);
+    return apiRequest(`/api/v1/classes/${encoded}`);
+}
+
+export function addClassMember({ classId, userId, email }) {
+    const encoded = encodeURIComponent(classId);
+    return apiRequest(`/api/v1/classes/${encoded}/members`, {
+        method: "POST",
+        body: { user_id: userId, email },
+    });
+}
+
+export function removeClassMember({ classId, userId }) {
+    const encoded = encodeURIComponent(classId);
+    const encodedUser = encodeURIComponent(userId);
+    return apiRequest(`/api/v1/classes/${encoded}/members/${encodedUser}`, {
+        method: "DELETE",
+    });
+}
+
+export function assignQuestToClass({ classId, questId, dueAt }) {
+    const encoded = encodeURIComponent(classId);
+    return apiRequest(`/api/v1/classes/${encoded}/assignments`, {
+        method: "POST",
+        body: { quest_id: questId, due_at: dueAt },
+    });
+}
+
+export function getAdminLessons({ motifId } = {}) {
+    const qs = motifId
+        ? `?${new URLSearchParams({ motif_id: String(motifId) }).toString()}`
+        : "";
+    return apiRequest(`/api/v1/admin/lessons${qs}`);
+}
+
+export function createAdminLesson(payload) {
+    return apiRequest(`/api/v1/admin/lessons`, {
+        method: "POST",
+        body: payload,
+    });
+}
+
+export function updateAdminLesson({ lessonId, ...payload }) {
+    const encoded = encodeURIComponent(lessonId);
+    return apiRequest(`/api/v1/admin/lessons/${encoded}`, {
+        method: "PATCH",
+        body: payload,
+    });
+}
+
+export function getAdminQuizQuestions({ motifId } = {}) {
+    const qs = motifId
+        ? `?${new URLSearchParams({ motif_id: String(motifId) }).toString()}`
+        : "";
+    return apiRequest(`/api/v1/admin/quiz-questions${qs}`);
+}
+
+export function createAdminQuizQuestion(payload) {
+    return apiRequest(`/api/v1/admin/quiz-questions`, {
+        method: "POST",
+        body: payload,
+    });
+}
+
+export function updateAdminQuizQuestion({ questionId, ...payload }) {
+    const encoded = encodeURIComponent(questionId);
+    return apiRequest(`/api/v1/admin/quiz-questions/${encoded}`, {
+        method: "PATCH",
+        body: payload,
+    });
+}
+
+export function getRecommendations() {
+    return apiRequest(`/api/v1/users/me/recommendations`);
+}
+
+export function refreshRecommendations({ useLlm = false } = {}) {
+    return apiRequest(`/api/v1/users/me/recommendations/refresh`, {
+        method: "POST",
+        body: { use_llm: useLlm },
+    });
+}
+
+export function getAiJobs() {
+    return apiRequest(`/api/v1/users/me/ai-jobs`);
+}
+
+export function retryAiJob({ jobId }) {
+    const encoded = encodeURIComponent(jobId);
+    return apiRequest(`/api/v1/users/me/ai-jobs/${encoded}/retry`, {
+        method: "POST",
+    });
+}
+
+export function createContentFlag({ contentType, contentId, reason }) {
+    return apiRequest(`/api/v1/content/flags`, {
+        method: "POST",
+        body: {
+            content_type: contentType,
+            content_id: contentId,
+            reason,
+        },
     });
 }

@@ -1,17 +1,89 @@
 "use client";
 
-import { create } from "zustand";
+import { createWithEqualityFn } from "zustand/traditional";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { shallow } from "zustand/shallow";
 import toast from "react-hot-toast";
 
-import { getMotifsByUrn, unlockProgress } from "@/lib/api";
+import { getMotifsByUrn, getUrnProgress, unlockProgress } from "@/lib/api";
 import { useAuthStore } from "@/stores/authStore";
 
-export const useMotifStore = create(
+export function deriveMotifStatus(state, motifId) {
+    const progress = state.progressByMotifId?.[motifId];
+    if (progress?.status) return progress.status;
+    if (state.foundByMotifId?.[motifId]) return "discovered";
+    return "hidden";
+}
+
+export const selectMotifListSorted = (state) => {
+    const list = Object.values(state.motifsById || {});
+    list.sort((a, b) => {
+        const ao = typeof a?.display_order === "number" ? a.display_order : 0;
+        const bo = typeof b?.display_order === "number" ? b.display_order : 0;
+        return ao - bo;
+    });
+    return list;
+};
+
+export const selectMotifStatusById = (state) => {
+    const map = {};
+    for (const motifId of Object.keys(state.motifsById || {})) {
+        map[motifId] = deriveMotifStatus(state, motifId);
+    }
+    return map;
+};
+
+export const selectMotifProgressSummary = (state) => {
+    const motifIds = Object.keys(state.motifsById || {});
+    const total = motifIds.length;
+    let discovered = 0;
+    let mastered = 0;
+    for (const motifId of motifIds) {
+        const status = deriveMotifStatus(state, motifId);
+        if (status !== "hidden") discovered += 1;
+        if (status === "mastered") mastered += 1;
+    }
+    return {
+        total,
+        discovered,
+        mastered,
+        undiscovered: Math.max(0, total - discovered),
+        unmastered: Math.max(0, total - mastered),
+    };
+};
+
+export const makeSelectNextUnmasteredMotif = (originMotifId) => (state) => {
+    const list = selectMotifListSorted(state);
+    if (!list.length) return null;
+
+    const isUnmastered = (motif) =>
+        deriveMotifStatus(state, motif.id) !== "mastered";
+
+    if (!originMotifId) {
+        return list.find(isUnmastered) || null;
+    }
+
+    const originIndex = list.findIndex(
+        (motif) => String(motif.id) === String(originMotifId),
+    );
+    if (originIndex === -1) {
+        return list.find(isUnmastered) || null;
+    }
+
+    for (let offset = 1; offset <= list.length; offset += 1) {
+        const idx = (originIndex + offset) % list.length;
+        const candidate = list[idx];
+        if (candidate && isUnmastered(candidate)) return candidate;
+    }
+    return null;
+};
+
+export const useMotifStore = createWithEqualityFn(
     persist(
         (set, get) => ({
             urnSlug: null,
             urnId: null,
+            urnModelUrl: null,
             motifsByMesh: {}, // { [mesh_name]: motif }
             motifsById: {}, // { [motif_id]: motif }
 
@@ -24,6 +96,9 @@ export const useMotifStore = create(
             loadingMotifs: false,
             error: null,
             unlockingByMotifId: {},
+            loadingProgress: false,
+            progressError: null,
+            progressLoadedUrn: null,
 
             setSelectedMotifId: (motifId) =>
                 set({ selectedMotifId: motifId, sidebarOpen: true }),
@@ -66,6 +141,7 @@ export const useMotifStore = create(
                     error: null,
                     urnSlug,
                     urnId: switchingUrn ? null : state.urnId,
+                    urnModelUrl: switchingUrn ? null : state.urnModelUrl,
                     motifsByMesh: switchingUrn ? {} : state.motifsByMesh,
                     motifsById: switchingUrn ? {} : state.motifsById,
                 });
@@ -83,6 +159,7 @@ export const useMotifStore = create(
 
                     set({
                         urnId: payload?.urn?.id || null,
+                        urnModelUrl: payload?.urn?.model_url || null,
                         motifsByMesh,
                         motifsById,
                         loadingMotifs: false,
@@ -93,6 +170,70 @@ export const useMotifStore = create(
                         loadingMotifs: false,
                         error: err instanceof Error ? err.message : String(err),
                     });
+                }
+            },
+
+            hydrateProgressForUrn: async (urnSlug) => {
+                if (!urnSlug) return null;
+                const authStatus = useAuthStore.getState().status;
+                if (authStatus !== "authed") return null;
+
+                const state = get();
+                if (
+                    state.loadingProgress &&
+                    state.progressLoadedUrn === urnSlug
+                ) {
+                    return null;
+                }
+
+                set({
+                    loadingProgress: true,
+                    progressError: null,
+                    progressLoadedUrn: urnSlug,
+                });
+
+                try {
+                    const res = await getUrnProgress({ urnSlug });
+                    if (get().progressLoadedUrn !== urnSlug) return res;
+
+                    set((s) => {
+                        const nextFound = { ...s.foundByMotifId };
+                        const nextProgress = { ...s.progressByMotifId };
+                        const entries = Array.isArray(res?.motifs)
+                            ? res.motifs
+                            : [];
+
+                        for (const entry of entries) {
+                            if (!entry?.motif_id) continue;
+                            const motifId = entry.motif_id;
+                            const status = entry.status || "hidden";
+                            nextProgress[motifId] = {
+                                status,
+                                discoveredAt: entry.discovered_at ?? null,
+                                xpAwarded: 0,
+                                totalXp: entry.xp_earned ?? 0,
+                                quizAttempts: entry.quiz_attempts ?? 0,
+                                quizBestScore: entry.quiz_best_score ?? 0,
+                            };
+                            if (status !== "hidden") {
+                                nextFound[motifId] = true;
+                            }
+                        }
+
+                        return {
+                            foundByMotifId: nextFound,
+                            progressByMotifId: nextProgress,
+                            loadingProgress: false,
+                            progressError: null,
+                        };
+                    });
+
+                    return res;
+                } catch (err) {
+                    const msg =
+                        err instanceof Error ? err.message : String(err);
+                    set({ loadingProgress: false, progressError: msg });
+                    return null;
                 }
             },
 
@@ -190,4 +331,5 @@ export const useMotifStore = create(
             }),
         },
     ),
+    shallow,
 );

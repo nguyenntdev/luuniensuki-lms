@@ -65,6 +65,8 @@ export default function Page() {
     const [username, setUsername] = useState("");
     const [bio, setBio] = useState("");
     const [isProfilePublic, setIsProfilePublic] = useState(true);
+    const [aiPersonalizationEnabled, setAiPersonalizationEnabled] =
+        useState(true);
     const [shareUrl, setShareUrl] = useState("");
     const [copied, setCopied] = useState(false);
     const [avatarPreview, setAvatarPreview] = useState("");
@@ -92,6 +94,9 @@ export default function Page() {
             setBio(user.bio || "");
             setAvatarPreview(user.avatar_url || "");
             setIsProfilePublic(user.is_profile_public ?? true);
+            setAiPersonalizationEnabled(
+                user.ai_personalization_enabled ?? true,
+            );
             setUsernameStatus(null);
         }
     }, [user, isEditing]);
@@ -194,6 +199,7 @@ export default function Page() {
             display_name: displayName.trim(),
             bio,
             is_profile_public: isProfilePublic,
+            ai_personalization_enabled: aiPersonalizationEnabled,
         };
         if (trimmedUsername && trimmedUsername !== currentUsername)
             payload.username = trimmedUsername;
@@ -220,6 +226,10 @@ export default function Page() {
                         updatedUser.is_profile_public ??
                         payload.is_profile_public ??
                         state.user?.is_profile_public,
+                    ai_personalization_enabled:
+                        updatedUser.ai_personalization_enabled ??
+                        payload.ai_personalization_enabled ??
+                        state.user?.ai_personalization_enabled,
                 },
             }));
 
@@ -241,6 +251,7 @@ export default function Page() {
         setBio(user?.bio || "");
         setAvatarPreview(user?.avatar_url || "");
         setIsProfilePublic(user?.is_profile_public ?? true);
+        setAiPersonalizationEnabled(user?.ai_personalization_enabled ?? true);
     }
 
     async function copyShareLink() {
@@ -627,6 +638,44 @@ export default function Page() {
                                         Hồ sơ công khai cho phép người dùng đã
                                         đăng nhập xem tiến trình và thành tích
                                         của bạn.
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-medium text-muted-foreground">
+                                        Cá nhân hóa AI
+                                    </label>
+                                    {isEditing ? (
+                                        <label className="mt-2 flex items-center gap-2 text-sm text-foreground">
+                                            <input
+                                                type="checkbox"
+                                                checked={
+                                                    aiPersonalizationEnabled
+                                                }
+                                                onChange={(e) =>
+                                                    setAiPersonalizationEnabled(
+                                                        e.target.checked,
+                                                    )
+                                                }
+                                                className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
+                                            />
+                                            <span>
+                                                {aiPersonalizationEnabled
+                                                    ? "Bật"
+                                                    : "Tắt"}
+                                            </span>
+                                        </label>
+                                    ) : (
+                                        <div className="mt-1 text-sm text-muted-foreground">
+                                            {(user.ai_personalization_enabled ??
+                                            true)
+                                                ? "Đang bật"
+                                                : "Đang tắt"}
+                                        </div>
+                                    )}
+                                    <p className="mt-2 text-xs text-muted-foreground">
+                                        Tắt để chỉ nhận gợi ý mặc định, không
+                                        dùng AI.
                                     </p>
                                 </div>
                             </div>

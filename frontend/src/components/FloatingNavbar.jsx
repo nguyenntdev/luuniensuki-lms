@@ -10,6 +10,8 @@ import {
     Trophy,
     BookOpen,
     User,
+    Map,
+    Shield,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -55,18 +57,22 @@ const translations = {
     vi: {
         "nav.dashboard": "Learning Hub",
         "nav.explore": "Khám Phá",
+        "nav.quests": "Hành Trình",
         "nav.collection": "Bộ Sưu Tập",
         "nav.achievements": "Thành Tích",
         "nav.profile": "Hồ Sơ",
+        "nav.admin": "Teacher Hub",
         "nav.logout": "Đăng xuất",
         "nav.start": "Tiếp Tục Học",
     },
     en: {
         "nav.dashboard": "Learning Hub",
         "nav.explore": "Explore",
+        "nav.quests": "Quests",
         "nav.collection": "Collection",
         "nav.achievements": "Achievements",
         "nav.profile": "Profile",
+        "nav.admin": "Teacher Hub",
         "nav.logout": "Logout",
         "nav.start": "Continue Learning",
     },
@@ -140,13 +146,23 @@ export default function FloatingNavbar() {
         setIsMobileMenuOpen(false);
     };
 
+    const isStaff = ["teacher", "admin", "super_admin"].includes(user?.role);
     const primaryNavItems = [
         { icon: Globe, label: t("nav.dashboard"), link: "/dashboard" },
         { icon: Eye, label: t("nav.explore"), link: "/explore" },
+        { icon: Map, label: t("nav.quests"), link: "/quests" },
         { icon: BookOpen, label: t("nav.collection"), link: "/collection" },
         { icon: Trophy, label: t("nav.achievements"), link: "/achievements" },
         { icon: User, label: t("nav.profile"), link: "/profile" },
     ];
+
+    if (isStaff) {
+        primaryNavItems.push({
+            icon: Shield,
+            label: t("nav.admin"),
+            link: "/admin",
+        });
+    }
 
     if (isAuthPage) return null;
 

@@ -5,10 +5,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import Skeleton from "@/components/Skeleton";
 import {
-    getMotifsByUrn,
-    getMyCollection,
-    getMyStreak,
-    getUrns,
+    getDashboardSummary,
+    refreshRecommendations,
     logAnalyticsEvent,
 } from "@/lib/api";
 import { useAuthStore } from "@/stores/authStore";
@@ -20,24 +18,21 @@ const STATUS_LABELS = {
     mastered: "Đã thành thạo",
 };
 
-function sortMotifs(a, b) {
-    const aOrder = a.display_order ?? Number.MAX_SAFE_INTEGER;
-    const bOrder = b.display_order ?? Number.MAX_SAFE_INTEGER;
-    if (aOrder !== bOrder) return aOrder - bOrder;
-    return String(a.name || "").localeCompare(String(b.name || ""));
-}
-
 export default function DashboardPage() {
     const status = useAuthStore((s) => s.status);
     const user = useAuthStore((s) => s.user);
     const fetchMe = useAuthStore((s) => s.fetchMe);
 
     const [urns, setUrns] = useState([]);
-    const [collection, setCollection] = useState(null);
+    const [collectionStats, setCollectionStats] = useState(null);
     const [streak, setStreak] = useState(null);
+    const [questSummary, setQuestSummary] = useState(null);
+    const [recommendations, setRecommendations] = useState(null);
+    const [recommendationError, setRecommendationError] = useState(null);
+    const [recommendationRefreshing, setRecommendationRefreshing] =
+        useState(false);
     const [pathMotifs, setPathMotifs] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [pathLoading, setPathLoading] = useState(false);
     const [error, setError] = useState(null);
 
     const hasLoggedRef = useRef(false);
@@ -54,15 +49,16 @@ export default function DashboardPage() {
             setLoading(true);
             setError(null);
             try {
-                const [urnRes, collectionRes, streakRes] = await Promise.all([
-                    getUrns(),
-                    getMyCollection(),
-                    getMyStreak(),
-                ]);
+                const summary = await getDashboardSummary();
                 if (cancelled) return;
-                setUrns(urnRes || []);
-                setCollection(collectionRes || null);
-                setStreak(streakRes || null);
+
+                setUrns(summary?.urns || []);
+                setCollectionStats(summary?.collection_stats || null);
+                setStreak(summary?.streak || null);
+                setQuestSummary(summary?.quest_summary || null);
+                setRecommendations(summary?.recommendations || null);
+                setPathMotifs(summary?.path_motifs || []);
+                setRecommendationError(null);
             } catch (err) {
                 if (!cancelled)
                     setError(err instanceof Error ? err.message : String(err));
@@ -83,31 +79,6 @@ export default function DashboardPage() {
     }, [urns, user?.starting_urn_id]);
 
     useEffect(() => {
-        if (status !== "authed" || !startingUrn) return;
-        let cancelled = false;
-
-        async function loadPath() {
-            setPathLoading(true);
-            try {
-                const res = await getMotifsByUrn(startingUrn.slug);
-                if (cancelled) return;
-                const motifs = Array.isArray(res?.motifs) ? res.motifs : [];
-                setPathMotifs(motifs.sort(sortMotifs));
-            } catch (err) {
-                if (!cancelled)
-                    setError(err instanceof Error ? err.message : String(err));
-            } finally {
-                if (!cancelled) setPathLoading(false);
-            }
-        }
-
-        loadPath();
-        return () => {
-            cancelled = true;
-        };
-    }, [startingUrn, status]);
-
-    useEffect(() => {
         if (status !== "authed" || !user || hasLoggedRef.current) return;
         hasLoggedRef.current = true;
         logAnalyticsEvent({
@@ -120,21 +91,12 @@ export default function DashboardPage() {
         }).catch(() => null);
     }, [status, user]);
 
-    const statusByMotifId = useMemo(() => {
-        const map = {};
-        const items = collection?.items || [];
-        for (const item of items) {
-            if (item?.motif_id) map[item.motif_id] = item.status || "hidden";
-        }
-        return map;
-    }, [collection]);
-
     const pathMotifsWithStatus = useMemo(() => {
         return pathMotifs.map((motif) => ({
             ...motif,
-            status: statusByMotifId[motif.id] || "hidden",
+            status: motif.status || "hidden",
         }));
-    }, [pathMotifs, statusByMotifId]);
+    }, [pathMotifs]);
 
     const pathCounts = useMemo(() => {
         const counts = { total: 0, discovered: 0, learned: 0, mastered: 0 };
@@ -195,6 +157,24 @@ export default function DashboardPage() {
             .slice(0, 4);
     }, [pathMotifsWithStatus]);
 
+    const recommendationItems = useMemo(() => {
+        return Array.isArray(recommendations?.items)
+            ? recommendations.items
+            : [];
+    }, [recommendations]);
+
+    const remediationItems = useMemo(
+        () =>
+            recommendationItems.filter((item) => item?.kind === "remediation"),
+        [recommendationItems],
+    );
+
+    const nextRecommendationItems = useMemo(
+        () =>
+            recommendationItems.filter((item) => item?.kind !== "remediation"),
+        [recommendationItems],
+    );
+
     function handleResumeClick() {
         if (status !== "authed" || !resumeAction) return;
         logAnalyticsEvent({
@@ -207,6 +187,24 @@ export default function DashboardPage() {
             },
             path: "/dashboard",
         }).catch(() => null);
+    }
+
+    async function handleRefreshRecommendations() {
+        if (status !== "authed") return;
+        setRecommendationRefreshing(true);
+        setRecommendationError(null);
+        try {
+            const res = await refreshRecommendations({
+                useLlm: Boolean(user?.ai_personalization_enabled),
+            });
+            setRecommendations(res || null);
+        } catch (err) {
+            setRecommendationError(
+                err instanceof Error ? err.message : String(err),
+            );
+        } finally {
+            setRecommendationRefreshing(false);
+        }
     }
 
     if (status !== "authed") {
@@ -307,6 +305,80 @@ export default function DashboardPage() {
                         <div className="flex items-baseline justify-between">
                             <div>
                                 <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                    Quest đang theo
+                                </div>
+                                <div className="mt-1 text-lg font-display font-semibold text-foreground">
+                                    {loading ? (
+                                        <Skeleton className="h-4 w-40" />
+                                    ) : questSummary?.quest_name ? (
+                                        questSummary.quest_name
+                                    ) : (
+                                        "Chưa chọn quest"
+                                    )}
+                                </div>
+                            </div>
+                            {questSummary ? (
+                                <span className="text-xs text-muted-foreground">
+                                    {Math.round(
+                                        questSummary.progress_percent || 0,
+                                    )}
+                                    %
+                                </span>
+                            ) : null}
+                        </div>
+
+                        {questSummary ? (
+                            <>
+                                <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-muted">
+                                    <div
+                                        className="h-full bg-primary transition-all"
+                                        style={{
+                                            width: `${Math.round(
+                                                questSummary.progress_percent ||
+                                                    0,
+                                            )}%`,
+                                        }}
+                                    />
+                                </div>
+                                <div className="mt-3 text-sm text-muted-foreground">
+                                    {questSummary.next_step_title ? (
+                                        <>
+                                            Bước tiếp theo:{" "}
+                                            <span className="text-foreground">
+                                                {questSummary.next_step_title}
+                                            </span>
+                                        </>
+                                    ) : (
+                                        "Hãy mở quest để xem chi tiết."
+                                    )}
+                                </div>
+                            </>
+                        ) : (
+                            <div className="mt-3 text-sm text-muted-foreground">
+                                Chọn quest phù hợp để bắt đầu hành trình học
+                                tập.
+                            </div>
+                        )}
+
+                        <div className="mt-4">
+                            <Link
+                                href={
+                                    questSummary?.quest_slug
+                                        ? `/quests/${questSummary.quest_slug}`
+                                        : "/quests"
+                                }
+                                className="text-sm font-semibold text-primary hover:text-primary/80"
+                            >
+                                {questSummary ? "Xem quest" : "Khám phá quest"}{" "}
+                                →
+                            </Link>
+                        </div>
+                    </div>
+
+                    <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+                        <div className="flex items-baseline justify-between">
+                            <div>
+                                <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                                     Lộ trình hiện tại
                                 </div>
                                 <div className="mt-1 text-lg font-display font-semibold text-foreground">
@@ -366,7 +438,7 @@ export default function DashboardPage() {
                             <h2 className="font-display text-lg font-semibold text-foreground">
                                 Next Up
                             </h2>
-                            {pathLoading ? (
+                            {loading ? (
                                 <span className="text-xs text-muted-foreground">
                                     Đang tải...
                                 </span>
@@ -450,6 +522,127 @@ export default function DashboardPage() {
                     </div>
 
                     <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+                        <div className="flex items-center justify-between">
+                            <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                Gợi ý tiếp theo
+                            </div>
+                            <div className="flex items-center gap-2">
+                                {recommendations?.source === "llm" ? (
+                                    <span className="rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+                                        AI
+                                    </span>
+                                ) : null}
+                                <button
+                                    type="button"
+                                    onClick={handleRefreshRecommendations}
+                                    disabled={recommendationRefreshing}
+                                    className="text-xs font-semibold text-primary hover:text-primary/80 disabled:opacity-60"
+                                >
+                                    {recommendationRefreshing
+                                        ? "Đang làm mới..."
+                                        : "Làm mới"}
+                                </button>
+                            </div>
+                        </div>
+                        {recommendations?.ai?.provider ? (
+                            <div className="mt-2 text-[11px] text-muted-foreground">
+                                AI: {recommendations.ai.provider}
+                                {recommendations.ai.model
+                                    ? ` · ${recommendations.ai.model}`
+                                    : ""}
+                            </div>
+                        ) : null}
+
+                        {recommendationError ? (
+                            <div className="mt-3 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-xs text-destructive">
+                                {recommendationError}
+                            </div>
+                        ) : null}
+
+                        {loading ? (
+                            <div className="mt-3 space-y-2">
+                                <Skeleton className="h-4 w-3/4" />
+                                <Skeleton className="h-4 w-2/3" />
+                            </div>
+                        ) : recommendationItems.length ? (
+                            <div className="mt-4 space-y-3">
+                                {remediationItems.length ? (
+                                    <div>
+                                        <div className="text-xs font-semibold uppercase tracking-wider text-amber-600">
+                                            Cần ôn tập
+                                        </div>
+                                        <div className="mt-2 space-y-2">
+                                            {remediationItems.map(
+                                                (item, idx) => (
+                                                    <Link
+                                                        key={`remed-${idx}`}
+                                                        href={
+                                                            item.href ||
+                                                            "/collection"
+                                                        }
+                                                        className="block rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800 hover:bg-amber-100"
+                                                    >
+                                                        <div className="font-semibold">
+                                                            {item.title}
+                                                        </div>
+                                                        {item.description ? (
+                                                            <div className="text-xs">
+                                                                {
+                                                                    item.description
+                                                                }
+                                                            </div>
+                                                        ) : null}
+                                                    </Link>
+                                                ),
+                                            )}
+                                        </div>
+                                    </div>
+                                ) : null}
+
+                                <div>
+                                    <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                        Tiếp tục học
+                                    </div>
+                                    <div className="mt-2 space-y-2">
+                                        {nextRecommendationItems.map(
+                                            (item, idx) => (
+                                                <Link
+                                                    key={`rec-${idx}`}
+                                                    href={
+                                                        item.href || "/explore"
+                                                    }
+                                                    className="block rounded-lg border border-border bg-secondary/40 px-3 py-2 text-sm text-foreground hover:bg-secondary/60"
+                                                >
+                                                    <div className="font-semibold">
+                                                        {item.title}
+                                                    </div>
+                                                    {item.description ? (
+                                                        <div className="text-xs text-muted-foreground">
+                                                            {item.description}
+                                                        </div>
+                                                    ) : null}
+                                                </Link>
+                                            ),
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="mt-3 text-sm text-muted-foreground">
+                                Chưa có gợi ý nào. Hãy hoàn thành bài học hoặc
+                                quest để nhận đề xuất mới.
+                            </div>
+                        )}
+
+                        {user?.ai_personalization_enabled === false ? (
+                            <div className="mt-4 rounded-lg bg-muted/60 p-3 text-xs text-muted-foreground">
+                                Cá nhân hóa AI đang tắt. Bật lại trong hồ sơ để
+                                nhận gợi ý nâng cao.
+                            </div>
+                        ) : null}
+                    </div>
+
+                    <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
                         <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                             Daily Goal
                         </div>
@@ -491,25 +684,25 @@ export default function DashboardPage() {
                                 <div>
                                     Đã khám phá:{" "}
                                     <span className="font-display tabular-nums text-foreground">
-                                        {collection?.stats?.discovered ?? 0}
+                                        {collectionStats?.discovered ?? 0}
                                     </span>
                                 </div>
                                 <div>
                                     Đã học:{" "}
                                     <span className="font-display tabular-nums text-foreground">
-                                        {collection?.stats?.learned ?? 0}
+                                        {collectionStats?.learned ?? 0}
                                     </span>
                                 </div>
                                 <div>
                                     Thành thạo:{" "}
                                     <span className="font-display tabular-nums text-foreground">
-                                        {collection?.stats?.mastered ?? 0}
+                                        {collectionStats?.mastered ?? 0}
                                     </span>
                                 </div>
                                 <div>
                                     Tổng họa tiết:{" "}
                                     <span className="font-display tabular-nums text-foreground">
-                                        {collection?.stats?.total ?? 0}
+                                        {collectionStats?.total ?? 0}
                                     </span>
                                 </div>
                             </div>

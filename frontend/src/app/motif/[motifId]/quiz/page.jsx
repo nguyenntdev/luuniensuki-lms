@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import {
     getMotifDetail,
     getMotifQuiz,
+    getMotifsByUrn,
     logAnalyticsEvent,
     submitQuiz,
 } from "@/lib/api";
@@ -24,15 +25,19 @@ export default function MotifQuizPage() {
     const status = useAuthStore((s) => s.status);
     const fetchMe = useAuthStore((s) => s.fetchMe);
     const progressByMotifId = useMotifStore((s) => s.progressByMotifId);
+    const hydrateProgressForUrn = useMotifStore((s) => s.hydrateProgressForUrn);
 
     const [motif, setMotif] = useState(null);
     const [quiz, setQuiz] = useState(null);
     const [answers, setAnswers] = useState({});
+    const [urnMotifs, setUrnMotifs] = useState([]);
     const [loading, setLoading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState(null);
+    const [submitError, setSubmitError] = useState(null);
     const [result, setResult] = useState(null);
     const [startedAt, setStartedAt] = useState(null);
+    const [progressChecked, setProgressChecked] = useState(false);
 
     // New states for UX enhancements
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -42,6 +47,9 @@ export default function MotifQuizPage() {
     const motifProgress = progressByMotifId[motifId];
     const isDiscovered =
         motifProgress?.status && motifProgress.status !== "hidden";
+    const continueExploreHref = motif?.urn?.slug
+        ? `/urns/${motif.urn.slug}?focus=next&fromMotif=${motifId}`
+        : "/explore";
 
     useEffect(() => {
         let cancelled = false;
@@ -49,29 +57,58 @@ export default function MotifQuizPage() {
             if (!motifId) return;
             if (status !== "authed") return;
 
-            // Block access if not discovered
-            if (!isDiscovered) {
-                setError(
-                    "Bạn chưa khám phá họa tiết này. Hãy khám phá trên mô hình 3D trước!",
-                );
-                return;
-            }
-
             setLoading(true);
             setError(null);
+            setSubmitError(null);
             setResult(null);
+            setProgressChecked(false);
             try {
-                const [motifRes, quizRes] = await Promise.all([
-                    getMotifDetail(motifId),
-                    getMotifQuiz({ motifId }),
-                ]);
+                const motifRes = await getMotifDetail(motifId);
                 if (cancelled) return;
                 setMotif(motifRes);
+
+                if (motifRes?.urn?.slug) {
+                    await hydrateProgressForUrn(motifRes.urn.slug);
+                }
+                if (cancelled) return;
+                setProgressChecked(true);
+
+                const latestProgress =
+                    useMotifStore.getState().progressByMotifId[motifId];
+                const unlocked =
+                    latestProgress?.status &&
+                    latestProgress.status !== "hidden";
+                if (!unlocked) {
+                    setError(
+                        "Bạn chưa khám phá họa tiết này. Hãy khám phá trên mô hình 3D trước!",
+                    );
+                    return;
+                }
+
+                const quizRes = await getMotifQuiz({ motifId });
+                if (cancelled) return;
+
                 setQuiz(quizRes);
                 setAnswers({});
                 setStartedAt(Date.now());
                 setElapsedTime(0);
                 setCurrentQuestionIndex(0);
+                const needsMeshOptions = Array.isArray(quizRes?.questions)
+                    ? quizRes.questions.some(
+                          (q) => q?.question_type === "mesh_location",
+                      )
+                    : false;
+                if (needsMeshOptions && motifRes?.urn?.slug) {
+                    try {
+                        const urnRes = await getMotifsByUrn(motifRes.urn.slug);
+                        if (!cancelled) setUrnMotifs(urnRes?.motifs || []);
+                    } catch {
+                        if (!cancelled) setUrnMotifs([]);
+                    }
+                } else {
+                    setUrnMotifs([]);
+                }
+
                 logAnalyticsEvent({
                     name: "quiz_start",
                     payload: {
@@ -92,7 +129,7 @@ export default function MotifQuizPage() {
         return () => {
             cancelled = true;
         };
-    }, [motifId, status, isDiscovered]);
+    }, [motifId, status, hydrateProgressForUrn]);
 
     // Timer effect
     useEffect(() => {
@@ -125,8 +162,19 @@ export default function MotifQuizPage() {
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, [currentQuestionIndex, quiz, result, loading]);
 
-    function setAnswer(questionId, answer) {
+    function setAnswer(questionId, answer, meta) {
         setAnswers((prev) => ({ ...prev, [questionId]: answer }));
+        if (!meta?.type) return;
+        logAnalyticsEvent({
+            name: "quiz_answer_selected",
+            payload: {
+                motif_id: motifId,
+                question_id: String(questionId),
+                question_type: meta.type,
+                source: "client",
+            },
+            path: `/motif/${motifId}/quiz`,
+        }).catch(() => null);
     }
 
     const handleNext = useCallback(() => {
@@ -146,6 +194,7 @@ export default function MotifQuizPage() {
         if (!quiz?.questions?.length) return;
         setSubmitting(true);
         setError(null);
+        setSubmitError(null);
         setResult(null);
         try {
             const timeTakenSeconds = startedAt
@@ -207,7 +256,7 @@ export default function MotifQuizPage() {
             await fetchMe();
         } catch (err) {
             const msg = err instanceof Error ? err.message : String(err);
-            setError(msg);
+            setSubmitError(msg);
             toast.error(`❌ Lỗi: ${msg}`);
         } finally {
             setSubmitting(false);
@@ -256,7 +305,7 @@ export default function MotifQuizPage() {
 
     // Error State
     if (error) {
-        if (!isDiscovered) {
+        if (progressChecked && !isDiscovered) {
             return (
                 <main className="mx-auto max-w-4xl px-6 py-10">
                     <div className="rounded-2xl border border-border bg-card p-6">
@@ -310,6 +359,12 @@ export default function MotifQuizPage() {
                         Kết quả bài kiểm tra
                     </h1>
                     <div className="flex items-center gap-3">
+                        <Link
+                            href={continueExploreHref}
+                            className="text-sm font-medium text-primary hover:text-primary/80"
+                        >
+                            Tiếp tục khám phá →
+                        </Link>
                         <Link
                             href="/dashboard"
                             className="text-sm font-medium text-primary hover:text-primary/80"
@@ -431,10 +486,16 @@ export default function MotifQuizPage() {
 
                     <div className="flex flex-wrap justify-center gap-3 border-t border-border bg-muted/50 p-6">
                         <Link
+                            href={continueExploreHref}
+                            className="rounded-lg border border-border px-6 py-2.5 text-sm font-semibold hover:bg-muted"
+                        >
+                            Tiếp tục khám phá
+                        </Link>
+                        <Link
                             href="/dashboard"
                             className="rounded-lg border border-border px-6 py-2.5 text-sm font-semibold hover:bg-muted"
                         >
-                            Tiếp tục lộ trình
+                            Về Learning Hub
                         </Link>
                         <button
                             onClick={() => window.location.reload()}
@@ -453,6 +514,126 @@ export default function MotifQuizPage() {
     const progressPercent = quiz?.questions?.length
         ? ((currentQuestionIndex + 1) / quiz.questions.length) * 100
         : 0;
+
+    const imageOptions = (() => {
+        if (
+            !currentQuestion ||
+            currentQuestion.question_type !== "image_select"
+        )
+            return [];
+        const raw = Array.isArray(currentQuestion.options)
+            ? currentQuestion.options
+            : [];
+        return raw
+            .map((opt, idx) => {
+                if (typeof opt === "string") {
+                    return {
+                        value: opt,
+                        label: opt,
+                        image:
+                            opt.startsWith("http") || opt.includes("/")
+                                ? opt
+                                : null,
+                    };
+                }
+                if (opt && typeof opt === "object") {
+                    const value =
+                        opt.value ??
+                        opt.answer ??
+                        opt.id ??
+                        opt.label ??
+                        opt.text ??
+                        `option-${idx + 1}`;
+                    const label =
+                        opt.label ??
+                        opt.text ??
+                        opt.value ??
+                        `Option ${idx + 1}`;
+                    const image =
+                        opt.image_url ||
+                        opt.image ||
+                        opt.src ||
+                        opt.url ||
+                        null;
+                    return {
+                        value: String(value),
+                        label: String(label),
+                        image,
+                    };
+                }
+                return null;
+            })
+            .filter(Boolean);
+    })();
+
+    const meshOptions = (() => {
+        if (
+            !currentQuestion ||
+            currentQuestion.question_type !== "mesh_location"
+        )
+            return [];
+        if (urnMotifs.length) {
+            return urnMotifs
+                .filter((m) => m?.mesh_name)
+                .map((m) => ({
+                    value: m.mesh_name,
+                    label: m.name || m.mesh_name,
+                }));
+        }
+        if (Array.isArray(currentQuestion.options)) {
+            return currentQuestion.options
+                .map((opt, idx) => {
+                    if (typeof opt === "string") {
+                        return { value: opt, label: opt };
+                    }
+                    if (opt && typeof opt === "object") {
+                        const value =
+                            opt.value ??
+                            opt.mesh_name ??
+                            opt.label ??
+                            opt.text ??
+                            `option-${idx + 1}`;
+                        const label =
+                            opt.label ??
+                            opt.text ??
+                            opt.value ??
+                            `Option ${idx + 1}`;
+                        return { value: String(value), label: String(label) };
+                    }
+                    return null;
+                })
+                .filter(Boolean);
+        }
+        return [];
+    })();
+
+    const choiceOptions = (() => {
+        if (!currentQuestion || !Array.isArray(currentQuestion.options))
+            return [];
+        return currentQuestion.options
+            .map((opt, idx) => {
+                if (typeof opt === "string") {
+                    return { value: opt, label: opt };
+                }
+                if (opt && typeof opt === "object") {
+                    const value =
+                        opt.value ??
+                        opt.answer ??
+                        opt.id ??
+                        opt.label ??
+                        opt.text ??
+                        `option-${idx + 1}`;
+                    const label =
+                        opt.label ??
+                        opt.text ??
+                        opt.value ??
+                        `Option ${idx + 1}`;
+                    return { value: String(value), label: String(label) };
+                }
+                return null;
+            })
+            .filter(Boolean);
+    })();
 
     return (
         <main className="mx-auto max-w-3xl px-6 py-10">
@@ -495,6 +676,22 @@ export default function MotifQuizPage() {
                 </div>
             </div>
 
+            {submitError ? (
+                <div className="mb-6 rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-xs text-destructive">
+                    <div className="font-semibold">
+                        Không thể nộp bài kiểm tra
+                    </div>
+                    <div className="mt-1">{submitError}</div>
+                    <button
+                        onClick={handleSubmit}
+                        disabled={submitting}
+                        className="mt-3 inline-flex items-center gap-2 rounded-md bg-destructive px-3 py-1.5 text-xs font-semibold text-destructive-foreground hover:bg-destructive/90 disabled:cursor-wait disabled:opacity-70"
+                    >
+                        {submitting ? "Đang thử lại..." : "Thử gửi lại"}
+                    </button>
+                </div>
+            ) : null}
+
             {/* Question Card */}
             {currentQuestion ? (
                 <div className="rounded-2xl border bg-card p-8 shadow-sm">
@@ -503,14 +700,126 @@ export default function MotifQuizPage() {
                     </h2>
 
                     <div className="mt-6 space-y-3">
-                        {Array.isArray(currentQuestion.options) &&
-                        currentQuestion.options.length ? (
-                            currentQuestion.options.map((opt) => {
+                        {currentQuestion.question_type === "image_select" ? (
+                            imageOptions.length ? (
+                                <div className="grid gap-4 sm:grid-cols-2">
+                                    {imageOptions.map((opt) => {
+                                        const isSelected =
+                                            (answers[currentQuestion.id] ??
+                                                "") === opt.value;
+                                        return (
+                                            <button
+                                                key={opt.value}
+                                                type="button"
+                                                onClick={() =>
+                                                    setAnswer(
+                                                        currentQuestion.id,
+                                                        opt.value,
+                                                        {
+                                                            type: currentQuestion.question_type,
+                                                        },
+                                                    )
+                                                }
+                                                className={[
+                                                    "overflow-hidden rounded-xl border text-left transition-all",
+                                                    isSelected
+                                                        ? "border-primary ring-2 ring-primary/40 bg-primary/10"
+                                                        : "border-border hover:border-primary/50 hover:bg-muted",
+                                                ].join(" ")}
+                                            >
+                                                <div className="aspect-video w-full bg-muted">
+                                                    {opt.image ? (
+                                                        <img
+                                                            src={opt.image}
+                                                            alt={opt.label}
+                                                            className="h-full w-full object-cover"
+                                                        />
+                                                    ) : (
+                                                        <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">
+                                                            Không có hình ảnh
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div className="px-3 py-2 text-sm font-medium">
+                                                    {opt.label}
+                                                </div>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            ) : (
+                                <div className="rounded-xl border border-border bg-muted/50 p-4 text-sm text-muted-foreground">
+                                    Không có lựa chọn hình ảnh cho câu hỏi này.
+                                </div>
+                            )
+                        ) : currentQuestion.question_type ===
+                          "mesh_location" ? (
+                            meshOptions.length ? (
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium text-muted-foreground">
+                                        Chọn vị trí họa tiết
+                                    </label>
+                                    <select
+                                        value={
+                                            answers[currentQuestion.id] ?? ""
+                                        }
+                                        onChange={(e) =>
+                                            setAnswer(
+                                                currentQuestion.id,
+                                                e.target.value,
+                                                {
+                                                    type: currentQuestion.question_type,
+                                                },
+                                            )
+                                        }
+                                        className="w-full rounded-xl border-input bg-input px-4 py-3 text-sm text-foreground focus:border-primary focus:ring-primary"
+                                    >
+                                        <option value="">
+                                            -- Chọn vị trí --
+                                        </option>
+                                        {meshOptions.map((opt) => (
+                                            <option
+                                                key={opt.value}
+                                                value={opt.value}
+                                            >
+                                                {opt.label}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            ) : (
+                                <div className="space-y-2">
+                                    <div className="text-sm text-muted-foreground">
+                                        Chưa có dữ liệu vị trí. Nhập mã mesh nếu
+                                        biết.
+                                    </div>
+                                    <input
+                                        type="text"
+                                        value={
+                                            answers[currentQuestion.id] ?? ""
+                                        }
+                                        onChange={(e) =>
+                                            setAnswer(
+                                                currentQuestion.id,
+                                                e.target.value,
+                                                {
+                                                    type: currentQuestion.question_type,
+                                                },
+                                            )
+                                        }
+                                        className="w-full rounded-xl border-input px-4 py-3 text-sm focus:border-primary focus:ring-primary bg-input"
+                                        placeholder="Ví dụ: mesh_name"
+                                    />
+                                </div>
+                            )
+                        ) : choiceOptions.length ? (
+                            choiceOptions.map((opt) => {
                                 const isSelected =
-                                    (answers[currentQuestion.id] ?? "") === opt;
+                                    (answers[currentQuestion.id] ?? "") ===
+                                    opt.value;
                                 return (
                                     <label
-                                        key={opt}
+                                        key={opt.value}
                                         className={`flex cursor-pointer items-center gap-3 rounded-xl border p-4 transition-all duration-200 ${
                                             isSelected
                                                 ? "border-primary bg-primary/10 ring-1 ring-primary"
@@ -531,12 +840,12 @@ export default function MotifQuizPage() {
                                         <input
                                             type="radio"
                                             name={`q-${currentQuestion.id}`}
-                                            value={opt}
+                                            value={opt.value}
                                             checked={isSelected}
                                             onChange={() =>
                                                 setAnswer(
                                                     currentQuestion.id,
-                                                    opt,
+                                                    opt.value,
                                                 )
                                             }
                                             className="hidden"
@@ -544,7 +853,7 @@ export default function MotifQuizPage() {
                                         <span
                                             className={`text-sm ${isSelected ? "font-medium text-primary" : "text-foreground"}`}
                                         >
-                                            {opt}
+                                            {opt.label}
                                         </span>
                                     </label>
                                 );
