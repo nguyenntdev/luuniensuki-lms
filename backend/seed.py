@@ -24,29 +24,47 @@ if __package__ in (None, ""):
         Badge,
         BadgeCategory,
         Base,
+        ClassMember,
+        Classroom,
         LessonContent,
         Motif,
         MotifCategory,
         MotifRarity,
+        Quest,
         QuestionType,
+        QuestObjective,
+        QuestReward,
+        QuestStep,
         QuizQuestion,
         Urn,
         UrnExam,
+        User,
+        UserRole,
     )
+    from backend.security import hash_password
 else:
     from .models import (
         Badge,
         BadgeCategory,
         Base,
+        ClassMember,
+        Classroom,
         LessonContent,
         Motif,
         MotifCategory,
         MotifRarity,
+        Quest,
         QuestionType,
+        QuestObjective,
+        QuestReward,
+        QuestStep,
         QuizQuestion,
         Urn,
         UrnExam,
+        User,
+        UserRole,
     )
+    from .security import hash_password
 
 
 URN_ORDER: dict[str, int] = {
@@ -196,6 +214,161 @@ DEFAULT_BADGES: list[dict[str, Any]] = [
         "xp_bonus": 100,
         "unlock_criteria": {"type": "login_before_hour", "hour": 6},
         "is_secret": False,
+    },
+]
+
+DEFAULT_QUESTS: list[dict[str, Any]] = [
+    {
+        "slug": "dat-mua-mang",
+        "name": "Đất & Mùa Màng",
+        "description": "Khám phá họa tiết về nông nghiệp và mùa vụ.",
+        "category": "nong_nghiep",
+        "display_order": 1,
+        "prerequisite_slug": None,
+        "steps": [
+            {
+                "title": "Dấu ấn nông nghiệp",
+                "description": "Mở khóa các họa tiết nông nghiệp cơ bản.",
+                "objectives": [
+                    {
+                        "objective_type": "discover_category",
+                        "target_value": 3,
+                        "params": {"category": "nong_nghiep"},
+                    },
+                    {
+                        "objective_type": "discover_category",
+                        "target_value": 3,
+                        "params": {"category": "thao_moc"},
+                    },
+                ],
+            },
+            {
+                "title": "Kiểm tra mùa màng",
+                "description": "Vượt qua các câu hỏi liên quan nông nghiệp.",
+                "objectives": [
+                    {
+                        "objective_type": "quiz_pass_count",
+                        "target_value": 2,
+                        "params": {"category": "nong_nghiep"},
+                    }
+                ],
+            },
+        ],
+        "rewards": [{"reward_type": "xp", "amount": 200}],
+    },
+    {
+        "slug": "linh-thu",
+        "name": "Linh Thú & Động Vật",
+        "description": "Thu thập dấu tích của linh thú và động vật trên các đỉnh.",
+        "category": "linh_thu",
+        "display_order": 2,
+        "prerequisite_slug": "dat-mua-mang",
+        "steps": [
+            {
+                "title": "Tìm linh thú",
+                "objectives": [
+                    {
+                        "objective_type": "discover_category",
+                        "target_value": 3,
+                        "params": {"category": "linh_thu"},
+                    },
+                    {
+                        "objective_type": "discover_category",
+                        "target_value": 3,
+                        "params": {"category": "dong_vat"},
+                    },
+                ],
+            },
+            {
+                "title": "Thử thách linh thú",
+                "objectives": [
+                    {
+                        "objective_type": "quiz_pass_count",
+                        "target_value": 2,
+                        "params": {"category": "dong_vat"},
+                    }
+                ],
+            },
+        ],
+        "rewards": [{"reward_type": "xp", "amount": 250}],
+    },
+    {
+        "slug": "son-ha-xa-tac",
+        "name": "Sơn Hà Xã Tắc",
+        "description": "Khám phá các họa tiết về địa lý, núi sông.",
+        "category": "dia_ly",
+        "display_order": 3,
+        "prerequisite_slug": "dat-mua-mang",
+        "steps": [
+            {
+                "title": "Địa lý Việt Nam",
+                "objectives": [
+                    {
+                        "objective_type": "discover_category",
+                        "target_value": 4,
+                        "params": {"category": "dia_ly"},
+                    }
+                ],
+            },
+            {
+                "title": "Kiểm tra địa danh",
+                "objectives": [
+                    {
+                        "objective_type": "quiz_pass_count",
+                        "target_value": 1,
+                        "params": {"category": "dia_ly"},
+                    }
+                ],
+            },
+        ],
+        "rewards": [{"reward_type": "xp", "amount": 200}],
+    },
+    {
+        "slug": "cuu-dinh-thu-thach",
+        "name": "Thử Thách Cửu Đỉnh",
+        "description": "Vượt qua kỳ kiểm tra Cửu Đỉnh để nhận chứng nhận.",
+        "category": "tong-hop",
+        "display_order": 4,
+        "prerequisite_slug": "son-ha-xa-tac",
+        "steps": [
+            {
+                "title": "Thi chứng nhận",
+                "objectives": [
+                    {
+                        "objective_type": "urn_exam_pass",
+                        "target_value": 1,
+                        "params": {},
+                    }
+                ],
+            }
+        ],
+        "rewards": [{"reward_type": "xp", "amount": 300}],
+    },
+]
+
+DEMO_USER_PASSWORD_ENV = "DEMO_USER_PASSWORD"
+DEFAULT_DEMO_PASSWORD = "Demo12345"
+
+DEMO_USERS: list[dict[str, Any]] = [
+    {
+        "email": "teacher@luuniensuki.local",
+        "display_name": "Teacher Demo",
+        "role": UserRole.teacher,
+    },
+    {
+        "email": "admin@luuniensuki.local",
+        "display_name": "Admin Demo",
+        "role": UserRole.admin,
+    },
+    {
+        "email": "superadmin@luuniensuki.local",
+        "display_name": "Super Admin",
+        "role": UserRole.super_admin,
+    },
+    {
+        "email": "learner@luuniensuki.local",
+        "display_name": "Learner Demo",
+        "role": UserRole.learner,
     },
 ]
 
@@ -430,6 +603,158 @@ def upsert_badge(
     badge.is_active = True
     session.flush()
     return badge
+
+
+def seed_quests(session: Session) -> None:
+    quest_by_slug: dict[str, Quest] = {}
+    for quest_def in DEFAULT_QUESTS:
+        slug = str(quest_def["slug"])
+        quest = session.execute(
+            select(Quest).where(Quest.slug == slug)
+        ).scalar_one_or_none()
+        if quest is None:
+            quest = Quest(
+                slug=slug,
+                name=str(quest_def["name"]),
+                description=quest_def.get("description"),
+                category=quest_def.get("category"),
+                display_order=int(quest_def.get("display_order") or 0),
+                is_active=True,
+            )
+            session.add(quest)
+        else:
+            quest.name = str(quest_def["name"])
+            quest.description = quest_def.get("description")
+            quest.category = quest_def.get("category")
+            quest.display_order = int(
+                quest_def.get("display_order") or quest.display_order or 0
+            )
+            quest.is_active = True
+        session.flush()
+        quest_by_slug[slug] = quest
+
+    for quest_def in DEFAULT_QUESTS:
+        slug = str(quest_def["slug"])
+        quest = quest_by_slug.get(slug)
+        if quest is None:
+            continue
+        prereq_slug = quest_def.get("prerequisite_slug")
+        quest.prerequisite_id = (
+            quest_by_slug.get(prereq_slug).id if prereq_slug else None
+        )
+        session.flush()
+
+        existing_steps = (
+            session.execute(select(QuestStep.id).where(QuestStep.quest_id == quest.id))
+            .scalars()
+            .all()
+        )
+        if existing_steps:
+            session.execute(
+                QuestObjective.__table__.delete().where(
+                    QuestObjective.quest_step_id.in_(existing_steps)
+                )
+            )
+            session.execute(
+                QuestStep.__table__.delete().where(QuestStep.id.in_(existing_steps))
+            )
+        session.execute(
+            QuestReward.__table__.delete().where(QuestReward.quest_id == quest.id)
+        )
+
+        steps = quest_def.get("steps") or []
+        for step_index, step_def in enumerate(steps, start=1):
+            step = QuestStep(
+                quest_id=quest.id,
+                title=str(step_def.get("title") or f"Bước {step_index}"),
+                description=step_def.get("description"),
+                display_order=int(step_def.get("display_order") or step_index),
+            )
+            session.add(step)
+            session.flush()
+
+            objectives = step_def.get("objectives") or []
+            for obj_index, obj_def in enumerate(objectives, start=1):
+                session.add(
+                    QuestObjective(
+                        quest_step_id=step.id,
+                        objective_type=str(obj_def.get("objective_type") or ""),
+                        target_value=int(obj_def.get("target_value") or 1),
+                        params=obj_def.get("params")
+                        if isinstance(obj_def.get("params"), dict)
+                        else None,
+                        display_order=int(obj_def.get("display_order") or obj_index),
+                    )
+                )
+
+        for reward_def in quest_def.get("rewards") or []:
+            session.add(
+                QuestReward(
+                    quest_id=quest.id,
+                    reward_type=str(reward_def.get("reward_type") or "xp"),
+                    amount=reward_def.get("amount"),
+                    badge_slug=reward_def.get("badge_slug"),
+                    metadata_payload=reward_def.get("metadata")
+                    if isinstance(reward_def.get("metadata"), dict)
+                    else None,
+                )
+            )
+
+
+def seed_demo_users(session: Session) -> None:
+    demo_password = os.getenv(DEMO_USER_PASSWORD_ENV, DEFAULT_DEMO_PASSWORD)
+    password_hash = hash_password(demo_password)
+
+    for spec in DEMO_USERS:
+        email = str(spec["email"])
+        user = session.execute(
+            select(User).where(User.email == email)
+        ).scalar_one_or_none()
+        if user is None:
+            user = User(
+                email=email,
+                password_hash=password_hash,
+                display_name=str(spec["display_name"]),
+                role=spec["role"],
+            )
+            session.add(user)
+        else:
+            user.display_name = str(spec["display_name"])
+            user.role = spec["role"]
+        session.flush()
+
+    teacher = session.execute(
+        select(User).where(User.email == "teacher@luuniensuki.local")
+    ).scalar_one_or_none()
+    learner = session.execute(
+        select(User).where(User.email == "learner@luuniensuki.local")
+    ).scalar_one_or_none()
+    if teacher and learner:
+        classroom = session.execute(
+            select(Classroom).where(Classroom.name == "Lớp Demo")
+        ).scalar_one_or_none()
+        if classroom is None:
+            classroom = Classroom(
+                name="Lớp Demo",
+                description="Lớp học mẫu cho giáo viên.",
+                teacher_id=teacher.id,
+            )
+            session.add(classroom)
+            session.flush()
+        existing_member = session.execute(
+            select(ClassMember).where(
+                ClassMember.class_id == classroom.id,
+                ClassMember.user_id == learner.id,
+            )
+        ).scalar_one_or_none()
+        if existing_member is None:
+            session.add(
+                ClassMember(
+                    class_id=classroom.id,
+                    user_id=learner.id,
+                    role="learner",
+                )
+            )
 
 
 def scan_images(image_path: Path) -> dict[tuple[str, str], str]:
@@ -1082,6 +1407,8 @@ def run_seed(
         )
         seed_urn_exams(session, exams_path=seed_root / "urn_exams")
         seed_coordinates(session, coords_path)
+        seed_quests(session)
+        seed_demo_users(session)
 
         session.commit()
 

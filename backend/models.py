@@ -31,6 +31,7 @@ class Base(DeclarativeBase):
 class UserRole(str, Enum):
     guest = "guest"
     learner = "learner"
+    teacher = "teacher"
     admin = "admin"
     super_admin = "super_admin"
 
@@ -104,6 +105,9 @@ class User(Base):
     is_profile_public: Mapped[bool] = mapped_column(
         Boolean, nullable=False, server_default=text("true")
     )
+    ai_personalization_enabled: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("true")
+    )
     role: Mapped[UserRole] = mapped_column(
         SAEnum(UserRole, name="user_role", native_enum=True),
         nullable=False,
@@ -145,6 +149,43 @@ class User(Base):
         cascade="all, delete-orphan",
     )
     urn_exam_attempts: Mapped[list[UrnExamAttempt]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    certificates: Mapped[list["Certificate"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    quest_progress: Mapped[list["QuestProgress"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    classes: Mapped[list["Classroom"]] = relationship(
+        back_populates="teacher",
+        cascade="all, delete-orphan",
+        foreign_keys="Classroom.teacher_id",
+    )
+    class_memberships: Mapped[list["ClassMember"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    assignments: Mapped[list["QuestAssignment"]] = relationship(
+        back_populates="assigned_by",
+        foreign_keys="QuestAssignment.assigned_by_id",
+    )
+    assignment_progress: Mapped[list["AssignmentProgress"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    recommendations: Mapped[list["Recommendation"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    ai_jobs: Mapped[list["AIJob"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    content_flags: Mapped[list["ContentFlag"]] = relationship(
         back_populates="user",
         cascade="all, delete-orphan",
     )
@@ -323,6 +364,9 @@ class LessonContent(Base):
     additional_images: Mapped[Optional[Any]] = mapped_column(JSONB)
     video_url: Mapped[Optional[str]] = mapped_column(Text)
 
+    is_published: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("true")
+    )
     is_ai_generated: Mapped[bool] = mapped_column(
         Boolean, nullable=False, server_default=text("false")
     )
@@ -433,6 +477,9 @@ class QuizQuestion(Base):
     )
     explanation: Mapped[Optional[str]] = mapped_column(Text)
 
+    is_published: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("true")
+    )
     is_active: Mapped[bool] = mapped_column(
         Boolean, nullable=False, server_default=text("true")
     )
@@ -608,3 +655,447 @@ class UserBadge(Base):
 
     user: Mapped[User] = relationship(back_populates="user_badges")
     badge: Mapped[Badge] = relationship(back_populates="user_badges")
+
+
+class Certificate(Base):
+    __tablename__ = "certificates"
+    __table_args__ = (
+        UniqueConstraint("code", name="uq_certificates_code"),
+        UniqueConstraint(
+            "user_id", "reason_type", "reason_id", name="uq_certificates_reason"
+        ),
+        Index("idx_certificates_user", "user_id"),
+        Index("idx_certificates_reason", "reason_type", "reason_id"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    code: Mapped[str] = mapped_column(String(64), nullable=False)
+    issuer_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    reason_type: Mapped[str] = mapped_column(String(50), nullable=False)
+    reason_id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), nullable=False)
+    status: Mapped[str] = mapped_column(
+        String(20), nullable=False, server_default=text("'issued'")
+    )
+    issued_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+    user: Mapped["User"] = relationship(back_populates="certificates")
+
+
+class Quest(Base):
+    __tablename__ = "quests"
+    __table_args__ = (
+        Index("idx_quests_slug", "slug"),
+        Index("idx_quests_active", "is_active"),
+        Index("idx_quests_order", "display_order"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    slug: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    description: Mapped[Optional[str]] = mapped_column(Text)
+    category: Mapped[Optional[str]] = mapped_column(String(50))
+    display_order: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default=text("0")
+    )
+    is_active: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("true")
+    )
+    prerequisite_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("quests.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
+    steps: Mapped[list["QuestStep"]] = relationship(
+        back_populates="quest",
+        cascade="all, delete-orphan",
+    )
+    rewards: Mapped[list["QuestReward"]] = relationship(
+        back_populates="quest",
+        cascade="all, delete-orphan",
+    )
+    progress_entries: Mapped[list["QuestProgress"]] = relationship(
+        back_populates="quest",
+        cascade="all, delete-orphan",
+    )
+    prerequisite: Mapped[Optional["Quest"]] = relationship("Quest", remote_side=[id])
+
+
+class QuestStep(Base):
+    __tablename__ = "quest_steps"
+    __table_args__ = (
+        Index("idx_quest_steps_quest", "quest_id"),
+        Index("idx_quest_steps_order", "display_order"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    quest_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("quests.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    description: Mapped[Optional[str]] = mapped_column(Text)
+    display_order: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default=text("0")
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+    quest: Mapped[Quest] = relationship(back_populates="steps")
+    objectives: Mapped[list["QuestObjective"]] = relationship(
+        back_populates="step",
+        cascade="all, delete-orphan",
+    )
+
+
+class QuestObjective(Base):
+    __tablename__ = "quest_objectives"
+    __table_args__ = (
+        Index("idx_quest_objectives_step", "quest_step_id"),
+        Index("idx_quest_objectives_type", "objective_type"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    quest_step_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("quest_steps.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    objective_type: Mapped[str] = mapped_column(String(50), nullable=False)
+    target_value: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default=text("1")
+    )
+    params: Mapped[Optional[Any]] = mapped_column(JSONB)
+    display_order: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default=text("0")
+    )
+
+    step: Mapped["QuestStep"] = relationship(back_populates="objectives")
+
+
+class QuestReward(Base):
+    __tablename__ = "quest_rewards"
+    __table_args__ = (
+        Index("idx_quest_rewards_quest", "quest_id"),
+        Index("idx_quest_rewards_type", "reward_type"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    quest_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("quests.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    reward_type: Mapped[str] = mapped_column(String(50), nullable=False)
+    amount: Mapped[Optional[int]] = mapped_column(Integer)
+    badge_slug: Mapped[Optional[str]] = mapped_column(String(100))
+    metadata_payload: Mapped[Optional[Any]] = mapped_column("metadata", JSONB)
+
+    quest: Mapped["Quest"] = relationship(back_populates="rewards")
+
+
+class QuestProgress(Base):
+    __tablename__ = "quest_progress"
+    __table_args__ = (
+        UniqueConstraint("user_id", "quest_id", name="uq_quest_progress_user"),
+        Index("idx_quest_progress_user", "user_id"),
+        Index("idx_quest_progress_quest", "quest_id"),
+        Index("idx_quest_progress_status", "status"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    quest_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("quests.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    status: Mapped[str] = mapped_column(
+        String(20), nullable=False, server_default=text("'in_progress'")
+    )
+    started_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+
+    user: Mapped["User"] = relationship(back_populates="quest_progress")
+    quest: Mapped["Quest"] = relationship(back_populates="progress_entries")
+
+
+class Classroom(Base):
+    __tablename__ = "classes"
+    __table_args__ = (
+        Index("idx_classes_teacher", "teacher_id"),
+        Index("idx_classes_created_at", "created_at"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    description: Mapped[Optional[str]] = mapped_column(Text)
+    teacher_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+    teacher: Mapped["User"] = relationship(
+        back_populates="classes", foreign_keys=[teacher_id]
+    )
+    members: Mapped[list["ClassMember"]] = relationship(
+        back_populates="classroom",
+        cascade="all, delete-orphan",
+    )
+    assignments: Mapped[list["QuestAssignment"]] = relationship(
+        back_populates="classroom",
+        cascade="all, delete-orphan",
+    )
+
+
+class ClassMember(Base):
+    __tablename__ = "class_members"
+    __table_args__ = (
+        UniqueConstraint("class_id", "user_id", name="uq_class_members"),
+        Index("idx_class_members_class", "class_id"),
+        Index("idx_class_members_user", "user_id"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    class_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("classes.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    role: Mapped[str] = mapped_column(
+        String(20), nullable=False, server_default=text("'learner'")
+    )
+    joined_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+    classroom: Mapped["Classroom"] = relationship(back_populates="members")
+    user: Mapped["User"] = relationship(back_populates="class_memberships")
+
+
+class QuestAssignment(Base):
+    __tablename__ = "quest_assignments"
+    __table_args__ = (
+        Index("idx_assignments_class", "class_id"),
+        Index("idx_assignments_quest", "quest_id"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    class_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("classes.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    quest_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("quests.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    assigned_by_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    due_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    assigned_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+    classroom: Mapped["Classroom"] = relationship(back_populates="assignments")
+    quest: Mapped["Quest"] = relationship()
+    assigned_by: Mapped["User"] = relationship(
+        back_populates="assignments", foreign_keys=[assigned_by_id]
+    )
+    progress_entries: Mapped[list["AssignmentProgress"]] = relationship(
+        back_populates="assignment",
+        cascade="all, delete-orphan",
+    )
+
+
+class AssignmentProgress(Base):
+    __tablename__ = "assignment_progress"
+    __table_args__ = (
+        UniqueConstraint("assignment_id", "user_id", name="uq_assignment_progress"),
+        Index("idx_assignment_progress_assignment", "assignment_id"),
+        Index("idx_assignment_progress_user", "user_id"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    assignment_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("quest_assignments.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    status: Mapped[str] = mapped_column(
+        String(20), nullable=False, server_default=text("'assigned'")
+    )
+    completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+
+    assignment: Mapped["QuestAssignment"] = relationship(
+        back_populates="progress_entries"
+    )
+    user: Mapped["User"] = relationship(back_populates="assignment_progress")
+
+
+class Recommendation(Base):
+    __tablename__ = "recommendations"
+    __table_args__ = (
+        Index("idx_recommendations_user", "user_id"),
+        Index("idx_recommendations_created", "created_at"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    source: Mapped[str] = mapped_column(String(20), nullable=False)
+    items: Mapped[Any] = mapped_column(JSONB, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+    user: Mapped["User"] = relationship(back_populates="recommendations")
+
+
+class AIJob(Base):
+    __tablename__ = "ai_jobs"
+    __table_args__ = (
+        Index("idx_ai_jobs_user", "user_id"),
+        Index("idx_ai_jobs_status", "status"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    job_type: Mapped[str] = mapped_column(String(50), nullable=False)
+    status: Mapped[str] = mapped_column(
+        String(20), nullable=False, server_default=text("'pending'")
+    )
+    provider: Mapped[Optional[str]] = mapped_column(String(50))
+    prompt: Mapped[Optional[str]] = mapped_column(Text)
+    response: Mapped[Optional[str]] = mapped_column(Text)
+    error: Mapped[Optional[str]] = mapped_column(Text)
+    retry_count: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default=text("0")
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
+    user: Mapped["User"] = relationship(back_populates="ai_jobs")
+
+
+class ContentProvenance(Base):
+    __tablename__ = "content_provenance"
+    __table_args__ = (
+        Index("idx_content_provenance_type", "content_type"),
+        Index("idx_content_provenance_content", "content_id"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    content_type: Mapped[str] = mapped_column(String(50), nullable=False)
+    content_id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), nullable=False)
+    provider: Mapped[Optional[str]] = mapped_column(String(50))
+    model: Mapped[Optional[str]] = mapped_column(String(100))
+    generated_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    metadata_payload: Mapped[Optional[Any]] = mapped_column("metadata", JSONB)
+
+
+class ContentFlag(Base):
+    __tablename__ = "content_flags"
+    __table_args__ = (
+        Index("idx_content_flags_user", "user_id"),
+        Index("idx_content_flags_type", "content_type"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    content_type: Mapped[str] = mapped_column(String(50), nullable=False)
+    content_id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), nullable=False)
+    reason: Mapped[str] = mapped_column(String(255), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+    user: Mapped["User"] = relationship(back_populates="content_flags")
