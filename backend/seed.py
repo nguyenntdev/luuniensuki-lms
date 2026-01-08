@@ -215,16 +215,302 @@ DEFAULT_BADGES: list[dict[str, Any]] = [
         "unlock_criteria": {"type": "login_before_hour", "hour": 6},
         "is_secret": False,
     },
+    # Quest-specific badges
+    {
+        "slug": "nong-dan",
+        "name": "Nông Dân",
+        "name_en": "Farmer",
+        "description": "Hoàn thành quest Đất & Mùa Màng.",
+        "icon_url": "🌾",
+        "category": BadgeCategory.quest,
+        "xp_bonus": 100,
+        "unlock_criteria": {"type": "quest_complete", "quest_slug": "dat-mua-mang"},
+        "is_secret": False,
+    },
+    {
+        "slug": "thu-hoang-gia",
+        "name": "Thú Hoang Gia",
+        "name_en": "Royal Beasts",
+        "description": "Hoàn thành quest Thế Giới Động Vật.",
+        "icon_url": "🦁",
+        "category": BadgeCategory.quest,
+        "xp_bonus": 100,
+        "unlock_criteria": {
+            "type": "quest_complete",
+            "quest_slug": "the-gioi-dong-vat",
+        },
+        "is_secret": False,
+    },
+    {
+        "slug": "nha-dia-ly",
+        "name": "Nhà Địa Lý",
+        "name_en": "Geographer",
+        "description": "Hoàn thành quest Sơn Hà Xã Tắc.",
+        "icon_url": "🏔️",
+        "category": BadgeCategory.quest,
+        "xp_bonus": 100,
+        "unlock_criteria": {"type": "quest_complete", "quest_slug": "son-ha-xa-tac"},
+        "is_secret": False,
+    },
+    {
+        "slug": "nha-thao-hoc",
+        "name": "Nhà Thảo Học",
+        "name_en": "Botanist",
+        "description": "Hoàn thành quest Thảo Mộc Thiên Nhiên.",
+        "icon_url": "🌿",
+        "category": BadgeCategory.quest,
+        "xp_bonus": 100,
+        "unlock_criteria": {
+            "type": "quest_complete",
+            "quest_slug": "thao-moc-thien-nhien",
+        },
+        "is_secret": False,
+    },
+    {
+        "slug": "chien-binh",
+        "name": "Chiến Binh",
+        "name_en": "Warrior",
+        "description": "Hoàn thành quest Võ Bị & Quân Sự.",
+        "icon_url": "⚔️",
+        "category": BadgeCategory.quest,
+        "xp_bonus": 100,
+        "unlock_criteria": {"type": "quest_complete", "quest_slug": "vo-bi-quan-su"},
+        "is_secret": False,
+    },
+    {
+        "slug": "nha-thien-van",
+        "name": "Nhà Thiên Văn",
+        "name_en": "Astronomer",
+        "description": "Hoàn thành quest Thiên Văn & Vũ Trụ.",
+        "icon_url": "🌟",
+        "category": BadgeCategory.quest,
+        "xp_bonus": 100,
+        "unlock_criteria": {"type": "quest_complete", "quest_slug": "thien-van-vu-tru"},
+        "is_secret": False,
+    },
+    {
+        "slug": "kien-truc-su",
+        "name": "Kiến Trúc Sư",
+        "name_en": "Architect",
+        "description": "Hoàn thành quest Kiến Trúc Cổ.",
+        "icon_url": "🏛️",
+        "category": BadgeCategory.quest,
+        "xp_bonus": 100,
+        "unlock_criteria": {"type": "quest_complete", "quest_slug": "kien-truc-co"},
+        "is_secret": False,
+    },
+    # Urn Master badges
+    {
+        "slug": "cao-dinh-master",
+        "name": "Bậc Thầy Cao Đỉnh",
+        "name_en": "Cao Dinh Master",
+        "description": "Hoàn thành quest Khám Phá Cao Đỉnh.",
+        "icon_url": "👑",
+        "category": BadgeCategory.quest,
+        "xp_bonus": 150,
+        "unlock_criteria": {
+            "type": "quest_complete",
+            "quest_slug": "kham-pha-cao-dinh",
+        },
+        "is_secret": False,
+    },
+    {
+        "slug": "nhan-dinh-master",
+        "name": "Bậc Thầy Nhân Đỉnh",
+        "name_en": "Nhan Dinh Master",
+        "description": "Hoàn thành quest Khám Phá Nhân Đỉnh.",
+        "icon_url": "🏅",
+        "category": BadgeCategory.quest,
+        "xp_bonus": 150,
+        "unlock_criteria": {
+            "type": "quest_complete",
+            "quest_slug": "kham-pha-nhan-dinh",
+        },
+        "is_secret": False,
+    },
+    {
+        "slug": "chuong-dinh-master",
+        "name": "Bậc Thầy Chương Đỉnh",
+        "name_en": "Chuong Dinh Master",
+        "description": "Hoàn thành quest Khám Phá Chương Đỉnh.",
+        "icon_url": "🏅",
+        "category": BadgeCategory.quest,
+        "xp_bonus": 150,
+        "unlock_criteria": {
+            "type": "quest_complete",
+            "quest_slug": "kham-pha-chuong-dinh",
+        },
+        "is_secret": False,
+    },
+    {
+        "slug": "anh-dinh-master",
+        "name": "Bậc Thầy Anh Đỉnh",
+        "name_en": "Anh Dinh Master",
+        "description": "Hoàn thành quest Khám Phá Anh Đỉnh.",
+        "icon_url": "🏅",
+        "category": BadgeCategory.quest,
+        "xp_bonus": 150,
+        "unlock_criteria": {
+            "type": "quest_complete",
+            "quest_slug": "kham-pha-anh-dinh",
+        },
+        "is_secret": False,
+    },
+    {
+        "slug": "nghi-dinh-master",
+        "name": "Bậc Thầy Nghị Đỉnh",
+        "name_en": "Nghi Dinh Master",
+        "description": "Hoàn thành quest Khám Phá Nghị Đỉnh.",
+        "icon_url": "🏅",
+        "category": BadgeCategory.quest,
+        "xp_bonus": 150,
+        "unlock_criteria": {
+            "type": "quest_complete",
+            "quest_slug": "kham-pha-nghi-dinh",
+        },
+        "is_secret": False,
+    },
+    {
+        "slug": "thuan-dinh-master",
+        "name": "Bậc Thầy Thuần Đỉnh",
+        "name_en": "Thuan Dinh Master",
+        "description": "Hoàn thành quest Khám Phá Thuần Đỉnh.",
+        "icon_url": "🏅",
+        "category": BadgeCategory.quest,
+        "xp_bonus": 150,
+        "unlock_criteria": {
+            "type": "quest_complete",
+            "quest_slug": "kham-pha-thuan-dinh",
+        },
+        "is_secret": False,
+    },
+    {
+        "slug": "tuyen-dinh-master",
+        "name": "Bậc Thầy Tuyên Đỉnh",
+        "name_en": "Tuyen Dinh Master",
+        "description": "Hoàn thành quest Khám Phá Tuyên Đỉnh.",
+        "icon_url": "🏅",
+        "category": BadgeCategory.quest,
+        "xp_bonus": 150,
+        "unlock_criteria": {
+            "type": "quest_complete",
+            "quest_slug": "kham-pha-tuyen-dinh",
+        },
+        "is_secret": False,
+    },
+    {
+        "slug": "du-dinh-master",
+        "name": "Bậc Thầy Dụ Đỉnh",
+        "name_en": "Du Dinh Master",
+        "description": "Hoàn thành quest Khám Phá Dụ Đỉnh.",
+        "icon_url": "🏅",
+        "category": BadgeCategory.quest,
+        "xp_bonus": 150,
+        "unlock_criteria": {"type": "quest_complete", "quest_slug": "kham-pha-du-dinh"},
+        "is_secret": False,
+    },
+    {
+        "slug": "huyen-dinh-master",
+        "name": "Bậc Thầy Huyền Đỉnh",
+        "name_en": "Huyen Dinh Master",
+        "description": "Hoàn thành quest Khám Phá Huyền Đỉnh.",
+        "icon_url": "🏅",
+        "category": BadgeCategory.quest,
+        "xp_bonus": 150,
+        "unlock_criteria": {
+            "type": "quest_complete",
+            "quest_slug": "kham-pha-huyen-dinh",
+        },
+        "is_secret": False,
+    },
+    # Master-level badges
+    {
+        "slug": "cuu-dinh-expert",
+        "name": "Chuyên Gia Cửu Đỉnh",
+        "name_en": "Nine Urns Expert",
+        "description": "Vượt qua thử thách Cửu Đỉnh.",
+        "icon_url": "🎖️",
+        "category": BadgeCategory.quest,
+        "xp_bonus": 300,
+        "unlock_criteria": {
+            "type": "quest_complete",
+            "quest_slug": "cuu-dinh-thu-thach",
+        },
+        "is_secret": False,
+    },
+    {
+        "slug": "grand-collector",
+        "name": "Đại Sưu Tầm Gia",
+        "name_en": "Grand Collector",
+        "description": "Thu thập và thành thạo tất cả họa tiết.",
+        "icon_url": "💎",
+        "category": BadgeCategory.quest,
+        "xp_bonus": 500,
+        "unlock_criteria": {
+            "type": "quest_complete",
+            "quest_slug": "nha-suu-tam-vi-dai",
+        },
+        "is_secret": False,
+    },
+    {
+        "slug": "cuu-dinh-scholar",
+        "name": "Học Giả Cửu Đỉnh",
+        "name_en": "Nine Urns Scholar",
+        "description": "Đạt thành tích cao nhất trong tất cả các lĩnh vực.",
+        "icon_url": "📜",
+        "category": BadgeCategory.quest,
+        "xp_bonus": 1000,
+        "unlock_criteria": {"type": "quest_complete", "quest_slug": "hoc-gia-cuu-dinh"},
+        "is_secret": False,
+    },
 ]
 
 DEFAULT_QUESTS: list[dict[str, Any]] = [
+    # ==========================================================================
+    # TIER 1: Starter Quests (No prerequisites)
+    # ==========================================================================
+    {
+        "slug": "khoi-dau-hanh-trinh",
+        "name": "Khởi Đầu Hành Trình",
+        "description": "Làm quen với Cửu Đỉnh và khám phá những họa tiết đầu tiên.",
+        "category": "starter",
+        "display_order": 1,
+        "prerequisite_slug": None,
+        "steps": [
+            {
+                "title": "Chào mừng đến Cửu Đỉnh",
+                "description": "Khám phá đỉnh đầu tiên và mở khóa 3 họa tiết bất kỳ.",
+                "objectives": [
+                    {
+                        "objective_type": "discover_any",
+                        "target_value": 3,
+                        "params": {},
+                    },
+                ],
+            },
+            {
+                "title": "Bài học đầu tiên",
+                "description": "Hoàn thành bài học cho một họa tiết.",
+                "objectives": [
+                    {
+                        "objective_type": "complete_lesson",
+                        "target_value": 1,
+                        "params": {},
+                    }
+                ],
+            },
+        ],
+        "rewards": [
+            {"reward_type": "xp", "amount": 100},
+        ],
+    },
     {
         "slug": "dat-mua-mang",
         "name": "Đất & Mùa Màng",
-        "description": "Khám phá họa tiết về nông nghiệp và mùa vụ.",
+        "description": "Khám phá họa tiết về nông nghiệp và mùa vụ - nền tảng của văn hóa Việt Nam.",
         "category": "nong_nghiep",
-        "display_order": 1,
-        "prerequisite_slug": None,
+        "display_order": 2,
+        "prerequisite_slug": "khoi-dau-hanh-trinh",
         "steps": [
             {
                 "title": "Dấu ấn nông nghiệp",
@@ -232,12 +518,18 @@ DEFAULT_QUESTS: list[dict[str, Any]] = [
                 "objectives": [
                     {
                         "objective_type": "discover_category",
-                        "target_value": 3,
+                        "target_value": 5,
                         "params": {"category": "nong_nghiep"},
                     },
+                ],
+            },
+            {
+                "title": "Cây cỏ hoa lá",
+                "description": "Tìm hiểu về thảo mộc trên Cửu Đỉnh.",
+                "objectives": [
                     {
                         "objective_type": "discover_category",
-                        "target_value": 3,
+                        "target_value": 10,
                         "params": {"category": "thao_moc"},
                     },
                 ],
@@ -248,91 +540,702 @@ DEFAULT_QUESTS: list[dict[str, Any]] = [
                 "objectives": [
                     {
                         "objective_type": "quiz_pass_count",
-                        "target_value": 2,
+                        "target_value": 3,
                         "params": {"category": "nong_nghiep"},
                     }
                 ],
             },
         ],
-        "rewards": [{"reward_type": "xp", "amount": 200}],
+        "rewards": [
+            {"reward_type": "xp", "amount": 200},
+            {"reward_type": "badge", "badge_slug": "nong-dan"},
+        ],
     },
+    # ==========================================================================
+    # TIER 2: Category-specific Quests
+    # ==========================================================================
     {
-        "slug": "linh-thu",
-        "name": "Linh Thú & Động Vật",
-        "description": "Thu thập dấu tích của linh thú và động vật trên các đỉnh.",
+        "slug": "linh-thu-huyen-bi",
+        "name": "Linh Thú Huyền Bí",
+        "description": "Thu thập dấu tích của các linh thú thiêng liêng trên Cửu Đỉnh.",
         "category": "linh_thu",
-        "display_order": 2,
-        "prerequisite_slug": "dat-mua-mang",
+        "display_order": 3,
+        "prerequisite_slug": "khoi-dau-hanh-trinh",
         "steps": [
             {
-                "title": "Tìm linh thú",
+                "title": "Rồng & Phượng",
+                "description": "Tìm kiếm Long và Phượng - hai linh thú tối cao.",
                 "objectives": [
                     {
                         "objective_type": "discover_category",
-                        "target_value": 3,
+                        "target_value": 2,
                         "params": {"category": "linh_thu"},
                     },
+                ],
+            },
+            {
+                "title": "Hiểu về linh thú",
+                "description": "Hoàn thành bài học về linh thú.",
+                "objectives": [
+                    {
+                        "objective_type": "complete_lesson_category",
+                        "target_value": 2,
+                        "params": {"category": "linh_thu"},
+                    }
+                ],
+            },
+        ],
+        "rewards": [
+            {"reward_type": "xp", "amount": 250},
+        ],
+    },
+    {
+        "slug": "the-gioi-dong-vat",
+        "name": "Thế Giới Động Vật",
+        "description": "Khám phá các loài động vật được khắc họa trên Cửu Đỉnh.",
+        "category": "dong_vat",
+        "display_order": 4,
+        "prerequisite_slug": "khoi-dau-hanh-trinh",
+        "steps": [
+            {
+                "title": "Tìm muông thú",
+                "description": "Khám phá 15 họa tiết động vật.",
+                "objectives": [
                     {
                         "objective_type": "discover_category",
-                        "target_value": 3,
+                        "target_value": 15,
                         "params": {"category": "dong_vat"},
                     },
                 ],
             },
             {
-                "title": "Thử thách linh thú",
+                "title": "Học về động vật",
+                "description": "Hoàn thành bài học về 5 loài động vật.",
+                "objectives": [
+                    {
+                        "objective_type": "complete_lesson_category",
+                        "target_value": 5,
+                        "params": {"category": "dong_vat"},
+                    }
+                ],
+            },
+            {
+                "title": "Thử thách động vật",
+                "description": "Vượt qua quiz về động vật.",
                 "objectives": [
                     {
                         "objective_type": "quiz_pass_count",
-                        "target_value": 2,
+                        "target_value": 5,
                         "params": {"category": "dong_vat"},
                     }
                 ],
             },
         ],
-        "rewards": [{"reward_type": "xp", "amount": 250}],
+        "rewards": [
+            {"reward_type": "xp", "amount": 300},
+            {"reward_type": "badge", "badge_slug": "thu-hoang-gia"},
+        ],
     },
     {
         "slug": "son-ha-xa-tac",
         "name": "Sơn Hà Xã Tắc",
-        "description": "Khám phá các họa tiết về địa lý, núi sông.",
+        "description": "Khám phá các họa tiết về địa lý, núi sông của đất Việt.",
         "category": "dia_ly",
-        "display_order": 3,
-        "prerequisite_slug": "dat-mua-mang",
+        "display_order": 5,
+        "prerequisite_slug": "khoi-dau-hanh-trinh",
         "steps": [
             {
-                "title": "Địa lý Việt Nam",
+                "title": "Núi sông Việt Nam",
+                "description": "Khám phá 15 họa tiết địa lý.",
                 "objectives": [
                     {
                         "objective_type": "discover_category",
-                        "target_value": 4,
+                        "target_value": 15,
                         "params": {"category": "dia_ly"},
                     }
                 ],
             },
             {
-                "title": "Kiểm tra địa danh",
+                "title": "Địa danh lịch sử",
+                "description": "Hoàn thành bài học về các địa danh.",
+                "objectives": [
+                    {
+                        "objective_type": "complete_lesson_category",
+                        "target_value": 5,
+                        "params": {"category": "dia_ly"},
+                    }
+                ],
+            },
+            {
+                "title": "Kiểm tra địa lý",
+                "description": "Vượt qua quiz về địa lý Việt Nam.",
                 "objectives": [
                     {
                         "objective_type": "quiz_pass_count",
-                        "target_value": 1,
+                        "target_value": 3,
                         "params": {"category": "dia_ly"},
                     }
                 ],
             },
         ],
-        "rewards": [{"reward_type": "xp", "amount": 200}],
+        "rewards": [
+            {"reward_type": "xp", "amount": 300},
+            {"reward_type": "badge", "badge_slug": "nha-dia-ly"},
+        ],
     },
+    {
+        "slug": "thao-moc-thien-nhien",
+        "name": "Thảo Mộc Thiên Nhiên",
+        "description": "Khám phá thế giới cây cỏ hoa lá trên Cửu Đỉnh.",
+        "category": "thao_moc",
+        "display_order": 6,
+        "prerequisite_slug": "dat-mua-mang",
+        "steps": [
+            {
+                "title": "Vườn hoa",
+                "description": "Khám phá 20 họa tiết thảo mộc.",
+                "objectives": [
+                    {
+                        "objective_type": "discover_category",
+                        "target_value": 20,
+                        "params": {"category": "thao_moc"},
+                    }
+                ],
+            },
+            {
+                "title": "Ý nghĩa cây cỏ",
+                "description": "Hoàn thành bài học về 10 loài thảo mộc.",
+                "objectives": [
+                    {
+                        "objective_type": "complete_lesson_category",
+                        "target_value": 10,
+                        "params": {"category": "thao_moc"},
+                    }
+                ],
+            },
+            {
+                "title": "Bậc thầy thảo mộc",
+                "description": "Mastered 5 họa tiết thảo mộc.",
+                "objectives": [
+                    {
+                        "objective_type": "master_category",
+                        "target_value": 5,
+                        "params": {"category": "thao_moc"},
+                    }
+                ],
+            },
+        ],
+        "rewards": [
+            {"reward_type": "xp", "amount": 350},
+            {"reward_type": "badge", "badge_slug": "nha-thao-hoc"},
+        ],
+    },
+    {
+        "slug": "vo-bi-quan-su",
+        "name": "Võ Bị & Quân Sự",
+        "description": "Tìm hiểu về các họa tiết liên quan đến võ bị và quân sự.",
+        "category": "vo_bi",
+        "display_order": 7,
+        "prerequisite_slug": "khoi-dau-hanh-trinh",
+        "steps": [
+            {
+                "title": "Khám phá võ bị",
+                "description": "Tìm 10 họa tiết về võ bị.",
+                "objectives": [
+                    {
+                        "objective_type": "discover_category",
+                        "target_value": 10,
+                        "params": {"category": "vo_bi"},
+                    }
+                ],
+            },
+            {
+                "title": "Lịch sử quân sự",
+                "description": "Hoàn thành bài học về võ bị.",
+                "objectives": [
+                    {
+                        "objective_type": "complete_lesson_category",
+                        "target_value": 5,
+                        "params": {"category": "vo_bi"},
+                    }
+                ],
+            },
+            {
+                "title": "Thử thách võ bị",
+                "description": "Vượt qua quiz về võ bị.",
+                "objectives": [
+                    {
+                        "objective_type": "quiz_pass_count",
+                        "target_value": 3,
+                        "params": {"category": "vo_bi"},
+                    }
+                ],
+            },
+        ],
+        "rewards": [
+            {"reward_type": "xp", "amount": 280},
+            {"reward_type": "badge", "badge_slug": "chien-binh"},
+        ],
+    },
+    {
+        "slug": "thien-van-vu-tru",
+        "name": "Thiên Văn & Vũ Trụ",
+        "description": "Khám phá các họa tiết về thiên văn và vũ trụ.",
+        "category": "thien_van",
+        "display_order": 8,
+        "prerequisite_slug": "khoi-dau-hanh-trinh",
+        "steps": [
+            {
+                "title": "Bầu trời sao",
+                "description": "Khám phá 8 họa tiết thiên văn.",
+                "objectives": [
+                    {
+                        "objective_type": "discover_category",
+                        "target_value": 8,
+                        "params": {"category": "thien_van"},
+                    }
+                ],
+            },
+            {
+                "title": "Hiểu về thiên văn",
+                "description": "Hoàn thành bài học về thiên văn.",
+                "objectives": [
+                    {
+                        "objective_type": "complete_lesson_category",
+                        "target_value": 4,
+                        "params": {"category": "thien_van"},
+                    }
+                ],
+            },
+        ],
+        "rewards": [
+            {"reward_type": "xp", "amount": 250},
+            {"reward_type": "badge", "badge_slug": "nha-thien-van"},
+        ],
+    },
+    {
+        "slug": "kien-truc-co",
+        "name": "Kiến Trúc Cổ",
+        "description": "Tìm hiểu về các họa tiết kiến trúc truyền thống.",
+        "category": "kien_truc",
+        "display_order": 9,
+        "prerequisite_slug": "khoi-dau-hanh-trinh",
+        "steps": [
+            {
+                "title": "Công trình cổ",
+                "description": "Khám phá 8 họa tiết kiến trúc.",
+                "objectives": [
+                    {
+                        "objective_type": "discover_category",
+                        "target_value": 8,
+                        "params": {"category": "kien_truc"},
+                    }
+                ],
+            },
+            {
+                "title": "Kiến trúc Nguyễn triều",
+                "description": "Hoàn thành bài học về kiến trúc.",
+                "objectives": [
+                    {
+                        "objective_type": "complete_lesson_category",
+                        "target_value": 4,
+                        "params": {"category": "kien_truc"},
+                    }
+                ],
+            },
+        ],
+        "rewards": [
+            {"reward_type": "xp", "amount": 250},
+            {"reward_type": "badge", "badge_slug": "kien-truc-su"},
+        ],
+    },
+    {
+        "slug": "giao-thuong-buon-ban",
+        "name": "Giao Thương & Buôn Bán",
+        "description": "Khám phá các họa tiết liên quan đến thương mại.",
+        "category": "giao_thuong",
+        "display_order": 10,
+        "prerequisite_slug": "khoi-dau-hanh-trinh",
+        "steps": [
+            {
+                "title": "Con đường tơ lụa",
+                "description": "Khám phá họa tiết giao thương.",
+                "objectives": [
+                    {
+                        "objective_type": "discover_category",
+                        "target_value": 2,
+                        "params": {"category": "giao_thuong"},
+                    }
+                ],
+            },
+            {
+                "title": "Lịch sử thương mại",
+                "description": "Hoàn thành bài học về giao thương.",
+                "objectives": [
+                    {
+                        "objective_type": "complete_lesson_category",
+                        "target_value": 2,
+                        "params": {"category": "giao_thuong"},
+                    }
+                ],
+            },
+        ],
+        "rewards": [
+            {"reward_type": "xp", "amount": 200},
+        ],
+    },
+    # ==========================================================================
+    # TIER 3: Urn-specific Quests
+    # ==========================================================================
+    {
+        "slug": "kham-pha-cao-dinh",
+        "name": "Khám Phá Cao Đỉnh",
+        "description": "Cao Đỉnh - đỉnh đầu tiên, tôn vinh vua Gia Long.",
+        "category": "urn",
+        "display_order": 11,
+        "prerequisite_slug": "khoi-dau-hanh-trinh",
+        "steps": [
+            {
+                "title": "Khám phá Cao Đỉnh",
+                "description": "Mở khóa tất cả họa tiết trên Cao Đỉnh.",
+                "objectives": [
+                    {
+                        "objective_type": "discover_urn",
+                        "target_value": 100,
+                        "params": {"urn_slug": "cao-dinh", "percent": True},
+                    }
+                ],
+            },
+            {
+                "title": "Học hỏi",
+                "description": "Hoàn thành bài học cho 5 họa tiết.",
+                "objectives": [
+                    {
+                        "objective_type": "complete_lesson_urn",
+                        "target_value": 5,
+                        "params": {"urn_slug": "cao-dinh"},
+                    }
+                ],
+            },
+        ],
+        "rewards": [
+            {"reward_type": "xp", "amount": 300},
+            {"reward_type": "badge", "badge_slug": "cao-dinh-master"},
+        ],
+    },
+    {
+        "slug": "kham-pha-nhan-dinh",
+        "name": "Khám Phá Nhân Đỉnh",
+        "description": "Nhân Đỉnh - tôn vinh vua Minh Mạng.",
+        "category": "urn",
+        "display_order": 12,
+        "prerequisite_slug": "khoi-dau-hanh-trinh",
+        "steps": [
+            {
+                "title": "Khám phá Nhân Đỉnh",
+                "description": "Mở khóa tất cả họa tiết trên Nhân Đỉnh.",
+                "objectives": [
+                    {
+                        "objective_type": "discover_urn",
+                        "target_value": 100,
+                        "params": {"urn_slug": "nhan-dinh", "percent": True},
+                    }
+                ],
+            },
+            {
+                "title": "Học hỏi",
+                "description": "Hoàn thành bài học cho 5 họa tiết.",
+                "objectives": [
+                    {
+                        "objective_type": "complete_lesson_urn",
+                        "target_value": 5,
+                        "params": {"urn_slug": "nhan-dinh"},
+                    }
+                ],
+            },
+        ],
+        "rewards": [
+            {"reward_type": "xp", "amount": 300},
+            {"reward_type": "badge", "badge_slug": "nhan-dinh-master"},
+        ],
+    },
+    {
+        "slug": "kham-pha-chuong-dinh",
+        "name": "Khám Phá Chương Đỉnh",
+        "description": "Chương Đỉnh - tôn vinh vua Thiệu Trị.",
+        "category": "urn",
+        "display_order": 13,
+        "prerequisite_slug": "khoi-dau-hanh-trinh",
+        "steps": [
+            {
+                "title": "Khám phá Chương Đỉnh",
+                "description": "Mở khóa tất cả họa tiết trên Chương Đỉnh.",
+                "objectives": [
+                    {
+                        "objective_type": "discover_urn",
+                        "target_value": 100,
+                        "params": {"urn_slug": "chuong-dinh", "percent": True},
+                    }
+                ],
+            },
+            {
+                "title": "Học hỏi",
+                "description": "Hoàn thành bài học cho 5 họa tiết.",
+                "objectives": [
+                    {
+                        "objective_type": "complete_lesson_urn",
+                        "target_value": 5,
+                        "params": {"urn_slug": "chuong-dinh"},
+                    }
+                ],
+            },
+        ],
+        "rewards": [
+            {"reward_type": "xp", "amount": 300},
+            {"reward_type": "badge", "badge_slug": "chuong-dinh-master"},
+        ],
+    },
+    {
+        "slug": "kham-pha-anh-dinh",
+        "name": "Khám Phá Anh Đỉnh",
+        "description": "Anh Đỉnh - tôn vinh vua Tự Đức.",
+        "category": "urn",
+        "display_order": 14,
+        "prerequisite_slug": "khoi-dau-hanh-trinh",
+        "steps": [
+            {
+                "title": "Khám phá Anh Đỉnh",
+                "description": "Mở khóa tất cả họa tiết trên Anh Đỉnh.",
+                "objectives": [
+                    {
+                        "objective_type": "discover_urn",
+                        "target_value": 100,
+                        "params": {"urn_slug": "anh-dinh", "percent": True},
+                    }
+                ],
+            },
+            {
+                "title": "Học hỏi",
+                "description": "Hoàn thành bài học cho 5 họa tiết.",
+                "objectives": [
+                    {
+                        "objective_type": "complete_lesson_urn",
+                        "target_value": 5,
+                        "params": {"urn_slug": "anh-dinh"},
+                    }
+                ],
+            },
+        ],
+        "rewards": [
+            {"reward_type": "xp", "amount": 300},
+            {"reward_type": "badge", "badge_slug": "anh-dinh-master"},
+        ],
+    },
+    {
+        "slug": "kham-pha-nghi-dinh",
+        "name": "Khám Phá Nghị Đỉnh",
+        "description": "Nghị Đỉnh - tôn vinh vua Kiến Phúc.",
+        "category": "urn",
+        "display_order": 15,
+        "prerequisite_slug": "khoi-dau-hanh-trinh",
+        "steps": [
+            {
+                "title": "Khám phá Nghị Đỉnh",
+                "description": "Mở khóa tất cả họa tiết trên Nghị Đỉnh.",
+                "objectives": [
+                    {
+                        "objective_type": "discover_urn",
+                        "target_value": 100,
+                        "params": {"urn_slug": "nghi-dinh", "percent": True},
+                    }
+                ],
+            },
+            {
+                "title": "Học hỏi",
+                "description": "Hoàn thành bài học cho 5 họa tiết.",
+                "objectives": [
+                    {
+                        "objective_type": "complete_lesson_urn",
+                        "target_value": 5,
+                        "params": {"urn_slug": "nghi-dinh"},
+                    }
+                ],
+            },
+        ],
+        "rewards": [
+            {"reward_type": "xp", "amount": 300},
+            {"reward_type": "badge", "badge_slug": "nghi-dinh-master"},
+        ],
+    },
+    {
+        "slug": "kham-pha-thuan-dinh",
+        "name": "Khám Phá Thuần Đỉnh",
+        "description": "Thuần Đỉnh - tôn vinh vua Đồng Khánh.",
+        "category": "urn",
+        "display_order": 16,
+        "prerequisite_slug": "khoi-dau-hanh-trinh",
+        "steps": [
+            {
+                "title": "Khám phá Thuần Đỉnh",
+                "description": "Mở khóa tất cả họa tiết trên Thuần Đỉnh.",
+                "objectives": [
+                    {
+                        "objective_type": "discover_urn",
+                        "target_value": 100,
+                        "params": {"urn_slug": "thuan-dinh", "percent": True},
+                    }
+                ],
+            },
+            {
+                "title": "Học hỏi",
+                "description": "Hoàn thành bài học cho 5 họa tiết.",
+                "objectives": [
+                    {
+                        "objective_type": "complete_lesson_urn",
+                        "target_value": 5,
+                        "params": {"urn_slug": "thuan-dinh"},
+                    }
+                ],
+            },
+        ],
+        "rewards": [
+            {"reward_type": "xp", "amount": 300},
+            {"reward_type": "badge", "badge_slug": "thuan-dinh-master"},
+        ],
+    },
+    {
+        "slug": "kham-pha-tuyen-dinh",
+        "name": "Khám Phá Tuyên Đỉnh",
+        "description": "Tuyên Đỉnh - tôn vinh vua Khải Định.",
+        "category": "urn",
+        "display_order": 17,
+        "prerequisite_slug": "khoi-dau-hanh-trinh",
+        "steps": [
+            {
+                "title": "Khám phá Tuyên Đỉnh",
+                "description": "Mở khóa tất cả họa tiết trên Tuyên Đỉnh.",
+                "objectives": [
+                    {
+                        "objective_type": "discover_urn",
+                        "target_value": 100,
+                        "params": {"urn_slug": "tuyen-dinh", "percent": True},
+                    }
+                ],
+            },
+            {
+                "title": "Học hỏi",
+                "description": "Hoàn thành bài học cho 5 họa tiết.",
+                "objectives": [
+                    {
+                        "objective_type": "complete_lesson_urn",
+                        "target_value": 5,
+                        "params": {"urn_slug": "tuyen-dinh"},
+                    }
+                ],
+            },
+        ],
+        "rewards": [
+            {"reward_type": "xp", "amount": 300},
+            {"reward_type": "badge", "badge_slug": "tuyen-dinh-master"},
+        ],
+    },
+    {
+        "slug": "kham-pha-du-dinh",
+        "name": "Khám Phá Dụ Đỉnh",
+        "description": "Dụ Đỉnh - tôn vinh vua Bảo Đại.",
+        "category": "urn",
+        "display_order": 18,
+        "prerequisite_slug": "khoi-dau-hanh-trinh",
+        "steps": [
+            {
+                "title": "Khám phá Dụ Đỉnh",
+                "description": "Mở khóa tất cả họa tiết trên Dụ Đỉnh.",
+                "objectives": [
+                    {
+                        "objective_type": "discover_urn",
+                        "target_value": 100,
+                        "params": {"urn_slug": "du-dinh", "percent": True},
+                    }
+                ],
+            },
+            {
+                "title": "Học hỏi",
+                "description": "Hoàn thành bài học cho 5 họa tiết.",
+                "objectives": [
+                    {
+                        "objective_type": "complete_lesson_urn",
+                        "target_value": 5,
+                        "params": {"urn_slug": "du-dinh"},
+                    }
+                ],
+            },
+        ],
+        "rewards": [
+            {"reward_type": "xp", "amount": 300},
+            {"reward_type": "badge", "badge_slug": "du-dinh-master"},
+        ],
+    },
+    {
+        "slug": "kham-pha-huyen-dinh",
+        "name": "Khám Phá Huyền Đỉnh",
+        "description": "Huyền Đỉnh - đỉnh cuối cùng trong Cửu Đỉnh.",
+        "category": "urn",
+        "display_order": 19,
+        "prerequisite_slug": "khoi-dau-hanh-trinh",
+        "steps": [
+            {
+                "title": "Khám phá Huyền Đỉnh",
+                "description": "Mở khóa tất cả họa tiết trên Huyền Đỉnh.",
+                "objectives": [
+                    {
+                        "objective_type": "discover_urn",
+                        "target_value": 100,
+                        "params": {"urn_slug": "huyen-dinh", "percent": True},
+                    }
+                ],
+            },
+            {
+                "title": "Học hỏi",
+                "description": "Hoàn thành bài học cho 5 họa tiết.",
+                "objectives": [
+                    {
+                        "objective_type": "complete_lesson_urn",
+                        "target_value": 5,
+                        "params": {"urn_slug": "huyen-dinh"},
+                    }
+                ],
+            },
+        ],
+        "rewards": [
+            {"reward_type": "xp", "amount": 300},
+            {"reward_type": "badge", "badge_slug": "huyen-dinh-master"},
+        ],
+    },
+    # ==========================================================================
+    # TIER 4: Master Quests (High-level challenges)
+    # ==========================================================================
     {
         "slug": "cuu-dinh-thu-thach",
         "name": "Thử Thách Cửu Đỉnh",
         "description": "Vượt qua kỳ kiểm tra Cửu Đỉnh để nhận chứng nhận.",
-        "category": "tong-hop",
-        "display_order": 4,
+        "category": "tong_hop",
+        "display_order": 20,
         "prerequisite_slug": "son-ha-xa-tac",
         "steps": [
             {
+                "title": "Thu thập kiến thức",
+                "description": "Hoàn thành ít nhất 50 bài học.",
+                "objectives": [
+                    {
+                        "objective_type": "complete_lesson",
+                        "target_value": 50,
+                        "params": {},
+                    }
+                ],
+            },
+            {
                 "title": "Thi chứng nhận",
+                "description": "Vượt qua kỳ thi chứng nhận.",
                 "objectives": [
                     {
                         "objective_type": "urn_exam_pass",
@@ -340,9 +1243,195 @@ DEFAULT_QUESTS: list[dict[str, Any]] = [
                         "params": {},
                     }
                 ],
-            }
+            },
         ],
-        "rewards": [{"reward_type": "xp", "amount": 300}],
+        "rewards": [
+            {"reward_type": "xp", "amount": 500},
+            {"reward_type": "badge", "badge_slug": "cuu-dinh-expert"},
+        ],
+    },
+    {
+        "slug": "nha-suu-tam-vi-dai",
+        "name": "Nhà Sưu Tầm Vĩ Đại",
+        "description": "Thu thập và thành thạo tất cả họa tiết trên Cửu Đỉnh.",
+        "category": "collection",
+        "display_order": 21,
+        "prerequisite_slug": "cuu-dinh-thu-thach",
+        "steps": [
+            {
+                "title": "Khám phá tất cả",
+                "description": "Mở khóa tất cả họa tiết trên 9 đỉnh.",
+                "objectives": [
+                    {
+                        "objective_type": "discover_all_urns",
+                        "target_value": 9,
+                        "params": {},
+                    }
+                ],
+            },
+            {
+                "title": "Hoàn thành tất cả bài học",
+                "description": "Hoàn thành bài học cho tất cả họa tiết.",
+                "objectives": [
+                    {
+                        "objective_type": "complete_lesson",
+                        "target_value": 100,
+                        "params": {},
+                    }
+                ],
+            },
+            {
+                "title": "Thành thạo",
+                "description": "Mastered 50 họa tiết.",
+                "objectives": [
+                    {
+                        "objective_type": "master_any",
+                        "target_value": 50,
+                        "params": {},
+                    }
+                ],
+            },
+        ],
+        "rewards": [
+            {"reward_type": "xp", "amount": 1000},
+            {"reward_type": "badge", "badge_slug": "grand-collector"},
+        ],
+    },
+    {
+        "slug": "hoc-gia-cuu-dinh",
+        "name": "Học Giả Cửu Đỉnh",
+        "description": "Đạt thành tích cao nhất trong tất cả các lĩnh vực.",
+        "category": "master",
+        "display_order": 22,
+        "prerequisite_slug": "nha-suu-tam-vi-dai",
+        "steps": [
+            {
+                "title": "Quiz Master",
+                "description": "Đạt điểm tối đa trong 20 quiz.",
+                "objectives": [
+                    {
+                        "objective_type": "quiz_perfect_score",
+                        "target_value": 20,
+                        "params": {},
+                    }
+                ],
+            },
+            {
+                "title": "Streak legend",
+                "description": "Duy trì streak 30 ngày.",
+                "objectives": [
+                    {
+                        "objective_type": "streak_days",
+                        "target_value": 30,
+                        "params": {},
+                    }
+                ],
+            },
+        ],
+        "rewards": [
+            {"reward_type": "xp", "amount": 2000},
+            {"reward_type": "badge", "badge_slug": "cuu-dinh-scholar"},
+        ],
+    },
+    # ==========================================================================
+    # BONUS: Special & Event Quests
+    # ==========================================================================
+    {
+        "slug": "speed-runner",
+        "name": "Speed Runner",
+        "description": "Hoàn thành các thử thách với tốc độ nhanh nhất.",
+        "category": "special",
+        "display_order": 23,
+        "prerequisite_slug": "khoi-dau-hanh-trinh",
+        "steps": [
+            {
+                "title": "Quiz nhanh",
+                "description": "Hoàn thành 5 quiz trong dưới 30 giây mỗi quiz.",
+                "objectives": [
+                    {
+                        "objective_type": "quiz_speed",
+                        "target_value": 5,
+                        "params": {"max_seconds": 30},
+                    }
+                ],
+            },
+        ],
+        "rewards": [
+            {"reward_type": "xp", "amount": 300},
+            {"reward_type": "badge", "badge_slug": "speed-demon"},
+        ],
+    },
+    {
+        "slug": "nguoi-kham-pha",
+        "name": "Người Khám Phá",
+        "description": "Khám phá mọi ngóc ngách của Cửu Đỉnh.",
+        "category": "exploration",
+        "display_order": 24,
+        "prerequisite_slug": "khoi-dau-hanh-trinh",
+        "steps": [
+            {
+                "title": "Ghé thăm mọi đỉnh",
+                "description": "Khám phá ít nhất 1 họa tiết trên mỗi đỉnh.",
+                "objectives": [
+                    {
+                        "objective_type": "visit_all_urns",
+                        "target_value": 9,
+                        "params": {},
+                    }
+                ],
+            },
+            {
+                "title": "Đa dạng danh mục",
+                "description": "Khám phá họa tiết từ tất cả 9 danh mục.",
+                "objectives": [
+                    {
+                        "objective_type": "discover_all_categories",
+                        "target_value": 9,
+                        "params": {},
+                    }
+                ],
+            },
+        ],
+        "rewards": [
+            {"reward_type": "xp", "amount": 400},
+            {"reward_type": "badge", "badge_slug": "explorer-all-urns"},
+        ],
+    },
+    {
+        "slug": "hoc-sinh-cham-chi",
+        "name": "Học Sinh Chăm Chỉ",
+        "description": "Thể hiện sự kiên trì trong học tập.",
+        "category": "streak",
+        "display_order": 25,
+        "prerequisite_slug": "khoi-dau-hanh-trinh",
+        "steps": [
+            {
+                "title": "7 ngày liên tiếp",
+                "description": "Duy trì streak 7 ngày.",
+                "objectives": [
+                    {
+                        "objective_type": "streak_days",
+                        "target_value": 7,
+                        "params": {},
+                    }
+                ],
+            },
+            {
+                "title": "Học mỗi ngày",
+                "description": "Hoàn thành ít nhất 1 bài học mỗi ngày trong 7 ngày.",
+                "objectives": [
+                    {
+                        "objective_type": "daily_lesson",
+                        "target_value": 7,
+                        "params": {},
+                    }
+                ],
+            },
+        ],
+        "rewards": [
+            {"reward_type": "xp", "amount": 250},
+            {"reward_type": "badge", "badge_slug": "streak-7"},
+        ],
     },
 ]
 

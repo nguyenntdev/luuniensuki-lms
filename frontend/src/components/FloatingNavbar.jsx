@@ -147,10 +147,9 @@ export default function FloatingNavbar() {
     };
 
     const isStaff = ["teacher", "admin", "super_admin"].includes(user?.role);
+    // Simplified navigation: 4 primary items
     const primaryNavItems = [
-        { icon: Globe, label: t("nav.dashboard"), link: "/dashboard" },
         { icon: Eye, label: t("nav.explore"), link: "/explore" },
-        { icon: Map, label: t("nav.quests"), link: "/quests" },
         { icon: BookOpen, label: t("nav.collection"), link: "/collection" },
         { icon: Trophy, label: t("nav.achievements"), link: "/achievements" },
         { icon: User, label: t("nav.profile"), link: "/profile" },

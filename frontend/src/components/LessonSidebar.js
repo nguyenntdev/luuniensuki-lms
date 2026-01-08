@@ -9,7 +9,8 @@ import toast from "react-hot-toast";
 import { useAuthStore } from "@/stores/authStore";
 import { useMotifStore } from "@/stores/motifStore";
 
-import { completeLesson, getMotifDetail } from "@/lib/api";
+import { completeLesson, getMotifDetail, logAnalyticsEvent } from "@/lib/api";
+import { AudioPlayer, VideoPlayer, ImageGallery } from "@/components/MediaPlayer";
 
 const STATUS_META = {
     hidden: {
@@ -599,6 +600,44 @@ export default function LessonSidebar() {
                                 />
                             </div>
                         ) : null}
+
+                        {/* Media Section: Audio, Video, Gallery */}
+                        {(lesson?.audio_narration_url || lesson?.video_url || lesson?.additional_images?.length > 0) && (
+                            <div className="mb-4 space-y-3">
+                                {lesson?.video_url && (
+                                    <VideoPlayer
+                                        src={lesson.video_url}
+                                        title="Video bài học"
+                                        onPlay={() => {
+                                            logAnalyticsEvent({
+                                                name: "video_play",
+                                                payload: { motif_id: motif.id, motif_name: motif.name },
+                                                path: `/urns/${motif.urn_slug}`,
+                                            }).catch(() => {});
+                                        }}
+                                    />
+                                )}
+                                {lesson?.audio_narration_url && (
+                                    <AudioPlayer
+                                        src={lesson.audio_narration_url}
+                                        title="Bài đọc"
+                                        onPlay={() => {
+                                            logAnalyticsEvent({
+                                                name: "audio_play",
+                                                payload: { motif_id: motif.id, motif_name: motif.name },
+                                                path: `/urns/${motif.urn_slug}`,
+                                            }).catch(() => {});
+                                        }}
+                                    />
+                                )}
+                                {lesson?.additional_images?.length > 0 && (
+                                    <ImageGallery
+                                        images={lesson.additional_images}
+                                        title="Hình ảnh bổ sung"
+                                    />
+                                )}
+                            </div>
+                        )}
 
                         <div className="mb-3 flex items-start justify-between gap-3">
                             <div>

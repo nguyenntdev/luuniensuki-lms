@@ -1,0 +1,138 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      skip_tests:
+        description: 'Skip tests before deploy'
+        required: false
+        default: 'false'
+        type: boolean
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # Run tests first (unless skipped)
+  test:
+    if: ${{ github.event.inputs.skip_tests != 'true' }}
+    runs-on: ubuntu-latest
+    services:
+      db:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: luuniensuki_test
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install backend dependencies
+        run: |
+          pip install -r backend/requirements.txt
+          pip install -r backend/requirements-dev.txt
+
+      - name: Run backend tests
+        env:
+          DATABASE_URL: postgresql+psycopg://postgres:password@localhost:5432/luuniensuki_test
+          JWT_SECRET_KEY: test-secret-key-for-ci
+        run: pytest tests/backend -v --tb=short
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: Lint frontend
+        working-directory: ./frontend
+        run: npm run lint
+
+      - name: Build frontend
+        working-directory: ./frontend
+        run: npm run build
+
+  # Deploy to production server
+  deploy:
+    needs: [test]
+    if: always() && (needs.test.result == 'success' || needs.test.result == 'skipped')
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SERVER_PORT || 22 }}
+          script: |
+            set -e
+
+            cd /opt/luuniensuki-lms
+
+            echo "=== Pulling latest code ==="
+            git fetch origin main
+            git reset --hard origin/main
+
+            echo "=== Rebuilding containers ==="
+            docker compose -f docker-compose.prod.yml -f docker-compose.override.yml --env-file .env.prod pull
+            docker compose -f docker-compose.prod.yml -f docker-compose.override.yml --env-file .env.prod up -d --build
+
+            echo "=== Running database migrations ==="
+            docker compose -f docker-compose.prod.yml -f docker-compose.override.yml --env-file .env.prod run --rm api alembic upgrade head || true
+
+            echo "=== Cleaning up old images ==="
+            docker image prune -f
+
+            echo "=== Health check ==="
+            sleep 10
+            curl -sf https://lms.histolab.icu/health || exit 1
+
+            echo "=== Deployment complete! ==="
+
+      - name: Notify on success
+        if: success()
+        run: echo "✅ Deployment to production successful!"
+
+      - name: Notify on failure
+        if: failure()
+        run: echo "❌ Deployment failed! Check logs above."
+
+  # Notify deployment status (optional - for Slack/Discord)
+  notify:
+    needs: [deploy]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deployment Summary
+        run: |
+          echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Repository:** ${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Triggered by:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status:** ${{ needs.deploy.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Production URL:** https://lms.histolab.icu" >> $GITHUB_STEP_SUMMARY
