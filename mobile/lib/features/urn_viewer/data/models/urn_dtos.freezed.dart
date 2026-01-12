@@ -1481,6 +1481,294 @@ abstract class _MotifDto implements MotifDto {
       throw _privateConstructorUsedError;
 }
 
+UrnInfoDto _$UrnInfoDtoFromJson(Map<String, dynamic> json) {
+  return _UrnInfoDto.fromJson(json);
+}
+
+/// @nodoc
+mixin _$UrnInfoDto {
+  String get id => throw _privateConstructorUsedError;
+  String get slug => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  @JsonKey(name: 'model_url')
+  String? get modelUrl => throw _privateConstructorUsedError;
+  @JsonKey(name: 'thumbnail_url')
+  String? get thumbnailUrl => throw _privateConstructorUsedError;
+  String? get description => throw _privateConstructorUsedError;
+  @JsonKey(name: 'display_order')
+  int get displayOrder => throw _privateConstructorUsedError;
+
+  /// Serializes this UrnInfoDto to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of UrnInfoDto
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $UrnInfoDtoCopyWith<UrnInfoDto> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $UrnInfoDtoCopyWith<$Res> {
+  factory $UrnInfoDtoCopyWith(
+          UrnInfoDto value, $Res Function(UrnInfoDto) then) =
+      _$UrnInfoDtoCopyWithImpl<$Res, UrnInfoDto>;
+  @useResult
+  $Res call(
+      {String id,
+      String slug,
+      String name,
+      @JsonKey(name: 'model_url') String? modelUrl,
+      @JsonKey(name: 'thumbnail_url') String? thumbnailUrl,
+      String? description,
+      @JsonKey(name: 'display_order') int displayOrder});
+}
+
+/// @nodoc
+class _$UrnInfoDtoCopyWithImpl<$Res, $Val extends UrnInfoDto>
+    implements $UrnInfoDtoCopyWith<$Res> {
+  _$UrnInfoDtoCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of UrnInfoDto
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? slug = null,
+    Object? name = null,
+    Object? modelUrl = freezed,
+    Object? thumbnailUrl = freezed,
+    Object? description = freezed,
+    Object? displayOrder = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      slug: null == slug
+          ? _value.slug
+          : slug // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      modelUrl: freezed == modelUrl
+          ? _value.modelUrl
+          : modelUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      thumbnailUrl: freezed == thumbnailUrl
+          ? _value.thumbnailUrl
+          : thumbnailUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      displayOrder: null == displayOrder
+          ? _value.displayOrder
+          : displayOrder // ignore: cast_nullable_to_non_nullable
+              as int,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$UrnInfoDtoImplCopyWith<$Res>
+    implements $UrnInfoDtoCopyWith<$Res> {
+  factory _$$UrnInfoDtoImplCopyWith(
+          _$UrnInfoDtoImpl value, $Res Function(_$UrnInfoDtoImpl) then) =
+      __$$UrnInfoDtoImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String slug,
+      String name,
+      @JsonKey(name: 'model_url') String? modelUrl,
+      @JsonKey(name: 'thumbnail_url') String? thumbnailUrl,
+      String? description,
+      @JsonKey(name: 'display_order') int displayOrder});
+}
+
+/// @nodoc
+class __$$UrnInfoDtoImplCopyWithImpl<$Res>
+    extends _$UrnInfoDtoCopyWithImpl<$Res, _$UrnInfoDtoImpl>
+    implements _$$UrnInfoDtoImplCopyWith<$Res> {
+  __$$UrnInfoDtoImplCopyWithImpl(
+      _$UrnInfoDtoImpl _value, $Res Function(_$UrnInfoDtoImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of UrnInfoDto
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? slug = null,
+    Object? name = null,
+    Object? modelUrl = freezed,
+    Object? thumbnailUrl = freezed,
+    Object? description = freezed,
+    Object? displayOrder = null,
+  }) {
+    return _then(_$UrnInfoDtoImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      slug: null == slug
+          ? _value.slug
+          : slug // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      modelUrl: freezed == modelUrl
+          ? _value.modelUrl
+          : modelUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      thumbnailUrl: freezed == thumbnailUrl
+          ? _value.thumbnailUrl
+          : thumbnailUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      displayOrder: null == displayOrder
+          ? _value.displayOrder
+          : displayOrder // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$UrnInfoDtoImpl implements _UrnInfoDto {
+  const _$UrnInfoDtoImpl(
+      {required this.id,
+      required this.slug,
+      required this.name,
+      @JsonKey(name: 'model_url') this.modelUrl,
+      @JsonKey(name: 'thumbnail_url') this.thumbnailUrl,
+      this.description,
+      @JsonKey(name: 'display_order') this.displayOrder = 0});
+
+  factory _$UrnInfoDtoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$UrnInfoDtoImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String slug;
+  @override
+  final String name;
+  @override
+  @JsonKey(name: 'model_url')
+  final String? modelUrl;
+  @override
+  @JsonKey(name: 'thumbnail_url')
+  final String? thumbnailUrl;
+  @override
+  final String? description;
+  @override
+  @JsonKey(name: 'display_order')
+  final int displayOrder;
+
+  @override
+  String toString() {
+    return 'UrnInfoDto(id: $id, slug: $slug, name: $name, modelUrl: $modelUrl, thumbnailUrl: $thumbnailUrl, description: $description, displayOrder: $displayOrder)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UrnInfoDtoImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.slug, slug) || other.slug == slug) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.modelUrl, modelUrl) ||
+                other.modelUrl == modelUrl) &&
+            (identical(other.thumbnailUrl, thumbnailUrl) ||
+                other.thumbnailUrl == thumbnailUrl) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.displayOrder, displayOrder) ||
+                other.displayOrder == displayOrder));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, slug, name, modelUrl,
+      thumbnailUrl, description, displayOrder);
+
+  /// Create a copy of UrnInfoDto
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UrnInfoDtoImplCopyWith<_$UrnInfoDtoImpl> get copyWith =>
+      __$$UrnInfoDtoImplCopyWithImpl<_$UrnInfoDtoImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$UrnInfoDtoImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _UrnInfoDto implements UrnInfoDto {
+  const factory _UrnInfoDto(
+          {required final String id,
+          required final String slug,
+          required final String name,
+          @JsonKey(name: 'model_url') final String? modelUrl,
+          @JsonKey(name: 'thumbnail_url') final String? thumbnailUrl,
+          final String? description,
+          @JsonKey(name: 'display_order') final int displayOrder}) =
+      _$UrnInfoDtoImpl;
+
+  factory _UrnInfoDto.fromJson(Map<String, dynamic> json) =
+      _$UrnInfoDtoImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get slug;
+  @override
+  String get name;
+  @override
+  @JsonKey(name: 'model_url')
+  String? get modelUrl;
+  @override
+  @JsonKey(name: 'thumbnail_url')
+  String? get thumbnailUrl;
+  @override
+  String? get description;
+  @override
+  @JsonKey(name: 'display_order')
+  int get displayOrder;
+
+  /// Create a copy of UrnInfoDto
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$UrnInfoDtoImplCopyWith<_$UrnInfoDtoImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
 MotifDetailDto _$MotifDetailDtoFromJson(Map<String, dynamic> json) {
   return _MotifDetailDto.fromJson(json);
 }
@@ -1488,8 +1776,7 @@ MotifDetailDto _$MotifDetailDtoFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$MotifDetailDto {
   String get id => throw _privateConstructorUsedError;
-  @JsonKey(name: 'urn_id')
-  String get urnId => throw _privateConstructorUsedError;
+  UrnInfoDto get urn => throw _privateConstructorUsedError;
   @JsonKey(name: 'mesh_name')
   String get meshName => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
@@ -1532,7 +1819,7 @@ abstract class $MotifDetailDtoCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
-      @JsonKey(name: 'urn_id') String urnId,
+      UrnInfoDto urn,
       @JsonKey(name: 'mesh_name') String meshName,
       String name,
       @JsonKey(name: 'name_en') String? nameEn,
@@ -1548,6 +1835,7 @@ abstract class $MotifDetailDtoCopyWith<$Res> {
       LessonContentDto? lesson,
       UserProgressDto? progress});
 
+  $UrnInfoDtoCopyWith<$Res> get urn;
   $LessonContentDtoCopyWith<$Res>? get lesson;
   $UserProgressDtoCopyWith<$Res>? get progress;
 }
@@ -1568,7 +1856,7 @@ class _$MotifDetailDtoCopyWithImpl<$Res, $Val extends MotifDetailDto>
   @override
   $Res call({
     Object? id = null,
-    Object? urnId = null,
+    Object? urn = null,
     Object? meshName = null,
     Object? name = null,
     Object? nameEn = freezed,
@@ -1589,10 +1877,10 @@ class _$MotifDetailDtoCopyWithImpl<$Res, $Val extends MotifDetailDto>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      urnId: null == urnId
-          ? _value.urnId
-          : urnId // ignore: cast_nullable_to_non_nullable
-              as String,
+      urn: null == urn
+          ? _value.urn
+          : urn // ignore: cast_nullable_to_non_nullable
+              as UrnInfoDto,
       meshName: null == meshName
           ? _value.meshName
           : meshName // ignore: cast_nullable_to_non_nullable
@@ -1656,6 +1944,16 @@ class _$MotifDetailDtoCopyWithImpl<$Res, $Val extends MotifDetailDto>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
+  $UrnInfoDtoCopyWith<$Res> get urn {
+    return $UrnInfoDtoCopyWith<$Res>(_value.urn, (value) {
+      return _then(_value.copyWith(urn: value) as $Val);
+    });
+  }
+
+  /// Create a copy of MotifDetailDto
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
   $LessonContentDtoCopyWith<$Res>? get lesson {
     if (_value.lesson == null) {
       return null;
@@ -1691,7 +1989,7 @@ abstract class _$$MotifDetailDtoImplCopyWith<$Res>
   @useResult
   $Res call(
       {String id,
-      @JsonKey(name: 'urn_id') String urnId,
+      UrnInfoDto urn,
       @JsonKey(name: 'mesh_name') String meshName,
       String name,
       @JsonKey(name: 'name_en') String? nameEn,
@@ -1707,6 +2005,8 @@ abstract class _$$MotifDetailDtoImplCopyWith<$Res>
       LessonContentDto? lesson,
       UserProgressDto? progress});
 
+  @override
+  $UrnInfoDtoCopyWith<$Res> get urn;
   @override
   $LessonContentDtoCopyWith<$Res>? get lesson;
   @override
@@ -1727,7 +2027,7 @@ class __$$MotifDetailDtoImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
-    Object? urnId = null,
+    Object? urn = null,
     Object? meshName = null,
     Object? name = null,
     Object? nameEn = freezed,
@@ -1748,10 +2048,10 @@ class __$$MotifDetailDtoImplCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      urnId: null == urnId
-          ? _value.urnId
-          : urnId // ignore: cast_nullable_to_non_nullable
-              as String,
+      urn: null == urn
+          ? _value.urn
+          : urn // ignore: cast_nullable_to_non_nullable
+              as UrnInfoDto,
       meshName: null == meshName
           ? _value.meshName
           : meshName // ignore: cast_nullable_to_non_nullable
@@ -1817,7 +2117,7 @@ class __$$MotifDetailDtoImplCopyWithImpl<$Res>
 class _$MotifDetailDtoImpl implements _MotifDetailDto {
   const _$MotifDetailDtoImpl(
       {required this.id,
-      @JsonKey(name: 'urn_id') required this.urnId,
+      required this.urn,
       @JsonKey(name: 'mesh_name') required this.meshName,
       required this.name,
       @JsonKey(name: 'name_en') this.nameEn,
@@ -1839,8 +2139,7 @@ class _$MotifDetailDtoImpl implements _MotifDetailDto {
   @override
   final String id;
   @override
-  @JsonKey(name: 'urn_id')
-  final String urnId;
+  final UrnInfoDto urn;
   @override
   @JsonKey(name: 'mesh_name')
   final String meshName;
@@ -1881,7 +2180,7 @@ class _$MotifDetailDtoImpl implements _MotifDetailDto {
 
   @override
   String toString() {
-    return 'MotifDetailDto(id: $id, urnId: $urnId, meshName: $meshName, name: $name, nameEn: $nameEn, category: $category, rarity: $rarity, posX: $posX, posY: $posY, posZ: $posZ, boundingRadius: $boundingRadius, thumbnailUrl: $thumbnailUrl, imageUrl: $imageUrl, isDemo: $isDemo, lesson: $lesson, progress: $progress)';
+    return 'MotifDetailDto(id: $id, urn: $urn, meshName: $meshName, name: $name, nameEn: $nameEn, category: $category, rarity: $rarity, posX: $posX, posY: $posY, posZ: $posZ, boundingRadius: $boundingRadius, thumbnailUrl: $thumbnailUrl, imageUrl: $imageUrl, isDemo: $isDemo, lesson: $lesson, progress: $progress)';
   }
 
   @override
@@ -1890,7 +2189,7 @@ class _$MotifDetailDtoImpl implements _MotifDetailDto {
         (other.runtimeType == runtimeType &&
             other is _$MotifDetailDtoImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.urnId, urnId) || other.urnId == urnId) &&
+            (identical(other.urn, urn) || other.urn == urn) &&
             (identical(other.meshName, meshName) ||
                 other.meshName == meshName) &&
             (identical(other.name, name) || other.name == name) &&
@@ -1918,7 +2217,7 @@ class _$MotifDetailDtoImpl implements _MotifDetailDto {
   int get hashCode => Object.hash(
       runtimeType,
       id,
-      urnId,
+      urn,
       meshName,
       name,
       nameEn,
@@ -1954,7 +2253,7 @@ class _$MotifDetailDtoImpl implements _MotifDetailDto {
 abstract class _MotifDetailDto implements MotifDetailDto {
   const factory _MotifDetailDto(
       {required final String id,
-      @JsonKey(name: 'urn_id') required final String urnId,
+      required final UrnInfoDto urn,
       @JsonKey(name: 'mesh_name') required final String meshName,
       required final String name,
       @JsonKey(name: 'name_en') final String? nameEn,
@@ -1976,8 +2275,7 @@ abstract class _MotifDetailDto implements MotifDetailDto {
   @override
   String get id;
   @override
-  @JsonKey(name: 'urn_id')
-  String get urnId;
+  UrnInfoDto get urn;
   @override
   @JsonKey(name: 'mesh_name')
   String get meshName;
@@ -2030,9 +2328,9 @@ LessonContentDto _$LessonContentDtoFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$LessonContentDto {
-  String get id => throw _privateConstructorUsedError;
+  String? get id => throw _privateConstructorUsedError;
   @JsonKey(name: 'motif_id')
-  String get motifId => throw _privateConstructorUsedError;
+  String? get motifId => throw _privateConstructorUsedError;
   @JsonKey(name: 'intro_text')
   String? get introText => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
@@ -2064,8 +2362,8 @@ abstract class $LessonContentDtoCopyWith<$Res> {
       _$LessonContentDtoCopyWithImpl<$Res, LessonContentDto>;
   @useResult
   $Res call(
-      {String id,
-      @JsonKey(name: 'motif_id') String motifId,
+      {String? id,
+      @JsonKey(name: 'motif_id') String? motifId,
       @JsonKey(name: 'intro_text') String? introText,
       String? description,
       @JsonKey(name: 'historical_context') String? historicalContext,
@@ -2091,8 +2389,8 @@ class _$LessonContentDtoCopyWithImpl<$Res, $Val extends LessonContentDto>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
-    Object? motifId = null,
+    Object? id = freezed,
+    Object? motifId = freezed,
     Object? introText = freezed,
     Object? description = freezed,
     Object? historicalContext = freezed,
@@ -2103,14 +2401,14 @@ class _$LessonContentDtoCopyWithImpl<$Res, $Val extends LessonContentDto>
     Object? images = null,
   }) {
     return _then(_value.copyWith(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      motifId: null == motifId
+              as String?,
+      motifId: freezed == motifId
           ? _value.motifId
           : motifId // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       introText: freezed == introText
           ? _value.introText
           : introText // ignore: cast_nullable_to_non_nullable
@@ -2156,8 +2454,8 @@ abstract class _$$LessonContentDtoImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String id,
-      @JsonKey(name: 'motif_id') String motifId,
+      {String? id,
+      @JsonKey(name: 'motif_id') String? motifId,
       @JsonKey(name: 'intro_text') String? introText,
       String? description,
       @JsonKey(name: 'historical_context') String? historicalContext,
@@ -2181,8 +2479,8 @@ class __$$LessonContentDtoImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
-    Object? motifId = null,
+    Object? id = freezed,
+    Object? motifId = freezed,
     Object? introText = freezed,
     Object? description = freezed,
     Object? historicalContext = freezed,
@@ -2193,14 +2491,14 @@ class __$$LessonContentDtoImplCopyWithImpl<$Res>
     Object? images = null,
   }) {
     return _then(_$LessonContentDtoImpl(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      motifId: null == motifId
+              as String?,
+      motifId: freezed == motifId
           ? _value.motifId
           : motifId // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       introText: freezed == introText
           ? _value.introText
           : introText // ignore: cast_nullable_to_non_nullable
@@ -2241,8 +2539,8 @@ class __$$LessonContentDtoImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$LessonContentDtoImpl implements _LessonContentDto {
   const _$LessonContentDtoImpl(
-      {required this.id,
-      @JsonKey(name: 'motif_id') required this.motifId,
+      {this.id,
+      @JsonKey(name: 'motif_id') this.motifId,
       @JsonKey(name: 'intro_text') this.introText,
       this.description,
       @JsonKey(name: 'historical_context') this.historicalContext,
@@ -2257,10 +2555,10 @@ class _$LessonContentDtoImpl implements _LessonContentDto {
       _$$LessonContentDtoImplFromJson(json);
 
   @override
-  final String id;
+  final String? id;
   @override
   @JsonKey(name: 'motif_id')
-  final String motifId;
+  final String? motifId;
   @override
   @JsonKey(name: 'intro_text')
   final String? introText;
@@ -2351,8 +2649,8 @@ class _$LessonContentDtoImpl implements _LessonContentDto {
 
 abstract class _LessonContentDto implements LessonContentDto {
   const factory _LessonContentDto(
-      {required final String id,
-      @JsonKey(name: 'motif_id') required final String motifId,
+      {final String? id,
+      @JsonKey(name: 'motif_id') final String? motifId,
       @JsonKey(name: 'intro_text') final String? introText,
       final String? description,
       @JsonKey(name: 'historical_context') final String? historicalContext,
@@ -2366,10 +2664,10 @@ abstract class _LessonContentDto implements LessonContentDto {
       _$LessonContentDtoImpl.fromJson;
 
   @override
-  String get id;
+  String? get id;
   @override
   @JsonKey(name: 'motif_id')
-  String get motifId;
+  String? get motifId;
   @override
   @JsonKey(name: 'intro_text')
   String? get introText;

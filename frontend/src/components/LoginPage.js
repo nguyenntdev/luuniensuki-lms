@@ -50,8 +50,8 @@ function LoginForm() {
     }
 
     return (
-        <div className="min-h-dvh bg-background text-foreground">
-            <div className="mx-auto flex min-h-dvh max-w-md flex-col justify-center px-6 py-10">
+        <div className="flex min-h-dvh flex-col items-center justify-center bg-background px-6 py-10 text-foreground">
+            <div className="w-full max-w-md">
                 <h1 className="text-2xl font-display font-semibold">
                     Lưu Niên Sử Kí
                 </h1>

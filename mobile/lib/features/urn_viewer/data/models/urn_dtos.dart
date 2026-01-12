@@ -83,12 +83,29 @@ class MotifDto with _$MotifDto {
       _$MotifDtoFromJson(json);
 }
 
+/// URN info DTO (nested in motif detail response)
+@freezed
+class UrnInfoDto with _$UrnInfoDto {
+  const factory UrnInfoDto({
+    required String id,
+    required String slug,
+    required String name,
+    @JsonKey(name: 'model_url') String? modelUrl,
+    @JsonKey(name: 'thumbnail_url') String? thumbnailUrl,
+    String? description,
+    @JsonKey(name: 'display_order') @Default(0) int displayOrder,
+  }) = _UrnInfoDto;
+
+  factory UrnInfoDto.fromJson(Map<String, dynamic> json) =>
+      _$UrnInfoDtoFromJson(json);
+}
+
 /// Motif detail DTO (from /api/v1/motifs/{id})
 @freezed
 class MotifDetailDto with _$MotifDetailDto {
   const factory MotifDetailDto({
     required String id,
-    @JsonKey(name: 'urn_id') required String urnId,
+    required UrnInfoDto urn,
     @JsonKey(name: 'mesh_name') required String meshName,
     required String name,
     @JsonKey(name: 'name_en') String? nameEn,
@@ -113,8 +130,8 @@ class MotifDetailDto with _$MotifDetailDto {
 @freezed
 class LessonContentDto with _$LessonContentDto {
   const factory LessonContentDto({
-    required String id,
-    @JsonKey(name: 'motif_id') required String motifId,
+    String? id,
+    @JsonKey(name: 'motif_id') String? motifId,
     @JsonKey(name: 'intro_text') String? introText,
     String? description,
     @JsonKey(name: 'historical_context') String? historicalContext,

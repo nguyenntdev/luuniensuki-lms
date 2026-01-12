@@ -137,7 +137,7 @@ extension MotifDetailDtoMapper on MotifDetailDto {
   Motif toEntity() {
     return Motif(
       id: id,
-      urnId: urnId,
+      urnId: urn.id,
       meshName: meshName,
       name: name,
       nameEn: nameEn,

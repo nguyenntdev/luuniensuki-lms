@@ -23,6 +23,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   bool _hasInitialized = false;
+  ProviderSubscription<AuthState>? _authSubscription;
 
   @override
   void initState() {
@@ -46,22 +47,31 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
     if (_hasInitialized) return;
 
     final authState = ref.read(authNotifierProvider);
+
+    // If already authenticated, load immediately
     if (authState.isAuthenticated) {
       _hasInitialized = true;
       ref.read(exploreNotifierProvider.notifier).loadUrns();
-    } else {
-      // Listen for auth state changes
-      ref.listenManual(authNotifierProvider, (previous, next) {
+      return;
+    }
+
+    // If still loading auth or unauthenticated, set up listener with fireImmediately
+    _authSubscription = ref.listenManual<AuthState>(
+      authNotifierProvider,
+      (previous, next) {
         if (!_hasInitialized && next.isAuthenticated) {
           _hasInitialized = true;
           ref.read(exploreNotifierProvider.notifier).loadUrns();
+          _authSubscription?.close();
         }
-      });
-    }
+      },
+      fireImmediately: true,  // CRITICAL: This ensures we catch the current state
+    );
   }
 
   @override
   void dispose() {
+    _authSubscription?.close();
     _animationController.dispose();
     super.dispose();
   }

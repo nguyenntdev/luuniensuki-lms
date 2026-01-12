@@ -58,7 +58,7 @@ class _GlassBottomNavState extends State<GlassBottomNav> {
       final size = itemBox.size;
 
       setState(() {
-        _indicatorWidth = size.width * 0.5; // 50% of item width for pill
+        _indicatorWidth = size.width * 0.7; // 70% of item width for pill
         _indicatorLeft = position.dx + (size.width - _indicatorWidth) / 2;
       });
     }

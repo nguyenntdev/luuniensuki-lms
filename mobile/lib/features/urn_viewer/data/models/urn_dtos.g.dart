@@ -122,10 +122,32 @@ Map<String, dynamic> _$$MotifDtoImplToJson(_$MotifDtoImpl instance) =>
       'is_demo': instance.isDemo,
     };
 
+_$UrnInfoDtoImpl _$$UrnInfoDtoImplFromJson(Map<String, dynamic> json) =>
+    _$UrnInfoDtoImpl(
+      id: json['id'] as String,
+      slug: json['slug'] as String,
+      name: json['name'] as String,
+      modelUrl: json['model_url'] as String?,
+      thumbnailUrl: json['thumbnail_url'] as String?,
+      description: json['description'] as String?,
+      displayOrder: (json['display_order'] as num?)?.toInt() ?? 0,
+    );
+
+Map<String, dynamic> _$$UrnInfoDtoImplToJson(_$UrnInfoDtoImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'slug': instance.slug,
+      'name': instance.name,
+      'model_url': instance.modelUrl,
+      'thumbnail_url': instance.thumbnailUrl,
+      'description': instance.description,
+      'display_order': instance.displayOrder,
+    };
+
 _$MotifDetailDtoImpl _$$MotifDetailDtoImplFromJson(Map<String, dynamic> json) =>
     _$MotifDetailDtoImpl(
       id: json['id'] as String,
-      urnId: json['urn_id'] as String,
+      urn: UrnInfoDto.fromJson(json['urn'] as Map<String, dynamic>),
       meshName: json['mesh_name'] as String,
       name: json['name'] as String,
       nameEn: json['name_en'] as String?,
@@ -150,7 +172,7 @@ Map<String, dynamic> _$$MotifDetailDtoImplToJson(
         _$MotifDetailDtoImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'urn_id': instance.urnId,
+      'urn': instance.urn,
       'mesh_name': instance.meshName,
       'name': instance.name,
       'name_en': instance.nameEn,
@@ -170,8 +192,8 @@ Map<String, dynamic> _$$MotifDetailDtoImplToJson(
 _$LessonContentDtoImpl _$$LessonContentDtoImplFromJson(
         Map<String, dynamic> json) =>
     _$LessonContentDtoImpl(
-      id: json['id'] as String,
-      motifId: json['motif_id'] as String,
+      id: json['id'] as String?,
+      motifId: json['motif_id'] as String?,
       introText: json['intro_text'] as String?,
       description: json['description'] as String?,
       historicalContext: json['historical_context'] as String?,

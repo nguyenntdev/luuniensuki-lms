@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/glass/animated_background.dart';
@@ -364,13 +365,36 @@ class _CollectionScreenState extends ConsumerState<CollectionScreen> {
                   color: Colors.white.withOpacity(0.05),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Center(
-                  child: Icon(
-                    Icons.image,
-                    size: 48,
-                    color: Colors.white.withOpacity(0.3),
-                  ),
-                ),
+                child: motif.thumbnailUrl != null && motif.thumbnailUrl!.isNotEmpty
+                    ? CachedNetworkImage(
+                        imageUrl: motif.thumbnailUrl!,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                        placeholder: (context, url) => Container(
+                          color: Colors.white.withOpacity(0.05),
+                          child: const Center(
+                            child: CircularProgressIndicator(
+                              color: Color(0xFFE8B44C),
+                              strokeWidth: 2,
+                            ),
+                          ),
+                        ),
+                        errorWidget: (context, url, error) => Center(
+                          child: Icon(
+                            Icons.image_not_supported_outlined,
+                            size: 48,
+                            color: Colors.white.withOpacity(0.3),
+                          ),
+                        ),
+                      )
+                    : Center(
+                        child: Icon(
+                          Icons.image,
+                          size: 48,
+                          color: Colors.white.withOpacity(0.3),
+                        ),
+                      ),
               ),
             ),
 
