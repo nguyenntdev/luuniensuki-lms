@@ -1,0 +1,676 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_typography.dart';
+import '../../../../routing/route_names.dart';
+import '../../../urn_viewer/data/models/urn_dtos.dart';
+import '../providers/motif_detail_provider.dart';
+
+/// Lesson tab showing lesson content and action buttons.
+class LessonTab extends ConsumerWidget {
+  final MotifDetailDto motif;
+  final LessonContentDto? lesson;
+  final UserProgressDto? progress;
+
+  const LessonTab({
+    super.key,
+    required this.motif,
+    this.lesson,
+    this.progress,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (lesson == null) {
+      return _buildEmptyState();
+    }
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Introduction
+          if (lesson!.introText != null && lesson!.introText!.isNotEmpty) ...[
+            _LessonSection(
+              title: 'Giới thiệu',
+              icon: Icons.info_outline,
+              content: lesson!.introText!,
+            ),
+            const SizedBox(height: 20),
+          ],
+
+          // Description
+          if (lesson!.description != null &&
+              lesson!.description!.isNotEmpty) ...[
+            _LessonSection(
+              title: 'Mô tả chi tiết',
+              icon: Icons.description_outlined,
+              content: lesson!.description!,
+            ),
+            const SizedBox(height: 20),
+          ],
+
+          // Symbolism
+          if (lesson!.symbolism != null && lesson!.symbolism!.isNotEmpty) ...[
+            _LessonSection(
+              title: 'Ý nghĩa biểu tượng',
+              icon: Icons.auto_awesome_outlined,
+              content: lesson!.symbolism!,
+              accentColor: AppColors.primary,
+            ),
+            const SizedBox(height: 20),
+          ],
+
+          // Historical context
+          if (lesson!.historicalContext != null &&
+              lesson!.historicalContext!.isNotEmpty) ...[
+            _LessonSection(
+              title: 'Bối cảnh lịch sử',
+              icon: Icons.history_edu_outlined,
+              content: lesson!.historicalContext!,
+            ),
+            const SizedBox(height: 20),
+          ],
+
+          // Fun fact
+          if (lesson!.funFact != null && lesson!.funFact!.isNotEmpty) ...[
+            _FunFactCard(fact: lesson!.funFact!),
+            const SizedBox(height: 20),
+          ],
+
+          // Image gallery placeholder
+          if (lesson!.images.isNotEmpty) ...[
+            _ImageGalleryPreview(images: lesson!.images),
+            const SizedBox(height: 20),
+          ],
+
+          const SizedBox(height: 16),
+
+          // Action buttons
+          _buildActionButtons(context, ref),
+
+          const SizedBox(height: 32),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.school_outlined,
+              size: 64,
+              color: AppColors.textHint,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Chưa có bài học',
+              style: AppTypography.textTheme.titleMedium?.copyWith(
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Nội dung bài học đang được cập nhật.',
+              style: AppTypography.textTheme.bodyMedium?.copyWith(
+                color: AppColors.textSecondary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButtons(BuildContext context, WidgetRef ref) {
+    final status = progress?.status ?? 'hidden';
+    final lessonCompletion = ref.watch(lessonCompletionProvider);
+    final isLoading = lessonCompletion is AsyncLoading;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Complete lesson button (for discovered status)
+        if (status == 'discovered')
+          _ActionButton(
+            label: 'Hoàn thành bài học',
+            icon: Icons.check_circle_outline,
+            isLoading: isLoading,
+            onPressed: isLoading
+                ? null
+                : () => _completeLesson(context, ref),
+          ),
+
+        // Quiz button (for learned or mastered status)
+        if (status == 'learned' || status == 'mastered') ...[
+          _ActionButton(
+            label: status == 'mastered'
+                ? 'Làm lại trắc nghiệm'
+                : 'Làm trắc nghiệm',
+            icon: Icons.quiz_outlined,
+            isPrimary: status == 'learned',
+            onPressed: () => context.push(
+              RoutePaths.quiz(motif.id),
+            ),
+          ),
+          if (status == 'mastered' && progress?.quizBestScore != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.emoji_events,
+                    size: 16,
+                    color: AppColors.xpGold,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Điểm cao nhất: ${progress!.quizBestScore}%',
+                    style: AppTypography.textTheme.bodySmall?.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
+
+        // Hidden status message
+        if (status == 'hidden')
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: AppColors.surfaceElevated,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.border),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.explore_outlined,
+                  color: AppColors.textHint,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Hãy khám phá họa tiết này trên mô hình 3D để mở khóa bài học.',
+                    style: AppTypography.textTheme.bodyMedium?.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+
+  Future<void> _completeLesson(BuildContext context, WidgetRef ref) async {
+    final result = await ref
+        .read(lessonCompletionProvider.notifier)
+        .completeLesson(motif.id);
+
+    if (result != null && context.mounted) {
+      // Show completion dialog
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => _LessonCompletionDialog(
+          xpEarned: result.xpEarned,
+          newBadges: result.newBadges,
+          onDismiss: () {
+            Navigator.pop(context);
+          },
+          onTakeQuiz: () {
+            Navigator.pop(context);
+            context.push(
+              RoutePaths.quiz(motif.id),
+            );
+          },
+        ),
+      );
+    }
+  }
+}
+
+/// Lesson section widget
+class _LessonSection extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final String content;
+  final Color? accentColor;
+
+  const _LessonSection({
+    required this.title,
+    required this.icon,
+    required this.content,
+    this.accentColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final color = accentColor ?? AppColors.textSecondary;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Header
+        Row(
+          children: [
+            Icon(icon, size: 18, color: color),
+            const SizedBox(width: 8),
+            Text(
+              title,
+              style: AppTypography.textTheme.titleSmall?.copyWith(
+                color: color,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+
+        // Content
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Text(
+            content,
+            style: AppTypography.vietnameseText.copyWith(
+              color: AppColors.textPrimary,
+              height: 1.7,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Fun fact card widget
+class _FunFactCard extends StatelessWidget {
+  final String fact;
+
+  const _FunFactCard({required this.fact});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppColors.primary.withOpacity(0.1),
+            AppColors.primary.withOpacity(0.05),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: AppColors.primary.withOpacity(0.3),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Text('💡', style: TextStyle(fontSize: 20)),
+              const SizedBox(width: 8),
+              Text(
+                'Điều thú vị',
+                style: AppTypography.textTheme.titleSmall?.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            fact,
+            style: AppTypography.vietnameseText.copyWith(
+              color: AppColors.textPrimary,
+              height: 1.6,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Image gallery preview widget
+class _ImageGalleryPreview extends StatelessWidget {
+  final List<String> images;
+
+  const _ImageGalleryPreview({required this.images});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(
+              Icons.photo_library_outlined,
+              size: 18,
+              color: AppColors.textSecondary,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'Hình ảnh (${images.length})',
+              style: AppTypography.textTheme.titleSmall?.copyWith(
+                color: AppColors.textSecondary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        SizedBox(
+          height: 100,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: images.length > 4 ? 4 : images.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 8),
+            itemBuilder: (context, index) {
+              if (index == 3 && images.length > 4) {
+                return _buildMoreIndicator();
+              }
+              return _buildImageThumbnail(images[index]);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildImageThumbnail(String imageUrl) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        width: 100,
+        height: 100,
+        color: AppColors.surfaceVariant,
+        child: Image.network(
+          imageUrl,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => Icon(
+            Icons.broken_image,
+            color: AppColors.textHint,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMoreIndicator() {
+    return Container(
+      width: 100,
+      height: 100,
+      decoration: BoxDecoration(
+        color: AppColors.surfaceVariant,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            '+${images.length - 3}',
+            style: AppTypography.textTheme.titleLarge?.copyWith(
+              color: AppColors.primary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
+            'ảnh',
+            style: AppTypography.textTheme.bodySmall?.copyWith(
+              color: AppColors.textSecondary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Action button widget
+class _ActionButton extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final VoidCallback? onPressed;
+  final bool isPrimary;
+  final bool isLoading;
+
+  const _ActionButton({
+    required this.label,
+    required this.icon,
+    this.onPressed,
+    this.isPrimary = true,
+    this.isLoading = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (isPrimary) {
+      return SizedBox(
+        height: 52,
+        child: ElevatedButton.icon(
+          onPressed: onPressed,
+          icon: isLoading
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.onPrimary,
+                  ),
+                )
+              : Icon(icon),
+          label: Text(label),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            foregroundColor: AppColors.onPrimary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            textStyle: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return SizedBox(
+      height: 52,
+      child: OutlinedButton.icon(
+        onPressed: onPressed,
+        icon: Icon(icon),
+        label: Text(label),
+        style: OutlinedButton.styleFrom(
+          foregroundColor: AppColors.primary,
+          side: BorderSide(color: AppColors.primary),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          textStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Lesson completion dialog
+class _LessonCompletionDialog extends StatelessWidget {
+  final int xpEarned;
+  final List<BadgeDto> newBadges;
+  final VoidCallback onDismiss;
+  final VoidCallback onTakeQuiz;
+
+  const _LessonCompletionDialog({
+    required this.xpEarned,
+    required this.newBadges,
+    required this.onDismiss,
+    required this.onTakeQuiz,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: AppColors.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Success icon
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: AppColors.success.withOpacity(0.15),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.check_circle,
+                size: 48,
+                color: AppColors.success,
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Title
+            Text(
+              'Hoàn thành bài học!',
+              style: AppTypography.textTheme.headlineSmall?.copyWith(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            // XP earned
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppColors.xpGold.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.star,
+                    size: 20,
+                    color: AppColors.xpGold,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    '+$xpEarned XP',
+                    style: AppTypography.xpCounter,
+                  ),
+                ],
+              ),
+            ),
+
+            // New badges
+            if (newBadges.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              Text(
+                'Huy hiệu mới!',
+                style: AppTypography.textTheme.titleSmall?.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                children: newBadges.map((badge) {
+                  return Chip(
+                    avatar: const Icon(
+                      Icons.military_tech,
+                      size: 18,
+                      color: AppColors.badgePurple,
+                    ),
+                    label: Text(badge.name),
+                    backgroundColor: AppColors.badgeSurface,
+                    labelStyle: TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 12,
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
+
+            const SizedBox(height: 24),
+
+            // Buttons
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: onDismiss,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.textSecondary,
+                      side: BorderSide(color: AppColors.border),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: const Text('Đóng'),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: onTakeQuiz,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: AppColors.onPrimary,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: const Text('Làm trắc nghiệm'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

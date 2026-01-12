@@ -1,0 +1,9 @@
+# Template for key.properties
+# Copy this file to key.properties and fill in your actual values
+# DO NOT commit key.properties to version control
+
+storePassword=<your-keystore-password>
+keyPassword=<your-key-password>
+keyAlias=release
+storeFile=<path-to-keystore>/release-keystore.jks
+
