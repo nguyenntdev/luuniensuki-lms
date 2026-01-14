@@ -8,6 +8,9 @@ part 'auth_state.freezed.dart';
 /// Represents all possible authentication states in the app.
 @freezed
 class AuthState with _$AuthState {
+  // Private constructor to allow adding getters/methods
+  const AuthState._();
+
   /// Initial state - app is starting up
   const factory AuthState.initial() = AuthStateInitial;
 
@@ -30,10 +33,8 @@ class AuthState with _$AuthState {
     required String message,
     String? code,
   }) = AuthStateError;
-}
 
-/// Extension methods for convenient state checking
-extension AuthStateX on AuthState {
+  // Getters directly in the class (not extension)
   /// Check if user is authenticated
   bool get isAuthenticated => this is AuthStateAuthenticated;
 

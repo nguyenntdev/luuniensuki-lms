@@ -6,6 +6,12 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../routing/route_names.dart';
 import '../../../urn_viewer/data/models/urn_dtos.dart';
+import '../../../gems/presentation/providers/gems_provider.dart';
+import '../../../gems/domain/entities/gem_transaction.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../mascot/presentation/widgets/mascot_bubble.dart';
+import '../../../mascot/presentation/widgets/mascot_widget.dart';
+import '../../../mascot/domain/mascot_messages.dart';
 import '../providers/motif_detail_provider.dart';
 
 /// Lesson tab showing lesson content and action buttons.
@@ -222,6 +228,23 @@ class LessonTab extends ConsumerWidget {
         .completeLesson(motif.id);
 
     if (result != null && context.mounted) {
+      // Award gems for completing lesson
+      await ref.read(gemsNotifierProvider.notifier).addGems(
+            amount: 10,
+            type: GemTransactionType.earnedLesson,
+            description: 'Hoàn thành bài học: ${motif.name}',
+          );
+
+      // Check for 7-day streak milestone and award bonus gems
+      final user = ref.read(currentUserProvider);
+      if (user != null && user.currentStreak >= 7 && user.currentStreak % 7 == 0) {
+        await ref.read(gemsNotifierProvider.notifier).addGems(
+              amount: 50,
+              type: GemTransactionType.earnedStreak,
+              description: 'Chuỗi học tập ${user.currentStreak} ngày!',
+            );
+      }
+
       // Show completion dialog
       showDialog(
         context: context,
@@ -240,6 +263,18 @@ class LessonTab extends ConsumerWidget {
           },
         ),
       );
+
+      // Show mascot message after dialog
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (context.mounted) {
+          showMascotBubble(
+            context: context,
+            message: MascotMessages.random(MascotMessages.lessonComplete),
+            expression: MascotExpression.celebrating,
+            duration: const Duration(seconds: 4),
+          );
+        }
+      });
     }
   }
 }

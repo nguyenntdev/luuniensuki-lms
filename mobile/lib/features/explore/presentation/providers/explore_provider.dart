@@ -13,12 +13,14 @@ class ExploreState {
   final bool isLoading;
   final String? errorMessage;
   final bool isRefreshing;
+  final CollectionStats? collectionStats;
 
   const ExploreState({
     this.urns = const [],
     this.isLoading = false,
     this.errorMessage,
     this.isRefreshing = false,
+    this.collectionStats,
   });
 
   ExploreState copyWith({
@@ -26,17 +28,43 @@ class ExploreState {
     bool? isLoading,
     String? errorMessage,
     bool? isRefreshing,
+    CollectionStats? collectionStats,
   }) {
     return ExploreState(
       urns: urns ?? this.urns,
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage,
       isRefreshing: isRefreshing ?? this.isRefreshing,
+      collectionStats: collectionStats ?? this.collectionStats,
     );
   }
 
   bool get hasError => errorMessage != null;
   bool get hasData => urns.isNotEmpty;
+}
+
+/// Collection statistics from dashboard summary
+class CollectionStats {
+  final int total;
+  final int discovered;
+  final int learned;
+  final int mastered;
+
+  const CollectionStats({
+    required this.total,
+    required this.discovered,
+    required this.learned,
+    required this.mastered,
+  });
+
+  factory CollectionStats.fromJson(Map<String, dynamic> json) {
+    return CollectionStats(
+      total: json['total'] as int? ?? 0,
+      discovered: json['discovered'] as int? ?? 0,
+      learned: json['learned'] as int? ?? 0,
+      mastered: json['mastered'] as int? ?? 0,
+    );
+  }
 }
 
 /// Provider for explore screen state and actions
@@ -80,10 +108,30 @@ class ExploreNotifier extends _$ExploreNotifier {
       // Sort by display order
       urns.sort((a, b) => a.displayOrder.compareTo(b.displayOrder));
 
+      // Fetch collection stats from dashboard summary
+      debugPrint('[EXPLORE] Fetching collection stats from dashboard summary...');
+      CollectionStats? collectionStats;
+      try {
+        final dashboardResponse = await _apiClient.get<Map<String, dynamic>>(
+          ApiConstants.dashboardSummary,
+        );
+
+        if (dashboardResponse.containsKey('collection_stats')) {
+          collectionStats = CollectionStats.fromJson(
+            dashboardResponse['collection_stats'] as Map<String, dynamic>,
+          );
+          debugPrint('[EXPLORE] Collection stats loaded: discovered=${collectionStats.discovered}, learned=${collectionStats.learned}, mastered=${collectionStats.mastered}');
+        }
+      } catch (e) {
+        debugPrint('[EXPLORE] Failed to load collection stats: $e');
+        // Continue even if stats fail - we'll use defaults
+      }
+
       state = state.copyWith(
         urns: urns,
         isLoading: false,
         isRefreshing: false,
+        collectionStats: collectionStats,
       );
 
       debugPrint('[EXPLORE] Urns loaded successfully');
@@ -116,9 +164,28 @@ class ExploreNotifier extends _$ExploreNotifier {
 
       urns.sort((a, b) => a.displayOrder.compareTo(b.displayOrder));
 
+      // Also refresh collection stats
+      CollectionStats? collectionStats;
+      try {
+        final dashboardResponse = await _apiClient.get<Map<String, dynamic>>(
+          ApiConstants.dashboardSummary,
+        );
+
+        if (dashboardResponse.containsKey('collection_stats')) {
+          collectionStats = CollectionStats.fromJson(
+            dashboardResponse['collection_stats'] as Map<String, dynamic>,
+          );
+        }
+      } catch (e) {
+        debugPrint('[EXPLORE] Failed to refresh collection stats: $e');
+        // Keep existing stats if refresh fails
+        collectionStats = state.collectionStats;
+      }
+
       state = state.copyWith(
         urns: urns,
         isRefreshing: false,
+        collectionStats: collectionStats,
       );
     } catch (e) {
       state = state.copyWith(
@@ -157,6 +224,17 @@ Urn? urnBySlug(UrnBySlugRef ref, String slug) {
 ExploreProgress exploreProgress(ExploreProgressRef ref) {
   final state = ref.watch(exploreNotifierProvider);
 
+  // Use collection stats from dashboard summary if available
+  if (state.collectionStats != null) {
+    return ExploreProgress(
+      totalMotifs: state.collectionStats!.total,
+      discoveredMotifs: state.collectionStats!.discovered,
+      learnedMotifs: state.collectionStats!.learned,
+      masteredMotifs: state.collectionStats!.mastered,
+    );
+  }
+
+  // Fallback to calculating from urns (will show 0s if urns don't have stats)
   if (state.urns.isEmpty) {
     return const ExploreProgress(
       totalMotifs: 0,

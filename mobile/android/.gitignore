@@ -11,3 +11,7 @@ GeneratedPluginRegistrant.java
 key.properties
 **/*.keystore
 **/*.jks
+
+# EXCEPTION: Allow shared debug keystore (safe to commit)
+# This prevents "app not installed" errors across different machines
+!debug.keystore

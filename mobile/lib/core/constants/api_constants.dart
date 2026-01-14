@@ -46,6 +46,13 @@ class ApiConstants {
   static const String userProfile = '$apiPath/users/me';
   static const String userCollection = '$apiPath/users/me/collection';
 
+  // Dashboard Endpoints
+  static const String dashboardSummary = '$apiPath/dashboard/summary';
+
+  // Streak Endpoints
+  static const String streak = '$apiPath/users/me/streak';
+  static const String useStreakFreeze = '$apiPath/users/me/streak/freeze';
+
   // Health Check
   static const String health = '/health';
 

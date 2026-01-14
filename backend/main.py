@@ -29,13 +29,14 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy import create_engine, delete, func, or_, select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, selectinload, sessionmaker
 from starlette.exceptions import HTTPException as StarletteHTTPException
+from starlette.middleware.cors import CORSMiddleware
 
+from .config import settings
 from .errors import (
     AppError,
     app_exception_handler,
@@ -120,29 +121,6 @@ XP_RANKS = [
 ]
 
 
-class Settings(BaseSettings):
-    database_url: str = "postgresql+psycopg://postgres:postgres@db:5432/luuniensuki"
-    log_level: str = "info"
-    interaction_tolerance_multiplier: float = 1.25
-    jwt_secret_key: str = "dev-insecure-change-me"
-    jwt_algorithm: str = "HS256"
-    access_token_expire_minutes: int = 60
-    refresh_token_expire_days: int = 30
-    access_cookie_name: str = "luuniensuki_access"
-    refresh_cookie_name: str = "luuniensuki_refresh"
-    cookie_domain: Optional[str] = None
-    cookie_secure: bool = False
-    cookie_samesite: str = "lax"
-    cookie_path: str = "/"
-    deepseek_api_key: Optional[str] = None
-    deepseek_base_url: str = "https://api.deepseek.com"
-    deepseek_model: str = "deepseek-chat"
-    deepseek_timeout_seconds: int = 20
-
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
-
-
-settings = Settings()
 logging.basicConfig(level=getattr(logging, settings.log_level.upper(), logging.INFO))
 logger = logging.getLogger("luuniensuki.api")
 
@@ -163,6 +141,15 @@ app = FastAPI(title="Luuniensuki API", version="0.1.0")
 app.add_exception_handler(AppError, app_exception_handler)
 app.add_exception_handler(StarletteHTTPException, http_exception_handler)
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
+
+# Add CORS middleware to allow cross-origin requests from mobile app
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.cors_origins_list,
+    allow_credentials=settings.cors_allow_credentials,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login", auto_error=False)
 

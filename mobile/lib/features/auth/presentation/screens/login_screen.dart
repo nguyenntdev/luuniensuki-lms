@@ -3,8 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../routing/route_names.dart';
+import '../../../../shared/widgets/glass/glass_button.dart';
+import '../../../../shared/widgets/glass/glass_container.dart';
+import '../../../../shared/widgets/glass/glass_text_field.dart';
+import '../../../../shared/widgets/glass/animated_background.dart';
+import '../../../mascot/presentation/widgets/mascot_widget.dart';
 import '../providers/auth_provider.dart';
 import '../providers/auth_state.dart';
 
@@ -146,18 +152,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderSt
     });
 
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              const Color(0xFF1A1A2E),
-              const Color(0xFF16213E),
-              const Color(0xFF0F3460).withOpacity(0.8),
-            ],
-          ),
-        ),
+      body: AnimatedGradientBackground(
         child: SafeArea(
           child: FadeTransition(
             opacity: _fadeAnimation,
@@ -178,35 +173,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderSt
                         child: Container(
                           width: 100,
                           height: 100,
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [Color(0xFFD4A84B), Color(0xFFE8C87E)],
-                            ),
-                            borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFFD4A84B).withOpacity(0.4),
-                                blurRadius: 30,
-                                spreadRadius: 5,
-                                offset: const Offset(0, 10),
-                              ),
-                              BoxShadow(
-                                color: const Color(0xFFD4A84B).withOpacity(0.2),
-                                blurRadius: 50,
-                                spreadRadius: 10,
-                              ),
-                            ],
-                          ),
                           child: const Center(
-                            child: Text(
-                              '鼎',
-                              style: TextStyle(
-                                fontSize: 50,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF1A1A2E),
-                              ),
+                            child: MascotWidget(
+                              expression: MascotExpression.happy,
+                              size: 80,
+                              animate: true,
                             ),
                           ),
                         ),
@@ -297,120 +268,44 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderSt
                     ),
 
                     // Email field with glassmorphism
-                    Text(
-                      'Email',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.9),
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
+                    GlassTextField(
+                      controller: _emailController,
+                      focusNode: _emailFocusNode,
+                      labelText: 'Email',
+                      hintText: 'you@example.com',
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.next,
+                      prefixIcon: Icon(
+                        Icons.email_outlined,
+                        color: Colors.white.withOpacity(0.6),
                       ),
-                    ),
-                    AppSpacing.verticalSpaceSM,
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: TextField(
-                        controller: _emailController,
-                        focusNode: _emailFocusNode,
-                        keyboardType: TextInputType.emailAddress,
-                        textInputAction: TextInputAction.next,
-                        onSubmitted: (_) => _passwordFocusNode.requestFocus(),
-                        style: const TextStyle(color: Colors.white, fontSize: 15),
-                        decoration: InputDecoration(
-                          hintText: 'you@example.com',
-                          hintStyle: TextStyle(color: Colors.white.withOpacity(0.4)),
-                          filled: true,
-                          fillColor: Colors.white.withOpacity(0.12),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.md,
-                            vertical: AppSpacing.md,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
-                            borderSide: const BorderSide(color: Color(0xFFD4A84B), width: 2),
-                          ),
-                          prefixIcon: Icon(
-                            Icons.email_outlined,
-                            color: Colors.white.withOpacity(0.6),
-                          ),
-                        ),
-                      ),
+                      onSubmitted: (_) => _passwordFocusNode.requestFocus(),
                     ),
 
                     AppSpacing.verticalSpaceLG,
 
                     // Password field with glassmorphism
-                    Text(
-                      'Mật khẩu',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.9),
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
+                    GlassTextField(
+                      controller: _passwordController,
+                      focusNode: _passwordFocusNode,
+                      labelText: 'Mật khẩu',
+                      hintText: '••••••••',
+                      obscureText: _obscurePassword,
+                      textInputAction: TextInputAction.done,
+                      prefixIcon: Icon(
+                        Icons.lock_outline,
+                        color: Colors.white.withOpacity(0.6),
                       ),
-                    ),
-                    AppSpacing.verticalSpaceSM,
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: TextField(
-                        controller: _passwordController,
-                        focusNode: _passwordFocusNode,
-                        obscureText: _obscurePassword,
-                        textInputAction: TextInputAction.done,
-                        onSubmitted: (_) => _handleLogin(),
-                        style: const TextStyle(color: Colors.white, fontSize: 15),
-                        decoration: InputDecoration(
-                          hintText: '••••••••',
-                          hintStyle: TextStyle(color: Colors.white.withOpacity(0.4)),
-                          filled: true,
-                          fillColor: Colors.white.withOpacity(0.12),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.md,
-                            vertical: AppSpacing.md,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
-                            borderSide: const BorderSide(color: Color(0xFFD4A84B), width: 2),
-                          ),
-                          prefixIcon: Icon(
-                            Icons.lock_outline,
-                            color: Colors.white.withOpacity(0.6),
-                          ),
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                              color: Colors.white.withOpacity(0.6),
-                            ),
-                            onPressed: () {
-                              setState(() => _obscurePassword = !_obscurePassword);
-                            },
-                          ),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                          color: Colors.white.withOpacity(0.6),
                         ),
+                        onPressed: () {
+                          setState(() => _obscurePassword = !_obscurePassword);
+                        },
                       ),
+                      onSubmitted: (_) => _handleLogin(),
                     ),
 
                     AppSpacing.verticalSpaceSM,
@@ -446,52 +341,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderSt
                     AppSpacing.verticalSpaceLG,
 
                     // Login button with enhanced styling
-                    SizedBox(
+                    GlassButton(
+                      text: 'Đăng nhập',
+                      onPressed: _handleLogin,
+                      isLoading: _isLoading,
+                      isPrimary: true,
                       height: 56,
-                      child: ElevatedButton(
-                        onPressed: _isLoading ? null : _handleLogin,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFD4A84B),
-                          foregroundColor: const Color(0xFF1A1A2E),
-                          disabledBackgroundColor: const Color(0xFFD4A84B).withOpacity(0.5),
-                          elevation: 8,
-                          shadowColor: const Color(0xFFD4A84B).withOpacity(0.4),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
-                          ),
-                        ),
-                        child: _isLoading
-                            ? Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const SizedBox(
-                                    width: 24,
-                                    height: 24,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2.5,
-                                      valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF1A1A2E)),
-                                    ),
-                                  ),
-                                  AppSpacing.horizontalSpaceMD,
-                                  const Text(
-                                    'Đang đăng nhập...',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 0.5,
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : const Text(
-                                'Đăng nhập',
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 0.5,
-                                ),
-                              ),
-                      ),
                     ),
 
                     AppSpacing.verticalSpaceXL,

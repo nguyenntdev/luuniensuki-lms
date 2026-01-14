@@ -1,0 +1,242 @@
+# Hearts System - Complete File Tree
+
+## 🌳 Directory Structure
+
+```
+luuniensuki-lms/
+│
+├── 📄 HEARTS_DOCUMENTATION_INDEX.md          # Main documentation index
+├── 📄 HEARTS_COMPLETE_IMPLEMENTATION.md      # Executive summary
+├── 📄 HEARTS_IMPLEMENTATION_COMPLETE.md      # Final status report
+├── 📄 HEARTS_FILE_TREE.txt                   # This file
+│
+└── mobile/
+    │
+    ├── 📄 HEARTS_QUICK_REFERENCE.md          # Quick start guide
+    ├── 📄 HEARTS_NEXT_STEPS.md               # Testing checklist
+    ├── 📄 HEARTS_IMPLEMENTATION_SUMMARY.md   # Technical summary
+    │
+    └── lib/
+        │
+        ├── features/
+        │   │
+        │   ├── hearts/                        # ⭐ Hearts Feature Module
+        │   │   │
+        │   │   ├── 📄 HEARTS_SYSTEM_README.md # Complete technical guide
+        │   │   ├── 📄 HEARTS_VISUAL_GUIDE.md  # UI/UX reference
+        │   │   │
+        │   │   ├── domain/
+        │   │   │   └── entities/
+        │   │   │       ├── 💎 heart_state.dart         # Hearts state entity (Freezed)
+        │   │   │       ├── 🤖 heart_state.freezed.dart # Generated (after build_runner)
+        │   │   │       └── 🤖 heart_state.g.dart       # Generated (after build_runner)
+        │   │   │
+        │   │   └── presentation/
+        │   │       │
+        │   │       ├── providers/
+        │   │       │   ├── 💎 hearts_provider.dart     # Riverpod provider
+        │   │       │   └── 🤖 hearts_provider.g.dart   # Generated (after build_runner)
+        │   │       │
+        │   │       ├── screens/
+        │   │       │   └── 💎 hearts_refill_screen.dart # Refill options screen
+        │   │       │
+        │   │       └── widgets/
+        │   │           ├── 💎 hearts_display.dart      # Hearts UI widget
+        │   │           └── 💎 heart_lost_animation.dart # Loss animation
+        │   │
+        │   └── quiz/
+        │       └── presentation/
+        │           └── screens/
+        │               └── 🔧 quiz_screen.dart         # MODIFIED: Added hearts
+        │
+        └── routing/
+            └── 🔧 app_router.dart                      # MODIFIED: Added route
+
+```
+
+## 📊 File Statistics
+
+### Source Code Files
+| File | Type | Lines | Status |
+|------|------|-------|--------|
+| heart_state.dart | Entity | 165 | ✅ Created |
+| hearts_provider.dart | Provider | 190 | ✅ Created |
+| hearts_refill_screen.dart | Screen | 337 | ✅ Created |
+| hearts_display.dart | Widget | 197 | ✅ Created |
+| heart_lost_animation.dart | Widget | 135 | ✅ Created |
+| quiz_screen.dart | Screen | +60 | ✅ Modified |
+| app_router.dart | Router | +15 | ✅ Modified |
+| **Total** | - | **~1,100** | **7 files** |
+
+### Generated Files (After build_runner)
+| File | Generator | Status |
+|------|-----------|--------|
+| heart_state.freezed.dart | Freezed | ⏳ Pending |
+| heart_state.g.dart | JSON | ⏳ Pending |
+| hearts_provider.g.dart | Riverpod | ⏳ Pending |
+
+### Documentation Files
+| File | Purpose | Lines | Status |
+|------|---------|-------|--------|
+| HEARTS_DOCUMENTATION_INDEX.md | Main index | 180 | ✅ Created |
+| HEARTS_COMPLETE_IMPLEMENTATION.md | Executive summary | 280 | ✅ Created |
+| HEARTS_IMPLEMENTATION_COMPLETE.md | Final status | 260 | ✅ Created |
+| HEARTS_FILE_TREE.txt | This file | 150 | ✅ Created |
+| HEARTS_QUICK_REFERENCE.md | Quick guide | 180 | ✅ Created |
+| HEARTS_NEXT_STEPS.md | Testing | 200 | ✅ Created |
+| HEARTS_IMPLEMENTATION_SUMMARY.md | Technical | 230 | ✅ Created |
+| HEARTS_SYSTEM_README.md | Full guide | 310 | ✅ Created |
+| HEARTS_VISUAL_GUIDE.md | UI/UX | 250 | ✅ Created |
+| **Total** | - | **~2,040** | **9 files** |
+
+## 🎯 Key Files by Purpose
+
+### 🚀 Getting Started
+1. `HEARTS_DOCUMENTATION_INDEX.md` - Start here\!
+2. `HEARTS_QUICK_REFERENCE.md` - Common tasks
+3. `HEARTS_NEXT_STEPS.md` - What to do next
+
+### 💻 Development
+1. `heart_state.dart` - Core business logic
+2. `hearts_provider.dart` - State management
+3. `quiz_screen.dart` - Integration example
+
+### 🎨 UI/UX
+1. `hearts_display.dart` - Hearts widget
+2. `heart_lost_animation.dart` - Animation
+3. `hearts_refill_screen.dart` - Refill UI
+4. `HEARTS_VISUAL_GUIDE.md` - Mockups
+
+### 📚 Documentation
+1. `HEARTS_SYSTEM_README.md` - Technical deep dive
+2. `HEARTS_COMPLETE_IMPLEMENTATION.md` - Big picture
+3. `HEARTS_IMPLEMENTATION_SUMMARY.md` - What's done
+
+## 📦 Dependencies
+
+### External Packages
+- `riverpod` / `riverpod_annotation` - State management
+- `freezed` / `freezed_annotation` - Immutable entities
+- `hive` / `hive_flutter` - Local storage
+- `go_router` - Navigation
+
+### Internal Dependencies
+- `core/storage/hive_storage.dart` - Storage wrapper
+- `core/theme/app_colors.dart` - Color scheme
+- `shared/widgets/*` - Shared components
+
+## 🔄 Data Flow
+
+```
+User Action (Wrong Answer)
+    ↓
+QuizScreen
+    ↓
+HeartsNotifier.loseHeart()
+    ↓
+HeartState.loseHeart()
+    ↓
+Save to Hive (userBox)
+    ↓
+Notify listeners
+    ↓
+UI updates (HeartsDisplay)
+    ↓
+Play animation (HeartLostAnimation)
+    ↓
+[If 0 hearts] Navigate to HeartsRefillScreen
+```
+
+## 🎨 Component Hierarchy
+
+```
+MaterialApp
+└── GoRouter
+    └── QuizScreen
+        ├── AppBar
+        │   └── CompactHeartsDisplay
+        │       ├── Consumer (heartsNotifierProvider)
+        │       └── GestureDetector (onTap: info dialog)
+        │
+        ├── Question Cards
+        │   └── onAnswerSelected
+        │       ├── Check if wrong
+        │       ├── Call loseHeart()
+        │       └── Show HeartLostAnimation (Overlay)
+        │
+        └── [Navigation]
+            └── HeartsRefillScreen (if hearts = 0)
+                ├── Current hearts display
+                ├── Countdown timer
+                └── 4 refill option cards
+```
+
+## 🧩 Feature Integration Points
+
+### Quiz Module
+- QuizScreen imports hearts widgets
+- Checks hearts before quiz start
+- Deducts hearts on wrong answers
+- Shows animations and dialogs
+
+### Routing Module
+- AppRouter adds hearts refill route
+- Supports returnPath query param
+- Deep linking support
+
+### Storage Module
+- HiveStorage userBox stores hearts state
+- Persists across app restarts
+- JSON serialization via Freezed
+
+### Theme Module
+- Uses AppColors for consistency
+- Hearts: AppColors.error
+- Accents: AppColors.primary
+
+## 🔮 Extension Points
+
+### Easy to Add
+- Different heart counts (5 → 6)
+- Different refill times (30m → 20m)
+- New refill methods
+- Server synchronization
+
+### Hooks Available
+- `onHeartLost` - Custom actions on loss
+- `onHeartRefilled` - Custom actions on refill
+- `onOutOfHearts` - Custom blocking behavior
+- Timer callbacks - Analytics events
+
+## 🎯 Next Actions
+
+1. **Generate Code**
+   ```bash
+   cd mobile
+   flutter pub run build_runner build --delete-conflicting-outputs
+   ```
+
+2. **Test Build**
+   ```bash
+   flutter analyze
+   flutter run
+   ```
+
+3. **Manual Testing**
+   - Follow HEARTS_NEXT_STEPS.md checklist
+   - Test all user scenarios
+   - Verify persistence
+
+4. **Deploy**
+   - Merge to main branch
+   - Update version notes
+   - Monitor analytics
+
+---
+
+**Legend:**
+- 💎 = Created source file
+- 🤖 = Generated file (after build_runner)
+- 🔧 = Modified existing file
+- 📄 = Documentation file
+- ⭐ = New feature module

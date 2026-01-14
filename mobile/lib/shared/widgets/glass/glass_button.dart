@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../core/theme/app_colors.dart';
 
 /// A button with glassmorphism styling
 /// Uses gradient or semi-transparent background without BackdropFilter
 class GlassButton extends StatelessWidget {
-  final String text;
+  final String? text;
+  final Widget? child;
   final VoidCallback? onPressed;
   final bool isLoading;
   final bool isPrimary;
@@ -13,10 +15,12 @@ class GlassButton extends StatelessWidget {
   final double? width;
   final IconData? icon;
   final EdgeInsets? padding;
+  final Gradient? gradient;
 
   const GlassButton({
     super.key,
-    required this.text,
+    this.text,
+    this.child,
     this.onPressed,
     this.isLoading = false,
     this.isPrimary = true,
@@ -24,7 +28,8 @@ class GlassButton extends StatelessWidget {
     this.width,
     this.icon,
     this.padding,
-  });
+    this.gradient,
+  }) : assert(text != null || child != null, 'Either text or child must be provided');
 
   @override
   Widget build(BuildContext context) {
@@ -34,14 +39,21 @@ class GlassButton extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: isLoading ? null : onPressed,
+          onTap: isLoading
+              ? null
+              : onPressed == null
+                  ? null
+                  : () {
+                      HapticFeedback.mediumImpact();
+                      onPressed!();
+                    },
           borderRadius: BorderRadius.circular(12),
           splashColor: isPrimary
               ? Colors.white.withOpacity(0.2)
               : AppColors.primary.withOpacity(0.2),
           child: Ink(
             decoration: BoxDecoration(
-              gradient: isPrimary
+              gradient: gradient ?? (isPrimary
                   ? LinearGradient(
                       colors: [
                         AppColors.primary,
@@ -50,8 +62,8 @@ class GlassButton extends StatelessWidget {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     )
-                  : null,
-              color: isPrimary ? null : Colors.white.withOpacity(0.1),
+                  : null),
+              color: (gradient == null && !isPrimary) ? Colors.white.withOpacity(0.1) : null,
               borderRadius: BorderRadius.circular(12),
               border: isPrimary
                   ? null
@@ -80,7 +92,7 @@ class GlassButton extends StatelessWidget {
                           ),
                         ),
                       )
-                    : Row(
+                    : child ?? Row(
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -95,7 +107,7 @@ class GlassButton extends StatelessWidget {
                             const SizedBox(width: 8),
                           ],
                           Text(
-                            text,
+                            text ?? '',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -139,7 +151,12 @@ class GlassIconButton extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: onPressed,
+          onTap: onPressed == null
+              ? null
+              : () {
+                  HapticFeedback.lightImpact();
+                  onPressed!();
+                },
           borderRadius: BorderRadius.circular(size / 4),
           child: Container(
             decoration: BoxDecoration(

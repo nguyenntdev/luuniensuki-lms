@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../core/storage/hive_storage.dart';
 import '../features/auth/presentation/providers/auth_provider.dart';
 import '../features/auth/presentation/screens/login_screen.dart';
 import '../features/auth/presentation/screens/register_screen.dart';
@@ -10,9 +11,17 @@ import '../features/explore/presentation/screens/explore_screen.dart';
 import '../features/collection/presentation/screens/collection_screen.dart';
 import '../features/achievements/presentation/screens/achievements_screen.dart';
 import '../features/profile/presentation/screens/profile_screen.dart';
+import '../features/settings/presentation/screens/settings_screen.dart';
 import '../features/urn_viewer/presentation/screens/urn_viewer_screen.dart';
 import '../features/lesson/presentation/screens/motif_detail_screen.dart';
 import '../features/quiz/presentation/screens/quiz_screen.dart';
+import '../features/help/presentation/screens/help_support_screen.dart';
+import '../features/notifications/presentation/screens/notifications_screen.dart';
+import '../features/daily_goals/presentation/screens/daily_goal_screen.dart';
+import '../features/gems/presentation/screens/gems_shop_screen.dart';
+import '../features/hearts/presentation/screens/hearts_refill_screen.dart';
+import '../features/social/presentation/screens/friends_screen.dart';
+import '../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../shared/widgets/glass/animated_background.dart';
 import '../shared/widgets/glass/glass_bottom_nav.dart';
 
@@ -20,6 +29,7 @@ part 'app_router.g.dart';
 
 // Route path constants
 class _Paths {
+  static const String onboarding = '/onboarding';
   static const String login = '/login';
   static const String register = '/register';
   static const String explore = '/explore';
@@ -30,6 +40,12 @@ class _Paths {
   static const String motifs = '/motifs';
   static const String quests = '/quests';
   static const String settings = '/settings';
+  static const String help = '/help';
+  static const String notifications = '/notifications';
+  static const String dailyGoal = '/daily-goal';
+  static const String gemsShop = '/gems-shop';
+  static const String heartsRefill = '/hearts-refill';
+  static const String friends = '/friends';
 }
 
 /// Provides the GoRouter instance configured with all app routes.
@@ -39,12 +55,13 @@ class _Paths {
 GoRouter appRouter(AppRouterRef ref) {
   // Watch auth state to rebuild router only when auth changes
   final authNotifier = ref.read(authNotifierProvider.notifier);
+  final storage = ref.read(hiveStorageProvider);
 
   return GoRouter(
     initialLocation: _Paths.explore,
     debugLogDiagnostics: true,
 
-    // Redirect logic based on auth state
+    // Redirect logic based on auth state and onboarding
     redirect: (context, state) {
       // Use ref.read here - only called during navigation, not on every auth change
       final authState = ref.read(authNotifierProvider);
@@ -53,6 +70,8 @@ GoRouter appRouter(AppRouterRef ref) {
         authenticated: (_) => true,
         orElse: () => false,
       );
+
+      final isOnboarding = state.matchedLocation == _Paths.onboarding;
       final isLoggingIn = state.matchedLocation == _Paths.login;
       final isRegistering = state.matchedLocation == _Paths.register;
       final isAuthRoute = isLoggingIn || isRegistering;
@@ -67,8 +86,21 @@ GoRouter appRouter(AppRouterRef ref) {
         return null;
       }
 
+      // Check if user has seen onboarding
+      final hasSeenOnboarding = storage.hasSeenOnboarding();
+
+      // Not seen onboarding and not currently on onboarding -> redirect to onboarding
+      if (isLoggedIn && !hasSeenOnboarding && !isOnboarding) {
+        return _Paths.onboarding;
+      }
+
+      // On onboarding but already seen it -> go to explore
+      if (isOnboarding && hasSeenOnboarding) {
+        return _Paths.explore;
+      }
+
       // Not logged in and not on auth route -> redirect to login
-      if (!isLoggedIn && !isAuthRoute) {
+      if (!isLoggedIn && !isAuthRoute && !isOnboarding) {
         final returnUrl = Uri.encodeComponent(state.matchedLocation);
         return '${_Paths.login}?returnUrl=$returnUrl';
       }
@@ -87,6 +119,15 @@ GoRouter appRouter(AppRouterRef ref) {
     },
 
     routes: [
+      // =======================================================================
+      // ONBOARDING
+      // =======================================================================
+      GoRoute(
+        path: _Paths.onboarding,
+        name: 'onboarding',
+        builder: (context, state) => const OnboardingScreen(),
+      ),
+
       // =======================================================================
       // AUTH ROUTES
       // =======================================================================
@@ -211,7 +252,64 @@ GoRouter appRouter(AppRouterRef ref) {
       GoRoute(
         path: _Paths.settings,
         name: 'settings',
-        builder: (context, state) => const SettingsPlaceholder(),
+        builder: (context, state) => const SettingsScreen(),
+      ),
+
+      // =======================================================================
+      // DAILY GOAL ROUTE
+      // =======================================================================
+      GoRoute(
+        path: _Paths.dailyGoal,
+        name: 'dailyGoal',
+        builder: (context, state) => const DailyGoalScreen(),
+      ),
+
+      // =======================================================================
+      // HELP & SUPPORT ROUTES
+      // =======================================================================
+      GoRoute(
+        path: _Paths.help,
+        name: 'help',
+        builder: (context, state) => const HelpSupportScreen(),
+      ),
+
+      // =======================================================================
+      // NOTIFICATIONS ROUTE
+      // =======================================================================
+      GoRoute(
+        path: _Paths.notifications,
+        name: 'notifications',
+        builder: (context, state) => const NotificationsScreen(),
+      ),
+
+      // =======================================================================
+      // GEMS SHOP ROUTE
+      // =======================================================================
+      GoRoute(
+        path: _Paths.gemsShop,
+        name: 'gemsShop',
+        builder: (context, state) => const GemsShopScreen(),
+      ),
+
+      // =======================================================================
+      // HEARTS REFILL ROUTE
+      // =======================================================================
+      GoRoute(
+        path: _Paths.heartsRefill,
+        name: 'heartsRefill',
+        builder: (context, state) {
+          final returnPath = state.uri.queryParameters['returnPath'];
+          return HeartsRefillScreen(returnPath: returnPath);
+        },
+      ),
+
+      // =======================================================================
+      // FRIENDS ROUTE
+      // =======================================================================
+      GoRoute(
+        path: _Paths.friends,
+        name: 'friends',
+        builder: (context, state) => const FriendsScreen(),
       ),
     ],
 

@@ -115,8 +115,8 @@ class __$$AuthStateInitialImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$AuthStateInitialImpl implements AuthStateInitial {
-  const _$AuthStateInitialImpl();
+class _$AuthStateInitialImpl extends AuthStateInitial {
+  const _$AuthStateInitialImpl() : super._();
 
   @override
   String toString() {
@@ -213,8 +213,9 @@ class _$AuthStateInitialImpl implements AuthStateInitial {
   }
 }
 
-abstract class AuthStateInitial implements AuthState {
+abstract class AuthStateInitial extends AuthState {
   const factory AuthStateInitial() = _$AuthStateInitialImpl;
+  const AuthStateInitial._() : super._();
 }
 
 /// @nodoc
@@ -252,8 +253,8 @@ class __$$AuthStateLoadingImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$AuthStateLoadingImpl implements AuthStateLoading {
-  const _$AuthStateLoadingImpl({this.message});
+class _$AuthStateLoadingImpl extends AuthStateLoading {
+  const _$AuthStateLoadingImpl({this.message}) : super._();
 
   /// Optional message to show during loading
   @override
@@ -365,9 +366,10 @@ class _$AuthStateLoadingImpl implements AuthStateLoading {
   }
 }
 
-abstract class AuthStateLoading implements AuthState {
+abstract class AuthStateLoading extends AuthState {
   const factory AuthStateLoading({final String? message}) =
       _$AuthStateLoadingImpl;
+  const AuthStateLoading._() : super._();
 
   /// Optional message to show during loading
   String? get message;
@@ -416,8 +418,8 @@ class __$$AuthStateAuthenticatedImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$AuthStateAuthenticatedImpl implements AuthStateAuthenticated {
-  const _$AuthStateAuthenticatedImpl({required this.user});
+class _$AuthStateAuthenticatedImpl extends AuthStateAuthenticated {
+  const _$AuthStateAuthenticatedImpl({required this.user}) : super._();
 
   @override
   final User user;
@@ -528,9 +530,10 @@ class _$AuthStateAuthenticatedImpl implements AuthStateAuthenticated {
   }
 }
 
-abstract class AuthStateAuthenticated implements AuthState {
+abstract class AuthStateAuthenticated extends AuthState {
   const factory AuthStateAuthenticated({required final User user}) =
       _$AuthStateAuthenticatedImpl;
+  const AuthStateAuthenticated._() : super._();
 
   User get user;
 
@@ -564,8 +567,8 @@ class __$$AuthStateUnauthenticatedImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$AuthStateUnauthenticatedImpl implements AuthStateUnauthenticated {
-  const _$AuthStateUnauthenticatedImpl();
+class _$AuthStateUnauthenticatedImpl extends AuthStateUnauthenticated {
+  const _$AuthStateUnauthenticatedImpl() : super._();
 
   @override
   String toString() {
@@ -663,8 +666,9 @@ class _$AuthStateUnauthenticatedImpl implements AuthStateUnauthenticated {
   }
 }
 
-abstract class AuthStateUnauthenticated implements AuthState {
+abstract class AuthStateUnauthenticated extends AuthState {
   const factory AuthStateUnauthenticated() = _$AuthStateUnauthenticatedImpl;
+  const AuthStateUnauthenticated._() : super._();
 }
 
 /// @nodoc
@@ -707,8 +711,8 @@ class __$$AuthStateErrorImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$AuthStateErrorImpl implements AuthStateError {
-  const _$AuthStateErrorImpl({required this.message, this.code});
+class _$AuthStateErrorImpl extends AuthStateError {
+  const _$AuthStateErrorImpl({required this.message, this.code}) : super._();
 
   @override
   final String message;
@@ -822,10 +826,11 @@ class _$AuthStateErrorImpl implements AuthStateError {
   }
 }
 
-abstract class AuthStateError implements AuthState {
+abstract class AuthStateError extends AuthState {
   const factory AuthStateError(
       {required final String message,
       final String? code}) = _$AuthStateErrorImpl;
+  const AuthStateError._() : super._();
 
   String get message;
   String? get code;

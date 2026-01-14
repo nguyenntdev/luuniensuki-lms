@@ -207,8 +207,8 @@ class _UrnCardState extends State<UrnCard> with SingleTickerProviderStateMixin {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xFF2A2A4E),
-            const Color(0xFF1A1A2E),
+            AppColors.surfaceElevated,
+            AppColors.surface,
           ],
         ),
       ),
@@ -233,26 +233,26 @@ class _UrnCardState extends State<UrnCard> with SingleTickerProviderStateMixin {
       ),
       decoration: BoxDecoration(
         gradient: isCompleted
-            ? const LinearGradient(
-                colors: [Color(0xFF4CAF50), Color(0xFF66BB6A)],
+            ? LinearGradient(
+                colors: [AppColors.success, AppColors.success.withOpacity(0.8)],
               )
             : LinearGradient(
                 colors: [
-                  const Color(0xFF1A1A2E).withOpacity(0.9),
-                  const Color(0xFF1A1A2E).withOpacity(0.85),
+                  AppColors.surface.withOpacity(0.9),
+                  AppColors.surface.withOpacity(0.85),
                 ],
               ),
         borderRadius: BorderRadius.circular(AppSpacing.radiusSM + 4),
         border: Border.all(
           color: isCompleted
-              ? const Color(0xFF4CAF50)
+              ? AppColors.success
               : Colors.white.withOpacity(0.25),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
             color: isCompleted
-                ? const Color(0xFF4CAF50).withOpacity(0.3)
+                ? AppColors.success.withOpacity(0.3)
                 : Colors.black.withOpacity(0.3),
             blurRadius: 8,
             offset: const Offset(0, 2),

@@ -157,6 +157,9 @@ class AppColors {
   /// Level up green
   static const Color levelUpGreen = Color(0xFF00C853);
 
+  /// Gem yellow (cyan-yellow for gems)
+  static const Color gemYellow = Color(0xFFFFD700);
+
   // ==========================================================================
   // PROGRESS STATUS COLORS
   // ==========================================================================

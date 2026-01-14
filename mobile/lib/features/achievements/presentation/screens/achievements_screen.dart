@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/glass/animated_background.dart';
 import '../../../../shared/widgets/glass/glass_container.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
@@ -15,13 +16,21 @@ class AchievementsScreen extends ConsumerStatefulWidget {
 }
 
 class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late TabController _tabController;
+  late AnimationController _animationController;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+
+    // Initialize animation controller
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+    _animationController.forward();
 
     // Add listener to load leaderboard when the tab is selected
     _tabController.addListener(() {
@@ -30,19 +39,25 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
         // Load leaderboard data on first visit
         Future.microtask(() {
           final provider = ref.read(leaderboardNotifierProvider);
-          if (provider is AsyncLoading || provider is AsyncData) {
-            // Already loading or loaded
+          // Only skip if we already have valid data
+          if (provider.hasValue && provider.value!.isNotEmpty) {
             return;
           }
           ref.read(leaderboardNotifierProvider.notifier).loadLeaderboard();
         });
       }
     });
+
+    // Initial load of leaderboard data
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(leaderboardNotifierProvider.notifier).loadLeaderboard();
+    });
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
@@ -106,12 +121,12 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
             height: 50,
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFFD4A84B), Color(0xFFE8C87E)],
+                colors: [AppColors.primaryDark, AppColors.primaryLight],
               ),
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFD4A84B).withOpacity(0.3),
+                  color: AppColors.primary.withOpacity(0.3),
                   blurRadius: 12,
                   spreadRadius: 2,
                 ),
@@ -119,7 +134,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
             ),
             child: const Icon(
               Icons.emoji_events,
-              color: Color(0xFF1A1A2E),
+              color: AppColors.onPrimary,
               size: 28,
             ),
           ),
@@ -143,12 +158,12 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
         controller: _tabController,
         indicator: BoxDecoration(
           gradient: const LinearGradient(
-            colors: [Color(0xFFD4A84B), Color(0xFFE8C87E)],
+            colors: [AppColors.primaryDark, AppColors.primaryLight],
           ),
           borderRadius: BorderRadius.circular(12),
         ),
         indicatorSize: TabBarIndicatorSize.tab,
-        labelColor: const Color(0xFF1A1A2E),
+        labelColor: AppColors.onPrimary,
         unselectedLabelColor: Colors.white70,
         labelStyle: const TextStyle(
           fontWeight: FontWeight.bold,
@@ -203,8 +218,36 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
       itemCount: badges.length,
       itemBuilder: (context, index) {
         final badge = badges[index];
-        return _buildBadgeCard(badge);
+        return _buildAnimatedBadgeCard(badge, index);
       },
+    );
+  }
+
+  Widget _buildAnimatedBadgeCard(Map<String, dynamic> badge, int index) {
+    return AnimatedBuilder(
+      animation: _animationController,
+      builder: (context, child) {
+        final delay = index * 0.1;
+        final animation = CurvedAnimation(
+          parent: _animationController,
+          curve: Interval(
+            delay.clamp(0.0, 1.0),
+            (delay + 0.4).clamp(0.0, 1.0),
+            curve: Curves.easeOutCubic,
+          ),
+        );
+        return FadeTransition(
+          opacity: animation,
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0, 0.3),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          ),
+        );
+      },
+      child: _buildBadgeCard(badge),
     );
   }
 
@@ -216,7 +259,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
       padding: const EdgeInsets.all(16),
       border: Border.all(
         color: isEarned
-            ? const Color(0xFFD4A84B).withOpacity(0.5)
+            ? AppColors.primary.withOpacity(0.5)
             : Colors.white.withOpacity(0.1),
         width: 1.5,
       ),
@@ -231,14 +274,14 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
               shape: BoxShape.circle,
               gradient: isEarned
                   ? const LinearGradient(
-                      colors: [Color(0xFFD4A84B), Color(0xFFE8C87E)],
+                      colors: [AppColors.primaryDark, AppColors.primaryLight],
                     )
                   : null,
               color: isEarned ? null : Colors.white.withOpacity(0.1),
               boxShadow: isEarned
                   ? [
                       BoxShadow(
-                        color: const Color(0xFFD4A84B).withOpacity(0.3),
+                        color: AppColors.primary.withOpacity(0.3),
                         blurRadius: 12,
                         spreadRadius: 2,
                       ),
@@ -248,7 +291,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
             child: Icon(
               badge['icon'] as IconData,
               color: isEarned
-                  ? const Color(0xFF1A1A2E)
+                  ? AppColors.onPrimary
                   : Colors.white.withOpacity(0.3),
               size: 32,
             ),
@@ -276,7 +319,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
               color: isEarned
-                  ? const Color(0xFF4CAF50).withOpacity(0.2)
+                  ? AppColors.success.withOpacity(0.2)
                   : Colors.white.withOpacity(0.05),
               borderRadius: BorderRadius.circular(12),
             ),
@@ -287,7 +330,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
                   isEarned ? Icons.check_circle : Icons.lock,
                   size: 12,
                   color: isEarned
-                      ? const Color(0xFF4CAF50)
+                      ? AppColors.success
                       : Colors.white.withOpacity(0.3),
                 ),
                 const SizedBox(width: 4),
@@ -295,7 +338,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
                   isEarned ? 'Đã nhận' : '+${badge['xp']} XP',
                   style: TextStyle(
                     color: isEarned
-                        ? const Color(0xFF4CAF50)
+                        ? AppColors.success
                         : Colors.white.withOpacity(0.5),
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
@@ -316,7 +359,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
     return leaderboardAsync.when(
       loading: () => const Center(
         child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFD4A84B)),
+          valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
         ),
       ),
       error: (error, stackTrace) => _buildErrorState(error),
@@ -367,8 +410,8 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
               icon: const Icon(Icons.refresh),
               label: const Text('Thử lại'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFD4A84B),
-                foregroundColor: const Color(0xFF1A1A2E),
+                backgroundColor: AppColors.primary,
+                foregroundColor: AppColors.onPrimary,
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               ),
             ),
@@ -437,7 +480,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
     Color getRankColor() {
       switch (rank) {
         case 1:
-          return const Color(0xFFFFD700); // Gold
+          return AppColors.xpGold; // Gold
         case 2:
           return const Color(0xFFC0C0C0); // Silver
         case 3:
@@ -452,12 +495,12 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isCurrentUser
-            ? const Color(0xFFD4A84B).withOpacity(0.15)
+            ? AppColors.primary.withOpacity(0.15)
             : Colors.white.withOpacity(0.08),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isCurrentUser
-              ? const Color(0xFFD4A84B).withOpacity(0.5)
+              ? AppColors.primary.withOpacity(0.5)
               : Colors.white.withOpacity(0.1),
           width: 1,
         ),
@@ -505,7 +548,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
               shape: BoxShape.circle,
               gradient: isCurrentUser
                   ? const LinearGradient(
-                      colors: [Color(0xFFD4A84B), Color(0xFFE8C87E)],
+                      colors: [AppColors.primaryDark, AppColors.primaryLight],
                     )
                   : null,
               color: isCurrentUser ? null : Colors.white.withOpacity(0.1),
@@ -515,7 +558,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
                 displayName[0].toUpperCase(),
                 style: TextStyle(
                   color: isCurrentUser
-                      ? const Color(0xFF1A1A2E)
+                      ? AppColors.onPrimary
                       : Colors.white.withOpacity(0.7),
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -538,7 +581,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
                         displayName,
                         style: TextStyle(
                           color: isCurrentUser
-                              ? const Color(0xFFD4A84B)
+                              ? AppColors.primary
                               : Colors.white,
                           fontSize: 16,
                           fontWeight:
@@ -553,13 +596,13 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
                         padding: const EdgeInsets.symmetric(
                             horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFD4A84B).withOpacity(0.2),
+                          color: AppColors.primary.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: const Text(
                           'Bạn',
                           style: TextStyle(
-                            color: Color(0xFFD4A84B),
+                            color: AppColors.primary,
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
                           ),
@@ -587,7 +630,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
                 children: [
                   Icon(
                     Icons.star,
-                    color: const Color(0xFFD4A84B).withOpacity(0.8),
+                    color: AppColors.primary.withOpacity(0.8),
                     size: 16,
                   ),
                   const SizedBox(width: 4),

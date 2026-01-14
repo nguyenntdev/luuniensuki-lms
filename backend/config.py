@@ -39,6 +39,14 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 60
     refresh_token_expire_days: int = 30
 
+    # Cookie settings for JWT tokens
+    access_cookie_name: str = "luuniensuki_access"
+    refresh_cookie_name: str = "luuniensuki_refresh"
+    cookie_domain: Optional[str] = None
+    cookie_secure: bool = False
+    cookie_samesite: str = "lax"
+    cookie_path: str = "/"
+
     # ==========================================================================
     # Application
     # ==========================================================================
@@ -84,6 +92,8 @@ class Settings(BaseSettings):
     # ==========================================================================
     deepseek_api_key: Optional[str] = None
     deepseek_base_url: str = "https://api.deepseek.com/v1"
+    deepseek_model: str = "deepseek-chat"
+    deepseek_timeout_seconds: int = 20
 
     sentry_dsn: Optional[str] = None
 

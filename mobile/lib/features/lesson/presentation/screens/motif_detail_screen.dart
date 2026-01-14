@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/utils/url_utils.dart';
 import '../../../../routing/route_names.dart';
 import '../../../urn_viewer/data/models/urn_dtos.dart';
 import '../providers/motif_detail_provider.dart';
@@ -178,13 +179,15 @@ class _MotifDetailScreenState extends ConsumerState<MotifDetailScreen>
   }
 
   Widget _buildHeroImage(MotifDetailDto motif) {
+    final imageUrl = UrlUtils.getImageUrl(motif.imageUrl ?? motif.thumbnailUrl);
+
     return Stack(
       fit: StackFit.expand,
       children: [
         // Background image
-        if (motif.imageUrl != null || motif.thumbnailUrl != null)
+        if (imageUrl.isNotEmpty)
           CachedNetworkImage(
-            imageUrl: motif.imageUrl ?? motif.thumbnailUrl ?? '',
+            imageUrl: imageUrl,
             fit: BoxFit.cover,
             placeholder: (_, __) => Container(
               color: AppColors.surfaceVariant,

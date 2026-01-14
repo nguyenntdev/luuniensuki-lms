@@ -10,12 +10,14 @@ class QuestionCard extends StatelessWidget {
   final QuizQuestionDto question;
   final String? selectedAnswer;
   final Function(String) onAnswerSelected;
+  final Set<String>? hiddenOptions; // Options to hide (for hint system)
 
   const QuestionCard({
     super.key,
     required this.question,
     this.selectedAnswer,
     required this.onAnswerSelected,
+    this.hiddenOptions,
   });
 
   @override
@@ -105,6 +107,7 @@ class QuestionCard extends StatelessWidget {
           options: question.options,
           selectedAnswer: selectedAnswer,
           onAnswerSelected: onAnswerSelected,
+          hiddenOptions: hiddenOptions,
         );
     }
   }
@@ -115,11 +118,13 @@ class _MultipleChoiceOptions extends StatelessWidget {
   final List<String> options;
   final String? selectedAnswer;
   final Function(String) onAnswerSelected;
+  final Set<String>? hiddenOptions;
 
   const _MultipleChoiceOptions({
     required this.options,
     this.selectedAnswer,
     required this.onAnswerSelected,
+    this.hiddenOptions,
   });
 
   @override
@@ -130,6 +135,28 @@ class _MultipleChoiceOptions extends StatelessWidget {
         final option = entry.value;
         final isSelected = selectedAnswer == option;
         final optionLabel = String.fromCharCode(65 + index); // A, B, C, D...
+        final isHidden = hiddenOptions?.contains(option) ?? false;
+
+        // Skip rendering hidden options with fade out animation
+        if (isHidden) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: AnimatedOpacity(
+              opacity: 0.0,
+              duration: const Duration(milliseconds: 500),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 500),
+                height: 0,
+                child: _OptionButton(
+                  label: optionLabel,
+                  text: option,
+                  isSelected: false,
+                  onTap: () {}, // Disabled
+                ),
+              ),
+            ),
+          );
+        }
 
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),

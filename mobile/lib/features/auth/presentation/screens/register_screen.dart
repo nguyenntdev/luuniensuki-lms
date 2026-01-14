@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/theme/app_colors.dart';
 import '../../../../routing/route_names.dart';
 import '../providers/auth_provider.dart';
 import '../providers/auth_state.dart';
@@ -156,7 +157,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     });
 
     return Scaffold(
-          backgroundColor: const Color(0xFF1A1A2E),
+          backgroundColor: AppColors.background,
           body: SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -172,7 +173,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       height: 70,
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [Color(0xFFD4A84B), Color(0xFFE8C87E)],
+                          colors: [AppColors.primaryDark, AppColors.primaryLight],
                         ),
                         borderRadius: BorderRadius.circular(18),
                       ),
@@ -182,7 +183,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           style: TextStyle(
                             fontSize: 38,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF1A1A2E),
+                            color: AppColors.onPrimary,
                           ),
                         ),
                       ),

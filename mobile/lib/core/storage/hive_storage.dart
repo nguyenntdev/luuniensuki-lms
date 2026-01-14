@@ -15,6 +15,7 @@ class HiveStorage {
   static const String _userBox = 'user';
   static const String _settingsBox = 'settings';
   static const String _cacheMetaBox = 'cache_meta';
+  static const String _quizProgressBox = 'quiz_progress';
 
   /// Initialize Hive and open all boxes
   static Future<void> init() async {
@@ -31,6 +32,7 @@ class HiveStorage {
       Hive.openBox(_userBox),
       Hive.openBox(_settingsBox),
       Hive.openBox(_cacheMetaBox),
+      Hive.openBox(_quizProgressBox),
     ]);
   }
 
@@ -227,6 +229,35 @@ class HiveStorage {
 
   Future<void> setSelectedLanguage(String locale) async {
     await settingsBox.put('selectedLanguage', locale);
+  }
+
+  // === Quiz Progress ===
+
+  Box get quizProgressBox => _getBox(_quizProgressBox);
+
+  /// Save quiz progress for a motif
+  Future<void> saveQuizProgress(
+    String motifId,
+    Map<String, dynamic> progress,
+  ) async {
+    await quizProgressBox.put('quiz_progress_$motifId', progress);
+  }
+
+  /// Get saved quiz progress for a motif
+  Map<String, dynamic>? getQuizProgress(String motifId) {
+    final data = quizProgressBox.get('quiz_progress_$motifId');
+    if (data == null) return null;
+    return Map<String, dynamic>.from(data);
+  }
+
+  /// Clear quiz progress for a motif
+  Future<void> clearQuizProgress(String motifId) async {
+    await quizProgressBox.delete('quiz_progress_$motifId');
+  }
+
+  /// Clear all quiz progress
+  Future<void> clearAllQuizProgress() async {
+    await quizProgressBox.clear();
   }
 
   // === Cache Metadata ===

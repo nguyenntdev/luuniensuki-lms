@@ -168,7 +168,7 @@ class _UrnBySlugProviderElement extends AutoDisposeProviderElement<Urn?>
   String get slug => (origin as UrnBySlugProvider).slug;
 }
 
-String _$exploreProgressHash() => r'c1533aa9062803b1e9f893f03edb35d6218b8c54';
+String _$exploreProgressHash() => r'beee7503bfe2d5e85eb5370a44eb056ac6aec756';
 
 /// Provider for total progress across all urns
 ///
@@ -187,7 +187,7 @@ final exploreProgressProvider = AutoDisposeProvider<ExploreProgress>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ExploreProgressRef = AutoDisposeProviderRef<ExploreProgress>;
-String _$exploreNotifierHash() => r'83be8b931cfedc3bc2b3388008649773ef0b80e7';
+String _$exploreNotifierHash() => r'b0137f6aaa9439f910f888bc082cafee6f510dbd';
 
 /// Provider for explore screen state and actions
 ///

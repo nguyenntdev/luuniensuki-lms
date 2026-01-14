@@ -4,8 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/url_utils.dart';
 import '../../../../shared/widgets/glass/animated_background.dart';
 import '../../../../shared/widgets/glass/glass_container.dart';
+import '../../../../shared/widgets/shimmer/shimmer_skeleton.dart';
 import '../../data/models/collection_dtos.dart';
 import '../providers/collection_provider.dart';
 
@@ -25,16 +27,32 @@ class CollectionScreen extends ConsumerStatefulWidget {
   ConsumerState<CollectionScreen> createState() => _CollectionScreenState();
 }
 
-class _CollectionScreenState extends ConsumerState<CollectionScreen> {
+class _CollectionScreenState extends ConsumerState<CollectionScreen>
+    with SingleTickerProviderStateMixin {
   CollectionFilter _selectedFilter = CollectionFilter.all;
+  late AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
+
+    // Initialize animation controller
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+    _controller.forward();
+
     // Load collection when screen is first created
     Future.microtask(() {
       ref.read(collectionNotifierProvider.notifier).loadCollection();
     });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -120,12 +138,12 @@ class _CollectionScreenState extends ConsumerState<CollectionScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? const Color(0xFFD4A84B)
+                      ? AppColors.primary
                       : Colors.white.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
                     color: isSelected
-                        ? const Color(0xFFD4A84B)
+                        ? AppColors.primary
                         : Colors.white.withOpacity(0.2),
                   ),
                 ),
@@ -136,7 +154,7 @@ class _CollectionScreenState extends ConsumerState<CollectionScreen> {
                       _getFilterIcon(filter),
                       size: 16,
                       color: isSelected
-                          ? const Color(0xFF1A1A2E)
+                          ? AppColors.onPrimary
                           : Colors.white70,
                     ),
                     const SizedBox(width: 6),
@@ -144,7 +162,7 @@ class _CollectionScreenState extends ConsumerState<CollectionScreen> {
                       _getFilterLabel(filter),
                       style: TextStyle(
                         color: isSelected
-                            ? const Color(0xFF1A1A2E)
+                            ? AppColors.onPrimary
                             : Colors.white,
                         fontSize: 14,
                         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
@@ -191,11 +209,7 @@ class _CollectionScreenState extends ConsumerState<CollectionScreen> {
 
     // Handle loading state
     if (state.isLoading && !state.hasData) {
-      return const Center(
-        child: CircularProgressIndicator(
-          color: Color(0xFFD4A84B),
-        ),
-      );
+      return _buildLoadingState();
     }
 
     // Handle error state
@@ -226,8 +240,8 @@ class _CollectionScreenState extends ConsumerState<CollectionScreen> {
                   ref.read(collectionNotifierProvider.notifier).loadCollection();
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFD4A84B),
-                  foregroundColor: const Color(0xFF1A1A2E),
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: AppColors.onPrimary,
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -257,6 +271,24 @@ class _CollectionScreenState extends ConsumerState<CollectionScreen> {
 
     // Fallback to empty state
     return _buildEmptyState();
+  }
+
+  /// Build loading state with shimmer skeletons
+  Widget _buildLoadingState() {
+    return GridView.builder(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 0.85,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+      ),
+      // Show 8 shimmer cards as placeholder
+      itemCount: 8,
+      itemBuilder: (context, index) {
+        return const ShimmerMotifCard();
+      },
+    );
   }
 
   /// Filter motifs based on selected filter
@@ -316,8 +348,8 @@ class _CollectionScreenState extends ConsumerState<CollectionScreen> {
             ElevatedButton.icon(
               onPressed: () => context.go('/explore'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFD4A84B),
-                foregroundColor: const Color(0xFF1A1A2E),
+                backgroundColor: AppColors.primary,
+                foregroundColor: AppColors.onPrimary,
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -344,8 +376,36 @@ class _CollectionScreenState extends ConsumerState<CollectionScreen> {
       itemCount: motifs.length,
       itemBuilder: (context, index) {
         final motif = motifs[index];
-        return _buildMotifCard(motif);
+        return _buildAnimatedMotifCard(motif, index);
       },
+    );
+  }
+
+  Widget _buildAnimatedMotifCard(CollectionMotifDto motif, int index) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        final delay = index * 0.1;
+        final animation = CurvedAnimation(
+          parent: _controller,
+          curve: Interval(
+            delay.clamp(0.0, 1.0),
+            (delay + 0.4).clamp(0.0, 1.0),
+            curve: Curves.easeOutCubic,
+          ),
+        );
+        return FadeTransition(
+          opacity: animation,
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0, 0.3),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          ),
+        );
+      },
+      child: _buildMotifCard(motif),
     );
   }
 
@@ -367,18 +427,13 @@ class _CollectionScreenState extends ConsumerState<CollectionScreen> {
                 ),
                 child: motif.thumbnailUrl != null && motif.thumbnailUrl!.isNotEmpty
                     ? CachedNetworkImage(
-                        imageUrl: motif.thumbnailUrl!,
+                        imageUrl: UrlUtils.getImageUrl(motif.thumbnailUrl),
                         fit: BoxFit.cover,
                         width: double.infinity,
                         height: double.infinity,
-                        placeholder: (context, url) => Container(
-                          color: Colors.white.withOpacity(0.05),
-                          child: const Center(
-                            child: CircularProgressIndicator(
-                              color: Color(0xFFE8B44C),
-                              strokeWidth: 2,
-                            ),
-                          ),
+                        placeholder: (context, url) => const ShimmerSkeleton(
+                          width: double.infinity,
+                          height: double.infinity,
                         ),
                         errorWidget: (context, url, error) => Center(
                           child: Icon(

@@ -310,7 +310,7 @@ class _QuizHistoryProviderElement
   String get motifId => (origin as QuizHistoryProvider).motifId;
 }
 
-String _$quizSubmissionHash() => r'0be200343c4318f3671cf66f2e62f30832931aa9';
+String _$quizSubmissionHash() => r'68f3de687de4d33362930f0ccefc576ecc45a0cb';
 
 /// Provider for submitting quiz answers.
 ///
@@ -328,5 +328,159 @@ final quizSubmissionProvider =
 );
 
 typedef _$QuizSubmission = AutoDisposeAsyncNotifier<QuizResultDto?>;
+String _$quizStateHash() => r'ea5ce3f7993ef3fccc99c61caa3b4226783038ad';
+
+abstract class _$QuizState extends BuildlessAutoDisposeNotifier<QuizStateData> {
+  late final String motifId;
+
+  QuizStateData build(
+    String motifId,
+  );
+}
+
+/// Provider for quiz state management with auto-save
+///
+/// Copied from [QuizState].
+@ProviderFor(QuizState)
+const quizStateProvider = QuizStateFamily();
+
+/// Provider for quiz state management with auto-save
+///
+/// Copied from [QuizState].
+class QuizStateFamily extends Family<QuizStateData> {
+  /// Provider for quiz state management with auto-save
+  ///
+  /// Copied from [QuizState].
+  const QuizStateFamily();
+
+  /// Provider for quiz state management with auto-save
+  ///
+  /// Copied from [QuizState].
+  QuizStateProvider call(
+    String motifId,
+  ) {
+    return QuizStateProvider(
+      motifId,
+    );
+  }
+
+  @override
+  QuizStateProvider getProviderOverride(
+    covariant QuizStateProvider provider,
+  ) {
+    return call(
+      provider.motifId,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'quizStateProvider';
+}
+
+/// Provider for quiz state management with auto-save
+///
+/// Copied from [QuizState].
+class QuizStateProvider
+    extends AutoDisposeNotifierProviderImpl<QuizState, QuizStateData> {
+  /// Provider for quiz state management with auto-save
+  ///
+  /// Copied from [QuizState].
+  QuizStateProvider(
+    String motifId,
+  ) : this._internal(
+          () => QuizState()..motifId = motifId,
+          from: quizStateProvider,
+          name: r'quizStateProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$quizStateHash,
+          dependencies: QuizStateFamily._dependencies,
+          allTransitiveDependencies: QuizStateFamily._allTransitiveDependencies,
+          motifId: motifId,
+        );
+
+  QuizStateProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.motifId,
+  }) : super.internal();
+
+  final String motifId;
+
+  @override
+  QuizStateData runNotifierBuild(
+    covariant QuizState notifier,
+  ) {
+    return notifier.build(
+      motifId,
+    );
+  }
+
+  @override
+  Override overrideWith(QuizState Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: QuizStateProvider._internal(
+        () => create()..motifId = motifId,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        motifId: motifId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeNotifierProviderElement<QuizState, QuizStateData> createElement() {
+    return _QuizStateProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is QuizStateProvider && other.motifId == motifId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, motifId.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin QuizStateRef on AutoDisposeNotifierProviderRef<QuizStateData> {
+  /// The parameter `motifId` of this provider.
+  String get motifId;
+}
+
+class _QuizStateProviderElement
+    extends AutoDisposeNotifierProviderElement<QuizState, QuizStateData>
+    with QuizStateRef {
+  _QuizStateProviderElement(super.provider);
+
+  @override
+  String get motifId => (origin as QuizStateProvider).motifId;
+}
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

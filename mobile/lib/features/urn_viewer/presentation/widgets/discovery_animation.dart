@@ -1,22 +1,31 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../shared/services/xp_celebration_service.dart';
 import '../../domain/entities/urn.dart';
 
 /// Animated overlay shown when a motif is discovered.
 /// Displays XP earned and any badges unlocked.
+///
+/// Can optionally use the enhanced XP celebration system by setting [useEnhancedCelebration] to true.
 class DiscoveryAnimation extends StatefulWidget {
   final Motif motif;
   final int xpEarned;
+  final int? oldTotalXp; // Required for enhanced celebration
+  final int? newTotalXp; // Required for enhanced celebration
   final List<String> badgesEarned;
   final VoidCallback onComplete;
+  final bool useEnhancedCelebration;
 
   const DiscoveryAnimation({
     super.key,
     required this.motif,
     required this.xpEarned,
+    this.oldTotalXp,
+    this.newTotalXp,
     this.badgesEarned = const [],
     required this.onComplete,
+    this.useEnhancedCelebration = false,
   });
 
   @override
@@ -32,10 +41,33 @@ class _DiscoveryAnimationState extends State<DiscoveryAnimation>
   late Animation<double> _fadeOutAnimation;
   late Animation<double> _xpCountAnimation;
 
+  bool _controllersInitialized = false;
+
   @override
   void initState() {
     super.initState();
 
+    // If using enhanced celebration, show it instead of the traditional animation
+    if (widget.useEnhancedCelebration &&
+        widget.oldTotalXp != null &&
+        widget.newTotalXp != null) {
+      // Schedule the enhanced celebration to show after frame
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          XpCelebrationService.instance.showCelebration(
+            context: context,
+            xpGained: widget.xpEarned,
+            oldTotalXp: widget.oldTotalXp!,
+            newTotalXp: widget.newTotalXp!,
+            badges: widget.badgesEarned,
+            onComplete: widget.onComplete,
+          );
+        }
+      });
+      return; // Skip traditional animation setup
+    }
+
+    // Traditional animation setup below
     // Main animation controller
     _mainController = AnimationController(
       vsync: this,
@@ -47,6 +79,8 @@ class _DiscoveryAnimationState extends State<DiscoveryAnimation>
       vsync: this,
       duration: const Duration(milliseconds: 1000),
     );
+
+    _controllersInitialized = true;
 
     // Scale animation - bounce in
     _scaleAnimation = TweenSequence<double>([
@@ -119,13 +153,22 @@ class _DiscoveryAnimationState extends State<DiscoveryAnimation>
 
   @override
   void dispose() {
-    _mainController.dispose();
-    _xpController.dispose();
+    if (_controllersInitialized) {
+      _mainController.dispose();
+      _xpController.dispose();
+    }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    // If using enhanced celebration, return empty container
+    // (the celebration is shown via overlay)
+    if (widget.useEnhancedCelebration) {
+      return const SizedBox.shrink();
+    }
+
+    // Traditional animation display
     return AnimatedBuilder(
       animation: _mainController,
       builder: (context, child) {

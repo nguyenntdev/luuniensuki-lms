@@ -12,7 +12,13 @@ class AppConstants {
   static const int discoveryXp = 25;
   static const int lessonXp = 50;
   static const int masteredXp = 75;
+  static const int urnExamXp = 300;
   static const int quizPassPercent = 80;
+
+  // XP Celebration Thresholds
+  static const int smallXpThreshold = 25; // Quick badge popup
+  static const int mediumXpThreshold = 50; // Badge + subtle particles
+  static const int largeXpThreshold = 300; // Full confetti blast
 
   // XP Ranks (Vietnamese titles)
   static const List<Map<String, dynamic>> xpRanks = [
@@ -26,6 +32,36 @@ class AppConstants {
     {'level': 8, 'name': 'Hoàng Đế', 'xp': 2800},
     {'level': 9, 'name': 'Sử Quan', 'xp': 3600},
   ];
+
+  /// Get rank information for a given XP amount
+  static Map<String, dynamic> getRankForXp(int xp) {
+    Map<String, dynamic> currentRank = xpRanks.first;
+    for (final rank in xpRanks) {
+      if (xp >= rank['xp']) {
+        currentRank = rank;
+      } else {
+        break;
+      }
+    }
+    return currentRank;
+  }
+
+  /// Get next rank information
+  static Map<String, dynamic>? getNextRank(int currentXp) {
+    for (final rank in xpRanks) {
+      if (currentXp < rank['xp']) {
+        return rank;
+      }
+    }
+    return null; // Already at max rank
+  }
+
+  /// Check if XP gain causes level up
+  static bool didLevelUp(int oldXp, int newXp) {
+    final oldRank = getRankForXp(oldXp);
+    final newRank = getRankForXp(newXp);
+    return oldRank['level'] != newRank['level'];
+  }
 
   // Number of urns (Cửu Đỉnh = 9 urns)
   static const int totalUrns = 9;

@@ -4,9 +4,17 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/services/sound_service.dart';
 import '../../../urn_viewer/data/models/urn_dtos.dart';
+import '../../../hearts/presentation/providers/hearts_provider.dart';
+import '../../../hearts/presentation/widgets/hearts_display.dart';
+import '../../../hearts/presentation/widgets/heart_lost_animation.dart';
+import '../../../gems/presentation/providers/gems_provider.dart';
+import '../../../gems/domain/entities/gem_transaction.dart';
+import '../../data/models/quiz_progress.dart';
 import '../providers/quiz_provider.dart';
 import '../widgets/question_card.dart';
+import '../widgets/hint_used_dialog.dart';
 import 'quiz_result_screen.dart';
 
 /// Quiz screen with question navigation and submission.
@@ -22,14 +30,184 @@ class QuizScreen extends ConsumerStatefulWidget {
 class _QuizScreenState extends ConsumerState<QuizScreen> {
   int _currentQuestionIndex = 0;
   final Map<String, String> _answers = {};
+  final Map<String, bool> _incorrectAnswers = {}; // Track incorrect answers
+  final Map<String, bool> _hintsUsed = {}; // Track hints used per question
+  final Map<String, Set<String>> _hiddenOptions = {}; // Track hidden options per question
+  int _totalGemsSpentOnHints = 0; // Track total gems spent on hints
   DateTime? _startTime;
   bool _isSubmitting = false;
+  bool _hasCheckedSavedProgress = false;
+
+  static const int _hintCost = 5; // Cost in gems per hint
 
   @override
   void initState() {
     super.initState();
     _startTime = DateTime.now();
+
+    // Check for saved progress after build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkForSavedProgress();
+    });
   }
+
+  /// Check if there's saved progress and show resume dialog
+  Future<void> _checkForSavedProgress() async {
+    if (_hasCheckedSavedProgress) return;
+    _hasCheckedSavedProgress = true;
+
+    final quizState = ref.read(quizStateProvider(widget.motifId));
+
+    if (quizState.hasSavedProgress && quizState.savedProgress != null) {
+      final savedProgress = quizState.savedProgress!;
+
+      // Verify quiz content hasn't changed
+      final quizAsync = ref.read(quizProvider(widget.motifId));
+      await quizAsync.when(
+        data: (quiz) async {
+          final currentHash = QuizProgress.createQuestionsHash(
+            quiz.questions.map((q) => {'id': q.id}).toList(),
+          );
+
+          if (currentHash != savedProgress.questionsHash) {
+            // Quiz content changed, clear old progress
+            ref.read(quizStateProvider(widget.motifId).notifier).clearProgress();
+            return;
+          }
+
+          // Show resume dialog
+          if (mounted) {
+            final shouldResume = await _showResumeDialog(savedProgress);
+            if (shouldResume == true) {
+              _resumeFromSavedProgress(savedProgress);
+            } else {
+              // Start fresh
+              ref.read(quizStateProvider(widget.motifId).notifier).startFresh(quiz);
+            }
+          }
+        },
+        loading: () {},
+        error: (_, __) {},
+      );
+    }
+  }
+
+  /// Show dialog asking user to resume or start fresh
+  Future<bool?> _showResumeDialog(QuizProgress progress) {
+    return showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: Row(
+          children: [
+            Icon(Icons.restore, color: AppColors.primary, size: 24),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                'Tiếp tục bài quiz?',
+                style: AppTypography.textTheme.titleLarge?.copyWith(
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Bạn có bài quiz chưa hoàn thành:',
+              style: AppTypography.textTheme.bodyMedium?.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            ),
+            const SizedBox(height: 12),
+            _buildProgressInfo('Câu hỏi', '${progress.currentQuestionIndex + 1}'),
+            const SizedBox(height: 8),
+            _buildProgressInfo('Đã trả lời', '${progress.answers.length} câu'),
+            const SizedBox(height: 8),
+            _buildProgressInfo('Thời gian', _formatDuration(progress.timeSpentSeconds)),
+            const SizedBox(height: 16),
+            Text(
+              'Bạn muốn tiếp tục hay bắt đầu lại?',
+              style: AppTypography.textTheme.bodyMedium?.copyWith(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => context.pop(false),
+            child: Text(
+              'Bắt đầu lại',
+              style: TextStyle(color: AppColors.textSecondary),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => context.pop(true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: AppColors.onPrimary,
+            ),
+            child: const Text('Tiếp tục'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProgressInfo(String label, String value) {
+    return Row(
+      children: [
+        Icon(Icons.check_circle_outline, size: 16, color: AppColors.primary),
+        const SizedBox(width: 8),
+        Text(
+          '$label: ',
+          style: AppTypography.textTheme.bodySmall?.copyWith(
+            color: AppColors.textSecondary,
+          ),
+        ),
+        Text(
+          value,
+          style: AppTypography.textTheme.bodySmall?.copyWith(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _formatDuration(int seconds) {
+    final minutes = seconds ~/ 60;
+    final secs = seconds % 60;
+    if (minutes > 0) {
+      return '$minutes phút $secs giây';
+    }
+    return '$secs giây';
+  }
+
+  /// Resume from saved progress
+  void _resumeFromSavedProgress(QuizProgress progress) {
+    setState(() {
+      _currentQuestionIndex = progress.currentQuestionIndex;
+      _answers.addAll(progress.answers);
+      _incorrectAnswers.addAll(progress.incorrectAnswers);
+      _startTime = DateTime.now().subtract(
+        Duration(seconds: progress.timeSpentSeconds),
+      );
+    });
+
+    ref.read(quizStateProvider(widget.motifId).notifier).resumeProgress();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +224,49 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
           onPressed: () => _showExitConfirmation(context),
         ),
         actions: [
+          // Gems display
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: Center(
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('💎', style: TextStyle(fontSize: 16)),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${ref.watch(gemsNotifierProvider).balance}',
+                      style: AppTypography.textTheme.labelLarge?.copyWith(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          // Hearts display
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: CompactHeartsDisplay(
+              onTap: () {
+                // Show hearts info dialog
+                _showHeartsInfoDialog(context);
+              },
+            ),
+          ),
+
+          // Question counter
           quizAsync.maybeWhen(
             data: (quiz) => Center(
               child: Padding(
@@ -138,6 +359,11 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     final isLastQuestion = _currentQuestionIndex == quiz.questions.length - 1;
     final hasAnswer = _answers.containsKey(currentQuestion.id);
     final allAnswered = _answers.length == quiz.questions.length;
+    final isMultipleChoice = currentQuestion.questionType.toLowerCase() == 'multiple_choice' ||
+                            currentQuestion.questionType.toLowerCase() == 'multiplechoice';
+    final hasUsedHint = _hintsUsed[currentQuestion.id] ?? false;
+    final gemsState = ref.watch(gemsNotifierProvider);
+    final canAffordHint = gemsState.balance >= _hintCost;
 
     return Column(
       children: [
@@ -153,14 +379,82 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
-            child: QuestionCard(
-              question: currentQuestion,
-              selectedAnswer: _answers[currentQuestion.id],
-              onAnswerSelected: (answer) {
-                setState(() {
-                  _answers[currentQuestion.id] = answer;
-                });
-              },
+            child: Column(
+              children: [
+                // Hint button (only for multiple choice questions)
+                if (isMultipleChoice && currentQuestion.options.length >= 4)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: _buildHintButton(
+                      currentQuestion,
+                      hasUsedHint: hasUsedHint,
+                      canAffordHint: canAffordHint,
+                    ),
+                  ),
+
+                // Question card
+                QuestionCard(
+                  question: currentQuestion,
+                  selectedAnswer: _answers[currentQuestion.id],
+                  hiddenOptions: _hiddenOptions[currentQuestion.id],
+                  onAnswerSelected: (answer) async {
+                    // Check if this is a new answer
+                    final previousAnswer = _answers[currentQuestion.id];
+
+                    setState(() {
+                      _answers[currentQuestion.id] = answer;
+                    });
+
+                    // Save progress auto-save
+                    ref.read(quizStateProvider(widget.motifId).notifier).setAnswer(
+                      currentQuestion.id,
+                      answer,
+                    );
+
+                    // Check if answer is incorrect and we haven't already penalized this question
+                    final isCorrect = currentQuestion.correctAnswer.trim().toLowerCase() ==
+                                      answer.trim().toLowerCase();
+
+                    // Play sound effect based on answer
+                    final soundService = ref.read(soundServiceProvider);
+                    if (isCorrect) {
+                      await soundService.playCorrect();
+                    } else {
+                      await soundService.playWrong();
+                    }
+
+                    if (!isCorrect &&
+                        previousAnswer != answer &&
+                        !_incorrectAnswers.containsKey(currentQuestion.id)) {
+                      // Mark this question as having an incorrect answer
+                      _incorrectAnswers[currentQuestion.id] = true;
+
+                      // Save incorrect answer state
+                      ref.read(quizStateProvider(widget.motifId).notifier).markIncorrect(
+                        currentQuestion.id,
+                      );
+
+                      // Deduct a heart
+                      await ref.read(heartsNotifierProvider.notifier).loseHeart();
+
+                      // Show heart lost animation
+                      if (mounted) {
+                        showHeartLostAnimation(context);
+                      }
+
+                      // Check if out of hearts
+                      final hasHearts = ref.read(heartsNotifierProvider).hasHearts;
+                      if (!hasHearts && mounted) {
+                        // Navigate to hearts refill screen after a short delay
+                        await Future.delayed(const Duration(milliseconds: 1500));
+                        if (mounted) {
+                          context.push('/hearts-refill?returnPath=/quiz/${widget.motifId}');
+                        }
+                      }
+                    }
+                  },
+                ),
+              ],
             ),
           ),
         ),
@@ -186,6 +480,10 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                         setState(() {
                           _currentQuestionIndex--;
                         });
+                        // Save progress
+                        ref.read(quizStateProvider(widget.motifId).notifier).setQuestionIndex(
+                          _currentQuestionIndex - 1,
+                        );
                       },
                       icon: const Icon(Icons.arrow_back, size: 18),
                       label: const Text('Câu trước'),
@@ -237,6 +535,10 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                                   setState(() {
                                     _currentQuestionIndex++;
                                   });
+                                  // Save progress
+                                  ref.read(quizStateProvider(widget.motifId).notifier).setQuestionIndex(
+                                    _currentQuestionIndex + 1,
+                                  );
                                 }
                               : null,
                           icon: const Icon(Icons.arrow_forward, size: 18),
@@ -303,6 +605,170 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     );
   }
 
+  /// Build hint button widget
+  Widget _buildHintButton(
+    QuizQuestionDto question, {
+    required bool hasUsedHint,
+    required bool canAffordHint,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceElevated,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: AppColors.border,
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          // Hint icon
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: hasUsedHint
+                  ? AppColors.textHint.withOpacity(0.2)
+                  : AppColors.warning.withOpacity(0.2),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.lightbulb_outline,
+              color: hasUsedHint ? AppColors.textHint : AppColors.warning,
+              size: 24,
+            ),
+          ),
+
+          const SizedBox(width: 12),
+
+          // Hint text
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  hasUsedHint ? 'Đã sử dụng gợi ý' : 'Gợi ý',
+                  style: AppTypography.textTheme.titleSmall?.copyWith(
+                    color: hasUsedHint
+                        ? AppColors.textHint
+                        : AppColors.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  hasUsedHint
+                      ? '2 đáp án sai đã bị loại'
+                      : 'Loại bỏ 2 đáp án sai',
+                  style: AppTypography.textTheme.bodySmall?.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Use hint button
+          if (!hasUsedHint)
+            ElevatedButton.icon(
+              onPressed: canAffordHint
+                  ? () => _useHint(question)
+                  : null,
+              icon: const Text('💎', style: TextStyle(fontSize: 16)),
+              label: Text('$_hintCost'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.warning,
+                foregroundColor: AppColors.onPrimary,
+                disabledBackgroundColor: AppColors.textHint.withOpacity(0.3),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  /// Use hint - removes 2 wrong answers for multiple choice questions
+  Future<void> _useHint(QuizQuestionDto question) async {
+    // Check if already used hint for this question
+    if (_hintsUsed[question.id] ?? false) return;
+
+    // Check if can afford
+    final gemsNotifier = ref.read(gemsNotifierProvider.notifier);
+    if (!gemsNotifier.canAfford(_hintCost)) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Không đủ gems để sử dụng gợi ý!'),
+            backgroundColor: AppColors.error,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+      return;
+    }
+
+    // Deduct gems
+    final success = await gemsNotifier.spendGems(
+      amount: _hintCost,
+      type: GemTransactionType.spentHint,
+      description: 'Sử dụng gợi ý trong quiz',
+    );
+
+    if (!success) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Không thể sử dụng gợi ý!'),
+            backgroundColor: AppColors.error,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+      return;
+    }
+
+    // Find 2 wrong answers to hide
+    final correctAnswer = question.correctAnswer;
+    final wrongOptions = question.options
+        .where((option) => option.trim().toLowerCase() != correctAnswer.trim().toLowerCase())
+        .toList();
+
+    // Shuffle and take 2
+    wrongOptions.shuffle();
+    final optionsToHide = wrongOptions.take(2).toSet();
+
+    // Update state
+    setState(() {
+      _hintsUsed[question.id] = true;
+      _hiddenOptions[question.id] = optionsToHide;
+      _totalGemsSpentOnHints += _hintCost;
+    });
+
+    // Show hint used dialog
+    if (mounted) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => HintUsedDialog(
+          gemsDeducted: _hintCost,
+          onDismiss: () {
+            if (mounted) {
+              Navigator.of(context).pop();
+            }
+          },
+        ),
+      );
+    }
+  }
+
   void _showExitConfirmation(BuildContext context) {
     showDialog(
       context: context,
@@ -318,14 +784,14 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
           ),
         ),
         content: Text(
-          'Tiến trình làm bài sẽ bị mất. Bạn có chắc chắn muốn thoát?',
+          'Tiến trình làm bài đã được tự động lưu. Bạn có thể tiếp tục sau. Bạn có chắc chắn muốn thoát?',
           style: AppTypography.textTheme.bodyMedium?.copyWith(
             color: AppColors.textSecondary,
           ),
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => context.pop(),
             child: Text(
               'Tiếp tục làm',
               style: TextStyle(color: AppColors.textSecondary),
@@ -333,12 +799,78 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
+              context.pop();
               context.pop();
             },
             child: Text(
               'Thoát',
               style: TextStyle(color: AppColors.error),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showHeartsInfoDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: Row(
+          children: [
+            Icon(Icons.favorite, color: AppColors.error, size: 24),
+            const SizedBox(width: 8),
+            Text(
+              'Hệ Thống Tim',
+              style: AppTypography.textTheme.titleLarge?.copyWith(
+                color: AppColors.textPrimary,
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Mỗi câu trả lời sai sẽ làm bạn mất 1 tim.',
+              style: AppTypography.textTheme.bodyMedium?.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              '• Tim sẽ tự động hồi mỗi 30 phút',
+              style: AppTypography.textTheme.bodyMedium?.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '• Tối đa 5 tim',
+              style: AppTypography.textTheme.bodyMedium?.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '• Khi hết tim, bạn có thể đợi hoặc nạp bằng 💎',
+              style: AppTypography.textTheme.bodyMedium?.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => context.pop(),
+            child: Text(
+              'Đã hiểu',
+              style: TextStyle(color: AppColors.primary),
             ),
           ),
         ],
@@ -353,7 +885,18 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
       _isSubmitting = true;
     });
 
-    final timeSpent = DateTime.now().difference(_startTime!).inSeconds;
+    // Add null check for _startTime
+    final startTime = _startTime;
+    if (startTime == null) {
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
+      return;
+    }
+
+    final timeSpent = DateTime.now().difference(startTime).inSeconds;
 
     try {
       final result = await ref.read(quizSubmissionProvider.notifier).submit(

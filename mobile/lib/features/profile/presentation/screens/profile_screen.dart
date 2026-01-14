@@ -2,19 +2,69 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/glass/animated_background.dart';
 import '../../../../shared/widgets/glass/glass_container.dart';
 import '../../../auth/domain/entities/user.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../auth/presentation/providers/auth_state.dart';
 import '../../../collection/presentation/providers/collection_provider.dart';
+import '../../../gems/presentation/widgets/gems_display.dart';
+import '../../../streak/presentation/widgets/streak_display.dart';
+import '../../../streak/presentation/widgets/buy_streak_freeze_button.dart';
+import 'personal_info_screen.dart';
 
 /// Profile screen showing user info, stats, and settings
-class ProfileScreen extends ConsumerWidget {
+class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends ConsumerState<ProfileScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+      ),
+    );
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: const Interval(0.2, 1.0, curve: Curves.easeOutCubic),
+      ),
+    );
+
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final authState = ref.watch(authNotifierProvider);
     final user = authState.user;
 
@@ -28,152 +78,314 @@ class ProfileScreen extends ConsumerWidget {
   }
 
   Widget _buildNotLoggedIn(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.person_outline,
-            size: 80,
-            color: Colors.white.withOpacity(0.5),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Chưa đăng nhập',
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.7),
-              fontSize: 18,
-            ),
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () => context.go('/login'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFD4A84B),
-              foregroundColor: const Color(0xFF1A1A2E),
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Animated icon
+            Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.primary.withOpacity(0.3),
+                    AppColors.primaryDark.withOpacity(0.1),
+                  ],
+                ),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.2),
+                  width: 2,
+                ),
+              ),
+              child: Icon(
+                Icons.person_outline,
+                size: 60,
+                color: Colors.white.withOpacity(0.5),
               ),
             ),
-            child: const Text('Đăng nhập'),
-          ),
-        ],
+            AppSpacing.verticalSpaceLG,
+            Text(
+              'Chưa đăng nhập',
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.9),
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            AppSpacing.verticalSpaceSM,
+            Text(
+              'Đăng nhập để theo dõi tiến độ của bạn',
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.6),
+                fontSize: 14,
+              ),
+            ),
+            AppSpacing.verticalSpaceXL,
+            ElevatedButton(
+              onPressed: () => context.go('/login'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: AppColors.onPrimary,
+                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusLG),
+                ),
+                elevation: 8,
+                shadowColor: AppColors.primary.withOpacity(0.5),
+              ),
+              child: const Text(
+                'Đăng nhập',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildProfile(BuildContext context, WidgetRef ref, User user) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
-          // Header with avatar and name
-          _buildProfileHeader(user),
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: SlideTransition(
+        position: _slideAnimation,
+        child: CustomScrollView(
+          slivers: [
+            // Beautiful header with gradient background
+            _buildProfileHeader(user),
 
-          const SizedBox(height: 24),
+            // Content with padding
+            SliverPadding(
+              padding: const EdgeInsets.all(AppSpacing.md),
+              sliver: SliverList(
+                delegate: SliverChildListDelegate([
+                  // XP Progress Card
+                  _buildXpCard(user),
 
-          // XP Progress Card
-          _buildXpCard(user),
+                  AppSpacing.verticalSpaceMD,
 
-          const SizedBox(height: 16),
+                  // Stats Grid
+                  _buildStatsGrid(ref, user),
 
-          // Stats Grid
-          _buildStatsGrid(ref, user),
+                  AppSpacing.verticalSpaceMD,
 
-          const SizedBox(height: 16),
+                  // Enhanced Streak Display
+                  const StreakDisplay(),
 
-          // Streak Card
-          _buildStreakCard(user),
+                  AppSpacing.verticalSpaceMD,
 
-          const SizedBox(height: 24),
+                  // Buy Streak Freeze Button
+                  const BuyStreakFreezeButton(),
 
-          // Action Buttons
-          _buildActionButtons(context, ref),
+                  AppSpacing.verticalSpaceLG,
 
-          const SizedBox(height: 100), // Bottom padding for nav bar
-        ],
+                  // Section header
+                  Text(
+                    'Cài đặt & Tài khoản',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.9),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+
+                  AppSpacing.verticalSpaceMD,
+
+                  // Settings Cards
+                  _buildSettingsCards(context, ref),
+
+                  const SizedBox(height: 120), // Bottom padding for nav bar
+                ]),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildProfileHeader(User user) {
-    return Column(
-      children: [
-        // Avatar
-        Container(
-          width: 100,
-          height: 100,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: const LinearGradient(
-              colors: [Color(0xFFD4A84B), Color(0xFFE8C87E)],
-            ),
-            border: Border.all(
-              color: Colors.white.withOpacity(0.3),
-              width: 3,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFFD4A84B).withOpacity(0.3),
-                blurRadius: 20,
-                spreadRadius: 2,
+    return SliverToBoxAdapter(
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              AppColors.primary.withOpacity(0.2),
+              AppColors.primaryDark.withOpacity(0.1),
+              Colors.transparent,
+            ],
+            stops: const [0.0, 0.5, 1.0],
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.md,
+            AppSpacing.lg,
+            AppSpacing.md,
+            AppSpacing.xl,
+          ),
+          child: Column(
+            children: [
+              // Hero Avatar with glow effect
+              Hero(
+                tag: 'user_avatar_${user.id}',
+                child: Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: AppColors.primaryGradient,
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.4),
+                      width: 4,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primary.withOpacity(0.4),
+                        blurRadius: 30,
+                        spreadRadius: 5,
+                      ),
+                      BoxShadow(
+                        color: AppColors.primaryDark.withOpacity(0.3),
+                        blurRadius: 15,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                  child: user.avatarUrl != null && user.avatarUrl!.isNotEmpty
+                      ? ClipOval(
+                          child: Image.network(
+                            user.avatarUrl!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) =>
+                                _buildAvatarPlaceholder(user),
+                          ),
+                        )
+                      : _buildAvatarPlaceholder(user),
+                ),
+              ),
+
+              AppSpacing.verticalSpaceLG,
+
+              // Display Name with shadow
+              Text(
+                user.displayName,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black26,
+                      blurRadius: 8,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+              ),
+
+              AppSpacing.verticalSpaceSM,
+
+              // Email with icon
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.email_outlined,
+                    size: 14,
+                    color: Colors.white.withOpacity(0.5),
+                  ),
+                  const SizedBox(width: 6),
+                  Flexible(
+                    child: Text(
+                      user.email,
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.6),
+                        fontSize: 14,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  ),
+                ],
+              ),
+
+              AppSpacing.verticalSpaceMD,
+
+              // Rank badge with enhanced styling
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.lg,
+                  vertical: AppSpacing.sm,
+                ),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      AppColors.primary.withOpacity(0.3),
+                      AppColors.primaryDark.withOpacity(0.2),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusRound),
+                  border: Border.all(
+                    color: AppColors.primary.withOpacity(0.6),
+                    width: 1.5,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withOpacity(0.2),
+                      blurRadius: 8,
+                      spreadRadius: 1,
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.military_tech,
+                      color: AppColors.primary,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      user.rank.name,
+                      style: const TextStyle(
+                        color: AppColors.primary,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              AppSpacing.verticalSpaceMD,
+
+              // Gems display with tap to go to shop
+              GemsDisplay(
+                showLabel: true,
+                iconSize: 24,
+                textStyle: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+                onTap: () => context.push('/gems-shop'),
               ),
             ],
           ),
-          child: user.avatarUrl != null && user.avatarUrl!.isNotEmpty
-              ? ClipOval(
-                  child: Image.network(
-                    user.avatarUrl!,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => _buildAvatarPlaceholder(user),
-                  ),
-                )
-              : _buildAvatarPlaceholder(user),
         ),
-
-        const SizedBox(height: 16),
-
-        // Display Name
-        Text(
-          user.displayName,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-
-        // Email
-        Text(
-          user.email,
-          style: TextStyle(
-            color: Colors.white.withOpacity(0.6),
-            fontSize: 14,
-          ),
-        ),
-
-        // Rank badge
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          decoration: BoxDecoration(
-            color: const Color(0xFFD4A84B).withOpacity(0.2),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: const Color(0xFFD4A84B).withOpacity(0.5),
-            ),
-          ),
-          child: Text(
-            user.rank.name,
-            style: const TextStyle(
-              color: Color(0xFFD4A84B),
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 
@@ -184,9 +396,9 @@ class ProfileScreen extends ConsumerWidget {
     return Center(
       child: Text(
         initial,
-        style: const TextStyle(
-          color: Color(0xFF1A1A2E),
-          fontSize: 40,
+        style: TextStyle(
+          color: AppColors.onPrimary,
+          fontSize: 48,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -198,10 +410,19 @@ class ProfileScreen extends ConsumerWidget {
     final xpToNext = user.xpToNextRank;
     final currentRank = user.rank.name;
     final nextRank = user.nextRank?.name;
-    final progress = xpToNext > 0 ? (totalXp % xpToNext) / xpToNext : 1.0;
+    final xpProgress = xpToNext > 0 ? (totalXp % xpToNext) : totalXp.toDouble();
+    final progress = xpToNext > 0 ? xpProgress / xpToNext : 1.0;
 
     return GlassContainer(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          AppColors.glassWhite,
+          AppColors.primary.withOpacity(0.05),
+        ],
+      ),
       child: Column(
         children: [
           Row(
@@ -210,29 +431,49 @@ class ProfileScreen extends ConsumerWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Kinh nghiệm',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 14,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(
-                        Icons.star,
-                        color: Color(0xFFD4A84B),
-                        size: 24,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        '$totalXp XP',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
+                      Container(
+                        padding: const EdgeInsets.all(AppSpacing.sm),
+                        decoration: BoxDecoration(
+                          gradient: AppColors.primaryGradient,
+                          borderRadius:
+                              BorderRadius.circular(AppSpacing.radiusSM),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primary.withOpacity(0.3),
+                              blurRadius: 8,
+                              spreadRadius: 1,
+                            ),
+                          ],
                         ),
+                        child: Icon(
+                          Icons.star,
+                          color: AppColors.onPrimary,
+                          size: 20,
+                        ),
+                      ),
+                      AppSpacing.horizontalSpaceSM,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Kinh nghiệm',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.7),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Text(
+                            '$totalXp XP',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -241,70 +482,127 @@ class ProfileScreen extends ConsumerWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
-                    currentRank,
-                    style: const TextStyle(
-                      color: Color(0xFFD4A84B),
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md,
+                      vertical: AppSpacing.xs,
                     ),
-                  ),
-                  if (nextRank != null)
-                    Text(
-                      '→ $nextRank',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.5),
-                        fontSize: 12,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withOpacity(0.2),
+                      borderRadius:
+                          BorderRadius.circular(AppSpacing.radiusMD),
+                      border: Border.all(
+                        color: AppColors.primary.withOpacity(0.4),
                       ),
                     ),
+                    child: Text(
+                      currentRank,
+                      style: const TextStyle(
+                        color: AppColors.primary,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  if (nextRank != null) ...[
+                    AppSpacing.verticalSpaceXS,
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.arrow_forward,
+                          size: 12,
+                          color: Colors.white.withOpacity(0.4),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          nextRank,
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.5),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ],
               ),
             ],
           ),
 
-          const SizedBox(height: 16),
+          AppSpacing.verticalSpaceLG,
 
-          // XP Progress bar
+          // XP Progress bar with enhanced styling
           Column(
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Còn $xpToNext XP để lên cấp',
+                    nextRank != null ? 'Còn $xpToNext XP để lên cấp' : 'Cấp tối đa',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.6),
+                      color: Colors.white.withOpacity(0.7),
                       fontSize: 12,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                  Text(
-                    '${(progress * 100).round()}%',
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.6),
-                      fontSize: 12,
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.sm,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withOpacity(0.2),
+                      borderRadius:
+                          BorderRadius.circular(AppSpacing.radiusSM),
+                    ),
+                    child: Text(
+                      '${(progress * 100).toInt()}%',
+                      style: TextStyle(
+                        color: AppColors.primary,
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
-              Container(
-                height: 8,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: FractionallySizedBox(
-                  alignment: Alignment.centerLeft,
-                  widthFactor: progress.clamp(0.0, 1.0),
-                  child: Container(
+              AppSpacing.verticalSpaceSM,
+              Stack(
+                children: [
+                  // Background
+                  Container(
+                    height: 10,
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFFD4A84B), Color(0xFFE8C87E)],
+                      color: Colors.white.withOpacity(0.1),
+                      borderRadius:
+                          BorderRadius.circular(AppSpacing.radiusSM),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.1),
                       ),
-                      borderRadius: BorderRadius.circular(4),
                     ),
                   ),
-                ),
+                  // Progress with gradient
+                  FractionallySizedBox(
+                    alignment: Alignment.centerLeft,
+                    widthFactor: progress.clamp(0.0, 1.0),
+                    child: Container(
+                      height: 10,
+                      decoration: BoxDecoration(
+                        gradient: AppColors.xpGradient,
+                        borderRadius:
+                            BorderRadius.circular(AppSpacing.radiusSM),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.xpGold.withOpacity(0.5),
+                            blurRadius: 8,
+                            spreadRadius: 1,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -316,6 +614,7 @@ class ProfileScreen extends ConsumerWidget {
   Widget _buildStatsGrid(WidgetRef ref, User user) {
     final collectionState = ref.watch(collectionNotifierProvider);
     final discoveredCount = collectionState.collection?.stats.discovered ?? 0;
+    final lessonsCompleted = user.totalXp ~/ 75; // Approximate
 
     return Row(
       children: [
@@ -324,25 +623,37 @@ class ProfileScreen extends ConsumerWidget {
             icon: Icons.visibility,
             label: 'Đã khám phá',
             value: '$discoveredCount',
-            color: const Color(0xFF64B5F6),
+            color: AppColors.info,
+            gradientColors: [
+              AppColors.info.withOpacity(0.3),
+              AppColors.info.withOpacity(0.1),
+            ],
           ),
         ),
-        const SizedBox(width: 12),
+        AppSpacing.horizontalSpaceSM,
         Expanded(
           child: _buildStatCard(
             icon: Icons.school,
             label: 'Đã học',
-            value: '${user.totalXp ~/ 75}', // Approximate
-            color: const Color(0xFF81C784),
+            value: '$lessonsCompleted',
+            color: AppColors.success,
+            gradientColors: [
+              AppColors.success.withOpacity(0.3),
+              AppColors.success.withOpacity(0.1),
+            ],
           ),
         ),
-        const SizedBox(width: 12),
+        AppSpacing.horizontalSpaceSM,
         Expanded(
           child: _buildStatCard(
             icon: Icons.emoji_events,
             label: 'Huy hiệu',
-            value: '0', // Would need badges count
-            color: const Color(0xFFD4A84B),
+            value: '0',
+            color: AppColors.badgePurple,
+            gradientColors: [
+              AppColors.badgePurple.withOpacity(0.3),
+              AppColors.badgePurple.withOpacity(0.1),
+            ],
           ),
         ),
       ],
@@ -354,29 +665,48 @@ class ProfileScreen extends ConsumerWidget {
     required String label,
     required String value,
     required Color color,
+    required List<Color> gradientColors,
   }) {
     return GlassContainer(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+      padding: const EdgeInsets.symmetric(
+        vertical: AppSpacing.lg,
+        horizontal: AppSpacing.sm,
+      ),
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: gradientColors,
+      ),
       child: Column(
         children: [
-          Icon(icon, color: color, size: 28),
-          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.all(AppSpacing.sm),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
+            ),
+            child: Icon(icon, color: color, size: 24),
+          ),
+          AppSpacing.verticalSpaceSM,
           Text(
             value,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 20,
+              fontSize: 22,
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 4),
+          AppSpacing.verticalSpaceXS,
           Text(
             label,
             style: TextStyle(
-              color: Colors.white.withOpacity(0.6),
+              color: Colors.white.withOpacity(0.7),
               fontSize: 11,
+              fontWeight: FontWeight.w500,
             ),
             textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
@@ -387,31 +717,60 @@ class ProfileScreen extends ConsumerWidget {
     final currentStreak = user.currentStreak;
     final longestStreak = user.longestStreak;
     final streakFreezes = user.streakFreezes;
+    final hasStreak = currentStreak > 0;
 
     return GlassContainer(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: hasStreak
+            ? [
+                AppColors.streakOrange.withOpacity(0.15),
+                AppColors.streakOrange.withOpacity(0.05),
+              ]
+            : [
+                AppColors.glassWhite,
+                Colors.transparent,
+              ],
+      ),
       child: Row(
         children: [
-          // Streak fire icon
+          // Streak fire icon with animation-ready glow
           Container(
-            width: 56,
-            height: 56,
+            width: 64,
+            height: 64,
             decoration: BoxDecoration(
-              color: currentStreak > 0
-                  ? const Color(0xFFFF6B35).withOpacity(0.2)
-                  : Colors.white.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(16),
+              gradient: hasStreak
+                  ? LinearGradient(
+                      colors: [
+                        AppColors.streakOrange.withOpacity(0.3),
+                        AppColors.streakOrange.withOpacity(0.1),
+                      ],
+                    )
+                  : null,
+              color: hasStreak ? null : Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(AppSpacing.radiusLG),
+              boxShadow: hasStreak
+                  ? [
+                      BoxShadow(
+                        color: AppColors.streakOrange.withOpacity(0.3),
+                        blurRadius: 16,
+                        spreadRadius: 2,
+                      ),
+                    ]
+                  : null,
             ),
             child: Icon(
               Icons.local_fire_department,
-              color: currentStreak > 0
-                  ? const Color(0xFFFF6B35)
+              color: hasStreak
+                  ? AppColors.streakOrange
                   : Colors.white.withOpacity(0.3),
-              size: 32,
+              size: 36,
             ),
           ),
 
-          const SizedBox(width: 16),
+          AppSpacing.horizontalSpaceMD,
 
           // Streak info
           Expanded(
@@ -421,59 +780,110 @@ class ProfileScreen extends ConsumerWidget {
                 Row(
                   children: [
                     Text(
-                      '$currentStreak ngày',
+                      '$currentStreak',
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 24,
+                        fontSize: 32,
                         fontWeight: FontWeight.bold,
+                        height: 1,
                       ),
                     ),
-                    if (currentStreak > 0)
-                      const Padding(
-                        padding: EdgeInsets.only(left: 8),
-                        child: Text('🔥', style: TextStyle(fontSize: 20)),
+                    const SizedBox(width: 6),
+                    Text(
+                      'ngày',
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.7),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
                       ),
+                    ),
+                    if (hasStreak) ...[
+                      const SizedBox(width: 6),
+                      const Text('🔥', style: TextStyle(fontSize: 20)),
+                    ],
                   ],
                 ),
+                AppSpacing.verticalSpaceXS,
                 Text(
                   'Chuỗi học tập hiện tại',
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.6),
-                    fontSize: 14,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
             ),
           ),
 
-          // Stats column
+          // Stats column with enhanced design
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(
-                'Kỷ lục: $longestStreak',
-                style: TextStyle(
-                  color: Colors.white.withOpacity(0.6),
-                  fontSize: 12,
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm,
+                  vertical: AppSpacing.xs,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusSM),
+                  border: Border.all(
+                    color: AppColors.primary.withOpacity(0.3),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.emoji_events,
+                      color: AppColors.primary,
+                      size: 14,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '$longestStreak',
+                      style: TextStyle(
+                        color: AppColors.primary,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 4),
-              Row(
-                children: [
-                  Icon(
-                    Icons.ac_unit,
-                    color: Colors.white.withOpacity(0.5),
-                    size: 14,
+              AppSpacing.verticalSpaceXS,
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm,
+                  vertical: AppSpacing.xs,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.info.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusSM),
+                  border: Border.all(
+                    color: AppColors.info.withOpacity(0.3),
                   ),
-                  const SizedBox(width: 4),
-                  Text(
-                    '$streakFreezes',
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.6),
-                      fontSize: 12,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.ac_unit,
+                      color: AppColors.info,
+                      size: 14,
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 4),
+                    Text(
+                      '$streakFreezes',
+                      style: TextStyle(
+                        color: AppColors.info,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -482,74 +892,199 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildActionButtons(BuildContext context, WidgetRef ref) {
+  Widget _buildSettingsCards(BuildContext context, WidgetRef ref) {
     return Column(
       children: [
-        // Settings button
-        _buildActionButton(
-          icon: Icons.settings_outlined,
-          label: 'Cài đặt',
+        // Account settings card
+        _buildMenuCard(
+          icon: Icons.person_outline,
+          title: 'Thông tin cá nhân',
+          subtitle: 'Chỉnh sửa hồ sơ và ảnh đại diện',
+          color: AppColors.info,
           onTap: () {
-            // Navigate to settings
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Cài đặt - Coming soon')),
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const PersonalInfoScreen(),
+              ),
             );
           },
         ),
 
-        const SizedBox(height: 12),
+        AppSpacing.verticalSpaceSM,
+
+        // Friends card
+        _buildMenuCard(
+          icon: Icons.people_outline,
+          title: 'Bạn bè',
+          subtitle: 'Kết nối và thi đua với bạn bè',
+          color: AppColors.primary,
+          onTap: () => context.push('/friends'),
+        ),
+
+        AppSpacing.verticalSpaceSM,
+
+        // Gems Shop card
+        _buildMenuCard(
+          icon: Icons.diamond_outlined,
+          title: 'Cửa Hàng Gems',
+          subtitle: 'Mua các vật phẩm hữu ích',
+          color: AppColors.gemYellow,
+          onTap: () => context.push('/gems-shop'),
+        ),
+
+        AppSpacing.verticalSpaceSM,
+
+        // Notifications card
+        _buildMenuCard(
+          icon: Icons.notifications_outlined,
+          title: 'Thông báo',
+          subtitle: 'Quản lý nhắc nhở và thông báo',
+          color: AppColors.warning,
+          onTap: () => context.push('/notifications'),
+        ),
+
+        AppSpacing.verticalSpaceSM,
+
+        // Settings card
+        _buildMenuCard(
+          icon: Icons.settings_outlined,
+          title: 'Cài đặt',
+          subtitle: 'Tùy chỉnh ứng dụng',
+          color: AppColors.textSecondary,
+          onTap: () => context.push('/settings'),
+        ),
+
+        AppSpacing.verticalSpaceSM,
+
+        // Help & Support card
+        _buildMenuCard(
+          icon: Icons.help_outline,
+          title: 'Trợ giúp & Hỗ trợ',
+          subtitle: 'Câu hỏi thường gặp và liên hệ',
+          color: AppColors.success,
+          onTap: () {
+            context.push('/help');
+          },
+        ),
+
+        AppSpacing.verticalSpaceLG,
 
         // Logout button
-        _buildActionButton(
-          icon: Icons.logout,
-          label: 'Đăng xuất',
-          isDestructive: true,
-          onTap: () => _showLogoutDialog(context, ref),
-        ),
+        _buildLogoutButton(context, ref),
       ],
     );
   }
 
-  Widget _buildActionButton({
+  Widget _buildMenuCard({
     required IconData icon,
-    required String label,
+    required String title,
+    required String subtitle,
+    required Color color,
     required VoidCallback onTap,
-    bool isDestructive = false,
   }) {
-    return GestureDetector(
+    return GlassCard(
+      padding: const EdgeInsets.all(AppSpacing.md),
       onTap: onTap,
+      child: Row(
+        children: [
+          // Icon with gradient background
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  color.withOpacity(0.3),
+                  color.withOpacity(0.1),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
+              border: Border.all(
+                color: color.withOpacity(0.3),
+              ),
+            ),
+            child: Icon(
+              icon,
+              color: color,
+              size: 24,
+            ),
+          ),
+
+          AppSpacing.horizontalSpaceMD,
+
+          // Text content
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                AppSpacing.verticalSpaceXS,
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.6),
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Arrow icon
+          Icon(
+            Icons.chevron_right,
+            color: Colors.white.withOpacity(0.3),
+            size: 24,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLogoutButton(BuildContext context, WidgetRef ref) {
+    return GestureDetector(
+      onTap: () => _showLogoutDialog(context, ref),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.lg,
+          vertical: AppSpacing.md,
+        ),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.08),
-          borderRadius: BorderRadius.circular(16),
+          gradient: LinearGradient(
+            colors: [
+              AppColors.error.withOpacity(0.15),
+              AppColors.error.withOpacity(0.05),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusLG),
           border: Border.all(
-            color: isDestructive
-                ? Colors.red.withOpacity(0.3)
-                : Colors.white.withOpacity(0.1),
+            color: AppColors.error.withOpacity(0.3),
+            width: 1.5,
           ),
         ),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              icon,
-              color: isDestructive ? Colors.red[300] : Colors.white70,
-              size: 24,
+              Icons.logout,
+              color: AppColors.error,
+              size: 20,
             ),
-            const SizedBox(width: 16),
+            AppSpacing.horizontalSpaceSM,
             Text(
-              label,
+              'Đăng xuất',
               style: TextStyle(
-                color: isDestructive ? Colors.red[300] : Colors.white,
+                color: AppColors.error,
                 fontSize: 16,
+                fontWeight: FontWeight.w600,
               ),
-            ),
-            const Spacer(),
-            Icon(
-              Icons.chevron_right,
-              color: isDestructive
-                  ? Colors.red.withOpacity(0.5)
-                  : Colors.white.withOpacity(0.3),
             ),
           ],
         ),
@@ -561,36 +1096,84 @@ class ProfileScreen extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1A2E),
+        backgroundColor: AppColors.surface,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: BorderSide(color: Colors.white.withOpacity(0.1)),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusLG),
+          side: BorderSide(color: Colors.white.withOpacity(0.15)),
         ),
-        title: const Text(
-          'Đăng xuất',
-          style: TextStyle(color: Colors.white),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(AppSpacing.sm),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.error.withOpacity(0.3),
+                    AppColors.error.withOpacity(0.1),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(AppSpacing.radiusSM),
+              ),
+              child: Icon(
+                Icons.logout,
+                color: AppColors.error,
+                size: 20,
+              ),
+            ),
+            AppSpacing.horizontalSpaceSM,
+            const Text(
+              'Đăng xuất',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
         content: Text(
-          'Bạn có chắc chắn muốn đăng xuất?',
-          style: TextStyle(color: Colors.white.withOpacity(0.7)),
+          'Bạn có chắc chắn muốn đăng xuất khỏi tài khoản?',
+          style: TextStyle(
+            color: Colors.white.withOpacity(0.8),
+            fontSize: 15,
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.lg,
+                vertical: AppSpacing.sm,
+              ),
+            ),
             child: Text(
               'Hủy',
-              style: TextStyle(color: Colors.white.withOpacity(0.7)),
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.7),
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
-          TextButton(
+          ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
               ref.read(authNotifierProvider.notifier).logout();
               context.go('/login');
             },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.error,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.lg,
+                vertical: AppSpacing.sm,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppSpacing.radiusSM),
+              ),
+            ),
             child: const Text(
               'Đăng xuất',
-              style: TextStyle(color: Colors.red),
+              style: TextStyle(fontWeight: FontWeight.w600),
             ),
           ),
         ],

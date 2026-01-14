@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,6 +27,8 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
     with TickerProviderStateMixin {
   bool _isLoading = true;
   bool _showHotspots = true;
+  bool _modelLoadError = false;
+  String? _errorMessage;
   Motif? _selectedMotif;
   UnlockResult? _pendingDiscovery;
   bool _showDiscoveryAnimation = false;
@@ -33,15 +37,34 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
   double _cameraRotationY = 0.0;
   double _cameraDistance = 5.0;
 
+  // Timer for model loading timeout
+  Timer? _loadingTimer;
+
   @override
   void initState() {
     super.initState();
     // Set immersive mode for 3D viewer
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+
+    // Extended timeout for model loading (60 seconds)
+    // After timeout, just hide the loading overlay but keep model loading in background
+    // Only show error if there's an actual error event from ModelViewer
+    _loadingTimer = Timer(const Duration(seconds: 60), () {
+      if (mounted && _isLoading) {
+        setState(() {
+          _isLoading = false;
+          // Don't set error state - let the model continue loading
+        });
+        debugPrint('[URN_VIEWER] Model loading timeout after 60 seconds - continuing in background');
+      }
+    });
   }
 
   @override
   void dispose() {
+    // Cancel the loading timer to prevent memory leak
+    _loadingTimer?.cancel();
+
     // Restore system UI
     SystemChrome.setEnabledSystemUIMode(
       SystemUiMode.manual,
@@ -180,7 +203,10 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
         ),
 
         // Loading overlay
-        if (_isLoading) _buildLoadingOverlay(),
+        if (_isLoading && !_modelLoadError) _buildLoadingOverlay(),
+
+        // Model load error overlay
+        if (_modelLoadError) _buildModelErrorOverlay(),
 
         // Top controls
         Positioned(
@@ -191,7 +217,7 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
         ),
 
         // Hotspot overlays (positioned based on 3D coordinates)
-        if (_showHotspots && !_isLoading)
+        if (_showHotspots && !_isLoading && !_modelLoadError)
           ...urnDetail.motifs.map(
             (motif) => HotspotOverlay(
               key: ValueKey(motif.id),
@@ -257,15 +283,7 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
     final modelPath = urnDetail.urn.effectiveModelUrl;
 
     debugPrint('[URN_VIEWER] Loading model from: $modelPath');
-
-    // Set loading to false after model load delay
-    if (_isLoading) {
-      Future.delayed(const Duration(seconds: 3), () {
-        if (mounted && _isLoading) {
-          setState(() => _isLoading = false);
-        }
-      });
-    }
+    debugPrint('[URN_VIEWER] Loading state: $_isLoading, Error state: $_modelLoadError');
 
     return ModelViewer(
       src: modelPath,
@@ -278,7 +296,7 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
       disableZoom: false,
       disablePan: false,
       disableTap: false,
-      backgroundColor: const Color(0xFF1A1A1A),
+      backgroundColor: const Color(0xFF1A1A2E), // Lighter background for debugging
       loading: Loading.eager,
       reveal: Reveal.auto,
       cameraOrbit: '0deg 75deg 5m',
@@ -387,6 +405,35 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
       // Track camera orbit changes
       const modelViewer = document.querySelector('model-viewer');
       if (modelViewer) {
+        // Model load success handler
+        modelViewer.addEventListener('load', () => {
+          console.log('[MODEL_VIEWER] Model loaded successfully');
+          if (window.flutter_inappwebview) {
+            window.flutter_inappwebview.callHandler('onModelLoad', { success: true });
+          }
+        });
+
+        // Model load error handler
+        modelViewer.addEventListener('error', (event) => {
+          console.error('[MODEL_VIEWER] Error loading model:', event);
+          if (window.flutter_inappwebview) {
+            window.flutter_inappwebview.callHandler('onModelError', {
+              message: 'Failed to load 3D model. Check network connection or CORS settings.',
+              detail: event?.detail || 'Unknown error'
+            });
+          }
+        });
+
+        // Model progress handler
+        modelViewer.addEventListener('progress', (event) => {
+          const progress = event.detail.totalProgress;
+          console.log('[MODEL_VIEWER] Loading progress:', progress);
+          if (window.flutter_inappwebview) {
+            window.flutter_inappwebview.callHandler('onModelProgress', { progress });
+          }
+        });
+
+        // Camera change handler
         modelViewer.addEventListener('camera-change', (e) => {
           if (window.flutter_inappwebview) {
             const orbit = modelViewer.getCameraOrbit();
@@ -397,6 +444,14 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
             });
           }
         });
+      } else {
+        console.error('[MODEL_VIEWER] model-viewer element not found');
+        if (window.flutter_inappwebview) {
+          window.flutter_inappwebview.callHandler('onModelError', {
+            message: 'Model viewer component not initialized',
+            detail: 'Element not found'
+          });
+        }
       }
     ''';
   }
@@ -499,13 +554,13 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFD4A84B),
+                  color: AppColors.primary,
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
                   badge,
                   style: const TextStyle(
-                    color: Color(0xFF1A1A2E),
+                    color: AppColors.onPrimary,
                     fontSize: 8,
                     fontWeight: FontWeight.bold,
                   ),
@@ -544,7 +599,7 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
             ),
           ],
         ),
-        backgroundColor: const Color(0xFF1A1A2E),
+        backgroundColor: AppColors.surface,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -670,18 +725,184 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
               'Đang tải mô hình 3D...',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 16,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 8),
+            SizedBox(height: 12),
             Text(
-              'Vui lòng chờ trong giây lát',
+              'Vui lòng đợi',
               style: TextStyle(
-                color: Colors.white60,
-                fontSize: 14,
+                color: Colors.white70,
+                fontSize: 15,
+              ),
+            ),
+            SizedBox(height: 20),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 32),
+              child: Text(
+                'Thiết bị yếu có thể mất nhiều thời gian hơn',
+                style: TextStyle(
+                  color: Colors.white54,
+                  fontSize: 13,
+                  fontStyle: FontStyle.italic,
+                ),
+                textAlign: TextAlign.center,
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModelErrorOverlay() {
+    return Container(
+      color: Colors.black87,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Error icon
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.2),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.error_outline,
+                  color: Colors.red,
+                  size: 64,
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // Error title
+              const Text(
+                'Không thể tải mô hình 3D',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+
+              // Error message
+              Text(
+                _errorMessage ??
+                    'Đã xảy ra lỗi khi tải mô hình. Vui lòng kiểm tra kết nối mạng.',
+                style: const TextStyle(
+                  color: Colors.white70,
+                  fontSize: 14,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 32),
+
+              // Retry button
+              ElevatedButton.icon(
+                onPressed: () {
+                  setState(() {
+                    _isLoading = true;
+                    _modelLoadError = false;
+                    _errorMessage = null;
+                  });
+                  // Refresh the urn data
+                  ref.invalidate(urnDetailProvider(widget.urnSlug));
+                  // Reset timeout (60 seconds)
+                  Future.delayed(const Duration(seconds: 60), () {
+                    if (mounted && _isLoading) {
+                      setState(() {
+                        _isLoading = false;
+                        // Don't set error state - let the model continue loading
+                      });
+                      debugPrint('[URN_VIEWER] Model loading timeout after 60 seconds - continuing in background');
+                    }
+                  });
+                },
+                icon: const Icon(Icons.refresh),
+                label: const Text('Thử lại'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: AppColors.onPrimary,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 16,
+                  ),
+                  textStyle: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Back button
+              TextButton.icon(
+                onPressed: () => context.pop(),
+                icon: const Icon(Icons.arrow_back),
+                label: const Text('Quay lại'),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.white70,
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // Troubleshooting tips
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.1),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Gợi ý khắc phục:',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    _buildTroubleshootingTip(
+                      '• Kiểm tra kết nối Internet',
+                    ),
+                    _buildTroubleshootingTip(
+                      '• Thử chuyển sang WiFi hoặc 4G/5G',
+                    ),
+                    _buildTroubleshootingTip(
+                      '• Khởi động lại ứng dụng',
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTroubleshootingTip(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 4),
+      child: Text(
+        text,
+        style: const TextStyle(
+          color: Colors.white60,
+          fontSize: 12,
         ),
       ),
     );

@@ -5,8 +5,11 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/glass/animated_background.dart';
+import '../../../../shared/widgets/shimmer/shimmer_skeleton.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../auth/presentation/providers/auth_state.dart';
+import '../../../daily_goals/presentation/widgets/compact_daily_goal_widget.dart';
+import '../../../mascot/presentation/widgets/compact_mascot_display.dart';
 import '../providers/explore_provider.dart';
 import '../widgets/urn_card.dart';
 
@@ -107,7 +110,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
     // Get user name if authenticated
     String? userName;
     if (authState.isAuthenticated && authState.user != null) {
-      userName = authState.user!.name;
+      userName = authState.user!.displayName;
     }
 
     return Padding(
@@ -137,6 +140,10 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              // Mascot
+              const CompactMascotDisplay(),
+              AppSpacing.horizontalSpaceSM,
+
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -172,6 +179,11 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
 
           // Search/Filter placeholder
           _buildSearchBar(context),
+
+          AppSpacing.verticalSpaceMD,
+
+          // Daily Goal Widget
+          const CompactDailyGoalWidget(),
 
           AppSpacing.verticalSpaceMD,
 
@@ -462,23 +474,37 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
   }
 
   Widget _buildLoadingState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Responsive grid based on width
+        int crossAxisCount = 2;
+        if (constraints.maxWidth > 600) {
+          crossAxisCount = 3;
+        }
+        if (constraints.maxWidth > 900) {
+          crossAxisCount = 4;
+        }
+
+        return GridView.builder(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.md,
+            AppSpacing.sm,
+            AppSpacing.md,
+            100,
           ),
-          const SizedBox(height: 16),
-          Text(
-            'Đang tải...',
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.7),
-              fontSize: 16,
-            ),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            childAspectRatio: 0.75,
+            crossAxisSpacing: AppSpacing.md,
+            mainAxisSpacing: AppSpacing.md,
           ),
-        ],
-      ),
+          // Show 9 shimmer cards (number of urns)
+          itemCount: 9,
+          itemBuilder: (context, index) {
+            return const ShimmerUrnCard();
+          },
+        );
+      },
     );
   }
 

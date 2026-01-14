@@ -1,7 +1,7 @@
 name: luuniensuki_lms
 description: "Luuniensuki LMS - Vietnamese Cultural Heritage Learning App"
 publish_to: 'none'
-version: 1.4.0+5
+version: 1.5.0+6
 
 environment:
   sdk: ^3.5.4
@@ -42,6 +42,7 @@ dependencies:
 
   # Animations & Effects
   confetti: ^0.7.0
+  vibration: ^1.8.4
 
   # Utilities
   dartz: ^0.10.1
@@ -49,6 +50,14 @@ dependencies:
   json_annotation: ^4.8.1
   intl: ^0.18.1
   equatable: ^2.0.5
+  path_provider: ^2.1.1
+  crypto: ^3.0.3
+  url_launcher: ^6.2.3
+
+  # Push Notifications
+  firebase_core: ^2.24.2
+  firebase_messaging: ^14.7.10
+  flutter_local_notifications: ^17.2.0
 
   # Icons
   cupertino_icons: ^1.0.6
@@ -78,3 +87,4 @@ flutter:
     - assets/animations/
     - assets/models/
     - assets/data/
+    - assets/sounds/

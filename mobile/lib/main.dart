@@ -5,6 +5,7 @@ import 'core/storage/hive_storage.dart';
 import 'core/theme/app_theme.dart';
 import 'routing/app_router.dart';
 import 'features/auth/presentation/providers/auth_provider.dart';
+import 'features/daily_goals/presentation/providers/daily_goal_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,8 +33,11 @@ class _LuuniensukiAppState extends ConsumerState<LuuniensukiApp> {
     super.initState();
     // Initialize auth in initState, not in build
     // Use Future.microtask to avoid calling ref during initState
-    Future.microtask(() {
-      ref.read(authNotifierProvider.notifier).initialize();
+    Future.microtask(() async {
+      // Await initialize() to complete before accessing dailyGoalXpSyncProvider
+      await ref.read(authNotifierProvider.notifier).initialize();
+      // Initialize daily goal XP sync to track XP changes
+      ref.read(dailyGoalXpSyncProvider);
     });
   }
 

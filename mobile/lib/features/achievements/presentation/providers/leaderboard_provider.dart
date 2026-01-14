@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/api_constants.dart';
-import '../../../../core/network/dio_provider.dart';
+import '../../../../core/network/api_client.dart';
 import '../../data/models/leaderboard_dto.dart';
 
 /// Provider for leaderboard data

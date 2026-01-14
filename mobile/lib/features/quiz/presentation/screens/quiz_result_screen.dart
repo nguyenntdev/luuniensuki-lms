@@ -5,7 +5,13 @@ import 'package:confetti/confetti.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/services/sound_service.dart';
 import '../../../urn_viewer/data/models/urn_dtos.dart';
+import '../../../gems/presentation/providers/gems_provider.dart';
+import '../../../gems/domain/entities/gem_transaction.dart';
+import '../../../mascot/presentation/widgets/mascot_bubble.dart';
+import '../../../mascot/presentation/widgets/mascot_widget.dart';
+import '../../../mascot/domain/mascot_messages.dart';
 
 /// Quiz result screen showing score and feedback.
 class QuizResultScreen extends ConsumerStatefulWidget {
@@ -40,6 +46,56 @@ class _QuizResultScreenState extends ConsumerState<QuizResultScreen> {
     if (widget.result.passed) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _confettiController.play();
+
+        // Play lesson complete sound
+        ref.read(soundServiceProvider).playLessonComplete();
+
+        // Award bonus gems for perfect score (100%)
+        if (widget.result.percentage == 100) {
+          ref.read(gemsNotifierProvider.notifier).addGems(
+                amount: 5,
+                type: GemTransactionType.earnedPerfect,
+                description: 'Hoàn hảo: ${widget.result.totalQuestions}/${widget.result.totalQuestions} câu đúng',
+              );
+
+          // Show perfect score message from mascot
+          Future.delayed(const Duration(milliseconds: 500), () {
+            if (mounted) {
+              showMascotBubble(
+                context: context,
+                message: MascotMessages.random(MascotMessages.perfectScore),
+                expression: MascotExpression.celebrating,
+                duration: const Duration(seconds: 4),
+              );
+            }
+          });
+        } else {
+          // Show celebration message for passing
+          Future.delayed(const Duration(milliseconds: 500), () {
+            if (mounted) {
+              showMascotBubble(
+                context: context,
+                message: MascotMessages.random(MascotMessages.celebration),
+                expression: MascotExpression.happy,
+                duration: const Duration(seconds: 4),
+              );
+            }
+          });
+        }
+      });
+    } else {
+      // Show motivation for failing
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(const Duration(milliseconds: 500), () {
+          if (mounted) {
+            showMascotBubble(
+              context: context,
+              message: MascotMessages.random(MascotMessages.motivation),
+              expression: MascotExpression.encouraging,
+              duration: const Duration(seconds: 4),
+            );
+          }
+        });
       });
     }
   }
