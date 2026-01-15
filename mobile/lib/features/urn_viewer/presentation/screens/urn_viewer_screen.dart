@@ -1,17 +1,37 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:model_viewer_plus/model_viewer_plus.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/entities/urn.dart';
 import '../providers/urn_provider.dart';
+import '../widgets/custom_model_viewer.dart';
 import '../widgets/discovery_animation.dart';
 import '../widgets/hotspot_overlay.dart';
 import '../widgets/motif_sidebar.dart';
+
+enum ModelQuality {
+  low,
+  medium,
+  high,
+}
+
+class _ModelSelection {
+  final String url;
+  final ModelQuality quality;
+  final bool isLocal;
+
+  const _ModelSelection({
+    required this.url,
+    required this.quality,
+    required this.isLocal,
+  });
+}
 
 /// 3D Urn Viewer Screen with hotspot interaction and motif discovery.
 class UrnViewerScreen extends ConsumerStatefulWidget {
@@ -33,6 +53,12 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
   UnlockResult? _pendingDiscovery;
   bool _showDiscoveryAnimation = false;
 
+  String? _resolvedModelUrl;
+  String? _originalModelUrl;
+  ModelQuality? _modelQuality;
+  bool _isResolvingModel = false;
+  bool _usedFallbackModel = false;
+
   // Track camera position for hotspot positioning
   double _cameraRotationY = 0.0;
   double _cameraDistance = 5.0;
@@ -40,9 +66,27 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
   // Timer for model loading timeout
   Timer? _loadingTimer;
 
+  // Debug tracking
+  double _modelLoadProgress = 0.0;
+  String? _debugInfo;
+  bool _isOnline = true;
+  DateTime? _loadStartTime;
+
   @override
   void initState() {
     super.initState();
+
+    _loadStartTime = DateTime.now();
+
+    debugPrint('[URN_VIEWER] ═══════════════════════════════════════');
+    debugPrint('[URN_VIEWER] === 3D VIEWER DEBUG START ===');
+    debugPrint('[URN_VIEWER] Screen initializing for slug: ${widget.urnSlug}');
+    debugPrint('[URN_VIEWER] Timestamp: ${DateTime.now().toIso8601String()}');
+    debugPrint('[URN_VIEWER] ═══════════════════════════════════════');
+
+    // Check network connectivity
+    _checkConnectivity();
+
     // Set immersive mode for 3D viewer
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
@@ -51,17 +95,40 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
     // Only show error if there's an actual error event from ModelViewer
     _loadingTimer = Timer(const Duration(seconds: 60), () {
       if (mounted && _isLoading) {
+        final elapsed = DateTime.now().difference(_loadStartTime!).inSeconds;
         setState(() {
           _isLoading = false;
           // Don't set error state - let the model continue loading
         });
-        debugPrint('[URN_VIEWER] Model loading timeout after 60 seconds - continuing in background');
+        debugPrint('[URN_VIEWER] ⚠️ Model loading timeout after $elapsed seconds - continuing in background');
+        debugPrint('[URN_VIEWER] Last progress: ${(_modelLoadProgress * 100).toInt()}%');
       }
     });
   }
 
+  /// Check network connectivity before loading model
+  Future<void> _checkConnectivity() async {
+    try {
+      // Simple connectivity check using socket
+      final result = await InternetAddress.lookup('google.com')
+          .timeout(const Duration(seconds: 5));
+      _isOnline = result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+      debugPrint('[URN_VIEWER] Network connectivity check: ${_isOnline ? "✅ Online" : "❌ Offline"}');
+    } catch (e) {
+      _isOnline = false;
+      debugPrint('[URN_VIEWER] ❌ Network connectivity check failed: $e');
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'Không có kết nối Internet. Vui lòng kiểm tra và thử lại.';
+        });
+      }
+    }
+  }
+
   @override
   void dispose() {
+    debugPrint('[URN_VIEWER] Screen disposing for slug: ${widget.urnSlug}');
+
     // Cancel the loading timer to prevent memory leak
     _loadingTimer?.cancel();
 
@@ -70,7 +137,159 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
       SystemUiMode.manual,
       overlays: SystemUiOverlay.values,
     );
+
+    debugPrint('[URN_VIEWER] === 3D VIEWER DEBUG END ===');
     super.dispose();
+  }
+
+  Future<void> _resolveModelUrl(UrnDetail urnDetail) async {
+    if (_isResolvingModel || _resolvedModelUrl != null) {
+      return;
+    }
+
+    _isResolvingModel = true;
+    final selection = await _selectModelUrl(urnDetail);
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _resolvedModelUrl = selection.url;
+      _originalModelUrl = urnDetail.urn.remoteModelUrl;
+      _modelQuality = selection.quality;
+      _isResolvingModel = false;
+    });
+  }
+
+  Future<_ModelSelection> _selectModelUrl(UrnDetail urnDetail) async {
+    final baseUrl = urnDetail.urn.remoteModelUrl;
+    final deviceInfo = DeviceInfoPlugin();
+    bool isLowRamDevice = false;
+    int? totalMemMb;
+
+    if (Platform.isAndroid) {
+      final androidInfo = await deviceInfo.androidInfo;
+      isLowRamDevice = androidInfo.isLowRamDevice;
+      totalMemMb = await _readAndroidTotalMemoryMb();
+
+      debugPrint('[URN_VIEWER] Device: ${androidInfo.manufacturer} ${androidInfo.model}');
+      debugPrint('[URN_VIEWER] SDK: ${androidInfo.version.sdkInt}');
+      debugPrint('[URN_VIEWER] Low RAM: $isLowRamDevice');
+      if (totalMemMb != null) {
+        debugPrint('[URN_VIEWER] Total RAM: ${totalMemMb}MB');
+      }
+    }
+
+    final quality = _chooseModelQuality(
+      totalMemMb: totalMemMb,
+      isLowRamDevice: isLowRamDevice,
+    );
+
+    final localAssetPath = _localAssetFor(urnDetail.urn.slug, quality);
+    if (localAssetPath != null) {
+      debugPrint('[URN_VIEWER] Using local asset for quality: $quality');
+      return _ModelSelection(
+        url: _androidAssetUrl(localAssetPath),
+        quality: quality,
+        isLocal: true,
+      );
+    }
+
+    if (urnDetail.urn.slug != 'cao-dinh') {
+      return _ModelSelection(
+        url: baseUrl,
+        quality: ModelQuality.high,
+        isLocal: false,
+      );
+    }
+
+    final remoteVariant = _applyQualitySuffix(baseUrl, quality);
+    debugPrint('[URN_VIEWER] Using remote model for quality: $quality');
+    return _ModelSelection(
+      url: remoteVariant,
+      quality: quality,
+      isLocal: false,
+    );
+  }
+
+  ModelQuality _chooseModelQuality({
+    required int? totalMemMb,
+    required bool isLowRamDevice,
+  }) {
+    if (isLowRamDevice) {
+      return ModelQuality.low;
+    }
+    if (totalMemMb != null) {
+      if (totalMemMb <= 3072) {
+        return ModelQuality.low;
+      }
+      if (totalMemMb <= 4096) {
+        return ModelQuality.medium;
+      }
+      return ModelQuality.high;
+    }
+    return ModelQuality.medium;
+  }
+
+  Future<int?> _readAndroidTotalMemoryMb() async {
+    if (!Platform.isAndroid) {
+      return null;
+    }
+
+    try {
+      final data = await File('/proc/meminfo').readAsString();
+      final match = RegExp(r'^MemTotal:\s+(\d+) kB', multiLine: true).firstMatch(data);
+      if (match == null) {
+        return null;
+      }
+      final totalKb = int.tryParse(match.group(1) ?? '');
+      if (totalKb == null) {
+        return null;
+      }
+      return totalKb ~/ 1024;
+    } catch (e) {
+      debugPrint('[URN_VIEWER] Failed to read /proc/meminfo: $e');
+      return null;
+    }
+  }
+
+  String? _localAssetFor(String slug, ModelQuality quality) {
+    if (!Platform.isAndroid) {
+      return null;
+    }
+    if (slug != 'cao-dinh') {
+      return null;
+    }
+
+    switch (quality) {
+      case ModelQuality.low:
+        return 'assets/models/CAO-DINH-v1-1k.glb';
+      case ModelQuality.medium:
+        return 'assets/models/CAO-DINH-v1.glb';
+      case ModelQuality.high:
+        return null;
+    }
+  }
+
+  String _androidAssetUrl(String assetPath) {
+    return 'file:///android_asset/flutter_assets/$assetPath';
+  }
+
+  String _applyQualitySuffix(String url, ModelQuality quality) {
+    if (quality == ModelQuality.high) {
+      return url;
+    }
+
+    final suffix = quality == ModelQuality.low ? '-1k' : '-2k';
+    final uri = Uri.parse(url);
+    final path = uri.path;
+    if (!path.toLowerCase().endsWith('.glb')) {
+      return url;
+    }
+
+    final updatedPath =
+        path.replaceFirst(RegExp(r'\.glb$', caseSensitive: false), '$suffix.glb');
+    return uri.replace(path: updatedPath).toString();
   }
 
   Future<void> _handleHotspotTap(Motif motif) async {
@@ -195,6 +414,22 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
     final screenSize = MediaQuery.of(context).size;
     final sidebarWidth = screenSize.width * 0.85;
 
+    // Log urn details on first build
+    debugPrint('[URN_VIEWER] ───────────────────────────────────────');
+    debugPrint('[URN_VIEWER] Building viewer content');
+    debugPrint('[URN_VIEWER] Urn ID: ${urnDetail.urn.id}');
+    debugPrint('[URN_VIEWER] Urn Name: ${urnDetail.urn.name}');
+    debugPrint('[URN_VIEWER] Urn Slug: ${urnDetail.urn.slug}');
+    debugPrint('[URN_VIEWER] Model URL from API: ${urnDetail.urn.modelUrl}');
+    debugPrint('[URN_VIEWER] Effective Model URL: ${urnDetail.urn.effectiveModelUrl}');
+    debugPrint('[URN_VIEWER] Motif count: ${urnDetail.motifs.length}');
+    debugPrint('[URN_VIEWER] Discovered count: ${urnDetail.urn.discoveredCount}');
+    debugPrint('[URN_VIEWER] Network status: ${_isOnline ? "Online" : "Offline"}');
+    debugPrint('[URN_VIEWER] ───────────────────────────────────────');
+
+    // Build debug info string
+    _debugInfo = _buildDebugInfoString(urnDetail);
+
     return Stack(
       children: [
         // 3D Model Viewer - Full screen
@@ -279,181 +514,142 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
   }
 
   Widget _build3DViewer(UrnDetail urnDetail) {
-    // Use remote URL for reliable model loading
-    final modelPath = urnDetail.urn.effectiveModelUrl;
+    if (_resolvedModelUrl == null) {
+      _resolveModelUrl(urnDetail);
+      return Container(
+        color: const Color(0xFF1A1A2E),
+        child: const Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+          ),
+        ),
+      );
+    }
 
-    debugPrint('[URN_VIEWER] Loading model from: $modelPath');
-    debugPrint('[URN_VIEWER] Loading state: $_isLoading, Error state: $_modelLoadError');
+    final modelPath = _resolvedModelUrl!;
 
-    return ModelViewer(
-      src: modelPath,
+    // Verify model URL format
+    _verifyModelUrl(modelPath, urnDetail);
+
+    debugPrint('[URN_VIEWER] ┌─────────────────────────────────────');
+    debugPrint('[URN_VIEWER] │ Starting 3D Model Load');
+    debugPrint('[URN_VIEWER] │ Model URL: $modelPath');
+    debugPrint('[URN_VIEWER] │ URL is valid: ${Uri.tryParse(modelPath) != null}');
+    debugPrint('[URN_VIEWER] │ Loading state: $_isLoading');
+    debugPrint('[URN_VIEWER] │ Error state: $_modelLoadError');
+    debugPrint('[URN_VIEWER] │ Progress: ${(_modelLoadProgress * 100).toInt()}%');
+    debugPrint('[URN_VIEWER] └─────────────────────────────────────');
+
+    return CustomModelViewer(
+      modelUrl: modelPath,
       alt: urnDetail.urn.name,
-      ar: true, // Enable AR
-      arModes: const ['scene-viewer', 'webxr', 'quick-look'],
-      arScale: ArScale.auto,
-      autoRotate: false,
+      hotspots: urnDetail.motifs,
+      backgroundColor: const Color(0xFF1A1A2E),
+      autoRotate: true,  // Enable auto-rotate to help see the model
       cameraControls: true,
       disableZoom: false,
-      disablePan: false,
-      disableTap: false,
-      backgroundColor: const Color(0xFF1A1A2E), // Lighter background for debugging
-      loading: Loading.eager,
-      reveal: Reveal.auto,
-      cameraOrbit: '0deg 75deg 5m',
-      minCameraOrbit: 'auto auto 2m',
-      maxCameraOrbit: 'auto auto 10m',
-      fieldOfView: '45deg',
-      interactionPrompt: InteractionPrompt.none,
-      // Hotspot HTML for model-viewer (click detection)
-      innerModelViewerHtml: _generateHotspotHtml(urnDetail.motifs),
-      relatedJs: _generateHotspotJs(),
+      cameraOrbit: '45deg 60deg 3m',  // Better initial angle
+      minCameraOrbit: 'auto auto 1m',  // Allow closer zoom
+      maxCameraOrbit: 'auto auto 15m',
+      fieldOfView: '35deg',  // Wider field of view
+      onModelLoaded: () {
+        debugPrint('[URN_VIEWER] ✅ Model loaded successfully via CustomModelViewer');
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+            _modelLoadError = false;
+            _errorMessage = null;
+          });
+        }
+      },
+      onModelError: (error) {
+        debugPrint('[URN_VIEWER] ❌ Model load error: $error');
+        if (!_usedFallbackModel &&
+            _originalModelUrl != null &&
+            modelPath != _originalModelUrl) {
+          debugPrint('[URN_VIEWER] ⚠️ Falling back to original model URL.');
+          setState(() {
+            _resolvedModelUrl = _originalModelUrl;
+            _usedFallbackModel = true;
+            _isLoading = true;
+            _modelLoadError = false;
+            _errorMessage = null;
+          });
+          return;
+        }
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+            _modelLoadError = true;
+            _errorMessage = error;
+          });
+        }
+      },
+      onProgress: (progress) {
+        if (mounted) {
+          setState(() {
+            _modelLoadProgress = progress / 100.0;
+          });
+        }
+      },
+      onHotspotTap: (motifId) {
+        debugPrint('[URN_VIEWER] 🎯 Hotspot tapped: $motifId');
+        final motif = urnDetail.motifs.firstWhere(
+          (m) => m.id == motifId,
+          orElse: () => urnDetail.motifs.first,
+        );
+        _handleHotspotTap(motif);
+      },
     );
   }
 
-  String _generateHotspotHtml(List<Motif> motifs) {
-    final buffer = StringBuffer();
-
-    // Add CSS for hotspots
-    buffer.writeln('''
-      <style>
-        .hotspot {
-          display: block;
-          width: 28px;
-          height: 28px;
-          border-radius: 50%;
-          border: 3px solid white;
-          background-color: rgba(212, 175, 55, 0.9);
-          box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
-          cursor: pointer;
-          transition: transform 0.2s;
-        }
-        .hotspot:hover {
-          transform: scale(1.2);
-        }
-        .hotspot.discovered {
-          background-color: rgba(76, 175, 80, 0.9);
-          box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
-        }
-        .hotspot.mastered {
-          background-color: rgba(156, 39, 176, 0.9);
-          box-shadow: 0 0 10px rgba(156, 39, 176, 0.5);
-        }
-        .hotspot-label {
-          display: none;
-          position: absolute;
-          top: -30px;
-          left: 50%;
-          transform: translateX(-50%);
-          white-space: nowrap;
-          background: rgba(0,0,0,0.8);
-          color: white;
-          padding: 4px 8px;
-          border-radius: 4px;
-          font-size: 12px;
-        }
-        .hotspot:hover .hotspot-label {
-          display: block;
-        }
-        @keyframes pulse {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.3); }
-        }
-        .hotspot.undiscovered {
-          animation: pulse 1.5s ease-in-out infinite;
-        }
-      </style>
-    ''');
-
-    // Add hotspot buttons
-    for (final motif in motifs) {
-      if (!motif.hasValidPosition) continue;
-
-      String statusClass = 'undiscovered';
-      if (motif.isMastered) {
-        statusClass = 'mastered';
-      } else if (motif.isDiscovered) {
-        statusClass = 'discovered';
-      }
-
-      buffer.writeln('''
-        <button class="hotspot $statusClass"
-          slot="hotspot-${motif.id}"
-          data-motif-id="${motif.id}"
-          data-position="${motif.posX} ${motif.posY} ${motif.posZ}"
-          data-normal="0 1 0">
-          <span class="hotspot-label">${motif.name}</span>
-        </button>
-      ''');
+  /// Verify and log model URL details
+  void _verifyModelUrl(String modelPath, UrnDetail urnDetail) {
+    debugPrint('[URN_VIEWER] 🔍 Model URL Verification:');
+    debugPrint('[URN_VIEWER]   Raw model URL: ${urnDetail.urn.modelUrl}');
+    debugPrint('[URN_VIEWER]   Effective URL: $modelPath');
+    if (_modelQuality != null) {
+      debugPrint('[URN_VIEWER]   Selected quality: $_modelQuality');
     }
 
-    return buffer.toString();
+    final uri = Uri.tryParse(modelPath);
+    if (uri != null) {
+      debugPrint('[URN_VIEWER]   ✅ URL is valid');
+      debugPrint('[URN_VIEWER]   Scheme: ${uri.scheme}');
+      debugPrint('[URN_VIEWER]   Host: ${uri.host}');
+      debugPrint('[URN_VIEWER]   Path: ${uri.path}');
+      debugPrint('[URN_VIEWER]   Extension: ${uri.path.split('.').last}');
+    } else {
+      debugPrint('[URN_VIEWER]   ❌ URL is INVALID!');
+    }
   }
 
-  String _generateHotspotJs() {
-    return '''
-      // Add click handlers for hotspots
-      document.querySelectorAll('.hotspot').forEach(hotspot => {
-        hotspot.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const motifId = hotspot.dataset.motifId;
-          if (window.flutter_inappwebview) {
-            window.flutter_inappwebview.callHandler('onHotspotClick', motifId);
-          }
-        });
-      });
-
-      // Track camera orbit changes
-      const modelViewer = document.querySelector('model-viewer');
-      if (modelViewer) {
-        // Model load success handler
-        modelViewer.addEventListener('load', () => {
-          console.log('[MODEL_VIEWER] Model loaded successfully');
-          if (window.flutter_inappwebview) {
-            window.flutter_inappwebview.callHandler('onModelLoad', { success: true });
-          }
-        });
-
-        // Model load error handler
-        modelViewer.addEventListener('error', (event) => {
-          console.error('[MODEL_VIEWER] Error loading model:', event);
-          if (window.flutter_inappwebview) {
-            window.flutter_inappwebview.callHandler('onModelError', {
-              message: 'Failed to load 3D model. Check network connection or CORS settings.',
-              detail: event?.detail || 'Unknown error'
-            });
-          }
-        });
-
-        // Model progress handler
-        modelViewer.addEventListener('progress', (event) => {
-          const progress = event.detail.totalProgress;
-          console.log('[MODEL_VIEWER] Loading progress:', progress);
-          if (window.flutter_inappwebview) {
-            window.flutter_inappwebview.callHandler('onModelProgress', { progress });
-          }
-        });
-
-        // Camera change handler
-        modelViewer.addEventListener('camera-change', (e) => {
-          if (window.flutter_inappwebview) {
-            const orbit = modelViewer.getCameraOrbit();
-            window.flutter_inappwebview.callHandler('onCameraChange', {
-              theta: orbit.theta,
-              phi: orbit.phi,
-              radius: orbit.radius
-            });
-          }
-        });
-      } else {
-        console.error('[MODEL_VIEWER] model-viewer element not found');
-        if (window.flutter_inappwebview) {
-          window.flutter_inappwebview.callHandler('onModelError', {
-            message: 'Model viewer component not initialized',
-            detail: 'Element not found'
-          });
-        }
-      }
-    ''';
+  /// Build debug info string for copying
+  String _buildDebugInfoString(UrnDetail urnDetail) {
+    final buffer = StringBuffer();
+    buffer.writeln('=== URN VIEWER DEBUG INFO ===');
+    buffer.writeln('Timestamp: ${DateTime.now().toIso8601String()}');
+    buffer.writeln('Urn ID: ${urnDetail.urn.id}');
+    buffer.writeln('Urn Slug: ${urnDetail.urn.slug}');
+    buffer.writeln('Urn Name: ${urnDetail.urn.name}');
+    buffer.writeln('Model URL: ${urnDetail.urn.modelUrl}');
+    buffer.writeln('Effective URL: ${urnDetail.urn.effectiveModelUrl}');
+    buffer.writeln('Motif Count: ${urnDetail.motifs.length}');
+    buffer.writeln('Discovered: ${urnDetail.urn.discoveredCount}');
+    buffer.writeln('Network: ${_isOnline ? "Online" : "Offline"}');
+    buffer.writeln('Loading: $_isLoading');
+    buffer.writeln('Error: $_modelLoadError');
+    buffer.writeln('Progress: ${(_modelLoadProgress * 100).toInt()}%');
+    if (_errorMessage != null) {
+      buffer.writeln('Error Message: $_errorMessage');
+    }
+    if (_loadStartTime != null) {
+      final elapsed = DateTime.now().difference(_loadStartTime!);
+      buffer.writeln('Time Elapsed: ${elapsed.inSeconds}s');
+    }
+    buffer.writeln('Platform: ${Platform.operatingSystem} ${Platform.operatingSystemVersion}');
+    buffer.writeln('===========================');
+    return buffer.toString();
   }
 
   Widget _buildTopBar(UrnDetail urnDetail) {
@@ -713,15 +909,17 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
   }
 
   Widget _buildLoadingOverlay() {
+    final progressPercent = (_modelLoadProgress * 100).toInt();
+
     return Container(
       color: Colors.black87,
-      child: const Center(
+      child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircularProgressIndicator(color: AppColors.primary),
-            SizedBox(height: 24),
-            Text(
+            const CircularProgressIndicator(color: AppColors.primary),
+            const SizedBox(height: 24),
+            const Text(
               'Đang tải mô hình 3D...',
               style: TextStyle(
                 color: Colors.white,
@@ -729,16 +927,16 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             Text(
-              'Vui lòng đợi',
-              style: TextStyle(
+              progressPercent > 0 ? '$progressPercent%' : 'Vui lòng đợi',
+              style: const TextStyle(
                 color: Colors.white70,
                 fontSize: 15,
               ),
             ),
-            SizedBox(height: 20),
-            Padding(
+            const SizedBox(height: 20),
+            const Padding(
               padding: EdgeInsets.symmetric(horizontal: 32),
               child: Text(
                 'Thiết bị yếu có thể mất nhiều thời gian hơn',
@@ -750,6 +948,31 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
                 textAlign: TextAlign.center,
               ),
             ),
+            if (!_isOnline) ...[
+              const SizedBox(height: 16),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 32),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.orange),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.warning_amber, color: Colors.orange, size: 20),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Không có kết nối mạng',
+                        style: TextStyle(color: Colors.orange, fontSize: 13),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ],
         ),
       ),
@@ -762,133 +985,205 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
       child: Center(
         child: Padding(
           padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Error icon
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.2),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.error_outline,
-                  color: Colors.red,
-                  size: 64,
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // Error title
-              const Text(
-                'Không thể tải mô hình 3D',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 12),
-
-              // Error message
-              Text(
-                _errorMessage ??
-                    'Đã xảy ra lỗi khi tải mô hình. Vui lòng kiểm tra kết nối mạng.',
-                style: const TextStyle(
-                  color: Colors.white70,
-                  fontSize: 14,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 32),
-
-              // Retry button
-              ElevatedButton.icon(
-                onPressed: () {
-                  setState(() {
-                    _isLoading = true;
-                    _modelLoadError = false;
-                    _errorMessage = null;
-                  });
-                  // Refresh the urn data
-                  ref.invalidate(urnDetailProvider(widget.urnSlug));
-                  // Reset timeout (60 seconds)
-                  Future.delayed(const Duration(seconds: 60), () {
-                    if (mounted && _isLoading) {
-                      setState(() {
-                        _isLoading = false;
-                        // Don't set error state - let the model continue loading
-                      });
-                      debugPrint('[URN_VIEWER] Model loading timeout after 60 seconds - continuing in background');
-                    }
-                  });
-                },
-                icon: const Icon(Icons.refresh),
-                label: const Text('Thử lại'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: AppColors.onPrimary,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 32,
-                    vertical: 16,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Error icon
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withOpacity(0.2),
+                    shape: BoxShape.circle,
                   ),
-                  textStyle: const TextStyle(
-                    fontSize: 16,
+                  child: const Icon(
+                    Icons.error_outline,
+                    color: Colors.red,
+                    size: 64,
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Error title
+                const Text(
+                  'Không thể tải mô hình 3D',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
+                  textAlign: TextAlign.center,
                 ),
-              ),
-              const SizedBox(height: 16),
+                const SizedBox(height: 12),
 
-              // Back button
-              TextButton.icon(
-                onPressed: () => context.pop(),
-                icon: const Icon(Icons.arrow_back),
-                label: const Text('Quay lại'),
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.white70,
+                // Error message
+                Text(
+                  _errorMessage ??
+                      'Đã xảy ra lỗi khi tải mô hình. Vui lòng kiểm tra kết nối mạng.',
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-              ),
+                const SizedBox(height: 24),
 
-              const SizedBox(height: 24),
+                // Debug info (in debug mode)
+                if (_debugInfo != null) ...[
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.white24),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Row(
+                          children: [
+                            Icon(Icons.bug_report, color: Colors.orange, size: 16),
+                            SizedBox(width: 8),
+                            Text(
+                              'Thông tin gỡ lỗi',
+                              style: TextStyle(
+                                color: Colors.orange,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          _debugInfo!,
+                          style: const TextStyle(
+                            color: Colors.white60,
+                            fontSize: 10,
+                            fontFamily: 'monospace',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
 
-              // Troubleshooting tips
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.05),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.1),
+                  // Copy debug info button
+                  OutlinedButton.icon(
+                    onPressed: () {
+                      Clipboard.setData(ClipboardData(text: _debugInfo!));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Đã sao chép thông tin gỡ lỗi'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                      debugPrint('[URN_VIEWER] 📋 Debug info copied to clipboard');
+                    },
+                    icon: const Icon(Icons.copy, size: 16),
+                    label: const Text('Sao chép thông tin gỡ lỗi'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.orange,
+                      side: const BorderSide(color: Colors.orange),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                ],
+
+                // Retry button
+                ElevatedButton.icon(
+                  onPressed: () {
+                    debugPrint('[URN_VIEWER] 🔄 User initiated retry');
+                    setState(() {
+                      _isLoading = true;
+                      _modelLoadError = false;
+                      _errorMessage = null;
+                      _modelLoadProgress = 0.0;
+                      _loadStartTime = DateTime.now();
+                    });
+                    // Refresh the urn data
+                    ref.invalidate(urnDetailProvider(widget.urnSlug));
+                    // Reset timeout (60 seconds)
+                    _loadingTimer?.cancel();
+                    _loadingTimer = Timer(const Duration(seconds: 60), () {
+                      if (mounted && _isLoading) {
+                        final elapsed = DateTime.now().difference(_loadStartTime!).inSeconds;
+                        setState(() {
+                          _isLoading = false;
+                          // Don't set error state - let the model continue loading
+                        });
+                        debugPrint('[URN_VIEWER] ⚠️ Model loading timeout after $elapsed seconds - continuing in background');
+                      }
+                    });
+                  },
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Thử lại'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: AppColors.onPrimary,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 16,
+                    ),
+                    textStyle: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Gợi ý khắc phục:',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    _buildTroubleshootingTip(
-                      '• Kiểm tra kết nối Internet',
-                    ),
-                    _buildTroubleshootingTip(
-                      '• Thử chuyển sang WiFi hoặc 4G/5G',
-                    ),
-                    _buildTroubleshootingTip(
-                      '• Khởi động lại ứng dụng',
-                    ),
-                  ],
+                const SizedBox(height: 16),
+
+                // Back button
+                TextButton.icon(
+                  onPressed: () => context.pop(),
+                  icon: const Icon(Icons.arrow_back),
+                  label: const Text('Quay lại'),
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.white70,
+                  ),
                 ),
-              ),
-            ],
+
+                const SizedBox(height: 24),
+
+                // Troubleshooting tips
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.1),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Gợi ý khắc phục:',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      _buildTroubleshootingTip(
+                        '• Kiểm tra kết nối Internet',
+                      ),
+                      _buildTroubleshootingTip(
+                        '• Thử chuyển sang WiFi hoặc 4G/5G',
+                      ),
+                      _buildTroubleshootingTip(
+                        '• Khởi động lại ứng dụng',
+                      ),
+                      _buildTroubleshootingTip(
+                        '• Xóa cache và thử lại',
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

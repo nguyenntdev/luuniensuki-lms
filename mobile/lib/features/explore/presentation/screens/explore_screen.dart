@@ -109,10 +109,10 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
       BuildContext context, ExploreProgress progress, dynamic authState) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
-        AppSpacing.lg,
         AppSpacing.md,
-        AppSpacing.lg,
+        AppSpacing.sm,
         AppSpacing.md,
+        AppSpacing.sm,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -121,29 +121,29 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
           Wrap(
             alignment: WrapAlignment.spaceBetween,
             crossAxisAlignment: WrapCrossAlignment.center,
-            runSpacing: AppSpacing.sm,
+            runSpacing: AppSpacing.xs,
             children: [
               const Text(
                 'Khám Phá',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 28,
+                  fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  letterSpacing: 0.5,
+                  letterSpacing: 0.4,
                 ),
               ),
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const CompactStreakWidget(),
-                  const SizedBox(width: AppSpacing.md),
+                  const SizedBox(width: AppSpacing.sm),
                   _buildUserAvatar(authState),
                 ],
               ),
             ],
           ),
 
-          AppSpacing.verticalSpaceMD,
+          const SizedBox(height: AppSpacing.sm),
 
           // Compact progress stats row
           _buildCompactStats(progress),
@@ -259,8 +259,8 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
   Widget _buildCompactStats(ExploreProgress progress) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md,
-        vertical: AppSpacing.sm,
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.xs + 2,
       ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -297,7 +297,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
           if (constraints.maxWidth < 320) {
             return Wrap(
               alignment: WrapAlignment.center,
-              spacing: AppSpacing.md,
+              spacing: AppSpacing.sm,
               runSpacing: AppSpacing.xs,
               children: stats,
             );
@@ -330,9 +330,9 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
           value,
           style: const TextStyle(
             color: Colors.white,
-            fontSize: 15,
+            fontSize: 14,
             fontWeight: FontWeight.bold,
-            letterSpacing: 0.3,
+            letterSpacing: 0.2,
           ),
         ),
       ],
@@ -383,38 +383,6 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
           return CustomScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             slivers: [
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    AppSpacing.lg,
-                    AppSpacing.sm,
-                    AppSpacing.lg,
-                    AppSpacing.sm,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Tất cả đỉnh',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.2,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Chọn một đỉnh để bắt đầu hành trình.',
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.65),
-                          fontSize: 13,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
               SliverPadding(
                 padding: const EdgeInsets.fromLTRB(
                   AppSpacing.md,
@@ -477,24 +445,6 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
         return CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.lg,
-                  AppSpacing.sm,
-                  AppSpacing.lg,
-                  AppSpacing.sm,
-                ),
-                child: Text(
-                  'Tất cả đỉnh',
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.6),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(
                 AppSpacing.md,
