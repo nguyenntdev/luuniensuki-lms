@@ -185,16 +185,6 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
       isLowRamDevice: isLowRamDevice,
     );
 
-    final localAssetPath = _localAssetFor(urnDetail.urn.slug, quality);
-    if (localAssetPath != null) {
-      debugPrint('[URN_VIEWER] Using local asset for quality: $quality');
-      return _ModelSelection(
-        url: _androidAssetUrl(localAssetPath),
-        quality: quality,
-        isLocal: true,
-      );
-    }
-
     if (urnDetail.urn.slug != 'cao-dinh') {
       return _ModelSelection(
         url: baseUrl,
@@ -251,28 +241,6 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
       debugPrint('[URN_VIEWER] Failed to read /proc/meminfo: $e');
       return null;
     }
-  }
-
-  String? _localAssetFor(String slug, ModelQuality quality) {
-    if (!Platform.isAndroid) {
-      return null;
-    }
-    if (slug != 'cao-dinh') {
-      return null;
-    }
-
-    switch (quality) {
-      case ModelQuality.low:
-        return 'assets/models/CAO-DINH-v1-1k.glb';
-      case ModelQuality.medium:
-        return 'assets/models/CAO-DINH-v1.glb';
-      case ModelQuality.high:
-        return null;
-    }
-  }
-
-  String _androidAssetUrl(String assetPath) {
-    return 'file:///android_asset/flutter_assets/$assetPath';
   }
 
   String _applyQualitySuffix(String url, ModelQuality quality) {
