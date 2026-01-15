@@ -91,8 +91,8 @@ class Settings(BaseSettings):
     # External Services (Optional)
     # ==========================================================================
     deepseek_api_key: Optional[str] = None
-    deepseek_base_url: str = "https://api.deepseek.com/v1"
-    deepseek_model: str = "deepseek-chat"
+    deepseek_base_url: str = "https://api.yescale.vip/v1"
+    deepseek_model: str = "deepseek-v3"
     deepseek_timeout_seconds: int = 20
 
     sentry_dsn: Optional[str] = None

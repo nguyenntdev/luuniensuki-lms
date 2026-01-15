@@ -1,72 +1,75 @@
 services:
-    db:
-        image: postgres:15-alpine
-        restart: unless-stopped
-        environment:
-            POSTGRES_DB: ${POSTGRES_DB}
-            POSTGRES_USER: ${POSTGRES_USER}
-            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-        volumes:
-            - postgres_data:/var/lib/postgresql/data
-        healthcheck:
-            test:
-                ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
-            interval: 5s
-            timeout: 5s
-            retries: 20
+  db:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
 
-    api:
-        build:
-            context: .
-            dockerfile: backend/Dockerfile
-        restart: unless-stopped
-        environment:
-            DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
-            LOG_LEVEL: ${LOG_LEVEL:-info}
-            INTERACTION_TOLERANCE_MULTIPLIER: ${INTERACTION_TOLERANCE_MULTIPLIER:-1.25}
-            JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-            JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
-            ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-60}
-            REFRESH_TOKEN_EXPIRE_DAYS: ${REFRESH_TOKEN_EXPIRE_DAYS:-30}
-        depends_on:
-            db:
-                condition: service_healthy
-        volumes:
-            - ./ban-duc-noi:/app/ban-duc-noi:ro
-        command: >
-            /bin/sh -c
-            "gunicorn -k uvicorn.workers.UvicornWorker
-            -w ${GUNICORN_WORKERS:-2}
-            -b 0.0.0.0:8000
-            --timeout ${GUNICORN_TIMEOUT:-180}
-            backend.main:app"
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      INTERACTION_TOLERANCE_MULTIPLIER: ${INTERACTION_TOLERANCE_MULTIPLIER:-1.25}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-60}
+      REFRESH_TOKEN_EXPIRE_DAYS: ${REFRESH_TOKEN_EXPIRE_DAYS:-30}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      DEEPSEEK_BASE_URL: ${DEEPSEEK_BASE_URL:-https://api.yescale.vip/v1}
+      DEEPSEEK_MODEL: ${DEEPSEEK_MODEL:-deepseek-v3}
+      DEEPSEEK_TIMEOUT_SECONDS: ${DEEPSEEK_TIMEOUT_SECONDS:-20}
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./ban-duc-noi:/app/ban-duc-noi:ro
+    command: >
+      /bin/sh -c
+      "gunicorn -k uvicorn.workers.UvicornWorker
+      -w ${GUNICORN_WORKERS:-2}
+      -b 0.0.0.0:8000
+      --timeout ${GUNICORN_TIMEOUT:-180}
+      backend.main:app"
 
-    web:
-        build:
-            context: ./frontend
-            dockerfile: Dockerfile
-        restart: unless-stopped
-        environment:
-            NODE_ENV: production
-            # Prefer same-origin API in production. Leave NEXT_PUBLIC_API_BASE_URL unset
-            # so the frontend can call "/api/..." through Nginx.
-        depends_on:
-            - api
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      # Prefer same-origin API in production. Leave NEXT_PUBLIC_API_BASE_URL unset
+      # so the frontend can call "/api/..." through Nginx.
+    depends_on:
+      - api
 
-    nginx:
-        image: nginx:1.25-alpine
-        restart: unless-stopped
-        ports:
-            - "80:80"
-            - "443:443"
-        volumes:
-            - ./nginx-lms.conf:/etc/nginx/conf.d/default.conf:ro
-            - ./certbot/www:/var/www/certbot:ro
-            - ./certbot/conf:/etc/letsencrypt:ro
-            - ./ban-duc-noi:/var/www/assets/ban-duc-noi:ro
-        depends_on:
-            - web
-            - api
+  nginx:
+    image: nginx:1.25-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx-lms.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./certbot/www:/var/www/certbot:ro
+      - ./certbot/conf:/etc/letsencrypt:ro
+      - ./ban-duc-noi:/var/www/assets/ban-duc-noi:ro
+    depends_on:
+      - web
+      - api
 
 volumes:
-    postgres_data:
+  postgres_data:

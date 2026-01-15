@@ -8,7 +8,7 @@ import unicodedata
 import uuid as uuid_module
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Iterable, Optional, Sequence
 from urllib.error import HTTPError, URLError
 from urllib.request import Request as UrlRequest
 from urllib.request import urlopen
@@ -119,6 +119,32 @@ XP_RANKS = [
     {"level": 9, "name": "Hàn Lâm", "xp": 55000},
     {"level": 10, "name": "Sử Quan", "xp": 80000},
 ]
+
+SEED_DATA_FILES = {
+    "cao-dinh": "05_Data_CaoDinh.json",
+    "nhan-dinh": "06_Data_NhanDinh.json",
+    "chuong-dinh": "07_Data_ChuongDinh.json",
+    "anh-dinh": "08_Data_AnhDinh.json",
+    "nghi-dinh": "09_Data_NghiDinh.json",
+    "thuan-dinh": "10_Data_ThuanDinh.json",
+    "tuyen-dinh": "11_Data_TuyenDinh.json",
+    "du-dinh": "12_Data_DuDinh.json",
+    "huyen-dinh": "13_Data_HuyenDinh.json",
+}
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+SEED_DATA_DIR = REPO_ROOT / "data"
+_SEED_CACHE: dict[str, list[dict[str, Any]]] = {}
+
+CUU_DINH_CONTEXT = (
+    "Cửu Đỉnh là chín đỉnh đồng lớn đặt tại Hoàng thành Huế, "
+    "được vua Minh Mạng cho đúc giai đoạn 1835-1837. "
+    "Mỗi đỉnh mang tên thụy hiệu của các vị vua triều Nguyễn và "
+    "khắc họa hàng trăm hình tượng núi sông, cây cỏ, chim thú, "
+    "thủy hệ và khí vật tiêu biểu của đất nước. "
+    'Cửu Đỉnh vừa là biểu tượng quyền lực quốc gia, vừa là bộ "bách khoa" '
+    "về địa lý - văn hóa Việt Nam thế kỷ XIX."
+)
 
 
 logging.basicConfig(level=getattr(logging, settings.log_level.upper(), logging.INFO))
@@ -4657,6 +4683,204 @@ class AIJobOut(BaseModel):
     error: Optional[str] = None
 
 
+class AIChatMessage(BaseModel):
+    role: str = Field(pattern="^(user|assistant)$")
+    content: str = Field(min_length=1)
+
+
+class AIContextIn(BaseModel):
+    urn_id: Optional[UUID] = None
+    urn_slug: Optional[str] = None
+    motif_id: Optional[UUID] = None
+    lesson_id: Optional[UUID] = None
+    quiz_question_id: Optional[UUID] = None
+
+
+class AICitationOut(BaseModel):
+    index: int
+    source_type: str
+    source_id: Optional[str] = None
+    title: str
+    snippet: Optional[str] = None
+
+
+class AIAnswerOut(BaseModel):
+    answer: str
+    citations: list[AICitationOut] = Field(default_factory=list)
+    job_id: Optional[UUID] = None
+
+
+class AITutorRequest(BaseModel):
+    message: str = Field(min_length=1)
+    history: list[AIChatMessage] = Field(default_factory=list)
+    context: Optional[AIContextIn] = None
+    level: Optional[str] = None
+
+
+class AIQuestionRequest(BaseModel):
+    question: str = Field(min_length=1)
+    context: Optional[AIContextIn] = None
+    limit: int = Field(default=6, ge=1, le=12)
+
+
+class LessonGenerateIn(BaseModel):
+    motif_id: Optional[UUID] = None
+    motif_mesh_name: Optional[str] = None
+    motif_name: Optional[str] = None
+    urn_slug: Optional[str] = None
+    level: Optional[str] = "beginner"
+    language: Optional[str] = "vi"
+    force: bool = False
+    use_seed: bool = True
+    generate_quiz: bool = False
+    quiz_count: int = Field(default=4, ge=1, le=20)
+
+
+class LessonGenerateOut(BaseModel):
+    motif_id: UUID
+    lesson_id: UUID
+    summary: str
+    ai_job_id: Optional[UUID] = None
+    used_seed: bool = False
+
+
+class QuizGenerateIn(BaseModel):
+    motif_id: Optional[UUID] = None
+    motif_mesh_name: Optional[str] = None
+    motif_name: Optional[str] = None
+    urn_id: Optional[UUID] = None
+    urn_slug: Optional[str] = None
+    count: int = Field(default=5, ge=1, le=30)
+    difficulty: int = Field(default=2, ge=1, le=5)
+    replace_existing: bool = False
+    use_seed: bool = True
+
+
+class QuizGenerateOut(BaseModel):
+    question_ids: list[UUID]
+    ai_job_id: Optional[UUID] = None
+    used_seed: bool = False
+
+
+class SummaryGenerateIn(BaseModel):
+    motif_id: Optional[UUID] = None
+    urn_slug: Optional[str] = None
+    level: Optional[str] = None
+
+
+class SummaryGenerateOut(BaseModel):
+    summary: str
+    key_points: list[str] = Field(default_factory=list)
+    job_id: Optional[UUID] = None
+
+
+class FlashcardGenerateIn(BaseModel):
+    topic: Optional[str] = None
+    motif_id: Optional[UUID] = None
+    count: int = Field(default=8, ge=2, le=30)
+    level: Optional[str] = None
+
+
+class FlashcardOut(BaseModel):
+    front: str
+    back: str
+
+
+class FlashcardGenerateOut(BaseModel):
+    cards: list[FlashcardOut]
+    job_id: Optional[UUID] = None
+
+
+class FeedbackGenerateIn(BaseModel):
+    question: str = Field(min_length=1)
+    correct_answer: str = Field(min_length=1)
+    user_answer: str = Field(min_length=1)
+    context: Optional[AIContextIn] = None
+
+
+class FeedbackGenerateOut(BaseModel):
+    is_correct: bool
+    explanation: str
+    next_step: Optional[str] = None
+    job_id: Optional[UUID] = None
+
+
+class CoachGenerateIn(BaseModel):
+    goal: Optional[str] = None
+    availability_minutes_per_day: Optional[int] = Field(default=15, ge=5, le=120)
+    days_per_week: Optional[int] = Field(default=5, ge=2, le=7)
+
+
+class CoachGenerateOut(BaseModel):
+    message: str
+    weekly_plan: list[str] = Field(default_factory=list)
+    job_id: Optional[UUID] = None
+
+
+class ExplainGenerateIn(BaseModel):
+    text: str = Field(min_length=1)
+    level: str = Field(pattern="^(child|teen|expert)$")
+
+
+class ExplainGenerateOut(BaseModel):
+    explanation: str
+    job_id: Optional[UUID] = None
+
+
+class ReviewPlanItem(BaseModel):
+    motif_id: UUID
+    motif_name: str
+    due_in_days: int
+    status: str
+
+
+class ReviewPlanOut(BaseModel):
+    items: list[ReviewPlanItem]
+
+
+class DiagnosticGenerateIn(BaseModel):
+    urn_id: Optional[UUID] = None
+    urn_slug: Optional[str] = None
+    count: int = Field(default=6, ge=2, le=20)
+    level: Optional[str] = None
+
+
+class DiagnosticQuestionOut(BaseModel):
+    question_text: str
+    options: list[str]
+    correct_answer: str
+    explanation: Optional[str] = None
+
+
+class DiagnosticGenerateOut(BaseModel):
+    questions: list[DiagnosticQuestionOut]
+    job_id: Optional[UUID] = None
+
+
+class SeedUrnIn(BaseModel):
+    force: bool = False
+    generate_quiz: bool = True
+    quiz_count: int = Field(default=4, ge=1, le=20)
+    use_seed: bool = True
+
+
+class SeedUrnResult(BaseModel):
+    motif_id: UUID
+    status: str
+    lesson_id: Optional[UUID] = None
+    quiz_count: int = 0
+    used_seed: bool = False
+
+
+class SeedUrnOut(BaseModel):
+    urn_id: UUID
+    urn_slug: str
+    total: int
+    created: int
+    skipped: int
+    results: list[SeedUrnResult]
+
+
 class ContentFlagCreateRequest(BaseModel):
     content_type: str
     content_id: UUID
@@ -4823,25 +5047,33 @@ def _build_rules_recommendations(
     return items
 
 
-def _call_deepseek(prompt: str) -> str:
+def _deepseek_chat_url() -> str:
+    base = settings.deepseek_base_url.rstrip("/")
+    if base.endswith("/v1"):
+        return f"{base}/chat/completions"
+    return f"{base}/v1/chat/completions"
+
+
+def _call_deepseek_chat(
+    messages: Sequence[dict[str, str]],
+    *,
+    temperature: float = 0.2,
+    response_format: Optional[dict[str, Any]] = None,
+) -> str:
     if not settings.deepseek_api_key:
         raise RuntimeError("Deepseek API key not configured")
 
-    url = settings.deepseek_base_url.rstrip("/") + "/v1/chat/completions"
-    payload = {
+    payload: dict[str, Any] = {
         "model": settings.deepseek_model,
-        "messages": [
-            {
-                "role": "system",
-                "content": "You generate concise learning recommendations in JSON.",
-            },
-            {"role": "user", "content": prompt},
-        ],
-        "temperature": 0.2,
+        "messages": messages,
+        "temperature": temperature,
     }
+    if response_format is not None:
+        payload["response_format"] = response_format
+
     data = json.dumps(payload).encode("utf-8")
     request = UrlRequest(
-        url,
+        _deepseek_chat_url(),
         data=data,
         headers={
             "Content-Type": "application/json",
@@ -4866,6 +5098,486 @@ def _call_deepseek(prompt: str) -> str:
     if not content:
         raise RuntimeError("Deepseek response was empty")
     return content
+
+
+def _call_deepseek(prompt: str) -> str:
+    messages = [
+        {
+            "role": "system",
+            "content": "You generate concise learning recommendations in JSON.",
+        },
+        {"role": "user", "content": prompt},
+    ]
+    return _call_deepseek_chat(messages, temperature=0.2)
+
+
+def _strip_accents(value: str) -> str:
+    normalized = unicodedata.normalize("NFD", value)
+    return "".join(
+        char for char in normalized if unicodedata.category(char) != "Mn"
+    ).lower()
+
+
+def _load_seed_data(urn_slug: str) -> list[dict[str, Any]]:
+    cached = _SEED_CACHE.get(urn_slug)
+    if cached is not None:
+        return cached
+
+    filename = SEED_DATA_FILES.get(urn_slug)
+    if not filename:
+        _SEED_CACHE[urn_slug] = []
+        return []
+
+    path = SEED_DATA_DIR / filename
+    if not path.exists():
+        _SEED_CACHE[urn_slug] = []
+        return []
+
+    try:
+        raw = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        _SEED_CACHE[urn_slug] = []
+        return []
+
+    items = [item for item in raw if isinstance(item, dict)]
+    _SEED_CACHE[urn_slug] = items
+    return items
+
+
+def _find_seed_entry(urn_slug: str, motif_name: str) -> Optional[dict[str, Any]]:
+    if not urn_slug or not motif_name:
+        return None
+    normalized = _strip_accents(motif_name)
+    for item in _load_seed_data(urn_slug):
+        candidate = item.get("name_vi") or item.get("name_en") or ""
+        if _strip_accents(str(candidate)) == normalized:
+            return item
+    return None
+
+
+def _extract_json_payload(content: str) -> Optional[str]:
+    match = re.search(r"```json\\s*(\\{.*?\\})\\s*```", content, re.DOTALL)
+    if match:
+        return match.group(1)
+    match = re.search(r"(\\{.*\\})", content, re.DOTALL)
+    if match:
+        return match.group(1)
+    return None
+
+
+def _safe_parse_json(content: str) -> Optional[Any]:
+    try:
+        return json.loads(content)
+    except json.JSONDecodeError:
+        payload = _extract_json_payload(content)
+        if not payload:
+            return None
+        try:
+            return json.loads(payload)
+        except json.JSONDecodeError:
+            return None
+
+
+def _source_snippet(text: Optional[str], max_len: int = 280) -> Optional[str]:
+    if not text:
+        return None
+    trimmed = " ".join(str(text).split())
+    if len(trimmed) <= max_len:
+        return trimmed
+    return trimmed[: max_len - 1].rstrip() + "…"
+
+
+def _collect_ai_sources(
+    session: Session,
+    *,
+    urn_slug: Optional[str] = None,
+    motif_id: Optional[UUID] = None,
+    limit: int = 6,
+) -> list[dict[str, Any]]:
+    sources: list[dict[str, Any]] = []
+
+    if motif_id:
+        motif = session.execute(
+            select(Motif)
+            .options(selectinload(Motif.lesson), selectinload(Motif.urn))
+            .where(Motif.id == motif_id)
+        ).scalar_one_or_none()
+        if motif:
+            motif_summary = None
+            if motif.lesson and motif.lesson.description:
+                motif_summary = motif.lesson.description
+            if not motif_summary:
+                motif_summary = (
+                    f"Họa tiết {motif.name} thuộc nhóm {motif.category.value}."
+                )
+            sources.append(
+                {
+                    "type": "motif",
+                    "id": str(motif.id),
+                    "title": motif.name,
+                    "content": motif_summary,
+                }
+            )
+            if motif.lesson:
+                lesson_text = " ".join(
+                    chunk
+                    for chunk in [
+                        motif.lesson.description,
+                        motif.lesson.historical_context,
+                        motif.lesson.symbolism,
+                        motif.lesson.fun_fact,
+                    ]
+                    if chunk
+                )
+                if lesson_text:
+                    sources.append(
+                        {
+                            "type": "lesson",
+                            "id": str(motif.lesson.id),
+                            "title": f"Bài học: {motif.name}",
+                            "content": lesson_text,
+                        }
+                    )
+            if motif.urn:
+                sources.append(
+                    {
+                        "type": "urn",
+                        "id": str(motif.urn.id),
+                        "title": motif.urn.name,
+                        "content": motif.urn.description or "",
+                    }
+                )
+
+    if urn_slug and not motif_id:
+        urn = session.execute(
+            select(Urn).where(Urn.slug == urn_slug)
+        ).scalar_one_or_none()
+        if urn:
+            sources.append(
+                {
+                    "type": "urn",
+                    "id": str(urn.id),
+                    "title": urn.name,
+                    "content": urn.description or "",
+                }
+            )
+            motifs = (
+                session.execute(
+                    select(Motif)
+                    .options(selectinload(Motif.lesson))
+                    .where(Motif.urn_id == urn.id)
+                    .order_by(Motif.display_order.asc())
+                    .limit(limit)
+                )
+                .scalars()
+                .all()
+            )
+            for motif in motifs:
+                motif_summary = (
+                    motif.lesson.description
+                    if motif.lesson and motif.lesson.description
+                    else f"Họa tiết {motif.name} thuộc nhóm {motif.category.value}."
+                )
+                sources.append(
+                    {
+                        "type": "motif",
+                        "id": str(motif.id),
+                        "title": motif.name,
+                        "content": motif_summary,
+                    }
+                )
+                if motif.lesson and motif.lesson.description:
+                    sources.append(
+                        {
+                            "type": "lesson",
+                            "id": str(motif.lesson.id),
+                            "title": f"Bài học: {motif.name}",
+                            "content": motif.lesson.description,
+                        }
+                    )
+
+    if not sources:
+        sources.append(
+            {
+                "type": "context",
+                "id": "cuu-dinh",
+                "title": "Cửu Đỉnh",
+                "content": CUU_DINH_CONTEXT,
+            }
+        )
+
+    return sources[:limit]
+
+
+def _format_sources_for_prompt(sources: Iterable[dict[str, Any]]) -> str:
+    lines: list[str] = []
+    for idx, source in enumerate(sources, start=1):
+        title = source.get("title") or "Nguồn"
+        content = source.get("content") or ""
+        lines.append(f"[S{idx}] {title}\n{content}")
+    return "\n\n".join(lines)
+
+
+def _extract_citations(answer: str) -> list[int]:
+    citations = []
+    for match in re.findall(r"\\[S(\\d+)\\]", answer):
+        try:
+            citations.append(int(match))
+        except ValueError:
+            continue
+    return list(dict.fromkeys(citations))
+
+
+def _build_ai_citations(
+    sources: Sequence[dict[str, Any]], cited_indexes: Sequence[int]
+) -> list[AICitationOut]:
+    citations: list[AICitationOut] = []
+    for idx, source in enumerate(sources, start=1):
+        if cited_indexes and idx not in cited_indexes:
+            continue
+        citations.append(
+            AICitationOut(
+                index=idx,
+                source_type=str(source.get("type") or "context"),
+                source_id=source.get("id"),
+                title=str(source.get("title") or "Nguồn"),
+                snippet=_source_snippet(source.get("content")),
+            )
+        )
+    return citations
+
+
+def _start_ai_job(session: Session, *, user: User, job_type: str, prompt: str) -> AIJob:
+    job = AIJob(
+        user_id=user.id,
+        job_type=job_type,
+        status="pending",
+        provider="deepseek",
+        prompt=prompt,
+    )
+    session.add(job)
+    session.commit()
+    session.refresh(job)
+    return job
+
+
+def _finish_ai_job(session: Session, job: AIJob, *, response: str) -> None:
+    job.status = "succeeded"
+    job.response = response
+    session.commit()
+
+
+def _fail_ai_job(session: Session, job: AIJob, *, error: str) -> None:
+    job.status = "failed"
+    job.error = error
+    session.commit()
+
+
+def _resolve_urn(
+    session: Session,
+    *,
+    urn_id: Optional[UUID] = None,
+    urn_slug: Optional[str] = None,
+) -> Optional[Urn]:
+    if urn_id:
+        return session.execute(select(Urn).where(Urn.id == urn_id)).scalar_one_or_none()
+    if urn_slug:
+        return session.execute(
+            select(Urn).where(Urn.slug == urn_slug)
+        ).scalar_one_or_none()
+    return None
+
+
+def _resolve_motif(
+    session: Session,
+    *,
+    motif_id: Optional[UUID] = None,
+    mesh_name: Optional[str] = None,
+    motif_name: Optional[str] = None,
+) -> Optional[Motif]:
+    if motif_id:
+        return session.execute(
+            select(Motif)
+            .options(selectinload(Motif.lesson), selectinload(Motif.urn))
+            .where(Motif.id == motif_id)
+        ).scalar_one_or_none()
+    if mesh_name:
+        return session.execute(
+            select(Motif)
+            .options(selectinload(Motif.lesson), selectinload(Motif.urn))
+            .where(Motif.mesh_name == mesh_name)
+        ).scalar_one_or_none()
+    if motif_name:
+        return session.execute(
+            select(Motif)
+            .options(selectinload(Motif.lesson), selectinload(Motif.urn))
+            .where(func.lower(Motif.name) == motif_name.lower())
+        ).scalar_one_or_none()
+    return None
+
+
+def _lesson_payload_from_seed(seed: dict[str, Any]) -> dict[str, Optional[str]]:
+    description_short = seed.get("description_short")
+    description_educational = seed.get("description_educational") or description_short
+    return {
+        "intro_text": description_short,
+        "description": description_educational or "",
+        "historical_context": seed.get("historical_context"),
+        "symbolism": seed.get("symbolism"),
+        "fun_fact": seed.get("fun_fact"),
+    }
+
+
+def _quiz_payloads_from_seed(seed: dict[str, Any]) -> list[dict[str, Any]]:
+    quiz_questions = seed.get("quiz_questions") or []
+    payloads: list[dict[str, Any]] = []
+    for quiz in quiz_questions:
+        if not isinstance(quiz, dict):
+            continue
+        question_text = quiz.get("question")
+        correct_answer = quiz.get("correct_answer")
+        if not question_text or not correct_answer:
+            continue
+        options = quiz.get("options")
+        if options is not None and not isinstance(options, list):
+            continue
+        payloads.append(
+            {
+                "question_type": quiz.get("type") or "multiple_choice",
+                "question_text": question_text,
+                "options": options,
+                "correct_answer": correct_answer,
+                "difficulty": quiz.get("difficulty") or 1,
+                "explanation": quiz.get("explanation"),
+            }
+        )
+    return payloads
+
+
+def _sanitize_quiz_payload(payload: dict[str, Any]) -> Optional[dict[str, Any]]:
+    question_text = str(payload.get("question_text") or "").strip()
+    correct_answer = str(payload.get("correct_answer") or "").strip()
+    question_type = str(payload.get("question_type") or "multiple_choice")
+    if not question_text or not correct_answer:
+        return None
+
+    if question_type not in {
+        QuestionType.multiple_choice.value,
+        QuestionType.true_false.value,
+        QuestionType.image_select.value,
+        QuestionType.mesh_location.value,
+    }:
+        question_type = QuestionType.multiple_choice.value
+
+    options = payload.get("options")
+    if options is not None and not isinstance(options, list):
+        options = None
+    if isinstance(options, list):
+        options = [str(item) for item in options]
+        if correct_answer not in options and options:
+            options[0] = correct_answer
+    return {
+        "question_type": question_type,
+        "question_text": question_text,
+        "options": options,
+        "correct_answer": correct_answer,
+        "difficulty": max(1, int(payload.get("difficulty") or 1)),
+        "explanation": payload.get("explanation"),
+        "target_mesh_name": payload.get("target_mesh_name"),
+    }
+
+
+def _generate_quiz_payloads_with_ai(
+    *,
+    motif: Optional[Motif],
+    urn: Optional[Urn],
+    count: int,
+    difficulty: int,
+    level: Optional[str],
+) -> tuple[list[dict[str, Any]], str]:
+    topic = motif.name if motif else (urn.name if urn else "Cửu Đỉnh")
+    context = CUU_DINH_CONTEXT
+    if motif and motif.lesson and motif.lesson.description:
+        context = f"{motif.lesson.description}\n\n{CUU_DINH_CONTEXT}"
+    prompt = json.dumps(
+        {
+            "topic": topic,
+            "difficulty": difficulty,
+            "count": count,
+            "level": level or "beginner",
+            "context": context,
+            "allowed_types": ["multiple_choice", "true_false"],
+            "format": {
+                "questions": [
+                    {
+                        "question_type": "multiple_choice|true_false",
+                        "question_text": "string",
+                        "options": ["string"],
+                        "correct_answer": "string",
+                        "difficulty": 1,
+                        "explanation": "string",
+                    }
+                ]
+            },
+        },
+        ensure_ascii=False,
+    )
+
+    messages = [
+        {
+            "role": "system",
+            "content": (
+                "Bạn tạo câu hỏi kiểm tra kiến thức bằng tiếng Việt, "
+                "trả về JSON đúng cấu trúc được yêu cầu."
+            ),
+        },
+        {"role": "user", "content": prompt},
+    ]
+    response = _call_deepseek_chat(messages, temperature=0.2)
+    parsed = _safe_parse_json(response)
+    questions_raw: list[dict[str, Any]] = []
+    if isinstance(parsed, dict):
+        questions_raw = parsed.get("questions") or []
+    elif isinstance(parsed, list):
+        questions_raw = parsed
+
+    payloads: list[dict[str, Any]] = []
+    for item in questions_raw:
+        if not isinstance(item, dict):
+            continue
+        sanitized = _sanitize_quiz_payload(item)
+        if sanitized:
+            payloads.append(sanitized)
+
+    if not payloads:
+        raise RuntimeError("AI quiz generation returned empty payloads")
+    return payloads[:count], response
+
+
+def _store_quiz_payloads(
+    session: Session,
+    *,
+    motif: Motif,
+    urn: Optional[Urn],
+    payloads: Sequence[dict[str, Any]],
+) -> list[QuizQuestion]:
+    questions: list[QuizQuestion] = []
+    for payload in payloads:
+        question = QuizQuestion(
+            motif_id=motif.id,
+            urn_id=urn.id if urn else None,
+            question_type=QuestionType(payload["question_type"]),
+            question_text=payload["question_text"],
+            options=payload.get("options"),
+            correct_answer=payload["correct_answer"],
+            target_mesh_name=payload.get("target_mesh_name"),
+            difficulty=payload.get("difficulty") or 1,
+            explanation=payload.get("explanation"),
+        )
+        session.add(question)
+        questions.append(question)
+    session.commit()
+    return questions
 
 
 def _generate_llm_recommendations(
@@ -5147,6 +5859,851 @@ def retry_ai_job(
         job.error = str(exc)
         db.commit()
         raise HTTPException(status_code=502, detail="AI retry failed") from exc
+
+
+@app.post("/api/v1/ai/tutor", response_model=AIAnswerOut)
+def ai_tutor(
+    payload: AITutorRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> AIAnswerOut:
+    if not settings.deepseek_api_key:
+        raise HTTPException(status_code=503, detail="AI not configured")
+
+    context = payload.context or AIContextIn()
+    sources = _collect_ai_sources(
+        db, urn_slug=context.urn_slug, motif_id=context.motif_id, limit=6
+    )
+    sources_prompt = _format_sources_for_prompt(sources)
+    level = payload.level or "beginner"
+    user_prompt = (
+        f"Người học ở mức: {level}.\n"
+        "Hãy trả lời ngắn gọn, dễ hiểu, có ví dụ thực tế nếu phù hợp.\n"
+        "Trích dẫn nguồn bằng [S#] nếu sử dụng thông tin từ nguồn bên dưới.\n\n"
+        f"Nguồn:\n{sources_prompt}\n\n"
+        f"Câu hỏi: {payload.message}\nTrả lời:"
+    )
+
+    messages = [
+        {
+            "role": "system",
+            "content": (
+                "Bạn là trợ giảng lịch sử Việt Nam cho ứng dụng Cửu Đỉnh. "
+                "Trả lời bằng tiếng Việt, rõ ràng, súc tích."
+            ),
+        }
+    ]
+    for msg in payload.history[-6:]:
+        messages.append({"role": msg.role, "content": msg.content})
+    messages.append({"role": "user", "content": user_prompt})
+
+    job = _start_ai_job(db, user=current_user, job_type="tutor", prompt=user_prompt)
+    try:
+        answer = _call_deepseek_chat(messages, temperature=0.3)
+        _finish_ai_job(db, job, response=answer)
+    except Exception as exc:
+        _fail_ai_job(db, job, error=str(exc))
+        raise HTTPException(status_code=502, detail="AI tutor failed") from exc
+
+    cited_indexes = _extract_citations(answer)
+    citations = _build_ai_citations(sources, cited_indexes)
+    if not citations:
+        citations = _build_ai_citations(sources, [])
+    return AIAnswerOut(answer=answer, citations=citations, job_id=job.id)
+
+
+@app.post("/api/v1/ai/qa", response_model=AIAnswerOut)
+def ai_qa(
+    payload: AIQuestionRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> AIAnswerOut:
+    if not settings.deepseek_api_key:
+        raise HTTPException(status_code=503, detail="AI not configured")
+
+    context = payload.context or AIContextIn()
+    sources = _collect_ai_sources(
+        db,
+        urn_slug=context.urn_slug,
+        motif_id=context.motif_id,
+        limit=payload.limit,
+    )
+    sources_prompt = _format_sources_for_prompt(sources)
+    user_prompt = (
+        "Chỉ trả lời dựa trên nguồn đã cung cấp. "
+        "Nếu thiếu dữ kiện, hãy nói rõ cần thêm thông tin.\n"
+        "Trích dẫn nguồn bằng [S#].\n\n"
+        f"Nguồn:\n{sources_prompt}\n\n"
+        f"Câu hỏi: {payload.question}\nTrả lời:"
+    )
+    messages = [
+        {
+            "role": "system",
+            "content": (
+                "Bạn là hệ thống hỏi đáp nội dung nội bộ về Cửu Đỉnh. "
+                "Ưu tiên chính xác và trích dẫn nguồn."
+            ),
+        },
+        {"role": "user", "content": user_prompt},
+    ]
+
+    job = _start_ai_job(db, user=current_user, job_type="qa", prompt=user_prompt)
+    try:
+        answer = _call_deepseek_chat(messages, temperature=0.2)
+        _finish_ai_job(db, job, response=answer)
+    except Exception as exc:
+        _fail_ai_job(db, job, error=str(exc))
+        raise HTTPException(status_code=502, detail="AI Q&A failed") from exc
+
+    cited_indexes = _extract_citations(answer)
+    citations = _build_ai_citations(sources, cited_indexes)
+    if not citations:
+        citations = _build_ai_citations(sources, [])
+    return AIAnswerOut(answer=answer, citations=citations, job_id=job.id)
+
+
+@app.post("/api/v1/ai/summary", response_model=SummaryGenerateOut)
+def ai_summary(
+    payload: SummaryGenerateIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> SummaryGenerateOut:
+    sources = _collect_ai_sources(
+        db, urn_slug=payload.urn_slug, motif_id=payload.motif_id, limit=6
+    )
+    sources_prompt = _format_sources_for_prompt(sources)
+    if not settings.deepseek_api_key:
+        return SummaryGenerateOut(
+            summary=sources[0].get("content") or "", key_points=[]
+        )
+
+    user_prompt = (
+        "Tóm tắt nội dung dưới đây bằng tiếng Việt.\n"
+        "Trả về JSON với các khóa: summary, key_points (mảng).\n\n"
+        f"Nguồn:\n{sources_prompt}"
+    )
+    messages = [
+        {"role": "system", "content": "Bạn tóm tắt bài học lịch sử."},
+        {"role": "user", "content": user_prompt},
+    ]
+    job = _start_ai_job(db, user=current_user, job_type="summary", prompt=user_prompt)
+    try:
+        response = _call_deepseek_chat(messages, temperature=0.2)
+        _finish_ai_job(db, job, response=response)
+    except Exception as exc:
+        _fail_ai_job(db, job, error=str(exc))
+        raise HTTPException(status_code=502, detail="AI summary failed") from exc
+
+    parsed = _safe_parse_json(response)
+    summary = response
+    key_points: list[str] = []
+    if isinstance(parsed, dict):
+        summary = str(parsed.get("summary") or response)
+        raw_points = parsed.get("key_points") or []
+        if isinstance(raw_points, list):
+            key_points = [str(item) for item in raw_points if item]
+    return SummaryGenerateOut(summary=summary, key_points=key_points, job_id=job.id)
+
+
+@app.post("/api/v1/ai/flashcards", response_model=FlashcardGenerateOut)
+def ai_flashcards(
+    payload: FlashcardGenerateIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> FlashcardGenerateOut:
+    if not settings.deepseek_api_key:
+        raise HTTPException(status_code=503, detail="AI not configured")
+
+    sources = _collect_ai_sources(db, motif_id=payload.motif_id, limit=4)
+    topic = payload.topic or (sources[0].get("title") if sources else "Cửu Đỉnh")
+    sources_prompt = _format_sources_for_prompt(sources)
+    user_prompt = (
+        f"Tạo {payload.count} thẻ ghi nhớ ngắn về chủ đề: {topic}.\n"
+        "Trả về JSON với khóa cards: [{front, back}].\n\n"
+        f"Nguồn:\n{sources_prompt}"
+    )
+    messages = [
+        {"role": "system", "content": "Bạn tạo flashcards học tập."},
+        {"role": "user", "content": user_prompt},
+    ]
+    job = _start_ai_job(
+        db, user=current_user, job_type="flashcards", prompt=user_prompt
+    )
+    try:
+        response = _call_deepseek_chat(messages, temperature=0.3)
+        _finish_ai_job(db, job, response=response)
+    except Exception as exc:
+        _fail_ai_job(db, job, error=str(exc))
+        raise HTTPException(status_code=502, detail="AI flashcards failed") from exc
+
+    parsed = _safe_parse_json(response)
+    cards: list[FlashcardOut] = []
+    if isinstance(parsed, dict):
+        raw_cards = parsed.get("cards") or []
+    else:
+        raw_cards = parsed or []
+    if isinstance(raw_cards, list):
+        for card in raw_cards:
+            if not isinstance(card, dict):
+                continue
+            front = str(card.get("front") or "").strip()
+            back = str(card.get("back") or "").strip()
+            if front and back:
+                cards.append(FlashcardOut(front=front, back=back))
+    if not cards:
+        cards = [FlashcardOut(front=topic or "Flashcard", back=response)]
+    return FlashcardGenerateOut(cards=cards, job_id=job.id)
+
+
+@app.post("/api/v1/ai/feedback", response_model=FeedbackGenerateOut)
+def ai_feedback(
+    payload: FeedbackGenerateIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> FeedbackGenerateOut:
+    is_correct = payload.user_answer.strip() == payload.correct_answer.strip()
+    if not settings.deepseek_api_key:
+        return FeedbackGenerateOut(
+            is_correct=is_correct,
+            explanation="Câu trả lời đã được chấm tự động.",
+            next_step=None,
+        )
+
+    context = payload.context or AIContextIn()
+    sources = _collect_ai_sources(
+        db, urn_slug=context.urn_slug, motif_id=context.motif_id, limit=4
+    )
+    sources_prompt = _format_sources_for_prompt(sources)
+    user_prompt = json.dumps(
+        {
+            "question": payload.question,
+            "correct_answer": payload.correct_answer,
+            "user_answer": payload.user_answer,
+            "is_correct": is_correct,
+            "sources": sources_prompt,
+            "format": {"explanation": "string", "next_step": "string"},
+        },
+        ensure_ascii=False,
+    )
+    messages = [
+        {
+            "role": "system",
+            "content": (
+                "Bạn là trợ giảng phản hồi câu trả lời. Trả về JSON theo định dạng."
+            ),
+        },
+        {"role": "user", "content": user_prompt},
+    ]
+    job = _start_ai_job(db, user=current_user, job_type="feedback", prompt=user_prompt)
+    try:
+        response = _call_deepseek_chat(messages, temperature=0.2)
+        _finish_ai_job(db, job, response=response)
+    except Exception as exc:
+        _fail_ai_job(db, job, error=str(exc))
+        raise HTTPException(status_code=502, detail="AI feedback failed") from exc
+
+    parsed = _safe_parse_json(response)
+    explanation = response
+    next_step = None
+    if isinstance(parsed, dict):
+        explanation = str(parsed.get("explanation") or response)
+        next_step_value = parsed.get("next_step")
+        if next_step_value:
+            next_step = str(next_step_value)
+    return FeedbackGenerateOut(
+        is_correct=is_correct,
+        explanation=explanation,
+        next_step=next_step,
+        job_id=job.id,
+    )
+
+
+@app.post("/api/v1/ai/coach", response_model=CoachGenerateOut)
+def ai_coach(
+    payload: CoachGenerateIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> CoachGenerateOut:
+    if not settings.deepseek_api_key:
+        return CoachGenerateOut(
+            message="Hãy duy trì thói quen học đều đặn mỗi ngày.",
+            weekly_plan=[],
+        )
+
+    progress_counts = db.execute(
+        select(UserProgress.status, func.count(UserProgress.id))
+        .where(UserProgress.user_id == current_user.id)
+        .group_by(UserProgress.status)
+    ).all()
+    counts = {row.status.value: row[1] for row in progress_counts}
+    user_prompt = json.dumps(
+        {
+            "goal": payload.goal,
+            "availability_minutes_per_day": payload.availability_minutes_per_day,
+            "days_per_week": payload.days_per_week,
+            "stats": {
+                "total_xp": current_user.total_xp,
+                "current_streak": current_user.current_streak,
+                "progress": counts,
+            },
+            "format": {"message": "string", "weekly_plan": ["string"]},
+        },
+        ensure_ascii=False,
+    )
+    messages = [
+        {
+            "role": "system",
+            "content": (
+                "Bạn là coach học tập cho nội dung Cửu Đỉnh. "
+                "Trả về JSON theo định dạng."
+            ),
+        },
+        {"role": "user", "content": user_prompt},
+    ]
+    job = _start_ai_job(db, user=current_user, job_type="coach", prompt=user_prompt)
+    try:
+        response = _call_deepseek_chat(messages, temperature=0.3)
+        _finish_ai_job(db, job, response=response)
+    except Exception as exc:
+        _fail_ai_job(db, job, error=str(exc))
+        raise HTTPException(status_code=502, detail="AI coach failed") from exc
+
+    parsed = _safe_parse_json(response)
+    message = response
+    weekly_plan: list[str] = []
+    if isinstance(parsed, dict):
+        message = str(parsed.get("message") or response)
+        raw_plan = parsed.get("weekly_plan") or []
+        if isinstance(raw_plan, list):
+            weekly_plan = [str(item) for item in raw_plan if item]
+    return CoachGenerateOut(message=message, weekly_plan=weekly_plan, job_id=job.id)
+
+
+@app.post("/api/v1/ai/explain", response_model=ExplainGenerateOut)
+def ai_explain(
+    payload: ExplainGenerateIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> ExplainGenerateOut:
+    if not settings.deepseek_api_key:
+        return ExplainGenerateOut(explanation=payload.text)
+
+    user_prompt = json.dumps(
+        {
+            "text": payload.text,
+            "level": payload.level,
+            "format": {"explanation": "string"},
+        },
+        ensure_ascii=False,
+    )
+    messages = [
+        {
+            "role": "system",
+            "content": "Bạn diễn giải nội dung theo mức độ người học.",
+        },
+        {"role": "user", "content": user_prompt},
+    ]
+    job = _start_ai_job(db, user=current_user, job_type="explain", prompt=user_prompt)
+    try:
+        response = _call_deepseek_chat(messages, temperature=0.3)
+        _finish_ai_job(db, job, response=response)
+    except Exception as exc:
+        _fail_ai_job(db, job, error=str(exc))
+        raise HTTPException(status_code=502, detail="AI explain failed") from exc
+
+    parsed = _safe_parse_json(response)
+    explanation = response
+    if isinstance(parsed, dict):
+        explanation = str(parsed.get("explanation") or response)
+    return ExplainGenerateOut(explanation=explanation, job_id=job.id)
+
+
+@app.get("/api/v1/ai/review-plan", response_model=ReviewPlanOut)
+def ai_review_plan(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> ReviewPlanOut:
+    now = datetime.now(timezone.utc)
+    progress_rows = db.execute(
+        select(UserProgress, Motif)
+        .join(Motif, Motif.id == UserProgress.motif_id)
+        .where(UserProgress.user_id == current_user.id)
+    ).all()
+
+    items: list[ReviewPlanItem] = []
+    for progress, motif in progress_rows:
+        if progress.status == UnlockStatus.hidden:
+            continue
+        last_attempt = db.execute(
+            select(
+                func.max(QuizAttempt.created_at), func.max(QuizAttempt.percentage)
+            ).where(
+                QuizAttempt.user_id == current_user.id,
+                QuizAttempt.motif_id == motif.id,
+            )
+        ).first()
+        last_date = last_attempt[0] if last_attempt else None
+        score = last_attempt[1] if last_attempt else None
+
+        if last_date is None:
+            last_date = (
+                progress.mastered_at
+                or progress.learned_at
+                or progress.lesson_viewed_at
+                or progress.discovered_at
+                or progress.created_at
+            )
+
+        interval_days = 1
+        if score is not None:
+            if score >= 90:
+                interval_days = 14
+            elif score >= 80:
+                interval_days = 7
+            elif score >= 60:
+                interval_days = 3
+            else:
+                interval_days = 1
+
+        due_in_days = 0
+        if last_date:
+            due_date = last_date + timedelta(days=interval_days)
+            due_in_days = max(0, (due_date - now).days)
+
+        items.append(
+            ReviewPlanItem(
+                motif_id=motif.id,
+                motif_name=motif.name,
+                due_in_days=due_in_days,
+                status=progress.status.value,
+            )
+        )
+
+    items.sort(key=lambda item: item.due_in_days)
+    return ReviewPlanOut(items=items)
+
+
+@app.post("/api/v1/ai/lessons/generate", response_model=LessonGenerateOut)
+def ai_generate_lesson(
+    payload: LessonGenerateIn,
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> LessonGenerateOut:
+    motif = _resolve_motif(
+        db,
+        motif_id=payload.motif_id,
+        mesh_name=payload.motif_mesh_name,
+        motif_name=payload.motif_name,
+    )
+    if motif is None:
+        raise HTTPException(status_code=404, detail="Motif not found")
+
+    if motif.lesson and not payload.force:
+        summary = (
+            _source_snippet(motif.lesson.description, 160) or motif.lesson.description
+        )
+        return LessonGenerateOut(
+            motif_id=motif.id,
+            lesson_id=motif.lesson.id,
+            summary=summary,
+            used_seed=False,
+        )
+
+    urn_slug = payload.urn_slug or (motif.urn.slug if motif.urn else None)
+    seed_entry = _find_seed_entry(urn_slug, motif.name) if urn_slug else None
+    used_seed = False
+    job: Optional[AIJob] = None
+
+    lesson_payload: dict[str, Optional[str]] = {}
+    if payload.use_seed and seed_entry:
+        lesson_payload = _lesson_payload_from_seed(seed_entry)
+        used_seed = True
+    else:
+        if not settings.deepseek_api_key:
+            raise HTTPException(status_code=503, detail="AI not configured")
+        user_prompt = json.dumps(
+            {
+                "motif": {
+                    "name": motif.name,
+                    "category": motif.category.value,
+                    "rarity": motif.rarity.value,
+                },
+                "urn": {
+                    "name": motif.urn.name if motif.urn else None,
+                    "slug": urn_slug,
+                },
+                "context": CUU_DINH_CONTEXT,
+                "level": payload.level,
+                "language": payload.language,
+                "format": {
+                    "intro_text": "string",
+                    "description": "string",
+                    "historical_context": "string",
+                    "symbolism": "string",
+                    "fun_fact": "string",
+                },
+            },
+            ensure_ascii=False,
+        )
+        messages = [
+            {
+                "role": "system",
+                "content": (
+                    "Bạn tạo nội dung bài học lịch sử về Cửu Đỉnh bằng tiếng Việt. "
+                    "Trả về JSON đúng định dạng."
+                ),
+            },
+            {"role": "user", "content": user_prompt},
+        ]
+        job = _start_ai_job(
+            db, user=current_user, job_type="lesson_generate", prompt=user_prompt
+        )
+        try:
+            response = _call_deepseek_chat(messages, temperature=0.3)
+            _finish_ai_job(db, job, response=response)
+        except Exception as exc:
+            _fail_ai_job(db, job, error=str(exc))
+            raise HTTPException(
+                status_code=502, detail="AI lesson generation failed"
+            ) from exc
+
+        parsed = _safe_parse_json(response)
+        if not isinstance(parsed, dict):
+            raise HTTPException(status_code=502, detail="AI lesson generation invalid")
+        lesson_payload = {
+            "intro_text": parsed.get("intro_text"),
+            "description": parsed.get("description"),
+            "historical_context": parsed.get("historical_context"),
+            "symbolism": parsed.get("symbolism"),
+            "fun_fact": parsed.get("fun_fact"),
+        }
+
+    description = lesson_payload.get("description") or ""
+    if not description:
+        raise HTTPException(status_code=400, detail="Lesson description missing")
+
+    lesson = motif.lesson or LessonContent(motif_id=motif.id, description=description)
+    lesson.intro_text = lesson_payload.get("intro_text")
+    lesson.description = description
+    lesson.historical_context = lesson_payload.get("historical_context")
+    lesson.symbolism = lesson_payload.get("symbolism")
+    lesson.fun_fact = lesson_payload.get("fun_fact")
+    lesson.is_ai_generated = True
+    db.add(lesson)
+    db.commit()
+    db.refresh(lesson)
+
+    provenance = ContentProvenance(
+        content_type="lesson",
+        content_id=lesson.id,
+        provider="seed" if used_seed else "deepseek",
+        model=settings.deepseek_model if not used_seed else None,
+        generated_at=datetime.now(timezone.utc) if not used_seed else None,
+        metadata_payload={
+            "urn_slug": urn_slug,
+            "motif_id": str(motif.id),
+            "job_id": str(job.id) if job else None,
+        },
+    )
+    db.add(provenance)
+    db.commit()
+
+    if payload.generate_quiz:
+        quiz_payloads: list[dict[str, Any]] = []
+        if used_seed and seed_entry:
+            quiz_payloads = [
+                sanitized
+                for item in _quiz_payloads_from_seed(seed_entry)
+                if (sanitized := _sanitize_quiz_payload(item))
+            ]
+        if not quiz_payloads and settings.deepseek_api_key:
+            quiz_payloads, _ = _generate_quiz_payloads_with_ai(
+                motif=motif,
+                urn=motif.urn,
+                count=payload.quiz_count,
+                difficulty=2,
+                level=payload.level,
+            )
+        if quiz_payloads:
+            _store_quiz_payloads(db, motif=motif, urn=motif.urn, payloads=quiz_payloads)
+
+    summary = _source_snippet(lesson.description, 160) or lesson.description
+    return LessonGenerateOut(
+        motif_id=motif.id,
+        lesson_id=lesson.id,
+        summary=summary,
+        ai_job_id=job.id if job else None,
+        used_seed=used_seed,
+    )
+
+
+@app.post("/api/v1/ai/quizzes/generate", response_model=QuizGenerateOut)
+def ai_generate_quiz(
+    payload: QuizGenerateIn,
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> QuizGenerateOut:
+    motif = _resolve_motif(
+        db,
+        motif_id=payload.motif_id,
+        mesh_name=payload.motif_mesh_name,
+        motif_name=payload.motif_name,
+    )
+    if motif is None:
+        raise HTTPException(status_code=404, detail="Motif not found")
+    urn = (
+        _resolve_urn(db, urn_id=payload.urn_id, urn_slug=payload.urn_slug) or motif.urn
+    )
+
+    if payload.replace_existing:
+        db.execute(delete(QuizQuestion).where(QuizQuestion.motif_id == motif.id))
+        db.commit()
+
+    used_seed = False
+    seed_entry = (
+        _find_seed_entry(urn.slug if urn else None, motif.name) if urn else None
+    )
+    quiz_payloads: list[dict[str, Any]] = []
+    job: Optional[AIJob] = None
+
+    if payload.use_seed and seed_entry:
+        quiz_payloads = [
+            sanitized
+            for item in _quiz_payloads_from_seed(seed_entry)
+            if (sanitized := _sanitize_quiz_payload(item))
+        ]
+        used_seed = bool(quiz_payloads)
+
+    if not quiz_payloads:
+        if not settings.deepseek_api_key:
+            raise HTTPException(status_code=503, detail="AI not configured")
+        job = _start_ai_job(
+            db, user=current_user, job_type="quiz_generate", prompt="generate quiz"
+        )
+        try:
+            quiz_payloads, response = _generate_quiz_payloads_with_ai(
+                motif=motif,
+                urn=urn,
+                count=payload.count,
+                difficulty=payload.difficulty,
+                level=None,
+            )
+            _finish_ai_job(db, job, response=response)
+        except Exception as exc:
+            _fail_ai_job(db, job, error=str(exc))
+            raise HTTPException(
+                status_code=502, detail="AI quiz generation failed"
+            ) from exc
+
+    questions = _store_quiz_payloads(db, motif=motif, urn=urn, payloads=quiz_payloads)
+    for question in questions:
+        provenance = ContentProvenance(
+            content_type="quiz_question",
+            content_id=question.id,
+            provider="seed" if used_seed else "deepseek",
+            model=settings.deepseek_model if not used_seed else None,
+            generated_at=datetime.now(timezone.utc) if not used_seed else None,
+            metadata_payload={
+                "motif_id": str(motif.id),
+                "urn_id": str(urn.id) if urn else None,
+                "job_id": str(job.id) if job else None,
+            },
+        )
+        db.add(provenance)
+    db.commit()
+
+    return QuizGenerateOut(
+        question_ids=[q.id for q in questions],
+        ai_job_id=job.id if job else None,
+        used_seed=used_seed,
+    )
+
+
+@app.post("/api/v1/ai/diagnostic", response_model=DiagnosticGenerateOut)
+def ai_diagnostic(
+    payload: DiagnosticGenerateIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> DiagnosticGenerateOut:
+    if not settings.deepseek_api_key:
+        raise HTTPException(status_code=503, detail="AI not configured")
+
+    urn = _resolve_urn(db, urn_id=payload.urn_id, urn_slug=payload.urn_slug)
+    job = _start_ai_job(
+        db, user=current_user, job_type="diagnostic", prompt="diagnostic quiz"
+    )
+    try:
+        payloads, response = _generate_quiz_payloads_with_ai(
+            motif=None,
+            urn=urn,
+            count=payload.count,
+            difficulty=2,
+            level=payload.level,
+        )
+        _finish_ai_job(db, job, response=response)
+    except Exception as exc:
+        _fail_ai_job(db, job, error=str(exc))
+        raise HTTPException(status_code=502, detail="AI diagnostic failed") from exc
+
+    questions = [
+        DiagnosticQuestionOut(
+            question_text=item["question_text"],
+            options=item.get("options") or [],
+            correct_answer=item["correct_answer"],
+            explanation=item.get("explanation"),
+        )
+        for item in payloads
+    ]
+    return DiagnosticGenerateOut(questions=questions, job_id=job.id)
+
+
+@app.post("/api/v1/admin/ai/urns/{urn_slug}/seed", response_model=SeedUrnOut)
+def ai_seed_urn(
+    urn_slug: str,
+    payload: SeedUrnIn,
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> SeedUrnOut:
+    urn = _resolve_urn(db, urn_slug=urn_slug)
+    if urn is None:
+        raise HTTPException(status_code=404, detail="Urn not found")
+
+    motifs = (
+        db.execute(
+            select(Motif)
+            .options(selectinload(Motif.lesson))
+            .where(Motif.urn_id == urn.id)
+            .order_by(Motif.display_order.asc())
+        )
+        .scalars()
+        .all()
+    )
+
+    results: list[SeedUrnResult] = []
+    created = 0
+    skipped = 0
+
+    for motif in motifs:
+        if motif.lesson and not payload.force:
+            skipped += 1
+            results.append(
+                SeedUrnResult(
+                    motif_id=motif.id,
+                    status="skipped",
+                    lesson_id=motif.lesson.id,
+                )
+            )
+            continue
+
+        seed_entry = (
+            _find_seed_entry(urn_slug, motif.name) if payload.use_seed else None
+        )
+        used_seed = False
+        lesson_payload: dict[str, Optional[str]] = {}
+        if seed_entry:
+            lesson_payload = _lesson_payload_from_seed(seed_entry)
+            used_seed = True
+        elif not settings.deepseek_api_key:
+            skipped += 1
+            results.append(SeedUrnResult(motif_id=motif.id, status="skipped"))
+            continue
+        else:
+            prompt = json.dumps(
+                {
+                    "motif": {"name": motif.name},
+                    "urn": {"name": urn.name},
+                    "context": CUU_DINH_CONTEXT,
+                    "format": {
+                        "intro_text": "string",
+                        "description": "string",
+                        "historical_context": "string",
+                        "symbolism": "string",
+                        "fun_fact": "string",
+                    },
+                },
+                ensure_ascii=False,
+            )
+            messages = [
+                {
+                    "role": "system",
+                    "content": "Bạn tạo nội dung bài học lịch sử về Cửu Đỉnh.",
+                },
+                {"role": "user", "content": prompt},
+            ]
+            try:
+                response = _call_deepseek_chat(messages, temperature=0.3)
+            except Exception:
+                response = ""
+            parsed = _safe_parse_json(response) if response else None
+            if isinstance(parsed, dict):
+                lesson_payload = {
+                    "intro_text": parsed.get("intro_text"),
+                    "description": parsed.get("description"),
+                    "historical_context": parsed.get("historical_context"),
+                    "symbolism": parsed.get("symbolism"),
+                    "fun_fact": parsed.get("fun_fact"),
+                }
+
+        description = lesson_payload.get("description") or ""
+        if not description:
+            skipped += 1
+            results.append(SeedUrnResult(motif_id=motif.id, status="skipped"))
+            continue
+
+        lesson = motif.lesson or LessonContent(
+            motif_id=motif.id, description=description
+        )
+        lesson.intro_text = lesson_payload.get("intro_text")
+        lesson.description = description
+        lesson.historical_context = lesson_payload.get("historical_context")
+        lesson.symbolism = lesson_payload.get("symbolism")
+        lesson.fun_fact = lesson_payload.get("fun_fact")
+        lesson.is_ai_generated = True
+        db.add(lesson)
+        db.commit()
+        db.refresh(lesson)
+
+        provenance = ContentProvenance(
+            content_type="lesson",
+            content_id=lesson.id,
+            provider="seed" if used_seed else "deepseek",
+            model=settings.deepseek_model if not used_seed else None,
+            generated_at=datetime.now(timezone.utc) if not used_seed else None,
+            metadata_payload={"urn_slug": urn.slug, "motif_id": str(motif.id)},
+        )
+        db.add(provenance)
+        db.commit()
+
+        if payload.generate_quiz:
+            quiz_payloads = []
+            if seed_entry:
+                quiz_payloads = [
+                    sanitized
+                    for item in _quiz_payloads_from_seed(seed_entry)
+                    if (sanitized := _sanitize_quiz_payload(item))
+                ]
+            if quiz_payloads:
+                _store_quiz_payloads(db, motif=motif, urn=urn, payloads=quiz_payloads)
+
+        created += 1
+        results.append(
+            SeedUrnResult(
+                motif_id=motif.id,
+                status="created",
+                lesson_id=lesson.id,
+                quiz_count=len(quiz_payloads) if payload.generate_quiz else 0,
+                used_seed=used_seed,
+            )
+        )
+
+    return SeedUrnOut(
+        urn_id=urn.id,
+        urn_slug=urn.slug,
+        total=len(motifs),
+        created=created,
+        skipped=skipped,
+        results=results,
+    )
 
 
 @app.post("/api/v1/content/flags", response_model=ContentFlagOut, status_code=201)
