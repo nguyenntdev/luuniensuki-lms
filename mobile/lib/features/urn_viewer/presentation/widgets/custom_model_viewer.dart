@@ -343,11 +343,17 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
   @override
   Widget build(BuildContext context) {
     debugPrint('[CUSTOM_MODEL_VIEWER] Building widget - _isLoading: $_isLoading, _errorMessage: $_errorMessage');
+    final hotspotKey = widget.hotspots
+        .map(
+          (motif) =>
+              '${motif.id}:${motif.posX.toStringAsFixed(3)}:${motif.posY.toStringAsFixed(3)}:${motif.posZ.toStringAsFixed(3)}',
+        )
+        .join('|');
 
     return Stack(
       children: [
         ModelViewer(
-          key: ValueKey(widget.modelUrl),
+          key: ValueKey('${widget.modelUrl}::$hotspotKey'),
           src: widget.modelUrl,
           alt: widget.alt,
           backgroundColor: widget.backgroundColor,

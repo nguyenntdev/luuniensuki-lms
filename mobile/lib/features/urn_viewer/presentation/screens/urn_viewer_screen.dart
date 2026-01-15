@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
@@ -12,7 +13,6 @@ import '../../domain/entities/urn.dart';
 import '../providers/urn_provider.dart';
 import '../widgets/custom_model_viewer.dart';
 import '../widgets/discovery_animation.dart';
-import '../widgets/hotspot_overlay.dart';
 import '../widgets/motif_sidebar.dart';
 
 enum ModelQuality {
@@ -61,9 +61,10 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
   List<String> _modelFallbackUrls = [];
   int _modelFallbackIndex = 0;
 
-  // Track camera position for hotspot positioning
-  double _cameraRotationY = 0.0;
-  double _cameraDistance = 5.0;
+  static const String _motifCoordinateAsset =
+      'assets/data/motif-coordinates-cao-dinh.json';
+  final Map<String, _MotifCoordinate> _motifCoordinates = {};
+  bool _motifCoordinatesLoaded = false;
 
   // Timer for model loading timeout
   Timer? _loadingTimer;
@@ -88,6 +89,7 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
 
     // Check network connectivity
     _checkConnectivity();
+    _loadMotifCoordinates();
 
     // Set immersive mode for 3D viewer
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
@@ -125,6 +127,81 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
         });
       }
     }
+  }
+
+  Future<void> _loadMotifCoordinates() async {
+    if (_motifCoordinatesLoaded) {
+      return;
+    }
+    try {
+      final raw = await rootBundle.loadString(_motifCoordinateAsset);
+      final decoded = jsonDecode(raw);
+      if (decoded is! List) {
+        throw const FormatException('Expected list of motif coordinates');
+      }
+      for (final entry in decoded) {
+        if (entry is! Map) {
+          continue;
+        }
+        final motifName = (entry['motif_name'] ?? '').toString();
+        final meshName = (entry['mesh_name'] ?? '').toString();
+        final posX = (entry['pos_x'] as num?)?.toDouble();
+        final posY = (entry['pos_y'] as num?)?.toDouble();
+        final posZ = (entry['pos_z'] as num?)?.toDouble();
+        final boundingRadius = (entry['bounding_radius'] as num?)?.toDouble();
+        if (motifName.isEmpty && meshName.isEmpty) {
+          continue;
+        }
+        if (posX == null || posY == null || posZ == null || boundingRadius == null) {
+          continue;
+        }
+        final coordinate = _MotifCoordinate(
+          motifName: motifName,
+          meshName: meshName,
+          posX: posX,
+          posY: posY,
+          posZ: posZ,
+          boundingRadius: boundingRadius,
+        );
+        final primaryKey = _normalizeMotifKey(motifName.isNotEmpty ? motifName : meshName);
+        _motifCoordinates[primaryKey] = coordinate;
+        if (meshName.isNotEmpty) {
+          _motifCoordinates[_normalizeMotifKey(meshName)] = coordinate;
+        }
+      }
+      _motifCoordinatesLoaded = true;
+      if (mounted) {
+        setState(() {});
+      }
+      debugPrint('[URN_VIEWER] ✅ Loaded motif coordinates: ${_motifCoordinates.length}');
+    } catch (e) {
+      _motifCoordinatesLoaded = true;
+      debugPrint('[URN_VIEWER] ❌ Failed to load motif coordinates: $e');
+    }
+  }
+
+  String _normalizeMotifKey(String value) {
+    return value.trim().toLowerCase();
+  }
+
+  List<Motif> _applyMotifCoordinates(UrnDetail urnDetail) {
+    if (urnDetail.urn.slug != 'cao-dinh' || _motifCoordinates.isEmpty) {
+      return urnDetail.motifs;
+    }
+    return urnDetail.motifs.map((motif) {
+      final nameKey = _normalizeMotifKey(motif.name);
+      final meshKey = _normalizeMotifKey(motif.meshName);
+      final coordinate = _motifCoordinates[nameKey] ?? _motifCoordinates[meshKey];
+      if (coordinate == null) {
+        return motif;
+      }
+      return motif.copyWith(
+        posX: coordinate.posX,
+        posY: coordinate.posY,
+        posZ: coordinate.posZ,
+        boundingRadius: coordinate.boundingRadius,
+      );
+    }).toList();
   }
 
   @override
@@ -399,6 +476,7 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
   Widget _buildViewerContent(UrnDetail urnDetail) {
     final screenSize = MediaQuery.of(context).size;
     final sidebarWidth = screenSize.width * 0.85;
+    final motifs = _applyMotifCoordinates(urnDetail);
 
     // Log urn details on first build
     debugPrint('[URN_VIEWER] ───────────────────────────────────────');
@@ -420,7 +498,7 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
       children: [
         // 3D Model Viewer - Full screen
         Positioned.fill(
-          child: _build3DViewer(urnDetail),
+          child: _build3DViewer(urnDetail, motifs),
         ),
 
         // Loading overlay
@@ -437,18 +515,7 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
           child: _buildTopBar(urnDetail),
         ),
 
-        // Hotspot overlays (positioned based on 3D coordinates)
-        if (_showHotspots && !_isLoading && !_modelLoadError)
-          ...urnDetail.motifs.map(
-            (motif) => HotspotOverlay(
-              key: ValueKey(motif.id),
-              motif: motif,
-              screenSize: screenSize,
-              cameraRotationY: _cameraRotationY,
-              cameraDistance: _cameraDistance,
-              onTap: () => _handleHotspotTap(motif),
-            ),
-          ),
+        // Hotspots are rendered inside the 3D viewer to avoid overlay issues.
 
         // Bottom info bar
         Positioned(
@@ -499,7 +566,7 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
     );
   }
 
-  Widget _build3DViewer(UrnDetail urnDetail) {
+  Widget _build3DViewer(UrnDetail urnDetail, List<Motif> motifs) {
     if (_resolvedModelUrl == null) {
       _resolveModelUrl(urnDetail);
       return Container(
@@ -530,15 +597,11 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
     return CustomModelViewer(
       modelUrl: modelPath,
       alt: urnDetail.urn.name,
-      hotspots: urnDetail.motifs,
+      hotspots: _showHotspots ? motifs : const [],
       backgroundColor: const Color(0xFF1A1A2E),
-      autoRotate: allowAutoRotate,  // Reduce GPU load on low quality devices
+      autoRotate: false,
       cameraControls: true,
       disableZoom: false,
-      cameraOrbit: '45deg 60deg 3m',  // Better initial angle
-      minCameraOrbit: 'auto auto 1m',  // Allow closer zoom
-      maxCameraOrbit: 'auto auto 15m',
-      fieldOfView: '35deg',  // Wider field of view
       onModelLoaded: () {
         debugPrint('[URN_VIEWER] ✅ Model loaded successfully via CustomModelViewer');
         if (mounted) {
@@ -585,9 +648,9 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
       },
       onHotspotTap: (motifId) {
         debugPrint('[URN_VIEWER] 🎯 Hotspot tapped: $motifId');
-        final motif = urnDetail.motifs.firstWhere(
+        final motif = motifs.firstWhere(
           (m) => m.id == motifId,
-          orElse: () => urnDetail.motifs.first,
+          orElse: () => motifs.first,
         );
         _handleHotspotTap(motif);
       },
@@ -1301,4 +1364,22 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
       ],
     );
   }
+}
+
+class _MotifCoordinate {
+  final String motifName;
+  final String meshName;
+  final double posX;
+  final double posY;
+  final double posZ;
+  final double boundingRadius;
+
+  const _MotifCoordinate({
+    required this.motifName,
+    required this.meshName,
+    required this.posX,
+    required this.posY,
+    required this.posZ,
+    required this.boundingRadius,
+  });
 }
