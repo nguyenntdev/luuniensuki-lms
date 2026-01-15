@@ -25,11 +25,13 @@ class _ModelSelection {
   final String url;
   final ModelQuality quality;
   final bool isLocal;
+  final List<String> fallbackUrls;
 
   const _ModelSelection({
     required this.url,
     required this.quality,
     required this.isLocal,
+    required this.fallbackUrls,
   });
 }
 
@@ -54,10 +56,10 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
   bool _showDiscoveryAnimation = false;
 
   String? _resolvedModelUrl;
-  String? _originalModelUrl;
   ModelQuality? _modelQuality;
   bool _isResolvingModel = false;
-  bool _usedFallbackModel = false;
+  List<String> _modelFallbackUrls = [];
+  int _modelFallbackIndex = 0;
 
   // Track camera position for hotspot positioning
   double _cameraRotationY = 0.0;
@@ -155,8 +157,9 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
 
     setState(() {
       _resolvedModelUrl = selection.url;
-      _originalModelUrl = urnDetail.urn.remoteModelUrl;
       _modelQuality = selection.quality;
+      _modelFallbackUrls = selection.fallbackUrls;
+      _modelFallbackIndex = 0;
       _isResolvingModel = false;
     });
   }
@@ -188,17 +191,32 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
     if (urnDetail.urn.slug != 'cao-dinh') {
       return _ModelSelection(
         url: baseUrl,
-        quality: ModelQuality.high,
+        quality: quality,
         isLocal: false,
+        fallbackUrls: const [],
       );
     }
 
-    final remoteVariant = _applyQualitySuffix(baseUrl, quality);
+    final url512 = _applyQualitySuffix(baseUrl, ModelQuality.low);
+    final url1k = _applyQualitySuffix(baseUrl, ModelQuality.medium);
+    final url2k = _applyQualitySuffix(baseUrl, ModelQuality.high);
+    final fallbackUrls = switch (quality) {
+      ModelQuality.low => [url1k, url2k, baseUrl],
+      ModelQuality.medium => [url2k, baseUrl],
+      ModelQuality.high => [baseUrl],
+    };
+
+    final remoteVariant = switch (quality) {
+      ModelQuality.low => url512,
+      ModelQuality.medium => url1k,
+      ModelQuality.high => url2k,
+    };
     debugPrint('[URN_VIEWER] Using remote model for quality: $quality');
     return _ModelSelection(
       url: remoteVariant,
       quality: quality,
       isLocal: false,
+      fallbackUrls: fallbackUrls,
     );
   }
 
@@ -244,11 +262,11 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
   }
 
   String _applyQualitySuffix(String url, ModelQuality quality) {
-    if (quality == ModelQuality.high) {
-      return url;
-    }
-
-    final suffix = quality == ModelQuality.low ? '-1k' : '-2k';
+    final suffix = switch (quality) {
+      ModelQuality.low => '-512',
+      ModelQuality.medium => '-1k',
+      ModelQuality.high => '-2k',
+    };
     final uri = Uri.parse(url);
     final path = uri.path;
     if (!path.toLowerCase().endsWith('.glb')) {
@@ -532,13 +550,12 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
       },
       onModelError: (error) {
         debugPrint('[URN_VIEWER] ❌ Model load error: $error');
-        if (!_usedFallbackModel &&
-            _originalModelUrl != null &&
-            modelPath != _originalModelUrl) {
-          debugPrint('[URN_VIEWER] ⚠️ Falling back to original model URL.');
+        if (_modelFallbackIndex < _modelFallbackUrls.length) {
+          final fallbackUrl = _modelFallbackUrls[_modelFallbackIndex];
+          _modelFallbackIndex += 1;
+          debugPrint('[URN_VIEWER] ⚠️ Falling back to: $fallbackUrl');
           setState(() {
-            _resolvedModelUrl = _originalModelUrl;
-            _usedFallbackModel = true;
+            _resolvedModelUrl = fallbackUrl;
             _isLoading = true;
             _modelLoadError = false;
             _errorMessage = null;
