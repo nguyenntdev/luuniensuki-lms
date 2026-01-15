@@ -131,6 +131,8 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
         height: 40px;
         border-radius: 50%;
         cursor: pointer;
+        pointer-events: auto;
+        touch-action: none;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -193,13 +195,17 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
 
         const hotspots = modelViewer.querySelectorAll('.hotspot');
         hotspots.forEach((hotspot) => {
-          hotspot.addEventListener('click', (event) => {
+          hotspot.style.pointerEvents = 'auto';
+          const handleTap = (event) => {
             event.stopPropagation();
+            event.preventDefault();
             const motifId = hotspot.getAttribute('data-motif-id');
             if (motifId) {
               notify('hotspot', { motifId: motifId });
             }
-          });
+          };
+          hotspot.addEventListener('click', handleTap);
+          hotspot.addEventListener('pointerup', handleTap);
         });
 
         const attachContextHandlers = () => {
