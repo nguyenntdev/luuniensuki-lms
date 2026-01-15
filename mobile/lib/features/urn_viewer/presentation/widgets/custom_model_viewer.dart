@@ -116,7 +116,7 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
           data-position="${motif.posX}m ${motif.posY}m ${motif.posZ}m"
           data-normal="0m 1m 0m"
           data-motif-id="${motif.id}"
-          style="background-color: $hotspotColor; border: 2px solid white;"
+          style="background-color: $hotspotColor;"
         >
           <span class="hotspot-icon">$hotspotIcon</span>
         </button>
@@ -136,8 +136,16 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
         display: flex;
         align-items: center;
         justify-content: center;
+        opacity: 0.06;
+        border: 1.5px solid rgba(255, 255, 255, 0.15);
+        box-shadow: none;
+        transition: opacity 0.15s ease, transform 0.2s ease, box-shadow 0.2s ease;
+      }
+      .hotspot.is-active,
+      .hotspot:active {
+        opacity: 0.45;
+        border-color: rgba(255, 255, 255, 0.6);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        transition: transform 0.2s ease;
       }
       .hotspot:hover {
         transform: scale(1.1);
@@ -146,6 +154,7 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
         color: white;
         font-size: 20px;
         font-weight: bold;
+        opacity: 0.9;
       }
     ''';
   }
@@ -204,8 +213,14 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
               notify('hotspot', { motifId: motifId });
             }
           };
+          const activate = () => hotspot.classList.add('is-active');
+          const deactivate = () => hotspot.classList.remove('is-active');
           hotspot.addEventListener('click', handleTap);
+          hotspot.addEventListener('pointerdown', activate);
           hotspot.addEventListener('pointerup', handleTap);
+          hotspot.addEventListener('pointerup', deactivate);
+          hotspot.addEventListener('pointercancel', deactivate);
+          hotspot.addEventListener('pointerleave', deactivate);
         });
 
         const attachContextHandlers = () => {
