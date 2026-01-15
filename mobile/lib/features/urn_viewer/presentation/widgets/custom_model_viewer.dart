@@ -178,8 +178,8 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
     ${widget.minCameraOrbit != null ? 'min-camera-orbit="${widget.minCameraOrbit}"' : 'min-camera-orbit="auto auto 2m"'}
     ${widget.maxCameraOrbit != null ? 'max-camera-orbit="${widget.maxCameraOrbit}"' : 'max-camera-orbit="auto auto 10m"'}
     ${widget.fieldOfView != null ? 'field-of-view="${widget.fieldOfView}"' : 'field-of-view="45deg"'}
-    loading="lazy"
-    reveal="auto"
+    loading="eager"
+    reveal="manual"
     shadow-intensity="0"
     environment-image="neutral"
     exposure="1.2"
@@ -194,6 +194,14 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
     // Model load success handler
     modelViewer.addEventListener('load', () => {
       console.log('[MODEL_VIEWER] ✅ Model loaded successfully');
+      if (modelViewer.dismissPoster) {
+        modelViewer.dismissPoster();
+      }
+      setTimeout(() => {
+        if (modelViewer.dismissPoster) {
+          modelViewer.dismissPoster();
+        }
+      }, 200);
       attachContextLossHandler();
       if (window.flutter_inappwebview) {
         window.flutter_inappwebview.callHandler('onModelLoad', {
@@ -225,6 +233,13 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
           progress: progress,
           timestamp: Date.now()
         });
+      }
+    });
+
+    modelViewer.addEventListener('model-visibility', (event) => {
+      console.log('[MODEL_VIEWER] Model visibility:', event.detail.visible);
+      if (event.detail.visible === false && modelViewer.dismissPoster) {
+        modelViewer.dismissPoster();
       }
     });
 
