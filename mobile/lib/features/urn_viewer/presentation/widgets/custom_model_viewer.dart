@@ -174,12 +174,12 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
     ${widget.autoRotate ? 'auto-rotate' : ''}
     ${widget.cameraControls ? 'camera-controls' : ''}
     ${widget.disableZoom ? 'disable-zoom' : ''}
-    ${widget.cameraOrbit != null ? 'camera-orbit="${widget.cameraOrbit}"' : 'camera-orbit="0deg 75deg 5m"'}
-    ${widget.minCameraOrbit != null ? 'min-camera-orbit="${widget.minCameraOrbit}"' : 'min-camera-orbit="auto auto 2m"'}
-    ${widget.maxCameraOrbit != null ? 'max-camera-orbit="${widget.maxCameraOrbit}"' : 'max-camera-orbit="auto auto 10m"'}
+    ${widget.cameraOrbit != null ? 'camera-orbit="${widget.cameraOrbit}"' : 'camera-orbit="0deg 75deg 105%"'}
+    ${widget.minCameraOrbit != null ? 'min-camera-orbit="${widget.minCameraOrbit}"' : 'min-camera-orbit="auto auto 45%"'}
+    ${widget.maxCameraOrbit != null ? 'max-camera-orbit="${widget.maxCameraOrbit}"' : 'max-camera-orbit="auto auto 200%"'}
     ${widget.fieldOfView != null ? 'field-of-view="${widget.fieldOfView}"' : 'field-of-view="45deg"'}
     loading="eager"
-    reveal="manual"
+    reveal="auto"
     shadow-intensity="0"
     environment-image="neutral"
     exposure="1.2"
@@ -191,17 +191,12 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
     console.log('[MODEL_VIEWER] Initializing...');
     const modelViewer = document.getElementById('modelViewer');
 
+    const fallbackOrbit = '${widget.cameraOrbit ?? '0deg 75deg 105%'}';
+    const fallbackTarget = 'auto auto auto';
+
     // Model load success handler
     modelViewer.addEventListener('load', () => {
       console.log('[MODEL_VIEWER] ✅ Model loaded successfully');
-      if (modelViewer.dismissPoster) {
-        modelViewer.dismissPoster();
-      }
-      setTimeout(() => {
-        if (modelViewer.dismissPoster) {
-          modelViewer.dismissPoster();
-        }
-      }, 200);
       attachContextLossHandler();
       if (window.flutter_inappwebview) {
         window.flutter_inappwebview.callHandler('onModelLoad', {
@@ -237,9 +232,19 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
     });
 
     modelViewer.addEventListener('model-visibility', (event) => {
-      console.log('[MODEL_VIEWER] Model visibility:', event.detail.visible);
-      if (event.detail.visible === false && modelViewer.dismissPoster) {
-        modelViewer.dismissPoster();
+      const visible = event.detail.visible;
+      console.log('[MODEL_VIEWER] Model visibility:', visible);
+      if (!visible) {
+        console.warn('[MODEL_VIEWER] Model hidden - forcing camera reset');
+        if (modelViewer.jumpCameraToGoal) {
+          modelViewer.cameraOrbit = fallbackOrbit;
+          modelViewer.cameraTarget = fallbackTarget;
+          modelViewer.jumpCameraToGoal();
+          return;
+        }
+        if (modelViewer.updateFraming) {
+          modelViewer.updateFraming();
+        }
       }
     });
 
