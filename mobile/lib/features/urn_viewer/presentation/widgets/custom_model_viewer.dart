@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -138,35 +137,6 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
     );
   }
 
-  double _parseFieldOfViewDegrees() {
-    final raw = widget.fieldOfView;
-    if (raw == null || raw.isEmpty) {
-      return 45.0;
-    }
-    final cleaned = raw.toLowerCase().replaceAll('deg', '').trim();
-    final value = double.tryParse(cleaned);
-    if (value == null || value.isNaN || value <= 0) {
-      return 45.0;
-    }
-    return value;
-  }
-
-  String? _buildFallbackCameraOrbit(_MotifBounds bounds) {
-    final sizeX = bounds.sizeX.abs();
-    final sizeY = bounds.sizeY.abs();
-    final sizeZ = bounds.sizeZ.abs();
-    final maxDim = [sizeX, sizeY, sizeZ].reduce((a, b) => a > b ? a : b);
-    if (maxDim <= 0) {
-      return null;
-    }
-    final fov = _parseFieldOfViewDegrees();
-    final radius = 0.5 * math.sqrt(sizeX * sizeX + sizeY * sizeY + sizeZ * sizeZ);
-    final distance = radius / (math.sin((fov * math.pi / 180) / 2));
-    final orbitDistance = [distance * 1.4, radius * 2, maxDim * 2.5, 1.0]
-        .reduce((a, b) => a > b ? a : b);
-    return '0deg 75deg ${orbitDistance.toStringAsFixed(3)}m';
-  }
-
   /// Generate HTML content with model-viewer web component
   String _generateHtml() {
     final bgColor = _colorToHex(widget.backgroundColor);
@@ -177,13 +147,8 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
     final boundsSizeAttr = motifBounds == null
         ? ''
         : 'data-bounds-size="${motifBounds.sizeX} ${motifBounds.sizeY} ${motifBounds.sizeZ}"';
-    final fallbackOrbit = motifBounds == null ? null : _buildFallbackCameraOrbit(motifBounds);
-    final fallbackTarget = motifBounds == null
-        ? null
-        : '${motifBounds.centerX}m ${motifBounds.centerY}m ${motifBounds.centerZ}m';
-    final useFallbackCamera = widget.cameraOrbit == null && fallbackOrbit != null && fallbackTarget != null;
-    final cameraOrbitAttrValue = widget.cameraOrbit ?? (useFallbackCamera ? fallbackOrbit : 'auto auto auto');
-    final cameraTargetAttrValue = useFallbackCamera ? fallbackTarget : 'auto auto auto';
+    final cameraOrbitAttrValue = widget.cameraOrbit ?? 'auto auto auto';
+    final cameraTargetAttrValue = 'auto auto auto';
 
     // Generate hotspot HTML
     final hotspotsHtml = widget.hotspots.map((motif) {
@@ -213,7 +178,7 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>3D Model Viewer</title>
-  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <script type="module" src="https://unpkg.com/@google/model-viewer@3.4.0/dist/model-viewer.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -274,8 +239,15 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
   </model-viewer>
 
   <script>
-    console.log('[MODEL_VIEWER] Initializing...');
-    const modelViewer = document.getElementById('modelViewer');
+    let modelViewer = null;
+    function initializeModelViewer() {
+      console.log('[MODEL_VIEWER] Initializing...');
+      if (!modelViewer) {
+        console.warn('[MODEL_VIEWER] Missing modelViewer element');
+        return;
+      }
+      console.log('[MODEL_VIEWER] Model src attribute:', modelViewer.getAttribute('src'));
+      console.log('[MODEL_VIEWER] Model src property:', modelViewer.src);
 
     function parseFieldOfView(viewer) {
       const raw = viewer?.fieldOfView ?? viewer?.getFieldOfView?.();
@@ -667,7 +639,8 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
     });
 
     console.log('[MODEL_VIEWER] Initialization complete');
-    console.log('[MODEL_VIEWER] Model src:', modelViewer.src);
+    console.log('[MODEL_VIEWER] Model src attribute:', modelViewer.getAttribute('src'));
+    console.log('[MODEL_VIEWER] Model src property:', modelViewer.src);
     console.log('[MODEL_VIEWER] Hotspots count:', hotspots.length);
 
     function attachContextLossHandler() {
@@ -695,6 +668,17 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
       });
       console.log('[MODEL_VIEWER] WebGL context handlers attached');
     }
+  }
+
+  if (window.customElements && customElements.whenDefined) {
+    customElements.whenDefined('model-viewer').then(() => {
+      modelViewer = document.getElementById('modelViewer');
+      initializeModelViewer();
+    });
+  } else {
+    modelViewer = document.getElementById('modelViewer');
+    initializeModelViewer();
+  }
   </script>
 </body>
 </html>
