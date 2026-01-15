@@ -203,11 +203,17 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
         });
 
         const hotspots = modelViewer.querySelectorAll('.hotspot');
+        let lastTapAt = 0;
         hotspots.forEach((hotspot) => {
           hotspot.style.pointerEvents = 'auto';
           const handleTap = (event) => {
             event.stopPropagation();
             event.preventDefault();
+            const now = Date.now();
+            if (now - lastTapAt < 250) {
+              return;
+            }
+            lastTapAt = now;
             const motifId = hotspot.getAttribute('data-motif-id');
             if (motifId) {
               notify('hotspot', { motifId: motifId });
@@ -216,6 +222,8 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
           const activate = () => hotspot.classList.add('is-active');
           const deactivate = () => hotspot.classList.remove('is-active');
           hotspot.addEventListener('click', handleTap);
+          hotspot.addEventListener('touchend', handleTap);
+          hotspot.addEventListener('mouseup', handleTap);
           hotspot.addEventListener('pointerdown', activate);
           hotspot.addEventListener('pointerup', handleTap);
           hotspot.addEventListener('pointerup', deactivate);

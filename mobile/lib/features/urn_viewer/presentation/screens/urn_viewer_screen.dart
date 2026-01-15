@@ -371,6 +371,12 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
         _pendingDiscovery = result;
         _showDiscoveryAnimation = true;
       });
+      return;
+    }
+
+    // Fallback: still open detail even if unlock failed.
+    if (mounted) {
+      _openMotifDetail(motif);
     }
   }
 
