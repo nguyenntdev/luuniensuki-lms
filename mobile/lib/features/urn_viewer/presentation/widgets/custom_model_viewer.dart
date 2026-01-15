@@ -206,10 +206,41 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
       return 45;
     }
 
+    function logCameraState(prefix) {
+      const orbit = modelViewer?.getCameraOrbit ? modelViewer.getCameraOrbit() : modelViewer?.cameraOrbit;
+      const target = modelViewer?.getCameraTarget ? modelViewer.getCameraTarget() : modelViewer?.cameraTarget;
+      console.log(prefix, 'orbit:', JSON.stringify(orbit), 'target:', JSON.stringify(target));
+    }
+
+    function expandCameraOrbit(multiplier) {
+      if (!modelViewer || !modelViewer.getCameraOrbit) {
+        return false;
+      }
+      const orbit = modelViewer.getCameraOrbit();
+      if (!orbit || orbit.radius == null) {
+        return false;
+      }
+      const theta = Number.isFinite(orbit.theta) ? orbit.theta : 0;
+      const phi = Number.isFinite(orbit.phi) ? orbit.phi : Math.PI / 2;
+      const radius = Number.isFinite(orbit.radius) ? orbit.radius : 2;
+      const newRadius = Math.max(radius * multiplier, radius + 0.5);
+      modelViewer.cameraOrbit = `\${theta}rad \${phi}rad \${newRadius}m`;
+      if (modelViewer.jumpCameraToGoal) {
+        modelViewer.jumpCameraToGoal();
+      }
+      logCameraState('[MODEL_VIEWER] Expanded orbit');
+      return true;
+    }
+
     function fitCameraToModel() {
       if (!modelViewer) {
         return false;
       }
+      console.log(
+        '[MODEL_VIEWER] Bounds API:',
+        typeof modelViewer.getBoundingBoxCenter,
+        typeof modelViewer.getBoundingBoxSize
+      );
       if (modelViewer.updateFraming) {
         modelViewer.updateFraming();
       }
@@ -252,6 +283,7 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
 
       console.log('[MODEL_VIEWER] Bounds center:', center, 'size:', size);
       console.log('[MODEL_VIEWER] Fit camera fov:', fov, 'radius:', radius, 'orbit:', orbitDistance);
+      logCameraState('[MODEL_VIEWER] Before fit');
 
       modelViewer.cameraTarget = `\${center.x}m \${center.y}m \${center.z}m`;
       modelViewer.cameraOrbit = `0deg 75deg \${orbitDistance}m`;
@@ -262,16 +294,25 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
 
       modelViewer.style.visibility = 'visible';
       modelViewer.style.opacity = '1';
+      logCameraState('[MODEL_VIEWER] After fit');
       return true;
     }
 
     // Model load success handler
     modelViewer.addEventListener('load', () => {
       console.log('[MODEL_VIEWER] ✅ Model loaded successfully');
-      fitCameraToModel();
-      requestAnimationFrame(() => fitCameraToModel());
+      if (!fitCameraToModel()) {
+        expandCameraOrbit(1.4);
+      }
+      requestAnimationFrame(() => {
+        if (!fitCameraToModel()) {
+          expandCameraOrbit(1.4);
+        }
+      });
       setTimeout(() => {
-        fitCameraToModel();
+        if (!fitCameraToModel()) {
+          expandCameraOrbit(1.4);
+        }
       }, 150);
       attachContextLossHandler();
       if (window.flutter_inappwebview) {
@@ -312,18 +353,9 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
       console.log('[MODEL_VIEWER] Model visibility:', visible);
       if (!visible) {
         console.warn('[MODEL_VIEWER] Model hidden - re-fitting camera');
-        if (modelViewer.getCameraOrbit) {
-          console.log('[MODEL_VIEWER] Current orbit:', modelViewer.getCameraOrbit());
-        }
-        if (modelViewer.getCameraTarget) {
-          console.log('[MODEL_VIEWER] Current target:', modelViewer.getCameraTarget());
-        }
+        logCameraState('[MODEL_VIEWER] Current camera');
         if (!fitCameraToModel()) {
-          modelViewer.cameraTarget = '0m 0m 0m';
-          modelViewer.cameraOrbit = '0deg 75deg 2m';
-          if (modelViewer.jumpCameraToGoal) {
-            modelViewer.jumpCameraToGoal();
-          }
+          expandCameraOrbit(1.6);
         }
       }
     });
