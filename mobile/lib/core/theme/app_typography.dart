@@ -8,8 +8,8 @@ class AppTypography {
   AppTypography._();
 
   // Font families
-  static const String fontFamily = 'Roboto'; // Default, system font
-  static const String displayFontFamily = 'Roboto'; // For headings
+  static const String fontFamily = 'Roboto';
+  static const String displayFontFamily = 'Roboto';
 
   // Font weights
   static const FontWeight light = FontWeight.w300;
@@ -77,14 +77,14 @@ class AppTypography {
         titleMedium: TextStyle(
           fontSize: 16,
           fontWeight: medium,
-          letterSpacing: 0.15,
+          letterSpacing: 0.1,
           height: 1.5,
           color: AppColors.textPrimary,
         ),
         titleSmall: TextStyle(
           fontSize: 14,
           fontWeight: medium,
-          letterSpacing: 0.1,
+          letterSpacing: 0.05,
           height: 1.43,
           color: AppColors.textPrimary,
         ),
@@ -93,21 +93,21 @@ class AppTypography {
         bodyLarge: TextStyle(
           fontSize: 16,
           fontWeight: regular,
-          letterSpacing: 0.5,
+          letterSpacing: 0.2,
           height: 1.5,
           color: AppColors.textPrimary,
         ),
         bodyMedium: TextStyle(
           fontSize: 14,
           fontWeight: regular,
-          letterSpacing: 0.25,
+          letterSpacing: 0.15,
           height: 1.43,
           color: AppColors.textPrimary,
         ),
         bodySmall: TextStyle(
           fontSize: 12,
           fontWeight: regular,
-          letterSpacing: 0.4,
+          letterSpacing: 0.2,
           height: 1.33,
           color: AppColors.textSecondary,
         ),
@@ -116,25 +116,25 @@ class AppTypography {
         labelLarge: TextStyle(
           fontSize: 14,
           fontWeight: medium,
-          letterSpacing: 0.1,
+          letterSpacing: 0.2,
           height: 1.43,
           color: AppColors.textPrimary,
         ),
         labelMedium: TextStyle(
           fontSize: 12,
           fontWeight: medium,
-          letterSpacing: 0.5,
+          letterSpacing: 0.3,
           height: 1.33,
           color: AppColors.textPrimary,
         ),
         labelSmall: TextStyle(
           fontSize: 11,
           fontWeight: medium,
-          letterSpacing: 0.5,
+          letterSpacing: 0.3,
           height: 1.45,
           color: AppColors.textSecondary,
         ),
-      );
+      ).apply(fontFamily: fontFamily);
 
   // Custom styles for specific use cases
 

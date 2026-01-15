@@ -6,10 +6,10 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/glass/animated_background.dart';
 import '../../../../shared/widgets/shimmer/shimmer_skeleton.dart';
+import '../../../../shared/widgets/icons/status_icon.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../auth/presentation/providers/auth_state.dart';
-import '../../../daily_goals/presentation/widgets/compact_daily_goal_widget.dart';
-import '../../../mascot/presentation/widgets/compact_mascot_display.dart';
+import '../../../streak/presentation/widgets/compact_streak_widget.dart';
 import '../providers/explore_provider.dart';
 import '../widgets/urn_card.dart';
 
@@ -107,295 +107,243 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
 
   Widget _buildHeader(
       BuildContext context, ExploreProgress progress, dynamic authState) {
-    // Get user name if authenticated
-    String? userName;
-    if (authState.isAuthenticated && authState.user != null) {
-      userName = authState.user!.displayName;
-    }
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         AppSpacing.lg,
         AppSpacing.md,
         AppSpacing.lg,
-        AppSpacing.sm,
+        AppSpacing.md,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Welcome message
-          if (userName != null) ...[
-            Text(
-              'Xin chào, $userName!',
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            AppSpacing.verticalSpaceSM,
-          ],
-
-          // Title row
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          // Clean top bar: Title + Streak + Avatar
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            runSpacing: AppSpacing.sm,
             children: [
-              // Mascot
-              const CompactMascotDisplay(),
-              AppSpacing.horizontalSpaceSM,
-
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Cửu Đỉnh',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                    AppSpacing.verticalSpaceXS,
-                    Text(
-                      'Khám phá 9 chiếc đỉnh triều Nguyễn',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.7),
-                        fontSize: 15,
-                        letterSpacing: 0.2,
-                      ),
-                    ),
-                  ],
+              const Text(
+                'Khám Phá',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5,
                 ),
               ),
-              AppSpacing.horizontalSpaceMD,
-              // Overall progress
-              _buildOverallProgress(progress),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const CompactStreakWidget(),
+                  const SizedBox(width: AppSpacing.md),
+                  _buildUserAvatar(authState),
+                ],
+              ),
             ],
           ),
 
-          AppSpacing.verticalSpaceLG,
-
-          // Search/Filter placeholder
-          _buildSearchBar(context),
-
           AppSpacing.verticalSpaceMD,
 
-          // Daily Goal Widget
-          const CompactDailyGoalWidget(),
-
-          AppSpacing.verticalSpaceMD,
-
-          // Progress summary card
-          _buildProgressSummary(progress),
+          // Compact progress stats row
+          _buildCompactStats(progress),
         ],
       ),
     );
   }
 
-  Widget _buildSearchBar(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.15),
-          width: 1,
-        ),
-      ),
-      child: TextField(
-        enabled: false, // Placeholder for now
-        style: const TextStyle(color: Colors.white),
-        decoration: InputDecoration(
-          hintText: 'Tìm kiếm đỉnh... (sắp ra mắt)',
-          hintStyle: TextStyle(
-            color: Colors.white.withOpacity(0.4),
-            fontSize: 15,
-          ),
-          prefixIcon: Icon(
-            Icons.search,
-            color: Colors.white.withOpacity(0.5),
-          ),
-          suffixIcon: Icon(
-            Icons.filter_list,
-            color: Colors.white.withOpacity(0.5),
-          ),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.md,
-          ),
-        ),
-      ),
-    );
-  }
+  Widget _buildUserAvatar(dynamic authState) {
+    if (!authState.isAuthenticated || authState.user == null) {
+      return const SizedBox.shrink();
+    }
 
-  Widget _buildOverallProgress(ExploreProgress progress) {
-    final percent = (progress.masteryPercent * 100).round();
+    final user = authState.user!;
+    final initial = user.displayName.isNotEmpty
+        ? user.displayName[0].toUpperCase()
+        : user.email[0].toUpperCase();
+    final level = user.rank.level;
 
-    return Container(
-      width: 64,
-      height: 64,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.white.withOpacity(0.15),
-            Colors.white.withOpacity(0.05),
-          ],
-        ),
-        border: Border.all(
-          color: AppColors.primary.withOpacity(0.3),
-          width: 2,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withOpacity(0.2),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        // Avatar circle
+        Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(
+              colors: [
+                AppColors.primary.withOpacity(0.5),
+                AppColors.primaryDark.withOpacity(0.3),
+              ],
+            ),
+            border: Border.all(
+              color: Colors.white.withOpacity(0.4),
+              width: 2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withOpacity(0.3),
+                blurRadius: 8,
+                spreadRadius: 1,
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          // Progress circle
-          SizedBox(
-            width: 54,
-            height: 54,
-            child: CircularProgressIndicator(
-              value: progress.masteryPercent,
-              strokeWidth: 5,
-              backgroundColor: Colors.white.withOpacity(0.1),
-              valueColor: AlwaysStoppedAnimation<Color>(
-                AppColors.primary,
+          child: user.avatarUrl != null && user.avatarUrl!.isNotEmpty
+              ? ClipOval(
+                  child: Image.network(
+                    user.avatarUrl!,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Center(
+                      child: Text(
+                        initial,
+                        style: TextStyle(
+                          color: AppColors.onPrimary,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              : Center(
+                  child: Text(
+                    initial,
+                    style: TextStyle(
+                      color: AppColors.onPrimary,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+        ),
+
+        // Level badge
+        Positioned(
+          bottom: -4,
+          right: -4,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [AppColors.xpGold, AppColors.xpGoldDark],
+              ),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: Colors.white,
+                width: 1.5,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.xpGold.withOpacity(0.5),
+                  blurRadius: 6,
+                  spreadRadius: 1,
+                ),
+              ],
+            ),
+            child: Text(
+              '$level',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
               ),
             ),
-          ),
-          // Percentage text
-          Text(
-            '$percent%',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildProgressSummary(ExploreProgress progress) {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.white.withOpacity(0.12),
-            Colors.white.withOpacity(0.06),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(AppSpacing.radiusLG),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.15),
-          width: 1.5,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildStatColumn(
-            icon: Icons.visibility,
-            label: 'Khám phá',
-            value: '${progress.discoveredMotifs}/${progress.totalMotifs}',
-            color: AppColors.info,
-          ),
-          _buildDivider(),
-          _buildStatColumn(
-            icon: Icons.school,
-            label: 'Học xong',
-            value: '${progress.learnedMotifs}/${progress.totalMotifs}',
-            color: AppColors.success,
-          ),
-          _buildDivider(),
-          _buildStatColumn(
-            icon: Icons.star,
-            label: 'Thành thạo',
-            value: '${progress.masteredMotifs}/${progress.totalMotifs}',
-            color: AppColors.primary,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatColumn({
-    required IconData icon,
-    required String label,
-    required String value,
-    required Color color,
-  }) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(AppSpacing.sm),
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.15),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(icon, color: color, size: 26),
-        ),
-        AppSpacing.verticalSpaceXS,
-        Text(
-          value,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 17,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 0.3,
-          ),
-        ),
-        AppSpacing.verticalSpaceXS,
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.white.withOpacity(0.65),
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildDivider() {
+  Widget _buildCompactStats(ExploreProgress progress) {
     return Container(
-      width: 1.5,
-      height: 50,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
+      ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
           colors: [
-            Colors.white.withOpacity(0.0),
-            Colors.white.withOpacity(0.2),
-            Colors.white.withOpacity(0.0),
+            Colors.white.withOpacity(0.1),
+            Colors.white.withOpacity(0.05),
           ],
         ),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.15),
+          width: 1,
+        ),
       ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final stats = [
+            _buildCompactStat(
+              status: MotifStatus.discovered,
+              value: '${progress.discoveredMotifs}/${progress.totalMotifs}',
+            ),
+            _buildCompactStat(
+              status: MotifStatus.learned,
+              value: '${progress.learnedMotifs}',
+            ),
+            _buildCompactStat(
+              status: MotifStatus.mastered,
+              value: '${progress.masteredMotifs}',
+            ),
+          ];
+
+          if (constraints.maxWidth < 320) {
+            return Wrap(
+              alignment: WrapAlignment.center,
+              spacing: AppSpacing.md,
+              runSpacing: AppSpacing.xs,
+              children: stats,
+            );
+          }
+
+          return Row(
+            children: [
+              Expanded(child: Center(child: stats[0])),
+              _buildCompactDivider(),
+              Expanded(child: Center(child: stats[1])),
+              _buildCompactDivider(),
+              Expanded(child: Center(child: stats[2])),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildCompactStat({required MotifStatus status, required String value}) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        StatusIcon(
+          status: status,
+          size: 16,
+        ),
+        const SizedBox(width: 6),
+        Text(
+          value,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.3,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCompactDivider() {
+    return Container(
+      width: 1,
+      height: 20,
+      color: Colors.white.withOpacity(0.2),
     );
   }
 
@@ -432,41 +380,82 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
             crossAxisCount = 4;
           }
 
-          return GridView.builder(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.md,
-              AppSpacing.sm,
-              AppSpacing.md,
-              100,
-            ),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: crossAxisCount,
-              childAspectRatio: 0.75,
-              crossAxisSpacing: AppSpacing.md,
-              mainAxisSpacing: AppSpacing.md,
-            ),
-            itemCount: state.urns.length,
-            itemBuilder: (context, index) {
-              final urn = state.urns[index];
-              return TweenAnimationBuilder<double>(
-                tween: Tween(begin: 0.0, end: 1.0),
-                duration: Duration(milliseconds: 400 + (index * 100)),
-                curve: Curves.easeOutCubic,
-                builder: (context, value, child) {
-                  return Transform.scale(
-                    scale: value,
-                    child: Opacity(
-                      opacity: value,
-                      child: child,
-                    ),
-                  );
-                },
-                child: UrnCard(
-                  urn: urn,
-                  onTap: () => _navigateToUrn(context, urn.slug),
+          return CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.lg,
+                    AppSpacing.sm,
+                    AppSpacing.lg,
+                    AppSpacing.sm,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Tất cả đỉnh',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.2,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Chọn một đỉnh để bắt đầu hành trình.',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.65),
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              );
-            },
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.md,
+                  AppSpacing.sm,
+                  AppSpacing.md,
+                  100,
+                ),
+                sliver: SliverGrid(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: crossAxisCount,
+                    childAspectRatio: 0.7,
+                    crossAxisSpacing: AppSpacing.md,
+                    mainAxisSpacing: AppSpacing.md,
+                  ),
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final urn = state.urns[index];
+                      return TweenAnimationBuilder<double>(
+                        tween: Tween(begin: 0.0, end: 1.0),
+                        duration: Duration(milliseconds: 400 + (index * 100)),
+                        curve: Curves.easeOutCubic,
+                        builder: (context, value, child) {
+                          return Transform.scale(
+                            scale: value,
+                            child: Opacity(
+                              opacity: value,
+                              child: child,
+                            ),
+                          );
+                        },
+                        child: UrnCard(
+                          urn: urn,
+                          onTap: () => _navigateToUrn(context, urn.slug),
+                        ),
+                      );
+                    },
+                    childCount: state.urns.length,
+                  ),
+                ),
+              ),
+            ],
           );
         },
       ),
@@ -485,24 +474,50 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
           crossAxisCount = 4;
         }
 
-        return GridView.builder(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.md,
-            AppSpacing.sm,
-            AppSpacing.md,
-            100,
-          ),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: crossAxisCount,
-            childAspectRatio: 0.75,
-            crossAxisSpacing: AppSpacing.md,
-            mainAxisSpacing: AppSpacing.md,
-          ),
-          // Show 9 shimmer cards (number of urns)
-          itemCount: 9,
-          itemBuilder: (context, index) {
-            return const ShimmerUrnCard();
-          },
+        return CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.lg,
+                  AppSpacing.sm,
+                  AppSpacing.lg,
+                  AppSpacing.sm,
+                ),
+                child: Text(
+                  'Tất cả đỉnh',
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.6),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.md,
+                AppSpacing.sm,
+                AppSpacing.md,
+                100,
+              ),
+              sliver: SliverGrid(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: crossAxisCount,
+                  childAspectRatio: 0.7,
+                  crossAxisSpacing: AppSpacing.md,
+                  mainAxisSpacing: AppSpacing.md,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    return const ShimmerUrnCard();
+                  },
+                  childCount: 9,
+                ),
+              ),
+            ),
+          ],
         );
       },
     );

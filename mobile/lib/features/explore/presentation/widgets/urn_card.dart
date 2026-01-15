@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/utils/url_utils.dart';
 import '../../domain/entities/urn.dart';
 
 /// A glassmorphism card displaying an urn with progress indicator
@@ -190,11 +191,17 @@ class _UrnCardState extends State<UrnCard> with SingleTickerProviderStateMixin {
 
   Widget _buildThumbnail() {
     if (widget.urn.thumbnailUrl != null && widget.urn.thumbnailUrl!.isNotEmpty) {
+      // Convert relative URL to full URL
+      final imageUrl = UrlUtils.getImageUrl(widget.urn.thumbnailUrl);
+
       return CachedNetworkImage(
-        imageUrl: widget.urn.thumbnailUrl!,
+        imageUrl: imageUrl,
         fit: BoxFit.cover,
         placeholder: (context, url) => _buildPlaceholder(),
-        errorWidget: (context, url, error) => _buildPlaceholder(),
+        errorWidget: (context, url, error) {
+          debugPrint('[MOTIF_IMAGE] Failed to load urn thumbnail: $imageUrl - Error: $error');
+          return _buildPlaceholder();
+        },
       );
     }
     return _buildPlaceholder();
@@ -366,28 +373,43 @@ class _UrnCardState extends State<UrnCard> with SingleTickerProviderStateMixin {
   }
 
   Widget _buildStatsRow() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        _buildStatItem(
-          icon: Icons.visibility_outlined,
-          count: widget.urn.discoveredCount,
-          total: widget.urn.motifCount,
-          color: AppColors.info,
-        ),
-        _buildStatItem(
-          icon: Icons.school_outlined,
-          count: widget.urn.learnedCount,
-          total: widget.urn.motifCount,
-          color: AppColors.success,
-        ),
-        _buildStatItem(
-          icon: Icons.star_outline,
-          count: widget.urn.masteredCount,
-          total: widget.urn.motifCount,
-          color: AppColors.primary,
-        ),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final stats = [
+          _buildStatItem(
+            icon: Icons.visibility_outlined,
+            count: widget.urn.discoveredCount,
+            total: widget.urn.motifCount,
+            color: AppColors.info,
+          ),
+          _buildStatItem(
+            icon: Icons.school_outlined,
+            count: widget.urn.learnedCount,
+            total: widget.urn.motifCount,
+            color: AppColors.success,
+          ),
+          _buildStatItem(
+            icon: Icons.star_outline,
+            count: widget.urn.masteredCount,
+            total: widget.urn.motifCount,
+            color: AppColors.primary,
+          ),
+        ];
+
+        if (constraints.maxWidth < 170) {
+          return Wrap(
+            spacing: AppSpacing.xs,
+            runSpacing: AppSpacing.xs,
+            alignment: WrapAlignment.spaceBetween,
+            children: stats,
+          );
+        }
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: stats,
+        );
+      },
     );
   }
 

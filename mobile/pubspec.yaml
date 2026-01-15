@@ -1,6 +1,6 @@
 name: luuniensuki_lms
 description: "Luuniensuki LMS - Vietnamese Cultural Heritage Learning App"
-publish_to: 'none'
+publish_to: "none"
 version: 1.5.0+6
 
 environment:
@@ -29,6 +29,7 @@ dependencies:
 
   # 3D Rendering
   model_viewer_plus: ^1.6.0
+  flutter_inappwebview: ^6.0.0
 
   # UI Components
   cached_network_image: ^3.3.1
