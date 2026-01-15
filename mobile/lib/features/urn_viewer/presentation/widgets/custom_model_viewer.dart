@@ -242,9 +242,16 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
       }
 
       const fov = parseFieldOfView(modelViewer);
-      const radius = maxDim / 2;
+      const radius = 0.5 * Math.sqrt(
+        (size.x || 0) * (size.x || 0) +
+        (size.y || 0) * (size.y || 0) +
+        (size.z || 0) * (size.z || 0)
+      );
       const distance = radius / Math.sin((fov * Math.PI / 180) / 2);
-      const orbitDistance = Math.max(distance * 1.4, maxDim);
+      const orbitDistance = Math.max(distance * 1.4, radius * 2, maxDim);
+
+      console.log('[MODEL_VIEWER] Bounds center:', center, 'size:', size);
+      console.log('[MODEL_VIEWER] Fit camera fov:', fov, 'radius:', radius, 'orbit:', orbitDistance);
 
       modelViewer.cameraTarget = `\${center.x}m \${center.y}m \${center.z}m`;
       modelViewer.cameraOrbit = `0deg 75deg \${orbitDistance}m`;
@@ -305,6 +312,12 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
       console.log('[MODEL_VIEWER] Model visibility:', visible);
       if (!visible) {
         console.warn('[MODEL_VIEWER] Model hidden - re-fitting camera');
+        if (modelViewer.getCameraOrbit) {
+          console.log('[MODEL_VIEWER] Current orbit:', modelViewer.getCameraOrbit());
+        }
+        if (modelViewer.getCameraTarget) {
+          console.log('[MODEL_VIEWER] Current target:', modelViewer.getCameraTarget());
+        }
         if (!fitCameraToModel()) {
           modelViewer.cameraTarget = '0m 0m 0m';
           modelViewer.cameraOrbit = '0deg 75deg 2m';
