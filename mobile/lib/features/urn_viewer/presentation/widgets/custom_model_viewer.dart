@@ -352,6 +352,7 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
             // Disable text zoom to prevent layout issues
             textZoom: 100,
             useOnRenderProcessGone: true,
+            useHybridComposition: true,
           ),
           onWebViewCreated: (controller) {
             _webViewController = controller;

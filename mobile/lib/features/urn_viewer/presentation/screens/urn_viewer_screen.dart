@@ -575,6 +575,11 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
         if (mounted) {
           setState(() {
             _modelLoadProgress = progress / 100.0;
+            if (progress >= 100 && _isLoading) {
+              _isLoading = false;
+              _modelLoadError = false;
+              _errorMessage = null;
+            }
           });
         }
       },
