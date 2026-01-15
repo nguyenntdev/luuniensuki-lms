@@ -98,9 +98,55 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
     }
   }
 
+  _MotifBounds? _computeMotifBounds() {
+    final positioned = widget.hotspots.where((motif) => motif.hasValidPosition).toList();
+    if (positioned.isEmpty) {
+      return null;
+    }
+
+    double minX = positioned.first.posX;
+    double maxX = positioned.first.posX;
+    double minY = positioned.first.posY;
+    double maxY = positioned.first.posY;
+    double minZ = positioned.first.posZ;
+    double maxZ = positioned.first.posZ;
+
+    for (final motif in positioned.skip(1)) {
+      minX = minX < motif.posX ? minX : motif.posX;
+      maxX = maxX > motif.posX ? maxX : motif.posX;
+      minY = minY < motif.posY ? minY : motif.posY;
+      maxY = maxY > motif.posY ? maxY : motif.posY;
+      minZ = minZ < motif.posZ ? minZ : motif.posZ;
+      maxZ = maxZ > motif.posZ ? maxZ : motif.posZ;
+    }
+
+    final centerX = (minX + maxX) / 2.0;
+    final centerY = (minY + maxY) / 2.0;
+    final centerZ = (minZ + maxZ) / 2.0;
+    final sizeX = (maxX - minX).abs();
+    final sizeY = (maxY - minY).abs();
+    final sizeZ = (maxZ - minZ).abs();
+
+    return _MotifBounds(
+      centerX: centerX,
+      centerY: centerY,
+      centerZ: centerZ,
+      sizeX: sizeX,
+      sizeY: sizeY,
+      sizeZ: sizeZ,
+    );
+  }
+
   /// Generate HTML content with model-viewer web component
   String _generateHtml() {
     final bgColor = _colorToHex(widget.backgroundColor);
+    final motifBounds = _computeMotifBounds();
+    final boundsCenterAttr = motifBounds == null
+        ? ''
+        : 'data-bounds-center="${motifBounds.centerX} ${motifBounds.centerY} ${motifBounds.centerZ}"';
+    final boundsSizeAttr = motifBounds == null
+        ? ''
+        : 'data-bounds-size="${motifBounds.sizeX} ${motifBounds.sizeY} ${motifBounds.sizeZ}"';
 
     // Generate hotspot HTML
     final hotspotsHtml = widget.hotspots.map((motif) {
@@ -184,6 +230,8 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
     shadow-intensity="0"
     environment-image="neutral"
     exposure="1.2"
+    $boundsCenterAttr
+    $boundsSizeAttr
   >
     $hotspotsHtml
   </model-viewer>
@@ -210,6 +258,30 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
       const orbit = modelViewer?.getCameraOrbit ? modelViewer.getCameraOrbit() : modelViewer?.cameraOrbit;
       const target = modelViewer?.getCameraTarget ? modelViewer.getCameraTarget() : modelViewer?.cameraTarget;
       console.log(prefix, 'orbit:', JSON.stringify(orbit), 'target:', JSON.stringify(target));
+    }
+
+    function getBoundsFromAttributes() {
+      if (!modelViewer) {
+        return null;
+      }
+      const centerAttr = modelViewer.getAttribute('data-bounds-center');
+      const sizeAttr = modelViewer.getAttribute('data-bounds-size');
+      if (!centerAttr || !sizeAttr) {
+        return null;
+      }
+      const centerValues = centerAttr.split(' ').map((value) => Number.parseFloat(value));
+      const sizeValues = sizeAttr.split(' ').map((value) => Number.parseFloat(value));
+      if (centerValues.length < 3 || sizeValues.length < 3) {
+        return null;
+      }
+      if (centerValues.some((value) => !Number.isFinite(value)) ||
+          sizeValues.some((value) => !Number.isFinite(value))) {
+        return null;
+      }
+      return {
+        center: { x: centerValues[0], y: centerValues[1], z: centerValues[2] },
+        size: { x: sizeValues[0], y: sizeValues[1], z: sizeValues[2] },
+      };
     }
 
     function expandCameraOrbit(multiplier) {
@@ -258,7 +330,36 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
         if (modelViewer.jumpCameraToGoal) {
           modelViewer.jumpCameraToGoal();
         }
-        return false;
+        const fallbackBounds = getBoundsFromAttributes();
+        if (!fallbackBounds) {
+          return false;
+        }
+        const center = fallbackBounds.center;
+        const size = fallbackBounds.size;
+        const maxDim = Math.max(size.x || 0, size.y || 0, size.z || 0);
+        if (!Number.isFinite(maxDim) || maxDim <= 0) {
+          return false;
+        }
+        const fov = parseFieldOfView(modelViewer);
+        const radius = 0.5 * Math.sqrt(
+          (size.x || 0) * (size.x || 0) +
+          (size.y || 0) * (size.y || 0) +
+          (size.z || 0) * (size.z || 0)
+        );
+        const distance = radius / Math.sin((fov * Math.PI / 180) / 2);
+        const orbitDistance = Math.max(distance * 1.4, radius * 2, maxDim);
+        console.log('[MODEL_VIEWER] Bounds from motifs:', center, size);
+        console.log('[MODEL_VIEWER] Fit camera fov:', fov, 'radius:', radius, 'orbit:', orbitDistance);
+        logCameraState('[MODEL_VIEWER] Before fit');
+        modelViewer.cameraTarget = `\${center.x}m \${center.y}m \${center.z}m`;
+        modelViewer.cameraOrbit = `0deg 75deg \${orbitDistance}m`;
+        if (modelViewer.jumpCameraToGoal) {
+          modelViewer.jumpCameraToGoal();
+        }
+        modelViewer.style.visibility = 'visible';
+        modelViewer.style.opacity = '1';
+        logCameraState('[MODEL_VIEWER] After fit');
+        return true;
       }
 
       const center = modelViewer.getBoundingBoxCenter();
@@ -734,4 +835,22 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
 
     debugPrint('[CUSTOM_MODEL_VIEWER] JavaScript handlers registered');
   }
+}
+
+class _MotifBounds {
+  final double centerX;
+  final double centerY;
+  final double centerZ;
+  final double sizeX;
+  final double sizeY;
+  final double sizeZ;
+
+  const _MotifBounds({
+    required this.centerX,
+    required this.centerY,
+    required this.centerZ,
+    required this.sizeX,
+    required this.sizeY,
+    required this.sizeZ,
+  });
 }
