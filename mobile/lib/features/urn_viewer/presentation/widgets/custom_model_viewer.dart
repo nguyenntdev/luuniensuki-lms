@@ -60,6 +60,7 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
   String? _errorMessage;
   double _loadProgress = 0.0;
   int _contextLossCount = 0;
+  int _renderProcessGoneCount = 0;
 
   @override
   void initState() {
@@ -85,6 +86,7 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
           _errorMessage = null;
           _isLoading = true;
           _contextLossCount = 0;
+          _renderProcessGoneCount = 0;
         });
       }
       _webViewController?.loadData(
@@ -349,6 +351,7 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
             useWideViewPort: true,
             // Disable text zoom to prevent layout issues
             textZoom: 100,
+            useOnRenderProcessGone: true,
           ),
           onWebViewCreated: (controller) {
             _webViewController = controller;
@@ -385,6 +388,27 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
               _errorMessage = error.description;
               _isLoading = false;
             });
+          },
+          onRenderProcessGone: (controller, detail) {
+            _renderProcessGoneCount += 1;
+            debugPrint(
+              '[CUSTOM_MODEL_VIEWER] ❌ Render process gone (crash: ${detail.didCrash}, priority: ${detail.rendererPriorityAtExit})',
+            );
+            if (_renderProcessGoneCount <= 1) {
+              setState(() {
+                _isLoading = true;
+                _errorMessage = null;
+              });
+              _webViewController?.reload();
+              return;
+            }
+            if (mounted) {
+              setState(() {
+                _isLoading = false;
+                _errorMessage = 'WebView render process crashed';
+              });
+            }
+            widget.onModelError?.call('WebView render process crashed');
           },
         ),
 
