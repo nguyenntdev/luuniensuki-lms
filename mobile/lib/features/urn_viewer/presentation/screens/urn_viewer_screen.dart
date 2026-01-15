@@ -513,6 +513,7 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
     }
 
     final modelPath = _resolvedModelUrl!;
+    final allowAutoRotate = _modelQuality != ModelQuality.low;
 
     // Verify model URL format
     _verifyModelUrl(modelPath, urnDetail);
@@ -531,7 +532,7 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
       alt: urnDetail.urn.name,
       hotspots: urnDetail.motifs,
       backgroundColor: const Color(0xFF1A1A2E),
-      autoRotate: true,  // Enable auto-rotate to help see the model
+      autoRotate: allowAutoRotate,  // Reduce GPU load on low quality devices
       cameraControls: true,
       disableZoom: false,
       cameraOrbit: '45deg 60deg 3m',  // Better initial angle

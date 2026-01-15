@@ -59,6 +59,7 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
   bool _isLoading = true;
   String? _errorMessage;
   double _loadProgress = 0.0;
+  int _contextLossCount = 0;
 
   @override
   void initState() {
@@ -83,6 +84,7 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
           _loadProgress = 0.0;
           _errorMessage = null;
           _isLoading = true;
+          _contextLossCount = 0;
         });
       }
       _webViewController?.loadData(
@@ -190,6 +192,7 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
     // Model load success handler
     modelViewer.addEventListener('load', () => {
       console.log('[MODEL_VIEWER] ✅ Model loaded successfully');
+      attachContextLossHandler();
       if (window.flutter_inappwebview) {
         window.flutter_inappwebview.callHandler('onModelLoad', {
           success: true,
@@ -248,6 +251,32 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
     console.log('[MODEL_VIEWER] Initialization complete');
     console.log('[MODEL_VIEWER] Model src:', modelViewer.src);
     console.log('[MODEL_VIEWER] Hotspots count:', hotspots.length);
+
+    function attachContextLossHandler() {
+      const canvas = modelViewer?.shadowRoot?.querySelector('canvas');
+      if (!canvas) {
+        console.warn('[MODEL_VIEWER] Canvas not found for context loss handler');
+        return;
+      }
+      canvas.addEventListener('webglcontextlost', (event) => {
+        event.preventDefault();
+        console.error('[MODEL_VIEWER] ❌ WebGL context lost');
+        if (window.flutter_inappwebview) {
+          window.flutter_inappwebview.callHandler('onWebglContextLost', {
+            timestamp: Date.now()
+          });
+        }
+      });
+      canvas.addEventListener('webglcontextrestored', () => {
+        console.warn('[MODEL_VIEWER] ⚠️ WebGL context restored');
+        if (window.flutter_inappwebview) {
+          window.flutter_inappwebview.callHandler('onWebglContextRestored', {
+            timestamp: Date.now()
+          });
+        }
+      });
+      console.log('[MODEL_VIEWER] WebGL context handlers attached');
+    }
   </script>
 </body>
 </html>
@@ -462,6 +491,7 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
           setState(() {
             _isLoading = false;
             _errorMessage = null;
+            _contextLossCount = 0;
           });
           debugPrint('[CUSTOM_MODEL_VIEWER] Current _isLoading after: $_isLoading');
         }
@@ -512,6 +542,36 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
             widget.onHotspotTap?.call(motifId);
           }
         }
+      },
+    );
+
+    controller.addJavaScriptHandler(
+      handlerName: 'onWebglContextLost',
+      callback: (args) {
+        _contextLossCount += 1;
+        debugPrint('[CUSTOM_MODEL_VIEWER] ❌ WebGL context lost (count: $_contextLossCount)');
+        if (_contextLossCount <= 1) {
+          setState(() {
+            _isLoading = true;
+            _errorMessage = null;
+          });
+          _webViewController?.reload();
+          return;
+        }
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+            _errorMessage = 'WebGL context lost';
+          });
+        }
+        widget.onModelError?.call('WebGL context lost');
+      },
+    );
+
+    controller.addJavaScriptHandler(
+      handlerName: 'onWebglContextRestored',
+      callback: (args) {
+        debugPrint('[CUSTOM_MODEL_VIEWER] ⚠️ WebGL context restored');
       },
     );
 
