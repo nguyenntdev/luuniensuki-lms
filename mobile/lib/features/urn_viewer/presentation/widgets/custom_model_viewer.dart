@@ -335,6 +335,10 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
       return { x: parts[0], y: parts[1], z: parts[2] };
     }
 
+    let lastAppliedOrbit = null;
+    let lastAppliedTarget = null;
+    let visibilityRetryCount = 0;
+
     function getCurrentTarget() {
       if (!modelViewer) {
         return null;
@@ -345,16 +349,16 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
           return { x: target.x, y: target.y, z: target.z };
         }
       }
-      return parseVectorString(modelViewer.cameraTarget);
+      return parseVectorString(modelViewer.cameraTarget) || lastAppliedTarget;
     }
 
     function getCurrentOrbit() {
       if (!modelViewer || typeof modelViewer.getCameraOrbit !== 'function') {
-        return null;
+        return lastAppliedOrbit;
       }
       const orbit = modelViewer.getCameraOrbit();
       if (!orbit || orbit.radius == null) {
-        return null;
+        return lastAppliedOrbit;
       }
       return orbit;
     }
@@ -373,11 +377,23 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
       const safeRadius = Number.isFinite(radius) ? Math.max(radius, 0.5) : 1;
       const thetaDeg = toDegrees(theta);
       const phiDeg = Number.isFinite(phi) ? toDegrees(phi) : 75;
-      const orbitString = `\${thetaDeg}deg \${phiDeg}deg \${safeRadius}m`;
-      const targetString = `\${target.x}m \${target.y}m \${target.z}m`;
-      modelViewer.cameraTarget = targetString;
+      const orbitString = `\${thetaDeg.toFixed(2)}deg \${phiDeg.toFixed(2)}deg \${safeRadius.toFixed(3)}m`;
+      const targetString = `\${target.x.toFixed(4)}m \${target.y.toFixed(4)}m \${target.z.toFixed(4)}m`;
+      lastAppliedOrbit = { theta, phi, radius: safeRadius };
+      lastAppliedTarget = { x: target.x, y: target.y, z: target.z };
+
+      if (modelViewer.cameraTarget != null && typeof modelViewer.cameraTarget === 'object') {
+        modelViewer.cameraTarget = { x: target.x, y: target.y, z: target.z };
+      } else {
+        modelViewer.cameraTarget = targetString;
+      }
       modelViewer.setAttribute('camera-target', targetString);
-      modelViewer.cameraOrbit = orbitString;
+
+      if (modelViewer.cameraOrbit != null && typeof modelViewer.cameraOrbit === 'object') {
+        modelViewer.cameraOrbit = { theta, phi, radius: safeRadius };
+      } else {
+        modelViewer.cameraOrbit = orbitString;
+      }
       modelViewer.setAttribute('camera-orbit', orbitString);
       if (modelViewer.jumpCameraToGoal) {
         modelViewer.jumpCameraToGoal();
@@ -392,6 +408,24 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
       modelViewer.style.opacity = '1';
       console.log('[MODEL_VIEWER] Applied camera:', orbitString, 'target:', targetString);
       return true;
+    }
+
+    function forceZoomOut() {
+      const fallbackBounds = getBoundsFromAttributes();
+      const size = fallbackBounds?.size;
+      const maxDim = size ? Math.max(size.x || 0, size.y || 0, size.z || 0) : 1;
+      const baseOrbit = lastAppliedOrbit || getCurrentOrbit();
+      const baseRadius = Number.isFinite(baseOrbit?.radius) ? baseOrbit.radius : maxDim;
+      const theta = Number.isFinite(baseOrbit?.theta) ? baseOrbit.theta : 0;
+      const phi = Number.isFinite(baseOrbit?.phi) ? baseOrbit.phi : Math.PI / 2;
+      const target = lastAppliedTarget || getCurrentTarget() || fallbackBounds?.center;
+      if (!target) {
+        return false;
+      }
+      visibilityRetryCount += 1;
+      const multiplier = Math.min(6, 1.8 + visibilityRetryCount * 0.4);
+      const bumpedRadius = Math.max(baseRadius * multiplier, maxDim * 6, baseRadius + 4);
+      return applyCamera(target, theta, phi, bumpedRadius);
     }
 
     function expandCameraOrbit(multiplier) {
@@ -442,7 +476,7 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
         );
         const distance = radius / Math.sin((fov * Math.PI / 180) / 2);
         const orbitDistance = Math.max(distance * 1.4, radius * 2, maxDim);
-        const safeDistance = Math.max(orbitDistance, currentRadius * 1.25, maxDim * 2.5, 1);
+        const safeDistance = Math.max(orbitDistance, currentRadius * 1.8, maxDim * 4, 4);
         console.log('[MODEL_VIEWER] Bounds from motifs:', JSON.stringify(center), JSON.stringify(size));
         console.log('[MODEL_VIEWER] Fit camera fov:', fov, 'radius:', radius, 'orbit:', safeDistance);
         logCameraState('[MODEL_VIEWER] Before fit');
@@ -478,7 +512,7 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
       console.log('[MODEL_VIEWER] Fit camera fov:', fov, 'radius:', radius, 'orbit:', orbitDistance);
       logCameraState('[MODEL_VIEWER] Before fit');
 
-      applyCamera(center, theta, phi, orbitDistance);
+      applyCamera(center, theta, phi, Math.max(orbitDistance, maxDim * 4, 4));
       logCameraState('[MODEL_VIEWER] After fit');
       return true;
     }
@@ -540,8 +574,13 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
         console.warn('[MODEL_VIEWER] Model hidden - re-fitting camera');
         logCameraState('[MODEL_VIEWER] Current camera');
         if (!fitCameraToModel()) {
-          expandCameraOrbit(1.6);
+          forceZoomOut();
         }
+        setTimeout(() => {
+          if (!fitCameraToModel()) {
+            forceZoomOut();
+          }
+        }, 200);
       }
     });
 
