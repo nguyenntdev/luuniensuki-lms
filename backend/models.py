@@ -1058,6 +1058,71 @@ class AIJob(Base):
     user: Mapped["User"] = relationship(back_populates="ai_jobs")
 
 
+class RagDocument(Base):
+    __tablename__ = "rag_documents"
+    __table_args__ = (
+        Index("idx_rag_documents_active", "is_active"),
+        Index("idx_rag_documents_updated", "updated_at"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    content: Mapped[str] = mapped_column(Text, nullable=False)
+    source_type: Mapped[str] = mapped_column(
+        String(30), nullable=False, server_default=text("'manual'")
+    )
+    source_path: Mapped[Optional[str]] = mapped_column(String(255))
+    is_active: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("true")
+    )
+    embedding: Mapped[Optional[Any]] = mapped_column(JSONB)
+    embedding_model: Mapped[Optional[str]] = mapped_column(String(100))
+    embedding_updated_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True)
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
+
+class RagSettings(Base):
+    __tablename__ = "rag_settings"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    system_instruction: Mapped[Optional[str]] = mapped_column(Text)
+    prompt_prefix: Mapped[Optional[str]] = mapped_column(Text)
+    model_override: Mapped[Optional[str]] = mapped_column(String(100))
+    temperature: Mapped[Optional[float]] = mapped_column(Float)
+    max_documents: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default=text("6")
+    )
+    embedding_enabled: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("true")
+    )
+    hybrid_alpha: Mapped[float] = mapped_column(
+        Float, nullable=False, server_default=text("0.6")
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
+
 class ContentProvenance(Base):
     __tablename__ = "content_provenance"
     __table_args__ = (

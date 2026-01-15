@@ -94,6 +94,12 @@ class Settings(BaseSettings):
     deepseek_base_url: str = "https://api.yescale.vip/v1"
     deepseek_model: str = "deepseek-v3"
     deepseek_timeout_seconds: int = 20
+    deepseek_max_retries: int = 1
+
+    embedding_api_key: Optional[str] = None
+    embedding_base_url: str = "https://api.yescale.vip/v1/embeddings"
+    embedding_model: str = "text-embedding-3-small"
+    embedding_timeout_seconds: int = 20
 
     sentry_dsn: Optional[str] = None
 

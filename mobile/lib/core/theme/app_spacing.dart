@@ -45,5 +45,9 @@ class AppSpacing {
   static const double iconMD = 24.0;
   static const double iconLG = 32.0;
   static const double iconXL = 48.0;
-}
 
+  // Bottom navigation sizing
+  static const double navBarHeight = 80.0;
+  static const double navBarMargin = 16.0;
+  static const double navBarInset = navBarHeight + navBarMargin;
+}

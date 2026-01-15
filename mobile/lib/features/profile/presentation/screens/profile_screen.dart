@@ -176,6 +176,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
 
                   AppSpacing.verticalSpaceMD,
 
+                  // Gamification Hub
+                  _buildGamificationSection(context, ref, user),
+
+                  AppSpacing.verticalSpaceMD,
+
                   // Enhanced Streak Display
                   const StreakDisplay(),
 
@@ -655,6 +660,86 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
               AppColors.badgePurple.withOpacity(0.1),
             ],
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGamificationSection(
+    BuildContext context,
+    WidgetRef ref,
+    User user,
+  ) {
+    final collectionState = ref.watch(collectionNotifierProvider);
+    final discovered = collectionState.collection?.stats.discovered ?? 0;
+    final learned = collectionState.collection?.stats.learned ?? 0;
+    final mastered = collectionState.collection?.stats.mastered ?? 0;
+
+    final quests = [
+      _GamificationQuest(
+        title: 'Chuỗi 7 ngày',
+        subtitle: 'Giữ streak mỗi ngày',
+        progress: user.currentStreak,
+        goal: 7,
+        color: AppColors.streakOrange,
+        icon: Icons.local_fire_department,
+        actionLabel: 'Tiếp tục học',
+        onTap: () => context.go('/learning'),
+      ),
+      _GamificationQuest(
+        title: 'Bậc thầy họa tiết',
+        subtitle: 'Hoàn thành 5 họa tiết',
+        progress: mastered,
+        goal: 5,
+        color: AppColors.success,
+        icon: Icons.workspace_premium,
+        actionLabel: 'Ôn tập',
+        onTap: () => context.go('/practice'),
+      ),
+      _GamificationQuest(
+        title: 'Sưu tầm đỉnh',
+        subtitle: 'Mở khóa 12 họa tiết',
+        progress: discovered,
+        goal: 12,
+        color: AppColors.info,
+        icon: Icons.collections_bookmark,
+        actionLabel: 'Khám phá',
+        onTap: () => context.go('/explore'),
+      ),
+      _GamificationQuest(
+        title: 'Chinh phục bài học',
+        subtitle: 'Hoàn thành 8 bài',
+        progress: learned,
+        goal: 8,
+        color: AppColors.primaryLight,
+        icon: Icons.school,
+        actionLabel: 'Học ngay',
+        onTap: () => context.go('/learning'),
+      ),
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Hoạt động gamification',
+          style: TextStyle(
+            color: Colors.white.withOpacity(0.9),
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        AppSpacing.verticalSpaceSM,
+        Wrap(
+          spacing: AppSpacing.md,
+          runSpacing: AppSpacing.md,
+          children: quests
+              .map(
+                (quest) => _GamificationQuestCard(
+                  quest: quest,
+                ),
+              )
+              .toList(),
         ),
       ],
     );
@@ -1177,6 +1262,136 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _GamificationQuest {
+  final String title;
+  final String subtitle;
+  final int progress;
+  final int goal;
+  final IconData icon;
+  final Color color;
+  final String actionLabel;
+  final VoidCallback onTap;
+
+  const _GamificationQuest({
+    required this.title,
+    required this.subtitle,
+    required this.progress,
+    required this.goal,
+    required this.icon,
+    required this.color,
+    required this.actionLabel,
+    required this.onTap,
+  });
+}
+
+class _GamificationQuestCard extends StatelessWidget {
+  final _GamificationQuest quest;
+
+  const _GamificationQuestCard({required this.quest});
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = quest.goal > 0
+        ? (quest.progress / quest.goal).clamp(0.0, 1.0)
+        : 0.0;
+
+    return SizedBox(
+      width: MediaQuery.of(context).size.width < 360 ? double.infinity : 170,
+      child: GlassContainer(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            quest.color.withOpacity(0.18),
+            quest.color.withOpacity(0.05),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(AppSpacing.sm),
+              decoration: BoxDecoration(
+                color: quest.color.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
+              ),
+              child: Icon(quest.icon, color: quest.color, size: 22),
+            ),
+            AppSpacing.verticalSpaceSM,
+            Text(
+              quest.title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              quest.subtitle,
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.7),
+                fontSize: 11,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            AppSpacing.verticalSpaceSM,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '${quest.progress}/${quest.goal}',
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.7),
+                    fontSize: 11,
+                  ),
+                ),
+                Text(
+                  '${(progress * 100).round()}%',
+                  style: TextStyle(
+                    color: quest.color,
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(6),
+              child: LinearProgressIndicator(
+                value: progress,
+                minHeight: 6,
+                color: quest.color,
+                backgroundColor: Colors.white.withOpacity(0.12),
+              ),
+            ),
+            AppSpacing.verticalSpaceSM,
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: quest.onTap,
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: quest.color.withOpacity(0.6)),
+                  foregroundColor: quest.color,
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  textStyle: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                child: Text(quest.actionLabel),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

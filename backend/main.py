@@ -4,6 +4,7 @@ import json
 import logging
 import math
 import re
+import time
 import unicodedata
 import uuid as uuid_module
 from datetime import datetime, timedelta, timezone
@@ -66,6 +67,8 @@ from .models import (
     QuestStep,
     QuizAttempt,
     QuizQuestion,
+    RagDocument,
+    RagSettings,
     Recommendation,
     UnlockStatus,
     Urn,
@@ -92,6 +95,7 @@ USERNAME_REGEX = re.compile(r"^[a-zA-Z0-9_]{3,20}$")
 AVATAR_UPLOAD_DIR = Path("/app/uploads/avatars")
 ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp"}
 MAX_AVATAR_SIZE = 5 * 1024 * 1024
+RAG_ALLOWED_FILE_TYPES = {"text/plain", "text/markdown", "application/json"}
 
 STAFF_ROLES = {UserRole.teacher, UserRole.admin, UserRole.super_admin}
 ADMIN_ROLES = {UserRole.admin, UserRole.super_admin}
@@ -3732,6 +3736,330 @@ def update_admin_quiz_question(
     )
 
 
+class RagDocumentOut(BaseModel):
+    id: UUID
+    title: str
+    content: str
+    source_type: str
+    source_path: Optional[str] = None
+    is_active: bool
+    embedding_model: Optional[str] = None
+    embedding_updated_at: Optional[datetime] = None
+    has_embedding: bool = False
+    created_at: datetime
+    updated_at: datetime
+
+
+class RagDocumentCreateRequest(BaseModel):
+    title: str = Field(min_length=1, max_length=255)
+    content: str = Field(min_length=1)
+    is_active: Optional[bool] = True
+
+
+class RagDocumentUpdateRequest(BaseModel):
+    title: Optional[str] = Field(default=None, min_length=1, max_length=255)
+    content: Optional[str] = None
+    is_active: Optional[bool] = None
+
+
+class RagSettingsOut(BaseModel):
+    system_instruction: Optional[str] = None
+    prompt_prefix: Optional[str] = None
+    model_override: Optional[str] = None
+    temperature: Optional[float] = None
+    max_documents: int
+    embedding_enabled: bool = True
+    hybrid_alpha: float = 0.6
+
+
+class RagSettingsUpdateRequest(BaseModel):
+    system_instruction: Optional[str] = None
+    prompt_prefix: Optional[str] = None
+    model_override: Optional[str] = None
+    temperature: Optional[float] = Field(default=None, ge=0, le=2)
+    max_documents: Optional[int] = Field(default=None, ge=1, le=20)
+    embedding_enabled: Optional[bool] = None
+    hybrid_alpha: Optional[float] = Field(default=None, ge=0, le=1)
+
+
+class RagEmbeddingRebuildOut(BaseModel):
+    total: int
+    updated: int
+    skipped: int
+
+
+class AIJobOut(BaseModel):
+    id: UUID
+    user_id: UUID
+    user_email: Optional[str] = None
+    job_type: str
+    status: str
+    provider: Optional[str] = None
+    prompt: Optional[str] = None
+    response: Optional[str] = None
+    error: Optional[str] = None
+    retry_count: int
+    created_at: datetime
+    updated_at: datetime
+
+
+def _rag_document_out(doc: RagDocument) -> RagDocumentOut:
+    return RagDocumentOut(
+        id=doc.id,
+        title=doc.title,
+        content=doc.content,
+        source_type=doc.source_type,
+        source_path=doc.source_path,
+        is_active=doc.is_active,
+        embedding_model=doc.embedding_model,
+        embedding_updated_at=doc.embedding_updated_at,
+        has_embedding=bool(doc.embedding),
+        created_at=doc.created_at,
+        updated_at=doc.updated_at,
+    )
+
+
+def _maybe_update_rag_embedding(session: Session, doc: RagDocument) -> bool:
+    rag_settings = _get_rag_settings(session)
+    if not rag_settings.embedding_enabled:
+        return False
+    if not settings.embedding_api_key:
+        return False
+    embedding = _call_embedding(doc.content or doc.title)
+    if not embedding:
+        return False
+    doc.embedding = embedding
+    doc.embedding_model = settings.embedding_model
+    doc.embedding_updated_at = datetime.now(timezone.utc)
+    return True
+
+
+@app.get("/api/v1/admin/rag/documents", response_model=list[RagDocumentOut])
+def list_rag_documents(
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> list[RagDocumentOut]:
+    docs = (
+        db.execute(select(RagDocument).order_by(RagDocument.updated_at.desc()))
+        .scalars()
+        .all()
+    )
+    return [_rag_document_out(doc) for doc in docs]
+
+
+@app.post(
+    "/api/v1/admin/rag/documents",
+    response_model=RagDocumentOut,
+    status_code=201,
+)
+def create_rag_document(
+    payload: RagDocumentCreateRequest,
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> RagDocumentOut:
+    doc = RagDocument(
+        title=payload.title,
+        content=payload.content,
+        source_type="manual",
+        is_active=bool(payload.is_active) if payload.is_active is not None else True,
+    )
+    db.add(doc)
+    _maybe_update_rag_embedding(db, doc)
+    db.commit()
+    db.refresh(doc)
+    return _rag_document_out(doc)
+
+
+@app.post(
+    "/api/v1/admin/rag/documents/upload",
+    response_model=RagDocumentOut,
+    status_code=201,
+)
+async def upload_rag_document(
+    file: UploadFile = File(...),
+    title: Optional[str] = Query(default=None),
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> RagDocumentOut:
+    if file.content_type not in RAG_ALLOWED_FILE_TYPES:
+        raise HTTPException(status_code=400, detail="Unsupported file type")
+
+    max_bytes = settings.max_upload_size_mb * 1024 * 1024
+    contents = await file.read(max_bytes + 1)
+    if len(contents) > max_bytes:
+        raise HTTPException(status_code=400, detail="File too large")
+
+    try:
+        decoded = contents.decode("utf-8")
+    except UnicodeDecodeError:
+        decoded = contents.decode("utf-8", errors="replace")
+
+    doc_title = title or Path(file.filename or "RAG Document").stem
+    doc = RagDocument(
+        title=doc_title,
+        content=decoded,
+        source_type="file",
+        source_path=file.filename,
+        is_active=True,
+    )
+    db.add(doc)
+    _maybe_update_rag_embedding(db, doc)
+    db.commit()
+    db.refresh(doc)
+    return _rag_document_out(doc)
+
+
+@app.patch("/api/v1/admin/rag/documents/{doc_id}", response_model=RagDocumentOut)
+def update_rag_document(
+    doc_id: UUID,
+    payload: RagDocumentUpdateRequest,
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> RagDocumentOut:
+    doc = db.get(RagDocument, doc_id)
+    if doc is None:
+        raise HTTPException(status_code=404, detail="Document not found")
+
+    updates = payload.model_dump(exclude_unset=True)
+    for field, value in updates.items():
+        setattr(doc, field, value)
+    if "content" in updates or "title" in updates:
+        _maybe_update_rag_embedding(db, doc)
+    db.commit()
+    db.refresh(doc)
+    return _rag_document_out(doc)
+
+
+@app.post(
+    "/api/v1/admin/rag/embeddings/rebuild",
+    response_model=RagEmbeddingRebuildOut,
+)
+def rebuild_rag_embeddings(
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> RagEmbeddingRebuildOut:
+    if not settings.embedding_api_key:
+        raise HTTPException(status_code=503, detail="Embedding not configured")
+
+    rag_settings = _get_rag_settings(db)
+    if not rag_settings.embedding_enabled:
+        raise HTTPException(status_code=400, detail="Embeddings disabled")
+
+    docs = (
+        db.execute(select(RagDocument).where(RagDocument.is_active.is_(True)))
+        .scalars()
+        .all()
+    )
+    updated = 0
+    skipped = 0
+    for doc in docs:
+        if _maybe_update_rag_embedding(db, doc):
+            updated += 1
+        else:
+            skipped += 1
+    db.commit()
+
+    return RagEmbeddingRebuildOut(total=len(docs), updated=updated, skipped=skipped)
+
+
+@app.get("/api/v1/admin/ai/jobs", response_model=list[AIJobOut])
+def list_ai_jobs(
+    status_filter: Optional[str] = Query(default=None, alias="status"),
+    job_type: Optional[str] = Query(default=None),
+    limit: int = Query(default=50, ge=1, le=200),
+    offset: int = Query(default=0, ge=0),
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> list[AIJobOut]:
+    query = (
+        select(AIJob, User.email)
+        .join(User, User.id == AIJob.user_id)
+        .order_by(AIJob.created_at.desc())
+    )
+    if status_filter:
+        query = query.where(AIJob.status == status_filter)
+    if job_type:
+        query = query.where(AIJob.job_type == job_type)
+
+    rows = db.execute(query.limit(limit).offset(offset)).all()
+    results: list[AIJobOut] = []
+    for job, email in rows:
+        results.append(
+            AIJobOut(
+                id=job.id,
+                user_id=job.user_id,
+                user_email=email,
+                job_type=job.job_type,
+                status=job.status,
+                provider=job.provider,
+                prompt=job.prompt,
+                response=job.response,
+                error=job.error,
+                retry_count=job.retry_count,
+                created_at=job.created_at,
+                updated_at=job.updated_at,
+            )
+        )
+    return results
+
+
+@app.delete("/api/v1/admin/rag/documents/{doc_id}", status_code=204)
+def delete_rag_document(
+    doc_id: UUID,
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> Response:
+    doc = db.get(RagDocument, doc_id)
+    if doc is None:
+        return Response(status_code=204)
+    db.delete(doc)
+    db.commit()
+    return Response(status_code=204)
+
+
+@app.get("/api/v1/admin/rag/settings", response_model=RagSettingsOut)
+def get_rag_settings(
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> RagSettingsOut:
+    settings_row = _get_rag_settings(db)
+    return RagSettingsOut(
+        system_instruction=settings_row.system_instruction,
+        prompt_prefix=settings_row.prompt_prefix,
+        model_override=settings_row.model_override,
+        temperature=settings_row.temperature,
+        max_documents=int(settings_row.max_documents or 6),
+        embedding_enabled=bool(settings_row.embedding_enabled),
+        hybrid_alpha=float(settings_row.hybrid_alpha or 0.6),
+    )
+
+
+@app.put("/api/v1/admin/rag/settings", response_model=RagSettingsOut)
+def update_rag_settings(
+    payload: RagSettingsUpdateRequest,
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> RagSettingsOut:
+    settings_row = _get_rag_settings(db)
+    updates = payload.model_dump(exclude_unset=True)
+    if "model_override" in updates:
+        value = updates.get("model_override")
+        updates["model_override"] = value if value else None
+    for field, value in updates.items():
+        setattr(settings_row, field, value)
+    db.commit()
+    db.refresh(settings_row)
+    return RagSettingsOut(
+        system_instruction=settings_row.system_instruction,
+        prompt_prefix=settings_row.prompt_prefix,
+        model_override=settings_row.model_override,
+        temperature=settings_row.temperature,
+        max_documents=int(settings_row.max_documents or 6),
+        embedding_enabled=bool(settings_row.embedding_enabled),
+        hybrid_alpha=float(settings_row.hybrid_alpha or 0.6),
+    )
+
+
 class LeaderboardEntryOut(BaseModel):
     rank: int
     user_id: UUID
@@ -5059,12 +5387,13 @@ def _call_deepseek_chat(
     *,
     temperature: float = 0.2,
     response_format: Optional[dict[str, Any]] = None,
+    model: Optional[str] = None,
 ) -> str:
     if not settings.deepseek_api_key:
         raise RuntimeError("Deepseek API key not configured")
 
     payload: dict[str, Any] = {
-        "model": settings.deepseek_model,
+        "model": model or settings.deepseek_model,
         "messages": messages,
         "temperature": temperature,
     }
@@ -5081,11 +5410,30 @@ def _call_deepseek_chat(
         },
     )
 
-    try:
-        with urlopen(request, timeout=settings.deepseek_timeout_seconds) as response:
-            body = response.read().decode("utf-8")
-    except (HTTPError, URLError) as exc:
-        raise RuntimeError(f"Deepseek request failed: {exc}") from exc
+    body = None
+    max_retries = max(0, int(settings.deepseek_max_retries or 0))
+    retryable_codes = {429, 500, 502, 503, 504}
+
+    for attempt in range(max_retries + 1):
+        try:
+            with urlopen(
+                request, timeout=settings.deepseek_timeout_seconds
+            ) as response:
+                body = response.read().decode("utf-8")
+            break
+        except HTTPError as exc:
+            if attempt < max_retries and exc.code in retryable_codes:
+                time.sleep(0.6 * (attempt + 1))
+                continue
+            raise RuntimeError(f"Deepseek request failed: {exc}") from exc
+        except URLError as exc:
+            if attempt < max_retries:
+                time.sleep(0.6 * (attempt + 1))
+                continue
+            raise RuntimeError(f"Deepseek request failed: {exc}") from exc
+
+    if body is None:
+        raise RuntimeError("Deepseek response was empty")
 
     try:
         parsed = json.loads(body)
@@ -5100,15 +5448,61 @@ def _call_deepseek_chat(
     return content
 
 
-def _call_deepseek(prompt: str) -> str:
-    messages = [
-        {
-            "role": "system",
-            "content": "You generate concise learning recommendations in JSON.",
+def _embedding_url() -> str:
+    base = settings.embedding_base_url.rstrip("/")
+    if base.endswith("/embeddings"):
+        return base
+    if base.endswith("/v1"):
+        return f"{base}/embeddings"
+    return f"{base}/v1/embeddings"
+
+
+def _prepare_embedding_text(text: str, max_len: int = 2000) -> str:
+    trimmed = " ".join(text.split())
+    if len(trimmed) <= max_len:
+        return trimmed
+    return trimmed[:max_len].rstrip()
+
+
+def _call_embedding(text: str) -> Optional[list[float]]:
+    if not settings.embedding_api_key:
+        return None
+    cleaned = _prepare_embedding_text(text)
+    if not cleaned:
+        return None
+
+    payload = {
+        "model": settings.embedding_model,
+        "input": cleaned,
+    }
+    data = json.dumps(payload).encode("utf-8")
+    request = UrlRequest(
+        _embedding_url(),
+        data=data,
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {settings.embedding_api_key}",
         },
-        {"role": "user", "content": prompt},
-    ]
-    return _call_deepseek_chat(messages, temperature=0.2)
+    )
+
+    try:
+        with urlopen(request, timeout=settings.embedding_timeout_seconds) as response:
+            body = response.read().decode("utf-8")
+    except (HTTPError, URLError):
+        return None
+
+    try:
+        parsed = json.loads(body)
+    except json.JSONDecodeError:
+        return None
+
+    data_items = parsed.get("data") if isinstance(parsed, dict) else None
+    if not isinstance(data_items, list) or not data_items:
+        return None
+    embedding = data_items[0].get("embedding")
+    if not isinstance(embedding, list):
+        return None
+    return [float(value) for value in embedding]
 
 
 def _strip_accents(value: str) -> str:
@@ -5155,27 +5549,52 @@ def _find_seed_entry(urn_slug: str, motif_name: str) -> Optional[dict[str, Any]]
     return None
 
 
+def _slice_json_candidate(content: Optional[str]) -> Optional[str]:
+    if not content:
+        return None
+    start_obj = content.find("{")
+    start_arr = content.find("[")
+    starts = [idx for idx in (start_obj, start_arr) if idx != -1]
+    if not starts:
+        return None
+    start = min(starts)
+    end_obj = content.rfind("}")
+    end_arr = content.rfind("]")
+    end = max(end_obj, end_arr)
+    if end <= start:
+        return None
+    return content[start : end + 1]
+
+
 def _extract_json_payload(content: str) -> Optional[str]:
-    match = re.search(r"```json\\s*(\\{.*?\\})\\s*```", content, re.DOTALL)
-    if match:
-        return match.group(1)
-    match = re.search(r"(\\{.*\\})", content, re.DOTALL)
-    if match:
-        return match.group(1)
-    return None
+    fence_match = re.search(r"```(?:json)?\\s*([\\s\\S]*?)```", content, re.IGNORECASE)
+    if fence_match:
+        fenced = fence_match.group(1).strip()
+        candidate = _slice_json_candidate(fenced)
+        return candidate or fenced
+    return _slice_json_candidate(content)
 
 
 def _safe_parse_json(content: str) -> Optional[Any]:
     try:
-        return json.loads(content)
+        parsed = json.loads(content)
     except json.JSONDecodeError:
         payload = _extract_json_payload(content)
         if not payload:
             return None
         try:
-            return json.loads(payload)
+            parsed = json.loads(payload)
         except json.JSONDecodeError:
             return None
+
+    if isinstance(parsed, str):
+        inner = parsed.strip()
+        if inner.startswith("{") or inner.startswith("["):
+            try:
+                return json.loads(inner)
+            except json.JSONDecodeError:
+                return parsed
+    return parsed
 
 
 def _source_snippet(text: Optional[str], max_len: int = 280) -> Optional[str]:
@@ -5187,14 +5606,112 @@ def _source_snippet(text: Optional[str], max_len: int = 280) -> Optional[str]:
     return trimmed[: max_len - 1].rstrip() + "…"
 
 
+def _clip_text(text: Optional[str], max_len: int = 1200) -> str:
+    if not text:
+        return ""
+    trimmed = " ".join(str(text).split())
+    if len(trimmed) <= max_len:
+        return trimmed
+    return trimmed[:max_len].rstrip()
+
+
+def _tokenize_query(query: str) -> list[str]:
+    return [token for token in re.split(r"\\s+", query.lower()) if len(token) >= 3]
+
+
+def _keyword_score(text: str, tokens: Sequence[str]) -> float:
+    if not tokens:
+        return 0.0
+    haystack = text.lower()
+    hits = sum(1 for token in tokens if token in haystack)
+    return hits / max(len(tokens), 1)
+
+
+def _cosine_similarity(vec_a: Sequence[float], vec_b: Sequence[float]) -> float:
+    if not vec_a or not vec_b or len(vec_a) != len(vec_b):
+        return 0.0
+    dot = 0.0
+    norm_a = 0.0
+    norm_b = 0.0
+    for a, b in zip(vec_a, vec_b):
+        dot += a * b
+        norm_a += a * a
+        norm_b += b * b
+    if norm_a == 0.0 or norm_b == 0.0:
+        return 0.0
+    return dot / math.sqrt(norm_a * norm_b)
+
+
+def _score_rag_documents(
+    docs: Sequence[RagDocument],
+    *,
+    query: str,
+    query_embedding: Optional[Sequence[float]],
+    alpha: float,
+) -> list[RagDocument]:
+    tokens = _tokenize_query(query)
+    weighted = []
+    for doc in docs:
+        text = f\"{doc.title}\\n{doc.content}\"
+        keyword_score = _keyword_score(text, tokens)
+        embed_score = 0.0
+        if query_embedding is not None and isinstance(doc.embedding, list):
+            embed_score = _cosine_similarity(query_embedding, doc.embedding)
+        score = alpha * embed_score + (1 - alpha) * keyword_score
+        weighted.append((score, doc))
+    weighted.sort(key=lambda item: item[0], reverse=True)
+    return [doc for _, doc in weighted]
+
+
+def _get_rag_settings(session: Session) -> RagSettings:
+    settings_row = (
+        session.execute(select(RagSettings).order_by(RagSettings.created_at.desc()))
+        .scalars()
+        .first()
+    )
+    if settings_row:
+        return settings_row
+    settings_row = RagSettings()
+    session.add(settings_row)
+    session.commit()
+    session.refresh(settings_row)
+    return settings_row
+
+
+def _apply_ai_settings(
+    session: Session,
+    *,
+    system_prompt: str,
+    user_prompt: str,
+    temperature: float,
+) -> tuple[str, str, Optional[str], float]:
+    rag_settings = _get_rag_settings(session)
+    system_content = system_prompt
+    system_instruction = (rag_settings.system_instruction or "").strip()
+    if system_instruction:
+        system_content = f"{system_instruction}\n\n{system_prompt}"
+    prompt_prefix = (rag_settings.prompt_prefix or "").strip()
+    if prompt_prefix:
+        user_prompt = f"{prompt_prefix}\n\n{user_prompt}"
+    model_override = rag_settings.model_override or None
+    temp_override = (
+        float(rag_settings.temperature)
+        if rag_settings.temperature is not None
+        else temperature
+    )
+    return system_content, user_prompt, model_override, temp_override
+
+
 def _collect_ai_sources(
     session: Session,
     *,
     urn_slug: Optional[str] = None,
     motif_id: Optional[UUID] = None,
     limit: int = 6,
+    query: Optional[str] = None,
 ) -> list[dict[str, Any]]:
     sources: list[dict[str, Any]] = []
+    rag_settings = _get_rag_settings(session)
 
     if motif_id:
         motif = session.execute(
@@ -5296,6 +5813,38 @@ def _collect_ai_sources(
                         }
                     )
 
+    max_docs = max(1, int(rag_settings.max_documents or 6))
+    rag_docs = (
+        session.execute(
+            select(RagDocument)
+            .where(RagDocument.is_active.is_(True))
+            .order_by(RagDocument.updated_at.desc(), RagDocument.created_at.desc())
+        )
+        .scalars()
+        .all()
+    )
+
+    if query and rag_settings.embedding_enabled and settings.embedding_api_key:
+        query_embedding = _call_embedding(query)
+        alpha = float(rag_settings.hybrid_alpha or 0.6)
+        alpha = min(max(alpha, 0.0), 1.0)
+        rag_docs = _score_rag_documents(
+            rag_docs,
+            query=query,
+            query_embedding=query_embedding,
+            alpha=alpha,
+        )
+    rag_docs = rag_docs[:max_docs]
+    for doc in rag_docs:
+        sources.append(
+            {
+                "type": "rag",
+                "id": str(doc.id),
+                "title": doc.title,
+                "content": _clip_text(doc.content),
+            }
+        )
+
     if not sources:
         sources.append(
             {
@@ -5347,6 +5896,67 @@ def _build_ai_citations(
     return citations
 
 
+def _fallback_answer_from_sources(
+    question: str, sources: Sequence[dict[str, Any]]
+) -> str:
+    if not sources:
+        return (
+            "Mình chưa có đủ dữ liệu để trả lời ngay. "
+            "Bạn thử lại sau hoặc bổ sung thêm bối cảnh nhé."
+        )
+    snippet = _source_snippet(sources[0].get("content"), max_len=360) or ""
+    if snippet:
+        return (
+            f"Theo [S1], {snippet}\n\n"
+            "Bạn có thể hỏi chi tiết hơn hoặc thử lại để nhận câu trả lời đầy đủ."
+        )
+    title = sources[0].get("title") or "Nguồn nội bộ"
+    return (
+        f"Mình đang ưu tiên nội dung từ [S1] {title}. "
+        "Bạn thử lại sau để nhận câu trả lời chi tiết hơn nhé."
+    )
+
+
+def _fallback_summary_from_sources(sources: Sequence[dict[str, Any]]) -> str:
+    if not sources:
+        return "Chưa có dữ liệu để tóm tắt."
+    return _source_snippet(sources[0].get("content"), max_len=480) or "Chưa có dữ liệu để tóm tắt."
+
+
+def _fallback_flashcards_from_sources(
+    sources: Sequence[dict[str, Any]],
+    *,
+    count: int,
+    topic: Optional[str] = None,
+) -> list[FlashcardOut]:
+    cards: list[FlashcardOut] = []
+    for source in sources:
+        if len(cards) >= count:
+            break
+        title = str(source.get("title") or topic or "Cửu Đỉnh")
+        snippet = _source_snippet(source.get("content"), max_len=160) or ""
+        if not snippet:
+            continue
+        cards.append(FlashcardOut(front=title, back=snippet))
+    if not cards:
+        cards.append(
+            FlashcardOut(
+                front=topic or "Cửu Đỉnh",
+                back="Gợi ý: thử chọn lại họa tiết hoặc thử lại để AI tạo flashcards.",
+            )
+        )
+    return cards
+
+
+def _fallback_explain_text(text: str) -> str:
+    trimmed = " ".join(text.split())
+    if not trimmed:
+        return "Chưa có nội dung để giải thích."
+    if len(trimmed) > 260:
+        trimmed = trimmed[:260].rstrip() + "…"
+    return f"Tóm tắt nhanh: {trimmed}"
+
+
 def _start_ai_job(session: Session, *, user: User, job_type: str, prompt: str) -> AIJob:
     job = AIJob(
         user_id=user.id,
@@ -5364,6 +5974,16 @@ def _start_ai_job(session: Session, *, user: User, job_type: str, prompt: str) -
 def _finish_ai_job(session: Session, job: AIJob, *, response: str) -> None:
     job.status = "succeeded"
     job.response = response
+    session.commit()
+
+
+def _finish_ai_job_fallback(
+    session: Session, job: AIJob, *, response: str, error: str
+) -> None:
+    job.status = "fallback"
+    job.provider = "fallback"
+    job.response = response
+    job.error = error
     session.commit()
 
 
@@ -5488,6 +6108,7 @@ def _sanitize_quiz_payload(payload: dict[str, Any]) -> Optional[dict[str, Any]]:
 
 
 def _generate_quiz_payloads_with_ai(
+    session: Session,
     *,
     motif: Optional[Motif],
     urn: Optional[Urn],
@@ -5523,17 +6144,23 @@ def _generate_quiz_payloads_with_ai(
         ensure_ascii=False,
     )
 
+    system_prompt = (
+        "Bạn tạo câu hỏi kiểm tra kiến thức bằng tiếng Việt, "
+        "trả về JSON đúng cấu trúc được yêu cầu."
+    )
+    system_prompt, user_prompt, model_override, temperature = _apply_ai_settings(
+        session,
+        system_prompt=system_prompt,
+        user_prompt=prompt,
+        temperature=0.2,
+    )
     messages = [
-        {
-            "role": "system",
-            "content": (
-                "Bạn tạo câu hỏi kiểm tra kiến thức bằng tiếng Việt, "
-                "trả về JSON đúng cấu trúc được yêu cầu."
-            ),
-        },
-        {"role": "user", "content": prompt},
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": user_prompt},
     ]
-    response = _call_deepseek_chat(messages, temperature=0.2)
+    response = _call_deepseek_chat(
+        messages, temperature=temperature, model=model_override
+    )
     parsed = _safe_parse_json(response)
     questions_raw: list[dict[str, Any]] = []
     if isinstance(parsed, dict):
@@ -5607,7 +6234,20 @@ def _generate_llm_recommendations(
         ensure_ascii=False,
     )
 
-    content = _call_deepseek(prompt)
+    system_prompt = "You generate concise learning recommendations in JSON."
+    system_prompt, user_prompt, model_override, temperature = _apply_ai_settings(
+        session,
+        system_prompt=system_prompt,
+        user_prompt=prompt,
+        temperature=0.2,
+    )
+    messages = [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": user_prompt},
+    ]
+    content = _call_deepseek_chat(
+        messages, temperature=temperature, model=model_override
+    )
     items: list[dict[str, Any]] = []
     try:
         parsed = json.loads(content)
@@ -5727,11 +6367,13 @@ def refresh_recommendations(
             recommendation = _store_recommendation(
                 db, user=current_user, source="llm", items=llm_items
             )
+            rag_settings = _get_rag_settings(db)
+            model_used = rag_settings.model_override or settings.deepseek_model
             provenance = ContentProvenance(
                 content_type="recommendation",
                 content_id=recommendation.id,
                 provider="deepseek",
-                model=settings.deepseek_model,
+                model=model_used,
                 generated_at=datetime.now(timezone.utc),
                 metadata_payload={"job_id": str(job.id)},
             )
@@ -5872,7 +6514,11 @@ def ai_tutor(
 
     context = payload.context or AIContextIn()
     sources = _collect_ai_sources(
-        db, urn_slug=context.urn_slug, motif_id=context.motif_id, limit=6
+        db,
+        urn_slug=context.urn_slug,
+        motif_id=context.motif_id,
+        limit=6,
+        query=payload.message,
     )
     sources_prompt = _format_sources_for_prompt(sources)
     level = payload.level or "beginner"
@@ -5884,13 +6530,21 @@ def ai_tutor(
         f"Câu hỏi: {payload.message}\nTrả lời:"
     )
 
+    system_prompt = (
+        "Bạn là trợ giảng lịch sử Việt Nam cho ứng dụng Cửu Đỉnh. "
+        "Trả lời bằng tiếng Việt, rõ ràng, súc tích."
+    )
+    system_prompt, user_prompt, model_override, temperature = _apply_ai_settings(
+        db,
+        system_prompt=system_prompt,
+        user_prompt=user_prompt,
+        temperature=0.3,
+    )
+
     messages = [
         {
             "role": "system",
-            "content": (
-                "Bạn là trợ giảng lịch sử Việt Nam cho ứng dụng Cửu Đỉnh. "
-                "Trả lời bằng tiếng Việt, rõ ràng, súc tích."
-            ),
+            "content": system_prompt,
         }
     ]
     for msg in payload.history[-6:]:
@@ -5899,11 +6553,13 @@ def ai_tutor(
 
     job = _start_ai_job(db, user=current_user, job_type="tutor", prompt=user_prompt)
     try:
-        answer = _call_deepseek_chat(messages, temperature=0.3)
+        answer = _call_deepseek_chat(
+            messages, temperature=temperature, model=model_override
+        )
         _finish_ai_job(db, job, response=answer)
     except Exception as exc:
-        _fail_ai_job(db, job, error=str(exc))
-        raise HTTPException(status_code=502, detail="AI tutor failed") from exc
+        answer = _fallback_answer_from_sources(payload.message, sources)
+        _finish_ai_job_fallback(db, job, response=answer, error=str(exc))
 
     cited_indexes = _extract_citations(answer)
     citations = _build_ai_citations(sources, cited_indexes)
@@ -5927,6 +6583,7 @@ def ai_qa(
         urn_slug=context.urn_slug,
         motif_id=context.motif_id,
         limit=payload.limit,
+        query=payload.question,
     )
     sources_prompt = _format_sources_for_prompt(sources)
     user_prompt = (
@@ -5936,24 +6593,34 @@ def ai_qa(
         f"Nguồn:\n{sources_prompt}\n\n"
         f"Câu hỏi: {payload.question}\nTrả lời:"
     )
+
+    system_prompt = (
+        "Bạn là hệ thống hỏi đáp nội dung nội bộ về Cửu Đỉnh. "
+        "Ưu tiên chính xác và trích dẫn nguồn."
+    )
+    system_prompt, user_prompt, model_override, temperature = _apply_ai_settings(
+        db,
+        system_prompt=system_prompt,
+        user_prompt=user_prompt,
+        temperature=0.2,
+    )
     messages = [
         {
             "role": "system",
-            "content": (
-                "Bạn là hệ thống hỏi đáp nội dung nội bộ về Cửu Đỉnh. "
-                "Ưu tiên chính xác và trích dẫn nguồn."
-            ),
+            "content": system_prompt,
         },
         {"role": "user", "content": user_prompt},
     ]
 
     job = _start_ai_job(db, user=current_user, job_type="qa", prompt=user_prompt)
     try:
-        answer = _call_deepseek_chat(messages, temperature=0.2)
+        answer = _call_deepseek_chat(
+            messages, temperature=temperature, model=model_override
+        )
         _finish_ai_job(db, job, response=answer)
     except Exception as exc:
-        _fail_ai_job(db, job, error=str(exc))
-        raise HTTPException(status_code=502, detail="AI Q&A failed") from exc
+        answer = _fallback_answer_from_sources(payload.question, sources)
+        _finish_ai_job_fallback(db, job, response=answer, error=str(exc))
 
     cited_indexes = _extract_citations(answer)
     citations = _build_ai_citations(sources, cited_indexes)
@@ -5982,17 +6649,27 @@ def ai_summary(
         "Trả về JSON với các khóa: summary, key_points (mảng).\n\n"
         f"Nguồn:\n{sources_prompt}"
     )
+    system_prompt = "Bạn tóm tắt bài học lịch sử."
+    system_prompt, user_prompt, model_override, temperature = _apply_ai_settings(
+        db,
+        system_prompt=system_prompt,
+        user_prompt=user_prompt,
+        temperature=0.2,
+    )
     messages = [
-        {"role": "system", "content": "Bạn tóm tắt bài học lịch sử."},
+        {"role": "system", "content": system_prompt},
         {"role": "user", "content": user_prompt},
     ]
     job = _start_ai_job(db, user=current_user, job_type="summary", prompt=user_prompt)
     try:
-        response = _call_deepseek_chat(messages, temperature=0.2)
+        response = _call_deepseek_chat(
+            messages, temperature=temperature, model=model_override
+        )
         _finish_ai_job(db, job, response=response)
     except Exception as exc:
-        _fail_ai_job(db, job, error=str(exc))
-        raise HTTPException(status_code=502, detail="AI summary failed") from exc
+        summary = _fallback_summary_from_sources(sources)
+        _finish_ai_job_fallback(db, job, response=summary, error=str(exc))
+        return SummaryGenerateOut(summary=summary, key_points=[], job_id=job.id)
 
     parsed = _safe_parse_json(response)
     summary = response
@@ -6022,19 +6699,36 @@ def ai_flashcards(
         "Trả về JSON với khóa cards: [{front, back}].\n\n"
         f"Nguồn:\n{sources_prompt}"
     )
+    system_prompt = "Bạn tạo flashcards học tập."
+    system_prompt, user_prompt, model_override, temperature = _apply_ai_settings(
+        db,
+        system_prompt=system_prompt,
+        user_prompt=user_prompt,
+        temperature=0.3,
+    )
     messages = [
-        {"role": "system", "content": "Bạn tạo flashcards học tập."},
+        {"role": "system", "content": system_prompt},
         {"role": "user", "content": user_prompt},
     ]
     job = _start_ai_job(
         db, user=current_user, job_type="flashcards", prompt=user_prompt
     )
     try:
-        response = _call_deepseek_chat(messages, temperature=0.3)
+        response = _call_deepseek_chat(
+            messages, temperature=temperature, model=model_override
+        )
         _finish_ai_job(db, job, response=response)
     except Exception as exc:
-        _fail_ai_job(db, job, error=str(exc))
-        raise HTTPException(status_code=502, detail="AI flashcards failed") from exc
+        cards = _fallback_flashcards_from_sources(
+            sources, count=payload.count, topic=topic
+        )
+        _finish_ai_job_fallback(
+            db,
+            job,
+            response=json.dumps([card.model_dump() for card in cards], ensure_ascii=False),
+            error=str(exc),
+        )
+        return FlashcardGenerateOut(cards=cards, job_id=job.id)
 
     parsed = _safe_parse_json(response)
     cards: list[FlashcardOut] = []
@@ -6071,7 +6765,11 @@ def ai_feedback(
 
     context = payload.context or AIContextIn()
     sources = _collect_ai_sources(
-        db, urn_slug=context.urn_slug, motif_id=context.motif_id, limit=4
+        db,
+        urn_slug=context.urn_slug,
+        motif_id=context.motif_id,
+        limit=4,
+        query=payload.question,
     )
     sources_prompt = _format_sources_for_prompt(sources)
     user_prompt = json.dumps(
@@ -6085,22 +6783,35 @@ def ai_feedback(
         },
         ensure_ascii=False,
     )
+    system_prompt = "Bạn là trợ giảng phản hồi câu trả lời. Trả về JSON theo định dạng."
+    system_prompt, user_prompt, model_override, temperature = _apply_ai_settings(
+        db,
+        system_prompt=system_prompt,
+        user_prompt=user_prompt,
+        temperature=0.2,
+    )
     messages = [
-        {
-            "role": "system",
-            "content": (
-                "Bạn là trợ giảng phản hồi câu trả lời. Trả về JSON theo định dạng."
-            ),
-        },
+        {"role": "system", "content": system_prompt},
         {"role": "user", "content": user_prompt},
     ]
     job = _start_ai_job(db, user=current_user, job_type="feedback", prompt=user_prompt)
     try:
-        response = _call_deepseek_chat(messages, temperature=0.2)
+        response = _call_deepseek_chat(
+            messages, temperature=temperature, model=model_override
+        )
         _finish_ai_job(db, job, response=response)
     except Exception as exc:
-        _fail_ai_job(db, job, error=str(exc))
-        raise HTTPException(status_code=502, detail="AI feedback failed") from exc
+        fallback = (
+            "Câu trả lời đã được chấm tự động. "
+            "Bạn có thể thử lại để nhận phản hồi chi tiết hơn."
+        )
+        _finish_ai_job_fallback(db, job, response=fallback, error=str(exc))
+        return FeedbackGenerateOut(
+            is_correct=is_correct,
+            explanation=fallback,
+            next_step="Ôn lại nội dung liên quan và thử lại câu hỏi.",
+            job_id=job.id,
+        )
 
     parsed = _safe_parse_json(response)
     explanation = response
@@ -6150,23 +6861,46 @@ def ai_coach(
         },
         ensure_ascii=False,
     )
+    system_prompt = (
+        "Bạn là coach học tập cho nội dung Cửu Đỉnh. Trả về JSON theo định dạng."
+    )
+    system_prompt, user_prompt, model_override, temperature = _apply_ai_settings(
+        db,
+        system_prompt=system_prompt,
+        user_prompt=user_prompt,
+        temperature=0.3,
+    )
     messages = [
-        {
-            "role": "system",
-            "content": (
-                "Bạn là coach học tập cho nội dung Cửu Đỉnh. "
-                "Trả về JSON theo định dạng."
-            ),
-        },
+        {"role": "system", "content": system_prompt},
         {"role": "user", "content": user_prompt},
     ]
     job = _start_ai_job(db, user=current_user, job_type="coach", prompt=user_prompt)
     try:
-        response = _call_deepseek_chat(messages, temperature=0.3)
+        response = _call_deepseek_chat(
+            messages, temperature=temperature, model=model_override
+        )
         _finish_ai_job(db, job, response=response)
     except Exception as exc:
-        _fail_ai_job(db, job, error=str(exc))
-        raise HTTPException(status_code=502, detail="AI coach failed") from exc
+        fallback_message = "Hãy duy trì nhịp học đều đặn mỗi ngày."
+        fallback_plan = [
+            "Mỗi ngày hoàn thành 1 bài học ngắn.",
+            "Làm 5 câu quiz để củng cố kiến thức.",
+            "Ôn lại các họa tiết đã học vào cuối tuần.",
+        ]
+        _finish_ai_job_fallback(
+            db,
+            job,
+            response=json.dumps(
+                {"message": fallback_message, "weekly_plan": fallback_plan},
+                ensure_ascii=False,
+            ),
+            error=str(exc),
+        )
+        return CoachGenerateOut(
+            message=fallback_message,
+            weekly_plan=fallback_plan,
+            job_id=job.id,
+        )
 
     parsed = _safe_parse_json(response)
     message = response
@@ -6196,20 +6930,27 @@ def ai_explain(
         },
         ensure_ascii=False,
     )
+    system_prompt = "Bạn diễn giải nội dung theo mức độ người học."
+    system_prompt, user_prompt, model_override, temperature = _apply_ai_settings(
+        db,
+        system_prompt=system_prompt,
+        user_prompt=user_prompt,
+        temperature=0.3,
+    )
     messages = [
-        {
-            "role": "system",
-            "content": "Bạn diễn giải nội dung theo mức độ người học.",
-        },
+        {"role": "system", "content": system_prompt},
         {"role": "user", "content": user_prompt},
     ]
     job = _start_ai_job(db, user=current_user, job_type="explain", prompt=user_prompt)
     try:
-        response = _call_deepseek_chat(messages, temperature=0.3)
+        response = _call_deepseek_chat(
+            messages, temperature=temperature, model=model_override
+        )
         _finish_ai_job(db, job, response=response)
     except Exception as exc:
-        _fail_ai_job(db, job, error=str(exc))
-        raise HTTPException(status_code=502, detail="AI explain failed") from exc
+        explanation = _fallback_explain_text(payload.text)
+        _finish_ai_job_fallback(db, job, response=explanation, error=str(exc))
+        return ExplainGenerateOut(explanation=explanation, job_id=job.id)
 
     parsed = _safe_parse_json(response)
     explanation = response
@@ -6313,6 +7054,7 @@ def ai_generate_lesson(
     seed_entry = _find_seed_entry(urn_slug, motif.name) if urn_slug else None
     used_seed = False
     job: Optional[AIJob] = None
+    model_used: Optional[str] = None
 
     lesson_payload: dict[str, Optional[str]] = {}
     if payload.use_seed and seed_entry:
@@ -6345,13 +7087,21 @@ def ai_generate_lesson(
             },
             ensure_ascii=False,
         )
+        system_prompt = (
+            "Bạn tạo nội dung bài học lịch sử về Cửu Đỉnh bằng tiếng Việt. "
+            "Trả về JSON đúng định dạng."
+        )
+        system_prompt, user_prompt, model_override, temperature = _apply_ai_settings(
+            db,
+            system_prompt=system_prompt,
+            user_prompt=user_prompt,
+            temperature=0.3,
+        )
+        model_used = model_override or settings.deepseek_model
         messages = [
             {
                 "role": "system",
-                "content": (
-                    "Bạn tạo nội dung bài học lịch sử về Cửu Đỉnh bằng tiếng Việt. "
-                    "Trả về JSON đúng định dạng."
-                ),
+                "content": system_prompt,
             },
             {"role": "user", "content": user_prompt},
         ]
@@ -6359,7 +7109,9 @@ def ai_generate_lesson(
             db, user=current_user, job_type="lesson_generate", prompt=user_prompt
         )
         try:
-            response = _call_deepseek_chat(messages, temperature=0.3)
+            response = _call_deepseek_chat(
+                messages, temperature=temperature, model=model_override
+            )
             _finish_ai_job(db, job, response=response)
         except Exception as exc:
             _fail_ai_job(db, job, error=str(exc))
@@ -6397,7 +7149,7 @@ def ai_generate_lesson(
         content_type="lesson",
         content_id=lesson.id,
         provider="seed" if used_seed else "deepseek",
-        model=settings.deepseek_model if not used_seed else None,
+        model=model_used if not used_seed else None,
         generated_at=datetime.now(timezone.utc) if not used_seed else None,
         metadata_payload={
             "urn_slug": urn_slug,
@@ -6418,6 +7170,7 @@ def ai_generate_lesson(
             ]
         if not quiz_payloads and settings.deepseek_api_key:
             quiz_payloads, _ = _generate_quiz_payloads_with_ai(
+                db,
                 motif=motif,
                 urn=motif.urn,
                 count=payload.quiz_count,
@@ -6482,6 +7235,7 @@ def ai_generate_quiz(
         )
         try:
             quiz_payloads, response = _generate_quiz_payloads_with_ai(
+                db,
                 motif=motif,
                 urn=urn,
                 count=payload.count,
@@ -6495,13 +7249,18 @@ def ai_generate_quiz(
                 status_code=502, detail="AI quiz generation failed"
             ) from exc
 
+    model_used = None
+    if not used_seed:
+        rag_settings = _get_rag_settings(db)
+        model_used = rag_settings.model_override or settings.deepseek_model
+
     questions = _store_quiz_payloads(db, motif=motif, urn=urn, payloads=quiz_payloads)
     for question in questions:
         provenance = ContentProvenance(
             content_type="quiz_question",
             content_id=question.id,
             provider="seed" if used_seed else "deepseek",
-            model=settings.deepseek_model if not used_seed else None,
+            model=model_used if not used_seed else None,
             generated_at=datetime.now(timezone.utc) if not used_seed else None,
             metadata_payload={
                 "motif_id": str(motif.id),
@@ -6534,6 +7293,7 @@ def ai_diagnostic(
     )
     try:
         payloads, response = _generate_quiz_payloads_with_ai(
+            db,
             motif=None,
             urn=urn,
             count=payload.count,
@@ -6623,15 +7383,26 @@ def ai_seed_urn(
                 },
                 ensure_ascii=False,
             )
+            system_prompt = "Bạn tạo nội dung bài học lịch sử về Cửu Đỉnh."
+            system_prompt, user_prompt, model_override, temperature = (
+                _apply_ai_settings(
+                    db,
+                    system_prompt=system_prompt,
+                    user_prompt=prompt,
+                    temperature=0.3,
+                )
+            )
             messages = [
                 {
                     "role": "system",
-                    "content": "Bạn tạo nội dung bài học lịch sử về Cửu Đỉnh.",
+                    "content": system_prompt,
                 },
-                {"role": "user", "content": prompt},
+                {"role": "user", "content": user_prompt},
             ]
             try:
-                response = _call_deepseek_chat(messages, temperature=0.3)
+                response = _call_deepseek_chat(
+                    messages, temperature=temperature, model=model_override
+                )
             except Exception:
                 response = ""
             parsed = _safe_parse_json(response) if response else None
@@ -6667,7 +7438,11 @@ def ai_seed_urn(
             content_type="lesson",
             content_id=lesson.id,
             provider="seed" if used_seed else "deepseek",
-            model=settings.deepseek_model if not used_seed else None,
+            model=(
+                (_get_rag_settings(db).model_override or settings.deepseek_model)
+                if not used_seed
+                else None
+            ),
             generated_at=datetime.now(timezone.utc) if not used_seed else None,
             metadata_payload={"urn_slug": urn.slug, "motif_id": str(motif.id)},
         )

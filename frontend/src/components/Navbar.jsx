@@ -8,6 +8,7 @@ import { useAuthStore } from "@/stores/authStore";
 const NAV_LINKS = [
   { href: "/explore", label: "Explore" },
   { href: "/collection", label: "Collection" },
+  { href: "/ai", label: "AI Tutor" },
   { href: "/leaderboard", label: "Leaderboard" },
 ];
 
@@ -25,7 +26,10 @@ export default function Navbar() {
         <div className="flex h-16 justify-between">
           <div className="flex">
             <div className="flex flex-shrink-0 items-center">
-              <Link href="/" className="text-xl font-serif font-bold text-primary">
+              <Link
+                href="/"
+                className="text-xl font-serif font-bold text-primary"
+              >
                 Lưu Niên Sử Kí
               </Link>
             </div>
@@ -88,7 +92,11 @@ export default function Navbar() {
                   stroke="currentColor"
                   aria-hidden="true"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                  />
                 </svg>
               ) : (
                 /* Close Icon */
@@ -100,7 +108,11 @@ export default function Navbar() {
                   stroke="currentColor"
                   aria-hidden="true"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               )}
             </button>
@@ -131,8 +143,12 @@ export default function Navbar() {
             {user ? (
               <div className="space-y-1">
                 <div className="px-4 py-2">
-                  <div className="text-base font-medium text-foreground">{user.display_name}</div>
-                  <div className="text-sm font-medium text-muted-foreground">{user.email}</div>
+                  <div className="text-base font-medium text-foreground">
+                    {user.display_name}
+                  </div>
+                  <div className="text-sm font-medium text-muted-foreground">
+                    {user.email}
+                  </div>
                 </div>
                 <Link
                   href="/profile"
