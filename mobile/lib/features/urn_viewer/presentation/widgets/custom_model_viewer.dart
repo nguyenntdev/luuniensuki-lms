@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -137,6 +138,35 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
     );
   }
 
+  double _parseFieldOfViewDegrees() {
+    final raw = widget.fieldOfView;
+    if (raw == null || raw.isEmpty) {
+      return 45.0;
+    }
+    final cleaned = raw.toLowerCase().replaceAll('deg', '').trim();
+    final value = double.tryParse(cleaned);
+    if (value == null || value.isNaN || value <= 0) {
+      return 45.0;
+    }
+    return value;
+  }
+
+  String? _buildFallbackCameraOrbit(_MotifBounds bounds) {
+    final sizeX = bounds.sizeX.abs();
+    final sizeY = bounds.sizeY.abs();
+    final sizeZ = bounds.sizeZ.abs();
+    final maxDim = [sizeX, sizeY, sizeZ].reduce((a, b) => a > b ? a : b);
+    if (maxDim <= 0) {
+      return null;
+    }
+    final fov = _parseFieldOfViewDegrees();
+    final radius = 0.5 * math.sqrt(sizeX * sizeX + sizeY * sizeY + sizeZ * sizeZ);
+    final distance = radius / (math.sin((fov * math.pi / 180) / 2));
+    final orbitDistance = [distance * 1.4, radius * 2, maxDim * 2.5, 1.0]
+        .reduce((a, b) => a > b ? a : b);
+    return '0deg 75deg ${orbitDistance.toStringAsFixed(3)}m';
+  }
+
   /// Generate HTML content with model-viewer web component
   String _generateHtml() {
     final bgColor = _colorToHex(widget.backgroundColor);
@@ -147,6 +177,13 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
     final boundsSizeAttr = motifBounds == null
         ? ''
         : 'data-bounds-size="${motifBounds.sizeX} ${motifBounds.sizeY} ${motifBounds.sizeZ}"';
+    final fallbackOrbit = motifBounds == null ? null : _buildFallbackCameraOrbit(motifBounds);
+    final fallbackTarget = motifBounds == null
+        ? null
+        : '${motifBounds.centerX}m ${motifBounds.centerY}m ${motifBounds.centerZ}m';
+    final useFallbackCamera = widget.cameraOrbit == null && fallbackOrbit != null && fallbackTarget != null;
+    final cameraOrbitAttrValue = widget.cameraOrbit ?? (useFallbackCamera ? fallbackOrbit : 'auto auto auto');
+    final cameraTargetAttrValue = useFallbackCamera ? fallbackTarget : 'auto auto auto';
 
     // Generate hotspot HTML
     final hotspotsHtml = widget.hotspots.map((motif) {
@@ -220,11 +257,11 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
     ${widget.autoRotate ? 'auto-rotate' : ''}
     ${widget.cameraControls ? 'camera-controls' : ''}
     ${widget.disableZoom ? 'disable-zoom' : ''}
-    ${widget.cameraOrbit != null ? 'camera-orbit="${widget.cameraOrbit}"' : 'camera-orbit="auto auto auto"'}
+    camera-orbit="$cameraOrbitAttrValue"
     ${widget.minCameraOrbit != null ? 'min-camera-orbit="${widget.minCameraOrbit}"' : ''}
     ${widget.maxCameraOrbit != null ? 'max-camera-orbit="${widget.maxCameraOrbit}"' : ''}
     ${widget.fieldOfView != null ? 'field-of-view="${widget.fieldOfView}"' : 'field-of-view="45deg"'}
-    camera-target="auto auto auto"
+    camera-target="$cameraTargetAttrValue"
     loading="eager"
     reveal="auto"
     shadow-intensity="0"
@@ -284,22 +321,88 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
       };
     }
 
-    function expandCameraOrbit(multiplier) {
-      if (!modelViewer || !modelViewer.getCameraOrbit) {
-        return false;
+    function parseVectorString(value) {
+      if (typeof value !== 'string') {
+        return null;
+      }
+      const parts = value.split(' ').map((entry) => Number.parseFloat(entry));
+      if (parts.length < 3) {
+        return null;
+      }
+      if (parts.some((entry) => !Number.isFinite(entry))) {
+        return null;
+      }
+      return { x: parts[0], y: parts[1], z: parts[2] };
+    }
+
+    function getCurrentTarget() {
+      if (!modelViewer) {
+        return null;
+      }
+      if (typeof modelViewer.getCameraTarget === 'function') {
+        const target = modelViewer.getCameraTarget();
+        if (target && Number.isFinite(target.x) && Number.isFinite(target.y) && Number.isFinite(target.z)) {
+          return { x: target.x, y: target.y, z: target.z };
+        }
+      }
+      return parseVectorString(modelViewer.cameraTarget);
+    }
+
+    function getCurrentOrbit() {
+      if (!modelViewer || typeof modelViewer.getCameraOrbit !== 'function') {
+        return null;
       }
       const orbit = modelViewer.getCameraOrbit();
       if (!orbit || orbit.radius == null) {
+        return null;
+      }
+      return orbit;
+    }
+
+    function toDegrees(radians) {
+      if (!Number.isFinite(radians)) {
+        return 0;
+      }
+      return radians * 180 / Math.PI;
+    }
+
+    function applyCamera(target, theta, phi, radius) {
+      if (!modelViewer || !target) {
         return false;
       }
-      const theta = Number.isFinite(orbit.theta) ? orbit.theta : 0;
-      const phi = Number.isFinite(orbit.phi) ? orbit.phi : Math.PI / 2;
-      const radius = Number.isFinite(orbit.radius) ? orbit.radius : 2;
-      const newRadius = Math.max(radius * multiplier, radius + 0.5);
-      modelViewer.cameraOrbit = `\${theta}rad \${phi}rad \${newRadius}m`;
+      const safeRadius = Number.isFinite(radius) ? Math.max(radius, 0.5) : 1;
+      const thetaDeg = toDegrees(theta);
+      const phiDeg = Number.isFinite(phi) ? toDegrees(phi) : 75;
+      const orbitString = `\${thetaDeg}deg \${phiDeg}deg \${safeRadius}m`;
+      const targetString = `\${target.x}m \${target.y}m \${target.z}m`;
+      modelViewer.cameraTarget = targetString;
+      modelViewer.setAttribute('camera-target', targetString);
+      modelViewer.cameraOrbit = orbitString;
+      modelViewer.setAttribute('camera-orbit', orbitString);
       if (modelViewer.jumpCameraToGoal) {
         modelViewer.jumpCameraToGoal();
       }
+      if (modelViewer.requestUpdate) {
+        modelViewer.requestUpdate();
+      }
+      if (modelViewer.dismissPoster) {
+        modelViewer.dismissPoster();
+      }
+      modelViewer.style.visibility = 'visible';
+      modelViewer.style.opacity = '1';
+      console.log('[MODEL_VIEWER] Applied camera:', orbitString, 'target:', targetString);
+      return true;
+    }
+
+    function expandCameraOrbit(multiplier) {
+      const orbit = getCurrentOrbit();
+      const target = getCurrentTarget();
+      if (!orbit || !target) {
+        return false;
+      }
+      const radius = Number.isFinite(orbit.radius) ? orbit.radius : 2;
+      const newRadius = Math.max(radius * multiplier, radius + 0.5);
+      applyCamera(target, orbit.theta, orbit.phi, newRadius);
       logCameraState('[MODEL_VIEWER] Expanded orbit');
       return true;
     }
@@ -313,33 +416,24 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
         typeof modelViewer.getBoundingBoxCenter,
         typeof modelViewer.getBoundingBoxSize
       );
-      if (modelViewer.updateFraming) {
-        modelViewer.updateFraming();
-      }
       if (typeof modelViewer.getBoundingBoxCenter !== 'function' ||
           typeof modelViewer.getBoundingBoxSize !== 'function') {
-        if (modelViewer.updateFraming) {
-          modelViewer.updateFraming();
-        }
-        if (modelViewer.resetCameraOrbit) {
-          modelViewer.resetCameraOrbit();
-        }
-        if (modelViewer.resetCameraTarget) {
-          modelViewer.resetCameraTarget();
-        }
-        if (modelViewer.jumpCameraToGoal) {
-          modelViewer.jumpCameraToGoal();
-        }
         const fallbackBounds = getBoundsFromAttributes();
         if (!fallbackBounds) {
           return false;
         }
-        const center = fallbackBounds.center;
         const size = fallbackBounds.size;
+        const center = fallbackBounds.center;
         const maxDim = Math.max(size.x || 0, size.y || 0, size.z || 0);
         if (!Number.isFinite(maxDim) || maxDim <= 0) {
           return false;
         }
+        const currentOrbit = getCurrentOrbit();
+        const currentTarget = getCurrentTarget();
+        const theta = Number.isFinite(currentOrbit?.theta) ? currentOrbit.theta : 0;
+        const phi = Number.isFinite(currentOrbit?.phi) ? currentOrbit.phi : Math.PI / 2;
+        const currentRadius = Number.isFinite(currentOrbit?.radius) ? currentOrbit.radius : 0;
+        const target = currentTarget ?? center;
         const fov = parseFieldOfView(modelViewer);
         const radius = 0.5 * Math.sqrt(
           (size.x || 0) * (size.x || 0) +
@@ -348,16 +442,11 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
         );
         const distance = radius / Math.sin((fov * Math.PI / 180) / 2);
         const orbitDistance = Math.max(distance * 1.4, radius * 2, maxDim);
-        console.log('[MODEL_VIEWER] Bounds from motifs:', center, size);
-        console.log('[MODEL_VIEWER] Fit camera fov:', fov, 'radius:', radius, 'orbit:', orbitDistance);
+        const safeDistance = Math.max(orbitDistance, currentRadius * 1.25, maxDim * 2.5, 1);
+        console.log('[MODEL_VIEWER] Bounds from motifs:', JSON.stringify(center), JSON.stringify(size));
+        console.log('[MODEL_VIEWER] Fit camera fov:', fov, 'radius:', radius, 'orbit:', safeDistance);
         logCameraState('[MODEL_VIEWER] Before fit');
-        modelViewer.cameraTarget = `\${center.x}m \${center.y}m \${center.z}m`;
-        modelViewer.cameraOrbit = `0deg 75deg \${orbitDistance}m`;
-        if (modelViewer.jumpCameraToGoal) {
-          modelViewer.jumpCameraToGoal();
-        }
-        modelViewer.style.visibility = 'visible';
-        modelViewer.style.opacity = '1';
+        applyCamera(target, theta, phi, safeDistance);
         logCameraState('[MODEL_VIEWER] After fit');
         return true;
       }
@@ -381,20 +470,15 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
       );
       const distance = radius / Math.sin((fov * Math.PI / 180) / 2);
       const orbitDistance = Math.max(distance * 1.4, radius * 2, maxDim);
+      const currentOrbit = getCurrentOrbit();
+      const theta = Number.isFinite(currentOrbit?.theta) ? currentOrbit.theta : 0;
+      const phi = Number.isFinite(currentOrbit?.phi) ? currentOrbit.phi : Math.PI / 2;
 
       console.log('[MODEL_VIEWER] Bounds center:', center, 'size:', size);
       console.log('[MODEL_VIEWER] Fit camera fov:', fov, 'radius:', radius, 'orbit:', orbitDistance);
       logCameraState('[MODEL_VIEWER] Before fit');
 
-      modelViewer.cameraTarget = `\${center.x}m \${center.y}m \${center.z}m`;
-      modelViewer.cameraOrbit = `0deg 75deg \${orbitDistance}m`;
-
-      if (modelViewer.jumpCameraToGoal) {
-        modelViewer.jumpCameraToGoal();
-      }
-
-      modelViewer.style.visibility = 'visible';
-      modelViewer.style.opacity = '1';
+      applyCamera(center, theta, phi, orbitDistance);
       logCameraState('[MODEL_VIEWER] After fit');
       return true;
     }
