@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../urn_viewer/data/models/urn_dtos.dart';
 
@@ -12,8 +13,13 @@ class InfoTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isCompact = MediaQuery.of(context).size.width < 360;
+    final contentPadding = EdgeInsets.all(
+      isCompact ? AppSpacing.md : AppSpacing.lg,
+    );
+
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: contentPadding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

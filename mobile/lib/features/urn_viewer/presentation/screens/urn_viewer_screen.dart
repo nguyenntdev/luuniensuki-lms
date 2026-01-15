@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../../domain/entities/urn.dart';
 import '../providers/urn_provider.dart';
 import '../widgets/custom_model_viewer.dart';
@@ -357,31 +358,32 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
 
   Future<void> _handleHotspotTap(Motif motif) async {
     if (motif.isDiscovered) {
-      // Already discovered - show sidebar
-      setState(() => _selectedMotif = motif);
-    } else {
-      // Unlock the motif
-      final result = await ref
-          .read(discoveryNotifierProvider.notifier)
-          .unlockMotif(motif.id);
+      _openMotifDetail(motif);
+      return;
+    }
 
-      if (result != null && mounted) {
-        setState(() {
-          _pendingDiscovery = result;
-          _showDiscoveryAnimation = true;
-        });
-      }
+    final result = await ref
+        .read(discoveryNotifierProvider.notifier)
+        .unlockMotif(motif.id);
+
+    if (result != null && mounted) {
+      setState(() {
+        _pendingDiscovery = result;
+        _showDiscoveryAnimation = true;
+      });
     }
   }
 
   void _onDiscoveryAnimationComplete() {
+    final discoveredMotif = _pendingDiscovery?.motif;
     setState(() {
       _showDiscoveryAnimation = false;
-      if (_pendingDiscovery != null) {
-        _selectedMotif = _pendingDiscovery!.motif;
-        _pendingDiscovery = null;
-      }
+      _pendingDiscovery = null;
     });
+
+    if (discoveredMotif != null) {
+      _openMotifDetail(discoveredMotif);
+    }
 
     // Refresh the urn data to update hotspot states
     ref.invalidate(urnDetailProvider(widget.urnSlug));
@@ -389,6 +391,10 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
 
   void _closeSidebar() {
     setState(() => _selectedMotif = null);
+  }
+
+  void _openMotifDetail(Motif motif) {
+    context.push('/motifs/${motif.id}');
   }
 
   void _navigateToLesson(Motif motif) {
@@ -648,10 +654,15 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
       },
       onHotspotTap: (motifId) {
         debugPrint('[URN_VIEWER] 🎯 Hotspot tapped: $motifId');
-        final motif = motifs.firstWhere(
-          (m) => m.id == motifId,
-          orElse: () => motifs.first,
-        );
+        Motif? motif;
+        try {
+          motif = motifs.firstWhere((m) => m.id == motifId);
+        } catch (_) {
+          debugPrint('[URN_VIEWER] ⚠️ Hotspot motif not found: $motifId');
+        }
+        if (motif == null) {
+          return;
+        }
         _handleHotspotTap(motif);
       },
     );
@@ -707,70 +718,141 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
   }
 
   Widget _buildTopBar(UrnDetail urnDetail) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isCompact = screenWidth < 360;
+    final titleStyle = AppTypography.textTheme.titleMedium?.copyWith(
+      color: Colors.white,
+      fontSize: isCompact ? 14 : 16,
+      fontWeight: FontWeight.bold,
+    );
+
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        child: Row(
-          children: [
-            // Back button with glass effect
-            _buildGlassIconButton(
-              Icons.arrow_back,
-              () => context.pop(),
-              tooltip: 'Quay lại',
-            ),
-
-            const SizedBox(width: 8),
-
-            // Title
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.2),
-                    width: 1,
+        child: isCompact
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      _buildGlassIconButton(
+                        Icons.arrow_back,
+                        () => context.pop(),
+                        tooltip: 'Quay lại',
+                        iconSize: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.2),
+                              width: 1,
+                            ),
+                          ),
+                          child: Text(
+                            urnDetail.urn.name,
+                            style: titleStyle,
+                            textAlign: TextAlign.center,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                child: Text(
-                  urnDetail.urn.name,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildGlassIconButton(
+                        Icons.view_in_ar,
+                        () => _launchAR(urnDetail),
+                        tooltip: 'Xem AR',
+                        badge: 'AR',
+                        iconSize: 20,
+                      ),
+                      _buildGlassIconButton(
+                        _showHotspots ? Icons.visibility : Icons.visibility_off,
+                        () => setState(() => _showHotspots = !_showHotspots),
+                        tooltip: _showHotspots ? 'Ẩn điểm nóng' : 'Hiện điểm nóng',
+                        iconSize: 20,
+                      ),
+                      _buildGlassIconButton(
+                        Icons.info_outline,
+                        () => _showUrnInfo(context, urnDetail),
+                        tooltip: 'Thông tin',
+                        iconSize: 20,
+                      ),
+                    ],
                   ),
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                ],
+              )
+            : Row(
+                children: [
+                  // Back button with glass effect
+                  _buildGlassIconButton(
+                    Icons.arrow_back,
+                    () => context.pop(),
+                    tooltip: 'Quay lại',
+                  ),
+
+                  const SizedBox(width: 8),
+
+                  // Title
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.2),
+                          width: 1,
+                        ),
+                      ),
+                      child: Text(
+                        urnDetail.urn.name,
+                        style: titleStyle,
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(width: 8),
+
+                  // AR button
+                  _buildGlassIconButton(
+                    Icons.view_in_ar,
+                    () => _launchAR(urnDetail),
+                    tooltip: 'Xem AR',
+                    badge: 'AR',
+                  ),
+
+                  // Toggle hotspots
+                  _buildGlassIconButton(
+                    _showHotspots ? Icons.visibility : Icons.visibility_off,
+                    () => setState(() => _showHotspots = !_showHotspots),
+                    tooltip: _showHotspots ? 'Ẩn điểm nóng' : 'Hiện điểm nóng',
+                  ),
+
+                  // Info button
+                  _buildGlassIconButton(
+                    Icons.info_outline,
+                    () => _showUrnInfo(context, urnDetail),
+                    tooltip: 'Thông tin',
+                  ),
+                ],
               ),
-            ),
-
-            const SizedBox(width: 8),
-
-            // AR button
-            _buildGlassIconButton(
-              Icons.view_in_ar,
-              () => _launchAR(urnDetail),
-              tooltip: 'Xem AR',
-              badge: 'AR',
-            ),
-
-            // Toggle hotspots
-            _buildGlassIconButton(
-              _showHotspots ? Icons.visibility : Icons.visibility_off,
-              () => setState(() => _showHotspots = !_showHotspots),
-              tooltip: _showHotspots ? 'Ẩn điểm nóng' : 'Hiện điểm nóng',
-            ),
-
-            // Info button
-            _buildGlassIconButton(
-              Icons.info_outline,
-              () => _showUrnInfo(context, urnDetail),
-              tooltip: 'Thông tin',
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -780,6 +862,7 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
     VoidCallback onPressed, {
     String? tooltip,
     String? badge,
+    double iconSize = 22,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -793,7 +876,7 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
       child: Stack(
         children: [
           IconButton(
-            icon: Icon(icon, color: Colors.white, size: 22),
+            icon: Icon(icon, color: Colors.white, size: iconSize),
             onPressed: onPressed,
             tooltip: tooltip,
           ),
@@ -864,6 +947,8 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
     final discovered = urnDetail.urn.discoveredCount;
     final total = urnDetail.urn.motifCount;
     final progress = total > 0 ? discovered / total : 0.0;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isCompact = screenWidth < 360;
 
     return Container(
       padding: EdgeInsets.only(
@@ -898,29 +983,56 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
           const SizedBox(height: 8),
 
           // Stats row
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildStatItem(
-                icon: Icons.explore,
-                label: 'Khám phá',
-                value: '$discovered/$total',
-                color: AppColors.statusDiscovered,
-              ),
-              _buildStatItem(
-                icon: Icons.school,
-                label: 'Học xong',
-                value: '${urnDetail.urn.learnedCount}',
-                color: AppColors.statusLearned,
-              ),
-              _buildStatItem(
-                icon: Icons.star,
-                label: 'Thành thạo',
-                value: '${urnDetail.urn.masteredCount}',
-                color: AppColors.statusMastered,
-              ),
-            ],
-          ),
+          if (isCompact)
+            Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 16,
+              runSpacing: 8,
+              children: [
+                _buildStatItem(
+                  icon: Icons.explore,
+                  label: 'Khám phá',
+                  value: '$discovered/$total',
+                  color: AppColors.statusDiscovered,
+                ),
+                _buildStatItem(
+                  icon: Icons.school,
+                  label: 'Học xong',
+                  value: '${urnDetail.urn.learnedCount}',
+                  color: AppColors.statusLearned,
+                ),
+                _buildStatItem(
+                  icon: Icons.star,
+                  label: 'Thành thạo',
+                  value: '${urnDetail.urn.masteredCount}',
+                  color: AppColors.statusMastered,
+                ),
+              ],
+            )
+          else
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildStatItem(
+                  icon: Icons.explore,
+                  label: 'Khám phá',
+                  value: '$discovered/$total',
+                  color: AppColors.statusDiscovered,
+                ),
+                _buildStatItem(
+                  icon: Icons.school,
+                  label: 'Học xong',
+                  value: '${urnDetail.urn.learnedCount}',
+                  color: AppColors.statusLearned,
+                ),
+                _buildStatItem(
+                  icon: Icons.star,
+                  label: 'Thành thạo',
+                  value: '${urnDetail.urn.masteredCount}',
+                  color: AppColors.statusMastered,
+                ),
+              ],
+            ),
         ],
       ),
     );

@@ -26,166 +26,175 @@ class _UrnCardState extends State<UrnCard> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (_) => setState(() => _isPressed = true),
-      onTapUp: (_) {
-        setState(() => _isPressed = false);
-        widget.onTap?.call();
-      },
-      onTapCancel: () => setState(() => _isPressed = false),
-      child: AnimatedScale(
-        scale: _isPressed ? 0.95 : 1.0,
-        duration: const Duration(milliseconds: 150),
-        curve: Curves.easeOut,
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.white.withOpacity(0.12),
-                Colors.white.withOpacity(0.06),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(AppSpacing.radiusLG),
-            border: Border.all(
-              color: Colors.white.withOpacity(0.2),
-              width: 1.5,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
-              ),
-              BoxShadow(
-                color: AppColors.primary.withOpacity(
-                  widget.urn.isCompleted ? 0.15 : 0.0,
-                ),
-                blurRadius: 30,
-                spreadRadius: -5,
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(AppSpacing.radiusLG),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Thumbnail with progress overlay
-                Expanded(
-                  flex: 3,
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      // Urn thumbnail
-                      _buildThumbnail(),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isCompact = constraints.maxWidth < 160;
+        final nameSize = isCompact ? 15.0 : 17.0;
+        final subtitleSize = isCompact ? 11.0 : 12.0;
+        final infoPadding = isCompact ? AppSpacing.sm : AppSpacing.md;
 
-                      // Gradient overlay for better text visibility
-                      Positioned.fill(
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Colors.transparent,
-                                Colors.black.withOpacity(0.3),
-                              ],
-                              stops: const [0.5, 1.0],
+        return GestureDetector(
+          onTapDown: (_) => setState(() => _isPressed = true),
+          onTapUp: (_) {
+            setState(() => _isPressed = false);
+            widget.onTap?.call();
+          },
+          onTapCancel: () => setState(() => _isPressed = false),
+          child: AnimatedScale(
+            scale: _isPressed ? 0.95 : 1.0,
+            duration: const Duration(milliseconds: 150),
+            curve: Curves.easeOut,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.white.withOpacity(0.12),
+                    Colors.white.withOpacity(0.06),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(AppSpacing.radiusLG),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.2),
+                  width: 1.5,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                  BoxShadow(
+                    color: AppColors.primary.withOpacity(
+                      widget.urn.isCompleted ? 0.15 : 0.0,
+                    ),
+                    blurRadius: 30,
+                    spreadRadius: -5,
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(AppSpacing.radiusLG),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Thumbnail with progress overlay
+                    Expanded(
+                      flex: 3,
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          // Urn thumbnail
+                          _buildThumbnail(),
+
+                          // Gradient overlay for better text visibility
+                          Positioned.fill(
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.transparent,
+                                    Colors.black.withOpacity(0.3),
+                                  ],
+                                  stops: const [0.5, 1.0],
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
 
-                      // Progress overlay
-                      Positioned(
-                        top: AppSpacing.sm,
-                        right: AppSpacing.sm,
-                        child: _buildProgressBadge(),
-                      ),
+                          // Progress overlay
+                          Positioned(
+                            top: AppSpacing.sm,
+                            right: AppSpacing.sm,
+                            child: _buildProgressBadge(isCompact),
+                          ),
 
-                      // Demo badge
-                      if (widget.urn.isDemo)
-                        Positioned(
-                          top: AppSpacing.sm,
-                          left: AppSpacing.sm,
-                          child: _buildDemoBadge(),
-                        ),
-                    ],
-                  ),
-                ),
-
-                // Info section
-                Expanded(
-                  flex: 2,
-                  child: Container(
-                    padding: const EdgeInsets.all(AppSpacing.md),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.white.withOpacity(0.08),
-                          Colors.white.withOpacity(0.04),
+                          // Demo badge
+                          if (widget.urn.isDemo)
+                            Positioned(
+                              top: AppSpacing.sm,
+                              left: AppSpacing.sm,
+                              child: _buildDemoBadge(isCompact),
+                            ),
                         ],
                       ),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // Urn name
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.urn.name,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 0.2,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            if (widget.urn.nameEn != null &&
-                                widget.urn.nameEn!.isNotEmpty) ...[
-                              AppSpacing.verticalSpaceXS,
-                              Text(
-                                widget.urn.nameEn!,
-                                style: TextStyle(
-                                  color: Colors.white.withOpacity(0.65),
-                                  fontSize: 12,
-                                  fontStyle: FontStyle.italic,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ],
-                        ),
 
-                        // Progress bar and stats
-                        Column(
+                    // Info section
+                    Expanded(
+                      flex: 2,
+                      child: Container(
+                        padding: EdgeInsets.all(infoPadding),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.white.withOpacity(0.08),
+                              Colors.white.withOpacity(0.04),
+                            ],
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            // Progress bar
-                            _buildProgressBar(),
-                            AppSpacing.verticalSpaceXS,
-                            // Stats row
-                            _buildStatsRow(),
+                            // Urn name
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  widget.urn.name,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: nameSize,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 0.2,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                if (widget.urn.nameEn != null &&
+                                    widget.urn.nameEn!.isNotEmpty) ...[
+                                  AppSpacing.verticalSpaceXS,
+                                  Text(
+                                    widget.urn.nameEn!,
+                                    style: TextStyle(
+                                      color: Colors.white.withOpacity(0.65),
+                                      fontSize: subtitleSize,
+                                      fontStyle: FontStyle.italic,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ],
+                            ),
+
+                            // Progress bar and stats
+                            Column(
+                              children: [
+                                // Progress bar
+                                _buildProgressBar(),
+                                AppSpacing.verticalSpaceXS,
+                                // Stats row
+                                _buildStatsRow(),
+                              ],
+                            ),
                           ],
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -229,9 +238,11 @@ class _UrnCardState extends State<UrnCard> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget _buildProgressBadge() {
+  Widget _buildProgressBadge(bool isCompact) {
     final percent = (widget.urn.progressPercent * 100).round();
     final isCompleted = widget.urn.isCompleted;
+    final fontSize = isCompact ? 11.0 : 13.0;
+    final iconSize = isCompact ? 13.0 : 15.0;
 
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -270,18 +281,18 @@ class _UrnCardState extends State<UrnCard> with SingleTickerProviderStateMixin {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (isCompleted) ...[
-            const Icon(
+            Icon(
               Icons.check_circle,
               color: Colors.white,
-              size: 15,
+              size: iconSize,
             ),
             AppSpacing.horizontalSpaceXS,
           ],
           Text(
             '$percent%',
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
-              fontSize: 13,
+              fontSize: fontSize,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -290,7 +301,9 @@ class _UrnCardState extends State<UrnCard> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget _buildDemoBadge() {
+  Widget _buildDemoBadge(bool isCompact) {
+    final fontSize = isCompact ? 10.0 : 11.0;
+
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.sm,
@@ -313,7 +326,7 @@ class _UrnCardState extends State<UrnCard> with SingleTickerProviderStateMixin {
         'DEMO',
         style: TextStyle(
           color: AppColors.onPrimary,
-          fontSize: 11,
+          fontSize: fontSize,
           fontWeight: FontWeight.bold,
           letterSpacing: 0.5,
         ),

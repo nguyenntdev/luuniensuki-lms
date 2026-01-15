@@ -4,12 +4,14 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/widgets/glass/animated_background.dart';
 import '../../../../shared/widgets/shimmer/shimmer_skeleton.dart';
 import '../../../../shared/widgets/icons/status_icon.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../auth/presentation/providers/auth_state.dart';
 import '../../../streak/presentation/widgets/compact_streak_widget.dart';
+import '../../domain/entities/urn.dart';
 import '../providers/explore_provider.dart';
 import '../widgets/urn_card.dart';
 
@@ -92,7 +94,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
           child: Column(
             children: [
               // Header
-              _buildHeader(context, progress, authState),
+              _buildHeader(context, progress, authState, state),
 
               // Content
               Expanded(
@@ -106,7 +108,13 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
   }
 
   Widget _buildHeader(
-      BuildContext context, ExploreProgress progress, dynamic authState) {
+    BuildContext context,
+    ExploreProgress progress,
+    dynamic authState,
+    ExploreState state,
+  ) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isCompact = screenWidth < 360;
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         AppSpacing.md,
@@ -123,11 +131,11 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
             crossAxisAlignment: WrapCrossAlignment.center,
             runSpacing: AppSpacing.xs,
             children: [
-              const Text(
+              Text(
                 'Khám Phá',
-                style: TextStyle(
+                style: AppTypography.textTheme.headlineSmall?.copyWith(
                   color: Colors.white,
-                  fontSize: 24,
+                  fontSize: isCompact ? 20 : 24,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 0.4,
                 ),
@@ -143,10 +151,15 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
             ],
           ),
 
-          const SizedBox(height: AppSpacing.sm),
+          SizedBox(height: isCompact ? AppSpacing.xs : AppSpacing.sm),
 
           // Compact progress stats row
           _buildCompactStats(progress),
+
+          SizedBox(height: isCompact ? AppSpacing.xs : AppSpacing.sm),
+
+          // Quick actions to improve flow
+          _buildQuickActions(context, state),
         ],
       ),
     );
@@ -336,6 +349,97 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildQuickActions(BuildContext context, ExploreState state) {
+    final continueUrn = _findContinueUrn(state);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isCompact = screenWidth < 360;
+
+    return Wrap(
+      spacing: AppSpacing.sm,
+      runSpacing: AppSpacing.xs,
+      children: [
+        _buildActionPill(
+          label: 'Tiếp tục',
+          icon: Icons.play_arrow,
+          isEnabled: continueUrn != null,
+          onTap: continueUrn == null
+              ? null
+              : () => _navigateToUrn(context, continueUrn.slug),
+        ),
+        _buildActionPill(
+          label: 'Luyện tập',
+          icon: Icons.fitness_center,
+          isEnabled: true,
+          onTap: () => context.push('/practice'),
+          minWidth: isCompact ? 0 : 120,
+        ),
+      ],
+    );
+  }
+
+  Urn? _findContinueUrn(ExploreState state) {
+    if (state.urns.isEmpty) {
+      return null;
+    }
+    return state.urns.firstWhere(
+      (urn) => urn.hasProgress && !urn.isCompleted,
+      orElse: () => state.urns.first,
+    );
+  }
+
+  Widget _buildActionPill({
+    required String label,
+    required IconData icon,
+    required bool isEnabled,
+    required VoidCallback? onTap,
+    double? minWidth,
+  }) {
+    return Opacity(
+      opacity: isEnabled ? 1 : 0.45,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(AppSpacing.radiusRound),
+        onTap: isEnabled ? onTap : null,
+        child: Container(
+          constraints: minWidth != null
+              ? BoxConstraints(minWidth: minWidth)
+              : const BoxConstraints(),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.sm,
+          ),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Colors.white.withOpacity(0.12),
+                Colors.white.withOpacity(0.05),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(AppSpacing.radiusRound),
+            border: Border.all(
+              color: Colors.white.withOpacity(0.2),
+              width: 1,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, color: Colors.white, size: 16),
+              const SizedBox(width: AppSpacing.sm),
+              Text(
+                label,
+                style: AppTypography.textTheme.labelLarge?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 

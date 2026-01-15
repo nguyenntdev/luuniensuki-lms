@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/utils/url_utils.dart';
 import '../../../../routing/route_names.dart';
 import '../../../urn_viewer/data/models/urn_dtos.dart';
 import '../../../gems/presentation/providers/gems_provider.dart';
@@ -33,8 +36,13 @@ class LessonTab extends ConsumerWidget {
       return _buildEmptyState();
     }
 
+    final isCompact = MediaQuery.of(context).size.width < 360;
+    final contentPadding = EdgeInsets.all(
+      isCompact ? AppSpacing.md : AppSpacing.lg,
+    );
+
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: contentPadding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -151,9 +159,7 @@ class LessonTab extends ConsumerWidget {
             label: 'Hoàn thành bài học',
             icon: Icons.check_circle_outline,
             isLoading: isLoading,
-            onPressed: isLoading
-                ? null
-                : () => _completeLesson(context, ref),
+            onPressed: isLoading ? null : () => _completeLesson(context, ref),
           ),
 
         // Quiz button (for learned or mastered status)
@@ -237,7 +243,9 @@ class LessonTab extends ConsumerWidget {
 
       // Check for 7-day streak milestone and award bonus gems
       final user = ref.read(currentUserProvider);
-      if (user != null && user.currentStreak >= 7 && user.currentStreak % 7 == 0) {
+      if (user != null &&
+          user.currentStreak >= 7 &&
+          user.currentStreak % 7 == 0) {
         await ref.read(gemsNotifierProvider.notifier).addGems(
               amount: 50,
               type: GemTransactionType.earnedStreak,
@@ -421,47 +429,72 @@ class _ImageGalleryPreview extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 12),
-        SizedBox(
-          height: 100,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: images.length > 4 ? 4 : images.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 8),
-            itemBuilder: (context, index) {
-              if (index == 3 && images.length > 4) {
-                return _buildMoreIndicator();
-              }
-              return _buildImageThumbnail(images[index]);
-            },
-          ),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final isCompact = constraints.maxWidth < 360;
+            final size = isCompact ? 84.0 : 100.0;
+
+            return SizedBox(
+              height: size,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: images.length > 4 ? 4 : images.length,
+                separatorBuilder: (_, __) => const SizedBox(width: 8),
+                itemBuilder: (context, index) {
+                  if (index == 3 && images.length > 4) {
+                    return _buildMoreIndicator(size);
+                  }
+                  return _buildImageThumbnail(images[index], size);
+                },
+              ),
+            );
+          },
         ),
       ],
     );
   }
 
-  Widget _buildImageThumbnail(String imageUrl) {
+  Widget _buildImageThumbnail(String imageUrl, double size) {
+    // Convert relative URL to full URL
+    final fullImageUrl = UrlUtils.getImageUrl(imageUrl);
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(8),
       child: Container(
-        width: 100,
-        height: 100,
+        width: size,
+        height: size,
         color: AppColors.surfaceVariant,
-        child: Image.network(
-          imageUrl,
-          fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => Icon(
-            Icons.broken_image,
-            color: AppColors.textHint,
-          ),
-        ),
+        child: fullImageUrl.isNotEmpty
+            ? CachedNetworkImage(
+                imageUrl: fullImageUrl,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => const Center(
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.primary,
+                  ),
+                ),
+                errorWidget: (context, url, error) {
+                  debugPrint(
+                      '[MOTIF_IMAGE] Failed to load lesson image: $fullImageUrl - Error: $error');
+                  return Icon(
+                    Icons.broken_image,
+                    color: AppColors.textHint,
+                  );
+                },
+              )
+            : Icon(
+                Icons.image,
+                color: AppColors.textHint,
+              ),
       ),
     );
   }
 
-  Widget _buildMoreIndicator() {
+  Widget _buildMoreIndicator(double size) {
     return Container(
-      width: 100,
-      height: 100,
+      width: size,
+      height: size,
       decoration: BoxDecoration(
         color: AppColors.surfaceVariant,
         borderRadius: BorderRadius.circular(8),

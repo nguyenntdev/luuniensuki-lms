@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/url_utils.dart';
 import '../../../../routing/route_names.dart';
@@ -102,17 +103,29 @@ class _MotifDetailScreenState extends ConsumerState<MotifDetailScreen>
   }
 
   Widget _buildContent(MotifDetailDto motifDetail) {
+    final screenSize = MediaQuery.of(context).size;
+    final isCompact = screenSize.width < 360 || screenSize.height < 700;
+    final tabLabelStyle = AppTypography.textTheme.labelLarge?.copyWith(
+      fontSize: isCompact ? 12 : 14,
+      fontWeight: FontWeight.w600,
+    );
+    final tabLabelMuted = AppTypography.textTheme.labelLarge?.copyWith(
+      fontSize: isCompact ? 12 : 14,
+      fontWeight: FontWeight.w500,
+      color: AppColors.textSecondary,
+    );
+
     return NestedScrollView(
       headerSliverBuilder: (context, innerBoxIsScrolled) => [
         // Hero image header
         SliverAppBar(
-          expandedHeight: 280,
+          expandedHeight: isCompact ? 200 : 280,
           pinned: true,
           backgroundColor: AppColors.surface,
           foregroundColor: AppColors.textPrimary,
           leading: IconButton(
             icon: Container(
-              padding: const EdgeInsets.all(8),
+              padding: EdgeInsets.all(isCompact ? 6 : 8),
               decoration: BoxDecoration(
                 color: AppColors.background.withOpacity(0.7),
                 shape: BoxShape.circle,
@@ -156,6 +169,11 @@ class _MotifDetailScreenState extends ConsumerState<MotifDetailScreen>
               unselectedLabelColor: AppColors.textSecondary,
               indicatorColor: AppColors.primary,
               indicatorWeight: 3,
+              labelStyle: tabLabelStyle,
+              unselectedLabelStyle: tabLabelMuted,
+              labelPadding: EdgeInsets.symmetric(
+                horizontal: isCompact ? AppSpacing.sm : AppSpacing.md,
+              ),
               tabs: const [
                 Tab(text: 'Bài Học'),
                 Tab(text: 'Thông Tin'),
@@ -179,7 +197,10 @@ class _MotifDetailScreenState extends ConsumerState<MotifDetailScreen>
   }
 
   Widget _buildHeroImage(MotifDetailDto motif) {
-    final imageUrl = UrlUtils.getImageUrl(motif.imageUrl ?? motif.thumbnailUrl);
+    final heroUrl = motif.imageUrl != null && motif.imageUrl!.trim().isNotEmpty
+        ? motif.imageUrl
+        : motif.thumbnailUrl;
+    final imageUrl = UrlUtils.getImageUrl(heroUrl);
 
     return Stack(
       fit: StackFit.expand,
@@ -248,7 +269,7 @@ class _MotifDetailScreenState extends ConsumerState<MotifDetailScreen>
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              if (motif.nameEn != null) ...[
+              if (motif.nameEn != null && motif.nameEn!.isNotEmpty) ...[
                 const SizedBox(height: 4),
                 Text(
                   motif.nameEn!,
@@ -259,10 +280,11 @@ class _MotifDetailScreenState extends ConsumerState<MotifDetailScreen>
                 ),
               ],
               const SizedBox(height: 12),
-              Row(
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
                 children: [
                   _CategoryChip(category: motif.category),
-                  const SizedBox(width: 8),
                   _RarityChip(rarity: motif.rarity),
                 ],
               ),
