@@ -175,8 +175,8 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
     ${widget.cameraControls ? 'camera-controls' : ''}
     ${widget.disableZoom ? 'disable-zoom' : ''}
     ${widget.cameraOrbit != null ? 'camera-orbit="${widget.cameraOrbit}"' : 'camera-orbit="auto auto auto"'}
-    ${widget.minCameraOrbit != null ? 'min-camera-orbit="${widget.minCameraOrbit}"' : 'min-camera-orbit="auto auto 45%"'}
-    ${widget.maxCameraOrbit != null ? 'max-camera-orbit="${widget.maxCameraOrbit}"' : 'max-camera-orbit="auto auto 200%"'}
+    ${widget.minCameraOrbit != null ? 'min-camera-orbit="${widget.minCameraOrbit}"' : ''}
+    ${widget.maxCameraOrbit != null ? 'max-camera-orbit="${widget.maxCameraOrbit}"' : ''}
     ${widget.fieldOfView != null ? 'field-of-view="${widget.fieldOfView}"' : 'field-of-view="45deg"'}
     camera-target="auto auto auto"
     loading="eager"
@@ -208,7 +208,10 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
 
     function fitCameraToModel() {
       if (!modelViewer) {
-        return;
+        return false;
+      }
+      if (modelViewer.updateFraming) {
+        modelViewer.updateFraming();
       }
       if (typeof modelViewer.getBoundingBoxCenter !== 'function' ||
           typeof modelViewer.getBoundingBoxSize !== 'function') {
@@ -224,26 +227,27 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
         if (modelViewer.jumpCameraToGoal) {
           modelViewer.jumpCameraToGoal();
         }
-        return;
+        return false;
       }
 
       const center = modelViewer.getBoundingBoxCenter();
       const size = modelViewer.getBoundingBoxSize();
       if (!center || !size) {
-        return;
+        return false;
       }
 
       const maxDim = Math.max(size.x || 0, size.y || 0, size.z || 0);
       if (!Number.isFinite(maxDim) || maxDim <= 0) {
-        return;
+        return false;
       }
 
       const fov = parseFieldOfView(modelViewer);
-      const distance = (maxDim / 2) / Math.tan((fov * Math.PI / 180) / 2);
-      const radius = Math.max(distance * 1.25, maxDim);
+      const radius = maxDim / 2;
+      const distance = radius / Math.sin((fov * Math.PI / 180) / 2);
+      const orbitDistance = Math.max(distance * 1.4, maxDim);
 
       modelViewer.cameraTarget = `\${center.x}m \${center.y}m \${center.z}m`;
-      modelViewer.cameraOrbit = `0deg 75deg \${radius}m`;
+      modelViewer.cameraOrbit = `0deg 75deg \${orbitDistance}m`;
 
       if (modelViewer.jumpCameraToGoal) {
         modelViewer.jumpCameraToGoal();
@@ -251,12 +255,14 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
 
       modelViewer.style.visibility = 'visible';
       modelViewer.style.opacity = '1';
+      return true;
     }
 
     // Model load success handler
     modelViewer.addEventListener('load', () => {
       console.log('[MODEL_VIEWER] ✅ Model loaded successfully');
       fitCameraToModel();
+      requestAnimationFrame(() => fitCameraToModel());
       setTimeout(() => {
         fitCameraToModel();
       }, 150);
@@ -299,7 +305,13 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
       console.log('[MODEL_VIEWER] Model visibility:', visible);
       if (!visible) {
         console.warn('[MODEL_VIEWER] Model hidden - re-fitting camera');
-        fitCameraToModel();
+        if (!fitCameraToModel()) {
+          modelViewer.cameraTarget = '0m 0m 0m';
+          modelViewer.cameraOrbit = '0deg 75deg 2m';
+          if (modelViewer.jumpCameraToGoal) {
+            modelViewer.jumpCameraToGoal();
+          }
+        }
       }
     });
 
