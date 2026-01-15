@@ -174,10 +174,11 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
     ${widget.autoRotate ? 'auto-rotate' : ''}
     ${widget.cameraControls ? 'camera-controls' : ''}
     ${widget.disableZoom ? 'disable-zoom' : ''}
-    ${widget.cameraOrbit != null ? 'camera-orbit="${widget.cameraOrbit}"' : 'camera-orbit="0deg 75deg 105%"'}
+    ${widget.cameraOrbit != null ? 'camera-orbit="${widget.cameraOrbit}"' : 'camera-orbit="auto auto auto"'}
     ${widget.minCameraOrbit != null ? 'min-camera-orbit="${widget.minCameraOrbit}"' : 'min-camera-orbit="auto auto 45%"'}
     ${widget.maxCameraOrbit != null ? 'max-camera-orbit="${widget.maxCameraOrbit}"' : 'max-camera-orbit="auto auto 200%"'}
     ${widget.fieldOfView != null ? 'field-of-view="${widget.fieldOfView}"' : 'field-of-view="45deg"'}
+    camera-target="auto auto auto"
     loading="eager"
     reveal="auto"
     shadow-intensity="0"
@@ -191,12 +192,74 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
     console.log('[MODEL_VIEWER] Initializing...');
     const modelViewer = document.getElementById('modelViewer');
 
-    const fallbackOrbit = '${widget.cameraOrbit ?? '0deg 75deg 105%'}';
-    const fallbackTarget = 'auto auto auto';
+    function parseFieldOfView(viewer) {
+      const raw = viewer?.fieldOfView ?? viewer?.getFieldOfView?.();
+      if (typeof raw === 'number') {
+        return raw;
+      }
+      if (typeof raw === 'string') {
+        const value = parseFloat(raw);
+        if (!Number.isNaN(value)) {
+          return value;
+        }
+      }
+      return 45;
+    }
+
+    function fitCameraToModel() {
+      if (!modelViewer) {
+        return;
+      }
+      if (typeof modelViewer.getBoundingBoxCenter !== 'function' ||
+          typeof modelViewer.getBoundingBoxSize !== 'function') {
+        if (modelViewer.updateFraming) {
+          modelViewer.updateFraming();
+        }
+        if (modelViewer.resetCameraOrbit) {
+          modelViewer.resetCameraOrbit();
+        }
+        if (modelViewer.resetCameraTarget) {
+          modelViewer.resetCameraTarget();
+        }
+        if (modelViewer.jumpCameraToGoal) {
+          modelViewer.jumpCameraToGoal();
+        }
+        return;
+      }
+
+      const center = modelViewer.getBoundingBoxCenter();
+      const size = modelViewer.getBoundingBoxSize();
+      if (!center || !size) {
+        return;
+      }
+
+      const maxDim = Math.max(size.x || 0, size.y || 0, size.z || 0);
+      if (!Number.isFinite(maxDim) || maxDim <= 0) {
+        return;
+      }
+
+      const fov = parseFieldOfView(modelViewer);
+      const distance = (maxDim / 2) / Math.tan((fov * Math.PI / 180) / 2);
+      const radius = Math.max(distance * 1.25, maxDim);
+
+      modelViewer.cameraTarget = `\${center.x}m \${center.y}m \${center.z}m`;
+      modelViewer.cameraOrbit = `0deg 75deg \${radius}m`;
+
+      if (modelViewer.jumpCameraToGoal) {
+        modelViewer.jumpCameraToGoal();
+      }
+
+      modelViewer.style.visibility = 'visible';
+      modelViewer.style.opacity = '1';
+    }
 
     // Model load success handler
     modelViewer.addEventListener('load', () => {
       console.log('[MODEL_VIEWER] ✅ Model loaded successfully');
+      fitCameraToModel();
+      setTimeout(() => {
+        fitCameraToModel();
+      }, 150);
       attachContextLossHandler();
       if (window.flutter_inappwebview) {
         window.flutter_inappwebview.callHandler('onModelLoad', {
@@ -235,16 +298,8 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
       const visible = event.detail.visible;
       console.log('[MODEL_VIEWER] Model visibility:', visible);
       if (!visible) {
-        console.warn('[MODEL_VIEWER] Model hidden - forcing camera reset');
-        if (modelViewer.jumpCameraToGoal) {
-          modelViewer.cameraOrbit = fallbackOrbit;
-          modelViewer.cameraTarget = fallbackTarget;
-          modelViewer.jumpCameraToGoal();
-          return;
-        }
-        if (modelViewer.updateFraming) {
-          modelViewer.updateFraming();
-        }
+        console.warn('[MODEL_VIEWER] Model hidden - re-fitting camera');
+        fitCameraToModel();
       }
     });
 
