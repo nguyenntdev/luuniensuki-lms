@@ -258,8 +258,8 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
     ${widget.cameraControls ? 'camera-controls' : ''}
     ${widget.disableZoom ? 'disable-zoom' : ''}
     camera-orbit="$cameraOrbitAttrValue"
-    ${widget.minCameraOrbit != null ? 'min-camera-orbit="${widget.minCameraOrbit}"' : ''}
-    ${widget.maxCameraOrbit != null ? 'max-camera-orbit="${widget.maxCameraOrbit}"' : ''}
+    ${widget.minCameraOrbit != null ? 'min-camera-orbit="${widget.minCameraOrbit}"' : 'min-camera-orbit="auto auto 0.1m"'}
+    ${widget.maxCameraOrbit != null ? 'max-camera-orbit="${widget.maxCameraOrbit}"' : 'max-camera-orbit="auto auto 1000m"'}
     ${widget.fieldOfView != null ? 'field-of-view="${widget.fieldOfView}"' : 'field-of-view="45deg"'}
     camera-target="$cameraTargetAttrValue"
     loading="eager"
@@ -321,6 +321,55 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
       };
     }
 
+    function getBoundsFromSceneGraph() {
+      if (!modelViewer) {
+        return null;
+      }
+      const model = modelViewer.model;
+      if (!model) {
+        return null;
+      }
+      let box = null;
+      if (typeof model.getBoundingBox === 'function') {
+        box = model.getBoundingBox();
+      } else if (model.boundingBox) {
+        box = model.boundingBox;
+      } else if (model.sceneGraph && model.sceneGraph.boundingBox) {
+        box = model.sceneGraph.boundingBox;
+      }
+      const min = box?.min;
+      const max = box?.max;
+      if (!min || !max) {
+        return null;
+      }
+      if (![min.x, min.y, min.z, max.x, max.y, max.z].every((value) => Number.isFinite(value))) {
+        return null;
+      }
+      const center = {
+        x: (min.x + max.x) / 2,
+        y: (min.y + max.y) / 2,
+        z: (min.z + max.z) / 2,
+      };
+      const size = {
+        x: Math.abs(max.x - min.x),
+        y: Math.abs(max.y - min.y),
+        z: Math.abs(max.z - min.z),
+      };
+      return { center, size };
+    }
+
+    function ensureCameraLimits() {
+      if (!modelViewer) {
+        return;
+      }
+      if (!modelViewer.hasAttribute('min-camera-orbit')) {
+        modelViewer.setAttribute('min-camera-orbit', 'auto auto 0.1m');
+      }
+      if (!modelViewer.hasAttribute('max-camera-orbit')) {
+        modelViewer.setAttribute('max-camera-orbit', 'auto auto 1000m');
+      }
+    }
+
     function parseVectorString(value) {
       if (typeof value !== 'string') {
         return null;
@@ -374,6 +423,7 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
       if (!modelViewer || !target) {
         return false;
       }
+      ensureCameraLimits();
       const safeRadius = Number.isFinite(radius) ? Math.max(radius, 0.5) : 1;
       const thetaDeg = toDegrees(theta);
       const phiDeg = Number.isFinite(phi) ? toDegrees(phi) : 75;
@@ -445,14 +495,24 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
       if (!modelViewer) {
         return false;
       }
+      ensureCameraLimits();
       console.log(
         '[MODEL_VIEWER] Bounds API:',
         typeof modelViewer.getBoundingBoxCenter,
         typeof modelViewer.getBoundingBoxSize
       );
-      if (typeof modelViewer.getBoundingBoxCenter !== 'function' ||
+      const sceneBounds = getBoundsFromSceneGraph();
+      if (sceneBounds) {
+        console.log(
+          '[MODEL_VIEWER] Bounds from scene:',
+          JSON.stringify(sceneBounds.center),
+          JSON.stringify(sceneBounds.size)
+        );
+      }
+      if (sceneBounds ||
+          typeof modelViewer.getBoundingBoxCenter !== 'function' ||
           typeof modelViewer.getBoundingBoxSize !== 'function') {
-        const fallbackBounds = getBoundsFromAttributes();
+        const fallbackBounds = sceneBounds ?? getBoundsFromAttributes();
         if (!fallbackBounds) {
           return false;
         }
