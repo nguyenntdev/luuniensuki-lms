@@ -3,14 +3,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../core/theme/app_spacing.dart';
 import '../core/storage/hive_storage.dart';
 import '../features/auth/presentation/providers/auth_provider.dart';
 import '../features/auth/presentation/screens/login_screen.dart';
 import '../features/auth/presentation/screens/register_screen.dart';
 import '../features/explore/presentation/screens/explore_screen.dart';
 import '../features/collection/presentation/screens/collection_screen.dart';
+import '../features/learning_path/presentation/screens/learning_path_screen.dart';
+import '../features/learning_path/presentation/screens/learning_hub_screen.dart';
+import '../features/practice/presentation/screens/practice_screen.dart';
+import '../features/practice/presentation/screens/practice_session_screen.dart';
 import '../features/achievements/presentation/screens/achievements_screen.dart';
 import '../features/profile/presentation/screens/profile_screen.dart';
+import '../features/ai_chat/presentation/screens/ai_chat_screen.dart';
 import '../features/settings/presentation/screens/settings_screen.dart';
 import '../features/urn_viewer/presentation/screens/urn_viewer_screen.dart';
 import '../features/lesson/presentation/screens/motif_detail_screen.dart';
@@ -22,6 +28,7 @@ import '../features/gems/presentation/screens/gems_shop_screen.dart';
 import '../features/hearts/presentation/screens/hearts_refill_screen.dart';
 import '../features/social/presentation/screens/friends_screen.dart';
 import '../features/onboarding/presentation/screens/onboarding_screen.dart';
+import '../features/streak/services/streak_event_service.dart';
 import '../shared/widgets/glass/animated_background.dart';
 import '../shared/widgets/glass/glass_bottom_nav.dart';
 
@@ -34,6 +41,10 @@ class _Paths {
   static const String register = '/register';
   static const String explore = '/explore';
   static const String collection = '/collection';
+  static const String learningHub = '/learning';
+  static const String learningPath = '/learning-path';
+  static const String practice = '/practice';
+  static const String aiChat = '/ai-chat';
   static const String achievements = '/achievements';
   static const String profile = '/profile';
   static const String urns = '/urns';
@@ -166,6 +177,54 @@ GoRouter appRouter(AppRouterRef ref) {
             pageBuilder: (context, state) => const NoTransitionPage(
               child: CollectionScreen(),
             ),
+          ),
+
+          // Learning Hub - Combined learning + practice overview
+          GoRoute(
+            path: _Paths.learningHub,
+            name: 'learningHub',
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: LearningHubScreen(),
+            ),
+          ),
+
+          // Learning Path - Structured learning progression
+          GoRoute(
+            path: _Paths.learningPath,
+            name: 'learningPath',
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: LearningPathScreen(),
+            ),
+          ),
+
+          // Practice - Spaced repetition and review modes
+          GoRoute(
+            path: _Paths.practice,
+            name: 'practice',
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: PracticeScreen(),
+            ),
+            routes: [
+              // Practice session route
+              GoRoute(
+                path: 'session',
+                name: 'practice-session',
+                builder: (context, state) => const PracticeSessionScreen(),
+              ),
+            ],
+          ),
+
+          // AI Chat - contextual tutor
+          GoRoute(
+            path: _Paths.aiChat,
+            name: 'aiChat',
+            pageBuilder: (context, state) {
+              final motifId = state.uri.queryParameters['motifId'];
+              final urnSlug = state.uri.queryParameters['urnSlug'];
+              return NoTransitionPage(
+                child: AiChatScreen(motifId: motifId, urnSlug: urnSlug),
+              );
+            },
           ),
 
           // Achievements - Badges and leaderboard
@@ -324,51 +383,97 @@ GoRouter appRouter(AppRouterRef ref) {
 // MAIN SHELL WITH BOTTOM NAVIGATION
 // =============================================================================
 
-class MainShell extends StatelessWidget {
+class MainShell extends ConsumerStatefulWidget {
   final Widget child;
 
   const MainShell({super.key, required this.child});
 
   @override
+  ConsumerState<MainShell> createState() => _MainShellState();
+}
+
+class _MainShellState extends ConsumerState<MainShell> {
+  bool _hasCheckedStreak = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Check streak reminder after the widget is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkStreakReminder();
+    });
+  }
+
+  Future<void> _checkStreakReminder() async {
+    if (_hasCheckedStreak) return;
+    _hasCheckedStreak = true;
+
+    // Wait for authentication to complete
+    final authState = ref.read(authNotifierProvider);
+    if (!authState.isAuthenticated) return;
+
+    // Check and show streak reminder if needed
+    final streakService = ref.read(streakEventServiceProvider);
+    if (mounted) {
+      await streakService.checkAndShowStreakReminder(context);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final keyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
+    final navInset = keyboardVisible
+        ? 0.0
+        : AppSpacing.navBarInset + MediaQuery.of(context).padding.bottom;
+
     return Scaffold(
       body: Stack(
         children: [
           // Content
-          child,
+          Padding(
+            padding: EdgeInsets.only(bottom: navInset),
+            child: widget.child,
+          ),
 
           // Glass Bottom Navigation
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: GlassBottomNav(
-              currentIndex: _calculateSelectedIndex(context),
-              onTap: (index) => _onItemTapped(index, context),
-              items: const [
-                GlassBottomNavItem(
-                  icon: Icons.explore_outlined,
-                  activeIcon: Icons.explore,
-                  label: 'Khám Phá',
-                ),
-                GlassBottomNavItem(
-                  icon: Icons.collections_outlined,
-                  activeIcon: Icons.collections,
-                  label: 'Bộ Sưu Tập',
-                ),
-                GlassBottomNavItem(
-                  icon: Icons.emoji_events_outlined,
-                  activeIcon: Icons.emoji_events,
-                  label: 'Thành Tích',
-                ),
-                GlassBottomNavItem(
-                  icon: Icons.person_outlined,
-                  activeIcon: Icons.person,
-                  label: 'Hồ Sơ',
-                ),
-              ],
+          if (!keyboardVisible)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: GlassBottomNav(
+                currentIndex: _calculateSelectedIndex(context),
+                onTap: (index) => _onItemTapped(index, context),
+                items: const [
+                  GlassBottomNavItem(
+                    icon: Icons.explore_outlined,
+                    activeIcon: Icons.explore,
+                    label: 'Khám Phá',
+                  ),
+                  GlassBottomNavItem(
+                    icon: Icons.school_outlined,
+                    activeIcon: Icons.school,
+                    label: 'Học & Luyện',
+                  ),
+                  GlassBottomNavItem(
+                    icon: Icons.auto_awesome_outlined,
+                    activeIcon: Icons.auto_awesome,
+                    label: 'AI Chat',
+                    isPrimary: true,
+                  ),
+                  GlassBottomNavItem(
+                    icon: Icons.emoji_events_outlined,
+                    activeIcon: Icons.emoji_events,
+                    label: 'Thành Tích',
+                  ),
+                  GlassBottomNavItem(
+                    icon: Icons.person_outlined,
+                    activeIcon: Icons.person,
+                    label: 'Hồ Sơ',
+                  ),
+                ],
+              ),
             ),
-          ),
         ],
       ),
     );
@@ -377,9 +482,12 @@ class MainShell extends StatelessWidget {
   int _calculateSelectedIndex(BuildContext context) {
     final location = GoRouterState.of(context).matchedLocation;
     if (location.startsWith(_Paths.explore)) return 0;
-    if (location.startsWith(_Paths.collection)) return 1;
-    if (location.startsWith(_Paths.achievements)) return 2;
-    if (location.startsWith(_Paths.profile)) return 3;
+    if (location.startsWith(_Paths.learningHub)) return 1;
+    if (location.startsWith(_Paths.learningPath)) return 1;
+    if (location.startsWith(_Paths.practice)) return 1;
+    if (location.startsWith(_Paths.aiChat)) return 2;
+    if (location.startsWith(_Paths.achievements)) return 3;
+    if (location.startsWith(_Paths.profile)) return 4;
     return 0;
   }
 
@@ -389,12 +497,15 @@ class MainShell extends StatelessWidget {
         context.go(_Paths.explore);
         break;
       case 1:
-        context.go(_Paths.collection);
+        context.go(_Paths.learningHub);
         break;
       case 2:
-        context.go(_Paths.achievements);
+        context.go(_Paths.aiChat);
         break;
       case 3:
+        context.go(_Paths.achievements);
+        break;
+      case 4:
         context.go(_Paths.profile);
         break;
     }

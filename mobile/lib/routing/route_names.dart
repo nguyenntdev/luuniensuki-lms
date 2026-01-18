@@ -35,6 +35,9 @@ abstract class RouteNames {
   /// Achievements screen (badges + leaderboard)
   static const String achievements = 'achievements';
 
+  /// AI chat screen
+  static const String aiChat = 'ai-chat';
+
   /// Profile screen
   static const String profile = 'profile';
 
@@ -134,6 +137,7 @@ abstract class RoutePaths {
   static const String collection = '/collection';
   static const String achievements = '/achievements';
   static const String profile = '/profile';
+  static const String aiChat = '/ai-chat';
 
   // Urns (base path for building)
   static const String urns = '/urns';

@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import toast from "react-hot-toast";
 
 import { getAllBadges, getMyBadges } from "@/lib/api";
 import { useAuthStore } from "@/stores/authStore";
+import { showErrorToast } from "@/lib/errorHandler";
 
 export default function BadgesPage() {
     const status = useAuthStore((s) => s.status);
@@ -34,8 +36,10 @@ export default function BadgesPage() {
                 const earnedRes = await getMyBadges();
                 if (!cancelled) setEarnedBadges(earnedRes);
             } catch (err) {
-                if (!cancelled)
+                if (!cancelled) {
                     setError(err instanceof Error ? err.message : String(err));
+                    showErrorToast(err, toast);
+                }
             } finally {
                 if (!cancelled) setLoading(false);
             }

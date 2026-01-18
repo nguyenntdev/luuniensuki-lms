@@ -682,6 +682,10 @@ export function rebuildRagEmbeddings() {
   });
 }
 
+export function getRagHealth() {
+  return apiRequest(`/api/v1/admin/rag/health`);
+}
+
 export function getRecommendations() {
   return apiRequest(`/api/v1/users/me/recommendations`);
 }
@@ -702,21 +706,6 @@ export function retryAiJob({ jobId }) {
   return apiRequest(`/api/v1/users/me/ai-jobs/${encoded}/retry`, {
     method: "POST",
   });
-}
-
-export function getAdminAiJobs({
-  status,
-  jobType,
-  limit = 50,
-  offset = 0,
-} = {}) {
-  const params = new URLSearchParams();
-  if (status) params.set("status", status);
-  if (jobType) params.set("job_type", jobType);
-  if (limit) params.set("limit", String(limit));
-  if (offset) params.set("offset", String(offset));
-  const qs = params.toString();
-  return apiRequest(`/api/v1/admin/ai/jobs${qs ? `?${qs}` : ""}`);
 }
 
 export function createContentFlag({ contentType, contentId, reason }) {

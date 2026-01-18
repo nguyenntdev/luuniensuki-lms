@@ -63,6 +63,8 @@ module.exports = {
         jade: "hsl(var(--jade-green))",
         bronze: "hsl(var(--bronze))",
         ivory: "hsl(var(--ivory))",
+        "xp-gold": "hsl(var(--xp-gold))",
+        "xp-gold-dark": "hsl(var(--xp-gold-dark))",
         success: {
           DEFAULT: "hsl(var(--success))",
           foreground: "hsl(var(--success-foreground))",

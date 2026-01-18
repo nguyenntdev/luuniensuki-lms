@@ -186,7 +186,7 @@ class _UrnDetailProviderElement
   String get slug => (origin as UrnDetailProvider).slug;
 }
 
-String _$motifDetailHash() => r'cac6069ea95e5ff994578a4a6dba1b7f5ee25db3';
+String _$motifDetailHash() => r'46d4955d18c25d9eb3cdcbc80103748b503bc40c';
 
 /// Provider for fetching a single motif detail
 ///

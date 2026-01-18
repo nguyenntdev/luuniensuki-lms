@@ -22,20 +22,20 @@ class AppColors {
   static const Color primarySurface = Color(0xFF2A2520);
 
   // ==========================================================================
-  // BACKGROUND COLORS - Deeper, richer navy
+  // BACKGROUND COLORS - Premium deep midnight with purple/blue undertones
   // ==========================================================================
 
-  /// Main background - Deep midnight
-  static const Color background = Color(0xFF0A0E14);
+  /// Main background - Deep midnight blue with subtle purple
+  static const Color background = Color(0xFF0A0F1C);
 
-  /// Card/surface background - Elevated dark
-  static const Color surface = Color(0xFF141921);
+  /// Card/surface background - Rich navy with warmth
+  static const Color surface = Color(0xFF0F1729);
 
-  /// Elevated surface - Card surface
-  static const Color surfaceElevated = Color(0xFF1C232D);
+  /// Elevated surface - Subtle purple tint
+  static const Color surfaceElevated = Color(0xFF13142D);
 
-  /// Variant surface for alternating backgrounds
-  static const Color surfaceVariant = Color(0xFF1C2128);
+  /// Variant surface for alternating backgrounds - Warm dark
+  static const Color surfaceVariant = Color(0xFF14151F);
 
   // ==========================================================================
   // SECONDARY PALETTE - Imperial Red (refined)
@@ -224,16 +224,28 @@ class AppColors {
     end: Alignment.bottomRight,
   );
 
-  /// Background gradient (matching updated background colors)
+  /// Background gradient - Premium deep midnight with purple/blue undertones
   static const LinearGradient backgroundGradient = LinearGradient(
     colors: [
-      Color(0xFF0A0E14),
-      Color(0xFF0C1016),
-      Color(0xFF0B0F15),
-      Color(0xFF090D13),
+      Color(0xFF0A0F1C), // Deep midnight blue
+      Color(0xFF0D1220), // Transitional midnight
+      Color(0xFF0F1729), // Rich navy
+      Color(0xFF13142D), // Subtle purple tint
     ],
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
+  );
+
+  /// Premium background gradient - Sophisticated imperial theme
+  static const LinearGradient premiumBackgroundGradient = LinearGradient(
+    colors: [
+      Color(0xFF0A0F1C), // Deep midnight blue
+      Color(0xFF13142D), // Subtle purple tint
+      Color(0xFF0F1729), // Rich navy
+      Color(0xFF14151F), // Warm dark
+    ],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
   );
 
   /// XP gradient
@@ -243,15 +255,40 @@ class AppColors {
     end: Alignment.bottomCenter,
   );
 
-  /// Card gradient overlay
+  /// Card gradient overlay - Premium depth with purple undertones
   static const LinearGradient cardGradient = LinearGradient(
     colors: [
-      Color(0xFF141921),
-      Color(0xFF1C232D),
+      Color(0xFF0F1729), // Rich navy
+      Color(0xFF13142D), // Subtle purple tint
     ],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
+
+  // ==========================================================================
+  // MODERN BACKGROUND COLORS - Premium imperial palette
+  // ==========================================================================
+
+  /// Deep imperial purple for modern backgrounds
+  static const Color modernPurple = Color(0xFF13142D);
+
+  /// Rich midnight blue for modern backgrounds
+  static const Color modernBlue = Color(0xFF0F1729);
+
+  /// Deep midnight for depth
+  static const Color modernDark = Color(0xFF0A0F1C);
+
+  /// Warm dark accent
+  static const Color modernWarmDark = Color(0xFF14151F);
+
+  /// Modern mesh gradient colors - Premium imperial theme
+  static const List<Color> modernMeshColors = [
+    Color(0xFF0A0F1C), // Deep midnight blue
+    Color(0xFF13142D), // Subtle purple tint
+    Color(0xFF0F1729), // Rich navy
+    Color(0xFF14151F), // Warm dark
+    Color(0xFF0D1220), // Transitional midnight
+  ];
 
   // ==========================================================================
   // SHADOWS

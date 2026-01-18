@@ -1,6 +1,17 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import {
+  ArrowRight,
+  BookOpen,
+  Database,
+  LayoutDashboard,
+  RefreshCcw,
+  Sparkles,
+  Users,
+  Wand2,
+} from "lucide-react";
 
 import Skeleton from "@/components/Skeleton";
 import {
@@ -13,13 +24,14 @@ import {
   createRagDocument,
   createClass,
   deleteRagDocument,
-  getAdminAiJobs,
+  getAiJobs,
   getAdminLessons,
   getAdminQuizQuestions,
   getClassDetail,
   getClasses,
   getQuests,
   getRagDocuments,
+  getRagHealth,
   getRagSettings,
   rebuildRagEmbeddings,
   removeClassMember,
@@ -32,11 +44,20 @@ import {
 import { useAuthStore } from "@/stores/authStore";
 
 const TABS = {
-  CONTENT: "content",
+  OVERVIEW: "overview",
+  CMS: "cms",
   CLASSES: "classes",
   RAG: "rag",
   AI: "ai",
 };
+
+const TAB_ITEMS = [
+  { key: TABS.OVERVIEW, label: "Tổng quan", icon: LayoutDashboard },
+  { key: TABS.CMS, label: "CMS", icon: BookOpen },
+  { key: TABS.CLASSES, label: "Lớp học", icon: Users },
+  { key: TABS.RAG, label: "RAG", icon: Database },
+  { key: TABS.AI, label: "AI Studio", icon: Sparkles },
+];
 
 const QUESTION_TYPES = [
   "multiple_choice",
@@ -53,10 +74,11 @@ const AI_LEVEL_OPTIONS = [
 export default function AdminPage() {
   const status = useAuthStore((s) => s.status);
   const user = useAuthStore((s) => s.user);
+  const searchParams = useSearchParams();
   const isStaff = ["teacher", "admin", "super_admin"].includes(user?.role);
   const canPublish = ["admin", "super_admin"].includes(user?.role);
 
-  const [activeTab, setActiveTab] = useState(TABS.CONTENT);
+  const [activeTab, setActiveTab] = useState(TABS.OVERVIEW);
 
   const [motifId, setMotifId] = useState("");
   const [lesson, setLesson] = useState(null);
@@ -137,12 +159,18 @@ export default function AdminPage() {
   const [aiGenLoading, setAiGenLoading] = useState(false);
   const [aiGenError, setAiGenError] = useState(null);
   const [aiGenNotice, setAiGenNotice] = useState(null);
-
   const [aiJobs, setAiJobs] = useState([]);
   const [aiJobsLoading, setAiJobsLoading] = useState(false);
   const [aiJobsError, setAiJobsError] = useState(null);
   const [aiJobStatusFilter, setAiJobStatusFilter] = useState("");
   const [aiJobTypeFilter, setAiJobTypeFilter] = useState("");
+
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab && Object.values(TABS).includes(tab) && tab !== activeTab) {
+      setActiveTab(tab);
+    }
+  }, [activeTab, searchParams]);
 
   useEffect(() => {
     if (!isStaff || status !== "authed") return;
@@ -180,7 +208,13 @@ export default function AdminPage() {
   }, [isStaff, status]);
 
   useEffect(() => {
-    if (!isStaff || status !== "authed" || activeTab !== TABS.RAG) return;
+    if (
+      !isStaff ||
+      status !== "authed" ||
+      ![TABS.RAG, TABS.OVERVIEW].includes(activeTab)
+    ) {
+      return;
+    }
     let cancelled = false;
 
     async function loadRagResources() {
@@ -230,32 +264,37 @@ export default function AdminPage() {
   }, [activeTab, isStaff, status]);
 
   useEffect(() => {
-    if (!isStaff || status !== "authed" || activeTab !== TABS.AI) return;
+    if (
+      !isStaff ||
+      status !== "authed" ||
+      ![TABS.AI, TABS.OVERVIEW].includes(activeTab)
+    ) {
+      return;
+    }
     let cancelled = false;
 
-    async function loadJobs() {
+    async function loadAiJobs() {
       setAiJobsLoading(true);
       setAiJobsError(null);
       try {
-        const res = await getAdminAiJobs({
-          status: aiJobStatusFilter || undefined,
-          jobType: aiJobTypeFilter || undefined,
-          limit: 100,
-        });
-        if (!cancelled) setAiJobs(Array.isArray(res) ? res : []);
+        const res = await getAiJobs();
+        if (!cancelled) {
+          setAiJobs(Array.isArray(res) ? res : []);
+        }
       } catch (err) {
-        if (!cancelled)
+        if (!cancelled) {
           setAiJobsError(err instanceof Error ? err.message : String(err));
+        }
       } finally {
         if (!cancelled) setAiJobsLoading(false);
       }
     }
 
-    loadJobs();
+    loadAiJobs();
     return () => {
       cancelled = true;
     };
-  }, [activeTab, aiJobStatusFilter, aiJobTypeFilter, isStaff, status]);
+  }, [activeTab, isStaff, status]);
 
   const selectedQuestion = useMemo(() => {
     return questions.find((q) => q.id === selectedQuestionId) || null;
@@ -264,6 +303,29 @@ export default function AdminPage() {
   const selectedRagDoc = useMemo(() => {
     return ragDocuments.find((doc) => doc.id === selectedRagDocId) || null;
   }, [ragDocuments, selectedRagDocId]);
+
+  const ragEmbeddingCoverage = useMemo(() => {
+    if (!ragDocuments.length) return 0;
+    const withEmbedding = ragDocuments.filter(
+      (doc) => doc.has_embedding,
+    ).length;
+    return Math.round((withEmbedding / ragDocuments.length) * 100);
+  }, [ragDocuments]);
+
+  const filteredAiJobs = useMemo(() => {
+    return aiJobs.filter((job) => {
+      if (aiJobStatusFilter && job.status !== aiJobStatusFilter) return false;
+      if (
+        aiJobTypeFilter &&
+        !String(job.job_type || "")
+          .toLowerCase()
+          .includes(aiJobTypeFilter.toLowerCase())
+      ) {
+        return false;
+      }
+      return true;
+    });
+  }, [aiJobs, aiJobStatusFilter, aiJobTypeFilter]);
 
   const classSummary = useMemo(() => {
     if (!classDetail) return null;
@@ -289,6 +351,47 @@ export default function AdminPage() {
       completionPercent,
     };
   }, [classDetail]);
+
+  const classTotals = useMemo(() => {
+    return classes.reduce(
+      (acc, cls) => ({
+        classCount: acc.classCount + 1,
+        memberCount: acc.memberCount + (Number(cls.member_count) || 0),
+        assignmentCount:
+          acc.assignmentCount + (Number(cls.assignment_count) || 0),
+      }),
+      { classCount: 0, memberCount: 0, assignmentCount: 0 },
+    );
+  }, [classes]);
+
+  const ragStats = useMemo(() => {
+    const activeCount = ragDocuments.filter((doc) => doc.is_active).length;
+    const latest = ragDocuments.reduce((latestTime, doc) => {
+      const timestamp = new Date(
+        doc.embedding_updated_at || doc.updated_at || doc.created_at || 0,
+      ).getTime();
+      return Number.isNaN(timestamp)
+        ? latestTime
+        : Math.max(latestTime, timestamp);
+    }, 0);
+    return {
+      activeCount,
+      latestUpdatedAt: latest ? new Date(latest) : null,
+    };
+  }, [ragDocuments]);
+
+  const aiJobStats = useMemo(() => {
+    return aiJobs.reduce(
+      (acc, job) => {
+        acc.total += 1;
+        if (job.status === "succeeded") acc.succeeded += 1;
+        if (job.status === "failed") acc.failed += 1;
+        if (job.status === "pending") acc.pending += 1;
+        return acc;
+      },
+      { total: 0, succeeded: 0, failed: 0, pending: 0 },
+    );
+  }, [aiJobs]);
 
   useEffect(() => {
     if (!selectedQuestion) return;
@@ -556,38 +659,6 @@ export default function AdminPage() {
     }
   }
 
-  async function handleRebuildEmbeddings() {
-    setRagError(null);
-    setRagEmbeddingNotice(null);
-    try {
-      const res = await rebuildRagEmbeddings();
-      setRagEmbeddingNotice(
-        `Đã cập nhật embedding: ${res.updated}/${res.total} tài liệu.`,
-      );
-      const docsRes = await getRagDocuments();
-      setRagDocuments(Array.isArray(docsRes) ? docsRes : []);
-    } catch (err) {
-      setRagError(err instanceof Error ? err.message : String(err));
-    }
-  }
-
-  async function handleRefreshAiJobs() {
-    setAiJobsLoading(true);
-    setAiJobsError(null);
-    try {
-      const res = await getAdminAiJobs({
-        status: aiJobStatusFilter || undefined,
-        jobType: aiJobTypeFilter || undefined,
-        limit: 100,
-      });
-      setAiJobs(Array.isArray(res) ? res : []);
-    } catch (err) {
-      setAiJobsError(err instanceof Error ? err.message : String(err));
-    } finally {
-      setAiJobsLoading(false);
-    }
-  }
-
   async function handleCreateRagDocument() {
     if (!ragTitle || !ragContent) return;
     setRagError(null);
@@ -661,6 +732,33 @@ export default function AdminPage() {
     }
   }
 
+  async function handleRebuildEmbeddings() {
+    setRagEmbeddingNotice(null);
+    try {
+      const res = await rebuildRagEmbeddings();
+      setRagEmbeddingNotice(
+        `Đã làm mới embedding (${res.updated}/${res.total}).`,
+      );
+    } catch (err) {
+      setRagEmbeddingNotice(
+        err instanceof Error ? err.message : "Không thể rebuild embeddings.",
+      );
+    }
+  }
+
+  async function handleRefreshAiJobs() {
+    setAiJobsError(null);
+    setAiJobsLoading(true);
+    try {
+      const res = await getAiJobs();
+      setAiJobs(Array.isArray(res) ? res : []);
+    } catch (err) {
+      setAiJobsError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setAiJobsLoading(false);
+    }
+  }
+
   async function handleGenerateLesson() {
     setAiGenError(null);
     setAiGenNotice(null);
@@ -721,7 +819,7 @@ export default function AdminPage() {
     return (
       <main className="mx-auto max-w-4xl px-6 py-10">
         <div className="rounded-xl border border-border bg-card p-6">
-          <h1 className="text-xl font-display font-semibold">Teacher Hub</h1>
+          <h1 className="text-xl font-display font-semibold">Admin Studio</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             Vui lòng đăng nhập để tiếp tục.
           </p>
@@ -734,7 +832,7 @@ export default function AdminPage() {
     return (
       <main className="mx-auto max-w-4xl px-6 py-10">
         <div className="rounded-xl border border-border bg-card p-6">
-          <h1 className="text-xl font-display font-semibold">Teacher Hub</h1>
+          <h1 className="text-xl font-display font-semibold">Admin Studio</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             Bạn không có quyền truy cập trang này.
           </p>
@@ -748,388 +846,432 @@ export default function AdminPage() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-display font-bold text-foreground">
-            Teacher Hub
+            Admin Studio
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Quản lý nội dung, lớp học và bài tập quest.
+            CMS nội dung, lớp học, AI/RAG và KPI giữ chân người học.
           </p>
         </div>
       </div>
 
       <div className="mt-6 rounded-2xl border border-border bg-card p-2">
-        <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
-          <button
-            type="button"
-            onClick={() => setActiveTab(TABS.CONTENT)}
-            className={[
-              "rounded-xl px-4 py-2 text-sm font-semibold transition",
-              activeTab === TABS.CONTENT
-                ? "bg-background text-foreground shadow-sm"
-                : "text-muted-foreground hover:bg-muted hover:text-foreground",
-            ].join(" ")}
-          >
-            Nội dung
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab(TABS.CLASSES)}
-            className={[
-              "rounded-xl px-4 py-2 text-sm font-semibold transition",
-              activeTab === TABS.CLASSES
-                ? "bg-background text-foreground shadow-sm"
-                : "text-muted-foreground hover:bg-muted hover:text-foreground",
-            ].join(" ")}
-          >
-            Lớp học
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab(TABS.RAG)}
-            className={[
-              "rounded-xl px-4 py-2 text-sm font-semibold transition",
-              activeTab === TABS.RAG
-                ? "bg-background text-foreground shadow-sm"
-                : "text-muted-foreground hover:bg-muted hover:text-foreground",
-            ].join(" ")}
-          >
-            AI / RAG
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab(TABS.AI)}
-            className={[
-              "rounded-xl px-4 py-2 text-sm font-semibold transition",
-              activeTab === TABS.AI
-                ? "bg-background text-foreground shadow-sm"
-                : "text-muted-foreground hover:bg-muted hover:text-foreground",
-            ].join(" ")}
-          >
-            AI History
-          </button>
+        <div className="grid grid-cols-2 gap-2 md:grid-cols-5">
+          {TAB_ITEMS.map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.key}
+                type="button"
+                onClick={() => setActiveTab(tab.key)}
+                className={[
+                  "flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition",
+                  activeTab === tab.key
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                ].join(" ")}
+              >
+                <Icon className="h-4 w-4" />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      {activeTab === TABS.CONTENT ? (
-        <section className="mt-8 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-            <h2 className="text-lg font-display font-semibold text-foreground">
-              Bài học
-            </h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Nhập motif ID để chỉnh sửa hoặc tạo mới bài học.
-            </p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <input
-                type="text"
-                value={motifId}
-                onChange={(e) => setMotifId(e.target.value)}
-                placeholder="Motif ID..."
-                className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-              />
-              <button
-                type="button"
-                onClick={handleLoadContent}
-                className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
-              >
-                Tải nội dung
-              </button>
+      {activeTab === TABS.OVERVIEW ? (
+        <section className="mt-8 space-y-6">
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+              <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Lớp học
+              </div>
+              <div className="mt-3 text-3xl font-display font-bold text-foreground">
+                {classTotals.classCount}
+              </div>
+              <div className="mt-2 text-xs text-muted-foreground">
+                {classTotals.memberCount} học viên ·{" "}
+                {classTotals.assignmentCount} bài tập
+              </div>
+            </div>
+            <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+              <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                RAG documents
+              </div>
+              <div className="mt-3 text-3xl font-display font-bold text-foreground">
+                {ragDocuments.length}
+              </div>
+              <div className="mt-2 text-xs text-muted-foreground">
+                {ragEmbeddingCoverage}% có embedding · {ragStats.activeCount}{" "}
+                active
+              </div>
+            </div>
+            <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+              <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                AI jobs
+              </div>
+              <div className="mt-3 text-3xl font-display font-bold text-foreground">
+                {aiJobStats.total}
+              </div>
+              <div className="mt-2 text-xs text-muted-foreground">
+                {aiJobStats.succeeded} thành công · {aiJobStats.failed} lỗi
+              </div>
+            </div>
+            <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+              <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                RAG cập nhật
+              </div>
+              <div className="mt-3 text-2xl font-display font-bold text-foreground">
+                {ragStats.latestUpdatedAt
+                  ? ragStats.latestUpdatedAt.toLocaleString("vi-VN")
+                  : "Chưa có dữ liệu"}
+              </div>
+              <div className="mt-2 text-xs text-muted-foreground">
+                Đồng bộ embeddings và nội dung mới nhất
+              </div>
+            </div>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-4">
+              <div>
+                <h2 className="text-lg font-display font-semibold text-foreground">
+                  Ưu tiên giữ chân người dùng
+                </h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Nhắc nhanh các trụ cột tác động đến KPI retention.
+                </p>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {[
+                  {
+                    title: "Streak & thói quen",
+                    detail: "Nhắc học mỗi ngày, bonus khi hoàn thành.",
+                  },
+                  {
+                    title: "Quest theo tuần",
+                    detail: "Giao nhiệm vụ ngắn, dễ hoàn thành.",
+                  },
+                  {
+                    title: "Nội dung mới",
+                    detail: "Bổ sung bài học/quiz mỗi tuần.",
+                  },
+                  {
+                    title: "AI hỗ trợ học",
+                    detail: "Tạo bài học nhanh, giữ nhịp cập nhật.",
+                  },
+                ].map((item) => (
+                  <div
+                    key={item.title}
+                    className="rounded-xl border border-border bg-background/60 p-4"
+                  >
+                    <div className="text-sm font-semibold text-foreground">
+                      {item.title}
+                    </div>
+                    <div className="mt-2 text-xs text-muted-foreground">
+                      {item.detail}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {lessonError ? (
-              <div className="mt-4 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
-                {lessonError}
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-4">
+              <div>
+                <h2 className="text-lg font-display font-semibold text-foreground">
+                  Quick actions
+                </h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Điều hướng nhanh tới các tác vụ thường dùng.
+                </p>
               </div>
-            ) : null}
-            {lessonNotice ? (
-              <div className="mt-4 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-700">
-                {lessonNotice}
+              <div className="grid gap-3">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab(TABS.CMS)}
+                  className="flex items-center justify-between rounded-xl border border-border bg-background/60 px-4 py-3 text-sm font-semibold text-foreground hover:bg-muted"
+                >
+                  Mở CMS nội dung
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab(TABS.CLASSES)}
+                  className="flex items-center justify-between rounded-xl border border-border bg-background/60 px-4 py-3 text-sm font-semibold text-foreground hover:bg-muted"
+                >
+                  Quản lý lớp học
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab(TABS.RAG)}
+                  className="flex items-center justify-between rounded-xl border border-border bg-background/60 px-4 py-3 text-sm font-semibold text-foreground hover:bg-muted"
+                >
+                  Cấu hình RAG
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab(TABS.AI)}
+                  className="flex items-center justify-between rounded-xl border border-border bg-background/60 px-4 py-3 text-sm font-semibold text-foreground hover:bg-muted"
+                >
+                  AI Studio
+                  <ArrowRight className="h-4 w-4" />
+                </button>
               </div>
-            ) : null}
+            </div>
+          </div>
 
-            {lessonLoading ? (
-              <div className="mt-6 space-y-3">
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-4 w-full" />
-              </div>
-            ) : (
-              <div className="mt-6 space-y-4">
+          <div className="grid gap-6 lg:grid-cols-2">
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <label className="text-xs font-medium text-muted-foreground">
-                    Intro
-                  </label>
-                  <input
-                    type="text"
-                    value={lessonForm.intro_text}
-                    onChange={(e) =>
-                      setLessonForm((prev) => ({
-                        ...prev,
-                        intro_text: e.target.value,
-                      }))
-                    }
-                    className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-muted-foreground">
-                    Nội dung
-                  </label>
-                  <textarea
-                    rows={6}
-                    value={lessonForm.description}
-                    onChange={(e) =>
-                      setLessonForm((prev) => ({
-                        ...prev,
-                        description: e.target.value,
-                      }))
-                    }
-                    className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-                  />
-                </div>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div>
-                    <label className="text-xs font-medium text-muted-foreground">
-                      Bối cảnh lịch sử
-                    </label>
-                    <input
-                      type="text"
-                      value={lessonForm.historical_context}
-                      onChange={(e) =>
-                        setLessonForm((prev) => ({
-                          ...prev,
-                          historical_context: e.target.value,
-                        }))
-                      }
-                      className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs font-medium text-muted-foreground">
-                      Biểu tượng
-                    </label>
-                    <input
-                      type="text"
-                      value={lessonForm.symbolism}
-                      onChange={(e) =>
-                        setLessonForm((prev) => ({
-                          ...prev,
-                          symbolism: e.target.value,
-                        }))
-                      }
-                      className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-muted-foreground">
-                    Fun fact
-                  </label>
-                  <input
-                    type="text"
-                    value={lessonForm.fun_fact}
-                    onChange={(e) =>
-                      setLessonForm((prev) => ({
-                        ...prev,
-                        fun_fact: e.target.value,
-                      }))
-                    }
-                    className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-                  />
-                </div>
-                <div className="flex flex-wrap gap-4">
-                  <label className="flex items-center gap-2 text-sm text-foreground">
-                    <input
-                      type="checkbox"
-                      checked={lessonForm.is_ai_generated}
-                      onChange={(e) =>
-                        setLessonForm((prev) => ({
-                          ...prev,
-                          is_ai_generated: e.target.checked,
-                        }))
-                      }
-                      className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
-                    />
-                    AI nội dung
-                  </label>
-                  <label className="flex items-center gap-2 text-sm text-foreground">
-                    <input
-                      type="checkbox"
-                      checked={lessonForm.is_published}
-                      disabled={!canPublish}
-                      onChange={(e) =>
-                        setLessonForm((prev) => ({
-                          ...prev,
-                          is_published: e.target.checked,
-                        }))
-                      }
-                      className="h-4 w-4 rounded border-border text-primary focus:ring-primary disabled:opacity-60"
-                    />
-                    Xuất bản
-                  </label>
+                  <h2 className="text-lg font-display font-semibold text-foreground">
+                    Tình trạng RAG
+                  </h2>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Theo dõi độ phủ embedding và lần cập nhật gần nhất.
+                  </p>
                 </div>
                 <button
                   type="button"
-                  onClick={handleSaveLesson}
-                  disabled={lessonLoading}
-                  className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
+                  onClick={handleRebuildEmbeddings}
+                  className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm font-semibold text-foreground hover:bg-muted"
                 >
-                  {lesson ? "Lưu thay đổi" : "Tạo bài học"}
+                  <RefreshCcw className="h-4 w-4" />
+                  Rebuild
                 </button>
               </div>
-            )}
+              {ragEmbeddingNotice ? (
+                <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-700">
+                  {ragEmbeddingNotice}
+                </div>
+              ) : null}
+              <div className="rounded-xl border border-border bg-background/60 p-4">
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <span>Embedding coverage</span>
+                  <span>{ragEmbeddingCoverage}%</span>
+                </div>
+                <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted">
+                  <div
+                    className="h-full bg-primary"
+                    style={{ width: `${ragEmbeddingCoverage}%` }}
+                  />
+                </div>
+                <div className="mt-2 text-xs text-muted-foreground">
+                  {ragStats.activeCount} tài liệu đang active ·{" "}
+                  {ragDocuments.length} tổng
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-4">
+              <div>
+                <h2 className="text-lg font-display font-semibold text-foreground">
+                  AI activity
+                </h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Tóm tắt lịch sử AI để kiểm soát chất lượng.
+                </p>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-3">
+                <div className="rounded-xl border border-border bg-background/60 p-4 text-center">
+                  <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Pending
+                  </div>
+                  <div className="mt-2 text-2xl font-display font-bold text-foreground">
+                    {aiJobStats.pending}
+                  </div>
+                </div>
+                <div className="rounded-xl border border-border bg-background/60 p-4 text-center">
+                  <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Success
+                  </div>
+                  <div className="mt-2 text-2xl font-display font-bold text-foreground">
+                    {aiJobStats.succeeded}
+                  </div>
+                </div>
+                <div className="rounded-xl border border-border bg-background/60 p-4 text-center">
+                  <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Failed
+                  </div>
+                  <div className="mt-2 text-2xl font-display font-bold text-foreground">
+                    {aiJobStats.failed}
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setActiveTab(TABS.AI)}
+                className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm font-semibold text-foreground hover:bg-muted"
+              >
+                Xem chi tiết AI logs
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </section>
+      ) : activeTab === TABS.CMS ? (
+        <section className="mt-8 space-y-6">
+          <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-display font-semibold text-foreground">
+                  CMS Studio
+                </h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Chọn motif để quản lý bài học và quiz.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <input
+                  type="text"
+                  value={motifId}
+                  onChange={(e) => setMotifId(e.target.value)}
+                  placeholder="Motif ID..."
+                  className="w-full min-w-[220px] rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground sm:w-64"
+                />
+                <button
+                  type="button"
+                  onClick={handleLoadContent}
+                  className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+                >
+                  Tải nội dung
+                </button>
+              </div>
+            </div>
           </div>
 
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-            <h2 className="text-lg font-display font-semibold text-foreground">
-              Quiz Questions
-            </h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Quản lý câu hỏi cho motif.
-            </p>
+          <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+              <h2 className="text-lg font-display font-semibold text-foreground">
+                Lesson Builder
+              </h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Xây dựng bài học chính, thêm bối cảnh và nội dung phụ trợ.
+              </p>
 
-            {questionError ? (
-              <div className="mt-4 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
-                {questionError}
-              </div>
-            ) : null}
-
-            {questionLoading ? (
-              <div className="mt-4 space-y-3">
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-4 w-full" />
-              </div>
-            ) : (
-              <>
-                <div className="mt-4 space-y-2">
-                  {questions.length ? (
-                    questions.map((q) => (
-                      <button
-                        key={q.id}
-                        type="button"
-                        onClick={() => setSelectedQuestionId(q.id)}
-                        className={[
-                          "w-full rounded-lg border px-3 py-2 text-left text-sm",
-                          selectedQuestionId === q.id
-                            ? "border-primary bg-primary/10"
-                            : "border-border hover:bg-muted",
-                        ].join(" ")}
-                      >
-                        <div className="font-semibold text-foreground">
-                          {q.question_text}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          {q.question_type} ·{" "}
-                          {q.is_published ? "Đã xuất bản" : "Nháp"}
-                        </div>
-                      </button>
-                    ))
-                  ) : (
-                    <div className="text-sm text-muted-foreground">
-                      Chưa có câu hỏi nào.
-                    </div>
-                  )}
+              {lessonError ? (
+                <div className="mt-4 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+                  {lessonError}
                 </div>
+              ) : null}
+              {lessonNotice ? (
+                <div className="mt-4 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-700">
+                  {lessonNotice}
+                </div>
+              ) : null}
 
+              {lessonLoading ? (
                 <div className="mt-6 space-y-3">
-                  <input
-                    type="text"
-                    value={questionForm.question_text}
-                    onChange={(e) =>
-                      setQuestionForm((prev) => ({
-                        ...prev,
-                        question_text: e.target.value,
-                      }))
-                    }
-                    placeholder="Nội dung câu hỏi"
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-                  />
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <select
-                      value={questionForm.question_type}
-                      onChange={(e) =>
-                        setQuestionForm((prev) => ({
-                          ...prev,
-                          question_type: e.target.value,
-                        }))
-                      }
-                      className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-                    >
-                      {QUESTION_TYPES.map((type) => (
-                        <option key={type} value={type}>
-                          {type}
-                        </option>
-                      ))}
-                    </select>
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-4 w-full" />
+                </div>
+              ) : (
+                <div className="mt-6 space-y-4">
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">
+                      Intro
+                    </label>
                     <input
                       type="text"
-                      value={questionForm.correct_answer}
+                      value={lessonForm.intro_text}
                       onChange={(e) =>
-                        setQuestionForm((prev) => ({
+                        setLessonForm((prev) => ({
                           ...prev,
-                          correct_answer: e.target.value,
+                          intro_text: e.target.value,
                         }))
                       }
-                      placeholder="Đáp án đúng"
-                      className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+                      className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
                     />
                   </div>
-                  <textarea
-                    rows={3}
-                    value={questionForm.options}
-                    onChange={(e) =>
-                      setQuestionForm((prev) => ({
-                        ...prev,
-                        options: e.target.value,
-                      }))
-                    }
-                    placeholder='Options JSON: ["A", "B"]'
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-                  />
-                  <input
-                    type="number"
-                    min="1"
-                    max="5"
-                    value={questionForm.difficulty}
-                    onChange={(e) =>
-                      setQuestionForm((prev) => ({
-                        ...prev,
-                        difficulty: e.target.value,
-                      }))
-                    }
-                    placeholder="Độ khó (1-5)"
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-                  />
-                  <input
-                    type="text"
-                    value={questionForm.target_mesh_name}
-                    onChange={(e) =>
-                      setQuestionForm((prev) => ({
-                        ...prev,
-                        target_mesh_name: e.target.value,
-                      }))
-                    }
-                    placeholder="Target mesh name (optional)"
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-                  />
-                  <textarea
-                    rows={2}
-                    value={questionForm.explanation}
-                    onChange={(e) =>
-                      setQuestionForm((prev) => ({
-                        ...prev,
-                        explanation: e.target.value,
-                      }))
-                    }
-                    placeholder="Giải thích"
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-                  />
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">
+                      Nội dung
+                    </label>
+                    <textarea
+                      rows={6}
+                      value={lessonForm.description}
+                      onChange={(e) =>
+                        setLessonForm((prev) => ({
+                          ...prev,
+                          description: e.target.value,
+                        }))
+                      }
+                      className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+                    />
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">
+                        Bối cảnh lịch sử
+                      </label>
+                      <input
+                        type="text"
+                        value={lessonForm.historical_context}
+                        onChange={(e) =>
+                          setLessonForm((prev) => ({
+                            ...prev,
+                            historical_context: e.target.value,
+                          }))
+                        }
+                        className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">
+                        Biểu tượng
+                      </label>
+                      <input
+                        type="text"
+                        value={lessonForm.symbolism}
+                        onChange={(e) =>
+                          setLessonForm((prev) => ({
+                            ...prev,
+                            symbolism: e.target.value,
+                          }))
+                        }
+                        className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">
+                      Fun fact
+                    </label>
+                    <input
+                      type="text"
+                      value={lessonForm.fun_fact}
+                      onChange={(e) =>
+                        setLessonForm((prev) => ({
+                          ...prev,
+                          fun_fact: e.target.value,
+                        }))
+                      }
+                      className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+                    />
+                  </div>
                   <div className="flex flex-wrap gap-4">
                     <label className="flex items-center gap-2 text-sm text-foreground">
                       <input
                         type="checkbox"
-                        checked={questionForm.is_published}
+                        checked={lessonForm.is_ai_generated}
+                        onChange={(e) =>
+                          setLessonForm((prev) => ({
+                            ...prev,
+                            is_ai_generated: e.target.checked,
+                          }))
+                        }
+                        className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
+                      />
+                      AI nội dung
+                    </label>
+                    <label className="flex items-center gap-2 text-sm text-foreground">
+                      <input
+                        type="checkbox"
+                        checked={lessonForm.is_published}
                         disabled={!canPublish}
                         onChange={(e) =>
-                          setQuestionForm((prev) => ({
+                          setLessonForm((prev) => ({
                             ...prev,
                             is_published: e.target.checked,
                           }))
@@ -1138,32 +1280,206 @@ export default function AdminPage() {
                       />
                       Xuất bản
                     </label>
-                    <label className="flex items-center gap-2 text-sm text-foreground">
-                      <input
-                        type="checkbox"
-                        checked={questionForm.is_active}
-                        onChange={(e) =>
-                          setQuestionForm((prev) => ({
-                            ...prev,
-                            is_active: e.target.checked,
-                          }))
-                        }
-                        className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
-                      />
-                      Kích hoạt
-                    </label>
                   </div>
                   <button
                     type="button"
-                    onClick={handleSaveQuestion}
-                    disabled={questionLoading}
+                    onClick={handleSaveLesson}
+                    disabled={lessonLoading}
                     className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
                   >
-                    {selectedQuestionId ? "Lưu câu hỏi" : "Tạo câu hỏi"}
+                    {lesson ? "Lưu thay đổi" : "Tạo bài học"}
                   </button>
                 </div>
-              </>
-            )}
+              )}
+            </div>
+
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+              <h2 className="text-lg font-display font-semibold text-foreground">
+                Quiz Studio
+              </h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Quản lý ngân hàng câu hỏi, mức độ khó và xuất bản.
+              </p>
+
+              {questionError ? (
+                <div className="mt-4 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+                  {questionError}
+                </div>
+              ) : null}
+
+              {questionLoading ? (
+                <div className="mt-4 space-y-3">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-4 w-full" />
+                </div>
+              ) : (
+                <>
+                  <div className="mt-4 space-y-2">
+                    {questions.length ? (
+                      questions.map((q) => (
+                        <button
+                          key={q.id}
+                          type="button"
+                          onClick={() => setSelectedQuestionId(q.id)}
+                          className={[
+                            "w-full rounded-lg border px-3 py-2 text-left text-sm",
+                            selectedQuestionId === q.id
+                              ? "border-primary bg-primary/10"
+                              : "border-border hover:bg-muted",
+                          ].join(" ")}
+                        >
+                          <div className="font-semibold text-foreground">
+                            {q.question_text}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {q.question_type} ·{" "}
+                            {q.is_published ? "Đã xuất bản" : "Nháp"}
+                          </div>
+                        </button>
+                      ))
+                    ) : (
+                      <div className="text-sm text-muted-foreground">
+                        Chưa có câu hỏi nào.
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mt-6 space-y-3">
+                    <input
+                      type="text"
+                      value={questionForm.question_text}
+                      onChange={(e) =>
+                        setQuestionForm((prev) => ({
+                          ...prev,
+                          question_text: e.target.value,
+                        }))
+                      }
+                      placeholder="Nội dung câu hỏi"
+                      className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+                    />
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <select
+                        value={questionForm.question_type}
+                        onChange={(e) =>
+                          setQuestionForm((prev) => ({
+                            ...prev,
+                            question_type: e.target.value,
+                          }))
+                        }
+                        className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+                      >
+                        {QUESTION_TYPES.map((type) => (
+                          <option key={type} value={type}>
+                            {type}
+                          </option>
+                        ))}
+                      </select>
+                      <input
+                        type="text"
+                        value={questionForm.correct_answer}
+                        onChange={(e) =>
+                          setQuestionForm((prev) => ({
+                            ...prev,
+                            correct_answer: e.target.value,
+                          }))
+                        }
+                        placeholder="Đáp án đúng"
+                        className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+                      />
+                    </div>
+                    <textarea
+                      rows={3}
+                      value={questionForm.options}
+                      onChange={(e) =>
+                        setQuestionForm((prev) => ({
+                          ...prev,
+                          options: e.target.value,
+                        }))
+                      }
+                      placeholder='Options JSON: ["A", "B"]'
+                      className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+                    />
+                    <input
+                      type="number"
+                      min="1"
+                      max="5"
+                      value={questionForm.difficulty}
+                      onChange={(e) =>
+                        setQuestionForm((prev) => ({
+                          ...prev,
+                          difficulty: e.target.value,
+                        }))
+                      }
+                      placeholder="Độ khó (1-5)"
+                      className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+                    />
+                    <input
+                      type="text"
+                      value={questionForm.target_mesh_name}
+                      onChange={(e) =>
+                        setQuestionForm((prev) => ({
+                          ...prev,
+                          target_mesh_name: e.target.value,
+                        }))
+                      }
+                      placeholder="Target mesh name (optional)"
+                      className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+                    />
+                    <textarea
+                      rows={2}
+                      value={questionForm.explanation}
+                      onChange={(e) =>
+                        setQuestionForm((prev) => ({
+                          ...prev,
+                          explanation: e.target.value,
+                        }))
+                      }
+                      placeholder="Giải thích"
+                      className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+                    />
+                    <div className="flex flex-wrap gap-4">
+                      <label className="flex items-center gap-2 text-sm text-foreground">
+                        <input
+                          type="checkbox"
+                          checked={questionForm.is_published}
+                          disabled={!canPublish}
+                          onChange={(e) =>
+                            setQuestionForm((prev) => ({
+                              ...prev,
+                              is_published: e.target.checked,
+                            }))
+                          }
+                          className="h-4 w-4 rounded border-border text-primary focus:ring-primary disabled:opacity-60"
+                        />
+                        Xuất bản
+                      </label>
+                      <label className="flex items-center gap-2 text-sm text-foreground">
+                        <input
+                          type="checkbox"
+                          checked={questionForm.is_active}
+                          onChange={(e) =>
+                            setQuestionForm((prev) => ({
+                              ...prev,
+                              is_active: e.target.checked,
+                            }))
+                          }
+                          className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
+                        />
+                        Kích hoạt
+                      </label>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleSaveQuestion}
+                      disabled={questionLoading}
+                      className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
+                    >
+                      {selectedQuestionId ? "Lưu câu hỏi" : "Tạo câu hỏi"}
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </section>
       ) : activeTab === TABS.CLASSES ? (
@@ -1384,486 +1700,17 @@ export default function AdminPage() {
           </div>
         </section>
       ) : activeTab === TABS.AI ? (
-        <section className="mt-8 space-y-6">
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-4">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h2 className="text-lg font-display font-semibold text-foreground">
-                  AI history
-                </h2>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Theo dõi prompt/response gần đây để kiểm soát chất lượng.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={handleRefreshAiJobs}
-                className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-foreground hover:bg-muted"
-              >
-                Làm mới
-              </button>
-            </div>
-
-            <div className="grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
-              <select
-                value={aiJobStatusFilter}
-                onChange={(e) => setAiJobStatusFilter(e.target.value)}
-                className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-              >
-                <option value="">Tất cả trạng thái</option>
-                <option value="pending">Pending</option>
-                <option value="succeeded">Succeeded</option>
-                <option value="failed">Failed</option>
-              </select>
-              <input
-                type="text"
-                value={aiJobTypeFilter}
-                onChange={(e) => setAiJobTypeFilter(e.target.value)}
-                placeholder="Lọc theo job type (tutor, qa, ...)"
-                className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-              />
-              <button
-                type="button"
-                onClick={() => {
-                  setAiJobStatusFilter("");
-                  setAiJobTypeFilter("");
-                }}
-                className="rounded-lg border border-border px-3 py-2 text-sm font-semibold text-foreground hover:bg-muted"
-              >
-                Reset
-              </button>
-            </div>
-
-            {aiJobsError ? (
-              <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
-                {aiJobsError}
-              </div>
-            ) : null}
-
-            {aiJobsLoading ? (
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-4 w-2/3" />
-                <Skeleton className="h-4 w-1/2" />
-              </div>
-            ) : (
-              <div className="max-h-[420px] space-y-3 overflow-auto pr-1">
-                {aiJobs.map((job) => (
-                  <details
-                    key={job.id}
-                    className="rounded-xl border border-border bg-background/60 p-4"
-                  >
-                    <summary className="cursor-pointer list-none">
-                      <div className="flex flex-wrap items-center justify-between gap-2">
-                        <div>
-                          <div className="text-sm font-semibold text-foreground">
-                            {job.job_type} · {job.status}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            {job.user_email || job.user_id} ·{" "}
-                            {new Date(job.created_at).toLocaleString("vi-VN")}
-                          </div>
-                        </div>
-                        <span className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-muted-foreground">
-                          {job.provider || "ai"} · retry {job.retry_count}
-                        </span>
-                      </div>
-                    </summary>
-                    <div className="mt-3 space-y-2 text-xs text-muted-foreground">
-                      {job.prompt ? (
-                        <div>
-                          <div className="font-semibold text-foreground">
-                            Prompt
-                          </div>
-                          <pre className="mt-1 whitespace-pre-wrap rounded-lg bg-muted/40 p-3 text-xs text-foreground">
-                            {job.prompt}
-                          </pre>
-                        </div>
-                      ) : null}
-                      {job.response ? (
-                        <div>
-                          <div className="font-semibold text-foreground">
-                            Response
-                          </div>
-                          <pre className="mt-1 whitespace-pre-wrap rounded-lg bg-muted/40 p-3 text-xs text-foreground">
-                            {job.response}
-                          </pre>
-                        </div>
-                      ) : null}
-                      {job.error ? (
-                        <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-xs text-destructive">
-                          {job.error}
-                        </div>
-                      ) : null}
-                    </div>
-                  </details>
-                ))}
-                {!aiJobs.length ? (
-                  <div className="text-sm text-muted-foreground">
-                    Chưa có log AI.
-                  </div>
-                ) : null}
-              </div>
-            )}
-          </div>
-        </section>
-      ) : (
-        <section className="mt-8 grid gap-6 lg:grid-cols-[1fr_1fr]">
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-6">
-            <div>
+        <section className="mt-8 grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+          <div className="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-5">
+            <div className="flex items-center gap-2">
+              <Wand2 className="h-5 w-5 text-primary" />
               <h2 className="text-lg font-display font-semibold text-foreground">
-                Cấu hình AI
+                AI Studio
               </h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Thiết lập hệ thống prompt, model và số tài liệu dùng cho RAG.
-              </p>
             </div>
-
-            {ragError ? (
-              <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
-                {ragError}
-              </div>
-            ) : null}
-            {ragNotice ? (
-              <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-700">
-                {ragNotice}
-              </div>
-            ) : null}
-            {ragEmbeddingNotice ? (
-              <div className="rounded-lg border border-sky-500/30 bg-sky-500/10 p-3 text-sm text-sky-700">
-                {ragEmbeddingNotice}
-              </div>
-            ) : null}
-
-            <div className="space-y-4">
-              <div>
-                <label className="text-xs font-medium text-muted-foreground">
-                  System instruction
-                </label>
-                <textarea
-                  rows={3}
-                  value={ragSettings.system_instruction}
-                  onChange={(e) =>
-                    setRagSettings((prev) => ({
-                      ...prev,
-                      system_instruction: e.target.value,
-                    }))
-                  }
-                  className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-                />
-              </div>
-              <div>
-                <label className="text-xs font-medium text-muted-foreground">
-                  Prompt prefix
-                </label>
-                <textarea
-                  rows={3}
-                  value={ragSettings.prompt_prefix}
-                  onChange={(e) =>
-                    setRagSettings((prev) => ({
-                      ...prev,
-                      prompt_prefix: e.target.value,
-                    }))
-                  }
-                  className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-                />
-              </div>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div>
-                  <label className="text-xs font-medium text-muted-foreground">
-                    Model override
-                  </label>
-                  <input
-                    type="text"
-                    value={ragSettings.model_override}
-                    onChange={(e) =>
-                      setRagSettings((prev) => ({
-                        ...prev,
-                        model_override: e.target.value,
-                      }))
-                    }
-                    placeholder="deepseek-v3"
-                    className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-muted-foreground">
-                    Temperature
-                  </label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    min="0"
-                    max="2"
-                    value={ragSettings.temperature}
-                    onChange={(e) =>
-                      setRagSettings((prev) => ({
-                        ...prev,
-                        temperature: e.target.value,
-                      }))
-                    }
-                    className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="text-xs font-medium text-muted-foreground">
-                  Số tài liệu tối đa
-                </label>
-                <input
-                  type="number"
-                  min="1"
-                  max="20"
-                  value={ragSettings.max_documents}
-                  onChange={(e) =>
-                    setRagSettings((prev) => ({
-                      ...prev,
-                      max_documents: e.target.value,
-                    }))
-                  }
-                  className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-                />
-              </div>
-              <div className="rounded-xl border border-border/70 bg-background/70 p-3">
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <div className="text-xs font-semibold text-foreground">
-                      Hybrid Embedding
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      Kết hợp keyword + vector để chọn tài liệu RAG.
-                    </div>
-                  </div>
-                  <label className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                    <input
-                      type="checkbox"
-                      checked={Boolean(ragSettings.embedding_enabled)}
-                      onChange={(e) =>
-                        setRagSettings((prev) => ({
-                          ...prev,
-                          embedding_enabled: e.target.checked,
-                        }))
-                      }
-                      className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
-                    />
-                    Bật embedding
-                  </label>
-                </div>
-                <div className="mt-3">
-                  <label className="text-xs font-medium text-muted-foreground">
-                    Tỉ lệ hybrid (0 = keyword, 1 = vector)
-                  </label>
-                  <input
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.05"
-                    value={Number(ragSettings.hybrid_alpha ?? 0.6)}
-                    onChange={(e) =>
-                      setRagSettings((prev) => ({
-                        ...prev,
-                        hybrid_alpha: Number(e.target.value),
-                      }))
-                    }
-                    className="mt-2 w-full"
-                  />
-                  <div className="text-xs text-muted-foreground">
-                    {Number(ragSettings.hybrid_alpha ?? 0.6).toFixed(2)}
-                  </div>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={handleSaveRagSettings}
-                className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
-              >
-                Lưu cấu hình
-              </button>
-              <button
-                type="button"
-                onClick={handleRebuildEmbeddings}
-                className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-foreground hover:bg-muted"
-              >
-                Tạo lại embedding cho tài liệu
-              </button>
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-6">
-            <div>
-              <h2 className="text-lg font-display font-semibold text-foreground">
-                Tài liệu RAG
-              </h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Tải file hoặc nhập nội dung thủ công để AI dùng làm nguồn.
-              </p>
-            </div>
-
-            <div className="space-y-3 rounded-xl border border-border bg-background/40 p-4">
-              <h3 className="text-sm font-semibold text-foreground">
-                Upload file
-              </h3>
-              <input
-                type="text"
-                value={ragTitle}
-                onChange={(e) => setRagTitle(e.target.value)}
-                placeholder="Tiêu đề (tuỳ chọn)"
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-              />
-              <input
-                type="file"
-                accept=".txt,.md,.json"
-                onChange={(e) => setRagFile(e.target.files?.[0] || null)}
-                className="w-full text-sm text-muted-foreground"
-              />
-              <button
-                type="button"
-                onClick={handleUploadRagFile}
-                className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
-              >
-                Tải file
-              </button>
-            </div>
-
-            <div className="space-y-3 rounded-xl border border-border bg-background/40 p-4">
-              <h3 className="text-sm font-semibold text-foreground">
-                Thêm thủ công
-              </h3>
-              <input
-                type="text"
-                value={ragTitle}
-                onChange={(e) => setRagTitle(e.target.value)}
-                placeholder="Tiêu đề"
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-              />
-              <textarea
-                rows={4}
-                value={ragContent}
-                onChange={(e) => setRagContent(e.target.value)}
-                placeholder="Nội dung..."
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-              />
-              <button
-                type="button"
-                onClick={handleCreateRagDocument}
-                className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
-              >
-                Thêm tài liệu
-              </button>
-            </div>
-
-            <div className="rounded-xl border border-border bg-background/40 p-4">
-              <h3 className="text-sm font-semibold text-foreground">
-                Danh sách tài liệu
-              </h3>
-              {ragLoading ? (
-                <div className="mt-3 space-y-2">
-                  <Skeleton className="h-4 w-3/4" />
-                  <Skeleton className="h-4 w-2/3" />
-                </div>
-              ) : (
-                <div className="mt-3 space-y-2 max-h-56 overflow-auto">
-                  {ragDocuments.map((doc) => (
-                    <button
-                      key={doc.id}
-                      type="button"
-                      onClick={() => setSelectedRagDocId(doc.id)}
-                      className={[
-                        "w-full rounded-lg border px-3 py-2 text-left text-sm",
-                        selectedRagDocId === doc.id
-                          ? "border-primary bg-primary/10"
-                          : "border-border hover:bg-muted",
-                      ].join(" ")}
-                    >
-                      <div className="font-semibold text-foreground">
-                        {doc.title}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {doc.source_type} ·{" "}
-                        {doc.is_active ? "Đang dùng" : "Tạm tắt"} ·{" "}
-                        {doc.has_embedding ? "Embedding ✅" : "Embedding ⏳"}
-                      </div>
-                    </button>
-                  ))}
-                  {!ragDocuments.length ? (
-                    <div className="text-sm text-muted-foreground">
-                      Chưa có tài liệu.
-                    </div>
-                  ) : null}
-                </div>
-              )}
-            </div>
-
-            {selectedRagDoc ? (
-              <div className="space-y-3 rounded-xl border border-border bg-background/40 p-4">
-                <h3 className="text-sm font-semibold text-foreground">
-                  Chỉnh sửa tài liệu
-                </h3>
-                <input
-                  type="text"
-                  value={ragEditForm.title}
-                  onChange={(e) =>
-                    setRagEditForm((prev) => ({
-                      ...prev,
-                      title: e.target.value,
-                    }))
-                  }
-                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-                />
-                <textarea
-                  rows={5}
-                  value={ragEditForm.content}
-                  onChange={(e) =>
-                    setRagEditForm((prev) => ({
-                      ...prev,
-                      content: e.target.value,
-                    }))
-                  }
-                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-                />
-                <label className="flex items-center gap-2 text-sm text-foreground">
-                  <input
-                    type="checkbox"
-                    checked={ragEditForm.is_active}
-                    onChange={(e) =>
-                      setRagEditForm((prev) => ({
-                        ...prev,
-                        is_active: e.target.checked,
-                      }))
-                    }
-                    className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
-                  />
-                  Kích hoạt tài liệu
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    onClick={handleUpdateRagDocument}
-                    className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
-                  >
-                    Lưu
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteRagDocument(selectedRagDocId)}
-                    className="rounded-lg border border-destructive/40 px-4 py-2 text-sm font-semibold text-destructive hover:bg-destructive/10"
-                  >
-                    Xoá
-                  </button>
-                </div>
-              </div>
-            ) : null}
-          </div>
-
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-5 lg:col-span-2">
-            <div>
-              <h2 className="text-lg font-display font-semibold text-foreground">
-                AI tạo nội dung
-              </h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Sinh bài học hoặc quiz dựa trên motif, dùng seed hoặc model AI.
-              </p>
-            </div>
+            <p className="text-sm text-muted-foreground">
+              Sinh bài học hoặc quiz mới, đồng bộ chất lượng nội dung nhanh.
+            </p>
 
             {aiGenError ? (
               <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
@@ -1990,8 +1837,534 @@ export default function AdminPage() {
               </button>
             </div>
           </div>
+
+          <div className="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 className="text-lg font-display font-semibold text-foreground">
+                  AI Logs
+                </h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Theo dõi lịch sử AI để kiểm soát chất lượng.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleRefreshAiJobs}
+                className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm font-semibold text-foreground hover:bg-muted"
+              >
+                <RefreshCcw className="h-4 w-4" />
+                Làm mới
+              </button>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
+              <select
+                value={aiJobStatusFilter}
+                onChange={(e) => setAiJobStatusFilter(e.target.value)}
+                className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+              >
+                <option value="">Tất cả trạng thái</option>
+                <option value="pending">Pending</option>
+                <option value="succeeded">Succeeded</option>
+                <option value="failed">Failed</option>
+              </select>
+              <input
+                type="text"
+                value={aiJobTypeFilter}
+                onChange={(e) => setAiJobTypeFilter(e.target.value)}
+                placeholder="Lọc theo job type (tutor, qa, ...)"
+                className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  setAiJobStatusFilter("");
+                  setAiJobTypeFilter("");
+                }}
+                className="rounded-lg border border-border px-3 py-2 text-sm font-semibold text-foreground hover:bg-muted"
+              >
+                Reset
+              </button>
+            </div>
+
+            {aiJobsError ? (
+              <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+                {aiJobsError}
+              </div>
+            ) : null}
+
+            {aiJobsLoading ? (
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-2/3" />
+                <Skeleton className="h-4 w-1/2" />
+              </div>
+            ) : (
+              <div className="max-h-[520px] space-y-3 overflow-auto pr-1">
+                {filteredAiJobs.map((job) => (
+                  <details
+                    key={job.id}
+                    className="rounded-xl border border-border bg-background/60 p-4"
+                  >
+                    <summary className="cursor-pointer list-none">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                          <div className="text-sm font-semibold text-foreground">
+                            {job.job_type} · {job.status}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {new Date(job.created_at).toLocaleString("vi-VN")}
+                          </div>
+                        </div>
+                        <span className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-muted-foreground">
+                          {job.provider || "ai"} · retry {job.retry_count}
+                        </span>
+                      </div>
+                    </summary>
+                    <div className="mt-3 space-y-2 text-xs text-muted-foreground">
+                      {job.prompt ? (
+                        <div>
+                          <div className="font-semibold text-foreground">
+                            Prompt
+                          </div>
+                          <pre className="mt-1 whitespace-pre-wrap rounded-lg bg-muted/40 p-3 text-xs text-foreground">
+                            {job.prompt}
+                          </pre>
+                        </div>
+                      ) : null}
+                      {job.response ? (
+                        <div>
+                          <div className="font-semibold text-foreground">
+                            Response
+                          </div>
+                          <pre className="mt-1 whitespace-pre-wrap rounded-lg bg-muted/40 p-3 text-xs text-foreground">
+                            {job.response}
+                          </pre>
+                        </div>
+                      ) : null}
+                      {job.error ? (
+                        <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-xs text-destructive">
+                          {job.error}
+                        </div>
+                      ) : null}
+                    </div>
+                  </details>
+                ))}
+                {!filteredAiJobs.length ? (
+                  <div className="text-sm text-muted-foreground">
+                    Chưa có log AI.
+                  </div>
+                ) : null}
+              </div>
+            )}
+          </div>
         </section>
-      )}
+      ) : activeTab === TABS.RAG ? (
+        <section className="mt-8 space-y-6">
+          <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-6">
+              <div>
+                <h2 className="text-lg font-display font-semibold text-foreground">
+                  Cấu hình RAG
+                </h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Thiết lập prompt hệ thống, model và giới hạn tài liệu.
+                </p>
+              </div>
+
+              {ragError ? (
+                <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+                  {ragError}
+                </div>
+              ) : null}
+              {ragNotice ? (
+                <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-700">
+                  {ragNotice}
+                </div>
+              ) : null}
+
+              <div className="space-y-4">
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground">
+                    System instruction
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={ragSettings.system_instruction}
+                    onChange={(e) =>
+                      setRagSettings((prev) => ({
+                        ...prev,
+                        system_instruction: e.target.value,
+                      }))
+                    }
+                    className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground">
+                    Prompt prefix
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={ragSettings.prompt_prefix}
+                    onChange={(e) =>
+                      setRagSettings((prev) => ({
+                        ...prev,
+                        prompt_prefix: e.target.value,
+                      }))
+                    }
+                    className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+                  />
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">
+                      Model override
+                    </label>
+                    <input
+                      type="text"
+                      value={ragSettings.model_override}
+                      onChange={(e) =>
+                        setRagSettings((prev) => ({
+                          ...prev,
+                          model_override: e.target.value,
+                        }))
+                      }
+                      placeholder="deepseek-v3"
+                      className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">
+                      Temperature
+                    </label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      max="2"
+                      value={ragSettings.temperature}
+                      onChange={(e) =>
+                        setRagSettings((prev) => ({
+                          ...prev,
+                          temperature: e.target.value,
+                        }))
+                      }
+                      className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground">
+                    Số tài liệu tối đa
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="20"
+                    value={ragSettings.max_documents}
+                    onChange={(e) =>
+                      setRagSettings((prev) => ({
+                        ...prev,
+                        max_documents: e.target.value,
+                      }))
+                    }
+                    className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+                  />
+                </div>
+                <div className="rounded-xl border border-border/70 bg-background/70 p-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <div className="text-xs font-semibold text-foreground">
+                        Hybrid Embedding
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Kết hợp keyword + vector để chọn tài liệu RAG.
+                      </div>
+                    </div>
+                    <label className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                      <input
+                        type="checkbox"
+                        checked={Boolean(ragSettings.embedding_enabled)}
+                        onChange={(e) =>
+                          setRagSettings((prev) => ({
+                            ...prev,
+                            embedding_enabled: e.target.checked,
+                          }))
+                        }
+                        className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
+                      />
+                      Bật embedding
+                    </label>
+                  </div>
+                  <div className="mt-3">
+                    <label className="text-xs font-medium text-muted-foreground">
+                      Tỉ lệ hybrid (0 = keyword, 1 = vector)
+                    </label>
+                    <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.05"
+                      value={Number(ragSettings.hybrid_alpha ?? 0.6)}
+                      onChange={(e) =>
+                        setRagSettings((prev) => ({
+                          ...prev,
+                          hybrid_alpha: Number(e.target.value),
+                        }))
+                      }
+                      className="mt-2 w-full"
+                    />
+                    <div className="text-xs text-muted-foreground">
+                      {Number(ragSettings.hybrid_alpha ?? 0.6).toFixed(2)}
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleSaveRagSettings}
+                  className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+                >
+                  Lưu cấu hình
+                </button>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-5">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h2 className="text-lg font-display font-semibold text-foreground">
+                    RAG health
+                  </h2>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Theo dõi độ phủ embedding và trạng thái dữ liệu.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleRebuildEmbeddings}
+                  className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm font-semibold text-foreground hover:bg-muted"
+                >
+                  <RefreshCcw className="h-4 w-4" />
+                  Rebuild
+                </button>
+              </div>
+              {ragEmbeddingNotice ? (
+                <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-700">
+                  {ragEmbeddingNotice}
+                </div>
+              ) : null}
+              <div className="rounded-xl border border-border bg-background/60 p-4 space-y-3">
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <span>Embedding coverage</span>
+                  <span>{ragEmbeddingCoverage}%</span>
+                </div>
+                <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+                  <div
+                    className="h-full bg-primary"
+                    style={{ width: `${ragEmbeddingCoverage}%` }}
+                  />
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {ragStats.activeCount} active · {ragDocuments.length} tổng
+                </div>
+              </div>
+              <div className="grid gap-3 text-xs text-muted-foreground">
+                <div className="rounded-lg border border-border bg-background/60 p-3">
+                  Lần cập nhật gần nhất:{" "}
+                  {ragStats.latestUpdatedAt
+                    ? ragStats.latestUpdatedAt.toLocaleString("vi-VN")
+                    : "Chưa có dữ liệu"}
+                </div>
+                <div className="rounded-lg border border-border bg-background/60 p-3">
+                  Embedding:{" "}
+                  {ragSettings.embedding_enabled ? "Đang bật" : "Đã tắt"}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-[1fr_1fr]">
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-6">
+              <div>
+                <h2 className="text-lg font-display font-semibold text-foreground">
+                  Nạp dữ liệu RAG
+                </h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Tải file hoặc nhập nội dung thủ công để AI dùng làm nguồn.
+                </p>
+              </div>
+
+              <div className="space-y-3 rounded-xl border border-border bg-background/40 p-4">
+                <h3 className="text-sm font-semibold text-foreground">
+                  Upload file
+                </h3>
+                <input
+                  type="text"
+                  value={ragTitle}
+                  onChange={(e) => setRagTitle(e.target.value)}
+                  placeholder="Tiêu đề (tuỳ chọn)"
+                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+                />
+                <input
+                  type="file"
+                  accept=".txt,.md,.json"
+                  onChange={(e) => setRagFile(e.target.files?.[0] || null)}
+                  className="w-full text-sm text-muted-foreground"
+                />
+                <button
+                  type="button"
+                  onClick={handleUploadRagFile}
+                  className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+                >
+                  Tải file
+                </button>
+              </div>
+
+              <div className="space-y-3 rounded-xl border border-border bg-background/40 p-4">
+                <h3 className="text-sm font-semibold text-foreground">
+                  Thêm thủ công
+                </h3>
+                <input
+                  type="text"
+                  value={ragTitle}
+                  onChange={(e) => setRagTitle(e.target.value)}
+                  placeholder="Tiêu đề"
+                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+                />
+                <textarea
+                  rows={4}
+                  value={ragContent}
+                  onChange={(e) => setRagContent(e.target.value)}
+                  placeholder="Nội dung..."
+                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+                />
+                <button
+                  type="button"
+                  onClick={handleCreateRagDocument}
+                  className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+                >
+                  Thêm tài liệu
+                </button>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-6">
+              <div>
+                <h2 className="text-lg font-display font-semibold text-foreground">
+                  Thư viện tài liệu
+                </h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Chọn tài liệu để chỉnh sửa hoặc tắt/bật.
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-border bg-background/40 p-4">
+                <h3 className="text-sm font-semibold text-foreground">
+                  Danh sách tài liệu
+                </h3>
+                {ragLoading ? (
+                  <div className="mt-3 space-y-2">
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-4 w-2/3" />
+                  </div>
+                ) : (
+                  <div className="mt-3 space-y-2 max-h-56 overflow-auto">
+                    {ragDocuments.map((doc) => (
+                      <button
+                        key={doc.id}
+                        type="button"
+                        onClick={() => setSelectedRagDocId(doc.id)}
+                        className={[
+                          "w-full rounded-lg border px-3 py-2 text-left text-sm",
+                          selectedRagDocId === doc.id
+                            ? "border-primary bg-primary/10"
+                            : "border-border hover:bg-muted",
+                        ].join(" ")}
+                      >
+                        <div className="font-semibold text-foreground">
+                          {doc.title}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {doc.source_type} ·{" "}
+                          {doc.is_active ? "Đang dùng" : "Tạm tắt"} ·{" "}
+                          {doc.has_embedding ? "Embedding ✅" : "Embedding ⏳"}
+                        </div>
+                      </button>
+                    ))}
+                    {!ragDocuments.length ? (
+                      <div className="text-sm text-muted-foreground">
+                        Chưa có tài liệu.
+                      </div>
+                    ) : null}
+                  </div>
+                )}
+              </div>
+
+              {selectedRagDoc ? (
+                <div className="space-y-3 rounded-xl border border-border bg-background/40 p-4">
+                  <h3 className="text-sm font-semibold text-foreground">
+                    Chỉnh sửa tài liệu
+                  </h3>
+                  <input
+                    type="text"
+                    value={ragEditForm.title}
+                    onChange={(e) =>
+                      setRagEditForm((prev) => ({
+                        ...prev,
+                        title: e.target.value,
+                      }))
+                    }
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+                  />
+                  <textarea
+                    rows={5}
+                    value={ragEditForm.content}
+                    onChange={(e) =>
+                      setRagEditForm((prev) => ({
+                        ...prev,
+                        content: e.target.value,
+                      }))
+                    }
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+                  />
+                  <label className="flex items-center gap-2 text-sm text-foreground">
+                    <input
+                      type="checkbox"
+                      checked={ragEditForm.is_active}
+                      onChange={(e) =>
+                        setRagEditForm((prev) => ({
+                          ...prev,
+                          is_active: e.target.checked,
+                        }))
+                      }
+                      className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
+                    />
+                    Kích hoạt tài liệu
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={handleUpdateRagDocument}
+                      className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+                    >
+                      Lưu
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteRagDocument(selectedRagDocId)}
+                      className="rounded-lg border border-destructive/40 px-4 py-2 text-sm font-semibold text-destructive hover:bg-destructive/10"
+                    >
+                      Xoá
+                    </button>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          </div>
+        </section>
+      ) : null}
     </main>
   );
 }

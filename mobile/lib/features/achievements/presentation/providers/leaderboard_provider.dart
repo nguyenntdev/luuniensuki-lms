@@ -28,7 +28,20 @@ class LeaderboardNotifier extends StateNotifier<AsyncValue<List<LeaderboardEntry
         queryParameters: {'limit': limit},
       );
 
-      final List<dynamic> data = response.data as List<dynamic>;
+      // API returns { scope, entries, user_rank, user_entry, total_users }
+      // We need to extract the 'entries' field
+      List<dynamic> data;
+      if (response.data is Map<String, dynamic>) {
+        // New API format with nested entries
+        final responseMap = response.data as Map<String, dynamic>;
+        data = (responseMap['entries'] as List<dynamic>?) ?? [];
+      } else if (response.data is List<dynamic>) {
+        // Legacy format (direct list)
+        data = response.data as List<dynamic>;
+      } else {
+        data = [];
+      }
+
       final entries = data
           .map((json) => LeaderboardEntryDto.fromJson(json as Map<String, dynamic>))
           .toList();

@@ -38,6 +38,8 @@ class Settings(BaseSettings):
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 60
     refresh_token_expire_days: int = 30
+    password_reset_token_expire_minutes: int = 30
+    password_reset_return_token: bool = True
 
     # Cookie settings for JWT tokens
     access_cookie_name: str = "luuniensuki_access"
@@ -93,15 +95,26 @@ class Settings(BaseSettings):
     deepseek_api_key: Optional[str] = None
     deepseek_base_url: str = "https://api.yescale.vip/v1"
     deepseek_model: str = "deepseek-v3"
-    deepseek_timeout_seconds: int = 20
+    deepseek_timeout_seconds: int = 60
     deepseek_max_retries: int = 1
 
     embedding_api_key: Optional[str] = None
     embedding_base_url: str = "https://api.yescale.vip/v1/embeddings"
     embedding_model: str = "text-embedding-3-small"
-    embedding_timeout_seconds: int = 20
+    embedding_timeout_seconds: int = 30
 
     sentry_dsn: Optional[str] = None
+
+    # ==========================================================================
+    # Push Notifications
+    # ==========================================================================
+    fcm_credentials_path: Optional[str] = None  # Path to Firebase service account JSON
+    apns_key_id: Optional[str] = None
+    apns_team_id: Optional[str] = None
+    apns_key_path: Optional[str] = None  # Path to APNs auth key (.p8)
+    apns_bundle_id: str = "com.luuniensuki.lms"
+    push_notification_batch_size: int = 500  # FCM allows up to 500 per batch
+    push_notification_max_retries: int = 3
 
     # ==========================================================================
     # File Storage

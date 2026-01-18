@@ -621,9 +621,27 @@ class _PeakNode extends StatelessWidget {
     };
 
     final icon = switch (status) {
-      _PeakStatus.completed => Icons.check,
-      _PeakStatus.current => Icons.flag,
-      _PeakStatus.locked => Icons.lock,
+      _PeakStatus.completed => Icons.check_rounded,
+      _PeakStatus.current => Icons.radio_button_checked,
+      _PeakStatus.locked => Icons.lock_outline,
+    };
+
+    final fillColor = switch (status) {
+      _PeakStatus.completed => color,
+      _PeakStatus.current => color.withOpacity(0.15),
+      _PeakStatus.locked => Colors.transparent,
+    };
+
+    final borderColor = switch (status) {
+      _PeakStatus.completed => color.withOpacity(0.9),
+      _PeakStatus.current => color.withOpacity(0.6),
+      _PeakStatus.locked => Colors.white24,
+    };
+
+    final iconColor = switch (status) {
+      _PeakStatus.completed => Colors.white,
+      _PeakStatus.current => color,
+      _PeakStatus.locked => Colors.white70,
     };
 
     return SizedBox(
@@ -632,58 +650,36 @@ class _PeakNode extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          ClipPath(
-            clipper: _PeakClipper(),
-            child: Container(
-              width: size,
-              height: size,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    color.withOpacity(0.9),
-                    color.withOpacity(0.5),
-                  ],
-                ),
-                boxShadow: status == _PeakStatus.locked
-                    ? null
-                    : [
-                        BoxShadow(
-                          color: color.withOpacity(0.4),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
+          Container(
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: fillColor,
+              border: Border.all(
+                color: borderColor,
+                width: 1.6,
               ),
+              boxShadow: status == _PeakStatus.locked
+                  ? null
+                  : [
+                      BoxShadow(
+                        color: color.withOpacity(0.35),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
             ),
           ),
           Icon(
             icon,
             size: size * 0.45,
-            color: status == _PeakStatus.locked
-                ? Colors.white70
-                : AppColors.onPrimary,
+            color: iconColor,
           ),
         ],
       ),
     );
   }
-}
-
-class _PeakClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    final path = Path();
-    path.moveTo(size.width / 2, 0);
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
 }
 
 /// Mock data model for urn.

@@ -3,6 +3,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/network/api_client.dart';
+import '../../../../core/network/network_info.dart';
+import '../../../../core/storage/hive_storage.dart';
 import '../../domain/entities/urn.dart';
 
 part 'explore_provider.g.dart';
@@ -78,6 +80,8 @@ class ExploreNotifier extends _$ExploreNotifier {
   }
 
   ApiClient get _apiClient => ref.read(apiClientProvider);
+  HiveStorage get _hiveStorage => ref.read(hiveStorageProvider);
+  NetworkInfo get _networkInfo => ref.read(networkInfoProvider);
 
   /// Initialize the provider - should be called when auth is ready
   void initialize() {
@@ -91,6 +95,36 @@ class ExploreNotifier extends _$ExploreNotifier {
     if (state.isLoading && state.hasData) return;
 
     state = state.copyWith(isLoading: true, errorMessage: null);
+
+    // Check network connectivity first
+    final isOnline = await _networkInfo.isConnected;
+
+    // Try to get from cache first if offline
+    if (!isOnline) {
+      debugPrint('[EXPLORE] Offline - loading from cache...');
+      final cachedUrns = _hiveStorage.getCachedUrns();
+      final cachedStats = _getCachedCollectionStats();
+
+      if (cachedUrns != null) {
+        final urns = cachedUrns.map((json) => Urn.fromJson(json)).toList();
+        urns.sort((a, b) => a.displayOrder.compareTo(b.displayOrder));
+
+        state = state.copyWith(
+          urns: urns,
+          isLoading: false,
+          collectionStats: cachedStats,
+        );
+        debugPrint('[EXPLORE] Loaded ${urns.length} urns from cache');
+        return;
+      }
+
+      // No cache available offline
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: 'Không có kết nối mạng. Vui lòng kiểm tra lại.',
+      );
+      return;
+    }
 
     try {
       debugPrint('[EXPLORE] Loading urns from API...');
@@ -108,6 +142,11 @@ class ExploreNotifier extends _$ExploreNotifier {
       // Sort by display order
       urns.sort((a, b) => a.displayOrder.compareTo(b.displayOrder));
 
+      // Cache the urns
+      await _hiveStorage.cacheUrns(
+        urns.map((u) => u.toJson()).toList(),
+      );
+
       // Fetch collection stats from dashboard summary
       debugPrint('[EXPLORE] Fetching collection stats from dashboard summary...');
       CollectionStats? collectionStats;
@@ -121,10 +160,17 @@ class ExploreNotifier extends _$ExploreNotifier {
             dashboardResponse['collection_stats'] as Map<String, dynamic>,
           );
           debugPrint('[EXPLORE] Collection stats loaded: discovered=${collectionStats.discovered}, learned=${collectionStats.learned}, mastered=${collectionStats.mastered}');
+
+          // Cache collection stats
+          await _hiveStorage.setSetting(
+            'collection_stats',
+            dashboardResponse['collection_stats'],
+          );
         }
       } catch (e) {
         debugPrint('[EXPLORE] Failed to load collection stats: $e');
-        // Continue even if stats fail - we'll use defaults
+        // Try to use cached stats if available
+        collectionStats = _getCachedCollectionStats();
       }
 
       state = state.copyWith(
@@ -138,6 +184,24 @@ class ExploreNotifier extends _$ExploreNotifier {
     } catch (e, stackTrace) {
       debugPrint('[EXPLORE] Error loading urns: $e');
       debugPrint('[EXPLORE] StackTrace: $stackTrace');
+
+      // Try cache on error
+      final cachedUrns = _hiveStorage.getCachedUrns();
+      final cachedStats = _getCachedCollectionStats();
+
+      if (cachedUrns != null) {
+        final urns = cachedUrns.map((json) => Urn.fromJson(json)).toList();
+        urns.sort((a, b) => a.displayOrder.compareTo(b.displayOrder));
+
+        state = state.copyWith(
+          urns: urns,
+          isLoading: false,
+          isRefreshing: false,
+          collectionStats: cachedStats,
+        );
+        debugPrint('[EXPLORE] Loaded ${urns.length} urns from cache (fallback)');
+        return;
+      }
 
       state = state.copyWith(
         isLoading: false,
@@ -153,6 +217,18 @@ class ExploreNotifier extends _$ExploreNotifier {
 
     state = state.copyWith(isRefreshing: true, errorMessage: null);
 
+    // Check network connectivity first
+    final isOnline = await _networkInfo.isConnected;
+
+    if (!isOnline) {
+      // Can't refresh offline, show cached data
+      state = state.copyWith(
+        isRefreshing: false,
+        errorMessage: 'Không có kết nối mạng. Hiển thị dữ liệu đã lưu.',
+      );
+      return;
+    }
+
     try {
       final response = await _apiClient.get<List<dynamic>>(
         ApiConstants.urns,
@@ -163,6 +239,11 @@ class ExploreNotifier extends _$ExploreNotifier {
           .toList();
 
       urns.sort((a, b) => a.displayOrder.compareTo(b.displayOrder));
+
+      // Cache the refreshed urns
+      await _hiveStorage.cacheUrns(
+        urns.map((u) => u.toJson()).toList(),
+      );
 
       // Also refresh collection stats
       CollectionStats? collectionStats;
@@ -175,11 +256,17 @@ class ExploreNotifier extends _$ExploreNotifier {
           collectionStats = CollectionStats.fromJson(
             dashboardResponse['collection_stats'] as Map<String, dynamic>,
           );
+
+          // Cache collection stats
+          await _hiveStorage.setSetting(
+            'collection_stats',
+            dashboardResponse['collection_stats'],
+          );
         }
       } catch (e) {
         debugPrint('[EXPLORE] Failed to refresh collection stats: $e');
         // Keep existing stats if refresh fails
-        collectionStats = state.collectionStats;
+        collectionStats = state.collectionStats ?? _getCachedCollectionStats();
       }
 
       state = state.copyWith(
@@ -188,11 +275,36 @@ class ExploreNotifier extends _$ExploreNotifier {
         collectionStats: collectionStats,
       );
     } catch (e) {
-      state = state.copyWith(
-        isRefreshing: false,
-        errorMessage: _getErrorMessage(e),
-      );
+      // Try to show cached data on error
+      final cachedUrns = _hiveStorage.getCachedUrns();
+      if (cachedUrns != null && state.urns.isEmpty) {
+        final urns = cachedUrns.map((json) => Urn.fromJson(json)).toList();
+        urns.sort((a, b) => a.displayOrder.compareTo(b.displayOrder));
+
+        state = state.copyWith(
+          urns: urns,
+          isRefreshing: false,
+          collectionStats: _getCachedCollectionStats(),
+          errorMessage: _getErrorMessage(e),
+        );
+      } else {
+        state = state.copyWith(
+          isRefreshing: false,
+          errorMessage: _getErrorMessage(e),
+        );
+      }
     }
+  }
+
+  /// Get cached collection stats from storage
+  CollectionStats? _getCachedCollectionStats() {
+    final cached = _hiveStorage.getSetting<Map<String, dynamic>>(
+      'collection_stats',
+    );
+    if (cached != null) {
+      return CollectionStats.fromJson(Map<String, dynamic>.from(cached));
+    }
+    return null;
   }
 
   /// Get error message from exception

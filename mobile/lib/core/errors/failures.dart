@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'error_messages.dart';
 
 /// Base class for all failures in the domain layer.
 /// Failures represent expected errors that can be handled gracefully.
@@ -13,6 +14,10 @@ abstract class Failure extends Equatable {
 
   @override
   String toString() => '$runtimeType: $message (code: $code)';
+
+  String get vietnameseMessage {
+    return ErrorMessages.getErrorMessage(code);
+  }
 }
 
 /// Failure from server/API errors
@@ -29,6 +34,11 @@ class ServerFailure extends Failure {
 
   @override
   List<Object?> get props => [message, code, statusCode, details];
+
+  @override
+  String get vietnameseMessage {
+    return ErrorMessages.getErrorMessage(code, statusCode: statusCode);
+  }
 }
 
 /// Failure due to network connectivity issues
@@ -57,7 +67,8 @@ class AuthFailure extends Failure {
 
   /// Invalid credentials
   factory AuthFailure.invalidCredentials() =>
-      const AuthFailure('Invalid email or password', code: 'INVALID_CREDENTIALS');
+      const AuthFailure('Invalid email or password',
+          code: 'INVALID_CREDENTIALS');
 
   /// Account locked or disabled
   factory AuthFailure.accountDisabled() =>

@@ -125,6 +125,10 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
     };
   }
 
+  String _normalizeAiContent(String content) {
+    return content.replaceAll('\r\n', '\n').trim();
+  }
+
   void _appendAssistant(String content, {List<_ChatCitation> sources = const []}) {
     setState(() {
       _messages.add(
@@ -139,113 +143,6 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
         .whereType<Map<String, dynamic>>()
         .map(_ChatCitation.fromJson)
         .toList();
-  }
-
-  String _normalizeAiContent(String content) {
-    final trimmed = content.trim();
-    if (trimmed.isEmpty) return content;
-    final parsed = _tryParseJsonPayload(trimmed);
-    if (parsed == null) return content;
-    return _formatAiPayload(parsed);
-  }
-
-  dynamic _tryParseJsonPayload(String content) {
-    try {
-      return jsonDecode(content);
-    } catch (_) {
-      final payload = _extractJsonPayload(content);
-      if (payload == null) return null;
-      try {
-        return jsonDecode(payload);
-      } catch (_) {
-        return null;
-      }
-    }
-  }
-
-  String? _extractJsonPayload(String content) {
-    final fence = RegExp(r"```(?:json)?\\s*([\\s\\S]*?)```",
-            caseSensitive: false)
-        .firstMatch(content);
-    if (fence != null) {
-      final fenced = fence.group(1)?.trim();
-      final candidate = _sliceJsonCandidate(fenced);
-      return candidate ?? fenced;
-    }
-    return _sliceJsonCandidate(content);
-  }
-
-  String? _sliceJsonCandidate(String? content) {
-    if (content == null || content.isEmpty) return null;
-    final startObj = content.indexOf('{');
-    final startArr = content.indexOf('[');
-    final starts = [startObj, startArr].where((value) => value >= 0).toList();
-    if (starts.isEmpty) return null;
-    final start = starts.reduce((a, b) => a < b ? a : b);
-    final endObj = content.lastIndexOf('}');
-    final endArr = content.lastIndexOf(']');
-    final end = endObj > endArr ? endObj : endArr;
-    if (end <= start) return null;
-    return content.substring(start, end + 1);
-  }
-
-  String _formatAiPayload(dynamic payload) {
-    if (payload == null) return '';
-    if (payload is List) {
-      return payload.map((item) => '• ${item.toString()}').join('\n');
-    }
-    if (payload is Map<String, dynamic>) {
-      if (payload.containsKey('summary') || payload.containsKey('key_points')) {
-        final summary = payload['summary']?.toString() ?? '';
-        final points = payload['key_points'];
-        final formattedPoints = points is List
-            ? points.map((item) => '• ${item.toString()}').join('\n')
-            : '';
-        return [
-          if (summary.isNotEmpty) 'Tóm tắt: $summary',
-          if (formattedPoints.isNotEmpty) 'Điểm chính:\n$formattedPoints',
-        ].join('\n\n');
-      }
-      if (payload['cards'] is List) {
-        final cards = (payload['cards'] as List)
-            .map((item) {
-              if (item is Map) {
-                final front = item['front']?.toString() ?? '';
-                final back = item['back']?.toString() ?? '';
-                if (front.isNotEmpty || back.isNotEmpty) {
-                  return '• $front → $back';
-                }
-              }
-              return '• ${item.toString()}';
-            })
-            .join('\n');
-        return cards.isEmpty ? '' : 'Flashcards:\n$cards';
-      }
-      if (payload['questions'] is List) {
-        final questions = (payload['questions'] as List)
-            .map((item) {
-              if (item is Map) {
-                return '• ${item['question_text'] ?? item['question'] ?? ''}';
-              }
-              return '• ${item.toString()}';
-            })
-            .join('\n');
-        return questions.isEmpty ? '' : 'Câu hỏi chẩn đoán:\n$questions';
-      }
-      if (payload.containsKey('message') || payload.containsKey('weekly_plan')) {
-        final message = payload['message']?.toString() ?? '';
-        final plan = payload['weekly_plan'];
-        final formattedPlan = plan is List
-            ? plan.map((item) => '• ${item.toString()}').join('\n')
-            : '';
-        return [
-          if (message.isNotEmpty) message,
-          if (formattedPlan.isNotEmpty) 'Kế hoạch tuần:\n$formattedPlan',
-        ].join('\n\n');
-      }
-      return const JsonEncoder.withIndent('  ').convert(payload);
-    }
-    return payload.toString();
   }
 
   Future<void> _runSummary() async {
@@ -338,32 +235,13 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
                   ),
                 ),
                 const SizedBox(height: AppSpacing.sm),
-                TextField(
-                  controller: controller,
-                  minLines: 2,
-                  maxLines: 4,
-                  style: AppTypography.textTheme.bodyMedium?.copyWith(
-                    color: Colors.white,
-                  ),
-                  decoration: InputDecoration(
-                    hintText: 'Nhập nội dung cần giải thích...',
-                    hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
-                    filled: true,
-                    fillColor: AppColors.surfaceElevated.withOpacity(0.7),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide:
-                          BorderSide(color: Colors.white.withOpacity(0.1)),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.sm),
                 DropdownButtonFormField<String>(
                   value: level,
                   dropdownColor: AppColors.surface,
                   decoration: InputDecoration(
                     labelText: 'Mức độ',
-                    labelStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
+                    labelStyle:
+                        TextStyle(color: Colors.white.withOpacity(0.7)),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide:
@@ -379,6 +257,25 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
                     level = value ?? 'teen';
                   },
                 ),
+                const SizedBox(height: AppSpacing.sm),
+                TextField(
+                  controller: controller,
+                  style: AppTypography.textTheme.bodyMedium?.copyWith(
+                    color: Colors.white,
+                  ),
+                  decoration: InputDecoration(
+                    labelText: 'Nội dung',
+                    labelStyle:
+                        TextStyle(color: Colors.white.withOpacity(0.7)),
+                    filled: true,
+                    fillColor: AppColors.surfaceElevated.withOpacity(0.6),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide:
+                          BorderSide(color: Colors.white.withOpacity(0.1)),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: AppSpacing.md),
                 Row(
                   children: [
@@ -388,6 +285,7 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
                         child: const Text('Huỷ'),
                       ),
                     ),
+                    const SizedBox(width: AppSpacing.sm),
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
@@ -722,7 +620,7 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: AppSpacing.md),
+                    const SizedBox(height: AppSpacing.sm),
                     DropdownButtonFormField<AiChatMode>(
                       value: tempMode,
                       dropdownColor: AppColors.surface,
@@ -767,13 +665,17 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
                       ),
                       items: const [
                         DropdownMenuItem(
-                            value: 'beginner', child: Text('Cơ bản')),
+                          value: 'beginner',
+                          child: Text('Cơ bản'),
+                        ),
                         DropdownMenuItem(
                           value: 'intermediate',
                           child: Text('Trung bình'),
                         ),
                         DropdownMenuItem(
-                            value: 'advanced', child: Text('Nâng cao')),
+                          value: 'advanced',
+                          child: Text('Nâng cao'),
+                        ),
                       ],
                       onChanged: (value) {
                         if (value == null) return;
@@ -827,14 +729,19 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
                             child: const Text('Huỷ'),
                           ),
                         ),
+                        const SizedBox(width: AppSpacing.sm),
                         Expanded(
                           child: ElevatedButton(
                             onPressed: () {
+                              final motifValue =
+                                  _motifController.text.trim();
+                              final urnValue = _urnController.text.trim();
                               setState(() {
                                 _mode = tempMode;
                                 _level = tempLevel;
-                                _motifId = _motifController.text.trim();
-                                _urnSlug = _urnController.text.trim();
+                                _motifId =
+                                    motifValue.isEmpty ? null : motifValue;
+                                _urnSlug = urnValue.isEmpty ? null : urnValue;
                               });
                               Navigator.pop(context);
                             },

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:crypto/crypto.dart';
 import 'dart:convert';
@@ -108,7 +109,9 @@ class ModelPreloader {
           }
         } catch (e) {
           // Continue with other downloads even if one fails
-          print('Failed to preload model $url: $e');
+          if (kDebugMode) {
+            print('Failed to preload model $url: $e');
+          }
         }
       }),
     );

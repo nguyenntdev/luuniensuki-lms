@@ -1,13 +1,17 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/utils/url_utils.dart';
+import '../../../../routing/route_names.dart';
 import '../../../../shared/widgets/glass/animated_background.dart';
 import '../../../hearts/presentation/widgets/hearts_display.dart';
 import '../../../streak/presentation/providers/streak_provider.dart';
 import '../providers/practice_provider.dart';
+import '../providers/practice_urns_provider.dart';
 import '../providers/quiz_session_provider.dart';
 
 /// Main practice screen with daily stats and practice modes
@@ -67,7 +71,7 @@ class PracticeScreen extends ConsumerWidget {
               ),
 
               // Due for Review Items
-              _buildUrnsList(context, 'Cần Ôn Tập', 8, AppColors.warning),
+              _buildUrnsList(context, ref, 'Cần Ôn Tập', 8, AppColors.warning),
 
               SliverToBoxAdapter(
                 child: Padding(
@@ -78,7 +82,7 @@ class PracticeScreen extends ConsumerWidget {
               ),
 
               // New Items
-              _buildUrnsList(context, 'Học Mới', 5, AppColors.info),
+              _buildUrnsList(context, ref, 'Học Mới', 5, AppColors.info),
 
               SliverToBoxAdapter(
                 child: Padding(
@@ -89,7 +93,7 @@ class PracticeScreen extends ConsumerWidget {
               ),
 
               // Mastered Items
-              _buildUrnsList(context, 'Đã Thành Thạo', 12, AppColors.success),
+              _buildUrnsList(context, ref, 'Đã Thành Thạo', 12, AppColors.success),
 
               const SliverToBoxAdapter(
                 child: SizedBox(height: AppSpacing.xl),
@@ -151,6 +155,7 @@ class PracticeScreen extends ConsumerWidget {
         final isCompact = constraints.maxWidth < 360;
         final padding = isCompact ? AppSpacing.md : AppSpacing.lg;
         return Container(
+          width: double.infinity,
           padding: EdgeInsets.all(padding),
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -348,43 +353,96 @@ class PracticeScreen extends ConsumerWidget {
   }
 
   Widget _buildUrnsList(
-      BuildContext context, String category, int count, Color accentColor) {
+      BuildContext context, WidgetRef ref, String category, int count, Color accentColor) {
     final screenWidth = MediaQuery.of(context).size.width;
     final horizontalPadding = screenWidth < 360 ? AppSpacing.md : AppSpacing.lg;
+    final urnsAsync = ref.watch(practiceUrnsProvider);
+
+    return urnsAsync.when(
+      loading: () => SliverToBoxAdapter(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+          child: const Center(
+            child: CircularProgressIndicator(color: AppColors.primary),
+          ),
+        ),
+      ),
+      error: (_, __) => _buildUrnsListWithData(
+        context, [], category, count, accentColor, horizontalPadding,
+      ),
+      data: (urns) => _buildUrnsListWithData(
+        context, urns, category, count, accentColor, horizontalPadding,
+      ),
+    );
+  }
+
+  Widget _buildUrnsListWithData(
+    BuildContext context,
+    List<PracticeUrn> urns,
+    String category,
+    int count,
+    Color accentColor,
+    double horizontalPadding,
+  ) {
+    final displayCount = urns.isEmpty ? count.clamp(0, 3) : urns.length.clamp(0, 3);
+
     return SliverPadding(
       padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
           (context, index) {
+            final urn = urns.isNotEmpty && index < urns.length ? urns[index] : null;
             return Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.md),
-              child: _buildUrnCard(context, index, category, accentColor),
+              child: _buildUrnCard(context, index, category, accentColor, urn),
             );
           },
-          childCount: count > 3 ? 3 : count, // Show max 3 items per category
+          childCount: displayCount > 0 ? displayCount : 1,
         ),
       ),
     );
   }
 
   Widget _buildUrnCard(
-      BuildContext context, int index, String category, Color accentColor) {
+      BuildContext context, int index, String category, Color accentColor, PracticeUrn? urn) {
+    // Fallback mock data if urn is null
     final mockUrns = [
-      {'name': 'Họa Tiết Rồng', 'progress': 0.8, 'items': 12},
-      {'name': 'Họa Tiết Phượng', 'progress': 0.6, 'items': 8},
-      {'name': 'Họa Tiết Sen', 'progress': 0.4, 'items': 5},
+      {
+        'name': 'Họa Tiết Rồng',
+        'progress': 0.8,
+        'items': 12,
+        'id': 'cao-dinh',
+        'thumbnailUrl': 'https://lms.histolab.icu/assets/ban-duc-noi/CAO%20DINH/CAO%20DINH.jpg',
+      },
+      {
+        'name': 'Họa Tiết Phượng',
+        'progress': 0.6,
+        'items': 8,
+        'id': 'nhan-dinh',
+        'thumbnailUrl': 'https://lms.histolab.icu/assets/ban-duc-noi/NHAN%20DINH/NH%C3%82N%20%C4%90%E1%BB%88NH.jpg',
+      },
+      {
+        'name': 'Họa Tiết Sen',
+        'progress': 0.4,
+        'items': 5,
+        'id': 'chuong-dinh',
+        'thumbnailUrl': 'https://lms.histolab.icu/assets/ban-duc-noi/CHUONG%20DINH/CH%C6%AF%C6%A0NG%20%C4%90%E1%BB%88NH.jpg',
+      },
     ];
 
-    final urn = mockUrns[index % mockUrns.length];
-    final progressValue = urn['progress'] as double;
+    final mockData = mockUrns[index % mockUrns.length];
+    final name = urn?.name ?? mockData['name'] as String;
+    final progressValue = urn?.progress ?? mockData['progress'] as double;
+    final itemCount = urn?.motifCount ?? mockData['items'] as int;
+    final urnId = urn?.id ?? mockData['id'] as String;
+    final thumbnailUrl = urn?.thumbnailUrl ?? mockData['thumbnailUrl'] as String;
+
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Mở ${urn['name']}...')),
-          );
+          context.push(RoutePaths.urn(urnId));
         },
         borderRadius: BorderRadius.circular(12),
         child: LayoutBuilder(
@@ -403,25 +461,14 @@ class PracticeScreen extends ConsumerWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: isCompact ? 44 : 50,
-                    height: isCompact ? 44 : 50,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [accentColor, accentColor.withOpacity(0.6)],
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(Icons.terrain,
-                        color: Colors.white, size: 26),
-                  ),
+                  _buildUrnThumbnail(thumbnailUrl, accentColor, isCompact),
                   const SizedBox(width: AppSpacing.md),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          urn['name'] as String,
+                          name,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: isCompact ? 14 : 16,
@@ -453,7 +500,7 @@ class PracticeScreen extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      '${urn['items']} mục',
+                      '$itemCount mục',
                       style: TextStyle(
                         color: accentColor,
                         fontSize: isCompact ? 11 : 12,
@@ -467,6 +514,41 @@ class PracticeScreen extends ConsumerWidget {
           },
         ),
       ),
+    );
+  }
+
+  Widget _buildUrnThumbnail(String? thumbnailUrl, Color accentColor, bool isCompact) {
+    final size = isCompact ? 44.0 : 50.0;
+
+    if (thumbnailUrl != null && thumbnailUrl.isNotEmpty) {
+      final imageUrl = UrlUtils.getImageUrl(thumbnailUrl);
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: CachedNetworkImage(
+          imageUrl: imageUrl,
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+          placeholder: (_, __) => _buildThumbnailPlaceholder(accentColor, size),
+          errorWidget: (_, __, ___) => _buildThumbnailPlaceholder(accentColor, size),
+        ),
+      );
+    }
+
+    return _buildThumbnailPlaceholder(accentColor, size);
+  }
+
+  Widget _buildThumbnailPlaceholder(Color accentColor, double size) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [accentColor, accentColor.withOpacity(0.6)],
+        ),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Icon(Icons.terrain, color: Colors.white, size: size * 0.52),
     );
   }
 

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/theme/app_colors.dart';
+
 /// A container with glassmorphism styling
 /// Uses semi-transparent background without BackdropFilter to avoid layout issues
 class GlassContainer extends StatelessWidget {
@@ -24,25 +26,26 @@ class GlassContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveBorderRadius = borderRadius ?? BorderRadius.circular(16);
+    final effectiveBorderRadius = borderRadius ?? BorderRadius.circular(20);
 
     return Container(
-      padding: padding ?? const EdgeInsets.all(24),
+      padding: padding ?? const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: gradient,
-        color: gradient == null ? Colors.white.withOpacity(opacity) : null,
+        color:
+            gradient == null ? AppColors.glassWhite.withOpacity(opacity) : null,
         borderRadius: effectiveBorderRadius,
         border: border ??
             Border.all(
-              color: Colors.white.withOpacity(0.2),
+              color: AppColors.glassBorder,
               width: 1.5,
             ),
         boxShadow: boxShadow ??
             [
               BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
+                color: AppColors.black.withOpacity(0.25),
+                blurRadius: 24,
+                offset: const Offset(0, 12),
               ),
             ],
       ),

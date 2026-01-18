@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 import math
 import re
+import secrets
 import time
 import unicodedata
 import uuid as uuid_module
@@ -30,13 +32,14 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
-from sqlalchemy import create_engine, delete, func, or_, select
+from sqlalchemy import and_, create_engine, delete, func, or_, select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, selectinload, sessionmaker
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.middleware.cors import CORSMiddleware
 
+from . import schemas
 from .config import settings
 from .errors import (
     AppError,
@@ -45,8 +48,12 @@ from .errors import (
     validation_exception_handler,
 )
 from .models import (
+    AbuseReport,
+    AIConversation,
     AIJob,
+    AIMessage,
     AnalyticsEvent,
+    AppVersion,
     AssignmentProgress,
     Badge,
     BadgeCategory,
@@ -55,11 +62,40 @@ from .models import (
     Classroom,
     ContentFlag,
     ContentProvenance,
+    ContentRating,
+    ContentStatus,
+    ContentTag,
+    ContentType,
+    ContentVersion,
+    CrashReport,
+    DailyMission,
+    EmailStatus,
+    EmailTemplate,
+    EmbeddingJob,
+    ErrorType,
+    Experiment,
+    ExperimentEvent,
+    ExperimentMetricEvent,
+    FeatureFlag,
+    FlagType,
+    FriendRequest,
+    FriendRequestStatus,
+    GuestPreview,
+    HeartTransaction,
+    HeartTransactionReason,
+    LessonCache,
     LessonContent,
+    LessonPrerequisite,
+    MilestoneType,
+    MissionType,
     Motif,
     MotifCategory,
+    NotificationStatus,
+    NotificationType,
+    PushNotification,
     Quest,
     QuestAssignment,
+    QuestCategory,
     QuestionType,
     QuestObjective,
     QuestProgress,
@@ -70,15 +106,34 @@ from .models import (
     RagDocument,
     RagSettings,
     Recommendation,
+    ScheduledEmail,
+    SkillType,
+    SpacedRepetitionCard,
+    StreakReward,
+    Tag,
+    TagType,
     UnlockStatus,
     Urn,
     UrnExam,
     UrnExamAttempt,
     User,
     UserBadge,
+    UserDailyMission,
+    UserExperimentAssignment,
+    UserFollow,
+    UserHearts,
+    UserLearningPath,
+    UserMilestone,
+    UserNotificationSettings,
     UserProgress,
     UserRole,
+    UserSession,
+    UserShare,
+    UserSkillLevel,
+    UserWeeklyQuest,
+    WeeklyQuest,
 )
+from .rag_defaults import get_rag_defaults
 from .security import create_jwt_token, hash_password, verify_password
 
 DISCOVERY_XP = 25
@@ -103,6 +158,8 @@ ADMIN_ROLES = {UserRole.admin, UserRole.super_admin}
 BADGE_FIRST_DISCOVERY = "first-discovery"
 BADGE_FIRST_MASTERED = "first-mastered"
 BADGE_STREAK_7 = "streak-7"
+BADGE_STREAK_30 = "streak-30-days"
+BADGE_STREAK_100 = "streak-100-days"
 BADGE_COLLECTOR_10 = "collector-10"
 BADGE_COLLECTOR_50 = "collector-50"
 BADGE_EXPLORER_ALL_URNS = "explorer-all-urns"
@@ -230,16 +287,23 @@ def _record_analytics_event(
     name: str,
     payload: Optional[dict[str, Any]] = None,
     path: Optional[str] = None,
+    session_id: Optional[UUID] = None,
+    cohort: Optional[str] = None,
+    device_info: Optional[dict[str, Any]] = None,
 ) -> None:
     try:
-        session.add(
-            AnalyticsEvent(
-                user_id=user_id,
-                event_name=name,
-                payload=payload,
-                path=path,
-            )
+        from services.analytics import create_event_record
+
+        event_data = create_event_record(
+            user_id=user_id,
+            event_name=name,
+            payload=payload,
+            path=path,
+            session_id=session_id,
+            cohort=cohort,
+            device_info=device_info,
         )
+        session.add(AnalyticsEvent(**event_data))
         session.commit()
     except Exception:
         session.rollback()
@@ -281,6 +345,15 @@ def _award_badge(session: Session, *, user: User, badge_slug: str) -> int:
         return 0
     if inserted is None:
         return 0
+
+    # Track first badge earned milestone
+    badges_before = session.execute(
+        select(func.count(UserBadge.id)).where(UserBadge.user_id == user.id)
+    ).scalar_one()
+    if badges_before <= 1:  # First badge (just inserted)
+        from backend.services.milestones import check_and_create_first_badge_earned
+
+        check_and_create_first_badge_earned(session, user.id, badge_slug)
 
     bonus = int(badge.xp_bonus or 0)
     if bonus:
@@ -650,6 +723,35 @@ def get_current_user(
     return user
 
 
+def get_current_user_optional(
+    request: Request,
+    token: Optional[str] = Depends(oauth2_scheme),
+    db: Session = Depends(get_db),
+) -> Optional[User]:
+    """
+    Get current user if authenticated, otherwise return None.
+    Used for endpoints that are public but can show different data when authenticated.
+    """
+    raw_token = token or request.cookies.get(settings.access_cookie_name)
+    if not raw_token:
+        return None
+
+    try:
+        payload = jwt.decode(
+            raw_token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm]
+        )
+        subject = payload.get("sub")
+        token_type = payload.get("type")
+        if not subject or token_type != "access":
+            return None
+        user_id = UUID(subject)
+    except (JWTError, ValueError):
+        return None
+
+    user = db.get(User, user_id)
+    return user
+
+
 def _can_view_drafts(user: User) -> bool:
     return user.role in STAFF_ROLES
 
@@ -675,6 +777,86 @@ def get_admin_user(current_user: User = Depends(get_current_user)) -> User:
     if current_user.role not in ADMIN_ROLES:
         raise HTTPException(status_code=403, detail="Not authorized")
     return current_user
+
+
+# Alias for consistency with other endpoints
+require_admin = get_admin_user
+
+
+def get_super_admin_user(current_user: User = Depends(get_current_user)) -> User:
+    """Require super_admin role for sensitive operations like audit logs."""
+    if current_user.role != UserRole.super_admin:
+        raise HTTPException(status_code=403, detail="Super admin access required")
+    return current_user
+
+
+def require_feature(feature_key: str):
+    """
+    Dependency factory to require a feature flag to be enabled for the current user.
+
+    Usage:
+        @app.get("/api/v1/new-feature")
+        def new_feature_endpoint(
+            current_user: User = Depends(require_feature("new_feature_flag")),
+            db: Session = Depends(get_db),
+        ):
+            ...
+
+    Args:
+        feature_key: The feature flag key to check
+
+    Returns:
+        A dependency function that checks the feature flag
+    """
+
+    def _dependency(
+        current_user: User = Depends(get_current_user),
+        db: Session = Depends(get_db),
+    ) -> User:
+        from backend.services import feature_flags
+
+        if not feature_flags.is_feature_enabled_for_user(
+            db, feature_key, current_user.id
+        ):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Feature '{feature_key}' is not enabled for this user",
+            )
+        return current_user
+
+    return _dependency
+
+
+def get_user_age(user: User) -> Optional[int]:
+    """Calculate user's current age from birth year."""
+    if user.birth_year is None:
+        return None
+    current_year = datetime.now(timezone.utc).year
+    return current_year - user.birth_year
+
+
+def get_allowed_content_ratings(user: User) -> list[ContentRating]:
+    """
+    Determine which content ratings a user can access based on their age verification.
+
+    Rules:
+    - If user age not verified or under 13 → only 'everyone' content
+    - If user age 13-17 → 'everyone' and 'teen' content
+    - If user age 18+ → all content
+    """
+    if not user.age_verified:
+        return [ContentRating.everyone]
+
+    age = get_user_age(user)
+    if age is None:
+        return [ContentRating.everyone]
+
+    if age < 13:
+        return [ContentRating.everyone]
+    elif age < 18:
+        return [ContentRating.everyone, ContentRating.teen]
+    else:
+        return [ContentRating.everyone, ContentRating.teen, ContentRating.mature]
 
 
 class UserOut(BaseModel):
@@ -1060,6 +1242,661 @@ def set_starting_path(
     return StartingPathResponse(starting_urn_id=urn.id, starting_urn_slug=urn.slug)
 
 
+# =============================================================================
+# Onboarding Endpoints
+# =============================================================================
+
+
+class OnboardingGoalRequest(BaseModel):
+    goal: str = Field(
+        ...,
+        description="User's learning goal",
+        examples=["learn_culture", "pass_exam", "curiosity"],
+    )
+
+
+class OnboardingStatusResponse(BaseModel):
+    onboarding_completed: bool
+    onboarding_goal: Optional[str] = None
+    onboarding_completed_at: Optional[datetime] = None
+
+
+class OnboardingCompleteResponse(BaseModel):
+    success: bool
+    message: str
+    onboarding_completed: bool
+    onboarding_completed_at: Optional[datetime] = None
+
+
+@app.post("/api/v1/onboarding/goals")
+def save_onboarding_goal(
+    request: OnboardingGoalRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Save user's selected onboarding goal."""
+    # Validate goal value
+    valid_goals = ["learn_culture", "pass_exam", "curiosity", "professional", "hobby"]
+    if request.goal not in valid_goals:
+        raise AppError(
+            code="INVALID_GOAL",
+            message=f"Invalid goal. Must be one of: {', '.join(valid_goals)}",
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
+    current_user.onboarding_goal = request.goal
+    db.commit()
+    db.refresh(current_user)
+
+    return {
+        "success": True,
+        "message": "Onboarding goal saved successfully",
+        "goal": current_user.onboarding_goal,
+    }
+
+
+@app.get("/api/v1/onboarding/status", response_model=OnboardingStatusResponse)
+def get_onboarding_status(
+    current_user: User = Depends(get_current_user),
+) -> OnboardingStatusResponse:
+    """Get user's onboarding status."""
+    return OnboardingStatusResponse(
+        onboarding_completed=current_user.onboarding_completed,
+        onboarding_goal=current_user.onboarding_goal,
+        onboarding_completed_at=current_user.onboarding_completed_at,
+    )
+
+
+@app.post("/api/v1/onboarding/complete", response_model=OnboardingCompleteResponse)
+def complete_onboarding(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> OnboardingCompleteResponse:
+    """Mark user's onboarding as complete."""
+    if current_user.onboarding_completed:
+        return OnboardingCompleteResponse(
+            success=True,
+            message="Onboarding already completed",
+            onboarding_completed=True,
+            onboarding_completed_at=current_user.onboarding_completed_at,
+        )
+
+    current_user.onboarding_completed = True
+    current_user.onboarding_completed_at = datetime.now(timezone.utc)
+
+    # Track onboarding completion milestone
+    from backend.services.milestones import check_and_create_onboarding_completed
+
+    check_and_create_onboarding_completed(db, current_user.id)
+
+    db.commit()
+    db.refresh(current_user)
+
+    return OnboardingCompleteResponse(
+        success=True,
+        message="Onboarding completed successfully",
+        onboarding_completed=True,
+        onboarding_completed_at=current_user.onboarding_completed_at,
+    )
+
+
+# =============================================================================
+# Notification Settings Endpoints
+# =============================================================================
+
+
+@app.get(
+    "/api/v1/notifications/settings", response_model=schemas.NotificationSettingsOut
+)
+def get_notification_settings(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.NotificationSettingsOut:
+    """Get user's notification settings."""
+    settings = db.execute(
+        select(UserNotificationSettings).where(
+            UserNotificationSettings.user_id == current_user.id
+        )
+    ).scalar_one_or_none()
+
+    # Create default settings if they don't exist
+    if settings is None:
+        settings = UserNotificationSettings(
+            id=uuid_module.uuid4(),
+            user_id=current_user.id,
+        )
+        db.add(settings)
+        db.commit()
+        db.refresh(settings)
+
+    return schemas.NotificationSettingsOut.model_validate(settings)
+
+
+@app.put(
+    "/api/v1/notifications/settings", response_model=schemas.NotificationSettingsOut
+)
+def update_notification_settings(
+    payload: schemas.NotificationSettingsUpdateIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.NotificationSettingsOut:
+    """Update user's notification settings."""
+    settings = db.execute(
+        select(UserNotificationSettings).where(
+            UserNotificationSettings.user_id == current_user.id
+        )
+    ).scalar_one_or_none()
+
+    # Create if doesn't exist
+    if settings is None:
+        settings = UserNotificationSettings(
+            id=uuid_module.uuid4(),
+            user_id=current_user.id,
+        )
+        db.add(settings)
+
+    # Update fields
+    if payload.push_enabled is not None:
+        settings.push_enabled = payload.push_enabled
+    if payload.email_enabled is not None:
+        settings.email_enabled = payload.email_enabled
+    if payload.streak_reminders is not None:
+        settings.streak_reminders = payload.streak_reminders
+    if payload.daily_mission_reminders is not None:
+        settings.daily_mission_reminders = payload.daily_mission_reminders
+    if payload.weekly_digest is not None:
+        settings.weekly_digest = payload.weekly_digest
+    if payload.marketing_enabled is not None:
+        settings.marketing_enabled = payload.marketing_enabled
+    if payload.quiet_hours_start is not None:
+        settings.quiet_hours_start = payload.quiet_hours_start
+    if payload.quiet_hours_end is not None:
+        settings.quiet_hours_end = payload.quiet_hours_end
+
+    db.commit()
+    db.refresh(settings)
+
+    return schemas.NotificationSettingsOut.model_validate(settings)
+
+
+@app.post(
+    "/api/v1/notifications/register-push", response_model=schemas.PushTokenRegisterOut
+)
+def register_push_token(
+    payload: schemas.PushTokenRegisterIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.PushTokenRegisterOut:
+    """Register or update push notification token."""
+    settings = db.execute(
+        select(UserNotificationSettings).where(
+            UserNotificationSettings.user_id == current_user.id
+        )
+    ).scalar_one_or_none()
+
+    # Create if doesn't exist
+    if settings is None:
+        settings = UserNotificationSettings(
+            id=uuid_module.uuid4(),
+            user_id=current_user.id,
+        )
+        db.add(settings)
+
+    # Update push token and platform
+    settings.push_token = payload.token
+    settings.push_platform = payload.platform
+    settings.push_enabled = True
+
+    # Mark that we've prompted the user for permission
+    current_user.push_permission_prompted = True
+
+    db.commit()
+
+    return schemas.PushTokenRegisterOut(
+        success=True, message="Push notification token registered successfully"
+    )
+
+
+@app.delete(
+    "/api/v1/notifications/unregister-push", response_model=schemas.PushTokenRegisterOut
+)
+def unregister_push_token(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.PushTokenRegisterOut:
+    """Unregister push notification token."""
+    settings = db.execute(
+        select(UserNotificationSettings).where(
+            UserNotificationSettings.user_id == current_user.id
+        )
+    ).scalar_one_or_none()
+
+    if settings is not None:
+        settings.push_token = None
+        settings.push_platform = None
+        settings.push_enabled = False
+        db.commit()
+
+    return schemas.PushTokenRegisterOut(
+        success=True, message="Push notification token unregistered successfully"
+    )
+
+
+@app.get(
+    "/api/v1/notifications/should-prompt-permission",
+    response_model=schemas.ShouldPromptPermissionOut,
+)
+def should_prompt_permission(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.ShouldPromptPermissionOut:
+    """
+    Check if we should prompt the user for push notification permission.
+    Returns true if:
+    - User has not been prompted before (push_permission_prompted is false)
+    - User has completed at least 1 lesson
+    """
+    # Check if already prompted
+    if current_user.push_permission_prompted:
+        return schemas.ShouldPromptPermissionOut(
+            should_prompt=False,
+            reason="User has already been prompted for push notifications",
+        )
+
+    # Check if user has completed at least one lesson
+    completed_lesson_count = db.execute(
+        select(func.count(UserProgress.id)).where(
+            UserProgress.user_id == current_user.id,
+            UserProgress.lesson_viewed_at.isnot(None),
+        )
+    ).scalar_one()
+
+    if completed_lesson_count == 0:
+        return schemas.ShouldPromptPermissionOut(
+            should_prompt=False, reason="User has not completed any lessons yet"
+        )
+
+    return schemas.ShouldPromptPermissionOut(
+        should_prompt=True, reason="User is eligible for push notification prompt"
+    )
+
+
+# =============================================================================
+# PUSH NOTIFICATION ENDPOINTS
+# =============================================================================
+
+
+@app.post(
+    "/api/v1/admin/push-notifications/send",
+    response_model=schemas.SendPushNotificationOut,
+)
+def admin_send_push_notification(
+    payload: schemas.SendPushNotificationIn,
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> schemas.SendPushNotificationOut:
+    """
+    Send push notifications to specific users.
+
+    Admin only endpoint.
+    """
+    from .services import push_notifications
+
+    # Create notifications for each user
+    created_notifications = []
+    for user_id in payload.user_ids:
+        # Verify user exists
+        user = db.execute(select(User).where(User.id == user_id)).scalar_one_or_none()
+        if not user:
+            continue
+
+        notification = push_notifications.create_notification(
+            db=db,
+            user_id=user_id,
+            title=payload.title,
+            body=payload.body,
+            notification_type=NotificationType(payload.notification_type),
+            data_payload=payload.data_payload,
+            scheduled_for=payload.scheduled_for,
+        )
+        created_notifications.append(notification)
+
+    # Send notifications immediately if not scheduled
+    sent_count = 0
+    failed_count = 0
+
+    if not payload.scheduled_for:
+        for notification in created_notifications:
+            if push_notifications.send_notification(db, notification):
+                sent_count += 1
+            else:
+                failed_count += 1
+
+    return schemas.SendPushNotificationOut(
+        success=True,
+        message=f"Created {len(created_notifications)} notifications",
+        notifications_created=len(created_notifications),
+        notifications_sent=sent_count,
+        notifications_failed=failed_count,
+    )
+
+
+@app.post(
+    "/api/v1/admin/push-notifications/broadcast",
+    response_model=schemas.BroadcastPushNotificationOut,
+)
+def admin_broadcast_push_notification(
+    payload: schemas.BroadcastPushNotificationIn,
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> schemas.BroadcastPushNotificationOut:
+    """
+    Broadcast a push notification to all eligible users.
+
+    Admin only endpoint. Can filter by user role.
+    """
+    from .services import push_notifications
+
+    results = push_notifications.broadcast_notification(
+        db=db,
+        title=payload.title,
+        body=payload.body,
+        notification_type=NotificationType(payload.notification_type),
+        data_payload=payload.data_payload,
+        user_role=payload.user_role,
+    )
+
+    return schemas.BroadcastPushNotificationOut(
+        success=True,
+        message=f"Broadcast to {results['total_users']} users",
+        **results,
+    )
+
+
+@app.get(
+    "/api/v1/admin/push-notifications", response_model=schemas.PushNotificationListOut
+)
+def admin_list_push_notifications(
+    user_id: Optional[UUID] = Query(None, description="Filter by user ID"),
+    status: Optional[str] = Query(None, description="Filter by status"),
+    notification_type: Optional[str] = Query(None, description="Filter by type"),
+    limit: int = Query(50, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> schemas.PushNotificationListOut:
+    """
+    List all push notifications with optional filters.
+
+    Admin only endpoint.
+    """
+    # Build query
+    query = select(PushNotification)
+
+    if user_id:
+        query = query.where(PushNotification.user_id == user_id)
+
+    if status:
+        query = query.where(PushNotification.status == status)
+
+    if notification_type:
+        query = query.where(PushNotification.notification_type == notification_type)
+
+    # Get total count
+    total = len(db.execute(query).scalars().all())
+
+    # Get paginated results
+    query = (
+        query.order_by(PushNotification.created_at.desc()).limit(limit).offset(offset)
+    )
+    notifications = db.execute(query).scalars().all()
+
+    return schemas.PushNotificationListOut(
+        notifications=[
+            schemas.PushNotificationOut.model_validate(n) for n in notifications
+        ],
+        total=total,
+        limit=limit,
+        offset=offset,
+    )
+
+
+@app.get(
+    "/api/v1/notifications/history", response_model=schemas.PushNotificationListOut
+)
+def get_notification_history(
+    limit: int = Query(50, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.PushNotificationListOut:
+    """
+    Get the current user's notification history.
+    """
+    from .services import push_notifications
+
+    notifications, total = push_notifications.get_user_notification_history(
+        db=db,
+        user_id=current_user.id,
+        limit=limit,
+        offset=offset,
+    )
+
+    return schemas.PushNotificationListOut(
+        notifications=[
+            schemas.PushNotificationOut.model_validate(n) for n in notifications
+        ],
+        total=total,
+        limit=limit,
+        offset=offset,
+    )
+
+
+# =============================================================================
+# GUEST PREVIEW ENDPOINTS
+# =============================================================================
+
+
+@app.get("/api/v1/preview/lesson")
+def get_preview_lesson(
+    db: Session = Depends(get_db),
+) -> schemas.GuestPreviewLessonOut:
+    """Get the demo lesson for guest users (no authentication required).
+
+    Returns the first preview-eligible lesson for guests to experience
+    the app before signing up.
+    """
+    # Find first preview-eligible lesson
+    stmt = (
+        select(LessonContent)
+        .join(Motif)
+        .join(Urn)
+        .where(LessonContent.preview_eligible == True)
+        .where(LessonContent.is_published == True)
+        .options(selectinload(LessonContent.motif).selectinload(Motif.urn))
+        .order_by(LessonContent.created_at)
+        .limit(1)
+    )
+
+    lesson = db.execute(stmt).scalar_one_or_none()
+
+    if lesson is None:
+        raise AppError(
+            code="NO_PREVIEW_AVAILABLE",
+            message="No preview lesson available at this time",
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
+
+    # Parse additional_images if it's a JSON string
+    additional_images = None
+    if lesson.additional_images:
+        if isinstance(lesson.additional_images, str):
+            import json
+
+            try:
+                additional_images = json.loads(lesson.additional_images)
+            except json.JSONDecodeError:
+                additional_images = None
+        elif isinstance(lesson.additional_images, list):
+            additional_images = lesson.additional_images
+
+    return schemas.GuestPreviewLessonOut(
+        lesson_id=lesson.id,
+        motif_id=lesson.motif.id,
+        motif_name=lesson.motif.name,
+        motif_description=lesson.motif.description or "",
+        urn_id=lesson.motif.urn.id,
+        urn_name=lesson.motif.urn.name,
+        urn_thumbnail_url=lesson.motif.urn.thumbnail_url,
+        intro_text=lesson.intro_text,
+        description=lesson.description,
+        historical_context=lesson.historical_context,
+        symbolism=lesson.symbolism,
+        fun_fact=lesson.fun_fact,
+        additional_images=additional_images,
+    )
+
+
+@app.post("/api/v1/preview/start", response_model=schemas.GuestPreviewStartOut)
+def start_preview_session(
+    payload: schemas.GuestPreviewStartIn,
+    db: Session = Depends(get_db),
+) -> schemas.GuestPreviewStartOut:
+    """Start a guest preview session (no authentication required).
+
+    Creates a tracking record for the guest's preview session,
+    allowing us to measure engagement and conversion.
+    """
+    # Find first preview-eligible lesson
+    stmt = (
+        select(LessonContent)
+        .join(Motif)
+        .join(Urn)
+        .where(LessonContent.preview_eligible == True)
+        .where(LessonContent.is_published == True)
+        .options(selectinload(LessonContent.motif).selectinload(Motif.urn))
+        .order_by(LessonContent.created_at)
+        .limit(1)
+    )
+
+    lesson = db.execute(stmt).scalar_one_or_none()
+
+    if lesson is None:
+        raise AppError(
+            code="NO_PREVIEW_AVAILABLE",
+            message="No preview lesson available at this time",
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
+
+    # Create preview session record
+    preview = GuestPreview(
+        session_id=payload.session_id,
+        preview_lesson_id=lesson.id,
+        device_info=payload.device_info,
+        started_at=datetime.now(timezone.utc),
+    )
+
+    db.add(preview)
+    db.commit()
+    db.refresh(preview)
+
+    return schemas.GuestPreviewStartOut(
+        preview_id=preview.id,
+        lesson_id=lesson.id,
+        lesson_title=lesson.motif.name,
+        lesson_description=lesson.description,
+        motif_name=lesson.motif.name,
+        urn_name=lesson.motif.urn.name,
+        started_at=preview.started_at,
+    )
+
+
+@app.post("/api/v1/preview/complete", response_model=schemas.GuestPreviewCompleteOut)
+def complete_preview_session(
+    payload: schemas.GuestPreviewCompleteIn,
+    db: Session = Depends(get_db),
+) -> schemas.GuestPreviewCompleteOut:
+    """Mark a guest preview session as complete (no authentication required).
+
+    Updates the preview session to track completion, which helps measure
+    engagement and content quality.
+    """
+    # Find the most recent preview session for this session_id that hasn't been completed
+    stmt = (
+        select(GuestPreview)
+        .where(GuestPreview.session_id == payload.session_id)
+        .where(GuestPreview.completed_at.is_(None))
+        .order_by(GuestPreview.started_at.desc())
+        .limit(1)
+    )
+
+    preview = db.execute(stmt).scalar_one_or_none()
+
+    if preview is None:
+        raise AppError(
+            code="PREVIEW_SESSION_NOT_FOUND",
+            message="No active preview session found for this session ID",
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
+
+    # Mark as completed
+    preview.completed_at = datetime.now(timezone.utc)
+    db.commit()
+    db.refresh(preview)
+
+    return schemas.GuestPreviewCompleteOut(
+        success=True,
+        message="Preview session marked as complete",
+        completed_at=preview.completed_at,
+        preview_id=preview.id,
+    )
+
+
+@app.post("/api/v1/preview/convert", response_model=schemas.GuestPreviewConvertOut)
+def convert_preview_to_user(
+    payload: schemas.GuestPreviewConvertIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.GuestPreviewConvertOut:
+    """Link preview session(s) to a newly registered user account.
+
+    After a user signs up, this endpoint connects their previous guest
+    preview sessions to their new account for analytics tracking.
+
+    Requires authentication (user must be logged in).
+    """
+    # Find all preview sessions for this session_id that haven't been converted yet
+    stmt = (
+        select(GuestPreview)
+        .where(GuestPreview.session_id == payload.session_id)
+        .where(GuestPreview.converted_to_user_id.is_(None))
+    )
+
+    previews = db.execute(stmt).scalars().all()
+
+    if not previews:
+        # Not an error - user might not have done a preview
+        return schemas.GuestPreviewConvertOut(
+            success=True,
+            message="No preview sessions to convert",
+            preview_sessions_converted=0,
+        )
+
+    # Link all matching preview sessions to the current user
+    count = 0
+    for preview in previews:
+        preview.converted_to_user_id = current_user.id
+        count += 1
+
+    db.commit()
+
+    return schemas.GuestPreviewConvertOut(
+        success=True,
+        message=f"Successfully linked {count} preview session(s) to your account",
+        preview_sessions_converted=count,
+    )
+
+
 class PublicBadgeOut(BaseModel):
     name: str
     icon: str
@@ -1255,6 +2092,9 @@ class AnalyticsEventIn(BaseModel):
     name: str = Field(..., min_length=1, max_length=100)
     payload: Optional[dict[str, Any]] = None
     path: Optional[str] = None
+    session_id: Optional[UUID] = None
+    cohort: Optional[str] = Field(None, max_length=50)
+    device_info: Optional[dict[str, Any]] = None
 
 
 class AnalyticsEventsIn(BaseModel):
@@ -1275,19 +2115,729 @@ def ingest_analytics_events(
     if not payload.events:
         return AnalyticsEventsOut(success=True, count=0)
 
-    db.add_all(
-        [
-            AnalyticsEvent(
-                user_id=current_user.id,
-                event_name=event.name,
-                payload=event.payload,
-                path=event.path,
-            )
-            for event in payload.events
-        ]
-    )
+    # Import analytics service for event validation
+    from services.analytics import create_event_record
+
+    # Create validated event records
+    event_records = []
+    for event in payload.events:
+        event_data = create_event_record(
+            user_id=current_user.id,
+            event_name=event.name,
+            payload=event.payload,
+            path=event.path,
+            session_id=event.session_id,
+            cohort=event.cohort,
+            device_info=event.device_info,
+        )
+        event_records.append(AnalyticsEvent(**event_data))
+
+    db.add_all(event_records)
     db.commit()
     return AnalyticsEventsOut(success=True, count=len(payload.events))
+
+
+# =============================================================================
+# SESSION TRACKING ENDPOINTS
+# =============================================================================
+
+
+@app.post("/api/v1/sessions/heartbeat", response_model=schemas.SessionHeartbeatOut)
+def session_heartbeat(
+    payload: schemas.SessionHeartbeatIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.SessionHeartbeatOut:
+    """
+    Update session activity with heartbeat.
+    Called every 30 seconds from client to keep session alive.
+    """
+    now = datetime.now(timezone.utc)
+
+    # Find existing session or create new one
+    existing_session = db.execute(
+        select(UserSession).where(
+            UserSession.session_id == payload.session_id,
+            UserSession.user_id == current_user.id,
+        )
+    ).scalar_one_or_none()
+
+    if existing_session:
+        # Update existing session
+        existing_session.last_active_at = now
+        existing_session.is_active = True
+        existing_session.device_type = payload.device_type
+        existing_session.platform = payload.platform
+        if payload.app_version:
+            existing_session.app_version = payload.app_version
+        db.commit()
+        db.refresh(existing_session)
+
+        return schemas.SessionHeartbeatOut(
+            success=True,
+            session_id=existing_session.session_id,
+            is_active=existing_session.is_active,
+        )
+    else:
+        # Create new session
+        new_session = UserSession(
+            session_id=payload.session_id,
+            user_id=current_user.id,
+            device_type=payload.device_type,
+            platform=payload.platform,
+            app_version=payload.app_version,
+            started_at=now,
+            last_active_at=now,
+            is_active=True,
+        )
+        db.add(new_session)
+        db.commit()
+        db.refresh(new_session)
+
+        return schemas.SessionHeartbeatOut(
+            success=True,
+            session_id=new_session.session_id,
+            is_active=new_session.is_active,
+        )
+
+
+@app.post("/api/v1/sessions/end", response_model=schemas.SessionEndOut)
+def end_session(
+    payload: schemas.SessionEndIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.SessionEndOut:
+    """
+    End the current session.
+    Called when user logs out or closes app.
+    """
+    now = datetime.now(timezone.utc)
+
+    # Find the session
+    session = db.execute(
+        select(UserSession).where(
+            UserSession.session_id == payload.session_id,
+            UserSession.user_id == current_user.id,
+        )
+    ).scalar_one_or_none()
+
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    # Mark session as ended
+    session.ended_at = now
+    session.is_active = False
+    db.commit()
+
+    # Calculate duration
+    duration_seconds = None
+    if session.started_at:
+        duration_seconds = int((now - session.started_at).total_seconds())
+
+    return schemas.SessionEndOut(
+        success=True,
+        session_id=session.session_id,
+        duration_seconds=duration_seconds,
+    )
+
+
+@app.get(
+    "/api/v1/admin/analytics/sessions/active", response_model=schemas.ActiveSessionsOut
+)
+def get_active_sessions(
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> schemas.ActiveSessionsOut:
+    """
+    Get count of currently active sessions.
+    Admin only endpoint.
+    """
+    now = datetime.now(timezone.utc)
+    five_minutes_ago = now - timedelta(minutes=5)
+    thirty_minutes_ago = now - timedelta(minutes=30)
+
+    # Active sessions (last 5 minutes)
+    active_5min = (
+        db.execute(
+            select(func.count(UserSession.id)).where(
+                UserSession.is_active.is_(True),
+                UserSession.last_active_at >= five_minutes_ago,
+            )
+        ).scalar()
+        or 0
+    )
+
+    # Sessions active in last 30 minutes
+    active_30min = (
+        db.execute(
+            select(func.count(UserSession.id)).where(
+                UserSession.is_active.is_(True),
+                UserSession.last_active_at >= thirty_minutes_ago,
+            )
+        ).scalar()
+        or 0
+    )
+
+    # Auto-expire old sessions
+    db.execute(
+        select(UserSession).where(
+            UserSession.is_active.is_(True),
+            UserSession.last_active_at < thirty_minutes_ago,
+        )
+    )
+    expired_sessions = (
+        db.execute(
+            select(UserSession).where(
+                UserSession.is_active.is_(True),
+                UserSession.last_active_at < thirty_minutes_ago,
+            )
+        )
+        .scalars()
+        .all()
+    )
+
+    for session in expired_sessions:
+        session.is_active = False
+        session.ended_at = session.last_active_at
+
+    if expired_sessions:
+        db.commit()
+
+    return schemas.ActiveSessionsOut(
+        active_sessions=active_5min,
+        last_5_minutes=active_5min,
+        last_30_minutes=active_30min,
+        timestamp=now,
+    )
+
+
+@app.get(
+    "/api/v1/admin/analytics/sessions/stats", response_model=schemas.SessionStatsOut
+)
+def get_session_statistics(
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> schemas.SessionStatsOut:
+    """
+    Get detailed session statistics.
+    Admin only endpoint.
+    """
+    now = datetime.now(timezone.utc)
+    today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    week_start = now - timedelta(days=7)
+    month_start = now - timedelta(days=30)
+
+    # Total sessions by period
+    total_today = (
+        db.execute(
+            select(func.count(UserSession.id)).where(
+                UserSession.started_at >= today_start
+            )
+        ).scalar()
+        or 0
+    )
+
+    total_week = (
+        db.execute(
+            select(func.count(UserSession.id)).where(
+                UserSession.started_at >= week_start
+            )
+        ).scalar()
+        or 0
+    )
+
+    total_month = (
+        db.execute(
+            select(func.count(UserSession.id)).where(
+                UserSession.started_at >= month_start
+            )
+        ).scalar()
+        or 0
+    )
+
+    # Average session duration (in minutes)
+    # Calculate only for ended sessions
+    avg_duration_result = db.execute(
+        select(
+            func.avg(
+                func.extract("epoch", UserSession.ended_at - UserSession.started_at)
+            )
+        ).where(
+            UserSession.ended_at.isnot(None),
+            UserSession.started_at >= month_start,
+        )
+    ).scalar()
+
+    avg_duration_minutes = 0.0
+    if avg_duration_result:
+        avg_duration_minutes = round(float(avg_duration_result) / 60, 2)
+
+    # Unique users by period
+    unique_today = (
+        db.execute(
+            select(func.count(func.distinct(UserSession.user_id))).where(
+                UserSession.started_at >= today_start,
+                UserSession.user_id.isnot(None),
+            )
+        ).scalar()
+        or 0
+    )
+
+    unique_week = (
+        db.execute(
+            select(func.count(func.distinct(UserSession.user_id))).where(
+                UserSession.started_at >= week_start,
+                UserSession.user_id.isnot(None),
+            )
+        ).scalar()
+        or 0
+    )
+
+    unique_month = (
+        db.execute(
+            select(func.count(func.distinct(UserSession.user_id))).where(
+                UserSession.started_at >= month_start,
+                UserSession.user_id.isnot(None),
+            )
+        ).scalar()
+        or 0
+    )
+
+    # Current active sessions
+    five_minutes_ago = now - timedelta(minutes=5)
+    current_active = (
+        db.execute(
+            select(func.count(UserSession.id)).where(
+                UserSession.is_active.is_(True),
+                UserSession.last_active_at >= five_minutes_ago,
+            )
+        ).scalar()
+        or 0
+    )
+
+    # Peak concurrent today (approximate using 5-minute windows)
+    # This is a simplified version - for production you'd want more sophisticated tracking
+    peak_concurrent = (
+        db.execute(
+            select(func.count(UserSession.id)).where(
+                UserSession.started_at >= today_start,
+                UserSession.is_active.is_(True),
+            )
+        ).scalar()
+        or 0
+    )
+
+    # Sessions by platform
+    platform_stats = db.execute(
+        select(UserSession.platform, func.count(UserSession.id))
+        .where(UserSession.started_at >= month_start)
+        .group_by(UserSession.platform)
+    ).all()
+
+    by_platform = {platform: count for platform, count in platform_stats}
+
+    # Sessions by device type
+    device_stats = db.execute(
+        select(UserSession.device_type, func.count(UserSession.id))
+        .where(UserSession.started_at >= month_start)
+        .group_by(UserSession.device_type)
+    ).all()
+
+    by_device_type = {device: count for device, count in device_stats}
+
+    return schemas.SessionStatsOut(
+        total_sessions_today=total_today,
+        total_sessions_week=total_week,
+        total_sessions_month=total_month,
+        avg_session_duration_minutes=avg_duration_minutes,
+        unique_users_today=unique_today,
+        unique_users_week=unique_week,
+        unique_users_month=unique_month,
+        current_active_sessions=current_active,
+        peak_concurrent_today=peak_concurrent,
+        by_platform=by_platform,
+        by_device_type=by_device_type,
+    )
+
+
+# =============================================================================
+# CRASH REPORTING ENDPOINTS
+# =============================================================================
+
+
+# Simple in-memory rate limiter for crash reports
+_crash_report_rate_limiter: dict[str, list[datetime]] = {}
+
+
+def _check_crash_report_rate_limit(
+    user_key: str, max_reports: int = 10, window_hours: int = 1
+) -> None:
+    """Check if user has exceeded crash report rate limit."""
+    now = datetime.now(timezone.utc)
+    window_start = now - timedelta(hours=window_hours)
+
+    # Clean up old entries for this user
+    if user_key in _crash_report_rate_limiter:
+        _crash_report_rate_limiter[user_key] = [
+            ts for ts in _crash_report_rate_limiter[user_key] if ts > window_start
+        ]
+    else:
+        _crash_report_rate_limiter[user_key] = []
+
+    # Check if limit exceeded
+    if len(_crash_report_rate_limiter[user_key]) >= max_reports:
+        raise HTTPException(
+            status_code=429,
+            detail=f"Rate limit exceeded. Maximum {max_reports} crash reports per {window_hours} hour(s).",
+        )
+
+    # Add current timestamp
+    _crash_report_rate_limiter[user_key].append(now)
+
+
+@app.post("/api/v1/crash-reports", response_model=schemas.CrashReportOut)
+def submit_crash_report(
+    payload: schemas.CrashReportCreateIn,
+    request: Request,
+    db: Session = Depends(get_db),
+) -> schemas.CrashReportOut:
+    """
+    Submit a crash/error report from mobile or web client.
+    Public endpoint with rate limiting (10 reports per hour per user/IP).
+    """
+    # Determine rate limit key (user_id if provided, otherwise IP address)
+    if payload.user_id:
+        rate_limit_key = f"user_{payload.user_id}"
+    else:
+        # Get client IP from request
+        client_ip = request.client.host if request.client else "unknown"
+        rate_limit_key = f"ip_{client_ip}"
+
+    # Check rate limit
+    _check_crash_report_rate_limit(rate_limit_key)
+
+    # Create crash report
+    crash_report = CrashReport(
+        user_id=payload.user_id,
+        session_id=payload.session_id,
+        error_type=payload.error_type,
+        error_message=payload.error_message,
+        stack_trace=payload.stack_trace,
+        platform=payload.platform,
+        app_version=payload.app_version,
+        device_model=payload.device_model,
+        os_version=payload.os_version,
+        additional_data=payload.additional_data,
+    )
+
+    db.add(crash_report)
+    db.commit()
+    db.refresh(crash_report)
+
+    return schemas.CrashReportOut.model_validate(crash_report)
+
+
+@app.get("/api/v1/admin/crash-reports", response_model=schemas.CrashReportListOut)
+def list_crash_reports(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(50, ge=1, le=100),
+    platform: Optional[str] = Query(None, pattern="^(ios|android|web)$"),
+    error_type: Optional[str] = Query(None, pattern="^(crash|error|exception|anr)$"),
+    is_resolved: Optional[bool] = None,
+    user_id: Optional[UUID] = None,
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> schemas.CrashReportListOut:
+    """
+    Get paginated list of crash reports with filters.
+    Admin only endpoint.
+    """
+    # Build query
+    query = select(CrashReport)
+
+    # Apply filters
+    if platform:
+        query = query.where(CrashReport.platform == platform)
+    if error_type:
+        query = query.where(CrashReport.error_type == error_type)
+    if is_resolved is not None:
+        query = query.where(CrashReport.is_resolved == is_resolved)
+    if user_id:
+        query = query.where(CrashReport.user_id == user_id)
+
+    # Get total count
+    total = db.execute(select(func.count()).select_from(query.subquery())).scalar() or 0
+
+    # Apply pagination and ordering
+    query = query.order_by(CrashReport.created_at.desc())
+    query = query.offset((page - 1) * page_size).limit(page_size)
+
+    # Execute query with eager loading
+    results = (
+        db.execute(
+            query.options(
+                selectinload(CrashReport.user), selectinload(CrashReport.resolved_by)
+            )
+        )
+        .scalars()
+        .all()
+    )
+
+    # Build detailed output
+    detailed_reports = []
+    for report in results:
+        detailed_reports.append(
+            schemas.CrashReportDetailOut(
+                id=report.id,
+                user_id=report.user_id,
+                user_email=report.user.email if report.user else None,
+                user_display_name=report.user.display_name if report.user else None,
+                session_id=report.session_id,
+                error_type=report.error_type,
+                error_message=report.error_message,
+                stack_trace=report.stack_trace,
+                platform=report.platform,
+                app_version=report.app_version,
+                device_model=report.device_model,
+                os_version=report.os_version,
+                additional_data=report.additional_data,
+                created_at=report.created_at,
+                is_resolved=report.is_resolved,
+                resolved_by_id=report.resolved_by_id,
+                resolved_by_email=report.resolved_by.email
+                if report.resolved_by
+                else None,
+                resolved_by_display_name=report.resolved_by.display_name
+                if report.resolved_by
+                else None,
+                resolved_at=report.resolved_at,
+            )
+        )
+
+    return schemas.CrashReportListOut(
+        reports=detailed_reports,
+        total=total,
+        page=page,
+        page_size=page_size,
+    )
+
+
+@app.get(
+    "/api/v1/admin/crash-reports/{report_id}",
+    response_model=schemas.CrashReportDetailOut,
+)
+def get_crash_report(
+    report_id: UUID,
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> schemas.CrashReportDetailOut:
+    """
+    Get detailed information about a specific crash report.
+    Admin only endpoint.
+    """
+    report = db.execute(
+        select(CrashReport)
+        .where(CrashReport.id == report_id)
+        .options(selectinload(CrashReport.user), selectinload(CrashReport.resolved_by))
+    ).scalar_one_or_none()
+
+    if not report:
+        raise HTTPException(status_code=404, detail="Crash report not found")
+
+    return schemas.CrashReportDetailOut(
+        id=report.id,
+        user_id=report.user_id,
+        user_email=report.user.email if report.user else None,
+        user_display_name=report.user.display_name if report.user else None,
+        session_id=report.session_id,
+        error_type=report.error_type,
+        error_message=report.error_message,
+        stack_trace=report.stack_trace,
+        platform=report.platform,
+        app_version=report.app_version,
+        device_model=report.device_model,
+        os_version=report.os_version,
+        additional_data=report.additional_data,
+        created_at=report.created_at,
+        is_resolved=report.is_resolved,
+        resolved_by_id=report.resolved_by_id,
+        resolved_by_email=report.resolved_by.email if report.resolved_by else None,
+        resolved_by_display_name=report.resolved_by.display_name
+        if report.resolved_by
+        else None,
+        resolved_at=report.resolved_at,
+    )
+
+
+@app.post(
+    "/api/v1/admin/crash-reports/{report_id}/resolve",
+    response_model=schemas.CrashReportDetailOut,
+)
+def resolve_crash_report(
+    report_id: UUID,
+    payload: schemas.CrashReportResolveIn,
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> schemas.CrashReportDetailOut:
+    """
+    Mark a crash report as resolved.
+    Admin only endpoint.
+    """
+    report = db.execute(
+        select(CrashReport)
+        .where(CrashReport.id == report_id)
+        .options(selectinload(CrashReport.user), selectinload(CrashReport.resolved_by))
+    ).scalar_one_or_none()
+
+    if not report:
+        raise HTTPException(status_code=404, detail="Crash report not found")
+
+    if report.is_resolved:
+        raise HTTPException(status_code=400, detail="Crash report is already resolved")
+
+    # Mark as resolved
+    report.is_resolved = True
+    report.resolved_by_id = current_user.id
+    report.resolved_at = datetime.now(timezone.utc)
+
+    db.commit()
+    db.refresh(report)
+
+    return schemas.CrashReportDetailOut(
+        id=report.id,
+        user_id=report.user_id,
+        user_email=report.user.email if report.user else None,
+        user_display_name=report.user.display_name if report.user else None,
+        session_id=report.session_id,
+        error_type=report.error_type,
+        error_message=report.error_message,
+        stack_trace=report.stack_trace,
+        platform=report.platform,
+        app_version=report.app_version,
+        device_model=report.device_model,
+        os_version=report.os_version,
+        additional_data=report.additional_data,
+        created_at=report.created_at,
+        is_resolved=report.is_resolved,
+        resolved_by_id=report.resolved_by_id,
+        resolved_by_email=report.resolved_by.email if report.resolved_by else None,
+        resolved_by_display_name=report.resolved_by.display_name
+        if report.resolved_by
+        else None,
+        resolved_at=report.resolved_at,
+    )
+
+
+@app.get(
+    "/api/v1/admin/crash-reports/stats", response_model=schemas.CrashReportStatsOut
+)
+def get_crash_report_stats(
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> schemas.CrashReportStatsOut:
+    """
+    Get crash report statistics.
+    Admin only endpoint.
+    """
+    now = datetime.now(timezone.utc)
+    last_24h = now - timedelta(hours=24)
+    last_7d = now - timedelta(days=7)
+    last_30d = now - timedelta(days=30)
+
+    # Total reports
+    total_reports = db.execute(select(func.count(CrashReport.id))).scalar() or 0
+
+    # Unresolved reports
+    unresolved_reports = (
+        db.execute(
+            select(func.count(CrashReport.id)).where(CrashReport.is_resolved == False)
+        ).scalar()
+        or 0
+    )
+
+    # Resolved reports
+    resolved_reports = (
+        db.execute(
+            select(func.count(CrashReport.id)).where(CrashReport.is_resolved == True)
+        ).scalar()
+        or 0
+    )
+
+    # Reports by platform
+    platform_stats = db.execute(
+        select(CrashReport.platform, func.count(CrashReport.id)).group_by(
+            CrashReport.platform
+        )
+    ).all()
+    reports_by_platform = {platform: count for platform, count in platform_stats}
+
+    # Reports by error type
+    error_type_stats = db.execute(
+        select(CrashReport.error_type, func.count(CrashReport.id)).group_by(
+            CrashReport.error_type
+        )
+    ).all()
+    reports_by_error_type = {
+        error_type: count for error_type, count in error_type_stats
+    }
+
+    # Reports in last 24 hours
+    reports_last_24h = (
+        db.execute(
+            select(func.count(CrashReport.id)).where(CrashReport.created_at >= last_24h)
+        ).scalar()
+        or 0
+    )
+
+    # Reports in last 7 days
+    reports_last_7d = (
+        db.execute(
+            select(func.count(CrashReport.id)).where(CrashReport.created_at >= last_7d)
+        ).scalar()
+        or 0
+    )
+
+    # Reports in last 30 days
+    reports_last_30d = (
+        db.execute(
+            select(func.count(CrashReport.id)).where(CrashReport.created_at >= last_30d)
+        ).scalar()
+        or 0
+    )
+
+    # Top errors (most frequent error messages)
+    top_errors_raw = db.execute(
+        select(
+            CrashReport.error_message,
+            func.count(CrashReport.id).label("count"),
+            func.max(CrashReport.created_at).label("latest_occurrence"),
+        )
+        .where(CrashReport.created_at >= last_30d)
+        .group_by(CrashReport.error_message)
+        .order_by(func.count(CrashReport.id).desc())
+        .limit(10)
+    ).all()
+
+    top_errors = [
+        {
+            "error_message": error_msg,
+            "count": count,
+            "latest_occurrence": latest.isoformat() if latest else None,
+        }
+        for error_msg, count, latest in top_errors_raw
+    ]
+
+    return schemas.CrashReportStatsOut(
+        total_reports=total_reports,
+        unresolved_reports=unresolved_reports,
+        resolved_reports=resolved_reports,
+        reports_by_platform=reports_by_platform,
+        reports_by_error_type=reports_by_error_type,
+        reports_last_24h=reports_last_24h,
+        reports_last_7d=reports_last_7d,
+        reports_last_30d=reports_last_30d,
+        top_errors=top_errors,
+    )
 
 
 class MotifOut(BaseModel):
@@ -1346,11 +2896,18 @@ def get_motifs_by_urn(
     if urn is None:
         raise HTTPException(status_code=404, detail="Urn not found")
 
+    # Get allowed content ratings for the user
+    allowed_ratings = get_allowed_content_ratings(current_user)
+
     motifs = (
         db.execute(
             select(Motif)
             .options(selectinload(Motif.lesson))
-            .where(Motif.urn_id == urn.id, Motif.is_active.is_(True))
+            .where(
+                Motif.urn_id == urn.id,
+                Motif.is_active.is_(True),
+                Motif.content_rating.in_(allowed_ratings),
+            )
             .order_by(Motif.display_order.nulls_last(), Motif.name)
         )
         .scalars()
@@ -1604,6 +3161,17 @@ class LessonContentOut(BaseModel):
     video_url: Optional[str] = None
 
 
+class MotifQuizQuestionOut(BaseModel):
+    id: UUID
+    question_type: str
+    question_text: str
+    options: Optional[list[Any]] = None
+    target_mesh_name: Optional[str] = None
+    difficulty: int = 1
+    explanation: Optional[str] = None
+    image_url: Optional[str] = None
+
+
 class MotifDetailOut(BaseModel):
     id: UUID
     urn: UrnOut
@@ -1614,10 +3182,12 @@ class MotifDetailOut(BaseModel):
     rarity: str
     thumbnail_url: Optional[str] = None
     silhouette_url: Optional[str] = None
+    image_url: Optional[str] = None
     is_demo: bool
     display_order: Optional[int] = None
     lesson: Optional[LessonContentOut] = None
     quiz_question_count: int = 0
+    quiz_questions: list[MotifQuizQuestionOut] = Field(default_factory=list)
 
 
 @app.get("/api/v1/motifs/{motif_id}", response_model=MotifDetailOut)
@@ -1638,12 +3208,34 @@ def get_motif_detail(
     if motif is None:
         raise HTTPException(status_code=404, detail="Motif not found")
 
+    # Check content rating access
+    allowed_ratings = get_allowed_content_ratings(current_user)
+    if motif.content_rating not in allowed_ratings:
+        raise HTTPException(
+            status_code=403,
+            detail="You do not have access to this content. Please verify your age.",
+        )
+
     can_view_drafts = _can_view_drafts(current_user)
     lesson_out = (
         LessonContentOut.model_validate(motif.lesson)
         if motif.lesson and (motif.lesson.is_published or can_view_drafts)
         else None
     )
+    quiz_questions = [
+        MotifQuizQuestionOut(
+            id=q.id,
+            question_type=q.question_type.value,
+            question_text=q.question_text,
+            options=q.options if isinstance(q.options, list) else None,
+            target_mesh_name=q.target_mesh_name,
+            difficulty=max(1, int(q.difficulty or 1)),
+            explanation=(q.explanation or "").strip() or None,
+            image_url=None,
+        )
+        for q in motif.quiz_questions
+        if q.is_active and (q.is_published or can_view_drafts)
+    ]
 
     return MotifDetailOut(
         id=motif.id,
@@ -1655,16 +3247,12 @@ def get_motif_detail(
         rarity=motif.rarity.value,
         thumbnail_url=motif.thumbnail_url,
         silhouette_url=motif.silhouette_url,
+        image_url=motif.thumbnail_url,
         is_demo=motif.is_demo,
         display_order=motif.display_order,
         lesson=lesson_out,
-        quiz_question_count=len(
-            [
-                q
-                for q in motif.quiz_questions
-                if q.is_active and (q.is_published or can_view_drafts)
-            ]
-        ),
+        quiz_question_count=len(quiz_questions),
+        quiz_questions=quiz_questions,
     )
 
 
@@ -1751,8 +3339,29 @@ def complete_lesson(
         badge_bonus += _award_badge(
             db, user=current_user, badge_slug=BADGE_FIRST_DISCOVERY
         )
+
+    # Track first lesson completion milestone
+    learned_before = db.execute(
+        select(func.count(UserProgress.id)).where(
+            UserProgress.user_id == current_user.id,
+            UserProgress.status.in_([UnlockStatus.learned, UnlockStatus.mastered]),
+        )
+    ).scalar_one()
+    if learned_before == 0 or (
+        learned_before == 1 and progress.status == UnlockStatus.learned
+    ):
+        from backend.services.milestones import check_and_create_first_lesson_completed
+
+        check_and_create_first_lesson_completed(db, current_user.id, motif.id)
+
     if current_user.current_streak >= 7:
         badge_bonus += _award_badge(db, user=current_user, badge_slug=BADGE_STREAK_7)
+        # Track first 7-day streak milestone
+        from backend.services.milestones import check_and_create_first_streak_7
+
+        check_and_create_first_streak_7(
+            db, current_user.id, current_user.current_streak
+        )
 
     current_user.last_active_at = now
 
@@ -1821,6 +3430,440 @@ def complete_lesson(
         learned_at=progress.learned_at,
         xp_awarded=xp_awarded + badge_bonus,
         total_xp=current_user.total_xp,
+    )
+
+
+# =============================================================================
+# Offline Lesson Caching Endpoints
+# =============================================================================
+
+
+@app.get("/api/v1/lessons/cache-manifest", response_model=schemas.CacheManifestOut)
+def get_cache_manifest(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.CacheManifestOut:
+    """Get a manifest of lessons available for offline caching.
+
+    Returns lessons with metadata about files to cache, estimated sizes,
+    and caching priority based on user progress.
+    """
+    # Get all published lessons with their motifs
+    lessons = (
+        db.execute(
+            select(LessonContent)
+            .options(selectinload(LessonContent.motif))
+            .where(LessonContent.is_published.is_(True))
+            .order_by(LessonContent.updated_at.desc())
+        )
+        .scalars()
+        .all()
+    )
+
+    # Get user's progress to determine priority
+    user_progress = {
+        p.motif_id: p
+        for p in db.execute(
+            select(UserProgress).where(UserProgress.user_id == current_user.id)
+        )
+        .scalars()
+        .all()
+    }
+
+    manifest_items = []
+    total_size = 0
+
+    for lesson in lessons:
+        if not lesson.motif or not lesson.motif.is_active:
+            continue
+
+        # Determine priority based on user progress
+        progress = user_progress.get(lesson.motif_id)
+        if progress and progress.status in (
+            UnlockStatus.discovered,
+            UnlockStatus.learned,
+        ):
+            priority = 1  # High priority - discovered or learned
+        elif progress and progress.status == UnlockStatus.mastered:
+            priority = 3  # Low priority - already mastered
+        else:
+            priority = 2  # Medium priority - not yet discovered
+
+        # Build list of files to cache
+        file_urls = []
+        lesson_size = 0
+
+        # Lesson content (estimate ~5KB per lesson)
+        lesson_size += 5000
+
+        # Audio narration
+        if lesson.audio_narration_url:
+            file_urls.append(
+                schemas.CacheFileInfo(
+                    url=lesson.audio_narration_url,
+                    type="audio",
+                    size_bytes=500000,  # Estimate 500KB for audio
+                )
+            )
+            lesson_size += 500000
+
+        # Video
+        if lesson.video_url:
+            file_urls.append(
+                schemas.CacheFileInfo(
+                    url=lesson.video_url,
+                    type="video",
+                    size_bytes=5000000,  # Estimate 5MB for video
+                )
+            )
+            lesson_size += 5000000
+
+        # Additional images
+        if lesson.additional_images and isinstance(lesson.additional_images, list):
+            for img_url in lesson.additional_images:
+                if isinstance(img_url, str):
+                    file_urls.append(
+                        schemas.CacheFileInfo(
+                            url=img_url,
+                            type="image",
+                            size_bytes=100000,  # Estimate 100KB per image
+                        )
+                    )
+                    lesson_size += 100000
+
+        # Motif images
+        if lesson.motif.thumbnail_url:
+            file_urls.append(
+                schemas.CacheFileInfo(
+                    url=lesson.motif.thumbnail_url,
+                    type="image",
+                    size_bytes=50000,  # Estimate 50KB for thumbnail
+                )
+            )
+            lesson_size += 50000
+
+        if lesson.motif.silhouette_url:
+            file_urls.append(
+                schemas.CacheFileInfo(
+                    url=lesson.motif.silhouette_url,
+                    type="image",
+                    size_bytes=30000,  # Estimate 30KB for silhouette
+                )
+            )
+            lesson_size += 30000
+
+        manifest_items.append(
+            schemas.CacheManifestItemOut(
+                lesson_id=lesson.id,
+                motif_id=lesson.motif_id,
+                motif_name=lesson.motif.name,
+                title=lesson.motif.name,
+                version=lesson.version,
+                file_urls=file_urls,
+                total_size_bytes=lesson_size,
+                priority=priority,
+            )
+        )
+        total_size += lesson_size
+
+    # Sort by priority (1=high, 2=medium, 3=low)
+    manifest_items.sort(key=lambda x: (x.priority, x.motif_name))
+
+    return schemas.CacheManifestOut(
+        lessons=manifest_items,
+        total_size_bytes=total_size,
+        recommended_cache_size_bytes=50 * 1024 * 1024,  # 50MB recommendation
+    )
+
+
+@app.post("/api/v1/lessons/{lesson_id}/cache", response_model=schemas.LessonCacheOut)
+def mark_lesson_cached(
+    lesson_id: UUID,
+    payload: schemas.LessonCacheIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.LessonCacheOut:
+    """Mark a lesson as cached by the user."""
+    # Verify lesson exists
+    lesson = db.get(LessonContent, lesson_id)
+    if not lesson:
+        raise HTTPException(status_code=404, detail="Lesson not found")
+
+    # Check if already cached
+    existing_cache = db.execute(
+        select(LessonCache).where(
+            LessonCache.user_id == current_user.id,
+            LessonCache.lesson_id == lesson_id,
+        )
+    ).scalar_one_or_none()
+
+    now = datetime.now(timezone.utc)
+    expires = now + timedelta(days=30)  # Cache valid for 30 days
+
+    if existing_cache:
+        # Update existing cache entry
+        existing_cache.cached_at = now
+        existing_cache.cache_version = payload.cache_version
+        existing_cache.file_size_bytes = payload.file_size_bytes
+        existing_cache.is_valid = True
+        existing_cache.expires_at = expires
+        db.commit()
+        db.refresh(existing_cache)
+        return schemas.LessonCacheOut.model_validate(existing_cache)
+
+    # Create new cache entry
+    cache_entry = LessonCache(
+        id=uuid_module.uuid4(),
+        user_id=current_user.id,
+        lesson_id=lesson_id,
+        cached_at=now,
+        cache_version=payload.cache_version,
+        file_size_bytes=payload.file_size_bytes,
+        is_valid=True,
+        expires_at=expires,
+    )
+    db.add(cache_entry)
+    db.commit()
+    db.refresh(cache_entry)
+
+    return schemas.LessonCacheOut.model_validate(cache_entry)
+
+
+@app.delete("/api/v1/lessons/{lesson_id}/cache", status_code=status.HTTP_204_NO_CONTENT)
+def remove_cached_lesson(
+    lesson_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> None:
+    """Remove a lesson from the user's cache."""
+    result = db.execute(
+        delete(LessonCache).where(
+            LessonCache.user_id == current_user.id,
+            LessonCache.lesson_id == lesson_id,
+        )
+    )
+    db.commit()
+
+    if result.rowcount == 0:
+        raise HTTPException(status_code=404, detail="Cached lesson not found")
+
+
+@app.get("/api/v1/lessons/cached", response_model=list[schemas.LessonCacheOut])
+def get_cached_lessons(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> list[schemas.LessonCacheOut]:
+    """Get all lessons cached by the user."""
+    cached_lessons = (
+        db.execute(
+            select(LessonCache)
+            .where(LessonCache.user_id == current_user.id)
+            .order_by(LessonCache.cached_at.desc())
+        )
+        .scalars()
+        .all()
+    )
+
+    return [schemas.LessonCacheOut.model_validate(cache) for cache in cached_lessons]
+
+
+# =============================================================================
+# Lesson Prerequisites and Sequence Endpoints
+# =============================================================================
+
+
+@app.get("/api/v1/lessons/next", response_model=schemas.NextLessonOut)
+def get_next_lesson(
+    urn_id: Optional[UUID] = Query(default=None),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.NextLessonOut:
+    """
+    Get the next recommended lesson for the user.
+
+    This endpoint determines the best next lesson based on:
+    - User's current progress
+    - Prerequisites and unlock status
+    - Difficulty progression
+    - Urn context (if provided)
+
+    Args:
+        urn_id: Optional urn to filter lessons from
+        current_user: Authenticated user
+        db: Database session
+
+    Returns:
+        Next lesson recommendation or null if no suitable lesson found
+    """
+    from .services import lesson_sequence
+
+    next_lesson = lesson_sequence.get_next_lesson(db, current_user, urn_id)
+
+    if not next_lesson:
+        # Return empty response if no next lesson
+        return schemas.NextLessonOut(
+            lesson_id=None,
+            motif_id=None,
+            motif_name=None,
+            motif_slug=None,
+            urn_id=urn_id,
+            urn_name=None,
+            difficulty_level=None,
+            estimated_time_minutes=None,
+            reason="no_lessons_available",
+            has_prerequisites=False,
+            progress_status=None,
+        )
+
+    return schemas.NextLessonOut(**next_lesson)
+
+
+@app.get(
+    "/api/v1/lessons/{lesson_id}/prerequisites",
+    response_model=schemas.LessonPrerequisitesOut,
+)
+def get_lesson_prerequisites(
+    lesson_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.LessonPrerequisitesOut:
+    """
+    Get all prerequisites for a specific lesson.
+
+    Returns the list of prerequisite lessons with their completion status
+    and whether all prerequisites have been met.
+
+    Args:
+        lesson_id: ID of the lesson
+        current_user: Authenticated user
+        db: Database session
+
+    Returns:
+        Prerequisite information including completion status
+    """
+    from .services import lesson_sequence
+
+    # Verify lesson exists
+    lesson = db.get(LessonContent, lesson_id)
+    if not lesson:
+        raise HTTPException(status_code=404, detail="Lesson not found")
+
+    prereq_info = lesson_sequence.get_lesson_prerequisites(db, current_user, lesson_id)
+
+    return schemas.LessonPrerequisitesOut(
+        lesson_id=prereq_info["lesson_id"],
+        prerequisites=[
+            schemas.PrerequisiteLessonInfo(**p) for p in prereq_info["prerequisites"]
+        ],
+        all_prerequisites_met=prereq_info["all_prerequisites_met"],
+    )
+
+
+@app.get(
+    "/api/v1/lessons/{lesson_id}/is-unlocked",
+    response_model=schemas.LessonUnlockStatusOut,
+)
+def check_lesson_is_unlocked(
+    lesson_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.LessonUnlockStatusOut:
+    """
+    Check if a lesson is unlocked for the user.
+
+    A lesson is unlocked if all strict prerequisites have been completed.
+    Recommended prerequisites don't block access but are shown for guidance.
+
+    Args:
+        lesson_id: ID of the lesson
+        current_user: Authenticated user
+        db: Database session
+
+    Returns:
+        Unlock status with missing prerequisites
+    """
+    from .services import lesson_sequence
+
+    # Verify lesson exists
+    lesson = db.get(LessonContent, lesson_id)
+    if not lesson:
+        raise HTTPException(status_code=404, detail="Lesson not found")
+
+    is_unlocked, missing_strict, missing_recommended = (
+        lesson_sequence.check_lesson_unlocked(db, current_user, lesson_id)
+    )
+
+    def format_prereq_lesson(
+        prereq_lesson: LessonContent,
+    ) -> schemas.PrerequisiteLessonInfo:
+        return schemas.PrerequisiteLessonInfo(
+            id=prereq_lesson.id,
+            motif_id=prereq_lesson.motif_id,
+            motif_name=prereq_lesson.motif.name,
+            motif_slug=prereq_lesson.motif.slug,
+            difficulty_level=prereq_lesson.difficulty_level,
+            estimated_time_minutes=prereq_lesson.estimated_time_minutes,
+            is_strict=True,  # These are from strict list
+            is_completed=False,  # By definition, these are missing
+        )
+
+    def format_recommended_prereq(
+        prereq_lesson: LessonContent,
+    ) -> schemas.PrerequisiteLessonInfo:
+        return schemas.PrerequisiteLessonInfo(
+            id=prereq_lesson.id,
+            motif_id=prereq_lesson.motif_id,
+            motif_name=prereq_lesson.motif.name,
+            motif_slug=prereq_lesson.motif.slug,
+            difficulty_level=prereq_lesson.difficulty_level,
+            estimated_time_minutes=prereq_lesson.estimated_time_minutes,
+            is_strict=False,  # These are recommended only
+            is_completed=False,
+        )
+
+    return schemas.LessonUnlockStatusOut(
+        lesson_id=lesson_id,
+        is_unlocked=is_unlocked,
+        missing_prerequisites=[format_prereq_lesson(p) for p in missing_strict],
+        recommended_prerequisites=[
+            format_recommended_prereq(p) for p in missing_recommended
+        ],
+    )
+
+
+@app.get("/api/v1/lessons/sequence", response_model=schemas.LessonSequenceOut)
+def get_lesson_sequence(
+    urn_id: Optional[UUID] = Query(default=None),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.LessonSequenceOut:
+    """
+    Get the full learning sequence for the user.
+
+    Returns an ordered list of all lessons (optionally filtered by urn)
+    with their unlock status, completion status, and position in the sequence.
+
+    Args:
+        urn_id: Optional urn to filter lessons from
+        current_user: Authenticated user
+        db: Database session
+
+    Returns:
+        Complete learning sequence with progress information
+    """
+    from .services import lesson_sequence
+
+    sequence_data = lesson_sequence.get_lesson_sequence(db, current_user, urn_id)
+
+    return schemas.LessonSequenceOut(
+        urn_id=sequence_data["urn_id"],
+        urn_name=sequence_data["urn_name"],
+        total_lessons=sequence_data["total_lessons"],
+        completed_lessons=sequence_data["completed_lessons"],
+        current_position=sequence_data["current_position"],
+        sequence=[
+            schemas.LessonSequenceItem(**item) for item in sequence_data["sequence"]
+        ],
     )
 
 
@@ -1923,8 +3966,16 @@ def unlock_progress(
     _update_streak(user, now)
     if was_locked and int(discovered_before or 0) == 0:
         badge_bonus += _award_badge(db, user=user, badge_slug=BADGE_FIRST_DISCOVERY)
+        # Track first motif discovery milestone
+        from backend.services.milestones import check_and_create_first_motif_discovered
+
+        check_and_create_first_motif_discovered(db, user.id, motif.id)
     if user.current_streak >= 7:
         badge_bonus += _award_badge(db, user=user, badge_slug=BADGE_STREAK_7)
+        # Track first 7-day streak milestone
+        from backend.services.milestones import check_and_create_first_streak_7
+
+        check_and_create_first_streak_7(db, user.id, user.current_streak)
 
     # Check collector badges
     discovered, urns = _count_user_discoveries(db, user.id)
@@ -2109,6 +4160,77 @@ def change_password(
     current_user.password_hash = hash_password(request.new_password)
     db.commit()
     return {"message": "Password changed successfully"}
+
+
+@app.post("/api/v1/users/me/age-verify", response_model=schemas.AgeVerificationOut)
+def verify_user_age(
+    request: schemas.AgeVerificationIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.AgeVerificationOut:
+    """
+    Verify user's age by submitting birth year.
+
+    This enables age-appropriate content filtering.
+    """
+    # Validate birth year is reasonable
+    current_year = datetime.now(timezone.utc).year
+    if request.birth_year < 1900 or request.birth_year > current_year:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Birth year must be between 1900 and {current_year}",
+        )
+
+    # Update user's age verification info
+    current_user.birth_year = request.birth_year
+    current_user.age_verified = True
+    current_user.age_verified_at = datetime.now(timezone.utc)
+
+    db.commit()
+    db.refresh(current_user)
+
+    # Calculate current age
+    age = get_user_age(current_user)
+    allowed_ratings = get_allowed_content_ratings(current_user)
+
+    return schemas.AgeVerificationOut(
+        age_verified=current_user.age_verified,
+        age_verified_at=current_user.age_verified_at,
+        birth_year=current_user.birth_year,
+        current_age=age,
+        allowed_ratings=[r.value for r in allowed_ratings],
+    )
+
+
+@app.get("/api/v1/content/ratings", response_model=schemas.ContentRatingsOut)
+def get_content_ratings() -> schemas.ContentRatingsOut:
+    """
+    Get content rating definitions.
+
+    Returns information about all available content ratings and their age requirements.
+    """
+    return schemas.ContentRatingsOut(
+        ratings=[
+            schemas.ContentRatingInfo(
+                rating="everyone",
+                label="Everyone",
+                description="Suitable for all ages",
+                min_age=None,
+            ),
+            schemas.ContentRatingInfo(
+                rating="teen",
+                label="Teen",
+                description="Suitable for ages 13 and up",
+                min_age=13,
+            ),
+            schemas.ContentRatingInfo(
+                rating="mature",
+                label="Mature",
+                description="Suitable for ages 18 and up",
+                min_age=18,
+            ),
+        ]
+    )
 
 
 @app.get("/api/v1/users/me/collection", response_model=UserCollectionResponse)
@@ -2316,6 +4438,9 @@ def list_quests(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> list[QuestListItemOut]:
+    # Get allowed content ratings for the user
+    allowed_ratings = get_allowed_content_ratings(current_user)
+
     quests = (
         db.execute(
             select(Quest)
@@ -2324,7 +4449,7 @@ def list_quests(
                 selectinload(Quest.rewards),
                 selectinload(Quest.prerequisite),
             )
-            .where(Quest.is_active.is_(True))
+            .where(Quest.is_active.is_(True), Quest.content_rating.in_(allowed_ratings))
             .order_by(Quest.display_order.asc(), Quest.created_at.asc())
         )
         .scalars()
@@ -2419,6 +4544,14 @@ def get_quest_detail(
     ).scalar_one_or_none()
     if quest is None:
         raise HTTPException(status_code=404, detail="Quest not found")
+
+    # Check content rating access
+    allowed_ratings = get_allowed_content_ratings(current_user)
+    if quest.content_rating not in allowed_ratings:
+        raise HTTPException(
+            status_code=403,
+            detail="You do not have access to this content. Please verify your age.",
+        )
 
     progress_entry = db.execute(
         select(QuestProgress).where(
@@ -2678,7 +4811,8 @@ class AssignmentCreateRequest(BaseModel):
     due_at: Optional[datetime] = None
 
 
-class ClassMemberOut(BaseModel):
+# Old schemas kept for backward compatibility
+class ClassMemberOut_Legacy(BaseModel):
     user_id: UUID
     display_name: str
     email: str
@@ -2696,7 +4830,7 @@ class AssignmentSummaryOut(BaseModel):
     completion_percent: float
 
 
-class ClassSummaryOut(BaseModel):
+class ClassSummaryOut_Legacy(BaseModel):
     id: UUID
     name: str
     description: Optional[str] = None
@@ -2706,13 +4840,13 @@ class ClassSummaryOut(BaseModel):
     assignment_count: int
 
 
-class ClassDetailOut(BaseModel):
+class ClassDetailOut_Legacy(BaseModel):
     id: UUID
     name: str
     description: Optional[str] = None
     teacher_id: UUID
     created_at: datetime
-    members: list[ClassMemberOut]
+    members: list[ClassMemberOut_Legacy]
     assignments: list[AssignmentSummaryOut]
 
 
@@ -2727,20 +4861,35 @@ def _ensure_class_access(current_user: User, classroom: Classroom) -> None:
     raise HTTPException(status_code=403, detail="Not authorized")
 
 
-@app.get("/api/v1/classes", response_model=list[ClassSummaryOut])
-def list_classes(
+# =============================================================================
+# Classroom Management Endpoints (Enhanced for P1-TEACH-01)
+# =============================================================================
+
+
+@app.get("/api/v1/classrooms", response_model=list[schemas.ClassroomSummaryOut])
+def list_classrooms(
+    include_archived: bool = Query(False, description="Include archived classrooms"),
     current_user: User = Depends(get_staff_user),
     db: Session = Depends(get_db),
-) -> list[ClassSummaryOut]:
+) -> list[schemas.ClassroomSummaryOut]:
+    """
+    List all classrooms for the current teacher.
+    Admins can see all classrooms.
+    """
     query = select(Classroom)
+
     if current_user.role == UserRole.teacher:
         query = query.where(Classroom.teacher_id == current_user.id)
 
-    classes = db.execute(query.order_by(Classroom.created_at.desc())).scalars().all()
-    if not classes:
+    if not include_archived:
+        query = query.where(Classroom.is_archived == False)
+
+    classrooms = db.execute(query.order_by(Classroom.created_at.desc())).scalars().all()
+
+    if not classrooms:
         return []
 
-    class_ids = [c.id for c in classes]
+    class_ids = [c.id for c in classrooms]
     member_counts = dict(
         db.execute(
             select(ClassMember.class_id, func.count(ClassMember.id))
@@ -2757,55 +4906,959 @@ def list_classes(
     )
 
     return [
-        ClassSummaryOut(
+        schemas.ClassroomSummaryOut(
             id=classroom.id,
             name=classroom.name,
             description=classroom.description,
             teacher_id=classroom.teacher_id,
-            created_at=classroom.created_at,
+            class_code=classroom.class_code,
+            max_students=classroom.max_students,
+            is_archived=classroom.is_archived,
             member_count=int(member_counts.get(classroom.id, 0)),
             assignment_count=int(assignment_counts.get(classroom.id, 0)),
+            created_at=classroom.created_at,
+            updated_at=classroom.updated_at,
         )
-        for classroom in classes
+        for classroom in classrooms
     ]
 
 
-@app.post("/api/v1/classes", response_model=ClassSummaryOut, status_code=201)
-def create_class(
-    payload: ClassCreateRequest,
+@app.post(
+    "/api/v1/classrooms", response_model=schemas.ClassroomSummaryOut, status_code=201
+)
+def create_classroom(
+    payload: schemas.ClassroomCreateIn,
     current_user: User = Depends(get_staff_user),
     db: Session = Depends(get_db),
-) -> ClassSummaryOut:
-    teacher_id = current_user.id
-    if current_user.role in ADMIN_ROLES and current_user.role != UserRole.teacher:
-        teacher_id = current_user.id
+) -> schemas.ClassroomSummaryOut:
+    """
+    Create a new classroom.
+    Generates a unique class code for students to join.
+    """
+    from .services import classroom as classroom_service
 
-    classroom = Classroom(
+    classroom = classroom_service.create_classroom(
+        db=db,
+        teacher=current_user,
         name=payload.name,
         description=payload.description,
-        teacher_id=teacher_id,
+        max_students=payload.max_students,
+        settings=payload.settings,
     )
-    db.add(classroom)
-    db.commit()
-    db.refresh(classroom)
 
-    return ClassSummaryOut(
+    return schemas.ClassroomSummaryOut(
         id=classroom.id,
         name=classroom.name,
         description=classroom.description,
         teacher_id=classroom.teacher_id,
-        created_at=classroom.created_at,
+        class_code=classroom.class_code,
+        max_students=classroom.max_students,
+        is_archived=classroom.is_archived,
         member_count=0,
         assignment_count=0,
+        created_at=classroom.created_at,
+        updated_at=classroom.updated_at,
     )
 
 
-@app.get("/api/v1/classes/{class_id}", response_model=ClassDetailOut)
+@app.get("/api/v1/classrooms/{classroom_id}", response_model=schemas.ClassroomDetailOut)
+def get_classroom(
+    classroom_id: UUID,
+    current_user: User = Depends(get_staff_user),
+    db: Session = Depends(get_db),
+) -> schemas.ClassroomDetailOut:
+    """
+    Get detailed classroom information including members and assignments.
+    """
+    classroom = db.get(Classroom, classroom_id)
+    if classroom is None:
+        raise HTTPException(status_code=404, detail="Classroom not found")
+
+    _ensure_class_access(current_user, classroom)
+
+    # Get teacher info
+    teacher = db.get(User, classroom.teacher_id)
+    teacher_name = teacher.display_name if teacher else "Unknown"
+
+    # Get members with user details
+    members = (
+        db.execute(
+            select(ClassMember)
+            .options(selectinload(ClassMember.user))
+            .where(ClassMember.class_id == classroom.id)
+            .order_by(ClassMember.joined_at.asc())
+        )
+        .scalars()
+        .all()
+    )
+
+    # Get assignment count
+    assignment_count = db.execute(
+        select(func.count(QuestAssignment.id)).where(
+            QuestAssignment.class_id == classroom.id
+        )
+    ).scalar_one()
+
+    return schemas.ClassroomDetailOut(
+        id=classroom.id,
+        name=classroom.name,
+        description=classroom.description,
+        teacher_id=classroom.teacher_id,
+        teacher_name=teacher_name,
+        class_code=classroom.class_code,
+        max_students=classroom.max_students,
+        is_archived=classroom.is_archived,
+        settings=classroom.settings,
+        members=[
+            schemas.ClassMemberOut(
+                id=member.id,
+                user_id=member.user_id,
+                display_name=member.user.display_name,
+                email=member.user.email,
+                role=member.role,
+                joined_at=member.joined_at,
+            )
+            for member in members
+        ],
+        member_count=len(members),
+        assignment_count=int(assignment_count),
+        created_at=classroom.created_at,
+        updated_at=classroom.updated_at,
+    )
+
+
+@app.put("/api/v1/classrooms/{classroom_id}", response_model=schemas.ClassroomDetailOut)
+def update_classroom(
+    classroom_id: UUID,
+    payload: schemas.ClassroomUpdateIn,
+    current_user: User = Depends(get_staff_user),
+    db: Session = Depends(get_db),
+) -> schemas.ClassroomDetailOut:
+    """
+    Update classroom details.
+    """
+    from .services import classroom as classroom_service
+
+    classroom = db.get(Classroom, classroom_id)
+    if classroom is None:
+        raise HTTPException(status_code=404, detail="Classroom not found")
+
+    _ensure_class_access(current_user, classroom)
+
+    classroom = classroom_service.update_classroom(
+        db=db,
+        classroom=classroom,
+        name=payload.name,
+        description=payload.description,
+        max_students=payload.max_students,
+        settings=payload.settings,
+    )
+
+    return get_classroom(classroom_id, current_user, db)
+
+
+@app.delete("/api/v1/classrooms/{classroom_id}", status_code=204)
+def delete_classroom(
+    classroom_id: UUID,
+    current_user: User = Depends(get_staff_user),
+    db: Session = Depends(get_db),
+) -> None:
+    """
+    Delete a classroom.
+    This will also delete all members and assignments.
+    """
+    classroom = db.get(Classroom, classroom_id)
+    if classroom is None:
+        raise HTTPException(status_code=404, detail="Classroom not found")
+
+    _ensure_class_access(current_user, classroom)
+
+    db.delete(classroom)
+    db.commit()
+
+
+@app.post(
+    "/api/v1/classrooms/{classroom_id}/archive",
+    response_model=schemas.ClassroomDetailOut,
+)
+def archive_classroom(
+    classroom_id: UUID,
+    current_user: User = Depends(get_staff_user),
+    db: Session = Depends(get_db),
+) -> schemas.ClassroomDetailOut:
+    """
+    Archive a classroom.
+    Archived classrooms cannot accept new students but existing data is preserved.
+    """
+    from .services import classroom as classroom_service
+
+    classroom = db.get(Classroom, classroom_id)
+    if classroom is None:
+        raise HTTPException(status_code=404, detail="Classroom not found")
+
+    _ensure_class_access(current_user, classroom)
+
+    if classroom.is_archived:
+        raise HTTPException(status_code=400, detail="Classroom is already archived")
+
+    classroom_service.archive_classroom(db, classroom)
+
+    return get_classroom(classroom_id, current_user, db)
+
+
+@app.post(
+    "/api/v1/classrooms/{classroom_id}/unarchive",
+    response_model=schemas.ClassroomDetailOut,
+)
+def unarchive_classroom(
+    classroom_id: UUID,
+    current_user: User = Depends(get_staff_user),
+    db: Session = Depends(get_db),
+) -> schemas.ClassroomDetailOut:
+    """
+    Unarchive a classroom.
+    """
+    from .services import classroom as classroom_service
+
+    classroom = db.get(Classroom, classroom_id)
+    if classroom is None:
+        raise HTTPException(status_code=404, detail="Classroom not found")
+
+    _ensure_class_access(current_user, classroom)
+
+    if not classroom.is_archived:
+        raise HTTPException(status_code=400, detail="Classroom is not archived")
+
+    classroom_service.unarchive_classroom(db, classroom)
+
+    return get_classroom(classroom_id, current_user, db)
+
+
+@app.post("/api/v1/classrooms/join", response_model=schemas.ClassroomJoinOut)
+def join_classroom(
+    payload: schemas.ClassroomJoinIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.ClassroomJoinOut:
+    """
+    Join a classroom using a class code.
+    Available to learners only.
+    """
+    from .services import classroom as classroom_service
+
+    if current_user.role != UserRole.learner:
+        raise HTTPException(status_code=403, detail="Only learners can join classrooms")
+
+    try:
+        classroom, member = classroom_service.join_classroom_by_code(
+            db=db,
+            user=current_user,
+            class_code=payload.class_code,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    # Get teacher info
+    teacher = db.get(User, classroom.teacher_id)
+    teacher_name = teacher.display_name if teacher else "Unknown"
+
+    # Get all members
+    members = (
+        db.execute(
+            select(ClassMember)
+            .options(selectinload(ClassMember.user))
+            .where(ClassMember.class_id == classroom.id)
+        )
+        .scalars()
+        .all()
+    )
+
+    # Get assignment count
+    assignment_count = db.execute(
+        select(func.count(QuestAssignment.id)).where(
+            QuestAssignment.class_id == classroom.id
+        )
+    ).scalar_one()
+
+    classroom_detail = schemas.ClassroomDetailOut(
+        id=classroom.id,
+        name=classroom.name,
+        description=classroom.description,
+        teacher_id=classroom.teacher_id,
+        teacher_name=teacher_name,
+        class_code=classroom.class_code,
+        max_students=classroom.max_students,
+        is_archived=classroom.is_archived,
+        settings=classroom.settings,
+        members=[
+            schemas.ClassMemberOut(
+                id=m.id,
+                user_id=m.user_id,
+                display_name=m.user.display_name,
+                email=m.user.email,
+                role=m.role,
+                joined_at=m.joined_at,
+            )
+            for m in members
+        ],
+        member_count=len(members),
+        assignment_count=int(assignment_count),
+        created_at=classroom.created_at,
+        updated_at=classroom.updated_at,
+    )
+
+    return schemas.ClassroomJoinOut(
+        classroom=classroom_detail, message=f"Successfully joined {classroom.name}"
+    )
+
+
+@app.delete("/api/v1/classrooms/{classroom_id}/members/{member_id}", status_code=204)
+def remove_member(
+    classroom_id: UUID,
+    member_id: UUID,
+    current_user: User = Depends(get_staff_user),
+    db: Session = Depends(get_db),
+) -> None:
+    """
+    Remove a member from a classroom.
+    """
+    from .services import classroom as classroom_service
+
+    classroom = db.get(Classroom, classroom_id)
+    if classroom is None:
+        raise HTTPException(status_code=404, detail="Classroom not found")
+
+    _ensure_class_access(current_user, classroom)
+
+    try:
+        classroom_service.remove_class_member(db, classroom, member_id)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+
+@app.get(
+    "/api/v1/classrooms/enrolled", response_model=list[schemas.ClassroomSummaryOut]
+)
+def get_enrolled_classrooms(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> list[schemas.ClassroomSummaryOut]:
+    """
+    Get all classrooms where the current user is enrolled as a student.
+    """
+    from .services import classroom as classroom_service
+
+    classrooms = classroom_service.get_enrolled_classrooms(db, current_user)
+
+    if not classrooms:
+        return []
+
+    class_ids = [c.id for c in classrooms]
+    member_counts = dict(
+        db.execute(
+            select(ClassMember.class_id, func.count(ClassMember.id))
+            .where(ClassMember.class_id.in_(class_ids))
+            .group_by(ClassMember.class_id)
+        ).all()
+    )
+    assignment_counts = dict(
+        db.execute(
+            select(QuestAssignment.class_id, func.count(QuestAssignment.id))
+            .where(QuestAssignment.class_id.in_(class_ids))
+            .group_by(QuestAssignment.class_id)
+        ).all()
+    )
+
+    return [
+        schemas.ClassroomSummaryOut(
+            id=classroom.id,
+            name=classroom.name,
+            description=classroom.description,
+            teacher_id=classroom.teacher_id,
+            class_code=classroom.class_code,
+            max_students=classroom.max_students,
+            is_archived=classroom.is_archived,
+            member_count=int(member_counts.get(classroom.id, 0)),
+            assignment_count=int(assignment_counts.get(classroom.id, 0)),
+            created_at=classroom.created_at,
+            updated_at=classroom.updated_at,
+        )
+        for classroom in classrooms
+    ]
+
+
+# =============================================================================
+# Quest Assignment Endpoints (P1-TEACH-02)
+# =============================================================================
+
+
+@app.get(
+    "/api/v1/classrooms/{classroom_id}/assignments",
+    response_model=list[schemas.QuestAssignmentOut],
+)
+def list_classroom_assignments(
+    classroom_id: UUID,
+    current_user: User = Depends(get_staff_user),
+    db: Session = Depends(get_db),
+) -> list[schemas.QuestAssignmentOut]:
+    """
+    List all quest assignments for a classroom.
+    """
+    from backend.services import quest_assignments as assignment_service
+
+    classroom = db.get(Classroom, classroom_id)
+    if not classroom:
+        raise HTTPException(status_code=404, detail="Classroom not found")
+
+    _ensure_class_access(current_user, classroom)
+
+    assignments = assignment_service.get_classroom_assignments(db, classroom_id)
+
+    # Build response
+    result = []
+    for assignment in assignments:
+        progress_entries = assignment.progress_entries
+        total_students = len(progress_entries)
+        assigned_count = sum(1 for p in progress_entries if p.status == "assigned")
+        in_progress_count = sum(
+            1 for p in progress_entries if p.status == "in_progress"
+        )
+        completed_count = sum(1 for p in progress_entries if p.status == "completed")
+
+        assigned_by_name = None
+        if assignment.assigned_by:
+            assigned_by_name = (
+                assignment.assigned_by.display_name or assignment.assigned_by.email
+            )
+
+        result.append(
+            schemas.QuestAssignmentOut(
+                id=assignment.id,
+                class_id=assignment.class_id,
+                quest=schemas.QuestBriefOut(
+                    id=assignment.quest.id,
+                    slug=assignment.quest.slug,
+                    name=assignment.quest.name,
+                    description=assignment.quest.description,
+                ),
+                assigned_by_id=assignment.assigned_by_id,
+                assigned_by_name=assigned_by_name,
+                due_at=assignment.due_at,
+                assigned_at=assignment.assigned_at,
+                points_override=assignment.points_override,
+                notes=assignment.notes,
+                total_students=total_students,
+                completed_count=completed_count,
+                in_progress_count=in_progress_count,
+                assigned_count=assigned_count,
+                completion_rate=(completed_count / total_students * 100)
+                if total_students > 0
+                else 0,
+            )
+        )
+
+    return result
+
+
+@app.post(
+    "/api/v1/classrooms/{classroom_id}/assignments",
+    response_model=schemas.QuestAssignmentOut,
+    status_code=201,
+)
+def create_assignment(
+    classroom_id: UUID,
+    payload: schemas.QuestAssignmentCreateIn,
+    current_user: User = Depends(get_staff_user),
+    db: Session = Depends(get_db),
+) -> schemas.QuestAssignmentOut:
+    """
+    Create a new quest assignment.
+    Can assign to entire classroom or to individual student.
+    """
+    from backend.services import quest_assignments as assignment_service
+
+    classroom = db.get(Classroom, classroom_id)
+    if not classroom:
+        raise HTTPException(status_code=404, detail="Classroom not found")
+
+    _ensure_class_access(current_user, classroom)
+
+    try:
+        if payload.student_id:
+            # Assign to individual student
+            assignment = assignment_service.assign_quest_to_student(
+                db=db,
+                classroom=classroom,
+                quest_id=payload.quest_id,
+                student_id=payload.student_id,
+                teacher=current_user,
+                due_at=payload.due_at,
+                points_override=payload.points_override,
+                notes=payload.notes,
+            )
+        else:
+            # Assign to entire classroom
+            assignment = assignment_service.assign_quest_to_classroom(
+                db=db,
+                classroom=classroom,
+                quest_id=payload.quest_id,
+                teacher=current_user,
+                due_at=payload.due_at,
+                points_override=payload.points_override,
+                notes=payload.notes,
+            )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    # Build response
+    progress_entries = assignment.progress_entries
+    total_students = len(progress_entries)
+    assigned_count = sum(1 for p in progress_entries if p.status == "assigned")
+    in_progress_count = sum(1 for p in progress_entries if p.status == "in_progress")
+    completed_count = sum(1 for p in progress_entries if p.status == "completed")
+
+    assigned_by_name = None
+    if assignment.assigned_by:
+        assigned_by_name = (
+            assignment.assigned_by.display_name or assignment.assigned_by.email
+        )
+
+    return schemas.QuestAssignmentOut(
+        id=assignment.id,
+        class_id=assignment.class_id,
+        quest=schemas.QuestBriefOut(
+            id=assignment.quest.id,
+            slug=assignment.quest.slug,
+            name=assignment.quest.name,
+            description=assignment.quest.description,
+        ),
+        assigned_by_id=assignment.assigned_by_id,
+        assigned_by_name=assigned_by_name,
+        due_at=assignment.due_at,
+        assigned_at=assignment.assigned_at,
+        points_override=assignment.points_override,
+        notes=assignment.notes,
+        total_students=total_students,
+        completed_count=completed_count,
+        in_progress_count=in_progress_count,
+        assigned_count=assigned_count,
+        completion_rate=(completed_count / total_students * 100)
+        if total_students > 0
+        else 0,
+    )
+
+
+@app.put(
+    "/api/v1/classrooms/{classroom_id}/assignments/{assignment_id}",
+    response_model=schemas.QuestAssignmentOut,
+)
+def update_assignment(
+    classroom_id: UUID,
+    assignment_id: UUID,
+    payload: schemas.QuestAssignmentUpdateIn,
+    current_user: User = Depends(get_staff_user),
+    db: Session = Depends(get_db),
+) -> schemas.QuestAssignmentOut:
+    """
+    Update a quest assignment.
+    """
+    from backend.services import quest_assignments as assignment_service
+
+    classroom = db.get(Classroom, classroom_id)
+    if not classroom:
+        raise HTTPException(status_code=404, detail="Classroom not found")
+
+    _ensure_class_access(current_user, classroom)
+
+    try:
+        assignment = assignment_service.update_assignment(
+            db=db,
+            assignment_id=assignment_id,
+            due_at=payload.due_at,
+            points_override=payload.points_override,
+            notes=payload.notes,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+    # Build response
+    progress_entries = assignment.progress_entries
+    total_students = len(progress_entries)
+    assigned_count = sum(1 for p in progress_entries if p.status == "assigned")
+    in_progress_count = sum(1 for p in progress_entries if p.status == "in_progress")
+    completed_count = sum(1 for p in progress_entries if p.status == "completed")
+
+    assigned_by_name = None
+    if assignment.assigned_by:
+        assigned_by_name = (
+            assignment.assigned_by.display_name or assignment.assigned_by.email
+        )
+
+    return schemas.QuestAssignmentOut(
+        id=assignment.id,
+        class_id=assignment.class_id,
+        quest=schemas.QuestBriefOut(
+            id=assignment.quest.id,
+            slug=assignment.quest.slug,
+            name=assignment.quest.name,
+            description=assignment.quest.description,
+        ),
+        assigned_by_id=assignment.assigned_by_id,
+        assigned_by_name=assigned_by_name,
+        due_at=assignment.due_at,
+        assigned_at=assignment.assigned_at,
+        points_override=assignment.points_override,
+        notes=assignment.notes,
+        total_students=total_students,
+        completed_count=completed_count,
+        in_progress_count=in_progress_count,
+        assigned_count=assigned_count,
+        completion_rate=(completed_count / total_students * 100)
+        if total_students > 0
+        else 0,
+    )
+
+
+@app.delete(
+    "/api/v1/classrooms/{classroom_id}/assignments/{assignment_id}", status_code=204
+)
+def delete_assignment(
+    classroom_id: UUID,
+    assignment_id: UUID,
+    current_user: User = Depends(get_staff_user),
+    db: Session = Depends(get_db),
+) -> None:
+    """
+    Delete a quest assignment.
+    """
+    from backend.services import quest_assignments as assignment_service
+
+    classroom = db.get(Classroom, classroom_id)
+    if not classroom:
+        raise HTTPException(status_code=404, detail="Classroom not found")
+
+    _ensure_class_access(current_user, classroom)
+
+    try:
+        assignment_service.delete_assignment(db, assignment_id)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+
+@app.get("/api/v1/assignments/mine", response_model=list[schemas.StudentAssignmentOut])
+def get_my_assignments(
+    classroom_id: Optional[UUID] = Query(None, description="Filter by classroom"),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> list[schemas.StudentAssignmentOut]:
+    """
+    Get all quest assignments for the current student.
+    """
+    from datetime import datetime
+
+    from backend.services import quest_assignments as assignment_service
+
+    assignments = assignment_service.get_student_assignments(
+        db=db,
+        user_id=current_user.id,
+        classroom_id=classroom_id,
+    )
+
+    result = []
+    for assignment in assignments:
+        is_overdue = False
+        if assignment["due_at"] and assignment["status"] != "completed":
+            is_overdue = (
+                datetime.now(assignment["due_at"].tzinfo) > assignment["due_at"]
+            )
+
+        result.append(
+            schemas.StudentAssignmentOut(
+                assignment_id=UUID(assignment["assignment_id"]),
+                quest_id=UUID(assignment["quest_id"]),
+                quest_name=assignment["quest_name"],
+                quest_description=assignment["quest_description"],
+                classroom_id=UUID(assignment["classroom_id"]),
+                classroom_name=assignment["classroom_name"],
+                due_at=assignment["due_at"],
+                assigned_at=assignment["assigned_at"],
+                points_override=assignment["points_override"],
+                notes=assignment["notes"],
+                status=assignment["status"],
+                completed_at=assignment["completed_at"],
+                is_overdue=is_overdue,
+            )
+        )
+
+    return result
+
+
+@app.post(
+    "/api/v1/assignments/{assignment_id}/submit",
+    response_model=schemas.AssignmentSubmitOut,
+)
+def submit_assignment(
+    assignment_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.AssignmentSubmitOut:
+    """
+    Submit an assignment as completed.
+    The quest must be completed first.
+    """
+    from backend.services import quest_assignments as assignment_service
+
+    try:
+        progress = assignment_service.submit_assignment(
+            db=db,
+            assignment_id=assignment_id,
+            user_id=current_user.id,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    message = (
+        "Assignment marked as in progress"
+        if progress.status == "in_progress"
+        else "Assignment completed!"
+    )
+
+    return schemas.AssignmentSubmitOut(
+        assignment_id=assignment_id,
+        status=progress.status,
+        completed_at=progress.completed_at,
+        message=message,
+    )
+
+
+# =============================================================================
+# Student Progress Endpoints (P1-TEACH-03)
+# =============================================================================
+
+
+@app.get(
+    "/api/v1/classrooms/{classroom_id}/students/{student_id}/progress",
+    response_model=schemas.StudentProgressOut,
+)
+def get_student_progress(
+    classroom_id: UUID,
+    student_id: UUID,
+    current_user: User = Depends(get_staff_user),
+    db: Session = Depends(get_db),
+) -> schemas.StudentProgressOut:
+    """
+    Get detailed progress for a specific student in a classroom.
+    Only accessible to teachers of the classroom and admins.
+    """
+    from .services import student_progress as progress_service
+
+    classroom = db.get(Classroom, classroom_id)
+    if classroom is None:
+        raise HTTPException(status_code=404, detail="Classroom not found")
+
+    _ensure_class_access(current_user, classroom)
+
+    try:
+        progress = progress_service.get_student_progress(db, student_id, classroom_id)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+    return schemas.StudentProgressOut(
+        student_id=progress["student_id"],
+        classroom_id=progress["classroom_id"],
+        joined_at=progress["joined_at"],
+        overall_completion_percent=progress["overall_completion_percent"],
+        lessons=schemas.LessonStatsOut(**progress["lessons"]),
+        quizzes=schemas.QuizStatsOut(**progress["quizzes"]),
+        engagement=schemas.EngagementStatsOut(**progress["engagement"]),
+    )
+
+
+@app.get(
+    "/api/v1/classrooms/{classroom_id}/progress",
+    response_model=schemas.ClassProgressSummaryOut,
+)
+def get_class_progress_summary(
+    classroom_id: UUID,
+    current_user: User = Depends(get_staff_user),
+    db: Session = Depends(get_db),
+) -> schemas.ClassProgressSummaryOut:
+    """
+    Get class-wide progress summary with average metrics.
+    Only accessible to teachers of the classroom and admins.
+    """
+    from .services import student_progress as progress_service
+
+    classroom = db.get(Classroom, classroom_id)
+    if classroom is None:
+        raise HTTPException(status_code=404, detail="Classroom not found")
+
+    _ensure_class_access(current_user, classroom)
+
+    summary = progress_service.get_class_progress_summary(db, classroom_id)
+
+    return schemas.ClassProgressSummaryOut(
+        classroom_id=summary["classroom_id"],
+        student_count=summary["student_count"],
+        averages=schemas.ClassProgressAveragesOut(**summary["averages"]),
+    )
+
+
+@app.get(
+    "/api/v1/classrooms/{classroom_id}/leaderboard",
+    response_model=schemas.LeaderboardOut,
+)
+def get_class_leaderboard(
+    classroom_id: UUID,
+    order_by: str = Query("xp", regex="^(xp|streak|motifs|quizzes)$"),
+    limit: int = Query(50, ge=1, le=100),
+    current_user: User = Depends(get_staff_user),
+    db: Session = Depends(get_db),
+) -> schemas.LeaderboardOut:
+    """
+    Get class leaderboard sorted by various metrics.
+
+    Order by options:
+    - xp: Total XP earned
+    - streak: Current streak
+    - motifs: Discovered motifs
+    - quizzes: Quizzes passed
+
+    Only accessible to teachers of the classroom and admins.
+    """
+    from .services import student_progress as progress_service
+
+    classroom = db.get(Classroom, classroom_id)
+    if classroom is None:
+        raise HTTPException(status_code=404, detail="Classroom not found")
+
+    _ensure_class_access(current_user, classroom)
+
+    entries = progress_service.get_class_leaderboard(db, classroom_id, limit, order_by)
+
+    return schemas.LeaderboardOut(
+        classroom_id=classroom_id,
+        order_by=order_by,
+        entries=[schemas.LeaderboardEntryOut(**entry) for entry in entries],
+    )
+
+
+@app.get("/api/v1/classrooms/{classroom_id}/export")
+def export_class_progress(
+    classroom_id: UUID,
+    current_user: User = Depends(get_staff_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Export class progress data as CSV.
+    Only accessible to teachers of the classroom and admins.
+    """
+    import csv
+    from io import StringIO
+
+    from fastapi.responses import StreamingResponse
+
+    from .services import student_progress as progress_service
+
+    classroom = db.get(Classroom, classroom_id)
+    if classroom is None:
+        raise HTTPException(status_code=404, detail="Classroom not found")
+
+    _ensure_class_access(current_user, classroom)
+
+    # Get all student members
+    members = (
+        db.execute(
+            select(ClassMember)
+            .options(selectinload(ClassMember.user))
+            .where(
+                and_(
+                    ClassMember.class_id == classroom_id,
+                    ClassMember.role == "learner",
+                )
+            )
+        )
+        .scalars()
+        .all()
+    )
+
+    # Create CSV
+    output = StringIO()
+    writer = csv.writer(output)
+
+    # Write header
+    writer.writerow(
+        [
+            "Student ID",
+            "Display Name",
+            "Email",
+            "Joined At",
+            "Completion %",
+            "Discovered Motifs",
+            "Learned Motifs",
+            "Mastered Motifs",
+            "Quiz Attempts",
+            "Quizzes Passed",
+            "Avg Quiz Score",
+            "Current Streak",
+            "Longest Streak",
+            "Total XP",
+            "Time Spent (min)",
+        ]
+    )
+
+    # Write data for each student
+    for member in members:
+        try:
+            progress = progress_service.get_student_progress(
+                db, member.user_id, classroom_id
+            )
+
+            writer.writerow(
+                [
+                    str(progress["student_id"]),
+                    member.user.display_name,
+                    member.user.email,
+                    progress["joined_at"].isoformat(),
+                    progress["overall_completion_percent"],
+                    progress["lessons"]["discovered"],
+                    progress["lessons"]["learned"],
+                    progress["lessons"]["mastered"],
+                    progress["quizzes"]["total_attempts"],
+                    progress["quizzes"]["passed"],
+                    progress["quizzes"]["average_score"],
+                    progress["engagement"]["current_streak"],
+                    progress["engagement"]["longest_streak"],
+                    progress["engagement"]["total_xp"],
+                    progress["engagement"]["time_spent_minutes"],
+                ]
+            )
+        except ValueError:
+            # Skip students with errors
+            continue
+
+    output.seek(0)
+
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={
+            "Content-Disposition": f"attachment; filename=classroom_{classroom_id}_progress.csv"
+        },
+    )
+
+
+# =============================================================================
+# Legacy Classroom Endpoints (Backward Compatibility)
+# =============================================================================
+
+
+@app.get("/api/v1/classes/{class_id}", response_model=ClassDetailOut_Legacy)
 def get_class_detail(
     class_id: UUID,
     current_user: User = Depends(get_staff_user),
     db: Session = Depends(get_db),
-) -> ClassDetailOut:
+) -> ClassDetailOut_Legacy:
     classroom = db.get(Classroom, class_id)
     if classroom is None:
         raise HTTPException(status_code=404, detail="Class not found")
@@ -2869,14 +5922,14 @@ def get_class_detail(
             )
         )
 
-    return ClassDetailOut(
+    return ClassDetailOut_Legacy(
         id=classroom.id,
         name=classroom.name,
         description=classroom.description,
         teacher_id=classroom.teacher_id,
         created_at=classroom.created_at,
         members=[
-            ClassMemberOut(
+            ClassMemberOut_Legacy(
                 user_id=member.user_id,
                 display_name=member.user.display_name,
                 email=member.user.email,
@@ -2889,13 +5942,13 @@ def get_class_detail(
     )
 
 
-@app.post("/api/v1/classes/{class_id}/members", response_model=ClassDetailOut)
+@app.post("/api/v1/classes/{class_id}/members", response_model=ClassDetailOut_Legacy)
 def add_class_member(
     class_id: UUID,
     payload: ClassMemberAddRequest,
     current_user: User = Depends(get_staff_user),
     db: Session = Depends(get_db),
-) -> ClassDetailOut:
+) -> ClassDetailOut_Legacy:
     classroom = db.get(Classroom, class_id)
     if classroom is None:
         raise HTTPException(status_code=404, detail="Class not found")
@@ -2951,14 +6004,14 @@ def add_class_member(
 
 
 @app.delete(
-    "/api/v1/classes/{class_id}/members/{user_id}", response_model=ClassDetailOut
+    "/api/v1/classes/{class_id}/members/{user_id}", response_model=ClassDetailOut_Legacy
 )
 def remove_class_member(
     class_id: UUID,
     user_id: UUID,
     current_user: User = Depends(get_staff_user),
     db: Session = Depends(get_db),
-) -> ClassDetailOut:
+) -> ClassDetailOut_Legacy:
     classroom = db.get(Classroom, class_id)
     if classroom is None:
         raise HTTPException(status_code=404, detail="Class not found")
@@ -2993,13 +6046,15 @@ def remove_class_member(
     return get_class_detail(class_id, current_user=current_user, db=db)
 
 
-@app.post("/api/v1/classes/{class_id}/assignments", response_model=ClassDetailOut)
+@app.post(
+    "/api/v1/classes/{class_id}/assignments", response_model=ClassDetailOut_Legacy
+)
 def assign_quest_to_class(
     class_id: UUID,
     payload: AssignmentCreateRequest,
     current_user: User = Depends(get_staff_user),
     db: Session = Depends(get_db),
-) -> ClassDetailOut:
+) -> ClassDetailOut_Legacy:
     classroom = db.get(Classroom, class_id)
     if classroom is None:
         raise HTTPException(status_code=404, detail="Class not found")
@@ -3074,8 +6129,12 @@ def get_my_streak(current_user: User = Depends(get_current_user)) -> StreakRespo
 class DashboardPathMotifOut(BaseModel):
     id: UUID
     name: str
+    name_en: Optional[str] = None
     display_order: Optional[int] = None
     status: str
+    category: Optional[str] = None
+    thumbnail_url: Optional[str] = None
+    silhouette_url: Optional[str] = None
 
 
 class DashboardSummaryOut(BaseModel):
@@ -3194,12 +6253,16 @@ def get_dashboard_summary(
             DashboardPathMotifOut(
                 id=motif.id,
                 name=motif.name,
+                name_en=motif.name_en,
                 display_order=motif.display_order,
                 status=(
                     progress_by_id[motif.id].status.value
                     if motif.id in progress_by_id
                     else UnlockStatus.hidden.value
                 ),
+                category=motif.category.value if motif.category else None,
+                thumbnail_url=motif.thumbnail_url,
+                silhouette_url=motif.silhouette_url,
             )
             for motif in motifs
         ]
@@ -3354,6 +6417,115 @@ def get_my_badges(
     ]
 
 
+# =============================================================================
+# Milestones API
+# =============================================================================
+
+
+@app.get("/api/v1/milestones", response_model=schemas.MilestoneListOut)
+def get_user_milestones(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.MilestoneListOut:
+    """Get all milestones for the current user."""
+    from backend.services.milestones import get_user_milestones
+
+    milestones = get_user_milestones(db, current_user.id)
+
+    return schemas.MilestoneListOut(
+        milestones=[
+            schemas.MilestoneOut(
+                id=m.id,
+                user_id=m.user_id,
+                milestone_type=m.milestone_type.value,
+                achieved_at=m.achieved_at,
+                context_data=m.context_data,
+                celebrated=m.celebrated,
+                created_at=m.created_at,
+            )
+            for m in milestones
+        ]
+    )
+
+
+@app.get(
+    "/api/v1/milestones/pending-celebration",
+    response_model=schemas.PendingMilestonesOut,
+)
+def get_pending_milestones(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.PendingMilestonesOut:
+    """Get milestones that haven't been celebrated yet."""
+    from backend.services.milestones import get_pending_milestones
+
+    milestones = get_pending_milestones(db, current_user.id)
+
+    return schemas.PendingMilestonesOut(
+        pending_milestones=[
+            schemas.PendingMilestoneOut(
+                id=m.id,
+                milestone_type=m.milestone_type.value,
+                achieved_at=m.achieved_at,
+                context_data=m.context_data,
+            )
+            for m in milestones
+        ]
+    )
+
+
+@app.post(
+    "/api/v1/milestones/{milestone_id}/celebrate",
+    response_model=schemas.MilestoneCelebratedOut,
+)
+def celebrate_milestone(
+    milestone_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.MilestoneCelebratedOut:
+    """Mark a milestone as celebrated."""
+    from backend.services.milestones import mark_milestone_celebrated
+
+    milestone = mark_milestone_celebrated(db, milestone_id, current_user.id)
+
+    if not milestone:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Milestone not found or already celebrated",
+        )
+
+    try:
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to update milestone",
+        )
+
+    # Create human-readable message based on milestone type
+    milestone_messages = {
+        "first_motif_discovered": "Congratulations on discovering your first motif!",
+        "first_quiz_passed": "Amazing! You passed your first quiz!",
+        "first_lesson_completed": "Great job on completing your first lesson!",
+        "first_badge_earned": "You earned your first badge!",
+        "first_streak_7": "Incredible! You've maintained a 7-day streak!",
+        "onboarding_completed": "Welcome aboard! You've completed onboarding!",
+    }
+
+    message = milestone_messages.get(
+        milestone.milestone_type.value,
+        "Congratulations on this milestone!",
+    )
+
+    return schemas.MilestoneCelebratedOut(
+        success=True,
+        milestone_id=milestone.id,
+        milestone_type=milestone.milestone_type.value,
+        message=message,
+    )
+
+
 class AdminLessonOut(BaseModel):
     id: UUID
     motif_id: UUID
@@ -3367,6 +6539,16 @@ class AdminLessonOut(BaseModel):
     video_url: Optional[str] = None
     is_published: bool
     is_ai_generated: bool
+    version: int = 1
+    last_editor_id: Optional[UUID] = None
+    published_at: Optional[datetime] = None
+    publish_note: Optional[str] = None
+    # Review workflow fields
+    status: str = "draft"
+    submitted_for_review_at: Optional[datetime] = None
+    reviewed_by_id: Optional[UUID] = None
+    reviewed_at: Optional[datetime] = None
+    review_notes: Optional[str] = None
     created_at: datetime
     updated_at: datetime
 
@@ -3396,6 +6578,7 @@ class AdminLessonUpdateRequest(BaseModel):
     video_url: Optional[str] = None
     is_published: Optional[bool] = None
     is_ai_generated: Optional[bool] = None
+    publish_note: Optional[str] = None  # Note for publishing this version
 
 
 class AdminQuizQuestionOut(BaseModel):
@@ -3411,6 +6594,13 @@ class AdminQuizQuestionOut(BaseModel):
     explanation: Optional[str] = None
     is_published: bool
     is_active: bool
+    # Review workflow fields
+    status: str = "draft"
+    submitted_for_review_at: Optional[datetime] = None
+    reviewed_by_id: Optional[UUID] = None
+    reviewed_at: Optional[datetime] = None
+    review_notes: Optional[str] = None
+    created_by_id: Optional[UUID] = None
     created_at: datetime
 
 
@@ -3474,6 +6664,15 @@ def list_admin_lessons(
             video_url=lesson.video_url,
             is_published=lesson.is_published,
             is_ai_generated=lesson.is_ai_generated,
+            version=lesson.version,
+            last_editor_id=lesson.last_editor_id,
+            published_at=lesson.published_at,
+            publish_note=lesson.publish_note,
+            status=lesson.status.value if lesson.status else "draft",
+            submitted_for_review_at=lesson.submitted_for_review_at,
+            reviewed_by_id=lesson.reviewed_by_id,
+            reviewed_at=lesson.reviewed_at,
+            review_notes=lesson.review_notes,
             created_at=lesson.created_at,
             updated_at=lesson.updated_at,
         )
@@ -3521,6 +6720,9 @@ def create_admin_lesson(
         is_ai_generated=bool(payload.is_ai_generated)
         if payload.is_ai_generated is not None
         else False,
+        last_editor_id=current_user.id,
+        published_at=datetime.now(timezone.utc) if is_published else None,
+        status=ContentStatus.published if is_published else ContentStatus.draft,
     )
     db.add(lesson)
     db.commit()
@@ -3539,6 +6741,15 @@ def create_admin_lesson(
         video_url=lesson.video_url,
         is_published=lesson.is_published,
         is_ai_generated=lesson.is_ai_generated,
+        version=lesson.version,
+        last_editor_id=lesson.last_editor_id,
+        published_at=lesson.published_at,
+        publish_note=lesson.publish_note,
+        status=lesson.status.value if lesson.status else "draft",
+        submitted_for_review_at=lesson.submitted_for_review_at,
+        reviewed_by_id=lesson.reviewed_by_id,
+        reviewed_at=lesson.reviewed_at,
+        review_notes=lesson.review_notes,
         created_at=lesson.created_at,
         updated_at=lesson.updated_at,
     )
@@ -3565,10 +6776,35 @@ def update_admin_lesson(
                 status_code=403, detail="Teachers cannot publish lessons"
             )
 
+    # Create a snapshot before updating
+    _create_content_snapshot(
+        db,
+        "lesson",
+        lesson.id,
+        lesson.version,
+        current_user.id,
+        f"Version {lesson.version}",
+    )
+
+    # Track if we're publishing
+    is_publishing = False
+    if payload.is_published and not lesson.is_published:
+        is_publishing = True
+
     for field, value in payload.model_dump(exclude_unset=True).items():
         if field == "is_published" and current_user.role not in ADMIN_ROLES:
             continue
         setattr(lesson, field, value)
+
+    # Update versioning metadata
+    lesson.version += 1
+    lesson.last_editor_id = current_user.id
+
+    if is_publishing:
+        lesson.published_at = datetime.now(timezone.utc)
+        # Get publish_note from payload if available (need to add this to schema)
+        if hasattr(payload, "publish_note"):
+            lesson.publish_note = payload.publish_note
 
     db.commit()
     db.refresh(lesson)
@@ -3586,6 +6822,15 @@ def update_admin_lesson(
         video_url=lesson.video_url,
         is_published=lesson.is_published,
         is_ai_generated=lesson.is_ai_generated,
+        version=lesson.version,
+        last_editor_id=lesson.last_editor_id,
+        published_at=lesson.published_at,
+        publish_note=lesson.publish_note,
+        status=lesson.status.value if lesson.status else "draft",
+        submitted_for_review_at=lesson.submitted_for_review_at,
+        reviewed_by_id=lesson.reviewed_by_id,
+        reviewed_at=lesson.reviewed_at,
+        review_notes=lesson.review_notes,
         created_at=lesson.created_at,
         updated_at=lesson.updated_at,
     )
@@ -3617,6 +6862,12 @@ def list_admin_quiz_questions(
             explanation=q.explanation,
             is_published=q.is_published,
             is_active=q.is_active,
+            status=q.status.value if q.status else "draft",
+            submitted_for_review_at=q.submitted_for_review_at,
+            reviewed_by_id=q.reviewed_by_id,
+            reviewed_at=q.reviewed_at,
+            review_notes=q.review_notes,
+            created_by_id=q.created_by_id,
             created_at=q.created_at,
         )
         for q in questions
@@ -3660,6 +6911,8 @@ def create_admin_quiz_question(
         explanation=payload.explanation,
         is_published=is_published,
         is_active=True if payload.is_active is None else bool(payload.is_active),
+        status=ContentStatus.published if is_published else ContentStatus.draft,
+        created_by_id=current_user.id,
     )
     db.add(question)
     db.commit()
@@ -3678,6 +6931,12 @@ def create_admin_quiz_question(
         explanation=question.explanation,
         is_published=question.is_published,
         is_active=question.is_active,
+        status=question.status.value if question.status else "draft",
+        submitted_for_review_at=question.submitted_for_review_at,
+        reviewed_by_id=question.reviewed_by_id,
+        reviewed_at=question.reviewed_at,
+        review_notes=question.review_notes,
+        created_by_id=question.created_by_id,
         created_at=question.created_at,
     )
 
@@ -3732,60 +6991,51 @@ def update_admin_quiz_question(
         explanation=question.explanation,
         is_published=question.is_published,
         is_active=question.is_active,
+        status=question.status.value if question.status else "draft",
+        submitted_for_review_at=question.submitted_for_review_at,
+        reviewed_by_id=question.reviewed_by_id,
+        reviewed_at=question.reviewed_at,
+        review_notes=question.review_notes,
+        created_by_id=question.created_by_id,
         created_at=question.created_at,
     )
-
-
-class RagDocumentOut(BaseModel):
-    id: UUID
-    title: str
-    content: str
-    source_type: str
-    source_path: Optional[str] = None
-    is_active: bool
-    embedding_model: Optional[str] = None
-    embedding_updated_at: Optional[datetime] = None
-    has_embedding: bool = False
-    created_at: datetime
-    updated_at: datetime
-
-
-class RagDocumentCreateRequest(BaseModel):
-    title: str = Field(min_length=1, max_length=255)
-    content: str = Field(min_length=1)
-    is_active: Optional[bool] = True
-
-
-class RagDocumentUpdateRequest(BaseModel):
-    title: Optional[str] = Field(default=None, min_length=1, max_length=255)
-    content: Optional[str] = None
-    is_active: Optional[bool] = None
-
-
-class RagSettingsOut(BaseModel):
-    system_instruction: Optional[str] = None
-    prompt_prefix: Optional[str] = None
-    model_override: Optional[str] = None
-    temperature: Optional[float] = None
-    max_documents: int
-    embedding_enabled: bool = True
-    hybrid_alpha: float = 0.6
-
-
-class RagSettingsUpdateRequest(BaseModel):
-    system_instruction: Optional[str] = None
-    prompt_prefix: Optional[str] = None
-    model_override: Optional[str] = None
-    temperature: Optional[float] = Field(default=None, ge=0, le=2)
-    max_documents: Optional[int] = Field(default=None, ge=1, le=20)
-    embedding_enabled: Optional[bool] = None
-    hybrid_alpha: Optional[float] = Field(default=None, ge=0, le=1)
 
 
 class RagEmbeddingRebuildOut(BaseModel):
     total: int
     updated: int
     skipped: int
+
+
+class RagHealthOut(BaseModel):
+    total_documents: int
+    active_documents: int
+    documents_with_embeddings: int
+    documents_without_embeddings: int
+    coverage_percent: float
+    last_embedding_updated_at: Optional[datetime] = None
+    oldest_embedding_at: Optional[datetime] = None
+    embedding_model: str
+    settings_status: dict[str, Any]
+    status: str
+    issues: list[str]
+
+
+class EmbeddingJobOut(BaseModel):
+    id: UUID
+    status: str
+    total_documents: int
+    processed_documents: int
+    started_at: Optional[datetime] = None
+    completed_at: Optional[datetime] = None
+    error_message: Optional[str] = None
+    created_by_id: UUID
+    created_at: datetime
+    progress_percent: float = 0.0
+
+
+class EmbeddingRebuildRequest(BaseModel):
+    force: bool = False
 
 
 class AIJobOut(BaseModel):
@@ -3803,8 +7053,8 @@ class AIJobOut(BaseModel):
     updated_at: datetime
 
 
-def _rag_document_out(doc: RagDocument) -> RagDocumentOut:
-    return RagDocumentOut(
+def _rag_document_out(doc: RagDocument) -> schemas.RagDocumentOut:
+    return schemas.RagDocumentOut(
         id=doc.id,
         title=doc.title,
         content=doc.content,
@@ -3817,6 +7067,84 @@ def _rag_document_out(doc: RagDocument) -> RagDocumentOut:
         created_at=doc.created_at,
         updated_at=doc.updated_at,
     )
+
+
+def _embedding_job_out(job: EmbeddingJob) -> EmbeddingJobOut:
+    progress_percent = 0.0
+    if job.total_documents > 0:
+        progress_percent = (job.processed_documents / job.total_documents) * 100.0
+
+    return EmbeddingJobOut(
+        id=job.id,
+        status=job.status,
+        total_documents=job.total_documents,
+        processed_documents=job.processed_documents,
+        started_at=job.started_at,
+        completed_at=job.completed_at,
+        error_message=job.error_message,
+        created_by_id=job.created_by_id,
+        created_at=job.created_at,
+        progress_percent=round(progress_percent, 2),
+    )
+
+
+def _embedding_url() -> str:
+    base = settings.embedding_base_url.rstrip("/")
+    if base.endswith("/v1"):
+        return f"{base}/embeddings"
+    if base.endswith("/embeddings"):
+        return base
+    return f"{base}/v1/embeddings"
+
+
+def _call_embedding(text: str) -> Optional[list[float]]:
+    if not settings.embedding_api_key or not text:
+        return None
+
+    payload = {"model": settings.embedding_model, "input": text}
+    data = json.dumps(payload).encode("utf-8")
+    request = UrlRequest(
+        _embedding_url(),
+        data=data,
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {settings.embedding_api_key}",
+        },
+    )
+
+    try:
+        with urlopen(request, timeout=settings.embedding_timeout_seconds) as response:
+            body = response.read().decode("utf-8")
+    except HTTPError as exc:
+        logger.warning("Embedding request failed: %s", exc)
+        return None
+    except URLError as exc:
+        logger.warning("Embedding request failed: %s", exc)
+        return None
+
+    if not body:
+        return None
+
+    try:
+        payload = json.loads(body)
+    except json.JSONDecodeError:
+        logger.warning("Failed to decode embedding response")
+        return None
+
+    data_list = payload.get("data") or []
+    if not data_list:
+        return None
+    embedding = data_list[0].get("embedding")
+    if not isinstance(embedding, list):
+        return None
+
+    result: list[float] = []
+    for value in embedding:
+        try:
+            result.append(float(value))
+        except (TypeError, ValueError):
+            continue
+    return result or None
 
 
 def _maybe_update_rag_embedding(session: Session, doc: RagDocument) -> bool:
@@ -3834,29 +7162,69 @@ def _maybe_update_rag_embedding(session: Session, doc: RagDocument) -> bool:
     return True
 
 
-@app.get("/api/v1/admin/rag/documents", response_model=list[RagDocumentOut])
+@app.get("/api/v1/admin/rag/documents", response_model=schemas.RagDocumentListOut)
 def list_rag_documents(
+    page: int = Query(default=1, ge=1, description="Page number"),
+    page_size: int = Query(default=20, ge=1, le=100, description="Items per page"),
     current_user: User = Depends(get_admin_user),
     db: Session = Depends(get_db),
-) -> list[RagDocumentOut]:
+) -> schemas.RagDocumentListOut:
+    """List all RAG documents with pagination."""
+    # Count total documents
+    total = db.execute(select(func.count()).select_from(RagDocument)).scalar_one()
+
+    # Calculate pagination
+    total_pages = math.ceil(total / page_size) if total > 0 else 1
+    offset = (page - 1) * page_size
+
+    # Get documents for current page
     docs = (
-        db.execute(select(RagDocument).order_by(RagDocument.updated_at.desc()))
+        db.execute(
+            select(RagDocument)
+            .order_by(RagDocument.updated_at.desc())
+            .limit(page_size)
+            .offset(offset)
+        )
         .scalars()
         .all()
     )
-    return [_rag_document_out(doc) for doc in docs]
+
+    return schemas.RagDocumentListOut(
+        documents=[_rag_document_out(doc) for doc in docs],
+        total=total,
+        page=page,
+        page_size=page_size,
+        total_pages=total_pages,
+    )
+
+
+@app.get(
+    "/api/v1/admin/rag/documents/{document_id}",
+    response_model=schemas.RagDocumentOut,
+)
+def get_rag_document(
+    document_id: UUID,
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> schemas.RagDocumentOut:
+    """Get a single RAG document by ID."""
+    doc = db.get(RagDocument, document_id)
+    if doc is None:
+        raise HTTPException(status_code=404, detail="Document not found")
+    return _rag_document_out(doc)
 
 
 @app.post(
     "/api/v1/admin/rag/documents",
-    response_model=RagDocumentOut,
+    response_model=schemas.RagDocumentOut,
     status_code=201,
 )
 def create_rag_document(
-    payload: RagDocumentCreateRequest,
+    payload: schemas.RagDocumentCreateIn,
     current_user: User = Depends(get_admin_user),
     db: Session = Depends(get_db),
-) -> RagDocumentOut:
+) -> schemas.RagDocumentOut:
+    """Create a new RAG document with manual text input."""
     doc = RagDocument(
         title=payload.title,
         content=payload.content,
@@ -3872,7 +7240,7 @@ def create_rag_document(
 
 @app.post(
     "/api/v1/admin/rag/documents/upload",
-    response_model=RagDocumentOut,
+    response_model=schemas.RagDocumentOut,
     status_code=201,
 )
 async def upload_rag_document(
@@ -3880,20 +7248,35 @@ async def upload_rag_document(
     title: Optional[str] = Query(default=None),
     current_user: User = Depends(get_admin_user),
     db: Session = Depends(get_db),
-) -> RagDocumentOut:
+) -> schemas.RagDocumentOut:
+    """Upload a RAG document from a file (.txt, .md, .json)."""
+    # Validate file type
     if file.content_type not in RAG_ALLOWED_FILE_TYPES:
-        raise HTTPException(status_code=400, detail="Unsupported file type")
+        # Also check by file extension for better compatibility
+        if file.filename:
+            ext = Path(file.filename).suffix.lower()
+            if ext not in {".txt", ".md", ".json"}:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Unsupported file type. Allowed: .txt, .md, .json",
+                )
 
-    max_bytes = settings.max_upload_size_mb * 1024 * 1024
+    # Check file size (5MB limit as per requirements)
+    max_bytes = 5 * 1024 * 1024
     contents = await file.read(max_bytes + 1)
     if len(contents) > max_bytes:
-        raise HTTPException(status_code=400, detail="File too large")
+        raise HTTPException(
+            status_code=400,
+            detail=f"File too large. Maximum size: 5MB",
+        )
 
+    # Decode content
     try:
         decoded = contents.decode("utf-8")
     except UnicodeDecodeError:
         decoded = contents.decode("utf-8", errors="replace")
 
+    # Create document
     doc_title = title or Path(file.filename or "RAG Document").stem
     doc = RagDocument(
         title=doc_title,
@@ -3909,107 +7292,45 @@ async def upload_rag_document(
     return _rag_document_out(doc)
 
 
-@app.patch("/api/v1/admin/rag/documents/{doc_id}", response_model=RagDocumentOut)
+@app.put(
+    "/api/v1/admin/rag/documents/{document_id}",
+    response_model=schemas.RagDocumentOut,
+)
 def update_rag_document(
-    doc_id: UUID,
-    payload: RagDocumentUpdateRequest,
+    document_id: UUID,
+    payload: schemas.RagDocumentUpdateIn,
     current_user: User = Depends(get_admin_user),
     db: Session = Depends(get_db),
-) -> RagDocumentOut:
-    doc = db.get(RagDocument, doc_id)
+) -> schemas.RagDocumentOut:
+    """Update a RAG document. Clears embedding when content changes."""
+    doc = db.get(RagDocument, document_id)
     if doc is None:
         raise HTTPException(status_code=404, detail="Document not found")
 
     updates = payload.model_dump(exclude_unset=True)
     for field, value in updates.items():
         setattr(doc, field, value)
+
+    # Clear and rebuild embedding if content or title changed
     if "content" in updates or "title" in updates:
+        doc.embedding = None
+        doc.embedding_model = None
+        doc.embedding_updated_at = None
         _maybe_update_rag_embedding(db, doc)
+
     db.commit()
     db.refresh(doc)
     return _rag_document_out(doc)
 
 
-@app.post(
-    "/api/v1/admin/rag/embeddings/rebuild",
-    response_model=RagEmbeddingRebuildOut,
-)
-def rebuild_rag_embeddings(
-    current_user: User = Depends(get_admin_user),
-    db: Session = Depends(get_db),
-) -> RagEmbeddingRebuildOut:
-    if not settings.embedding_api_key:
-        raise HTTPException(status_code=503, detail="Embedding not configured")
-
-    rag_settings = _get_rag_settings(db)
-    if not rag_settings.embedding_enabled:
-        raise HTTPException(status_code=400, detail="Embeddings disabled")
-
-    docs = (
-        db.execute(select(RagDocument).where(RagDocument.is_active.is_(True)))
-        .scalars()
-        .all()
-    )
-    updated = 0
-    skipped = 0
-    for doc in docs:
-        if _maybe_update_rag_embedding(db, doc):
-            updated += 1
-        else:
-            skipped += 1
-    db.commit()
-
-    return RagEmbeddingRebuildOut(total=len(docs), updated=updated, skipped=skipped)
-
-
-@app.get("/api/v1/admin/ai/jobs", response_model=list[AIJobOut])
-def list_ai_jobs(
-    status_filter: Optional[str] = Query(default=None, alias="status"),
-    job_type: Optional[str] = Query(default=None),
-    limit: int = Query(default=50, ge=1, le=200),
-    offset: int = Query(default=0, ge=0),
-    current_user: User = Depends(get_admin_user),
-    db: Session = Depends(get_db),
-) -> list[AIJobOut]:
-    query = (
-        select(AIJob, User.email)
-        .join(User, User.id == AIJob.user_id)
-        .order_by(AIJob.created_at.desc())
-    )
-    if status_filter:
-        query = query.where(AIJob.status == status_filter)
-    if job_type:
-        query = query.where(AIJob.job_type == job_type)
-
-    rows = db.execute(query.limit(limit).offset(offset)).all()
-    results: list[AIJobOut] = []
-    for job, email in rows:
-        results.append(
-            AIJobOut(
-                id=job.id,
-                user_id=job.user_id,
-                user_email=email,
-                job_type=job.job_type,
-                status=job.status,
-                provider=job.provider,
-                prompt=job.prompt,
-                response=job.response,
-                error=job.error,
-                retry_count=job.retry_count,
-                created_at=job.created_at,
-                updated_at=job.updated_at,
-            )
-        )
-    return results
-
-
-@app.delete("/api/v1/admin/rag/documents/{doc_id}", status_code=204)
+@app.delete("/api/v1/admin/rag/documents/{document_id}", status_code=204)
 def delete_rag_document(
-    doc_id: UUID,
+    document_id: UUID,
     current_user: User = Depends(get_admin_user),
     db: Session = Depends(get_db),
 ) -> Response:
-    doc = db.get(RagDocument, doc_id)
+    """Delete a RAG document."""
+    doc = db.get(RagDocument, document_id)
     if doc is None:
         return Response(status_code=204)
     db.delete(doc)
@@ -4017,13 +7338,54 @@ def delete_rag_document(
     return Response(status_code=204)
 
 
-@app.get("/api/v1/admin/rag/settings", response_model=RagSettingsOut)
+@app.post(
+    "/api/v1/admin/rag/documents/{document_id}/activate",
+    response_model=schemas.RagDocumentOut,
+)
+def activate_rag_document(
+    document_id: UUID,
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> schemas.RagDocumentOut:
+    """Activate a RAG document."""
+    doc = db.get(RagDocument, document_id)
+    if doc is None:
+        raise HTTPException(status_code=404, detail="Document not found")
+
+    doc.is_active = True
+    db.commit()
+    db.refresh(doc)
+    return _rag_document_out(doc)
+
+
+@app.post(
+    "/api/v1/admin/rag/documents/{document_id}/deactivate",
+    response_model=schemas.RagDocumentOut,
+)
+def deactivate_rag_document(
+    document_id: UUID,
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> schemas.RagDocumentOut:
+    """Deactivate a RAG document."""
+    doc = db.get(RagDocument, document_id)
+    if doc is None:
+        raise HTTPException(status_code=404, detail="Document not found")
+
+    doc.is_active = False
+    db.commit()
+    db.refresh(doc)
+    return _rag_document_out(doc)
+
+
+@app.get("/api/v1/admin/rag/settings", response_model=schemas.RagSettingsOut)
 def get_rag_settings(
     current_user: User = Depends(get_admin_user),
     db: Session = Depends(get_db),
-) -> RagSettingsOut:
+) -> schemas.RagSettingsOut:
+    """Get current RAG settings."""
     settings_row = _get_rag_settings(db)
-    return RagSettingsOut(
+    return schemas.RagSettingsOut(
         system_instruction=settings_row.system_instruction,
         prompt_prefix=settings_row.prompt_prefix,
         model_override=settings_row.model_override,
@@ -4034,12 +7396,13 @@ def get_rag_settings(
     )
 
 
-@app.put("/api/v1/admin/rag/settings", response_model=RagSettingsOut)
+@app.put("/api/v1/admin/rag/settings", response_model=schemas.RagSettingsOut)
 def update_rag_settings(
-    payload: RagSettingsUpdateRequest,
+    payload: schemas.RagSettingsUpdateIn,
     current_user: User = Depends(get_admin_user),
     db: Session = Depends(get_db),
-) -> RagSettingsOut:
+) -> schemas.RagSettingsOut:
+    """Update RAG settings with validation."""
     settings_row = _get_rag_settings(db)
     updates = payload.model_dump(exclude_unset=True)
     if "model_override" in updates:
@@ -4049,7 +7412,7 @@ def update_rag_settings(
         setattr(settings_row, field, value)
     db.commit()
     db.refresh(settings_row)
-    return RagSettingsOut(
+    return schemas.RagSettingsOut(
         system_instruction=settings_row.system_instruction,
         prompt_prefix=settings_row.prompt_prefix,
         model_override=settings_row.model_override,
@@ -4058,6 +7421,345 @@ def update_rag_settings(
         embedding_enabled=bool(settings_row.embedding_enabled),
         hybrid_alpha=float(settings_row.hybrid_alpha or 0.6),
     )
+
+
+@app.post("/api/v1/admin/rag/settings/reset", response_model=schemas.RagSettingsOut)
+def reset_rag_settings(
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> schemas.RagSettingsOut:
+    """Reset RAG settings to default values."""
+    settings_row = _get_rag_settings(db)
+    defaults = get_rag_defaults()
+
+    # Apply all default values
+    for field, value in defaults.items():
+        setattr(settings_row, field, value)
+
+    db.commit()
+    db.refresh(settings_row)
+
+    return schemas.RagSettingsOut(
+        system_instruction=settings_row.system_instruction,
+        prompt_prefix=settings_row.prompt_prefix,
+        model_override=settings_row.model_override,
+        temperature=settings_row.temperature,
+        max_documents=int(settings_row.max_documents or 6),
+        embedding_enabled=bool(settings_row.embedding_enabled),
+        hybrid_alpha=float(settings_row.hybrid_alpha or 0.6),
+    )
+
+
+@app.post(
+    "/api/v1/admin/rag/rebuild",
+    response_model=EmbeddingJobOut,
+    status_code=202,
+)
+def start_rebuild_embeddings(
+    payload: EmbeddingRebuildRequest = EmbeddingRebuildRequest(),
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> EmbeddingJobOut:
+    """
+    Start a new embedding rebuild job.
+
+    This creates a job and rebuilds all embeddings for active RAG documents.
+    Use force=true to rebuild even if embeddings already exist.
+    """
+    from .services.embeddings import rebuild_all_embeddings
+
+    # Create a new job
+    job = EmbeddingJob(
+        status="pending",
+        total_documents=0,
+        processed_documents=0,
+        created_by_id=current_user.id,
+    )
+    db.add(job)
+    db.commit()
+    db.refresh(job)
+
+    try:
+        # Run the rebuild process
+        rebuild_all_embeddings(db, job, force=payload.force)
+        db.refresh(job)
+    except Exception as e:
+        logger.error("Embedding rebuild job failed: %s", str(e), exc_info=True)
+        # Job status is already updated in the service
+        db.refresh(job)
+
+    return _embedding_job_out(job)
+
+
+@app.get(
+    "/api/v1/admin/rag/rebuild/status",
+    response_model=EmbeddingJobOut,
+)
+def get_rebuild_status(
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> EmbeddingJobOut:
+    """
+    Get the status of the most recent embedding rebuild job.
+    """
+    from .services.embeddings import get_latest_job
+
+    job = get_latest_job(db)
+    if job is None:
+        raise HTTPException(status_code=404, detail="No rebuild jobs found")
+
+    return _embedding_job_out(job)
+
+
+@app.get(
+    "/api/v1/admin/rag/rebuild/{job_id}",
+    response_model=EmbeddingJobOut,
+)
+def get_rebuild_job(
+    job_id: UUID,
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> EmbeddingJobOut:
+    """
+    Get the status of a specific embedding rebuild job.
+    """
+    from .services.embeddings import get_job_by_id
+
+    job = get_job_by_id(db, job_id)
+    if job is None:
+        raise HTTPException(status_code=404, detail="Job not found")
+
+    return _embedding_job_out(job)
+
+
+# Legacy endpoint - kept for backward compatibility
+@app.post(
+    "/api/v1/admin/rag/embeddings/rebuild",
+    response_model=RagEmbeddingRebuildOut,
+    deprecated=True,
+)
+def rebuild_rag_embeddings(
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> RagEmbeddingRebuildOut:
+    """
+    Legacy endpoint for rebuilding embeddings.
+
+    Deprecated: Use POST /api/v1/admin/rag/rebuild for progress tracking.
+    """
+    from .services.embeddings import update_document_embedding
+
+    docs = (
+        db.execute(select(RagDocument).order_by(RagDocument.updated_at.desc()))
+        .scalars()
+        .all()
+    )
+    total = len(docs)
+    updated = 0
+    skipped = 0
+    for doc in docs:
+        try:
+            if update_document_embedding(db, doc):
+                updated += 1
+            else:
+                skipped += 1
+        except Exception:
+            skipped += 1
+            logger.warning(
+                "Failed to rebuild embedding for RAG document %s",
+                doc.id,
+                exc_info=True,
+            )
+    db.commit()
+    return RagEmbeddingRebuildOut(total=total, updated=updated, skipped=skipped)
+
+
+@app.get("/api/v1/admin/rag/health", response_model=RagHealthOut)
+def get_rag_health(
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> RagHealthOut:
+    """Get comprehensive RAG health status."""
+    # Get all documents
+    all_docs = db.execute(select(RagDocument)).scalars().all()
+    total_documents = len(all_docs)
+
+    # Count active documents
+    active_docs = [doc for doc in all_docs if doc.is_active]
+    active_documents = len(active_docs)
+
+    # Count documents with/without embeddings
+    docs_with_embeddings = [doc for doc in all_docs if doc.embedding is not None]
+    documents_with_embeddings = len(docs_with_embeddings)
+    documents_without_embeddings = total_documents - documents_with_embeddings
+
+    # Calculate coverage percentage
+    coverage_percent = (
+        (documents_with_embeddings / total_documents * 100.0)
+        if total_documents > 0
+        else 0.0
+    )
+
+    # Find last and oldest embedding update times
+    last_embedding_updated_at: Optional[datetime] = None
+    oldest_embedding_at: Optional[datetime] = None
+
+    if docs_with_embeddings:
+        embedding_times = [
+            doc.embedding_updated_at
+            for doc in docs_with_embeddings
+            if doc.embedding_updated_at
+        ]
+        if embedding_times:
+            last_embedding_updated_at = max(embedding_times)
+            oldest_embedding_at = min(embedding_times)
+
+    # Get current embedding model
+    embedding_model = settings.embedding_model
+
+    # Get RAG settings status
+    rag_settings = _get_rag_settings(db)
+    settings_status = {
+        "embedding_enabled": rag_settings.embedding_enabled,
+        "max_documents": rag_settings.max_documents,
+        "hybrid_alpha": rag_settings.hybrid_alpha,
+        "model_override": rag_settings.model_override,
+        "temperature": rag_settings.temperature,
+    }
+
+    # Determine health status and issues
+    issues: list[str] = []
+
+    # Check for embedding API configuration
+    if not settings.embedding_api_key:
+        issues.append("Embedding API key not configured")
+
+    # Check if embeddings are disabled
+    if not rag_settings.embedding_enabled:
+        issues.append("Embeddings are disabled in settings")
+
+    # Check for documents without embeddings
+    if documents_without_embeddings > 0 and rag_settings.embedding_enabled:
+        issues.append(f"{documents_without_embeddings} document(s) missing embeddings")
+
+    # Check for inactive documents
+    inactive_count = total_documents - active_documents
+    if inactive_count > 0:
+        issues.append(f"{inactive_count} inactive document(s)")
+
+    # Check if there are no documents at all
+    if total_documents == 0:
+        issues.append("No RAG documents available")
+
+    # Determine overall status
+    if total_documents == 0 or coverage_percent < 50:
+        status = "unhealthy"
+    elif coverage_percent < 90 or len(issues) > 0:
+        status = "degraded"
+    else:
+        status = "healthy"
+
+    return RagHealthOut(
+        total_documents=total_documents,
+        active_documents=active_documents,
+        documents_with_embeddings=documents_with_embeddings,
+        documents_without_embeddings=documents_without_embeddings,
+        coverage_percent=round(coverage_percent, 2),
+        last_embedding_updated_at=last_embedding_updated_at,
+        oldest_embedding_at=oldest_embedding_at,
+        embedding_model=embedding_model,
+        settings_status=settings_status,
+        status=status,
+        issues=issues,
+    )
+
+
+# =============================================================================
+# RETENTION ANALYTICS ENDPOINTS
+# =============================================================================
+
+
+@app.get(
+    "/api/v1/admin/analytics/retention", response_model=schemas.RetentionMetricsOut
+)
+def get_retention_metrics(
+    days_ago: Optional[int] = Query(
+        None, description="Number of days to look back for user cohort (optional)"
+    ),
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> schemas.RetentionMetricsOut:
+    """
+    Get overall retention metrics (D1, D7, D30).
+
+    Calculates retention rates showing what percentage of users return
+    after 1, 7, and 30 days from their signup date.
+
+    Admin only.
+    """
+    from .services.retention import calculate_overall_retention
+
+    result = calculate_overall_retention(db, days_ago=days_ago)
+    return schemas.RetentionMetricsOut(**result)
+
+
+@app.get(
+    "/api/v1/admin/analytics/retention/cohorts",
+    response_model=schemas.CohortRetentionOut,
+)
+def get_cohort_retention(
+    period: str = Query(
+        "week",
+        description="Cohort grouping period: 'week' or 'month'",
+        regex="^(week|month)$",
+    ),
+    limit: int = Query(
+        12, ge=1, le=52, description="Maximum number of cohorts to return"
+    ),
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> schemas.CohortRetentionOut:
+    """
+    Get retention metrics grouped by signup cohort.
+
+    Returns retention rates for users grouped by their signup week or month.
+    Useful for tracking how retention changes over time across different
+    user cohorts.
+
+    Admin only.
+    """
+    from .services.retention import calculate_cohort_retention
+
+    result = calculate_cohort_retention(db, period=period, limit=limit)
+    return schemas.CohortRetentionOut(**result)
+
+
+@app.get(
+    "/api/v1/admin/analytics/retention/curve", response_model=schemas.RetentionCurveOut
+)
+def get_retention_curve(
+    days: int = Query(
+        30, ge=1, le=90, description="Number of days to calculate retention for"
+    ),
+    cohort_days_ago: int = Query(
+        90, ge=30, le=365, description="How far back to include users in the cohort"
+    ),
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> schemas.RetentionCurveOut:
+    """
+    Get retention curve data for visualization.
+
+    Returns daily retention rates from day 0 to the specified day count.
+    Used for plotting retention curves that show how user retention
+    decays over time.
+
+    Admin only.
+    """
+    from .services.retention import calculate_retention_curve
+
+    result = calculate_retention_curve(db, days=days, cohort_days_ago=cohort_days_ago)
+    return schemas.RetentionCurveOut(**result)
 
 
 class LeaderboardEntryOut(BaseModel):
@@ -4069,37 +7771,164 @@ class LeaderboardEntryOut(BaseModel):
     title: str
 
 
-@app.get("/api/v1/leaderboard", response_model=list[LeaderboardEntryOut])
+@app.get("/api/v1/leaderboard", response_model=schemas.EnhancedLeaderboardOut)
 def get_leaderboard(
+    scope: str = Query("global", regex="^(global|friends|class)$"),
     limit: int = Query(50, ge=1, le=200),
+    order_by: str = Query("xp", regex="^(xp|streak)$"),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-) -> list[LeaderboardEntryOut]:
-    users = (
-        db.execute(
-            select(User)
-            .where(User.role == UserRole.learner)
-            .order_by(User.total_xp.desc(), User.created_at.asc())
-            .limit(limit)
+) -> schemas.EnhancedLeaderboardOut:
+    """
+    Get leaderboard with optional scope filtering.
+
+    Scopes:
+    - global: All users (default)
+    - friends: Only mutual follows
+    - class: Classroom leaderboard (not implemented yet)
+
+    Order by:
+    - xp: Total experience points (default)
+    - streak: Current streak
+    """
+    from .services import leaderboard as leaderboard_service
+
+    if scope == "friends":
+        entries, user_rank, total_users = leaderboard_service.get_friends_leaderboard(
+            db=db,
+            user_id=current_user.id,
+            limit=limit,
+            order_by=order_by,
         )
-        .scalars()
-        .all()
+    else:  # global
+        entries, user_rank, total_users = leaderboard_service.get_global_leaderboard(
+            db=db,
+            current_user_id=current_user.id,
+            limit=limit,
+            order_by=order_by,
+        )
+
+    # Build response entries with title
+    enhanced_entries = []
+    user_entry = None
+    for entry in entries:
+        current_rank, _, _ = _compute_rank(entry["total_xp"])
+        enhanced_entry = schemas.EnhancedLeaderboardEntryOut(
+            rank=entry["rank"],
+            user_id=entry["user_id"],
+            display_name=entry["display_name"],
+            avatar_url=entry.get("avatar_url"),
+            total_xp=entry["total_xp"],
+            current_streak=entry.get("current_streak", 0),
+            title=str(current_rank["name"]),
+        )
+        enhanced_entries.append(enhanced_entry)
+
+        if entry["user_id"] == current_user.id:
+            user_entry = enhanced_entry
+
+    return schemas.EnhancedLeaderboardOut(
+        scope=scope,
+        entries=enhanced_entries,
+        user_rank=user_rank,
+        user_entry=user_entry,
+        total_users=total_users,
     )
 
-    entries: list[LeaderboardEntryOut] = []
-    for idx, user in enumerate(users, start=1):
-        current_rank, _, _ = _compute_rank(user.total_xp)
-        entries.append(
-            LeaderboardEntryOut(
-                rank=idx,
-                user_id=user.id,
-                display_name=user.display_name,
-                avatar_url=user.avatar_url,
-                total_xp=user.total_xp,
-                title=str(current_rank["name"]),
-            )
+
+@app.get("/api/v1/leaderboard/friends", response_model=schemas.EnhancedLeaderboardOut)
+def get_friends_leaderboard_endpoint(
+    limit: int = Query(50, ge=1, le=200),
+    order_by: str = Query("xp", regex="^(xp|streak)$"),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.EnhancedLeaderboardOut:
+    """Get leaderboard of user's friends (mutual follows)."""
+    from .services import leaderboard as leaderboard_service
+
+    entries, user_rank, total_users = leaderboard_service.get_friends_leaderboard(
+        db=db,
+        user_id=current_user.id,
+        limit=limit,
+        order_by=order_by,
+    )
+
+    # Build response entries with title
+    enhanced_entries = []
+    user_entry = None
+    for entry in entries:
+        current_rank, _, _ = _compute_rank(entry["total_xp"])
+        enhanced_entry = schemas.EnhancedLeaderboardEntryOut(
+            rank=entry["rank"],
+            user_id=entry["user_id"],
+            display_name=entry["display_name"],
+            avatar_url=entry.get("avatar_url"),
+            total_xp=entry["total_xp"],
+            current_streak=entry.get("current_streak", 0),
+            title=str(current_rank["name"]),
         )
-    return entries
+        enhanced_entries.append(enhanced_entry)
+
+        if entry["user_id"] == current_user.id:
+            user_entry = enhanced_entry
+
+    return schemas.EnhancedLeaderboardOut(
+        scope="friends",
+        entries=enhanced_entries,
+        user_rank=user_rank,
+        user_entry=user_entry,
+        total_users=total_users,
+    )
+
+
+@app.get("/api/v1/leaderboard/settings", response_model=schemas.LeaderboardSettingsOut)
+def get_leaderboard_settings(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.LeaderboardSettingsOut:
+    """Get user's leaderboard settings."""
+    from .services import leaderboard as leaderboard_service
+
+    settings = leaderboard_service.get_or_create_leaderboard_settings(
+        db, current_user.id
+    )
+    return schemas.LeaderboardSettingsOut(
+        id=settings.id,
+        user_id=settings.user_id,
+        show_on_global=settings.show_on_global,
+        show_real_name=settings.show_real_name,
+        preferred_leaderboard=settings.preferred_leaderboard,
+        created_at=settings.created_at,
+        updated_at=settings.updated_at,
+    )
+
+
+@app.put("/api/v1/leaderboard/settings", response_model=schemas.LeaderboardSettingsOut)
+def update_leaderboard_settings(
+    payload: schemas.LeaderboardSettingsUpdateIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.LeaderboardSettingsOut:
+    """Update user's leaderboard settings."""
+    from .services import leaderboard as leaderboard_service
+
+    settings = leaderboard_service.update_leaderboard_settings(
+        db=db,
+        user_id=current_user.id,
+        show_on_global=payload.show_on_global,
+        show_real_name=payload.show_real_name,
+        preferred_leaderboard=payload.preferred_leaderboard,
+    )
+
+    return schemas.LeaderboardSettingsOut(
+        id=settings.id,
+        user_id=settings.user_id,
+        show_on_global=settings.show_on_global,
+        show_real_name=settings.show_real_name,
+        preferred_leaderboard=settings.preferred_leaderboard,
+        created_at=settings.created_at,
+        updated_at=settings.updated_at,
+    )
 
 
 class QuizQuestionOut(BaseModel):
@@ -4109,6 +7938,7 @@ class QuizQuestionOut(BaseModel):
     options: Optional[list[Any]] = None
     target_mesh_name: Optional[str] = None
     difficulty: int
+    image_url: Optional[str] = None
 
 
 class MotifQuizResponse(BaseModel):
@@ -4166,6 +7996,7 @@ def get_motif_quiz(
                 options=q.options if isinstance(q.options, list) else None,
                 target_mesh_name=q.target_mesh_name,
                 difficulty=max(1, int(q.difficulty or 1)),
+                image_url=None,
             )
             for q in questions
         ],
@@ -4283,6 +8114,29 @@ def submit_quiz(
             )
         )
 
+        # Update skill level for adaptive learning if question has skill_type
+        if q.skill_type:
+            from backend.services.adaptive_quiz import update_skill_level
+
+            try:
+                update_skill_level(
+                    db,
+                    user_id=current_user.id,
+                    skill_type=q.skill_type,
+                    question_difficulty=q.difficulty,
+                    is_correct=is_correct,
+                )
+            except Exception as e:
+                # Log but don't fail the quiz submission
+                logger.warning(
+                    f"Failed to update skill level: {e}",
+                    extra={
+                        "user_id": str(current_user.id),
+                        "question_id": str(q.id),
+                        "skill_type": q.skill_type,
+                    },
+                )
+
     percentage = int(round((score / max_score) * 100)) if max_score > 0 else 0
     passed = percentage >= QUIZ_PASS_PERCENT
 
@@ -4318,10 +8172,31 @@ def submit_quiz(
                 db, user=current_user, badge_slug=BADGE_FIRST_MASTERED
             )
 
+    # Track first quiz passed milestone
+    if passed:
+        passed_before = db.execute(
+            select(func.count(QuizAttempt.id)).where(
+                QuizAttempt.user_id == current_user.id,
+                QuizAttempt.percentage >= 70,
+            )
+        ).scalar_one()
+        if passed_before == 0:
+            from backend.services.milestones import check_and_create_first_quiz_passed
+
+            check_and_create_first_quiz_passed(
+                db, current_user.id, motif.id, score, max_score, percentage
+            )
+
     _update_streak(current_user, now)
     if current_user.current_streak >= 7:
         badge_attempts.append(BADGE_STREAK_7)
         badge_bonus += _award_badge(db, user=current_user, badge_slug=BADGE_STREAK_7)
+        # Track first 7-day streak milestone
+        from backend.services.milestones import check_and_create_first_streak_7
+
+        check_and_create_first_streak_7(
+            db, current_user.id, current_user.current_streak
+        )
 
     # Check quiz badges
     if percentage == 100:
@@ -4423,6 +8298,289 @@ def submit_quiz(
         total_xp=current_user.total_xp,
         results=results,
     )
+
+
+# =============================================================================
+# ADAPTIVE QUIZ ENDPOINTS
+# =============================================================================
+
+
+@app.get("/api/v1/quiz/adaptive", response_model=schemas.AdaptiveQuizOut)
+def get_adaptive_quiz(
+    motif_id: Optional[UUID] = Query(default=None),
+    skill_type: Optional[str] = Query(default=None),
+    limit: int = Query(default=10, ge=1, le=50),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.AdaptiveQuizOut:
+    """
+    Get adaptive quiz questions based on user's skill level.
+
+    Query parameters:
+    - motif_id: Optional motif ID to filter questions
+    - skill_type: Optional skill type (motif_recognition, history_knowledge, cultural_understanding)
+    - limit: Number of questions to return (1-50, default 10)
+    """
+    from backend.services.adaptive_quiz import (
+        get_adaptive_questions,
+        get_recommended_difficulty,
+    )
+
+    # Validate skill type if provided
+    if skill_type and skill_type not in [st.value for st in SkillType]:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid skill_type. Must be one of: {', '.join([st.value for st in SkillType])}",
+        )
+
+    # Get recommended difficulty
+    if skill_type:
+        recommended_difficulty = get_recommended_difficulty(
+            db, current_user.id, skill_type
+        )
+    else:
+        # Get average across all skills
+        stmt = select(func.avg(UserSkillLevel.skill_level)).where(
+            UserSkillLevel.user_id == current_user.id
+        )
+        avg_skill = db.execute(stmt).scalar()
+        recommended_difficulty = avg_skill if avg_skill is not None else 0.5
+
+    # Get adaptive questions
+    questions = get_adaptive_questions(
+        db,
+        user_id=current_user.id,
+        motif_id=motif_id,
+        skill_type=skill_type,
+        limit=limit,
+    )
+
+    if not questions:
+        raise HTTPException(
+            status_code=404, detail="No questions found matching your skill level"
+        )
+
+    # Convert to schema format
+    question_outs = []
+    for q in questions:
+        options = []
+        if q.options:
+            for opt in q.options:
+                options.append(
+                    schemas.QuizOptionOut(
+                        id=opt.get("id", ""),
+                        text=opt.get("text", ""),
+                        image_url=opt.get("image_url"),
+                    )
+                )
+
+        question_outs.append(
+            schemas.QuizQuestionOut(
+                id=q.id,
+                question_text=q.question_text,
+                question_type=q.question_type.value,
+                options=options,
+                target_mesh_name=q.target_mesh_name,
+                explanation=q.explanation,
+            )
+        )
+
+    return schemas.AdaptiveQuizOut(
+        motif_id=motif_id,
+        skill_type=skill_type,
+        recommended_difficulty=recommended_difficulty,
+        questions=question_outs,
+    )
+
+
+@app.get("/api/v1/skills", response_model=schemas.UserSkillsOut)
+def get_user_skills(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.UserSkillsOut:
+    """Get user's skill levels across all skill types."""
+    from backend.services.adaptive_quiz import get_user_skill_level
+
+    skills = []
+    total_level = 0.0
+
+    for skill_type in SkillType:
+        skill = get_user_skill_level(db, current_user.id, skill_type.value)
+        skills.append(
+            schemas.UserSkillLevelOut(
+                id=skill.id,
+                user_id=skill.user_id,
+                skill_type=skill.skill_type,
+                skill_level=skill.skill_level,
+                total_questions=skill.total_questions,
+                correct_answers=skill.correct_answers,
+                accuracy=(skill.correct_answers / skill.total_questions * 100)
+                if skill.total_questions > 0
+                else 0.0,
+                last_updated_at=skill.last_updated_at,
+                created_at=skill.created_at,
+            )
+        )
+        total_level += skill.skill_level
+
+    overall_level = total_level / len(SkillType) if len(SkillType) > 0 else 0.5
+
+    return schemas.UserSkillsOut(
+        skills=skills,
+        overall_level=overall_level,
+    )
+
+
+@app.post("/api/v1/skills/recalculate", response_model=schemas.UserSkillsOut)
+def recalculate_user_skills(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.UserSkillsOut:
+    """
+    Recalculate user's skill levels from quiz history.
+    Useful for backfilling or recalibrating skill levels.
+    """
+    from backend.services.adaptive_quiz import recalculate_user_skills
+
+    # Recalculate all skills
+    updated_skills = recalculate_user_skills(db, current_user.id)
+
+    skills = []
+    total_level = 0.0
+
+    for skill in updated_skills:
+        skills.append(
+            schemas.UserSkillLevelOut(
+                id=skill.id,
+                user_id=skill.user_id,
+                skill_type=skill.skill_type,
+                skill_level=skill.skill_level,
+                total_questions=skill.total_questions,
+                correct_answers=skill.correct_answers,
+                accuracy=(skill.correct_answers / skill.total_questions * 100)
+                if skill.total_questions > 0
+                else 0.0,
+                last_updated_at=skill.last_updated_at,
+                created_at=skill.created_at,
+            )
+        )
+        total_level += skill.skill_level
+
+    overall_level = (
+        total_level / len(updated_skills) if len(updated_skills) > 0 else 0.5
+    )
+
+    return schemas.UserSkillsOut(
+        skills=skills,
+        overall_level=overall_level,
+    )
+
+
+# =============================================================================
+# QUIZ HINTS ENDPOINTS (P1-AI-02)
+# =============================================================================
+
+
+@app.post(
+    "/api/v1/quiz/questions/{question_id}/hint", response_model=schemas.QuizHintOut
+)
+def request_quiz_hint(
+    question_id: UUID,
+    payload: schemas.QuizHintRequestIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.QuizHintOut:
+    """
+    Request a context-aware hint for a quiz question.
+
+    Hint types:
+    - explain: Explain the concept without giving answer (0 hearts)
+    - clue: Give a subtle clue towards the answer (1 heart)
+    - elimination: Eliminate one wrong answer (2 hearts)
+    """
+    from backend.models import HintType as HintTypeEnum
+    from backend.services.quiz_hints import (
+        HintType,
+        create_hint_request,
+    )
+
+    # Validate hint type
+    try:
+        hint_type = HintTypeEnum(payload.hint_type)
+    except ValueError:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid hint_type. Must be one of: {', '.join([ht.value for ht in HintTypeEnum])}",
+        )
+
+    # Create hint request
+    try:
+        hint_request = create_hint_request(
+            db=db,
+            user=current_user,
+            question_id=question_id,
+            hint_type=hint_type,
+            collect_ai_sources_fn=_collect_ai_sources,
+            call_deepseek_fn=_call_deepseek_chat,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except RuntimeError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+    return schemas.QuizHintOut(
+        id=hint_request.id,
+        question_id=hint_request.question_id,
+        hint_type=hint_request.hint_type,
+        hint_text=hint_request.hint_text,
+        heart_cost=hint_request.heart_cost,
+        created_at=hint_request.created_at,
+        rag_sources=hint_request.rag_sources,
+    )
+
+
+@app.get(
+    "/api/v1/quiz/questions/{question_id}/hints",
+    response_model=schemas.QuizHintsListOut,
+)
+def get_question_hints(
+    question_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.QuizHintsListOut:
+    """
+    Get all hints the user has requested for a specific question.
+    """
+    from backend.services.quiz_hints import get_question_hints as get_hints
+
+    # Verify question exists
+    question = db.get(QuizQuestion, question_id)
+    if not question:
+        raise HTTPException(status_code=404, detail="Question not found")
+
+    # Get hints
+    hints = get_hints(db, current_user, question_id)
+
+    return schemas.QuizHintsListOut(
+        hints=[
+            schemas.QuizHintOut(
+                id=hint.id,
+                question_id=hint.question_id,
+                hint_type=hint.hint_type,
+                hint_text=hint.hint_text,
+                heart_cost=hint.heart_cost,
+                created_at=hint.created_at,
+                rag_sources=hint.rag_sources,
+            )
+            for hint in hints
+        ],
+        total=len(hints),
+    )
+
+
+# =============================================================================
+# URN EXAM ELIGIBILITY
+# =============================================================================
 
 
 def _build_urn_exam_eligibility_detail(
@@ -4568,6 +8726,7 @@ def get_urn_exam(
                 options=q.options if isinstance(q.options, list) else None,
                 target_mesh_name=q.target_mesh_name,
                 difficulty=max(1, int(q.difficulty or 1)),
+                image_url=None,
             )
             for q in questions
         ],
@@ -4921,6 +9080,7 @@ def get_latest_urn_exam_attempt(
                     options=q.options if isinstance(q.options, list) else None,
                     target_mesh_name=q.target_mesh_name,
                     difficulty=max(1, int(q.difficulty or 1)),
+                    image_url=None,
                 )
                 for q in questions
             ],
@@ -5448,63 +9608,6 @@ def _call_deepseek_chat(
     return content
 
 
-def _embedding_url() -> str:
-    base = settings.embedding_base_url.rstrip("/")
-    if base.endswith("/embeddings"):
-        return base
-    if base.endswith("/v1"):
-        return f"{base}/embeddings"
-    return f"{base}/v1/embeddings"
-
-
-def _prepare_embedding_text(text: str, max_len: int = 2000) -> str:
-    trimmed = " ".join(text.split())
-    if len(trimmed) <= max_len:
-        return trimmed
-    return trimmed[:max_len].rstrip()
-
-
-def _call_embedding(text: str) -> Optional[list[float]]:
-    if not settings.embedding_api_key:
-        return None
-    cleaned = _prepare_embedding_text(text)
-    if not cleaned:
-        return None
-
-    payload = {
-        "model": settings.embedding_model,
-        "input": cleaned,
-    }
-    data = json.dumps(payload).encode("utf-8")
-    request = UrlRequest(
-        _embedding_url(),
-        data=data,
-        headers={
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {settings.embedding_api_key}",
-        },
-    )
-
-    try:
-        with urlopen(request, timeout=settings.embedding_timeout_seconds) as response:
-            body = response.read().decode("utf-8")
-    except (HTTPError, URLError):
-        return None
-
-    try:
-        parsed = json.loads(body)
-    except json.JSONDecodeError:
-        return None
-
-    data_items = parsed.get("data") if isinstance(parsed, dict) else None
-    if not isinstance(data_items, list) or not data_items:
-        return None
-    embedding = data_items[0].get("embedding")
-    if not isinstance(embedding, list):
-        return None
-    return [float(value) for value in embedding]
-
-
 def _strip_accents(value: str) -> str:
     normalized = unicodedata.normalize("NFD", value)
     return "".join(
@@ -5587,15 +9690,6 @@ def _safe_parse_json(content: str) -> Optional[Any]:
         except json.JSONDecodeError:
             return None
 
-    if isinstance(parsed, str):
-        inner = parsed.strip()
-        if inner.startswith("{") or inner.startswith("["):
-            try:
-                return json.loads(inner)
-            except json.JSONDecodeError:
-                return parsed
-    return parsed
-
 
 def _source_snippet(text: Optional[str], max_len: int = 280) -> Optional[str]:
     if not text:
@@ -5613,54 +9707,6 @@ def _clip_text(text: Optional[str], max_len: int = 1200) -> str:
     if len(trimmed) <= max_len:
         return trimmed
     return trimmed[:max_len].rstrip()
-
-
-def _tokenize_query(query: str) -> list[str]:
-    return [token for token in re.split(r"\\s+", query.lower()) if len(token) >= 3]
-
-
-def _keyword_score(text: str, tokens: Sequence[str]) -> float:
-    if not tokens:
-        return 0.0
-    haystack = text.lower()
-    hits = sum(1 for token in tokens if token in haystack)
-    return hits / max(len(tokens), 1)
-
-
-def _cosine_similarity(vec_a: Sequence[float], vec_b: Sequence[float]) -> float:
-    if not vec_a or not vec_b or len(vec_a) != len(vec_b):
-        return 0.0
-    dot = 0.0
-    norm_a = 0.0
-    norm_b = 0.0
-    for a, b in zip(vec_a, vec_b):
-        dot += a * b
-        norm_a += a * a
-        norm_b += b * b
-    if norm_a == 0.0 or norm_b == 0.0:
-        return 0.0
-    return dot / math.sqrt(norm_a * norm_b)
-
-
-def _score_rag_documents(
-    docs: Sequence[RagDocument],
-    *,
-    query: str,
-    query_embedding: Optional[Sequence[float]],
-    alpha: float,
-) -> list[RagDocument]:
-    tokens = _tokenize_query(query)
-    weighted = []
-    for doc in docs:
-        text = f\"{doc.title}\\n{doc.content}\"
-        keyword_score = _keyword_score(text, tokens)
-        embed_score = 0.0
-        if query_embedding is not None and isinstance(doc.embedding, list):
-            embed_score = _cosine_similarity(query_embedding, doc.embedding)
-        score = alpha * embed_score + (1 - alpha) * keyword_score
-        weighted.append((score, doc))
-    weighted.sort(key=lambda item: item[0], reverse=True)
-    return [doc for _, doc in weighted]
 
 
 def _get_rag_settings(session: Session) -> RagSettings:
@@ -5700,6 +9746,103 @@ def _apply_ai_settings(
         else temperature
     )
     return system_content, user_prompt, model_override, temp_override
+
+
+def _cosine_similarity(vec1: list[float], vec2: list[float]) -> float:
+    """Calculate cosine similarity between two vectors."""
+    if not vec1 or not vec2 or len(vec1) != len(vec2):
+        return 0.0
+
+    dot_product = sum(a * b for a, b in zip(vec1, vec2))
+    magnitude1 = math.sqrt(sum(a * a for a in vec1))
+    magnitude2 = math.sqrt(sum(b * b for b in vec2))
+
+    if magnitude1 == 0.0 or magnitude2 == 0.0:
+        return 0.0
+
+    return dot_product / (magnitude1 * magnitude2)
+
+
+def _keyword_score(text: str, query: str) -> float:
+    """Calculate keyword matching score between text and query."""
+    if not text or not query:
+        return 0.0
+
+    # Normalize text and query
+    text_lower = text.lower()
+    query_lower = query.lower()
+
+    # Split into terms
+    query_terms = query_lower.split()
+    if not query_terms:
+        return 0.0
+
+    # Count term matches
+    matches = 0
+    for term in query_terms:
+        if term in text_lower:
+            matches += 1
+
+    # Calculate score as ratio of matched terms
+    return matches / len(query_terms)
+
+
+def _score_rag_documents(
+    rag_docs: Sequence[RagDocument],
+    *,
+    query: str,
+    query_embedding: Optional[list[float]],
+    alpha: float,
+) -> list[RagDocument]:
+    """
+    Score and rank RAG documents using hybrid search.
+
+    Args:
+        rag_docs: List of RAG documents to score
+        query: Search query text
+        query_embedding: Query embedding vector
+        alpha: Hybrid search weight (0.0 = pure keyword, 1.0 = pure semantic)
+
+    Returns:
+        List of documents sorted by score (highest first)
+    """
+    if not rag_docs:
+        return []
+
+    scored_docs: list[tuple[float, RagDocument]] = []
+
+    for doc in rag_docs:
+        # Calculate keyword score
+        keyword_score = 0.0
+        if query:
+            # Score based on title and content
+            title_score = _keyword_score(doc.title, query)
+            content_score = _keyword_score(doc.content, query)
+            # Weight title matches higher
+            keyword_score = 0.7 * title_score + 0.3 * content_score
+
+        # Calculate semantic score
+        semantic_score = 0.0
+        if query_embedding and doc.embedding:
+            try:
+                # doc.embedding is stored as JSONB, may need to convert
+                doc_embedding = doc.embedding
+                if isinstance(doc_embedding, list):
+                    semantic_score = _cosine_similarity(query_embedding, doc_embedding)
+            except (TypeError, ValueError):
+                pass
+
+        # Combine scores using alpha
+        # alpha=0.0 means pure keyword, alpha=1.0 means pure semantic
+        hybrid_score = (1.0 - alpha) * keyword_score + alpha * semantic_score
+
+        scored_docs.append((hybrid_score, doc))
+
+    # Sort by score descending
+    scored_docs.sort(key=lambda x: x[0], reverse=True)
+
+    # Return sorted documents
+    return [doc for score, doc in scored_docs]
 
 
 def _collect_ai_sources(
@@ -5920,7 +10063,10 @@ def _fallback_answer_from_sources(
 def _fallback_summary_from_sources(sources: Sequence[dict[str, Any]]) -> str:
     if not sources:
         return "Chưa có dữ liệu để tóm tắt."
-    return _source_snippet(sources[0].get("content"), max_len=480) or "Chưa có dữ liệu để tóm tắt."
+    return (
+        _source_snippet(sources[0].get("content"), max_len=480)
+        or "Chưa có dữ liệu để tóm tắt."
+    )
 
 
 def _fallback_flashcards_from_sources(
@@ -5977,18 +10123,21 @@ def _finish_ai_job(session: Session, job: AIJob, *, response: str) -> None:
     session.commit()
 
 
-def _finish_ai_job_fallback(
-    session: Session, job: AIJob, *, response: str, error: str
-) -> None:
-    job.status = "fallback"
-    job.provider = "fallback"
-    job.response = response
+def _fail_ai_job(session: Session, job: AIJob, *, error: str) -> None:
+    job.status = "failed"
     job.error = error
     session.commit()
 
 
-def _fail_ai_job(session: Session, job: AIJob, *, error: str) -> None:
-    job.status = "failed"
+def _finish_ai_job_fallback(
+    session: Session, job: AIJob, *, response: str, error: str
+) -> None:
+    """Finish an AI job with a fallback response due to an error.
+
+    Marks the job as 'fallback' status with both the fallback response and error details.
+    """
+    job.status = "fallback"
+    job.response = response
     job.error = error
     session.commit()
 
@@ -6503,6 +10652,166 @@ def retry_ai_job(
         raise HTTPException(status_code=502, detail="AI retry failed") from exc
 
 
+# =============================================================================
+# Content-Based Recommendations API
+# =============================================================================
+
+
+@app.get("/api/v1/recommendations", response_model=schemas.RecommendationsOut)
+def get_recommendations(
+    recommendation_type: Optional[str] = Query(
+        None, pattern="^(continue_learning|discover_new|review_needed|popular)$"
+    ),
+    limit: int = Query(10, ge=1, le=50),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.RecommendationsOut:
+    """
+    Get personalized content recommendations.
+
+    Returns different types of recommendations:
+    - continue_learning: Lessons to continue
+    - discover_new: New content based on interests
+    - review_needed: Content needing review
+    - popular: Trending content
+    """
+    from .services.recommendations import get_personalized_recommendations
+
+    recommendations = get_personalized_recommendations(
+        db, user=current_user, limit=limit, recommendation_type=recommendation_type
+    )
+
+    # Convert to schema format
+    result = schemas.RecommendationsOut()
+
+    for rec_type, items in recommendations.items():
+        rec_items = [schemas.RecommendationContentOut(**item) for item in items]
+        setattr(result, rec_type, rec_items)
+
+    return result
+
+
+@app.get(
+    "/api/v1/recommendations/similar/{content_type}/{content_id}",
+    response_model=schemas.SimilarContentOut,
+)
+def get_similar_content_endpoint(
+    content_type: str,
+    content_id: UUID,
+    limit: int = Query(10, ge=1, le=50),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.SimilarContentOut:
+    """
+    Get similar content based on tags and collaborative filtering.
+
+    Args:
+        content_type: Type of content (lesson, motif, quest)
+        content_id: ID of the content
+        limit: Maximum number of recommendations
+    """
+    from .services.recommendations import get_similar_content
+
+    if content_type not in ["lesson", "motif", "quest"]:
+        raise HTTPException(
+            status_code=400, detail="content_type must be one of: lesson, motif, quest"
+        )
+
+    similar_items = get_similar_content(
+        db,
+        content_type=content_type,
+        content_id=content_id,
+        user=current_user,
+        limit=limit,
+    )
+
+    return schemas.SimilarContentOut(
+        similar_content=[
+            schemas.RecommendationContentOut(**item) for item in similar_items
+        ],
+        total=len(similar_items),
+    )
+
+
+@app.post(
+    "/api/v1/recommendations/interaction", response_model=schemas.RecordInteractionOut
+)
+def record_content_interaction(
+    payload: schemas.RecordInteractionIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.RecordInteractionOut:
+    """
+    Record a user content interaction for recommendation engine.
+
+    This helps improve personalized recommendations by tracking:
+    - Views: Content user has browsed
+    - Completions: Content user has finished
+    - Likes: Content user has favorited
+    - Saves: Content user has bookmarked
+    """
+    from .models import InteractionType
+    from .services.recommendations import record_interaction
+
+    # Convert string to enum
+    interaction_type_enum = InteractionType(payload.interaction_type)
+
+    interaction = record_interaction(
+        db=db,
+        user=current_user,
+        content_type=payload.content_type,
+        content_id=payload.content_id,
+        interaction_type=interaction_type_enum,
+        duration_seconds=payload.duration_seconds,
+        metadata=payload.metadata,
+    )
+
+    return schemas.RecordInteractionOut(
+        success=True,
+        message="Interaction recorded successfully",
+        interaction_id=str(interaction.id),
+    )
+
+
+@app.post(
+    "/api/v1/recommendations/feedback", response_model=schemas.RecommendationFeedbackOut
+)
+def submit_recommendation_feedback(
+    payload: schemas.RecommendationFeedbackIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.RecommendationFeedbackOut:
+    """
+    Submit feedback on recommendations to improve future suggestions.
+
+    Feedback types:
+    - helpful: Recommendation was useful
+    - not_helpful: Recommendation was not useful
+    - irrelevant: Recommendation was not relevant
+    - already_seen: User has already seen this content
+    """
+    from .models import InteractionType
+    from .services.recommendations import record_interaction
+
+    # Store feedback as metadata in interaction
+    metadata = payload.metadata or {}
+    metadata["feedback_type"] = payload.feedback_type
+
+    # Record as a view interaction with feedback metadata
+    record_interaction(
+        db=db,
+        user=current_user,
+        content_type=payload.content_type,
+        content_id=payload.content_id,
+        interaction_type=InteractionType.view,
+        metadata=metadata,
+    )
+
+    return schemas.RecommendationFeedbackOut(
+        success=True, message="Feedback recorded successfully"
+    )
+
+
 @app.post("/api/v1/ai/tutor", response_model=AIAnswerOut)
 def ai_tutor(
     payload: AITutorRequest,
@@ -6725,7 +11034,9 @@ def ai_flashcards(
         _finish_ai_job_fallback(
             db,
             job,
-            response=json.dumps([card.model_dump() for card in cards], ensure_ascii=False),
+            response=json.dumps(
+                [card.model_dump() for card in cards], ensure_ascii=False
+            ),
             error=str(exc),
         )
         return FlashcardGenerateOut(cards=cards, job_id=job.id)
@@ -7530,6 +11841,676 @@ def list_content_flags(
 
 
 # ============================================================
+# Content Versioning Endpoints
+# ============================================================
+
+
+def _create_content_snapshot(
+    db: Session,
+    content_type: str,
+    content_id: UUID,
+    version: int,
+    editor_id: UUID,
+    change_note: Optional[str] = None,
+) -> None:
+    """Create a snapshot of content for versioning."""
+    # Get the content data based on type
+    if content_type == "lesson":
+        content = db.get(LessonContent, content_id)
+        if content is None:
+            return
+        data = {
+            "intro_text": content.intro_text,
+            "description": content.description,
+            "historical_context": content.historical_context,
+            "symbolism": content.symbolism,
+            "fun_fact": content.fun_fact,
+            "audio_narration_url": content.audio_narration_url,
+            "additional_images": content.additional_images,
+            "video_url": content.video_url,
+            "is_published": content.is_published,
+            "is_ai_generated": content.is_ai_generated,
+        }
+    else:
+        # Future: handle other content types (quiz, etc.)
+        return
+
+    snapshot = ContentVersion(
+        content_type=content_type,
+        content_id=content_id,
+        version=version,
+        data=data,
+        editor_id=editor_id,
+        change_note=change_note,
+    )
+    db.add(snapshot)
+
+
+class ContentVersionListOut(BaseModel):
+    id: UUID
+    version: int
+    editor_id: Optional[UUID] = None
+    editor_name: Optional[str] = None
+    change_note: Optional[str] = None
+    created_at: datetime
+
+
+class ContentVersionOut(BaseModel):
+    id: UUID
+    content_type: str
+    content_id: UUID
+    version: int
+    data: dict
+    editor_id: Optional[UUID] = None
+    editor_name: Optional[str] = None
+    change_note: Optional[str] = None
+    created_at: datetime
+
+
+class RevertContentIn(BaseModel):
+    change_note: Optional[str] = None
+
+
+@app.get(
+    "/api/v1/admin/content/{content_type}/{content_id}/versions",
+    response_model=list[ContentVersionListOut],
+)
+def list_content_versions(
+    content_type: str,
+    content_id: UUID,
+    current_user: User = Depends(get_staff_user),
+    db: Session = Depends(get_db),
+) -> list[ContentVersionListOut]:
+    """List all versions of a content item."""
+    if content_type not in ["lesson", "quiz"]:
+        raise HTTPException(status_code=400, detail="Invalid content type")
+
+    versions = (
+        db.execute(
+            select(ContentVersion)
+            .where(
+                ContentVersion.content_type == content_type,
+                ContentVersion.content_id == content_id,
+            )
+            .order_by(ContentVersion.version.desc())
+        )
+        .scalars()
+        .all()
+    )
+
+    # Get editor names
+    editor_ids = [v.editor_id for v in versions if v.editor_id]
+    editors = {}
+    if editor_ids:
+        users = db.execute(select(User).where(User.id.in_(editor_ids))).scalars().all()
+        editors = {u.id: u.display_name for u in users}
+
+    return [
+        ContentVersionListOut(
+            id=v.id,
+            version=v.version,
+            editor_id=v.editor_id,
+            editor_name=editors.get(v.editor_id) if v.editor_id else None,
+            change_note=v.change_note,
+            created_at=v.created_at,
+        )
+        for v in versions
+    ]
+
+
+@app.get(
+    "/api/v1/admin/content/{content_type}/{content_id}/versions/{version}",
+    response_model=ContentVersionOut,
+)
+def get_content_version(
+    content_type: str,
+    content_id: UUID,
+    version: int,
+    current_user: User = Depends(get_staff_user),
+    db: Session = Depends(get_db),
+) -> ContentVersionOut:
+    """Get a specific version of a content item."""
+    if content_type not in ["lesson", "quiz"]:
+        raise HTTPException(status_code=400, detail="Invalid content type")
+
+    content_version = db.execute(
+        select(ContentVersion).where(
+            ContentVersion.content_type == content_type,
+            ContentVersion.content_id == content_id,
+            ContentVersion.version == version,
+        )
+    ).scalar_one_or_none()
+
+    if content_version is None:
+        raise HTTPException(status_code=404, detail="Version not found")
+
+    editor_name = None
+    if content_version.editor_id:
+        editor = db.get(User, content_version.editor_id)
+        editor_name = editor.display_name if editor else None
+
+    return ContentVersionOut(
+        id=content_version.id,
+        content_type=content_version.content_type,
+        content_id=content_version.content_id,
+        version=content_version.version,
+        data=content_version.data,
+        editor_id=content_version.editor_id,
+        editor_name=editor_name,
+        change_note=content_version.change_note,
+        created_at=content_version.created_at,
+    )
+
+
+# =============================================================================
+# Review Workflow Endpoints
+# =============================================================================
+
+
+@app.post(
+    "/api/v1/admin/lessons/{lesson_id}/submit-review", response_model=AdminLessonOut
+)
+def submit_lesson_for_review(
+    lesson_id: UUID,
+    payload: schemas.SubmitForReviewIn,
+    current_user: User = Depends(get_staff_user),
+    db: Session = Depends(get_db),
+) -> AdminLessonOut:
+    """Submit a lesson for review (teachers and admins)."""
+    lesson = db.get(LessonContent, lesson_id)
+    if lesson is None:
+        raise HTTPException(status_code=404, detail="Lesson not found")
+
+    # Check current status
+    current_status = lesson.status or ContentStatus.draft
+    if current_status != ContentStatus.draft:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Can only submit draft lessons for review. Current status: {current_status.value}",
+        )
+
+    # Update status to review
+    lesson.status = ContentStatus.review
+    lesson.submitted_for_review_at = datetime.utcnow()
+    lesson.last_editor_id = current_user.id
+
+    db.commit()
+    db.refresh(lesson)
+
+    return AdminLessonOut(
+        id=lesson.id,
+        motif_id=lesson.motif_id,
+        intro_text=lesson.intro_text,
+        description=lesson.description,
+        historical_context=lesson.historical_context,
+        symbolism=lesson.symbolism,
+        fun_fact=lesson.fun_fact,
+        audio_narration_url=lesson.audio_narration_url,
+        additional_images=lesson.additional_images,
+        video_url=lesson.video_url,
+        is_published=lesson.is_published,
+        is_ai_generated=lesson.is_ai_generated,
+        version=lesson.version,
+        last_editor_id=lesson.last_editor_id,
+        published_at=lesson.published_at,
+        publish_note=lesson.publish_note,
+        status=lesson.status.value if lesson.status else "draft",
+        submitted_for_review_at=lesson.submitted_for_review_at,
+        reviewed_by_id=lesson.reviewed_by_id,
+        reviewed_at=lesson.reviewed_at,
+        review_notes=lesson.review_notes,
+        created_at=lesson.created_at,
+        updated_at=lesson.updated_at,
+    )
+
+
+@app.post("/api/v1/admin/lessons/{lesson_id}/approve", response_model=AdminLessonOut)
+def approve_lesson(
+    lesson_id: UUID,
+    payload: schemas.ApproveContentIn,
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> AdminLessonOut:
+    """Approve and publish a lesson (admins only)."""
+    lesson = db.get(LessonContent, lesson_id)
+    if lesson is None:
+        raise HTTPException(status_code=404, detail="Lesson not found")
+
+    # Check current status
+    current_status = lesson.status or ContentStatus.draft
+    if current_status not in (ContentStatus.review, ContentStatus.draft):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Can only approve lessons in review or draft status. Current status: {current_status.value}",
+        )
+
+    # Update status to published
+    lesson.status = ContentStatus.published
+    lesson.is_published = True
+    lesson.reviewed_by_id = current_user.id
+    lesson.reviewed_at = datetime.utcnow()
+    lesson.published_at = datetime.utcnow()
+    lesson.review_notes = payload.review_notes
+
+    db.commit()
+    db.refresh(lesson)
+
+    return AdminLessonOut(
+        id=lesson.id,
+        motif_id=lesson.motif_id,
+        intro_text=lesson.intro_text,
+        description=lesson.description,
+        historical_context=lesson.historical_context,
+        symbolism=lesson.symbolism,
+        fun_fact=lesson.fun_fact,
+        audio_narration_url=lesson.audio_narration_url,
+        additional_images=lesson.additional_images,
+        video_url=lesson.video_url,
+        is_published=lesson.is_published,
+        is_ai_generated=lesson.is_ai_generated,
+        version=lesson.version,
+        last_editor_id=lesson.last_editor_id,
+        published_at=lesson.published_at,
+        publish_note=lesson.publish_note,
+        status=lesson.status.value if lesson.status else "draft",
+        submitted_for_review_at=lesson.submitted_for_review_at,
+        reviewed_by_id=lesson.reviewed_by_id,
+        reviewed_at=lesson.reviewed_at,
+        review_notes=lesson.review_notes,
+        created_at=lesson.created_at,
+        updated_at=lesson.updated_at,
+    )
+
+
+@app.post("/api/v1/admin/lessons/{lesson_id}/reject", response_model=AdminLessonOut)
+def reject_lesson(
+    lesson_id: UUID,
+    payload: schemas.RejectContentIn,
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> AdminLessonOut:
+    """Reject a lesson and send back to draft (admins only)."""
+    lesson = db.get(LessonContent, lesson_id)
+    if lesson is None:
+        raise HTTPException(status_code=404, detail="Lesson not found")
+
+    # Check current status
+    current_status = lesson.status or ContentStatus.draft
+    if current_status != ContentStatus.review:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Can only reject lessons in review status. Current status: {current_status.value}",
+        )
+
+    # Update status back to draft
+    lesson.status = ContentStatus.draft
+    lesson.reviewed_by_id = current_user.id
+    lesson.reviewed_at = datetime.utcnow()
+    lesson.review_notes = payload.review_notes
+
+    db.commit()
+    db.refresh(lesson)
+
+    return AdminLessonOut(
+        id=lesson.id,
+        motif_id=lesson.motif_id,
+        intro_text=lesson.intro_text,
+        description=lesson.description,
+        historical_context=lesson.historical_context,
+        symbolism=lesson.symbolism,
+        fun_fact=lesson.fun_fact,
+        audio_narration_url=lesson.audio_narration_url,
+        additional_images=lesson.additional_images,
+        video_url=lesson.video_url,
+        is_published=lesson.is_published,
+        is_ai_generated=lesson.is_ai_generated,
+        version=lesson.version,
+        last_editor_id=lesson.last_editor_id,
+        published_at=lesson.published_at,
+        publish_note=lesson.publish_note,
+        status=lesson.status.value if lesson.status else "draft",
+        submitted_for_review_at=lesson.submitted_for_review_at,
+        reviewed_by_id=lesson.reviewed_by_id,
+        reviewed_at=lesson.reviewed_at,
+        review_notes=lesson.review_notes,
+        created_at=lesson.created_at,
+        updated_at=lesson.updated_at,
+    )
+
+
+@app.post(
+    "/api/v1/admin/quiz-questions/{question_id}/submit-review",
+    response_model=AdminQuizQuestionOut,
+)
+def submit_quiz_question_for_review(
+    question_id: UUID,
+    payload: schemas.SubmitForReviewIn,
+    current_user: User = Depends(get_staff_user),
+    db: Session = Depends(get_db),
+) -> AdminQuizQuestionOut:
+    """Submit a quiz question for review (teachers and admins)."""
+    question = db.get(QuizQuestion, question_id)
+    if question is None:
+        raise HTTPException(status_code=404, detail="Quiz question not found")
+
+    # Check current status
+    current_status = question.status or ContentStatus.draft
+    if current_status != ContentStatus.draft:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Can only submit draft questions for review. Current status: {current_status.value}",
+        )
+
+    # Update status to review
+    question.status = ContentStatus.review
+    question.submitted_for_review_at = datetime.utcnow()
+
+    db.commit()
+    db.refresh(question)
+
+    return AdminQuizQuestionOut(
+        id=question.id,
+        motif_id=question.motif_id,
+        urn_id=question.urn_id,
+        question_type=question.question_type.value,
+        question_text=question.question_text,
+        options=question.options,
+        correct_answer=question.correct_answer,
+        target_mesh_name=question.target_mesh_name,
+        difficulty=int(question.difficulty or 1),
+        explanation=question.explanation,
+        is_published=question.is_published,
+        is_active=question.is_active,
+        status=question.status.value if question.status else "draft",
+        submitted_for_review_at=question.submitted_for_review_at,
+        reviewed_by_id=question.reviewed_by_id,
+        reviewed_at=question.reviewed_at,
+        review_notes=question.review_notes,
+        created_by_id=question.created_by_id,
+        created_at=question.created_at,
+    )
+
+
+@app.post(
+    "/api/v1/admin/quiz-questions/{question_id}/approve",
+    response_model=AdminQuizQuestionOut,
+)
+def approve_quiz_question(
+    question_id: UUID,
+    payload: schemas.ApproveContentIn,
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> AdminQuizQuestionOut:
+    """Approve and publish a quiz question (admins only)."""
+    question = db.get(QuizQuestion, question_id)
+    if question is None:
+        raise HTTPException(status_code=404, detail="Quiz question not found")
+
+    # Check current status
+    current_status = question.status or ContentStatus.draft
+    if current_status not in (ContentStatus.review, ContentStatus.draft):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Can only approve questions in review or draft status. Current status: {current_status.value}",
+        )
+
+    # Update status to published
+    question.status = ContentStatus.published
+    question.is_published = True
+    question.reviewed_by_id = current_user.id
+    question.reviewed_at = datetime.utcnow()
+    question.review_notes = payload.review_notes
+
+    db.commit()
+    db.refresh(question)
+
+    return AdminQuizQuestionOut(
+        id=question.id,
+        motif_id=question.motif_id,
+        urn_id=question.urn_id,
+        question_type=question.question_type.value,
+        question_text=question.question_text,
+        options=question.options,
+        correct_answer=question.correct_answer,
+        target_mesh_name=question.target_mesh_name,
+        difficulty=int(question.difficulty or 1),
+        explanation=question.explanation,
+        is_published=question.is_published,
+        is_active=question.is_active,
+        status=question.status.value if question.status else "draft",
+        submitted_for_review_at=question.submitted_for_review_at,
+        reviewed_by_id=question.reviewed_by_id,
+        reviewed_at=question.reviewed_at,
+        review_notes=question.review_notes,
+        created_by_id=question.created_by_id,
+        created_at=question.created_at,
+    )
+
+
+@app.post(
+    "/api/v1/admin/quiz-questions/{question_id}/reject",
+    response_model=AdminQuizQuestionOut,
+)
+def reject_quiz_question(
+    question_id: UUID,
+    payload: schemas.RejectContentIn,
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> AdminQuizQuestionOut:
+    """Reject a quiz question and send back to draft (admins only)."""
+    question = db.get(QuizQuestion, question_id)
+    if question is None:
+        raise HTTPException(status_code=404, detail="Quiz question not found")
+
+    # Check current status
+    current_status = question.status or ContentStatus.draft
+    if current_status != ContentStatus.review:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Can only reject questions in review status. Current status: {current_status.value}",
+        )
+
+    # Update status back to draft
+    question.status = ContentStatus.draft
+    question.reviewed_by_id = current_user.id
+    question.reviewed_at = datetime.utcnow()
+    question.review_notes = payload.review_notes
+
+    db.commit()
+    db.refresh(question)
+
+    return AdminQuizQuestionOut(
+        id=question.id,
+        motif_id=question.motif_id,
+        urn_id=question.urn_id,
+        question_type=question.question_type.value,
+        question_text=question.question_text,
+        options=question.options,
+        correct_answer=question.correct_answer,
+        target_mesh_name=question.target_mesh_name,
+        difficulty=int(question.difficulty or 1),
+        explanation=question.explanation,
+        is_published=question.is_published,
+        is_active=question.is_active,
+        status=question.status.value if question.status else "draft",
+        submitted_for_review_at=question.submitted_for_review_at,
+        reviewed_by_id=question.reviewed_by_id,
+        reviewed_at=question.reviewed_at,
+        review_notes=question.review_notes,
+        created_by_id=question.created_by_id,
+        created_at=question.created_at,
+    )
+
+
+@app.get(
+    "/api/v1/admin/content/pending-review", response_model=schemas.PendingReviewListOut
+)
+def get_pending_review_items(
+    current_user: User = Depends(get_staff_user),
+    db: Session = Depends(get_db),
+) -> schemas.PendingReviewListOut:
+    """Get all content items pending review (teachers can see their own, admins see all)."""
+
+    # Get lessons in review status
+    lesson_query = (
+        select(LessonContent)
+        .where(LessonContent.status == ContentStatus.review)
+        .options(selectinload(LessonContent.motif))
+    )
+
+    lessons = (
+        db.execute(lesson_query.order_by(LessonContent.submitted_for_review_at.desc()))
+        .scalars()
+        .all()
+    )
+
+    lesson_items = []
+    for lesson in lessons:
+        motif_name = lesson.motif.name if lesson.motif else "Unknown Motif"
+        # Get submitter name
+        submitter_name = None
+        if lesson.last_editor_id:
+            submitter = db.get(User, lesson.last_editor_id)
+            submitter_name = submitter.display_name if submitter else None
+
+        lesson_items.append(
+            schemas.PendingReviewItemOut(
+                id=lesson.id,
+                content_type="lesson",
+                title=f"Lesson: {motif_name}",
+                motif_name=motif_name,
+                submitted_by_id=lesson.last_editor_id,
+                submitted_by_name=submitter_name,
+                submitted_at=lesson.submitted_for_review_at,
+                version=lesson.version,
+            )
+        )
+
+    # Get quiz questions in review status
+    question_query = (
+        select(QuizQuestion)
+        .where(QuizQuestion.status == ContentStatus.review)
+        .options(selectinload(QuizQuestion.motif))
+    )
+
+    questions = (
+        db.execute(question_query.order_by(QuizQuestion.submitted_for_review_at.desc()))
+        .scalars()
+        .all()
+    )
+
+    question_items = []
+    for question in questions:
+        motif_name = question.motif.name if question.motif else "Unknown Motif"
+        # Get submitter name
+        submitter_name = None
+        if question.created_by_id:
+            submitter = db.get(User, question.created_by_id)
+            submitter_name = submitter.display_name if submitter else None
+
+        # Preview of question text (first 60 chars)
+        question_preview = (
+            question.question_text[:60] + "..."
+            if len(question.question_text) > 60
+            else question.question_text
+        )
+
+        question_items.append(
+            schemas.PendingReviewItemOut(
+                id=question.id,
+                content_type="quiz_question",
+                title=question_preview,
+                motif_name=motif_name,
+                submitted_by_id=question.created_by_id,
+                submitted_by_name=submitter_name,
+                submitted_at=question.submitted_for_review_at,
+                version=None,
+            )
+        )
+
+    return schemas.PendingReviewListOut(
+        lessons=lesson_items,
+        quiz_questions=question_items,
+        total_count=len(lesson_items) + len(question_items),
+    )
+
+
+@app.post(
+    "/api/v1/admin/content/{content_type}/{content_id}/revert/{version}",
+    status_code=200,
+)
+def revert_content_to_version(
+    content_type: str,
+    content_id: UUID,
+    version: int,
+    payload: RevertContentIn,
+    current_user: User = Depends(get_staff_user),
+    db: Session = Depends(get_db),
+) -> dict:
+    """Revert content to a specific version."""
+    if content_type not in ["lesson", "quiz"]:
+        raise HTTPException(status_code=400, detail="Invalid content type")
+
+    # Get the version to revert to
+    content_version = db.execute(
+        select(ContentVersion).where(
+            ContentVersion.content_type == content_type,
+            ContentVersion.content_id == content_id,
+            ContentVersion.version == version,
+        )
+    ).scalar_one_or_none()
+
+    if content_version is None:
+        raise HTTPException(status_code=404, detail="Version not found")
+
+    # Get the current content
+    if content_type == "lesson":
+        content = db.get(LessonContent, content_id)
+        if content is None:
+            raise HTTPException(status_code=404, detail="Content not found")
+
+        # Create a snapshot of current state before reverting
+        _create_content_snapshot(
+            db,
+            content_type,
+            content_id,
+            content.version,
+            current_user.id,
+            f"Before revert to version {version}",
+        )
+
+        # Apply the version data to the content
+        for field, value in content_version.data.items():
+            if hasattr(content, field):
+                setattr(content, field, value)
+
+        # Increment version and update metadata
+        content.version += 1
+        content.last_editor_id = current_user.id
+
+        # Create a new snapshot for the reverted state
+        _create_content_snapshot(
+            db,
+            content_type,
+            content_id,
+            content.version,
+            current_user.id,
+            payload.change_note or f"Reverted to version {version}",
+        )
+
+        db.commit()
+        db.refresh(content)
+
+        return {
+            "message": f"Content reverted to version {version}",
+            "new_version": content.version,
+        }
+    else:
+        # Future: handle other content types
+        raise HTTPException(status_code=400, detail="Content type not yet supported")
+
+
+# ============================================================
 # Health & Public Endpoints
 # ============================================================
 
@@ -7573,6 +12554,7 @@ def list_ranks(
 
 
 class BadgeListItemOut(BaseModel):
+    id: UUID
     slug: str
     name: str
     name_en: Optional[str] = None
@@ -7596,6 +12578,7 @@ def list_badges(
     )
     return [
         BadgeListItemOut(
+            id=badge.id,
             slug=badge.slug,
             name=badge.name,
             name_en=badge.name_en,
@@ -7606,3 +12589,4578 @@ def list_badges(
         )
         for badge in badges
     ]
+
+
+# ============================================================
+# Daily Mission Endpoints
+# ============================================================
+
+
+class DailyMissionOut(BaseModel):
+    """Schema for a daily mission template."""
+
+    id: UUID
+    slug: str
+    name: str
+    description: str
+    mission_type: str
+    target_count: int
+    xp_reward: int
+    is_active: bool
+
+
+class UserDailyMissionOut(BaseModel):
+    """Schema for user's daily mission progress."""
+
+    id: UUID
+    mission: DailyMissionOut
+    mission_date: datetime
+    current_count: int
+    is_completed: bool
+    completed_at: Optional[datetime] = None
+    xp_awarded: int
+    progress_percentage: int
+
+
+class DailyMissionsResponse(BaseModel):
+    """Response for today's daily missions."""
+
+    missions: list[UserDailyMissionOut]
+    total_xp_today: int
+    completed_count: int
+    total_count: int
+
+
+class UpdateMissionProgressRequest(BaseModel):
+    """Request to update mission progress."""
+
+    increment: int = Field(default=1, ge=0)
+
+
+class UpdateMissionProgressResponse(BaseModel):
+    """Response after updating mission progress."""
+
+    mission: UserDailyMissionOut
+    xp_gained: int
+    just_completed: bool
+
+
+class DailyMissionHistoryItem(BaseModel):
+    """Schema for a historical daily mission entry."""
+
+    mission_date: datetime
+    mission_name: str
+    mission_type: str
+    target_count: int
+    current_count: int
+    is_completed: bool
+    completed_at: Optional[datetime] = None
+    xp_awarded: int
+
+
+class DailyMissionHistoryResponse(BaseModel):
+    """Response for daily mission history."""
+
+    history: list[DailyMissionHistoryItem]
+    total_completed: int
+    total_xp_earned: int
+    current_streak: int
+
+
+def _ensure_daily_missions_for_user(
+    db: Session, user_id: UUID, mission_date: datetime
+) -> list[UserDailyMission]:
+    """Ensure user has daily missions assigned for the given date."""
+    from datetime import date as date_type
+
+    # Convert mission_date to date (no time)
+    if isinstance(mission_date, datetime):
+        date_only = mission_date.date()
+    else:
+        date_only = mission_date
+
+    # Get all active missions
+    active_missions = (
+        db.execute(
+            select(DailyMission)
+            .where(DailyMission.is_active.is_(True))
+            .order_by(DailyMission.created_at)
+        )
+        .scalars()
+        .all()
+    )
+
+    user_missions = []
+    for mission in active_missions:
+        # Check if user already has this mission for the date
+        existing = db.execute(
+            select(UserDailyMission).where(
+                UserDailyMission.user_id == user_id,
+                UserDailyMission.mission_id == mission.id,
+                func.date(UserDailyMission.mission_date) == date_only,
+            )
+        ).scalar_one_or_none()
+
+        if existing is None:
+            # Create new user mission
+            user_mission = UserDailyMission(
+                user_id=user_id,
+                mission_id=mission.id,
+                mission_date=datetime.combine(date_only, datetime.min.time()),
+                current_count=0,
+                is_completed=False,
+                xp_awarded=0,
+            )
+            db.add(user_mission)
+            user_missions.append(user_mission)
+        else:
+            user_missions.append(existing)
+
+    if user_missions:
+        db.flush()
+
+    return user_missions
+
+
+@app.get("/api/v1/daily-missions", response_model=DailyMissionsResponse)
+def get_daily_missions(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> DailyMissionsResponse:
+    """Get today's daily missions with progress."""
+    from datetime import date as date_type
+
+    today = datetime.now(timezone.utc).date()
+
+    # Ensure user has missions for today
+    _ensure_daily_missions_for_user(db, current_user.id, datetime.now(timezone.utc))
+    db.commit()
+
+    # Fetch user's missions for today
+    user_missions = (
+        db.execute(
+            select(UserDailyMission)
+            .options(selectinload(UserDailyMission.mission))
+            .where(
+                UserDailyMission.user_id == current_user.id,
+                func.date(UserDailyMission.mission_date) == today,
+            )
+            .order_by(UserDailyMission.mission_id)
+        )
+        .scalars()
+        .all()
+    )
+
+    missions_out = []
+    total_xp = 0
+    completed_count = 0
+
+    for um in user_missions:
+        progress_pct = min(100, int((um.current_count / um.mission.target_count) * 100))
+        missions_out.append(
+            UserDailyMissionOut(
+                id=um.id,
+                mission=DailyMissionOut(
+                    id=um.mission.id,
+                    slug=um.mission.slug,
+                    name=um.mission.name,
+                    description=um.mission.description,
+                    mission_type=um.mission.mission_type.value,
+                    target_count=um.mission.target_count,
+                    xp_reward=um.mission.xp_reward,
+                    is_active=um.mission.is_active,
+                ),
+                mission_date=um.mission_date,
+                current_count=um.current_count,
+                is_completed=um.is_completed,
+                completed_at=um.completed_at,
+                xp_awarded=um.xp_awarded,
+                progress_percentage=progress_pct,
+            )
+        )
+        total_xp += um.xp_awarded
+        if um.is_completed:
+            completed_count += 1
+
+    return DailyMissionsResponse(
+        missions=missions_out,
+        total_xp_today=total_xp,
+        completed_count=completed_count,
+        total_count=len(missions_out),
+    )
+
+
+@app.post(
+    "/api/v1/daily-missions/{mission_id}/progress",
+    response_model=UpdateMissionProgressResponse,
+)
+def update_mission_progress(
+    mission_id: UUID,
+    payload: UpdateMissionProgressRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> UpdateMissionProgressResponse:
+    """Update progress on a daily mission."""
+    from datetime import date as date_type
+
+    today = datetime.now(timezone.utc).date()
+
+    # Find user's mission for today
+    user_mission = db.execute(
+        select(UserDailyMission)
+        .options(selectinload(UserDailyMission.mission))
+        .where(
+            UserDailyMission.user_id == current_user.id,
+            UserDailyMission.mission_id == mission_id,
+            func.date(UserDailyMission.mission_date) == today,
+        )
+    ).scalar_one_or_none()
+
+    if user_mission is None:
+        raise HTTPException(status_code=404, detail="Mission not found for today")
+
+    if user_mission.is_completed:
+        # Already completed, return current state
+        progress_pct = 100
+        return UpdateMissionProgressResponse(
+            mission=UserDailyMissionOut(
+                id=user_mission.id,
+                mission=DailyMissionOut(
+                    id=user_mission.mission.id,
+                    slug=user_mission.mission.slug,
+                    name=user_mission.mission.name,
+                    description=user_mission.mission.description,
+                    mission_type=user_mission.mission.mission_type.value,
+                    target_count=user_mission.mission.target_count,
+                    xp_reward=user_mission.mission.xp_reward,
+                    is_active=user_mission.mission.is_active,
+                ),
+                mission_date=user_mission.mission_date,
+                current_count=user_mission.current_count,
+                is_completed=user_mission.is_completed,
+                completed_at=user_mission.completed_at,
+                xp_awarded=user_mission.xp_awarded,
+                progress_percentage=progress_pct,
+            ),
+            xp_gained=0,
+            just_completed=False,
+        )
+
+    # Update progress
+    user_mission.current_count = min(
+        user_mission.current_count + payload.increment,
+        user_mission.mission.target_count,
+    )
+
+    xp_gained = 0
+    just_completed = False
+
+    # Check if mission is now completed
+    if (
+        user_mission.current_count >= user_mission.mission.target_count
+        and not user_mission.is_completed
+    ):
+        user_mission.is_completed = True
+        user_mission.completed_at = datetime.now(timezone.utc)
+        user_mission.xp_awarded = user_mission.mission.xp_reward
+        xp_gained = user_mission.mission.xp_reward
+        just_completed = True
+
+        # Award XP to user
+        current_user.total_xp += xp_gained
+
+    db.commit()
+    db.refresh(user_mission)
+
+    progress_pct = min(
+        100, int((user_mission.current_count / user_mission.mission.target_count) * 100)
+    )
+
+    return UpdateMissionProgressResponse(
+        mission=UserDailyMissionOut(
+            id=user_mission.id,
+            mission=DailyMissionOut(
+                id=user_mission.mission.id,
+                slug=user_mission.mission.slug,
+                name=user_mission.mission.name,
+                description=user_mission.mission.description,
+                mission_type=user_mission.mission.mission_type.value,
+                target_count=user_mission.mission.target_count,
+                xp_reward=user_mission.mission.xp_reward,
+                is_active=user_mission.mission.is_active,
+            ),
+            mission_date=user_mission.mission_date,
+            current_count=user_mission.current_count,
+            is_completed=user_mission.is_completed,
+            completed_at=user_mission.completed_at,
+            xp_awarded=user_mission.xp_awarded,
+            progress_percentage=progress_pct,
+        ),
+        xp_gained=xp_gained,
+        just_completed=just_completed,
+    )
+
+
+@app.get("/api/v1/daily-missions/history", response_model=DailyMissionHistoryResponse)
+def get_daily_mission_history(
+    days: int = Query(default=30, ge=1, le=90),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> DailyMissionHistoryResponse:
+    """Get past mission history."""
+    from datetime import date as date_type
+    from datetime import timedelta
+
+    end_date = datetime.now(timezone.utc).date()
+    start_date = end_date - timedelta(days=days)
+
+    # Fetch user's missions for the date range
+    user_missions = (
+        db.execute(
+            select(UserDailyMission)
+            .options(selectinload(UserDailyMission.mission))
+            .where(
+                UserDailyMission.user_id == current_user.id,
+                func.date(UserDailyMission.mission_date) >= start_date,
+                func.date(UserDailyMission.mission_date) <= end_date,
+            )
+            .order_by(UserDailyMission.mission_date.desc())
+        )
+        .scalars()
+        .all()
+    )
+
+    history_items = []
+    total_completed = 0
+    total_xp = 0
+
+    for um in user_missions:
+        history_items.append(
+            DailyMissionHistoryItem(
+                mission_date=um.mission_date,
+                mission_name=um.mission.name,
+                mission_type=um.mission.mission_type.value,
+                target_count=um.mission.target_count,
+                current_count=um.current_count,
+                is_completed=um.is_completed,
+                completed_at=um.completed_at,
+                xp_awarded=um.xp_awarded,
+            )
+        )
+        if um.is_completed:
+            total_completed += 1
+            total_xp += um.xp_awarded
+
+    # Calculate current mission streak
+    streak = 0
+    current_date = end_date
+    while True:
+        day_missions = [
+            um
+            for um in user_missions
+            if isinstance(um.mission_date, datetime)
+            and um.mission_date.date() == current_date
+        ]
+        if not day_missions:
+            break
+
+        # Check if all missions for the day are completed
+        all_completed = all(um.is_completed for um in day_missions)
+        if all_completed:
+            streak += 1
+            current_date -= timedelta(days=1)
+        else:
+            break
+
+    return DailyMissionHistoryResponse(
+        history=history_items,
+        total_completed=total_completed,
+        total_xp_earned=total_xp,
+        current_streak=streak,
+    )
+
+
+# =============================================================================
+# Streak Endpoints
+# =============================================================================
+
+
+class StreakMilestoneOut(BaseModel):
+    """Streak milestone information."""
+
+    day: int
+    xp_reward: int
+    badge_slug: Optional[str] = None
+    freeze_reward: int = 0
+    is_completed: bool = False
+
+
+class StreakStatusOut(BaseModel):
+    """Current streak status response."""
+
+    current_streak: int
+    longest_streak: int
+    streak_freezes: int
+    is_maintained_today: bool
+    is_at_risk: bool
+    next_milestone: Optional[dict] = None
+    milestones: list[StreakMilestoneOut]
+
+
+class ClaimDailyStreakOut(BaseModel):
+    """Response for claiming daily streak reward."""
+
+    xp_awarded: int
+    current_streak: int
+    total_xp: int
+    message: str
+
+
+class UseStreakFreezeOut(BaseModel):
+    """Response for using streak freeze."""
+
+    success: bool
+    remaining_freezes: int
+    message: str
+
+
+@app.get("/api/v1/streak", response_model=StreakStatusOut)
+def get_streak_status(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> StreakStatusOut:
+    """Get current streak status with milestones."""
+    from .services.streak import (
+        STREAK_MILESTONES,
+        get_next_milestone,
+        is_streak_at_risk,
+        is_streak_maintained_today,
+    )
+
+    now = datetime.now(timezone.utc)
+
+    # Check which milestones are completed
+    milestones = []
+    for day, rewards in STREAK_MILESTONES.items():
+        # Check if milestone is completed
+        existing = db.execute(
+            select(StreakReward).where(
+                StreakReward.user_id == current_user.id, StreakReward.streak_day == day
+            )
+        ).scalar_one_or_none()
+
+        milestones.append(
+            StreakMilestoneOut(
+                day=day,
+                xp_reward=rewards["xp"],
+                badge_slug=rewards.get("badge_slug"),
+                freeze_reward=rewards["freeze"],
+                is_completed=existing is not None,
+            )
+        )
+
+    return StreakStatusOut(
+        current_streak=current_user.current_streak,
+        longest_streak=current_user.longest_streak,
+        streak_freezes=current_user.streak_freezes,
+        is_maintained_today=is_streak_maintained_today(current_user, now),
+        is_at_risk=is_streak_at_risk(current_user, now),
+        next_milestone=get_next_milestone(current_user.current_streak),
+        milestones=milestones,
+    )
+
+
+@app.post("/api/v1/streak/claim-daily", response_model=ClaimDailyStreakOut)
+def claim_daily_streak(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> ClaimDailyStreakOut:
+    """Claim daily streak reward."""
+    from .services.streak import (
+        award_daily_streak_reward,
+        award_milestone_rewards,
+        is_streak_maintained_today,
+    )
+
+    now = datetime.now(timezone.utc)
+
+    # Check if streak is maintained today
+    if not is_streak_maintained_today(current_user, now):
+        raise HTTPException(
+            status_code=400,
+            detail="You must be active today to claim daily streak reward",
+        )
+
+    # Award daily streak XP
+    xp_awarded = award_daily_streak_reward(db, current_user, now)
+
+    # Check for milestone rewards
+    milestone_rewards = award_milestone_rewards(db, current_user, now)
+    total_milestone_xp = milestone_rewards["total_xp"]
+
+    # Refresh user to get updated values
+    db.refresh(current_user)
+
+    message = f"Earned {xp_awarded} XP for maintaining your streak!"
+    if total_milestone_xp > 0:
+        message += f" Plus {total_milestone_xp} XP from milestone rewards!"
+
+    return ClaimDailyStreakOut(
+        xp_awarded=xp_awarded + total_milestone_xp,
+        current_streak=current_user.current_streak,
+        total_xp=current_user.total_xp,
+        message=message,
+    )
+
+
+@app.post("/api/v1/streak/use-freeze", response_model=UseStreakFreezeOut)
+def use_streak_freeze(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> UseStreakFreezeOut:
+    """Use a streak freeze to protect the streak."""
+    from .services.streak import use_streak_freeze as use_freeze
+
+    now = datetime.now(timezone.utc)
+
+    success = use_freeze(db, current_user, now)
+
+    if not success:
+        if current_user.streak_freezes <= 0:
+            message = "You don't have any streak freezes available"
+        else:
+            message = "Streak freeze can only be used when your streak is at risk"
+
+        return UseStreakFreezeOut(
+            success=False,
+            remaining_freezes=current_user.streak_freezes,
+            message=message,
+        )
+
+    # Refresh user to get updated values
+    db.refresh(current_user)
+
+    return UseStreakFreezeOut(
+        success=True,
+        remaining_freezes=current_user.streak_freezes,
+        message="Streak freeze used successfully! Your streak is protected.",
+    )
+
+
+# =============================================================================
+# Hearts System Endpoints
+# =============================================================================
+
+
+@app.get("/api/v1/hearts", response_model=schemas.HeartsStatusOut)
+def get_hearts_status(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.HeartsStatusOut:
+    """Get current hearts status for the user."""
+    from .services.hearts import (
+        auto_refill_hearts,
+        calculate_time_until_refill,
+        get_or_create_user_hearts,
+    )
+
+    now = datetime.now(timezone.utc)
+    user_hearts = get_or_create_user_hearts(db, current_user)
+
+    # Auto-refill hearts
+    auto_refill_hearts(db, user_hearts, now)
+    db.refresh(user_hearts)
+
+    # Calculate time until refill
+    time_until_refill = calculate_time_until_refill(user_hearts, now)
+
+    # Check if unlimited
+    is_unlimited = (
+        user_hearts.unlimited_until is not None and now < user_hearts.unlimited_until
+    )
+
+    return schemas.HeartsStatusOut(
+        current_hearts=user_hearts.current_hearts,
+        max_hearts=user_hearts.max_hearts,
+        last_heart_lost_at=user_hearts.last_heart_lost_at,
+        hearts_refill_at=user_hearts.hearts_refill_at,
+        unlimited_until=user_hearts.unlimited_until,
+        streak_freezes=user_hearts.streak_freezes,
+        is_unlimited=is_unlimited,
+        time_until_refill_seconds=time_until_refill,
+        updated_at=user_hearts.updated_at,
+    )
+
+
+@app.post("/api/v1/hearts/use", response_model=schemas.UseHeartOut)
+def use_heart_endpoint(
+    payload: schemas.UseHeartIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.UseHeartOut:
+    """Use a heart (e.g., on wrong quiz answer)."""
+    from .services.hearts import use_heart
+
+    now = datetime.now(timezone.utc)
+
+    # Map string reason to enum
+    reason_map = {
+        "quiz_wrong": HeartTransactionReason.quiz_wrong,
+        "practice": HeartTransactionReason.practice_complete,
+    }
+    reason = reason_map.get(payload.reason, HeartTransactionReason.quiz_wrong)
+
+    success, user_hearts = use_heart(
+        db, current_user, now, reason=reason, metadata=payload.metadata
+    )
+
+    if not success:
+        return schemas.UseHeartOut(
+            success=False,
+            current_hearts=user_hearts.current_hearts,
+            hearts_refill_at=user_hearts.hearts_refill_at,
+            message="No hearts available. Wait for refill or purchase more hearts.",
+        )
+
+    message = f"Heart used. {user_hearts.current_hearts} hearts remaining."
+    if user_hearts.current_hearts == 0:
+        message = "Out of hearts! Wait for refill or purchase more."
+
+    return schemas.UseHeartOut(
+        success=True,
+        current_hearts=user_hearts.current_hearts,
+        hearts_refill_at=user_hearts.hearts_refill_at,
+        message=message,
+    )
+
+
+@app.post("/api/v1/hearts/refill", response_model=schemas.RefillHeartsOut)
+def refill_hearts_endpoint(
+    payload: schemas.RefillHeartsIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.RefillHeartsOut:
+    """Refill hearts (purchase, ad watch, reward, etc.)."""
+    from .services.hearts import refill_hearts
+
+    now = datetime.now(timezone.utc)
+
+    # Map string method to enum reason
+    method_reason_map = {
+        "purchase": HeartTransactionReason.heart_purchase,
+        "ad_watch": HeartTransactionReason.ad_watch,
+        "reward": HeartTransactionReason.reward,
+        "admin": HeartTransactionReason.admin_grant,
+    }
+    reason = method_reason_map.get(payload.method, HeartTransactionReason.reward)
+
+    hearts_added, user_hearts = refill_hearts(
+        db,
+        current_user,
+        now,
+        amount=payload.amount,
+        reason=reason,
+        metadata=payload.metadata,
+    )
+
+    if hearts_added == 0:
+        return schemas.RefillHeartsOut(
+            success=False,
+            current_hearts=user_hearts.current_hearts,
+            hearts_added=0,
+            message="Hearts are already full.",
+        )
+
+    return schemas.RefillHeartsOut(
+        success=True,
+        current_hearts=user_hearts.current_hearts,
+        hearts_added=hearts_added,
+        message=f"Successfully added {hearts_added} hearts!",
+    )
+
+
+@app.post(
+    "/api/v1/hearts/use-streak-freeze",
+    response_model=schemas.UseStreakFreezeForHeartsOut,
+)
+def use_streak_freeze_for_hearts_endpoint(
+    payload: schemas.UseStreakFreezeIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.UseStreakFreezeForHeartsOut:
+    """Use a streak freeze to restore all hearts."""
+    from .services.hearts import use_streak_freeze_for_hearts
+
+    now = datetime.now(timezone.utc)
+
+    success, user_hearts = use_streak_freeze_for_hearts(db, current_user, now)
+
+    if not success:
+        return schemas.UseStreakFreezeForHeartsOut(
+            success=False,
+            current_hearts=user_hearts.current_hearts,
+            remaining_freezes=current_user.streak_freezes,
+            message="No streak freezes available.",
+        )
+
+    # Refresh user to get updated streak_freezes
+    db.refresh(current_user)
+
+    return schemas.UseStreakFreezeForHeartsOut(
+        success=True,
+        current_hearts=user_hearts.current_hearts,
+        remaining_freezes=current_user.streak_freezes,
+        message="Streak freeze used! All hearts restored.",
+    )
+
+
+@app.get("/api/v1/hearts/transactions", response_model=schemas.HeartTransactionListOut)
+def get_heart_transactions_endpoint(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.HeartTransactionListOut:
+    """Get heart transaction history for the user."""
+    from .services.hearts import get_heart_transactions
+
+    transactions, total = get_heart_transactions(db, current_user, page, page_size)
+
+    return schemas.HeartTransactionListOut(
+        transactions=[
+            schemas.HeartTransactionOut(
+                id=t.id,
+                amount=t.amount,
+                reason=t.reason.value,
+                balance_after=t.balance_after,
+                metadata=t.metadata_json,
+                created_at=t.created_at,
+            )
+            for t in transactions
+        ],
+        total=total,
+        page=page,
+        page_size=page_size,
+    )
+
+
+# =============================================================================
+# Weekly Quest Endpoints
+# =============================================================================
+
+
+def _ensure_weekly_quests_for_user(
+    db: Session, user_id: UUID, current_time: datetime
+) -> list[UserWeeklyQuest]:
+    """Ensure user has all active recurring weekly quests assigned for the current week."""
+    from .services.weekly_quests import ensure_weekly_quests_for_user
+
+    return ensure_weekly_quests_for_user(db, user_id, current_time)
+
+
+@app.get("/api/v1/weekly-quests", response_model=schemas.WeeklyQuestsResponse)
+def get_weekly_quests(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.WeeklyQuestsResponse:
+    """Get this week's quests with progress."""
+    from .services.weekly_quests import get_week_end_date, get_week_start_date
+
+    current_time = datetime.now(timezone.utc)
+    week_start = get_week_start_date(current_time)
+    week_end = get_week_end_date(week_start)
+
+    # Ensure user has quests for this week
+    _ensure_weekly_quests_for_user(db, current_user.id, current_time)
+    db.commit()
+
+    # Fetch user's quests for this week
+    user_quests = (
+        db.execute(
+            select(UserWeeklyQuest)
+            .options(selectinload(UserWeeklyQuest.quest))
+            .where(
+                UserWeeklyQuest.user_id == current_user.id,
+                UserWeeklyQuest.week_start_date == week_start,
+            )
+            .order_by(UserWeeklyQuest.quest_id)
+        )
+        .scalars()
+        .all()
+    )
+
+    quests_out = []
+    total_xp = 0
+    completed_count = 0
+
+    for uq in user_quests:
+        if not uq.quest.is_active:
+            continue
+
+        progress_pct = min(100, int((uq.current_count / uq.quest.target_count) * 100))
+
+        quests_out.append(
+            schemas.UserWeeklyQuestOut(
+                id=uq.id,
+                quest=schemas.WeeklyQuestOut(
+                    id=uq.quest.id,
+                    slug=uq.quest.slug,
+                    name=uq.quest.name,
+                    description=uq.quest.description,
+                    category=uq.quest.category.value,
+                    week_number=uq.quest.week_number,
+                    year=uq.quest.year,
+                    target_count=uq.quest.target_count,
+                    xp_reward=uq.quest.xp_reward,
+                    badge_slug=uq.quest.badge_slug,
+                    is_recurring=uq.quest.is_recurring,
+                    is_active=uq.quest.is_active,
+                ),
+                week_start_date=uq.week_start_date,
+                current_count=uq.current_count,
+                is_completed=uq.is_completed,
+                completed_at=uq.completed_at,
+                xp_awarded=uq.xp_awarded,
+                progress_percentage=progress_pct,
+            )
+        )
+
+        if uq.is_completed:
+            completed_count += 1
+            total_xp += uq.xp_awarded
+
+    return schemas.WeeklyQuestsResponse(
+        quests=quests_out,
+        week_start_date=week_start,
+        week_end_date=week_end,
+        total_xp_this_week=total_xp,
+        completed_count=completed_count,
+        total_count=len(quests_out),
+    )
+
+
+@app.post(
+    "/api/v1/weekly-quests/{quest_id}/progress",
+    response_model=schemas.UpdateWeeklyQuestProgressResponse,
+)
+def update_weekly_quest_progress(
+    quest_id: UUID,
+    payload: schemas.UpdateWeeklyQuestProgressRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.UpdateWeeklyQuestProgressResponse:
+    """Update progress on a weekly quest."""
+    from .services.weekly_quests import get_week_start_date
+
+    current_time = datetime.now(timezone.utc)
+    week_start = get_week_start_date(current_time)
+
+    # Find user's quest for this week
+    user_quest = db.execute(
+        select(UserWeeklyQuest)
+        .options(selectinload(UserWeeklyQuest.quest))
+        .where(
+            UserWeeklyQuest.user_id == current_user.id,
+            UserWeeklyQuest.quest_id == quest_id,
+            UserWeeklyQuest.week_start_date == week_start,
+        )
+    ).scalar_one_or_none()
+
+    if user_quest is None:
+        raise HTTPException(status_code=404, detail="Quest not found for this week")
+
+    if user_quest.is_completed:
+        # Already completed, return current state
+        progress_pct = 100
+        return schemas.UpdateWeeklyQuestProgressResponse(
+            quest=schemas.UserWeeklyQuestOut(
+                id=user_quest.id,
+                quest=schemas.WeeklyQuestOut(
+                    id=user_quest.quest.id,
+                    slug=user_quest.quest.slug,
+                    name=user_quest.quest.name,
+                    description=user_quest.quest.description,
+                    category=user_quest.quest.category.value,
+                    week_number=user_quest.quest.week_number,
+                    year=user_quest.quest.year,
+                    target_count=user_quest.quest.target_count,
+                    xp_reward=user_quest.quest.xp_reward,
+                    badge_slug=user_quest.quest.badge_slug,
+                    is_recurring=user_quest.quest.is_recurring,
+                    is_active=user_quest.quest.is_active,
+                ),
+                week_start_date=user_quest.week_start_date,
+                current_count=user_quest.current_count,
+                is_completed=user_quest.is_completed,
+                completed_at=user_quest.completed_at,
+                xp_awarded=user_quest.xp_awarded,
+                progress_percentage=progress_pct,
+            ),
+            xp_gained=0,
+            just_completed=False,
+        )
+
+    # Update progress
+    user_quest.current_count = min(
+        user_quest.current_count + payload.increment,
+        user_quest.quest.target_count,
+    )
+
+    xp_gained = 0
+    just_completed = False
+    badge_earned = None
+
+    # Check if quest is now completed
+    if (
+        user_quest.current_count >= user_quest.quest.target_count
+        and not user_quest.is_completed
+    ):
+        user_quest.is_completed = True
+        user_quest.completed_at = datetime.now(timezone.utc)
+        user_quest.xp_awarded = user_quest.quest.xp_reward
+        xp_gained = user_quest.quest.xp_reward
+        just_completed = True
+
+        # Award XP to user
+        current_user.total_xp += xp_gained
+
+        # Award badge if specified
+        if user_quest.quest.badge_slug:
+            badge = db.execute(
+                select(Badge).where(Badge.slug == user_quest.quest.badge_slug)
+            ).scalar_one_or_none()
+
+            if badge:
+                # Check if user already has this badge
+                existing_user_badge = db.execute(
+                    select(UserBadge).where(
+                        UserBadge.user_id == current_user.id,
+                        UserBadge.badge_id == badge.id,
+                    )
+                ).scalar_one_or_none()
+
+                if not existing_user_badge:
+                    user_badge = UserBadge(
+                        user_id=current_user.id,
+                        badge_id=badge.id,
+                        awarded_at=datetime.now(timezone.utc),
+                    )
+                    db.add(user_badge)
+                    badge_earned = badge.slug
+
+    db.commit()
+    db.refresh(user_quest)
+
+    progress_pct = min(
+        100, int((user_quest.current_count / user_quest.quest.target_count) * 100)
+    )
+
+    return schemas.UpdateWeeklyQuestProgressResponse(
+        quest=schemas.UserWeeklyQuestOut(
+            id=user_quest.id,
+            quest=schemas.WeeklyQuestOut(
+                id=user_quest.quest.id,
+                slug=user_quest.quest.slug,
+                name=user_quest.quest.name,
+                description=user_quest.quest.description,
+                category=user_quest.quest.category.value,
+                week_number=user_quest.quest.week_number,
+                year=user_quest.quest.year,
+                target_count=user_quest.quest.target_count,
+                xp_reward=user_quest.quest.xp_reward,
+                badge_slug=user_quest.quest.badge_slug,
+                is_recurring=user_quest.quest.is_recurring,
+                is_active=user_quest.quest.is_active,
+            ),
+            week_start_date=user_quest.week_start_date,
+            current_count=user_quest.current_count,
+            is_completed=user_quest.is_completed,
+            completed_at=user_quest.completed_at,
+            xp_awarded=user_quest.xp_awarded,
+            progress_percentage=progress_pct,
+        ),
+        xp_gained=xp_gained,
+        just_completed=just_completed,
+        badge_earned=badge_earned,
+    )
+
+
+@app.get(
+    "/api/v1/weekly-quests/history", response_model=schemas.WeeklyQuestHistoryResponse
+)
+def get_weekly_quest_history(
+    weeks: int = Query(default=4, ge=1, le=12),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.WeeklyQuestHistoryResponse:
+    """Get past weekly quest history."""
+    from .services.weekly_quests import get_week_start_date
+
+    current_time = datetime.now(timezone.utc)
+    current_week_start = get_week_start_date(current_time)
+
+    # Calculate the start date for the range
+    start_date = current_week_start - timedelta(weeks=weeks)
+
+    # Fetch user's quests for the date range
+    user_quests = (
+        db.execute(
+            select(UserWeeklyQuest)
+            .options(selectinload(UserWeeklyQuest.quest))
+            .where(
+                UserWeeklyQuest.user_id == current_user.id,
+                UserWeeklyQuest.week_start_date >= start_date,
+                UserWeeklyQuest.week_start_date <= current_week_start,
+            )
+            .order_by(UserWeeklyQuest.week_start_date.desc())
+        )
+        .scalars()
+        .all()
+    )
+
+    history_items = []
+    total_completed = 0
+    total_xp = 0
+
+    for uq in user_quests:
+        history_items.append(
+            schemas.WeeklyQuestHistoryItem(
+                week_start_date=uq.week_start_date,
+                quest_name=uq.quest.name,
+                quest_category=uq.quest.category.value,
+                target_count=uq.quest.target_count,
+                current_count=uq.current_count,
+                is_completed=uq.is_completed,
+                completed_at=uq.completed_at,
+                xp_awarded=uq.xp_awarded,
+            )
+        )
+        if uq.is_completed:
+            total_completed += 1
+            total_xp += uq.xp_awarded
+
+    return schemas.WeeklyQuestHistoryResponse(
+        history=history_items,
+        total_completed=total_completed,
+        total_xp_earned=total_xp,
+    )
+
+
+# ============================================================
+# Tag Schemas
+# ============================================================
+
+
+class TagOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    slug: str
+    name: str
+    tag_type: str
+    description: Optional[str] = None
+    is_active: bool
+    created_at: datetime
+
+
+class TagCreateIn(BaseModel):
+    slug: str = Field(..., min_length=1, max_length=100)
+    name: str = Field(..., min_length=1, max_length=200)
+    tag_type: str = Field(..., pattern="^(topic|difficulty|audience|era|style)$")
+    description: Optional[str] = None
+    is_active: bool = True
+
+
+class ContentTagOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    tag_id: UUID
+    content_type: str
+    content_id: UUID
+    created_at: datetime
+    tag: TagOut
+
+
+class ContentTagCreateIn(BaseModel):
+    tag_slugs: list[str] = Field(..., min_items=1)
+
+
+class SearchRequest(BaseModel):
+    q: Optional[str] = Field(None, description="Search query")
+    tags: Optional[list[str]] = Field(
+        None, description="List of tag slugs to filter by"
+    )
+    content_types: Optional[list[str]] = Field(
+        None, description="List of content types to search (lesson, motif, quiz, quest)"
+    )
+    limit: int = Field(20, ge=1, le=100)
+
+
+class SearchResultItem(BaseModel):
+    content_type: str
+    content_id: UUID
+    title: str
+    description: Optional[str] = None
+    tags: list[TagOut]
+    relevance_score: float = 0.0
+
+
+class SearchResponse(BaseModel):
+    results: list[SearchResultItem]
+    total: int
+    query: Optional[str] = None
+    applied_tags: list[str] = []
+
+
+# ============================================================
+# Tag Endpoints
+# ============================================================
+
+
+@app.get("/api/v1/tags", response_model=list[TagOut])
+def list_tags(
+    tag_type: Optional[str] = Query(default=None),
+    db: Session = Depends(get_db),
+) -> list[TagOut]:
+    """List all active tags, optionally filtered by type."""
+    query = select(Tag).where(Tag.is_active == True)
+    if tag_type:
+        query = query.where(Tag.tag_type == tag_type)
+    tags = db.execute(query.order_by(Tag.name)).scalars().all()
+    return [
+        TagOut(
+            id=tag.id,
+            slug=tag.slug,
+            name=tag.name,
+            tag_type=tag.tag_type,
+            description=tag.description,
+            is_active=tag.is_active,
+            created_at=tag.created_at,
+        )
+        for tag in tags
+    ]
+
+
+@app.post("/api/v1/admin/tags", response_model=TagOut, status_code=201)
+def create_tag(
+    payload: TagCreateIn,
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> TagOut:
+    """Create a new tag (admin only)."""
+    # Check if slug already exists
+    existing = db.execute(
+        select(Tag).where(Tag.slug == payload.slug)
+    ).scalar_one_or_none()
+    if existing:
+        raise HTTPException(status_code=400, detail="Tag with this slug already exists")
+
+    new_tag = Tag(
+        id=uuid_module.uuid4(),
+        slug=payload.slug,
+        name=payload.name,
+        tag_type=payload.tag_type,
+        description=payload.description,
+        is_active=payload.is_active,
+    )
+    db.add(new_tag)
+    db.commit()
+    db.refresh(new_tag)
+
+    return TagOut(
+        id=new_tag.id,
+        slug=new_tag.slug,
+        name=new_tag.name,
+        tag_type=new_tag.tag_type,
+        description=new_tag.description,
+        is_active=new_tag.is_active,
+        created_at=new_tag.created_at,
+    )
+
+
+@app.post(
+    "/api/v1/admin/content/{content_type}/{content_id}/tags",
+    response_model=list[ContentTagOut],
+)
+def add_content_tags(
+    content_type: str,
+    content_id: UUID,
+    payload: ContentTagCreateIn,
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> list[ContentTagOut]:
+    """Add tags to content (admin only)."""
+    # Validate content type
+    valid_types = ["lesson", "motif", "quiz", "quest"]
+    if content_type not in valid_types:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid content type. Must be one of: {', '.join(valid_types)}",
+        )
+
+    # Verify content exists
+    content_exists = False
+    if content_type == "lesson":
+        content_exists = db.get(LessonContent, content_id) is not None
+    elif content_type == "motif":
+        content_exists = db.get(Motif, content_id) is not None
+    elif content_type == "quiz":
+        content_exists = db.get(QuizQuestion, content_id) is not None
+    elif content_type == "quest":
+        content_exists = db.get(Quest, content_id) is not None
+
+    if not content_exists:
+        raise HTTPException(
+            status_code=404, detail=f"{content_type.capitalize()} not found"
+        )
+
+    # Get tags by slug
+    tags = (
+        db.execute(
+            select(Tag).where(Tag.slug.in_(payload.tag_slugs), Tag.is_active == True)
+        )
+        .scalars()
+        .all()
+    )
+
+    if len(tags) != len(payload.tag_slugs):
+        found_slugs = {tag.slug for tag in tags}
+        missing_slugs = set(payload.tag_slugs) - found_slugs
+        raise HTTPException(
+            status_code=404, detail=f"Tags not found: {', '.join(missing_slugs)}"
+        )
+
+    # Add content tags (using upsert to avoid duplicates)
+    created_tags = []
+    for tag in tags:
+        # Check if already exists
+        existing = db.execute(
+            select(ContentTag).where(
+                ContentTag.tag_id == tag.id,
+                ContentTag.content_type == content_type,
+                ContentTag.content_id == content_id,
+            )
+        ).scalar_one_or_none()
+
+        if not existing:
+            content_tag = ContentTag(
+                id=uuid_module.uuid4(),
+                tag_id=tag.id,
+                content_type=content_type,
+                content_id=content_id,
+            )
+            db.add(content_tag)
+            created_tags.append(content_tag)
+
+    db.commit()
+
+    # Get all tags for this content
+    all_content_tags = (
+        db.execute(
+            select(ContentTag)
+            .options(selectinload(ContentTag.tag))
+            .where(
+                ContentTag.content_type == content_type,
+                ContentTag.content_id == content_id,
+            )
+        )
+        .scalars()
+        .all()
+    )
+
+    return [
+        ContentTagOut(
+            id=ct.id,
+            tag_id=ct.tag_id,
+            content_type=ct.content_type,
+            content_id=ct.content_id,
+            created_at=ct.created_at,
+            tag=TagOut(
+                id=ct.tag.id,
+                slug=ct.tag.slug,
+                name=ct.tag.name,
+                tag_type=ct.tag.tag_type,
+                description=ct.tag.description,
+                is_active=ct.tag.is_active,
+                created_at=ct.tag.created_at,
+            ),
+        )
+        for ct in all_content_tags
+    ]
+
+
+@app.delete(
+    "/api/v1/admin/content/{content_type}/{content_id}/tags/{tag_slug}", status_code=204
+)
+def remove_content_tag(
+    content_type: str,
+    content_id: UUID,
+    tag_slug: str,
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> Response:
+    """Remove a tag from content (admin only)."""
+    # Validate content type
+    valid_types = ["lesson", "motif", "quiz", "quest"]
+    if content_type not in valid_types:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid content type. Must be one of: {', '.join(valid_types)}",
+        )
+
+    # Get tag by slug
+    tag = db.execute(select(Tag).where(Tag.slug == tag_slug)).scalar_one_or_none()
+    if not tag:
+        return Response(status_code=204)
+
+    # Delete content tag
+    result = db.execute(
+        delete(ContentTag).where(
+            ContentTag.tag_id == tag.id,
+            ContentTag.content_type == content_type,
+            ContentTag.content_id == content_id,
+        )
+    )
+    db.commit()
+
+    return Response(status_code=204)
+
+
+@app.get("/api/v1/search", response_model=SearchResponse)
+def search_content(
+    q: Optional[str] = Query(None, description="Search query"),
+    tags: Optional[str] = Query(None, description="Comma-separated list of tag slugs"),
+    content_types: Optional[str] = Query(
+        None, description="Comma-separated list of content types"
+    ),
+    limit: int = Query(20, ge=1, le=100),
+    db: Session = Depends(get_db),
+) -> SearchResponse:
+    """Search content by query and/or tags."""
+    tag_list = [t.strip() for t in tags.split(",")] if tags else []
+    content_type_list = (
+        [ct.strip() for ct in content_types.split(",")]
+        if content_types
+        else ["lesson", "motif", "quiz", "quest"]
+    )
+
+    # Validate content types
+    valid_types = ["lesson", "motif", "quiz", "quest"]
+    for ct in content_type_list:
+        if ct not in valid_types:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid content type '{ct}'. Must be one of: {', '.join(valid_types)}",
+            )
+
+    results = []
+
+    # Search lessons
+    if "lesson" in content_type_list:
+        lesson_query = select(LessonContent).options(selectinload(LessonContent.motif))
+
+        # Filter by search query
+        if q:
+            search_filter = or_(
+                LessonContent.intro_text.ilike(f"%{q}%"),
+                LessonContent.description.ilike(f"%{q}%"),
+                LessonContent.historical_context.ilike(f"%{q}%"),
+                LessonContent.symbolism.ilike(f"%{q}%"),
+            )
+            lesson_query = lesson_query.where(search_filter)
+
+        lessons = db.execute(lesson_query.limit(limit)).scalars().all()
+
+        for lesson in lessons:
+            # Get tags for this lesson
+            lesson_tags = (
+                db.execute(
+                    select(ContentTag)
+                    .options(selectinload(ContentTag.tag))
+                    .where(
+                        ContentTag.content_type == "lesson",
+                        ContentTag.content_id == lesson.id,
+                    )
+                )
+                .scalars()
+                .all()
+            )
+
+            # Filter by tags if specified
+            if tag_list:
+                lesson_tag_slugs = {ct.tag.slug for ct in lesson_tags}
+                if not any(tag_slug in lesson_tag_slugs for tag_slug in tag_list):
+                    continue
+
+            results.append(
+                SearchResultItem(
+                    content_type="lesson",
+                    content_id=lesson.id,
+                    title=lesson.intro_text or "Untitled Lesson",
+                    description=lesson.description,
+                    tags=[
+                        TagOut(
+                            id=ct.tag.id,
+                            slug=ct.tag.slug,
+                            name=ct.tag.name,
+                            tag_type=ct.tag.tag_type,
+                            description=ct.tag.description,
+                            is_active=ct.tag.is_active,
+                            created_at=ct.tag.created_at,
+                        )
+                        for ct in lesson_tags
+                    ],
+                    relevance_score=1.0,
+                )
+            )
+
+    # Search motifs
+    if "motif" in content_type_list:
+        motif_query = select(Motif)
+
+        # Filter by search query
+        if q:
+            search_filter = or_(
+                Motif.name.ilike(f"%{q}%"),
+                Motif.description.ilike(f"%{q}%"),
+            )
+            motif_query = motif_query.where(search_filter)
+
+        motifs = db.execute(motif_query.limit(limit)).scalars().all()
+
+        for motif in motifs:
+            # Get tags for this motif
+            motif_tags = (
+                db.execute(
+                    select(ContentTag)
+                    .options(selectinload(ContentTag.tag))
+                    .where(
+                        ContentTag.content_type == "motif",
+                        ContentTag.content_id == motif.id,
+                    )
+                )
+                .scalars()
+                .all()
+            )
+
+            # Filter by tags if specified
+            if tag_list:
+                motif_tag_slugs = {ct.tag.slug for ct in motif_tags}
+                if not any(tag_slug in motif_tag_slugs for tag_slug in tag_list):
+                    continue
+
+            results.append(
+                SearchResultItem(
+                    content_type="motif",
+                    content_id=motif.id,
+                    title=motif.name,
+                    description=motif.description,
+                    tags=[
+                        TagOut(
+                            id=ct.tag.id,
+                            slug=ct.tag.slug,
+                            name=ct.tag.name,
+                            tag_type=ct.tag.tag_type,
+                            description=ct.tag.description,
+                            is_active=ct.tag.is_active,
+                            created_at=ct.tag.created_at,
+                        )
+                        for ct in motif_tags
+                    ],
+                    relevance_score=1.0,
+                )
+            )
+
+    # Limit results
+    results = results[:limit]
+
+    return SearchResponse(
+        results=results,
+        total=len(results),
+        query=q,
+        applied_tags=tag_list,
+    )
+
+
+# =============================================================================
+# Analytics Funnel Endpoints (Admin Only)
+# =============================================================================
+
+
+@app.get(
+    "/api/v1/admin/analytics/funnels", response_model=list[schemas.FunnelListItemOut]
+)
+def list_available_funnels(
+    current_user: User = Depends(get_admin_user),
+) -> list[schemas.FunnelListItemOut]:
+    """
+    List all available funnel types.
+
+    Admin only endpoint.
+    """
+    from services.analytics_funnels import list_available_funnels as get_funnels
+
+    funnels = get_funnels()
+    return [schemas.FunnelListItemOut(**funnel) for funnel in funnels]
+
+
+@app.get(
+    "/api/v1/admin/analytics/funnels/{funnel_type}",
+    response_model=schemas.FunnelDataOut,
+)
+def get_funnel_data(
+    funnel_type: str,
+    start_date: Optional[datetime] = Query(
+        None, description="Start date for filtering events"
+    ),
+    end_date: Optional[datetime] = Query(
+        None, description="End date for filtering events"
+    ),
+    cohort: Optional[str] = Query(
+        None, description="Cohort identifier (e.g., '2024-W01')"
+    ),
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> schemas.FunnelDataOut:
+    """
+    Get funnel data with conversion rates.
+
+    Supported funnel types:
+    - onboarding: App opened → Onboarding started → Goal selected → First lesson started → First lesson completed
+    - lesson: Lesson viewed → Lesson started → 50% progress → Lesson completed
+    - quiz: Quiz started → Quiz submitted → Quiz passed
+
+    Admin only endpoint.
+    """
+    from services.analytics_funnels import calculate_funnel_data
+
+    try:
+        funnel_data = calculate_funnel_data(
+            session=db,
+            funnel_type=funnel_type,
+            start_date=start_date,
+            end_date=end_date,
+            cohort=cohort,
+        )
+        return schemas.FunnelDataOut(**funnel_data)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+# =============================================================================
+# App Version Management Endpoints
+# =============================================================================
+
+
+def _parse_semver(version_str: str) -> tuple[int, int, int]:
+    """Parse semantic version string (major.minor.patch) into tuple of integers."""
+    try:
+        parts = version_str.strip().split(".")
+        if len(parts) != 3:
+            raise ValueError("Version must be in format major.minor.patch")
+        major, minor, patch = int(parts[0]), int(parts[1]), int(parts[2])
+        return (major, minor, patch)
+    except (ValueError, AttributeError) as e:
+        raise HTTPException(
+            status_code=400, detail=f"Invalid version format: {version_str}"
+        ) from e
+
+
+def _compare_versions(version1: str, version2: str) -> int:
+    """
+    Compare two semantic version strings.
+    Returns: -1 if version1 < version2, 0 if equal, 1 if version1 > version2
+    """
+    v1 = _parse_semver(version1)
+    v2 = _parse_semver(version2)
+
+    if v1 < v2:
+        return -1
+    elif v1 > v2:
+        return 1
+    else:
+        return 0
+
+
+@app.get("/api/v1/app/version/check", response_model=schemas.AppVersionCheckOut)
+def check_app_version(
+    platform: str = Query(..., pattern="^(ios|android)$"),
+    current_version: str = Query(..., min_length=1),
+    db: Session = Depends(get_db),
+) -> schemas.AppVersionCheckOut:
+    """
+    Check if app update is available or required.
+
+    Public endpoint - no authentication required.
+
+    Query params:
+    - platform: "ios" or "android"
+    - current_version: Current app version (e.g., "1.2.3")
+
+    Returns:
+    - update_available: True if newer version exists
+    - force_update: True if user must update (current < min_required_version)
+    - latest_version: Latest available version
+    - download_url: App store link
+    - release_notes: What's new in the latest version
+    """
+    # Get the current/latest version for this platform
+    latest = db.execute(
+        select(AppVersion)
+        .where(
+            AppVersion.platform == platform,
+            AppVersion.is_current.is_(True),
+        )
+        .order_by(AppVersion.released_at.desc())
+        .limit(1)
+    ).scalar_one_or_none()
+
+    if latest is None:
+        # No version info available - allow access
+        return schemas.AppVersionCheckOut(
+            update_available=False,
+            force_update=False,
+            current_version=current_version,
+        )
+
+    # Compare versions
+    try:
+        comparison = _compare_versions(current_version, latest.version)
+    except HTTPException:
+        # If version format is invalid, allow access but warn
+        logger.warning(f"Invalid version format received: {current_version}")
+        return schemas.AppVersionCheckOut(
+            update_available=False,
+            force_update=False,
+            current_version=current_version,
+        )
+
+    update_available = comparison < 0  # current < latest
+
+    # Check if force update is required
+    force_update = False
+    if latest.min_required_version:
+        try:
+            min_comparison = _compare_versions(
+                current_version, latest.min_required_version
+            )
+            force_update = min_comparison < 0  # current < min_required
+        except HTTPException:
+            pass  # Invalid min_required_version format, don't force
+
+    # If the version entry itself has force_update=True, enforce it
+    if latest.force_update and update_available:
+        force_update = True
+
+    return schemas.AppVersionCheckOut(
+        update_available=update_available,
+        force_update=force_update,
+        latest_version=latest.version,
+        current_version=current_version,
+        min_required_version=latest.min_required_version,
+        download_url=latest.download_url,
+        release_notes=latest.release_notes,
+    )
+
+
+@app.get("/api/v1/admin/app/versions", response_model=list[schemas.AppVersionOut])
+def list_app_versions(
+    platform: Optional[str] = Query(None, pattern="^(ios|android)$"),
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> list[schemas.AppVersionOut]:
+    """
+    List all app versions.
+
+    Admin only endpoint.
+
+    Query params:
+    - platform: Optional filter by platform ("ios" or "android")
+    """
+    query = select(AppVersion).order_by(
+        AppVersion.platform.asc(), AppVersion.released_at.desc()
+    )
+
+    if platform:
+        query = query.where(AppVersion.platform == platform)
+
+    versions = db.execute(query).scalars().all()
+
+    return [
+        schemas.AppVersionOut(
+            id=v.id,
+            platform=v.platform,
+            version=v.version,
+            version_code=v.version_code,
+            min_required_version=v.min_required_version,
+            is_current=v.is_current,
+            force_update=v.force_update,
+            release_notes=v.release_notes,
+            download_url=v.download_url,
+            released_at=v.released_at,
+            created_at=v.created_at,
+        )
+        for v in versions
+    ]
+
+
+@app.post(
+    "/api/v1/admin/app/versions", response_model=schemas.AppVersionOut, status_code=201
+)
+def create_app_version(
+    payload: schemas.AppVersionCreateIn,
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> schemas.AppVersionOut:
+    """
+    Create a new app version entry.
+
+    Admin only endpoint.
+
+    If is_current=True, will unset is_current for all other versions of the same platform.
+    """
+    # Validate version format
+    _parse_semver(payload.version)
+    _parse_semver(payload.min_required_version)
+
+    # Check if version already exists for this platform
+    existing = db.execute(
+        select(AppVersion).where(
+            AppVersion.platform == payload.platform,
+            AppVersion.version == payload.version,
+        )
+    ).scalar_one_or_none()
+
+    if existing is not None:
+        raise HTTPException(
+            status_code=409,
+            detail=f"Version {payload.version} already exists for platform {payload.platform}",
+        )
+
+    # If this is marked as current, unset is_current for all other versions of this platform
+    if payload.is_current:
+        db.execute(select(AppVersion).where(AppVersion.platform == payload.platform))
+        for v in db.execute(
+            select(AppVersion).where(AppVersion.platform == payload.platform)
+        ).scalars():
+            v.is_current = False
+        db.flush()
+
+    new_version = AppVersion(
+        id=uuid_module.uuid4(),
+        platform=payload.platform,
+        version=payload.version,
+        version_code=payload.version_code,
+        min_required_version=payload.min_required_version,
+        is_current=payload.is_current,
+        force_update=payload.force_update,
+        release_notes=payload.release_notes,
+        download_url=payload.download_url,
+        released_at=payload.released_at or datetime.now(timezone.utc),
+    )
+
+    db.add(new_version)
+    db.commit()
+    db.refresh(new_version)
+
+    return schemas.AppVersionOut(
+        id=new_version.id,
+        platform=new_version.platform,
+        version=new_version.version,
+        version_code=new_version.version_code,
+        min_required_version=new_version.min_required_version,
+        is_current=new_version.is_current,
+        force_update=new_version.force_update,
+        release_notes=new_version.release_notes,
+        download_url=new_version.download_url,
+        released_at=new_version.released_at,
+        created_at=new_version.created_at,
+    )
+
+
+@app.put(
+    "/api/v1/admin/app/versions/{version_id}", response_model=schemas.AppVersionOut
+)
+def update_app_version(
+    version_id: UUID,
+    payload: schemas.AppVersionUpdateIn,
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> schemas.AppVersionOut:
+    """
+    Update an app version entry.
+
+    Admin only endpoint.
+
+    Allows updating flags like is_current, force_update, release_notes, and download_url.
+    """
+    version = db.get(AppVersion, version_id)
+    if version is None:
+        raise HTTPException(status_code=404, detail="App version not found")
+
+    # If setting this as current, unset is_current for all other versions of this platform
+    if payload.is_current is True and not version.is_current:
+        for v in db.execute(
+            select(AppVersion).where(
+                AppVersion.platform == version.platform,
+                AppVersion.id != version_id,
+            )
+        ).scalars():
+            v.is_current = False
+        db.flush()
+
+    # Update fields
+    if payload.is_current is not None:
+        version.is_current = payload.is_current
+    if payload.force_update is not None:
+        version.force_update = payload.force_update
+    if payload.release_notes is not None:
+        version.release_notes = payload.release_notes
+    if payload.download_url is not None:
+        version.download_url = payload.download_url
+
+    db.commit()
+    db.refresh(version)
+
+    return schemas.AppVersionOut(
+        id=version.id,
+        platform=version.platform,
+        version=version.version,
+        version_code=version.version_code,
+        min_required_version=version.min_required_version,
+        is_current=version.is_current,
+        force_update=version.force_update,
+        release_notes=version.release_notes,
+        download_url=version.download_url,
+        released_at=version.released_at,
+        created_at=version.created_at,
+    )
+
+
+# =============================================================================
+# Abuse Report Endpoints
+# =============================================================================
+
+
+@app.post(
+    "/api/v1/reports/abuse", response_model=schemas.AbuseReportOut, status_code=201
+)
+def create_abuse_report(
+    payload: schemas.AbuseReportCreateIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.AbuseReportOut:
+    """
+    Submit an abuse report for user-generated content.
+
+    Any authenticated user can submit a report.
+    Reports are automatically prioritized based on reason and content type.
+    High and critical priority reports trigger admin notifications.
+    """
+    from .services.abuse_reports import create_abuse_report as create_report
+
+    report = create_report(
+        db=db,
+        reporter_id=current_user.id,
+        reported_user_id=payload.reported_user_id,
+        content_type=payload.content_type,
+        content_id=payload.content_id,
+        reason=payload.reason,
+        description=payload.description,
+        evidence_urls=payload.evidence_urls,
+    )
+
+    db.commit()
+    db.refresh(report)
+
+    return schemas.AbuseReportOut(
+        id=report.id,
+        reporter_id=report.reporter_id,
+        reported_user_id=report.reported_user_id,
+        content_type=report.content_type,
+        content_id=report.content_id,
+        reason=report.reason,
+        description=report.description,
+        evidence_urls=report.evidence_urls,
+        status=report.status,
+        priority=report.priority,
+        assigned_to_id=report.assigned_to_id,
+        resolution_notes=report.resolution_notes,
+        resolved_at=report.resolved_at,
+        created_at=report.created_at,
+    )
+
+
+@app.get("/api/v1/reports/abuse/mine", response_model=list[schemas.AbuseReportOut])
+def get_my_abuse_reports(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    status_filter: Optional[str] = Query(None, description="Filter by status"),
+) -> list[schemas.AbuseReportOut]:
+    """
+    Get abuse reports submitted by the current user.
+
+    Allows users to track the status of their submitted reports.
+    """
+    query = select(AbuseReport).where(AbuseReport.reporter_id == current_user.id)
+
+    if status_filter:
+        query = query.where(AbuseReport.status == status_filter)
+
+    query = query.order_by(AbuseReport.created_at.desc())
+
+    reports = db.execute(query).scalars().all()
+
+    return [
+        schemas.AbuseReportOut(
+            id=r.id,
+            reporter_id=r.reporter_id,
+            reported_user_id=r.reported_user_id,
+            content_type=r.content_type,
+            content_id=r.content_id,
+            reason=r.reason,
+            description=r.description,
+            evidence_urls=r.evidence_urls,
+            status=r.status,
+            priority=r.priority,
+            assigned_to_id=r.assigned_to_id,
+            resolution_notes=r.resolution_notes,
+            resolved_at=r.resolved_at,
+            created_at=r.created_at,
+        )
+        for r in reports
+    ]
+
+
+@app.get("/api/v1/admin/reports/abuse", response_model=schemas.AbuseReportListOut)
+def admin_list_abuse_reports(
+    current_user: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+    status: Optional[str] = Query(None, description="Filter by status"),
+    priority: Optional[str] = Query(None, description="Filter by priority"),
+    page: int = Query(1, ge=1, description="Page number"),
+    page_size: int = Query(20, ge=1, le=100, description="Items per page"),
+) -> schemas.AbuseReportListOut:
+    """
+    List all abuse reports with filtering and pagination.
+
+    Admin only endpoint.
+    """
+    query = select(AbuseReport).options(
+        selectinload(AbuseReport.reporter),
+        selectinload(AbuseReport.reported_user),
+        selectinload(AbuseReport.assigned_to),
+    )
+
+    if status:
+        query = query.where(AbuseReport.status == status)
+    if priority:
+        query = query.where(AbuseReport.priority == priority)
+
+    # Get total count
+    count_query = select(func.count()).select_from(query.subquery())
+    total = db.execute(count_query).scalar_one()
+
+    # Apply pagination and ordering
+    query = query.order_by(AbuseReport.priority.desc(), AbuseReport.created_at.desc())
+    query = query.offset((page - 1) * page_size).limit(page_size)
+
+    reports = db.execute(query).scalars().all()
+
+    return schemas.AbuseReportListOut(
+        reports=[
+            schemas.AbuseReportDetailOut(
+                id=r.id,
+                reporter_id=r.reporter_id,
+                reporter_email=r.reporter.email if r.reporter else None,
+                reporter_display_name=r.reporter.display_name if r.reporter else None,
+                reported_user_id=r.reported_user_id,
+                reported_user_email=r.reported_user.email if r.reported_user else None,
+                reported_user_display_name=r.reported_user.display_name
+                if r.reported_user
+                else None,
+                content_type=r.content_type,
+                content_id=r.content_id,
+                reason=r.reason,
+                description=r.description,
+                evidence_urls=r.evidence_urls,
+                status=r.status,
+                priority=r.priority,
+                assigned_to_id=r.assigned_to_id,
+                assigned_to_email=r.assigned_to.email if r.assigned_to else None,
+                assigned_to_display_name=r.assigned_to.display_name
+                if r.assigned_to
+                else None,
+                resolution_notes=r.resolution_notes,
+                resolved_at=r.resolved_at,
+                created_at=r.created_at,
+            )
+            for r in reports
+        ],
+        total=total,
+        page=page,
+        page_size=page_size,
+    )
+
+
+@app.get(
+    "/api/v1/admin/reports/abuse/{report_id}",
+    response_model=schemas.AbuseReportDetailOut,
+)
+def admin_get_abuse_report(
+    report_id: UUID,
+    current_user: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> schemas.AbuseReportDetailOut:
+    """
+    Get detailed information about a specific abuse report.
+
+    Admin only endpoint.
+    """
+    report = db.execute(
+        select(AbuseReport)
+        .where(AbuseReport.id == report_id)
+        .options(
+            selectinload(AbuseReport.reporter),
+            selectinload(AbuseReport.reported_user),
+            selectinload(AbuseReport.assigned_to),
+        )
+    ).scalar_one_or_none()
+
+    if not report:
+        raise HTTPException(status_code=404, detail="Report not found")
+
+    return schemas.AbuseReportDetailOut(
+        id=report.id,
+        reporter_id=report.reporter_id,
+        reporter_email=report.reporter.email if report.reporter else None,
+        reporter_display_name=report.reporter.display_name if report.reporter else None,
+        reported_user_id=report.reported_user_id,
+        reported_user_email=report.reported_user.email
+        if report.reported_user
+        else None,
+        reported_user_display_name=report.reported_user.display_name
+        if report.reported_user
+        else None,
+        content_type=report.content_type,
+        content_id=report.content_id,
+        reason=report.reason,
+        description=report.description,
+        evidence_urls=report.evidence_urls,
+        status=report.status,
+        priority=report.priority,
+        assigned_to_id=report.assigned_to_id,
+        assigned_to_email=report.assigned_to.email if report.assigned_to else None,
+        assigned_to_display_name=report.assigned_to.display_name
+        if report.assigned_to
+        else None,
+        resolution_notes=report.resolution_notes,
+        resolved_at=report.resolved_at,
+        created_at=report.created_at,
+    )
+
+
+@app.post(
+    "/api/v1/admin/reports/abuse/{report_id}/assign",
+    response_model=schemas.AbuseReportDetailOut,
+)
+def admin_assign_abuse_report(
+    report_id: UUID,
+    payload: schemas.AbuseReportAssignIn,
+    current_user: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> schemas.AbuseReportDetailOut:
+    """
+    Assign an abuse report to an admin user.
+
+    Admin only endpoint.
+    Changes status from 'pending' to 'reviewing' if applicable.
+    """
+    from .services.abuse_reports import assign_abuse_report
+
+    try:
+        report = assign_abuse_report(
+            db=db,
+            report_id=report_id,
+            assigned_to_id=payload.assigned_to_id,
+        )
+        db.commit()
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    # Reload with relationships
+    db.refresh(report)
+    report = db.execute(
+        select(AbuseReport)
+        .where(AbuseReport.id == report_id)
+        .options(
+            selectinload(AbuseReport.reporter),
+            selectinload(AbuseReport.reported_user),
+            selectinload(AbuseReport.assigned_to),
+        )
+    ).scalar_one()
+
+    return schemas.AbuseReportDetailOut(
+        id=report.id,
+        reporter_id=report.reporter_id,
+        reporter_email=report.reporter.email if report.reporter else None,
+        reporter_display_name=report.reporter.display_name if report.reporter else None,
+        reported_user_id=report.reported_user_id,
+        reported_user_email=report.reported_user.email
+        if report.reported_user
+        else None,
+        reported_user_display_name=report.reported_user.display_name
+        if report.reported_user
+        else None,
+        content_type=report.content_type,
+        content_id=report.content_id,
+        reason=report.reason,
+        description=report.description,
+        evidence_urls=report.evidence_urls,
+        status=report.status,
+        priority=report.priority,
+        assigned_to_id=report.assigned_to_id,
+        assigned_to_email=report.assigned_to.email if report.assigned_to else None,
+        assigned_to_display_name=report.assigned_to.display_name
+        if report.assigned_to
+        else None,
+        resolution_notes=report.resolution_notes,
+        resolved_at=report.resolved_at,
+        created_at=report.created_at,
+    )
+
+
+@app.post(
+    "/api/v1/admin/reports/abuse/{report_id}/resolve",
+    response_model=schemas.AbuseReportDetailOut,
+)
+def admin_resolve_abuse_report(
+    report_id: UUID,
+    payload: schemas.AbuseReportResolveIn,
+    current_user: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> schemas.AbuseReportDetailOut:
+    """
+    Resolve an abuse report.
+
+    Admin only endpoint.
+    Sets status to 'resolved' or 'dismissed' with resolution notes.
+    """
+    from .services.abuse_reports import resolve_abuse_report
+
+    try:
+        report = resolve_abuse_report(
+            db=db,
+            report_id=report_id,
+            status=payload.status,
+            resolution_notes=payload.resolution_notes,
+        )
+        db.commit()
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    # Reload with relationships
+    db.refresh(report)
+    report = db.execute(
+        select(AbuseReport)
+        .where(AbuseReport.id == report_id)
+        .options(
+            selectinload(AbuseReport.reporter),
+            selectinload(AbuseReport.reported_user),
+            selectinload(AbuseReport.assigned_to),
+        )
+    ).scalar_one()
+
+    return schemas.AbuseReportDetailOut(
+        id=report.id,
+        reporter_id=report.reporter_id,
+        reporter_email=report.reporter.email if report.reporter else None,
+        reporter_display_name=report.reporter.display_name if report.reporter else None,
+        reported_user_id=report.reported_user_id,
+        reported_user_email=report.reported_user.email
+        if report.reported_user
+        else None,
+        reported_user_display_name=report.reported_user.display_name
+        if report.reported_user
+        else None,
+        content_type=report.content_type,
+        content_id=report.content_id,
+        reason=report.reason,
+        description=report.description,
+        evidence_urls=report.evidence_urls,
+        status=report.status,
+        priority=report.priority,
+        assigned_to_id=report.assigned_to_id,
+        assigned_to_email=report.assigned_to.email if report.assigned_to else None,
+        assigned_to_display_name=report.assigned_to.display_name
+        if report.assigned_to
+        else None,
+        resolution_notes=report.resolution_notes,
+        resolved_at=report.resolved_at,
+        created_at=report.created_at,
+    )
+
+
+# =============================================================================
+# Spaced Repetition Review Endpoints
+# =============================================================================
+
+
+@app.get("/api/v1/review/due", response_model=schemas.DueCardsOut)
+def get_due_review_cards(
+    limit: int = Query(default=20, ge=1, le=100),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.DueCardsOut:
+    """
+    Get cards due for review.
+
+    Returns cards that are ready to be reviewed based on spaced repetition schedule.
+    """
+    from .services.spaced_repetition import get_due_cards
+
+    now = datetime.now(timezone.utc)
+    cards = get_due_cards(db=db, user_id=current_user.id, limit=limit, now=now)
+
+    # Prepare response with motif details
+    card_outputs = []
+    for card in cards:
+        # Get motif details
+        motif_data = None
+        if card.motif:
+            motif_data = {
+                "id": card.motif.id,
+                "name": card.motif.name,
+                "name_han": card.motif.name_han,
+                "thumbnail_url": card.motif.thumbnail_url,
+                "category": card.motif.category.value if card.motif.category else None,
+            }
+
+        card_outputs.append(
+            schemas.SpacedRepetitionCardOut(
+                id=card.id,
+                user_id=card.user_id,
+                motif_id=card.motif_id,
+                ease_factor=card.ease_factor,
+                interval_days=card.interval_days,
+                repetitions=card.repetitions,
+                next_review_at=card.next_review_at,
+                last_reviewed_at=card.last_reviewed_at,
+                review_history=card.review_history or [],
+                created_at=card.created_at,
+                updated_at=card.updated_at,
+                motif=motif_data,
+            )
+        )
+
+    return schemas.DueCardsOut(
+        cards=card_outputs,
+        total_due=len(cards),
+    )
+
+
+@app.post("/api/v1/review/{card_id}", response_model=schemas.SpacedRepetitionCardOut)
+def submit_review_result(
+    card_id: UUID,
+    payload: schemas.ReviewSubmitIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.SpacedRepetitionCardOut:
+    """
+    Submit a review result for a card.
+
+    Quality scale:
+    - 0: Complete blackout
+    - 1: Incorrect response; correct one recalled
+    - 2: Incorrect response; correct one seemed easy to recall
+    - 3: Correct response recalled with serious difficulty
+    - 4: Correct response after hesitation
+    - 5: Perfect response
+    """
+    from .services.spaced_repetition import process_review
+
+    now = datetime.now(timezone.utc)
+
+    # Verify card belongs to user
+    card = db.get(SpacedRepetitionCard, card_id)
+    if not card:
+        raise HTTPException(status_code=404, detail="Card not found")
+
+    if card.user_id != current_user.id:
+        raise HTTPException(
+            status_code=403, detail="Not authorized to review this card"
+        )
+
+    try:
+        card = process_review(
+            db=db,
+            card_id=card_id,
+            quality=payload.quality,
+            now=now,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    # Reload card with motif
+    db.refresh(card)
+    card = db.execute(
+        select(SpacedRepetitionCard)
+        .where(SpacedRepetitionCard.id == card_id)
+        .options(selectinload(SpacedRepetitionCard.motif))
+    ).scalar_one()
+
+    # Prepare motif data
+    motif_data = None
+    if card.motif:
+        motif_data = {
+            "id": card.motif.id,
+            "name": card.motif.name,
+            "name_han": card.motif.name_han,
+            "thumbnail_url": card.motif.thumbnail_url,
+            "category": card.motif.category.value if card.motif.category else None,
+        }
+
+    return schemas.SpacedRepetitionCardOut(
+        id=card.id,
+        user_id=card.user_id,
+        motif_id=card.motif_id,
+        ease_factor=card.ease_factor,
+        interval_days=card.interval_days,
+        repetitions=card.repetitions,
+        next_review_at=card.next_review_at,
+        last_reviewed_at=card.last_reviewed_at,
+        review_history=card.review_history or [],
+        created_at=card.created_at,
+        updated_at=card.updated_at,
+        motif=motif_data,
+    )
+
+
+# =============================================================================
+# Learning Path Endpoints
+# =============================================================================
+
+
+def _format_learning_path_response(path: UserLearningPath) -> schemas.LearningPathOut:
+    """Format a UserLearningPath model into a response schema."""
+    # Parse lessons
+    lessons = []
+    for lesson_data in path.recommended_lessons:
+        lessons.append(
+            schemas.LearningPathItemOut(
+                item_id=UUID(lesson_data["lesson_id"]),
+                motif_id=UUID(lesson_data.get("motif_id"))
+                if lesson_data.get("motif_id")
+                else None,
+                order=lesson_data["order"],
+                item_type="lesson",
+                reason=lesson_data.get("reason"),
+                is_completed=any(
+                    c["item_type"] == "lesson"
+                    and c["item_id"] == lesson_data["lesson_id"]
+                    for c in path.completed_items
+                ),
+            )
+        )
+
+    # Parse reviews
+    reviews = []
+    for review_data in path.recommended_reviews:
+        reviews.append(
+            schemas.LearningPathItemOut(
+                item_id=UUID(review_data["motif_id"]),
+                motif_id=UUID(review_data["motif_id"]),
+                order=review_data["order"],
+                item_type="review",
+                priority=review_data.get("priority"),
+                is_completed=any(
+                    c["item_type"] == "review"
+                    and c["item_id"] == review_data["motif_id"]
+                    for c in path.completed_items
+                ),
+            )
+        )
+
+    # Parse quizzes
+    quizzes = []
+    for quiz_data in path.recommended_quizzes:
+        quizzes.append(
+            schemas.LearningPathItemOut(
+                item_id=UUID(quiz_data["motif_id"]),
+                motif_id=UUID(quiz_data["motif_id"]),
+                order=quiz_data["order"],
+                item_type="quiz",
+                difficulty=quiz_data.get("difficulty"),
+                is_completed=any(
+                    c["item_type"] == "quiz" and c["item_id"] == quiz_data["motif_id"]
+                    for c in path.completed_items
+                ),
+            )
+        )
+
+    # Calculate progress
+    total_items = len(lessons) + len(reviews) + len(quizzes)
+    completed_items = len(path.completed_items)
+
+    progress = {
+        "total": total_items,
+        "completed": completed_items,
+        "percentage": (completed_items / total_items * 100) if total_items > 0 else 0,
+        "lessons": {
+            "total": len(lessons),
+            "completed": sum(1 for l in lessons if l.is_completed),
+        },
+        "reviews": {
+            "total": len(reviews),
+            "completed": sum(1 for r in reviews if r.is_completed),
+        },
+        "quizzes": {
+            "total": len(quizzes),
+            "completed": sum(1 for q in quizzes if q.is_completed),
+        },
+    }
+
+    return schemas.LearningPathOut(
+        id=path.id,
+        path_date=path.path_date,
+        lessons=lessons,
+        reviews=reviews,
+        quizzes=quizzes,
+        estimated_time_minutes=path.estimated_time_minutes,
+        is_completed=path.is_completed,
+        completed_at=path.completed_at,
+        generated_at=path.generated_at,
+        progress=progress,
+    )
+
+
+@app.get("/api/v1/learning-path/today", response_model=schemas.LearningPathOut)
+def get_todays_learning_path(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Get today's personalized learning path.
+
+    Automatically generates a new path if one doesn't exist for today.
+    """
+    from .services import learning_path as lp_service
+
+    now = datetime.now(timezone.utc)
+    path = lp_service.get_todays_learning_path(db, current_user, now)
+
+    if not path:
+        raise AppError(
+            code="PATH_NOT_FOUND",
+            message="Could not generate learning path",
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+    return _format_learning_path_response(path)
+
+
+@app.post("/api/v1/learning-path/generate", response_model=schemas.LearningPathOut)
+def generate_learning_path(
+    request: schemas.LearningPathGenerateIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Force regenerate a learning path for a specific date.
+
+    If a path already exists for the date, it will be deleted and a new one generated.
+    """
+    from .services import learning_path as lp_service
+
+    now = datetime.now(timezone.utc)
+    target_date = request.target_date if request.target_date else now
+
+    # Normalize to start of day
+    target_date = target_date.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    # If force regenerate, delete existing path
+    if request.force_regenerate:
+        existing_path = db.execute(
+            select(UserLearningPath).where(
+                and_(
+                    UserLearningPath.user_id == current_user.id,
+                    UserLearningPath.path_date == target_date,
+                )
+            )
+        ).scalar_one_or_none()
+
+        if existing_path:
+            db.delete(existing_path)
+            db.commit()
+
+    # Generate new path
+    path = lp_service.generate_learning_path(db, current_user, target_date, now)
+
+    return _format_learning_path_response(path)
+
+
+@app.post(
+    "/api/v1/learning-path/complete-item", response_model=schemas.CompletePathItemOut
+)
+def complete_learning_path_item(
+    request: schemas.CompletePathItemIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Mark an item in today's learning path as completed.
+
+    This updates the progress tracking for the learning path.
+    """
+    from .services import learning_path as lp_service
+
+    now = datetime.now(timezone.utc)
+
+    # Get today's learning path
+    path = lp_service.get_todays_learning_path(db, current_user, now)
+
+    if not path:
+        raise AppError(
+            code="PATH_NOT_FOUND",
+            message="No learning path found for today",
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
+
+    # Complete the item
+    result = lp_service.complete_path_item(
+        db, path, request.item_type, request.item_id, now
+    )
+
+    message = "Item completed successfully"
+    if result["already_completed"]:
+        message = "Item was already completed"
+    elif result["path_completed"]:
+        message = "Congratulations! You've completed today's learning path!"
+
+    return schemas.CompletePathItemOut(
+        success=True,
+        message=message,
+        already_completed=result["already_completed"],
+        completed_at=datetime.fromisoformat(result["completed_at"]),
+        path_completed=result.get("path_completed", False),
+        progress=result.get("progress", 0),
+        total=result.get("total", 0),
+    )
+
+
+@app.get("/api/v1/learning-path/history", response_model=schemas.LearningPathHistoryOut)
+def get_learning_path_history(
+    days: int = Query(30, ge=1, le=365, description="Number of days to look back"),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Get historical learning paths for the user.
+
+    Returns up to the specified number of days of learning path history.
+    """
+    from .services import learning_path as lp_service
+
+    paths = lp_service.get_path_history(db, current_user, limit=days)
+
+    formatted_paths = [_format_learning_path_response(p) for p in paths]
+
+    return schemas.LearningPathHistoryOut(
+        paths=formatted_paths,
+        total_paths=len(formatted_paths),
+        days_analyzed=days,
+    )
+
+
+@app.get("/api/v1/learning-path/stats", response_model=schemas.LearningPathStatsOut)
+def get_learning_path_stats(
+    days: int = Query(30, ge=1, le=365, description="Number of days to analyze"),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Get learning path statistics for the user.
+
+    Returns completion rates and other metrics for the specified time period.
+    """
+    from .services import learning_path as lp_service
+
+    stats = lp_service.get_path_statistics(db, current_user, days=days)
+
+    return schemas.LearningPathStatsOut(**stats)
+
+
+@app.get("/api/v1/review/stats", response_model=schemas.ReviewStatsOut)
+def get_review_statistics(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.ReviewStatsOut:
+    """
+    Get user's review statistics.
+
+    Returns counts of total cards, due cards, reviewed today, mastered cards, etc.
+    """
+    from .services.spaced_repetition import get_user_review_stats
+
+    now = datetime.now(timezone.utc)
+    stats = get_user_review_stats(db=db, user_id=current_user.id, now=now)
+
+    return schemas.ReviewStatsOut(**stats)
+
+
+@app.post("/api/v1/review/cards", response_model=schemas.SpacedRepetitionCardOut)
+def add_card_to_review_deck(
+    payload: schemas.AddCardIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.SpacedRepetitionCardOut:
+    """
+    Add a motif to the user's review deck.
+
+    Creates a new spaced repetition card for the specified motif.
+    If card already exists, returns the existing card.
+    """
+    from .services.spaced_repetition import add_card_to_deck
+
+    now = datetime.now(timezone.utc)
+
+    try:
+        card = add_card_to_deck(
+            db=db,
+            user_id=current_user.id,
+            motif_id=payload.motif_id,
+            now=now,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    # Reload card with motif
+    db.refresh(card)
+    card = db.execute(
+        select(SpacedRepetitionCard)
+        .where(SpacedRepetitionCard.id == card.id)
+        .options(selectinload(SpacedRepetitionCard.motif))
+    ).scalar_one()
+
+    # Prepare motif data
+    motif_data = None
+    if card.motif:
+        motif_data = {
+            "id": card.motif.id,
+            "name": card.motif.name,
+            "name_han": card.motif.name_han,
+            "thumbnail_url": card.motif.thumbnail_url,
+            "category": card.motif.category.value if card.motif.category else None,
+        }
+
+    return schemas.SpacedRepetitionCardOut(
+        id=card.id,
+        user_id=card.user_id,
+        motif_id=card.motif_id,
+        ease_factor=card.ease_factor,
+        interval_days=card.interval_days,
+        repetitions=card.repetitions,
+        next_review_at=card.next_review_at,
+        last_reviewed_at=card.last_reviewed_at,
+        review_history=card.review_history or [],
+        created_at=card.created_at,
+        updated_at=card.updated_at,
+        motif=motif_data,
+    )
+
+
+# =============================================================================
+# AI Conversation Endpoints
+# =============================================================================
+
+
+@app.get("/api/v1/ai/conversations", response_model=schemas.AIConversationListOut)
+def list_ai_conversations(
+    page: int = Query(1, ge=1, description="Page number"),
+    page_size: int = Query(20, ge=1, le=100, description="Items per page"),
+    active_only: bool = Query(True, description="Only return active conversations"),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.AIConversationListOut:
+    """
+    Get user's AI conversations with pagination.
+
+    Returns a list of conversation summaries with metadata.
+    """
+    from .services import ai_tutor
+
+    conversations, total = ai_tutor.get_user_conversations(
+        db, current_user, page=page, page_size=page_size, active_only=active_only
+    )
+
+    # Format conversations with last message preview
+    formatted_conversations = []
+    for conv in conversations:
+        # Get last message for preview
+        last_msg = db.execute(
+            select(AIMessage)
+            .where(AIMessage.conversation_id == conv.id)
+            .order_by(AIMessage.created_at.desc())
+            .limit(1)
+        ).scalar_one_or_none()
+
+        last_message = None
+        last_message_at = None
+        if last_msg:
+            # Truncate for preview
+            last_message = (
+                last_msg.content[:100] + "..."
+                if len(last_msg.content) > 100
+                else last_msg.content
+            )
+            last_message_at = last_msg.created_at
+
+        formatted_conversations.append(
+            schemas.AIConversationSummaryOut(
+                id=conv.id,
+                title=conv.title,
+                context_type=conv.context_type,
+                context_id=conv.context_id,
+                is_active=conv.is_active,
+                message_count=conv.message_count,
+                created_at=conv.created_at,
+                updated_at=conv.updated_at,
+                last_message=last_message,
+                last_message_at=last_message_at,
+            )
+        )
+
+    return schemas.AIConversationListOut(
+        conversations=formatted_conversations,
+        total=total,
+        page=page,
+        page_size=page_size,
+        has_more=(page * page_size) < total,
+    )
+
+
+@app.post(
+    "/api/v1/ai/conversations",
+    response_model=schemas.AIConversationCreateOut,
+    status_code=201,
+)
+def create_ai_conversation(
+    payload: schemas.AIConversationCreateIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.AIConversationCreateOut:
+    """
+    Create a new AI conversation.
+
+    Optionally can include an initial message to start the conversation.
+    """
+    from .services import ai_tutor
+
+    # Create conversation
+    conversation = ai_tutor.create_conversation(
+        db,
+        current_user,
+        title=payload.title,
+        context_type=payload.context_type,
+        context_id=payload.context_id,
+    )
+
+    # If initial message provided, send it
+    if payload.initial_message:
+        try:
+            ai_tutor.send_message(
+                db,
+                conversation,
+                current_user,
+                payload.initial_message,
+                deepseek_chat_func=_call_deepseek_chat,
+                collect_sources_func=_collect_ai_sources,
+                get_rag_settings_func=_get_rag_settings,
+            )
+        except Exception as e:
+            logger.error(f"Error sending initial message: {e}")
+            # Don't fail the conversation creation
+
+    return schemas.AIConversationCreateOut(
+        id=conversation.id,
+        title=conversation.title,
+        context_type=conversation.context_type,
+        context_id=conversation.context_id,
+        created_at=conversation.created_at,
+    )
+
+
+@app.get(
+    "/api/v1/ai/conversations/{conversation_id}",
+    response_model=schemas.AIConversationDetailOut,
+)
+def get_ai_conversation(
+    conversation_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.AIConversationDetailOut:
+    """
+    Get a specific conversation with all messages.
+    """
+    from .services import ai_tutor
+
+    conversation = ai_tutor.get_conversation(db, conversation_id, current_user)
+    if not conversation:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+
+    # Format messages
+    formatted_messages = [
+        schemas.AIMessageOut(
+            id=msg.id,
+            conversation_id=msg.conversation_id,
+            role=msg.role,
+            content=msg.content,
+            tokens_used=msg.tokens_used,
+            created_at=msg.created_at,
+        )
+        for msg in conversation.messages
+    ]
+
+    return schemas.AIConversationDetailOut(
+        id=conversation.id,
+        title=conversation.title,
+        context_type=conversation.context_type,
+        context_id=conversation.context_id,
+        is_active=conversation.is_active,
+        message_count=conversation.message_count,
+        created_at=conversation.created_at,
+        updated_at=conversation.updated_at,
+        messages=formatted_messages,
+    )
+
+
+@app.post(
+    "/api/v1/ai/conversations/{conversation_id}/messages",
+    response_model=schemas.AISendMessageOut,
+)
+def send_message_to_conversation(
+    conversation_id: UUID,
+    payload: schemas.AISendMessageIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.AISendMessageOut:
+    """
+    Send a message in a conversation and get AI response.
+
+    The AI will respond based on conversation context and RAG sources.
+    """
+    from .services import ai_tutor
+
+    if not settings.deepseek_api_key:
+        raise HTTPException(status_code=503, detail="AI service not configured")
+
+    # Get conversation
+    conversation = ai_tutor.get_conversation(db, conversation_id, current_user)
+    if not conversation:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+
+    if not conversation.is_active:
+        raise HTTPException(status_code=400, detail="Conversation is not active")
+
+    # Send message
+    try:
+        user_message, ai_response = ai_tutor.send_message(
+            db,
+            conversation,
+            current_user,
+            payload.message,
+            deepseek_chat_func=_call_deepseek_chat,
+            collect_sources_func=_collect_ai_sources,
+            get_rag_settings_func=_get_rag_settings,
+        )
+    except Exception as e:
+        logger.error(f"Error sending message: {e}")
+        raise HTTPException(status_code=500, detail="Failed to send message")
+
+    # Format response
+    return schemas.AISendMessageOut(
+        message=schemas.AIMessageOut(
+            id=user_message.id,
+            conversation_id=user_message.conversation_id,
+            role=user_message.role,
+            content=user_message.content,
+            tokens_used=user_message.tokens_used,
+            created_at=user_message.created_at,
+        ),
+        response=schemas.AIMessageOut(
+            id=ai_response.id,
+            conversation_id=ai_response.conversation_id,
+            role=ai_response.role,
+            content=ai_response.content,
+            tokens_used=ai_response.tokens_used,
+            created_at=ai_response.created_at,
+        ),
+        conversation_id=conversation.id,
+        tokens_used=ai_response.tokens_used,
+    )
+
+
+@app.delete("/api/v1/ai/conversations/{conversation_id}", status_code=204)
+def delete_ai_conversation(
+    conversation_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Delete a conversation.
+
+    This permanently deletes the conversation and all its messages.
+    """
+    from .services import ai_tutor
+
+    success = ai_tutor.delete_conversation(db, conversation_id, current_user)
+    if not success:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+
+    return Response(status_code=204)
+
+
+# =============================================================================
+# Social Features - Friends & Follow System
+# =============================================================================
+
+
+@app.get("/api/v1/social/following", response_model=schemas.FollowListOut)
+def get_following(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.FollowListOut:
+    """Get list of users that the current user is following."""
+    from .services import social
+
+    skip = (page - 1) * page_size
+    follows, total = social.get_following(
+        db, current_user.id, skip=skip, limit=page_size
+    )
+
+    return schemas.FollowListOut(
+        users=[
+            schemas.FollowUserOut(
+                id=follow.id,
+                user_id=follow.following.id,
+                display_name=follow.following.display_name,
+                username=follow.following.username,
+                avatar_url=follow.following.avatar_url,
+                bio=follow.following.bio,
+                total_xp=follow.following.total_xp,
+                followed_at=follow.created_at,
+            )
+            for follow in follows
+        ],
+        total=total,
+        page=page,
+        page_size=page_size,
+    )
+
+
+@app.get("/api/v1/social/followers", response_model=schemas.FollowListOut)
+def get_followers(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.FollowListOut:
+    """Get list of users following the current user."""
+    from .services import social
+
+    skip = (page - 1) * page_size
+    follows, total = social.get_followers(
+        db, current_user.id, skip=skip, limit=page_size
+    )
+
+    return schemas.FollowListOut(
+        users=[
+            schemas.FollowUserOut(
+                id=follow.id,
+                user_id=follow.follower.id,
+                display_name=follow.follower.display_name,
+                username=follow.follower.username,
+                avatar_url=follow.follower.avatar_url,
+                bio=follow.follower.bio,
+                total_xp=follow.follower.total_xp,
+                followed_at=follow.created_at,
+            )
+            for follow in follows
+        ],
+        total=total,
+        page=page,
+        page_size=page_size,
+    )
+
+
+@app.post("/api/v1/social/follow/{user_id}", status_code=201)
+def follow_user(
+    user_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Follow a user."""
+    from .services import social
+
+    # Check if user exists
+    target_user = db.get(User, user_id)
+    if not target_user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    try:
+        follow = social.follow_user(db, current_user.id, user_id)
+        return {"message": "User followed successfully", "follow_id": follow.id}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.delete("/api/v1/social/follow/{user_id}", status_code=204)
+def unfollow_user(
+    user_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Unfollow a user."""
+    from .services import social
+
+    success = social.unfollow_user(db, current_user.id, user_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Not following this user")
+
+    return Response(status_code=204)
+
+
+@app.get("/api/v1/social/friends", response_model=schemas.FriendListOut)
+def get_friends(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.FriendListOut:
+    """Get list of friends (mutual follows)."""
+    from .services import social
+
+    friends = social.get_friends(db, current_user.id)
+    online_status = social.get_online_status_map(db, [friend.id for friend in friends])
+
+    return schemas.FriendListOut(
+        friends=[
+            schemas.FriendOut(
+                id=friend.id,
+                user_id=friend.id,
+                display_name=friend.display_name,
+                username=friend.username,
+                avatar_url=friend.avatar_url,
+                bio=friend.bio,
+                total_xp=friend.total_xp,
+                is_online=online_status.get(friend.id, False),
+            )
+            for friend in friends
+        ],
+        total=len(friends),
+    )
+
+
+@app.post(
+    "/api/v1/social/friend-requests",
+    response_model=schemas.FriendRequestOut,
+    status_code=201,
+)
+def send_friend_request(
+    request_data: schemas.FriendRequestCreateIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.FriendRequestOut:
+    """Send a friend request to another user."""
+    from .services import social
+
+    # Check if target user exists
+    target_user = db.get(User, request_data.to_user_id)
+    if not target_user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    try:
+        friend_request = social.create_friend_request(
+            db, current_user.id, request_data.to_user_id
+        )
+
+        return schemas.FriendRequestOut(
+            id=friend_request.id,
+            from_user_id=friend_request.from_user_id,
+            from_user_display_name=current_user.display_name,
+            from_user_avatar_url=current_user.avatar_url,
+            to_user_id=friend_request.to_user_id,
+            to_user_display_name=target_user.display_name,
+            to_user_avatar_url=target_user.avatar_url,
+            status=friend_request.status.value,
+            created_at=friend_request.created_at,
+            responded_at=friend_request.responded_at,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.get("/api/v1/social/friend-requests", response_model=schemas.FriendRequestListOut)
+def get_friend_requests(
+    status: Optional[str] = Query(None, pattern="^(pending|accepted|rejected)$"),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.FriendRequestListOut:
+    """Get friend requests received by the current user."""
+    from .services import social
+
+    requests = social.get_friend_requests(db, current_user.id, status=status)
+
+    pending_count = sum(
+        1 for req in requests if req.status == FriendRequestStatus.pending
+    )
+
+    return schemas.FriendRequestListOut(
+        requests=[
+            schemas.FriendRequestOut(
+                id=req.id,
+                from_user_id=req.from_user_id,
+                from_user_display_name=req.from_user.display_name,
+                from_user_avatar_url=req.from_user.avatar_url,
+                to_user_id=req.to_user_id,
+                to_user_display_name=req.to_user.display_name,
+                to_user_avatar_url=req.to_user.avatar_url,
+                status=req.status.value,
+                created_at=req.created_at,
+                responded_at=req.responded_at,
+            )
+            for req in requests
+        ],
+        total=len(requests),
+        pending_count=pending_count,
+    )
+
+
+@app.post(
+    "/api/v1/social/friend-requests/{request_id}/accept",
+    response_model=schemas.FriendRequestOut,
+)
+def accept_friend_request(
+    request_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.FriendRequestOut:
+    """Accept a friend request."""
+    from .services import social
+
+    try:
+        friend_request = social.accept_friend_request(db, request_id, current_user.id)
+
+        return schemas.FriendRequestOut(
+            id=friend_request.id,
+            from_user_id=friend_request.from_user_id,
+            from_user_display_name=friend_request.from_user.display_name,
+            from_user_avatar_url=friend_request.from_user.avatar_url,
+            to_user_id=friend_request.to_user_id,
+            to_user_display_name=friend_request.to_user.display_name,
+            to_user_avatar_url=friend_request.to_user.avatar_url,
+            status=friend_request.status.value,
+            created_at=friend_request.created_at,
+            responded_at=friend_request.responded_at,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post(
+    "/api/v1/social/friend-requests/{request_id}/reject",
+    response_model=schemas.FriendRequestOut,
+)
+def reject_friend_request(
+    request_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.FriendRequestOut:
+    """Reject a friend request."""
+    from .services import social
+
+    try:
+        friend_request = social.reject_friend_request(db, request_id, current_user.id)
+
+        return schemas.FriendRequestOut(
+            id=friend_request.id,
+            from_user_id=friend_request.from_user_id,
+            from_user_display_name=friend_request.from_user.display_name,
+            from_user_avatar_url=friend_request.from_user.avatar_url,
+            to_user_id=friend_request.to_user_id,
+            to_user_display_name=friend_request.to_user.display_name,
+            to_user_avatar_url=friend_request.to_user.avatar_url,
+            status=friend_request.status.value,
+            created_at=friend_request.created_at,
+            responded_at=friend_request.responded_at,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+# =============================================================================
+# Social Sharing Endpoints
+# =============================================================================
+
+
+@app.get("/api/v1/social/feed", response_model=schemas.ActivityFeedOut)
+def get_activity_feed(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.ActivityFeedOut:
+    """
+    Get activity feed from followed users.
+
+    Returns public shares from other users.
+    This filters to shares from users the current user follows.
+    """
+    from .services import sharing
+
+    shares, total = sharing.get_activity_feed(db, current_user.id, page, page_size)
+
+    # Convert shares to activity items
+    activities = []
+    for share in shares:
+        user = db.query(User).filter(User.id == share.user_id).first()
+        if not user:
+            continue
+
+        content_data = sharing.get_content_data_for_share(db, share)
+
+        activity = schemas.UserActivityOut(
+            id=share.id,
+            activity_type="share",
+            user_id=user.id,
+            user_display_name=user.display_name or user.email,
+            user_avatar_url=user.avatar_url,
+            content={
+                "share_type": share.share_type,
+                "caption": share.caption,
+                "content_data": content_data,
+                "share_url": share.share_url,
+                "view_count": share.view_count,
+            },
+            created_at=share.created_at,
+        )
+        activities.append(activity)
+
+    return schemas.ActivityFeedOut(
+        activities=activities,
+        total=total,
+        page=page,
+        page_size=page_size,
+        has_more=(page * page_size) < total,
+    )
+
+
+@app.post(
+    "/api/v1/social/share",
+    response_model=schemas.ShareOut,
+    status_code=status.HTTP_201_CREATED,
+)
+def create_share(
+    share_in: schemas.ShareCreateIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.ShareOut:
+    """
+    Create a new share.
+
+    Allows users to share their achievements, badges, streaks, level ups, and certificates.
+    """
+    from .services import sharing
+
+    # Validate content_id exists if provided
+    if share_in.content_id:
+        if share_in.share_type == "badge":
+            badge_exists = (
+                db.query(UserBadge)
+                .filter(
+                    and_(
+                        UserBadge.user_id == current_user.id,
+                        UserBadge.badge_id == share_in.content_id,
+                    )
+                )
+                .first()
+            )
+            if not badge_exists:
+                raise HTTPException(status_code=404, detail="Badge not found")
+
+        elif share_in.share_type == "certificate":
+            cert_exists = (
+                db.query(Certificate)
+                .filter(
+                    and_(
+                        Certificate.user_id == current_user.id,
+                        Certificate.id == share_in.content_id,
+                    )
+                )
+                .first()
+            )
+            if not cert_exists:
+                raise HTTPException(status_code=404, detail="Certificate not found")
+
+    share = sharing.create_share(
+        db,
+        current_user.id,
+        share_in.share_type,
+        share_in.content_id,
+        share_in.caption,
+        share_in.visibility,
+    )
+
+    return schemas.ShareOut(
+        id=share.id,
+        user_id=share.user_id,
+        share_type=share.share_type,
+        content_id=share.content_id,
+        caption=share.caption,
+        visibility=share.visibility,
+        share_url=share.share_url,
+        view_count=share.view_count,
+        created_at=share.created_at,
+    )
+
+
+@app.get("/api/v1/social/shares/mine", response_model=schemas.ShareListOut)
+def get_my_shares(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.ShareListOut:
+    """
+    Get current user's shares.
+    """
+    from .services import sharing
+
+    shares, total = sharing.get_user_shares(db, current_user.id, page, page_size)
+
+    # Convert to detailed output
+    share_details = []
+    for share in shares:
+        content_data = sharing.get_content_data_for_share(db, share)
+
+        share_detail = schemas.ShareDetailOut(
+            id=share.id,
+            user_id=current_user.id,
+            user_display_name=current_user.display_name or current_user.email,
+            user_avatar_url=current_user.avatar_url,
+            user_xp=current_user.total_xp,
+            share_type=share.share_type,
+            content_id=share.content_id,
+            content_data=content_data,
+            caption=share.caption,
+            visibility=share.visibility,
+            share_url=share.share_url,
+            view_count=share.view_count,
+            created_at=share.created_at,
+        )
+        share_details.append(share_detail)
+
+    return schemas.ShareListOut(
+        shares=share_details,
+        total=total,
+        page=page,
+        page_size=page_size,
+    )
+
+
+@app.get("/api/v1/social/shares/{share_id}", response_model=schemas.ShareDetailOut)
+def get_share_by_id(
+    share_id: UUID,
+    current_user: Optional[User] = Depends(get_current_user_optional),
+    db: Session = Depends(get_db),
+) -> schemas.ShareDetailOut:
+    """
+    Get a share by ID (public endpoint with optional auth).
+
+    Visibility rules:
+    - Public shares: Anyone can view
+    - Followers shares: Only followers can view
+    - Private shares: Only the owner can view
+    """
+    from .services import sharing
+
+    current_user_id = current_user.id if current_user else None
+    share = sharing.get_share_by_id(db, share_id, current_user_id)
+
+    if not share:
+        raise HTTPException(status_code=404, detail="Share not found or not accessible")
+
+    # Increment view count (don't count owner's views)
+    if not current_user or current_user.id != share.user_id:
+        sharing.increment_view_count(db, share_id)
+
+    # Get user info
+    user = db.query(User).filter(User.id == share.user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    content_data = sharing.get_content_data_for_share(db, share)
+
+    return schemas.ShareDetailOut(
+        id=share.id,
+        user_id=user.id,
+        user_display_name=user.display_name or user.email,
+        user_avatar_url=user.avatar_url,
+        user_xp=user.total_xp,
+        share_type=share.share_type,
+        content_id=share.content_id,
+        content_data=content_data,
+        caption=share.caption,
+        visibility=share.visibility,
+        share_url=share.share_url,
+        view_count=share.view_count,
+        created_at=share.created_at,
+    )
+
+
+@app.delete("/api/v1/social/shares/{share_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_share(
+    share_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Delete a share (user can only delete their own shares).
+    """
+    from .services import sharing
+
+    success = sharing.delete_share(db, share_id, current_user.id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Share not found or not authorized")
+
+    return Response(status_code=204)
+
+
+@app.get("/api/v1/users/{user_id}/activity", response_model=schemas.ShareListOut)
+def get_user_activity(
+    user_id: UUID,
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
+    current_user: Optional[User] = Depends(get_current_user_optional),
+    db: Session = Depends(get_db),
+) -> schemas.ShareListOut:
+    """
+    Get public activity for a specific user.
+
+    This endpoint shows only public shares.
+    """
+    from .services import sharing
+
+    # Check if user exists
+    target_user = db.query(User).filter(User.id == user_id).first()
+    if not target_user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    shares, total = sharing.get_public_user_activity(db, user_id, page, page_size)
+
+    # Convert to detailed output
+    share_details = []
+    for share in shares:
+        content_data = sharing.get_content_data_for_share(db, share)
+
+        share_detail = schemas.ShareDetailOut(
+            id=share.id,
+            user_id=target_user.id,
+            user_display_name=target_user.display_name or target_user.email,
+            user_avatar_url=target_user.avatar_url,
+            user_xp=target_user.total_xp,
+            share_type=share.share_type,
+            content_id=share.content_id,
+            content_data=content_data,
+            caption=share.caption,
+            visibility=share.visibility,
+            share_url=share.share_url,
+            view_count=share.view_count,
+            created_at=share.created_at,
+        )
+        share_details.append(share_detail)
+
+    return schemas.ShareListOut(
+        shares=share_details,
+        total=total,
+        page=page,
+        page_size=page_size,
+    )
+
+
+# =============================================================================
+# Feature Flags and Experiments Endpoints
+# =============================================================================
+
+
+@app.get("/api/v1/features", response_model=schemas.UserFeaturesOut)
+def get_user_features(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.UserFeaturesOut:
+    """
+    Get all feature flags and their status for the current user.
+
+    Returns a mapping of feature keys to their enabled status.
+    """
+    from backend.services import feature_flags
+
+    features = feature_flags.get_all_features_for_user(db, current_user.id)
+
+    return schemas.UserFeaturesOut(features=features)
+
+
+@app.get("/api/v1/features/{key}", response_model=schemas.FeatureCheckOut)
+def check_feature(
+    key: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.FeatureCheckOut:
+    """
+    Check if a specific feature is enabled for the current user.
+    """
+    from backend.services import feature_flags
+
+    # Get the feature flag
+    flag = db.execute(
+        select(FeatureFlag).where(FeatureFlag.key == key)
+    ).scalar_one_or_none()
+
+    if not flag:
+        raise HTTPException(status_code=404, detail="Feature flag not found")
+
+    enabled = feature_flags.is_feature_enabled_for_user(db, key, current_user.id)
+
+    return schemas.FeatureCheckOut(
+        key=key,
+        enabled=enabled,
+        metadata=flag.rules,
+    )
+
+
+@app.get("/api/v1/experiments", response_model=schemas.UserExperimentsOut)
+def get_user_experiments(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.UserExperimentsOut:
+    """
+    Get all active experiments and assigned variants for the current user.
+
+    Returns a mapping of experiment keys to variant keys.
+    """
+    from backend.services import experiments
+
+    user_experiments = experiments.get_all_experiments_for_user(db, current_user.id)
+
+    return schemas.UserExperimentsOut(experiments=user_experiments)
+
+
+# =============================================================================
+# Admin Endpoints for Feature Flags
+# =============================================================================
+
+
+@app.get("/api/v1/admin/feature-flags", response_model=list[schemas.FeatureFlagOut])
+def list_feature_flags(
+    current_user: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> list[schemas.FeatureFlagOut]:
+    """
+    List all feature flags (admin only).
+    """
+    flags = db.execute(select(FeatureFlag)).scalars().all()
+
+    return [
+        schemas.FeatureFlagOut(
+            id=flag.id,
+            key=flag.key,
+            name=flag.name,
+            description=flag.description,
+            is_enabled=flag.is_enabled,
+            rollout_percentage=flag.rollout_percentage,
+            user_whitelist=flag.user_whitelist,
+            user_blacklist=flag.user_blacklist,
+            rules=flag.rules,
+            created_by_id=flag.created_by_id,
+            created_at=flag.created_at,
+            updated_at=flag.updated_at,
+        )
+        for flag in flags
+    ]
+
+
+@app.post(
+    "/api/v1/admin/feature-flags",
+    response_model=schemas.FeatureFlagOut,
+    status_code=status.HTTP_201_CREATED,
+)
+def create_feature_flag(
+    payload: schemas.FeatureFlagCreateIn,
+    current_user: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> schemas.FeatureFlagOut:
+    """
+    Create a new feature flag (admin only).
+    """
+    try:
+        flag = FeatureFlag(
+            key=payload.key,
+            name=payload.name,
+            description=payload.description,
+            is_enabled=payload.is_enabled,
+            rollout_percentage=payload.rollout_percentage,
+            user_whitelist=payload.user_whitelist,
+            user_blacklist=payload.user_blacklist,
+            rules=payload.rules,
+            created_by_id=current_user.id,
+        )
+        db.add(flag)
+        db.commit()
+        db.refresh(flag)
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=400, detail="Feature flag with this key already exists"
+        )
+
+    return schemas.FeatureFlagOut(
+        id=flag.id,
+        key=flag.key,
+        name=flag.name,
+        description=flag.description,
+        is_enabled=flag.is_enabled,
+        rollout_percentage=flag.rollout_percentage,
+        user_whitelist=flag.user_whitelist,
+        user_blacklist=flag.user_blacklist,
+        rules=flag.rules,
+        created_by_id=flag.created_by_id,
+        created_at=flag.created_at,
+        updated_at=flag.updated_at,
+    )
+
+
+@app.put("/api/v1/admin/feature-flags/{key}", response_model=schemas.FeatureFlagOut)
+def update_feature_flag(
+    key: str,
+    payload: schemas.FeatureFlagUpdateIn,
+    current_user: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> schemas.FeatureFlagOut:
+    """
+    Update a feature flag by key (admin only).
+    """
+    flag = db.execute(
+        select(FeatureFlag).where(FeatureFlag.key == key)
+    ).scalar_one_or_none()
+
+    if not flag:
+        raise HTTPException(status_code=404, detail="Feature flag not found")
+
+    # Update fields if provided
+    if payload.name is not None:
+        flag.name = payload.name
+    if payload.description is not None:
+        flag.description = payload.description
+    if payload.is_enabled is not None:
+        flag.is_enabled = payload.is_enabled
+    if payload.rollout_percentage is not None:
+        flag.rollout_percentage = payload.rollout_percentage
+    if payload.user_whitelist is not None:
+        flag.user_whitelist = payload.user_whitelist
+    if payload.user_blacklist is not None:
+        flag.user_blacklist = payload.user_blacklist
+    if payload.rules is not None:
+        flag.rules = payload.rules
+
+    db.commit()
+    db.refresh(flag)
+
+    return schemas.FeatureFlagOut(
+        id=flag.id,
+        key=flag.key,
+        name=flag.name,
+        description=flag.description,
+        is_enabled=flag.is_enabled,
+        rollout_percentage=flag.rollout_percentage,
+        user_whitelist=flag.user_whitelist,
+        user_blacklist=flag.user_blacklist,
+        rules=flag.rules,
+        created_by_id=flag.created_by_id,
+        created_at=flag.created_at,
+        updated_at=flag.updated_at,
+    )
+
+
+@app.delete("/api/v1/admin/feature-flags/{key}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_feature_flag(
+    key: str,
+    current_user: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+):
+    """
+    Delete a feature flag by key (admin only).
+    """
+    flag = db.execute(
+        select(FeatureFlag).where(FeatureFlag.key == key)
+    ).scalar_one_or_none()
+
+    if not flag:
+        raise HTTPException(status_code=404, detail="Feature flag not found")
+
+    db.delete(flag)
+    db.commit()
+
+    return Response(status_code=204)
+
+
+# =============================================================================
+# Admin Endpoints for Experiments
+# =============================================================================
+
+
+@app.get("/api/v1/admin/experiments", response_model=list[schemas.ExperimentOut])
+def list_experiments(
+    current_user: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> list[schemas.ExperimentOut]:
+    """
+    List all experiments (admin only).
+    """
+    experiments_list = db.execute(select(Experiment)).scalars().all()
+
+    return [
+        schemas.ExperimentOut(
+            id=exp.id,
+            key=exp.key,
+            name=exp.name,
+            description=exp.description,
+            variants=exp.variants,
+            is_active=exp.is_active,
+            start_date=exp.start_date,
+            end_date=exp.end_date,
+            created_at=exp.created_at,
+        )
+        for exp in experiments_list
+    ]
+
+
+@app.post(
+    "/api/v1/admin/experiments",
+    response_model=schemas.ExperimentOut,
+    status_code=status.HTTP_201_CREATED,
+)
+def create_experiment(
+    payload: schemas.ExperimentCreateIn,
+    current_user: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> schemas.ExperimentOut:
+    """
+    Create a new experiment (admin only).
+    """
+    from backend.services import experiments
+
+    try:
+        experiment = experiments.create_experiment(
+            db=db,
+            key=payload.key,
+            name=payload.name,
+            variants=payload.variants,
+            description=payload.description,
+            target_audience=payload.target_audience,
+            is_active=payload.is_active,
+            start_date=payload.start_date,
+            end_date=payload.end_date,
+            created_by_id=current_user.id,
+        )
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=400, detail="Experiment with this key already exists"
+        )
+
+    return schemas.ExperimentOut(
+        id=experiment.id,
+        key=experiment.key,
+        name=experiment.name,
+        description=experiment.description,
+        variants=experiment.variants,
+        target_audience=experiment.target_audience,
+        is_active=experiment.is_active,
+        start_date=experiment.start_date,
+        end_date=experiment.end_date,
+        created_by_id=experiment.created_by_id,
+        created_at=experiment.created_at,
+    )
+
+
+@app.put(
+    "/api/v1/admin/experiments/{experiment_id}", response_model=schemas.ExperimentOut
+)
+def update_experiment(
+    experiment_id: UUID,
+    payload: schemas.ExperimentUpdateIn,
+    current_user: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> schemas.ExperimentOut:
+    """
+    Update an experiment (admin only).
+    """
+    from backend.services import experiments
+
+    experiment = experiments.update_experiment(
+        db=db,
+        experiment_id=experiment_id,
+        name=payload.name,
+        description=payload.description,
+        variants=payload.variants,
+        target_audience=payload.target_audience,
+        is_active=payload.is_active,
+        start_date=payload.start_date,
+        end_date=payload.end_date,
+    )
+
+    if not experiment:
+        raise HTTPException(status_code=404, detail="Experiment not found")
+
+    db.commit()
+
+    return schemas.ExperimentOut(
+        id=experiment.id,
+        key=experiment.key,
+        name=experiment.name,
+        description=experiment.description,
+        variants=experiment.variants,
+        target_audience=experiment.target_audience,
+        is_active=experiment.is_active,
+        start_date=experiment.start_date,
+        end_date=experiment.end_date,
+        created_by_id=experiment.created_by_id,
+        created_at=experiment.created_at,
+    )
+
+
+@app.delete(
+    "/api/v1/admin/experiments/{experiment_id}", status_code=status.HTTP_204_NO_CONTENT
+)
+def delete_experiment(
+    experiment_id: UUID,
+    current_user: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+):
+    """
+    Delete an experiment (admin only).
+    """
+    experiment = db.get(Experiment, experiment_id)
+    if not experiment:
+        raise HTTPException(status_code=404, detail="Experiment not found")
+
+    db.delete(experiment)
+    db.commit()
+
+    return Response(status_code=204)
+
+
+@app.get(
+    "/api/v1/admin/experiments/{experiment_id}/assignments",
+    response_model=list[schemas.UserExperimentAssignmentOut],
+)
+def get_experiment_assignments(
+    experiment_id: UUID,
+    page: int = Query(1, ge=1),
+    page_size: int = Query(50, ge=1, le=100),
+    current_user: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> list[schemas.UserExperimentAssignmentOut]:
+    """
+    Get all user assignments for an experiment (admin only).
+    """
+    # Verify experiment exists
+    experiment = db.get(Experiment, experiment_id)
+    if not experiment:
+        raise HTTPException(status_code=404, detail="Experiment not found")
+
+    # Get assignments with pagination
+    offset = (page - 1) * page_size
+    assignments = (
+        db.execute(
+            select(UserExperimentAssignment)
+            .where(UserExperimentAssignment.experiment_id == experiment_id)
+            .order_by(UserExperimentAssignment.assigned_at.desc())
+            .offset(offset)
+            .limit(page_size)
+        )
+        .scalars()
+        .all()
+    )
+
+    return [
+        schemas.UserExperimentAssignmentOut(
+            id=assignment.id,
+            user_id=assignment.user_id,
+            experiment_id=assignment.experiment_id,
+            variant_key=assignment.variant_key,
+            assigned_at=assignment.assigned_at,
+        )
+        for assignment in assignments
+    ]
+
+
+# =============================================================================
+# Experiment Events and Analytics Endpoints (P1-EXP-02)
+# =============================================================================
+
+
+@app.post(
+    "/api/v1/experiments/{experiment_key}/events",
+    response_model=schemas.ExperimentEventOut,
+    status_code=status.HTTP_201_CREATED,
+)
+def track_experiment_event(
+    experiment_key: str,
+    payload: schemas.ExperimentEventIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.ExperimentEventOut:
+    """
+    Track an event for an experiment (authenticated users).
+
+    Event types:
+    - impression: User saw the variant
+    - conversion: User completed the target action
+    - click: User clicked on something
+    - custom: Custom event
+    """
+    from backend.services import experiment_analytics
+
+    event = experiment_analytics.track_experiment_event(
+        db=db,
+        experiment_key=experiment_key,
+        user_id=current_user.id,
+        event_type=payload.event_type,
+        event_name=payload.event_name,
+        event_value=payload.event_value,
+        metadata=payload.metadata,
+    )
+
+    if not event:
+        raise HTTPException(
+            status_code=404,
+            detail="Experiment not found or user not assigned to this experiment",
+        )
+
+    db.commit()
+
+    return schemas.ExperimentEventOut(
+        id=event.id,
+        experiment_id=event.experiment_id,
+        user_id=event.user_id,
+        assignment_id=event.assignment_id,
+        event_type=event.event_type,
+        event_name=event.event_name,
+        event_value=event.event_value,
+        metadata=event.metadata_json,
+        created_at=event.created_at,
+    )
+
+
+@app.get(
+    "/api/v1/admin/experiments/{experiment_id}/results",
+    response_model=schemas.ExperimentResultsOut,
+)
+def get_experiment_results(
+    experiment_id: UUID,
+    conversion_event_name: str = Query(
+        ..., description="Event name to count as conversion"
+    ),
+    control_variant_key: str = Query(
+        "control", description="Key for the control variant"
+    ),
+    significance_threshold: float = Query(
+        0.05, ge=0.0, le=1.0, description="P-value threshold for significance"
+    ),
+    current_user: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> schemas.ExperimentResultsOut:
+    """
+    Get experiment results with statistical analysis (admin only).
+
+    Returns per-variant metrics including:
+    - Impressions (assignments)
+    - Conversions
+    - Conversion rate
+    - Statistical significance (p-value)
+    - Improvement over control
+    - Winning variant (if statistically significant)
+    """
+    from backend.services import experiment_analytics
+
+    # Verify experiment exists
+    experiment = db.get(Experiment, experiment_id)
+    if not experiment:
+        raise HTTPException(status_code=404, detail="Experiment not found")
+
+    # Generate report
+    report = experiment_analytics.generate_experiment_report(
+        db=db,
+        experiment_id=experiment_id,
+        conversion_event_name=conversion_event_name,
+        control_variant_key=control_variant_key,
+        significance_threshold=significance_threshold,
+    )
+
+    if "error" in report:
+        raise HTTPException(status_code=400, detail=report["error"])
+
+    # Convert variant stats to schema
+    variant_results = {}
+    for variant_key, stats in report["variants"].items():
+        variant_results[variant_key] = schemas.VariantResultOut(
+            variant_key=variant_key,
+            impressions=stats["impressions"],
+            conversions=stats["conversions"],
+            conversion_rate=stats["conversion_rate"],
+            p_value=stats.get("p_value"),
+            chi_square=stats.get("chi_square"),
+            is_significant=stats.get("is_significant", False),
+            improvement=stats.get("improvement"),
+        )
+
+    return schemas.ExperimentResultsOut(
+        experiment_key=report["experiment_key"],
+        experiment_name=report["experiment_name"],
+        conversion_event=report["conversion_event"],
+        variants=variant_results,
+        winner=report["winner"],
+        is_significant=report["is_significant"],
+        significance_threshold=report["significance_threshold"],
+    )
+
+
+@app.get(
+    "/api/v1/admin/experiments/{experiment_id}/events",
+    response_model=schemas.ExperimentEventListOut,
+)
+def get_experiment_events(
+    experiment_id: UUID,
+    event_type: Optional[str] = Query(None, description="Filter by event type"),
+    event_name: Optional[str] = Query(None, description="Filter by event name"),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(100, ge=1, le=500),
+    current_user: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> schemas.ExperimentEventListOut:
+    """
+    Get events for an experiment with optional filtering (admin only).
+    """
+    from backend.models import ExperimentEvent
+    from backend.services import experiment_analytics
+
+    # Verify experiment exists
+    experiment = db.get(Experiment, experiment_id)
+    if not experiment:
+        raise HTTPException(status_code=404, detail="Experiment not found")
+
+    # Get total count
+    count_query = (
+        select(func.count())
+        .select_from(ExperimentEvent)
+        .where(ExperimentEvent.experiment_id == experiment_id)
+    )
+    if event_type:
+        count_query = count_query.where(ExperimentEvent.event_type == event_type)
+    if event_name:
+        count_query = count_query.where(ExperimentEvent.event_name == event_name)
+
+    total = db.execute(count_query).scalar() or 0
+
+    # Get events
+    offset = (page - 1) * page_size
+    events = experiment_analytics.get_experiment_events(
+        db=db,
+        experiment_id=experiment_id,
+        event_type=event_type,
+        event_name=event_name,
+        limit=page_size,
+        offset=offset,
+    )
+
+    return schemas.ExperimentEventListOut(
+        events=[
+            schemas.ExperimentEventOut(
+                id=event.id,
+                experiment_id=event.experiment_id,
+                user_id=event.user_id,
+                assignment_id=event.assignment_id,
+                event_type=event.event_type,
+                event_name=event.event_name,
+                event_value=event.event_value,
+                metadata=event.metadata_json,
+                created_at=event.created_at,
+            )
+            for event in events
+        ],
+        total=total,
+        page=page,
+        page_size=page_size,
+    )
+
+
+# =============================================================================
+# Experiment Metric Events Endpoints (P1-EXP-03)
+# =============================================================================
+
+
+@app.post(
+    "/api/v1/experiments/{experiment_id}/metrics",
+    response_model=schemas.ExperimentMetricEventOut,
+    status_code=status.HTTP_201_CREATED,
+)
+def record_experiment_metric(
+    experiment_id: UUID,
+    payload: schemas.ExperimentMetricEventIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.ExperimentMetricEventOut:
+    """
+    Record a metric event for an experiment.
+
+    This endpoint allows authenticated users to track metric values (like conversion,
+    retention, engagement scores) for experiments they are assigned to.
+    """
+    from backend.services import experiment_analytics
+
+    # Verify experiment exists
+    experiment = db.get(Experiment, experiment_id)
+    if not experiment:
+        raise HTTPException(status_code=404, detail="Experiment not found")
+
+    # Record metric event
+    metric_event = experiment_analytics.record_metric_event(
+        db=db,
+        experiment_id=experiment_id,
+        user_id=current_user.id,
+        metric_name=payload.metric_name,
+        metric_value=payload.metric_value,
+        metadata=payload.metadata,
+    )
+
+    if not metric_event:
+        raise HTTPException(
+            status_code=400, detail="User is not assigned to this experiment"
+        )
+
+    db.commit()
+
+    return schemas.ExperimentMetricEventOut(
+        id=metric_event.id,
+        experiment_id=metric_event.experiment_id,
+        user_id=metric_event.user_id,
+        variant=metric_event.variant,
+        metric_name=metric_event.metric_name,
+        metric_value=metric_event.metric_value,
+        metadata=metric_event.metadata_json,
+        created_at=metric_event.created_at,
+    )
+
+
+@app.get(
+    "/api/v1/admin/experiments/{experiment_id}/metrics",
+    response_model=schemas.ExperimentMetricSummaryOut,
+)
+def get_experiment_metrics_summary(
+    experiment_id: UUID,
+    current_user: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> schemas.ExperimentMetricSummaryOut:
+    """
+    Get metric summary for an experiment (admin only).
+
+    Returns a list of all available metrics and basic experiment info.
+    """
+    from backend.services import experiment_analytics
+
+    # Verify experiment exists
+    experiment = db.get(Experiment, experiment_id)
+    if not experiment:
+        raise HTTPException(status_code=404, detail="Experiment not found")
+
+    # Get all unique metrics for this experiment
+    metrics = experiment_analytics.get_all_metrics_for_experiment(
+        db=db, experiment_id=experiment_id
+    )
+
+    return schemas.ExperimentMetricSummaryOut(
+        experiment_id=experiment.id,
+        experiment_key=experiment.key,
+        experiment_name=experiment.name,
+        metrics=metrics,
+    )
+
+
+@app.get(
+    "/api/v1/admin/experiments/{experiment_id}/metrics/{metric_name}",
+    response_model=schemas.MetricComparisonOut,
+)
+def get_experiment_metric_comparison(
+    experiment_id: UUID,
+    metric_name: str,
+    control_variant_key: str = Query(
+        "control", description="Key for the control variant"
+    ),
+    current_user: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> schemas.MetricComparisonOut:
+    """
+    Get detailed metric comparison for a specific metric (admin only).
+
+    Returns aggregated statistics per variant with comparison to control.
+    """
+    from backend.services import experiment_analytics
+
+    # Verify experiment exists
+    experiment = db.get(Experiment, experiment_id)
+    if not experiment:
+        raise HTTPException(status_code=404, detail="Experiment not found")
+
+    # Get metric comparison
+    comparison = experiment_analytics.calculate_metric_comparison(
+        db=db,
+        experiment_id=experiment_id,
+        metric_name=metric_name,
+        control_variant_key=control_variant_key,
+    )
+
+    # Convert to schema format
+    variants_out = {}
+    for variant_key, metrics in comparison.get("variants", {}).items():
+        variants_out[variant_key] = schemas.VariantMetricSummary(**metrics)
+
+    return schemas.MetricComparisonOut(
+        metric_name=comparison["metric_name"],
+        control_variant=comparison.get("control_variant"),
+        variants=variants_out,
+    )
+
+
+# =============================================================================
+# Email Template Management Endpoints (Admin Only)
+# =============================================================================
+
+
+@app.get("/api/v1/admin/email-templates", response_model=schemas.EmailTemplateListOut)
+def list_email_templates(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
+    active_only: bool = Query(False),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.EmailTemplateListOut:
+    """
+    List all email templates (admin only).
+
+    Query parameters:
+    - page: Page number (default: 1)
+    - page_size: Items per page (default: 20, max: 100)
+    - active_only: Filter to active templates only
+    """
+    if current_user.role not in ADMIN_ROLES:
+        raise HTTPException(
+            status_code=403, detail="Only admins can access email templates"
+        )
+
+    # Build query
+    query = select(EmailTemplate)
+
+    if active_only:
+        query = query.where(EmailTemplate.is_active == True)
+
+    query = query.order_by(EmailTemplate.created_at.desc())
+
+    # Get total count
+    count_result = db.execute(select(func.count()).select_from(query.subquery()))
+    total = count_result.scalar() or 0
+
+    # Apply pagination
+    offset = (page - 1) * page_size
+    query = query.offset(offset).limit(page_size)
+
+    templates = db.execute(query).scalars().all()
+
+    return schemas.EmailTemplateListOut(
+        templates=[
+            schemas.EmailTemplateOut(
+                id=t.id,
+                key=t.key,
+                name=t.name,
+                subject_template=t.subject_template,
+                body_html=t.body_html,
+                body_text=t.body_text,
+                is_active=t.is_active,
+                created_at=t.created_at,
+                updated_at=t.updated_at,
+            )
+            for t in templates
+        ],
+        total=total,
+    )
+
+
+@app.post(
+    "/api/v1/admin/email-templates",
+    response_model=schemas.EmailTemplateOut,
+    status_code=201,
+)
+def create_email_template(
+    payload: schemas.EmailTemplateCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.EmailTemplateOut:
+    """
+    Create a new email template (admin only).
+    """
+    if current_user.role not in ADMIN_ROLES:
+        raise HTTPException(
+            status_code=403, detail="Only admins can create email templates"
+        )
+
+    # Check if key already exists
+    existing = db.execute(
+        select(EmailTemplate).where(EmailTemplate.key == payload.key)
+    ).scalar_one_or_none()
+
+    if existing:
+        raise HTTPException(
+            status_code=400, detail=f"Template with key '{payload.key}' already exists"
+        )
+
+    # Create template
+    template = EmailTemplate(
+        key=payload.key,
+        name=payload.name,
+        subject_template=payload.subject_template,
+        body_html=payload.body_html,
+        body_text=payload.body_text,
+        is_active=payload.is_active,
+    )
+
+    db.add(template)
+    db.commit()
+    db.refresh(template)
+
+    return schemas.EmailTemplateOut(
+        id=template.id,
+        key=template.key,
+        name=template.name,
+        subject_template=template.subject_template,
+        body_html=template.body_html,
+        body_text=template.body_text,
+        is_active=template.is_active,
+        created_at=template.created_at,
+        updated_at=template.updated_at,
+    )
+
+
+@app.put(
+    "/api/v1/admin/email-templates/{template_id}",
+    response_model=schemas.EmailTemplateOut,
+)
+def update_email_template(
+    template_id: UUID,
+    payload: schemas.EmailTemplateUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.EmailTemplateOut:
+    """
+    Update an email template (admin only).
+    """
+    if current_user.role not in ADMIN_ROLES:
+        raise HTTPException(
+            status_code=403, detail="Only admins can update email templates"
+        )
+
+    template = db.get(EmailTemplate, template_id)
+    if not template:
+        raise HTTPException(status_code=404, detail="Template not found")
+
+    # Update fields
+    if payload.name is not None:
+        template.name = payload.name
+    if payload.subject_template is not None:
+        template.subject_template = payload.subject_template
+    if payload.body_html is not None:
+        template.body_html = payload.body_html
+    if payload.body_text is not None:
+        template.body_text = payload.body_text
+    if payload.is_active is not None:
+        template.is_active = payload.is_active
+
+    db.commit()
+    db.refresh(template)
+
+    return schemas.EmailTemplateOut(
+        id=template.id,
+        key=template.key,
+        name=template.name,
+        subject_template=template.subject_template,
+        body_html=template.body_html,
+        body_text=template.body_text,
+        is_active=template.is_active,
+        created_at=template.created_at,
+        updated_at=template.updated_at,
+    )
+
+
+# =============================================================================
+# Scheduled Email Endpoints (Admin Only)
+# =============================================================================
+
+
+@app.get("/api/v1/admin/scheduled-emails", response_model=schemas.ScheduledEmailListOut)
+def list_scheduled_emails(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
+    status_filter: Optional[str] = Query(None),
+    user_id: Optional[UUID] = Query(None),
+    template_id: Optional[UUID] = Query(None),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.ScheduledEmailListOut:
+    """
+    List scheduled emails (admin only).
+
+    Query parameters:
+    - page: Page number
+    - page_size: Items per page
+    - status_filter: Filter by status (pending, sent, failed, cancelled)
+    - user_id: Filter by user ID
+    - template_id: Filter by template ID
+    """
+    if current_user.role not in ADMIN_ROLES:
+        raise HTTPException(
+            status_code=403, detail="Only admins can access scheduled emails"
+        )
+
+    # Build query
+    query = select(ScheduledEmail).options(selectinload(ScheduledEmail.template))
+
+    if status_filter:
+        try:
+            status_enum = EmailStatus(status_filter)
+            query = query.where(ScheduledEmail.status == status_enum)
+        except ValueError:
+            raise HTTPException(
+                status_code=400, detail=f"Invalid status: {status_filter}"
+            )
+
+    if user_id:
+        query = query.where(ScheduledEmail.user_id == user_id)
+
+    if template_id:
+        query = query.where(ScheduledEmail.template_id == template_id)
+
+    query = query.order_by(ScheduledEmail.scheduled_for.desc())
+
+    # Get total count
+    count_result = db.execute(select(func.count()).select_from(query.subquery()))
+    total = count_result.scalar() or 0
+
+    # Get status counts
+    status_counts_result = db.execute(
+        select(ScheduledEmail.status, func.count(ScheduledEmail.id)).group_by(
+            ScheduledEmail.status
+        )
+    ).all()
+
+    status_counts = {str(status.value): count for status, count in status_counts_result}
+
+    # Apply pagination
+    offset = (page - 1) * page_size
+    query = query.offset(offset).limit(page_size)
+
+    emails = db.execute(query).scalars().all()
+
+    return schemas.ScheduledEmailListOut(
+        emails=[
+            schemas.ScheduledEmailOut(
+                id=e.id,
+                user_id=e.user_id,
+                template_id=e.template_id,
+                template_key=e.template.key if e.template else None,
+                template_name=e.template.name if e.template else None,
+                scheduled_for=e.scheduled_for,
+                status=e.status.value,
+                context_data=e.context_data,
+                sent_at=e.sent_at,
+                error_message=e.error_message,
+                created_at=e.created_at,
+            )
+            for e in emails
+        ],
+        total=total,
+        status_counts=status_counts,
+    )
+
+
+@app.post(
+    "/api/v1/admin/scheduled-emails/send-test", response_model=schemas.SendTestEmailOut
+)
+def send_test_email(
+    payload: schemas.SendTestEmailIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.SendTestEmailOut:
+    """
+    Send a test email using a template (admin only).
+
+    This creates a scheduled email record for testing purposes.
+    In production, you would integrate with an actual email service (e.g., SendGrid, AWS SES).
+    """
+    if current_user.role not in ADMIN_ROLES:
+        raise HTTPException(status_code=403, detail="Only admins can send test emails")
+
+    # Get template
+    template = db.get(EmailTemplate, payload.template_id)
+    if not template:
+        raise HTTPException(status_code=404, detail="Template not found")
+
+    # Import email scheduler service
+    from .services import email_scheduler
+
+    try:
+        # Render template with test context
+        subject, body_html, body_text = email_scheduler.render_email_template(
+            template, payload.context_data
+        )
+
+        # Create a test scheduled email record
+        # In production, this would actually send the email
+        test_email = ScheduledEmail(
+            user_id=current_user.id,  # Send to current admin
+            template_id=template.id,
+            scheduled_for=datetime.now(timezone.utc),
+            status=EmailStatus.pending,
+            context_data=payload.context_data,
+        )
+
+        db.add(test_email)
+        db.commit()
+        db.refresh(test_email)
+
+        # Mark as sent immediately for testing
+        # In production, this would be done by the email worker
+        email_scheduler.mark_email_sent(db, test_email.id)
+
+        return schemas.SendTestEmailOut(
+            success=True,
+            message=f"Test email rendered successfully. Subject: {subject}",
+            scheduled_email_id=test_email.id,
+        )
+
+    except Exception as e:
+        logger.error(f"Failed to send test email: {e}")
+        return schemas.SendTestEmailOut(
+            success=False,
+            message=f"Failed to render template: {str(e)}",
+        )

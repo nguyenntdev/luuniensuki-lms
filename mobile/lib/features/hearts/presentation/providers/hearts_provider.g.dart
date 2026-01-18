@@ -43,7 +43,7 @@ final currentHeartsProvider = AutoDisposeProvider<int>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef CurrentHeartsRef = AutoDisposeProviderRef<int>;
-String _$heartsNotifierHash() => r'72d4b51008d2c0d13da1b5863c9b668c3d81ab61';
+String _$heartsNotifierHash() => r'6aa8bc41028595cad4079fc343202c0baca48dc5';
 
 /// Provider for managing hearts/energy system
 ///

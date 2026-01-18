@@ -11,6 +11,7 @@ import { useMotifStore } from "@/stores/motifStore";
 
 import { completeLesson, getMotifDetail, logAnalyticsEvent } from "@/lib/api";
 import { AudioPlayer, VideoPlayer, ImageGallery } from "@/components/MediaPlayer";
+import { useXpCelebration } from "@/lib/xpCelebrationContext";
 
 const STATUS_META = {
     hidden: {
@@ -218,7 +219,9 @@ function ProgressStepper({ status }) {
 export default function LessonSidebar() {
     const router = useRouter();
     const authStatus = useAuthStore((s) => s.status);
+    const user = useAuthStore((s) => s.user);
     const fetchMe = useAuthStore((s) => s.fetchMe);
+    const { showXpCelebration } = useXpCelebration();
 
     const sidebarOpen = useMotifStore((s) => s.sidebarOpen);
     const selectedMotifId = useMotifStore((s) => s.selectedMotifId);
@@ -421,6 +424,17 @@ export default function LessonSidebar() {
             toast.success(
                 `Đã lưu: ${label}${typeof res.xp_awarded === "number" ? ` (+${res.xp_awarded} XP)` : ""}`,
             );
+
+            // Show XP celebration animation
+            if (res.xp_awarded > 0) {
+                const oldTotalXp = (user?.total_xp || 0) - res.xp_awarded;
+                showXpCelebration({
+                    xpGained: res.xp_awarded,
+                    oldTotalXp: oldTotalXp,
+                    newTotalXp: res.total_xp || user?.total_xp || 0,
+                    badges: res.new_badges || [],
+                });
+            }
         } catch (err) {
             const msg = err instanceof Error ? err.message : String(err);
             toast.error(msg);

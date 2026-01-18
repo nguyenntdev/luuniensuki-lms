@@ -6,7 +6,7 @@ part of 'motif_detail_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$motifDetailHash() => r'c359737b52fa30f2228a53a8d4daf0cac52d76ff';
+String _$motifDetailHash() => r'9e8fc737cab30a5f7599dde1a4b81b52226b2986';
 
 /// Copied from Dart SDK
 class _SystemHash {

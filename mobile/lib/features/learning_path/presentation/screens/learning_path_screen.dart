@@ -5,6 +5,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/glass/animated_background.dart';
 import '../../../streak/presentation/widgets/compact_streak_widget.dart';
+import '../providers/dashboard_summary_provider.dart';
 import '../widgets/daily_lessons_widget.dart';
 import '../widgets/urn_path_card.dart';
 
@@ -20,7 +21,7 @@ class LearningPathScreen extends ConsumerWidget {
         child: CustomScrollView(
           slivers: [
             // Header
-            _buildHeader(context),
+            _buildHeader(context, ref),
 
             // Daily Lessons Section
             SliverToBoxAdapter(
@@ -112,7 +113,7 @@ class LearningPathScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, WidgetRef ref) {
     return SliverToBoxAdapter(
           child: Padding(
         padding: const EdgeInsets.fromLTRB(
@@ -145,7 +146,7 @@ class LearningPathScreen extends ConsumerWidget {
                   ],
                 ),
                 const SizedBox(height: AppSpacing.sm),
-                _buildDailyProgressCard(),
+                _buildDailyProgressCard(ref),
               ],
             );
           },
@@ -154,10 +155,74 @@ class LearningPathScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildDailyProgressCard() {
-    // Mock data - in real app, get from provider
-    const completedToday = 2;
-    const goalToday = 5;
+  Widget _buildDailyProgressCard(WidgetRef ref) {
+    final dashboardAsync = ref.watch(dashboardSummaryProvider);
+
+    return dashboardAsync.when(
+      loading: () => LayoutBuilder(
+        builder: (context, constraints) {
+          final isCompact = constraints.maxWidth < 360;
+          return Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.sm,
+            ),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppColors.primary.withOpacity(0.2),
+                  AppColors.primaryDark.withOpacity(0.1),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
+              border: Border.all(
+                color: AppColors.primary.withOpacity(0.3),
+                width: 1.2,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Container(
+                  height: isCompact ? 5 : 6,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(AppSpacing.radiusXS),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+      error: (_, __) => _buildProgressCard(0, 5), // Fallback on error
+      data: (dashboard) {
+        // Calculate today's progress from pathMotifs
+        final totalLessons = dashboard.pathMotifs.length;
+        final completedLessons = dashboard.pathMotifs
+            .where((m) => m.isLearned || m.isMastered)
+            .length;
+
+        return _buildProgressCard(
+          completedLessons,
+          totalLessons > 0 ? totalLessons : 5,
+        );
+      },
+    );
+  }
+
+  Widget _buildProgressCard(int completedToday, int goalToday) {
     final progress = completedToday / goalToday;
 
     return LayoutBuilder(
@@ -208,14 +273,15 @@ class LearningPathScreen extends ConsumerWidget {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  Text(
-                    '+${(goalToday - completedToday) * 10} XP',
-                    style: const TextStyle(
-                      color: AppColors.xpGold,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
+                  if (completedToday < goalToday)
+                    Text(
+                      '+${(goalToday - completedToday) * 10} XP',
+                      style: const TextStyle(
+                        color: AppColors.xpGold,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
                 ],
               ),
               const SizedBox(height: AppSpacing.xs),

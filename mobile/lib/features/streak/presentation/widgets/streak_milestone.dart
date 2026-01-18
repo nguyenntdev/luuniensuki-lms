@@ -3,6 +3,7 @@ import 'package:confetti/confetti.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/icons/milestone_icon.dart';
 import '../../domain/entities/streak_milestone.dart';
 
 /// Streak milestone celebration widget - Shows when user reaches milestone
@@ -111,9 +112,10 @@ class _StreakMilestoneCelebrationState
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     // Icon
-                    Text(
-                      widget.milestone.icon,
-                      style: const TextStyle(fontSize: 80),
+                    MilestoneIcon(
+                      days: widget.milestone.days,
+                      size: 80,
+                      showGlow: false,
                     ),
 
                     AppSpacing.verticalSpaceLG,

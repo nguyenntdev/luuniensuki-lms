@@ -26,6 +26,7 @@ class AppTheme {
 
     return ThemeData(
       useMaterial3: true,
+      fontFamily: AppTypography.fontFamily,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: AppColors.background,
 
@@ -52,11 +53,11 @@ class AppTheme {
 
       // Card Theme
       cardTheme: CardTheme(
-        elevation: 2,
-        shadowColor: Colors.black.withOpacity(0.1),
+        elevation: 1,
+        shadowColor: Colors.black.withOpacity(0.2),
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
         ),
         clipBehavior: Clip.antiAlias,
         color: AppColors.surface,
@@ -65,26 +66,27 @@ class AppTheme {
       // Input Decoration Theme
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.surface,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        fillColor: AppColors.surfaceElevated,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(14),
           borderSide: const BorderSide(color: AppColors.border),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(14),
           borderSide: const BorderSide(color: AppColors.border),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(14),
           borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(14),
           borderSide: const BorderSide(color: AppColors.error),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(14),
           borderSide: const BorderSide(color: AppColors.error, width: 2),
         ),
         labelStyle: AppTypography.textTheme.bodyMedium?.copyWith(
@@ -105,11 +107,11 @@ class AppTheme {
           foregroundColor: AppColors.onPrimary,
           disabledBackgroundColor: AppColors.primary.withOpacity(0.5),
           disabledForegroundColor: AppColors.onPrimary.withOpacity(0.7),
-          minimumSize: const Size(double.infinity, 52),
+          minimumSize: const Size(double.infinity, 56),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(14),
           ),
           textStyle: AppTypography.textTheme.labelLarge?.copyWith(
             fontWeight: FontWeight.w600,
@@ -121,11 +123,11 @@ class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.primary,
-          minimumSize: const Size(double.infinity, 52),
+          minimumSize: const Size(double.infinity, 56),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           side: const BorderSide(color: AppColors.primary, width: 1.5),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(14),
           ),
           textStyle: AppTypography.textTheme.labelLarge?.copyWith(
             fontWeight: FontWeight.w600,
@@ -224,7 +226,7 @@ class AppTheme {
         backgroundColor: AppColors.surface,
         elevation: 8,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
       ),
 
@@ -236,7 +238,7 @@ class AppTheme {
         ),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(12),
         ),
       ),
 
@@ -244,7 +246,8 @@ class AppTheme {
       tabBarTheme: TabBarTheme(
         labelColor: AppColors.primary,
         unselectedLabelColor: AppColors.textSecondary,
-        labelStyle: AppTypography.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w600),
+        labelStyle: AppTypography.textTheme.labelLarge
+            ?.copyWith(fontWeight: FontWeight.w600),
         unselectedLabelStyle: AppTypography.textTheme.labelLarge,
         indicatorSize: TabBarIndicatorSize.label,
         indicator: const UnderlineTabIndicator(
@@ -321,7 +324,8 @@ class AppTheme {
           color: AppColors.textPrimary.withOpacity(0.9),
           borderRadius: BorderRadius.circular(8),
         ),
-        textStyle: AppTypography.textTheme.bodySmall?.copyWith(color: Colors.white),
+        textStyle:
+            AppTypography.textTheme.bodySmall?.copyWith(color: Colors.white),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       ),
 

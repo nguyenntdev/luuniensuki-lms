@@ -63,11 +63,14 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
   String? _errorMessage;
   double _loadProgress = 0.0;
   int _contextLossCount = 0;
+  Timer? _safetyTimer;
 
   @override
   void initState() {
     super.initState();
-    debugPrint('[CUSTOM_MODEL_VIEWER] Initializing for model: ${widget.modelUrl}');
+    debugPrint(
+        '[CUSTOM_MODEL_VIEWER] 🚀 Initializing for model: ${widget.modelUrl}');
+    debugPrint('[CUSTOM_MODEL_VIEWER] 📊 Starting model load process...');
     _scheduleSafetyTimeout();
   }
 
@@ -76,7 +79,9 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
     super.didUpdateWidget(oldWidget);
 
     if (oldWidget.modelUrl != widget.modelUrl) {
-      debugPrint('[CUSTOM_MODEL_VIEWER] Model URL changed - resetting state');
+      debugPrint(
+          '[CUSTOM_MODEL_VIEWER] 🔄 Model URL changed - resetting state');
+      debugPrint('[CUSTOM_MODEL_VIEWER] 📊 New model URL: ${widget.modelUrl}');
       if (mounted) {
         setState(() {
           _loadProgress = 0.0;
@@ -89,13 +94,24 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
     }
   }
 
+  @override
+  void dispose() {
+    _safetyTimer?.cancel();
+    super.dispose();
+  }
+
   void _scheduleSafetyTimeout() {
-    Future.delayed(const Duration(seconds: 3), () {
+    _safetyTimer?.cancel();
+    _safetyTimer = Timer(const Duration(seconds: 120), () {
       if (mounted && _isLoading) {
-        debugPrint('[CUSTOM_MODEL_VIEWER] Safety timeout - forcing _isLoading = false');
-        setState(() {
-          _isLoading = false;
-        });
+        debugPrint(
+            '[CUSTOM_MODEL_VIEWER] ⚠️ Model still loading after 2 minutes');
+        debugPrint(
+            '[CUSTOM_MODEL_VIEWER] ⚠️ Current progress: ${_loadProgress.toInt()}%');
+        debugPrint(
+            '[CUSTOM_MODEL_VIEWER] ℹ️ Large models (60-80MB) may take time to download');
+        // Don't hide loading indicator - just log warning
+        // Model will continue loading in background
       }
     });
   }
@@ -162,43 +178,65 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
   String _buildRelatedJs() {
     return '''
       (function () {
+        console.log('[MODEL_VIEWER_JS] Initializing JavaScript bridge...');
         const channel = window.$_channelName;
         const send = (payload) => {
+          console.log('[MODEL_VIEWER_JS] Sending message:', JSON.stringify(payload));
           if (channel && channel.postMessage) {
             channel.postMessage(JSON.stringify(payload));
+          } else {
+            console.error('[MODEL_VIEWER_JS] Channel not available!');
           }
         };
 
+        // Send init message immediately
+        send({ type: 'init', timestamp: Date.now() });
+
         const modelViewer = document.getElementById('modelViewer') || document.querySelector('model-viewer');
         if (!modelViewer) {
+          console.error('[MODEL_VIEWER_JS] Model viewer element not found!');
           send({ type: 'error', error: 'Model viewer not found', timestamp: Date.now() });
           return;
         }
+        console.log('[MODEL_VIEWER_JS] Model viewer element found');
 
         const notify = (type, data) => {
           send(Object.assign({ type: type, timestamp: Date.now() }, data || {}));
         };
 
+        // Listen for model load
         modelViewer.addEventListener('load', () => {
+          console.log('[MODEL_VIEWER_JS] Model loaded event fired');
           notify('load');
         });
 
+        // Immediate check in case model already loaded before listeners attached
+        if (modelViewer.loaded) {
+          console.log('[MODEL_VIEWER_JS] Model already loaded (immediate check)');
+          notify('load');
+        }
+
+        // Listen for errors
         modelViewer.addEventListener('error', (event) => {
           const message = event && event.detail && event.detail.message
             ? event.detail.message
             : 'Failed to load 3D model';
+          console.error('[MODEL_VIEWER_JS] Error event:', message);
           notify('error', { error: message, detail: event && event.detail ? event.detail : {} });
         });
 
+        // Listen for progress
         modelViewer.addEventListener('progress', (event) => {
           const progress = event && event.detail && typeof event.detail.totalProgress === 'number'
             ? event.detail.totalProgress * 100
             : 0;
+          console.log('[MODEL_VIEWER_JS] Progress:', progress);
           notify('progress', { progress: progress });
         });
 
         modelViewer.addEventListener('model-visibility', (event) => {
           const visible = event && event.detail && event.detail.visible ? true : false;
+          console.log('[MODEL_VIEWER_JS] Model visibility:', visible);
           notify('visibility', { visible: visible });
         });
 
@@ -248,6 +286,17 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
 
         modelViewer.addEventListener('load', attachContextHandlers);
         setTimeout(attachContextHandlers, 0);
+
+        // Fallback: if model doesn't load after 60 seconds, check modelViewer state
+        setTimeout(() => {
+          if (modelViewer.loaded) {
+            console.log('[MODEL_VIEWER_JS] Fallback check: model is loaded');
+            notify('load');
+          } else {
+            console.log('[MODEL_VIEWER_JS] Fallback check: model not loaded - timeout');
+            notify('error', { error: 'Model loading timed out' });
+          }
+        }, 60000);
       })();
     ''';
   }
@@ -269,8 +318,14 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
 
     final type = payload['type']?.toString();
     switch (type) {
+      case 'init':
+        debugPrint('[CUSTOM_MODEL_VIEWER] 🚀 JavaScript bridge initialized');
+        break;
       case 'load':
-        debugPrint('[CUSTOM_MODEL_VIEWER] ✅ Model loaded successfully - hiding loading overlay');
+        debugPrint(
+            '[CUSTOM_MODEL_VIEWER] ✅ Model loaded successfully - hiding loading overlay');
+        debugPrint(
+            '[CUSTOM_MODEL_VIEWER] ✅ Final progress: ${_loadProgress.toInt()}%');
         if (mounted) {
           setState(() {
             _isLoading = false;
@@ -294,6 +349,8 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
       case 'progress':
         final progressValue = payload['progress'];
         final progress = progressValue is num ? progressValue.toDouble() : 0.0;
+        debugPrint(
+            '[CUSTOM_MODEL_VIEWER] 📊 Loading progress: ${progress.toInt()}%');
         if (mounted) {
           setState(() {
             _loadProgress = progress;
@@ -310,7 +367,8 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
         break;
       case 'webgl_lost':
         _contextLossCount += 1;
-        debugPrint('[CUSTOM_MODEL_VIEWER] ❌ WebGL context lost (count: $_contextLossCount)');
+        debugPrint(
+            '[CUSTOM_MODEL_VIEWER] ❌ WebGL context lost (count: $_contextLossCount)');
         if (_contextLossCount <= 1) {
           setState(() {
             _isLoading = true;
@@ -331,7 +389,8 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
         debugPrint('[CUSTOM_MODEL_VIEWER] ⚠️ WebGL context restored');
         break;
       case 'visibility':
-        debugPrint('[CUSTOM_MODEL_VIEWER] Model visibility: ${payload['visible']}');
+        debugPrint(
+            '[CUSTOM_MODEL_VIEWER] Model visibility: ${payload['visible']}');
         break;
       default:
         break;
@@ -371,7 +430,8 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('[CUSTOM_MODEL_VIEWER] Building widget - _isLoading: $_isLoading, _errorMessage: $_errorMessage');
+    debugPrint(
+        '[CUSTOM_MODEL_VIEWER] Building widget - _isLoading: $_isLoading, _errorMessage: $_errorMessage');
     final hotspotKey = widget.hotspots
         .map(
           (motif) =>
@@ -415,7 +475,6 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
             _webViewController = controller;
           },
         ),
-
         if (_isLoading && _errorMessage == null)
           Container(
             color: widget.backgroundColor,
@@ -424,7 +483,8 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(AppColors.primary),
                   ),
                   const SizedBox(height: 16),
                   Text(
@@ -447,7 +507,6 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
               ),
             ),
           ),
-
         if (_errorMessage != null)
           Container(
             color: widget.backgroundColor,

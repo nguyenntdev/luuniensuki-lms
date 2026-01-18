@@ -1,3 +1,4 @@
+import '../../../../core/utils/url_utils.dart';
 import '../../domain/entities/user.dart';
 import 'auth_dtos.dart';
 
@@ -13,7 +14,7 @@ extension UserDtoMapper on UserDto {
       id: id,
       email: email,
       displayName: displayName,
-      avatarUrl: avatarUrl,
+      avatarUrl: UrlUtils.toFullUrl(avatarUrl),
       username: username,
       role: role,
       totalXp: stats?.totalXp ?? totalXp,
@@ -39,7 +40,7 @@ extension UserDtoMapper on UserDto {
       id: id,
       email: email,
       displayName: displayName,
-      avatarUrl: avatarUrl,
+      avatarUrl: UrlUtils.toFullUrl(avatarUrl),
       username: username,
       role: role,
       totalXp: totalXp,

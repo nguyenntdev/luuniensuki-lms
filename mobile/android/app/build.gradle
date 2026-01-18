@@ -69,12 +69,23 @@ android {
         debug {
             // Always use the debug signing config (shared keystore if available)
             signingConfig signingConfigs.debug
+            // Debug-specific settings
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
         }
 
         release {
             // Use release signing config if key.properties exists, otherwise fall back to debug
             signingConfig = keystorePropertiesFile.exists() ? signingConfigs.release : signingConfigs.debug
-            // Additional release optimizations can be added here
+
+            // Release optimizations
+            debuggable false
+            minifyEnabled true
+            shrinkResources true
+
+            // ProGuard/R8 rules
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }

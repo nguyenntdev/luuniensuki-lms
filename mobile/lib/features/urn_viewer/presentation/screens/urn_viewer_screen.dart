@@ -239,6 +239,11 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
       _modelFallbackUrls = selection.fallbackUrls;
       _modelFallbackIndex = 0;
       _isResolvingModel = false;
+      if (selection.url.isEmpty) {
+        _isLoading = false;
+        _modelLoadError = true;
+        _errorMessage = 'Mô hình 3D chưa sẵn sàng cho đỉnh này.';
+      }
     });
   }
 
@@ -265,6 +270,15 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
       totalMemMb: totalMemMb,
       isLowRamDevice: isLowRamDevice,
     );
+
+    if (baseUrl.isEmpty) {
+      return _ModelSelection(
+        url: '',
+        quality: quality,
+        isLocal: false,
+        fallbackUrls: const [],
+      );
+    }
 
     if (urnDetail.urn.slug != 'cao-dinh') {
       return _ModelSelection(
@@ -592,6 +606,12 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
     }
 
     final modelPath = _resolvedModelUrl!;
+    if (modelPath.isEmpty) {
+      return Container(
+        color: const Color(0xFF1A1A2E),
+        child: const SizedBox.shrink(),
+      );
+    }
     final allowAutoRotate = _modelQuality != ModelQuality.low;
 
     // Verify model URL format

@@ -6,6 +6,7 @@ from logging.config import fileConfig
 from pathlib import Path
 
 from alembic import context
+import sqlalchemy as sa
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
@@ -43,6 +44,31 @@ def run_migrations_offline() -> None:
         context.run_migrations()
 
 
+def _ensure_alembic_version_length(connection) -> None:
+    inspector = sa.inspect(connection)
+    if "alembic_version" not in inspector.get_table_names():
+        metadata = sa.MetaData()
+        sa.Table(
+            "alembic_version",
+            metadata,
+            sa.Column("version_num", sa.String(64), primary_key=True),
+        ).create(bind=connection)
+        connection.commit()
+        return
+
+    for column in inspector.get_columns("alembic_version"):
+        if column["name"] != "version_num":
+            continue
+        length = getattr(column["type"], "length", None)
+        if length is None or length >= 64:
+            return
+        connection.execute(
+            sa.text("ALTER TABLE alembic_version ALTER COLUMN version_num TYPE VARCHAR(64)")
+        )
+        connection.commit()
+        return
+
+
 def run_migrations_online() -> None:
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
@@ -52,6 +78,7 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
+        _ensure_alembic_version_length(connection)
         context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
@@ -62,4 +89,3 @@ if context.is_offline_mode():
     run_migrations_offline()
 else:
     run_migrations_online()
-

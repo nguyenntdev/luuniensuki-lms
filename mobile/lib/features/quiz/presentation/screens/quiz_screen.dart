@@ -482,7 +482,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                         });
                         // Save progress
                         ref.read(quizStateProvider(widget.motifId).notifier).setQuestionIndex(
-                          _currentQuestionIndex - 1,
+                          _currentQuestionIndex,
                         );
                       },
                       icon: const Icon(Icons.arrow_back, size: 18),
@@ -537,7 +537,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                                   });
                                   // Save progress
                                   ref.read(quizStateProvider(widget.motifId).notifier).setQuestionIndex(
-                                    _currentQuestionIndex + 1,
+                                    _currentQuestionIndex,
                                   );
                                 }
                               : null,

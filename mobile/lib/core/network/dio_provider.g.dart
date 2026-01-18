@@ -6,7 +6,7 @@ part of 'dio_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$dioHash() => r'fb774d8bee8dd415c7b2aa6026c07a60c1cae558';
+String _$dioHash() => r'4fd8babf476bbd700a3188569ce3e51c0423aec5';
 
 /// Provides a configured Dio instance for making HTTP requests.
 ///
@@ -14,6 +14,7 @@ String _$dioHash() => r'fb774d8bee8dd415c7b2aa6026c07a60c1cae558';
 /// - Base URL pointing to the production API
 /// - Timeout settings for connection, send, and receive operations
 /// - Auth interceptor for token injection
+/// - Token refresh interceptor for automatic token refresh on 401
 /// - Error interceptor for converting errors to exceptions
 /// - Logging interceptor (debug mode only)
 ///

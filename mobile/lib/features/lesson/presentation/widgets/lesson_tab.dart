@@ -153,6 +153,15 @@ class LessonTab extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        _ActionButton(
+          label: 'Hỏi AI về họa tiết',
+          icon: Icons.auto_awesome_outlined,
+          isPrimary: false,
+          onPressed: () => context.push(
+            '/ai-chat?motifId=${motif.id}',
+          ),
+        ),
+        const SizedBox(height: 12),
         // Complete lesson button (for discovered status)
         if (status == 'discovered')
           _ActionButton(

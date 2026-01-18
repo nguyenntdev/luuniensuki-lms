@@ -16,6 +16,7 @@ class HiveStorage {
   static const String _settingsBox = 'settings';
   static const String _cacheMetaBox = 'cache_meta';
   static const String _quizProgressBox = 'quiz_progress';
+  static const String _syncQueueBox = 'sync_queue';
 
   /// Initialize Hive and open all boxes
   static Future<void> init() async {
@@ -33,6 +34,7 @@ class HiveStorage {
       Hive.openBox(_settingsBox),
       Hive.openBox(_cacheMetaBox),
       Hive.openBox(_quizProgressBox),
+      Hive.openBox(_syncQueueBox),
     ]);
   }
 
@@ -123,7 +125,9 @@ class HiveStorage {
   List<Map<String, dynamic>>? getCachedBadges() {
     final data = badgesBox.get('all');
     if (data == null) return null;
-    return List<Map<String, dynamic>>.from(data);
+    return List<Map<String, dynamic>>.from(
+      (data as List).map((item) => Map<String, dynamic>.from(item as Map)),
+    );
   }
 
   Future<void> cacheUserBadges(List<Map<String, dynamic>> badges) async {
@@ -133,7 +137,9 @@ class HiveStorage {
   List<Map<String, dynamic>>? getCachedUserBadges() {
     final data = badgesBox.get('user');
     if (data == null) return null;
-    return List<Map<String, dynamic>>.from(data);
+    return List<Map<String, dynamic>>.from(
+      (data as List).map((item) => Map<String, dynamic>.from(item as Map)),
+    );
   }
 
   // === Quests ===

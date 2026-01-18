@@ -42,6 +42,8 @@ class GlassTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -52,7 +54,7 @@ class GlassTextField extends StatelessWidget {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              color: Colors.white.withOpacity(0.7),
+              color: AppColors.textSecondary,
             ),
           ),
           const SizedBox(height: 8),
@@ -69,17 +71,14 @@ class GlassTextField extends StatelessWidget {
           maxLines: maxLines,
           focusNode: focusNode,
           autofocus: autofocus,
-          style: TextStyle(
+          style: textTheme.bodyLarge?.copyWith(
             color: AppColors.textPrimary,
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
           ),
           cursorColor: AppColors.primary,
           decoration: InputDecoration(
             hintText: hintText,
-            hintStyle: TextStyle(
-              color: AppColors.textPrimary.withOpacity(0.4),
-              fontSize: 16,
+            hintStyle: textTheme.bodyLarge?.copyWith(
+              color: AppColors.textHint,
             ),
             errorText: errorText,
             errorStyle: TextStyle(
@@ -87,44 +86,45 @@ class GlassTextField extends StatelessWidget {
               fontSize: 12,
             ),
             filled: true,
-            fillColor: Colors.white.withOpacity(0.08),
+            fillColor: AppColors.glassWhite,
+            isDense: true,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 20,
               vertical: 18,
             ),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(14),
               borderSide: BorderSide(
-                color: Colors.white.withOpacity(0.1),
+                color: AppColors.glassBorder,
               ),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(14),
               borderSide: BorderSide(
-                color: Colors.white.withOpacity(0.15),
+                color: AppColors.glassBorder,
               ),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(14),
               borderSide: BorderSide(
                 color: AppColors.primary,
                 width: 2,
               ),
             ),
             disabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(14),
               borderSide: BorderSide(
-                color: Colors.white.withOpacity(0.05),
+                color: AppColors.glassBorder.withOpacity(0.4),
               ),
             ),
             errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(14),
               borderSide: BorderSide(
                 color: AppColors.error,
               ),
             ),
             focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(14),
               borderSide: BorderSide(
                 color: AppColors.error,
                 width: 2,

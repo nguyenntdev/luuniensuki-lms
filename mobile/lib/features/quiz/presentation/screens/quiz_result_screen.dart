@@ -6,6 +6,7 @@ import 'package:confetti/confetti.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/services/sound_service.dart';
+import '../../../../core/network/api_client.dart';
 import '../../../urn_viewer/data/models/urn_dtos.dart';
 import '../../../gems/presentation/providers/gems_provider.dart';
 import '../../../gems/domain/entities/gem_transaction.dart';
@@ -521,6 +522,7 @@ class _QuizResultScreenState extends ConsumerState<QuizResultScreen> {
             question: question,
             userAnswer: userAnswer,
             isCorrect: isCorrect,
+            motifId: widget.motifId,
           );
         }),
       ],
@@ -576,21 +578,23 @@ class _StatCard extends StatelessWidget {
 }
 
 /// Question review card widget
-class _QuestionReviewCard extends StatelessWidget {
+class _QuestionReviewCard extends ConsumerWidget {
   final int index;
   final QuizQuestionDto question;
   final String userAnswer;
   final bool isCorrect;
+  final String motifId;
 
   const _QuestionReviewCard({
     required this.index,
     required this.question,
     required this.userAnswer,
     required this.isCorrect,
+    required this.motifId,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -729,8 +733,113 @@ class _QuestionReviewCard extends StatelessWidget {
               ),
             ),
           ],
+
+          const SizedBox(height: 8),
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton.icon(
+              onPressed: () => _showAiFeedback(context, ref),
+              icon: const Icon(Icons.auto_awesome, size: 16),
+              label: const Text('AI giải thích'),
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.primary,
+              ),
+            ),
+          ),
         ],
       ),
     );
+  }
+
+  Future<void> _showAiFeedback(BuildContext context, WidgetRef ref) async {
+    final apiClient = ref.read(apiClientProvider);
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(
+        child: CircularProgressIndicator(color: AppColors.primary),
+      ),
+    );
+
+    try {
+      final response = await apiClient.post<Map<String, dynamic>>(
+        '/api/v1/ai/feedback',
+        data: {
+          'question': question.questionText,
+          'correct_answer': question.correctAnswer,
+          'user_answer': userAnswer.isEmpty ? 'Không trả lời' : userAnswer,
+          'context': {'motif_id': motifId},
+        },
+        parser: (json) => json as Map<String, dynamic>,
+      );
+      if (context.mounted) {
+        Navigator.pop(context);
+        final explanation = response['explanation'] as String? ?? '';
+        final nextStep = response['next_step'] as String?;
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            backgroundColor: AppColors.surface,
+            title: const Text('Giải thích từ AI'),
+            content: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    explanation.isNotEmpty
+                        ? explanation
+                        : 'AI chưa có phản hồi.',
+                    style: AppTypography.textTheme.bodyMedium?.copyWith(
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  if (nextStep != null && nextStep.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    Text(
+                      'Gợi ý tiếp theo:',
+                      style: AppTypography.textTheme.titleSmall?.copyWith(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      nextStep,
+                      style: AppTypography.textTheme.bodySmall?.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Đóng'),
+              ),
+            ],
+          ),
+        );
+      }
+    } catch (_) {
+      if (context.mounted) {
+        Navigator.pop(context);
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            backgroundColor: AppColors.surface,
+            title: const Text('AI bận'),
+            content: const Text('Không lấy được giải thích, thử lại sau nhé.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Đóng'),
+              ),
+            ],
+          ),
+        );
+      }
+    }
   }
 }

@@ -1,3 +1,5 @@
+import '../../../../core/utils/url_utils.dart';
+
 /// Data transfer object for leaderboard entry from API
 class LeaderboardEntryDto {
   final int rank;
@@ -18,12 +20,12 @@ class LeaderboardEntryDto {
 
   factory LeaderboardEntryDto.fromJson(Map<String, dynamic> json) {
     return LeaderboardEntryDto(
-      rank: json['rank'] as int,
-      userId: json['user_id'] as String,
-      displayName: json['display_name'] as String,
-      avatarUrl: json['avatar_url'] as String?,
-      totalXp: json['total_xp'] as int,
-      title: json['title'] as String,
+      rank: (json['rank'] as num?)?.toInt() ?? 0,
+      userId: (json['user_id'] as String?) ?? '',
+      displayName: (json['display_name'] as String?) ?? 'Unknown',
+      avatarUrl: UrlUtils.toFullUrl(json['avatar_url'] as String?),
+      totalXp: (json['total_xp'] as num?)?.toInt() ?? 0,
+      title: (json['title'] as String?) ?? 'Lính Mới',
     );
   }
 
@@ -38,4 +40,3 @@ class LeaderboardEntryDto {
     };
   }
 }
-

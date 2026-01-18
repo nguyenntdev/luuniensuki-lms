@@ -22,7 +22,8 @@ class LoginScreen extends ConsumerStatefulWidget {
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderStateMixin {
+class _LoginScreenState extends ConsumerState<LoginScreen>
+    with TickerProviderStateMixin {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _emailFocusNode = FocusNode();
@@ -57,7 +58,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderSt
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.3),
       end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic));
+    ).animate(
+        CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic));
 
     _fadeController.forward();
     _slideController.forward();
@@ -120,7 +122,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderSt
   Widget build(BuildContext context) {
     // Listen to auth state changes
     ref.listen<AuthState>(authNotifierProvider, (previous, next) {
-      debugPrint('[LOGIN] Auth state changed: ${previous?.runtimeType} -> ${next.runtimeType}');
+      debugPrint(
+          '[LOGIN] Auth state changed: ${previous?.runtimeType} -> ${next.runtimeType}');
 
       if (!mounted) return;
 
@@ -140,7 +143,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderSt
           _errorMessage = next.errorMessage ?? 'Đăng nhập thất bại';
           _isLoading = false;
         });
-      } else if (next.isUnauthenticated && previous != null && previous.isLoading && _hasAttemptedLogin) {
+      } else if (next.isUnauthenticated &&
+          previous != null &&
+          previous.isLoading &&
+          _hasAttemptedLogin) {
         // Went from loading to unauthenticated = login failed silently
         debugPrint('[LOGIN] Auth state went from loading to unauthenticated');
         setState(() {
@@ -150,6 +156,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderSt
         });
       }
     });
+
+    final headlineStyle = Theme.of(context).textTheme.headlineSmall?.copyWith(
+          color: Colors.white,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.6,
+        );
+    final subtitleStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
+          color: Colors.white.withOpacity(0.75),
+        );
 
     return Scaffold(
       body: AnimatedGradientBackground(
@@ -187,15 +202,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderSt
                     AppSpacing.verticalSpaceXL,
 
                     // Title
-                    const Text(
+                    Text(
                       'Lưu Niên Sử Kí',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.2,
-                      ),
+                      style: headlineStyle,
                     ),
 
                     AppSpacing.verticalSpaceSM,
@@ -203,150 +213,167 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderSt
                     Text(
                       'Đăng nhập để tiếp tục',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.7),
-                        fontSize: 16,
-                        letterSpacing: 0.5,
-                      ),
+                      style: subtitleStyle,
                     ),
 
                     AppSpacing.verticalSpaceXXL,
 
-                    // Error message with animation
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 300),
-                      transitionBuilder: (Widget child, Animation<double> animation) {
-                        return FadeTransition(
-                          opacity: animation,
-                          child: SlideTransition(
-                            position: Tween<Offset>(
-                              begin: const Offset(0, -0.2),
-                              end: Offset.zero,
-                            ).animate(animation),
-                            child: child,
-                          ),
-                        );
-                      },
-                      child: _errorMessage != null
-                          ? Container(
-                              key: ValueKey<String>(_errorMessage!),
-                              padding: const EdgeInsets.all(AppSpacing.md),
-                              margin: const EdgeInsets.only(bottom: AppSpacing.md),
-                              decoration: BoxDecoration(
-                                color: Colors.red.withOpacity(0.15),
-                                borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
-                                border: Border.all(
-                                  color: Colors.red.withOpacity(0.4),
-                                  width: 1.5,
+                    GlassContainer(
+                      padding: const EdgeInsets.all(AppSpacing.lg),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // Error message with animation
+                          AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 300),
+                            transitionBuilder:
+                                (Widget child, Animation<double> animation) {
+                              return FadeTransition(
+                                opacity: animation,
+                                child: SlideTransition(
+                                  position: Tween<Offset>(
+                                    begin: const Offset(0, -0.2),
+                                    end: Offset.zero,
+                                  ).animate(animation),
+                                  child: child,
                                 ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.red.withOpacity(0.2),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.error_outline, color: Colors.red, size: 22),
-                                  AppSpacing.horizontalSpaceSM,
-                                  Expanded(
-                                    child: Text(
-                                      _errorMessage!,
-                                      style: const TextStyle(
-                                        color: Colors.red,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
+                              );
+                            },
+                            child: _errorMessage != null
+                                ? Container(
+                                    key: ValueKey<String>(_errorMessage!),
+                                    padding:
+                                        const EdgeInsets.all(AppSpacing.md),
+                                    margin: const EdgeInsets.only(
+                                        bottom: AppSpacing.md),
+                                    decoration: BoxDecoration(
+                                      color: Colors.red.withOpacity(0.15),
+                                      borderRadius: BorderRadius.circular(
+                                          AppSpacing.radiusMD),
+                                      border: Border.all(
+                                        color: Colors.red.withOpacity(0.4),
+                                        width: 1.5,
                                       ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.red.withOpacity(0.2),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          : const SizedBox.shrink(key: ValueKey<String>('no_error')),
-                    ),
-
-                    // Email field with glassmorphism
-                    GlassTextField(
-                      controller: _emailController,
-                      focusNode: _emailFocusNode,
-                      labelText: 'Email',
-                      hintText: 'you@example.com',
-                      keyboardType: TextInputType.emailAddress,
-                      textInputAction: TextInputAction.next,
-                      prefixIcon: Icon(
-                        Icons.email_outlined,
-                        color: Colors.white.withOpacity(0.6),
-                      ),
-                      onSubmitted: (_) => _passwordFocusNode.requestFocus(),
-                    ),
-
-                    AppSpacing.verticalSpaceLG,
-
-                    // Password field with glassmorphism
-                    GlassTextField(
-                      controller: _passwordController,
-                      focusNode: _passwordFocusNode,
-                      labelText: 'Mật khẩu',
-                      hintText: '••••••••',
-                      obscureText: _obscurePassword,
-                      textInputAction: TextInputAction.done,
-                      prefixIcon: Icon(
-                        Icons.lock_outline,
-                        color: Colors.white.withOpacity(0.6),
-                      ),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                          color: Colors.white.withOpacity(0.6),
-                        ),
-                        onPressed: () {
-                          setState(() => _obscurePassword = !_obscurePassword);
-                        },
-                      ),
-                      onSubmitted: (_) => _handleLogin(),
-                    ),
-
-                    AppSpacing.verticalSpaceSM,
-
-                    // Forgot password link
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () {
-                          // TODO: Implement forgot password
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Chức năng đang được phát triển'),
-                              behavior: SnackBarBehavior.floating,
-                            ),
-                          );
-                        },
-                        style: TextButton.styleFrom(
-                          foregroundColor: const Color(0xFFD4A84B),
-                          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-                        ),
-                        child: Text(
-                          'Quên mật khẩu?',
-                          style: TextStyle(
-                            color: const Color(0xFFD4A84B).withOpacity(0.9),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
+                                    child: Row(
+                                      children: [
+                                        const Icon(Icons.error_outline,
+                                            color: Colors.red, size: 22),
+                                        AppSpacing.horizontalSpaceSM,
+                                        Expanded(
+                                          child: Text(
+                                            _errorMessage!,
+                                            style: const TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : const SizedBox.shrink(
+                                    key: ValueKey<String>('no_error')),
                           ),
-                        ),
+
+                          // Email field with glassmorphism
+                          GlassTextField(
+                            controller: _emailController,
+                            focusNode: _emailFocusNode,
+                            labelText: 'Email',
+                            hintText: 'you@example.com',
+                            keyboardType: TextInputType.emailAddress,
+                            textInputAction: TextInputAction.next,
+                            prefixIcon: Icon(
+                              Icons.email_outlined,
+                              color: Colors.white.withOpacity(0.6),
+                            ),
+                            onSubmitted: (_) =>
+                                _passwordFocusNode.requestFocus(),
+                          ),
+
+                          AppSpacing.verticalSpaceLG,
+
+                          // Password field with glassmorphism
+                          GlassTextField(
+                            controller: _passwordController,
+                            focusNode: _passwordFocusNode,
+                            labelText: 'Mật khẩu',
+                            hintText: '••••••••',
+                            obscureText: _obscurePassword,
+                            textInputAction: TextInputAction.done,
+                            prefixIcon: Icon(
+                              Icons.lock_outline,
+                              color: Colors.white.withOpacity(0.6),
+                            ),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscurePassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                                color: Colors.white.withOpacity(0.6),
+                              ),
+                              onPressed: () {
+                                setState(
+                                    () => _obscurePassword = !_obscurePassword);
+                              },
+                            ),
+                            onSubmitted: (_) => _handleLogin(),
+                          ),
+
+                          AppSpacing.verticalSpaceSM,
+
+                          // Forgot password link
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: () {
+                                // TODO: Implement forgot password
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content:
+                                        Text('Chức năng đang được phát triển'),
+                                    behavior: SnackBarBehavior.floating,
+                                  ),
+                                );
+                              },
+                              style: TextButton.styleFrom(
+                                foregroundColor: const Color(0xFFD4A84B),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: AppSpacing.sm),
+                              ),
+                              child: Text(
+                                'Quên mật khẩu?',
+                                style: TextStyle(
+                                  color:
+                                      const Color(0xFFD4A84B).withOpacity(0.9),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          AppSpacing.verticalSpaceLG,
+
+                          // Login button with enhanced styling
+                          GlassButton(
+                            text: 'Đăng nhập',
+                            onPressed: _handleLogin,
+                            isLoading: _isLoading,
+                            isPrimary: true,
+                            height: 56,
+                          ),
+                        ],
                       ),
-                    ),
-
-                    AppSpacing.verticalSpaceLG,
-
-                    // Login button with enhanced styling
-                    GlassButton(
-                      text: 'Đăng nhập',
-                      onPressed: _handleLogin,
-                      isLoading: _isLoading,
-                      isPrimary: true,
-                      height: 56,
                     ),
 
                     AppSpacing.verticalSpaceXL,

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:vibration/vibration.dart';
@@ -39,14 +40,18 @@ class SoundService {
           _players[effect] = player;
         } catch (e) {
           // Sound file not found - use haptic feedback as fallback
-          print('Warning: Sound file not found for $effect at $assetPath');
+          if (kDebugMode) {
+            print('Warning: Sound file not found for $effect at $assetPath');
+          }
           _players[effect] = player; // Keep player for haptic fallback
         }
       }
 
       _initialized = true;
     } catch (e) {
-      print('Error initializing sound service: $e');
+      if (kDebugMode) {
+        print('Error initializing sound service: $e');
+      }
     }
   }
 
@@ -142,7 +147,9 @@ class SoundService {
       }
     } catch (e) {
       // Vibration not supported or error occurred
-      print('Haptic feedback error: $e');
+      if (kDebugMode) {
+        print('Haptic feedback error: $e');
+      }
     }
   }
 

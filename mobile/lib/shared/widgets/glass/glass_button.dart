@@ -29,10 +29,16 @@ class GlassButton extends StatelessWidget {
     this.icon,
     this.padding,
     this.gradient,
-  }) : assert(text != null || child != null, 'Either text or child must be provided');
+  }) : assert(text != null || child != null,
+            'Either text or child must be provided');
 
   @override
   Widget build(BuildContext context) {
+    final labelStyle = Theme.of(context).textTheme.labelLarge?.copyWith(
+          fontWeight: FontWeight.w600,
+          color: isPrimary ? AppColors.onPrimary : Colors.white,
+        );
+
     return SizedBox(
       height: height ?? 56,
       width: width,
@@ -53,24 +59,42 @@ class GlassButton extends StatelessWidget {
               : AppColors.primary.withOpacity(0.2),
           child: Ink(
             decoration: BoxDecoration(
-              gradient: gradient ?? (isPrimary
-                  ? LinearGradient(
-                      colors: [
-                        AppColors.primary,
-                        AppColors.primaryLight,
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    )
-                  : null),
-              color: (gradient == null && !isPrimary) ? Colors.white.withOpacity(0.1) : null,
-              borderRadius: BorderRadius.circular(12),
+              gradient: gradient ??
+                  (isPrimary
+                      ? LinearGradient(
+                          colors: [
+                            AppColors.primary,
+                            AppColors.primaryLight,
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        )
+                      : null),
+              color: (gradient == null && !isPrimary)
+                  ? Colors.white.withOpacity(0.1)
+                  : null,
+              borderRadius: BorderRadius.circular(14),
               border: isPrimary
                   ? null
                   : Border.all(
                       color: Colors.white.withOpacity(0.2),
                       width: 1.5,
                     ),
+              boxShadow: isPrimary
+                  ? [
+                      BoxShadow(
+                        color: AppColors.primary.withOpacity(0.35),
+                        blurRadius: 18,
+                        offset: const Offset(0, 10),
+                      ),
+                    ]
+                  : [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 16,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
             ),
             child: Container(
               padding: padding ??
@@ -86,39 +110,31 @@ class GlassButton extends StatelessWidget {
                         child: CircularProgressIndicator(
                           strokeWidth: 2.5,
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            isPrimary
-                                ? const Color(0xFF1A1A2E)
-                                : Colors.white,
+                            isPrimary ? const Color(0xFF1A1A2E) : Colors.white,
                           ),
                         ),
                       )
-                    : child ?? Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          if (icon != null) ...[
-                            Icon(
-                              icon,
-                              size: 20,
-                              color: isPrimary
-                                  ? const Color(0xFF1A1A2E)
-                                  : Colors.white,
+                    : child ??
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (icon != null) ...[
+                              Icon(
+                                icon,
+                                size: 20,
+                                color: isPrimary
+                                    ? const Color(0xFF1A1A2E)
+                                    : Colors.white,
+                              ),
+                              const SizedBox(width: 8),
+                            ],
+                            Text(
+                              text ?? '',
+                              style: labelStyle,
                             ),
-                            const SizedBox(width: 8),
                           ],
-                          Text(
-                            text ?? '',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: isPrimary
-                                  ? const Color(0xFF1A1A2E)
-                                  : Colors.white,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
               ),
             ),
           ),

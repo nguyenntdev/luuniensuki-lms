@@ -120,6 +120,17 @@ Future<UrnDetail> urnDetail(Ref ref, String slug) async {
 Future<Motif> motifDetail(Ref ref, String motifId) async {
   final apiClient = ref.watch(apiClientProvider);
   final hiveStorage = ref.watch(hiveStorageProvider);
+  final networkInfo = ref.watch(networkInfoProvider);
+
+  // Try to get from cache first if offline
+  if (!await networkInfo.isConnected) {
+    final cached = hiveStorage.getCachedMotif(motifId);
+    if (cached != null) {
+      final dto = MotifDetailDto.fromJson(cached);
+      return dto.toEntity();
+    }
+    throw const NetworkException('No internet connection');
+  }
 
   try {
     final response = await apiClient.get<Map<String, dynamic>>(
@@ -134,13 +145,15 @@ Future<Motif> motifDetail(Ref ref, String motifId) async {
 
     return motif;
   } on ServerException catch (e) {
+    throw ServerFailure(e.message, code: e.code, statusCode: e.statusCode);
+  } catch (e) {
     // Try cache on error
     final cached = hiveStorage.getCachedMotif(motifId);
     if (cached != null) {
       final dto = MotifDetailDto.fromJson(cached);
       return dto.toEntity();
     }
-    throw ServerFailure(e.message, code: e.code, statusCode: e.statusCode);
+    rethrow;
   }
 }
 

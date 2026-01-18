@@ -18,7 +18,8 @@ class StreakMilestone extends Equatable {
   /// Description of the achievement
   final String description;
 
-  /// Icon identifier
+  /// Icon identifier (deprecated - use MilestoneIcon widget instead)
+  @Deprecated('Use MilestoneIcon widget with days property instead')
   final String icon;
 
   const StreakMilestone({
@@ -37,7 +38,7 @@ class StreakMilestone extends Equatable {
         gemReward: 500,
         name: 'Chiến Binh Bất Bại',
         description: 'Hoàn thành 365 ngày liên tiếp!',
-        icon: '👑',
+        icon: 'crown', // Use MilestoneIcon widget
       );
     } else if (streak >= 100) {
       return const StreakMilestone(
@@ -45,7 +46,7 @@ class StreakMilestone extends Equatable {
         gemReward: 200,
         name: 'Bậc Thầy Kiên Trì',
         description: 'Hoàn thành 100 ngày liên tiếp!',
-        icon: '🏆',
+        icon: 'trophy', // Use MilestoneIcon widget
       );
     } else if (streak >= 30) {
       return const StreakMilestone(
@@ -53,7 +54,7 @@ class StreakMilestone extends Equatable {
         gemReward: 75,
         name: 'Người Học Chăm Chỉ',
         description: 'Hoàn thành 30 ngày liên tiếp!',
-        icon: '🎯',
+        icon: 'target', // Use MilestoneIcon widget
       );
     } else if (streak >= 7) {
       return const StreakMilestone(
@@ -61,7 +62,7 @@ class StreakMilestone extends Equatable {
         gemReward: 25,
         name: 'Tuần Hoàn Hảo',
         description: 'Hoàn thành 7 ngày liên tiếp!',
-        icon: '⭐',
+        icon: 'star', // Use MilestoneIcon widget
       );
     }
     return null;

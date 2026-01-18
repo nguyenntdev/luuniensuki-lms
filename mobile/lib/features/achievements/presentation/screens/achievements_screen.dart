@@ -5,7 +5,10 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/glass/animated_background.dart';
 import '../../../../shared/widgets/glass/glass_container.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../streak/presentation/widgets/streak_badge.dart';
+import '../providers/badge_provider.dart';
 import '../providers/leaderboard_provider.dart';
+import '../widgets/badge_detail_sheet.dart';
 
 /// Achievements screen with tabs for badges and leaderboard
 class AchievementsScreen extends ConsumerStatefulWidget {
@@ -48,8 +51,9 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
       }
     });
 
-    // Initial load of leaderboard data
+    // Initial load of badge and leaderboard data
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(badgeNotifierProvider.notifier).loadBadges();
       ref.read(leaderboardNotifierProvider.notifier).loadLeaderboard();
     });
   }
@@ -197,16 +201,110 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
   }
 
   Widget _buildBadgesTab() {
-    // Sample badges data - will integrate with API
-    final badges = [
-      {'name': 'Người Khám Phá', 'icon': Icons.visibility, 'earned': true, 'xp': 50},
-      {'name': 'Học Sinh Chăm Chỉ', 'icon': Icons.school, 'earned': true, 'xp': 100},
-      {'name': 'Bậc Thầy', 'icon': Icons.star, 'earned': false, 'xp': 200},
-      {'name': 'Chuỗi 7 Ngày', 'icon': Icons.local_fire_department, 'earned': false, 'xp': 150},
-      {'name': 'Nhà Sưu Tập', 'icon': Icons.collections, 'earned': false, 'xp': 300},
-      {'name': 'Hoàn Hảo', 'icon': Icons.workspace_premium, 'earned': false, 'xp': 500},
-    ];
+    final badgesAsync = ref.watch(badgeNotifierProvider);
 
+    return badgesAsync.when(
+      loading: () => const Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+        ),
+      ),
+      error: (error, stackTrace) => _buildBadgeErrorState(error),
+      data: (badges) {
+        if (badges.isEmpty) {
+          return _buildBadgeEmptyState();
+        }
+        return _buildBadgeGrid(badges);
+      },
+    );
+  }
+
+  Widget _buildBadgeErrorState(Object error) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.error_outline,
+              color: Colors.white70,
+              size: 64,
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Không thể tải huy hiệu',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              error.toString(),
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.7),
+                fontSize: 14,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: () {
+                ref.read(badgeNotifierProvider.notifier).loadBadges();
+              },
+              icon: const Icon(Icons.refresh),
+              label: const Text('Thử lại'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: AppColors.onPrimary,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBadgeEmptyState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.military_tech,
+              color: Colors.white70,
+              size: 64,
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Chưa có huy hiệu',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Huy hiệu sẽ xuất hiện khi bạn hoàn thành các thành tích',
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.7),
+                fontSize: 14,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBadgeGrid(List badges) {
     return GridView.builder(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -223,7 +321,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
     );
   }
 
-  Widget _buildAnimatedBadgeCard(Map<String, dynamic> badge, int index) {
+  Widget _buildAnimatedBadgeCard(dynamic badge, int index) {
     return AnimatedBuilder(
       animation: _animationController,
       builder: (context, child) {
@@ -251,105 +349,127 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
     );
   }
 
-  Widget _buildBadgeCard(Map<String, dynamic> badge) {
-    final isEarned = badge['earned'] as bool;
+  Widget _buildBadgeCard(dynamic badge) {
+    final isEarned = badge.earnedAt != null;
 
-    return GlassContainer(
-      opacity: isEarned ? 0.12 : 0.06,
-      padding: const EdgeInsets.all(16),
-      border: Border.all(
-        color: isEarned
-            ? AppColors.primary.withOpacity(0.5)
-            : Colors.white.withOpacity(0.1),
-        width: 1.5,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Badge icon
-          Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: isEarned
-                  ? const LinearGradient(
-                      colors: [AppColors.primaryDark, AppColors.primaryLight],
-                    )
-                  : null,
-              color: isEarned ? null : Colors.white.withOpacity(0.1),
-              boxShadow: isEarned
-                  ? [
-                      BoxShadow(
-                        color: AppColors.primary.withOpacity(0.3),
-                        blurRadius: 12,
-                        spreadRadius: 2,
-                      ),
-                    ]
-                  : null,
+    return GestureDetector(
+      onTap: () => BadgeDetailSheet.show(context, badge),
+      child: GlassContainer(
+        opacity: isEarned ? 0.12 : 0.06,
+        padding: const EdgeInsets.all(16),
+        border: Border.all(
+          color: isEarned
+              ? AppColors.primary.withOpacity(0.5)
+              : Colors.white.withOpacity(0.1),
+          width: 1.5,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Badge icon
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: isEarned
+                    ? const LinearGradient(
+                        colors: [AppColors.primaryDark, AppColors.primaryLight],
+                      )
+                    : null,
+                color: isEarned ? null : Colors.white.withOpacity(0.1),
+                boxShadow: isEarned
+                    ? [
+                        BoxShadow(
+                          color: AppColors.primary.withOpacity(0.3),
+                          blurRadius: 12,
+                          spreadRadius: 2,
+                        ),
+                      ]
+                    : null,
+              ),
+              child: Icon(
+                _getBadgeIcon(badge.category),
+                color: isEarned
+                    ? AppColors.onPrimary
+                    : Colors.white.withOpacity(0.3),
+                size: 32,
+              ),
             ),
-            child: Icon(
-              badge['icon'] as IconData,
-              color: isEarned
-                  ? AppColors.onPrimary
-                  : Colors.white.withOpacity(0.3),
-              size: 32,
+
+            const SizedBox(height: 12),
+
+            // Badge name
+            Text(
+              badge.name,
+              style: TextStyle(
+                color: isEarned ? Colors.white : Colors.white.withOpacity(0.5),
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
-          ),
 
-          const SizedBox(height: 12),
+            const SizedBox(height: 8),
 
-          // Badge name
-          Text(
-            badge['name'] as String,
-            style: TextStyle(
-              color: isEarned ? Colors.white : Colors.white.withOpacity(0.5),
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-
-          const SizedBox(height: 8),
-
-          // XP reward or status
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: isEarned
-                  ? AppColors.success.withOpacity(0.2)
-                  : Colors.white.withOpacity(0.05),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  isEarned ? Icons.check_circle : Icons.lock,
-                  size: 12,
-                  color: isEarned
-                      ? AppColors.success
-                      : Colors.white.withOpacity(0.3),
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  isEarned ? 'Đã nhận' : '+${badge['xp']} XP',
-                  style: TextStyle(
+            // XP reward or status
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: isEarned
+                    ? AppColors.success.withOpacity(0.2)
+                    : Colors.white.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    isEarned ? Icons.check_circle : Icons.lock,
+                    size: 12,
                     color: isEarned
                         ? AppColors.success
-                        : Colors.white.withOpacity(0.5),
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
+                        : Colors.white.withOpacity(0.3),
                   ),
-                ),
-              ],
+                  const SizedBox(width: 4),
+                  Text(
+                    isEarned ? 'Đã nhận' : '+${badge.xpBonus} XP',
+                    style: TextStyle(
+                      color: isEarned
+                          ? AppColors.success
+                          : Colors.white.withOpacity(0.5),
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
+  }
+
+  IconData _getBadgeIcon(String category) {
+    switch (category.toLowerCase()) {
+      case 'discovery':
+        return Icons.visibility;
+      case 'learning':
+        return Icons.school;
+      case 'mastery':
+        return Icons.star;
+      case 'streak':
+        return Icons.local_fire_department;
+      case 'collection':
+        return Icons.collections;
+      case 'achievement':
+        return Icons.workspace_premium;
+      default:
+        return Icons.military_tech;
+    }
   }
 
   Widget _buildLeaderboardTab() {
@@ -621,6 +741,18 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
               ],
             ),
           ),
+
+          // Streak badge (show placeholder - will be populated when API supports it)
+          // TODO: Add streak field to leaderboard API and LeaderboardEntryDto
+          // For now, show streak badge for top 3 players as demo
+          if (isTopThree)
+            Padding(
+              padding: const EdgeInsets.only(right: 12),
+              child: StreakBadge(
+                streakDays: rank == 1 ? 42 : (rank == 2 ? 28 : 14),
+                compact: true,
+              ),
+            ),
 
           // XP
           Column(

@@ -24,12 +24,12 @@ class _AnimatedGradientBackgroundState
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
-  // Default gradient colors - deep blues and purples
+  // Default gradient colors - Premium imperial theme with deep purples and blues
   static const _defaultColors = [
-    Color(0xFF1A1A2E), // Deep navy
-    Color(0xFF16213E), // Dark blue
-    Color(0xFF0F3460), // Royal blue
-    Color(0xFF1A1A2E), // Deep navy
+    Color(0xFF0A0F1C), // Deep midnight blue
+    Color(0xFF13142D), // Subtle purple tint
+    Color(0xFF0F1729), // Rich navy
+    Color(0xFF14151F), // Warm dark
   ];
 
   @override
@@ -107,10 +107,10 @@ class GradientBackground extends StatelessWidget {
   });
 
   static const defaultColors = [
-    Color(0xFF1A1A2E), // Deep navy
-    Color(0xFF16213E), // Dark blue
-    Color(0xFF0F3460), // Royal blue
-    Color(0xFF1A1A2E), // Deep navy
+    Color(0xFF0A0F1C), // Deep midnight blue
+    Color(0xFF13142D), // Subtle purple tint
+    Color(0xFF0F1729), // Rich navy
+    Color(0xFF14151F), // Warm dark
   ];
 
   @override

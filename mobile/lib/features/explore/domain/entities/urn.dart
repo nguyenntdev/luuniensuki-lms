@@ -68,8 +68,6 @@ class Urn extends Equatable {
 
   /// Get the effective model URL - uses remote URL for reliable loading
   String get effectiveModelUrl {
-    // Use remote URL for model_viewer_plus compatibility
-    // All 9 urn models are available on the remote server
     return remoteModelUrl;
   }
 
@@ -78,7 +76,7 @@ class Urn extends Equatable {
     if (modelUrl != null && modelUrl!.isNotEmpty) {
       return modelUrl!;
     }
-    // Fallback to constructed URL
+    // Fallback to constructed URL based on slug
     return 'https://lms.histolab.icu/assets/models/${slug.toUpperCase()}-v1.glb';
   }
 

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/url_utils.dart';
 import '../../domain/entities/urn.dart';
 
 /// Sidebar widget that displays motif details and actions.
@@ -55,6 +56,8 @@ class MotifSidebar extends ConsumerWidget {
                         style: theme.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
 
                       if (motif.nameEn != null) ...[
@@ -64,6 +67,8 @@ class MotifSidebar extends ConsumerWidget {
                           style: theme.textTheme.titleMedium?.copyWith(
                             color: Colors.grey[600],
                           ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
 
@@ -188,24 +193,36 @@ class MotifSidebar extends ConsumerWidget {
   }
 
   Widget _buildThumbnail(String url) {
+    // Convert relative URL to full URL
+    final imageUrl = UrlUtils.getImageUrl(url);
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: AspectRatio(
         aspectRatio: 16 / 10,
-        child: CachedNetworkImage(
-          imageUrl: url,
-          fit: BoxFit.cover,
-          placeholder: (context, url) => Container(
-            color: Colors.grey[200],
-            child: const Center(
-              child: CircularProgressIndicator(strokeWidth: 2),
-            ),
-          ),
-          errorWidget: (context, url, error) => Container(
-            color: Colors.grey[200],
-            child: const Icon(Icons.image_not_supported, size: 48),
-          ),
-        ),
+        child: imageUrl.isNotEmpty
+            ? CachedNetworkImage(
+                imageUrl: imageUrl,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(
+                  color: Colors.grey[200],
+                  child: const Center(
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                ),
+                errorWidget: (context, url, error) {
+                  debugPrint(
+                      '[MOTIF_IMAGE] Failed to load image: $imageUrl - Error: $error');
+                  return Container(
+                    color: Colors.grey[200],
+                    child: const Icon(Icons.image_not_supported, size: 48),
+                  );
+                },
+              )
+            : Container(
+                color: Colors.grey[200],
+                child: const Icon(Icons.image, size: 48),
+              ),
       ),
     );
   }

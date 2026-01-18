@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/storage/hive_storage.dart';
 import '../../domain/entities/heart_state.dart';
@@ -46,7 +47,9 @@ class HeartsNotifier extends _$HeartsNotifier {
       }
     } catch (e) {
       // If there's an error, return null to use initial state
-      print('Error loading hearts from storage: $e');
+      if (kDebugMode) {
+        print('Error loading hearts from storage: $e');
+      }
     }
     return null;
   }
@@ -57,7 +60,9 @@ class HeartsNotifier extends _$HeartsNotifier {
       final hiveStorage = ref.read(hiveStorageProvider);
       await hiveStorage.userBox.put(_heartsKey, heartState.toJson());
     } catch (e) {
-      print('Error saving hearts to storage: $e');
+      if (kDebugMode) {
+        print('Error saving hearts to storage: $e');
+      }
     }
   }
 

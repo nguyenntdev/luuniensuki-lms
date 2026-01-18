@@ -70,7 +70,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
           _authSubscription?.close();
         }
       },
-      fireImmediately: true,  // CRITICAL: This ensures we catch the current state
+      fireImmediately: true, // CRITICAL: This ensures we catch the current state
     );
   }
 
@@ -91,18 +91,46 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
       child: SafeArea(
         child: FadeTransition(
           opacity: _fadeAnimation,
-          child: Column(
-            children: [
-              // Header
-              _buildHeader(context, progress, authState, state),
-
-              // Content
-              Expanded(
-                child: _buildContent(context, ref, state),
-              ),
-            ],
-          ),
+          child: _buildBody(context, state, progress, authState),
         ),
+      ),
+    );
+  }
+
+  Widget _buildBody(
+    BuildContext context,
+    ExploreState state,
+    ExploreProgress progress,
+    AuthState authState,
+  ) {
+    return RefreshIndicator(
+      onRefresh: () => ref.read(exploreNotifierProvider.notifier).refreshUrns(),
+      color: AppColors.primary,
+      backgroundColor: AppColors.surface,
+      child: CustomScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        slivers: [
+          SliverToBoxAdapter(
+            child: _buildHeader(context, progress, authState, state),
+          ),
+          const SliverToBoxAdapter(
+            child: SizedBox(height: AppSpacing.sm),
+          ),
+          if (state.isLoading && !state.hasData)
+            _buildLoadingGridSliver(context)
+          else if (state.hasError && !state.hasData)
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: _buildErrorState(state.errorMessage!),
+            )
+          else if (!state.isLoading && !state.hasError && state.urns.isEmpty)
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: _buildEmptyState(),
+            )
+          else
+            _buildGridSliver(context, state),
+        ],
       ),
     );
   }
@@ -110,11 +138,13 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
   Widget _buildHeader(
     BuildContext context,
     ExploreProgress progress,
-    dynamic authState,
+    AuthState authState,
     ExploreState state,
   ) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isCompact = screenWidth < 360;
+    final continueUrn = _findContinueUrn(state);
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         AppSpacing.md,
@@ -125,47 +155,42 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Clean top bar: Title + Streak + Avatar
-          Wrap(
-            alignment: WrapAlignment.spaceBetween,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            runSpacing: AppSpacing.xs,
+          Row(
             children: [
               Text(
-                'Khám Phá',
+                'Khám phá',
                 style: AppTypography.textTheme.headlineSmall?.copyWith(
                   color: Colors.white,
                   fontSize: isCompact ? 20 : 24,
                   fontWeight: FontWeight.bold,
-                  letterSpacing: 0.4,
+                  letterSpacing: 0.3,
                 ),
               ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const CompactStreakWidget(),
-                  const SizedBox(width: AppSpacing.sm),
-                  _buildUserAvatar(authState),
-                ],
-              ),
+              const Spacer(),
+              const CompactStreakWidget(),
+              const SizedBox(width: AppSpacing.sm),
+              _buildUserAvatar(authState),
             ],
           ),
-
           SizedBox(height: isCompact ? AppSpacing.xs : AppSpacing.sm),
-
-          // Compact progress stats row
-          _buildCompactStats(progress),
-
-          SizedBox(height: isCompact ? AppSpacing.xs : AppSpacing.sm),
-
-          // Quick actions to improve flow
-          _buildQuickActions(context, state),
+          _buildStatsCard(progress),
+          const SizedBox(height: AppSpacing.sm),
+          _buildActionRow(context, continueUrn),
+          if (continueUrn != null) ...[
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              'Tiếp tục: ${continueUrn.name}',
+              style: AppTypography.textTheme.bodySmall?.copyWith(
+                color: Colors.white.withOpacity(0.7),
+              ),
+            ),
+          ],
         ],
       ),
     );
   }
 
-  Widget _buildUserAvatar(dynamic authState) {
+  Widget _buildUserAvatar(AuthState authState) {
     if (!authState.isAuthenticated || authState.user == null) {
       return const SizedBox.shrink();
     }
@@ -179,29 +204,16 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        // Avatar circle
         Container(
-          width: 44,
-          height: 44,
+          width: 40,
+          height: 40,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            gradient: LinearGradient(
-              colors: [
-                AppColors.primary.withOpacity(0.5),
-                AppColors.primaryDark.withOpacity(0.3),
-              ],
-            ),
+            color: Colors.white.withOpacity(0.1),
             border: Border.all(
-              color: Colors.white.withOpacity(0.4),
-              width: 2,
+              color: Colors.white.withOpacity(0.3),
+              width: 1.5,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.primary.withOpacity(0.3),
-                blurRadius: 8,
-                spreadRadius: 1,
-              ),
-            ],
           ),
           child: user.avatarUrl != null && user.avatarUrl!.isNotEmpty
               ? ClipOval(
@@ -213,7 +225,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
                         initial,
                         style: TextStyle(
                           color: AppColors.onPrimary,
-                          fontSize: 18,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -225,35 +237,24 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
                     initial,
                     style: TextStyle(
                       color: AppColors.onPrimary,
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
         ),
-
-        // Level badge
         Positioned(
           bottom: -4,
           right: -4,
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [AppColors.xpGold, AppColors.xpGoldDark],
-              ),
+              color: AppColors.xpGold,
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: Colors.white,
-                width: 1.5,
+                color: Colors.white.withOpacity(0.9),
+                width: 1,
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.xpGold.withOpacity(0.5),
-                  blurRadius: 6,
-                  spreadRadius: 1,
-                ),
-              ],
             ),
             child: Text(
               '$level',
@@ -269,68 +270,51 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
     );
   }
 
-  Widget _buildCompactStats(ExploreProgress progress) {
+  Widget _buildStatsCard(ExploreProgress progress) {
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.sm,
-        vertical: AppSpacing.xs + 2,
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
       ),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.white.withOpacity(0.1),
-            Colors.white.withOpacity(0.05),
-          ],
-        ),
+        color: Colors.white.withOpacity(0.08),
         borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
         border: Border.all(
-          color: Colors.white.withOpacity(0.15),
+          color: Colors.white.withOpacity(0.12),
           width: 1,
         ),
       ),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final stats = [
-            _buildCompactStat(
-              status: MotifStatus.discovered,
-              value: '${progress.discoveredMotifs}/${progress.totalMotifs}',
-            ),
-            _buildCompactStat(
-              status: MotifStatus.learned,
-              value: '${progress.learnedMotifs}',
-            ),
-            _buildCompactStat(
-              status: MotifStatus.mastered,
-              value: '${progress.masteredMotifs}',
-            ),
-          ];
-
-          if (constraints.maxWidth < 320) {
-            return Wrap(
-              alignment: WrapAlignment.center,
-              spacing: AppSpacing.sm,
-              runSpacing: AppSpacing.xs,
-              children: stats,
-            );
-          }
-
-          return Row(
-            children: [
-              Expanded(child: Center(child: stats[0])),
-              _buildCompactDivider(),
-              Expanded(child: Center(child: stats[1])),
-              _buildCompactDivider(),
-              Expanded(child: Center(child: stats[2])),
-            ],
-          );
-        },
+      child: Wrap(
+        alignment: WrapAlignment.spaceBetween,
+        spacing: AppSpacing.md,
+        runSpacing: AppSpacing.xs,
+        children: [
+          _buildStatItem(
+            status: MotifStatus.discovered,
+            value: '${progress.discoveredMotifs}/${progress.totalMotifs}',
+            label: 'Khám phá',
+          ),
+          _buildStatItem(
+            status: MotifStatus.learned,
+            value: '${progress.learnedMotifs}',
+            label: 'Đã học',
+          ),
+          _buildStatItem(
+            status: MotifStatus.mastered,
+            value: '${progress.masteredMotifs}',
+            label: 'Thành thạo',
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildCompactStat({required MotifStatus status, required String value}) {
+  Widget _buildStatItem({
+    required MotifStatus status,
+    required String value,
+    required String label,
+  }) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -339,42 +323,65 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
           size: 16,
         ),
         const SizedBox(width: 6),
-        Text(
-          value,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 0.2,
-          ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              value,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              label,
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.6),
+                fontSize: 11,
+              ),
+            ),
+          ],
         ),
       ],
     );
   }
 
-  Widget _buildQuickActions(BuildContext context, ExploreState state) {
-    final continueUrn = _findContinueUrn(state);
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isCompact = screenWidth < 360;
-
-    return Wrap(
-      spacing: AppSpacing.sm,
-      runSpacing: AppSpacing.xs,
+  Widget _buildActionRow(BuildContext context, Urn? continueUrn) {
+    return Row(
       children: [
-        _buildActionPill(
-          label: 'Tiếp tục',
-          icon: Icons.play_arrow,
-          isEnabled: continueUrn != null,
-          onTap: continueUrn == null
-              ? null
-              : () => _navigateToUrn(context, continueUrn.slug),
+        Expanded(
+          child: ElevatedButton.icon(
+            onPressed: continueUrn == null
+                ? null
+                : () => _navigateToUrn(context, continueUrn.slug),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: AppColors.onPrimary,
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+            ),
+            icon: const Icon(Icons.play_arrow),
+            label: const Text('Tiếp tục'),
+          ),
         ),
-        _buildActionPill(
-          label: 'Luyện tập',
-          icon: Icons.fitness_center,
-          isEnabled: true,
-          onTap: () => context.push('/practice'),
-          minWidth: isCompact ? 0 : 120,
+        const SizedBox(width: AppSpacing.sm),
+        Expanded(
+          child: OutlinedButton.icon(
+            onPressed: () => context.push('/practice'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.white,
+              side: BorderSide(color: Colors.white.withOpacity(0.4)),
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+            ),
+            icon: const Icon(Icons.fitness_center),
+            label: const Text('Luyện tập'),
+          ),
         ),
       ],
     );
@@ -390,194 +397,93 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
     );
   }
 
-  Widget _buildActionPill({
-    required String label,
-    required IconData icon,
-    required bool isEnabled,
-    required VoidCallback? onTap,
-    double? minWidth,
-  }) {
-    return Opacity(
-      opacity: isEnabled ? 1 : 0.45,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(AppSpacing.radiusRound),
-        onTap: isEnabled ? onTap : null,
-        child: Container(
-          constraints: minWidth != null
-              ? BoxConstraints(minWidth: minWidth)
-              : const BoxConstraints(),
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.sm,
-          ),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Colors.white.withOpacity(0.12),
-                Colors.white.withOpacity(0.05),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(AppSpacing.radiusRound),
-            border: Border.all(
-              color: Colors.white.withOpacity(0.2),
-              width: 1,
-            ),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, color: Colors.white, size: 16),
-              const SizedBox(width: AppSpacing.sm),
-              Text(
-                label,
-                style: AppTypography.textTheme.labelLarge?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.2,
-                ),
+  SliverPadding _buildGridSliver(BuildContext context, ExploreState state) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    int crossAxisCount = 2;
+    if (screenWidth > 600) {
+      crossAxisCount = 3;
+    }
+    if (screenWidth > 900) {
+      crossAxisCount = 4;
+    }
+
+    return SliverPadding(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.md,
+        AppSpacing.sm,
+        AppSpacing.md,
+        AppSpacing.lg,
+      ),
+      sliver: SliverGrid(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: crossAxisCount,
+          childAspectRatio: 0.72,
+          crossAxisSpacing: AppSpacing.md,
+          mainAxisSpacing: AppSpacing.md,
+        ),
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            final urn = state.urns[index];
+            return TweenAnimationBuilder<double>(
+              tween: Tween(begin: 0.0, end: 1.0),
+              duration: Duration(milliseconds: 350 + (index * 80)),
+              curve: Curves.easeOutCubic,
+              builder: (context, value, child) {
+                return Transform.scale(
+                  scale: value,
+                  child: Opacity(
+                    opacity: value,
+                    child: child,
+                  ),
+                );
+              },
+              child: UrnCard(
+                urn: urn,
+                onTap: () => _navigateToUrn(context, urn.slug),
               ),
-            ],
-          ),
+            );
+          },
+          childCount: state.urns.length,
         ),
       ),
     );
   }
 
-  Widget _buildCompactDivider() {
-    return Container(
-      width: 1,
-      height: 20,
-      color: Colors.white.withOpacity(0.2),
-    );
-  }
-
-  Widget _buildContent(
-    BuildContext context,
-    WidgetRef ref,
-    ExploreState state,
-  ) {
-    if (state.isLoading && !state.hasData) {
-      return _buildLoadingState();
+  SliverPadding _buildLoadingGridSliver(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    int crossAxisCount = 2;
+    if (screenWidth > 600) {
+      crossAxisCount = 3;
+    }
+    if (screenWidth > 900) {
+      crossAxisCount = 4;
     }
 
-    if (state.hasError && !state.hasData) {
-      return _buildErrorState(ref, state.errorMessage!);
-    }
-
-    // Check for empty state
-    if (!state.isLoading && !state.hasError && state.urns.isEmpty) {
-      return _buildEmptyState(ref);
-    }
-
-    return RefreshIndicator(
-      onRefresh: () => ref.read(exploreNotifierProvider.notifier).refreshUrns(),
-      color: AppColors.primary,
-      backgroundColor: AppColors.surface,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          // Responsive grid based on width
-          int crossAxisCount = 2;
-          if (constraints.maxWidth > 600) {
-            crossAxisCount = 3;
-          }
-          if (constraints.maxWidth > 900) {
-            crossAxisCount = 4;
-          }
-
-          return CustomScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            slivers: [
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.md,
-                  AppSpacing.sm,
-                  AppSpacing.md,
-                  100,
-                ),
-                sliver: SliverGrid(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: crossAxisCount,
-                    childAspectRatio: 0.7,
-                    crossAxisSpacing: AppSpacing.md,
-                    mainAxisSpacing: AppSpacing.md,
-                  ),
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final urn = state.urns[index];
-                      return TweenAnimationBuilder<double>(
-                        tween: Tween(begin: 0.0, end: 1.0),
-                        duration: Duration(milliseconds: 400 + (index * 100)),
-                        curve: Curves.easeOutCubic,
-                        builder: (context, value, child) {
-                          return Transform.scale(
-                            scale: value,
-                            child: Opacity(
-                              opacity: value,
-                              child: child,
-                            ),
-                          );
-                        },
-                        child: UrnCard(
-                          urn: urn,
-                          onTap: () => _navigateToUrn(context, urn.slug),
-                        ),
-                      );
-                    },
-                    childCount: state.urns.length,
-                  ),
-                ),
-              ),
-            ],
-          );
-        },
+    return SliverPadding(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.md,
+        AppSpacing.sm,
+        AppSpacing.md,
+        AppSpacing.lg,
+      ),
+      sliver: SliverGrid(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: crossAxisCount,
+          childAspectRatio: 0.72,
+          crossAxisSpacing: AppSpacing.md,
+          mainAxisSpacing: AppSpacing.md,
+        ),
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            return const ShimmerUrnCard();
+          },
+          childCount: 9,
+        ),
       ),
     );
   }
 
-  Widget _buildLoadingState() {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        // Responsive grid based on width
-        int crossAxisCount = 2;
-        if (constraints.maxWidth > 600) {
-          crossAxisCount = 3;
-        }
-        if (constraints.maxWidth > 900) {
-          crossAxisCount = 4;
-        }
-
-        return CustomScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          slivers: [
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.md,
-                AppSpacing.sm,
-                AppSpacing.md,
-                100,
-              ),
-              sliver: SliverGrid(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: crossAxisCount,
-                  childAspectRatio: 0.7,
-                  crossAxisSpacing: AppSpacing.md,
-                  mainAxisSpacing: AppSpacing.md,
-                ),
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    return const ShimmerUrnCard();
-                  },
-                  childCount: 9,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildErrorState(WidgetRef ref, String message) {
+  Widget _buildErrorState(String message) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -622,7 +528,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
     );
   }
 
-  Widget _buildEmptyState(WidgetRef ref) {
+  Widget _buildEmptyState() {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),

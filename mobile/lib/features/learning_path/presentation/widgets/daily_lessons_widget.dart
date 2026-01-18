@@ -1,3 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -6,31 +8,78 @@ import '../../../../core/constants/api_constants.dart';
 import '../../../../core/network/api_client.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/utils/url_utils.dart';
 import '../../../../routing/route_names.dart';
 
 final _dailyLessonsProvider = FutureProvider<List<_DailyLesson>>((ref) async {
   final apiClient = ref.watch(apiClientProvider);
 
   try {
+    debugPrint('🔍 [DailyLessons] Fetching user learning path motifs...');
+    // First try to get user's learning path motifs
     final response = await apiClient.get<Map<String, dynamic>>(
       ApiConstants.dashboardSummary,
       parser: (json) => json as Map<String, dynamic>,
     );
     final rawMotifs = response['path_motifs'];
+    debugPrint('📝 [DailyLessons] Dashboard response: path_motifs = $rawMotifs');
 
-    if (rawMotifs is List) {
+    if (rawMotifs is List && rawMotifs.isNotEmpty) {
       final lessons = rawMotifs
-          .map((item) => _DailyLesson.fromDashboard(item))
+          .map((item) {
+            final lesson = _DailyLesson.fromDashboard(item);
+            if (lesson != null) {
+              debugPrint('📖 [DailyLessons] Parsed lesson from dashboard: ${lesson.name}, thumbnailUrl: ${lesson.thumbnailUrl}');
+            }
+            return lesson;
+          })
           .whereType<_DailyLesson>()
           .toList();
       if (lessons.isNotEmpty) {
+        debugPrint('✅ [DailyLessons] Loaded ${lessons.length} lessons from dashboard');
         return lessons;
       }
     }
-  } catch (_) {
-    // Fallback to mock data if dashboard summary is not available.
+  } catch (e, stackTrace) {
+    debugPrint('❌ [DailyLessons] Error fetching dashboard: $e');
+    debugPrint('📚 [DailyLessons] Stack trace: $stackTrace');
+    // Continue to fallback
   }
 
+  // Fallback: fetch recommended motifs from cao-dinh urn (demo urn)
+  try {
+    debugPrint('🔍 [DailyLessons] Fallback: Fetching motifs from cao-dinh urn...');
+    final urnResponse = await apiClient.get<Map<String, dynamic>>(
+      '/api/v1/urns/cao-dinh',
+      parser: (json) => json as Map<String, dynamic>,
+    );
+    final motifs = urnResponse['motifs'] as List<dynamic>?;
+    debugPrint('📝 [DailyLessons] Urn response: motifs count = ${motifs?.length}');
+
+    if (motifs != null && motifs.isNotEmpty) {
+      final lessons = motifs
+          .take(6)
+          .map((item) {
+            final lesson = _DailyLesson.fromMotif(item as Map<String, dynamic>);
+            if (lesson != null) {
+              debugPrint('📖 [DailyLessons] Parsed lesson from motif: ${lesson.name}, thumbnailUrl: ${lesson.thumbnailUrl}');
+            }
+            return lesson;
+          })
+          .whereType<_DailyLesson>()
+          .toList();
+      if (lessons.isNotEmpty) {
+        debugPrint('✅ [DailyLessons] Loaded ${lessons.length} lessons from urn');
+        return lessons;
+      }
+    }
+  } catch (e, stackTrace) {
+    debugPrint('❌ [DailyLessons] Error fetching urn motifs: $e');
+    debugPrint('📚 [DailyLessons] Stack trace: $stackTrace');
+    // Continue to mock fallback
+  }
+
+  debugPrint('⚠️ [DailyLessons] Falling back to mock lessons');
   return _getMockLessons();
 });
 
@@ -165,26 +214,7 @@ class _DailyLessonCardState extends State<_DailyLessonCard> {
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              statusColor.withOpacity(0.2),
-                              Colors.transparent,
-                            ],
-                          ),
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.center,
-                        child: Icon(
-                          Icons.terrain,
-                          size: widget.width * 0.5,
-                          color: Colors.white.withOpacity(0.3),
-                        ),
-                      ),
+                      _buildThumbnail(statusColor),
                       Positioned(
                         top: AppSpacing.sm,
                         right: AppSpacing.sm,
@@ -314,6 +344,47 @@ class _DailyLessonCardState extends State<_DailyLessonCard> {
       ),
     );
   }
+
+  Widget _buildThumbnail(Color statusColor) {
+    final rawUrl = widget.lesson.thumbnailUrl;
+    if (rawUrl == null || rawUrl.trim().isEmpty) {
+      return _buildPlaceholder(statusColor);
+    }
+
+    final imageUrl = UrlUtils.getImageUrl(rawUrl);
+    if (imageUrl.isEmpty) {
+      return _buildPlaceholder(statusColor);
+    }
+
+    return CachedNetworkImage(
+      imageUrl: imageUrl,
+      fit: BoxFit.cover,
+      placeholder: (_, __) => _buildPlaceholder(statusColor),
+      errorWidget: (_, __, ___) => _buildPlaceholder(statusColor),
+    );
+  }
+
+  Widget _buildPlaceholder(Color statusColor) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            statusColor.withOpacity(0.15),
+            Colors.white.withOpacity(0.05),
+          ],
+        ),
+      ),
+      child: Center(
+        child: Icon(
+          Icons.terrain,
+          size: widget.width * 0.45,
+          color: Colors.white.withOpacity(0.35),
+        ),
+      ),
+    );
+  }
 }
 
 List<_DailyLesson> _getMockLessons() {
@@ -324,6 +395,7 @@ List<_DailyLesson> _getMockLessons() {
       status: _LessonStatus.newLesson,
       xpReward: 10,
       category: 'Linh Thú',
+      thumbnailUrl: 'https://lms.histolab.icu/assets/ban-duc-noi/CAO%20DINH/CAO%20DINH.jpg',
     ),
     _DailyLesson(
       name: 'Hoa sen',
@@ -331,6 +403,7 @@ List<_DailyLesson> _getMockLessons() {
       status: _LessonStatus.review,
       xpReward: 5,
       category: 'Thảo Mộc',
+      thumbnailUrl: 'https://lms.histolab.icu/assets/ban-duc-noi/NHAN%20DINH/NH%C3%82N%20%C4%90%E1%BB%88NH.jpg',
     ),
     _DailyLesson(
       name: 'Phượng hoàng',
@@ -338,6 +411,7 @@ List<_DailyLesson> _getMockLessons() {
       status: _LessonStatus.newLesson,
       xpReward: 10,
       category: 'Linh Thú',
+      thumbnailUrl: 'https://lms.histolab.icu/assets/ban-duc-noi/CHUONG%20DINH/CH%C6%AF%C6%A0NG%20%C4%90%E1%BB%88NH.jpg',
     ),
     _DailyLesson(
       name: 'Cây trúc',
@@ -345,6 +419,7 @@ List<_DailyLesson> _getMockLessons() {
       status: _LessonStatus.review,
       xpReward: 5,
       category: 'Thảo Mộc',
+      thumbnailUrl: 'https://lms.histolab.icu/assets/ban-duc-noi/ANH%20DINH/ANH%20%C4%90%E1%BB%88NH.jpg',
     ),
   ];
 }
@@ -357,6 +432,7 @@ class _DailyLesson {
   final int xpReward;
   final String category;
   final String? motifId;
+  final String? thumbnailUrl;
 
   _DailyLesson({
     required this.name,
@@ -365,6 +441,7 @@ class _DailyLesson {
     required this.xpReward,
     required this.category,
     this.motifId,
+    this.thumbnailUrl,
   });
 
   static _DailyLesson? fromDashboard(dynamic item) {
@@ -375,14 +452,62 @@ class _DailyLesson {
 
     final status = _LessonStatus.fromProgress(item['status']?.toString());
     final xpReward = status == _LessonStatus.newLesson ? 10 : 5;
+    final thumbnailUrl =
+        item['thumbnail_url']?.toString() ?? item['thumbnailUrl']?.toString();
 
     return _DailyLesson(
       name: name,
+      nameEn: item['name_en']?.toString(),
       status: status,
       xpReward: xpReward,
       category: 'Lộ trình',
       motifId: id,
+      thumbnailUrl: thumbnailUrl,
     );
+  }
+
+  /// Create from motif API response (fallback for new users)
+  static _DailyLesson? fromMotif(Map<String, dynamic> item) {
+    final id = item['id']?.toString();
+    final name = item['name']?.toString();
+    if (id == null || name == null) return null;
+
+    // Map category to Vietnamese display name
+    final category = item['category']?.toString() ?? 'other';
+    final categoryDisplay = _getCategoryDisplay(category);
+
+    return _DailyLesson(
+      name: name,
+      nameEn: item['name_en']?.toString(),
+      status: _LessonStatus.newLesson, // All are new for new users
+      xpReward: 10,
+      category: categoryDisplay,
+      motifId: id,
+      thumbnailUrl: item['thumbnail_url']?.toString(),
+    );
+  }
+
+  static String _getCategoryDisplay(String category) {
+    switch (category) {
+      case 'linh_thu':
+        return 'Linh Thú';
+      case 'thao_moc':
+        return 'Thảo Mộc';
+      case 'nong_nghiep':
+        return 'Nông Nghiệp';
+      case 'kien_truc':
+        return 'Kiến Trúc';
+      case 'thien_nhien':
+        return 'Thiên Nhiên';
+      case 'dong_vat':
+        return 'Động Vật';
+      case 'vu_khi':
+        return 'Vũ Khí';
+      case 'do_vat':
+        return 'Đồ Vật';
+      default:
+        return 'Họa Tiết';
+    }
   }
 }
 

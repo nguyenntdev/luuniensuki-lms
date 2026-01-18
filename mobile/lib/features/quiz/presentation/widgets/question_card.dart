@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/utils/url_utils.dart';
 import '../../../urn_viewer/data/models/urn_dtos.dart';
 
 /// Question card widget that renders different question types.
@@ -22,15 +23,16 @@ class QuestionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedImageUrl = UrlUtils.getImageUrl(question.imageUrl);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Question image (if available)
-        if (question.imageUrl != null && question.imageUrl!.isNotEmpty) ...[
+        if (resolvedImageUrl.isNotEmpty) ...[
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: CachedNetworkImage(
-              imageUrl: question.imageUrl!,
+              imageUrl: resolvedImageUrl,
               width: double.infinity,
               height: 180,
               fit: BoxFit.cover,
