@@ -23,6 +23,7 @@ class CustomModelViewer extends StatefulWidget {
   final Function(String error)? onModelError;
   final Function(double progress)? onProgress;
   final Function(String motifId)? onHotspotTap;
+  final ValueChanged<dynamic>? onControllerReady;
   final Color backgroundColor;
   final bool autoRotate;
   final bool cameraControls;
@@ -44,6 +45,7 @@ class CustomModelViewer extends StatefulWidget {
     this.onModelError,
     this.onProgress,
     this.onHotspotTap,
+    this.onControllerReady,
     this.backgroundColor = const Color(0xFF1A1A2E),
     this.autoRotate = false,
     this.cameraControls = true,
@@ -482,6 +484,7 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
           },
           onWebViewCreated: (controller) {
             _webViewController = controller;
+            widget.onControllerReady?.call(controller);
           },
         ),
         if (_isLoading && _errorMessage == null)

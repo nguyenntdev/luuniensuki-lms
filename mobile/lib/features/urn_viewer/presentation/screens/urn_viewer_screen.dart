@@ -56,6 +56,8 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
   UnlockResult? _pendingDiscovery;
   bool _showDiscoveryAnimation = false;
 
+  dynamic _modelViewerController;
+
   String? _resolvedModelUrl;
   ModelQuality? _modelQuality;
   bool _isResolvingModel = false;
@@ -660,6 +662,9 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
       autoRotate: false,
       cameraControls: true,
       disableZoom: false,
+      onControllerReady: (controller) {
+        _modelViewerController = controller;
+      },
       onModelLoaded: () {
         debugPrint('[URN_VIEWER] ✅ Model loaded successfully via CustomModelViewer');
         if (mounted) {
@@ -958,17 +963,42 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
   }
 
   void _launchAR(UrnDetail urnDetail) {
-    // Try to activate AR via the model viewer
-    // The model_viewer_plus will show its built-in AR button
-    // For now, show a helpful message about using the AR button on the 3D model
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Nhấn vào nút AR trên mô hình 3D để xem trong không gian thực'),
-        backgroundColor: AppColors.primary,
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 3),
-      ),
-    );
+    if (_modelViewerController == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Vui lòng đợi mô hình 3D tải xong'),
+          backgroundColor: AppColors.surface,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    // Execute JavaScript to activate AR
+    try {
+      _modelViewerController.runJavaScript('''
+        (function() {
+          const modelViewer = document.querySelector('model-viewer');
+          if (modelViewer && modelViewer.canActivateAR) {
+            modelViewer.activateAR();
+          } else if (modelViewer) {
+            // AR not supported, try anyway
+            modelViewer.activateAR();
+          } else {
+            console.error('Model viewer not found');
+          }
+        })();
+      ''');
+    } catch (e) {
+      debugPrint('Error activating AR: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Không thể kích hoạt AR. Thiết bị có thể không hỗ trợ.'),
+          backgroundColor: Colors.orange,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
   }
 
   Widget _buildBottomBar(UrnDetail urnDetail) {

@@ -311,58 +311,102 @@ class _MotifDetailScreenState extends ConsumerState<MotifDetailScreen>
                 child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
               ),
               SizedBox(width: 12),
-              Text('Đang chuẩn bị chia sẻ...'),
+              Text('Đang chuẩn bị ảnh...'),
             ],
           ),
           backgroundColor: AppColors.surface,
-          duration: Duration(seconds: 2),
+          duration: Duration(seconds: 10),
         ),
       );
 
-      // Prepare share text
-      final shareText = '''
-🏛️ ${motif.name}${motif.nameEn != null ? ' (${motif.nameEn})' : ''}
+      // Get best available image URL (same logic as hero image)
+      final heroUrl = motif.imageUrl != null && motif.imageUrl!.trim().isNotEmpty
+          ? motif.imageUrl
+          : motif.thumbnailUrl;
 
-📍 Họa tiết trên ${motif.urn.name}
-🎨 Thể loại: ${_getCategoryName(motif.category)}
-⭐ Độ hiếm: ${_getRarityName(motif.rarity)}
-
-Khám phá thêm tại ứng dụng Lưu Niên Sử Kí!
-    '''.trim();
-
-      // Share with image if available
-      if (motif.imageUrl != null && motif.imageUrl!.isNotEmpty) {
-        // Download image to temp file
-        final tempDir = await getTemporaryDirectory();
-        final imagePath = '${tempDir.path}/share_${motif.id}.jpg';
-
-        try {
-          final response = await Dio().download(
-            motif.imageUrl!,
-            imagePath,
-          );
-
-          if (response.statusCode == 200) {
-            await Share.shareXFiles(
-              [XFile(imagePath)],
-              text: shareText,
-            );
-            return;
-          }
-        } catch (e) {
-          debugPrint('Error downloading image for share: $e');
-        }
+      if (heroUrl == null || heroUrl.trim().isEmpty) {
+        // No image available, share text only
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        await Share.share(
+          '🏛️ ${motif.name} - Khám phá tại ứng dụng Lưu Niên Sử Kí!',
+        );
+        return;
       }
 
-      // Fallback to text-only share
-      await Share.share(shareText);
+      // Convert to full URL
+      final imageUrl = UrlUtils.getImageUrl(heroUrl);
+      debugPrint('Sharing image from URL: $imageUrl');
 
+      // Get temp directory and prepare file
+      final tempDir = await getTemporaryDirectory();
+
+      // Detect file extension from URL
+      final uri = Uri.parse(imageUrl);
+      final pathSegments = uri.path.split('.');
+      final urlExtension = pathSegments.isNotEmpty ? pathSegments.last.toLowerCase() : 'jpg';
+      final extension = ['jpg', 'jpeg', 'png', 'gif', 'webp'].contains(urlExtension)
+          ? urlExtension
+          : 'jpg';
+
+      final imagePath = '${tempDir.path}/share_motif_${motif.id}.$extension';
+
+      // Determine MIME type
+      String mimeType;
+      switch (extension) {
+        case 'png':
+          mimeType = 'image/png';
+          break;
+        case 'gif':
+          mimeType = 'image/gif';
+          break;
+        case 'webp':
+          mimeType = 'image/webp';
+          break;
+        default:
+          mimeType = 'image/jpeg';
+      }
+
+      // Download image
+      final dio = Dio();
+      dio.options.headers['Accept'] = 'image/*';
+
+      final response = await dio.download(
+        imageUrl,
+        imagePath,
+        options: Options(
+          responseType: ResponseType.bytes,
+          followRedirects: true,
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        // Dismiss loading snackbar
+        if (mounted) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        }
+
+        // Prepare caption text
+        final caption = '🏛️ ${motif.name}${motif.nameEn != null ? ' (${motif.nameEn})' : ''}\n'
+            '📍 ${motif.urn.name}\n'
+            '🎨 ${_getCategoryName(motif.category)} • ⭐ ${_getRarityName(motif.rarity)}\n\n'
+            'Khám phá tại: Lưu Niên Sử Kí';
+
+        // Share the image file with caption
+        await Share.shareXFiles(
+          [XFile(imagePath, mimeType: mimeType)],
+          text: caption,
+          subject: motif.name,
+        );
+      } else {
+        throw Exception('Failed to download image: ${response.statusCode}');
+      }
     } catch (e) {
       debugPrint('Error sharing motif: $e');
       if (mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Không thể chia sẻ. Vui lòng thử lại.'),
+          SnackBar(
+            content: Text('Không thể chia sẻ ảnh: $e'),
             backgroundColor: Colors.red,
           ),
         );

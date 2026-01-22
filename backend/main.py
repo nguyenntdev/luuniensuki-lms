@@ -3927,13 +3927,40 @@ class ProgressUnlockRequest(BaseModel):
         return self
 
 
-class ProgressUnlockResponse(BaseModel):
+class ProgressResponseDto(BaseModel):
+    """Progress DTO matching mobile UnlockResponseDto.progress structure."""
+
+    id: UUID
     user_id: UUID
     motif_id: UUID
     status: str
     discovered_at: Optional[datetime] = None
-    xp_awarded: int
+    learned_at: Optional[datetime] = None
+    mastered_at: Optional[datetime] = None
+    xp_earned: int = 0
+    quiz_best_score: Optional[int] = None
+
+
+class BadgeResponseDto(BaseModel):
+    """Badge DTO for new badges earned."""
+
+    id: UUID
+    slug: str
+    name: str
+    description: Optional[str] = None
+    icon_url: Optional[str] = None
+    xp_bonus: int = 0
+
+
+class ProgressUnlockResponse(BaseModel):
+    """Response matching mobile UnlockResponseDto structure."""
+
+    progress: ProgressResponseDto
+    xp_earned: int
     total_xp: int
+    new_badges: list[BadgeResponseDto] = []
+    streak_updated: bool = False
+    current_streak: int = 0
 
 
 @app.post("/progress/unlock", response_model=ProgressUnlockResponse)
@@ -4005,15 +4032,46 @@ def unlock_progress(
             xp_awarded = delta
 
     badge_bonus = 0
+    new_badges: list[Badge] = []
+    streak_before = user.current_streak
     _update_streak(user, now)
+    streak_updated = user.current_streak != streak_before
+
+    def _try_award_badge(badge_slug: str) -> int:
+        """Award badge and track it if newly earned."""
+        nonlocal new_badges
+        badge = db.execute(
+            select(Badge).where(Badge.slug == badge_slug, Badge.is_active.is_(True))
+        ).scalar_one_or_none()
+        if badge is None:
+            return 0
+        existing = db.execute(
+            select(UserBadge).where(
+                UserBadge.user_id == user.id, UserBadge.badge_id == badge.id
+            )
+        ).scalar_one_or_none()
+        if existing is not None:
+            return 0
+        bonus = _award_badge(db, user=user, badge_slug=badge_slug)
+        if bonus > 0 or existing is None:
+            # Re-check if badge was just awarded
+            newly_awarded = db.execute(
+                select(UserBadge).where(
+                    UserBadge.user_id == user.id, UserBadge.badge_id == badge.id
+                )
+            ).scalar_one_or_none()
+            if newly_awarded is not None:
+                new_badges.append(badge)
+        return bonus
+
     if was_locked and int(discovered_before or 0) == 0:
-        badge_bonus += _award_badge(db, user=user, badge_slug=BADGE_FIRST_DISCOVERY)
+        badge_bonus += _try_award_badge(BADGE_FIRST_DISCOVERY)
         # Track first motif discovery milestone
         from backend.services.milestones import check_and_create_first_motif_discovered
 
         check_and_create_first_motif_discovered(db, user.id, motif.id)
     if user.current_streak >= 7:
-        badge_bonus += _award_badge(db, user=user, badge_slug=BADGE_STREAK_7)
+        badge_bonus += _try_award_badge(BADGE_STREAK_7)
         # Track first 7-day streak milestone
         from backend.services.milestones import check_and_create_first_streak_7
 
@@ -4036,11 +4094,11 @@ def unlock_progress(
         if urn_discovered_before == 0:
             urns += 1
     if discovered >= 10:
-        badge_bonus += _award_badge(db, user=user, badge_slug=BADGE_COLLECTOR_10)
+        badge_bonus += _try_award_badge(BADGE_COLLECTOR_10)
     if discovered >= 50:
-        badge_bonus += _award_badge(db, user=user, badge_slug=BADGE_COLLECTOR_50)
+        badge_bonus += _try_award_badge(BADGE_COLLECTOR_50)
     if urns >= 9:
-        badge_bonus += _award_badge(db, user=user, badge_slug=BADGE_EXPLORER_ALL_URNS)
+        badge_bonus += _try_award_badge(BADGE_EXPLORER_ALL_URNS)
 
     user.last_active_at = now
 
@@ -4052,6 +4110,7 @@ def unlock_progress(
             "IntegrityError during unlock; retrying fetch/update", exc_info=True
         )
         badge_bonus = 0
+        new_badges = []  # Clear badges on retry
         discovered_before = db.execute(
             select(func.count(UserProgress.id)).where(
                 UserProgress.user_id == user.id,
@@ -4072,11 +4131,13 @@ def unlock_progress(
             progress.xp_earned = DISCOVERY_XP
             user.total_xp += delta
             xp_awarded = max(xp_awarded, delta)
+        streak_before = user.current_streak
         _update_streak(user, now)
+        streak_updated = user.current_streak != streak_before
         if was_locked and int(discovered_before or 0) == 0:
-            badge_bonus += _award_badge(db, user=user, badge_slug=BADGE_FIRST_DISCOVERY)
+            badge_bonus += _try_award_badge(BADGE_FIRST_DISCOVERY)
         if user.current_streak >= 7:
-            badge_bonus += _award_badge(db, user=user, badge_slug=BADGE_STREAK_7)
+            badge_bonus += _try_award_badge(BADGE_STREAK_7)
         # Check collector badges
         discovered, urns = _count_user_discoveries(db, user.id)
         if was_locked and (progress in db.new or progress in db.dirty):
@@ -4094,23 +4155,46 @@ def unlock_progress(
             if urn_discovered_before == 0:
                 urns += 1
         if discovered >= 10:
-            badge_bonus += _award_badge(db, user=user, badge_slug=BADGE_COLLECTOR_10)
+            badge_bonus += _try_award_badge(BADGE_COLLECTOR_10)
         if discovered >= 50:
-            badge_bonus += _award_badge(db, user=user, badge_slug=BADGE_COLLECTOR_50)
+            badge_bonus += _try_award_badge(BADGE_COLLECTOR_50)
         if urns >= 9:
-            badge_bonus += _award_badge(
-                db, user=user, badge_slug=BADGE_EXPLORER_ALL_URNS
-            )
+            badge_bonus += _try_award_badge(BADGE_EXPLORER_ALL_URNS)
         user.last_active_at = now
         db.commit()
 
-    return ProgressUnlockResponse(
+    # Build the response matching mobile UnlockResponseDto structure
+    progress_dto = ProgressResponseDto(
+        id=progress.id,
         user_id=user.id,
         motif_id=motif.id,
         status=progress.status.value,
         discovered_at=progress.discovered_at,
-        xp_awarded=xp_awarded + badge_bonus,
+        learned_at=progress.learned_at,
+        mastered_at=progress.mastered_at,
+        xp_earned=progress.xp_earned,
+        quiz_best_score=progress.quiz_best_score,
+    )
+
+    badge_dtos = [
+        BadgeResponseDto(
+            id=badge.id,
+            slug=badge.slug,
+            name=badge.name,
+            description=badge.description,
+            icon_url=badge.icon_url,
+            xp_bonus=badge.xp_bonus or 0,
+        )
+        for badge in new_badges
+    ]
+
+    return ProgressUnlockResponse(
+        progress=progress_dto,
+        xp_earned=xp_awarded + badge_bonus,
         total_xp=user.total_xp,
+        new_badges=badge_dtos,
+        streak_updated=streak_updated,
+        current_streak=user.current_streak,
     )
 
 
