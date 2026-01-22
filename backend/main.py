@@ -32,7 +32,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
-from sqlalchemy import and_, create_engine, delete, func, or_, select
+from sqlalchemy import and_, case, create_engine, delete, func, or_, select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, selectinload, sessionmaker
@@ -3040,12 +3040,16 @@ class UrnListItemOut(BaseModel):
     display_order: int
     is_demo: bool
     motif_count: int = 0
+    discovered_count: int = 0
+    learned_count: int = 0
+    mastered_count: int = 0
 
 
 @app.get("/api/v1/urns", response_model=list[UrnListItemOut])
 def list_urns(
     current_user: User = Depends(get_current_user), db: Session = Depends(get_db)
 ) -> list[UrnListItemOut]:
+    # Subquery for total motif counts per urn
     motif_counts = (
         select(Motif.urn_id, func.count(Motif.id).label("motif_count"))
         .where(Motif.is_active.is_(True))
@@ -3053,9 +3057,44 @@ def list_urns(
         .subquery()
     )
 
+    # Subquery for user progress counts per urn
+    progress_counts = (
+        select(
+            Motif.urn_id,
+            func.sum(
+                case((UserProgress.status == UnlockStatus.discovered, 1), else_=0)
+            ).label("discovered_count"),
+            func.sum(
+                case((UserProgress.status == UnlockStatus.learned, 1), else_=0)
+            ).label("learned_count"),
+            func.sum(
+                case((UserProgress.status == UnlockStatus.mastered, 1), else_=0)
+            ).label("mastered_count"),
+        )
+        .select_from(Motif)
+        .join(
+            UserProgress,
+            and_(
+                UserProgress.motif_id == Motif.id,
+                UserProgress.user_id == current_user.id
+            ),
+            isouter=True,
+        )
+        .where(Motif.is_active.is_(True))
+        .group_by(Motif.urn_id)
+        .subquery()
+    )
+
     rows = db.execute(
-        select(Urn, func.coalesce(motif_counts.c.motif_count, 0))
+        select(
+            Urn,
+            func.coalesce(motif_counts.c.motif_count, 0),
+            func.coalesce(progress_counts.c.discovered_count, 0),
+            func.coalesce(progress_counts.c.learned_count, 0),
+            func.coalesce(progress_counts.c.mastered_count, 0),
+        )
         .outerjoin(motif_counts, motif_counts.c.urn_id == Urn.id)
+        .outerjoin(progress_counts, progress_counts.c.urn_id == Urn.id)
         .order_by(Urn.display_order, Urn.name)
     ).all()
 
@@ -3069,8 +3108,11 @@ def list_urns(
             display_order=urn.display_order,
             is_demo=urn.is_demo,
             motif_count=int(motif_count or 0),
+            discovered_count=int(discovered or 0),
+            learned_count=int(learned or 0),
+            mastered_count=int(mastered or 0),
         )
-        for urn, motif_count in rows
+        for urn, motif_count, discovered, learned, mastered in rows
     ]
 
 
