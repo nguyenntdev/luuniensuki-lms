@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'core/network/api_client.dart';
 import 'core/storage/hive_storage.dart';
 import 'core/theme/app_theme.dart';
 import 'routing/app_router.dart';
@@ -12,6 +13,9 @@ void main() async {
 
   // Initialize Hive storage
   await HiveStorage.init();
+
+  // Initialize persistent cookie jar for session persistence across app restarts
+  await initPersistCookieJar();
 
   runApp(
     const ProviderScope(

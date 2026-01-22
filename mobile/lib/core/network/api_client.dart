@@ -1,14 +1,13 @@
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
-import 'package:flutter/foundation.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../constants/api_constants.dart';
 import '../errors/exceptions.dart';
 import '../storage/secure_storage.dart';
 import 'interceptors/auth_interceptor.dart';
-import 'interceptors/error_interceptor.dart';
 import 'interceptors/logging_interceptor.dart';
 
 part 'api_client.g.dart';
@@ -204,12 +203,29 @@ class ApiClient {
   Dio get dio => _dio;
 }
 
-/// Cookie jar for handling httpOnly cookies from server
-/// Using in-memory CookieJar to avoid path initialization issues
-final CookieJar _cookieJar = CookieJar();
+/// Persistent cookie jar for session persistence across app restarts
+PersistCookieJar? _persistCookieJar;
 
-/// Create and configure the Dio instance
+/// Initialize the persistent cookie jar - call this in main() before runApp
+Future<void> initPersistCookieJar() async {
+  if (_persistCookieJar != null) return;
+
+  final directory = await getApplicationDocumentsDirectory();
+  final cookiePath = '${directory.path}/.cookies/';
+  _persistCookieJar = PersistCookieJar(
+    ignoreExpires: true,
+    storage: FileStorage(cookiePath),
+  );
+}
+
+/// Get the cookie jar - returns persistent jar if initialized, otherwise temporary jar
+CookieJar get cookieJar => _persistCookieJar ?? CookieJar();
+
+/// Create and configure the Dio instance (synchronous - cookie jar must be initialized first)
 Dio createDio(SecureStorage secureStorage) {
+  // Use the pre-initialized persistent cookie jar
+  final cookieJarInstance = cookieJar;
+
   final dio = Dio(
     BaseOptions(
       baseUrl: ApiConstants.baseUrl,
@@ -229,12 +245,12 @@ Dio createDio(SecureStorage secureStorage) {
   );
 
   // Add interceptors in order:
-  // 1. Cookie Manager - handles httpOnly cookies automatically
+  // 1. Cookie Manager - handles httpOnly cookies automatically with persistent storage
   // 2. Auth - adds token to requests (fallback if cookies not available)
   // 3. Logging - logs requests/responses (debug only)
   // NOTE: ErrorInterceptor temporarily removed for debugging
   dio.interceptors.addAll([
-    CookieManager(_cookieJar),
+    CookieManager(cookieJarInstance),
     AuthInterceptor(secureStorage),
     LoggingInterceptor(),
     // ErrorInterceptor(), // Temporarily disabled for debugging
@@ -242,9 +258,6 @@ Dio createDio(SecureStorage secureStorage) {
 
   return dio;
 }
-
-/// Get the cookie jar for clearing cookies on logout
-CookieJar get cookieJar => _cookieJar;
 
 /// Provides the configured Dio instance
 /// Using keepAlive to prevent rebuilding and losing cookies
@@ -258,6 +271,6 @@ Dio dio(DioRef ref) {
 /// Using keepAlive to prevent rebuilding
 @Riverpod(keepAlive: true)
 ApiClient apiClient(ApiClientRef ref) {
-  final dio = ref.watch(dioProvider);
-  return ApiClient(dio);
+  final dioInstance = ref.watch(dioProvider);
+  return ApiClient(dioInstance);
 }

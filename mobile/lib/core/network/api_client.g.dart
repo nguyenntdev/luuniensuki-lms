@@ -25,7 +25,7 @@ final dioProvider = Provider<Dio>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef DioRef = ProviderRef<Dio>;
-String _$apiClientHash() => r'04f88fa418cd123c02c8f1c25fe2c1649b44b73a';
+String _$apiClientHash() => r'f8d0f929c84d59cd760b17e22072cfc70af9e76d';
 
 /// Provides the ApiClient instance
 /// Using keepAlive to prevent rebuilding
