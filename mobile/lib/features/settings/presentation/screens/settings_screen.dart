@@ -205,7 +205,7 @@ class SettingsScreen extends ConsumerWidget {
           ),
           _buildInfoTile(
             icon: Icons.copyright_outlined,
-            title: 'Luuniensuki LMS',
+            title: 'Lưu Niên Sử Kí',
             subtitle: '© 2024 - Học tập văn hóa Việt',
             color: AppColors.primary,
           ),
