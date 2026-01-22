@@ -285,6 +285,15 @@ GoRouter appRouter(AppRouterRef ref) {
               return QuizScreen(motifId: motifId);
             },
           ),
+          // AI Chat route under motif
+          GoRoute(
+            path: 'ai-chat',
+            name: 'motifAiChat',
+            builder: (context, state) {
+              final motifId = state.pathParameters['motifId'] ?? '';
+              return AiChatScreen(motifId: motifId);
+            },
+          ),
         ],
       ),
 

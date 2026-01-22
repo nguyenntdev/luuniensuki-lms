@@ -158,7 +158,7 @@ class LessonTab extends ConsumerWidget {
           icon: Icons.auto_awesome_outlined,
           isPrimary: false,
           onPressed: () => context.push(
-            '/ai-chat?motifId=${motif.id}',
+            '/motifs/${motif.id}/ai-chat',
           ),
         ),
         const SizedBox(height: 12),
