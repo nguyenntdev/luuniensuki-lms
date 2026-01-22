@@ -34,6 +34,7 @@ class BuyStreakFreezeButton extends ConsumerWidget {
         ),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header
@@ -56,6 +57,7 @@ class BuyStreakFreezeButton extends ConsumerWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
@@ -90,6 +92,7 @@ class BuyStreakFreezeButton extends ConsumerWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(

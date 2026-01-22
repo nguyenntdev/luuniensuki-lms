@@ -55,6 +55,7 @@ class StreakCalendar extends StatelessWidget {
           }
 
           return Column(
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header
@@ -134,6 +135,7 @@ class StreakCalendar extends StatelessWidget {
     }
 
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         // Day label
         Text(

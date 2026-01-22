@@ -57,6 +57,7 @@ class StreakDisplay extends ConsumerWidget {
           ],
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header with fire icon and count
@@ -90,6 +91,7 @@ class StreakDisplay extends ConsumerWidget {
                 // Streak info
                 Expanded(
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
@@ -189,6 +191,7 @@ class StreakDisplay extends ConsumerWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
