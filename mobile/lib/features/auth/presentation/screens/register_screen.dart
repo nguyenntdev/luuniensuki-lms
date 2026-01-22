@@ -10,7 +10,6 @@ import '../../../../shared/widgets/glass/animated_background.dart';
 import '../../../../shared/widgets/glass/glass_button.dart';
 import '../../../../shared/widgets/glass/glass_container.dart';
 import '../../../../shared/widgets/glass/glass_text_field.dart';
-import '../../../mascot/presentation/widgets/mascot_widget.dart';
 import '../providers/auth_provider.dart';
 import '../providers/auth_state.dart';
 
@@ -198,14 +197,25 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                     Center(
                       child: Hero(
                         tag: 'app_logo',
-                        child: SizedBox(
+                        child: Container(
                           width: 100,
                           height: 100,
-                          child: Center(
-                            child: MascotWidget(
-                              expression: MascotExpression.excited,
-                              size: 80,
-                              animate: true,
+                          decoration: BoxDecoration(
+                            gradient: AppColors.primaryGradient,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.primary.withOpacity(0.3),
+                                blurRadius: 20,
+                                spreadRadius: 5,
+                              ),
+                            ],
+                          ),
+                          child: const Center(
+                            child: Icon(
+                              Icons.history_edu,
+                              size: 50,
+                              color: Colors.white,
                             ),
                           ),
                         ),

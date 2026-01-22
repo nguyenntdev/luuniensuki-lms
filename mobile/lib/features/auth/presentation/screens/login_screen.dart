@@ -10,7 +10,6 @@ import '../../../../shared/widgets/glass/glass_button.dart';
 import '../../../../shared/widgets/glass/glass_container.dart';
 import '../../../../shared/widgets/glass/glass_text_field.dart';
 import '../../../../shared/widgets/glass/animated_background.dart';
-import '../../../mascot/presentation/widgets/mascot_widget.dart';
 import '../providers/auth_provider.dart';
 import '../providers/auth_state.dart';
 
@@ -188,11 +187,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         child: Container(
                           width: 100,
                           height: 100,
+                          decoration: BoxDecoration(
+                            gradient: AppColors.primaryGradient,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.primary.withOpacity(0.3),
+                                blurRadius: 20,
+                                spreadRadius: 5,
+                              ),
+                            ],
+                          ),
                           child: const Center(
-                            child: MascotWidget(
-                              expression: MascotExpression.happy,
-                              size: 80,
-                              animate: true,
+                            child: Icon(
+                              Icons.history_edu,
+                              size: 50,
+                              color: Colors.white,
                             ),
                           ),
                         ),
