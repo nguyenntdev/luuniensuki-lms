@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:dio/dio.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -295,14 +298,99 @@ class _MotifDetailScreenState extends ConsumerState<MotifDetailScreen>
     );
   }
 
-  void _shareMotif(MotifDetailDto motif) {
-    // TODO: Implement share functionality
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Tính năng chia sẻ đang phát triển'),
-        backgroundColor: AppColors.surface,
-      ),
-    );
+  Future<void> _shareMotif(MotifDetailDto motif) async {
+    try {
+      // Show loading indicator
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+              ),
+              SizedBox(width: 12),
+              Text('Đang chuẩn bị chia sẻ...'),
+            ],
+          ),
+          backgroundColor: AppColors.surface,
+          duration: Duration(seconds: 2),
+        ),
+      );
+
+      // Prepare share text
+      final shareText = '''
+🏛️ ${motif.name}${motif.nameEn != null ? ' (${motif.nameEn})' : ''}
+
+📍 Họa tiết trên ${motif.urn.name}
+🎨 Thể loại: ${_getCategoryName(motif.category)}
+⭐ Độ hiếm: ${_getRarityName(motif.rarity)}
+
+Khám phá thêm tại ứng dụng Lưu Niên Sử Kí!
+    '''.trim();
+
+      // Share with image if available
+      if (motif.imageUrl != null && motif.imageUrl!.isNotEmpty) {
+        // Download image to temp file
+        final tempDir = await getTemporaryDirectory();
+        final imagePath = '${tempDir.path}/share_${motif.id}.jpg';
+
+        try {
+          final response = await Dio().download(
+            motif.imageUrl!,
+            imagePath,
+          );
+
+          if (response.statusCode == 200) {
+            await Share.shareXFiles(
+              [XFile(imagePath)],
+              text: shareText,
+            );
+            return;
+          }
+        } catch (e) {
+          debugPrint('Error downloading image for share: $e');
+        }
+      }
+
+      // Fallback to text-only share
+      await Share.share(shareText);
+
+    } catch (e) {
+      debugPrint('Error sharing motif: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Không thể chia sẻ. Vui lòng thử lại.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  String _getCategoryName(String category) {
+    const categories = {
+      'animal': 'Động vật',
+      'plant': 'Thực vật',
+      'celestial': 'Thiên văn',
+      'mythical': 'Thần thoại',
+      'landscape': 'Phong cảnh',
+      'symbol': 'Biểu tượng',
+    };
+    return categories[category] ?? category;
+  }
+
+  String _getRarityName(String rarity) {
+    const rarities = {
+      'common': 'Phổ thông',
+      'uncommon': 'Không phổ biến',
+      'rare': 'Hiếm',
+      'epic': 'Sử thi',
+      'legendary': 'Huyền thoại',
+    };
+    return rarities[rarity] ?? rarity;
   }
 }
 
