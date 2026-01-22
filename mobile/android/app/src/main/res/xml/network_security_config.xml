@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Network security configuration for model_viewer_plus -->
+<!-- This package uses a local HTTP server on localhost to serve the model-viewer web component -->
+<!-- Android 9+ (API 28+) blocks cleartext HTTP by default, so we need to allow it for localhost -->
+<network-security-config>
+    <!-- Allow cleartext traffic only to localhost for model_viewer_plus local server -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">localhost</domain>
+        <domain includeSubdomains="true">127.0.0.1</domain>
+        <domain includeSubdomains="true">10.0.2.2</domain>
+    </domain-config>
+</network-security-config>
+
