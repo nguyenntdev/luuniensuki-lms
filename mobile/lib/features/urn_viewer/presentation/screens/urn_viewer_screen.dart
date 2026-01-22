@@ -394,35 +394,60 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
     }
   }
 
-  void _onDiscoveryAnimationComplete() {
+  void _onDiscoveryAnimationComplete() async {
     final discoveredMotif = _pendingDiscovery?.motif;
+
     setState(() {
       _showDiscoveryAnimation = false;
       _pendingDiscovery = null;
     });
 
-    if (discoveredMotif != null) {
+    // Force refresh the urn data FIRST to update hotspot states and progress
+    ref.invalidate(urnDetailProvider(widget.urnSlug));
+    ref.invalidate(urnsProvider);
+
+    // Wait a bit for the provider to refresh
+    await Future.delayed(const Duration(milliseconds: 150));
+
+    // Then navigate to motif detail
+    if (discoveredMotif != null && mounted) {
       _openMotifDetail(discoveredMotif);
     }
-
-    // Refresh the urn data to update hotspot states
-    ref.invalidate(urnDetailProvider(widget.urnSlug));
   }
 
   void _closeSidebar() {
     setState(() => _selectedMotif = null);
   }
 
-  void _openMotifDetail(Motif motif) {
-    context.push('/motifs/${motif.id}');
+  void _openMotifDetail(Motif motif) async {
+    // Navigate to motif detail and wait for return
+    await context.push('/motifs/${motif.id}');
+
+    // Refresh when user returns (they might have completed lesson/quiz)
+    if (mounted) {
+      ref.invalidate(urnDetailProvider(widget.urnSlug));
+      ref.invalidate(urnsProvider);
+    }
   }
 
-  void _navigateToLesson(Motif motif) {
-    context.push('/motifs/${motif.id}/lesson');
+  void _navigateToLesson(Motif motif) async {
+    await context.push('/motifs/${motif.id}/lesson');
+
+    // Refresh when user returns
+    if (mounted) {
+      ref.invalidate(urnDetailProvider(widget.urnSlug));
+      ref.invalidate(urnsProvider);
+    }
   }
 
-  void _navigateToQuiz(Motif motif) {
-    context.push('/motifs/${motif.id}/quiz');
+  void _navigateToQuiz(Motif motif) async {
+    await context.push('/motifs/${motif.id}/quiz');
+
+    // Refresh when user returns
+    if (mounted) {
+      ref.invalidate(urnDetailProvider(widget.urnSlug));
+      ref.invalidate(urnsProvider);
+    }
   }
 
   void _showUrnInfo(BuildContext context, UrnDetail urnDetail) {
@@ -799,7 +824,7 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
                       _buildGlassIconButton(
                         Icons.view_in_ar,
                         () => _launchAR(urnDetail),
-                        tooltip: 'Xem AR',
+                        tooltip: 'Xem AR (Sắp ra mắt)',
                         badge: 'AR',
                         iconSize: 20,
                       ),
@@ -860,7 +885,7 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
                   _buildGlassIconButton(
                     Icons.view_in_ar,
                     () => _launchAR(urnDetail),
-                    tooltip: 'Xem AR',
+                    tooltip: 'Xem AR (Sắp ra mắt)',
                     badge: 'AR',
                   ),
 
@@ -932,39 +957,37 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
   }
 
   void _launchAR(UrnDetail urnDetail) {
-    // AR is already enabled in ModelViewer with ar: true
-    // The model-viewer web component will handle AR launch
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: AppColors.glassBorder),
+        ),
+        title: Row(
           children: [
-            const Icon(Icons.view_in_ar, color: Colors.white),
+            Icon(Icons.view_in_ar, color: AppColors.primary),
             const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    'Chế độ AR',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    'Nhấn vào nút AR trên mô hình 3D để xem trong không gian thực',
-                    style: TextStyle(fontSize: 12),
-                  ),
-                ],
-              ),
+            const Text(
+              'Chế độ AR',
+              style: TextStyle(color: Colors.white),
             ),
           ],
         ),
-        backgroundColor: AppColors.surface,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: Colors.white.withOpacity(0.2)),
+        content: const Text(
+          'Tính năng xem mô hình 3D trong không gian thực (AR) sẽ sớm được phát hành trong bản cập nhật tiếp theo.\n\nHiện tại, bạn có thể xoay và phóng to mô hình 3D để khám phá chi tiết.',
+          style: TextStyle(color: Colors.white70),
         ),
-        duration: const Duration(seconds: 3),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'Đã hiểu',
+              style: TextStyle(color: AppColors.primary),
+            ),
+          ),
+        ],
       ),
     );
   }

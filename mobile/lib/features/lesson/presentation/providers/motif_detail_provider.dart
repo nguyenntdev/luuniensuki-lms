@@ -5,6 +5,7 @@ import '../../../../core/network/network_info.dart';
 import '../../../../core/storage/hive_storage.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../urn_viewer/data/models/urn_dtos.dart';
+import '../../../urn_viewer/presentation/providers/urn_provider.dart';
 
 part 'motif_detail_provider.g.dart';
 
@@ -124,6 +125,18 @@ class LessonCompletion extends _$LessonCompletion {
 
       // Invalidate motif detail to refresh progress
       ref.invalidate(motifDetailProvider(motifId));
+
+      // Also invalidate urn providers to update progress numbers in 3D viewer
+      // First, get the motif to find its urn slug
+      try {
+        final motifDetail = await ref.read(motifDetailProvider(motifId).future);
+        final urnSlug = motifDetail.urn.slug;
+        ref.invalidate(urnDetailProvider(urnSlug));
+        ref.invalidate(urnsProvider);
+      } catch (e) {
+        // If we can't get the urn slug, just invalidate all urns
+        ref.invalidate(urnsProvider);
+      }
 
       return result;
     } catch (e, s) {
