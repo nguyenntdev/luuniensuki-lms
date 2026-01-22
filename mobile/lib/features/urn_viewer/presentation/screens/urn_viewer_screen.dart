@@ -654,6 +654,7 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
     return CustomModelViewer(
       modelUrl: modelPath,
       alt: urnDetail.urn.name,
+      ar: true,
       hotspots: _showHotspots ? motifs : const [],
       backgroundColor: const Color(0xFF1A1A2E),
       autoRotate: false,
@@ -824,7 +825,7 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
                       _buildGlassIconButton(
                         Icons.view_in_ar,
                         () => _launchAR(urnDetail),
-                        tooltip: 'Xem AR (Sắp ra mắt)',
+                        tooltip: 'Xem AR',
                         badge: 'AR',
                         iconSize: 20,
                       ),
@@ -885,7 +886,7 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
                   _buildGlassIconButton(
                     Icons.view_in_ar,
                     () => _launchAR(urnDetail),
-                    tooltip: 'Xem AR (Sắp ra mắt)',
+                    tooltip: 'Xem AR',
                     badge: 'AR',
                   ),
 
@@ -957,37 +958,15 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
   }
 
   void _launchAR(UrnDetail urnDetail) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: AppColors.glassBorder),
-        ),
-        title: Row(
-          children: [
-            Icon(Icons.view_in_ar, color: AppColors.primary),
-            const SizedBox(width: 12),
-            const Text(
-              'Chế độ AR',
-              style: TextStyle(color: Colors.white),
-            ),
-          ],
-        ),
-        content: const Text(
-          'Tính năng xem mô hình 3D trong không gian thực (AR) sẽ sớm được phát hành trong bản cập nhật tiếp theo.\n\nHiện tại, bạn có thể xoay và phóng to mô hình 3D để khám phá chi tiết.',
-          style: TextStyle(color: Colors.white70),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              'Đã hiểu',
-              style: TextStyle(color: AppColors.primary),
-            ),
-          ),
-        ],
+    // Try to activate AR via the model viewer
+    // The model_viewer_plus will show its built-in AR button
+    // For now, show a helpful message about using the AR button on the 3D model
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Nhấn vào nút AR trên mô hình 3D để xem trong không gian thực'),
+        backgroundColor: AppColors.primary,
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 3),
       ),
     );
   }

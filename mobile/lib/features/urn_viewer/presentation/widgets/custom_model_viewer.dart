@@ -31,6 +31,9 @@ class CustomModelViewer extends StatefulWidget {
   final String? minCameraOrbit;
   final String? maxCameraOrbit;
   final String? fieldOfView;
+  final bool ar;
+  final List<String>? arModes;
+  final String? iosSrc;
 
   const CustomModelViewer({
     super.key,
@@ -49,6 +52,9 @@ class CustomModelViewer extends StatefulWidget {
     this.minCameraOrbit,
     this.maxCameraOrbit,
     this.fieldOfView,
+    this.ar = false,
+    this.arModes,
+    this.iosSrc,
   });
 
   @override
@@ -455,6 +461,9 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
           minCameraOrbit: widget.minCameraOrbit ?? 'auto auto 0.1m',
           maxCameraOrbit: widget.maxCameraOrbit ?? 'auto auto 1000m',
           fieldOfView: widget.fieldOfView ?? '45deg',
+          ar: widget.ar,
+          arModes: widget.arModes ?? const ['scene-viewer', 'webxr', 'quick-look'],
+          iosSrc: widget.iosSrc,
           environmentImage: 'neutral',
           exposure: 1.2,
           shadowIntensity: 0,
