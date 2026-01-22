@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../../core/constants/api_constants.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/network/api_client.dart';
 import '../../../../core/network/network_info.dart';
@@ -46,7 +47,7 @@ class LessonRepository extends OfflineFirstRepository<MotifDetailDto> {
     return executeWriteOperation<CompleteLessonResponseDto>(
       networkCall: () async {
         final response = await apiClient.post<Map<String, dynamic>>(
-          '/api/v1/progress/complete-lesson',
+          ApiConstants.progressCompleteLesson,
           data: {'motif_id': motifId},
         );
         return CompleteLessonResponseDto.fromJson(response);

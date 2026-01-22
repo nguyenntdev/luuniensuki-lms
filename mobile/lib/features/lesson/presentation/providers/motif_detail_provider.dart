@@ -1,5 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../core/constants/api_constants.dart';
 import '../../../../core/network/api_client.dart';
 import '../../../../core/network/network_info.dart';
 import '../../../../core/storage/hive_storage.dart';
@@ -115,7 +116,7 @@ class LessonCompletion extends _$LessonCompletion {
       final apiClient = ref.read(apiClientProvider);
 
       final result = await apiClient.post<CompleteLessonResponseDto>(
-        '/api/v1/progress/complete-lesson',
+        ApiConstants.progressCompleteLesson,
         data: {'motif_id': motifId},
         parser: (json) =>
             CompleteLessonResponseDto.fromJson(json as Map<String, dynamic>),

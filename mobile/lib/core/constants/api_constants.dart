@@ -50,8 +50,8 @@ class ApiConstants {
   static String motifQuizSubmit(String id) => '$apiPath/motifs/$id/quiz/submit';
 
   // Progress Endpoints
-  static String get progressUnlock => '$apiPath/progress/unlock';
-  static String get progressCompleteLesson => '$apiPath/progress/complete-lesson';
+  static String get progressUnlock => '/progress/unlock';
+  static String get progressCompleteLesson => '/progress/complete-lesson';
 
   // Gamification Endpoints
   static String get badges => '$apiPath/badges';

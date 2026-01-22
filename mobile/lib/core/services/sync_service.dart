@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../constants/api_constants.dart';
 import '../network/network_info.dart';
 import '../network/api_client.dart';
 
@@ -193,7 +194,7 @@ class SyncService {
 
         case SyncOperationType.motifUnlock:
           await _apiClient.post<Map<String, dynamic>>(
-            '/api/v1/progress/unlock',
+            ApiConstants.progressUnlock,
             data: operation.data,
           );
           return true;
