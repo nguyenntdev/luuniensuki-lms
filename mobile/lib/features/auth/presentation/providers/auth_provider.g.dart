@@ -140,7 +140,7 @@ final authErrorProvider = Provider<String?>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef AuthErrorRef = ProviderRef<String?>;
-String _$authNotifierHash() => r'8bf8bfee6d6071e6232c1002d751e2cb296df896';
+String _$authNotifierHash() => r'2944633d97f0b5421ba457ee85919c0e597f185f';
 
 /// Auth state notifier that manages authentication state.
 /// Handles login, registration, logout, and session management.

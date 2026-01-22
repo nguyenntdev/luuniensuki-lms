@@ -70,7 +70,8 @@ class AuthNotifier extends _$AuthNotifier {
     state = const AuthState.loading();
 
     try {
-      final isLoggedIn = await _repository.isLoggedIn();
+      final repository = _repository;
+      final isLoggedIn = await repository.isLoggedIn();
 
       if (!isLoggedIn) {
         state = const AuthState.unauthenticated();
@@ -78,7 +79,7 @@ class AuthNotifier extends _$AuthNotifier {
       }
 
       // Try to get current user
-      final result = await _repository.getCurrentUser();
+      final result = await repository.getCurrentUser();
 
       result.fold(
         (failure) {
@@ -108,7 +109,8 @@ class AuthNotifier extends _$AuthNotifier {
 
     try {
       debugPrint('[AUTH_PROVIDER] Calling repository.login()...');
-      final result = await _repository.login(
+      final repository = _repository;
+      final result = await repository.login(
         email: email,
         password: password,
       );
@@ -163,7 +165,8 @@ class AuthNotifier extends _$AuthNotifier {
 
     try {
       debugPrint('[AUTH_PROVIDER] Calling repository.register()...');
-      final result = await _repository.register(
+      final repository = _repository;
+      final result = await repository.register(
         email: email,
         password: password,
         displayName: displayName,
@@ -209,7 +212,8 @@ class AuthNotifier extends _$AuthNotifier {
   Future<void> logout() async {
     state = const AuthState.loading();
 
-    await _repository.logout();
+    final repository = _repository;
+    await repository.logout();
     state = const AuthState.unauthenticated();
   }
 
@@ -217,7 +221,8 @@ class AuthNotifier extends _$AuthNotifier {
   Future<void> refreshUser() async {
     if (!state.isAuthenticated) return;
 
-    final result = await _repository.getCurrentUser();
+    final repository = _repository;
+    final result = await repository.getCurrentUser();
 
     result.fold(
       (failure) {
@@ -243,7 +248,8 @@ class AuthNotifier extends _$AuthNotifier {
     final currentUser = state.user;
     if (currentUser == null) return false;
 
-    final result = await _repository.updateProfile(
+    final repository = _repository;
+    final result = await repository.updateProfile(
       displayName: displayName,
       username: username,
       avatarUrl: avatarUrl,
@@ -264,7 +270,8 @@ class AuthNotifier extends _$AuthNotifier {
     required String currentPassword,
     required String newPassword,
   }) async {
-    final result = await _repository.changePassword(
+    final repository = _repository;
+    final result = await repository.changePassword(
       currentPassword: currentPassword,
       newPassword: newPassword,
     );
@@ -277,7 +284,8 @@ class AuthNotifier extends _$AuthNotifier {
 
   /// Use a streak freeze
   Future<bool> useStreakFreeze() async {
-    final result = await _repository.useStreakFreeze();
+    final repository = _repository;
+    final result = await repository.useStreakFreeze();
 
     return result.fold(
       (failure) => false,
