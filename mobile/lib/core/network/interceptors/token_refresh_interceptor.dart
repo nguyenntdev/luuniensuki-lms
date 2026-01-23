@@ -152,9 +152,15 @@ class TokenRefreshInterceptor extends Interceptor {
   }
 
   void _completeRefresh(bool success) {
+    if (!_isRefreshing) return; // Already completed, don't do anything
+
     _isRefreshing = false;
-    _refreshCompleter?.complete(success);
+    final completer = _refreshCompleter;
     _refreshCompleter = null;
+
+    if (completer != null && !completer.isCompleted) {
+      completer.complete(success);
+    }
   }
 
   /// Retry the original request with the new access token.

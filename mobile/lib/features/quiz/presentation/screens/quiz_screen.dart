@@ -63,10 +63,21 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
       final savedProgress = quizState.savedProgress!;
 
       try {
-        // Verify quiz content hasn't changed - use .future to actually await
-        final quiz = await ref.read(quizProvider(widget.motifId).future);
+        // Verify quiz content hasn't changed - read AsyncValue state directly
+        // instead of using .future to avoid race conditions
+        final quizAsync = ref.read(quizProvider(widget.motifId));
 
-        // Check mounted after async operation
+        // Only proceed if quiz data is already available
+        if (!quizAsync.hasValue || quizAsync.value == null) {
+          // Quiz data not loaded yet, skip saved progress check
+          // The build method will handle loading the quiz
+          debugPrint('[QuizScreen] Quiz data not ready yet, skipping saved progress check');
+          return;
+        }
+
+        final quiz = quizAsync.value!;
+
+        // Check mounted after reading provider
         if (!mounted) return;
 
         final currentHash = QuizProgress.createQuestionsHash(
