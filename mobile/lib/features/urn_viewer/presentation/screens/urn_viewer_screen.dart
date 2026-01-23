@@ -15,6 +15,8 @@ import '../providers/urn_provider.dart';
 import '../widgets/custom_model_viewer.dart';
 import '../widgets/discovery_animation.dart';
 import '../widgets/motif_sidebar.dart';
+import '../../../lesson/presentation/providers/motif_detail_provider.dart'
+    as lesson_provider;
 
 enum ModelQuality {
   low,
@@ -407,6 +409,11 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
     // Force refresh the urn data FIRST to update hotspot states and progress
     ref.invalidate(urnDetailProvider(widget.urnSlug));
     ref.invalidate(urnsProvider);
+
+    // Also invalidate the lesson's motif detail provider so lesson page shows updated status
+    if (discoveredMotif != null) {
+      ref.invalidate(lesson_provider.motifDetailProvider(discoveredMotif.id));
+    }
 
     // Wait a bit for the provider to refresh
     await Future.delayed(const Duration(milliseconds: 150));

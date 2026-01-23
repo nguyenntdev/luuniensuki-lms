@@ -1,4 +1,9 @@
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -311,21 +316,20 @@ class _MotifDetailScreenState extends ConsumerState<MotifDetailScreen>
                 child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
               ),
               SizedBox(width: 12),
-              Text('Đang chuẩn bị ảnh...'),
+              Text('Đang tạo ảnh chia sẻ...'),
             ],
           ),
           backgroundColor: AppColors.surface,
-          duration: Duration(seconds: 10),
+          duration: Duration(seconds: 15),
         ),
       );
 
-      // Get best available image URL (same logic as hero image)
+      // Get best available image URL
       final heroUrl = motif.imageUrl != null && motif.imageUrl!.trim().isNotEmpty
           ? motif.imageUrl
           : motif.thumbnailUrl;
 
       if (heroUrl == null || heroUrl.trim().isEmpty) {
-        // No image available, share text only
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
         await Share.share(
           '🏛️ ${motif.name} - Khám phá tại ứng dụng Lưu Niên Sử Kí!',
@@ -333,85 +337,243 @@ class _MotifDetailScreenState extends ConsumerState<MotifDetailScreen>
         return;
       }
 
-      // Convert to full URL
+      // Download the motif image first
       final imageUrl = UrlUtils.getImageUrl(heroUrl);
-      debugPrint('Sharing image from URL: $imageUrl');
-
-      // Get temp directory and prepare file
-      final tempDir = await getTemporaryDirectory();
-
-      // Detect file extension from URL
-      final uri = Uri.parse(imageUrl);
-      final pathSegments = uri.path.split('.');
-      final urlExtension = pathSegments.isNotEmpty ? pathSegments.last.toLowerCase() : 'jpg';
-      final extension = ['jpg', 'jpeg', 'png', 'gif', 'webp'].contains(urlExtension)
-          ? urlExtension
-          : 'jpg';
-
-      final imagePath = '${tempDir.path}/share_motif_${motif.id}.$extension';
-
-      // Determine MIME type
-      String mimeType;
-      switch (extension) {
-        case 'png':
-          mimeType = 'image/png';
-          break;
-        case 'gif':
-          mimeType = 'image/gif';
-          break;
-        case 'webp':
-          mimeType = 'image/webp';
-          break;
-        default:
-          mimeType = 'image/jpeg';
-      }
-
-      // Download image
       final dio = Dio();
-      dio.options.headers['Accept'] = 'image/*';
+      final tempDir = await getTemporaryDirectory();
+      final originalImagePath = '${tempDir.path}/motif_original_${motif.id}.jpg';
 
-      final response = await dio.download(
-        imageUrl,
-        imagePath,
-        options: Options(
-          responseType: ResponseType.bytes,
-          followRedirects: true,
-        ),
-      );
+      await dio.download(imageUrl, originalImagePath);
+      final originalImageFile = File(originalImagePath);
+      final originalImageBytes = await originalImageFile.readAsBytes();
 
-      if (response.statusCode == 200) {
-        // Dismiss loading snackbar
-        if (mounted) {
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        }
+      // Create a beautiful share card using Flutter widgets
+      final shareCardPath = await _createShareCard(motif, originalImageBytes);
 
-        // Prepare caption text
-        final caption = '🏛️ ${motif.name}${motif.nameEn != null ? ' (${motif.nameEn})' : ''}\n'
-            '📍 ${motif.urn.name}\n'
-            '🎨 ${_getCategoryName(motif.category)} • ⭐ ${_getRarityName(motif.rarity)}\n\n'
-            'Khám phá tại: Lưu Niên Sử Kí';
-
-        // Share the image file with caption
-        await Share.shareXFiles(
-          [XFile(imagePath, mimeType: mimeType)],
-          text: caption,
-          subject: motif.name,
-        );
-      } else {
-        throw Exception('Failed to download image: ${response.statusCode}');
+      if (mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
       }
+
+      // Share the card image
+      await Share.shareXFiles(
+        [XFile(shareCardPath, mimeType: 'image/png')],
+        text: 'Khám phá họa tiết "${motif.name}" tại ứng dụng Lưu Niên Sử Kí!',
+        subject: motif.name,
+      );
     } catch (e) {
       debugPrint('Error sharing motif: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Không thể chia sẻ ảnh: $e'),
+            content: Text('Không thể chia sẻ: $e'),
             backgroundColor: Colors.red,
           ),
         );
       }
     }
+  }
+
+  Future<String> _createShareCard(MotifDetailDto motif, List<int> imageBytes) async {
+    // Card dimensions for social media (1080x1350 - Instagram portrait)
+    const double cardWidth = 1080;
+    const double cardHeight = 1350;
+
+    // Create the share card widget
+    final shareCardWidget = Material(
+      color: Colors.transparent,
+      child: Container(
+        width: cardWidth,
+        height: cardHeight,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              const Color(0xFF1a1a2e),
+              const Color(0xFF16213e),
+              const Color(0xFF0f3460),
+            ],
+          ),
+        ),
+        child: Stack(
+          children: [
+            // Background pattern
+            Positioned.fill(
+              child: CustomPaint(
+                painter: _PatternPainter(),
+              ),
+            ),
+            // Content
+            Padding(
+              padding: const EdgeInsets.all(48),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // App logo/branding
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(30),
+                      border: Border.all(color: Colors.white24),
+                    ),
+                    child: const Text(
+                      '🏛️ LƯU NIÊN SỬ KÍ',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 2,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+                  // Motif image in a decorative frame
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primary.withOpacity(0.3),
+                            blurRadius: 30,
+                            spreadRadius: 5,
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(24),
+                        child: Image.memory(
+                          Uint8List.fromList(imageBytes),
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+                  // Motif name
+                  Text(
+                    motif.name,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 48,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  if (motif.nameEn != null) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      motif.nameEn!,
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.7),
+                        fontSize: 28,
+                        fontStyle: FontStyle.italic,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                  const SizedBox(height: 24),
+                  // Urn name badge
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: AppColors.primary.withOpacity(0.5)),
+                    ),
+                    child: Text(
+                      '📍 ${motif.urn.name}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  // Category and rarity
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _buildInfoChip('🎨 ${_getCategoryName(motif.category)}'),
+                      const SizedBox(width: 16),
+                      _buildInfoChip('⭐ ${_getRarityName(motif.rarity)}'),
+                    ],
+                  ),
+                  const SizedBox(height: 32),
+                  // Call to action
+                  Text(
+                    'Khám phá văn hóa Việt Nam',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.6),
+                      fontSize: 20,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    // Render widget to image
+    final repaintBoundary = RenderRepaintBoundary();
+    final renderView = RenderView(
+      view: ui.PlatformDispatcher.instance.views.first,
+      child: RenderPositionedBox(alignment: Alignment.center, child: repaintBoundary),
+      configuration: ViewConfiguration(
+        logicalConstraints: BoxConstraints.tight(const Size(cardWidth, cardHeight)),
+        devicePixelRatio: 1.0,
+      ),
+    );
+
+    final pipelineOwner = PipelineOwner();
+    final buildOwner = BuildOwner(focusManager: FocusManager());
+
+    pipelineOwner.rootNode = renderView;
+    renderView.prepareInitialFrame();
+
+    final rootElement = RenderObjectToWidgetAdapter<RenderBox>(
+      container: repaintBoundary,
+      child: shareCardWidget,
+    ).attachToRenderTree(buildOwner);
+
+    buildOwner.buildScope(rootElement);
+    pipelineOwner.flushLayout();
+    pipelineOwner.flushCompositingBits();
+    pipelineOwner.flushPaint();
+
+    final image = await repaintBoundary.toImage(pixelRatio: 1.0);
+    final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    final pngBytes = byteData!.buffer.asUint8List();
+
+    // Save to file
+    final tempDir = await getTemporaryDirectory();
+    final filePath = '${tempDir.path}/share_card_${motif.id}.png';
+    final file = File(filePath);
+    await file.writeAsBytes(pngBytes);
+
+    return filePath;
+  }
+
+  Widget _buildInfoChip(String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+        ),
+      ),
+    );
   }
 
   String _getCategoryName(String category) {
@@ -588,4 +750,38 @@ class _RarityChip extends StatelessWidget {
         return rarity;
     }
   }
+}
+
+/// Custom painter for decorative background pattern
+class _PatternPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white.withOpacity(0.03)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+
+    // Draw decorative circles
+    for (int i = 0; i < 5; i++) {
+      final radius = 100.0 + i * 150;
+      canvas.drawCircle(
+        Offset(size.width * 0.8, size.height * 0.2),
+        radius,
+        paint,
+      );
+    }
+
+    // Draw diagonal lines
+    for (int i = 0; i < 10; i++) {
+      final y = i * 200.0 - 200;
+      canvas.drawLine(
+        Offset(-100, y),
+        Offset(size.width + 100, y + size.width),
+        paint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
