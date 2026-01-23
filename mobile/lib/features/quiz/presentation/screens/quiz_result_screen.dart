@@ -35,6 +35,7 @@ class QuizResultScreen extends ConsumerStatefulWidget {
 
 class _QuizResultScreenState extends ConsumerState<QuizResultScreen> {
   late ConfettiController _confettiController;
+  bool _isDisposed = false;
 
   @override
   void initState() {
@@ -46,7 +47,14 @@ class _QuizResultScreenState extends ConsumerState<QuizResultScreen> {
     // Play confetti for passing or perfect scores
     if (widget.result.passed) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _confettiController.play();
+        if (_isDisposed || !mounted) return;
+
+        try {
+          _confettiController.play();
+        } catch (e) {
+          // Ignore confetti errors
+          debugPrint('Confetti error: $e');
+        }
 
         // Play lesson complete sound
         ref.read(soundServiceProvider).playLessonComplete();
@@ -61,26 +69,24 @@ class _QuizResultScreenState extends ConsumerState<QuizResultScreen> {
 
           // Show perfect score message from mascot
           Future.delayed(const Duration(milliseconds: 500), () {
-            if (mounted) {
-              showMascotBubble(
-                context: context,
-                message: MascotMessages.random(MascotMessages.perfectScore),
-                expression: MascotExpression.celebrating,
-                duration: const Duration(seconds: 4),
-              );
-            }
+            if (_isDisposed || !mounted) return;
+            showMascotBubble(
+              context: context,
+              message: MascotMessages.random(MascotMessages.perfectScore),
+              expression: MascotExpression.celebrating,
+              duration: const Duration(seconds: 4),
+            );
           });
         } else {
           // Show celebration message for passing
           Future.delayed(const Duration(milliseconds: 500), () {
-            if (mounted) {
-              showMascotBubble(
-                context: context,
-                message: MascotMessages.random(MascotMessages.celebration),
-                expression: MascotExpression.happy,
-                duration: const Duration(seconds: 4),
-              );
-            }
+            if (_isDisposed || !mounted) return;
+            showMascotBubble(
+              context: context,
+              message: MascotMessages.random(MascotMessages.celebration),
+              expression: MascotExpression.happy,
+              duration: const Duration(seconds: 4),
+            );
           });
         }
       });
@@ -88,14 +94,13 @@ class _QuizResultScreenState extends ConsumerState<QuizResultScreen> {
       // Show motivation for failing
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Future.delayed(const Duration(milliseconds: 500), () {
-          if (mounted) {
-            showMascotBubble(
-              context: context,
-              message: MascotMessages.random(MascotMessages.motivation),
-              expression: MascotExpression.encouraging,
-              duration: const Duration(seconds: 4),
-            );
-          }
+          if (_isDisposed || !mounted) return;
+          showMascotBubble(
+            context: context,
+            message: MascotMessages.random(MascotMessages.motivation),
+            expression: MascotExpression.encouraging,
+            duration: const Duration(seconds: 4),
+          );
         });
       });
     }
@@ -103,7 +108,13 @@ class _QuizResultScreenState extends ConsumerState<QuizResultScreen> {
 
   @override
   void dispose() {
-    _confettiController.dispose();
+    _isDisposed = true;
+    try {
+      _confettiController.dispose();
+    } catch (e) {
+      // Ignore disposal errors
+      debugPrint('Confetti dispose error: $e');
+    }
     super.dispose();
   }
 
@@ -513,9 +524,10 @@ class _QuizResultScreenState extends ConsumerState<QuizResultScreen> {
           final index = entry.key;
           final question = entry.value;
           final userAnswer = widget.answers[question.id] ?? '';
+          final correctAnswer = question.correctAnswer ?? '';
           final isCorrect =
               userAnswer.trim().toLowerCase() ==
-              question.correctAnswer.trim().toLowerCase();
+              correctAnswer.trim().toLowerCase();
 
           return _QuestionReviewCard(
             index: index + 1,
@@ -690,7 +702,7 @@ class _QuestionReviewCard extends ConsumerWidget {
                 ),
                 Expanded(
                   child: Text(
-                    question.correctAnswer,
+                    question.correctAnswer ?? '',
                     style: AppTypography.textTheme.bodySmall?.copyWith(
                       color: AppColors.success,
                       fontWeight: FontWeight.w500,

@@ -6,7 +6,7 @@ part of 'quiz_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$quizHash() => r'68d7d47c6f312fff7605bb7dead291b960919aa8';
+String _$quizHash() => r'bee59b2e19ee0eabe90bee3893c539dfe40b08d1';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -328,7 +328,7 @@ final quizSubmissionProvider =
 );
 
 typedef _$QuizSubmission = AutoDisposeAsyncNotifier<QuizResultDto?>;
-String _$quizStateHash() => r'ea5ce3f7993ef3fccc99c61caa3b4226783038ad';
+String _$quizStateHash() => r'888c9aeaca2466155bffb25c1435d977b77ab2e5';
 
 abstract class _$QuizState extends BuildlessAutoDisposeNotifier<QuizStateData> {
   late final String motifId;

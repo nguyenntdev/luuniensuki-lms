@@ -242,57 +242,73 @@ class LessonTab extends ConsumerWidget {
         .read(lessonCompletionProvider.notifier)
         .completeLesson(motif.id);
 
-    if (result != null && context.mounted) {
-      // Award gems for completing lesson
-      await ref.read(gemsNotifierProvider.notifier).addGems(
-            amount: 10,
-            type: GemTransactionType.earnedLesson,
-            description: 'Hoàn thành bài học: ${motif.name}',
-          );
+    if (!context.mounted) return;
 
-      // Check for 7-day streak milestone and award bonus gems
-      final user = ref.read(currentUserProvider);
-      if (user != null &&
-          user.currentStreak >= 7 &&
-          user.currentStreak % 7 == 0) {
-        await ref.read(gemsNotifierProvider.notifier).addGems(
-              amount: 50,
-              type: GemTransactionType.earnedStreak,
-              description: 'Chuỗi học tập ${user.currentStreak} ngày!',
-            );
-      }
+    if (result == null) {
+      // Show error message
+      final lessonState = ref.read(lessonCompletionProvider);
+      final errorMessage = lessonState.hasError
+          ? lessonState.error.toString()
+          : 'Có lỗi xảy ra khi hoàn thành bài học';
 
-      // Show completion dialog
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => _LessonCompletionDialog(
-          xpEarned: result.xpEarned,
-          newBadges: result.newBadges,
-          onDismiss: () {
-            Navigator.pop(context);
-          },
-          onTakeQuiz: () {
-            Navigator.pop(context);
-            context.push(
-              RoutePaths.quiz(motif.id),
-            );
-          },
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: AppColors.error,
+          behavior: SnackBarBehavior.floating,
         ),
       );
-
-      // Show mascot message after dialog
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (context.mounted) {
-          showMascotBubble(
-            context: context,
-            message: MascotMessages.random(MascotMessages.lessonComplete),
-            expression: MascotExpression.celebrating,
-            duration: const Duration(seconds: 4),
-          );
-        }
-      });
+      return;
     }
+
+    // Award gems for completing lesson
+    await ref.read(gemsNotifierProvider.notifier).addGems(
+          amount: 10,
+          type: GemTransactionType.earnedLesson,
+          description: 'Hoàn thành bài học: ${motif.name}',
+        );
+
+    // Check for 7-day streak milestone and award bonus gems
+    final user = ref.read(currentUserProvider);
+    if (user != null &&
+        user.currentStreak >= 7 &&
+        user.currentStreak % 7 == 0) {
+      await ref.read(gemsNotifierProvider.notifier).addGems(
+            amount: 50,
+            type: GemTransactionType.earnedStreak,
+            description: 'Chuỗi học tập ${user.currentStreak} ngày!',
+          );
+    }
+
+    // Show completion dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => _LessonCompletionDialog(
+        xpEarned: result.xpEarned,
+        onDismiss: () {
+          Navigator.pop(context);
+        },
+        onTakeQuiz: () {
+          Navigator.pop(context);
+          context.push(
+            RoutePaths.quiz(motif.id),
+          );
+        },
+      ),
+    );
+
+    // Show mascot message after dialog
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (context.mounted) {
+        showMascotBubble(
+          context: context,
+          message: MascotMessages.random(MascotMessages.lessonComplete),
+          expression: MascotExpression.celebrating,
+          duration: const Duration(seconds: 4),
+        );
+      }
+    });
   }
 }
 
@@ -604,13 +620,11 @@ class _ActionButton extends StatelessWidget {
 /// Lesson completion dialog
 class _LessonCompletionDialog extends StatelessWidget {
   final int xpEarned;
-  final List<BadgeDto> newBadges;
   final VoidCallback onDismiss;
   final VoidCallback onTakeQuiz;
 
   const _LessonCompletionDialog({
     required this.xpEarned,
-    required this.newBadges,
     required this.onDismiss,
     required this.onTakeQuiz,
   });
@@ -678,36 +692,6 @@ class _LessonCompletionDialog extends StatelessWidget {
                 ],
               ),
             ),
-
-            // New badges
-            if (newBadges.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              Text(
-                'Huy hiệu mới!',
-                style: AppTypography.textTheme.titleSmall?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                children: newBadges.map((badge) {
-                  return Chip(
-                    avatar: const Icon(
-                      Icons.military_tech,
-                      size: 18,
-                      color: AppColors.badgePurple,
-                    ),
-                    label: Text(badge.name),
-                    backgroundColor: AppColors.badgeSurface,
-                    labelStyle: TextStyle(
-                      color: AppColors.textPrimary,
-                      fontSize: 12,
-                    ),
-                  );
-                }).toList(),
-              ),
-            ],
 
             const SizedBox(height: 24),
 

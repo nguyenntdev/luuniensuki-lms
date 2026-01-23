@@ -116,8 +116,7 @@ class LessonCompletion extends _$LessonCompletion {
       final apiClient = ref.read(apiClientProvider);
 
       final result = await apiClient.post<CompleteLessonResponseDto>(
-        ApiConstants.progressCompleteLesson,
-        data: {'motif_id': motifId},
+        ApiConstants.progressCompleteLesson(motifId),
         parser: (json) =>
             CompleteLessonResponseDto.fromJson(json as Map<String, dynamic>),
       );

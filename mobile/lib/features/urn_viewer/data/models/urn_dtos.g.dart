@@ -303,40 +303,47 @@ Map<String, dynamic> _$$BadgeDtoImplToJson(_$BadgeDtoImpl instance) =>
 _$CompleteLessonResponseDtoImpl _$$CompleteLessonResponseDtoImplFromJson(
         Map<String, dynamic> json) =>
     _$CompleteLessonResponseDtoImpl(
-      progress:
-          UserProgressDto.fromJson(json['progress'] as Map<String, dynamic>),
-      xpEarned: (json['xp_earned'] as num?)?.toInt() ?? 0,
+      userId: json['user_id'] as String,
+      motifId: json['motif_id'] as String,
+      status: json['status'] as String,
+      lessonViewedAt: json['lesson_viewed_at'] == null
+          ? null
+          : DateTime.parse(json['lesson_viewed_at'] as String),
+      learnedAt: json['learned_at'] == null
+          ? null
+          : DateTime.parse(json['learned_at'] as String),
+      xpEarned: (json['xp_awarded'] as num?)?.toInt() ?? 0,
       totalXp: (json['total_xp'] as num?)?.toInt() ?? 0,
-      newBadges: (json['new_badges'] as List<dynamic>?)
-              ?.map((e) => BadgeDto.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          const [],
     );
 
 Map<String, dynamic> _$$CompleteLessonResponseDtoImplToJson(
         _$CompleteLessonResponseDtoImpl instance) =>
     <String, dynamic>{
-      'progress': instance.progress,
-      'xp_earned': instance.xpEarned,
+      'user_id': instance.userId,
+      'motif_id': instance.motifId,
+      'status': instance.status,
+      'lesson_viewed_at': instance.lessonViewedAt?.toIso8601String(),
+      'learned_at': instance.learnedAt?.toIso8601String(),
+      'xp_awarded': instance.xpEarned,
       'total_xp': instance.totalXp,
-      'new_badges': instance.newBadges,
     };
 
 _$QuizQuestionDtoImpl _$$QuizQuestionDtoImplFromJson(
         Map<String, dynamic> json) =>
     _$QuizQuestionDtoImpl(
       id: json['id'] as String,
-      motifId: json['motif_id'] as String,
+      motifId: json['motif_id'] as String?,
       questionType: json['question_type'] as String,
       questionText: json['question_text'] as String,
-      correctAnswer: json['correct_answer'] as String,
-      options: (json['options'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          const [],
+      correctAnswer: json['correct_answer'] as String?,
+      options: json['options'] == null
+          ? const []
+          : const OptionsListConverter().fromJson(json['options']),
       imageUrl: json['image_url'] as String?,
       explanation: json['explanation'] as String?,
       displayOrder: (json['display_order'] as num?)?.toInt() ?? 0,
+      targetMeshName: json['target_mesh_name'] as String?,
+      difficulty: (json['difficulty'] as num?)?.toInt() ?? 1,
     );
 
 Map<String, dynamic> _$$QuizQuestionDtoImplToJson(
@@ -347,20 +354,25 @@ Map<String, dynamic> _$$QuizQuestionDtoImplToJson(
       'question_type': instance.questionType,
       'question_text': instance.questionText,
       'correct_answer': instance.correctAnswer,
-      'options': instance.options,
+      'options': const OptionsListConverter().toJson(instance.options),
       'image_url': instance.imageUrl,
       'explanation': instance.explanation,
       'display_order': instance.displayOrder,
+      'target_mesh_name': instance.targetMeshName,
+      'difficulty': instance.difficulty,
     };
 
 _$QuizResponseDtoImpl _$$QuizResponseDtoImplFromJson(
         Map<String, dynamic> json) =>
     _$QuizResponseDtoImpl(
       motifId: json['motif_id'] as String,
-      motifName: json['motif_name'] as String,
+      motifName: json['motif_name'] as String?,
       questions: (json['questions'] as List<dynamic>)
           .map((e) => QuizQuestionDto.fromJson(e as Map<String, dynamic>))
           .toList(),
+      attempts: (json['attempts'] as num?)?.toInt() ?? 0,
+      bestScore: (json['best_score'] as num?)?.toInt() ?? 0,
+      passPercent: (json['pass_percent'] as num?)?.toInt() ?? 80,
     );
 
 Map<String, dynamic> _$$QuizResponseDtoImplToJson(
@@ -369,6 +381,9 @@ Map<String, dynamic> _$$QuizResponseDtoImplToJson(
       'motif_id': instance.motifId,
       'motif_name': instance.motifName,
       'questions': instance.questions,
+      'attempts': instance.attempts,
+      'best_score': instance.bestScore,
+      'pass_percent': instance.passPercent,
     };
 
 _$QuizSubmitRequestDtoImpl _$$QuizSubmitRequestDtoImplFromJson(

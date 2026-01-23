@@ -3655,13 +3655,19 @@ CompleteLessonResponseDto _$CompleteLessonResponseDtoFromJson(
 
 /// @nodoc
 mixin _$CompleteLessonResponseDto {
-  UserProgressDto get progress => throw _privateConstructorUsedError;
-  @JsonKey(name: 'xp_earned')
+  @JsonKey(name: 'user_id')
+  String get userId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'motif_id')
+  String get motifId => throw _privateConstructorUsedError;
+  String get status => throw _privateConstructorUsedError;
+  @JsonKey(name: 'lesson_viewed_at')
+  DateTime? get lessonViewedAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'learned_at')
+  DateTime? get learnedAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'xp_awarded')
   int get xpEarned => throw _privateConstructorUsedError;
   @JsonKey(name: 'total_xp')
   int get totalXp => throw _privateConstructorUsedError;
-  @JsonKey(name: 'new_badges')
-  List<BadgeDto> get newBadges => throw _privateConstructorUsedError;
 
   /// Serializes this CompleteLessonResponseDto to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -3680,12 +3686,13 @@ abstract class $CompleteLessonResponseDtoCopyWith<$Res> {
       _$CompleteLessonResponseDtoCopyWithImpl<$Res, CompleteLessonResponseDto>;
   @useResult
   $Res call(
-      {UserProgressDto progress,
-      @JsonKey(name: 'xp_earned') int xpEarned,
-      @JsonKey(name: 'total_xp') int totalXp,
-      @JsonKey(name: 'new_badges') List<BadgeDto> newBadges});
-
-  $UserProgressDtoCopyWith<$Res> get progress;
+      {@JsonKey(name: 'user_id') String userId,
+      @JsonKey(name: 'motif_id') String motifId,
+      String status,
+      @JsonKey(name: 'lesson_viewed_at') DateTime? lessonViewedAt,
+      @JsonKey(name: 'learned_at') DateTime? learnedAt,
+      @JsonKey(name: 'xp_awarded') int xpEarned,
+      @JsonKey(name: 'total_xp') int totalXp});
 }
 
 /// @nodoc
@@ -3704,16 +3711,35 @@ class _$CompleteLessonResponseDtoCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? progress = null,
+    Object? userId = null,
+    Object? motifId = null,
+    Object? status = null,
+    Object? lessonViewedAt = freezed,
+    Object? learnedAt = freezed,
     Object? xpEarned = null,
     Object? totalXp = null,
-    Object? newBadges = null,
   }) {
     return _then(_value.copyWith(
-      progress: null == progress
-          ? _value.progress
-          : progress // ignore: cast_nullable_to_non_nullable
-              as UserProgressDto,
+      userId: null == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
+      motifId: null == motifId
+          ? _value.motifId
+          : motifId // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      lessonViewedAt: freezed == lessonViewedAt
+          ? _value.lessonViewedAt
+          : lessonViewedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      learnedAt: freezed == learnedAt
+          ? _value.learnedAt
+          : learnedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       xpEarned: null == xpEarned
           ? _value.xpEarned
           : xpEarned // ignore: cast_nullable_to_non_nullable
@@ -3722,21 +3748,7 @@ class _$CompleteLessonResponseDtoCopyWithImpl<$Res,
           ? _value.totalXp
           : totalXp // ignore: cast_nullable_to_non_nullable
               as int,
-      newBadges: null == newBadges
-          ? _value.newBadges
-          : newBadges // ignore: cast_nullable_to_non_nullable
-              as List<BadgeDto>,
     ) as $Val);
-  }
-
-  /// Create a copy of CompleteLessonResponseDto
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $UserProgressDtoCopyWith<$Res> get progress {
-    return $UserProgressDtoCopyWith<$Res>(_value.progress, (value) {
-      return _then(_value.copyWith(progress: value) as $Val);
-    });
   }
 }
 
@@ -3750,13 +3762,13 @@ abstract class _$$CompleteLessonResponseDtoImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {UserProgressDto progress,
-      @JsonKey(name: 'xp_earned') int xpEarned,
-      @JsonKey(name: 'total_xp') int totalXp,
-      @JsonKey(name: 'new_badges') List<BadgeDto> newBadges});
-
-  @override
-  $UserProgressDtoCopyWith<$Res> get progress;
+      {@JsonKey(name: 'user_id') String userId,
+      @JsonKey(name: 'motif_id') String motifId,
+      String status,
+      @JsonKey(name: 'lesson_viewed_at') DateTime? lessonViewedAt,
+      @JsonKey(name: 'learned_at') DateTime? learnedAt,
+      @JsonKey(name: 'xp_awarded') int xpEarned,
+      @JsonKey(name: 'total_xp') int totalXp});
 }
 
 /// @nodoc
@@ -3774,16 +3786,35 @@ class __$$CompleteLessonResponseDtoImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? progress = null,
+    Object? userId = null,
+    Object? motifId = null,
+    Object? status = null,
+    Object? lessonViewedAt = freezed,
+    Object? learnedAt = freezed,
     Object? xpEarned = null,
     Object? totalXp = null,
-    Object? newBadges = null,
   }) {
     return _then(_$CompleteLessonResponseDtoImpl(
-      progress: null == progress
-          ? _value.progress
-          : progress // ignore: cast_nullable_to_non_nullable
-              as UserProgressDto,
+      userId: null == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
+      motifId: null == motifId
+          ? _value.motifId
+          : motifId // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      lessonViewedAt: freezed == lessonViewedAt
+          ? _value.lessonViewedAt
+          : lessonViewedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      learnedAt: freezed == learnedAt
+          ? _value.learnedAt
+          : learnedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       xpEarned: null == xpEarned
           ? _value.xpEarned
           : xpEarned // ignore: cast_nullable_to_non_nullable
@@ -3792,10 +3823,6 @@ class __$$CompleteLessonResponseDtoImplCopyWithImpl<$Res>
           ? _value.totalXp
           : totalXp // ignore: cast_nullable_to_non_nullable
               as int,
-      newBadges: null == newBadges
-          ? _value._newBadges
-          : newBadges // ignore: cast_nullable_to_non_nullable
-              as List<BadgeDto>,
     ));
   }
 }
@@ -3804,35 +3831,41 @@ class __$$CompleteLessonResponseDtoImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$CompleteLessonResponseDtoImpl implements _CompleteLessonResponseDto {
   const _$CompleteLessonResponseDtoImpl(
-      {required this.progress,
-      @JsonKey(name: 'xp_earned') this.xpEarned = 0,
-      @JsonKey(name: 'total_xp') this.totalXp = 0,
-      @JsonKey(name: 'new_badges') final List<BadgeDto> newBadges = const []})
-      : _newBadges = newBadges;
+      {@JsonKey(name: 'user_id') required this.userId,
+      @JsonKey(name: 'motif_id') required this.motifId,
+      required this.status,
+      @JsonKey(name: 'lesson_viewed_at') this.lessonViewedAt,
+      @JsonKey(name: 'learned_at') this.learnedAt,
+      @JsonKey(name: 'xp_awarded') this.xpEarned = 0,
+      @JsonKey(name: 'total_xp') this.totalXp = 0});
 
   factory _$CompleteLessonResponseDtoImpl.fromJson(Map<String, dynamic> json) =>
       _$$CompleteLessonResponseDtoImplFromJson(json);
 
   @override
-  final UserProgressDto progress;
+  @JsonKey(name: 'user_id')
+  final String userId;
   @override
-  @JsonKey(name: 'xp_earned')
+  @JsonKey(name: 'motif_id')
+  final String motifId;
+  @override
+  final String status;
+  @override
+  @JsonKey(name: 'lesson_viewed_at')
+  final DateTime? lessonViewedAt;
+  @override
+  @JsonKey(name: 'learned_at')
+  final DateTime? learnedAt;
+  @override
+  @JsonKey(name: 'xp_awarded')
   final int xpEarned;
   @override
   @JsonKey(name: 'total_xp')
   final int totalXp;
-  final List<BadgeDto> _newBadges;
-  @override
-  @JsonKey(name: 'new_badges')
-  List<BadgeDto> get newBadges {
-    if (_newBadges is EqualUnmodifiableListView) return _newBadges;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_newBadges);
-  }
 
   @override
   String toString() {
-    return 'CompleteLessonResponseDto(progress: $progress, xpEarned: $xpEarned, totalXp: $totalXp, newBadges: $newBadges)';
+    return 'CompleteLessonResponseDto(userId: $userId, motifId: $motifId, status: $status, lessonViewedAt: $lessonViewedAt, learnedAt: $learnedAt, xpEarned: $xpEarned, totalXp: $totalXp)';
   }
 
   @override
@@ -3840,19 +3873,22 @@ class _$CompleteLessonResponseDtoImpl implements _CompleteLessonResponseDto {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$CompleteLessonResponseDtoImpl &&
-            (identical(other.progress, progress) ||
-                other.progress == progress) &&
+            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.motifId, motifId) || other.motifId == motifId) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.lessonViewedAt, lessonViewedAt) ||
+                other.lessonViewedAt == lessonViewedAt) &&
+            (identical(other.learnedAt, learnedAt) ||
+                other.learnedAt == learnedAt) &&
             (identical(other.xpEarned, xpEarned) ||
                 other.xpEarned == xpEarned) &&
-            (identical(other.totalXp, totalXp) || other.totalXp == totalXp) &&
-            const DeepCollectionEquality()
-                .equals(other._newBadges, _newBadges));
+            (identical(other.totalXp, totalXp) || other.totalXp == totalXp));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, progress, xpEarned, totalXp,
-      const DeepCollectionEquality().hash(_newBadges));
+  int get hashCode => Object.hash(runtimeType, userId, motifId, status,
+      lessonViewedAt, learnedAt, xpEarned, totalXp);
 
   /// Create a copy of CompleteLessonResponseDto
   /// with the given fields replaced by the non-null parameter values.
@@ -3873,26 +3909,38 @@ class _$CompleteLessonResponseDtoImpl implements _CompleteLessonResponseDto {
 
 abstract class _CompleteLessonResponseDto implements CompleteLessonResponseDto {
   const factory _CompleteLessonResponseDto(
-          {required final UserProgressDto progress,
-          @JsonKey(name: 'xp_earned') final int xpEarned,
-          @JsonKey(name: 'total_xp') final int totalXp,
-          @JsonKey(name: 'new_badges') final List<BadgeDto> newBadges}) =
+          {@JsonKey(name: 'user_id') required final String userId,
+          @JsonKey(name: 'motif_id') required final String motifId,
+          required final String status,
+          @JsonKey(name: 'lesson_viewed_at') final DateTime? lessonViewedAt,
+          @JsonKey(name: 'learned_at') final DateTime? learnedAt,
+          @JsonKey(name: 'xp_awarded') final int xpEarned,
+          @JsonKey(name: 'total_xp') final int totalXp}) =
       _$CompleteLessonResponseDtoImpl;
 
   factory _CompleteLessonResponseDto.fromJson(Map<String, dynamic> json) =
       _$CompleteLessonResponseDtoImpl.fromJson;
 
   @override
-  UserProgressDto get progress;
+  @JsonKey(name: 'user_id')
+  String get userId;
   @override
-  @JsonKey(name: 'xp_earned')
+  @JsonKey(name: 'motif_id')
+  String get motifId;
+  @override
+  String get status;
+  @override
+  @JsonKey(name: 'lesson_viewed_at')
+  DateTime? get lessonViewedAt;
+  @override
+  @JsonKey(name: 'learned_at')
+  DateTime? get learnedAt;
+  @override
+  @JsonKey(name: 'xp_awarded')
   int get xpEarned;
   @override
   @JsonKey(name: 'total_xp')
   int get totalXp;
-  @override
-  @JsonKey(name: 'new_badges')
-  List<BadgeDto> get newBadges;
 
   /// Create a copy of CompleteLessonResponseDto
   /// with the given fields replaced by the non-null parameter values.
@@ -3910,19 +3958,23 @@ QuizQuestionDto _$QuizQuestionDtoFromJson(Map<String, dynamic> json) {
 mixin _$QuizQuestionDto {
   String get id => throw _privateConstructorUsedError;
   @JsonKey(name: 'motif_id')
-  String get motifId => throw _privateConstructorUsedError;
+  String? get motifId => throw _privateConstructorUsedError;
   @JsonKey(name: 'question_type')
   String get questionType => throw _privateConstructorUsedError;
   @JsonKey(name: 'question_text')
   String get questionText => throw _privateConstructorUsedError;
   @JsonKey(name: 'correct_answer')
-  String get correctAnswer => throw _privateConstructorUsedError;
+  String? get correctAnswer => throw _privateConstructorUsedError;
+  @OptionsListConverter()
   List<String> get options => throw _privateConstructorUsedError;
   @JsonKey(name: 'image_url')
   String? get imageUrl => throw _privateConstructorUsedError;
   String? get explanation => throw _privateConstructorUsedError;
   @JsonKey(name: 'display_order')
   int get displayOrder => throw _privateConstructorUsedError;
+  @JsonKey(name: 'target_mesh_name')
+  String? get targetMeshName => throw _privateConstructorUsedError;
+  int get difficulty => throw _privateConstructorUsedError;
 
   /// Serializes this QuizQuestionDto to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -3942,14 +3994,16 @@ abstract class $QuizQuestionDtoCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
-      @JsonKey(name: 'motif_id') String motifId,
+      @JsonKey(name: 'motif_id') String? motifId,
       @JsonKey(name: 'question_type') String questionType,
       @JsonKey(name: 'question_text') String questionText,
-      @JsonKey(name: 'correct_answer') String correctAnswer,
-      List<String> options,
+      @JsonKey(name: 'correct_answer') String? correctAnswer,
+      @OptionsListConverter() List<String> options,
       @JsonKey(name: 'image_url') String? imageUrl,
       String? explanation,
-      @JsonKey(name: 'display_order') int displayOrder});
+      @JsonKey(name: 'display_order') int displayOrder,
+      @JsonKey(name: 'target_mesh_name') String? targetMeshName,
+      int difficulty});
 }
 
 /// @nodoc
@@ -3968,24 +4022,26 @@ class _$QuizQuestionDtoCopyWithImpl<$Res, $Val extends QuizQuestionDto>
   @override
   $Res call({
     Object? id = null,
-    Object? motifId = null,
+    Object? motifId = freezed,
     Object? questionType = null,
     Object? questionText = null,
-    Object? correctAnswer = null,
+    Object? correctAnswer = freezed,
     Object? options = null,
     Object? imageUrl = freezed,
     Object? explanation = freezed,
     Object? displayOrder = null,
+    Object? targetMeshName = freezed,
+    Object? difficulty = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      motifId: null == motifId
+      motifId: freezed == motifId
           ? _value.motifId
           : motifId // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       questionType: null == questionType
           ? _value.questionType
           : questionType // ignore: cast_nullable_to_non_nullable
@@ -3994,10 +4050,10 @@ class _$QuizQuestionDtoCopyWithImpl<$Res, $Val extends QuizQuestionDto>
           ? _value.questionText
           : questionText // ignore: cast_nullable_to_non_nullable
               as String,
-      correctAnswer: null == correctAnswer
+      correctAnswer: freezed == correctAnswer
           ? _value.correctAnswer
           : correctAnswer // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       options: null == options
           ? _value.options
           : options // ignore: cast_nullable_to_non_nullable
@@ -4014,6 +4070,14 @@ class _$QuizQuestionDtoCopyWithImpl<$Res, $Val extends QuizQuestionDto>
           ? _value.displayOrder
           : displayOrder // ignore: cast_nullable_to_non_nullable
               as int,
+      targetMeshName: freezed == targetMeshName
+          ? _value.targetMeshName
+          : targetMeshName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      difficulty: null == difficulty
+          ? _value.difficulty
+          : difficulty // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
   }
 }
@@ -4028,14 +4092,16 @@ abstract class _$$QuizQuestionDtoImplCopyWith<$Res>
   @useResult
   $Res call(
       {String id,
-      @JsonKey(name: 'motif_id') String motifId,
+      @JsonKey(name: 'motif_id') String? motifId,
       @JsonKey(name: 'question_type') String questionType,
       @JsonKey(name: 'question_text') String questionText,
-      @JsonKey(name: 'correct_answer') String correctAnswer,
-      List<String> options,
+      @JsonKey(name: 'correct_answer') String? correctAnswer,
+      @OptionsListConverter() List<String> options,
       @JsonKey(name: 'image_url') String? imageUrl,
       String? explanation,
-      @JsonKey(name: 'display_order') int displayOrder});
+      @JsonKey(name: 'display_order') int displayOrder,
+      @JsonKey(name: 'target_mesh_name') String? targetMeshName,
+      int difficulty});
 }
 
 /// @nodoc
@@ -4052,24 +4118,26 @@ class __$$QuizQuestionDtoImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
-    Object? motifId = null,
+    Object? motifId = freezed,
     Object? questionType = null,
     Object? questionText = null,
-    Object? correctAnswer = null,
+    Object? correctAnswer = freezed,
     Object? options = null,
     Object? imageUrl = freezed,
     Object? explanation = freezed,
     Object? displayOrder = null,
+    Object? targetMeshName = freezed,
+    Object? difficulty = null,
   }) {
     return _then(_$QuizQuestionDtoImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      motifId: null == motifId
+      motifId: freezed == motifId
           ? _value.motifId
           : motifId // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       questionType: null == questionType
           ? _value.questionType
           : questionType // ignore: cast_nullable_to_non_nullable
@@ -4078,10 +4146,10 @@ class __$$QuizQuestionDtoImplCopyWithImpl<$Res>
           ? _value.questionText
           : questionText // ignore: cast_nullable_to_non_nullable
               as String,
-      correctAnswer: null == correctAnswer
+      correctAnswer: freezed == correctAnswer
           ? _value.correctAnswer
           : correctAnswer // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       options: null == options
           ? _value._options
           : options // ignore: cast_nullable_to_non_nullable
@@ -4098,6 +4166,14 @@ class __$$QuizQuestionDtoImplCopyWithImpl<$Res>
           ? _value.displayOrder
           : displayOrder // ignore: cast_nullable_to_non_nullable
               as int,
+      targetMeshName: freezed == targetMeshName
+          ? _value.targetMeshName
+          : targetMeshName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      difficulty: null == difficulty
+          ? _value.difficulty
+          : difficulty // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -4107,14 +4183,16 @@ class __$$QuizQuestionDtoImplCopyWithImpl<$Res>
 class _$QuizQuestionDtoImpl implements _QuizQuestionDto {
   const _$QuizQuestionDtoImpl(
       {required this.id,
-      @JsonKey(name: 'motif_id') required this.motifId,
+      @JsonKey(name: 'motif_id') this.motifId,
       @JsonKey(name: 'question_type') required this.questionType,
       @JsonKey(name: 'question_text') required this.questionText,
-      @JsonKey(name: 'correct_answer') required this.correctAnswer,
-      final List<String> options = const [],
+      @JsonKey(name: 'correct_answer') this.correctAnswer,
+      @OptionsListConverter() final List<String> options = const [],
       @JsonKey(name: 'image_url') this.imageUrl,
       this.explanation,
-      @JsonKey(name: 'display_order') this.displayOrder = 0})
+      @JsonKey(name: 'display_order') this.displayOrder = 0,
+      @JsonKey(name: 'target_mesh_name') this.targetMeshName,
+      this.difficulty = 1})
       : _options = options;
 
   factory _$QuizQuestionDtoImpl.fromJson(Map<String, dynamic> json) =>
@@ -4124,7 +4202,7 @@ class _$QuizQuestionDtoImpl implements _QuizQuestionDto {
   final String id;
   @override
   @JsonKey(name: 'motif_id')
-  final String motifId;
+  final String? motifId;
   @override
   @JsonKey(name: 'question_type')
   final String questionType;
@@ -4133,10 +4211,11 @@ class _$QuizQuestionDtoImpl implements _QuizQuestionDto {
   final String questionText;
   @override
   @JsonKey(name: 'correct_answer')
-  final String correctAnswer;
+  final String? correctAnswer;
   final List<String> _options;
   @override
   @JsonKey()
+  @OptionsListConverter()
   List<String> get options {
     if (_options is EqualUnmodifiableListView) return _options;
     // ignore: implicit_dynamic_type
@@ -4151,10 +4230,16 @@ class _$QuizQuestionDtoImpl implements _QuizQuestionDto {
   @override
   @JsonKey(name: 'display_order')
   final int displayOrder;
+  @override
+  @JsonKey(name: 'target_mesh_name')
+  final String? targetMeshName;
+  @override
+  @JsonKey()
+  final int difficulty;
 
   @override
   String toString() {
-    return 'QuizQuestionDto(id: $id, motifId: $motifId, questionType: $questionType, questionText: $questionText, correctAnswer: $correctAnswer, options: $options, imageUrl: $imageUrl, explanation: $explanation, displayOrder: $displayOrder)';
+    return 'QuizQuestionDto(id: $id, motifId: $motifId, questionType: $questionType, questionText: $questionText, correctAnswer: $correctAnswer, options: $options, imageUrl: $imageUrl, explanation: $explanation, displayOrder: $displayOrder, targetMeshName: $targetMeshName, difficulty: $difficulty)';
   }
 
   @override
@@ -4176,7 +4261,11 @@ class _$QuizQuestionDtoImpl implements _QuizQuestionDto {
             (identical(other.explanation, explanation) ||
                 other.explanation == explanation) &&
             (identical(other.displayOrder, displayOrder) ||
-                other.displayOrder == displayOrder));
+                other.displayOrder == displayOrder) &&
+            (identical(other.targetMeshName, targetMeshName) ||
+                other.targetMeshName == targetMeshName) &&
+            (identical(other.difficulty, difficulty) ||
+                other.difficulty == difficulty));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -4191,7 +4280,9 @@ class _$QuizQuestionDtoImpl implements _QuizQuestionDto {
       const DeepCollectionEquality().hash(_options),
       imageUrl,
       explanation,
-      displayOrder);
+      displayOrder,
+      targetMeshName,
+      difficulty);
 
   /// Create a copy of QuizQuestionDto
   /// with the given fields replaced by the non-null parameter values.
@@ -4212,16 +4303,17 @@ class _$QuizQuestionDtoImpl implements _QuizQuestionDto {
 
 abstract class _QuizQuestionDto implements QuizQuestionDto {
   const factory _QuizQuestionDto(
-          {required final String id,
-          @JsonKey(name: 'motif_id') required final String motifId,
-          @JsonKey(name: 'question_type') required final String questionType,
-          @JsonKey(name: 'question_text') required final String questionText,
-          @JsonKey(name: 'correct_answer') required final String correctAnswer,
-          final List<String> options,
-          @JsonKey(name: 'image_url') final String? imageUrl,
-          final String? explanation,
-          @JsonKey(name: 'display_order') final int displayOrder}) =
-      _$QuizQuestionDtoImpl;
+      {required final String id,
+      @JsonKey(name: 'motif_id') final String? motifId,
+      @JsonKey(name: 'question_type') required final String questionType,
+      @JsonKey(name: 'question_text') required final String questionText,
+      @JsonKey(name: 'correct_answer') final String? correctAnswer,
+      @OptionsListConverter() final List<String> options,
+      @JsonKey(name: 'image_url') final String? imageUrl,
+      final String? explanation,
+      @JsonKey(name: 'display_order') final int displayOrder,
+      @JsonKey(name: 'target_mesh_name') final String? targetMeshName,
+      final int difficulty}) = _$QuizQuestionDtoImpl;
 
   factory _QuizQuestionDto.fromJson(Map<String, dynamic> json) =
       _$QuizQuestionDtoImpl.fromJson;
@@ -4230,7 +4322,7 @@ abstract class _QuizQuestionDto implements QuizQuestionDto {
   String get id;
   @override
   @JsonKey(name: 'motif_id')
-  String get motifId;
+  String? get motifId;
   @override
   @JsonKey(name: 'question_type')
   String get questionType;
@@ -4239,8 +4331,9 @@ abstract class _QuizQuestionDto implements QuizQuestionDto {
   String get questionText;
   @override
   @JsonKey(name: 'correct_answer')
-  String get correctAnswer;
+  String? get correctAnswer;
   @override
+  @OptionsListConverter()
   List<String> get options;
   @override
   @JsonKey(name: 'image_url')
@@ -4250,6 +4343,11 @@ abstract class _QuizQuestionDto implements QuizQuestionDto {
   @override
   @JsonKey(name: 'display_order')
   int get displayOrder;
+  @override
+  @JsonKey(name: 'target_mesh_name')
+  String? get targetMeshName;
+  @override
+  int get difficulty;
 
   /// Create a copy of QuizQuestionDto
   /// with the given fields replaced by the non-null parameter values.
@@ -4268,8 +4366,13 @@ mixin _$QuizResponseDto {
   @JsonKey(name: 'motif_id')
   String get motifId => throw _privateConstructorUsedError;
   @JsonKey(name: 'motif_name')
-  String get motifName => throw _privateConstructorUsedError;
+  String? get motifName => throw _privateConstructorUsedError;
   List<QuizQuestionDto> get questions => throw _privateConstructorUsedError;
+  int get attempts => throw _privateConstructorUsedError;
+  @JsonKey(name: 'best_score')
+  int get bestScore => throw _privateConstructorUsedError;
+  @JsonKey(name: 'pass_percent')
+  int get passPercent => throw _privateConstructorUsedError;
 
   /// Serializes this QuizResponseDto to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -4289,8 +4392,11 @@ abstract class $QuizResponseDtoCopyWith<$Res> {
   @useResult
   $Res call(
       {@JsonKey(name: 'motif_id') String motifId,
-      @JsonKey(name: 'motif_name') String motifName,
-      List<QuizQuestionDto> questions});
+      @JsonKey(name: 'motif_name') String? motifName,
+      List<QuizQuestionDto> questions,
+      int attempts,
+      @JsonKey(name: 'best_score') int bestScore,
+      @JsonKey(name: 'pass_percent') int passPercent});
 }
 
 /// @nodoc
@@ -4309,22 +4415,37 @@ class _$QuizResponseDtoCopyWithImpl<$Res, $Val extends QuizResponseDto>
   @override
   $Res call({
     Object? motifId = null,
-    Object? motifName = null,
+    Object? motifName = freezed,
     Object? questions = null,
+    Object? attempts = null,
+    Object? bestScore = null,
+    Object? passPercent = null,
   }) {
     return _then(_value.copyWith(
       motifId: null == motifId
           ? _value.motifId
           : motifId // ignore: cast_nullable_to_non_nullable
               as String,
-      motifName: null == motifName
+      motifName: freezed == motifName
           ? _value.motifName
           : motifName // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       questions: null == questions
           ? _value.questions
           : questions // ignore: cast_nullable_to_non_nullable
               as List<QuizQuestionDto>,
+      attempts: null == attempts
+          ? _value.attempts
+          : attempts // ignore: cast_nullable_to_non_nullable
+              as int,
+      bestScore: null == bestScore
+          ? _value.bestScore
+          : bestScore // ignore: cast_nullable_to_non_nullable
+              as int,
+      passPercent: null == passPercent
+          ? _value.passPercent
+          : passPercent // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
   }
 }
@@ -4339,8 +4460,11 @@ abstract class _$$QuizResponseDtoImplCopyWith<$Res>
   @useResult
   $Res call(
       {@JsonKey(name: 'motif_id') String motifId,
-      @JsonKey(name: 'motif_name') String motifName,
-      List<QuizQuestionDto> questions});
+      @JsonKey(name: 'motif_name') String? motifName,
+      List<QuizQuestionDto> questions,
+      int attempts,
+      @JsonKey(name: 'best_score') int bestScore,
+      @JsonKey(name: 'pass_percent') int passPercent});
 }
 
 /// @nodoc
@@ -4357,22 +4481,37 @@ class __$$QuizResponseDtoImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? motifId = null,
-    Object? motifName = null,
+    Object? motifName = freezed,
     Object? questions = null,
+    Object? attempts = null,
+    Object? bestScore = null,
+    Object? passPercent = null,
   }) {
     return _then(_$QuizResponseDtoImpl(
       motifId: null == motifId
           ? _value.motifId
           : motifId // ignore: cast_nullable_to_non_nullable
               as String,
-      motifName: null == motifName
+      motifName: freezed == motifName
           ? _value.motifName
           : motifName // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       questions: null == questions
           ? _value._questions
           : questions // ignore: cast_nullable_to_non_nullable
               as List<QuizQuestionDto>,
+      attempts: null == attempts
+          ? _value.attempts
+          : attempts // ignore: cast_nullable_to_non_nullable
+              as int,
+      bestScore: null == bestScore
+          ? _value.bestScore
+          : bestScore // ignore: cast_nullable_to_non_nullable
+              as int,
+      passPercent: null == passPercent
+          ? _value.passPercent
+          : passPercent // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -4382,8 +4521,11 @@ class __$$QuizResponseDtoImplCopyWithImpl<$Res>
 class _$QuizResponseDtoImpl implements _QuizResponseDto {
   const _$QuizResponseDtoImpl(
       {@JsonKey(name: 'motif_id') required this.motifId,
-      @JsonKey(name: 'motif_name') required this.motifName,
-      required final List<QuizQuestionDto> questions})
+      @JsonKey(name: 'motif_name') this.motifName,
+      required final List<QuizQuestionDto> questions,
+      this.attempts = 0,
+      @JsonKey(name: 'best_score') this.bestScore = 0,
+      @JsonKey(name: 'pass_percent') this.passPercent = 80})
       : _questions = questions;
 
   factory _$QuizResponseDtoImpl.fromJson(Map<String, dynamic> json) =>
@@ -4394,7 +4536,7 @@ class _$QuizResponseDtoImpl implements _QuizResponseDto {
   final String motifId;
   @override
   @JsonKey(name: 'motif_name')
-  final String motifName;
+  final String? motifName;
   final List<QuizQuestionDto> _questions;
   @override
   List<QuizQuestionDto> get questions {
@@ -4404,8 +4546,18 @@ class _$QuizResponseDtoImpl implements _QuizResponseDto {
   }
 
   @override
+  @JsonKey()
+  final int attempts;
+  @override
+  @JsonKey(name: 'best_score')
+  final int bestScore;
+  @override
+  @JsonKey(name: 'pass_percent')
+  final int passPercent;
+
+  @override
   String toString() {
-    return 'QuizResponseDto(motifId: $motifId, motifName: $motifName, questions: $questions)';
+    return 'QuizResponseDto(motifId: $motifId, motifName: $motifName, questions: $questions, attempts: $attempts, bestScore: $bestScore, passPercent: $passPercent)';
   }
 
   @override
@@ -4417,13 +4569,25 @@ class _$QuizResponseDtoImpl implements _QuizResponseDto {
             (identical(other.motifName, motifName) ||
                 other.motifName == motifName) &&
             const DeepCollectionEquality()
-                .equals(other._questions, _questions));
+                .equals(other._questions, _questions) &&
+            (identical(other.attempts, attempts) ||
+                other.attempts == attempts) &&
+            (identical(other.bestScore, bestScore) ||
+                other.bestScore == bestScore) &&
+            (identical(other.passPercent, passPercent) ||
+                other.passPercent == passPercent));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, motifId, motifName,
-      const DeepCollectionEquality().hash(_questions));
+  int get hashCode => Object.hash(
+      runtimeType,
+      motifId,
+      motifName,
+      const DeepCollectionEquality().hash(_questions),
+      attempts,
+      bestScore,
+      passPercent);
 
   /// Create a copy of QuizResponseDto
   /// with the given fields replaced by the non-null parameter values.
@@ -4444,9 +4608,13 @@ class _$QuizResponseDtoImpl implements _QuizResponseDto {
 
 abstract class _QuizResponseDto implements QuizResponseDto {
   const factory _QuizResponseDto(
-      {@JsonKey(name: 'motif_id') required final String motifId,
-      @JsonKey(name: 'motif_name') required final String motifName,
-      required final List<QuizQuestionDto> questions}) = _$QuizResponseDtoImpl;
+          {@JsonKey(name: 'motif_id') required final String motifId,
+          @JsonKey(name: 'motif_name') final String? motifName,
+          required final List<QuizQuestionDto> questions,
+          final int attempts,
+          @JsonKey(name: 'best_score') final int bestScore,
+          @JsonKey(name: 'pass_percent') final int passPercent}) =
+      _$QuizResponseDtoImpl;
 
   factory _QuizResponseDto.fromJson(Map<String, dynamic> json) =
       _$QuizResponseDtoImpl.fromJson;
@@ -4456,9 +4624,17 @@ abstract class _QuizResponseDto implements QuizResponseDto {
   String get motifId;
   @override
   @JsonKey(name: 'motif_name')
-  String get motifName;
+  String? get motifName;
   @override
   List<QuizQuestionDto> get questions;
+  @override
+  int get attempts;
+  @override
+  @JsonKey(name: 'best_score')
+  int get bestScore;
+  @override
+  @JsonKey(name: 'pass_percent')
+  int get passPercent;
 
   /// Create a copy of QuizResponseDto
   /// with the given fields replaced by the non-null parameter values.

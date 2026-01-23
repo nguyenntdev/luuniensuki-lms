@@ -472,7 +472,7 @@ class _QuizQuestionsProviderElement
   String get motifId => (origin as QuizQuestionsProvider).motifId;
 }
 
-String _$discoveryNotifierHash() => r'c3b4a53abebcdfc9492394a94951e6f425260da5';
+String _$discoveryNotifierHash() => r'5a45331a8b67df0e3ab114b761fbca5e30d1a73b';
 
 /// Notifier for handling motif discovery/unlock actions
 ///

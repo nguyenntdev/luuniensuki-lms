@@ -61,34 +61,34 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     if (quizState.hasSavedProgress && quizState.savedProgress != null) {
       final savedProgress = quizState.savedProgress!;
 
-      // Verify quiz content hasn't changed
-      final quizAsync = ref.read(quizProvider(widget.motifId));
-      await quizAsync.when(
-        data: (quiz) async {
-          final currentHash = QuizProgress.createQuestionsHash(
-            quiz.questions.map((q) => {'id': q.id}).toList(),
-          );
+      try {
+        // Verify quiz content hasn't changed - use .future to actually await
+        final quiz = await ref.read(quizProvider(widget.motifId).future);
 
-          if (currentHash != savedProgress.questionsHash) {
-            // Quiz content changed, clear old progress
-            ref.read(quizStateProvider(widget.motifId).notifier).clearProgress();
-            return;
-          }
+        final currentHash = QuizProgress.createQuestionsHash(
+          quiz.questions.map((q) => {'id': q.id}).toList(),
+        );
 
-          // Show resume dialog
-          if (mounted) {
-            final shouldResume = await _showResumeDialog(savedProgress);
-            if (shouldResume == true) {
-              _resumeFromSavedProgress(savedProgress);
-            } else {
-              // Start fresh
-              ref.read(quizStateProvider(widget.motifId).notifier).startFresh(quiz);
-            }
+        if (currentHash != savedProgress.questionsHash) {
+          // Quiz content changed, clear old progress
+          ref.read(quizStateProvider(widget.motifId).notifier).clearProgress();
+          return;
+        }
+
+        // Show resume dialog
+        if (mounted) {
+          final shouldResume = await _showResumeDialog(savedProgress);
+          if (shouldResume == true) {
+            _resumeFromSavedProgress(savedProgress);
+          } else {
+            // Start fresh
+            ref.read(quizStateProvider(widget.motifId).notifier).startFresh(quiz);
           }
-        },
-        loading: () {},
-        error: (_, __) {},
-      );
+        }
+      } catch (e) {
+        // If quiz loading fails, just don't show resume dialog
+        // The error will be handled by the main build method
+      }
     }
   }
 
@@ -412,7 +412,8 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                     );
 
                     // Check if answer is incorrect and we haven't already penalized this question
-                    final isCorrect = currentQuestion.correctAnswer.trim().toLowerCase() ==
+                    final correctAnswer = currentQuestion.correctAnswer ?? '';
+                    final isCorrect = correctAnswer.trim().toLowerCase() ==
                                       answer.trim().toLowerCase();
 
                     // Play sound effect based on answer
@@ -736,7 +737,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     }
 
     // Find 2 wrong answers to hide
-    final correctAnswer = question.correctAnswer;
+    final correctAnswer = question.correctAnswer ?? '';
     final wrongOptions = question.options
         .where((option) => option.trim().toLowerCase() != correctAnswer.trim().toLowerCase())
         .toList();

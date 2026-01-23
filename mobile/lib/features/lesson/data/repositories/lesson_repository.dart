@@ -47,8 +47,7 @@ class LessonRepository extends OfflineFirstRepository<MotifDetailDto> {
     return executeWriteOperation<CompleteLessonResponseDto>(
       networkCall: () async {
         final response = await apiClient.post<Map<String, dynamic>>(
-          ApiConstants.progressCompleteLesson,
-          data: {'motif_id': motifId},
+          ApiConstants.progressCompleteLesson(motifId),
         );
         return CompleteLessonResponseDto.fromJson(response);
       },

@@ -3,6 +3,25 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'urn_dtos.freezed.dart';
 part 'urn_dtos.g.dart';
 
+/// Converter to handle options that might come as string or list from backend
+class OptionsListConverter implements JsonConverter<List<String>, dynamic> {
+  const OptionsListConverter();
+
+  @override
+  List<String> fromJson(dynamic json) {
+    if (json == null) return [];
+    if (json is List) {
+      return json.map((e) => e?.toString() ?? '').where((e) => e.isNotEmpty).toList();
+    }
+    // If backend sends a string instead of list, return empty list
+    // This prevents iterating over string characters
+    return [];
+  }
+
+  @override
+  dynamic toJson(List<String> object) => object;
+}
+
 /// Urn list item DTO (from /api/v1/urns)
 @freezed
 class UrnListItemDto with _$UrnListItemDto {
@@ -203,10 +222,13 @@ class BadgeDto with _$BadgeDto {
 @freezed
 class CompleteLessonResponseDto with _$CompleteLessonResponseDto {
   const factory CompleteLessonResponseDto({
-    required UserProgressDto progress,
-    @JsonKey(name: 'xp_earned') @Default(0) int xpEarned,
+    @JsonKey(name: 'user_id') required String userId,
+    @JsonKey(name: 'motif_id') required String motifId,
+    required String status,
+    @JsonKey(name: 'lesson_viewed_at') DateTime? lessonViewedAt,
+    @JsonKey(name: 'learned_at') DateTime? learnedAt,
+    @JsonKey(name: 'xp_awarded') @Default(0) int xpEarned,
     @JsonKey(name: 'total_xp') @Default(0) int totalXp,
-    @JsonKey(name: 'new_badges') @Default([]) List<BadgeDto> newBadges,
   }) = _CompleteLessonResponseDto;
 
   factory CompleteLessonResponseDto.fromJson(Map<String, dynamic> json) =>
@@ -218,14 +240,16 @@ class CompleteLessonResponseDto with _$CompleteLessonResponseDto {
 class QuizQuestionDto with _$QuizQuestionDto {
   const factory QuizQuestionDto({
     required String id,
-    @JsonKey(name: 'motif_id') required String motifId,
+    @JsonKey(name: 'motif_id') String? motifId,
     @JsonKey(name: 'question_type') required String questionType,
     @JsonKey(name: 'question_text') required String questionText,
-    @JsonKey(name: 'correct_answer') required String correctAnswer,
-    @Default([]) List<String> options,
+    @JsonKey(name: 'correct_answer') String? correctAnswer,
+    @OptionsListConverter() @Default([]) List<String> options,
     @JsonKey(name: 'image_url') String? imageUrl,
     String? explanation,
     @JsonKey(name: 'display_order') @Default(0) int displayOrder,
+    @JsonKey(name: 'target_mesh_name') String? targetMeshName,
+    @Default(1) int difficulty,
   }) = _QuizQuestionDto;
 
   factory QuizQuestionDto.fromJson(Map<String, dynamic> json) =>
@@ -237,8 +261,11 @@ class QuizQuestionDto with _$QuizQuestionDto {
 class QuizResponseDto with _$QuizResponseDto {
   const factory QuizResponseDto({
     @JsonKey(name: 'motif_id') required String motifId,
-    @JsonKey(name: 'motif_name') required String motifName,
+    @JsonKey(name: 'motif_name') String? motifName,
     required List<QuizQuestionDto> questions,
+    @Default(0) int attempts,
+    @JsonKey(name: 'best_score') @Default(0) int bestScore,
+    @JsonKey(name: 'pass_percent') @Default(80) int passPercent,
   }) = _QuizResponseDto;
 
   factory QuizResponseDto.fromJson(Map<String, dynamic> json) =>

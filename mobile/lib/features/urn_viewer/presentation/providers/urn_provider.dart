@@ -246,8 +246,7 @@ class DiscoveryNotifier extends _$DiscoveryNotifier {
       final apiClient = ref.read(apiClientProvider);
 
       final response = await apiClient.post<Map<String, dynamic>>(
-        ApiConstants.progressCompleteLesson,
-        data: {'motif_id': motifId},
+        ApiConstants.progressCompleteLesson(motifId),
       );
 
       final completeDto = CompleteLessonResponseDto.fromJson(response);
@@ -263,7 +262,7 @@ class DiscoveryNotifier extends _$DiscoveryNotifier {
         motif: motif,
         xpEarned: completeDto.xpEarned,
         totalXp: completeDto.totalXp,
-        badgesEarned: completeDto.newBadges.map((b) => b.slug).toList(),
+        badgesEarned: [], // TODO: Backend doesn't return badges yet
         isNewDiscovery: false,
       );
 

@@ -434,11 +434,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
         ],
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Column(
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
@@ -688,6 +690,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
         colors: gradientColors,
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
             padding: const EdgeInsets.all(AppSpacing.sm),

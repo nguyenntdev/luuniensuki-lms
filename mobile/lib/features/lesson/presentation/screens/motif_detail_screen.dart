@@ -348,57 +348,151 @@ class _MotifDetailScreenState extends ConsumerState<MotifDetailScreen>
 
       await Dio().download(imageUrl, originalPath);
 
-      // Load image and add caption overlay
+      // Load original image
       final originalBytes = await File(originalPath).readAsBytes();
       final codec = await ui.instantiateImageCodec(originalBytes);
       final frame = await codec.getNextFrame();
       final originalImage = frame.image;
 
-      // Caption text
-      final captionLine1 = '🏛️ ${motif.name}';
-      final captionLine2 = '📍 ${motif.urn.name} • Lưu Niên Sử Kí';
+      // Create 4:5 ratio image (1080x1350) for Instagram/Facebook
+      const int outputWidth = 1080;
+      const int outputHeight = 1350;
+      const double captionBarHeight = 280.0;  // Increased for larger fonts
+      final double imageAreaHeight = outputHeight - captionBarHeight;
 
-      // Create new image with caption bar
       final recorder = ui.PictureRecorder();
       final canvas = Canvas(recorder);
 
-      // Draw original image
-      canvas.drawImage(originalImage, Offset.zero, Paint());
-
-      // Draw semi-transparent overlay bar at bottom
-      final barHeight = 120.0;
-      final barPaint = Paint()..color = const Color(0xDD000000);
+      // Fill background with dark gradient color
+      final bgPaint = Paint()
+        ..shader = ui.Gradient.linear(
+          const Offset(0, 0),
+          Offset(0, outputHeight.toDouble()),
+          [const Color(0xFF1A1A2E), const Color(0xFF0F0F1A)],
+        );
       canvas.drawRect(
-        Rect.fromLTWH(0, originalImage.height - barHeight, originalImage.width.toDouble(), barHeight),
-        barPaint,
+        Rect.fromLTWH(0, 0, outputWidth.toDouble(), outputHeight.toDouble()),
+        bgPaint,
       );
 
-      // Draw caption text
+      // Calculate image scaling to fit in image area (contain)
+      final double scaleX = outputWidth / originalImage.width;
+      final double scaleY = imageAreaHeight / originalImage.height;
+      final double scale = scaleX < scaleY ? scaleX : scaleY;
+
+      final double scaledWidth = originalImage.width * scale;
+      final double scaledHeight = originalImage.height * scale;
+      final double imageX = (outputWidth - scaledWidth) / 2;
+      final double imageY = (imageAreaHeight - scaledHeight) / 2;
+
+      // Draw original image centered in top area
+      canvas.save();
+      canvas.translate(imageX, imageY);
+      canvas.scale(scale);
+      canvas.drawImage(originalImage, Offset.zero, Paint()..filterQuality = ui.FilterQuality.high);
+      canvas.restore();
+
+      // Draw decorative gold top border line on image
+      final goldBorderPaint = Paint()
+        ..color = const Color(0xFFD4A84B)
+        ..strokeWidth = 6;
+      canvas.drawLine(
+        const Offset(0, 3),
+        Offset(outputWidth.toDouble(), 3),
+        goldBorderPaint,
+      );
+
+      // Draw caption bar at bottom with gradient
+      final barGradient = Paint()
+        ..shader = ui.Gradient.linear(
+          Offset(0, imageAreaHeight),
+          Offset(0, outputHeight.toDouble()),
+          [const Color(0xFF0A0A14), const Color(0xFF14141E)],
+        );
+      canvas.drawRect(
+        Rect.fromLTWH(0, imageAreaHeight, outputWidth.toDouble(), captionBarHeight),
+        barGradient,
+      );
+
+      // Draw decorative gold line at caption bar top
+      final goldLinePaint = Paint()
+        ..shader = ui.Gradient.linear(
+          Offset(40, imageAreaHeight + 2),
+          Offset(outputWidth - 40, imageAreaHeight + 2),
+          [const Color(0x00D4A84B), const Color(0xFFD4A84B), const Color(0xFFD4A84B), const Color(0x00D4A84B)],
+          [0.0, 0.2, 0.8, 1.0],
+        )
+        ..strokeWidth = 3;
+      canvas.drawLine(
+        Offset(40, imageAreaHeight + 2),
+        Offset(outputWidth - 40, imageAreaHeight + 2),
+        goldLinePaint,
+      );
+
+      // Draw decorative corner ornaments (gold dots pattern)
+      final ornamentPaint = Paint()..color = const Color(0xFFD4A84B).withOpacity(0.4);
+      for (int i = 0; i < 3; i++) {
+        canvas.drawCircle(Offset(30 + i * 12, imageAreaHeight + 20), 3, ornamentPaint);
+        canvas.drawCircle(Offset(outputWidth - 30 - i * 12, imageAreaHeight + 20), 3, ornamentPaint);
+      }
+
+      // Draw caption text - Line 1: Motif name (GOLD, LARGER)
       final textStyle1 = ui.TextStyle(
-        color: const Color(0xFFFFFFFF),
-        fontSize: 42,
+        color: const Color(0xFFD4A84B),  // Imperial Gold
+        fontSize: 56,  // Increased from 48
         fontWeight: ui.FontWeight.bold,
+        letterSpacing: 0.5,
       );
-      final textStyle2 = ui.TextStyle(
-        color: const Color(0xCCFFFFFF),
-        fontSize: 32,
-      );
-
-      final paragraph1Builder = ui.ParagraphBuilder(ui.ParagraphStyle(textAlign: ui.TextAlign.center))
+      final paragraph1Builder = ui.ParagraphBuilder(ui.ParagraphStyle(
+        textAlign: ui.TextAlign.left,
+        maxLines: 2,
+        ellipsis: '...',
+      ))
         ..pushStyle(textStyle1)
-        ..addText(captionLine1);
-      final paragraph1 = paragraph1Builder.build()..layout(ui.ParagraphConstraints(width: originalImage.width - 40.0));
-      canvas.drawParagraph(paragraph1, Offset(20, originalImage.height - barHeight + 15));
+        ..addText(motif.name);
+      final paragraph1 = paragraph1Builder.build()..layout(const ui.ParagraphConstraints(width: outputWidth - 80.0));
+      canvas.drawParagraph(paragraph1, Offset(40, imageAreaHeight + 40));
 
-      final paragraph2Builder = ui.ParagraphBuilder(ui.ParagraphStyle(textAlign: ui.TextAlign.center))
+      // Draw caption text - Line 2: Urn name (WHITE with slight gold tint)
+      final textStyle2 = ui.TextStyle(
+        color: const Color(0xFFF5F0E5),  // Warm white
+        fontSize: 36,  // Increased from 32
+      );
+      final paragraph2Builder = ui.ParagraphBuilder(ui.ParagraphStyle(
+        textAlign: ui.TextAlign.left,
+        maxLines: 1,
+        ellipsis: '...',
+      ))
         ..pushStyle(textStyle2)
-        ..addText(captionLine2);
-      final paragraph2 = paragraph2Builder.build()..layout(ui.ParagraphConstraints(width: originalImage.width - 40.0));
-      canvas.drawParagraph(paragraph2, Offset(20, originalImage.height - barHeight + 65));
+        ..addText('📍 ${motif.urn.name}');
+      final paragraph2 = paragraph2Builder.build()..layout(const ui.ParagraphConstraints(width: outputWidth - 80.0));
+      canvas.drawParagraph(paragraph2, Offset(40, imageAreaHeight + 135));
+
+      // Draw app branding (GOLD with icon)
+      final textStyle3 = ui.TextStyle(
+        color: const Color(0xFFD4A84B),  // Imperial Gold
+        fontSize: 32,  // Increased from 28
+        fontWeight: ui.FontWeight.bold,
+        letterSpacing: 1.0,
+      );
+      final paragraph3Builder = ui.ParagraphBuilder(ui.ParagraphStyle(
+        textAlign: ui.TextAlign.left,
+      ))
+        ..pushStyle(textStyle3)
+        ..addText('🏛️ Lưu Niên Sử Kí');
+      final paragraph3 = paragraph3Builder.build()..layout(const ui.ParagraphConstraints(width: outputWidth - 80.0));
+      canvas.drawParagraph(paragraph3, Offset(40, imageAreaHeight + 200));
+
+      // Draw decorative bottom ornament line
+      canvas.drawLine(
+        Offset(40, imageAreaHeight + 255),
+        Offset(outputWidth - 40, imageAreaHeight + 255),
+        goldLinePaint,
+      );
 
       // Convert to image
       final picture = recorder.endRecording();
-      final finalImage = await picture.toImage(originalImage.width, originalImage.height);
+      final finalImage = await picture.toImage(outputWidth, outputHeight);
       final byteData = await finalImage.toByteData(format: ui.ImageByteFormat.png);
 
       final sharePath = '${tempDir.path}/share_${motif.id}.png';

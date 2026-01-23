@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/network/api_client.dart';
@@ -50,12 +51,21 @@ class QuizStateData {
 Future<QuizResponseDto> quiz(QuizRef ref, String motifId) async {
   final apiClient = ref.watch(apiClientProvider);
 
-  final result = await apiClient.get<QuizResponseDto>(
-    '/api/v1/motifs/$motifId/quiz',
-    parser: (json) => QuizResponseDto.fromJson(json as Map<String, dynamic>),
-  );
-
-  return result;
+  try {
+    final result = await apiClient.get<QuizResponseDto>(
+      '/api/v1/motifs/$motifId/quiz',
+      parser: (json) {
+        debugPrint('Quiz API response for $motifId: $json');
+        return QuizResponseDto.fromJson(json as Map<String, dynamic>);
+      },
+    );
+    debugPrint('Quiz loaded successfully: ${result.questions.length} questions');
+    return result;
+  } catch (e, s) {
+    debugPrint('Quiz API error for $motifId: $e');
+    debugPrint('Stack trace: $s');
+    rethrow;
+  }
 }
 
 /// Provider for submitting quiz answers.
@@ -202,7 +212,7 @@ class QuizState extends _$QuizState {
 
       final progress = QuizProgress(
         motifId: motifId,
-        motifName: quiz.motifName,
+        motifName: quiz.motifName ?? '',
         currentQuestionIndex: state.currentQuestionIndex,
         answers: state.answers,
         incorrectAnswers: state.incorrectAnswers,
