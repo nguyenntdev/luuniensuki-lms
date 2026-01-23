@@ -65,19 +65,49 @@ Future<UrnDetail> urnDetail(Ref ref, String slug) async {
   final hiveStorage = ref.watch(hiveStorageProvider);
   final networkInfo = ref.watch(networkInfoProvider);
 
-  // Try to get user progress for motif status
+  // Try to get user progress for this specific urn
   Map<String, UserProgressDto>? progressByMotifId;
   try {
-    final progressResponse = await apiClient.get<List<dynamic>>(
-      ApiConstants.userProgress,
+    final progressResponse = await apiClient.get<Map<String, dynamic>>(
+      ApiConstants.urnProgress(slug),
     );
-    progressByMotifId = {
-      for (final p in (progressResponse as List))
-        (p as Map<String, dynamic>)['motif_id'] as String:
-            UserProgressDto.fromJson(p)
-    };
-  } catch (e) {
-    debugPrint('Failed to fetch progress: $e');
+
+    debugPrint('Urn progress response: $progressResponse');
+
+    // Parse the response format: { urn_id, urn_slug, motifs: [...] }
+    final motifsList = progressResponse['motifs'] as List<dynamic>?;
+    if (motifsList != null) {
+      progressByMotifId = {};
+      for (final motifProgress in motifsList) {
+        final mp = motifProgress as Map<String, dynamic>;
+        final motifId = mp['motif_id'] as String;
+
+        // Parse datetime fields (they come as ISO strings from FastAPI)
+        String? discoveredAt = mp['discovered_at']?.toString();
+        String? learnedAt = mp['learned_at']?.toString();
+        String? masteredAt = mp['mastered_at']?.toString();
+
+        progressByMotifId[motifId] = UserProgressDto(
+          id: motifId,
+          userId: '',
+          motifId: motifId,
+          status: mp['status'] as String,
+          discoveredAt: discoveredAt,
+          learnedAt: learnedAt,
+          masteredAt: masteredAt,
+          xpEarned: (mp['xp_earned'] as num?)?.toInt() ?? 0,
+          quizBestScore: (mp['quiz_best_score'] as num?)?.toInt(),
+        );
+
+        debugPrint('Parsed progress for motif $motifId: ${mp['status']}');
+      }
+      debugPrint('Total progress entries parsed: ${progressByMotifId.length}');
+    } else {
+      debugPrint('No motifs list in progress response');
+    }
+  } catch (e, stackTrace) {
+    debugPrint('Failed to fetch urn progress: $e');
+    debugPrint('Stack trace: $stackTrace');
   }
 
   // Try to get from cache first if offline

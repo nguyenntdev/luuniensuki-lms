@@ -52,6 +52,7 @@ class ApiConstants {
   // Progress Endpoints
   static String get progressUnlock => '/progress/unlock';
   static String progressCompleteLesson(String motifId) => '$apiPath/motifs/$motifId/complete-lesson';
+  static String urnProgress(String slug) => '$apiPath/urns/$slug/progress';
 
   // Gamification Endpoints
   static String get badges => '$apiPath/badges';

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import '../../../../core/constants/api_constants.dart';
 import '../../domain/entities/urn.dart';
 import 'urn_dtos.dart';
@@ -20,6 +21,8 @@ extension UrnDetailResponseDtoMapper on UrnDetailResponseDto {
   UrnDetail toEntity({Map<String, UserProgressDto>? progressByMotifId}) {
     final urnDto = urn;
 
+    debugPrint('Converting urn ${urnDto.slug} to entity, progress map has ${progressByMotifId?.length ?? 0} entries');
+
     final urnEntity = Urn(
       id: urnDto.id,
       slug: urnDto.slug,
@@ -35,10 +38,14 @@ extension UrnDetailResponseDtoMapper on UrnDetailResponseDto {
 
     final motifEntities = motifs.map((m) {
       final progress = progressByMotifId?[m.id];
+      debugPrint('Motif ${m.name} (${m.id}): progress = ${progress?.status ?? "null"}');
       return m.toEntity(progress: progress);
     }).toList();
 
     // Calculate counts from motifs
+    // discovered = all non-hidden motifs (discovered + learned + mastered)
+    // learned = learned + mastered motifs
+    // mastered = only mastered motifs
     int discovered = 0;
     int learned = 0;
     int mastered = 0;
@@ -48,15 +55,20 @@ extension UrnDetailResponseDtoMapper on UrnDetailResponseDto {
           discovered++;
           break;
         case MotifStatus.learned:
+          discovered++;
           learned++;
           break;
         case MotifStatus.mastered:
+          discovered++;
+          learned++;
           mastered++;
           break;
         case MotifStatus.hidden:
           break;
       }
     }
+
+    debugPrint('Calculated counts - Discovered: $discovered, Learned: $learned, Mastered: $mastered');
 
     return UrnDetail(
       urn: urnEntity.copyWith(
