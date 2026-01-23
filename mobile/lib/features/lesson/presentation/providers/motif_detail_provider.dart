@@ -123,20 +123,25 @@ class LessonCompletion extends _$LessonCompletion {
 
       state = AsyncData(result);
 
-      // Invalidate motif detail to refresh progress
-      ref.invalidate(motifDetailProvider(motifId));
-
-      // Also invalidate urn providers to update progress numbers in 3D viewer
-      // First, get the motif to find its urn slug
+      // FIX: Get urn slug BEFORE invalidating to avoid race condition
+      // The pattern "invalidate then read .future" causes "Bad state: Future already completed"
+      String? urnSlug;
       try {
-        final motifDetail = await ref.read(motifDetailProvider(motifId).future);
-        final urnSlug = motifDetail.urn.slug;
-        ref.invalidate(urnDetailProvider(urnSlug));
-        ref.invalidate(urnsProvider);
-      } catch (e) {
-        // If we can't get the urn slug, just invalidate all urns
-        ref.invalidate(urnsProvider);
+        // Read from current state BEFORE invalidation (use AsyncValue, not .future)
+        final currentMotifState = ref.read(motifDetailProvider(motifId));
+        if (currentMotifState.hasValue && currentMotifState.value != null) {
+          urnSlug = currentMotifState.value!.urn.slug;
+        }
+      } catch (_) {
+        // Provider might not have data yet, that's ok
       }
+
+      // Now invalidate all providers at once - no .future reading after invalidate!
+      ref.invalidate(motifDetailProvider(motifId));
+      if (urnSlug != null) {
+        ref.invalidate(urnDetailProvider(urnSlug));
+      }
+      ref.invalidate(urnsProvider);
 
       return result;
     } catch (e, s) {
