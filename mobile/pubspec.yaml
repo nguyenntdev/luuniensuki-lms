@@ -1,7 +1,7 @@
 name: luuniensuki_lms
 description: "Luuniensuki LMS - Vietnamese Cultural Heritage Learning App"
 publish_to: "none"
-version: 1.6.5+12
+version: 1.21.0+14
 
 environment:
   sdk: ^3.5.4

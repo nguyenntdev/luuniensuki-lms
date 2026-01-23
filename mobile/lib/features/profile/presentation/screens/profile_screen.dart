@@ -244,6 +244,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
             AppSpacing.xl,
           ),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               // Hero Avatar with glow effect
               Hero(
@@ -467,6 +468,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       ),
                       AppSpacing.horizontalSpaceSM,
                       Column(
+                        mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
@@ -492,6 +494,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                 ],
               ),
               Column(
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Container(
@@ -546,6 +549,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
 
           // XP Progress bar with enhanced styling
           Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -895,6 +899,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
           // Streak info
           Expanded(
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
@@ -938,6 +943,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
 
           // Stats column with enhanced design
           Column(
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Container(
@@ -1014,6 +1020,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
 
   Widget _buildSettingsCards(BuildContext context, WidgetRef ref) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         // Account settings card
         _buildMenuCard(
@@ -1135,6 +1142,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
           // Text content
           Expanded(
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
