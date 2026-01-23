@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/storage/hive_storage.dart';
 import '../../domain/entities/urn.dart';
 import '../providers/urn_provider.dart';
 import '../widgets/custom_model_viewer.dart';
@@ -411,12 +412,18 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
     ref.invalidate(urnsProvider);
 
     // Also invalidate the lesson's motif detail provider so lesson page shows updated status
+    // AND clear the cache to ensure fresh data is fetched
     if (discoveredMotif != null) {
+      // Clear cached motif data
+      final hiveStorage = ref.read(hiveStorageProvider);
+      await hiveStorage.motifsBox.delete(discoveredMotif.id);
+
+      // Invalidate the provider
       ref.invalidate(lesson_provider.motifDetailProvider(discoveredMotif.id));
     }
 
-    // Wait a bit for the provider to refresh
-    await Future.delayed(const Duration(milliseconds: 150));
+    // Wait a bit longer to ensure cache clearing and provider refresh
+    await Future.delayed(const Duration(milliseconds: 300));
 
     // Then navigate to motif detail
     if (discoveredMotif != null && mounted) {
