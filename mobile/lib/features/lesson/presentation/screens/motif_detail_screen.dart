@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -320,86 +321,103 @@ class _MotifDetailScreenState extends ConsumerState<MotifDetailScreen>
 
   Future<void> _shareMotif(MotifDetailDto motif) async {
     try {
-      // Show loading indicator
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Row(
             children: [
-              SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-              ),
+              SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)),
               SizedBox(width: 12),
-              Text('Đang chuẩn bị ảnh...'),
+              Text('Đang tạo ảnh chia sẻ...'),
             ],
           ),
           backgroundColor: AppColors.surface,
-          duration: Duration(seconds: 10),
+          duration: Duration(seconds: 15),
         ),
       );
 
-      // Get best available image URL
-      final heroUrl = motif.imageUrl != null && motif.imageUrl!.trim().isNotEmpty
-          ? motif.imageUrl
-          : motif.thumbnailUrl;
-
+      final heroUrl = motif.imageUrl ?? motif.thumbnailUrl;
       if (heroUrl == null || heroUrl.trim().isEmpty) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        await Share.share(
-          '🏛️ ${motif.name} - Khám phá tại ứng dụng Lưu Niên Sử Kí!',
-        );
+        await Share.share('🏛️ ${motif.name} - Khám phá tại ứng dụng Lưu Niên Sử Kí!');
         return;
       }
 
-      // Download the motif image
       final imageUrl = UrlUtils.getImageUrl(heroUrl);
-      debugPrint('Sharing image from: $imageUrl');
-
-      final dio = Dio();
       final tempDir = await getTemporaryDirectory();
+      final originalPath = '${tempDir.path}/original_${motif.id}.jpg';
 
-      // Get file extension
-      final uri = Uri.parse(imageUrl);
-      final pathParts = uri.path.split('.');
-      final ext = pathParts.isNotEmpty ? pathParts.last.toLowerCase() : 'jpg';
-      final extension = ['jpg', 'jpeg', 'png', 'webp'].contains(ext) ? ext : 'jpg';
+      await Dio().download(imageUrl, originalPath);
 
-      final imagePath = '${tempDir.path}/share_${motif.id}.$extension';
+      // Load image and add caption overlay
+      final originalBytes = await File(originalPath).readAsBytes();
+      final codec = await ui.instantiateImageCodec(originalBytes);
+      final frame = await codec.getNextFrame();
+      final originalImage = frame.image;
 
-      await dio.download(imageUrl, imagePath);
+      // Caption text
+      final captionLine1 = '🏛️ ${motif.name}';
+      final captionLine2 = '📍 ${motif.urn.name} • Lưu Niên Sử Kí';
+
+      // Create new image with caption bar
+      final recorder = ui.PictureRecorder();
+      final canvas = Canvas(recorder);
+
+      // Draw original image
+      canvas.drawImage(originalImage, Offset.zero, Paint());
+
+      // Draw semi-transparent overlay bar at bottom
+      final barHeight = 120.0;
+      final barPaint = Paint()..color = const Color(0xDD000000);
+      canvas.drawRect(
+        Rect.fromLTWH(0, originalImage.height - barHeight, originalImage.width.toDouble(), barHeight),
+        barPaint,
+      );
+
+      // Draw caption text
+      final textStyle1 = ui.TextStyle(
+        color: const Color(0xFFFFFFFF),
+        fontSize: 42,
+        fontWeight: ui.FontWeight.bold,
+      );
+      final textStyle2 = ui.TextStyle(
+        color: const Color(0xCCFFFFFF),
+        fontSize: 32,
+      );
+
+      final paragraph1Builder = ui.ParagraphBuilder(ui.ParagraphStyle(textAlign: ui.TextAlign.center))
+        ..pushStyle(textStyle1)
+        ..addText(captionLine1);
+      final paragraph1 = paragraph1Builder.build()..layout(ui.ParagraphConstraints(width: originalImage.width - 40.0));
+      canvas.drawParagraph(paragraph1, Offset(20, originalImage.height - barHeight + 15));
+
+      final paragraph2Builder = ui.ParagraphBuilder(ui.ParagraphStyle(textAlign: ui.TextAlign.center))
+        ..pushStyle(textStyle2)
+        ..addText(captionLine2);
+      final paragraph2 = paragraph2Builder.build()..layout(ui.ParagraphConstraints(width: originalImage.width - 40.0));
+      canvas.drawParagraph(paragraph2, Offset(20, originalImage.height - barHeight + 65));
+
+      // Convert to image
+      final picture = recorder.endRecording();
+      final finalImage = await picture.toImage(originalImage.width, originalImage.height);
+      final byteData = await finalImage.toByteData(format: ui.ImageByteFormat.png);
+
+      final sharePath = '${tempDir.path}/share_${motif.id}.png';
+      await File(sharePath).writeAsBytes(byteData!.buffer.asUint8List());
 
       if (mounted) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
       }
 
-      // Create beautiful caption
-      final caption = '''🏛️ ${motif.name}${motif.nameEn != null ? ' (${motif.nameEn})' : ''}
-
-📍 ${motif.urn.name}
-🎨 ${_getCategoryName(motif.category)} • ⭐ ${_getRarityName(motif.rarity)}
-
-✨ Khám phá văn hóa Đông Sơn tại ứng dụng Lưu Niên Sử Kí!
-#LuuNienSuKi #VanHoaDongSon #TrongDong''';
-
-      // Determine MIME type
-      final mimeType = extension == 'png' ? 'image/png' : 'image/jpeg';
-
-      // Share the image with caption
       await Share.shareXFiles(
-        [XFile(imagePath, mimeType: mimeType)],
-        text: caption,
+        [XFile(sharePath, mimeType: 'image/png')],
         subject: motif.name,
       );
     } catch (e) {
-      debugPrint('Error sharing motif: $e');
+      debugPrint('Error sharing: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Không thể chia sẻ: $e'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('Lỗi: $e'), backgroundColor: Colors.red),
         );
       }
     }

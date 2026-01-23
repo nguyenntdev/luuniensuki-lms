@@ -463,7 +463,7 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
           minCameraOrbit: widget.minCameraOrbit ?? 'auto auto 0.1m',
           maxCameraOrbit: widget.maxCameraOrbit ?? 'auto auto 1000m',
           fieldOfView: widget.fieldOfView ?? '45deg',
-          ar: widget.ar,
+          ar: false,
           arModes: widget.arModes ?? const ['scene-viewer', 'webxr', 'quick-look'],
           iosSrc: widget.iosSrc,
           environmentImage: 'neutral',

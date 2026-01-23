@@ -1,2 +1,3 @@
-"""Backend package for Lưu Niên Sử Kí (FastAPI + SQLAlchemy)."""
+# -*- coding: utf-8 -*-
+"""Backend package for Luu Nien Su Ki (FastAPI + SQLAlchemy)."""
 

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import annotations
 
 import hashlib
@@ -3214,6 +3215,19 @@ class MotifQuizQuestionOut(BaseModel):
     image_url: Optional[str] = None
 
 
+class UserProgressDetailOut(BaseModel):
+    """User progress for a specific motif."""
+    id: UUID
+    user_id: UUID
+    motif_id: UUID
+    status: str  # hidden, discovered, learned, mastered
+    discovered_at: Optional[datetime] = None
+    learned_at: Optional[datetime] = None
+    mastered_at: Optional[datetime] = None
+    xp_earned: int = 0
+    quiz_best_score: Optional[int] = None
+
+
 class MotifDetailOut(BaseModel):
     id: UUID
     urn: UrnOut
@@ -3230,6 +3244,7 @@ class MotifDetailOut(BaseModel):
     lesson: Optional[LessonContentOut] = None
     quiz_question_count: int = 0
     quiz_questions: list[MotifQuizQuestionOut] = Field(default_factory=list)
+    progress: Optional[UserProgressDetailOut] = None  # User's progress for this motif
 
 
 @app.get("/api/v1/motifs/{motif_id}", response_model=MotifDetailOut)
@@ -3257,6 +3272,29 @@ def get_motif_detail(
             status_code=403,
             detail="You do not have access to this content. Please verify your age.",
         )
+
+    # Query user progress for this motif
+    user_progress_out = None
+    if current_user:
+        progress_row = db.execute(
+            select(UserProgress).where(
+                UserProgress.user_id == current_user.id,
+                UserProgress.motif_id == motif.id
+            )
+        ).scalar_one_or_none()
+
+        if progress_row:
+            user_progress_out = UserProgressDetailOut(
+                id=progress_row.id,
+                user_id=progress_row.user_id,
+                motif_id=progress_row.motif_id,
+                status=progress_row.status.value,
+                discovered_at=progress_row.discovered_at,
+                learned_at=progress_row.learned_at,
+                mastered_at=progress_row.mastered_at,
+                xp_earned=progress_row.xp_earned,
+                quiz_best_score=progress_row.quiz_best_score,
+            )
 
     can_view_drafts = _can_view_drafts(current_user)
     lesson_out = (
@@ -3295,6 +3333,7 @@ def get_motif_detail(
         lesson=lesson_out,
         quiz_question_count=len(quiz_questions),
         quiz_questions=quiz_questions,
+        progress=user_progress_out,
     )
 
 
