@@ -742,6 +742,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
         ],
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(

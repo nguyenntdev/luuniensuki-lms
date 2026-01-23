@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -222,6 +223,17 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   @override
   Widget build(BuildContext context) {
     final quizAsync = ref.watch(quizProvider(widget.motifId));
+
+    // Debug logging
+    debugPrint('[QuizScreen] build() called for motifId: ${widget.motifId}');
+    debugPrint('[QuizScreen] quizAsync state: ${quizAsync.runtimeType}');
+    debugPrint('[QuizScreen] isLoading: ${quizAsync.isLoading}, hasError: ${quizAsync.hasError}, hasValue: ${quizAsync.hasValue}');
+    if (quizAsync.hasError) {
+      debugPrint('[QuizScreen] Error: ${quizAsync.error}');
+    }
+    if (quizAsync.hasValue) {
+      debugPrint('[QuizScreen] Value: ${quizAsync.value?.questions.length ?? 0} questions');
+    }
 
     return Scaffold(
       backgroundColor: AppColors.background,
