@@ -65,6 +65,9 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
         // Verify quiz content hasn't changed - use .future to actually await
         final quiz = await ref.read(quizProvider(widget.motifId).future);
 
+        // Check mounted after async operation
+        if (!mounted) return;
+
         final currentHash = QuizProgress.createQuestionsHash(
           quiz.questions.map((q) => {'id': q.id}).toList(),
         );
@@ -78,16 +81,18 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
         // Show resume dialog
         if (mounted) {
           final shouldResume = await _showResumeDialog(savedProgress);
-          if (shouldResume == true) {
-            _resumeFromSavedProgress(savedProgress);
-          } else {
+          if (shouldResume == true && mounted) {
+            _resumeFromSavedProgress(savedProgress, quiz.questions.length);
+          } else if (mounted) {
             // Start fresh
             ref.read(quizStateProvider(widget.motifId).notifier).startFresh(quiz);
           }
         }
-      } catch (e) {
-        // If quiz loading fails, just don't show resume dialog
-        // The error will be handled by the main build method
+      } catch (e, stackTrace) {
+        // Log error for debugging instead of swallowing silently
+        debugPrint('[QuizScreen] Error checking saved progress: $e');
+        debugPrint('[QuizScreen] Stack trace: $stackTrace');
+        // Don't rethrow - allow quiz to load normally via main build method
       }
     }
   }
@@ -195,9 +200,14 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   }
 
   /// Resume from saved progress
-  void _resumeFromSavedProgress(QuizProgress progress) {
+  /// [questionCount] is used to validate and clamp the current question index
+  void _resumeFromSavedProgress(QuizProgress progress, int questionCount) {
+    // Validate and clamp index to prevent RangeError
+    final maxIndex = questionCount > 0 ? questionCount - 1 : 0;
+    final safeIndex = progress.currentQuestionIndex.clamp(0, maxIndex);
+
     setState(() {
-      _currentQuestionIndex = progress.currentQuestionIndex;
+      _currentQuestionIndex = safeIndex;
       _answers.addAll(progress.answers);
       _incorrectAnswers.addAll(progress.incorrectAnswers);
       _startTime = DateTime.now().subtract(
@@ -306,7 +316,37 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     );
   }
 
+  /// Format raw error message to user-friendly Vietnamese message
+  String _formatErrorForUser(String rawError) {
+    if (rawError.contains('Lesson not completed') ||
+        rawError.contains('lesson not completed')) {
+      return 'Bạn cần hoàn thành bài học trước khi làm trắc nghiệm.';
+    }
+    if (rawError.contains('NotFoundException') ||
+        rawError.contains('404') ||
+        rawError.contains('Not Found')) {
+      return 'Không tìm thấy bài trắc nghiệm cho họa tiết này.';
+    }
+    if (rawError.contains('NetworkException') ||
+        rawError.contains('SocketException') ||
+        rawError.contains('timeout') ||
+        rawError.contains('Connection refused')) {
+      return 'Không có kết nối mạng. Vui lòng kiểm tra lại.';
+    }
+    if (rawError.contains('401') || rawError.contains('Unauthorized')) {
+      return 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.';
+    }
+    if (rawError.contains('500') || rawError.contains('Internal Server Error')) {
+      return 'Lỗi máy chủ. Vui lòng thử lại sau.';
+    }
+    // Log the raw error for debugging but show generic message
+    debugPrint('[QuizScreen] Unhandled error: $rawError');
+    return 'Đã xảy ra lỗi. Vui lòng thử lại sau.';
+  }
+
   Widget _buildErrorState(String message) {
+    final displayMessage = _formatErrorForUser(message);
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -327,7 +367,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              message,
+              displayMessage,
               style: AppTypography.textTheme.bodyMedium?.copyWith(
                 color: AppColors.textSecondary,
               ),
@@ -344,6 +384,14 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                 foregroundColor: AppColors.onPrimary,
               ),
             ),
+            const SizedBox(height: 12),
+            TextButton(
+              onPressed: () => context.pop(),
+              child: Text(
+                'Quay lại',
+                style: TextStyle(color: AppColors.textSecondary),
+              ),
+            ),
           ],
         ),
       ),
@@ -353,6 +401,12 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   Widget _buildQuizContent(QuizResponseDto quiz) {
     if (quiz.questions.isEmpty) {
       return _buildEmptyState();
+    }
+
+    // Validate index bounds to prevent RangeError
+    if (_currentQuestionIndex >= quiz.questions.length) {
+      debugPrint('[QuizScreen] Index out of bounds: $_currentQuestionIndex >= ${quiz.questions.length}, clamping to 0');
+      _currentQuestionIndex = 0;
     }
 
     final currentQuestion = quiz.questions[_currentQuestionIndex];
