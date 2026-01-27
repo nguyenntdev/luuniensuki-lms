@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../shared/widgets/icons/index.dart';
 
 /// Small streak badge for display in leaderboard entries
 /// Shows fire icon with streak count
@@ -46,9 +47,9 @@ class StreakBadge extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              '🔥',
-              style: TextStyle(fontSize: compact ? 10 : 12),
+            StreakIcon(
+              type: StreakIconType.fire,
+              size: compact ? 10 : 12,
             ),
             const SizedBox(width: 2),
             Text(
@@ -89,7 +90,7 @@ class StreakBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text('🔥', style: TextStyle(fontSize: 14)),
+          const StreakIcon(type: StreakIconType.fire, size: 14),
           const SizedBox(width: 4),
           Text(
             '$streakDays',
@@ -196,7 +197,7 @@ class _AnimatedStreakBadgeState extends State<AnimatedStreakBadge>
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('🔥', style: TextStyle(fontSize: 18)),
+              const StreakIcon(type: StreakIconType.fire, size: 18),
               const SizedBox(width: 6),
               Text(
                 '${widget.streakDays}',

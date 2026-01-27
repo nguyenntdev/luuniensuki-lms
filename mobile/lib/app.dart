@@ -13,7 +13,7 @@ class LuuniensukiApp extends ConsumerWidget {
     final router = ref.watch(appRouterProvider);
 
     return MaterialApp.router(
-      title: 'Lưu Niên Sử Kí',
+      title: 'Cửu Đỉnh Ký',
       debugShowCheckedModeBanner: false,
 
       // Theme configuration

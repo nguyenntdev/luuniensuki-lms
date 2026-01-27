@@ -338,7 +338,7 @@ class _MotifDetailScreenState extends ConsumerState<MotifDetailScreen>
       final heroUrl = motif.imageUrl ?? motif.thumbnailUrl;
       if (heroUrl == null || heroUrl.trim().isEmpty) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        await Share.share('🏛️ ${motif.name} - Khám phá tại ứng dụng Lưu Niên Sử Kí!');
+        await Share.share('${motif.name} - Khám phá tại ứng dụng Cửu Đỉnh Ký!');
         return;
       }
 
@@ -479,7 +479,7 @@ class _MotifDetailScreenState extends ConsumerState<MotifDetailScreen>
         textAlign: ui.TextAlign.left,
       ))
         ..pushStyle(textStyle3)
-        ..addText('🏛️ Lưu Niên Sử Kí');
+        ..addText('Cửu Đỉnh Ký');
       final paragraph3 = paragraph3Builder.build()..layout(const ui.ParagraphConstraints(width: outputWidth - 80.0));
       canvas.drawParagraph(paragraph3, Offset(40, imageAreaHeight + 200));
 

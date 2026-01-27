@@ -204,7 +204,7 @@ void showFailedQuizMascot(BuildContext context, {int? score}) {
 void showDailyGoalComplete(BuildContext context) {
   showMascotBubble(
     context: context,
-    message: "Mục tiêu hôm nay hoàn thành! Xuất sắc! 🎯",
+    message: "Mục tiêu hôm nay hoàn thành! Xuất sắc!",
     expression: MascotExpression.celebrating,
     duration: const Duration(seconds: 4),
   );

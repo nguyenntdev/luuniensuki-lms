@@ -3,7 +3,7 @@ import 'package:confetti/confetti.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../shared/widgets/icons/milestone_icon.dart';
+import '../../../../shared/widgets/icons/index.dart';
 import '../../domain/entities/streak_milestone.dart';
 
 /// Streak milestone celebration widget - Shows when user reaches milestone
@@ -162,10 +162,7 @@ class _StreakMilestoneCelebrationState
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            '💎',
-                            style: const TextStyle(fontSize: 24),
-                          ),
+                          const GemIcon(size: 24),
                           const SizedBox(width: 8),
                           Text(
                             '+${widget.milestone.gemReward}',

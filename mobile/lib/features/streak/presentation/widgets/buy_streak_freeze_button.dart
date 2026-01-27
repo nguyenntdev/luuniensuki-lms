@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/icons/index.dart';
 import '../../../gems/presentation/providers/gems_provider.dart';
 import '../../domain/entities/streak_freeze.dart';
 import '../providers/streak_provider.dart';
@@ -48,9 +49,9 @@ class BuyStreakFreezeButton extends ConsumerWidget {
                   shape: BoxShape.circle,
                 ),
                 child: const Center(
-                  child: Text(
-                    '❄️',
-                    style: TextStyle(fontSize: 28),
+                  child: StreakIcon(
+                    type: StreakIconType.freeze,
+                    size: 28,
                   ),
                 ),
               ),
@@ -154,7 +155,7 @@ class BuyStreakFreezeButton extends ConsumerWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('💎'),
+                  const GemIcon(size: 18),
                   const SizedBox(width: 8),
                   Text(
                     canPurchase
@@ -217,8 +218,14 @@ class BuyStreakFreezeButton extends ConsumerWidget {
 
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('🎉 Đã mua Đóng Băng Chuỗi thành công!'),
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.celebration_rounded, color: Colors.white),
+              const SizedBox(width: 8),
+              const Text('Đã mua Đóng Băng Chuỗi thành công!'),
+            ],
+          ),
           backgroundColor: AppColors.success,
           behavior: SnackBarBehavior.floating,
         ),

@@ -40,22 +40,22 @@ final practiceUrnsProvider = FutureProvider<List<PracticeUrn>>((ref) async {
       parser: (json) => json as List<dynamic>,
     );
 
-    debugPrint('✅ [PracticeUrns] API response received: ${response.length} urns');
-    debugPrint('📝 [PracticeUrns] Raw response data: $response');
+    debugPrint('[PracticeUrns] API response received: ${response.length} urns');
+    debugPrint('[PracticeUrns] Raw response data: $response');
 
     final urns = response
         .map((item) {
           final urn = PracticeUrn.fromJson(item as Map<String, dynamic>);
-          debugPrint('🏺 [PracticeUrns] Parsed urn: ${urn.name}, thumbnailUrl: ${urn.thumbnailUrl}');
+          debugPrint('[PracticeUrns] Parsed urn: ${urn.name}, thumbnailUrl: ${urn.thumbnailUrl}');
           return urn;
         })
         .toList();
 
     return urns;
   } catch (e, stackTrace) {
-    debugPrint('❌ [PracticeUrns] Error fetching urns: $e');
-    debugPrint('📚 [PracticeUrns] Stack trace: $stackTrace');
-    debugPrint('⚠️ [PracticeUrns] Falling back to mock data');
+    debugPrint('[PracticeUrns] Error fetching urns: $e');
+    debugPrint('[PracticeUrns] Stack trace: $stackTrace');
+    debugPrint('[PracticeUrns] Falling back to mock data');
     // Return mock data as fallback
     return _getMockUrns();
   }

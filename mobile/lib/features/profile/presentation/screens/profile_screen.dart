@@ -924,7 +924,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                     ),
                     if (hasStreak) ...[
                       const SizedBox(width: 6),
-                      const Text('🔥', style: TextStyle(fontSize: 20)),
+                      Icon(
+                        Icons.local_fire_department_rounded,
+                        color: AppColors.streakOrange,
+                        size: 20,
+                      ),
                     ],
                   ],
                 ),

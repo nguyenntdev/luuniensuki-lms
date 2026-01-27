@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/icons/index.dart';
 import '../providers/streak_provider.dart';
 
 /// Streak reminder dialog shown when app opens and streak is at risk
@@ -92,9 +93,9 @@ class StreakReminderDialog extends ConsumerWidget {
                 ],
               ),
               child: const Center(
-                child: Text(
-                  '🔥',
-                  style: TextStyle(fontSize: 44),
+                child: StreakIcon(
+                  type: StreakIconType.fire,
+                  size: 44,
                 ),
               ),
             ),
@@ -139,7 +140,10 @@ class StreakReminderDialog extends ConsumerWidget {
                 ),
                 child: Row(
                   children: [
-                    const Text('❄️', style: TextStyle(fontSize: 24)),
+                    const StreakIcon(
+                      type: StreakIconType.freeze,
+                      size: 24,
+                    ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
@@ -206,9 +210,9 @@ class StreakReminderDialog extends ConsumerWidget {
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          '🔥',
-                          style: TextStyle(fontSize: 18),
+                        StreakIcon(
+                          type: StreakIconType.fire,
+                          size: 18,
                         ),
                         SizedBox(width: 8),
                         Text(

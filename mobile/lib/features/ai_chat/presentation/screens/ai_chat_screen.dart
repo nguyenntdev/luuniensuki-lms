@@ -528,7 +528,7 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
         final nextStep = response['next_step']?.toString() ?? '';
         final isCorrect = response['is_correct'] == true;
         final parts = <String>[
-          isCorrect ? 'Kết quả: Đúng ✅' : 'Kết quả: Chưa đúng ❌',
+          isCorrect ? 'Kết quả: Đúng' : 'Kết quả: Chưa đúng',
           if (explanation.isNotEmpty) 'Giải thích: $explanation',
           if (nextStep.isNotEmpty) 'Gợi ý tiếp theo: $nextStep',
         ];

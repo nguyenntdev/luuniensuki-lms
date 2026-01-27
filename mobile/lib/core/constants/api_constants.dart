@@ -1,4 +1,4 @@
-/// API constants for the Luuniensuki LMS mobile app.
+/// API constants for the Cửu Đỉnh Ký LMS mobile app.
 /// Contains base URL, timeouts, and all API endpoint definitions.
 class ApiConstants {
   ApiConstants._();

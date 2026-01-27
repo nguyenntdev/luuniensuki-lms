@@ -156,14 +156,14 @@ class _OnboardingPageState extends State<OnboardingPage>
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        _buildGamificationItem('❤️', 'Hearts', AppColors.error),
-        _buildGamificationItem('💎', 'Gems', AppColors.gemYellow),
-        _buildGamificationItem('🔥', 'Streaks', AppColors.streakOrange),
+        _buildGamificationItem(Icons.favorite_rounded, 'Hearts', AppColors.error),
+        _buildGamificationItem(Icons.diamond_rounded, 'Gems', AppColors.gemYellow),
+        _buildGamificationItem(Icons.local_fire_department_rounded, 'Streaks', AppColors.streakOrange),
       ],
     );
   }
 
-  Widget _buildGamificationItem(String emoji, String label, Color color) {
+  Widget _buildGamificationItem(IconData icon, String label, Color color) {
     return GlassContainer(
       opacity: 0.1,
       padding: const EdgeInsets.symmetric(
@@ -173,9 +173,10 @@ class _OnboardingPageState extends State<OnboardingPage>
       borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
       child: Column(
         children: [
-          Text(
-            emoji,
-            style: const TextStyle(fontSize: 32),
+          Icon(
+            icon,
+            size: 32,
+            color: color,
           ),
           AppSpacing.verticalSpaceXS,
           Text(

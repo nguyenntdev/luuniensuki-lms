@@ -1,12 +1,12 @@
-/// App-wide constants for Luuniensuki LMS
+/// App-wide constants for Cửu Đỉnh Ký
 class AppConstants {
   // Private constructor to prevent instantiation
   AppConstants._();
 
   // App Info
-  static const String appName = 'Lưu Niên Sử Kí';
-  static const String appNameEn = 'Luuniensuki LMS';
-  static const String appVersion = '1.0.0';
+  static const String appName = 'Cửu Đỉnh Ký';
+  static const String appNameEn = 'CuuDinhKy';
+  static const String appVersion = '1.22.0';
 
   // XP System
   static const int discoveryXp = 25;

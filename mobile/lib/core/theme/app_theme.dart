@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'app_colors.dart';
 import 'app_typography.dart';
 
-/// Main theme configuration for the Luuniensuki LMS app.
+/// Main theme configuration for the Cửu Đỉnh Ký LMS app.
 /// Uses Material 3 design with Vietnamese imperial color scheme.
 class AppTheme {
   AppTheme._();

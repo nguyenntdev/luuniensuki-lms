@@ -194,29 +194,42 @@ class _QuizResultScreenState extends ConsumerState<QuizResultScreen> {
     final isPassed = widget.result.passed;
     final isPerfect = widget.result.percentage == 100;
 
-    String emoji;
+    IconData icon;
+    Color iconColor;
     String title;
     String subtitle;
 
     if (isPerfect) {
-      emoji = '🏆';
+      icon = Icons.emoji_events_rounded;
+      iconColor = AppColors.xpGold;
       title = 'Xuất sắc!';
       subtitle = 'Bạn đã trả lời đúng tất cả câu hỏi!';
     } else if (isPassed) {
-      emoji = '🎉';
+      icon = Icons.celebration_rounded;
+      iconColor = AppColors.success;
       title = 'Tuyệt vời!';
       subtitle = 'Bạn đã vượt qua bài trắc nghiệm!';
     } else {
-      emoji = '💪';
+      icon = Icons.fitness_center_rounded;
+      iconColor = AppColors.primary;
       title = 'Cố gắng thêm!';
       subtitle = 'Hãy ôn lại bài học và thử lại nhé!';
     }
 
     return Column(
       children: [
-        Text(
-          emoji,
-          style: const TextStyle(fontSize: 64),
+        Container(
+          width: 80,
+          height: 80,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: iconColor.withOpacity(0.15),
+          ),
+          child: Icon(
+            icon,
+            size: 48,
+            color: iconColor,
+          ),
         ),
         const SizedBox(height: 16),
         Text(

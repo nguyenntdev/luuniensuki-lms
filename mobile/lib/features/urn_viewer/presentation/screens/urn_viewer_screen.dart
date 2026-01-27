@@ -110,7 +110,7 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
           _isLoading = false;
           // Don't set error state - let the model continue loading
         });
-        debugPrint('[URN_VIEWER] ⚠️ Model loading timeout after $elapsed seconds - continuing in background');
+        debugPrint('[URN_VIEWER] Model loading timeout after $elapsed seconds - continuing in background');
         debugPrint('[URN_VIEWER] Last progress: ${(_modelLoadProgress * 100).toInt()}%');
       }
     });
@@ -123,10 +123,10 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
       final result = await InternetAddress.lookup('google.com')
           .timeout(const Duration(seconds: 5));
       _isOnline = result.isNotEmpty && result[0].rawAddress.isNotEmpty;
-      debugPrint('[URN_VIEWER] Network connectivity check: ${_isOnline ? "✅ Online" : "❌ Offline"}');
+      debugPrint('[URN_VIEWER] Network connectivity check: ${_isOnline ? "Online" : "Offline"}');
     } catch (e) {
       _isOnline = false;
-      debugPrint('[URN_VIEWER] ❌ Network connectivity check failed: $e');
+      debugPrint('[URN_VIEWER] Network connectivity check failed: $e');
       if (mounted) {
         setState(() {
           _errorMessage = 'Không có kết nối Internet. Vui lòng kiểm tra và thử lại.';
@@ -179,10 +179,10 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
       if (mounted) {
         setState(() {});
       }
-      debugPrint('[URN_VIEWER] ✅ Loaded motif coordinates: ${_motifCoordinates.length}');
+      debugPrint('[URN_VIEWER] Loaded motif coordinates: ${_motifCoordinates.length}');
     } catch (e) {
       _motifCoordinatesLoaded = true;
-      debugPrint('[URN_VIEWER] ❌ Failed to load motif coordinates: $e');
+      debugPrint('[URN_VIEWER] Failed to load motif coordinates: $e');
     }
   }
 
@@ -680,7 +680,7 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
         _modelViewerController = controller;
       },
       onModelLoaded: () {
-        debugPrint('[URN_VIEWER] ✅ Model loaded successfully via CustomModelViewer');
+        debugPrint('[URN_VIEWER] Model loaded successfully via CustomModelViewer');
         if (mounted) {
           setState(() {
             _isLoading = false;
@@ -690,11 +690,11 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
         }
       },
       onModelError: (error) {
-        debugPrint('[URN_VIEWER] ❌ Model load error: $error');
+        debugPrint('[URN_VIEWER] Model load error: $error');
         if (_modelFallbackIndex < _modelFallbackUrls.length) {
           final fallbackUrl = _modelFallbackUrls[_modelFallbackIndex];
           _modelFallbackIndex += 1;
-          debugPrint('[URN_VIEWER] ⚠️ Falling back to: $fallbackUrl');
+          debugPrint('[URN_VIEWER] Falling back to: $fallbackUrl');
           setState(() {
             _resolvedModelUrl = fallbackUrl;
             _isLoading = true;
@@ -724,12 +724,12 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
         }
       },
       onHotspotTap: (motifId) {
-        debugPrint('[URN_VIEWER] 🎯 Hotspot tapped: $motifId');
+        debugPrint('[URN_VIEWER] Hotspot tapped: $motifId');
         Motif? motif;
         try {
           motif = motifs.firstWhere((m) => m.id == motifId);
         } catch (_) {
-          debugPrint('[URN_VIEWER] ⚠️ Hotspot motif not found: $motifId');
+          debugPrint('[URN_VIEWER] Hotspot motif not found: $motifId');
         }
         if (motif == null) {
           return;
@@ -750,13 +750,13 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
 
     final uri = Uri.tryParse(modelPath);
     if (uri != null) {
-      debugPrint('[URN_VIEWER]   ✅ URL is valid');
+      debugPrint('[URN_VIEWER]   URL is valid');
       debugPrint('[URN_VIEWER]   Scheme: ${uri.scheme}');
       debugPrint('[URN_VIEWER]   Host: ${uri.host}');
       debugPrint('[URN_VIEWER]   Path: ${uri.path}');
       debugPrint('[URN_VIEWER]   Extension: ${uri.path.split('.').last}');
     } else {
-      debugPrint('[URN_VIEWER]   ❌ URL is INVALID!');
+      debugPrint('[URN_VIEWER]   URL is INVALID!');
     }
   }
 
@@ -1331,7 +1331,7 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
                 // Retry button
                 ElevatedButton.icon(
                   onPressed: () {
-                    debugPrint('[URN_VIEWER] 🔄 User initiated retry');
+                    debugPrint('[URN_VIEWER] User initiated retry');
                     setState(() {
                       _isLoading = true;
                       _modelLoadError = false;
@@ -1350,7 +1350,7 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
                           _isLoading = false;
                           // Don't set error state - let the model continue loading
                         });
-                        debugPrint('[URN_VIEWER] ⚠️ Model loading timeout after $elapsed seconds - continuing in background');
+                        debugPrint('[URN_VIEWER] Model loading timeout after $elapsed seconds - continuing in background');
                       }
                     });
                   },

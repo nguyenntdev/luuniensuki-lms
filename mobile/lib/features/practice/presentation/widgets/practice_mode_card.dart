@@ -4,6 +4,66 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/glass/glass_container.dart';
 
+/// Helper function to map icon strings to Material Icons
+IconData _getIconData(String iconKey) {
+  switch (iconKey) {
+    // Emoji mapping
+    case 'bolt':
+      return Icons.bolt_rounded;
+    case 'menu_book':
+      return Icons.menu_book_rounded;
+    case 'favorite':
+      return Icons.favorite_rounded;
+    case 'star':
+      return Icons.star_rounded;
+    case 'diamond':
+      return Icons.diamond_rounded;
+    case 'emoji_events':
+      return Icons.emoji_events_rounded;
+    case 'check_circle':
+      return Icons.check_circle_rounded;
+    default:
+      return Icons.help_outline; // Fallback
+  }
+}
+
+/// Helper function to get color for icon
+Color _getIconColor(String iconKey) {
+  switch (iconKey) {
+    case 'bolt':
+      return AppColors.warning;
+    case 'menu_book':
+      return AppColors.primary;
+    case 'favorite':
+      return AppColors.error;
+    case 'star':
+      return AppColors.xpGold;
+    case 'diamond':
+      return AppColors.gemYellow;
+    case 'emoji_events':
+      return AppColors.xpGold;
+    case 'check_circle':
+      return AppColors.success;
+    default:
+      return AppColors.textSecondary;
+  }
+}
+
+/// Helper to check if string is an emoji (not an icon key)
+bool _isEmoji(String text) {
+  // Simple check: if it's a known icon key, it's not an emoji
+  const iconKeys = [
+    'bolt',
+    'menu_book',
+    'favorite',
+    'star',
+    'diamond',
+    'emoji_events',
+    'check_circle'
+  ];
+  return !iconKeys.contains(text);
+}
+
 /// Data model for practice mode
 class PracticeModeData {
   final String id;
@@ -135,10 +195,16 @@ class PracticeModeCard extends StatelessWidget {
                               color: mode.color.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(14),
                             ),
-                            child: Text(
-                              mode.emoji,
-                              style: TextStyle(fontSize: emojiSize),
-                            ),
+                            child: _isEmoji(mode.emoji)
+                                ? Text(
+                                    mode.emoji,
+                                    style: TextStyle(fontSize: emojiSize),
+                                  )
+                                : Icon(
+                                    _getIconData(mode.emoji),
+                                    size: emojiSize,
+                                    color: mode.color,
+                                  ),
                           ),
                           const SizedBox(height: AppSpacing.sm),
                           titleSection,
@@ -154,10 +220,16 @@ class PracticeModeCard extends StatelessWidget {
                               color: mode.color.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(16),
                             ),
-                            child: Text(
-                              mode.emoji,
-                              style: TextStyle(fontSize: emojiSize),
-                            ),
+                            child: _isEmoji(mode.emoji)
+                                ? Text(
+                                    mode.emoji,
+                                    style: TextStyle(fontSize: emojiSize),
+                                  )
+                                : Icon(
+                                    _getIconData(mode.emoji),
+                                    size: emojiSize,
+                                    color: mode.color,
+                                  ),
                           ),
                           const SizedBox(width: AppSpacing.md),
                           Expanded(child: titleSection),
@@ -235,10 +307,16 @@ class PracticeModeCard extends StatelessWidget {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(
-                                reward.icon,
-                                style: const TextStyle(fontSize: 16),
-                              ),
+                              _isEmoji(reward.icon)
+                                  ? Text(
+                                      reward.icon,
+                                      style: const TextStyle(fontSize: 16),
+                                    )
+                                  : Icon(
+                                      _getIconData(reward.icon),
+                                      size: 16,
+                                      color: _getIconColor(reward.icon),
+                                    ),
                               const SizedBox(width: 4),
                               Text(
                                 reward.value,

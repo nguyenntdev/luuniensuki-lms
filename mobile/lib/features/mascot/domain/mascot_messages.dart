@@ -3,7 +3,7 @@
 class MascotMessages {
   // Encouragement messages for progress
   static const encouragement = [
-    "Bạn làm tốt lắm! 🎉",
+    "Bạn làm tốt lắm!",
     "Tiếp tục phát huy nhé!",
     "Còn một chút nữa thôi!",
     "Xuất sắc! Cố lên!",
@@ -16,23 +16,23 @@ class MascotMessages {
     "Đừng quên học hôm nay!",
     "Streak của bạn đang chờ đấy!",
     "Học một chút thôi, đừng để streak bị mất!",
-    "Hôm nay bạn học chưa? 👀",
+    "Hôm nay bạn học chưa?",
     "Chỉ cần vài phút là giữ được streak!",
   ];
 
   // Celebration messages for achievements
   static const celebration = [
-    "Tuyệt vời! Bạn đã hoàn thành! 🎊",
+    "Tuyệt vời! Bạn đã hoàn thành!",
     "Xuất sắc! Tiếp tục nào!",
-    "Hoàn hảo! Bạn quá giỏi! ⭐",
+    "Hoàn hảo! Bạn quá giỏi!",
     "Wow! Thật đáng kinh ngạc!",
-    "Chúc mừng! Bạn đã làm được! 🎉",
+    "Chúc mừng! Bạn đã làm được!",
     "Tài năng quá! Tiếp tục phát huy nhé!",
   ];
 
   // Welcome messages
   static const welcome = [
-    "Xin chào! Vui lòng đồng hành cùng bạn! 👋",
+    "Xin chào! Vui lòng đồng hành cùng bạn!",
     "Hãy bắt đầu hành trình học tập nào!",
     "Chào mừng trở lại! Sẵn sàng học chưa?",
     "Mình sẽ giúp bạn học hiệu quả hơn!",
@@ -40,31 +40,31 @@ class MascotMessages {
 
   // Sad/worried messages when streak is about to break
   static const streakWarning = [
-    "Ồ không! Streak của bạn sắp mất rồi! 😢",
-    "Đừng để mình buồn nhé... Học ngay đi! 🥺",
+    "Ồ không! Streak của bạn sắp mất rồi!",
+    "Đừng để mình buồn nhé... Học ngay đi!",
     "Streak đã duy trì lâu rồi, đừng để mất!",
     "Mình sẽ buồn nếu bạn không học hôm nay...",
   ];
 
   // Perfect score messages
   static const perfectScore = [
-    "Hoàn hảo 100%! Bạn quá tuyệt! 🌟",
-    "Điểm tuyệt đối! Mình tự hào về bạn! 💯",
-    "Không sai một câu! Xuất sắc! ⭐",
-    "Tuyệt vời! Bạn là thiên tài! 🎯",
+    "Hoàn hảo 100%! Bạn quá tuyệt!",
+    "Điểm tuyệt đối! Mình tự hào về bạn!",
+    "Không sai một câu! Xuất sắc!",
+    "Tuyệt vời! Bạn là thiên tài!",
   ];
 
   // Lesson completion messages
   static const lessonComplete = [
-    "Bài học hoàn thành! Tuyệt lắm! 📚",
+    "Bài học hoàn thành! Tuyệt lắm!",
     "Giỏi quá! Một bài học nữa hoàn thành!",
     "Kiến thức mới đã trong tay! Tốt lắm!",
-    "Bạn đang tiến bộ từng ngày! 💪",
+    "Bạn đang tiến bộ từng ngày!",
   ];
 
   // First time messages
   static const firstQuiz = [
-    "Bài quiz đầu tiên! Cố lên nhé! 🎯",
+    "Bài quiz đầu tiên! Cố lên nhé!",
     "Chúc may mắn với quiz đầu tiên!",
     "Mình tin bạn sẽ làm tốt!",
   ];
@@ -86,7 +86,7 @@ class MascotMessages {
 
   // Empty state messages
   static const emptyState = [
-    "Hãy bắt đầu học thôi! 📖",
+    "Hãy bắt đầu học thôi!",
     "Chọn m��t bài học để bắt đầu nhé!",
     "Nhiều bài học thú vị đang chờ bạn!",
   ];

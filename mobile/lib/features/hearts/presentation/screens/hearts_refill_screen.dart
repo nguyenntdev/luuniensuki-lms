@@ -161,10 +161,10 @@ class HeartsRefillScreen extends ConsumerWidget {
         // Option 2: Spend gems for full refill
         _buildOptionCard(
           context: context,
-          icon: Icons.diamond,
+          icon: Icons.diamond_rounded,
           iconColor: AppColors.primary,
           title: 'Nạp Đầy Tim',
-          description: 'Sử dụng $gemCostForRefill 💎 để nạp đầy tim',
+          description: 'Sử dụng $gemCostForRefill Gems để nạp đầy tim',
           buttonText: 'Nạp Đầy',
           onTap: () async {
             final currentGems = user?.totalXp ?? 0; // TODO: Add gems system
@@ -190,7 +190,13 @@ class HeartsRefillScreen extends ConsumerWidget {
             } else if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Không đủ 💎 để nạp tim'),
+                  content: Row(
+                    children: [
+                      Icon(Icons.diamond_rounded, size: 16, color: Colors.white),
+                      const SizedBox(width: 8),
+                      const Text('Không đủ Gems để nạp tim'),
+                    ],
+                  ),
                   backgroundColor: AppColors.error,
                 ),
               );

@@ -213,7 +213,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
                     // Title
                     Text(
-                      'Lưu Niên Sử Kí',
+                      'Cửu Đỉnh Ký',
                       textAlign: TextAlign.center,
                       style: headlineStyle,
                     ),

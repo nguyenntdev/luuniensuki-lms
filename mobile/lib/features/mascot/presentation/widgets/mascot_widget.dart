@@ -12,7 +12,7 @@ enum MascotExpression {
 }
 
 /// Mascot widget similar to Duolingo's Duo owl
-/// Uses emoji owl 🦉 as placeholder (can be replaced with custom assets)
+/// Uses Material Icons for expressions
 class MascotWidget extends StatefulWidget {
   final MascotExpression expression;
   final double size;
@@ -98,22 +98,41 @@ class _MascotWidgetState extends State<MascotWidget>
     }
   }
 
-  String _getEmoji() {
+  IconData _getIcon() {
     switch (widget.expression) {
       case MascotExpression.happy:
-        return '🦉';
+        return Icons.sentiment_very_satisfied_rounded;
       case MascotExpression.sad:
-        return '😢';
+        return Icons.sentiment_dissatisfied_rounded;
       case MascotExpression.encouraging:
-        return '💪';
+        return Icons.fitness_center_rounded;
       case MascotExpression.celebrating:
-        return '🎉';
+        return Icons.celebration_rounded;
       case MascotExpression.worried:
-        return '😟';
+        return Icons.sentiment_dissatisfied_rounded;
       case MascotExpression.excited:
-        return '🤩';
+        return Icons.sentiment_very_satisfied_rounded;
       case MascotExpression.neutral:
-        return '🦉';
+        return Icons.sentiment_satisfied_rounded;
+    }
+  }
+
+  Color _getIconColor() {
+    switch (widget.expression) {
+      case MascotExpression.happy:
+        return const Color(0xFFFFD700); // Gold
+      case MascotExpression.sad:
+        return const Color(0xFF6E9AC4); // Blue
+      case MascotExpression.encouraging:
+        return const Color(0xFFFF6B6B); // Red
+      case MascotExpression.celebrating:
+        return const Color(0xFFFF8C00); // Orange
+      case MascotExpression.worried:
+        return const Color(0xFF9B9B9B); // Gray
+      case MascotExpression.excited:
+        return const Color(0xFFFFD700); // Gold
+      case MascotExpression.neutral:
+        return const Color(0xFFB8B8B8); // Light Gray
     }
   }
 
@@ -132,9 +151,10 @@ class _MascotWidgetState extends State<MascotWidget>
           ),
         );
       },
-      child: Text(
-        _getEmoji(),
-        style: TextStyle(fontSize: widget.size),
+      child: Icon(
+        _getIcon(),
+        size: widget.size,
+        color: _getIconColor(),
       ),
     );
   }

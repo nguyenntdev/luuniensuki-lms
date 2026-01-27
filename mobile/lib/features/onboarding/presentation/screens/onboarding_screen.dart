@@ -28,7 +28,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
   // Onboarding pages content
   final List<OnboardingPageData> _pages = [
     OnboardingPageData(
-      title: 'Chào mừng đến với\nLưu Niên Sử Kí',
+      title: 'Chào mừng đến với\nCửu Đỉnh Ký',
       description: 'Khám phá di sản văn hóa Việt Nam qua bộ sưu tập Cửu Đỉnh huyền thoại',
       icon: Icons.auto_awesome,
       gradient: AppColors.primaryGradient,
@@ -47,7 +47,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
     ),
     OnboardingPageData(
       title: 'Gamification',
-      description: 'Tích lũy Hearts ❤️, Gems 💎 và Streaks 🔥 khi hoàn thành bài học',
+      description: 'Tích lũy Hearts, Gems và Streaks khi hoàn thành bài học',
       icon: Icons.emoji_events_rounded,
       gradient: const LinearGradient(
         colors: [Color(0xFFF59E0B), Color(0xFFEF6B6B)],

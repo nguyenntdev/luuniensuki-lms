@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Glass theme constants for the Luuniensuki LMS mobile app.
+/// Glass theme constants for the Cửu Đỉnh Ký LMS mobile app.
 /// Defines the glassmorphism design system with colors, effects, and spacing.
 class GlassTheme {
   GlassTheme._(); // Private constructor to prevent instantiation

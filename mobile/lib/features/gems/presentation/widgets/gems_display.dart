@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/icons/index.dart';
 import '../providers/gems_provider.dart';
 
 /// Gems display widget with animation
@@ -77,9 +78,8 @@ class _GemsDisplayState extends ConsumerState<GemsDisplay>
               child: child,
             );
           },
-          child: Text(
-            '💎',
-            style: TextStyle(fontSize: widget.iconSize),
+          child: GemIcon(
+            size: widget.iconSize,
           ),
         ),
         const SizedBox(width: AppSpacing.xs),
@@ -163,7 +163,7 @@ class CompactGemsDisplay extends ConsumerWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('💎', style: TextStyle(fontSize: 16)),
+              const GemIcon(size: 16),
               const SizedBox(width: 4),
               Text(
                 '$balance',

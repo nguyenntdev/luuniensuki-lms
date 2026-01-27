@@ -189,22 +189,32 @@ class PracticeScreen extends ConsumerWidget {
                 children: [
                   _buildStatItem(
                     context,
-                    '✨',
+                    Icons.star_rounded,
+                    AppColors.xpGold,
                     '${stats['xpEarned'] ?? 0}',
                     'XP',
                     isCompact,
                   ),
-                  _buildStatItem(context, '🔥', '$streak', 'Ngày', isCompact),
                   _buildStatItem(
                     context,
-                    '❤️',
+                    Icons.local_fire_department_rounded,
+                    AppColors.streakOrange,
+                    '$streak',
+                    'Ngày',
+                    isCompact,
+                  ),
+                  _buildStatItem(
+                    context,
+                    Icons.favorite_rounded,
+                    AppColors.error,
                     '${stats['hearts'] ?? 5}',
                     'Tim',
                     isCompact,
                   ),
                   _buildStatItem(
                     context,
-                    '✅',
+                    Icons.check_circle_rounded,
+                    AppColors.success,
                     '${stats['questionsAnswered'] ?? 0}',
                     'Câu',
                     isCompact,
@@ -220,14 +230,19 @@ class PracticeScreen extends ConsumerWidget {
 
   Widget _buildStatItem(
     BuildContext context,
-    String emoji,
+    IconData icon,
+    Color iconColor,
     String value,
     String label,
     bool isCompact,
   ) {
     return Column(
       children: [
-        Text(emoji, style: TextStyle(fontSize: isCompact ? 22 : 28)),
+        Icon(
+          icon,
+          color: iconColor,
+          size: isCompact ? 24 : 32,
+        ),
         const SizedBox(height: 4),
         Text(
           value,

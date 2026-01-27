@@ -52,12 +52,14 @@ class StreakDay extends Equatable {
     return 'gray'; // Missed day
   }
 
-  /// Get icon for this day's status
-  String get statusIcon {
-    if (isFuture) return '';
-    if (usedFreeze) return '❄️'; // Ice for freeze
-    if (isActive) return '🔥'; // Fire for active
-    return ''; // No icon for missed
+  /// Get icon type for this day's status
+  /// This is used by the UI to determine which Material Icon to display
+  /// Returns null if no icon should be displayed
+  String? get iconType {
+    if (isFuture) return null;
+    if (usedFreeze) return 'freeze'; // Use StreakIconType.freeze
+    if (isActive) return 'fire'; // Use StreakIconType.fire
+    return null; // No icon for missed
   }
 
   /// Get label for this day

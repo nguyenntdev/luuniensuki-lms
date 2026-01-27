@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/icons/index.dart';
 import '../../domain/entities/streak_day.dart';
 
 /// Streak calendar widget - Shows last 7 days of activity
@@ -79,9 +80,9 @@ class StreakCalendar extends StatelessWidget {
                   ),
                   // Streak count
                   if (currentStreak > 0) ...[
-                    Text(
-                      '🔥',
-                      style: const TextStyle(fontSize: 16),
+                    const StreakIcon(
+                      type: StreakIconType.fire,
+                      size: 16,
                     ),
                     const SizedBox(width: 4),
                     Text(
@@ -118,7 +119,7 @@ class StreakCalendar extends StatelessWidget {
   }) {
     Color circleColor;
     Color borderColor;
-    String emoji = day.statusIcon;
+    Widget? iconWidget;
 
     if (day.isFuture) {
       circleColor = Colors.white.withOpacity(0.1);
@@ -126,9 +127,17 @@ class StreakCalendar extends StatelessWidget {
     } else if (day.usedFreeze) {
       circleColor = Colors.blue.withOpacity(0.3);
       borderColor = Colors.blue;
+      iconWidget = StreakIcon(
+        type: StreakIconType.freeze,
+        size: emojiSize,
+      );
     } else if (day.isActive) {
       circleColor = AppColors.streakOrange.withOpacity(0.3);
       borderColor = AppColors.streakOrange;
+      iconWidget = StreakIcon(
+        type: StreakIconType.fire,
+        size: emojiSize,
+      );
     } else {
       circleColor = Colors.white.withOpacity(0.05);
       borderColor = Colors.white.withOpacity(0.1);
@@ -169,10 +178,7 @@ class StreakCalendar extends StatelessWidget {
                 : null,
           ),
           child: Center(
-            child: Text(
-              emoji,
-              style: TextStyle(fontSize: emojiSize),
-            ),
+            child: iconWidget,
           ),
         ),
       ],

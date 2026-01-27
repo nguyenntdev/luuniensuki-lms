@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'quiz_models.freezed.dart';
@@ -144,12 +145,12 @@ class QuizResult with _$QuizResult {
     return 'Chưa đạt. Hãy ôn lại bài học và thử lại nhé!';
   }
 
-  /// Get result icon based on performance
-  String get resultEmoji {
-    if (isPerfect) return '🏆';
-    if (passed) return '🎉';
-    if (percentage >= 50) return '📚';
-    return '💪';
+  /// Get result icon (Material Icons) based on performance
+  IconData getResultIcon() {
+    if (isPerfect) return Icons.emoji_events_rounded;
+    if (passed) return Icons.celebration_rounded;
+    if (percentage >= 50) return Icons.menu_book_rounded;
+    return Icons.fitness_center_rounded;
   }
 }
 

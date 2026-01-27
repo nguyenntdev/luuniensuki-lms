@@ -22,13 +22,13 @@ class PracticeHomeScreen extends ConsumerWidget {
       // Quick Review
       PracticeModeData(
         id: 'quick_review',
-        emoji: '⚡',
+        emoji: 'bolt',
         title: 'Ôn Tập Nhanh',
         description: '5-10 câu hỏi về những họa tiết bạn đã học',
         duration: '2-3 phút',
         rewards: const [
-          Reward(icon: '❤️', value: '+1'),
-          Reward(icon: '✨', value: '+10 XP'),
+          Reward(icon: 'favorite', value: '+1'),
+          Reward(icon: 'star', value: '+10 XP'),
         ],
         color: AppColors.info,
       ),
@@ -36,44 +36,44 @@ class PracticeHomeScreen extends ConsumerWidget {
       // Category Deep Dive
       PracticeModeData(
         id: 'category_dive',
-        emoji: '📚',
+        emoji: 'menu_book',
         title: 'Ôn Sâu Theo Danh Mục',
         description: 'Chọn danh mục và ôn tập kỹ hơn',
         duration: '5-7 phút',
         rewards: const [
-          Reward(icon: '✨', value: '+30 XP'),
-          Reward(icon: '💎', value: '+5'),
+          Reward(icon: 'star', value: '+30 XP'),
+          Reward(icon: 'diamond', value: '+5'),
         ],
         color: AppColors.primary,
-        additionalInfo: '🌿 Thảo Mộc | 🦁 Linh Thú | 🏯 Kiến Trúc',
+        additionalInfo: 'Thảo Mộc | Linh Thú | Kiến Trúc',
       ),
 
       // Timed Challenge
       PracticeModeData(
         id: 'timed_challenge',
-        emoji: '⏱️',
+        emoji: 'timer',
         title: 'Thách Thức Tốc Độ',
         description: '10 câu hỏi trong 3 phút - Đua top bảng xếp hạng',
         duration: '3 phút',
         rewards: const [
-          Reward(icon: '✨', value: '+50 XP'),
-          Reward(icon: '🏆', value: 'Top 10% bonus'),
+          Reward(icon: 'star', value: '+50 XP'),
+          Reward(icon: 'emoji_events', value: 'Top 10% bonus'),
         ],
         color: AppColors.warning,
-        additionalInfo: '🏅 Hạng hiện tại: #$_mockCurrentRank',
+        additionalInfo: 'Hạng hiện tại: #$_mockCurrentRank',
       ),
 
       // Boss Battle
       PracticeModeData(
         id: 'boss_battle',
-        emoji: '👹',
+        emoji: 'school',
         title: 'Đỉnh Exam',
         description: '25 câu hỏi, cần 80% để vượt qua và nhận chứng chỉ',
         duration: '10-15 phút',
         rewards: const [
-          Reward(icon: '🎓', value: 'Chứng chỉ'),
-          Reward(icon: '✨', value: '+100 XP'),
-          Reward(icon: '💎', value: '+20'),
+          Reward(icon: 'school', value: 'Chứng chỉ'),
+          Reward(icon: 'star', value: '+100 XP'),
+          Reward(icon: 'diamond', value: '+20'),
         ],
         color: AppColors.error,
         isLocked: true,
@@ -282,21 +282,29 @@ class PracticeHomeScreen extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: AppSpacing.md),
-          _buildStatRow(context, '📅 Ngày luyện tập liên tiếp', '5 ngày'),
+          _buildStatRow(context, 'Ngày luyện tập liên tiếp', '5 ngày', icon: Icons.calendar_today_rounded),
           const SizedBox(height: AppSpacing.sm),
-          _buildStatRow(context, '✅ Tổng câu hỏi đã làm', '247 câu'),
+          _buildStatRow(context, 'Tổng câu hỏi đã làm', '247 câu', icon: Icons.check_circle_rounded),
           const SizedBox(height: AppSpacing.sm),
-          _buildStatRow(context, '🎯 Tỷ lệ chính xác', '85%'),
+          _buildStatRow(context, 'Tỷ lệ chính xác', '85%', icon: Icons.track_changes_rounded),
           const SizedBox(height: AppSpacing.sm),
-          _buildStatRow(context, '🏆 Họa tiết thành thạo', '12/45'),
+          _buildStatRow(context, 'Họa tiết thành thạo', '12/45', icon: Icons.emoji_events_rounded),
         ],
       ),
     );
   }
 
-  Widget _buildStatRow(BuildContext context, String label, String value) {
+  Widget _buildStatRow(BuildContext context, String label, String value, {IconData? icon}) {
     return Row(
       children: [
+        if (icon != null) ...[
+          Icon(
+            icon,
+            size: 18,
+            color: AppColors.xpGold,
+          ),
+          const SizedBox(width: AppSpacing.xs),
+        ],
         Expanded(
           child: Text(
             label,

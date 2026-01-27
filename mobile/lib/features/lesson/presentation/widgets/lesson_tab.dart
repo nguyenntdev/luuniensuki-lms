@@ -400,7 +400,11 @@ class _FunFactCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Text('💡', style: TextStyle(fontSize: 20)),
+              const Icon(
+                Icons.lightbulb_rounded,
+                color: AppColors.warning,
+                size: 20,
+              ),
               const SizedBox(width: 8),
               Text(
                 'Điều thú vị',

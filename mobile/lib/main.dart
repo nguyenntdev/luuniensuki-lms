@@ -50,7 +50,7 @@ class _LuuniensukiAppState extends ConsumerState<LuuniensukiApp> {
     final router = ref.watch(appRouterProvider);
 
     return MaterialApp.router(
-      title: 'Lưu Niên Sử Kí',
+      title: 'Cửu Đỉnh Ký',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,

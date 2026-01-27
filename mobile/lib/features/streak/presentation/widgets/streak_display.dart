@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/icons/index.dart';
 import '../../domain/entities/streak_day.dart' as streak_day;
 import '../../domain/entities/streak_milestone.dart';
 import '../providers/streak_provider.dart';
@@ -79,9 +80,9 @@ class StreakDisplay extends ConsumerWidget {
                     ],
                   ),
                   child: const Center(
-                    child: Text(
-                      '🔥',
-                      style: TextStyle(fontSize: 28),
+                    child: StreakIcon(
+                      type: StreakIconType.fire,
+                      size: 28,
                     ),
                   ),
                 ),
@@ -145,9 +146,9 @@ class StreakDisplay extends ConsumerWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Text(
-                          '❄️',
-                          style: TextStyle(fontSize: 16),
+                        const StreakIcon(
+                          type: StreakIconType.freeze,
+                          size: 16,
                         ),
                         const SizedBox(width: 4),
                         Text(
@@ -184,9 +185,9 @@ class StreakDisplay extends ConsumerWidget {
                 ),
                 child: Row(
                   children: [
-                    Text(
-                      nextMilestone.icon,
-                      style: const TextStyle(fontSize: 20),
+                    SimpleMilestoneIcon(
+                      days: nextMilestone.days,
+                      size: 20,
                     ),
                     const SizedBox(width: 8),
                     Expanded(
@@ -213,13 +214,20 @@ class StreakDisplay extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    Text(
-                      '+${nextMilestone.gemReward} 💎',
-                      style: TextStyle(
-                        color: AppColors.gemYellow,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '+${nextMilestone.gemReward}',
+                          style: TextStyle(
+                            color: AppColors.gemYellow,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        const GemIcon(size: 14),
+                      ],
                     ),
                   ],
                 ),
@@ -229,12 +237,23 @@ class StreakDisplay extends ConsumerWidget {
             // Longest streak
             if (data.longestStreak > data.currentStreak) ...[
               AppSpacing.verticalSpaceSM,
-              Text(
-                'Kỷ lục: ${data.longestStreak} ngày 🏆',
-                style: TextStyle(
-                  color: Colors.white.withOpacity(0.6),
-                  fontSize: 12,
-                ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Kỷ lục: ${data.longestStreak} ngày',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.6),
+                      fontSize: 12,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  const Icon(
+                    Icons.emoji_events_rounded,
+                    size: 16,
+                    color: AppColors.xpGold,
+                  ),
+                ],
               ),
             ],
           ],

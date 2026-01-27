@@ -77,8 +77,8 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
   void initState() {
     super.initState();
     debugPrint(
-        '[CUSTOM_MODEL_VIEWER] 🚀 Initializing for model: ${widget.modelUrl}');
-    debugPrint('[CUSTOM_MODEL_VIEWER] 📊 Starting model load process...');
+        '[CUSTOM_MODEL_VIEWER] Initializing for model: ${widget.modelUrl}');
+    debugPrint('[CUSTOM_MODEL_VIEWER] Starting model load process...');
     _scheduleSafetyTimeout();
   }
 
@@ -88,8 +88,8 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
 
     if (oldWidget.modelUrl != widget.modelUrl) {
       debugPrint(
-          '[CUSTOM_MODEL_VIEWER] 🔄 Model URL changed - resetting state');
-      debugPrint('[CUSTOM_MODEL_VIEWER] 📊 New model URL: ${widget.modelUrl}');
+          '[CUSTOM_MODEL_VIEWER] Model URL changed - resetting state');
+      debugPrint('[CUSTOM_MODEL_VIEWER] New model URL: ${widget.modelUrl}');
       if (mounted) {
         setState(() {
           _loadProgress = 0.0;
@@ -113,11 +113,11 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
     _safetyTimer = Timer(const Duration(seconds: 120), () {
       if (mounted && _isLoading) {
         debugPrint(
-            '[CUSTOM_MODEL_VIEWER] ⚠️ Model still loading after 2 minutes');
+            '[CUSTOM_MODEL_VIEWER] Model still loading after 2 minutes');
         debugPrint(
-            '[CUSTOM_MODEL_VIEWER] ⚠️ Current progress: ${_loadProgress.toInt()}%');
+            '[CUSTOM_MODEL_VIEWER] Current progress: ${_loadProgress.toInt()}%');
         debugPrint(
-            '[CUSTOM_MODEL_VIEWER] ℹ️ Large models (60-80MB) may take time to download');
+            '[CUSTOM_MODEL_VIEWER] Large models (60-80MB) may take time to download');
         // Don't hide loading indicator - just log warning
         // Model will continue loading in background
       }
@@ -327,13 +327,13 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
     final type = payload['type']?.toString();
     switch (type) {
       case 'init':
-        debugPrint('[CUSTOM_MODEL_VIEWER] 🚀 JavaScript bridge initialized');
+        debugPrint('[CUSTOM_MODEL_VIEWER] JavaScript bridge initialized');
         break;
       case 'load':
         debugPrint(
-            '[CUSTOM_MODEL_VIEWER] ✅ Model loaded successfully - hiding loading overlay');
+            '[CUSTOM_MODEL_VIEWER] Model loaded successfully - hiding loading overlay');
         debugPrint(
-            '[CUSTOM_MODEL_VIEWER] ✅ Final progress: ${_loadProgress.toInt()}%');
+            '[CUSTOM_MODEL_VIEWER] Final progress: ${_loadProgress.toInt()}%');
         if (mounted) {
           setState(() {
             _isLoading = false;
@@ -345,7 +345,7 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
         break;
       case 'error':
         final error = payload['error']?.toString() ?? 'Unknown error';
-        debugPrint('[CUSTOM_MODEL_VIEWER] ❌ Model load error: $error');
+        debugPrint('[CUSTOM_MODEL_VIEWER] Model load error: $error');
         if (mounted) {
           setState(() {
             _isLoading = false;
@@ -358,7 +358,7 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
         final progressValue = payload['progress'];
         final progress = progressValue is num ? progressValue.toDouble() : 0.0;
         debugPrint(
-            '[CUSTOM_MODEL_VIEWER] 📊 Loading progress: ${progress.toInt()}%');
+            '[CUSTOM_MODEL_VIEWER] Loading progress: ${progress.toInt()}%');
         if (mounted) {
           setState(() {
             _loadProgress = progress;
@@ -369,14 +369,14 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
       case 'hotspot':
         final motifId = payload['motifId']?.toString();
         if (motifId != null) {
-          debugPrint('[CUSTOM_MODEL_VIEWER] 🎯 Hotspot tapped: $motifId');
+          debugPrint('[CUSTOM_MODEL_VIEWER] Hotspot tapped: $motifId');
           widget.onHotspotTap?.call(motifId);
         }
         break;
       case 'webgl_lost':
         _contextLossCount += 1;
         debugPrint(
-            '[CUSTOM_MODEL_VIEWER] ❌ WebGL context lost (count: $_contextLossCount)');
+            '[CUSTOM_MODEL_VIEWER] WebGL context lost (count: $_contextLossCount)');
         if (_contextLossCount <= 1) {
           setState(() {
             _isLoading = true;
@@ -394,7 +394,7 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
         widget.onModelError?.call('WebGL context lost');
         break;
       case 'webgl_restored':
-        debugPrint('[CUSTOM_MODEL_VIEWER] ⚠️ WebGL context restored');
+        debugPrint('[CUSTOM_MODEL_VIEWER] WebGL context restored');
         break;
       case 'visibility':
         debugPrint(

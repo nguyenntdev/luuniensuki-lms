@@ -273,7 +273,11 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text('💎', style: TextStyle(fontSize: 16)),
+                    Icon(
+                      Icons.diamond_rounded,
+                      color: AppColors.gemYellow,
+                      size: 16,
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       '${ref.watch(gemsNotifierProvider).balance}',
@@ -753,7 +757,11 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
               onPressed: canAffordHint
                   ? () => _useHint(question)
                   : null,
-              icon: const Text('💎', style: TextStyle(fontSize: 16)),
+              icon: Icon(
+                Icons.diamond_rounded,
+                color: AppColors.onPrimary,
+                size: 16,
+              ),
               label: Text('$_hintCost'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.warning,
@@ -935,11 +943,20 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
               ),
             ),
             const SizedBox(height: 8),
-            Text(
-              '• Khi hết tim, bạn có thể đợi hoặc nạp bằng 💎',
-              style: AppTypography.textTheme.bodyMedium?.copyWith(
-                color: AppColors.textSecondary,
-              ),
+            Row(
+              children: [
+                Text(
+                  '• Khi hết tim, bạn có thể đợi hoặc nạp bằng ',
+                  style: AppTypography.textTheme.bodyMedium?.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+                Icon(
+                  Icons.diamond_rounded,
+                  color: AppColors.gemYellow,
+                  size: 16,
+                ),
+              ],
             ),
           ],
         ),

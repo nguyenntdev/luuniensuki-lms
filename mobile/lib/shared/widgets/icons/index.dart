@@ -5,4 +5,5 @@ library icons;
 export 'status_icon.dart';
 export 'streak_icon.dart';
 export 'milestone_icon.dart';
+export 'gem_icon.dart';
 

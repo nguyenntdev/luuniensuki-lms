@@ -4,7 +4,7 @@ import 'dart:math' as math;
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../shared/widgets/icons/milestone_icon.dart';
+import '../../../../shared/widgets/icons/index.dart';
 import '../../domain/entities/streak_milestone.dart';
 
 /// Enhanced streak milestone celebration with rich animations
@@ -240,7 +240,10 @@ class _StreakMilestoneAnimationState extends State<StreakMilestoneAnimation>
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text('🔥', style: TextStyle(fontSize: 32)),
+                        const StreakIcon(
+                          type: StreakIconType.fire,
+                          size: 32,
+                        ),
                         const SizedBox(width: 8),
                         Text(
                           '${widget.currentStreak}',
@@ -324,10 +327,7 @@ class _StreakMilestoneAnimationState extends State<StreakMilestoneAnimation>
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Text(
-                                  '💎',
-                                  style: TextStyle(fontSize: 28),
-                                ),
+                                const GemIcon(size: 28),
                                 const SizedBox(width: 10),
                                 Text(
                                   '+${widget.milestone.gemReward}',
@@ -360,13 +360,23 @@ class _StreakMilestoneAnimationState extends State<StreakMilestoneAnimation>
                           elevation: 8,
                           shadowColor: milestoneColor.withOpacity(0.5),
                         ),
-                        child: const Text(
-                          'Tuyệt vời! 🎉',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.celebration_rounded,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 8),
+                            const Text(
+                              'Tuyệt vời!',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),

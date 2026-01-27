@@ -22,27 +22,27 @@ final _dailyLessonsProvider = FutureProvider<List<_DailyLesson>>((ref) async {
       parser: (json) => json as Map<String, dynamic>,
     );
     final rawMotifs = response['path_motifs'];
-    debugPrint('📝 [DailyLessons] Dashboard response: path_motifs = $rawMotifs');
+    debugPrint('[DailyLessons] Dashboard response: path_motifs = $rawMotifs');
 
     if (rawMotifs is List && rawMotifs.isNotEmpty) {
       final lessons = rawMotifs
           .map((item) {
             final lesson = _DailyLesson.fromDashboard(item);
             if (lesson != null) {
-              debugPrint('📖 [DailyLessons] Parsed lesson from dashboard: ${lesson.name}, thumbnailUrl: ${lesson.thumbnailUrl}');
+              debugPrint('[DailyLessons] Parsed lesson from dashboard: ${lesson.name}, thumbnailUrl: ${lesson.thumbnailUrl}');
             }
             return lesson;
           })
           .whereType<_DailyLesson>()
           .toList();
       if (lessons.isNotEmpty) {
-        debugPrint('✅ [DailyLessons] Loaded ${lessons.length} lessons from dashboard');
+        debugPrint('[DailyLessons] Loaded ${lessons.length} lessons from dashboard');
         return lessons;
       }
     }
   } catch (e, stackTrace) {
-    debugPrint('❌ [DailyLessons] Error fetching dashboard: $e');
-    debugPrint('📚 [DailyLessons] Stack trace: $stackTrace');
+    debugPrint('[DailyLessons] Error fetching dashboard: $e');
+    debugPrint('[DailyLessons] Stack trace: $stackTrace');
     // Continue to fallback
   }
 
@@ -54,7 +54,7 @@ final _dailyLessonsProvider = FutureProvider<List<_DailyLesson>>((ref) async {
       parser: (json) => json as Map<String, dynamic>,
     );
     final motifs = urnResponse['motifs'] as List<dynamic>?;
-    debugPrint('📝 [DailyLessons] Urn response: motifs count = ${motifs?.length}');
+    debugPrint('[DailyLessons] Urn response: motifs count = ${motifs?.length}');
 
     if (motifs != null && motifs.isNotEmpty) {
       final lessons = motifs
@@ -62,24 +62,24 @@ final _dailyLessonsProvider = FutureProvider<List<_DailyLesson>>((ref) async {
           .map((item) {
             final lesson = _DailyLesson.fromMotif(item as Map<String, dynamic>);
             if (lesson != null) {
-              debugPrint('📖 [DailyLessons] Parsed lesson from motif: ${lesson.name}, thumbnailUrl: ${lesson.thumbnailUrl}');
+              debugPrint('[DailyLessons] Parsed lesson from motif: ${lesson.name}, thumbnailUrl: ${lesson.thumbnailUrl}');
             }
             return lesson;
           })
           .whereType<_DailyLesson>()
           .toList();
       if (lessons.isNotEmpty) {
-        debugPrint('✅ [DailyLessons] Loaded ${lessons.length} lessons from urn');
+        debugPrint('[DailyLessons] Loaded ${lessons.length} lessons from urn');
         return lessons;
       }
     }
   } catch (e, stackTrace) {
-    debugPrint('❌ [DailyLessons] Error fetching urn motifs: $e');
-    debugPrint('📚 [DailyLessons] Stack trace: $stackTrace');
+    debugPrint('[DailyLessons] Error fetching urn motifs: $e');
+    debugPrint('[DailyLessons] Stack trace: $stackTrace');
     // Continue to mock fallback
   }
 
-  debugPrint('⚠️ [DailyLessons] Falling back to mock lessons');
+  debugPrint('[DailyLessons] Falling back to mock lessons');
   return _getMockLessons();
 });
 

@@ -205,7 +205,7 @@ class SettingsScreen extends ConsumerWidget {
           ),
           _buildInfoTile(
             icon: Icons.copyright_outlined,
-            title: 'Lưu Niên Sử Kí',
+            title: 'Cửu Đỉnh Ký',
             subtitle: '© 2024 - Học tập văn hóa Việt',
             color: AppColors.primary,
           ),
