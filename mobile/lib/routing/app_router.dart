@@ -33,6 +33,7 @@ import '../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../features/streak/services/streak_event_service.dart';
 import '../shared/widgets/glass/animated_background.dart';
 import '../shared/widgets/glass/glass_bottom_nav.dart';
+import '../shared/widgets/backgrounds/modern_gradient_background_animated.dart';
 
 part 'app_router.g.dart';
 
@@ -447,56 +448,57 @@ class _MainShellState extends ConsumerState<MainShell> {
         ? 0.0
         : AppSpacing.navBarInset + MediaQuery.of(context).padding.bottom;
 
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Stack(
-        children: [
-          // Content
-          Padding(
-            padding: EdgeInsets.only(bottom: navInset),
-            child: widget.child,
-          ),
+    // Use simple AnimatedGradientBackground instead of ModernGradientBackgroundAnimated
+    // to ensure gradient is always visible
+    return AnimatedGradientBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Stack(
+          children: [
+            // Content - no padding so it extends behind navbar for blur effect
+            widget.child,
 
-          // Glass Bottom Navigation
-          if (!keyboardVisible)
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: GlassBottomNav(
-                currentIndex: _calculateSelectedIndex(context),
-                onTap: (index) => _onItemTapped(index, context),
-                items: const [
-                  GlassBottomNavItem(
-                    icon: Icons.explore_outlined,
-                    activeIcon: Icons.explore,
-                    label: 'Khám Phá',
-                  ),
-                  GlassBottomNavItem(
-                    icon: Icons.school_outlined,
-                    activeIcon: Icons.school,
-                    label: 'Học & Luyện',
-                  ),
-                  GlassBottomNavItem(
-                    icon: Icons.auto_awesome_outlined,
-                    activeIcon: Icons.auto_awesome,
-                    label: 'AI Chat',
-                    isPrimary: true,
-                  ),
-                  GlassBottomNavItem(
-                    icon: Icons.emoji_events_outlined,
-                    activeIcon: Icons.emoji_events,
-                    label: 'Thành Tích',
-                  ),
-                  GlassBottomNavItem(
-                    icon: Icons.person_outlined,
-                    activeIcon: Icons.person,
-                    label: 'Hồ Sơ',
-                  ),
-                ],
+            // Glass Bottom Navigation
+            if (!keyboardVisible)
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: GlassBottomNav(
+                  currentIndex: _calculateSelectedIndex(context),
+                  onTap: (index) => _onItemTapped(index, context),
+                  items: const [
+                    GlassBottomNavItem(
+                      icon: Icons.explore_outlined,
+                      activeIcon: Icons.explore,
+                      label: 'Khám Phá',
+                    ),
+                    GlassBottomNavItem(
+                      icon: Icons.school_outlined,
+                      activeIcon: Icons.school,
+                      label: 'Học & Luyện',
+                    ),
+                    GlassBottomNavItem(
+                      icon: Icons.auto_awesome_outlined,
+                      activeIcon: Icons.auto_awesome,
+                      label: 'AI Chat',
+                      isPrimary: true,
+                    ),
+                    GlassBottomNavItem(
+                      icon: Icons.emoji_events_outlined,
+                      activeIcon: Icons.emoji_events,
+                      label: 'Thành Tích',
+                    ),
+                    GlassBottomNavItem(
+                      icon: Icons.person_outlined,
+                      activeIcon: Icons.person,
+                      label: 'Hồ Sơ',
+                    ),
+                  ],
+                ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

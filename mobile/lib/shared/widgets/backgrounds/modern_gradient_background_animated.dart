@@ -66,11 +66,11 @@ class _ModernGradientBackgroundAnimatedState
   Color _getParticleColor(int index, Random random) {
     final colors = widget.gradientColors ??
         [
-          const Color(0xFF1A0A2E), // Imperial purple
-          const Color(0xFF16213E), // Deep blue
+          const Color(0xFF3D2B6E), // Brighter purple
+          const Color(0xFF2E4A7F), // Brighter blue
           const Color(0xFFE8B44C), // Gold accent
         ];
-    return colors[index % colors.length].withOpacity(0.15);
+    return colors[index % colors.length].withOpacity(0.2);
   }
 
   @override
@@ -86,11 +86,14 @@ class _ModernGradientBackgroundAnimatedState
   Widget build(BuildContext context) {
     return RepaintBoundary(
       child: Stack(
+        fit: StackFit.expand,
         children: [
-          // Aurora-like animated gradient base
-          AnimatedBuilder(
-            animation: _gradientController,
-            builder: (context, _) => _buildAnimatedGradient(),
+          // Aurora-like animated gradient base - must fill entire screen
+          Positioned.fill(
+            child: AnimatedBuilder(
+              animation: _gradientController,
+              builder: (context, _) => _buildAnimatedGradient(),
+            ),
           ),
 
           // Floating particles
@@ -116,39 +119,42 @@ class _ModernGradientBackgroundAnimatedState
     final progress = _gradientController.value;
     final colors = widget.gradientColors ??
         [
-          const Color(0xFF1A0A2E),
-          const Color(0xFF16213E),
-          const Color(0xFF0F1419),
+          const Color(0xFF2D1B4E), // Richer purple
+          const Color(0xFF1E3A5F), // Deeper blue with more saturation
+          const Color(0xFF0F1729), // Deep navy base
         ];
 
-    return Container(
-      decoration: BoxDecoration(
-        gradient: RadialGradient(
-          center: Alignment(
-            -0.8 + (progress * 0.4),
-            -0.6 + (progress * 0.3),
-          ),
-          radius: 1.5,
-          colors: [
-            Color.lerp(colors[0], colors[1], progress)!,
-            Color.lerp(colors[1], colors[2 % colors.length], progress)!,
-            colors[2 % colors.length],
-          ],
-          stops: const [0.0, 0.5, 1.0],
-        ),
-      ),
-      child: Container(
+    // Use SizedBox.expand to ensure the gradient fills the entire available space
+    return SizedBox.expand(
+      child: DecoratedBox(
         decoration: BoxDecoration(
           gradient: RadialGradient(
             center: Alignment(
-              0.8 - (progress * 0.4),
-              0.6 - (progress * 0.3),
+              -0.8 + (progress * 0.4),
+              -0.6 + (progress * 0.3),
             ),
-            radius: 1.2,
+            radius: 1.5,
             colors: [
-              const Color(0xFFE8B44C).withOpacity(0.1 * (1 - progress)),
-              Colors.transparent,
+              Color.lerp(colors[0], colors[1], progress)!,
+              Color.lerp(colors[1], colors[2 % colors.length], progress)!,
+              colors[2 % colors.length],
             ],
+            stops: const [0.0, 0.5, 1.0],
+          ),
+        ),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: RadialGradient(
+              center: Alignment(
+                0.8 - (progress * 0.4),
+                0.6 - (progress * 0.3),
+              ),
+              radius: 1.2,
+              colors: [
+                const Color(0xFFE8B44C).withOpacity(0.15 + (0.05 * progress)),
+                Colors.transparent,
+              ],
+            ),
           ),
         ),
       ),

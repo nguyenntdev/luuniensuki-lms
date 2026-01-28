@@ -28,7 +28,7 @@ class AppTheme {
       useMaterial3: true,
       fontFamily: AppTypography.fontFamily,
       colorScheme: colorScheme,
-      scaffoldBackgroundColor: AppColors.background,
+      scaffoldBackgroundColor: Colors.transparent,
 
       // App Bar Theme
       appBarTheme: AppBarTheme(

@@ -5,7 +5,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/url_utils.dart';
-import '../../../../shared/widgets/glass/animated_background.dart';
 import '../../../../shared/widgets/glass/glass_container.dart';
 import '../../../../shared/widgets/shimmer/shimmer_skeleton.dart';
 import '../../data/models/collection_dtos.dart';
@@ -57,8 +56,10 @@ class _CollectionScreenState extends ConsumerState<CollectionScreen>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedGradientBackground(
-      child: SafeArea(
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: SafeArea(
+        bottom: false,
         child: Column(
           children: [
             // Header

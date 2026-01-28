@@ -9,7 +9,6 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/url_utils.dart';
 import '../../../../routing/route_names.dart';
 import '../../../../shared/widgets/animations/staggered_animation_wrapper.dart';
-import '../../../../shared/widgets/glass/animated_background.dart';
 import '../../../hearts/presentation/widgets/hearts_display.dart';
 import '../../../streak/presentation/widgets/compact_streak_widget.dart';
 import '../../data/models/dashboard_summary.dart';
@@ -26,70 +25,69 @@ class LearningHubScreen extends ConsumerWidget {
     final horizontalPadding =
         screenWidth < 360 ? AppSpacing.md : AppSpacing.lg;
 
-    return AnimatedGradientBackground(
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: SafeArea(
-          child: CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(
-                child: _buildHeader(context),
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: SafeArea(
+        bottom: false,  // Allow content to extend behind navbar
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: _buildHeader(context),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                child: _buildTodaySummaryCard(context, summaryAsync),
               ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-                  child: _buildTodaySummaryCard(context, summaryAsync),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                  horizontalPadding,
+                  AppSpacing.lg,
+                  horizontalPadding,
+                  AppSpacing.sm,
+                ),
+                child: _buildSectionHeader(
+                  context,
+                  'Bài học & ôn tập',
+                  Icons.auto_stories,
                 ),
               ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    horizontalPadding,
-                    AppSpacing.lg,
-                    horizontalPadding,
-                    AppSpacing.sm,
-                  ),
-                  child: _buildSectionHeader(
-                    context,
-                    'Bài học & ôn tập',
-                    Icons.auto_stories,
-                  ),
+            ),
+            const SliverToBoxAdapter(
+              child: DailyLessonsWidget(),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                child: _buildQuickReviewTile(context, summaryAsync),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                  horizontalPadding,
+                  AppSpacing.lg,
+                  horizontalPadding,
+                  AppSpacing.sm,
+                ),
+                child: _buildSectionHeader(
+                  context,
+                  'Lộ trình theo đỉnh',
+                  Icons.terrain,
                 ),
               ),
-              const SliverToBoxAdapter(
-                child: DailyLessonsWidget(),
-              ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-                  child: _buildQuickReviewTile(context, summaryAsync),
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    horizontalPadding,
-                    AppSpacing.lg,
-                    horizontalPadding,
-                    AppSpacing.sm,
-                  ),
-                  child: _buildSectionHeader(
-                    context,
-                    'Lộ trình theo đỉnh',
-                    Icons.terrain,
-                  ),
-                ),
-              ),
-              _buildPathMotifsSliver(
-                context: context,
-                summaryAsync: summaryAsync,
-                horizontalPadding: horizontalPadding,
-              ),
-              const SliverToBoxAdapter(
-                child: SizedBox(height: 120),
-              ),
-            ],
-          ),
+            ),
+            _buildPathMotifsSliver(
+              context: context,
+              summaryAsync: summaryAsync,
+              horizontalPadding: horizontalPadding,
+            ),
+            const SliverToBoxAdapter(
+              child: SizedBox(height: 120),
+            ),
+          ],
         ),
       ),
     );

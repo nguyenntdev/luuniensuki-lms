@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/effects/shimmer_widget.dart';
-import '../../../../shared/widgets/backgrounds/modern_gradient_background_animated.dart';
 import '../../../../shared/widgets/glass/glass_container.dart';
 import '../../../../shared/widgets/glass/pressable_glass_card.dart';
 import '../../../../shared/widgets/text/gradient_text.dart';
@@ -73,28 +72,27 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
 
   @override
   Widget build(BuildContext context) {
-    return ModernGradientBackgroundAnimated(
-      child: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            _buildHeader(),
+    return SafeArea(
+      bottom: false, // Allow content to extend behind navbar
+      child: Column(
+        children: [
+          // Header
+          _buildHeader(),
 
-            // Tab bar
-            _buildTabBar(),
+          // Tab bar
+          _buildTabBar(),
 
-            // Tab content
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildBadgesTab(),
-                  _buildLeaderboardTab(),
-                ],
-              ),
+          // Tab content
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                _buildBadgesTab(),
+                _buildLeaderboardTab(),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

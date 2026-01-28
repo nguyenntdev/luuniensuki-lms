@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
-import '../../../../shared/widgets/backgrounds/modern_gradient_background_animated.dart';
 import '../../../../shared/widgets/effects/shimmer_widget.dart';
 import '../../../../shared/widgets/progress/circular_progress_badge.dart';
 import '../../../../shared/widgets/text/gradient_text.dart';
@@ -20,110 +19,109 @@ class LearningPathScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ModernGradientBackgroundAnimated(
-      child: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            // Header
-            _buildHeader(context, ref),
+    return SafeArea(
+      bottom: false,  // Allow content to extend behind navbar
+      child: CustomScrollView(
+        slivers: [
+          // Header
+          _buildHeader(context, ref),
 
-            // Daily Lessons Section
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.md,
-                  AppSpacing.sm,
-                  AppSpacing.md,
-                  AppSpacing.sm,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Section title with gradient
-                    GradientText(
-                      'Chặng leo hôm nay',
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.white,
-                          Colors.white.withOpacity(0.8),
-                        ],
-                      ),
-                      style: AppTypography.cardTitle.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            // Daily Lessons Horizontal List
-            const SliverToBoxAdapter(
-              child: DailyLessonsWidget(),
-            ),
-
-            // Urn Path Section Header
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.md,
-                  AppSpacing.xl,
-                  AppSpacing.md,
-                  AppSpacing.xs,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        GradientText(
-                          'Lộ trình theo đỉnh',
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.white,
-                              Colors.white.withOpacity(0.8),
-                            ],
-                          ),
-                          style: AppTypography.cardTitle.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            // Urn Path - Vertical List with staggered animations
-            SliverPadding(
+          // Daily Lessons Section
+          SliverToBoxAdapter(
+            child: Padding(
               padding: const EdgeInsets.fromLTRB(
                 AppSpacing.md,
                 AppSpacing.sm,
                 AppSpacing.md,
-                120, // Bottom padding for nav bar
+                AppSpacing.sm,
               ),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    return _StaggeredUrnCardWrapper(
-                      index: index,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                        child: UrnPathCard(
-                          urnIndex: index,
-                          isCurrentUrn: index == 1, // Mock: Second urn is current
-                        ),
-                      ),
-                    );
-                  },
-                  childCount: 9, // Mock: 9 urns total
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Section title with gradient
+                  GradientText(
+                    'Chặng leo hôm nay',
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.white,
+                        Colors.white.withOpacity(0.8),
+                      ],
+                    ),
+                    style: AppTypography.cardTitle.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+
+          // Daily Lessons Horizontal List
+          const SliverToBoxAdapter(
+            child: DailyLessonsWidget(),
+          ),
+
+          // Urn Path Section Header
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.md,
+                AppSpacing.xl,
+                AppSpacing.md,
+                AppSpacing.xs,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      GradientText(
+                        'Lộ trình theo đỉnh',
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.white,
+                            Colors.white.withOpacity(0.8),
+                          ],
+                        ),
+                        style: AppTypography.cardTitle.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Urn Path - Vertical List with staggered animations
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.md,
+              AppSpacing.sm,
+              AppSpacing.md,
+              120, // Bottom padding for nav bar
+            ),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  return _StaggeredUrnCardWrapper(
+                    index: index,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                      child: UrnPathCard(
+                        urnIndex: index,
+                        isCurrentUrn: index == 1, // Mock: Second urn is current
+                      ),
+                    ),
+                  );
+                },
+                childCount: 9, // Mock: 9 urns total
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

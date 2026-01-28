@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
-import '../../../../shared/widgets/backgrounds/modern_gradient_background_animated.dart';
 import '../../../../shared/widgets/glass/index.dart';
 import '../../../../shared/widgets/shimmer/shimmer_skeleton.dart';
 import '../../../../shared/widgets/icons/status_icon.dart';
@@ -93,12 +92,11 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
     final progress = ref.watch(exploreProgressProvider);
     final authState = ref.watch(authNotifierProvider);
 
-    return ModernGradientBackgroundAnimated(
-      child: SafeArea(
-        child: FadeTransition(
-          opacity: _fadeAnimation,
-          child: _buildBody(context, state, progress, authState),
-        ),
+    return SafeArea(
+      bottom: false,  // Allow content to extend behind navbar
+      child: FadeTransition(
+        opacity: _fadeAnimation,
+        child: _buildBody(context, state, progress, authState),
       ),
     );
   }

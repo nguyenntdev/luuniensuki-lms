@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../shared/widgets/backgrounds/modern_gradient_background_animated.dart';
 import '../../../../shared/widgets/glass/glass_container.dart';
 import '../../../../shared/widgets/avatar/animated_avatar_ring.dart';
 import '../../../../shared/widgets/text/gradient_text.dart';
@@ -71,12 +70,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     final authState = ref.watch(authNotifierProvider);
     final user = authState.user;
 
-    return ModernGradientBackgroundAnimated(
-      child: SafeArea(
-        child: user == null
-            ? _buildNotLoggedIn(context)
-            : _buildProfile(context, ref, user),
-      ),
+    return SafeArea(
+      bottom: false,  // Allow content to extend behind navbar
+      child: user == null
+          ? _buildNotLoggedIn(context)
+          : _buildProfile(context, ref, user),
     );
   }
 
