@@ -50,6 +50,9 @@ class AppNetworkImage extends StatelessWidget {
   /// Optional hero tag for Hero animations
   final String? heroTag;
 
+  /// Semantic label for accessibility (screen readers)
+  final String? semanticLabel;
+
   const AppNetworkImage({
     super.key,
     required this.imageUrl,
@@ -60,6 +63,7 @@ class AppNetworkImage extends StatelessWidget {
     this.placeholder,
     this.errorWidget,
     this.heroTag,
+    this.semanticLabel,
   });
 
   @override
@@ -93,7 +97,12 @@ class AppNetworkImage extends StatelessWidget {
       );
     }
 
-    return imageWidget;
+    // Wrap with Semantics for accessibility
+    return Semantics(
+      label: semanticLabel ?? 'Hình ảnh',
+      image: true,
+      child: imageWidget,
+    );
   }
 
   /// Build the placeholder widget (shown while loading)

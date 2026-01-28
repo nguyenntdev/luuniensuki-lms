@@ -154,24 +154,45 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen>
     }
 
     if (state.acceptedFriends.isEmpty) {
-      return _buildEmptyState(
-        icon: Icons.people_outline,
-        title: 'Chưa có bạn bè',
-        subtitle: 'Thêm bạn bè để cùng học tập và thi đua!',
+      return RefreshIndicator(
+        onRefresh: () async {
+          ref.read(friendsNotifierProvider.notifier).build();
+        },
+        color: AppColors.primary,
+        backgroundColor: AppColors.surface,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.6,
+            child: _buildEmptyState(
+              icon: Icons.people_outline,
+              title: 'Chưa có bạn bè',
+              subtitle: 'Thêm bạn bè để cùng học tập và thi đua!',
+            ),
+          ),
+        ),
       );
     }
 
-    return ListView.separated(
-      padding: const EdgeInsets.all(16),
-      itemCount: state.acceptedFriends.length,
-      separatorBuilder: (context, index) => AppSpacing.verticalSpaceMD,
-      itemBuilder: (context, index) {
-        final friend = state.acceptedFriends[index];
-        return FriendCard(
-          friend: friend,
-          onRemove: () => _confirmRemoveFriend(friend),
-        );
+    return RefreshIndicator(
+      onRefresh: () async {
+        ref.read(friendsNotifierProvider.notifier).build();
       },
+      color: AppColors.primary,
+      backgroundColor: AppColors.surface,
+      child: ListView.separated(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(16),
+        itemCount: state.acceptedFriends.length,
+        separatorBuilder: (context, index) => AppSpacing.verticalSpaceMD,
+        itemBuilder: (context, index) {
+          final friend = state.acceptedFriends[index];
+          return FriendCard(
+            friend: friend,
+            onRemove: () => _confirmRemoveFriend(friend),
+          );
+        },
+      ),
     );
   }
 
@@ -181,25 +202,46 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen>
     }
 
     if (state.incomingRequests.isEmpty) {
-      return _buildEmptyState(
-        icon: Icons.inbox_outlined,
-        title: 'Không có lời mời',
-        subtitle: 'Lời mời kết bạn sẽ hiển thị ở đây',
+      return RefreshIndicator(
+        onRefresh: () async {
+          ref.read(friendsNotifierProvider.notifier).build();
+        },
+        color: AppColors.primary,
+        backgroundColor: AppColors.surface,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.6,
+            child: _buildEmptyState(
+              icon: Icons.inbox_outlined,
+              title: 'Không có lời mời',
+              subtitle: 'Lời mời kết bạn sẽ hiển thị ở đây',
+            ),
+          ),
+        ),
       );
     }
 
-    return ListView.separated(
-      padding: const EdgeInsets.all(16),
-      itemCount: state.incomingRequests.length,
-      separatorBuilder: (context, index) => AppSpacing.verticalSpaceMD,
-      itemBuilder: (context, index) {
-        final request = state.incomingRequests[index];
-        return FriendRequestCard(
-          request: request,
-          onAccept: () => _acceptRequest(request),
-          onReject: () => _rejectRequest(request),
-        );
+    return RefreshIndicator(
+      onRefresh: () async {
+        ref.read(friendsNotifierProvider.notifier).build();
       },
+      color: AppColors.primary,
+      backgroundColor: AppColors.surface,
+      child: ListView.separated(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(16),
+        itemCount: state.incomingRequests.length,
+        separatorBuilder: (context, index) => AppSpacing.verticalSpaceMD,
+        itemBuilder: (context, index) {
+          final request = state.incomingRequests[index];
+          return FriendRequestCard(
+            request: request,
+            onAccept: () => _acceptRequest(request),
+            onReject: () => _rejectRequest(request),
+          );
+        },
+      ),
     );
   }
 

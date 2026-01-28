@@ -14,6 +14,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/url_utils.dart';
 import '../../../../routing/route_names.dart';
+import '../../../../shared/widgets/shimmer/shimmer_skeleton.dart';
 import '../../../urn_viewer/data/models/urn_dtos.dart';
 import '../providers/motif_detail_provider.dart';
 import '../widgets/lesson_tab.dart';
@@ -71,14 +72,240 @@ class _MotifDetailScreenState extends ConsumerState<MotifDetailScreen>
     return Scaffold(
       backgroundColor: AppColors.background,
       body: motifAsync.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(
-            color: AppColors.primary,
-          ),
-        ),
+        loading: () => _buildMotifDetailShimmer(),
         error: (e, s) => _buildErrorState(e.toString()),
         data: (motifDetail) => _buildContent(motifDetail),
       ),
+    );
+  }
+
+  Widget _buildMotifDetailShimmer() {
+    final screenSize = MediaQuery.of(context).size;
+    final isCompact = screenSize.width < 360 || screenSize.height < 700;
+
+    return CustomScrollView(
+      slivers: [
+        // Hero image shimmer
+        SliverAppBar(
+          expandedHeight: isCompact ? 200 : 280,
+          pinned: true,
+          backgroundColor: AppColors.surface,
+          leading: IconButton(
+            icon: Container(
+              padding: EdgeInsets.all(isCompact ? 6 : 8),
+              decoration: BoxDecoration(
+                color: AppColors.background.withOpacity(0.7),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.arrow_back, size: 20),
+            ),
+            onPressed: () => context.pop(),
+          ),
+          actions: [
+            IconButton(
+              icon: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.background.withOpacity(0.7),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.share, size: 20),
+              ),
+              onPressed: () {},
+            ),
+          ],
+          flexibleSpace: FlexibleSpaceBar(
+            background: Stack(
+              fit: StackFit.expand,
+              children: [
+                // Hero image shimmer
+                ShimmerSkeleton(
+                  width: double.infinity,
+                  height: double.infinity,
+                  borderRadius: BorderRadius.zero,
+                ),
+
+                // Gradient overlay
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        AppColors.background.withOpacity(0.3),
+                        AppColors.background.withOpacity(0.9),
+                      ],
+                      stops: const [0.0, 0.6, 1.0],
+                    ),
+                  ),
+                ),
+
+                // Motif info shimmer
+                Positioned(
+                  left: 16,
+                  right: 16,
+                  bottom: 16,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Title shimmer
+                      ShimmerSkeleton(
+                        width: 200,
+                        height: 24,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      const SizedBox(height: 8),
+                      // Subtitle shimmer
+                      ShimmerSkeleton(
+                        width: 150,
+                        height: 16,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      const SizedBox(height: 12),
+                      // Chips shimmer
+                      Row(
+                        children: [
+                          ShimmerSkeleton(
+                            width: 80,
+                            height: 28,
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          const SizedBox(width: 8),
+                          ShimmerSkeleton(
+                            width: 90,
+                            height: 28,
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        // Progress stepper shimmer
+        SliverToBoxAdapter(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+            color: AppColors.background,
+            child: Row(
+              children: List.generate(
+                3,
+                (index) => Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ShimmerSkeleton(
+                        width: 32,
+                        height: 32,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      const SizedBox(height: 8),
+                      ShimmerSkeleton(
+                        width: 60,
+                        height: 12,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      const SizedBox(height: 4),
+                      ShimmerSkeleton(
+                        width: 40,
+                        height: 10,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ],
+                  ),
+                ),
+              )..insert(1, Expanded(
+                  child: Container(
+                    height: 2,
+                    margin: const EdgeInsets.only(bottom: 32),
+                    color: AppColors.border,
+                  ),
+                ))
+              ..insert(3, Expanded(
+                  child: Container(
+                    height: 2,
+                    margin: const EdgeInsets.only(bottom: 32),
+                    color: AppColors.border,
+                  ),
+                )),
+            ),
+          ),
+        ),
+
+        // Tab bar shimmer
+        SliverPersistentHeader(
+          pinned: true,
+          delegate: _ShimmerTabBarDelegate(
+            child: Container(
+              color: AppColors.background,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                children: [
+                  ShimmerSkeleton(
+                    width: 80,
+                    height: 32,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  const SizedBox(width: 24),
+                  ShimmerSkeleton(
+                    width: 90,
+                    height: 32,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+
+        // Content shimmer
+        SliverPadding(
+          padding: const EdgeInsets.all(16),
+          sliver: SliverList(
+            delegate: SliverChildListDelegate([
+              // Section title shimmer
+              ShimmerSkeleton(
+                width: 120,
+                height: 20,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              const SizedBox(height: 16),
+
+              // Paragraph shimmers
+              ...List.generate(3, (index) => Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ShimmerSkeleton(
+                      width: double.infinity,
+                      height: 14,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    const SizedBox(height: 6),
+                    ShimmerSkeleton(
+                      width: double.infinity,
+                      height: 14,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    const SizedBox(height: 6),
+                    ShimmerSkeleton(
+                      width: screenSize.width * 0.7,
+                      height: 14,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ],
+                ),
+              )),
+            ]),
+          ),
+        ),
+      ],
     );
   }
 
@@ -541,6 +768,33 @@ class _MotifDetailScreenState extends ConsumerState<MotifDetailScreen>
       'legendary': 'Huyền thoại',
     };
     return rarities[rarity] ?? rarity;
+  }
+}
+
+/// Shimmer tab bar delegate for loading state
+class _ShimmerTabBarDelegate extends SliverPersistentHeaderDelegate {
+  final Widget child;
+
+  _ShimmerTabBarDelegate({required this.child});
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    return child;
+  }
+
+  @override
+  double get maxExtent => 48;
+
+  @override
+  double get minExtent => 48;
+
+  @override
+  bool shouldRebuild(covariant _ShimmerTabBarDelegate oldDelegate) {
+    return false;
   }
 }
 

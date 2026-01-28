@@ -27,6 +27,10 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen>
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
 
+  // Focus nodes for keyboard navigation
+  late FocusNode _displayNameFocusNode;
+  late FocusNode _usernameFocusNode;
+
   bool _isLoading = false;
   bool _isProfilePublic = false;
   bool _hasChanges = false;
@@ -37,9 +41,14 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen>
 
     // Initialize controllers
     final user = ref.read(authNotifierProvider).user;
-    _displayNameController = TextEditingController(text: user?.displayName ?? '');
+    _displayNameController =
+        TextEditingController(text: user?.displayName ?? '');
     _usernameController = TextEditingController(text: user?.username ?? '');
     _isProfilePublic = user?.isProfilePublic ?? false;
+
+    // Initialize focus nodes
+    _displayNameFocusNode = FocusNode();
+    _usernameFocusNode = FocusNode();
 
     // Add listeners to detect changes
     _displayNameController.addListener(_onFieldChanged);
@@ -90,6 +99,8 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen>
   void dispose() {
     _displayNameController.dispose();
     _usernameController.dispose();
+    _displayNameFocusNode.dispose();
+    _usernameFocusNode.dispose();
     _animationController.dispose();
     super.dispose();
   }
@@ -118,8 +129,10 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen>
     final authNotifier = ref.read(authNotifierProvider.notifier);
     final success = await authNotifier.updateProfile(
       displayName: displayName != user.displayName ? displayName : null,
-      username: username.isNotEmpty && username != user.username ? username : null,
-      isProfilePublic: _isProfilePublic != user.isProfilePublic ? _isProfilePublic : null,
+      username:
+          username.isNotEmpty && username != user.username ? username : null,
+      isProfilePublic:
+          _isProfilePublic != user.isProfilePublic ? _isProfilePublic : null,
     );
 
     setState(() {
@@ -410,8 +423,10 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen>
           AppSpacing.verticalSpaceSM,
           GlassTextField(
             controller: _displayNameController,
+            focusNode: _displayNameFocusNode,
             hintText: 'Nhập tên hiển thị',
             textInputAction: TextInputAction.next,
+            onSubmitted: (_) => _usernameFocusNode.requestFocus(),
             enabled: !_isLoading,
           ),
           AppSpacing.verticalSpaceXS,
@@ -454,8 +469,14 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen>
           AppSpacing.verticalSpaceSM,
           GlassTextField(
             controller: _usernameController,
+            focusNode: _usernameFocusNode,
             hintText: 'Nhập tên người dùng (tùy chọn)',
-            textInputAction: TextInputAction.next,
+            textInputAction: TextInputAction.done,
+            onSubmitted: (_) {
+              if (_hasChanges && !_isLoading) {
+                _saveChanges();
+              }
+            },
             enabled: !_isLoading,
           ),
           AppSpacing.verticalSpaceXS,
@@ -587,11 +608,14 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: (_isProfilePublic ? AppColors.info : AppColors.textSecondary)
-                  .withOpacity(0.1),
+              color:
+                  (_isProfilePublic ? AppColors.info : AppColors.textSecondary)
+                      .withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: (_isProfilePublic ? AppColors.info : AppColors.textSecondary)
+                color: (_isProfilePublic
+                        ? AppColors.info
+                        : AppColors.textSecondary)
                     .withOpacity(0.2),
                 width: 1,
               ),
@@ -600,7 +624,9 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen>
               children: [
                 Icon(
                   Icons.info_outline,
-                  color: _isProfilePublic ? AppColors.info : AppColors.textSecondary,
+                  color: _isProfilePublic
+                      ? AppColors.info
+                      : AppColors.textSecondary,
                   size: 16,
                 ),
                 AppSpacing.horizontalSpaceSM,
@@ -637,5 +663,3 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen>
     );
   }
 }
-
-
