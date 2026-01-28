@@ -167,18 +167,129 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
     return Scaffold(
       body: AnimatedGradientBackground(
-        child: SafeArea(
-          child: FadeTransition(
-            opacity: _fadeAnimation,
-            child: SlideTransition(
-              position: _slideAnimation,
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    AppSpacing.verticalSpaceXXL,
-                    AppSpacing.verticalSpaceMD,
+        child: Stack(
+          children: [
+            // Decorative floating elements - top left
+            Positioned(
+              top: 50,
+              left: -30,
+              child: Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      AppColors.primary.withOpacity(0.15),
+                      AppColors.primary.withOpacity(0.0),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            // Decorative element - top right
+            Positioned(
+              top: 200,
+              right: -40,
+              child: Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      AppColors.secondary.withOpacity(0.12),
+                      AppColors.secondary.withOpacity(0.0),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            // Decorative element - bottom left
+            Positioned(
+              bottom: 150,
+              left: -20,
+              child: Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      AppColors.gemYellow.withOpacity(0.1),
+                      AppColors.gemYellow.withOpacity(0.0),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            // Decorative element - bottom right
+            Positioned(
+              bottom: 80,
+              right: 30,
+              child: Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      AppColors.primary.withOpacity(0.08),
+                      AppColors.primary.withOpacity(0.0),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            // Additional decorative elements - middle left
+            Positioned(
+              top: 350,
+              left: 20,
+              child: Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      AppColors.gemYellow.withOpacity(0.12),
+                      AppColors.gemYellow.withOpacity(0.0),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            // Additional decorative element - middle right
+            Positioned(
+              top: 450,
+              right: -10,
+              child: Container(
+                width: 90,
+                height: 90,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      AppColors.secondary.withOpacity(0.1),
+                      AppColors.secondary.withOpacity(0.0),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            // Main content
+            SafeArea(
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: SlideTransition(
+                  position: _slideAnimation,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        AppSpacing.verticalSpaceXXL,
+                        AppSpacing.verticalSpaceMD,
 
                     // Logo with enhanced styling
                     Center(
@@ -420,12 +531,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                       ],
                     ),
 
-                    AppSpacing.verticalSpaceXL,
-                  ],
+                        AppSpacing.verticalSpaceXL,
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );
