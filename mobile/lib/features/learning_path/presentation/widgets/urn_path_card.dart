@@ -260,9 +260,17 @@ class _UrnPathCardState extends State<UrnPathCard>
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(AppSpacing.radiusXS),
-        child: FractionallySizedBox(
-          alignment: Alignment.centerLeft,
-          widthFactor: progress.clamp(0.0, 1.0),
+        child: TweenAnimationBuilder<double>(
+          tween: Tween<double>(begin: 0.0, end: progress.clamp(0.0, 1.0)),
+          duration: const Duration(milliseconds: 600),
+          curve: Curves.easeOutCubic,
+          builder: (context, value, child) {
+            return FractionallySizedBox(
+              alignment: Alignment.centerLeft,
+              widthFactor: value,
+              child: child,
+            );
+          },
           child: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(

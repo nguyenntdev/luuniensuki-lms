@@ -310,14 +310,17 @@ class _UrnCardState extends State<UrnCard> with TickerProviderStateMixin {
       // Convert relative URL to full URL
       final imageUrl = UrlUtils.getImageUrl(widget.urn.thumbnailUrl);
 
-      return CachedNetworkImage(
-        imageUrl: imageUrl,
-        fit: BoxFit.cover,
-        placeholder: (context, url) => _buildPlaceholder(),
-        errorWidget: (context, url, error) {
-          debugPrint('[MOTIF_IMAGE] Failed to load urn thumbnail: $imageUrl - Error: $error');
-          return _buildPlaceholder();
-        },
+      return Hero(
+        tag: 'urn_image_${widget.urn.slug}',
+        child: CachedNetworkImage(
+          imageUrl: imageUrl,
+          fit: BoxFit.cover,
+          placeholder: (context, url) => _buildPlaceholder(),
+          errorWidget: (context, url, error) {
+            debugPrint('[MOTIF_IMAGE] Failed to load urn thumbnail: $imageUrl - Error: $error');
+            return _buildPlaceholder();
+          },
+        ),
       );
     }
     return _buildPlaceholder();

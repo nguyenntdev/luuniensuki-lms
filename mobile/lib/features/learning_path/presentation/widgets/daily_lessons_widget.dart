@@ -10,6 +10,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/url_utils.dart';
 import '../../../../routing/route_names.dart';
 import '../../../../shared/widgets/animations/index.dart';
+import '../../../../shared/widgets/shimmer/shimmer_skeleton.dart';
 
 final _dailyLessonsProvider = FutureProvider<List<_DailyLesson>>((ref) async {
   final apiClient = ref.watch(apiClientProvider);
@@ -96,10 +97,18 @@ class DailyLessonsWidget extends ConsumerWidget {
     final lessonsAsync = ref.watch(_dailyLessonsProvider);
 
     return lessonsAsync.when(
-      loading: () => const SizedBox(
+      loading: () => SizedBox(
         height: 190,
-        child: Center(
-          child: CircularProgressIndicator(color: AppColors.primary),
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+          itemCount: 3,
+          itemBuilder: (context, index) => Padding(
+            padding: EdgeInsets.only(
+              right: index < 2 ? AppSpacing.md : 0,
+            ),
+            child: _DailyLessonShimmerCard(),
+          ),
         ),
       ),
       error: (_, __) => _LessonsList(lessons: _getMockLessons()),
@@ -506,6 +515,102 @@ class _DailyLessonCardState extends State<_DailyLessonCard>
           Icons.terrain,
           size: widget.width * 0.45,
           color: Colors.white.withOpacity(0.35),
+        ),
+      ),
+    );
+  }
+}
+
+/// Shimmer loading card for daily lesson
+class _DailyLessonShimmerCard extends StatelessWidget {
+  const _DailyLessonShimmerCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final cardWidth = width < 360 ? 140.0 : 170.0;
+
+    return Container(
+      width: cardWidth,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.white.withOpacity(0.14),
+            Colors.white.withOpacity(0.05),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusLG),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.18),
+          width: 1.2,
+        ),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(AppSpacing.radiusLG),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Top image area shimmer
+            Expanded(
+              child: ShimmerSkeleton(
+                width: double.infinity,
+                height: double.infinity,
+                borderRadius: BorderRadius.zero,
+              ),
+            ),
+            // Bottom content area
+            Container(
+              padding: const EdgeInsets.all(AppSpacing.md),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.white.withOpacity(0.08),
+                    Colors.white.withOpacity(0.03),
+                  ],
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Lesson name shimmer
+                  ShimmerSkeleton(
+                    width: cardWidth * 0.7,
+                    height: 14,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  const SizedBox(height: 4),
+                  // English name shimmer
+                  ShimmerSkeleton(
+                    width: cardWidth * 0.5,
+                    height: 11,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  AppSpacing.verticalSpaceXS,
+                  // Category and XP badge shimmer
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ShimmerSkeleton(
+                          width: 50,
+                          height: 10,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                      ShimmerSkeleton(
+                        width: 50,
+                        height: 16,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

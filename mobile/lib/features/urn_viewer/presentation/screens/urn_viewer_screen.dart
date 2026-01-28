@@ -667,75 +667,78 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
     debugPrint('[URN_VIEWER] │ Progress: ${(_modelLoadProgress * 100).toInt()}%');
     debugPrint('[URN_VIEWER] └─────────────────────────────────────');
 
-    return CustomModelViewer(
-      modelUrl: modelPath,
-      alt: urnDetail.urn.name,
-      ar: true,
-      hotspots: _showHotspots ? motifs : const [],
-      backgroundColor: const Color(0xFF1A1A2E),
-      autoRotate: false,
-      cameraControls: true,
-      disableZoom: false,
-      onControllerReady: (controller) {
-        _modelViewerController = controller;
-      },
-      onModelLoaded: () {
-        debugPrint('[URN_VIEWER] Model loaded successfully via CustomModelViewer');
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-            _modelLoadError = false;
-            _errorMessage = null;
-          });
-        }
-      },
-      onModelError: (error) {
-        debugPrint('[URN_VIEWER] Model load error: $error');
-        if (_modelFallbackIndex < _modelFallbackUrls.length) {
-          final fallbackUrl = _modelFallbackUrls[_modelFallbackIndex];
-          _modelFallbackIndex += 1;
-          debugPrint('[URN_VIEWER] Falling back to: $fallbackUrl');
-          setState(() {
-            _resolvedModelUrl = fallbackUrl;
-            _isLoading = true;
-            _modelLoadError = false;
-            _errorMessage = null;
-          });
-          return;
-        }
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-            _modelLoadError = true;
-            _errorMessage = error;
-          });
-        }
-      },
-      onProgress: (progress) {
-        if (mounted) {
-          setState(() {
-            _modelLoadProgress = progress / 100.0;
-            if (progress >= 100 && _isLoading) {
+    return Hero(
+      tag: 'urn_image_${widget.urnSlug}',
+      child: CustomModelViewer(
+        modelUrl: modelPath,
+        alt: urnDetail.urn.name,
+        ar: true,
+        hotspots: _showHotspots ? motifs : const [],
+        backgroundColor: const Color(0xFF1A1A2E),
+        autoRotate: false,
+        cameraControls: true,
+        disableZoom: false,
+        onControllerReady: (controller) {
+          _modelViewerController = controller;
+        },
+        onModelLoaded: () {
+          debugPrint('[URN_VIEWER] Model loaded successfully via CustomModelViewer');
+          if (mounted) {
+            setState(() {
               _isLoading = false;
               _modelLoadError = false;
               _errorMessage = null;
-            }
-          });
-        }
-      },
-      onHotspotTap: (motifId) {
-        debugPrint('[URN_VIEWER] Hotspot tapped: $motifId');
-        Motif? motif;
-        try {
-          motif = motifs.firstWhere((m) => m.id == motifId);
-        } catch (_) {
-          debugPrint('[URN_VIEWER] Hotspot motif not found: $motifId');
-        }
-        if (motif == null) {
-          return;
-        }
-        _handleHotspotTap(motif);
-      },
+            });
+          }
+        },
+        onModelError: (error) {
+          debugPrint('[URN_VIEWER] Model load error: $error');
+          if (_modelFallbackIndex < _modelFallbackUrls.length) {
+            final fallbackUrl = _modelFallbackUrls[_modelFallbackIndex];
+            _modelFallbackIndex += 1;
+            debugPrint('[URN_VIEWER] Falling back to: $fallbackUrl');
+            setState(() {
+              _resolvedModelUrl = fallbackUrl;
+              _isLoading = true;
+              _modelLoadError = false;
+              _errorMessage = null;
+            });
+            return;
+          }
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+              _modelLoadError = true;
+              _errorMessage = error;
+            });
+          }
+        },
+        onProgress: (progress) {
+          if (mounted) {
+            setState(() {
+              _modelLoadProgress = progress / 100.0;
+              if (progress >= 100 && _isLoading) {
+                _isLoading = false;
+                _modelLoadError = false;
+                _errorMessage = null;
+              }
+            });
+          }
+        },
+        onHotspotTap: (motifId) {
+          debugPrint('[URN_VIEWER] Hotspot tapped: $motifId');
+          Motif? motif;
+          try {
+            motif = motifs.firstWhere((m) => m.id == motifId);
+          } catch (_) {
+            debugPrint('[URN_VIEWER] Hotspot motif not found: $motifId');
+          }
+          if (motif == null) {
+            return;
+          }
+          _handleHotspotTap(motif);
+        },
+      ),
     );
   }
 

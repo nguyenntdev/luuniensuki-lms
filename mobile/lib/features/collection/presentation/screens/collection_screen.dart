@@ -434,20 +434,23 @@ class _CollectionScreenState extends ConsumerState<CollectionScreen>
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: motif.thumbnailUrl != null && motif.thumbnailUrl!.isNotEmpty
-                    ? CachedNetworkImage(
-                        imageUrl: UrlUtils.getImageUrl(motif.thumbnailUrl),
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: double.infinity,
-                        placeholder: (context, url) => const ShimmerSkeleton(
+                    ? Hero(
+                        tag: 'motif_image_${motif.id}',
+                        child: CachedNetworkImage(
+                          imageUrl: UrlUtils.getImageUrl(motif.thumbnailUrl),
+                          fit: BoxFit.cover,
                           width: double.infinity,
                           height: double.infinity,
-                        ),
-                        errorWidget: (context, url, error) => Center(
-                          child: Icon(
-                            Icons.image_not_supported_outlined,
-                            size: 48,
-                            color: Colors.white.withOpacity(0.3),
+                          placeholder: (context, url) => const ShimmerSkeleton(
+                            width: double.infinity,
+                            height: double.infinity,
+                          ),
+                          errorWidget: (context, url, error) => Center(
+                            child: Icon(
+                              Icons.image_not_supported_outlined,
+                              size: 48,
+                              color: Colors.white.withOpacity(0.3),
+                            ),
                           ),
                         ),
                       )

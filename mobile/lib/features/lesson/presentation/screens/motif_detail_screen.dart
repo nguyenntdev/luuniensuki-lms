@@ -231,24 +231,27 @@ class _MotifDetailScreenState extends ConsumerState<MotifDetailScreen>
       children: [
         // Background image
         if (imageUrl.isNotEmpty)
-          CachedNetworkImage(
-            imageUrl: imageUrl,
-            fit: BoxFit.cover,
-            placeholder: (_, __) => Container(
-              color: AppColors.surfaceVariant,
-              child: const Center(
-                child: CircularProgressIndicator(
-                  color: AppColors.primary,
-                  strokeWidth: 2,
+          Hero(
+            tag: 'motif_image_${motif.id}',
+            child: CachedNetworkImage(
+              imageUrl: imageUrl,
+              fit: BoxFit.cover,
+              placeholder: (_, __) => Container(
+                color: AppColors.surfaceVariant,
+                child: const Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.primary,
+                    strokeWidth: 2,
+                  ),
                 ),
               ),
-            ),
-            errorWidget: (_, __, ___) => Container(
-              color: AppColors.surfaceVariant,
-              child: Icon(
-                Icons.image_not_supported,
-                size: 64,
-                color: AppColors.textHint,
+              errorWidget: (_, __, ___) => Container(
+                color: AppColors.surfaceVariant,
+                child: Icon(
+                  Icons.image_not_supported,
+                  size: 64,
+                  color: AppColors.textHint,
+                ),
               ),
             ),
           )
