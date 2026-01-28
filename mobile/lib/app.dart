@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/theme/app_theme.dart';
 import 'routing/app_router.dart';
+import 'shared/widgets/network_status_indicator.dart';
 
 /// Main app widget that configures MaterialApp with Riverpod.
 class LuuniensukiApp extends ConsumerWidget {
@@ -33,15 +34,16 @@ class LuuniensukiApp extends ConsumerWidget {
 
       // Builder for global overlays and error handling
       builder: (context, child) {
-        // Add any global overlays here (e.g., loading indicator, connectivity banner)
-        return MediaQuery(
-          // Prevent text scaling from breaking layouts
-          data: MediaQuery.of(context).copyWith(
-            textScaler: TextScaler.linear(
-              MediaQuery.of(context).textScaler.scale(1.0).clamp(0.8, 1.2),
+        return NetworkStatusIndicator(
+          child: MediaQuery(
+            // Prevent text scaling from breaking layouts
+            data: MediaQuery.of(context).copyWith(
+              textScaler: TextScaler.linear(
+                MediaQuery.of(context).textScaler.scale(1.0).clamp(0.8, 1.2),
+              ),
             ),
+            child: child ?? const SizedBox.shrink(),
           ),
-          child: child ?? const SizedBox.shrink(),
         );
       },
     );
