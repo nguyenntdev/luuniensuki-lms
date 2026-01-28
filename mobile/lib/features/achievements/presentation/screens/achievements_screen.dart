@@ -7,6 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/effects/shimmer_widget.dart';
 import '../../../../shared/widgets/glass/glass_container.dart';
 import '../../../../shared/widgets/glass/pressable_glass_card.dart';
+import '../../../../shared/widgets/shimmer/shimmer_skeleton.dart';
 import '../../../../shared/widgets/text/gradient_text.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../streak/presentation/widgets/streak_badge.dart';
@@ -229,62 +230,43 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
       ),
       itemCount: 6,
       itemBuilder: (context, index) {
-        return ShimmerWidget(
-          duration: const Duration(milliseconds: 1500),
-          gradient: LinearGradient(
-            colors: [
-              Colors.white.withOpacity(0.0),
-              Colors.white.withOpacity(0.1),
-              Colors.white.withOpacity(0.15),
-              Colors.white.withOpacity(0.1),
-              Colors.white.withOpacity(0.0),
-            ],
-            stops: const [0.0, 0.35, 0.5, 0.65, 1.0],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          enabled: true,
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: Colors.white.withOpacity(0.1),
-                width: 1.5,
-              ),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 64,
-                  height: 64,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white.withOpacity(0.08),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Container(
-                  width: 80,
-                  height: 14,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.08),
-                    borderRadius: BorderRadius.circular(7),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  width: 60,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.08),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
+        return Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.white.withOpacity(0.12),
+                Colors.white.withOpacity(0.06),
               ],
             ),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: Colors.white.withOpacity(0.1),
+              width: 1.5,
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ShimmerSkeleton(
+                width: 64,
+                height: 64,
+                borderRadius: BorderRadius.circular(32),
+              ),
+              const SizedBox(height: 12),
+              const ShimmerSkeleton(
+                width: 80,
+                height: 14,
+              ),
+              const SizedBox(height: 8),
+              ShimmerSkeleton(
+                width: 60,
+                height: 20,
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ],
           ),
         );
       },
@@ -629,86 +611,59 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
       itemBuilder: (context, index) {
         return Container(
           margin: const EdgeInsets.only(bottom: 10),
-          child: ShimmerWidget(
-            duration: const Duration(milliseconds: 1500),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                Colors.white.withOpacity(0.0),
-                Colors.white.withOpacity(0.1),
-                Colors.white.withOpacity(0.15),
-                Colors.white.withOpacity(0.1),
-                Colors.white.withOpacity(0.0),
-              ],
-              stops: const [0.0, 0.35, 0.5, 0.65, 1.0],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
+              colors: [
+                Colors.white.withOpacity(0.12),
+                Colors.white.withOpacity(0.06),
+              ],
             ),
-            enabled: true,
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.08),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.1),
-                  width: 1,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: Colors.white.withOpacity(0.1),
+              width: 1,
+            ),
+          ),
+          child: Row(
+            children: [
+              ShimmerSkeleton(
+                width: 40,
+                height: 40,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              const SizedBox(width: 16),
+              ShimmerSkeleton(
+                width: 44,
+                height: 44,
+                borderRadius: BorderRadius.circular(22),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const ShimmerSkeleton(
+                      width: 100,
+                      height: 16,
+                    ),
+                    const SizedBox(height: 4),
+                    ShimmerSkeleton(
+                      width: 60,
+                      height: 12,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ],
                 ),
               ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white.withOpacity(0.1),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white.withOpacity(0.1),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 100,
-                          height: 16,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Container(
-                          width: 60,
-                          height: 12,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.08),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    width: 50,
-                    height: 24,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ],
+              ShimmerSkeleton(
+                width: 50,
+                height: 24,
+                borderRadius: BorderRadius.circular(12),
               ),
-            ),
+            ],
           ),
         );
       },

@@ -217,46 +217,7 @@ class _CollectionScreenState extends ConsumerState<CollectionScreen>
 
     // Handle error state
     if (state.hasError) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.error_outline,
-                size: 64,
-                color: Colors.white.withOpacity(0.3),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                state.errorMessage ?? 'Đã xảy ra lỗi',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white.withOpacity(0.8),
-                  fontSize: 16,
-                ),
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton.icon(
-                onPressed: () {
-                  ref.read(collectionNotifierProvider.notifier).loadCollection();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: AppColors.onPrimary,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                icon: const Icon(Icons.refresh),
-                label: const Text('Thử lại'),
-              ),
-            ],
-          ),
-        ),
-      );
+      return _buildErrorState(state.errorMessage);
     }
 
     // Handle data state
@@ -278,19 +239,27 @@ class _CollectionScreenState extends ConsumerState<CollectionScreen>
 
   /// Build loading state with shimmer skeletons
   Widget _buildLoadingState() {
-    return GridView.builder(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 0.85,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-      ),
-      // Show 8 shimmer cards as placeholder
-      itemCount: 8,
-      itemBuilder: (context, index) {
-        return const ShimmerMotifCard();
+    return RefreshIndicator(
+      onRefresh: () async {
+        await ref.read(collectionNotifierProvider.notifier).loadCollection();
       },
+      color: AppColors.primary,
+      backgroundColor: AppColors.surface,
+      child: GridView.builder(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
+        physics: const AlwaysScrollableScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 0.85,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+        ),
+        // Show 8 shimmer cards as placeholder
+        itemCount: 8,
+        itemBuilder: (context, index) {
+          return const ShimmerMotifCard();
+        },
+      ),
     );
   }
 
@@ -311,46 +280,102 @@ class _CollectionScreenState extends ConsumerState<CollectionScreen>
     }
   }
 
-  Widget _buildEmptyState() {
-    return Center(
-      child: Padding(
+  Widget _buildErrorState(String? errorMessage) {
+    return RefreshIndicator(
+      onRefresh: () async {
+        await ref.read(collectionNotifierProvider.notifier).loadCollection();
+      },
+      color: AppColors.primary,
+      backgroundColor: AppColors.surface,
+      child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.collections_outlined,
-                size: 48,
-                color: Colors.white.withOpacity(0.3),
-              ),
+        children: [
+          SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+          Icon(
+            Icons.error_outline,
+            size: 64,
+            color: Colors.white.withOpacity(0.3),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            errorMessage ?? 'Đã xảy ra lỗi',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.8),
+              fontSize: 16,
             ),
-            const SizedBox(height: 24),
-            Text(
-              'Chưa có họa tiết nào',
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+          ),
+          const SizedBox(height: 24),
+          Center(
+            child: ElevatedButton.icon(
+              onPressed: () {
+                ref.read(collectionNotifierProvider.notifier).loadCollection();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: AppColors.onPrimary,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
+              icon: const Icon(Icons.refresh),
+              label: const Text('Thử lại'),
             ),
-            const SizedBox(height: 8),
-            Text(
-              'Hãy khám phá các đỉnh để thu thập họa tiết',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.5),
-                fontSize: 14,
-              ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return RefreshIndicator(
+      onRefresh: () async {
+        await ref.read(collectionNotifierProvider.notifier).loadCollection();
+      },
+      color: AppColors.primary,
+      backgroundColor: AppColors.surface,
+      child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(32),
+        children: [
+          SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+          Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              shape: BoxShape.circle,
             ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
+            child: Icon(
+              Icons.collections_outlined,
+              size: 48,
+              color: Colors.white.withOpacity(0.3),
+            ),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            'Chưa có họa tiết nào',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.8),
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Hãy khám phá các đỉnh để thu thập họa tiết',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.5),
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 24),
+          Center(
+            child: ElevatedButton.icon(
               onPressed: () => context.go('/explore'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
@@ -363,8 +388,8 @@ class _CollectionScreenState extends ConsumerState<CollectionScreen>
               icon: const Icon(Icons.explore),
               label: const Text('Khám phá ngay'),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
