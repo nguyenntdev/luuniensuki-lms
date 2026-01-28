@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -23,6 +24,7 @@ class CustomModelViewer extends StatefulWidget {
   final Function(String error)? onModelError;
   final Function(double progress)? onProgress;
   final Function(String motifId)? onHotspotTap;
+  final Function(double zoom)? onZoomChange;
   final ValueChanged<dynamic>? onControllerReady;
   final Color backgroundColor;
   final bool autoRotate;
@@ -45,6 +47,7 @@ class CustomModelViewer extends StatefulWidget {
     this.onModelError,
     this.onProgress,
     this.onHotspotTap,
+    this.onZoomChange,
     this.onControllerReady,
     this.backgroundColor = const Color(0xFF1A1A2E),
     this.autoRotate = false,
@@ -150,6 +153,18 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
 
   String _buildRelatedCss() {
     return '''
+      @keyframes hotspot-ripple {
+        0% {
+          box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+        }
+        70% {
+          box-shadow: 0 0 0 20px rgba(255, 255, 255, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+        }
+      }
+
       .hotspot {
         width: 40px;
         height: 40px;
@@ -163,16 +178,22 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
         opacity: 0.06;
         border: 1.5px solid rgba(255, 255, 255, 0.15);
         box-shadow: none;
-        transition: opacity 0.15s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        transition: opacity 0.15s ease, transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
       }
-      .hotspot.is-active,
-      .hotspot:active {
+      .hotspot.is-active {
         opacity: 0.45;
         border-color: rgba(255, 255, 255, 0.6);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
       }
       .hotspot:hover {
         transform: scale(1.1);
+        filter: brightness(1.1);
+      }
+      .hotspot:active {
+        opacity: 0.45;
+        border-color: rgba(255, 255, 255, 0.6);
+        transform: scale(0.95);
+        animation: hotspot-ripple 0.6s ease-out;
       }
       .hotspot-icon {
         color: white;
@@ -246,6 +267,37 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
           const visible = event && event.detail && event.detail.visible ? true : false;
           console.log('[MODEL_VIEWER_JS] Model visibility:', visible);
           notify('visibility', { visible: visible });
+        });
+
+        // Track camera changes for zoom level
+        let lastFov = 45; // default field of view
+        const trackZoom = () => {
+          try {
+            const fovString = modelViewer.fieldOfView;
+            if (fovString) {
+              const fovDeg = parseFloat(fovString.replace('deg', ''));
+              if (!isNaN(fovDeg) && fovDeg !== lastFov) {
+                lastFov = fovDeg;
+                // Convert FOV to zoom level (inverse relationship)
+                // Default FOV is 45deg, narrower FOV = zoomed in
+                const zoomLevel = 45 / fovDeg;
+                console.log('[MODEL_VIEWER_JS] Zoom changed - FOV:', fovDeg, 'Zoom:', zoomLevel);
+                notify('zoom', { zoom: zoomLevel });
+              }
+            }
+          } catch (e) {
+            console.error('[MODEL_VIEWER_JS] Error tracking zoom:', e);
+          }
+        };
+
+        // Listen for camera-change events
+        modelViewer.addEventListener('camera-change', () => {
+          trackZoom();
+        });
+
+        // Initial zoom tracking after model loads
+        modelViewer.addEventListener('load', () => {
+          setTimeout(trackZoom, 100);
         });
 
         const hotspots = modelViewer.querySelectorAll('.hotspot');
@@ -367,11 +419,18 @@ class _CustomModelViewerState extends State<CustomModelViewer> {
         widget.onProgress?.call(progress);
         break;
       case 'hotspot':
+        HapticFeedback.lightImpact();
         final motifId = payload['motifId']?.toString();
         if (motifId != null) {
           debugPrint('[CUSTOM_MODEL_VIEWER] Hotspot tapped: $motifId');
           widget.onHotspotTap?.call(motifId);
         }
+        break;
+      case 'zoom':
+        final zoomValue = payload['zoom'];
+        final zoom = zoomValue is num ? zoomValue.toDouble() : 1.0;
+        debugPrint('[CUSTOM_MODEL_VIEWER] Zoom changed: ${zoom.toStringAsFixed(2)}');
+        widget.onZoomChange?.call(zoom);
         break;
       case 'webgl_lost':
         _contextLossCount += 1;
