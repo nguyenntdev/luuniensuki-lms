@@ -39,6 +39,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   DateTime? _startTime;
   bool _isSubmitting = false;
   bool _hasCheckedSavedProgress = false;
+  int _comboStreak = 0; // Track combo streak for consecutive correct answers
 
   static const int _hintCost = 5; // Cost in gems per hint
 
@@ -528,38 +529,40 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     final gemsState = ref.watch(gemsNotifierProvider);
     final canAffordHint = gemsState.balance >= _hintCost;
 
-    return Column(
+    return Stack(
       children: [
-        // Progress bar
-        LinearProgressIndicator(
-          value: (_currentQuestionIndex + 1) / quiz.questions.length,
-          backgroundColor: AppColors.surfaceElevated,
-          valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
-          minHeight: 4,
-        ),
+        Column(
+          children: [
+            // Progress bar
+            LinearProgressIndicator(
+              value: (_currentQuestionIndex + 1) / quiz.questions.length,
+              backgroundColor: AppColors.surfaceElevated,
+              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
+              minHeight: 4,
+            ),
 
-        // Question content
-        Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                // Hint button (only for multiple choice questions)
-                if (isMultipleChoice && currentQuestion.options.length >= 4)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: _buildHintButton(
-                      currentQuestion,
-                      hasUsedHint: hasUsedHint,
-                      canAffordHint: canAffordHint,
-                    ),
-                  ),
+            // Question content
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    // Hint button (only for multiple choice questions)
+                    if (isMultipleChoice && currentQuestion.options.length >= 4)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: _buildHintButton(
+                          currentQuestion,
+                          hasUsedHint: hasUsedHint,
+                          canAffordHint: canAffordHint,
+                        ),
+                      ),
 
-                // Question card
-                QuestionCard(
-                  question: currentQuestion,
-                  selectedAnswer: _answers[currentQuestion.id],
-                  hiddenOptions: _hiddenOptions[currentQuestion.id],
+                    // Question card
+                    QuestionCard(
+                      question: currentQuestion,
+                      selectedAnswer: _answers[currentQuestion.id],
+                      hiddenOptions: _hiddenOptions[currentQuestion.id],
                   onAnswerSelected: (answer) async {
                     // Check if this is a new answer
                     final previousAnswer = _answers[currentQuestion.id];
@@ -583,8 +586,18 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                     final soundService = ref.read(soundServiceProvider);
                     if (isCorrect) {
                       await soundService.playCorrect();
+
+                      // Increment combo streak for correct answer
+                      setState(() {
+                        _comboStreak++;
+                      });
                     } else {
                       await soundService.playWrong();
+
+                      // Reset combo streak on wrong answer
+                      setState(() {
+                        _comboStreak = 0;
+                      });
                     }
 
                     if (!isCorrect &&
@@ -621,6 +634,8 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
               ],
             ),
           ),
+        ),
+          ],
         ),
 
         // Navigation buttons
@@ -723,6 +738,60 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
             ),
           ),
         ),
+
+        // Combo indicator (fire icon when streak >= 3)
+        if (_comboStreak >= 3)
+          Positioned(
+            top: 20,
+            right: 16,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Colors.orange, Colors.red],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.orange.withOpacity(0.5),
+                    blurRadius: 8,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.local_fire_department,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    '$_comboStreak',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  const Text(
+                    'combo',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
       ],
     );
   }
