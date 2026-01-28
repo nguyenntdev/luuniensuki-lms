@@ -14,6 +14,7 @@ import '../../../collection/presentation/providers/collection_provider.dart';
 import '../../../gems/presentation/widgets/gems_display.dart';
 import '../../../streak/presentation/widgets/streak_display.dart';
 import '../../../streak/presentation/widgets/buy_streak_freeze_button.dart';
+import '../../../achievements/presentation/providers/badge_provider.dart';
 import '../widgets/prestige_badge.dart';
 import 'personal_info_screen.dart';
 
@@ -652,6 +653,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     final collectionState = ref.watch(collectionNotifierProvider);
     final discoveredCount = collectionState.collection?.stats.discovered ?? 0;
     final lessonsCompleted = user.totalXp ~/ 75; // Approximate
+    final earnedBadgesCount = ref.watch(earnedBadgesCountProvider);
 
     return Row(
       children: [
@@ -687,7 +689,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
           child: _buildStatCard(
             icon: Icons.emoji_events,
             label: 'Huy hiệu',
-            value: '0',
+            value: '$earnedBadgesCount',
             color: AppColors.badgePurple,
             gradientColors: [
               AppColors.badgePurple.withOpacity(0.3),
