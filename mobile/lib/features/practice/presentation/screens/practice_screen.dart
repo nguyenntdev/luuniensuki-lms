@@ -8,7 +8,6 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/url_utils.dart';
 import '../../../../routing/route_names.dart';
 import '../../../../shared/widgets/effects/shimmer_widget.dart';
-import '../../../../shared/widgets/glass/animated_background.dart';
 import '../../../../shared/widgets/progress/circular_progress_badge.dart';
 import '../../../../shared/widgets/text/gradient_text.dart';
 import '../../../hearts/presentation/widgets/hearts_display.dart';
@@ -29,14 +28,16 @@ class PracticeScreen extends ConsumerWidget {
     final horizontalPadding =
         screenWidth < 360 ? AppSpacing.md : AppSpacing.lg;
 
-    return AnimatedGradientBackground(
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: SafeArea(
-          child: RefreshIndicator(
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: SafeArea(
+        bottom: false,  // Allow content to extend behind navbar
+        child: RefreshIndicator(
             onRefresh: () async {
               ref.invalidate(practiceUrnsProvider);
-              await ref.read(practiceUrnsProvider.future);
+              // Wait a bit for provider to start loading, then let UI rebuild naturally
+              // Don't use .future after invalidate to avoid "Bad state: Future already completed"
+              await Future.delayed(const Duration(milliseconds: 100));
             },
             color: AppColors.primary,
             backgroundColor: AppColors.surface,
@@ -113,8 +114,7 @@ class PracticeScreen extends ConsumerWidget {
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 
   Widget _buildHeader(BuildContext context) {
