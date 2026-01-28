@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../../core/theme/app_colors.dart';
 
@@ -148,10 +149,13 @@ class _AnimatedAvatarRingState extends State<AnimatedAvatarRing>
 
   Widget _buildAvatar() {
     if (widget.avatarUrl != null && widget.avatarUrl!.isNotEmpty) {
-      return Image.network(
-        widget.avatarUrl!,
+      return CachedNetworkImage(
+        imageUrl: widget.avatarUrl!,
         fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => _buildAvatarPlaceholder(),
+        placeholder: (context, url) => const Center(
+          child: CircularProgressIndicator(strokeWidth: 2),
+        ),
+        errorWidget: (context, url, error) => _buildAvatarPlaceholder(),
       );
     }
     return _buildAvatarPlaceholder();

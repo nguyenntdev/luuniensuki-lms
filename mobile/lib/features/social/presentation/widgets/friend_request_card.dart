@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -129,10 +130,13 @@ class FriendRequestCard extends StatelessWidget {
       ),
       child: request.fromUserAvatar != null
           ? ClipOval(
-              child: Image.network(
-                request.fromUserAvatar!,
+              child: CachedNetworkImage(
+                imageUrl: request.fromUserAvatar!,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => _buildDefaultAvatar(),
+                placeholder: (context, url) => const Center(
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+                errorWidget: (context, url, error) => _buildDefaultAvatar(),
               ),
             )
           : _buildDefaultAvatar(),

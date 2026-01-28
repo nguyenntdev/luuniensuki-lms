@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -298,10 +299,13 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen>
                 ),
                 child: user.avatarUrl != null && user.avatarUrl!.isNotEmpty
                     ? ClipOval(
-                        child: Image.network(
-                          user.avatarUrl!,
+                        child: CachedNetworkImage(
+                          imageUrl: user.avatarUrl!,
                           fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
+                          placeholder: (context, url) => const Center(
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                          errorWidget: (context, url, error) {
                             return _buildDefaultAvatar(user);
                           },
                         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -179,10 +180,16 @@ class _ExploreHeaderV2State extends State<ExploreHeaderV2>
                 child: widget.user.avatarUrl != null &&
                         widget.user.avatarUrl!.isNotEmpty
                     ? ClipOval(
-                        child: Image.network(
-                          widget.user.avatarUrl!,
+                        child: CachedNetworkImage(
+                          imageUrl: widget.user.avatarUrl!,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Center(
+                          placeholder: (context, url) => Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white.withOpacity(0.5),
+                            ),
+                          ),
+                          errorWidget: (context, url, error) => Center(
                             child: Text(
                               initial,
                               style: const TextStyle(

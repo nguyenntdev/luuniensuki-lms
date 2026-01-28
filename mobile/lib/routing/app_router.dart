@@ -5,6 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../core/theme/app_spacing.dart';
 import '../core/storage/hive_storage.dart';
+import 'fade_transition_page.dart';
 import '../features/auth/presentation/providers/auth_provider.dart';
 import '../features/auth/presentation/screens/login_screen.dart';
 import '../features/auth/presentation/screens/register_screen.dart';
@@ -167,8 +168,8 @@ GoRouter appRouter(AppRouterRef ref) {
           GoRoute(
             path: _Paths.explore,
             name: 'explore',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: ExploreScreen(),
+            pageBuilder: (context, state) => FadeTransitionPage(
+              child: const ExploreScreen(),
             ),
           ),
 
@@ -176,8 +177,8 @@ GoRouter appRouter(AppRouterRef ref) {
           GoRoute(
             path: _Paths.collection,
             name: 'collection',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: CollectionScreen(),
+            pageBuilder: (context, state) => FadeTransitionPage(
+              child: const CollectionScreen(),
             ),
           ),
 
@@ -185,8 +186,8 @@ GoRouter appRouter(AppRouterRef ref) {
           GoRoute(
             path: _Paths.learningHub,
             name: 'learningHub',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: LearningHubScreen(),
+            pageBuilder: (context, state) => FadeTransitionPage(
+              child: const LearningHubScreen(),
             ),
           ),
 
@@ -194,8 +195,8 @@ GoRouter appRouter(AppRouterRef ref) {
           GoRoute(
             path: _Paths.learningPath,
             name: 'learningPath',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: LearningPathScreen(),
+            pageBuilder: (context, state) => FadeTransitionPage(
+              child: const LearningPathScreen(),
             ),
           ),
 
@@ -203,8 +204,8 @@ GoRouter appRouter(AppRouterRef ref) {
           GoRoute(
             path: _Paths.practice,
             name: 'practice',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: PracticeScreen(),
+            pageBuilder: (context, state) => FadeTransitionPage(
+              child: const PracticeScreen(),
             ),
             routes: [
               // Practice session route
@@ -223,7 +224,7 @@ GoRouter appRouter(AppRouterRef ref) {
             pageBuilder: (context, state) {
               final motifId = state.uri.queryParameters['motifId'];
               final urnSlug = state.uri.queryParameters['urnSlug'];
-              return NoTransitionPage(
+              return FadeTransitionPage(
                 child: AiChatScreen(motifId: motifId, urnSlug: urnSlug),
               );
             },
@@ -233,8 +234,8 @@ GoRouter appRouter(AppRouterRef ref) {
           GoRoute(
             path: _Paths.achievements,
             name: 'achievements',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: AchievementsScreen(),
+            pageBuilder: (context, state) => FadeTransitionPage(
+              child: const AchievementsScreen(),
             ),
           ),
 
@@ -242,8 +243,8 @@ GoRouter appRouter(AppRouterRef ref) {
           GoRoute(
             path: _Paths.profile,
             name: 'profile',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: ProfileScreen(),
+            pageBuilder: (context, state) => FadeTransitionPage(
+              child: const ProfileScreen(),
             ),
           ),
         ],
