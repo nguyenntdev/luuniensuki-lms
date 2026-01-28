@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,8 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/storage/hive_storage.dart';
+import '../../../../shared/widgets/glass/animated_background.dart';
+import '../../../../shared/widgets/glass/true_glass_container.dart';
 import '../../domain/entities/urn.dart';
 import '../providers/urn_provider.dart';
 import '../widgets/custom_model_viewer.dart';
@@ -479,12 +482,14 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
     final urnAsync = ref.watch(urnDetailProvider(widget.urnSlug));
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
-      body: urnAsync.when(
-        loading: () => _buildLoadingState(),
-        error: (error, stack) => _buildErrorState(error.toString()),
-        data: (urnDetail) => _buildViewerContent(urnDetail),
+      body: AnimatedGradientBackground(
+        child: urnAsync.when(
+          loading: () => _buildLoadingState(),
+          error: (error, stack) => _buildErrorState(error.toString()),
+          data: (urnDetail) => _buildViewerContent(urnDetail),
+        ),
       ),
     );
   }
@@ -817,24 +822,30 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
                       ),
                       const SizedBox(width: 8),
                       Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: Colors.white.withOpacity(0.2),
-                              width: 1,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: Colors.white.withOpacity(0.3),
+                                  width: 1,
+                                ),
+                              ),
+                              child: Text(
+                                urnDetail.urn.name,
+                                style: titleStyle,
+                                textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                          ),
-                          child: Text(
-                            urnDetail.urn.name,
-                            style: titleStyle,
-                            textAlign: TextAlign.center,
-                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ),
@@ -880,24 +891,30 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
 
                   // Title
                   Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.2),
-                          width: 1,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.3),
+                              width: 1,
+                            ),
+                          ),
+                          child: Text(
+                            urnDetail.urn.name,
+                            style: titleStyle,
+                            textAlign: TextAlign.center,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                      ),
-                      child: Text(
-                        urnDetail.urn.name,
-                        style: titleStyle,
-                        textAlign: TextAlign.center,
-                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ),
@@ -938,43 +955,49 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
     String? badge,
     double iconSize = 22,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.2),
-          width: 1,
-        ),
-      ),
-      child: Stack(
-        children: [
-          IconButton(
-            icon: Icon(icon, color: Colors.white, size: iconSize),
-            onPressed: onPressed,
-            tooltip: tooltip,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.15),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: Colors.white.withOpacity(0.3),
+              width: 1,
+            ),
           ),
-          if (badge != null)
-            Positioned(
-              right: 4,
-              top: 4,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  badge,
-                  style: const TextStyle(
-                    color: AppColors.onPrimary,
-                    fontSize: 8,
-                    fontWeight: FontWeight.bold,
+          child: Stack(
+            children: [
+              IconButton(
+                icon: Icon(icon, color: Colors.white, size: iconSize),
+                onPressed: onPressed,
+                tooltip: tooltip,
+              ),
+              if (badge != null)
+                Positioned(
+                  right: 4,
+                  top: 4,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      badge,
+                      style: const TextStyle(
+                        color: AppColors.onPrimary,
+                        fontSize: 8,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-        ],
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -1025,90 +1048,108 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
     final screenWidth = MediaQuery.of(context).size.width;
     final isCompact = screenWidth < 360;
 
-    return Container(
-      padding: EdgeInsets.only(
-        left: 16,
-        right: 16,
-        top: 12,
-        bottom: MediaQuery.of(context).padding.bottom + 12,
-      ),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Colors.transparent,
-            Colors.black.withOpacity(0.8),
-          ],
-        ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Progress bar
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: progress,
-              backgroundColor: Colors.white24,
-              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
-              minHeight: 6,
+    return ClipRRect(
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+        child: Container(
+          padding: EdgeInsets.only(
+            left: 16,
+            right: 16,
+            top: 16,
+            bottom: MediaQuery.of(context).padding.bottom + 16,
+          ),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.white.withOpacity(0.1),
+                Colors.white.withOpacity(0.15),
+              ],
+            ),
+            border: Border(
+              top: BorderSide(
+                color: Colors.white.withOpacity(0.3),
+                width: 1,
+              ),
             ),
           ),
-          const SizedBox(height: 8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Progress bar
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Container(
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: LinearProgressIndicator(
+                    value: progress,
+                    backgroundColor: Colors.transparent,
+                    valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
 
-          // Stats row
-          if (isCompact)
-            Wrap(
-              alignment: WrapAlignment.center,
-              spacing: 16,
-              runSpacing: 8,
-              children: [
-                _buildStatItem(
-                  icon: Icons.explore,
-                  label: 'Khám phá',
-                  value: '$discovered/$total',
-                  color: AppColors.statusDiscovered,
+              // Stats row
+              if (isCompact)
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 16,
+                  runSpacing: 8,
+                  children: [
+                    _buildStatItem(
+                      icon: Icons.explore,
+                      label: 'Khám phá',
+                      value: '$discovered/$total',
+                      color: AppColors.statusDiscovered,
+                    ),
+                    _buildStatItem(
+                      icon: Icons.school,
+                      label: 'Học xong',
+                      value: '${urnDetail.urn.learnedCount}',
+                      color: AppColors.statusLearned,
+                    ),
+                    _buildStatItem(
+                      icon: Icons.star,
+                      label: 'Thành thạo',
+                      value: '${urnDetail.urn.masteredCount}',
+                      color: AppColors.statusMastered,
+                    ),
+                  ],
+                )
+              else
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildStatItem(
+                      icon: Icons.explore,
+                      label: 'Khám phá',
+                      value: '$discovered/$total',
+                      color: AppColors.statusDiscovered,
+                    ),
+                    _buildStatItem(
+                      icon: Icons.school,
+                      label: 'Học xong',
+                      value: '${urnDetail.urn.learnedCount}',
+                      color: AppColors.statusLearned,
+                    ),
+                    _buildStatItem(
+                      icon: Icons.star,
+                      label: 'Thành thạo',
+                      value: '${urnDetail.urn.masteredCount}',
+                      color: AppColors.statusMastered,
+                    ),
+                  ],
                 ),
-                _buildStatItem(
-                  icon: Icons.school,
-                  label: 'Học xong',
-                  value: '${urnDetail.urn.learnedCount}',
-                  color: AppColors.statusLearned,
-                ),
-                _buildStatItem(
-                  icon: Icons.star,
-                  label: 'Thành thạo',
-                  value: '${urnDetail.urn.masteredCount}',
-                  color: AppColors.statusMastered,
-                ),
-              ],
-            )
-          else
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildStatItem(
-                  icon: Icons.explore,
-                  label: 'Khám phá',
-                  value: '$discovered/$total',
-                  color: AppColors.statusDiscovered,
-                ),
-                _buildStatItem(
-                  icon: Icons.school,
-                  label: 'Học xong',
-                  value: '${urnDetail.urn.learnedCount}',
-                  color: AppColors.statusLearned,
-                ),
-                _buildStatItem(
-                  icon: Icons.star,
-                  label: 'Thành thạo',
-                  value: '${urnDetail.urn.masteredCount}',
-                  color: AppColors.statusMastered,
-                ),
-              ],
-            ),
-        ],
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -1153,68 +1194,73 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
     final progressPercent = (_modelLoadProgress * 100).toInt();
 
     return Container(
-      color: Colors.black87,
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const CircularProgressIndicator(color: AppColors.primary),
-            const SizedBox(height: 24),
-            const Text(
-              'Đang tải mô hình 3D...',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              progressPercent > 0 ? '$progressPercent%' : 'Vui lòng đợi',
-              style: const TextStyle(
-                color: Colors.white70,
-                fontSize: 15,
-              ),
-            ),
-            const SizedBox(height: 20),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 32),
-              child: Text(
-                'Thiết bị yếu có thể mất nhiều thời gian hơn',
-                style: TextStyle(
-                  color: Colors.white54,
-                  fontSize: 13,
-                  fontStyle: FontStyle.italic,
+      color: Colors.black.withOpacity(0.7),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+        child: Center(
+          child: TrueGlassContainer(
+            blurSigma: 15,
+            opacity: 0.1,
+            padding: const EdgeInsets.all(32),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const CircularProgressIndicator(color: AppColors.primary),
+                const SizedBox(height: 24),
+                const Text(
+                  'Đang tải mô hình 3D...',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            if (!_isOnline) ...[
-              const SizedBox(height: 16),
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 32),
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.orange.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.orange),
+                const SizedBox(height: 12),
+                Text(
+                  progressPercent > 0 ? '$progressPercent%' : 'Vui lòng đợi',
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 15,
+                  ),
                 ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.warning_amber, color: Colors.orange, size: 20),
-                    SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'Không có kết nối mạng',
-                        style: TextStyle(color: Colors.orange, fontSize: 13),
-                      ),
+                const SizedBox(height: 20),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 32),
+                  child: Text(
+                    'Thiết bị yếu có thể mất nhiều thời gian hơn',
+                    style: TextStyle(
+                      color: Colors.white54,
+                      fontSize: 13,
+                      fontStyle: FontStyle.italic,
                     ),
-                  ],
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-              ),
-            ],
-          ],
+                if (!_isOnline) ...[
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.orange.withOpacity(0.5)),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.warning_amber, color: Colors.orange, size: 20),
+                        SizedBox(width: 8),
+                        Text(
+                          'Không có kết nối mạng',
+                          style: TextStyle(color: Colors.orange, fontSize: 13),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -1222,208 +1268,220 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
 
   Widget _buildModelErrorOverlay() {
     return Container(
-      color: Colors.black87,
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Error icon
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.red.withOpacity(0.2),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.error_outline,
-                    color: Colors.red,
-                    size: 64,
-                  ),
-                ),
-                const SizedBox(height: 24),
-
-                // Error title
-                const Text(
-                  'Không thể tải mô hình 3D',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 12),
-
-                // Error message
-                Text(
-                  _errorMessage ??
-                      'Đã xảy ra lỗi khi tải mô hình. Vui lòng kiểm tra kết nối mạng.',
-                  style: const TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 24),
-
-                // Debug info (in debug mode)
-                if (_debugInfo != null) ...[
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.3),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.white24),
+      color: Colors.black.withOpacity(0.7),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: SingleChildScrollView(
+              child: TrueGlassContainer(
+                blurSigma: 15,
+                opacity: 0.1,
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Error icon
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.red.withOpacity(0.2),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.red.withOpacity(0.5),
+                          width: 2,
+                        ),
+                      ),
+                      child: const Icon(
+                        Icons.error_outline,
+                        color: Colors.red,
+                        size: 64,
+                      ),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Row(
+                    const SizedBox(height: 24),
+
+                    // Error title
+                    const Text(
+                      'Không thể tải mô hình 3D',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Error message
+                    Text(
+                      _errorMessage ??
+                          'Đã xảy ra lỗi khi tải mô hình. Vui lòng kiểm tra kết nối mạng.',
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Debug info (in debug mode)
+                    if (_debugInfo != null) ...[
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.white.withOpacity(0.2)),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(Icons.bug_report, color: Colors.orange, size: 16),
-                            SizedBox(width: 8),
+                            const Row(
+                              children: [
+                                Icon(Icons.bug_report, color: Colors.orange, size: 16),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Thông tin gỡ lỗi',
+                                  style: TextStyle(
+                                    color: Colors.orange,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
                             Text(
-                              'Thông tin gỡ lỗi',
-                              style: TextStyle(
-                                color: Colors.orange,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
+                              _debugInfo!,
+                              style: const TextStyle(
+                                color: Colors.white60,
+                                fontSize: 10,
+                                fontFamily: 'monospace',
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          _debugInfo!,
-                          style: const TextStyle(
-                            color: Colors.white60,
-                            fontSize: 10,
-                            fontFamily: 'monospace',
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
+                      ),
+                      const SizedBox(height: 16),
 
-                  // Copy debug info button
-                  OutlinedButton.icon(
-                    onPressed: () {
-                      Clipboard.setData(ClipboardData(text: _debugInfo!));
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Đã sao chép thông tin gỡ lỗi'),
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
-                      debugPrint('[URN_VIEWER] 📋 Debug info copied to clipboard');
-                    },
-                    icon: const Icon(Icons.copy, size: 16),
-                    label: const Text('Sao chép thông tin gỡ lỗi'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.orange,
-                      side: const BorderSide(color: Colors.orange),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                ],
-
-                // Retry button
-                ElevatedButton.icon(
-                  onPressed: () {
-                    debugPrint('[URN_VIEWER] User initiated retry');
-                    setState(() {
-                      _isLoading = true;
-                      _modelLoadError = false;
-                      _errorMessage = null;
-                      _modelLoadProgress = 0.0;
-                      _loadStartTime = DateTime.now();
-                    });
-                    // Refresh the urn data
-                    ref.invalidate(urnDetailProvider(widget.urnSlug));
-                    // Reset timeout (60 seconds)
-                    _loadingTimer?.cancel();
-                    _loadingTimer = Timer(const Duration(seconds: 60), () {
-                      if (mounted && _isLoading) {
-                        final elapsed = DateTime.now().difference(_loadStartTime!).inSeconds;
-                        setState(() {
-                          _isLoading = false;
-                          // Don't set error state - let the model continue loading
-                        });
-                        debugPrint('[URN_VIEWER] Model loading timeout after $elapsed seconds - continuing in background');
-                      }
-                    });
-                  },
-                  icon: const Icon(Icons.refresh),
-                  label: const Text('Thử lại'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: AppColors.onPrimary,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 32,
-                      vertical: 16,
-                    ),
-                    textStyle: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Back button
-                TextButton.icon(
-                  onPressed: () => context.pop(),
-                  icon: const Icon(Icons.arrow_back),
-                  label: const Text('Quay lại'),
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.white70,
-                  ),
-                ),
-
-                const SizedBox(height: 24),
-
-                // Troubleshooting tips
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.1),
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Gợi ý khắc phục:',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
+                      // Copy debug info button
+                      OutlinedButton.icon(
+                        onPressed: () {
+                          Clipboard.setData(ClipboardData(text: _debugInfo!));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Đã sao chép thông tin gỡ lỗi'),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                          debugPrint('[URN_VIEWER] 📋 Debug info copied to clipboard');
+                        },
+                        icon: const Icon(Icons.copy, size: 16),
+                        label: const Text('Sao chép thông tin gỡ lỗi'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.orange,
+                          side: const BorderSide(color: Colors.orange),
                         ),
                       ),
                       const SizedBox(height: 8),
-                      _buildTroubleshootingTip(
-                        '• Kiểm tra kết nối Internet',
-                      ),
-                      _buildTroubleshootingTip(
-                        '• Thử chuyển sang WiFi hoặc 4G/5G',
-                      ),
-                      _buildTroubleshootingTip(
-                        '• Khởi động lại ứng dụng',
-                      ),
-                      _buildTroubleshootingTip(
-                        '• Xóa cache và thử lại',
-                      ),
                     ],
-                  ),
+
+                    // Retry button
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        debugPrint('[URN_VIEWER] User initiated retry');
+                        setState(() {
+                          _isLoading = true;
+                          _modelLoadError = false;
+                          _errorMessage = null;
+                          _modelLoadProgress = 0.0;
+                          _loadStartTime = DateTime.now();
+                        });
+                        // Refresh the urn data
+                        ref.invalidate(urnDetailProvider(widget.urnSlug));
+                        // Reset timeout (60 seconds)
+                        _loadingTimer?.cancel();
+                        _loadingTimer = Timer(const Duration(seconds: 60), () {
+                          if (mounted && _isLoading) {
+                            final elapsed = DateTime.now().difference(_loadStartTime!).inSeconds;
+                            setState(() {
+                              _isLoading = false;
+                              // Don't set error state - let the model continue loading
+                            });
+                            debugPrint('[URN_VIEWER] Model loading timeout after $elapsed seconds - continuing in background');
+                          }
+                        });
+                      },
+                      icon: const Icon(Icons.refresh),
+                      label: const Text('Thử lại'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: AppColors.onPrimary,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 32,
+                          vertical: 16,
+                        ),
+                        textStyle: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Back button
+                    TextButton.icon(
+                      onPressed: () => context.pop(),
+                      icon: const Icon(Icons.arrow_back),
+                      label: const Text('Quay lại'),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.white70,
+                      ),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Troubleshooting tips
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.05),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.1),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Gợi ý khắc phục:',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          _buildTroubleshootingTip(
+                            '• Kiểm tra kết nối Internet',
+                          ),
+                          _buildTroubleshootingTip(
+                            '• Thử chuyển sang WiFi hoặc 4G/5G',
+                          ),
+                          _buildTroubleshootingTip(
+                            '• Khởi động lại ứng dụng',
+                          ),
+                          _buildTroubleshootingTip(
+                            '• Xóa cache và thử lại',
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
@@ -1445,85 +1503,104 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
   }
 
   Widget _buildUrnInfoSheet(UrnDetail urnDetail) {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Handle
-          Center(
-            child: Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
+    return ClipRRect(
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.white.withOpacity(0.95),
+                Colors.white.withOpacity(0.98),
+              ],
+            ),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            border: const Border(
+              top: BorderSide(
+                color: Colors.white,
+                width: 2,
               ),
             ),
           ),
-          const SizedBox(height: 24),
-
-          // Title
-          Text(
-            urnDetail.urn.name,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-          ),
-          if (urnDetail.urn.nameEn != null) ...[
-            const SizedBox(height: 4),
-            Text(
-              urnDetail.urn.nameEn!,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Colors.grey[600],
-                  ),
-            ),
-          ],
-          const SizedBox(height: 16),
-
-          // Description
-          if (urnDetail.urn.description != null)
-            Text(
-              urnDetail.urn.description!,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-
-          const SizedBox(height: 24),
-
-          // Stats
-          Row(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: _buildInfoStat(
-                  'Tổng họa tiết',
-                  '${urnDetail.urn.motifCount}',
-                  Icons.grid_view,
+              // Handle
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
               ),
-              Expanded(
-                child: _buildInfoStat(
-                  'Đã khám phá',
-                  '${urnDetail.urn.discoveredCount}',
-                  Icons.explore,
-                ),
+              const SizedBox(height: 24),
+
+              // Title
+              Text(
+                urnDetail.urn.name,
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
-              Expanded(
-                child: _buildInfoStat(
-                  'Tiến độ',
-                  '${(urnDetail.urn.progress * 100).toInt()}%',
-                  Icons.trending_up,
+              if (urnDetail.urn.nameEn != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  urnDetail.urn.nameEn!,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Colors.grey[600],
+                      ),
                 ),
+              ],
+              const SizedBox(height: 16),
+
+              // Description
+              if (urnDetail.urn.description != null)
+                Text(
+                  urnDetail.urn.description!,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+
+              const SizedBox(height: 24),
+
+              // Stats
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildInfoStat(
+                      'Tổng họa tiết',
+                      '${urnDetail.urn.motifCount}',
+                      Icons.grid_view,
+                    ),
+                  ),
+                  Expanded(
+                    child: _buildInfoStat(
+                      'Đã khám phá',
+                      '${urnDetail.urn.discoveredCount}',
+                      Icons.explore,
+                    ),
+                  ),
+                  Expanded(
+                    child: _buildInfoStat(
+                      'Tiến độ',
+                      '${(urnDetail.urn.progress * 100).toInt()}%',
+                      Icons.trending_up,
+                    ),
+                  ),
+                ],
               ),
+
+              const SizedBox(height: 24),
             ],
           ),
-
-          const SizedBox(height: 24),
-        ],
+        ),
       ),
     );
   }
