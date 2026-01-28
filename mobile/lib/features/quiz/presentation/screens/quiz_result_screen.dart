@@ -281,41 +281,49 @@ class _QuizResultScreenState extends ConsumerState<QuizResultScreen> {
       ),
       child: Column(
         children: [
-          // Percentage circle
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              SizedBox(
-                width: 120,
-                height: 120,
-                child: CircularProgressIndicator(
-                  value: percentage / 100,
-                  strokeWidth: 10,
-                  backgroundColor: AppColors.border,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    isPassed ? AppColors.success : AppColors.error,
-                  ),
-                ),
-              ),
-              Column(
-                mainAxisSize: MainAxisSize.min,
+          // Percentage circle with animation
+          TweenAnimationBuilder<double>(
+            tween: Tween<double>(begin: 0.0, end: percentage / 100),
+            duration: const Duration(milliseconds: 1200),
+            curve: Curves.easeOutCubic,
+            builder: (context, animatedValue, child) {
+              final animatedPercentage = (animatedValue * 100).toInt();
+              return Stack(
+                alignment: Alignment.center,
                 children: [
-                  Text(
-                    '$percentage%',
-                    style: AppTypography.textTheme.headlineLarge?.copyWith(
-                      color: isPassed ? AppColors.success : AppColors.error,
-                      fontWeight: FontWeight.bold,
+                  SizedBox(
+                    width: 120,
+                    height: 120,
+                    child: CircularProgressIndicator(
+                      value: animatedValue,
+                      strokeWidth: 10,
+                      backgroundColor: AppColors.border,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        isPassed ? AppColors.success : AppColors.error,
+                      ),
                     ),
                   ),
-                  Text(
-                    isPassed ? 'Đạt' : 'Chưa đạt',
-                    style: AppTypography.textTheme.labelMedium?.copyWith(
-                      color: isPassed ? AppColors.success : AppColors.error,
-                    ),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '$animatedPercentage%',
+                        style: AppTypography.textTheme.headlineLarge?.copyWith(
+                          color: isPassed ? AppColors.success : AppColors.error,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        isPassed ? 'Đạt' : 'Chưa đạt',
+                        style: AppTypography.textTheme.labelMedium?.copyWith(
+                          color: isPassed ? AppColors.success : AppColors.error,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
-              ),
-            ],
+              );
+            },
           ),
 
           const SizedBox(height: 20),

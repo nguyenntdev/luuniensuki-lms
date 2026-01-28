@@ -293,7 +293,7 @@ class _FillBlankOptionState extends State<_FillBlankOption> {
 }
 
 /// Option button for multiple choice
-class _OptionButton extends StatelessWidget {
+class _OptionButton extends StatefulWidget {
   final String label;
   final String text;
   final bool isSelected;
@@ -307,70 +307,86 @@ class _OptionButton extends StatelessWidget {
   });
 
   @override
+  State<_OptionButton> createState() => _OptionButtonState();
+}
+
+class _OptionButtonState extends State<_OptionButton> {
+  bool _isPressed = false;
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? AppColors.primary.withOpacity(0.1)
-              : AppColors.surface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.border,
-            width: isSelected ? 2 : 1,
+      onTapDown: (_) => setState(() => _isPressed = true),
+      onTapUp: (_) {
+        setState(() => _isPressed = false);
+        widget.onTap();
+      },
+      onTapCancel: () => setState(() => _isPressed = false),
+      child: AnimatedScale(
+        scale: _isPressed ? 0.96 : 1.0,
+        duration: const Duration(milliseconds: 100),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: widget.isSelected
+                ? AppColors.primary.withOpacity(0.1)
+                : AppColors.surface,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: widget.isSelected ? AppColors.primary : AppColors.border,
+              width: widget.isSelected ? 2 : 1,
+            ),
           ),
-        ),
-        child: Row(
-          children: [
-            // Option label (A, B, C, D)
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? AppColors.primary
-                    : AppColors.surfaceElevated,
-                shape: BoxShape.circle,
-              ),
-              child: Center(
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    color: isSelected
-                        ? AppColors.onPrimary
-                        : AppColors.textSecondary,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
+          child: Row(
+            children: [
+              // Option label (A, B, C, D)
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: widget.isSelected
+                      ? AppColors.primary
+                      : AppColors.surfaceElevated,
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Text(
+                    widget.label,
+                    style: TextStyle(
+                      color: widget.isSelected
+                          ? AppColors.onPrimary
+                          : AppColors.textSecondary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(width: 12),
+              const SizedBox(width: 12),
 
-            // Option text
-            Expanded(
-              child: Text(
-                text,
-                style: AppTypography.quizOption.copyWith(
-                  color: isSelected
-                      ? AppColors.primary
-                      : AppColors.textPrimary,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+              // Option text
+              Expanded(
+                child: Text(
+                  widget.text,
+                  style: AppTypography.quizOption.copyWith(
+                    color: widget.isSelected
+                        ? AppColors.primary
+                        : AppColors.textPrimary,
+                    fontWeight: widget.isSelected ? FontWeight.w600 : FontWeight.normal,
+                  ),
                 ),
               ),
-            ),
 
-            // Selection indicator
-            if (isSelected)
-              Icon(
-                Icons.check_circle,
-                color: AppColors.primary,
-                size: 24,
-              ),
-          ],
+              // Selection indicator
+              if (widget.isSelected)
+                Icon(
+                  Icons.check_circle,
+                  color: AppColors.primary,
+                  size: 24,
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -378,7 +394,7 @@ class _OptionButton extends StatelessWidget {
 }
 
 /// True/False button widget
-class _TrueFalseButton extends StatelessWidget {
+class _TrueFalseButton extends StatefulWidget {
   final String label;
   final String value;
   final IconData icon;
@@ -396,37 +412,53 @@ class _TrueFalseButton extends StatelessWidget {
   });
 
   @override
+  State<_TrueFalseButton> createState() => _TrueFalseButtonState();
+}
+
+class _TrueFalseButtonState extends State<_TrueFalseButton> {
+  bool _isPressed = false;
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(vertical: 24),
-        decoration: BoxDecoration(
-          color: isSelected ? color.withOpacity(0.15) : AppColors.surface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected ? color : AppColors.border,
-            width: isSelected ? 2 : 1,
+      onTapDown: (_) => setState(() => _isPressed = true),
+      onTapUp: (_) {
+        setState(() => _isPressed = false);
+        widget.onTap();
+      },
+      onTapCancel: () => setState(() => _isPressed = false),
+      child: AnimatedScale(
+        scale: _isPressed ? 0.96 : 1.0,
+        duration: const Duration(milliseconds: 100),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(vertical: 24),
+          decoration: BoxDecoration(
+            color: widget.isSelected ? widget.color.withOpacity(0.15) : AppColors.surface,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: widget.isSelected ? widget.color : AppColors.border,
+              width: widget.isSelected ? 2 : 1,
+            ),
           ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              size: 40,
-              color: isSelected ? color : AppColors.textHint,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              style: AppTypography.textTheme.titleMedium?.copyWith(
-                color: isSelected ? color : AppColors.textSecondary,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                widget.icon,
+                size: 40,
+                color: widget.isSelected ? widget.color : AppColors.textHint,
               ),
-            ),
-          ],
+              const SizedBox(height: 8),
+              Text(
+                widget.label,
+                style: AppTypography.textTheme.titleMedium?.copyWith(
+                  color: widget.isSelected ? widget.color : AppColors.textSecondary,
+                  fontWeight: widget.isSelected ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

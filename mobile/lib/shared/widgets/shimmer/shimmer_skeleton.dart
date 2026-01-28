@@ -98,24 +98,21 @@ class ShimmerUrnCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     // Title shimmer
-                    ShimmerSkeleton(
+                    const ShimmerSkeleton(
                       width: double.infinity,
                       height: 20,
-                      borderRadius: BorderRadius.circular(AppSpacing.radiusXS),
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     // Subtitle shimmer
-                    ShimmerSkeleton(
+                    const ShimmerSkeleton(
                       width: 120,
                       height: 14,
-                      borderRadius: BorderRadius.circular(AppSpacing.radiusXS),
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     // Progress bar shimmer
-                    ShimmerSkeleton(
+                    const ShimmerSkeleton(
                       width: double.infinity,
                       height: 6,
-                      borderRadius: BorderRadius.circular(AppSpacing.radiusXS),
                     ),
                   ],
                 ),
@@ -158,7 +155,7 @@ class ShimmerMotifCard extends StatelessWidget {
           children: [
             // Thumbnail shimmer
             Expanded(
-              child: ShimmerSkeleton(
+              child: const ShimmerSkeleton(
                 width: double.infinity,
                 height: double.infinity,
               ),
@@ -167,10 +164,9 @@ class ShimmerMotifCard extends StatelessWidget {
             const SizedBox(height: 12),
 
             // Motif name shimmer
-            ShimmerSkeleton(
+            const ShimmerSkeleton(
               width: double.infinity,
               height: 16,
-              borderRadius: BorderRadius.circular(AppSpacing.radiusXS),
             ),
 
             const SizedBox(height: 8),
@@ -178,16 +174,14 @@ class ShimmerMotifCard extends StatelessWidget {
             // Status badge shimmer
             Row(
               children: [
-                ShimmerSkeleton(
+                const ShimmerSkeleton(
                   width: 60,
                   height: 20,
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusSM),
                 ),
                 const SizedBox(width: 8),
-                ShimmerSkeleton(
+                const ShimmerSkeleton(
                   width: 50,
                   height: 20,
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusSM),
                 ),
               ],
             ),
@@ -240,10 +234,9 @@ class ShimmerListItem extends StatelessWidget {
         children: [
           // Leading icon/image shimmer
           if (showLeading) ...[
-            ShimmerSkeleton(
+            const ShimmerSkeleton(
               width: 50,
               height: 50,
-              borderRadius: BorderRadius.circular(AppSpacing.radiusSM),
             ),
             const SizedBox(width: AppSpacing.md),
           ],
@@ -254,16 +247,14 @@ class ShimmerListItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ShimmerSkeleton(
+                const ShimmerSkeleton(
                   width: double.infinity,
                   height: 16,
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusXS),
                 ),
                 const SizedBox(height: AppSpacing.sm),
-                ShimmerSkeleton(
+                const ShimmerSkeleton(
                   width: 150,
                   height: 12,
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusXS),
                 ),
               ],
             ),
@@ -272,10 +263,9 @@ class ShimmerListItem extends StatelessWidget {
           // Trailing icon shimmer
           if (showTrailing) ...[
             const SizedBox(width: AppSpacing.md),
-            ShimmerSkeleton(
+            const ShimmerSkeleton(
               width: 24,
               height: 24,
-              borderRadius: BorderRadius.circular(AppSpacing.radiusXS),
             ),
           ],
         ],

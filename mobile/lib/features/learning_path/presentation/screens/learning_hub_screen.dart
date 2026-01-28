@@ -8,6 +8,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/url_utils.dart';
 import '../../../../routing/route_names.dart';
+import '../../../../shared/widgets/animations/staggered_animation_wrapper.dart';
 import '../../../../shared/widgets/glass/animated_background.dart';
 import '../../../hearts/presentation/widgets/hearts_display.dart';
 import '../../../streak/presentation/widgets/compact_streak_widget.dart';
@@ -491,12 +492,15 @@ class LearningHubScreen extends ConsumerWidget {
             delegate: SliverChildBuilderDelegate(
               (context, index) {
                 final motif = summary.pathMotifs[index];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                  child: _PathMotifCard(
-                    motif: motif,
-                    index: index,
-                    total: summary.pathMotifs.length,
+                return StaggeredAnimationWrapper(
+                  index: index,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                    child: _PathMotifCard(
+                      motif: motif,
+                      index: index,
+                      total: summary.pathMotifs.length,
+                    ),
                   ),
                 );
               },
