@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script to install the LuuNienSuki LMS app via ADB
+# Script to install the Cửu Đỉnh Ký app via ADB
 
 set -e
 
@@ -8,7 +8,7 @@ adb devices
 
 echo ""
 echo "📱 Uninstalling existing app (if any)..."
-adb uninstall com.luuniensuki.lms 2>/dev/null || echo "   (App was not installed)"
+adb uninstall com.cuudinhky.app 2>/dev/null || echo "   (App was not installed)"
 
 echo ""
 echo "🚀 Installing latest APK..."
@@ -20,9 +20,9 @@ if [ -f "mobile/build/app/outputs/flutter-apk/app-debug.apk" ]; then
 elif [ -f "mobile/build/app/outputs/flutter-apk/app-release.apk" ]; then
     APK_PATH="mobile/build/app/outputs/flutter-apk/app-release.apk"
     echo "   Using release APK from build folder..."
-elif [ -f "builds/luuniensuki-lms-v1.4.0-build5.apk" ]; then
-    APK_PATH="builds/luuniensuki-lms-v1.4.0-build5.apk"
-    echo "   Using APK v1.4.0 from builds folder..."
+elif [ -f "builds/cuudinhky-latest.apk" ]; then
+    APK_PATH="builds/cuudinhky-latest.apk"
+    echo "   Using latest APK from builds folder..."
 else
     echo "❌ No APK found! Please build first:"
     echo "   cd mobile && flutter build apk --debug"
@@ -36,7 +36,7 @@ echo ""
 echo "✅ Installation complete!"
 echo ""
 echo "🎮 Launching app..."
-adb shell am start -n com.luuniensuki.lms/.MainActivity
+adb shell am start -n com.cuudinhky.app/.MainActivity
 
 echo ""
 echo "Done! The app should now be open on your device."
