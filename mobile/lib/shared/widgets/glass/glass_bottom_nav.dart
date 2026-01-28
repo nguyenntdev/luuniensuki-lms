@@ -368,6 +368,42 @@ class _NavItemButtonState extends State<_NavItemButton>
                           ),
                         ),
                       ),
+                    if (widget.item.badgeCount != null && widget.item.badgeCount! > 0)
+                      Positioned(
+                        right: -6,
+                        top: -4,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.red.withOpacity(0.5),
+                                blurRadius: 4,
+                                spreadRadius: 1,
+                              ),
+                            ],
+                          ),
+                          constraints: const BoxConstraints(
+                            minWidth: 16,
+                            minHeight: 16,
+                          ),
+                          child: Center(
+                            child: Text(
+                              widget.item.badgeCount! > 9
+                                  ? '9+'
+                                  : '${widget.item.badgeCount}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
                 const SizedBox(height: 4),
@@ -403,6 +439,7 @@ class GlassBottomNavItem {
   final IconData activeIcon;
   final String label;
   final String? badge;
+  final int? badgeCount;
   final bool isPrimary;
   final Color? primaryColor;
 
@@ -411,6 +448,7 @@ class GlassBottomNavItem {
     required this.activeIcon,
     required this.label,
     this.badge,
+    this.badgeCount,
     this.isPrimary = false,
     this.primaryColor,
   });
