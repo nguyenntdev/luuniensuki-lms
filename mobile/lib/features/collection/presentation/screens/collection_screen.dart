@@ -365,19 +365,27 @@ class _CollectionScreenState extends ConsumerState<CollectionScreen>
   }
 
   Widget _buildMotifGrid(List<CollectionMotifDto> motifs) {
-    return GridView.builder(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 0.85,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-      ),
-      itemCount: motifs.length,
-      itemBuilder: (context, index) {
-        final motif = motifs[index];
-        return _buildAnimatedMotifCard(motif, index);
+    return RefreshIndicator(
+      onRefresh: () async {
+        await ref.read(collectionNotifierProvider.notifier).loadCollection();
       },
+      color: AppColors.primary,
+      backgroundColor: AppColors.surface,
+      child: GridView.builder(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
+        physics: const AlwaysScrollableScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 0.85,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+        ),
+        itemCount: motifs.length,
+        itemBuilder: (context, index) {
+          final motif = motifs[index];
+          return _buildAnimatedMotifCard(motif, index);
+        },
+      ),
     );
   }
 

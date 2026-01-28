@@ -9,6 +9,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/url_utils.dart';
 import '../../../../routing/route_names.dart';
+import '../../../../shared/widgets/animations/index.dart';
 
 final _dailyLessonsProvider = FutureProvider<List<_DailyLesson>>((ref) async {
   final apiClient = ref.watch(apiClientProvider);
@@ -129,7 +130,7 @@ class _LessonsList extends StatelessWidget {
             padding: EdgeInsets.only(
               right: index < lessons.length - 1 ? AppSpacing.md : 0,
             ),
-            child: _StaggeredAnimationWrapper(
+            child: StaggeredAnimationWrapper(
               index: index,
               child: _DailyLessonCard(
                 lesson: lesson,
@@ -138,84 +139,6 @@ class _LessonsList extends StatelessWidget {
             ),
           );
         },
-      ),
-    );
-  }
-}
-
-/// Wrapper widget for staggered entry animation
-class _StaggeredAnimationWrapper extends StatefulWidget {
-  final int index;
-  final Widget child;
-
-  const _StaggeredAnimationWrapper({
-    required this.index,
-    required this.child,
-  });
-
-  @override
-  State<_StaggeredAnimationWrapper> createState() =>
-      _StaggeredAnimationWrapperState();
-}
-
-class _StaggeredAnimationWrapperState extends State<_StaggeredAnimationWrapper>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _fadeAnimation;
-  late Animation<Offset> _slideAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 400),
-      vsync: this,
-    );
-
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeOutCubic,
-      ),
-    );
-
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeOutCubic,
-      ),
-    );
-
-    // Staggered delay: 100ms per card
-    Future.delayed(
-      Duration(milliseconds: 100 * widget.index),
-      () {
-        if (mounted) {
-          _controller.forward();
-        }
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _fadeAnimation,
-      child: SlideTransition(
-        position: _slideAnimation,
-        child: widget.child,
       ),
     );
   }

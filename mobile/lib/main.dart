@@ -7,6 +7,7 @@ import 'core/theme/app_theme.dart';
 import 'routing/app_router.dart';
 import 'features/auth/presentation/providers/auth_provider.dart';
 import 'features/daily_goals/presentation/providers/daily_goal_provider.dart';
+import 'shared/widgets/network_status_indicator.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,13 +50,15 @@ class _LuuniensukiAppState extends ConsumerState<LuuniensukiApp> {
   Widget build(BuildContext context) {
     final router = ref.watch(appRouterProvider);
 
-    return MaterialApp.router(
-      title: 'Cửu Đỉnh Ký',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.dark,
-      routerConfig: router,
+    return NetworkStatusIndicator(
+      child: MaterialApp.router(
+        title: 'Cửu Đỉnh Ký',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: ThemeMode.dark,
+        routerConfig: router,
+      ),
     );
   }
 }

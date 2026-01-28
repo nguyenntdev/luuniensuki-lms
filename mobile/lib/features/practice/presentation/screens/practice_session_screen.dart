@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/services/sound_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/glass/animated_background.dart';
@@ -41,6 +42,9 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
     if (_showingFeedback) return;
     setState(() => _showingFeedback = true);
 
+    // Play correct sound/haptic feedback
+    ref.read(soundServiceProvider).playCorrect();
+
     // Update session
     final session = ref.read(quizSessionProvider);
     final currentQuestion = session.currentQuestion;
@@ -66,6 +70,9 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
   void _handleIncorrectAnswer() async {
     if (_showingFeedback) return;
     setState(() => _showingFeedback = true);
+
+    // Play wrong sound/haptic feedback
+    ref.read(soundServiceProvider).playWrong();
 
     // Lose a heart
     await ref.read(heartsNotifierProvider.notifier).loseHeart();

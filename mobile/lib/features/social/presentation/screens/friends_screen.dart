@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/glass/animated_background.dart';
 import '../../../../shared/widgets/glass/glass_container.dart';
+import '../../../../shared/widgets/shimmer/shimmer_skeleton.dart';
 import '../providers/friends_provider.dart';
 import '../widgets/friend_card.dart';
 import '../widgets/friend_request_card.dart';
@@ -88,7 +89,7 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen>
                 controller: _tabController,
                 indicator: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     colors: [
                       AppColors.primary,
                       AppColors.primaryDark,
@@ -149,9 +150,7 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen>
 
   Widget _buildFriendsList(FriendsState state) {
     if (state.isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(color: AppColors.primary),
-      );
+      return _buildFriendsShimmerList();
     }
 
     if (state.acceptedFriends.isEmpty) {
@@ -178,9 +177,7 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen>
 
   Widget _buildRequestsList(FriendsState state) {
     if (state.isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(color: AppColors.primary),
-      );
+      return _buildRequestsShimmerList();
     }
 
     if (state.incomingRequests.isEmpty) {
@@ -345,7 +342,9 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen>
   }
 
   Future<void> _acceptRequest(request) async {
-    await ref.read(friendsNotifierProvider.notifier).acceptFriendRequest(request);
+    await ref
+        .read(friendsNotifierProvider.notifier)
+        .acceptFriendRequest(request);
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -357,7 +356,9 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen>
   }
 
   Future<void> _rejectRequest(request) async {
-    await ref.read(friendsNotifierProvider.notifier).rejectFriendRequest(request);
+    await ref
+        .read(friendsNotifierProvider.notifier)
+        .rejectFriendRequest(request);
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -366,5 +367,143 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen>
       );
     }
   }
-}
 
+  Widget _buildFriendsShimmerList() {
+    return ListView.separated(
+      padding: const EdgeInsets.all(16),
+      itemCount: 5,
+      separatorBuilder: (context, index) => AppSpacing.verticalSpaceMD,
+      itemBuilder: (context, index) => GlassContainer(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              // Avatar shimmer
+              ShimmerSkeleton(
+                width: 56,
+                height: 56,
+                borderRadius: BorderRadius.circular(28),
+              ),
+
+              AppSpacing.horizontalSpaceMD,
+
+              // Friend info shimmer
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Name shimmer
+                    ShimmerSkeleton(
+                      width: 120,
+                      height: 16,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+
+                    AppSpacing.verticalSpaceXS,
+
+                    // Stats row shimmer
+                    Row(
+                      children: [
+                        ShimmerSkeleton(
+                          width: 60,
+                          height: 20,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        AppSpacing.horizontalSpaceSM,
+                        ShimmerSkeleton(
+                          width: 50,
+                          height: 20,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        AppSpacing.horizontalSpaceSM,
+                        ShimmerSkeleton(
+                          width: 55,
+                          height: 20,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              // More icon shimmer
+              ShimmerSkeleton(
+                width: 24,
+                height: 24,
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRequestsShimmerList() {
+    return ListView.separated(
+      padding: const EdgeInsets.all(16),
+      itemCount: 3,
+      separatorBuilder: (context, index) => AppSpacing.verticalSpaceMD,
+      itemBuilder: (context, index) => GlassContainer(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              // Avatar shimmer
+              ShimmerSkeleton(
+                width: 48,
+                height: 48,
+                borderRadius: BorderRadius.circular(24),
+              ),
+
+              AppSpacing.horizontalSpaceMD,
+
+              // User info shimmer
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Name shimmer
+                    ShimmerSkeleton(
+                      width: 100,
+                      height: 16,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+
+                    AppSpacing.verticalSpaceXS,
+
+                    // Time ago shimmer
+                    ShimmerSkeleton(
+                      width: 70,
+                      height: 12,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Action buttons shimmer
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ShimmerSkeleton(
+                    width: 40,
+                    height: 40,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  const SizedBox(width: 8),
+                  ShimmerSkeleton(
+                    width: 40,
+                    height: 40,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/theme/app_colors.dart';
+
 /// Glass theme constants for the Cửu Đỉnh Ký LMS mobile app.
 /// Defines the glassmorphism design system with colors, effects, and spacing.
 class GlassTheme {
@@ -269,4 +271,64 @@ class GlassTheme {
         ),
         boxShadow: glassShadow,
       );
+
+  /// Creates a card decoration with colored gradient and matching border.
+  /// Commonly used for feature cards, mode cards, and stat cards.
+  static BoxDecoration coloredCardDecoration({
+    required Color color,
+    double gradientStartOpacity = 0.15,
+    double gradientEndOpacity = 0.05,
+    double borderOpacity = 0.3,
+    double radius = 20,
+    double borderWidth = 1.5,
+    bool isDisabled = false,
+  }) {
+    return BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          color.withOpacity(isDisabled ? 0.05 : gradientStartOpacity),
+          color.withOpacity(isDisabled ? 0.02 : gradientEndOpacity),
+        ],
+      ),
+      borderRadius: BorderRadius.circular(radius),
+      border: Border.all(
+        color: isDisabled
+            ? Colors.white.withOpacity(0.1)
+            : color.withOpacity(borderOpacity),
+        width: borderWidth,
+      ),
+    );
+  }
+
+  /// Creates a status badge decoration (for completed/pending states).
+  static BoxDecoration statusBadgeDecoration({
+    required bool isActive,
+    required Color activeColor,
+    double radius = 12,
+  }) {
+    return BoxDecoration(
+      gradient: isActive
+          ? LinearGradient(colors: [activeColor, activeColor.withOpacity(0.8)])
+          : LinearGradient(colors: [
+              AppColors.surface.withOpacity(0.9),
+              AppColors.surface.withOpacity(0.85),
+            ]),
+      borderRadius: BorderRadius.circular(radius),
+      border: Border.all(
+        color: isActive ? activeColor : Colors.white.withOpacity(0.25),
+        width: 1.5,
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: isActive
+              ? activeColor.withOpacity(0.3)
+              : Colors.black.withOpacity(0.3),
+          blurRadius: 8,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    );
+  }
 }
