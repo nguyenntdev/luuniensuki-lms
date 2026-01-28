@@ -94,11 +94,21 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
         // Show resume dialog
         if (mounted) {
           final shouldResume = await _showResumeDialog(savedProgress);
-          if (shouldResume == true && mounted) {
-            _resumeFromSavedProgress(savedProgress, quiz.questions.length);
-          } else if (mounted) {
+
+          // Re-verify quiz data after dialog closes (user may have been on dialog for a while)
+          if (!mounted) return;
+          final currentQuizAsync = ref.read(quizProvider(widget.motifId));
+          if (!currentQuizAsync.hasValue || currentQuizAsync.value == null) {
+            debugPrint('[QuizScreen] Quiz data no longer valid after dialog');
+            return;
+          }
+          final currentQuiz = currentQuizAsync.value!;
+
+          if (shouldResume == true) {
+            _resumeFromSavedProgress(savedProgress, currentQuiz.questions.length);
+          } else {
             // Start fresh
-            ref.read(quizStateProvider(widget.motifId).notifier).startFresh(quiz);
+            ref.read(quizStateProvider(widget.motifId).notifier).startFresh(currentQuiz);
           }
         }
       } catch (e, stackTrace) {
