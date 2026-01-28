@@ -84,6 +84,13 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
   bool _isOnline = true;
   DateTime? _loadStartTime;
 
+  // Zoom tracking
+  double _zoomLevel = 1.0;
+
+  // Gesture hints
+  bool _showGestureHints = false;
+  Timer? _gestureHintsTimer;
+
   @override
   void initState() {
     super.initState();
@@ -99,6 +106,7 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
     // Check network connectivity
     _checkConnectivity();
     _loadMotifCoordinates();
+    _checkGestureHints();
 
     // Set immersive mode for 3D viewer
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
@@ -189,6 +197,31 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
     }
   }
 
+  void _checkGestureHints() {
+    final hiveStorage = ref.read(hiveStorageProvider);
+    final hasShown = hiveStorage.getSetting<bool>(
+      'urn_viewer_gesture_hints_shown',
+      defaultValue: false,
+    );
+
+    if (hasShown == false) {
+      setState(() => _showGestureHints = true);
+      _gestureHintsTimer = Timer(const Duration(seconds: 4), () {
+        if (mounted) {
+          _dismissGestureHints();
+        }
+      });
+    }
+  }
+
+  void _dismissGestureHints() {
+    _gestureHintsTimer?.cancel();
+    setState(() => _showGestureHints = false);
+
+    final hiveStorage = ref.read(hiveStorageProvider);
+    hiveStorage.setSetting('urn_viewer_gesture_hints_shown', true);
+  }
+
   String _normalizeMotifKey(String value) {
     return value.trim().toLowerCase();
   }
@@ -219,6 +252,7 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
 
     // Cancel the loading timer to prevent memory leak
     _loadingTimer?.cancel();
+    _gestureHintsTimer?.cancel();
 
     // Restore system UI
     SystemChrome.setEnabledSystemUIMode(
@@ -634,6 +668,12 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
               onComplete: _onDiscoveryAnimationComplete,
             ),
           ),
+
+        // Gesture hints overlay (shows only on first use)
+        if (_showGestureHints)
+          Positioned.fill(
+            child: _buildGestureHintsOverlay(),
+          ),
       ],
     );
   }
@@ -742,6 +782,13 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
             return;
           }
           _handleHotspotTap(motif);
+        },
+        onZoomChange: (zoom) {
+          if (mounted) {
+            setState(() {
+              _zoomLevel = zoom;
+            });
+          }
         },
       ),
     );
@@ -869,6 +916,12 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
                         iconSize: 20,
                       ),
                       _buildGlassIconButton(
+                        Icons.center_focus_strong,
+                        _resetCamera,
+                        tooltip: 'Đặt lại góc nhìn',
+                        iconSize: 20,
+                      ),
+                      _buildGlassIconButton(
                         Icons.info_outline,
                         () => _showUrnInfo(context, urnDetail),
                         tooltip: 'Thông tin',
@@ -934,6 +987,13 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
                     _showHotspots ? Icons.visibility : Icons.visibility_off,
                     () => setState(() => _showHotspots = !_showHotspots),
                     tooltip: _showHotspots ? 'Ẩn điểm nóng' : 'Hiện điểm nóng',
+                  ),
+
+                  // Camera reset button
+                  _buildGlassIconButton(
+                    Icons.center_focus_strong,
+                    _resetCamera,
+                    tooltip: 'Đặt lại góc nhìn',
                   ),
 
                   // Info button
@@ -1038,6 +1098,37 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
           behavior: SnackBarBehavior.floating,
         ),
       );
+    }
+  }
+
+  void _resetCamera() {
+    if (_modelViewerController == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Vui lòng đợi mô hình 3D tải xong'),
+          backgroundColor: AppColors.surface,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    try {
+      _modelViewerController.runJavaScript('''
+        (function() {
+          const modelViewer = document.querySelector('model-viewer');
+          if (modelViewer) {
+            // Reset camera orbit to default
+            modelViewer.cameraOrbit = 'auto auto auto';
+            modelViewer.fieldOfView = '45deg';
+            console.log('Camera reset to default position');
+          } else {
+            console.error('Model viewer not found');
+          }
+        })();
+      ''');
+    } catch (e) {
+      debugPrint('Error resetting camera: $e');
     }
   }
 
@@ -1147,6 +1238,41 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
                     ),
                   ],
                 ),
+              const SizedBox(height: 12),
+
+              // Zoom indicator
+              Center(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.black26,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.2),
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.zoom_in,
+                        size: 14,
+                        color: Colors.white70,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        '${(_zoomLevel * 100).toInt()}%',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.white70,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -1623,6 +1749,97 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
           style: TextStyle(
             fontSize: 12,
             color: Colors.grey[600],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGestureHintsOverlay() {
+    return GestureDetector(
+      onTap: _dismissGestureHints,
+      child: Container(
+        color: Colors.black54,
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Center(
+            child: TrueGlassContainer(
+              blurSigma: 20,
+              opacity: 0.15,
+              padding: const EdgeInsets.all(32),
+              borderRadius: BorderRadius.circular(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Hướng dẫn thao tác',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  _buildHintRow(Icons.touch_app, 'Kéo một ngón tay để xoay mô hình 3D'),
+                  const SizedBox(height: 16),
+                  _buildHintRow(Icons.zoom_out_map, 'Chụm hai ngón để phóng to/thu nhỏ'),
+                  const SizedBox(height: 16),
+                  _buildHintRow(Icons.ads_click, 'Chạm điểm nóng để khám phá'),
+                  const SizedBox(height: 24),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.3),
+                      ),
+                    ),
+                    child: const Text(
+                      'Chạm bất kỳ đâu để tiếp tục',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHintRow(IconData icon, String text) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppColors.primary.withOpacity(0.2),
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: AppColors.primary.withOpacity(0.5),
+              width: 2,
+            ),
+          ),
+          child: Icon(
+            icon,
+            color: AppColors.primary,
+            size: 28,
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Text(
+            text,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
       ],
