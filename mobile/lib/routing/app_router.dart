@@ -448,6 +448,7 @@ class _MainShellState extends ConsumerState<MainShell> {
         : AppSpacing.navBarInset + MediaQuery.of(context).padding.bottom;
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: Stack(
         children: [
           // Content

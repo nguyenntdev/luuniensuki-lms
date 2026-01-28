@@ -43,22 +43,21 @@ class GlassBottomNav extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(24),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  AppColors.surface.withOpacity(0.85),
-                  AppColors.surfaceElevated.withOpacity(0.75),
-                ],
-              ),
+              color: AppColors.surface.withOpacity(0.7),
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
-                color: AppColors.glassBorder.withOpacity(0.5),
-                width: 1.5,
+                color: Colors.white.withOpacity(0.15),
               ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3),
+                  blurRadius: 18,
+                  offset: const Offset(0, 8),
+                ),
+              ],
             ),
             child: Stack(
               children: [
