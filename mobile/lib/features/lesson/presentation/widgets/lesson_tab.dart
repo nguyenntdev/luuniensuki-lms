@@ -782,6 +782,8 @@ class _ImageGalleryViewer extends StatefulWidget {
 class _ImageGalleryViewerState extends State<_ImageGalleryViewer> {
   late PageController _pageController;
   late int _currentIndex;
+  double _dragOffset = 0;
+  double _opacity = 1.0;
 
   @override
   void initState() {
@@ -799,27 +801,53 @@ class _ImageGalleryViewerState extends State<_ImageGalleryViewer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.black.withOpacity(_opacity),
       body: Stack(
         children: [
-          PhotoViewGallery.builder(
-            pageController: _pageController,
-            itemCount: widget.images.length,
-            onPageChanged: (index) => setState(() => _currentIndex = index),
-            builder: (context, index) {
-              final fullImageUrl = UrlUtils.getImageUrl(widget.images[index]);
-              return PhotoViewGalleryPageOptions(
-                imageProvider: CachedNetworkImageProvider(fullImageUrl),
-                minScale: PhotoViewComputedScale.contained,
-                maxScale: PhotoViewComputedScale.covered * 3,
-                heroAttributes: PhotoViewHeroAttributes(tag: 'gallery_$index'),
-              );
+          GestureDetector(
+            onVerticalDragUpdate: (details) {
+              setState(() {
+                _dragOffset += details.delta.dy;
+                _opacity = (1 - (_dragOffset.abs() / 200)).clamp(0.3, 1.0);
+              });
             },
-            loadingBuilder: (context, event) => const Center(
-              child: CircularProgressIndicator(color: Colors.white),
-            ),
-            backgroundDecoration: const BoxDecoration(
-              color: Colors.black,
+            onVerticalDragEnd: (details) {
+              if (_dragOffset.abs() > 100 ||
+                  details.velocity.pixelsPerSecond.dy.abs() > 500) {
+                Navigator.of(context).pop();
+              } else {
+                setState(() {
+                  _dragOffset = 0;
+                  _opacity = 1.0;
+                });
+              }
+            },
+            child: AnimatedOpacity(
+              opacity: _opacity,
+              duration: const Duration(milliseconds: 100),
+              child: Transform.translate(
+                offset: Offset(0, _dragOffset),
+                child: PhotoViewGallery.builder(
+                  pageController: _pageController,
+                  itemCount: widget.images.length,
+                  onPageChanged: (index) => setState(() => _currentIndex = index),
+                  builder: (context, index) {
+                    final fullImageUrl = UrlUtils.getImageUrl(widget.images[index]);
+                    return PhotoViewGalleryPageOptions(
+                      imageProvider: CachedNetworkImageProvider(fullImageUrl),
+                      minScale: PhotoViewComputedScale.contained,
+                      maxScale: PhotoViewComputedScale.covered * 3,
+                      heroAttributes: PhotoViewHeroAttributes(tag: 'gallery_$index'),
+                    );
+                  },
+                  loadingBuilder: (context, event) => const Center(
+                    child: CircularProgressIndicator(color: Colors.white),
+                  ),
+                  backgroundDecoration: const BoxDecoration(
+                    color: Colors.transparent,
+                  ),
+                ),
+              ),
             ),
           ),
           // Close button

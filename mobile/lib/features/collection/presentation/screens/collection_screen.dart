@@ -10,6 +10,7 @@ import '../../../../shared/widgets/glass/glass_container.dart';
 import '../../../../shared/widgets/shimmer/shimmer_skeleton.dart';
 import '../../data/models/collection_dtos.dart';
 import '../providers/collection_provider.dart';
+import '../providers/collection_filter_provider.dart';
 
 /// Filter options for the collection
 enum CollectionFilter {
@@ -29,7 +30,6 @@ class CollectionScreen extends ConsumerStatefulWidget {
 
 class _CollectionScreenState extends ConsumerState<CollectionScreen>
     with SingleTickerProviderStateMixin {
-  CollectionFilter _selectedFilter = CollectionFilter.all;
   late AnimationController _controller;
 
   @override
@@ -124,16 +124,18 @@ class _CollectionScreenState extends ConsumerState<CollectionScreen>
   }
 
   Widget _buildFilterChips() {
+    final selectedFilter = ref.watch(collectionFilterProvider);
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: Row(
         children: CollectionFilter.values.map((filter) {
-          final isSelected = _selectedFilter == filter;
+          final isSelected = selectedFilter == filter;
           return Padding(
             padding: const EdgeInsets.only(right: 8),
             child: GestureDetector(
-              onTap: () => setState(() => _selectedFilter = filter),
+              onTap: () => ref.read(collectionFilterProvider.notifier).state = filter,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 decoration: BoxDecoration(
@@ -293,7 +295,9 @@ class _CollectionScreenState extends ConsumerState<CollectionScreen>
 
   /// Filter motifs based on selected filter
   List<CollectionMotifDto> _filterMotifs(List<CollectionMotifDto> motifs) {
-    switch (_selectedFilter) {
+    final selectedFilter = ref.read(collectionFilterProvider);
+
+    switch (selectedFilter) {
       case CollectionFilter.all:
         // Show all motifs that are at least discovered
         return motifs.where((m) => m.status != 'hidden').toList();

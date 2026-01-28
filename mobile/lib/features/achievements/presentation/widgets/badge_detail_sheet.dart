@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/glass/glass_container.dart';
 import '../../data/models/badge_dto.dart';
+import '../../utils/badge_category_utils.dart';
 
 /// Bottom sheet widget for displaying badge details
 class BadgeDetailSheet extends StatelessWidget {
@@ -81,7 +82,7 @@ class BadgeDetailSheet extends StatelessWidget {
                       : null,
                 ),
                 child: Icon(
-                  _getCategoryIcon(badge.category),
+                  BadgeCategoryUtils.getIcon(badge.category),
                   color: isEarned
                       ? AppColors.onPrimary
                       : Colors.white.withOpacity(0.3),
@@ -112,7 +113,7 @@ class BadgeDetailSheet extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Text(
-                  _getCategoryName(badge.category),
+                  BadgeCategoryUtils.getName(badge.category),
                   style: const TextStyle(
                     color: AppColors.primary,
                     fontSize: 12,
@@ -221,43 +222,4 @@ class BadgeDetailSheet extends StatelessWidget {
       ),
     );
   }
-
-  IconData _getCategoryIcon(String category) {
-    switch (category.toLowerCase()) {
-      case 'discovery':
-        return Icons.visibility;
-      case 'learning':
-        return Icons.school;
-      case 'mastery':
-        return Icons.star;
-      case 'streak':
-        return Icons.local_fire_department;
-      case 'collection':
-        return Icons.collections;
-      case 'achievement':
-        return Icons.workspace_premium;
-      default:
-        return Icons.military_tech;
-    }
-  }
-
-  String _getCategoryName(String category) {
-    switch (category.toLowerCase()) {
-      case 'discovery':
-        return 'Khám Phá';
-      case 'learning':
-        return 'Học Tập';
-      case 'mastery':
-        return 'Thành Thạo';
-      case 'streak':
-        return 'Chuỗi Ngày';
-      case 'collection':
-        return 'Sưu Tập';
-      case 'achievement':
-        return 'Thành Tích';
-      default:
-        return category;
-    }
-  }
 }
-

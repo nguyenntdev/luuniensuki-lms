@@ -139,6 +139,11 @@ class AppColors {
   /// XP gold dark
   static const Color xpGoldDark = Color(0xFFD4A200);
 
+  /// Leaderboard rank colors
+  static const Color rankGold = Color(0xFFFFD700);    // Same as xpGold
+  static const Color rankSilver = Color(0xFFC0C0C0);  // Silver
+  static const Color rankBronze = Color(0xFFCD7F32);  // Bronze
+
   /// Streak orange
   static const Color streakOrange = Color(0xFFFF6B35);
 

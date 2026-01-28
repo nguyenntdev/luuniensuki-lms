@@ -11,6 +11,7 @@ import '../../../../shared/widgets/glass/pressable_glass_card.dart';
 import '../../../../shared/widgets/text/gradient_text.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../streak/presentation/widgets/streak_badge.dart';
+import '../../utils/badge_category_utils.dart';
 import '../providers/badge_provider.dart';
 import '../providers/leaderboard_provider.dart';
 import '../widgets/badge_detail_sheet.dart';
@@ -505,7 +506,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
             : null,
       ),
       child: Icon(
-        _getBadgeIcon(badge.category),
+        BadgeCategoryUtils.getIcon(badge.category),
         color: isEarned ? AppColors.onPrimary : Colors.white.withOpacity(0.3),
         size: 32,
       ),
@@ -585,25 +586,6 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
         ],
       ),
     );
-  }
-
-  IconData _getBadgeIcon(String category) {
-    switch (category.toLowerCase()) {
-      case 'discovery':
-        return Icons.visibility;
-      case 'learning':
-        return Icons.school;
-      case 'mastery':
-        return Icons.star;
-      case 'streak':
-        return Icons.local_fire_department;
-      case 'collection':
-        return Icons.collections;
-      case 'achievement':
-        return Icons.workspace_premium;
-      default:
-        return Icons.military_tech;
-    }
   }
 
   Widget _buildLeaderboardTab() {
@@ -844,11 +826,11 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
     Color getRankColor() {
       switch (rank) {
         case 1:
-          return AppColors.xpGold; // Gold
+          return AppColors.rankGold;
         case 2:
-          return const Color(0xFFC0C0C0); // Silver
+          return AppColors.rankSilver;
         case 3:
-          return const Color(0xFFCD7F32); // Bronze
+          return AppColors.rankBronze;
         default:
           return Colors.white.withOpacity(0.5);
       }
