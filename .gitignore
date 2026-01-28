@@ -10,3 +10,20 @@ certbot/
 
 frontend/.next/
 frontend/node_modules/
+
+# macOS
+.DS_Store
+
+# Build artifacts
+builds/*.apk
+\!builds/README.md
+
+# Test files
+test_screenshots/
+screenshots/
+
+# React Native project (if not primary)
+luuniensuki-mobile-rn/
+
+# Scripts (if temporary)
+# scripts/
