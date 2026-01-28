@@ -916,10 +916,11 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
   Widget build(BuildContext context) {
     final viewInsets = MediaQuery.of(context).viewInsets;
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Colors.transparent,
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        backgroundColor: AppColors.background,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         title: const Text('AI Chat'),
         actions: [
           IconButton(
@@ -935,6 +936,7 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
         ],
       ),
       body: SafeArea(
+        bottom: false,
         child: Column(
           children: [
             Padding(
@@ -995,7 +997,7 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
                 AppSpacing.lg,
                 AppSpacing.sm,
                 AppSpacing.lg,
-                AppSpacing.sm + viewInsets.bottom,
+                AppSpacing.sm + viewInsets.bottom + AppSpacing.navBarInset,
               ),
               child: Row(
                 children: [
