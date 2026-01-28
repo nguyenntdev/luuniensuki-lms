@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/services/sound_service.dart';
+import '../../../../shared/widgets/shimmer/shimmer_skeleton.dart';
 import '../../../urn_viewer/data/models/urn_dtos.dart';
 import '../../../hearts/presentation/providers/hearts_provider.dart';
 import '../../../hearts/presentation/widgets/hearts_display.dart';
@@ -332,11 +333,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
         ],
       ),
       body: quizAsync.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(
-            color: AppColors.primary,
-          ),
-        ),
+        loading: () => _buildQuizShimmer(),
         error: (e, s) => _buildErrorState(e.toString()),
         data: (quiz) => _buildQuizContent(quiz),
       ),
@@ -418,6 +415,81 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                 'Quay lại',
                 style: TextStyle(color: AppColors.textSecondary),
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuizShimmer() {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Progress bar shimmer
+            ShimmerSkeleton(
+              width: double.infinity,
+              height: 8,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            const SizedBox(height: 16),
+            // Question number shimmer
+            ShimmerSkeleton(
+              width: 120,
+              height: 20,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            const SizedBox(height: 24),
+            // Question text shimmer (2 lines)
+            ShimmerSkeleton(
+              width: double.infinity,
+              height: 24,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            const SizedBox(height: 8),
+            ShimmerSkeleton(
+              width: MediaQuery.of(context).size.width * 0.7,
+              height: 24,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            const SizedBox(height: 32),
+            // Answer options shimmer (4 cards)
+            Expanded(
+              child: ListView.builder(
+                itemCount: 4,
+                itemBuilder: (context, index) => Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: ShimmerSkeleton(
+                    width: double.infinity,
+                    height: 60,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            // Navigation buttons shimmer
+            Row(
+              children: [
+                Expanded(
+                  child: ShimmerSkeleton(
+                    width: double.infinity,
+                    height: 48,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ShimmerSkeleton(
+                    width: double.infinity,
+                    height: 48,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

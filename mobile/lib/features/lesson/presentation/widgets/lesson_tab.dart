@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -471,9 +473,9 @@ class _ImageGalleryPreview extends StatelessWidget {
                 separatorBuilder: (_, __) => const SizedBox(width: 8),
                 itemBuilder: (context, index) {
                   if (index == 3 && images.length > 4) {
-                    return _buildMoreIndicator(size);
+                    return _buildMoreIndicator(size, context);
                   }
-                  return _buildImageThumbnail(images[index], size);
+                  return _buildImageThumbnail(images[index], size, index, context);
                 },
               ),
             );
@@ -483,68 +485,91 @@ class _ImageGalleryPreview extends StatelessWidget {
     );
   }
 
-  Widget _buildImageThumbnail(String imageUrl, double size) {
+  Widget _buildImageThumbnail(String imageUrl, double size, int index, BuildContext context) {
     // Convert relative URL to full URL
     final fullImageUrl = UrlUtils.getImageUrl(imageUrl);
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
-      child: Container(
-        width: size,
-        height: size,
-        color: AppColors.surfaceVariant,
-        child: fullImageUrl.isNotEmpty
-            ? CachedNetworkImage(
-                imageUrl: fullImageUrl,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => const Center(
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: AppColors.primary,
+    return GestureDetector(
+      onTap: () => _openGalleryViewer(context, images, index),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          width: size,
+          height: size,
+          color: AppColors.surfaceVariant,
+          child: fullImageUrl.isNotEmpty
+              ? CachedNetworkImage(
+                  imageUrl: fullImageUrl,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => const Center(
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppColors.primary,
+                    ),
                   ),
+                  errorWidget: (context, url, error) {
+                    debugPrint(
+                        '[MOTIF_IMAGE] Failed to load lesson image: $fullImageUrl - Error: $error');
+                    return Icon(
+                      Icons.broken_image,
+                      color: AppColors.textHint,
+                    );
+                  },
+                )
+              : Icon(
+                  Icons.image,
+                  color: AppColors.textHint,
                 ),
-                errorWidget: (context, url, error) {
-                  debugPrint(
-                      '[MOTIF_IMAGE] Failed to load lesson image: $fullImageUrl - Error: $error');
-                  return Icon(
-                    Icons.broken_image,
-                    color: AppColors.textHint,
-                  );
-                },
-              )
-            : Icon(
-                Icons.image,
-                color: AppColors.textHint,
-              ),
+        ),
       ),
     );
   }
 
-  Widget _buildMoreIndicator(double size) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: AppColors.surfaceVariant,
-        borderRadius: BorderRadius.circular(8),
+  void _openGalleryViewer(BuildContext context, List<String> images, int initialIndex) {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        opaque: false,
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return _ImageGalleryViewer(
+            images: images,
+            initialIndex: initialIndex,
+          );
+        },
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            '+${images.length - 3}',
-            style: AppTypography.textTheme.titleLarge?.copyWith(
-              color: AppColors.primary,
-              fontWeight: FontWeight.bold,
+    );
+  }
+
+  Widget _buildMoreIndicator(double size, BuildContext context) {
+    return GestureDetector(
+      onTap: () => _openGalleryViewer(context, images, 3),
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          color: AppColors.surfaceVariant,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              '+${images.length - 3}',
+              style: AppTypography.textTheme.titleLarge?.copyWith(
+                color: AppColors.primary,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          Text(
-            'ảnh',
-            style: AppTypography.textTheme.bodySmall?.copyWith(
-              color: AppColors.textSecondary,
+            Text(
+              'ảnh',
+              style: AppTypography.textTheme.bodySmall?.copyWith(
+                color: AppColors.textSecondary,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -735,6 +760,97 @@ class _LessonCompletionDialog extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Image gallery viewer with photo zoom capabilities
+class _ImageGalleryViewer extends StatefulWidget {
+  final List<String> images;
+  final int initialIndex;
+
+  const _ImageGalleryViewer({
+    required this.images,
+    required this.initialIndex,
+  });
+
+  @override
+  State<_ImageGalleryViewer> createState() => _ImageGalleryViewerState();
+}
+
+class _ImageGalleryViewerState extends State<_ImageGalleryViewer> {
+  late PageController _pageController;
+  late int _currentIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
+    _pageController = PageController(initialPage: _currentIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          PhotoViewGallery.builder(
+            pageController: _pageController,
+            itemCount: widget.images.length,
+            onPageChanged: (index) => setState(() => _currentIndex = index),
+            builder: (context, index) {
+              final fullImageUrl = UrlUtils.getImageUrl(widget.images[index]);
+              return PhotoViewGalleryPageOptions(
+                imageProvider: CachedNetworkImageProvider(fullImageUrl),
+                minScale: PhotoViewComputedScale.contained,
+                maxScale: PhotoViewComputedScale.covered * 3,
+                heroAttributes: PhotoViewHeroAttributes(tag: 'gallery_$index'),
+              );
+            },
+            loadingBuilder: (context, event) => const Center(
+              child: CircularProgressIndicator(color: Colors.white),
+            ),
+            backgroundDecoration: const BoxDecoration(
+              color: Colors.black,
+            ),
+          ),
+          // Close button
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 16,
+            right: 16,
+            child: IconButton(
+              icon: const Icon(Icons.close, color: Colors.white, size: 28),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ),
+          // Page indicator
+          Positioned(
+            bottom: MediaQuery.of(context).padding.bottom + 16,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.black54,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Text(
+                  '${_currentIndex + 1} / ${widget.images.length}',
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -192,9 +192,29 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
       error: (error, stackTrace) => _buildBadgeErrorState(error),
       data: (badges) {
         if (badges.isEmpty) {
-          return _buildBadgeEmptyState();
+          return RefreshIndicator(
+            onRefresh: () async {
+              await ref.read(badgeNotifierProvider.notifier).loadBadges();
+            },
+            color: AppColors.primary,
+            backgroundColor: AppColors.surface,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height * 0.7,
+                child: _buildBadgeEmptyState(),
+              ),
+            ),
+          );
         }
-        return _buildBadgeGrid(badges);
+        return RefreshIndicator(
+          onRefresh: () async {
+            await ref.read(badgeNotifierProvider.notifier).loadBadges();
+          },
+          color: AppColors.primary,
+          backgroundColor: AppColors.surface,
+          child: _buildBadgeGrid(badges),
+        );
       },
     );
   }
@@ -359,6 +379,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
 
   Widget _buildBadgeGrid(List badges) {
     return GridView.builder(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
@@ -594,9 +615,29 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
       error: (error, stackTrace) => _buildErrorState(error),
       data: (entries) {
         if (entries.isEmpty) {
-          return _buildEmptyState();
+          return RefreshIndicator(
+            onRefresh: () async {
+              await ref.read(leaderboardNotifierProvider.notifier).loadLeaderboard();
+            },
+            color: AppColors.primary,
+            backgroundColor: AppColors.surface,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height * 0.7,
+                child: _buildEmptyState(),
+              ),
+            ),
+          );
         }
-        return _buildLeaderboardList(entries, currentUser?.id);
+        return RefreshIndicator(
+          onRefresh: () async {
+            await ref.read(leaderboardNotifierProvider.notifier).loadLeaderboard();
+          },
+          color: AppColors.primary,
+          backgroundColor: AppColors.surface,
+          child: _buildLeaderboardList(entries, currentUser?.id),
+        );
       },
     );
   }
@@ -781,6 +822,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
 
   Widget _buildLeaderboardList(List<dynamic> entries, String? currentUserId) {
     return ListView.builder(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
       itemCount: entries.length,
       itemBuilder: (context, index) {
