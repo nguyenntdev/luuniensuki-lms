@@ -91,14 +91,18 @@ class _UrnCardState extends State<UrnCard> with TickerProviderStateMixin {
         final subtitleSize = isCompact ? 11.0 : 12.0;
         final infoPadding = isCompact ? AppSpacing.sm : AppSpacing.md;
 
-        return GestureDetector(
-          onTapDown: (_) => setState(() => _isPressed = true),
-          onTapUp: (_) {
-            setState(() => _isPressed = false);
-            widget.onTap?.call();
-          },
-          onTapCancel: () => setState(() => _isPressed = false),
-          child: AnimatedBuilder(
+        return Semantics(
+          button: true,
+          enabled: widget.onTap != null,
+          label: _buildSemanticLabel(),
+          child: GestureDetector(
+            onTapDown: (_) => setState(() => _isPressed = true),
+            onTapUp: (_) {
+              setState(() => _isPressed = false);
+              widget.onTap?.call();
+            },
+            onTapCancel: () => setState(() => _isPressed = false),
+            child: AnimatedBuilder(
             animation: Listenable.merge([_glowController, _pulseController]),
             builder: (context, child) {
               // Apply pulse scale only if urn has progress
@@ -183,9 +187,22 @@ class _UrnCardState extends State<UrnCard> with TickerProviderStateMixin {
               );
             },
           ),
+          ),
         );
       },
     );
+  }
+
+  String _buildSemanticLabel() {
+    final urn = widget.urn;
+    final discovered = urn.discoveredCount;
+    final total = urn.motifCount;
+    final progress = (urn.progressPercent * 100).round();
+
+    return '${urn.name}. '
+        '$discovered trên $total họa tiết đã khám phá. '
+        'Tiến độ $progress phần trăm. '
+        'Nhấn đúp để xem chi tiết.';
   }
 
   Widget _buildCardContent(bool isCompact, double nameSize, double subtitleSize, double infoPadding) {

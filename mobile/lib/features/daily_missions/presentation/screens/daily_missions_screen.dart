@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/glass/animated_background.dart';
 import '../../../../shared/widgets/progress/circular_progress_badge.dart';
+import '../../../../shared/widgets/shimmer/shimmer_skeleton.dart';
 import '../../../../shared/widgets/text/gradient_text.dart';
 import '../../domain/entities/daily_mission.dart';
 import '../providers/daily_missions_provider.dart';
@@ -61,9 +62,7 @@ class DailyMissionsScreen extends ConsumerWidget {
 
                   // Loading state
                   if (state.isLoading && state.summary == null)
-                    const Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                    _buildShimmerLoading(),
 
                   // Error state
                   if (state.error != null && state.summary == null)
@@ -176,6 +175,144 @@ class DailyMissionsScreen extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildShimmerLoading() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Header shimmer
+        const ShimmerSkeleton(width: 180, height: 24),
+        const SizedBox(height: 8),
+        const ShimmerSkeleton(width: 120, height: 14),
+        const SizedBox(height: AppSpacing.lg),
+
+        // Summary card shimmer
+        Container(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.white.withOpacity(0.12),
+                Colors.white.withOpacity(0.06),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: Colors.white.withOpacity(0.3),
+              width: 1,
+            ),
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  const ShimmerSkeleton(width: 56, height: 56, borderRadius: BorderRadius.all(Radius.circular(28))),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        ShimmerSkeleton(width: 150, height: 20),
+                        SizedBox(height: 4),
+                        ShimmerSkeleton(width: 100, height: 14),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              Row(
+                children: const [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ShimmerSkeleton(width: 80, height: 12),
+                        SizedBox(height: 4),
+                        ShimmerSkeleton(width: 50, height: 16),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: AppSpacing.lg),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ShimmerSkeleton(width: 80, height: 12),
+                        SizedBox(height: 4),
+                        ShimmerSkeleton(width: 50, height: 16),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.md),
+              const ShimmerSkeleton(width: double.infinity, height: 12, borderRadius: BorderRadius.all(Radius.circular(8))),
+            ],
+          ),
+        ),
+        const SizedBox(height: AppSpacing.lg),
+
+        // Mission cards shimmer
+        const ShimmerSkeleton(width: 150, height: 20),
+        const SizedBox(height: AppSpacing.md),
+        ...List.generate(4, (index) => Padding(
+          padding: const EdgeInsets.only(bottom: AppSpacing.md),
+          child: Container(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.white.withOpacity(0.12),
+                  Colors.white.withOpacity(0.06),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.2),
+                width: 1,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: const [
+                    ShimmerSkeleton(width: 48, height: 48, borderRadius: BorderRadius.all(Radius.circular(24))),
+                    SizedBox(width: AppSpacing.md),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ShimmerSkeleton(width: double.infinity, height: 16),
+                          SizedBox(height: 4),
+                          ShimmerSkeleton(width: 150, height: 12),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.md),
+                const ShimmerSkeleton(width: double.infinity, height: 8, borderRadius: BorderRadius.all(Radius.circular(8))),
+                const SizedBox(height: AppSpacing.sm),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: const [
+                    ShimmerSkeleton(width: 60, height: 14),
+                    ShimmerSkeleton(width: 80, height: 24, borderRadius: BorderRadius.all(Radius.circular(12))),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        )),
+      ],
     );
   }
 

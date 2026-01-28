@@ -150,6 +150,7 @@ class GlassIconButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final Color? color;
   final double size;
+  final String? tooltip;
 
   const GlassIconButton({
     super.key,
@@ -157,11 +158,12 @@ class GlassIconButton extends StatelessWidget {
     this.onPressed,
     this.color,
     this.size = 48,
+    this.tooltip,
   });
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    Widget button = SizedBox(
       width: size,
       height: size,
       child: Material(
@@ -193,5 +195,14 @@ class GlassIconButton extends StatelessWidget {
         ),
       ),
     );
+
+    // Wrap with Tooltip for accessibility if provided
+    if (tooltip != null) {
+      return Tooltip(
+        message: tooltip!,
+        child: button,
+      );
+    }
+    return button;
   }
 }

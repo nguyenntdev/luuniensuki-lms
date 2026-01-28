@@ -33,75 +33,84 @@ class PracticeScreen extends ConsumerWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
-          child: CustomScrollView(
-            slivers: [
-              // App Bar
-              SliverToBoxAdapter(
-                child: _buildHeader(context),
-              ),
-
-              // Daily Stats Card
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.all(horizontalPadding),
-                  child: _buildDailyStatsCard(
-                      context, stats, streakState.data.currentStreak),
+          child: RefreshIndicator(
+            onRefresh: () async {
+              ref.invalidate(practiceUrnsProvider);
+              await ref.read(practiceUrnsProvider.future);
+            },
+            color: AppColors.primary,
+            backgroundColor: AppColors.surface,
+            child: CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                // App Bar
+                SliverToBoxAdapter(
+                  child: _buildHeader(context),
                 ),
-              ),
 
-              // Quick Review Button
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-                  child: _buildQuickReviewButton(context, ref),
-                ),
-              ),
-
-              // Section Headers and Categories
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.all(horizontalPadding),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: AppSpacing.md),
-                      _buildSectionHeader(
-                          context, 'Cần Ôn Tập', Icons.schedule),
-                      const SizedBox(height: AppSpacing.md),
-                    ],
+                // Daily Stats Card
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.all(horizontalPadding),
+                    child: _buildDailyStatsCard(
+                        context, stats, streakState.data.currentStreak),
                   ),
                 ),
-              ),
 
-              // Due for Review Items
-              _buildUrnsList(context, ref, 'Cần Ôn Tập', 8, AppColors.warning),
-
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.all(horizontalPadding),
-                  child: _buildSectionHeader(
-                      context, 'Học Mới', Icons.new_releases),
+                // Quick Review Button
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                    child: _buildQuickReviewButton(context, ref),
+                  ),
                 ),
-              ),
 
-              // New Items
-              _buildUrnsList(context, ref, 'Học Mới', 5, AppColors.info),
-
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.all(horizontalPadding),
-                  child: _buildSectionHeader(
-                      context, 'Đã Thành Thạo', Icons.stars),
+                // Section Headers and Categories
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.all(horizontalPadding),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: AppSpacing.md),
+                        _buildSectionHeader(
+                            context, 'Cần Ôn Tập', Icons.schedule),
+                        const SizedBox(height: AppSpacing.md),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
 
-              // Mastered Items
-              _buildUrnsList(context, ref, 'Đã Thành Thạo', 12, AppColors.success),
+                // Due for Review Items
+                _buildUrnsList(context, ref, 'Cần Ôn Tập', 8, AppColors.warning),
 
-              const SliverToBoxAdapter(
-                child: SizedBox(height: AppSpacing.xl),
-              ),
-            ],
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.all(horizontalPadding),
+                    child: _buildSectionHeader(
+                        context, 'Học Mới', Icons.new_releases),
+                  ),
+                ),
+
+                // New Items
+                _buildUrnsList(context, ref, 'Học Mới', 5, AppColors.info),
+
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.all(horizontalPadding),
+                    child: _buildSectionHeader(
+                        context, 'Đã Thành Thạo', Icons.stars),
+                  ),
+                ),
+
+                // Mastered Items
+                _buildUrnsList(context, ref, 'Đã Thành Thạo', 12, AppColors.success),
+
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: AppSpacing.xl),
+                ),
+              ],
+            ),
           ),
         ),
       ),
