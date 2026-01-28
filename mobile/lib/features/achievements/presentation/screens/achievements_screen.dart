@@ -1,9 +1,14 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import '../../../../shared/widgets/glass/animated_background.dart';
+import '../../../../shared/widgets/effects/shimmer_widget.dart';
+import '../../../../shared/widgets/backgrounds/modern_gradient_background_animated.dart';
 import '../../../../shared/widgets/glass/glass_container.dart';
+import '../../../../shared/widgets/glass/pressable_glass_card.dart';
+import '../../../../shared/widgets/text/gradient_text.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../streak/presentation/widgets/streak_badge.dart';
 import '../providers/badge_provider.dart';
@@ -67,7 +72,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedGradientBackground(
+    return ModernGradientBackgroundAnimated(
       child: SafeArea(
         child: Column(
           children: [
@@ -99,18 +104,18 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Column(
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              GradientText(
                 'Thành Tích',
-                style: TextStyle(
-                  color: Colors.white,
+                style: const TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                 ),
+                gradient: AppColors.primaryGradient,
               ),
-              Text(
+              const Text(
                 'Huy hiệu và bảng xếp hạng',
                 style: TextStyle(
                   color: Colors.white70,
@@ -119,29 +124,8 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
               ),
             ],
           ),
-          // Trophy icon
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [AppColors.primaryDark, AppColors.primaryLight],
-              ),
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.primary.withOpacity(0.3),
-                  blurRadius: 12,
-                  spreadRadius: 2,
-                ),
-              ],
-            ),
-            child: const Icon(
-              Icons.emoji_events,
-              color: AppColors.onPrimary,
-              size: 28,
-            ),
-          ),
+          // Trophy icon with pulsing glow
+          _PulsingTrophyIcon(),
         ],
       ),
     );
@@ -204,17 +188,86 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
     final badgesAsync = ref.watch(badgeNotifierProvider);
 
     return badgesAsync.when(
-      loading: () => const Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
-        ),
-      ),
+      loading: () => _buildBadgeLoadingState(),
       error: (error, stackTrace) => _buildBadgeErrorState(error),
       data: (badges) {
         if (badges.isEmpty) {
           return _buildBadgeEmptyState();
         }
         return _buildBadgeGrid(badges);
+      },
+    );
+  }
+
+  Widget _buildBadgeLoadingState() {
+    return GridView.builder(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 0.9,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+      ),
+      itemCount: 6,
+      itemBuilder: (context, index) {
+        return ShimmerWidget(
+          duration: const Duration(milliseconds: 1500),
+          gradient: LinearGradient(
+            colors: [
+              Colors.white.withOpacity(0.0),
+              Colors.white.withOpacity(0.1),
+              Colors.white.withOpacity(0.15),
+              Colors.white.withOpacity(0.1),
+              Colors.white.withOpacity(0.0),
+            ],
+            stops: const [0.0, 0.35, 0.5, 0.65, 1.0],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          enabled: true,
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.1),
+                width: 1.5,
+              ),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withOpacity(0.08),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Container(
+                  width: 80,
+                  height: 14,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(7),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  width: 60,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
       },
     );
   }
@@ -334,13 +387,16 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
             curve: Curves.easeOutCubic,
           ),
         );
+
+        final rotationAngle = (1 - animation.value) * math.pi / 2;
+
         return FadeTransition(
           opacity: animation,
-          child: SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(0, 0.3),
-              end: Offset.zero,
-            ).animate(animation),
+          child: Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.identity()
+              ..setEntry(3, 2, 0.001)
+              ..rotateY(rotationAngle),
             child: child,
           ),
         );
@@ -352,103 +408,160 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
   Widget _buildBadgeCard(dynamic badge) {
     final isEarned = badge.earnedAt != null;
 
-    return GestureDetector(
+    Widget badgeContent = PressableGlassCard(
       onTap: () => BadgeDetailSheet.show(context, badge),
-      child: GlassContainer(
-        opacity: isEarned ? 0.12 : 0.06,
-        padding: const EdgeInsets.all(16),
-        border: Border.all(
-          color: isEarned
-              ? AppColors.primary.withOpacity(0.5)
-              : Colors.white.withOpacity(0.1),
-          width: 1.5,
+      padding: const EdgeInsets.all(16),
+      opacity: isEarned ? 0.15 : 0.06,
+      border: Border.all(
+        color: isEarned
+            ? AppColors.primary.withOpacity(0.6)
+            : Colors.white.withOpacity(0.1),
+        width: isEarned ? 2.0 : 1.5,
+      ),
+      gradient: isEarned
+          ? LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                AppColors.primaryDark.withOpacity(0.08),
+                AppColors.primaryLight.withOpacity(0.04),
+              ],
+            )
+          : null,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildBadgeIcon(badge, isEarned),
+          const SizedBox(height: 12),
+          _buildBadgeName(badge, isEarned),
+          const SizedBox(height: 8),
+          _buildBadgeStatus(badge, isEarned),
+        ],
+      ),
+    );
+
+    if (isEarned) {
+      return PulsingGlowWidget(
+        glowColor: AppColors.primary,
+        maxBlurRadius: 12.0,
+        minBlurRadius: 4.0,
+        duration: const Duration(milliseconds: 2500),
+        enabled: true,
+        child: badgeContent,
+      );
+    } else {
+      return badgeContent;
+    }
+  }
+
+  Widget _buildBadgeIcon(dynamic badge, bool isEarned) {
+    Widget iconWidget = Container(
+      width: 64,
+      height: 64,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: isEarned
+            ? const LinearGradient(
+                colors: [AppColors.primaryDark, AppColors.primaryLight],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              )
+            : null,
+        color: isEarned ? null : Colors.white.withOpacity(0.08),
+        boxShadow: isEarned
+            ? [
+                BoxShadow(
+                  color: AppColors.primary.withOpacity(0.4),
+                  blurRadius: 16,
+                  spreadRadius: 2,
+                ),
+                BoxShadow(
+                  color: AppColors.primaryLight.withOpacity(0.3),
+                  blurRadius: 24,
+                  spreadRadius: -4,
+                ),
+              ]
+            : null,
+      ),
+      child: Icon(
+        _getBadgeIcon(badge.category),
+        color: isEarned ? AppColors.onPrimary : Colors.white.withOpacity(0.3),
+        size: 32,
+      ),
+    );
+
+    if (!isEarned) {
+      iconWidget = Opacity(
+        opacity: 0.4,
+        child: iconWidget,
+      );
+    }
+
+    return iconWidget;
+  }
+
+  Widget _buildBadgeName(dynamic badge, bool isEarned) {
+    if (isEarned) {
+      return GradientText(
+        badge.name,
+        style: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Badge icon
-            Container(
-              width: 64,
-              height: 64,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: isEarned
-                    ? const LinearGradient(
-                        colors: [AppColors.primaryDark, AppColors.primaryLight],
-                      )
-                    : null,
-                color: isEarned ? null : Colors.white.withOpacity(0.1),
-                boxShadow: isEarned
-                    ? [
-                        BoxShadow(
-                          color: AppColors.primary.withOpacity(0.3),
-                          blurRadius: 12,
-                          spreadRadius: 2,
-                        ),
-                      ]
-                    : null,
-              ),
-              child: Icon(
-                _getBadgeIcon(badge.category),
-                color: isEarned
-                    ? AppColors.onPrimary
-                    : Colors.white.withOpacity(0.3),
-                size: 32,
-              ),
+        gradient: AppColors.primaryGradient,
+        textAlign: TextAlign.center,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+      );
+    }
+
+    return Text(
+      badge.name,
+      style: TextStyle(
+        color: Colors.white.withOpacity(0.4),
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+      ),
+      textAlign: TextAlign.center,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+
+  Widget _buildBadgeStatus(dynamic badge, bool isEarned) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: isEarned
+            ? AppColors.success.withOpacity(0.2)
+            : Colors.white.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: isEarned
+            ? Border.all(
+                color: AppColors.success.withOpacity(0.3),
+                width: 1,
+              )
+            : null,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            isEarned ? Icons.check_circle : Icons.lock,
+            size: 12,
+            color: isEarned ? AppColors.success : Colors.white.withOpacity(0.3),
+          ),
+          const SizedBox(width: 4),
+          Text(
+            isEarned ? 'Đã nhận' : '+${badge.xpBonus} XP',
+            style: TextStyle(
+              color:
+                  isEarned ? AppColors.success : Colors.white.withOpacity(0.4),
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
             ),
-
-            const SizedBox(height: 12),
-
-            // Badge name
-            Text(
-              badge.name,
-              style: TextStyle(
-                color: isEarned ? Colors.white : Colors.white.withOpacity(0.5),
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-
-            const SizedBox(height: 8),
-
-            // XP reward or status
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: isEarned
-                    ? AppColors.success.withOpacity(0.2)
-                    : Colors.white.withOpacity(0.05),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    isEarned ? Icons.check_circle : Icons.lock,
-                    size: 12,
-                    color: isEarned
-                        ? AppColors.success
-                        : Colors.white.withOpacity(0.3),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    isEarned ? 'Đã nhận' : '+${badge.xpBonus} XP',
-                    style: TextStyle(
-                      color: isEarned
-                          ? AppColors.success
-                          : Colors.white.withOpacity(0.5),
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -477,17 +590,106 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
     final currentUser = ref.watch(currentUserProvider);
 
     return leaderboardAsync.when(
-      loading: () => const Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
-        ),
-      ),
+      loading: () => _buildLeaderboardLoadingState(),
       error: (error, stackTrace) => _buildErrorState(error),
       data: (entries) {
         if (entries.isEmpty) {
           return _buildEmptyState();
         }
         return _buildLeaderboardList(entries, currentUser?.id);
+      },
+    );
+  }
+
+  Widget _buildLeaderboardLoadingState() {
+    return ListView.builder(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
+      itemCount: 8,
+      itemBuilder: (context, index) {
+        return Container(
+          margin: const EdgeInsets.only(bottom: 10),
+          child: ShimmerWidget(
+            duration: const Duration(milliseconds: 1500),
+            gradient: LinearGradient(
+              colors: [
+                Colors.white.withOpacity(0.0),
+                Colors.white.withOpacity(0.1),
+                Colors.white.withOpacity(0.15),
+                Colors.white.withOpacity(0.1),
+                Colors.white.withOpacity(0.0),
+              ],
+              stops: const [0.0, 0.35, 0.5, 0.65, 1.0],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            enabled: true,
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.1),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.1),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.1),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 100,
+                          height: 16,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Container(
+                          width: 60,
+                          height: 12,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.08),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: 50,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
       },
     );
   }
@@ -787,6 +989,70 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen>
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Pulsing trophy icon widget with continuous animation
+class _PulsingTrophyIcon extends StatefulWidget {
+  @override
+  State<_PulsingTrophyIcon> createState() => _PulsingTrophyIconState();
+}
+
+class _PulsingTrophyIconState extends State<_PulsingTrophyIcon>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _pulseAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2000),
+    );
+
+    _pulseAnimation = Tween<double>(begin: 0.8, end: 1.2).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+
+    _controller.repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _pulseAnimation,
+      builder: (context, child) {
+        return Container(
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [AppColors.primaryDark, AppColors.primaryLight],
+            ),
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withOpacity(0.25 * _pulseAnimation.value),
+                blurRadius: 10 + (4 * _pulseAnimation.value),
+                spreadRadius: 1.5 * _pulseAnimation.value,
+              ),
+            ],
+          ),
+          child: const Icon(
+            Icons.emoji_events,
+            color: AppColors.onPrimary,
+            size: 28,
+          ),
+        );
+      },
     );
   }
 }

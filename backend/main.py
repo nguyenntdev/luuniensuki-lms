@@ -29,6 +29,7 @@ from fastapi import (
     UploadFile,
     status,
 )
+from fastapi.responses import StreamingResponse
 from fastapi.exceptions import RequestValidationError
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
@@ -9773,6 +9774,59 @@ def _call_deepseek_chat(
     return content
 
 
+def _call_deepseek_chat_stream(
+    messages: Sequence[dict[str, str]],
+    *,
+    temperature: float = 0.2,
+    model: Optional[str] = None,
+):
+    """
+    Stream responses from DeepSeek API using SSE.
+    Yields chunks of text as they arrive.
+    """
+    if not settings.deepseek_api_key:
+        raise RuntimeError("Deepseek API key not configured")
+
+    payload: dict[str, Any] = {
+        "model": model or settings.deepseek_model,
+        "messages": messages,
+        "temperature": temperature,
+        "stream": True,
+    }
+
+    data = json.dumps(payload).encode("utf-8")
+    request = UrlRequest(
+        _deepseek_chat_url(),
+        data=data,
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {settings.deepseek_api_key}",
+        },
+    )
+
+    try:
+        with urlopen(request, timeout=settings.deepseek_timeout_seconds) as response:
+            for line in response:
+                line_str = line.decode("utf-8").strip()
+                if not line_str or line_str == "data: [DONE]":
+                    continue
+
+                if line_str.startswith("data: "):
+                    try:
+                        chunk_data = json.loads(line_str[6:])
+                        content_delta = (
+                            chunk_data.get("choices", [{}])[0]
+                            .get("delta", {})
+                            .get("content", "")
+                        )
+                        if content_delta:
+                            yield content_delta
+                    except json.JSONDecodeError:
+                        continue
+    except (HTTPError, URLError) as exc:
+        raise RuntimeError(f"Deepseek streaming request failed: {exc}") from exc
+
+
 def _strip_accents(value: str) -> str:
     normalized = unicodedata.normalize("NFD", value)
     return "".join(
@@ -11040,6 +11094,104 @@ def ai_tutor(
     if not citations:
         citations = _build_ai_citations(sources, [])
     return AIAnswerOut(answer=answer, citations=citations, job_id=job.id)
+
+
+@app.post("/api/v1/ai/tutor/stream")
+async def ai_tutor_stream(
+    payload: AITutorRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Streaming version of AI tutor endpoint using Server-Sent Events (SSE).
+    Returns text chunks as they arrive from DeepSeek API.
+    """
+    if not settings.deepseek_api_key:
+        raise HTTPException(status_code=503, detail="AI not configured")
+
+    context = payload.context or AIContextIn()
+    sources = _collect_ai_sources(
+        db,
+        urn_slug=context.urn_slug,
+        motif_id=context.motif_id,
+        limit=6,
+        query=payload.message,
+    )
+    sources_prompt = _format_sources_for_prompt(sources)
+    level = payload.level or "beginner"
+    user_prompt = (
+        f"Người học ở mức: {level}.\n"
+        "Hãy trả lời ngắn gọn, dễ hiểu, có ví dụ thực tế nếu phù hợp.\n"
+        "Trích dẫn nguồn bằng [S#] nếu sử dụng thông tin từ nguồn bên dưới.\n\n"
+        f"Nguồn:\n{sources_prompt}\n\n"
+        f"Câu hỏi: {payload.message}\nTrả lời:"
+    )
+
+    system_prompt = (
+        "Bạn là trợ giảng lịch sử Việt Nam cho ứng dụng Cửu Đỉnh. "
+        "Trả lời bằng tiếng Việt, rõ ràng, súc tích."
+    )
+    system_prompt, user_prompt, model_override, temperature = _apply_ai_settings(
+        db,
+        system_prompt=system_prompt,
+        user_prompt=user_prompt,
+        temperature=0.3,
+    )
+
+    messages = [
+        {
+            "role": "system",
+            "content": system_prompt,
+        }
+    ]
+    for msg in payload.history[-6:]:
+        messages.append({"role": msg.role, "content": msg.content})
+    messages.append({"role": "user", "content": user_prompt})
+
+    job = _start_ai_job(db, user=current_user, job_type="tutor_stream", prompt=user_prompt)
+
+    async def event_generator():
+        accumulated_text = ""
+        try:
+            # Send initial metadata with citations
+            cited_indexes = []
+            initial_citations = _build_ai_citations(sources, cited_indexes)
+            if not initial_citations:
+                initial_citations = _build_ai_citations(sources, [])
+
+            yield f"data: {json.dumps({'type': 'citations', 'citations': [c.dict() for c in initial_citations]})}\n\n"
+
+            # Stream AI response chunks
+            for chunk in _call_deepseek_chat_stream(
+                messages, temperature=temperature, model=model_override
+            ):
+                accumulated_text += chunk
+                yield f"data: {json.dumps({'type': 'chunk', 'content': chunk})}\n\n"
+
+            # Finalize job and send completion
+            _finish_ai_job(db, job, response=accumulated_text)
+
+            # Extract and send final citations
+            cited_indexes = _extract_citations(accumulated_text)
+            final_citations = _build_ai_citations(sources, cited_indexes)
+            if not final_citations:
+                final_citations = _build_ai_citations(sources, [])
+
+            yield f"data: {json.dumps({'type': 'done', 'job_id': str(job.id), 'citations': [c.dict() for c in final_citations]})}\n\n"
+
+        except Exception as exc:
+            fallback = _fallback_answer_from_sources(payload.message, sources)
+            _finish_ai_job_fallback(db, job, response=fallback, error=str(exc))
+            yield f"data: {json.dumps({'type': 'error', 'message': fallback})}\n\n"
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+        },
+    )
 
 
 @app.post("/api/v1/ai/qa", response_model=AIAnswerOut)

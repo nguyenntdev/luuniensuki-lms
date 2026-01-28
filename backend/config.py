@@ -54,7 +54,7 @@ class Settings(BaseSettings):
     # ==========================================================================
     log_level: str = "info"
     debug: bool = False
-    app_name: str = "Lưu Niên Sử Kí"
+    app_name: str = "Cửu Đỉnh Ký"
     app_version: str = "0.1.0"
 
     # ==========================================================================

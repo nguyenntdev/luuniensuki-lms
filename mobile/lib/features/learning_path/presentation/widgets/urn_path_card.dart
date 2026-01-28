@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/effects/animated_path_connector.dart';
+import '../../../../shared/widgets/progress/circular_progress_badge.dart';
 
 /// Card showing an urn in the learning path with its progress and tracks.
 class UrnPathCard extends StatefulWidget {
@@ -116,21 +118,26 @@ class _UrnPathCardState extends State<UrnPathCard>
   }
 
   Widget _buildPathConnector(bool isLocked) {
-    return Container(
-      width: 6,
+    final previousUrnData = _getMockUrnData(widget.urnIndex - 1);
+    final currentUrnData = _getMockUrnData(widget.urnIndex);
+
+    final previousCompleted = previousUrnData.status == _UrnStatus.completed;
+    final currentActive = currentUrnData.status == _UrnStatus.inProgress;
+    final currentLocked = currentUrnData.status == _UrnStatus.locked;
+
+    Color? activeColor;
+    if (previousCompleted && !currentLocked) {
+      activeColor = AppColors.primary;
+    } else if (previousCompleted && currentLocked) {
+      activeColor = null;
+    }
+
+    return AnimatedPathConnector(
+      isLocked: currentLocked && !previousCompleted,
+      isCompleted: previousCompleted,
+      isActive: previousCompleted && currentActive,
       height: 36,
-      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            AppColors.primary.withOpacity(isLocked ? 0.15 : 0.4),
-            AppColors.primary.withOpacity(isLocked ? 0.05 : 0.2),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(3),
-      ),
+      activeColor: activeColor,
     );
   }
 
@@ -146,7 +153,7 @@ class _UrnPathCardState extends State<UrnPathCard>
           return Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildSummitBadge(urnData.status),
+              _buildSummitBadge(urnData),
               AppSpacing.horizontalSpaceMD,
               Expanded(
                 child: Column(
@@ -216,30 +223,31 @@ class _UrnPathCardState extends State<UrnPathCard>
     );
   }
 
-  Widget _buildSummitBadge(_UrnStatus status) {
-    final color = _getStatusColor(status);
-    final icon = status == _UrnStatus.completed
+  Widget _buildSummitBadge(_UrnData urnData) {
+    final color = _getStatusColor(urnData.status);
+    final icon = urnData.status == _UrnStatus.completed
         ? Icons.flag
-        : status == _UrnStatus.inProgress
+        : urnData.status == _UrnStatus.inProgress
             ? Icons.terrain
             : Icons.lock_outline;
 
-    return Container(
-      width: 48,
-      height: 48,
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: color.withOpacity(0.5),
-          width: 2,
-        ),
-      ),
-      child: Icon(
-        icon,
-        color: color,
-        size: 24,
-      ),
+    final totalMotifs = urnData.tracks.fold<int>(
+      0,
+      (sum, track) => sum + track.motifsTotal,
+    );
+    final completedMotifs = urnData.tracks.fold<int>(
+      0,
+      (sum, track) => sum + track.motifsCompleted,
+    );
+
+    final progress = totalMotifs > 0 ? completedMotifs / totalMotifs : 0.0;
+
+    return CircularProgressBadge(
+      progress: urnData.status == _UrnStatus.completed ? 1.0 : progress,
+      icon: icon,
+      progressColor: color,
+      size: 48,
+      strokeWidth: 4,
     );
   }
 

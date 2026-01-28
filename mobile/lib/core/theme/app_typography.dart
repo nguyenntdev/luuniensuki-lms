@@ -310,4 +310,57 @@ class AppTypography {
   static TextStyle asBold(TextStyle style) {
     return style.copyWith(fontWeight: bold);
   }
+
+  // ==========================================================================
+  // PREMIUM TEXT STYLES - Enhanced typography for better readability
+  // ==========================================================================
+
+  /// Premium heading style with increased letter spacing
+  static TextStyle get premiumHeading => const TextStyle(
+        letterSpacing: 0.5,
+        fontWeight: FontWeight.w700,
+        height: 1.2,
+      );
+
+  /// Premium body text optimized for Vietnamese
+  static TextStyle get premiumBody => const TextStyle(
+        letterSpacing: 0.2,
+        height: 1.7, // Better for Vietnamese diacritics
+      );
+
+  /// Gold gradient text style for XP/rewards (requires ShaderMask)
+  static TextStyle goldAccent(Rect bounds) => TextStyle(
+        fontWeight: FontWeight.bold,
+        letterSpacing: 0.3,
+        foreground: Paint()
+          ..shader = const LinearGradient(
+            colors: [
+              AppColors.primaryLight,
+              AppColors.primary,
+              AppColors.primaryDark,
+            ],
+          ).createShader(bounds),
+      );
+
+  /// Screen title style
+  static TextStyle get screenTitle => const TextStyle(
+        fontSize: 28,
+        fontWeight: FontWeight.bold,
+        letterSpacing: -0.5,
+        height: 1.2,
+      );
+
+  /// Card title style
+  static TextStyle get cardTitle => const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0.2,
+      );
+
+  /// Stat number style (large numbers in stats)
+  static TextStyle get statNumber => const TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 0.3,
+      );
 }

@@ -24,7 +24,7 @@ final urnsProvider = AutoDisposeFutureProvider<List<Urn>>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef UrnsRef = AutoDisposeFutureProviderRef<List<Urn>>;
-String _$urnDetailHash() => r'61d7089eb67c4fc17487022eb7227100d6149926';
+String _$urnDetailHash() => r'33766270d7517040c410ee12bc5642a95798f812';
 
 /// Copied from Dart SDK
 class _SystemHash {

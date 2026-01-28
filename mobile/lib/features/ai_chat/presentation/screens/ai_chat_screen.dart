@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/errors/exceptions.dart';
+import '../../data/datasources/ai_chat_remote_data_source.dart';
 
 class AiChatScreen extends ConsumerStatefulWidget {
   final String? motifId;
@@ -27,6 +26,7 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
   final TextEditingController _urnController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   bool _isSending = false;
+  bool _useStreaming = true; // Toggle for streaming mode
   AiChatMode _mode = AiChatMode.tutor;
   String _level = "beginner";
   String? _motifId;
@@ -61,6 +61,88 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
     _controller.clear();
     _scrollToBottom();
 
+    if (_useStreaming && _mode == AiChatMode.tutor) {
+      await _sendMessageStreaming(text);
+    } else {
+      await _sendMessageNonStreaming(text);
+    }
+  }
+
+  Future<void> _sendMessageStreaming(String text) async {
+    final dataSource = ref.read(aiChatRemoteDataSourceProvider);
+
+    // Add placeholder for streaming response
+    int messageIndex = _messages.length;
+    setState(() {
+      _messages.add(_ChatMessage.assistant('', isStreaming: true));
+    });
+
+    try {
+      String accumulatedText = '';
+      List<_ChatCitation> citations = [];
+
+      await for (final event in dataSource.streamTutorResponse(
+        message: text,
+        history: _buildHistoryPayload(_messages.sublist(0, messageIndex)),
+        context: _buildContextPayload(),
+        level: _level,
+      )) {
+        if (event.type == 'chunk') {
+          accumulatedText += event.content ?? '';
+          setState(() {
+            if (messageIndex < _messages.length) {
+              _messages[messageIndex] = _ChatMessage.assistant(
+                accumulatedText,
+                sources: citations,
+                isStreaming: true,
+              );
+            }
+          });
+          _scrollToBottom();
+        } else if (event.type == 'citations') {
+          citations = _parseCitations(event.citations);
+        } else if (event.type == 'done') {
+          citations = _parseCitations(event.citations);
+          setState(() {
+            if (messageIndex < _messages.length) {
+              _messages[messageIndex] = _ChatMessage.assistant(
+                _normalizeAiContent(accumulatedText.isNotEmpty
+                    ? accumulatedText
+                    : 'AI chưa có phản hồi, thử lại nhé.'),
+                sources: citations,
+                isStreaming: false,
+              );
+            }
+          });
+        } else if (event.type == 'error') {
+          setState(() {
+            if (messageIndex < _messages.length) {
+              _messages[messageIndex] = _ChatMessage.assistant(
+                event.message ?? 'Đã xảy ra lỗi',
+                isStreaming: false,
+              );
+            }
+          });
+        }
+      }
+    } catch (err) {
+      setState(() {
+        if (messageIndex < _messages.length) {
+          _messages[messageIndex] = _ChatMessage.assistant(
+            _formatErrorMessage(err),
+            isStreaming: false,
+          );
+        }
+      });
+    } finally {
+      setState(() {
+        _isSending = false;
+      });
+      _scrollToBottom();
+    }
+  }
+
+  Future<void> _sendMessageNonStreaming(String text) async {
     final apiClient = ref.read(apiClientProvider);
     try {
       final response = _mode == AiChatMode.tutor
@@ -1168,11 +1250,13 @@ class _ChatMessage {
   final ChatRole role;
   final String content;
   final List<_ChatCitation> sources;
+  final bool isStreaming;
 
   const _ChatMessage({
     required this.role,
     required this.content,
     this.sources = const [],
+    this.isStreaming = false,
   });
 
   factory _ChatMessage.user(String content) {
@@ -1182,11 +1266,13 @@ class _ChatMessage {
   factory _ChatMessage.assistant(
     String content, {
     List<_ChatCitation> sources = const [],
+    bool isStreaming = false,
   }) {
     return _ChatMessage(
       role: ChatRole.assistant,
       content: content,
       sources: sources,
+      isStreaming: isStreaming,
     );
   }
 }

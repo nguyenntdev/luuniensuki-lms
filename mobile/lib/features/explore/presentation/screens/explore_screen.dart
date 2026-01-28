@@ -5,15 +5,21 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
-import '../../../../shared/widgets/glass/animated_background.dart';
+import '../../../../shared/widgets/backgrounds/modern_gradient_background_animated.dart';
+import '../../../../shared/widgets/glass/index.dart';
 import '../../../../shared/widgets/shimmer/shimmer_skeleton.dart';
 import '../../../../shared/widgets/icons/status_icon.dart';
+import '../../../../shared/widgets/avatar/animated_avatar_ring.dart';
+import '../../../../shared/widgets/effects/shimmer_widget.dart';
+import '../../../../shared/widgets/text/gradient_text.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../auth/presentation/providers/auth_state.dart';
 import '../../../streak/presentation/widgets/compact_streak_widget.dart';
+import '../../../recommendations/presentation/widgets/recommendations_card.dart';
 import '../../domain/entities/urn.dart';
 import '../providers/explore_provider.dart';
 import '../widgets/urn_card.dart';
+import '../widgets/explore_header_v2.dart';
 
 /// Main explore screen showing a grid of all 9 urns
 class ExploreScreen extends ConsumerStatefulWidget {
@@ -87,7 +93,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
     final progress = ref.watch(exploreProgressProvider);
     final authState = ref.watch(authNotifierProvider);
 
-    return AnimatedGradientBackground(
+    return ModernGradientBackgroundAnimated(
       child: SafeArea(
         child: FadeTransition(
           opacity: _fadeAnimation,
@@ -116,6 +122,26 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
           const SliverToBoxAdapter(
             child: SizedBox(height: AppSpacing.sm),
           ),
+          // Section title with gradient text
+          if (state.hasData || (!state.isLoading && !state.hasError))
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.md,
+                  AppSpacing.md,
+                  AppSpacing.md,
+                  AppSpacing.sm,
+                ),
+                child: GradientText(
+                  'Cửu Đỉnh',
+                  style: AppTypography.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                  ),
+                  gradient: AppColors.primaryGradient,
+                ),
+              ),
+            ),
           if (state.isLoading && !state.hasData)
             _buildLoadingGridSliver(context)
           else if (state.hasError && !state.hasData)
@@ -141,9 +167,46 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
     AuthState authState,
     ExploreState state,
   ) {
+    final continueUrn = _findContinueUrn(state);
+
+    // Show new header if user is authenticated
+    if (authState.isAuthenticated && authState.user != null) {
+      return Column(
+        children: [
+          ExploreHeaderV2(
+            progress: progress,
+            user: authState.user!,
+            onContinue: continueUrn != null
+                ? () => _navigateToUrn(context, continueUrn.slug)
+                : null,
+            onPractice: () => context.push('/practice'),
+          ),
+          if (continueUrn != null)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.md,
+                0,
+                AppSpacing.md,
+                AppSpacing.sm,
+              ),
+              child: Text(
+                'Tiếp tục: ${continueUrn.name}',
+                style: AppTypography.textTheme.bodySmall?.copyWith(
+                  color: Colors.white.withOpacity(0.7),
+                ),
+              ),
+            ),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
+            child: RecommendationsCard(),
+          ),
+        ],
+      );
+    }
+
+    // Fallback to old header for unauthenticated users
     final screenWidth = MediaQuery.of(context).size.width;
     final isCompact = screenWidth < 360;
-    final continueUrn = _findContinueUrn(state);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(
@@ -157,14 +220,12 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
         children: [
           Row(
             children: [
-              Text(
+              GradientText(
                 'Khám phá',
-                style: AppTypography.textTheme.headlineSmall?.copyWith(
-                  color: Colors.white,
-                  fontSize: isCompact ? 20 : 24,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.3,
+                style: AppTypography.screenTitle.copyWith(
+                  fontSize: isCompact ? 22 : 28,
                 ),
+                gradient: AppColors.primaryGradient,
               ),
               const Spacer(),
               const CompactStreakWidget(),
@@ -185,6 +246,8 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
               ),
             ),
           ],
+          const SizedBox(height: AppSpacing.md),
+          if (authState.isAuthenticated) const RecommendationsCard(),
         ],
       ),
     );
@@ -196,94 +259,31 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
     }
 
     final user = authState.user!;
-    final initial = user.displayName.isNotEmpty
-        ? user.displayName[0].toUpperCase()
-        : user.email[0].toUpperCase();
     final level = user.rank.level;
 
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.white.withOpacity(0.1),
-            border: Border.all(
-              color: Colors.white.withOpacity(0.3),
-              width: 1.5,
-            ),
-          ),
-          child: user.avatarUrl != null && user.avatarUrl!.isNotEmpty
-              ? ClipOval(
-                  child: Image.network(
-                    user.avatarUrl!,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Center(
-                      child: Text(
-                        initial,
-                        style: TextStyle(
-                          color: AppColors.onPrimary,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                )
-              : Center(
-                  child: Text(
-                    initial,
-                    style: TextStyle(
-                      color: AppColors.onPrimary,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-        ),
-        Positioned(
-          bottom: -4,
-          right: -4,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-            decoration: BoxDecoration(
-              color: AppColors.xpGold,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: Colors.white.withOpacity(0.9),
-                width: 1,
-              ),
-            ),
-            child: Text(
-              '$level',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-      ],
+    return AnimatedAvatarRing(
+      avatarUrl: user.avatarUrl,
+      displayName: user.displayName.isNotEmpty ? user.displayName : user.email,
+      level: level,
+      size: 40,
     );
   }
 
   Widget _buildStatsCard(ExploreProgress progress) {
-    return Container(
-      width: double.infinity,
+    return PressableGlassCard(
+      onTap: () {
+        // Optional: Navigate to detailed stats or show tooltip
+      },
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.md,
         vertical: AppSpacing.sm,
       ),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.12),
-          width: 1,
-        ),
+      borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
+      backgroundColor: Colors.white,
+      opacity: 0.08,
+      border: Border.all(
+        color: Colors.white.withOpacity(0.12),
+        width: 1,
       ),
       child: Wrap(
         alignment: WrapAlignment.spaceBetween,
@@ -475,7 +475,9 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
         ),
         delegate: SliverChildBuilderDelegate(
           (context, index) {
-            return const ShimmerUrnCard();
+            return ShimmerWidget(
+              child: const ShimmerUrnCard(),
+            );
           },
           childCount: 9,
         ),

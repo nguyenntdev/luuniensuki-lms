@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -29,14 +28,16 @@ final _dailyLessonsProvider = FutureProvider<List<_DailyLesson>>((ref) async {
           .map((item) {
             final lesson = _DailyLesson.fromDashboard(item);
             if (lesson != null) {
-              debugPrint('[DailyLessons] Parsed lesson from dashboard: ${lesson.name}, thumbnailUrl: ${lesson.thumbnailUrl}');
+              debugPrint(
+                  '[DailyLessons] Parsed lesson from dashboard: ${lesson.name}, thumbnailUrl: ${lesson.thumbnailUrl}');
             }
             return lesson;
           })
           .whereType<_DailyLesson>()
           .toList();
       if (lessons.isNotEmpty) {
-        debugPrint('[DailyLessons] Loaded ${lessons.length} lessons from dashboard');
+        debugPrint(
+            '[DailyLessons] Loaded ${lessons.length} lessons from dashboard');
         return lessons;
       }
     }
@@ -48,7 +49,8 @@ final _dailyLessonsProvider = FutureProvider<List<_DailyLesson>>((ref) async {
 
   // Fallback: fetch recommended motifs from cao-dinh urn (demo urn)
   try {
-    debugPrint('🔍 [DailyLessons] Fallback: Fetching motifs from cao-dinh urn...');
+    debugPrint(
+        '🔍 [DailyLessons] Fallback: Fetching motifs from cao-dinh urn...');
     final urnResponse = await apiClient.get<Map<String, dynamic>>(
       '/api/v1/urns/cao-dinh',
       parser: (json) => json as Map<String, dynamic>,
@@ -62,7 +64,8 @@ final _dailyLessonsProvider = FutureProvider<List<_DailyLesson>>((ref) async {
           .map((item) {
             final lesson = _DailyLesson.fromMotif(item as Map<String, dynamic>);
             if (lesson != null) {
-              debugPrint('[DailyLessons] Parsed lesson from motif: ${lesson.name}, thumbnailUrl: ${lesson.thumbnailUrl}');
+              debugPrint(
+                  '[DailyLessons] Parsed lesson from motif: ${lesson.name}, thumbnailUrl: ${lesson.thumbnailUrl}');
             }
             return lesson;
           })
@@ -126,12 +129,93 @@ class _LessonsList extends StatelessWidget {
             padding: EdgeInsets.only(
               right: index < lessons.length - 1 ? AppSpacing.md : 0,
             ),
-            child: _DailyLessonCard(
-              lesson: lesson,
-              width: cardWidth,
+            child: _StaggeredAnimationWrapper(
+              index: index,
+              child: _DailyLessonCard(
+                lesson: lesson,
+                width: cardWidth,
+              ),
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+/// Wrapper widget for staggered entry animation
+class _StaggeredAnimationWrapper extends StatefulWidget {
+  final int index;
+  final Widget child;
+
+  const _StaggeredAnimationWrapper({
+    required this.index,
+    required this.child,
+  });
+
+  @override
+  State<_StaggeredAnimationWrapper> createState() =>
+      _StaggeredAnimationWrapperState();
+}
+
+class _StaggeredAnimationWrapperState extends State<_StaggeredAnimationWrapper>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 400),
+      vsync: this,
+    );
+
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOutCubic,
+      ),
+    );
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOutCubic,
+      ),
+    );
+
+    // Staggered delay: 100ms per card
+    Future.delayed(
+      Duration(milliseconds: 100 * widget.index),
+      () {
+        if (mounted) {
+          _controller.forward();
+        }
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: SlideTransition(
+        position: _slideAnimation,
+        child: widget.child,
       ),
     );
   }
@@ -148,172 +232,211 @@ class _DailyLessonCard extends StatefulWidget {
   State<_DailyLessonCard> createState() => _DailyLessonCardState();
 }
 
-class _DailyLessonCardState extends State<_DailyLessonCard> {
+class _DailyLessonCardState extends State<_DailyLessonCard>
+    with TickerProviderStateMixin {
   bool _isPressed = false;
+  late AnimationController _floatController;
+  late AnimationController _pulseController;
+  late Animation<double> _floatAnimation;
+  late Animation<double> _pulseAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Floating animation - 3 second cycle, -2px to +2px
+    _floatController = AnimationController(
+      duration: const Duration(seconds: 3),
+      vsync: this,
+    )..repeat(reverse: true);
+
+    _floatAnimation = Tween<double>(
+      begin: -2.0,
+      end: 2.0,
+    ).animate(
+      CurvedAnimation(
+        parent: _floatController,
+        curve: Curves.easeInOut,
+      ),
+    );
+
+    // Pulse animation for high-value XP (>50)
+    _pulseController = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    );
+
+    _pulseAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.15,
+    ).animate(
+      CurvedAnimation(
+        parent: _pulseController,
+        curve: Curves.easeInOut,
+      ),
+    );
+
+    if (widget.lesson.xpReward > 50) {
+      _pulseController.repeat(reverse: true);
+    }
+  }
+
+  @override
+  void dispose() {
+    _floatController.dispose();
+    _pulseController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final isNew = widget.lesson.status == _LessonStatus.newLesson;
     final statusColor = isNew ? AppColors.info : AppColors.warning;
 
-    return GestureDetector(
-      onTapDown: (_) => setState(() => _isPressed = true),
-      onTapUp: (_) {
-        setState(() => _isPressed = false);
-        final motifId = widget.lesson.motifId;
-        if (motifId != null && motifId.isNotEmpty) {
-          context.push(RoutePaths.motif(motifId));
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Bài học đang được cập nhật'),
-            ),
-          );
-        }
+    return AnimatedBuilder(
+      animation: _floatAnimation,
+      builder: (context, child) {
+        return Transform.translate(
+          offset: Offset(0, _floatAnimation.value),
+          child: child,
+        );
       },
-      onTapCancel: () => setState(() => _isPressed = false),
-      child: AnimatedScale(
-        scale: _isPressed ? 0.96 : 1.0,
-        duration: const Duration(milliseconds: 150),
-        curve: Curves.easeOut,
-        child: Container(
-          width: widget.width,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.white.withOpacity(0.14),
-                Colors.white.withOpacity(0.05),
+      child: GestureDetector(
+        onTapDown: (_) => setState(() => _isPressed = true),
+        onTapUp: (_) {
+          setState(() => _isPressed = false);
+          final motifId = widget.lesson.motifId;
+          if (motifId != null && motifId.isNotEmpty) {
+            context.push(RoutePaths.motif(motifId));
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Bài học đang được cập nhật'),
+              ),
+            );
+          }
+        },
+        onTapCancel: () => setState(() => _isPressed = false),
+        child: AnimatedScale(
+          scale: _isPressed ? 0.96 : 1.0,
+          duration: const Duration(milliseconds: 150),
+          curve: Curves.easeOut,
+          child: Container(
+            width: widget.width,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.white.withOpacity(0.14),
+                  Colors.white.withOpacity(0.05),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(AppSpacing.radiusLG),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.18),
+                width: 1.2,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.25),
+                  blurRadius: 18,
+                  offset: const Offset(0, 10),
+                ),
+                BoxShadow(
+                  color: statusColor.withOpacity(0.12),
+                  blurRadius: 26,
+                  spreadRadius: -6,
+                ),
               ],
             ),
-            borderRadius: BorderRadius.circular(AppSpacing.radiusLG),
-            border: Border.all(
-              color: Colors.white.withOpacity(0.18),
-              width: 1.2,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.25),
-                blurRadius: 18,
-                offset: const Offset(0, 10),
-              ),
-              BoxShadow(
-                color: statusColor.withOpacity(0.12),
-                blurRadius: 26,
-                spreadRadius: -6,
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(AppSpacing.radiusLG),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      _buildThumbnail(statusColor),
-                      Positioned(
-                        top: AppSpacing.sm,
-                        right: AppSpacing.sm,
-                        child: _buildStatusBadge(statusColor, isNew),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.white.withOpacity(0.08),
-                        Colors.white.withOpacity(0.03),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(AppSpacing.radiusLG),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        _buildThumbnail(statusColor),
+                        Positioned(
+                          top: AppSpacing.sm,
+                          right: AppSpacing.sm,
+                          child: _buildStatusBadge(statusColor, isNew),
+                        ),
+                        // Progress ring for review lessons
+                        if (!isNew &&
+                            widget.lesson.status == _LessonStatus.review)
+                          Positioned(
+                            top: AppSpacing.sm,
+                            left: AppSpacing.sm,
+                            child: _buildProgressRing(),
+                          ),
                       ],
                     ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.lesson.name,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                  Container(
+                    padding: const EdgeInsets.all(AppSpacing.md),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.white.withOpacity(0.08),
+                          Colors.white.withOpacity(0.03),
+                        ],
                       ),
-                      if (widget.lesson.nameEn != null) ...[
-                        const SizedBox(height: 2),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         Text(
-                          widget.lesson.nameEn!,
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.6),
-                            fontSize: 11,
-                            fontStyle: FontStyle.italic,
+                          widget.lesson.name,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                      ],
-                      AppSpacing.verticalSpaceXS,
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              widget.lesson.category,
-                              style: TextStyle(
-                                color: statusColor,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                        if (widget.lesson.nameEn != null) ...[
+                          const SizedBox(height: 2),
+                          Text(
+                            widget.lesson.nameEn!,
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.6),
+                              fontSize: 11,
+                              fontStyle: FontStyle.italic,
                             ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.xpGold.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  '+${widget.lesson.xpReward}',
-                                  style: const TextStyle(
-                                    color: AppColors.xpGold,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(width: 4),
-                                const Text(
-                                  'XP',
-                                  style: TextStyle(
-                                    color: AppColors.xpGold,
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
-                      ),
-                    ],
+                        AppSpacing.verticalSpaceXS,
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                widget.lesson.category,
+                                style: TextStyle(
+                                  color: statusColor,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            _buildXpBadge(),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -343,6 +466,85 @@ class _DailyLessonCardState extends State<_DailyLessonCard> {
         ),
       ),
     );
+  }
+
+  Widget _buildProgressRing() {
+    // Simple circular progress indicator for review lessons
+    // Assuming review lessons have some progress (60-80%)
+    const progress = 0.7; // Mock progress value
+
+    return Container(
+      width: 28,
+      height: 28,
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.3),
+        shape: BoxShape.circle,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(4),
+        child: CircularProgressIndicator(
+          value: progress,
+          strokeWidth: 2.5,
+          backgroundColor: Colors.white.withOpacity(0.2),
+          valueColor: const AlwaysStoppedAnimation<Color>(AppColors.warning),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildXpBadge() {
+    final isHighValue = widget.lesson.xpReward > 50;
+
+    Widget badge = Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 6,
+        vertical: 2,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.xpGold.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(6),
+        // Add subtle glow for all XP badges
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.xpGold.withOpacity(0.3),
+            blurRadius: 8,
+            spreadRadius: 0,
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '+${widget.lesson.xpReward}',
+            style: const TextStyle(
+              color: AppColors.xpGold,
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(width: 4),
+          const Text(
+            'XP',
+            style: TextStyle(
+              color: AppColors.xpGold,
+              fontSize: 9,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+
+    // Add pulse animation for high-value XP
+    if (isHighValue) {
+      return ScaleTransition(
+        scale: _pulseAnimation,
+        child: badge,
+      );
+    }
+
+    return badge;
   }
 
   Widget _buildThumbnail(Color statusColor) {
@@ -395,7 +597,8 @@ List<_DailyLesson> _getMockLessons() {
       status: _LessonStatus.newLesson,
       xpReward: 10,
       category: 'Linh Thú',
-      thumbnailUrl: 'https://lms.histolab.icu/assets/ban-duc-noi/CAO%20DINH/CAO%20DINH.jpg',
+      thumbnailUrl:
+          'https://lms.histolab.icu/assets/ban-duc-noi/CAO%20DINH/CAO%20DINH.jpg',
     ),
     _DailyLesson(
       name: 'Hoa sen',
@@ -403,7 +606,8 @@ List<_DailyLesson> _getMockLessons() {
       status: _LessonStatus.review,
       xpReward: 5,
       category: 'Thảo Mộc',
-      thumbnailUrl: 'https://lms.histolab.icu/assets/ban-duc-noi/NHAN%20DINH/NH%C3%82N%20%C4%90%E1%BB%88NH.jpg',
+      thumbnailUrl:
+          'https://lms.histolab.icu/assets/ban-duc-noi/NHAN%20DINH/NH%C3%82N%20%C4%90%E1%BB%88NH.jpg',
     ),
     _DailyLesson(
       name: 'Phượng hoàng',
@@ -411,7 +615,8 @@ List<_DailyLesson> _getMockLessons() {
       status: _LessonStatus.newLesson,
       xpReward: 10,
       category: 'Linh Thú',
-      thumbnailUrl: 'https://lms.histolab.icu/assets/ban-duc-noi/CHUONG%20DINH/CH%C6%AF%C6%A0NG%20%C4%90%E1%BB%88NH.jpg',
+      thumbnailUrl:
+          'https://lms.histolab.icu/assets/ban-duc-noi/CHUONG%20DINH/CH%C6%AF%C6%A0NG%20%C4%90%E1%BB%88NH.jpg',
     ),
     _DailyLesson(
       name: 'Cây trúc',
@@ -419,7 +624,8 @@ List<_DailyLesson> _getMockLessons() {
       status: _LessonStatus.review,
       xpReward: 5,
       category: 'Thảo Mộc',
-      thumbnailUrl: 'https://lms.histolab.icu/assets/ban-duc-noi/ANH%20DINH/ANH%20%C4%90%E1%BB%88NH.jpg',
+      thumbnailUrl:
+          'https://lms.histolab.icu/assets/ban-duc-noi/ANH%20DINH/ANH%20%C4%90%E1%BB%88NH.jpg',
     ),
   ];
 }

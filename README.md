@@ -1,16 +1,16 @@
-# Luuniensuki LMS
+# Cửu Đỉnh Ký
 
-Nen tang hoc tap gamified ve di san Cuu Dinh (trieu Nguyen).
+Nền tảng học tập gamified về di sản Cửu Đỉnh (triều Nguyễn).
 
 Production domain: `cuudinh.histolab.icu`
 
-## Cong nghe chinh
+## Công nghệ chính
 
 - Backend: FastAPI + SQLAlchemy + PostgreSQL
 - Frontend: Next.js + TailwindCSS + React Three Fiber
-- Ha tang: Docker Compose + Nginx
+- Hạ tầng: Docker Compose + Nginx
 
-## Chay local (quick start)
+## Chạy local (quick start)
 
 ```bash
 # DB + API
@@ -22,7 +22,7 @@ npm install
 npm run dev
 ```
 
-Kiem tra nhanh:
+Kiểm tra nhanh:
 
 ```bash
 curl -s http://localhost:8000/health
@@ -30,10 +30,10 @@ curl -s http://localhost:8000/health
 
 ## Deploy production
 
-- Huong dan chi tiet: `docs/DEPLOYMENT_CUUDINH.md`
-- Quan ly secrets: `docs/SECRETS.md`
+- Hướng dẫn chi tiết: `docs/DEPLOYMENT_CUUDINH.md`
+- Quản lý secrets: `docs/SECRETS.md`
 
-## Cau truc thu muc
+## Cấu trúc thư mục
 
 - `backend/` - FastAPI API
 - `frontend/` - Next.js app

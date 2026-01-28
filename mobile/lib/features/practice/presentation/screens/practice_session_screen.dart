@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/glass/animated_background.dart';
+import '../../../../shared/widgets/text/gradient_text.dart';
 import '../../../hearts/presentation/providers/hearts_provider.dart';
 import '../../../hearts/presentation/widgets/hearts_display.dart';
 import '../../../hearts/presentation/widgets/heart_lost_animation.dart';
@@ -195,10 +196,9 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
                     children: [
                       const Icon(Icons.star, color: AppColors.xpGold, size: 20),
                       const SizedBox(width: 8),
-                      Text(
+                      GradientText.xp(
                         '${session.totalScore} XP',
                         style: const TextStyle(
-                          color: AppColors.xpGold,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),

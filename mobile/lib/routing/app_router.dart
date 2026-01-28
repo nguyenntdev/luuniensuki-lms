@@ -24,6 +24,7 @@ import '../features/quiz/presentation/screens/quiz_screen.dart';
 import '../features/help/presentation/screens/help_support_screen.dart';
 import '../features/notifications/presentation/screens/notifications_screen.dart';
 import '../features/daily_goals/presentation/screens/daily_goal_screen.dart';
+import '../features/daily_missions/presentation/screens/daily_missions_screen.dart';
 import '../features/gems/presentation/screens/gems_shop_screen.dart';
 import '../features/hearts/presentation/screens/hearts_refill_screen.dart';
 import '../features/social/presentation/screens/friends_screen.dart';
@@ -54,6 +55,7 @@ class _Paths {
   static const String help = '/help';
   static const String notifications = '/notifications';
   static const String dailyGoal = '/daily-goal';
+  static const String dailyMissions = '/daily-missions';
   static const String gemsShop = '/gems-shop';
   static const String heartsRefill = '/hearts-refill';
   static const String friends = '/friends';
@@ -330,6 +332,15 @@ GoRouter appRouter(AppRouterRef ref) {
         path: _Paths.dailyGoal,
         name: 'dailyGoal',
         builder: (context, state) => const DailyGoalScreen(),
+      ),
+
+      // =======================================================================
+      // DAILY MISSIONS ROUTE
+      // =======================================================================
+      GoRoute(
+        path: _Paths.dailyMissions,
+        name: 'dailyMissions',
+        builder: (context, state) => const DailyMissionsScreen(),
       ),
 
       // =======================================================================

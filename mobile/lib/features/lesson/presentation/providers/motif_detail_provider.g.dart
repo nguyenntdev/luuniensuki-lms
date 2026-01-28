@@ -170,7 +170,7 @@ class _MotifDetailProviderElement
   String get motifId => (origin as MotifDetailProvider).motifId;
 }
 
-String _$lessonCompletionHash() => r'db8e93b0115341af14759f1a1734d145ee399141';
+String _$lessonCompletionHash() => r'e7ac8474ebd1dbf6702389634da3d171cb2efd09';
 
 /// Provider for completing a lesson.
 ///

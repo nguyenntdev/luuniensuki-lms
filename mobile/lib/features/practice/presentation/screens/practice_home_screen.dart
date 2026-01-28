@@ -4,7 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../shared/widgets/glass/animated_background.dart';
+import '../../../../shared/widgets/backgrounds/modern_gradient_background_animated.dart';
+import '../../../../shared/widgets/glass/index.dart';
 import '../widgets/due_reviews_banner.dart';
 import '../widgets/practice_mode_card.dart';
 
@@ -104,7 +105,7 @@ class PracticeHomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final practiceModes = _getPracticeModes(context);
 
-    return AnimatedGradientBackground(
+    return ModernGradientBackgroundAnimated(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
@@ -193,16 +194,23 @@ class PracticeHomeScreen extends ConsumerWidget {
 
                     const SizedBox(height: AppSpacing.sm),
 
-                    // Info card
-                    Container(
+                    // Info card with 3D press effect
+                    PressableGlassCard(
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('💡 Tip acknowledged!'),
+                            duration: Duration(seconds: 1),
+                          ),
+                        );
+                      },
                       padding: const EdgeInsets.all(AppSpacing.md),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.05),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.1),
-                          width: 1,
-                        ),
+                      borderRadius: BorderRadius.circular(12),
+                      backgroundColor: Colors.white,
+                      opacity: 0.05,
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.1),
+                        width: 1,
                       ),
                       child: Row(
                         children: [

@@ -3,7 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../shared/widgets/glass/animated_background.dart';
+import '../../../../core/theme/app_typography.dart';
+import '../../../../shared/widgets/backgrounds/modern_gradient_background_animated.dart';
+import '../../../../shared/widgets/effects/shimmer_widget.dart';
+import '../../../../shared/widgets/progress/circular_progress_badge.dart';
+import '../../../../shared/widgets/text/gradient_text.dart';
 import '../../../streak/presentation/widgets/compact_streak_widget.dart';
 import '../providers/dashboard_summary_provider.dart';
 import '../widgets/daily_lessons_widget.dart';
@@ -16,7 +20,7 @@ class LearningPathScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return GradientBackground(
+    return ModernGradientBackgroundAnimated(
       child: SafeArea(
         child: CustomScrollView(
           slivers: [
@@ -35,12 +39,16 @@ class LearningPathScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Section title
-                    Text(
+                    // Section title with gradient
+                    GradientText(
                       'Chặng leo hôm nay',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.9),
-                        fontSize: 18,
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.white,
+                          Colors.white.withOpacity(0.8),
+                        ],
+                      ),
+                      style: AppTypography.cardTitle.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -69,11 +77,15 @@ class LearningPathScreen extends ConsumerWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        GradientText(
                           'Lộ trình theo đỉnh',
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.9),
-                            fontSize: 18,
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.white,
+                              Colors.white.withOpacity(0.8),
+                            ],
+                          ),
+                          style: AppTypography.cardTitle.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -84,7 +96,7 @@ class LearningPathScreen extends ConsumerWidget {
               ),
             ),
 
-            // Urn Path - Vertical List
+            // Urn Path - Vertical List with staggered animations
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(
                 AppSpacing.md,
@@ -95,11 +107,14 @@ class LearningPathScreen extends ConsumerWidget {
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                      child: UrnPathCard(
-                        urnIndex: index,
-                        isCurrentUrn: index == 1, // Mock: Second urn is current
+                    return _StaggeredUrnCardWrapper(
+                      index: index,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                        child: UrnPathCard(
+                          urnIndex: index,
+                          isCurrentUrn: index == 1, // Mock: Second urn is current
+                        ),
                       ),
                     );
                   },
@@ -131,15 +146,20 @@ class LearningPathScreen extends ConsumerWidget {
                 Row(
                   children: [
                     Expanded(
-                      child: Text(
+                      child: GradientText(
                         'Học Tập',
-                        style: TextStyle(
-                          color: Colors.white,
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.white,
+                            AppColors.primary.withOpacity(0.9),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        style: AppTypography.screenTitle.copyWith(
                           fontSize: isCompact ? 22 : 26,
                           fontWeight: FontWeight.bold,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     const CompactStreakWidget(),
@@ -162,46 +182,61 @@ class LearningPathScreen extends ConsumerWidget {
       loading: () => LayoutBuilder(
         builder: (context, constraints) {
           final isCompact = constraints.maxWidth < 360;
-          return Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.md,
-              vertical: AppSpacing.sm,
-            ),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  AppColors.primary.withOpacity(0.2),
-                  AppColors.primaryDark.withOpacity(0.1),
+          return ShimmerWidget(
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.sm,
+              ),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppColors.primary.withOpacity(0.2),
+                    AppColors.primaryDark.withOpacity(0.1),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
+                border: Border.all(
+                  color: AppColors.primary.withOpacity(0.3),
+                  width: 1.2,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 60,
+                        height: 20,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        width: 80,
+                        height: 16,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Container(
+                    height: isCompact ? 5 : 6,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(AppSpacing.radiusXS),
+                    ),
+                  ),
                 ],
               ),
-              borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
-              border: Border.all(
-                color: AppColors.primary.withOpacity(0.3),
-                width: 1.2,
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(
-                  height: 20,
-                  width: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                Container(
-                  height: isCompact ? 5 : 6,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(AppSpacing.radiusXS),
-                  ),
-                ),
-              ],
             ),
           );
         },
@@ -274,10 +309,9 @@ class LearningPathScreen extends ConsumerWidget {
                     ),
                   ),
                   if (completedToday < goalToday)
-                    Text(
+                    GradientText.xp(
                       '+${(goalToday - completedToday) * 10} XP',
                       style: const TextStyle(
-                        color: AppColors.xpGold,
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                       ),
@@ -297,6 +331,42 @@ class LearningPathScreen extends ConsumerWidget {
           ),
         );
       },
+    );
+  }
+}
+
+/// Wrapper widget for staggered entrance animation of urn cards
+class _StaggeredUrnCardWrapper extends StatefulWidget {
+  final int index;
+  final Widget child;
+
+  const _StaggeredUrnCardWrapper({
+    required this.index,
+    required this.child,
+  });
+
+  @override
+  State<_StaggeredUrnCardWrapper> createState() =>
+      _StaggeredUrnCardWrapperState();
+}
+
+class _StaggeredUrnCardWrapperState extends State<_StaggeredUrnCardWrapper> {
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: 0.0, end: 1.0),
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeOutCubic,
+      builder: (context, value, child) {
+        return Opacity(
+          opacity: value,
+          child: Transform.translate(
+            offset: Offset(0, 20 * (1 - value)),
+            child: child,
+          ),
+        );
+      },
+      child: widget.child,
     );
   }
 }

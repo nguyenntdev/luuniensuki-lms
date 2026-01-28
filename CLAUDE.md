@@ -4,12 +4,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Luuniensuki LMS is a gamified learning platform for Vietnamese cultural heritage education, focused on the "Cửu Đỉnh" (Nine Urns) of the Nguyen Dynasty. Users explore 3D urn models, discover motifs (decorative patterns), complete lessons, and take quizzes to earn XP and badges.
+Cửu Đỉnh Ký is a gamified learning platform for Vietnamese cultural heritage education, focused on the "Cửu Đỉnh" (Nine Urns) of the Nguyen Dynasty. Users explore 3D urn models, discover motifs (decorative patterns), complete lessons, and take quizzes to earn XP and badges.
+
+**Current Version**: 1.22.0+15 (Mobile), Production domain: `cuudinh.histolab.icu`
+
+**Development Status**: Phase 1 complete (Branding & Emoji→Icon Migration). See `TASK_PHASES.md` for roadmap.
 
 ## Tech Stack
 
 - **Backend**: Python 3.12, FastAPI, SQLAlchemy 2.x, PostgreSQL 15, Alembic migrations
-- **Frontend**: Next.js 15, React 19, Three.js/React Three Fiber, Zustand, TailwindCSS
+- **Web Frontend**: Next.js 15, React 19, Three.js/React Three Fiber, Zustand, TailwindCSS
+- **Mobile App**: Flutter 3.x (SDK ^3.5.4), Riverpod 2.x, GoRouter 13.x, Hive, Freezed, model_viewer_plus for 3D
 - **Infrastructure**: Docker Compose, Nginx reverse proxy
 
 ## Common Commands
@@ -27,15 +32,34 @@ python -m backend.seed --seed-path data --image-path ban-duc-noi
 
 # Run migrations
 alembic upgrade head
+
+# Create new migration
+alembic revision --autogenerate -m "description"
 ```
 
-### Frontend
+### Web Frontend
 ```bash
 cd frontend
 npm run dev      # Development server on port 3000
 npm run build    # Production build
 npm run lint     # ESLint
 npx playwright test  # E2E tests
+```
+
+### Mobile App (Flutter)
+```bash
+cd mobile
+flutter pub get
+flutter pub run build_runner build --delete-conflicting-outputs  # Generate Freezed/Riverpod code
+flutter run                                                       # Run app
+flutter build apk --release                                       # Build Android APK (requires key.properties)
+flutter build apk --debug                                         # Build debug APK (uses shared debug keystore)
+
+# Run single test
+flutter test test/widget_test.dart
+
+# Analyze code
+flutter analyze
 ```
 
 ### Docker
@@ -47,20 +71,51 @@ docker compose exec api pytest    # Run tests in container
 ## Architecture
 
 ### Backend Structure
-- `backend/main.py` - FastAPI app with all API endpoints (monolithic, ~1500 lines)
+- `backend/main.py` - FastAPI app with all API endpoints (monolithic, 17000+ lines)
 - `backend/models.py` - SQLAlchemy ORM models (User, Urn, Motif, LessonContent, UserProgress, QuizQuestion, Badge, etc.)
+- `backend/schemas.py` - Pydantic request/response schemas
 - `backend/errors.py` - Custom AppError exception with structured JSON responses
 - `backend/seed.py` - Database seeder from JSON/Markdown files in `data/`
-- `backend/security.py` - JWT token creation and password hashing
+- `backend/security.py` - JWT token creation and password hashing (bcrypt, 12 rounds)
+- `backend/rbac.py` - Role-Based Access Control (guest < learner < teacher < admin < super_admin)
+- `backend/services/` - Business logic services:
+  - `hearts.py` - Duolingo-style hearts/energy system
+  - `spaced_repetition.py` - SM-2 algorithm for review scheduling
+  - `adaptive_quiz.py` - ELO-like skill level tracking
+  - `streak.py` - Daily streak tracking with freeze feature
+  - `weekly_quests.py` - Weekly challenge system
+  - `learning_path.py` - Personalized daily learning recommendations
 
-### Frontend Structure
+### Web Frontend Structure
 - `frontend/src/stores/` - Zustand stores (authStore, motifStore) with localStorage persistence
-- `frontend/src/lib/api.js` - API client functions
+- `frontend/src/lib/api.js` - API client with automatic token refresh on 401
 - `frontend/src/components/UrnViewer.js` - 3D urn viewer with Three.js, hotspot interaction
-- `frontend/src/components/FloatingNavbar.jsx` - Bottom floating navigation with i18n (vi/en), user dropdown, language switcher
+- `frontend/src/components/FloatingNavbar.jsx` - Bottom floating navigation with i18n (vi/en)
 - `frontend/src/components/OnboardingModal.jsx` - First-time user onboarding wizard
-- `frontend/src/components/AuthGate.jsx` - Authentication wrapper, redirects unauthenticated users to login
+- `frontend/src/components/AuthGate.jsx` - Authentication wrapper, redirects to login
 - `frontend/src/app/` - Next.js App Router pages
+
+### Mobile App Structure (Flutter)
+- `mobile/lib/core/` - Core utilities (network, storage, theme, constants)
+- `mobile/lib/features/` - Feature modules (auth, explore, quiz, hearts, gems, streak, etc.)
+- `mobile/lib/routing/app_router.dart` - GoRouter configuration with auth guards
+- `mobile/lib/shared/` - Shared widgets and services
+- Uses Clean Architecture: Presentation → Domain → Data layers
+- State management: Riverpod with code generation (@riverpod annotation)
+- Offline-first pattern: Hive local storage with network sync
+
+#### Mobile Feature Module Structure
+Each feature in `mobile/lib/features/` follows Clean Architecture:
+```
+features/
+  quiz/
+    data/           # DTOs, repositories, datasources
+    domain/         # Entities, use cases (if needed)
+    presentation/   # Screens, widgets, providers
+      providers/    # @riverpod annotated state management
+      screens/      # Full-page widgets
+      widgets/      # Reusable UI components
+```
 
 ### Key Data Flow
 1. User clicks hotspot sphere on 3D urn → `unlockFromClick()` in motifStore
@@ -81,6 +136,33 @@ docker compose exec api pytest    # Run tests in container
 Badges are awarded automatically in `_award_badge()` during unlock/lesson/quiz actions:
 - `first-discovery`, `first-mastered`, `streak-7`, `collector-10/50`, `explorer-all-urns`, `quiz-master`, `speed-demon`, `perfect-score`
 
+### Hearts System (Duolingo-style)
+- Max 5 hearts, lose 1 on wrong quiz answer
+- Auto-refill: 1 heart every 4 hours (240 minutes)
+- Unlimited hearts mode available via purchase/streak freeze
+- Heart transactions logged for analytics
+- Service: `backend/services/hearts.py`
+
+### Gems System (Virtual Currency)
+- Earned: lesson completion, streaks, perfect scores
+- Spent: streak freeze, double XP, hints
+- Mobile-only: local Hive storage with transaction history
+- Initial balance: 100 gems for new users
+
+### Spaced Repetition (SM-2 Algorithm)
+- Quality rating: 0-5 (≥3 is successful review)
+- Ease factor: min 1.3, default 2.5
+- Initial interval: 1 day, second interval: 6 days
+- Formula: `new_ease = current_ease + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02))`
+- Service: `backend/services/spaced_repetition.py`
+
+### Adaptive Quiz (ELO-like)
+- Skill level: 0.0 to 1.0 (default 0.5)
+- K-factor for skill updates
+- Difficulty normalization: 1-5 → 0.0-1.0
+- Questions selected based on recommended difficulty ± tolerance
+- Service: `backend/services/adaptive_quiz.py`
+
 ### Motif Positioning
 - Motifs have `pos_x/y/z` and `bounding_radius` for 3D hotspot placement
 - If positions are (0,0,0), UrnViewer falls back to circular arrangement formula
@@ -95,6 +177,14 @@ Badges are awarded automatically in `_award_badge()` during unlock/lesson/quiz a
 - JSON files in `data/` contain motif definitions with Vietnamese/English names, categories, lessons, quiz questions
 - Images in `ban-duc-noi/` are matched to motifs via slug fuzzy matching
 - `IMAGE_SLUG_ALIASES` handles known naming mismatches
+
+### Role-Based Access Control (RBAC)
+Role hierarchy: `guest < learner < teacher < admin < super_admin`
+- **guest**: View public/demo content only
+- **learner**: Access lessons, quizzes, progress tracking
+- **teacher**: Create/edit content, manage classes, submit for review
+- **admin**: Approve content, manage RAG, view analytics
+- **super_admin**: Full access including audit logs, user management
 
 ## API Patterns
 
@@ -232,135 +322,101 @@ All errors return structured JSON:
 - Maximum password length: 72 bytes (bcrypt limitation)
 - Passwords exceeding limit rejected at hash time, return false at verify time
 
-## Recent Bug Fixes & Updates
+## Important Patterns to Preserve
 
-### Image Loading Issue (FIXED - 2025-12-18)
-- **Problem**: All thumbnails (urns/motifs) returned 404
-- **Root cause**: `docker-compose.yml` had wrong volume mount: `/var/www/assets:/var/www/assets:ro` (host path empty)
-- **Solution**: Changed to `./ban-duc-noi:/var/www/assets/ban-duc-noi:ro` to match production config
-- **Files changed**: `docker-compose.yml` line 56
-- **Note**: After changing volume mounts, must run `docker compose down nginx && docker compose up -d nginx`
+### Motif Access Restriction
+- Undiscovered motifs cannot be accessed directly via URL
+- Client-side guard in `frontend/src/app/motif/[motifId]/page.jsx` and `quiz/page.jsx`
+- Checks `progressByMotifId` from motifStore - redirects to `/explore` if status is "hidden" or undefined
+- Pattern: Zustand store state + router redirect
 
-### 3D Viewer Height Issue (FIXED - 2025-12-18)
-- **Problem**: 3D viewer on `/urns/[urnSlug]` not full height (80px gap at bottom), FloatingNavbar overlapping 3D content
-- **Root cause**: `UrnExperience` uses `fixed inset-0` positioning which ignores parent padding. FloatingNavbar (80px height) was covering bottom of 3D viewer
-- **Solution**: Added `pb-20` directly to `UrnExperience` container div (line 64)
-- **Files changed**:
-  - `frontend/src/components/UrnExperience.js` - changed `className="fixed inset-0 w-full overflow-hidden bg-black"` to include `pb-20`
-- **Pattern**: Fixed-positioned elements need their own padding/margin, cannot inherit from parent layout
+### Fixed-Position Layout Considerations
+- Fixed-positioned elements (like `UrnExperience` with `fixed inset-0`) ignore parent padding
+- Must apply bottom padding (`pb-20`) directly to fixed container for FloatingNavbar clearance
+- FloatingNavbar height: 80px
 
-### UX Improvements (2025-12-18)
+### Docker Volume Mounts
+- Static assets served from Nginx require correct volume mounts
+- Production pattern: `./ban-duc-noi:/var/www/assets/ban-duc-noi:ro`
+- After changing volume mounts: `docker compose down nginx && docker compose up -d nginx`
 
-#### Navigation Simplification
-- **Change**: Reduced FloatingNavbar from 6 to 4 items
-- **New structure**: Khám Phá (Explore), Bộ Sưu Tập (Collection), Thành Tích (Achievements), Hồ Sơ (Profile)
-- **Files changed**: `frontend/src/components/FloatingNavbar.jsx`
-- **Rationale**: Reduce navigation overload, combine related features
+### Translation Files Location
+- `frontend/src/translations/` contains JSON files for i18n (nav.json, lesson-sidebar.json, homepage.json, onboarding.json, tooltips.json)
+- Use centralized translation files rather than inline translation objects
 
-#### Achievements Page
-- **Change**: Created `/achievements` page combining badges + leaderboard with tab navigation
-- **Features**: Tab switching between badges and leaderboard, responsive grid layout
-- **Files added**: `frontend/src/app/achievements/page.jsx`
-- **Rationale**: Consolidate achievement-related features in one place
+## Mobile App Special Patterns
 
-#### Dashboard → Profile Rename
-- **Change**: Renamed `/dashboard` to `/profile`, added redirect from old URL
-- **Files changed**:
-  - Renamed `frontend/src/app/dashboard/` to `frontend/src/app/profile/`
-  - Updated links in `UrnExperience.js`, `LoginPage.js`
-  - Added redirect route at `frontend/src/app/dashboard/page.jsx`
-- **Rationale**: "Profile" is more intuitive than "Dashboard" for user settings
+### Riverpod Provider Patterns
+- Use `@Riverpod(keepAlive: true)` for providers that should persist across navigation (auth, router, dio, storage)
+- Use `@riverpod` (default) for feature-specific providers that can be disposed
+- Generated code files have `.g.dart` suffix - run `build_runner` after changes
+- Use `ref.invalidate(provider)` to force refresh a provider's data
 
-#### Progress Stepper in LessonSidebar
-- **Change**: Added visual progress stepper showing 3 steps (Khám Phá, Bài Học, Trắc Nghiệm) with XP values
-- **Features**:
-  - Visual states: completed (green checkmark), current (pulsing primary), locked (gray lock)
-  - Connecting lines between steps
-  - XP display for each step (25, 50, 75)
-- **Files changed**: `frontend/src/components/LessonSidebar.js`
-- **Rationale**: Clear visual indication of learning progress and next actions
+### Persistent Cookie Authentication
+- Session persistence is achieved via `PersistCookieJar` stored at `{AppDocuments}/.cookies/`
+- Must call `await initPersistCookieJar()` in `main()` before `runApp()`
+- Authentication cookies (`luuniensuki_access`, `luuniensuki_refresh`) are httpOnly
+- `hasValidSession()` checks for auth cookie presence as primary method
+- On logout, call `cookieJar.deleteAll()` to clear persistent cookies
 
-#### Motif Access Restriction
-- **Change**: Undiscovered motifs cannot be accessed via direct link or click
-- **Behavior**: Redirects to `/explore` with error message if motif not discovered
-- **Files changed**:
-  - `frontend/src/app/motif/[motifId]/page.jsx`
-  - `frontend/src/app/motif/[motifId]/quiz/page.jsx`
-- **Rationale**: Enforce discovery flow, prevent spoilers via URL sharing
+### 3D Model Viewer JavaScript Bridge
+- `CustomModelViewer` widget wraps `model_viewer_plus` with custom JavaScript handlers
+- JavaScript-to-Dart communication via `javascriptChannels` with channel name `ModelViewerChannel`
+- Race condition fix: check both `load` event AND `.loaded` property for model load detection
+- Safety timeout: 120 seconds for large GLB models (60-80MB)
+- Hotspot tap detection: JavaScript sends `{type: 'hotspotTap', motifId: '...'}` message
 
-#### Translation Files
-- **Added**: Vietnamese/English translations for new features
-- **Files added**:
-  - `frontend/src/translations/nav.json` - Navigation labels
-  - `frontend/src/translations/lesson-sidebar.json` - Sidebar tab content
-  - `frontend/src/translations/homepage.json` - Smart homepage content
-  - `frontend/src/translations/onboarding.json` - Updated onboarding steps
-  - `frontend/src/translations/tooltips.json` - Feature tooltips
-- **Rationale**: Centralize i18n content for easier maintenance
+### Quiz Heart Penalty Deduplication
+- `_incorrectAnswers` map tracks questions that already deducted hearts
+- Pattern: check `!_incorrectAnswers.containsKey(questionId)` before calling `loseHeart()`
+- Prevents multiple heart losses on re-selecting wrong answer for same question
+- State saved to provider via `markIncorrect(questionId)` for persistence
 
-## UX Improvements (2025-12-18)
+### Daily Goal Midnight Reset
+- `DailyGoal.shouldReset(now)` checks if `lastUpdated` is from a previous day
+- Reset logic: keep `level`, reset `currentXp` to 0, set `isCompleted` to false
+- `getTimeUntilMidnight()` returns Duration for UI countdown display
+- Gems awarded (20) when daily goal is completed for the first time that day
 
-### Progress Stepper Component (Task 1.4)
-- **Added**: Visual progress stepper in LessonSidebar header showing 3 steps with XP values
-- **Steps**: Khám Phá (25 XP), Bài Học (50 XP), Trắc Nghiệm (75 XP)
-- **Visual states**:
-  - Completed: green checkmark, filled circle
-  - Current: primary color with pulsing animation
-  - Locked: gray with lock icon
-- **Features**: Connecting lines between steps, XP display, accessibility support
-- **Files changed**: `frontend/src/components/LessonSidebar.js`
-- **Removed**: Old 3-column status grid (redundant with new stepper)
+### Gems System (Mobile-Only)
+- Initial balance: 100 gems for new users
+- Transaction types: `earnedBonus`, `earnedStreak`, `spentRefill`, `spentHint`, `spentStreakFreeze`
+- Balance and transactions persisted in Hive storage
+- `addGems()` and `spendGems()` return `bool` indicating success
 
-### Navigation Simplification (Task 1.1)
-- **Reduced**: FloatingNavbar from 6 to 4 items
-- **New items**: Khám Phá, Bộ Sưu Tập, Thành Tích, Hồ Sơ
-- **Files changed**: `frontend/src/components/FloatingNavbar.jsx`
+### Hearts Auto-Refill Timer
+- Timer runs every 1 minute checking if hearts need refilling
+- Refill rate: 1 heart every 240 minutes (4 hours)
+- `HeartState.autoRefill()` calculates hearts gained based on elapsed time
+- Timer is cancelled in `ref.onDispose()` to prevent memory leaks
 
-### Achievements Page (Task 1.2)
-- **Created**: `/achievements` page combining badges + leaderboard with tab navigation
-- **Features**: Tab switching, Vietnamese UI, responsive grid layout
-- **Files**: `frontend/src/app/achievements/page.jsx`
+### Sync Service for Offline Operations
+- `SyncService` queues operations when offline for later sync
+- Operations stored in Hive box with retry count (max 3 retries)
+- Listens to connectivity changes via `connectivity_plus`
+- Operation types: `unlockMotif`, `completeLesson`, `submitQuiz`, `updateProgress`
 
-### Dashboard → Profile Rename (Task 3.1)
-- **Renamed**: `/dashboard` → `/profile`
-- **Added**: Redirect from `/dashboard` to `/profile`
-- **Files changed**:
-  - `frontend/src/app/profile/` (renamed from dashboard)
-  - `frontend/src/components/UrnExperience.js`
-  - `frontend/src/components/LoginPage.js`
+### GoRouter Auth Guard Pattern
+- `redirect` callback checks `authNotifierProvider` state
+- Returns `null` to allow navigation, or path string to redirect
+- Onboarding check: `storage.hasSeenOnboarding()` gates first-time flow
+- Return URL encoding: `Uri.encodeComponent(state.matchedLocation)`
 
-### Motif Access Restriction (NEW - 2025-12-18)
-- **Implemented**: Undiscovered motifs cannot be accessed directly via URL or link
-- **Behavior**:
-  - Check `progressByMotifId` from motifStore
-  - If status is "hidden" or undefined, show error and redirect to `/explore`
-  - Users must discover motifs on 3D viewer before accessing lesson/quiz pages
-- **Files changed**:
-  - `frontend/src/app/motif/[motifId]/page.jsx` - added discovery check
-  - `frontend/src/app/motif/[motifId]/quiz/page.jsx` - added discovery check
-- **Pattern**: Client-side guard using Zustand store state + router redirect
+## Android Build Configuration
 
-### Translation Files (Task 1.3)
-- **Created**: `frontend/src/translations/nav.json` with Vietnamese/English translations
-- **Content**: Navigation labels, tab labels, empty states, loading states
+### Debug Keystore (Team Development)
+- Shared `mobile/android/debug.keystore` prevents "app not installed" errors across dev machines
+- Default credentials: password `android`, alias `androiddebugkey`
+- If missing, falls back to system default debug keystore
 
-## Additional AI Tools
+### Release Keystore Setup
+1. Create keystore: `keytool -genkey -v -keystore release-keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias release`
+2. Copy `mobile/android/key.properties.template` to `key.properties`
+3. Fill in actual passwords and keystore path
+4. NEVER commit `key.properties` to version control
 
-When working on this project, use specialized AI tools for different tasks:
-
-- **Codex CLI (`codex`)**: Use for main tasks requiring code generation, designing, and refactoring
-- **Gemini CLI (`gemini`)**: Use with model `gemini-3-pro-preview` (must be this exact model) for:
-  - Finding documentation
-  - Writing informational content
-  - Generating long text
-  - i18n translations
-  - UX specifications
-
-Example usage:
-```bash
-# Codex for code tasks
-codex "Refactor component X to use hooks"
-
-# Gemini for content/docs
-gemini -m gemini-3.0-pro "Write Vietnamese translations for navigation items"
-```
+### ProGuard Rules
+- Custom rules in `mobile/android/app/proguard-rules.pro`
+- Keeps: Flutter engine, Firebase, Dio/OkHttp, Hive, model_viewer_plus
+- Removes: Android logging in release builds
+- Release build enables `minifyEnabled true` and `shrinkResources true`

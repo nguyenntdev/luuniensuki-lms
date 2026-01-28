@@ -169,7 +169,7 @@ class _ExampleReadUrnDetailState extends ConsumerState<_ExampleReadUrnDetail> {
             builder: (context, ref, _) {
               final urnDetailAsync = ref.watch(urnDetailOfflineFirstProvider(selectedSlug!));
               return urnDetailAsync.when(
-                data: (detail) => Text('Loaded: ${detail.name}'),
+                data: (detail) => Text('Loaded: ${detail.urn.name}'),
                 loading: () => const CircularProgressIndicator(),
                 error: (error, _) => Text(
                   'Error: $error',

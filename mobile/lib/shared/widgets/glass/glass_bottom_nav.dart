@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../core/theme/app_colors.dart';
@@ -5,6 +6,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../theme/glass_theme.dart';
 
 /// Glass bottom navigation bar with glassmorphism effect
+/// Enhanced with morphing icons, glow effects, and floating indicator
 class GlassBottomNav extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
@@ -29,11 +31,7 @@ class GlassBottomNav extends StatelessWidget {
         AppSpacing.navBarMargin + bottomInset,
       ),
       decoration: BoxDecoration(
-        color: AppColors.surface,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: AppColors.border.withOpacity(0.4),
-        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.3),
@@ -42,17 +40,51 @@ class GlassBottomNav extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: List.generate(
-          items.length,
-          (index) => _buildNavItem(
-            items[index],
-            index == currentIndex,
-            () {
-              HapticFeedback.lightImpact();
-              onTap(index);
-            },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppColors.surface.withOpacity(0.85),
+                  AppColors.surfaceElevated.withOpacity(0.75),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: AppColors.glassBorder.withOpacity(0.5),
+                width: 1.5,
+              ),
+            ),
+            child: Stack(
+              children: [
+                // Floating indicator dot
+                _FloatingIndicator(
+                  currentIndex: currentIndex,
+                  itemCount: items.length,
+                ),
+                // Navigation items
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: List.generate(
+                    items.length,
+                    (index) => _buildNavItem(
+                      index,
+                      items[index],
+                      index == currentIndex,
+                      () {
+                        HapticFeedback.lightImpact();
+                        onTap(index);
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -60,12 +92,14 @@ class GlassBottomNav extends StatelessWidget {
   }
 
   Widget _buildNavItem(
+    int index,
     GlassBottomNavItem item,
     bool isSelected,
     VoidCallback onTap,
   ) {
     return Expanded(
       child: _NavItemButton(
+        index: index,
         item: item,
         isSelected: isSelected,
         onTap: onTap,
@@ -74,13 +108,69 @@ class GlassBottomNav extends StatelessWidget {
   }
 }
 
-/// Individual navigation item with animations
+/// Floating indicator dot that follows the selected tab
+class _FloatingIndicator extends StatelessWidget {
+  final int currentIndex;
+  final int itemCount;
+
+  const _FloatingIndicator({
+    required this.currentIndex,
+    required this.itemCount,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedPositioned(
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeOutCubic,
+      left: _calculatePosition(context),
+      bottom: 4,
+      child: TweenAnimationBuilder<double>(
+        tween: Tween(begin: 0, end: 1),
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.elasticOut,
+        builder: (context, value, child) {
+          return Transform.scale(
+            scale: value,
+            child: Container(
+              width: 6,
+              height: 6,
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary.withOpacity(0.6),
+                    blurRadius: 8,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  double _calculatePosition(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final navWidth = screenWidth - (AppSpacing.md * 2);
+    final itemWidth = navWidth / itemCount;
+    final centerOffset = (itemWidth - 6) / 2;
+    return (itemWidth * currentIndex) + centerOffset;
+  }
+}
+
+/// Individual navigation item with enhanced animations
 class _NavItemButton extends StatefulWidget {
+  final int index;
   final GlassBottomNavItem item;
   final bool isSelected;
   final VoidCallback onTap;
 
   const _NavItemButton({
+    required this.index,
     required this.item,
     required this.isSelected,
     required this.onTap,
@@ -94,7 +184,6 @@ class _NavItemButtonState extends State<_NavItemButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _pressController;
   late Animation<double> _scaleAnimation;
-  bool _isPressed = false;
 
   @override
   void initState() {
@@ -115,81 +204,104 @@ class _NavItemButtonState extends State<_NavItemButton>
   }
 
   void _handleTapDown(TapDownDetails details) {
-    setState(() => _isPressed = true);
     _pressController.forward();
   }
 
   void _handleTapUp(TapUpDetails details) {
-    setState(() => _isPressed = false);
     _pressController.reverse();
   }
 
   void _handleTapCancel() {
-    setState(() => _isPressed = false);
     _pressController.reverse();
   }
 
-  Widget _buildIcon(GlassBottomNavItem item) {
-    final accent = item.primaryColor ?? GlassTheme.accentGold;
-    final iconSize = item.isPrimary ? 30.0 : 24.0;
-    final iconWidget = AnimatedContainer(
-      duration: const Duration(milliseconds: 350),
-      curve: Curves.elasticOut,
-      transform: Matrix4.identity()
-        ..translate(
-          0.0,
-          widget.isSelected ? -3.0 : 0.0,
-        )
-        ..scale(widget.isSelected ? 1.05 : 1.0),
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300),
-        transitionBuilder: (child, animation) {
-          return ScaleTransition(
-            scale: animation,
-            child: child,
-          );
-        },
-        child: Icon(
-          widget.isSelected ? item.activeIcon : item.icon,
-          key: ValueKey(widget.isSelected),
-          color: widget.isSelected ? accent : GlassTheme.textSecondary,
-          size: iconSize,
-        ),
-      ),
-    );
+  /// Build icon with morphing animation and glow effect
+  Widget _buildMorphingIcon() {
+    final accent = widget.item.primaryColor ?? AppColors.primary;
+    final iconSize = widget.item.isPrimary ? 30.0 : 24.0;
 
-    if (!item.isPrimary) {
-      return iconWidget;
-    }
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: widget.isSelected ? 1.0 : 0.0),
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeOutCubic,
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(0, -4 * value),
+          child: Transform.scale(
+            scale: 1.0 + (0.15 * value),
+            child: Container(
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: accent.withOpacity(0.5 * value),
+                    blurRadius: 16 * value,
+                    spreadRadius: 3 * value,
+                  ),
+                ],
+              ),
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                transitionBuilder: (child, animation) {
+                  return ScaleTransition(
+                    scale: animation,
+                    child: FadeTransition(
+                      opacity: animation,
+                      child: child,
+                    ),
+                  );
+                },
+                child: Icon(
+                  widget.isSelected ? widget.item.activeIcon : widget.item.icon,
+                  key: ValueKey(widget.isSelected),
+                  color: widget.isSelected ? accent : Colors.white60,
+                  size: iconSize,
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  /// Build primary (center) icon with enhanced container
+  Widget _buildPrimaryIcon() {
+    final accent = widget.item.primaryColor ?? AppColors.primary;
 
     return Transform.translate(
       offset: const Offset(0, -6),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        padding: EdgeInsets.all(widget.isSelected ? 9 : 8),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              accent.withOpacity(widget.isSelected ? 0.35 : 0.25),
-              accent.withOpacity(widget.isSelected ? 0.2 : 0.12),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: accent.withOpacity(widget.isSelected ? 0.9 : 0.6),
-            width: widget.isSelected ? 1.6 : 1.2,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: accent.withOpacity(widget.isSelected ? 0.45 : 0.25),
-              blurRadius: widget.isSelected ? 18 : 12,
-              spreadRadius: widget.isSelected ? 2 : 1,
+      child: TweenAnimationBuilder<double>(
+        tween: Tween(begin: 0, end: widget.isSelected ? 1.0 : 0.0),
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeOutCubic,
+        builder: (context, value, child) {
+          return Container(
+            padding: EdgeInsets.all(8 + (value * 1)),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  accent.withOpacity(0.25 + (value * 0.1)),
+                  accent.withOpacity(0.12 + (value * 0.08)),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: accent.withOpacity(0.6 + (value * 0.3)),
+                width: 1.2 + (value * 0.4),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: accent.withOpacity(0.25 + (value * 0.25)),
+                  blurRadius: 12 + (value * 8),
+                  spreadRadius: 1 + (value * 2),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: iconWidget,
+            child: _buildMorphingIcon(),
+          );
+        },
       ),
     );
   }
@@ -204,8 +316,8 @@ class _NavItemButtonState extends State<_NavItemButton>
         onTapUp: _handleTapUp,
         onTapCancel: _handleTapCancel,
         borderRadius: BorderRadius.circular(16),
-        splashColor: GlassTheme.accentGold.withOpacity(0.2),
-        highlightColor: GlassTheme.accentGold.withOpacity(0.1),
+        splashColor: (widget.item.primaryColor ?? AppColors.primary).withOpacity(0.2),
+        highlightColor: (widget.item.primaryColor ?? AppColors.primary).withOpacity(0.1),
         child: AnimatedBuilder(
           animation: _scaleAnimation,
           builder: (context, child) {
@@ -224,7 +336,9 @@ class _NavItemButtonState extends State<_NavItemButton>
                 Stack(
                   clipBehavior: Clip.none,
                   children: [
-                    _buildIcon(widget.item),
+                    widget.item.isPrimary
+                        ? _buildPrimaryIcon()
+                        : _buildMorphingIcon(),
                     if (widget.item.badge != null)
                       Positioned(
                         right: -8,
@@ -232,10 +346,10 @@ class _NavItemButtonState extends State<_NavItemButton>
                         child: Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: GlassTheme.accentRed,
+                            color: AppColors.accent,
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: GlassTheme.textPrimary,
+                              color: AppColors.textPrimary,
                               width: 1.5,
                             ),
                           ),
@@ -247,7 +361,7 @@ class _NavItemButtonState extends State<_NavItemButton>
                             child: Text(
                               widget.item.badge!,
                               style: const TextStyle(
-                                color: GlassTheme.textPrimary,
+                                color: AppColors.textPrimary,
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -258,14 +372,14 @@ class _NavItemButtonState extends State<_NavItemButton>
                   ],
                 ),
                 const SizedBox(height: 4),
-                // Label
+                // Label with enhanced animation
                 AnimatedDefaultTextStyle(
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeOutCubic,
                   style: TextStyle(
                     color: widget.isSelected
-                        ? (widget.item.primaryColor ?? GlassTheme.accentGold)
-                        : GlassTheme.textSecondary,
+                        ? (widget.item.primaryColor ?? AppColors.primary)
+                        : Colors.white60,
                     fontSize: 11,
                     fontWeight: widget.isSelected ? FontWeight.bold : FontWeight.normal,
                   ),

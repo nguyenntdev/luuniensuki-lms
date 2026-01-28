@@ -1,7 +1,7 @@
 name: cuudinhky
 description: "Cửu Đỉnh Ký - Vietnamese Cultural Heritage Learning App"
 publish_to: "none"
-version: 1.22.0+15
+version: 1.23.5+17
 
 environment:
   sdk: ^3.5.4

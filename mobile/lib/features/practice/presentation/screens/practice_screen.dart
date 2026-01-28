@@ -7,7 +7,10 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/url_utils.dart';
 import '../../../../routing/route_names.dart';
+import '../../../../shared/widgets/effects/shimmer_widget.dart';
 import '../../../../shared/widgets/glass/animated_background.dart';
+import '../../../../shared/widgets/progress/circular_progress_badge.dart';
+import '../../../../shared/widgets/text/gradient_text.dart';
 import '../../../hearts/presentation/widgets/hearts_display.dart';
 import '../../../streak/presentation/providers/streak_provider.dart';
 import '../providers/practice_provider.dart';
@@ -150,81 +153,95 @@ class PracticeScreen extends ConsumerWidget {
 
   Widget _buildDailyStatsCard(
       BuildContext context, Map<String, int> stats, int streak) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isCompact = constraints.maxWidth < 360;
-        final padding = isCompact ? AppSpacing.md : AppSpacing.lg;
-        return Container(
-          width: double.infinity,
-          padding: EdgeInsets.all(padding),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                AppColors.primary.withOpacity(0.15),
-                AppColors.primary.withOpacity(0.05),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: AppColors.primary.withOpacity(0.3),
-              width: 1.5,
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Thành Tích Hôm Nay',
-                style: AppTypography.textTheme.titleLarge?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              Wrap(
-                spacing: AppSpacing.lg,
-                runSpacing: AppSpacing.md,
-                children: [
-                  _buildStatItem(
-                    context,
-                    Icons.star_rounded,
-                    AppColors.xpGold,
-                    '${stats['xpEarned'] ?? 0}',
-                    'XP',
-                    isCompact,
-                  ),
-                  _buildStatItem(
-                    context,
-                    Icons.local_fire_department_rounded,
-                    AppColors.streakOrange,
-                    '$streak',
-                    'Ngày',
-                    isCompact,
-                  ),
-                  _buildStatItem(
-                    context,
-                    Icons.favorite_rounded,
-                    AppColors.error,
-                    '${stats['hearts'] ?? 5}',
-                    'Tim',
-                    isCompact,
-                  ),
-                  _buildStatItem(
-                    context,
-                    Icons.check_circle_rounded,
-                    AppColors.success,
-                    '${stats['questionsAnswered'] ?? 0}',
-                    'Câu',
-                    isCompact,
-                  ),
-                ],
-              ),
-            ],
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: const Duration(milliseconds: 600),
+      curve: Curves.easeOutCubic,
+      builder: (context, value, child) {
+        return Transform.scale(
+          scale: 0.9 + (value * 0.1),
+          child: Opacity(
+            opacity: value,
+            child: child,
           ),
         );
       },
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final isCompact = constraints.maxWidth < 360;
+          final padding = isCompact ? AppSpacing.md : AppSpacing.lg;
+          return Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(padding),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppColors.primary.withOpacity(0.15),
+                  AppColors.primary.withOpacity(0.05),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: AppColors.primary.withOpacity(0.3),
+                width: 1.5,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Thành Tích Hôm Nay',
+                  style: AppTypography.textTheme.titleLarge?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                Wrap(
+                  spacing: AppSpacing.lg,
+                  runSpacing: AppSpacing.md,
+                  children: [
+                    _buildStatItem(
+                      context,
+                      Icons.star_rounded,
+                      AppColors.xpGold,
+                      '${stats['xpEarned'] ?? 0}',
+                      'XP',
+                      isCompact,
+                    ),
+                    _buildStatItem(
+                      context,
+                      Icons.local_fire_department_rounded,
+                      AppColors.streakOrange,
+                      '$streak',
+                      'Ngày',
+                      isCompact,
+                    ),
+                    _buildStatItem(
+                      context,
+                      Icons.favorite_rounded,
+                      AppColors.error,
+                      '${stats['hearts'] ?? 5}',
+                      'Tim',
+                      isCompact,
+                    ),
+                    _buildStatItem(
+                      context,
+                      Icons.check_circle_rounded,
+                      AppColors.success,
+                      '${stats['questionsAnswered'] ?? 0}',
+                      'Câu',
+                      isCompact,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -262,84 +279,97 @@ class PracticeScreen extends ConsumerWidget {
   }
 
   Widget _buildQuickReviewButton(BuildContext context, WidgetRef ref) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () {
-          // Start quick review with mock questions
-          ref.read(quizSessionProvider.notifier).startMixedQuiz();
-          context.push('/practice/session');
-        },
-        borderRadius: BorderRadius.circular(16),
-        child: Container(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                AppColors.success,
-                AppColors.success.withOpacity(0.7),
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: const Duration(milliseconds: 700),
+      curve: Curves.easeOutCubic,
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(0, 20 * (1 - value)),
+          child: Opacity(
+            opacity: value,
+            child: child,
+          ),
+        );
+      },
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            ref.read(quizSessionProvider.notifier).startMixedQuiz();
+            context.push('/practice/session');
+          },
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppColors.success,
+                  AppColors.success.withOpacity(0.7),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.success.withOpacity(0.3),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
               ],
             ),
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.success.withOpacity(0.3),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final isCompact = constraints.maxWidth < 360;
-              return Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(12),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final isCompact = constraints.maxWidth < 360;
+                return Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(
+                        Icons.play_arrow,
+                        color: Colors.white,
+                        size: isCompact ? 26 : 32,
+                      ),
                     ),
-                    child: Icon(
-                      Icons.play_arrow,
+                    const SizedBox(width: AppSpacing.md),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Ôn Tập Nhanh',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: isCompact ? 18 : 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Bắt đầu ôn tập ngay • 5-10 câu hỏi',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.9),
+                              fontSize: isCompact ? 12 : 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(
+                      Icons.arrow_forward_ios,
                       color: Colors.white,
-                      size: isCompact ? 26 : 32,
+                      size: 18,
                     ),
-                  ),
-                  const SizedBox(width: AppSpacing.md),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Ôn Tập Nhanh',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: isCompact ? 18 : 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Bắt đầu ôn tập ngay • 5-10 câu hỏi',
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.9),
-                            fontSize: isCompact ? 12 : 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Icon(
-                    Icons.arrow_forward_ios,
-                    color: Colors.white,
-                    size: 18,
-                  ),
-                ],
-              );
-            },
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),
@@ -353,12 +383,12 @@ class PracticeScreen extends ConsumerWidget {
         Icon(icon, color: AppColors.primary, size: 24),
         const SizedBox(width: AppSpacing.sm),
         Expanded(
-          child: Text(
+          child: GradientText(
             title,
             style: AppTypography.textTheme.titleLarge?.copyWith(
-                  color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
+            gradient: AppColors.primaryGradient,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -377,8 +407,16 @@ class PracticeScreen extends ConsumerWidget {
       loading: () => SliverToBoxAdapter(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-          child: const Center(
-            child: CircularProgressIndicator(color: AppColors.primary),
+          child: Center(
+            child: ShimmerWidget(
+              child: Container(
+                height: 100,
+                decoration: BoxDecoration(
+                  color: AppColors.surface.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+            ),
           ),
         ),
       ),
@@ -507,21 +545,26 @@ class PracticeScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(width: AppSpacing.sm),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: accentColor.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      '$itemCount mục',
-                      style: TextStyle(
-                        color: accentColor,
-                        fontSize: isCompact ? 11 : 12,
-                        fontWeight: FontWeight.bold,
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressBadge(
+                        progress: progressValue,
+                        icon: Icons.terrain,
+                        progressColor: accentColor,
+                        size: isCompact ? 44 : 50,
+                        strokeWidth: 3,
                       ),
-                    ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '$itemCount',
+                        style: TextStyle(
+                          color: accentColor,
+                          fontSize: isCompact ? 11 : 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

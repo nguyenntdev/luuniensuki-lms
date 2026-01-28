@@ -4,15 +4,18 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../shared/widgets/glass/animated_background.dart';
+import '../../../../shared/widgets/backgrounds/modern_gradient_background_animated.dart';
 import '../../../../shared/widgets/glass/glass_container.dart';
+import '../../../../shared/widgets/avatar/animated_avatar_ring.dart';
+import '../../../../shared/widgets/text/gradient_text.dart';
+import '../../../../shared/widgets/glass/pressable_glass_card.dart';
 import '../../../auth/domain/entities/user.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
-import '../../../auth/presentation/providers/auth_state.dart';
 import '../../../collection/presentation/providers/collection_provider.dart';
 import '../../../gems/presentation/widgets/gems_display.dart';
 import '../../../streak/presentation/widgets/streak_display.dart';
 import '../../../streak/presentation/widgets/buy_streak_freeze_button.dart';
+import '../widgets/prestige_badge.dart';
 import 'personal_info_screen.dart';
 
 /// Profile screen showing user info, stats, and settings
@@ -68,7 +71,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     final authState = ref.watch(authNotifierProvider);
     final user = authState.user;
 
-    return AnimatedGradientBackground(
+    return ModernGradientBackgroundAnimated(
       child: SafeArea(
         child: user == null
             ? _buildNotLoggedIn(context)
@@ -246,52 +249,25 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Hero Avatar with glow effect
+              // Animated Avatar with rotating gradient ring
               Hero(
                 tag: 'user_avatar_${user.id}',
-                child: Container(
-                  width: 120,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: AppColors.primaryGradient,
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.4),
-                      width: 4,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.primary.withOpacity(0.4),
-                        blurRadius: 30,
-                        spreadRadius: 5,
-                      ),
-                      BoxShadow(
-                        color: AppColors.primaryDark.withOpacity(0.3),
-                        blurRadius: 15,
-                        spreadRadius: 2,
-                      ),
-                    ],
-                  ),
-                  child: user.avatarUrl != null && user.avatarUrl!.isNotEmpty
-                      ? ClipOval(
-                          child: Image.network(
-                            user.avatarUrl!,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) =>
-                                _buildAvatarPlaceholder(user),
-                          ),
-                        )
-                      : _buildAvatarPlaceholder(user),
+                child: AnimatedAvatarRing(
+                  avatarUrl: user.avatarUrl,
+                  displayName: user.displayName,
+                  level: _calculateLevel(user.totalXp),
+                  size: 120,
+                  ringColor: AppColors.primary,
                 ),
               ),
 
-              AppSpacing.verticalSpaceLG,
+              AppSpacing.verticalSpaceMD,
 
-              // Display Name with shadow
-              Text(
+              // Display Name with gradient effect
+              GradientText(
                 user.displayName,
+                gradient: AppColors.primaryGradient,
                 style: const TextStyle(
-                  color: Colors.white,
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                   shadows: [
@@ -328,6 +304,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                     ),
                   ),
                 ],
+              ),
+
+              AppSpacing.verticalSpaceMD,
+
+              // Prestige Badge
+              PrestigeBadge(
+                totalXp: user.totalXp,
+                showProgress: true,
+                size: 100,
               ),
 
               AppSpacing.verticalSpaceMD,
@@ -416,6 +401,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     );
   }
 
+  /// Calculate user level from total XP (roughly 1 level per 1000 XP)
+  int _calculateLevel(int totalXp) {
+    return (totalXp / 1000).floor() + 1;
+  }
+
   Widget _buildXpCard(User user) {
     final totalXp = user.totalXp;
     final xpToNext = user.xpToNextRank;
@@ -424,205 +414,227 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     final xpProgress = xpToNext > 0 ? (totalXp % xpToNext) : totalXp.toDouble();
     final progress = xpToNext > 0 ? xpProgress / xpToNext : 1.0;
 
-    return GlassContainer(
-      padding: const EdgeInsets.all(AppSpacing.lg),
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          AppColors.glassWhite,
-          AppColors.primary.withOpacity(0.05),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(AppSpacing.sm),
-                        decoration: BoxDecoration(
-                          gradient: AppColors.primaryGradient,
-                          borderRadius:
-                              BorderRadius.circular(AppSpacing.radiusSM),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.primary.withOpacity(0.3),
-                              blurRadius: 8,
-                              spreadRadius: 1,
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: const Duration(milliseconds: 1500),
+      curve: Curves.easeInOut,
+      builder: (context, value, child) {
+        // Create pulsing effect by oscillating between 0.3 and 0.6
+        final pulseValue = 0.3 + (0.3 * ((1 + value) / 2));
+
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AppSpacing.radiusLG),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.xpGold.withOpacity(pulseValue),
+                blurRadius: 20 + (10 * value),
+                spreadRadius: 2,
+              ),
+            ],
+          ),
+          child: child,
+        );
+      },
+      child: GlassContainer(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.glassWhite,
+            AppColors.primary.withOpacity(0.05),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(AppSpacing.sm),
+                          decoration: BoxDecoration(
+                            gradient: AppColors.primaryGradient,
+                            borderRadius:
+                                BorderRadius.circular(AppSpacing.radiusSM),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.primary.withOpacity(0.3),
+                                blurRadius: 8,
+                                spreadRadius: 1,
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            Icons.star,
+                            color: AppColors.onPrimary,
+                            size: 20,
+                          ),
+                        ),
+                        AppSpacing.horizontalSpaceSM,
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Kinh nghiệm',
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.7),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Text(
+                              '$totalXp XP',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ],
                         ),
-                        child: Icon(
-                          Icons.star,
-                          color: AppColors.onPrimary,
-                          size: 20,
+                      ],
+                    ),
+                  ],
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.md,
+                        vertical: AppSpacing.xs,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withOpacity(0.2),
+                        borderRadius:
+                            BorderRadius.circular(AppSpacing.radiusMD),
+                        border: Border.all(
+                          color: AppColors.primary.withOpacity(0.4),
                         ),
                       ),
-                      AppSpacing.horizontalSpaceSM,
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Text(
+                        currentRank,
+                        style: const TextStyle(
+                          color: AppColors.primary,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    if (nextRank != null) ...[ AppSpacing.verticalSpaceXS,
+                      Row(
                         children: [
+                          Icon(
+                            Icons.arrow_forward,
+                            size: 12,
+                            color: Colors.white.withOpacity(0.4),
+                          ),
+                          const SizedBox(width: 4),
                           Text(
-                            'Kinh nghiệm',
+                            nextRank,
                             style: TextStyle(
-                              color: Colors.white.withOpacity(0.7),
+                              color: Colors.white.withOpacity(0.5),
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          Text(
-                            '$totalXp XP',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ],
                       ),
                     ],
-                  ),
-                ],
-              ),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.md,
-                      vertical: AppSpacing.xs,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.2),
-                      borderRadius:
-                          BorderRadius.circular(AppSpacing.radiusMD),
-                      border: Border.all(
-                        color: AppColors.primary.withOpacity(0.4),
-                      ),
-                    ),
-                    child: Text(
-                      currentRank,
-                      style: const TextStyle(
-                        color: AppColors.primary,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  if (nextRank != null) ...[
-                    AppSpacing.verticalSpaceXS,
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.arrow_forward,
-                          size: 12,
-                          color: Colors.white.withOpacity(0.4),
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          nextRank,
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.5),
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
                   ],
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
 
-          AppSpacing.verticalSpaceLG,
+            AppSpacing.verticalSpaceLG,
 
-          // XP Progress bar with enhanced styling
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    nextRank != null ? 'Còn $xpToNext XP để lên cấp' : 'Cấp tối đa',
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.7),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.sm,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.2),
-                      borderRadius:
-                          BorderRadius.circular(AppSpacing.radiusSM),
-                    ),
-                    child: Text(
-                      '${(progress * 100).toInt()}%',
+            // XP Progress bar with enhanced styling
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      nextRank != null ? 'Còn $xpToNext XP để lên cấp' : 'Cấp tối đa',
                       style: TextStyle(
-                        color: AppColors.primary,
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
+                        color: Colors.white.withOpacity(0.7),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                  ),
-                ],
-              ),
-              AppSpacing.verticalSpaceSM,
-              Stack(
-                children: [
-                  // Background
-                  Container(
-                    height: 10,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.1),
-                      borderRadius:
-                          BorderRadius.circular(AppSpacing.radiusSM),
-                      border: Border.all(
-                        color: Colors.white.withOpacity(0.1),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.sm,
+                        vertical: 2,
                       ),
-                    ),
-                  ),
-                  // Progress with gradient
-                  FractionallySizedBox(
-                    alignment: Alignment.centerLeft,
-                    widthFactor: progress.clamp(0.0, 1.0),
-                    child: Container(
-                      height: 10,
                       decoration: BoxDecoration(
-                        gradient: AppColors.xpGradient,
+                        color: AppColors.primary.withOpacity(0.2),
                         borderRadius:
                             BorderRadius.circular(AppSpacing.radiusSM),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.xpGold.withOpacity(0.5),
-                            blurRadius: 8,
-                            spreadRadius: 1,
-                          ),
-                        ],
+                      ),
+                      child: Text(
+                        '${(progress * 100).toInt()}%',
+                        style: TextStyle(
+                          color: AppColors.primary,
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
+                  ],
+                ),
+                AppSpacing.verticalSpaceSM,
+                Stack(
+                  children: [
+                    // Background
+                    Container(
+                      height: 10,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.1),
+                        borderRadius:
+                            BorderRadius.circular(AppSpacing.radiusSM),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.1),
+                        ),
+                      ),
+                    ),
+                    // Progress with gradient
+                    FractionallySizedBox(
+                      alignment: Alignment.centerLeft,
+                      widthFactor: progress.clamp(0.0, 1.0),
+                      child: Container(
+                        height: 10,
+                        decoration: BoxDecoration(
+                          gradient: AppColors.xpGradient,
+                          borderRadius:
+                              BorderRadius.circular(AppSpacing.radiusSM),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.xpGold.withOpacity(0.5),
+                              blurRadius: 8,
+                              spreadRadius: 1,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -644,6 +656,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
               AppColors.info.withOpacity(0.3),
               AppColors.info.withOpacity(0.1),
             ],
+            delay: 0,
           ),
         ),
         AppSpacing.horizontalSpaceSM,
@@ -657,6 +670,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
               AppColors.success.withOpacity(0.3),
               AppColors.success.withOpacity(0.1),
             ],
+            delay: 100,
           ),
         ),
         AppSpacing.horizontalSpaceSM,
@@ -670,6 +684,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
               AppColors.badgePurple.withOpacity(0.3),
               AppColors.badgePurple.withOpacity(0.1),
             ],
+            delay: 200,
           ),
         ),
       ],
@@ -682,50 +697,65 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     required String value,
     required Color color,
     required List<Color> gradientColors,
+    required int delay,
   }) {
-    return GlassContainer(
-      padding: const EdgeInsets.symmetric(
-        vertical: AppSpacing.lg,
-        horizontal: AppSpacing.sm,
-      ),
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: gradientColors,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(AppSpacing.sm),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
-            ),
-            child: Icon(icon, color: color, size: 24),
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: Duration(milliseconds: 600 + delay),
+      curve: Curves.easeOutCubic,
+      builder: (context, animationValue, child) {
+        return Transform.translate(
+          offset: Offset(0, 20 * (1 - animationValue)),
+          child: Opacity(
+            opacity: animationValue,
+            child: child,
           ),
-          AppSpacing.verticalSpaceSM,
-          Text(
-            value,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
+        );
+      },
+      child: GlassContainer(
+        padding: const EdgeInsets.symmetric(
+          vertical: AppSpacing.lg,
+          horizontal: AppSpacing.sm,
+        ),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: gradientColors,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(AppSpacing.sm),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
+              ),
+              child: Icon(icon, color: color, size: 24),
             ),
-          ),
-          AppSpacing.verticalSpaceXS,
-          Text(
-            label,
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.7),
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
+            AppSpacing.verticalSpaceSM,
+            Text(
+              value,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
+            AppSpacing.verticalSpaceXS,
+            Text(
+              label,
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.7),
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -770,6 +800,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
             spacing: AppSpacing.sm,
             runSpacing: AppSpacing.sm,
             children: [
+              _buildQuickAction(
+                context,
+                icon: Icons.flag,
+                label: 'Nhiệm vụ',
+                color: AppColors.xpGold,
+                onTap: () => context.push('/daily-missions'),
+              ),
               _buildQuickAction(
                 context,
                 icon: Icons.emoji_events,
@@ -1113,9 +1150,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     required Color color,
     required VoidCallback onTap,
   }) {
-    return GlassCard(
+    return PressableGlassCard(
       padding: const EdgeInsets.all(AppSpacing.md),
       onTap: onTap,
+      borderRadius: BorderRadius.circular(AppSpacing.radiusLG),
       child: Row(
         children: [
           // Icon with gradient background

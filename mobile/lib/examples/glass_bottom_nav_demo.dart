@@ -39,19 +39,16 @@ class _GlassBottomNavDemoState extends State<GlassBottomNavDemo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: GlassTheme.backgroundDark,
+      backgroundColor: const Color(0xFF0A0E14),
       body: Stack(
         children: [
           // Background gradient
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  GlassTheme.backgroundDark,
-                  GlassTheme.backgroundDark.withBlue(40),
-                ],
+                colors: GlassTheme.gradientBackground,
               ),
             ),
           ),
