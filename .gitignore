@@ -11,6 +11,7 @@ certbot/
 frontend/.next/
 frontend/node_modules/
 node_modules/
+.venv311/
 
 # macOS
 .DS_Store
