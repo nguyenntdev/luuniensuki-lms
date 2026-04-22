@@ -1,0 +1,45 @@
+from __future__ import annotations
+
+from datetime import datetime, timedelta, timezone
+from typing import Any, Optional
+
+import bcrypt
+from jose import jwt
+
+
+MAX_BCRYPT_PASSWORD_BYTES = 72
+
+
+def hash_password(password: str) -> str:
+    password_bytes = password.encode("utf-8")
+    if len(password_bytes) > MAX_BCRYPT_PASSWORD_BYTES:
+        raise ValueError("Password too long")
+    salt = bcrypt.gensalt(rounds=12)
+    return bcrypt.hashpw(password_bytes, salt).decode("utf-8")
+
+
+def verify_password(plain_password: str, password_hash: str) -> bool:
+    password_bytes = plain_password.encode("utf-8")
+    if len(password_bytes) > MAX_BCRYPT_PASSWORD_BYTES:
+        return False
+    return bcrypt.checkpw(password_bytes, password_hash.encode("utf-8"))
+
+
+def create_jwt_token(
+    *,
+    subject: str,
+    secret_key: str,
+    algorithm: str,
+    expires_delta: timedelta,
+    extra_claims: Optional[dict[str, Any]] = None,
+) -> str:
+    now = datetime.now(timezone.utc)
+    expire_at = now + expires_delta
+    payload: dict[str, Any] = {
+        "sub": subject,
+        "iat": int(now.timestamp()),
+        "exp": int(expire_at.timestamp()),
+    }
+    if extra_claims:
+        payload.update(extra_claims)
+    return jwt.encode(payload, secret_key, algorithm=algorithm)

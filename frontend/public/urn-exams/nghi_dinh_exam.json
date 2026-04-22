@@ -1,0 +1,182 @@
+[
+  {
+    "question_text": "Chữ 'Nghị' trong tên gọi của Nghị Đỉnh mang ý nghĩa biểu tượng gì?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Sự quả quyết, kiên định, cứng cỏi",
+    "options": [
+      "Sự bàn bạc, thảo luận kỹ lưỡng",
+      "Sự quả quyết, kiên định, cứng cỏi",
+      "Sự nghi ngờ, đa nghi",
+      "Sự vui vẻ, hòa thuận"
+    ],
+    "explanation": "Chữ 'Nghị' (毅) trong Nghị Đỉnh mang ý nghĩa là sự cương nghị, quả quyết và ý chí sắt đá, tượng trưng cho đức tính cần có của một bậc quân vương để giữ gìn cơ nghiệp."
+  },
+  {
+    "question_text": "Hình ảnh thiên văn nào được khắc trên Nghị Đỉnh tượng trưng cho sự sống và tuổi thọ?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Sao Nam Đẩu",
+    "options": [
+      "Sao Bắc Đẩu",
+      "Sao Nam Đẩu",
+      "Sao Khuê",
+      "Mặt Trăng"
+    ],
+    "explanation": "Trên Nghị Đỉnh có khắc hình tượng sao Nam Đẩu (Nam Đẩu tinh quân). Trong văn hóa dân gian, Nam Tào (Nam Đẩu) giữ sổ Sinh (sự sống), đối lập với Bắc Đẩu giữ sổ Tử."
+  },
+  {
+    "question_text": "Cửa ải lịch sử nào thuộc hệ thống Lũy Thầy (Quảng Bình) được khắc họa trên Nghị Đỉnh?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Quảng Bình Quan",
+    "options": [
+      "Hải Vân Quan",
+      "Quảng Bình Quan",
+      "Trấn Bình Đài",
+      "Ngọ Môn"
+    ],
+    "explanation": "Quảng Bình Quan là một công trình phòng thủ trọng yếu trên đường thiên lý Bắc - Nam, thuộc hệ thống Lũy Thầy do Đào Duy Từ xây dựng, được khắc trên Nghị Đỉnh."
+  },
+  {
+    "question_text": "Con sông nào gắn liền với ba chiến công lừng lẫy chống ngoại xâm (Nam Hán, Tống, Nguyên Mông) xuất hiện trên Nghị Đỉnh?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Sông Bạch Đằng",
+    "options": [
+      "Sông Như Nguyệt",
+      "Sông Bạch Đằng",
+      "Sông Gianh",
+      "Sông Thạch Hãn"
+    ],
+    "explanation": "Bạch Đằng Giang (Sông Bạch Đằng) là dòng sông lịch sử nơi Ngô Quyền, Lê Hoàn và Trần Hưng Đạo đã đánh bại quân xâm lược phương Bắc. Hình ảnh sông được khắc trên Nghị Đỉnh để ghi nhớ chiến công giữ nước."
+  },
+  {
+    "question_text": "'Thuận An Hải Khẩu' được khắc trên Nghị Đỉnh có vai trò gì đối với Kinh thành Huế xưa?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Là cửa biển yết hầu, bảo vệ đường thủy vào Kinh thành",
+    "options": [
+      "Là nơi nghỉ mát của vua chúa",
+      "Là cửa biển yết hầu, bảo vệ đường thủy vào Kinh thành",
+      "Là cảng buôn bán sầm uất nhất Đàng Trong",
+      "Là nơi nuôi trồng thủy sản hoàng gia"
+    ],
+    "explanation": "Cửa Thuận An (nơi sông Hương đổ ra biển) được coi là 'yết hầu' (cổ họng) của Kinh thành Huế, có vị trí chiến lược sống còn về quân sự và giao thương."
+  },
+  {
+    "question_text": "Loài hoa nào khắc trên Nghị Đỉnh được coi là loài hoa đặc trưng của mùa xuân xứ Huế và miền Nam?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Hoa Mai (Hoàng Mai)",
+    "options": [
+      "Hoa Đào",
+      "Hoa Mai (Hoàng Mai)",
+      "Hoa Cúc",
+      "Hoa Lan"
+    ],
+    "explanation": "Hoa Mai (cụ thể là Mai vàng) là biểu tượng của mùa xuân phương Nam, tượng trưng cho sự phú quý và khí tiết người quân tử."
+  },
+  {
+    "question_text": "Họa tiết 'Hồ Da Tử' trên Nghị Đỉnh mô tả loài sinh vật nào?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Con Đuông dừa",
+    "options": [
+      "Con Hồ ly",
+      "Con Cá sấu",
+      "Con Đuông dừa",
+      "Con Tắc kè"
+    ],
+    "explanation": "Hồ Da Tử là tên gọi của con đuông dừa (ấu trùng kiến dương), một loài sinh vật sống trong thân cây dừa, vừa là loài gây hại cây trồng nhưng cũng là món đặc sản ẩm thực."
+  },
+  {
+    "question_text": "Loài cá nào quen thuộc với làng quê Việt Nam được khắc trên Nghị Đỉnh với tên gọi 'Lục Hoa Ngư'?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Cá lóc (Cá quả)",
+    "options": [
+      "Cá chép",
+      "Cá trê",
+      "Cá rô đồng",
+      "Cá lóc (Cá quả)"
+    ],
+    "explanation": "Lục Hoa Ngư chính là cá lóc (cá quả, cá chuối), loài cá nước ngọt phổ biến, có sức sống mãnh liệt và giá trị dinh dưỡng cao."
+  },
+  {
+    "question_text": "Loài vật nào xuất hiện trên Nghị Đỉnh tượng trưng cho sức mạnh của lực lượng 'Tượng binh' nhà Nguyễn?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Con Voi",
+    "options": [
+      "Con Hổ",
+      "Con Voi",
+      "Con Trâu",
+      "Con Ngựa"
+    ],
+    "explanation": "Hình ảnh con Voi (Tượng) trên Nghị Đỉnh đại diện cho sức mạnh tự nhiên và lực lượng tượng binh hùng hậu của triều đình."
+  },
+  {
+    "question_text": "'Hải Đạo' được khắc trên Nghị Đỉnh là phương tiện gì?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Một loại thuyền chiến nhanh nhẹn",
+    "options": [
+      "Một hòn đảo ngoài khơi",
+      "Một loại hải đăng",
+      "Một loại thuyền chiến nhanh nhẹn",
+      "Một loại bản đồ biển"
+    ],
+    "explanation": "Hải Đạo là tên một loại thuyền chiến nhỏ, thon dài, có khả năng di chuyển rất nhanh và linh hoạt, thường dùng để tuần tra và truy bắt cướp biển."
+  },
+  {
+    "question_text": "Cây Quế trên Nghị Đỉnh thường gắn liền với địa danh nổi tiếng nào về chất lượng quế?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Thanh Hóa",
+    "options": [
+      "Thanh Hóa",
+      "Nghệ An",
+      "Quảng Nam",
+      "Yên Bái"
+    ],
+    "explanation": "Quế Thanh (Thanh Hóa) xưa kia được mệnh danh là 'Ngọc quế', 'Châu thường', có giá trị dược liệu cao nhất và thường dùng làm cống phẩm."
+  },
+  {
+    "question_text": "Loài rau nào có hạt dùng làm thuốc và gia vị (mù tạt) được khắc trên Nghị Đỉnh với tên gọi 'Giới'?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Rau Cải",
+    "options": [
+      "Rau Muống",
+      "Rau Cải",
+      "Rau Dền",
+      "Rau Mồng tơi"
+    ],
+    "explanation": "Giới là tên Hán Việt của cây rau cải. Hạt cải (Giới tử) có vị cay nồng, dùng làm thuốc trị ho hoặc làm gia vị."
+  },
+  {
+    "question_text": "Hình ảnh đôi chim nào trên Nghị Đỉnh biểu tượng cho tình yêu chung thủy?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Uyên Ương",
+    "options": [
+      "Phượng Hoàng",
+      "Hạc",
+      "Uyên Ương",
+      "Khổng Tước"
+    ],
+    "explanation": "Uyên Ương (chim trống và chim mái) luôn đi có đôi, là biểu tượng kinh điển của hạnh phúc lứa đôi và lòng chung thủy trong văn hóa phương Đông."
+  },
+  {
+    "question_text": "Vũ khí nào thuộc nhóm 'Thập bát ban võ nghệ' dùng để đâm, có cán dài, được khắc trên Nghị Đỉnh?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Trường Thương",
+    "options": [
+      "Đại Đao",
+      "Trường Thương",
+      "Cung tên",
+      "Kiếm"
+    ],
+    "explanation": "Trường Thương (Giáo dài) là vũ khí cận chiến cơ bản và quan trọng của bộ binh xưa, có lợi thế về tầm đánh xa."
+  },
+  {
+    "question_text": "Loài hoa 'Hải Đường' trên Nghị Đỉnh thường được người xưa trưng bày vào dịp nào với ý nghĩa cầu phú quý?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Tết Nguyên Đán",
+    "options": [
+      "Lễ Vu Lan",
+      "Tết Trung Thu",
+      "Tết Nguyên Đán",
+      "Lễ Thất Tịch"
+    ],
+    "explanation": "Hoa Hải Đường nở vào mùa xuân, có màu đỏ thắm rực rỡ, được người Việt ưa chuộng chưng vào dịp Tết để cầu mong phú quý, giàu sang ('Phú quý chơi Hải Đường')."
+  }
+]

@@ -1,0 +1,770 @@
+[
+  {
+    "id": "urn_tuyen_dinh_01",
+    "name_vi": "Tuyên Đỉnh",
+    "name_en": "The Urn of Proclamation",
+    "urn_location": "Tuyên Đỉnh",
+    "category": "kien_truc",
+    "rarity": "legendary",
+    "description_short": "Tuyên Đỉnh - sự sáng tỏ, tuyên cáo ân đức vua ban.",
+    "description_educational": "Tuyên Đỉnh là chiếc đỉnh thứ bảy trong Cửu Đỉnh, nằm ở phía bên phải (đối diện với Dụ Đỉnh). Chữ 'Tuyên' (宣) có nghĩa là tuyên bố, truyền đạt rộng rãi, hoặc thông thoáng, sáng tỏ. Đây là thụy hiệu của vua Khải Định (1885-1925) - Hoằng Tông Tuyên Hoàng đế. Vua Khải Định là vị vua thứ 12 của triều Nguyễn, nổi tiếng với lăng tẩm có kiến trúc độc đáo kết hợp Á - Âu. Tuyên Đỉnh nặng khoảng 2.000kg, thể hiện mong muốn ân đức và mệnh lệnh của triều đình được truyền đi khắp bốn phương.",
+    "historical_context": "Tuyên Đỉnh đúc năm 1836. Việc ứng với thụy hiệu vua Khải Định (lên ngôi năm 1916) cũng là một sự trùng hợp lịch sử thú vị của Cửu Đỉnh.",
+    "symbolism": "Chữ 'Tuyên' tượng trưng cho sự minh bạch, cởi mở và quyền uy trong việc ban hành chiếu chỉ. Đỉnh cũng đại diện cho sự kết nối giữa vua và dân.",
+    "fun_fact": "Vua Khải Định là vị vua đầu tiên của triều Nguyễn đi máy bay và sang Pháp. Lăng Khải Định (Ứng Lăng) được coi là đỉnh cao của nghệ thuật khảm sành sứ Huế.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Tuyên Đỉnh ứng với thụy hiệu của vị vua nào?",
+        "options": [
+          "A. Vua Duy Tân",
+          "B. Vua Khải Định",
+          "C. Vua Bảo Đại",
+          "D. Vua Thành Thái"
+        ],
+        "correct_answer": "B. Vua Khải Định",
+        "difficulty": 1,
+        "explanation": "Vua Khải Định có thụy hiệu là Tuyên Hoàng đế."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Chữ 'Tuyên' trong tên đỉnh có nghĩa là gì?",
+        "options": [
+          "A. Giấu kín",
+          "B. Tuyên bố, làm sáng tỏ",
+          "C. Tuyên chiến",
+          "D. Tuyển chọn"
+        ],
+        "correct_answer": "B. Tuyên bố, làm sáng tỏ",
+        "difficulty": 1,
+        "explanation": "Tuyên (trong Tuyên ngôn, Tuyên truyền) nghĩa là nói rõ cho mọi người biết."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_tuyen_dinh_01_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/TUYEN%20DINH.jpg"
+  },
+  {
+    "id": "urn_tuyen_dinh_02",
+    "name_vi": "Tần Cát Liễu",
+    "name_en": "Myna Bird",
+    "urn_location": "Tuyên Đỉnh",
+    "category": "dong_vat",
+    "rarity": "common",
+    "description_short": "Chim Yểng - loài chim thông minh biết nói tiếng người.",
+    "description_educational": "Tần Cát Liễu (Chim Yểng/Nhồng - Gracula religiosa) là loài chim thuộc họ Sáo, có bộ lông màu đen bóng, mỏ vàng cam và đặc biệt là hai mấu thịt màu vàng sau gáy (tích). Yểng rất thông minh, có khả năng bắt chước tiếng người và các âm thanh khác rất giỏi. Chúng thường sống ở bìa rừng, ăn trái cây và côn trùng. Vì khả năng 'nói' hóm hỉnh, Yểng được nuôi làm cảnh rất phổ biến trong cung đình và dân gian. Hình ảnh chim Yểng trên đỉnh thể hiện sự vui tươi và trí tuệ của loài vật.",
+    "historical_context": "Sách Đại Nam Nhất Thống Chí có ghi chép về loài chim này. Thời xưa, những con chim biết nói thường được coi là điềm lành hoặc vật giải trí cho vua chúa.",
+    "symbolism": "Chim Yểng tượng trưng cho sự thông minh, khả năng giao tiếp và sự hòa hợp giữa con người với thiên nhiên.",
+    "fun_fact": "Chim Yểng có thể bắt chước tiếng người rõ hơn cả vẹt. Tên 'Tần Cát Liễu' (hoặc Tần Kết) là tên Hán Việt mỹ miều của nó.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Tần Cát Liễu là tên gọi khác của loài chim nào?",
+        "options": [
+          "A. Chim Sáo",
+          "B. Chim Yểng (Nhồng)",
+          "C. Chim Vẹt",
+          "D. Chim Khướu"
+        ],
+        "correct_answer": "B. Chim Yểng (Nhồng)",
+        "difficulty": 1,
+        "explanation": "Tần Cát Liễu là tên văn vẻ của chim Yểng."
+      },
+      {
+        "type": "true_false",
+        "question": "Chim Yểng không biết bay.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Yểng là loài chim rừng bay rất khỏe."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_tuyen_dinh_02_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/TẦN%20CÁT%20LIỄU.jpg"
+  },
+  {
+    "id": "urn_tuyen_dinh_03",
+    "name_vi": "Yến Oa",
+    "name_en": "Edible Bird's Nest",
+    "urn_location": "Tuyên Đỉnh",
+    "category": "dong_vat",
+    "rarity": "rare",
+    "description_short": "Tổ Yến - 'Vàng trắng' của biển khơi, món quà sức khỏe.",
+    "description_educational": "Yến Oa (Tổ chim yến - Collocalia fuciphaga) là sản vật quý giá được làm từ nước dãi của loài chim yến hàng (yến đảo). Chim yến làm tổ trên các vách đá cheo leo ngoài hải đảo (như Khánh Hòa, Hội An). Tổ yến (Yến sào) là một trong 'Bát trân' (8 món ăn quý) của cung đình xưa, có tác dụng bồi bổ sức khỏe, tăng cường hệ miễn dịch và làm đẹp da. Việc khai thác tổ yến rất nguy hiểm nhưng đem lại giá trị kinh tế cực lớn. Khắc Yến Oa lên đỉnh là ghi nhận nguồn tài nguyên biển đảo vô giá.",
+    "historical_context": "Ngành nghề khai thác yến sào ở Đàng Trong đã có từ lâu đời. Các chúa Nguyễn nắm độc quyền buôn bán yến sào với thương nhân nước ngoài, thu về nguồn lợi lớn cho ngân khố.",
+    "symbolism": "Tổ yến tượng trưng cho sự chắt chiu (chim yến nhả từng sợi nước dãi), sự hi sinh của cha mẹ và sự giàu có, sang trọng.",
+    "fun_fact": "Chim yến có đôi chân rất yếu, không thể đậu trên mặt đất mà phải treo mình trên vách đá. Chúng kiếm ăn (bắt côn trùng) ngay khi đang bay.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Yến sào (Tổ yến) được làm từ chất liệu gì?",
+        "options": [
+          "A. Cỏ khô",
+          "B. Lông chim",
+          "C. Nước dãi của chim yến",
+          "D. Bùn đất"
+        ],
+        "correct_answer": "C. Nước dãi của chim yến",
+        "difficulty": 1,
+        "explanation": "Chim yến tiết nước bọt (dãi) kết dính lại thành tổ."
+      },
+      {
+        "type": "true_false",
+        "question": "Tổ yến là món ăn bình dân, ai cũng ăn hàng ngày.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Tổ yến là thực phẩm cao cấp, giá thành rất đắt đỏ."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_tuyen_dinh_03_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/YẾN%20OA.jpg"
+  },
+  {
+    "id": "urn_tuyen_dinh_04",
+    "name_vi": "Long Nhãn",
+    "name_en": "Longan",
+    "urn_location": "Tuyên Đỉnh",
+    "category": "thao_moc",
+    "rarity": "common",
+    "description_short": "Quả Nhãn - 'Mắt rồng' ngọt lịm, đặc sản tiến vua.",
+    "description_educational": "Long Nhãn (Cây nhãn/Quả nhãn - Dimocarpus longan) là loài cây ăn quả nổi tiếng, đặc biệt là Nhãn lồng Hưng Yên. Quả nhãn có vỏ vàng nâu, cùi trắng trong mọng nước, hạt đen nhánh, trông giống như mắt con rồng (Long nhãn). Nhãn không chỉ là trái cây ngon mà cùi nhãn sấy khô (Long nhãn nhục) còn là vị thuốc bổ huyết, an thần rất tốt. Hình ảnh chùm nhãn sai trĩu trên Tuyên Đỉnh ca ngợi sự trù phú của vườn tược và hương vị ngọt ngào của sản vật quê hương.",
+    "historical_context": "Nhãn lồng Hưng Yên xưa là vật phẩm tiến vua ('Nhãn tiến'). Lê Quý Đôn từng ca ngợi nhãn Hưng Yên là ngon nhất nước. Cây nhãn tổ ở chùa Hiến (Hưng Yên) đã có hàng trăm năm tuổi.",
+    "symbolism": "Long nhãn tượng trưng cho sự tinh anh (mắt rồng), sự ngọt ngào và phúc lộc viên mãn (chùm quả sum suê).",
+    "fun_fact": "Tên 'Nhãn lồng' xuất phát từ việc người dân xưa phải đan lồng tre chụp vào chùm nhãn để bảo vệ khỏi chim dơi ăn, cũng là để giữ mã quả cho đẹp.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Vùng đất nào nổi tiếng nhất với đặc sản Nhãn lồng?",
+        "options": [
+          "A. Hà Nội",
+          "B. Hưng Yên",
+          "C. Bắc Giang",
+          "D. Hải Dương"
+        ],
+        "correct_answer": "B. Hưng Yên",
+        "difficulty": 1,
+        "explanation": "'Thứ nhất kinh kỳ, thứ nhì Phố Hiến'. Hưng Yên nổi tiếng với nhãn lồng tiến vua."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Trong đông y, Long nhãn (cùi nhãn sấy khô) có tác dụng gì?",
+        "options": [
+          "A. Chữa đau bụng",
+          "B. An thần, bổ máu",
+          "C. Chữa gãy xương",
+          "D. Chữa bệnh ngoài da"
+        ],
+        "correct_answer": "B. An thần, bổ máu",
+        "difficulty": 2,
+        "explanation": "Long nhãn là vị thuốc bổ tâm tỳ, giúp ngủ ngon."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_tuyen_dinh_04_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/LONG%20NHÃN.jpg"
+  },
+  {
+    "id": "urn_tuyen_dinh_05",
+    "name_vi": "Trân Châu Hoa",
+    "name_en": "Chloranthus",
+    "urn_location": "Tuyên Đỉnh",
+    "category": "thao_moc",
+    "rarity": "common",
+    "description_short": "Hoa Sói - những hạt ngọc thơm ngát dùng để ướp trà.",
+    "description_educational": "Trân Châu Hoa (Hoa Sói - Chloranthus spicatus) là loài cây bụi nhỏ, lá xanh bóng, hoa nhỏ màu trắng ngà mọc thành bông dài giống như chuỗi hạt ngọc trai (trân châu). Hoa sói có mùi thơm dịu, ngọt ngào, thường được trồng làm cảnh hoặc dùng để ướp trà (trà hoa sói) giống như hoa nhài, hoa sen. Tuy không rực rỡ nhưng hoa sói lại có vẻ đẹp thanh tao, quý phái. Khắc hoa sói lên đỉnh là tôn vinh nét văn hóa thưởng trà tinh tế của người Việt.",
+    "historical_context": "Vua chúa triều Nguyễn rất cầu kỳ trong việc thưởng trà. Các loại hoa ướp trà như sói, ngâu, nhài, sen đều được trồng trong Ngự uyển.",
+    "symbolism": "Hoa sói tượng trưng cho vẻ đẹp kín đáo, không phô trương nhưng đầy giá trị (như ngọc). Hương thơm của nó tượng trưng cho đức hạnh lan tỏa.",
+    "fun_fact": "Gọi là 'Hoa Sói' nhưng nó không liên quan gì đến con sói. Tên Hán Việt 'Trân Châu' (Ngọc trai) miêu tả chính xác hình dáng của hoa.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Hoa Sói (Trân Châu Hoa) thường được dùng để làm gì?",
+        "options": [
+          "A. Nấu canh",
+          "B. Ướp trà",
+          "C. Nhuộm vải",
+          "D. Đuổi muỗi"
+        ],
+        "correct_answer": "B. Ướp trà",
+        "difficulty": 1,
+        "explanation": "Hương thơm dịu của hoa sói rất hợp để ướp trà xanh."
+      },
+      {
+        "type": "true_false",
+        "question": "Hoa Sói có bông to, màu đỏ rực rỡ.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Hoa sói nhỏ li ti, màu trắng ngà, mọc thành chuỗi."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_tuyen_dinh_05_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/TRÂN%20CHÂU%20HOA.jpg"
+  },
+  {
+    "id": "urn_tuyen_dinh_06",
+    "name_vi": "Địa Đậu",
+    "name_en": "Peanut",
+    "urn_location": "Tuyên Đỉnh",
+    "category": "nong_nghiep",
+    "rarity": "common",
+    "description_short": "Củ Lạc - hạt đậu trong lòng đất, bùi ngậy tình quê.",
+    "description_educational": "Địa Đậu (Cây lạc/Đậu phộng - Arachis hypogaea) là loài cây hoa màu quan trọng. Tên 'Địa Đậu' nghĩa là đậu mọc dưới đất, vì sau khi thụ phấn, hoa lạc tàn và cuống hoa dài ra đâm xuống đất để phát triển thành củ (quả). Hạt lạc giàu dầu và protein, là món ăn dân dã (lạc rang, lạc luộc, muối vừng) và nguyên liệu ép dầu ăn. Cây lạc dễ trồng, cải tạo đất bạc màu. Hình ảnh cây lạc trên Tuyên Đỉnh thể hiện sự quan tâm đến các loại cây công nghiệp ngắn ngày thiết thực.",
+    "historical_context": "Cây lạc có nguồn gốc Nam Mỹ, du nhập vào Việt Nam từ thế kỷ 17-18 và nhanh chóng trở thành cây trồng phổ biến nhờ phù hợp với đất cát pha ven biển, ven sông.",
+    "symbolism": "Địa đậu tượng trưng cho sự khiêm tốn (củ giấu trong đất), sự bất ngờ và thành quả lao động cần cù. Hạt lạc còn gọi là 'hạt trường sinh' vì giá trị dinh dưỡng của nó.",
+    "fun_fact": "Nhiều người nhầm củ lạc là rễ, nhưng thực chất nó là quả phát triển dưới mặt đất. Đây là đặc điểm sinh học rất độc đáo gọi là 'geocarpy'.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Tại sao gọi Lạc là 'Địa Đậu'?",
+        "options": [
+          "A. Vì hạt nó màu nâu như đất",
+          "B. Vì quả (củ) của nó nằm dưới lòng đất",
+          "C. Vì nó chỉ mọc ở địa phủ",
+          "D. Vì nó cứng như đá"
+        ],
+        "correct_answer": "B. Vì quả (củ) của nó nằm dưới lòng đất",
+        "difficulty": 1,
+        "explanation": "Địa là đất, Đậu là đậu. Quả lạc phát triển trong đất."
+      },
+      {
+        "type": "true_false",
+        "question": "Lạc (Đậu phộng) là cây thân gỗ lâu năm.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Lạc là cây thân thảo hàng năm."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_tuyen_dinh_06_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/ĐỊA%20ĐẬU.jpg"
+  },
+  {
+    "id": "urn_tuyen_dinh_07",
+    "name_vi": "Bá",
+    "name_en": "Cypress",
+    "urn_location": "Tuyên Đỉnh",
+    "category": "thao_moc",
+    "rarity": "common",
+    "description_short": "Cây Trắc Bách Diệp - dáng cây quân tử, lá thuốc cầm máu.",
+    "description_educational": "Bá (Trắc bách diệp/Trắc bá - Platycladus orientalis) là loài cây lá kim, dáng tháp hình nón, lá dẹt xếp sít nhau theo chiều thẳng đứng. Cây xanh tốt quanh năm, chịu được khắc nghiệt nên thường được trồng làm cảnh ở đình chùa, lăng tẩm để tạo vẻ trang nghiêm. Trong đông y, lá và hạt (bá tử nhân) của cây là vị thuốc cầm máu, an thần, chữa mất ngủ. Hình ảnh cây Bá trên đỉnh tượng trưng cho khí tiết ngay thẳng, kiên định của người quân tử ('Tùng Bá').",
+    "historical_context": "Câu nói 'Tuế hàn chi tùng bá' (Năm lạnh mới biết cây tùng cây bách) ý nói trong gian khó mới biết người trung nghĩa. Cây Bá là biểu tượng của sự trường tồn, vĩnh cửu.",
+    "symbolism": "Cây Bá tượng trưng cho sự trường thọ (sống lâu), sự tưởng nhớ (trồng ở mộ) và đức tính kiên trung, bất khuất.",
+    "fun_fact": "Lá cây Trắc bách diệp mọc đối chéo chữ thập nhưng do ép dẹt nên trông như mọc trên một mặt phẳng nghiêng (Trắc: nghiêng).",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Cây Bá (Trắc bách diệp) thường được trồng ở đâu?",
+        "options": [
+          "A. Giữa ruộng lúa",
+          "B. Nơi trang nghiêm như đình, chùa, lăng tẩm",
+          "C. Trong phòng ngủ",
+          "D. Dưới gầm cầu"
+        ],
+        "correct_answer": "B. Nơi trang nghiêm như đình, chùa, lăng tẩm",
+        "difficulty": 1,
+        "explanation": "Dáng cây nghiêm trang, xanh tốt quanh năm phù hợp với không gian tâm linh."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Trong y học cổ truyền, Trắc bách diệp có công dụng gì nổi bật?",
+        "options": [
+          "A. Cầm máu (chữa chảy máu cam, nôn ra máu)",
+          "B. Chữa đau răng",
+          "C. Làm trắng da",
+          "D. Tăng cân"
+        ],
+        "correct_answer": "A. Cầm máu (chữa chảy máu cam, nôn ra máu)",
+        "difficulty": 2,
+        "explanation": "Lá trắc bá sao đen là vị thuốc cầm máu rất hay."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_tuyen_dinh_07_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/BÁ.jpg"
+  },
+  {
+    "id": "urn_tuyen_dinh_08",
+    "name_vi": "Duệ Sơn",
+    "name_en": "Due Mountain",
+    "urn_location": "Tuyên Đỉnh",
+    "category": "dia_ly",
+    "rarity": "rare",
+    "description_short": "Núi Duệ - ngọn núi thiêng trấn giữ phía Tây Kinh thành.",
+    "description_educational": "Duệ Sơn (Núi Duệ/Núi Lễ) là ngọn núi thuộc thị xã Hương Trà, tỉnh Thừa Thiên Huế, nằm bên bờ sông Bạch Yến. Tuy không quá cao lớn nhưng núi Duệ có dáng vẻ thanh tú, được coi là một trong những 'chủ sơn' trong phong thủy của Kinh thành Huế. Trên núi có chùa cổ và nhiều di tích Chăm Pa. Việc khắc Duệ Sơn lên đỉnh thể hiện sự trân trọng các yếu tố địa lý phong thủy tạo nên vượng khí cho Kinh đô.",
+    "historical_context": "Vua Minh Mạng từng đi tuần thú qua đây và làm thơ ca ngợi cảnh đẹp. Núi Duệ cùng với sông Hương, núi Ngự tạo nên cảnh quan sơn thủy hữu tình của xứ Huế.",
+    "symbolism": "Núi Duệ tượng trưng cho sự thông tuệ (Duệ: sáng suốt, thông minh) và sự che chở tâm linh cho vùng đất đế đô.",
+    "fun_fact": "Tên 'Duệ' còn có nghĩa là nhọn, sắc sảo. Dáng núi có thể trông giống như ngòi bút (văn phong).",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Núi Duệ (Duệ Sơn) nằm ở tỉnh nào?",
+        "options": [
+          "A. Quảng Nam",
+          "B. Thừa Thiên Huế",
+          "C. Thanh Hóa",
+          "D. Ninh Bình"
+        ],
+        "correct_answer": "B. Thừa Thiên Huế",
+        "difficulty": 1,
+        "explanation": "Đây là ngọn núi danh thắng của đất Cố đô."
+      },
+      {
+        "type": "true_false",
+        "question": "Núi Duệ là ngọn núi cao nhất Việt Nam.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Núi Duệ là ngọn núi thấp, đồi gò ở vùng trung du Huế. Núi cao nhất là Fansipan."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_tuyen_dinh_08_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/DUỆ%20SƠN.jpg"
+  },
+  {
+    "id": "urn_tuyen_dinh_09",
+    "name_vi": "Nhĩ Hà",
+    "name_en": "Red River",
+    "urn_location": "Tuyên Đỉnh",
+    "category": "dia_ly",
+    "rarity": "epic",
+    "description_short": "Sông Hồng - dòng sông Mẹ, cái nôi của văn minh lúa nước.",
+    "description_educational": "Nhĩ Hà (Sông Nhĩ/Sông Hồng) là con sông lớn nhất miền Bắc Việt Nam, bắt nguồn từ Vân Nam (Trung Quốc) chảy vào Việt Nam và đổ ra biển Đông qua 9 cửa (nay ít hơn). Tên 'Nhĩ' (cái tai) có thể do hình dáng sông uốn lượn giống vành tai, hoặc là tên gọi cổ. Sông Hồng bồi đắp phù sa màu mỡ tạo nên đồng bằng Bắc Bộ trù phú. Dòng sông mang sắc đỏ của phù sa này gắn liền với lịch sử dựng nước và giữ nước ngàn năm của dân tộc (Thăng Long - Hà Nội nằm bên sông Hồng).",
+    "historical_context": "Sông Hồng xưa còn gọi là sông Cái (Sông Mẹ). Hệ thống đê sông Hồng là công trình thủy lợi vĩ đại của người Việt để trị thủy, phòng lụt.",
+    "symbolism": "Nhĩ Hà tượng trưng cho nguồn sống, sự sinh sôi (phù sa), văn hóa cội nguồn và sức mạnh vĩ đại của thiên nhiên.",
+    "fun_fact": "Nước sông Hồng đỏ ngầu quanh năm là do chứa lượng phù sa khổng lồ (khoảng 100 triệu tấn/năm), rất tốt cho cây trồng.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Nhĩ Hà là tên gọi khác của con sông nào?",
+        "options": [
+          "A. Sông Đà",
+          "B. Sông Hồng",
+          "C. Sông Thái Bình",
+          "D. Sông Mã"
+        ],
+        "correct_answer": "B. Sông Hồng",
+        "difficulty": 1,
+        "explanation": "Nhĩ Hà là tên chữ Hán của sông Hồng."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Đặc điểm nổi bật nhất của nước sông Hồng là gì?",
+        "options": [
+          "A. Trong vắt nhìn thấy đáy",
+          "B. Màu xanh biếc",
+          "C. Màu đỏ đục (do nhiều phù sa)",
+          "D. Màu đen"
+        ],
+        "correct_answer": "C. Màu đỏ đục (do nhiều phù sa)",
+        "difficulty": 1,
+        "explanation": "Phù sa lơ lửng tạo nên màu đỏ đặc trưng của dòng sông."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_tuyen_dinh_09_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/NHĨ%20HÀ.jpg"
+  },
+  {
+    "id": "urn_tuyen_dinh_10",
+    "name_vi": "Vân",
+    "name_en": "Cloud",
+    "urn_location": "Tuyên Đỉnh",
+    "category": "thien_van",
+    "rarity": "common",
+    "description_short": "Mây - vẻ đẹp biến ảo, điềm lành từ trời cao.",
+    "description_educational": "Vân (Mây) là hơi nước ngưng tụ trôi lơ lửng trên bầu trời. Trong nghệ thuật và tín ngưỡng Á Đông, mây (Vân) là họa tiết trang trí phổ biến (vân mây, long vân), tượng trưng cho cõi tiên, sự thanh cao và điềm lành (Khánh vân - mây ngũ sắc). Mây mang mưa đến tưới mát ruộng đồng ('Mây xanh thì nắng, mây trắng thì mưa'). Hình ảnh mây trên Tuyên Đỉnh được chạm khắc mềm mại, bay bổng, thể hiện ước vọng về mưa thuận gió hòa.",
+    "historical_context": "Vua chúa thường tự ví mình như rồng (Long), rồng luôn đi kèm với mây (Long vân khánh hội). Mây là phương tiện di chuyển của thần tiên.",
+    "symbolism": "Mây tượng trưng cho sự tự do, phiêu du, sự thăng hoa và phúc lành (phúc ấm). 'Vân ám' (mây che) là điềm xấu, 'Quang vân' (mây sáng) là điềm tốt.",
+    "fun_fact": "Có nhiều loại mây báo hiệu thời tiết khác nhau. Người nông dân nhìn mây để đoán biết nắng mưa mà sắp xếp việc đồng áng ('Vàng mây thì gió, đỏ mây thì mưa').",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Trong nghệ thuật, Rồng thường xuất hiện cùng với hình ảnh nào?",
+        "options": [
+          "A. Đất",
+          "B. Mây (Vân)",
+          "C. Cây cỏ",
+          "D. Nhà cửa"
+        ],
+        "correct_answer": "B. Mây (Vân)",
+        "difficulty": 1,
+        "explanation": "Rồng đạp mây (Long vân) là hình ảnh quyền lực và linh thiêng."
+      },
+      {
+        "type": "true_false",
+        "question": "Mây ngũ sắc (Khánh vân) được coi là điềm xui xẻo.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Mây ngũ sắc là điềm cực kỳ cát tường, báo hiệu thánh nhân xuất hiện hoặc thái bình thịnh trị."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_tuyen_dinh_10_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/VÂN.jpg"
+  },
+  {
+    "id": "urn_tuyen_dinh_11",
+    "name_vi": "Đại Lãnh",
+    "name_en": "Dai Lanh Cape",
+    "urn_location": "Tuyên Đỉnh",
+    "category": "dia_ly",
+    "rarity": "epic",
+    "description_short": "Mũi Đại Lãnh - nơi đón ánh bình minh đầu tiên trên đất liền.",
+    "description_educational": "Đại Lãnh (Mũi Đại Lãnh/Mũi Điện) thuộc tỉnh Phú Yên, là một trong những điểm cực Đông của Tổ quốc trên đất liền, nơi đón ánh mặt trời đầu tiên trong ngày. Nơi đây có phong cảnh hùng vĩ với núi đâm ra biển, bãi Môn cát trắng tuyệt đẹp. Đại Lãnh từng được vua Minh Mạng cho khắc vào Tuyên Đỉnh vì vị trí địa lý đặc biệt và tầm quan trọng trong việc đánh dấu lãnh hải. Ngọn hải đăng Đại Lãnh ngày nay vẫn soi đường cho tàu bè qua lại.",
+    "historical_context": "Năm 1836, vua Minh Mạng cho dựng bia đá tại đây để khẳng định chủ quyền. Đại Lãnh là danh thắng tiêu biểu của miền Trung.",
+    "symbolism": "Đại Lãnh tượng trưng cho sự khởi đầu (bình minh), sự vững chãi trước sóng gió biển khơi và chủ quyền thiêng liêng.",
+    "fun_fact": "Tên 'Đại Lãnh' có nghĩa là cái đèo lớn/đỉnh núi lớn. Đây là nơi giao hòa tuyệt đẹp giữa núi và biển.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Mũi Đại Lãnh thuộc tỉnh nào của Việt Nam?",
+        "options": [
+          "A. Khánh Hòa",
+          "B. Phú Yên",
+          "C. Bình Định",
+          "D. Ninh Thuận"
+        ],
+        "correct_answer": "B. Phú Yên",
+        "difficulty": 1,
+        "explanation": "Đại Lãnh là danh thắng nổi tiếng của Phú Yên."
+      },
+      {
+        "type": "true_false",
+        "question": "Đại Lãnh là điểm cực Tây của Việt Nam.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Đại Lãnh là điểm cực Đông (trên đất liền), nơi đón bình minh sớm nhất."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_tuyen_dinh_11_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/ĐẠI%20LÃNH.jpg"
+  },
+  {
+    "id": "urn_tuyen_dinh_12",
+    "name_vi": "Lam Giang",
+    "name_en": "Lam River",
+    "urn_location": "Tuyên Đỉnh",
+    "category": "dia_ly",
+    "rarity": "epic",
+    "description_short": "Sông Lam - dòng sông xanh xứ Nghệ, biểu tượng của sự hiếu học.",
+    "description_educational": "Lam Giang (Sông Lam/Sông Cả) là con sông lớn nhất xứ Nghệ (Nghệ An - Hà Tĩnh). Nước sông trong xanh (màu lam) chảy qua những vùng đất địa linh nhân kiệt, nơi sinh ra nhiều danh nhân, thi hào (như Nguyễn Du) và các vị lãnh tụ. Sông Lam cùng với núi Hồng Lĩnh tạo nên biểu tượng 'Non Hồng - Nước Lam' của vùng đất học này. Khắc Lam Giang lên đỉnh là tôn vinh truyền thống văn hóa và con người xứ Nghệ.",
+    "historical_context": "Sông Lam là đường giao thông thủy quan trọng nối miền ngược với miền xuôi. Đôi bờ sông Lam có những điệu hò ví giặm đằm thắm được UNESCO công nhận là di sản văn hóa.",
+    "symbolism": "Sông Lam tượng trưng cho sự trong sáng, lòng kiên trung và dòng chảy văn hóa bất tận. Màu xanh của sông là màu của hy vọng và tri thức.",
+    "fun_fact": "Sông Lam còn có tên là Sông Cả (Sông Mẹ). Món 'nhút Thanh Chương, tương Nam Đàn' nổi tiếng gắn liền với dòng sông này.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Sông Lam thường được nhắc đến cùng với ngọn núi nào?",
+        "options": [
+          "A. Núi Ngự",
+          "B. Núi Hồng Lĩnh",
+          "C. Núi Tản Viên",
+          "D. Núi Bà Đen"
+        ],
+        "correct_answer": "B. Núi Hồng Lĩnh",
+        "difficulty": 1,
+        "explanation": "Cặp đôi 'Núi Hồng - Sông Lam' là biểu tượng của Nghệ Tĩnh."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Sông Lam chảy qua tỉnh nào?",
+        "options": [
+          "A. Nghệ An và Hà Tĩnh",
+          "B. Thanh Hóa",
+          "C. Quảng Bình",
+          "D. Quảng Ninh"
+        ],
+        "correct_answer": "A. Nghệ An và Hà Tĩnh",
+        "difficulty": 1,
+        "explanation": "Sông Lam là ranh giới tự nhiên và dòng sông chính của hai tỉnh này."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_tuyen_dinh_12_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/LAM%20GIANG.jpg"
+  },
+  {
+    "id": "urn_tuyen_dinh_13",
+    "name_vi": "Hậu Ngư",
+    "name_en": "Horseshoe Crab",
+    "urn_location": "Tuyên Đỉnh",
+    "category": "dong_vat",
+    "rarity": "uncommon",
+    "description_short": "Con Sam - tình nghĩa vợ chồng sắt son 'như sam'.",
+    "description_educational": "Hậu Ngư (Con Sam - Tachypleus tridentatus) là loài động vật chân khớp biển có vỏ cứng hình móng ngựa và đuôi nhọn dài. Sam luôn đi có đôi (con đực nhỏ bám trên lưng con cái lớn), nếu tách rời chúng sẽ chết hoặc rất khó sống. Vì đặc tính này, dân gian có câu 'dính như sam' để chỉ sự gắn bó khăng khít, đặc biệt là tình vợ chồng. Máu sam có màu xanh dương và được dùng trong y học để kiểm tra độc tố. Thịt sam (trứng sam) là món đặc sản biển hấp dẫn.",
+    "historical_context": "Sam là loài vật cổ đại còn sót lại (hóa thạch sống). Việc khắc sam lên đỉnh cho thấy sự quan sát tinh tế của người xưa về tập tính sinh học mang ý nghĩa nhân văn.",
+    "symbolism": "Con Sam tượng trưng cho tình yêu chung thủy, sự gắn bó không rời và hạnh phúc lứa đôi. Nó cũng nhắc nhở về đạo lý phu thê.",
+    "fun_fact": "Cần phân biệt con Sam (đuôi hình tam giác, có gai, ăn được) với con So (đuôi tròn, không gai, rất độc, ăn vào có thể chết người). Câu tục ngữ 'Thấy sam thì bắt, thấy so thì kiêng'.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Thành ngữ 'Dính như sam' xuất phát từ đặc điểm gì của loài này?",
+        "options": [
+          "A. Chúng có nhiều chân dính chặt vào đá",
+          "B. Con đực và con cái luôn bám chặt lấy nhau đi có đôi",
+          "C. Thịt của chúng rất dính",
+          "D. Chúng tiết ra keo dính"
+        ],
+        "correct_answer": "B. Con đực và con cái luôn bám chặt lấy nhau đi có đôi",
+        "difficulty": 1,
+        "explanation": "Sam luôn đi cặp đôi, con đực bám trên lưng con cái."
+      },
+      {
+        "type": "true_false",
+        "question": "Con Sam và con So là cùng một loài.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Con So rất giống con Sam nhưng nhỏ hơn và chứa độc tố Tetrodotoxin gây chết người."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_tuyen_dinh_13_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/HẬU%20NGƯ.jpg"
+  },
+  {
+    "id": "urn_tuyen_dinh_14",
+    "name_vi": "Khương",
+    "name_en": "Ginger",
+    "urn_location": "Tuyên Đỉnh",
+    "category": "thao_moc",
+    "rarity": "common",
+    "description_short": "Củ Gừng - gia vị cay nồng, vị thuốc ấm áp.",
+    "description_educational": "Khương (Sinh khương/Can khương - Cây Gừng) là loài cây gia vị quen thuộc trong mọi gian bếp Việt. Củ gừng có vị cay, tính ấm, mùi thơm nồng, dùng để khử mùi tanh thực phẩm và làm ấm tỳ vị. Trong y học, gừng tươi (sinh khương) chữa cảm lạnh, nôn mửa; gừng khô (can khương) hồi dương cứu nghịch. Mứt gừng là món ngon ngày Tết. Hình ảnh cây gừng trên Tuyên Đỉnh gợi lên sự ấm cúng và sự chăm sóc sức khỏe thường ngày.",
+    "historical_context": "Gừng được trồng và sử dụng từ hàng ngàn năm nay. 'Gừng càng già càng cay' là câu tục ngữ nói về kinh nghiệm và bản lĩnh của người lớn tuổi.",
+    "symbolism": "Củ gừng tượng trưng cho sự nồng ấm, lòng thủy chung (muối mặn gừng cay) và sự từng trải, vững vàng.",
+    "fun_fact": "Trà gừng mật ong là thức uống tuyệt vời để giữ ấm cơ thể mùa đông và tăng cường hệ miễn dịch.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Trong câu ca dao 'Tay bưng đĩa muối chén gừng...', gừng và muối tượng trưng cho điều gì?",
+        "options": [
+          "A. Sự nghèo khó",
+          "B. Tình nghĩa vợ chồng thủy chung, mặn nồng",
+          "C. Bữa ăn đạm bạc",
+          "D. Sự chua chát của cuộc đời"
+        ],
+        "correct_answer": "B. Tình nghĩa vợ chồng thủy chung, mặn nồng",
+        "difficulty": 1,
+        "explanation": "'Gừng cay muối mặn xin đừng quên nhau'."
+      },
+      {
+        "type": "true_false",
+        "question": "Gừng có tính hàn (lạnh).",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Gừng có tính ôn/nhiệt (ấm/nóng), dùng để trị các bệnh do lạnh."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_tuyen_dinh_14_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/KHƯƠNG.jpg"
+  },
+  {
+    "id": "urn_tuyen_dinh_15",
+    "name_vi": "Nỗ",
+    "name_en": "Crossbow",
+    "urn_location": "Tuyên Đỉnh",
+    "category": "vo_bi",
+    "rarity": "common",
+    "description_short": "Cái Nỏ - vũ khí thần diệu của An Dương Vương.",
+    "description_educational": "Nỗ (Cái nỏ) là loại vũ khí bắn tên cơ học, có lẫy cò, uy lực mạnh và bắn xa hơn cung tên thông thường. Nỏ gắn liền với truyền thuyết Nỏ thần (Linh Quang Kim Quy) của An Dương Vương giữ thành Cổ Loa, một phát bắn ra ngàn mũi tên. Trong quân đội triều Nguyễn, nỗ vẫn được sử dụng song song với súng, đặc biệt hiệu quả trong tay các binh lính người dân tộc thiểu số hoặc trong các trận phục kích im lặng. Hình ảnh cái nỏ trên đỉnh nhắc nhở về lịch sử giữ nước và trí tuệ chế tạo vũ khí của cha ông.",
+    "historical_context": "Người Việt cổ rất giỏi dùng nỏ. Các lẫy nỏ bằng đồng tìm thấy ở Cổ Loa chứng minh trình độ kỹ thuật cao từ thời Đông Sơn.",
+    "symbolism": "Cái Nỏ tượng trưng cho sự chính xác, sức mạnh bí mật và khả năng bảo vệ đất nước trước kẻ thù đông đảo.",
+    "fun_fact": "Nỏ có thể bắn xuyên giáp ở khoảng cách gần. Các chiến binh Tây Nguyên cũng rất thiện nghệ trong việc dùng nỏ săn thú và đánh giặc.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Vũ khí nổi tiếng gắn liền với truyền thuyết An Dương Vương và thành Cổ Loa là gì?",
+        "options": [
+          "A. Kiếm Thuận Thiên",
+          "B. Nỏ Thần",
+          "C. Súng Thần công",
+          "D. Ngựa sắt"
+        ],
+        "correct_answer": "B. Nỏ Thần",
+        "difficulty": 1,
+        "explanation": "Nỏ thần Kim Quy giúp An Dương Vương đánh bại Triệu Đà."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "So với cung, nỏ có ưu điểm gì?",
+        "options": [
+          "A. Bắn nhanh hơn",
+          "B. Có thể giữ dây căng sẵn chờ bắn (có lẫy cò) và ngắm bắn kỹ hơn",
+          "C. Nhẹ hơn",
+          "D. Dễ chế tạo hơn"
+        ],
+        "correct_answer": "B. Có thể giữ dây căng sẵn chờ bắn (có lẫy cò) và ngắm bắn kỹ hơn",
+        "difficulty": 2,
+        "explanation": "Nỏ có lẫy giữ dây nên người bắn không mất sức giữ, có thể ngắm lâu và chính xác."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_tuyen_dinh_15_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/NỖ.jpg"
+  },
+  {
+    "id": "urn_tuyen_dinh_16",
+    "name_vi": "Lê Thuyền",
+    "name_en": "Le Boat",
+    "urn_location": "Tuyên Đỉnh",
+    "category": "vo_bi",
+    "rarity": "rare",
+    "description_short": "Lê Thuyền - thuyền chiến thon dài, lướt nhanh trên sông.",
+    "description_educational": "Lê Thuyền là một loại thuyền chiến hạng nhẹ của thủy quân nhà Nguyễn. Thuyền có dáng thon, dài, mũi nhọn, thường có 12-16 tay chèo, di chuyển rất linh hoạt và nhanh chóng trên sông rạch. Loại thuyền này thường dùng để tuần tra, hộ tống hoặc tác chiến ở vùng sông nước chằng chịt. Tên 'Lê' có thể liên quan đến hình dáng hoặc nguồn gốc địa phương. Sự hiện diện của Lê Thuyền trên Tuyên Đỉnh bổ sung vào bộ sưu tập phong phú các loại tàu thuyền của triều đình.",
+    "historical_context": "Vua Gia Long rất coi trọng thủy chiến. Ông đã cho đóng hàng trăm chiến thuyền các loại, trong đó có Lê Thuyền, để thống nhất đất nước và bảo vệ lãnh thổ.",
+    "symbolism": "Lê Thuyền tượng trưng cho sự cơ động, tinh thần thượng võ và khả năng làm chủ sông nước của người Việt.",
+    "fun_fact": "Thuyền của vua chúa thường được sơn son thếp vàng, chạm rồng (Long thuyền), còn thuyền chiến như Lê Thuyền thường sơn đen hoặc đỏ, chú trọng vào tính năng chiến đấu.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Lê Thuyền là phương tiện di chuyển trên địa hình nào?",
+        "options": [
+          "A. Đường bộ",
+          "B. Đường thủy (sông, biển)",
+          "C. Đường không",
+          "D. Đường hầm"
+        ],
+        "correct_answer": "B. Đường thủy (sông, biển)",
+        "difficulty": 1,
+        "explanation": "Đây là một loại thuyền chèo."
+      },
+      {
+        "type": "true_false",
+        "question": "Lê Thuyền là loại tàu chiến lớn nhất của nhà Nguyễn.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 2,
+        "explanation": "Sai. Lê Thuyền là thuyền nhỏ/trung bình. Tàu lớn là tàu bọc đồng hoặc Định Quốc."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_tuyen_dinh_16_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/LÊ%20THUYỀN.jpg"
+  },
+  {
+    "id": "urn_tuyen_dinh_17",
+    "name_vi": "Thỉ",
+    "name_en": "Pig",
+    "urn_location": "Tuyên Đỉnh",
+    "category": "dong_vat",
+    "rarity": "common",
+    "description_short": "Con Lợn - biểu tượng của sự no đủ, phồn thực.",
+    "description_educational": "Thỉ (Con lợn/Heo) là gia súc quan trọng nhất trong nông nghiệp cổ truyền, cung cấp thịt và phân bón cho cây trồng. Hình ảnh con lợn béo tốt trên Tuyên Đỉnh (cũng như trong tranh Đông Hồ) tượng trưng cho sự sung túc, no đủ, sinh sôi nảy nở (lợn đẻ nhiều con). Lợn cũng là vật phẩm không thể thiếu trong các mâm cỗ cúng tế ('đầu heo', 'heo quay') để tạ ơn thần linh. Việc khắc con lợn lên đỉnh cao quý thể hiện cái nhìn trân trọng đối với đời sống thực tế của người dân.",
+    "historical_context": "Nuôi lợn là nghề phụ gia đình phổ biến ('Giàu lợn nái, lãi gà con'). Con lợn ỉ móng cái, lợn mọi là những giống lợn bản địa quý.",
+    "symbolism": "Con lợn tượng trưng cho tài lộc, sự an nhàn (ăn no ngủ kỹ) và sự mắn đẻ. Trong 12 con giáp, Hợi (Lợn) đứng cuối cùng, hưởng phúc lộc.",
+    "fun_fact": "Lợn là loài vật rất thông minh (hơn cả chó) và sạch sẽ (nếu có điều kiện).",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Trong tranh dân gian Đông Hồ, con lợn thường được vẽ với đặc điểm gì?",
+        "options": [
+          "A. Gầy gò, ốm yếu",
+          "B. Béo tốt, có xoáy âm dương trên mình",
+          "C. Đang đánh nhau",
+          "D. Đang bay"
+        ],
+        "correct_answer": "B. Béo tốt, có xoáy âm dương trên mình",
+        "difficulty": 1,
+        "explanation": "Hình ảnh lợn âm dương thể hiện sự phồn thực, sinh sôi và hòa hợp."
+      },
+      {
+        "type": "true_false",
+        "question": "Con Lợn (Thỉ) là con vật đứng đầu trong 12 con giáp.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Lợn (Hợi) đứng cuối cùng. Chuột (Tý) mới đứng đầu."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_tuyen_dinh_17_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/THỈ.jpg"
+  },
+  {
+    "id": "urn_tuyen_dinh_18",
+    "name_vi": "Ngoan",
+    "name_en": "Sea Turtle",
+    "urn_location": "Tuyên Đỉnh",
+    "category": "dong_vat",
+    "rarity": "rare",
+    "description_short": "Con Vích - rùa biển khổng lồ, sứ giả của đại dương.",
+    "description_educational": "Ngoan (Con Vích - Chelonia mydas/Rùa xanh) là loài rùa biển lớn, có mai cứng, bơi lội giỏi trong đại dương. Vích thường lên bãi cát ven biển để đẻ trứng vào ban đêm. Thịt và trứng vích từng là nguồn thực phẩm, mai vích (đồi mồi) dùng làm đồ mỹ nghệ (lược, hộp). Tuy nhiên, hiện nay Vích là loài nguy cấp cần được bảo vệ nghiêm ngặt. Hình ảnh con Vích trên đỉnh là minh chứng cho sự đa dạng sinh học biển Việt Nam và sự quan tâm của người xưa đến các loài thủy tộc.",
+    "historical_context": "Vích và Đồi mồi là những sản vật biển quý giá thường được cống nạp. Côn Đảo là nơi có quần thể rùa biển sinh sản lớn nhất Việt Nam.",
+    "symbolism": "Vích (Rùa biển) tượng trưng cho sự trường thọ, sự kiên trì (vượt đại dương để về nơi sinh ra đẻ trứng) và sự bình yên của biển cả.",
+    "fun_fact": "Rùa biển có thể sống hàng trăm năm. Khi lên bờ đẻ trứng, chúng thường 'khóc' (thực ra là tiết muối thừa qua tuyến lệ).",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Con Ngoan (Vích) sống chủ yếu ở đâu?",
+        "options": [
+          "A. Trên núi cao",
+          "B. Trong sông hồ",
+          "C. Ngoài biển khơi",
+          "D. Trong hang động"
+        ],
+        "correct_answer": "C. Ngoài biển khơi",
+        "difficulty": 1,
+        "explanation": "Vích là loài rùa biển."
+      },
+      {
+        "type": "true_false",
+        "question": "Vích là loài động vật đẻ con.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Vích là loài bò sát, chúng đẻ trứng trên bãi cát."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_tuyen_dinh_18_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/NGOAN.jpg"
+  }
+]

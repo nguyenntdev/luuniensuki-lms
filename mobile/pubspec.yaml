@@ -1,0 +1,91 @@
+name: luuniensuki_lms
+description: "Luuniensuki LMS - Vietnamese Cultural Heritage Learning App"
+publish_to: "none"
+version: 1.5.0+6
+
+environment:
+  sdk: ^3.5.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State Management
+  flutter_riverpod: ^2.4.9
+  riverpod_annotation: ^2.3.3
+
+  # Navigation
+  go_router: ^13.0.0
+
+  # Networking
+  dio: ^5.4.0
+  dio_cookie_manager: ^3.1.1
+  cookie_jar: ^4.0.8
+  connectivity_plus: ^5.0.2
+
+  # Local Storage
+  hive_flutter: ^1.1.0
+  flutter_secure_storage: ^9.0.0
+
+  # 3D Rendering
+  model_viewer_plus: ^1.6.0
+
+  # UI Components
+  cached_network_image: ^3.3.1
+  shimmer: ^3.0.0
+  flutter_svg: ^2.0.9
+  flutter_markdown: ^0.7.2
+
+  # Media
+  just_audio: ^0.9.36
+  video_player: ^2.8.2
+  photo_view: ^0.14.0
+
+  # Animations & Effects
+  confetti: ^0.7.0
+  vibration: ^1.8.4
+
+  # Utilities
+  dartz: ^0.10.1
+  freezed_annotation: ^2.4.1
+  json_annotation: ^4.8.1
+  intl: ^0.18.1
+  equatable: ^2.0.5
+  path_provider: ^2.1.1
+  crypto: ^3.0.3
+  url_launcher: ^6.2.3
+
+  # Push Notifications
+  firebase_core: ^2.24.2
+  firebase_messaging: ^14.7.10
+  flutter_local_notifications: ^17.2.0
+
+  # Icons
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # Code Generation
+  build_runner: ^2.4.8
+  riverpod_generator: ^2.3.9
+  freezed: ^2.4.6
+  json_serializable: ^6.7.1
+
+  # Testing
+  mocktail: ^1.0.2
+
+  # Linting
+  flutter_lints: ^3.0.1
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/icons/
+    - assets/animations/
+    - assets/models/
+    - assets/data/
+    - assets/sounds/
