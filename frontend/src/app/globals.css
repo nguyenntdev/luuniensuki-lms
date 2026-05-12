@@ -125,94 +125,163 @@
 
 @layer base {
     :root {
-        /* Lưu Niên Sử Kí Design System - Imperial Vietnamese Heritage Theme */
-        --background: 222 47% 6%;
-        --foreground: 43 20% 96%;
+        /* Light workspace */
+        --background: 42 35% 96%;
+        --foreground: 222 28% 13%;
 
-        --card: 222 40% 8%;
-        --card-foreground: 43 20% 96%;
+        --card: 42 42% 99%;
+        --card-foreground: 222 28% 13%;
 
-        --popover: 222 40% 8%;
-        --popover-foreground: 43 20% 96%;
+        --popover: 42 42% 99%;
+        --popover-foreground: 222 28% 13%;
 
-        /* Royal Gold - Main brand color inspired by Cửu Đỉnh */
-        --primary: 40 77% 61%;
-        --primary-foreground: 28 28% 10%;
+        --primary: 38 72% 44%;
+        --primary-foreground: 42 46% 98%;
 
-        /* Deep Navy - Secondary backgrounds */
-        --secondary: 222 35% 12%;
-        --secondary-foreground: 43 20% 96%;
+        --secondary: 42 28% 91%;
+        --secondary-foreground: 222 26% 16%;
 
-        /* Muted tones for subtle elements - IMPROVED CONTRAST */
-        --muted: 222 30% 15%;
-        --muted-foreground: 222 9% 75%;
+        --muted: 42 22% 88%;
+        --muted-foreground: 220 12% 42%;
 
-        /* Crimson accent - Imperial red */
-        --accent: 350 73% 45%;
-        --accent-foreground: 43 20% 96%;
+        --accent: 166 42% 34%;
+        --accent-foreground: 42 46% 98%;
 
-        --destructive: 0 84.2% 60.2%;
-        --destructive-foreground: 43 20% 96%;
+        --destructive: 0 72% 48%;
+        --destructive-foreground: 42 46% 98%;
 
-        --border: 222 30% 18%;
-        --input: 222 30% 18%;
-        --ring: 43 74% 49%;
+        --border: 42 20% 78%;
+        --input: 42 20% 82%;
+        --ring: 38 72% 44%;
 
-        --radius: 0.7rem;
+        --radius: 0.5rem;
 
-        /* Custom Lưu Niên Sử Kí tokens */
-        --imperial-gold: 40 77% 61%;
-        --imperial-gold-light: 44 86% 72%;
-        --imperial-red: 350 73% 45%;
-        --deep-navy: 222 47% 6%;
-        --navy-lighter: 222 35% 12%;
+        --imperial-gold: 39 73% 48%;
+        --imperial-gold-light: 43 86% 58%;
+        --imperial-red: 8 62% 42%;
+        --deep-navy: 220 24% 12%;
+        --navy-lighter: 218 18% 18%;
 
-        /* XP Celebration colors */
-        --xp-gold: 43 74% 49%;
-        --xp-gold-dark: 30 85% 45%;
+        --xp-gold: 39 73% 48%;
+        --xp-gold-dark: 30 78% 42%;
 
-        /* NEW: Tertiary colors - Heritage inspired */
-        --jade-green: 160 45% 35%;
-        --bronze: 25 60% 40%;
+        --jade-green: 166 42% 34%;
+        --bronze: 30 58% 42%;
         --ivory: 43 30% 92%;
 
-        /* NEW: Success/Info semantic colors */
-        --success: 142 55% 40%;
-        --success-foreground: 43 20% 96%;
-        --warning: 38 92% 50%;
-        --warning-foreground: 28 28% 10%;
-        --info: 200 70% 45%;
-        --info-foreground: 43 20% 96%;
+        --success: 148 48% 36%;
+        --success-foreground: 42 46% 98%;
+        --warning: 38 86% 46%;
+        --warning-foreground: 25 35% 8%;
+        --info: 194 55% 38%;
+        --info-foreground: 42 46% 98%;
 
-        /* Gradients */
         --gradient-gold: linear-gradient(
             135deg,
-            hsl(43 72% 48%) 0%,
-            hsl(32 70% 52%) 100%
+            hsl(43 86% 62%) 0%,
+            hsl(39 73% 48%) 42%,
+            hsl(25 58% 38%) 100%
         );
         --gradient-glow: radial-gradient(
             circle at 50% 50%,
-            hsl(43 74% 49% / 0.08) 0%,
+            hsl(39 73% 48% / 0.1) 0%,
             transparent 70%
         );
 
-        /* Shadows */
-        --shadow-gold: 0 8px 28px -10px hsl(43 74% 49% / 0.2);
-        --shadow-elegant: 0 18px 50px -22px hsl(0 0% 0% / 0.45);
+        --shadow-gold: 0 12px 28px -22px hsl(38 72% 44% / 0.35);
+        --shadow-elegant: 0 18px 44px -34px hsl(222 28% 13% / 0.32);
 
-        /* Animations */
         --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         --transition-spring: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 
-        /* Sidebar */
-        --sidebar-background: 222 47% 13%;
-        --sidebar-foreground: 60 9% 98%;
-        --sidebar-primary: 43 74% 49%;
-        --sidebar-primary-foreground: 222 47% 11%;
-        --sidebar-accent: 222 47% 20%;
-        --sidebar-accent-foreground: 60 9% 98%;
-        --sidebar-border: 222 47% 25%;
-        --sidebar-ring: 43 74% 49%;
+        --sidebar-background: 42 42% 99%;
+        --sidebar-foreground: 222 28% 13%;
+        --sidebar-primary: 39 73% 48%;
+        --sidebar-primary-foreground: 42 46% 98%;
+        --sidebar-accent: 42 28% 91%;
+        --sidebar-accent-foreground: 222 26% 16%;
+        --sidebar-border: 42 20% 78%;
+        --sidebar-ring: 39 73% 48%;
+    }
+
+    .dark {
+        /* Luu Nien Su Ki design system: focused dark workspace with heritage accents */
+        --background: 220 24% 7%;
+        --foreground: 42 26% 94%;
+
+        --card: 220 20% 10%;
+        --card-foreground: 43 33% 94%;
+
+        --popover: 220 20% 9%;
+        --popover-foreground: 43 33% 94%;
+
+        --primary: 42 78% 58%;
+        --primary-foreground: 220 24% 8%;
+
+        --secondary: 218 18% 15%;
+        --secondary-foreground: 43 28% 92%;
+
+        --muted: 218 16% 18%;
+        --muted-foreground: 218 10% 70%;
+
+        --accent: 166 47% 36%;
+        --accent-foreground: 43 33% 94%;
+
+        --destructive: 0 74% 56%;
+        --destructive-foreground: 43 33% 94%;
+
+        --border: 218 16% 22%;
+        --input: 218 16% 24%;
+        --ring: 42 78% 58%;
+
+        --radius: 0.5rem;
+
+        --imperial-gold: 39 73% 58%;
+        --imperial-gold-light: 43 86% 70%;
+        --imperial-red: 8 62% 42%;
+        --deep-navy: 220 24% 7%;
+        --navy-lighter: 218 18% 15%;
+
+        --xp-gold: 39 73% 58%;
+        --xp-gold-dark: 30 78% 45%;
+
+        --jade-green: 166 47% 36%;
+        --bronze: 30 58% 45%;
+        --ivory: 43 30% 92%;
+
+        --success: 148 48% 42%;
+        --success-foreground: 43 33% 94%;
+        --warning: 38 86% 54%;
+        --warning-foreground: 25 35% 8%;
+        --info: 194 55% 45%;
+        --info-foreground: 43 33% 94%;
+
+        --gradient-gold: linear-gradient(
+            135deg,
+            hsl(43 86% 70%) 0%,
+            hsl(39 73% 58%) 42%,
+            hsl(25 58% 42%) 100%
+        );
+        --gradient-glow: radial-gradient(
+            circle at 50% 50%,
+            hsl(39 73% 58% / 0.12) 0%,
+            transparent 70%
+        );
+
+        --shadow-gold: 0 12px 28px -22px hsl(42 78% 58% / 0.45);
+        --shadow-elegant: 0 18px 44px -34px hsl(0 0% 0% / 0.72);
+
+        --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-spring: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+        --sidebar-background: 220 20% 10%;
+        --sidebar-foreground: 43 28% 92%;
+        --sidebar-primary: 39 73% 58%;
+        --sidebar-primary-foreground: 25 35% 8%;
+        --sidebar-accent: 218 18% 15%;
+        --sidebar-accent-foreground: 43 28% 92%;
+        --sidebar-border: 35 27% 19%;
+        --sidebar-ring: 39 73% 58%;
     }
 }
 
@@ -226,14 +295,11 @@
         font-feature-settings:
             "kern" 1,
             "liga" 1;
-        background: linear-gradient(
-            180deg,
-            hsl(222, 47%, 6%) 0%,
-            hsl(230, 48%, 7%) 33%,
-            hsl(235, 45%, 6%) 66%,
-            hsl(222, 50%, 5%) 100%
-        );
-        background-attachment: fixed;
+        background:
+            radial-gradient(circle at 18% -10%, hsl(var(--primary) / 0.12), transparent 34%),
+            radial-gradient(circle at 92% 8%, hsl(var(--accent) / 0.1), transparent 30%),
+            linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--background)) 52%, hsl(var(--secondary) / 0.58) 100%);
+        background-attachment: scroll;
         min-height: 100vh;
         position: relative;
     }
@@ -243,51 +309,26 @@
         content: "";
         position: fixed;
         inset: 0;
-        background-image: radial-gradient(
-            circle at 50% 50%,
-            hsl(43, 74%, 49%, 0.02) 1px,
-            transparent 1px
-        );
-        background-size: 32px 32px;
+        background-image:
+            linear-gradient(hsl(43 30% 88% / 0.025) 1px, transparent 1px),
+            linear-gradient(90deg, hsl(43 30% 88% / 0.025) 1px, transparent 1px);
+        background-size: 72px 72px, 72px 72px;
         pointer-events: none;
         z-index: 1;
-        opacity: 0.5;
+        opacity: 0.18;
     }
 
-    /* Unified animated gradient glow background */
+    /* Unified gradient glow background */
     body::after {
         content: "";
         position: fixed;
         inset: 0;
         background:
-            radial-gradient(
-                circle at 20% 20%,
-                hsl(43, 74%, 49%, 0.08) 0%,
-                transparent 50%
-            ),
-            radial-gradient(
-                circle at 80% 80%,
-                hsl(15, 70%, 50%, 0.06) 0%,
-                transparent 50%
-            ),
-            radial-gradient(
-                circle at 50% 100%,
-                hsl(43, 74%, 49%, 0.05) 0%,
-                transparent 60%
-            ),
-            radial-gradient(
-                circle at 90% 30%,
-                hsl(250, 60%, 45%, 0.05) 0%,
-                transparent 45%
-            ),
-            radial-gradient(
-                circle at 10% 70%,
-                hsl(230, 70%, 50%, 0.04) 0%,
-                transparent 50%
-            );
+            radial-gradient(circle at 20% 18%, hsl(42 78% 58% / 0.05), transparent 44%),
+            radial-gradient(circle at 84% 72%, hsl(166 47% 36% / 0.045), transparent 44%);
         pointer-events: none;
         z-index: 1;
-        animation: glow-shift 12s ease-in-out infinite;
+        opacity: 0.8;
     }
 
     html {
@@ -361,6 +402,179 @@
 
     .transition-spring {
         transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .site-shell {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        max-width: 94rem;
+        min-height: 100vh;
+        margin-inline: auto;
+        padding: 1rem 1rem 6.5rem;
+    }
+
+    @media (min-width: 640px) {
+        .site-shell {
+            padding-inline: 1.5rem;
+        }
+    }
+
+    @media (min-width: 768px) {
+        .site-shell {
+            padding-top: 5.5rem;
+            padding-bottom: 3.5rem;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .site-shell {
+            padding-inline: 2rem;
+        }
+    }
+
+    .heritage-surface,
+    .heritage-hero,
+    .heritage-card {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid hsl(var(--primary) / 0.14);
+        background:
+            linear-gradient(145deg, hsl(var(--card) / 0.9), hsl(var(--secondary) / 0.7)),
+            radial-gradient(circle at 14% 12%, hsl(var(--primary) / 0.045), transparent 42%);
+        box-shadow: var(--shadow-elegant);
+        -webkit-backdrop-filter: blur(8px);
+        backdrop-filter: blur(8px);
+    }
+
+    .heritage-surface::before,
+    .heritage-hero::before,
+    .heritage-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background:
+            linear-gradient(90deg, hsl(var(--primary) / 0.055), transparent 26%, transparent 78%, hsl(var(--accent) / 0.045)),
+            linear-gradient(180deg, hsl(43 30% 92% / 0.04), transparent 34%);
+        opacity: 0.42;
+    }
+
+    .heritage-hero {
+        border-radius: 0.75rem;
+        padding: 1.25rem;
+    }
+
+    .heritage-surface {
+        border-radius: 0.75rem;
+    }
+
+    .heritage-card {
+        border-radius: 0.5rem;
+        box-shadow: 0 12px 30px -28px hsl(0 0% 0% / 0.86);
+    }
+
+    .heritage-card::before {
+        opacity: 0.28;
+    }
+
+    @media (max-width: 767px) {
+        .heritage-surface,
+        .heritage-hero,
+        .heritage-card {
+            -webkit-backdrop-filter: blur(6px);
+            backdrop-filter: blur(6px);
+        }
+    }
+
+    .heritage-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border-radius: 0.5rem;
+        border: 1px solid hsl(var(--primary) / 0.28);
+        background: hsl(var(--primary) / 0.1);
+        padding: 0.32rem 0.65rem;
+        color: hsl(var(--primary));
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+    }
+
+    .heritage-stat {
+        border-radius: 0.5rem;
+        border: 1px solid hsl(var(--border) / 0.72);
+        background: hsl(var(--secondary) / 0.55);
+        box-shadow: inset 0 1px 0 hsl(43 30% 92% / 0.06);
+    }
+
+    .focus-card {
+        border-radius: 0.75rem;
+        border: 1px solid hsl(var(--border) / 0.72);
+        background:
+            linear-gradient(145deg, hsl(var(--secondary) / 0.72), hsl(var(--card) / 0.92)),
+            radial-gradient(circle at 20% 0%, hsl(var(--primary) / 0.12), transparent 42%);
+        box-shadow: 0 18px 42px -34px hsl(0 0% 0% / 0.9);
+    }
+
+    .metric-pill {
+        border-radius: 0.65rem;
+        border: 1px solid hsl(var(--border) / 0.68);
+        background: hsl(var(--background) / 0.42);
+        box-shadow: inset 0 1px 0 hsl(43 30% 92% / 0.06);
+    }
+
+    .progress-track {
+        height: 0.55rem;
+        overflow: hidden;
+        border-radius: 999px;
+        background: hsl(var(--muted) / 0.75);
+    }
+
+    .progress-fill {
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent)));
+        box-shadow: 0 0 18px hsl(var(--primary) / 0.22);
+    }
+
+    .page-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: hsl(var(--muted-foreground));
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+    }
+
+    .section-grid {
+        display: grid;
+        gap: 1rem;
+    }
+
+    @media (min-width: 768px) {
+        .section-grid {
+            gap: 1.25rem;
+        }
+    }
+
+    .text-gradient-bronze {
+        background-image: linear-gradient(90deg, hsl(43 86% 72%), hsl(42 78% 58%), hsl(166 47% 46%));
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+    }
+
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
     }
 
     .shadow-elegant {

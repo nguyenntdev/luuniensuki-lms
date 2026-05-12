@@ -85,7 +85,7 @@ module.exports = {
       },
       fontFamily: {
         serif: ["Playfair Display", "Georgia", "serif"],
-        display: ["Playfair Display", "Georgia", "serif"],
+        display: ["Inter", "system-ui", "sans-serif"],
         sans: ["Inter", "system-ui", "sans-serif"],
         vietnamese: ["Inter", "sans-serif"],
         cjk: ["Noto Sans SC", "Noto Sans JP", "sans-serif"],

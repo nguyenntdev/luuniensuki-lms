@@ -7,11 +7,11 @@ import { useAuthStore } from "@/stores/authStore";
 import XpBoostIndicator from "./dashboard/XpBoostIndicator";
 
 const NAV_LINKS = [
-  { href: "/explore", label: "Explore" },
-  { href: "/collection", label: "Collection" },
-  { href: "/ai", label: "AI Tutor" },
-  { href: "/friends", label: "Friends" },
-  { href: "/leaderboard", label: "Leaderboard" },
+  { href: "/explore", label: "Khám phá" },
+  { href: "/practice", label: "Ôn tập" },
+  { href: "/collection", label: "Bộ sưu tập" },
+  { href: "/ai", label: "Giáo viên AI" },
+  { href: "/achievements", label: "Thành tích" },
 ];
 
 export default function Navbar() {
@@ -66,7 +66,7 @@ export default function Navbar() {
                   onClick={() => logout()}
                   className="rounded-md bg-muted px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/80"
                 >
-                  Logout
+                  Đăng xuất
                 </button>
               </div>
             ) : (
@@ -74,7 +74,7 @@ export default function Navbar() {
                 href="/login"
                 className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
               >
-                Login
+                Đăng nhập
               </Link>
             )}
           </div>
@@ -84,7 +84,7 @@ export default function Navbar() {
               onClick={() => setIsOpen(!isOpen)}
               className="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground hover:bg-muted hover:text-foreground focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
             >
-              <span className="sr-only">Open main menu</span>
+              <span className="sr-only">Mở menu</span>
               {/* Menu Icon */}
               {!isOpen ? (
                 <svg
@@ -158,7 +158,7 @@ export default function Navbar() {
                   onClick={() => setIsOpen(false)}
                   className="block px-4 py-2 text-base font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
                 >
-                  Dashboard
+                  Hồ sơ
                 </Link>
                 <button
                   onClick={() => {
@@ -167,7 +167,7 @@ export default function Navbar() {
                   }}
                   className="block w-full px-4 py-2 text-left text-base font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
                 >
-                  Logout
+                  Đăng xuất
                 </button>
               </div>
             ) : (
@@ -177,7 +177,7 @@ export default function Navbar() {
                   onClick={() => setIsOpen(false)}
                   className="block rounded-md bg-primary px-4 py-2 text-center text-base font-medium text-primary-foreground hover:bg-primary/90"
                 >
-                  Login
+                  Đăng nhập
                 </Link>
               </div>
             )}
