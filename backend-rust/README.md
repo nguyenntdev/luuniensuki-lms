@@ -10,6 +10,7 @@ Current scope:
 - Proxies non-native backend routes to the legacy Python API.
 - Handles selected unauthenticated 401 responses natively.
 - Serves `GET /api/v1/ranks` natively for valid access tokens.
+- Serves `GET /api/v1/content/ratings` natively.
 - Uses a minimal standard-library HTTP server so it can build on the current low-memory host.
 
 Local commands:
