@@ -39,7 +39,7 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 60
     refresh_token_expire_days: int = 30
     password_reset_token_expire_minutes: int = 30
-    password_reset_return_token: bool = True
+    password_reset_return_token: bool = False
 
     # Cookie settings for JWT tokens
     access_cookie_name: str = "luuniensuki_access"
