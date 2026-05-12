@@ -1,13 +1,19 @@
 mod config;
 
+use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine as _};
+use hmac::{Hmac, Mac};
+use serde_json::Value;
+use sha2::Sha256;
 use std::{
     io::{Read, Write},
     net::{TcpListener, TcpStream},
     thread,
-    time::Duration,
+    time::{Duration, SystemTime, UNIX_EPOCH},
 };
 
 use crate::config::Settings;
+
+type HmacSha256 = Hmac<Sha256>;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let settings = Settings::from_env();
@@ -50,6 +56,13 @@ fn handle_connection(
                 json_escape(&settings.app_name)
             ),
         )?;
+    } else if request_text.starts_with("GET /api/v1/ranks ") {
+        match extract_auth_token(&request_text)
+            .and_then(|token| verify_access_token(token, &settings.jwt_secret_key).ok())
+        {
+            Some(_) => write_json(&mut stream, "200 OK", ranks_json())?,
+            None => write_unauthorized(&mut stream)?,
+        }
     } else if should_short_circuit_unauthenticated(&request_text) {
         write_unauthorized(&mut stream)?;
     } else {
@@ -221,11 +234,91 @@ fn is_native_auth_guard_path(path: &str) -> bool {
 }
 
 fn has_auth_token(request: &str) -> bool {
-    request.lines().any(|line| {
+    extract_auth_token(request).is_some()
+}
+
+fn extract_auth_token(request: &str) -> Option<&str> {
+    request.lines().find_map(|line| {
         let lower = line.to_ascii_lowercase();
-        lower.starts_with("authorization: bearer ")
-            || (lower.starts_with("cookie:") && lower.contains("luuniensuki_access="))
+        if lower.starts_with("authorization: bearer ") {
+            return line.split_once("Bearer ").map(|(_, token)| token.trim());
+        }
+        if lower.starts_with("cookie:") {
+            return line
+                .split_once(':')
+                .and_then(|(_, cookies)| find_cookie(cookies, "luuniensuki_access"));
+        }
+        None
     })
+}
+
+fn find_cookie<'a>(cookies: &'a str, name: &str) -> Option<&'a str> {
+    cookies.split(';').find_map(|cookie| {
+        let (key, value) = cookie.trim().split_once('=')?;
+        if key == name {
+            Some(value.trim())
+        } else {
+            None
+        }
+    })
+}
+
+fn verify_access_token(token: &str, secret: &str) -> Result<Value, &'static str> {
+    let mut parts = token.split('.');
+    let header = parts.next().ok_or("missing header")?;
+    let payload = parts.next().ok_or("missing payload")?;
+    let signature = parts.next().ok_or("missing signature")?;
+    if parts.next().is_some() {
+        return Err("too many parts");
+    }
+
+    let signed = format!("{header}.{payload}");
+    let mut mac = HmacSha256::new_from_slice(secret.as_bytes()).map_err(|_| "bad secret")?;
+    mac.update(signed.as_bytes());
+    let expected = URL_SAFE_NO_PAD.encode(mac.finalize().into_bytes());
+    if !constant_time_eq(expected.as_bytes(), signature.as_bytes()) {
+        return Err("bad signature");
+    }
+
+    let payload_bytes = URL_SAFE_NO_PAD
+        .decode(payload.as_bytes())
+        .map_err(|_| "bad payload")?;
+    let claims: Value = serde_json::from_slice(&payload_bytes).map_err(|_| "bad json")?;
+    if claims.get("type").and_then(Value::as_str) != Some("access") {
+        return Err("wrong token type");
+    }
+
+    let exp = claims
+        .get("exp")
+        .and_then(Value::as_i64)
+        .ok_or("missing exp")?;
+    if exp < unix_now() as i64 {
+        return Err("expired");
+    }
+
+    Ok(claims)
+}
+
+fn constant_time_eq(a: &[u8], b: &[u8]) -> bool {
+    if a.len() != b.len() {
+        return false;
+    }
+    let mut diff = 0u8;
+    for (left, right) in a.iter().zip(b.iter()) {
+        diff |= left ^ right;
+    }
+    diff == 0
+}
+
+fn unix_now() -> u64 {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_secs()
+}
+
+fn ranks_json() -> &'static str {
+    r#"[{"level":1,"name":"Lính Mới","xp":0},{"level":2,"name":"Thư Sinh","xp":500},{"level":3,"name":"Tú Tài","xp":1500},{"level":4,"name":"Cử Nhân","xp":3500},{"level":5,"name":"Tiến Sĩ","xp":7000},{"level":6,"name":"Thám Hoa","xp":12000},{"level":7,"name":"Bảng Nhãn","xp":20000},{"level":8,"name":"Trạng Nguyên","xp":35000},{"level":9,"name":"Hàn Lâm","xp":55000},{"level":10,"name":"Sử Quan","xp":80000}]"#
 }
 
 fn json_escape(value: &str) -> String {
@@ -291,5 +384,54 @@ mod tests {
         let request = "GET /api/v1/auth/login HTTP/1.1\r\n\r\n";
 
         assert!(!should_short_circuit_unauthenticated(request));
+    }
+
+    #[test]
+    fn extract_auth_token_reads_cookie() {
+        let request = "GET / HTTP/1.1\r\nCookie: other=1; luuniensuki_access=abc.def.sig\r\n\r\n";
+
+        assert_eq!(extract_auth_token(request), Some("abc.def.sig"));
+    }
+
+    #[test]
+    fn verify_access_token_accepts_valid_hs256() {
+        let token = test_token("secret", unix_now() + 60, "access");
+
+        assert!(verify_access_token(&token, "secret").is_ok());
+    }
+
+    #[test]
+    fn verify_access_token_rejects_wrong_secret() {
+        let token = test_token("secret", unix_now() + 60, "access");
+
+        assert!(verify_access_token(&token, "wrong").is_err());
+    }
+
+    #[test]
+    fn verify_access_token_rejects_refresh_token() {
+        let token = test_token("secret", unix_now() + 60, "refresh");
+
+        assert!(verify_access_token(&token, "secret").is_err());
+    }
+
+    #[test]
+    fn ranks_json_matches_shape() {
+        let ranks: Value = serde_json::from_str(ranks_json()).unwrap();
+
+        assert_eq!(ranks.as_array().unwrap().len(), 10);
+        assert_eq!(ranks[0]["level"], 1);
+        assert_eq!(ranks[0]["xp"], 0);
+    }
+
+    fn test_token(secret: &str, exp: u64, token_type: &str) -> String {
+        let header = URL_SAFE_NO_PAD.encode(r#"{"alg":"HS256","typ":"JWT"}"#);
+        let payload = URL_SAFE_NO_PAD.encode(format!(
+            r#"{{"sub":"00000000-0000-0000-0000-000000000000","type":"{token_type}","exp":{exp}}}"#
+        ));
+        let signed = format!("{header}.{payload}");
+        let mut mac = HmacSha256::new_from_slice(secret.as_bytes()).unwrap();
+        mac.update(signed.as_bytes());
+        let signature = URL_SAFE_NO_PAD.encode(mac.finalize().into_bytes());
+        format!("{signed}.{signature}")
     }
 }
