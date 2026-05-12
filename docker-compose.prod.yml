@@ -72,6 +72,8 @@ services:
       API_HOST: 0.0.0.0
       API_PORT: 8001
       RUST_LOG: ${RUST_LOG:-info}
+      LEGACY_API_HOST: api
+      LEGACY_API_PORT: 8000
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
@@ -89,7 +91,7 @@ services:
       # Prefer same-origin API in production. Leave NEXT_PUBLIC_API_BASE_URL unset
       # so the frontend can call "/api/..." through Nginx.
     depends_on:
-      - api
+      - api_rust
 
   ai_teacher_agent:
     build:
@@ -172,6 +174,7 @@ services:
     depends_on:
       - web
       - api
+      - api_rust
       - ai_teacher_agent
       - livekit
 

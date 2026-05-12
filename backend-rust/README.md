@@ -6,7 +6,8 @@ Current scope:
 
 - Runs beside the Python API.
 - Exposes `GET /health`.
-- Does not receive production traffic yet.
+- Works as a gateway in front of the Python API.
+- Proxies non-native backend routes to the legacy Python API.
 - Uses a minimal standard-library HTTP server so it can build on the current low-memory host.
 
 Local commands:

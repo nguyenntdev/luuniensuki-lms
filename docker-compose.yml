@@ -73,6 +73,8 @@ services:
       API_HOST: 0.0.0.0
       API_PORT: 8001
       RUST_LOG: ${RUST_LOG:-info}
+      LEGACY_API_HOST: api
+      LEGACY_API_PORT: 8000
       DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-luuniensuki}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY:-dev-insecure-change-me}
       JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
@@ -90,7 +92,7 @@ services:
       args:
         NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-}
     depends_on:
-      - api
+      - api_rust
     ports:
       - "127.0.0.1:3000:3000"
     restart: unless-stopped
@@ -185,6 +187,7 @@ services:
       - uploads:/var/www/assets/avatars:ro
     depends_on:
       - api
+      - api_rust
       - web
       - livekit
     restart: unless-stopped
