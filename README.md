@@ -145,6 +145,12 @@ Các target Rust nên ưu tiên là endpoint đọc dữ liệu, ít side effect
 - `docker-compose.prod.yml` - production stack.
 - `nginx-lms.conf` - Nginx config production.
 
+## Tài Liệu Chính
+
+- [Documentation Index](docs/DOCUMENTATION_INDEX.md) - bản đồ tài liệu technical, architecture, proposal, business, UI/UX, planning và scientific research.
+- [Architecture](docs/ARCHITECTURE.md) - kiến trúc production hiện tại và hướng migration sang Rust.
+- [Rust Backend Refactor Plan](docs/plan/2026-05-12-rust-backend-refactor-plan.md) - kế hoạch chuyển backend sang Rust theo phase.
+
 ## Lưu Ý Vận Hành
 
 - Không commit secrets, token hoặc credential thật.
