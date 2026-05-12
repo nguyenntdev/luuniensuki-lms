@@ -32,6 +32,12 @@ const EXPLAIN_LEVELS = [
   { value: "expert", label: "Chuyên gia" },
 ];
 
+const QUICK_PROMPTS = [
+  "Tóm tắt bài học này thành 3 ý dễ nhớ.",
+  "Đặt cho tôi 5 câu hỏi ôn tập có đáp án.",
+  "Giải thích biểu tượng di sản này bằng tiếng Việt dễ hiểu.",
+];
+
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const SIMPLE_SLUG_PATTERN = /^[a-z0-9-]+$/;
@@ -135,7 +141,7 @@ function makeGuidanceActions({
       description: "Mở bài học chi tiết để học tiếp theo ngữ cảnh hiện tại.",
     });
     addAction({
-      label: "Làm quiz họa tiết",
+      label: "Làm trắc nghiệm họa tiết",
       href: `/motif/${encoded}/quiz`,
       description: "Kiểm tra nhanh mức độ nắm bài ngay sau khi học.",
     });
@@ -353,7 +359,7 @@ export default function AiHubPage() {
       id: "welcome",
       role: "assistant",
       content:
-        "Chào bạn! Mình là AI Tutor. Hãy hỏi về bài học, quiz hoặc nhờ tóm tắt nội dung nhé.",
+        "Chào bạn. Hỏi ngắn điều đang vướng, mình sẽ trả lời rõ ý và gợi ý bước học tiếp.",
       sources: [],
       guidance: null,
     },
@@ -507,7 +513,7 @@ export default function AiHubPage() {
     const text = input.trim();
     if (!text || isSending) return;
     if (status !== "authed") {
-      setError("Hãy đăng nhập để sử dụng AI Tutor.");
+      setError("Hãy đăng nhập để sử dụng Giáo viên AI.");
       return;
     }
 
@@ -736,7 +742,7 @@ export default function AiHubPage() {
       setFeedbackCorrect("");
       setFeedbackAnswer("");
       return [
-        res.is_correct === true ? "Kết quả: Đúng ✅" : "Kết quả: Chưa đúng ❌",
+        res.is_correct === true ? "Kết quả: Đúng" : "Kết quả: Chưa đúng",
         res.explanation ? `Giải thích: ${res.explanation}` : "",
         res.next_step ? `Gợi ý tiếp theo: ${res.next_step}` : "",
       ]
@@ -748,67 +754,74 @@ export default function AiHubPage() {
   const isAuthed = status === "authed";
 
   return (
-    <main className="mx-auto flex h-[calc(100dvh-2rem)] max-w-6xl flex-col overflow-hidden px-6 py-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-display font-bold text-foreground">
-            AI Tutor Hub
+    <main className="site-shell flex flex-col">
+      <section className="heritage-hero p-5 md:p-7">
+      <div className="relative flex flex-wrap items-center justify-between gap-4">
+        <div className="max-w-3xl">
+          <div className="heritage-chip">Giáo viên AI</div>
+          <h1 className="mt-3 text-3xl font-display font-bold text-foreground md:text-4xl">
+            Hỏi Giáo viên AI
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Trợ giảng AI theo ngữ cảnh bài học, quiz và kho tri thức nội bộ.
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+            Một ô hỏi chính. Câu trả lời ngắn, có nguồn khi cần, kèm bước học tiếp.
           </p>
         </div>
         <Link
           href="/explore"
-          className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-foreground hover:bg-muted"
+          className="rounded-lg border border-border bg-secondary/60 px-4 py-2 text-sm font-semibold text-foreground hover:border-primary/35 hover:bg-secondary"
         >
-          Quay lại khám phá
+          Mở thư viện
         </Link>
       </div>
+      </section>
 
-      <div className="mt-6 grid min-h-0 flex-1 gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-        <section className="flex min-h-0 flex-col rounded-3xl border border-border bg-card p-6 shadow-sm">
-          <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="mt-5 flex flex-1 flex-col gap-4">
+        <section className="heritage-surface flex min-h-0 flex-col p-4 md:p-6">
+          <div className="relative flex min-h-0 flex-1 flex-col">
+          <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <div className="text-xs font-semibold uppercase tracking-wider text-primary">
-                {mode === "tutor" ? "Tutor mode" : "Q&A mode"}
+                {mode === "tutor" ? "Dạy bài" : "Tra cứu"}
               </div>
-              <div className="text-lg font-display font-semibold text-foreground">
+              <div className="text-xl font-display font-semibold text-foreground">
                 {mode === "tutor"
-                  ? "Chat theo bài học & quiz"
-                  : "Hỏi đáp theo tài liệu nội bộ"}
+                  ? "Bạn hỏi, AI trả lời"
+                  : "Hỏi theo tài liệu"}
               </div>
+              <p className="mt-1 max-w-2xl text-xs leading-relaxed text-muted-foreground">
+                Nhập một câu hỏi rõ. Công cụ phụ nằm bên dưới, chỉ mở khi cần.
+              </p>
             </div>
             <div className="flex flex-wrap gap-2">
               <button
                 type="button"
                 onClick={() => setMode("tutor")}
                 className={[
-                  "rounded-full border px-3 py-1 text-xs font-semibold",
+                  "rounded-lg border px-3 py-1 text-xs font-semibold",
                   mode === "tutor"
                     ? "border-primary bg-primary/15 text-primary"
-                    : "border-border text-muted-foreground hover:bg-muted",
+                    : "border-border/70 text-muted-foreground hover:bg-primary/10",
                 ].join(" ")}
               >
-                Tutor
+                Dạy bài
               </button>
               <button
                 type="button"
                 onClick={() => setMode("qa")}
                 className={[
-                  "rounded-full border px-3 py-1 text-xs font-semibold",
+                  "rounded-lg border px-3 py-1 text-xs font-semibold",
                   mode === "qa"
                     ? "border-primary bg-primary/15 text-primary"
-                    : "border-border text-muted-foreground hover:bg-muted",
+                    : "border-border/70 text-muted-foreground hover:bg-primary/10",
                 ].join(" ")}
               >
-                Q&A
+                Tra cứu
               </button>
               <select
                 value={level}
                 onChange={(e) => setLevel(e.target.value)}
                 disabled={mode !== "tutor"}
-                className="rounded-full border border-border bg-background px-3 py-1 text-xs font-semibold text-foreground disabled:opacity-60"
+                className="rounded-lg border border-border/70 bg-background/60 px-3 py-1 text-xs font-semibold text-foreground disabled:opacity-60"
               >
                 {LEVEL_OPTIONS.map((item) => (
                   <option key={item.value} value={item.value}>
@@ -825,28 +838,28 @@ export default function AiHubPage() {
             </div>
           ) : null}
 
-          <div className="mt-5 min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
+          <div className="mt-5 min-h-[360px] max-h-[58vh] flex-1 space-y-4 overflow-y-auto rounded-lg border border-border/60 bg-background/25 p-3 pr-1">
             {messages.map((message) => (
               <div
                 key={message.id}
                 className={[
-                  "rounded-2xl border p-4 text-sm",
+                  "max-w-[92%] rounded-lg border p-4 text-sm shadow-sm",
                   message.role === "user"
-                    ? "ml-auto border-primary/40 bg-primary/10 text-foreground"
-                    : "border-border bg-muted/50 text-foreground",
+                    ? "ml-auto border-primary/40 bg-primary/15 text-foreground"
+                    : "mr-auto border-border/70 bg-secondary/45 text-foreground",
                 ].join(" ")}
               >
                 <div className="text-xs uppercase tracking-wider text-muted-foreground">
-                  {message.role === "user" ? "Bạn" : "AI Tutor"}
+                  {message.role === "user" ? "Bạn" : "Giáo viên AI"}
                 </div>
-                <div className="mt-2 whitespace-pre-line leading-relaxed">
+                <div className="mt-2 whitespace-pre-line break-words leading-relaxed">
                   {message.content}
                   {message.isStreaming && (
-                    <span className="inline-block ml-1 w-1.5 h-4 bg-primary animate-pulse" />
+                    <span className="ml-1 text-xs font-medium text-primary">đang viết...</span>
                   )}
                 </div>
                 {message.sources?.length ? (
-                  <div className="mt-3 space-y-2 rounded-xl border border-border bg-background/60 p-3 text-xs text-muted-foreground">
+                  <div className="mt-3 space-y-2 rounded-lg border border-border/70 bg-background/60 p-3 text-xs text-muted-foreground">
                     <div className="font-semibold text-foreground">
                       Nguồn tham khảo
                     </div>
@@ -865,7 +878,7 @@ export default function AiHubPage() {
                 {message.guidance &&
                 (message.guidance.actions?.length ||
                   message.guidance.references?.length) ? (
-                  <div className="mt-3 space-y-3 rounded-xl border border-primary/25 bg-primary/5 p-3">
+                  <div className="mt-3 space-y-3 rounded-lg border border-primary/25 bg-primary/5 p-3">
                     {message.guidance.actions?.length ? (
                       <div>
                         <div className="text-xs font-semibold uppercase tracking-wider text-primary">
@@ -876,7 +889,7 @@ export default function AiHubPage() {
                             <Link
                               key={action.id}
                               href={action.href}
-                              className="rounded-lg border border-primary/30 bg-background px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary/10"
+                              className="rounded-full border border-primary/30 bg-background/60 px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary/10"
                             >
                               {action.label}
                             </Link>
@@ -885,7 +898,7 @@ export default function AiHubPage() {
                       </div>
                     ) : null}
                     {message.guidance.references?.length ? (
-                      <div className="space-y-2 rounded-lg border border-border bg-background/70 p-3 text-xs text-muted-foreground">
+                      <div className="space-y-2 rounded-lg border border-border/70 bg-background/70 p-3 text-xs text-muted-foreground">
                         <div className="font-semibold text-foreground">
                           Nguồn tham khảo thêm
                         </div>
@@ -915,28 +928,41 @@ export default function AiHubPage() {
               </div>
             ))}
             {isSending && messages.length > 0 && !messages[messages.length - 1].isStreaming ? (
-              <div className="rounded-2xl border border-border bg-muted/40 p-4 text-xs text-muted-foreground">
+              <div className="rounded-lg border border-border/70 bg-secondary/40 p-4 text-xs text-muted-foreground">
                 AI đang trả lời...
               </div>
             ) : null}
           </div>
 
-          <div className="mt-5 border-t border-border pt-4">
+          <div className="mt-5 rounded-lg border border-border/70 bg-background/45 p-3">
+            <div className="mb-3 flex flex-wrap gap-2">
+              {QUICK_PROMPTS.map((prompt) => (
+                <button
+                  key={prompt}
+                  type="button"
+                  onClick={() => setInput(prompt)}
+                  disabled={isSending}
+                  className="rounded-full border border-primary/20 bg-primary/5 px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary/10 disabled:opacity-50"
+                >
+                  {prompt}
+                </button>
+              ))}
+            </div>
             <div className="flex flex-col gap-3 sm:flex-row">
               <textarea
                 rows={2}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Nhập câu hỏi cho AI Tutor..."
-                className="flex-1 rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground"
+                placeholder="Hỏi điều bạn đang vướng..."
+                className="flex-1 resize-none rounded-lg border border-border/70 bg-background/70 px-3 py-2 text-sm leading-relaxed text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
               <button
                 type="button"
-                disabled={!isAuthed || isSending}
+                disabled={!isAuthed || isSending || !input.trim()}
                 onClick={handleSend}
-                className="rounded-xl bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
+                className="min-h-11 rounded-lg border border-primary/35 bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground hover:brightness-110 disabled:opacity-60"
               >
-                Gửi
+                {isSending ? "Đang gửi..." : "Gửi"}
               </button>
             </div>
             {!isAuthed ? (
@@ -945,96 +971,118 @@ export default function AiHubPage() {
               </p>
             ) : null}
           </div>
+          </div>
         </section>
 
-        <aside className="min-h-0 space-y-6 overflow-y-auto pr-1">
-          <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+        <details className="heritage-surface p-4">
+          <summary className="cursor-pointer select-none text-sm font-semibold text-foreground">
+            Công cụ phụ và ngữ cảnh
+            <span className="ml-2 text-xs font-normal text-muted-foreground">
+              tóm tắt, thẻ nhớ, chấm bài
+            </span>
+          </summary>
+        <aside className="mt-4 grid gap-4 lg:grid-cols-2 xl:grid-cols-4">
+          <div className="heritage-card p-5">
+            <div className="relative">
             <h3 className="text-sm font-semibold text-foreground">
-              Ngữ cảnh bài học
+              Ngữ cảnh
             </h3>
             <p className="mt-1 text-xs text-muted-foreground">
-              Liên kết AI với họa tiết hoặc Cửu Đỉnh để trả lời chính xác hơn.
+              Điền khi muốn AI bám sát một bài học.
             </p>
             <div className="mt-4 space-y-3">
-              <input
-                type="text"
-                value={motifId}
-                onChange={(e) => setMotifId(e.target.value)}
-                placeholder="Motif ID"
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-              />
-              <input
-                type="text"
-                value={urnSlug}
-                onChange={(e) => setUrnSlug(e.target.value)}
-                placeholder="Urn slug"
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-              />
+              <label className="block space-y-1">
+                <span className="text-xs font-medium text-muted-foreground">Mã họa tiết</span>
+                <input
+                  type="text"
+                  value={motifId}
+                  onChange={(e) => setMotifId(e.target.value)}
+                  placeholder="Ví dụ: motif UUID"
+                  className="w-full rounded-lg border border-border/70 bg-background/60 px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                />
+              </label>
+              <label className="block space-y-1">
+                <span className="text-xs font-medium text-muted-foreground">Slug Cửu Đỉnh</span>
+                <input
+                  type="text"
+                  value={urnSlug}
+                  onChange={(e) => setUrnSlug(e.target.value)}
+                  placeholder="Ví dụ: cao-dinh"
+                  className="w-full rounded-lg border border-border/70 bg-background/60 px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                />
+              </label>
               <div className="text-xs text-muted-foreground">
-                Gợi ý: mở từ bài học/quiz sẽ tự điền sẵn.
+                Mở từ bài học thường tự điền sẵn.
               </div>
             </div>
           </div>
+          </div>
 
-          <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+          <div className="heritage-card p-5">
+            <div className="relative">
             <h3 className="text-sm font-semibold text-foreground">
-              Hành động nhanh
+              Tạo nhanh
             </h3>
             <div className="mt-4 flex flex-wrap gap-2">
               <button
                 type="button"
                 onClick={handleSummary}
-                className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-foreground hover:bg-muted"
+                className="rounded-full border border-primary/25 bg-background/45 px-3 py-1 text-xs font-semibold text-foreground hover:bg-primary/10 hover:text-primary"
               >
                 Tóm tắt
               </button>
               <button
                 type="button"
                 onClick={handleFlashcards}
-                className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-foreground hover:bg-muted"
+                className="rounded-full border border-primary/25 bg-background/45 px-3 py-1 text-xs font-semibold text-foreground hover:bg-primary/10 hover:text-primary"
               >
-                Flashcards
+                Thẻ nhớ
               </button>
               <button
                 type="button"
                 onClick={handleCoach}
-                className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-foreground hover:bg-muted"
+                className="rounded-full border border-primary/25 bg-background/45 px-3 py-1 text-xs font-semibold text-foreground hover:bg-primary/10 hover:text-primary"
               >
-                Coach
+                Huấn luyện
               </button>
               <button
                 type="button"
                 onClick={handleReviewPlan}
-                className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-foreground hover:bg-muted"
+                className="rounded-full border border-primary/25 bg-background/45 px-3 py-1 text-xs font-semibold text-foreground hover:bg-primary/10 hover:text-primary"
               >
                 Ôn tập
               </button>
               <button
                 type="button"
                 onClick={handleDiagnostic}
-                className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-foreground hover:bg-muted"
+                className="rounded-full border border-primary/25 bg-background/45 px-3 py-1 text-xs font-semibold text-foreground hover:bg-primary/10 hover:text-primary"
               >
                 Chẩn đoán
               </button>
             </div>
           </div>
+          </div>
 
-          <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+          <div className="heritage-card p-5">
+            <div className="relative">
             <h3 className="text-sm font-semibold text-foreground">
-              Giải thích theo cấp độ
+              Giải thích
             </h3>
+            <label className="mt-3 block space-y-1">
+              <span className="text-xs font-medium text-muted-foreground">Nội dung</span>
             <textarea
               rows={3}
               value={explainText}
               onChange={(e) => setExplainText(e.target.value)}
               placeholder="Nhập nội dung cần giải thích..."
-              className="mt-3 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+              className="w-full rounded-lg border border-border/70 bg-background/60 px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
+            </label>
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <select
                 value={explainLevel}
                 onChange={(e) => setExplainLevel(e.target.value)}
-                className="rounded-lg border border-border bg-background px-3 py-2 text-xs font-semibold text-foreground"
+                className="rounded-lg border border-border/70 bg-background/60 px-3 py-2 text-xs font-semibold text-foreground"
               >
                 {EXPLAIN_LEVELS.map((item) => (
                   <option key={item.value} value={item.value}>
@@ -1045,49 +1093,69 @@ export default function AiHubPage() {
               <button
                 type="button"
                 onClick={handleExplain}
-                className="rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/90"
+                disabled={isSending || !explainText.trim()}
+                className="rounded-lg border border-primary/35 bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground hover:brightness-110 disabled:opacity-60"
               >
                 Giải thích
               </button>
             </div>
           </div>
+          </div>
 
-          <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+          <div className="heritage-card p-5">
+            <div className="relative">
             <h3 className="text-sm font-semibold text-foreground">
-              Phản hồi bài làm
+              Chấm nhanh
             </h3>
             <div className="mt-3 space-y-3">
-              <input
-                type="text"
-                value={feedbackQuestion}
-                onChange={(e) => setFeedbackQuestion(e.target.value)}
-                placeholder="Câu hỏi"
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-              />
-              <input
-                type="text"
-                value={feedbackCorrect}
-                onChange={(e) => setFeedbackCorrect(e.target.value)}
-                placeholder="Đáp án đúng"
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-              />
-              <input
-                type="text"
-                value={feedbackAnswer}
-                onChange={(e) => setFeedbackAnswer(e.target.value)}
-                placeholder="Câu trả lời của bạn"
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-              />
+              <label className="block space-y-1">
+                <span className="text-xs font-medium text-muted-foreground">Câu hỏi</span>
+                <input
+                  type="text"
+                  value={feedbackQuestion}
+                  onChange={(e) => setFeedbackQuestion(e.target.value)}
+                  placeholder="Nhập câu hỏi cần chấm"
+                  className="w-full rounded-lg border border-border/70 bg-background/60 px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                />
+              </label>
+              <label className="block space-y-1">
+                <span className="text-xs font-medium text-muted-foreground">Đáp án đúng</span>
+                <input
+                  type="text"
+                  value={feedbackCorrect}
+                  onChange={(e) => setFeedbackCorrect(e.target.value)}
+                  placeholder="Nhập đáp án chuẩn"
+                  className="w-full rounded-lg border border-border/70 bg-background/60 px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                />
+              </label>
+              <label className="block space-y-1">
+                <span className="text-xs font-medium text-muted-foreground">Bài làm của bạn</span>
+                <input
+                  type="text"
+                  value={feedbackAnswer}
+                  onChange={(e) => setFeedbackAnswer(e.target.value)}
+                  placeholder="Nhập câu trả lời cần nhận xét"
+                  className="w-full rounded-lg border border-border/70 bg-background/60 px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                />
+              </label>
               <button
                 type="button"
                 onClick={handleFeedback}
-                className="rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/90"
+                disabled={
+                  isSending ||
+                  !feedbackQuestion.trim() ||
+                  !feedbackCorrect.trim() ||
+                  !feedbackAnswer.trim()
+                }
+                className="rounded-lg border border-primary/35 bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground hover:brightness-110 disabled:opacity-60"
               >
-                Nhận phản hồi
+                Chấm bài
               </button>
             </div>
           </div>
+          </div>
         </aside>
+        </details>
       </div>
     </main>
   );

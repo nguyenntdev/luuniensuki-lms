@@ -4,6 +4,7 @@ import ClientBodyWrapper from "@/components/ClientBodyWrapper";
 import AuthGate from "@/components/AuthGate";
 import StartingPathGate from "@/components/StartingPathGate";
 import NetworkStatusIndicator from "@/components/NetworkStatusIndicator";
+import ThemeProvider from "@/components/ThemeProvider";
 import { XpCelebrationProvider } from "@/lib/xpCelebrationContext";
 import BadgeUnlockProvider from "@/components/badges/BadgeUnlockProvider";
 import "./globals.css";
@@ -15,22 +16,24 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
     return (
-        <html lang="vi">
+        <html lang="vi" className="dark" suppressHydrationWarning>
             <body className="min-h-dvh bg-background text-foreground">
-                <NetworkStatusIndicator>
-                    <ClientBodyWrapper>
-                        <AuthGate>
-                            <XpCelebrationProvider>
-                                <BadgeUnlockProvider>
-                                    <FloatingNavbar />
-                                    <StartingPathGate />
-                                    <Toaster position="top-center" reverseOrder={false} />
-                                    {children}
-                                </BadgeUnlockProvider>
-                            </XpCelebrationProvider>
-                        </AuthGate>
-                    </ClientBodyWrapper>
-                </NetworkStatusIndicator>
+                <ThemeProvider>
+                    <NetworkStatusIndicator>
+                        <ClientBodyWrapper>
+                            <AuthGate>
+                                <XpCelebrationProvider>
+                                    <BadgeUnlockProvider>
+                                        <FloatingNavbar />
+                                        <StartingPathGate />
+                                        <Toaster position="top-center" reverseOrder={false} />
+                                        {children}
+                                    </BadgeUnlockProvider>
+                                </XpCelebrationProvider>
+                            </AuthGate>
+                        </ClientBodyWrapper>
+                    </NetworkStatusIndicator>
+                </ThemeProvider>
             </body>
         </html>
     );

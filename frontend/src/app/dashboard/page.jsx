@@ -226,10 +226,11 @@ export default function DashboardPage() {
 
     if (status !== "authed") {
         return (
-            <main className="mx-auto min-h-screen max-w-5xl px-5 pb-24 pt-8 md:px-7">
-                <div className="rounded-3xl border border-border/70 bg-card/70 p-6 shadow-[0_12px_28px_-16px_rgba(0,0,0,0.55)] backdrop-blur-xl">
+            <main className="site-shell">
+                <div className="heritage-surface p-6">
+                  <div className="relative">
                     <h1 className="text-xl font-display font-semibold text-foreground">
-                        Learning Hub
+                        Bảng học tập
                     </h1>
                     <p className="mt-2 text-sm text-muted-foreground">
                         Vui lòng đăng nhập để xem tiến trình học tập.
@@ -242,38 +243,60 @@ export default function DashboardPage() {
                             Đăng nhập
                         </Link>
                     </div>
+                  </div>
                 </div>
             </main>
         );
     }
 
     return (
-        <main className="mx-auto min-h-screen max-w-6xl px-5 pb-28 pt-8 md:px-7 md:pt-10">
-            <section className="relative overflow-hidden rounded-3xl border border-border/70 bg-card/70 p-6 shadow-[0_18px_50px_-22px_hsl(0_0%_0%_/_0.45)] backdrop-blur-xl md:p-8">
-                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_10%_10%,hsl(var(--primary)/0.16),transparent_45%)]" />
-                <div className="relative flex flex-wrap items-end justify-between gap-4">
+        <main className="site-shell">
+            <section className="heritage-hero md:p-6">
+                <div className="relative grid gap-5 lg:grid-cols-[1fr_380px] lg:items-end">
                     <div>
-                        <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-primary">
-                            Learning Hub
+                        <div className="heritage-chip">
+                            Bảng học tập
                         </div>
                         <h1 className="mt-3 text-3xl font-display font-bold text-foreground">
-                            Tiến Trình Hôm Nay
+                            Tiến trình hôm nay
                         </h1>
                         <p className="mt-1 text-sm text-muted-foreground">
-                            Theo dõi tiến trình, tiếp tục lộ trình, và hoàn thành
-                            các thử thách tiếp theo.
+                            Nhìn nhanh việc cần làm, tiến độ lộ trình và gợi ý tiếp theo.
                         </p>
                     </div>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="focus-card p-4">
+                        <div className="flex items-center justify-between gap-3">
+                            <div>
+                                <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                    Lộ trình
+                                </div>
+                                <div className="mt-1 text-2xl font-display font-bold text-foreground">
+                                    {completionPercent}%
+                                </div>
+                            </div>
+                            <div className="text-right text-xs text-muted-foreground">
+                                {pathCounts.mastered}/{pathCounts.total || 0}
+                                <br />
+                                thành thạo
+                            </div>
+                        </div>
+                        <div className="progress-track mt-4">
+                            <div
+                                className="progress-fill"
+                                style={{ width: `${completionPercent}%` }}
+                            />
+                        </div>
+                    </div>
+                    <div className="flex flex-wrap gap-2 lg:col-span-2">
                         <Link
                             href="/explore"
-                            className="rounded-full border border-border/70 bg-background/70 px-4 py-2 text-sm font-medium text-foreground hover:bg-muted/80"
+                            className="rounded-lg border border-border bg-secondary/60 px-4 py-2 text-sm font-medium text-foreground hover:border-primary/35 hover:bg-secondary"
                         >
                             Khám phá Cửu Đỉnh
                         </Link>
                         <Link
                             href="/collection"
-                            className="rounded-full border border-border/70 bg-background/70 px-4 py-2 text-sm font-medium text-foreground hover:bg-muted/80"
+                            className="rounded-lg border border-border bg-secondary/60 px-4 py-2 text-sm font-medium text-foreground hover:border-primary/35 hover:bg-secondary"
                         >
                             Bộ sưu tập
                         </Link>
@@ -287,9 +310,42 @@ export default function DashboardPage() {
                 </div>
             ) : null}
 
-            <div className="mt-8 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-                <div className="space-y-6">
-                    <div className="rounded-3xl border border-border/70 bg-card/70 p-6 shadow-[0_12px_28px_-16px_rgba(0,0,0,0.55)] backdrop-blur-xl">
+            <section className="mt-5 grid gap-3 md:grid-cols-3">
+                <div className="focus-card p-4">
+                    <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        Chuỗi học
+                    </div>
+                    <div className="mt-2 text-3xl font-display font-bold text-foreground">
+                        {streak?.current_streak ?? 0}
+                        <span className="ml-1 text-sm font-semibold text-muted-foreground">ngày</span>
+                    </div>
+                </div>
+                <div className="focus-card p-4">
+                    <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        Thành thạo
+                    </div>
+                    <div className="mt-2 text-3xl font-display font-bold text-foreground">
+                        {pathCounts.mastered}
+                        <span className="ml-1 text-sm font-semibold text-muted-foreground">mục</span>
+                    </div>
+                </div>
+                <div className="focus-card p-4">
+                    <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        Gợi ý
+                    </div>
+                    <div className="mt-2 text-3xl font-display font-bold text-foreground">
+                        {recommendationItems.length}
+                    </div>
+                    <div className="mt-1 text-xs text-muted-foreground">
+                        việc nên làm tiếp
+                    </div>
+                </div>
+            </section>
+
+            <div className="mt-5 grid gap-5 xl:grid-cols-[1.25fr_0.75fr]">
+                <div className="space-y-5">
+                    <div className="focus-card p-5">
+                      <div className="relative">
                         {loading ? (
                             <div className="space-y-3">
                                 <Skeleton className="h-5 w-40" />
@@ -299,9 +355,9 @@ export default function DashboardPage() {
                         ) : resumeAction ? (
                             <>
                                 <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                                    Tiếp tục
+                                    Việc nên làm tiếp
                                 </div>
-                                <div className="mt-2 text-xl font-display font-semibold text-foreground">
+                                <div className="mt-2 text-2xl font-display font-bold text-foreground">
                                     {resumeAction.title}
                                 </div>
                                 <p className="mt-1 text-sm text-muted-foreground">
@@ -311,9 +367,9 @@ export default function DashboardPage() {
                                     <Link
                                         href={resumeAction.href}
                                         onClick={handleResumeClick}
-                                        className="inline-flex items-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+                                        className="inline-flex items-center rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
                                     >
-                                        Bắt đầu →
+                                        Bắt đầu
                                     </Link>
                                 </div>
                             </>
@@ -322,13 +378,15 @@ export default function DashboardPage() {
                                 Chưa có dữ liệu lộ trình.
                             </div>
                         )}
+                      </div>
                     </div>
 
-                    <div className="rounded-3xl border border-border/70 bg-card/70 p-6 shadow-[0_12px_28px_-16px_rgba(0,0,0,0.55)] backdrop-blur-xl">
+                    <div className="heritage-surface p-5">
+                      <div className="relative">
                         <div className="flex items-baseline justify-between">
                             <div>
                                 <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                                    Quest đang theo
+                                    Hành trình đang theo
                                 </div>
                                 <div className="mt-1 text-lg font-display font-semibold text-foreground">
                                     {loading ? (
@@ -336,7 +394,7 @@ export default function DashboardPage() {
                                     ) : questSummary?.quest_name ? (
                                         questSummary.quest_name
                                     ) : (
-                                        "Chưa chọn quest"
+                                        "Chưa chọn hành trình"
                                     )}
                                 </div>
                             </div>
@@ -352,9 +410,9 @@ export default function DashboardPage() {
 
                         {questSummary ? (
                             <>
-                                <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-muted">
+                                <div className="progress-track mt-4">
                                     <div
-                                        className="h-full bg-primary transition-all"
+                                        className="progress-fill transition-all"
                                         style={{
                                             width: `${Math.round(
                                                 questSummary.progress_percent ||
@@ -372,7 +430,7 @@ export default function DashboardPage() {
                                             </span>
                                         </>
                                     ) : (
-                                        "Hãy mở quest để xem chi tiết."
+                                        "Hãy mở hành trình để xem chi tiết."
                                     )}
                                 </div>
                             </>
@@ -392,13 +450,14 @@ export default function DashboardPage() {
                                 }
                                 className="text-sm font-semibold text-primary hover:text-primary/80"
                             >
-                                {questSummary ? "Xem quest" : "Khám phá quest"}{" "}
-                                →
+                                {questSummary ? "Xem hành trình" : "Khám phá hành trình"}
                             </Link>
                         </div>
+                      </div>
                     </div>
 
-                    <div className="rounded-3xl border border-border/70 bg-card/70 p-6 shadow-[0_12px_28px_-16px_rgba(0,0,0,0.55)] backdrop-blur-xl">
+                    <div className="heritage-surface p-5">
+                      <div className="relative">
                         <div className="flex items-baseline justify-between">
                             <div>
                                 <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -414,15 +473,15 @@ export default function DashboardPage() {
                             </div>
                         </div>
 
-                        <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-muted">
+                        <div className="progress-track mt-4">
                             <div
-                                className="h-full bg-primary transition-all"
+                                className="progress-fill transition-all"
                                 style={{ width: `${completionPercent}%` }}
                             />
                         </div>
 
                         <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                            <div className="rounded-lg bg-secondary/40 p-3 text-center">
+                            <div className="metric-pill p-3 text-center">
                                 <div className="text-xs text-muted-foreground">
                                     Khám phá
                                 </div>
@@ -430,7 +489,7 @@ export default function DashboardPage() {
                                     {pathCounts.discovered}
                                 </div>
                             </div>
-                            <div className="rounded-lg bg-secondary/40 p-3 text-center">
+                            <div className="metric-pill p-3 text-center">
                                 <div className="text-xs text-muted-foreground">
                                     Đã học
                                 </div>
@@ -438,7 +497,7 @@ export default function DashboardPage() {
                                     {pathCounts.learned}
                                 </div>
                             </div>
-                            <div className="rounded-lg bg-secondary/40 p-3 text-center">
+                            <div className="metric-pill p-3 text-center">
                                 <div className="text-xs text-muted-foreground">
                                     Thành thạo
                                 </div>
@@ -454,12 +513,14 @@ export default function DashboardPage() {
                                 {completionPercent}%
                             </span>
                         </div>
+                      </div>
                     </div>
 
-                    <div className="rounded-3xl border border-border/70 bg-card/70 p-6 shadow-[0_12px_28px_-16px_rgba(0,0,0,0.55)] backdrop-blur-xl">
+                    <div className="heritage-surface p-5">
+                      <div className="relative">
                         <div className="flex items-baseline justify-between">
                             <h2 className="font-display text-lg font-semibold text-foreground">
-                                Next Up
+                                Bài kế tiếp
                             </h2>
                             {loading ? (
                                 <span className="text-xs text-muted-foreground">
@@ -472,7 +533,7 @@ export default function DashboardPage() {
                                 {nextUpList.map((motif) => (
                                     <div
                                         key={motif.id}
-                                        className="flex items-center justify-between rounded-xl border border-border bg-secondary/30 px-4 py-3"
+                                        className="flex items-center justify-between rounded-lg border border-border/70 bg-secondary/35 px-4 py-3"
                                     >
                                         <div>
                                             <div className="text-sm font-semibold text-foreground">
@@ -496,7 +557,7 @@ export default function DashboardPage() {
                                             className="text-xs font-semibold text-primary hover:text-primary/80"
                                         >
                                             {motif.status === "learned"
-                                                ? "Làm quiz"
+                                                ? "Làm trắc nghiệm"
                                                 : motif.status === "hidden"
                                                   ? "Khám phá"
                                                   : "Xem bài học"}
@@ -510,13 +571,15 @@ export default function DashboardPage() {
                                 này.
                             </div>
                         )}
+                      </div>
                     </div>
                 </div>
 
-                <div className="space-y-6">
-                    <div className="rounded-3xl border border-border/70 bg-card/70 p-6 shadow-[0_12px_28px_-16px_rgba(0,0,0,0.55)] backdrop-blur-xl">
+                <div className="space-y-5">
+                    <div className="heritage-surface p-5">
+                      <div className="relative">
                         <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                            Streak
+                            Chuỗi ngày học
                         </div>
                         {loading ? (
                             <div className="mt-3 space-y-2">
@@ -530,7 +593,7 @@ export default function DashboardPage() {
                                 </div>
                                 <div className="mt-1 text-xs text-muted-foreground">
                                     Kỷ lục: {streak?.longest_streak ?? 0} ·
-                                    Freeze: {streak?.streak_freezes ?? 0}
+                                    Vé giữ chuỗi: {streak?.streak_freezes ?? 0}
                                 </div>
                                 {streak?.days_since_last_active != null &&
                                 streak.days_since_last_active > 0 ? (
@@ -542,16 +605,18 @@ export default function DashboardPage() {
                                 ) : null}
                             </div>
                         )}
+                      </div>
                     </div>
 
-                    <div className="rounded-3xl border border-border/70 bg-card/70 p-6 shadow-[0_12px_28px_-16px_rgba(0,0,0,0.55)] backdrop-blur-xl">
+                    <div className="heritage-surface p-5">
+                      <div className="relative">
                         <div className="flex items-center justify-between">
                             <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                                 Gợi ý tiếp theo
                             </div>
                             <div className="flex items-center gap-2">
                                 {recommendations?.source === "llm" ? (
-                                    <span className="rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+                                        <span className="rounded-md border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-300">
                                         AI
                                     </span>
                                 ) : null}
@@ -603,7 +668,7 @@ export default function DashboardPage() {
                                                             item.href ||
                                                             "/collection"
                                                         }
-                                                        className="block rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800 hover:bg-amber-100"
+                                                        className="block rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-100 hover:bg-amber-500/15"
                                                     >
                                                         <div className="font-semibold">
                                                             {item.title}
@@ -634,7 +699,7 @@ export default function DashboardPage() {
                                                     href={
                                                         item.href || "/explore"
                                                     }
-                                                    className="block rounded-lg border border-border bg-secondary/40 px-3 py-2 text-sm text-foreground hover:bg-secondary/60"
+                                                    className="block rounded-lg border border-border/70 bg-secondary/40 px-3 py-2 text-sm text-foreground hover:border-primary/25 hover:bg-secondary/60"
                                                 >
                                                     <div className="font-semibold">
                                                         {item.title}
@@ -653,7 +718,7 @@ export default function DashboardPage() {
                         ) : (
                             <div className="mt-3 text-sm text-muted-foreground">
                                 Chưa có gợi ý nào. Hãy hoàn thành bài học hoặc
-                                quest để nhận đề xuất mới.
+                                hành trình để nhận đề xuất mới.
                             </div>
                         )}
 
@@ -663,6 +728,7 @@ export default function DashboardPage() {
                                 nhận gợi ý nâng cao.
                             </div>
                         ) : null}
+                      </div>
                     </div>
 
                     <DailyGoalCard />
@@ -671,7 +737,8 @@ export default function DashboardPage() {
 
                     <ActivateBoostButton />
 
-                    <div className="rounded-3xl border border-border/70 bg-card/70 p-6 shadow-[0_12px_28px_-16px_rgba(0,0,0,0.55)] backdrop-blur-xl">
+                    <div className="heritage-surface p-5">
+                      <div className="relative">
                         <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                             Tổng quan
                         </div>
@@ -708,6 +775,7 @@ export default function DashboardPage() {
                                 </div>
                             </div>
                         )}
+                      </div>
                     </div>
                 </div>
             </div>

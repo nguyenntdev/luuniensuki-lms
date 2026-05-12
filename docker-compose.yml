@@ -65,6 +65,24 @@ services:
       - uploads:/app/uploads
     restart: unless-stopped
 
+  api_rust:
+    build:
+      context: ./backend-rust
+      dockerfile: Dockerfile
+    environment:
+      API_HOST: 0.0.0.0
+      API_PORT: 8001
+      RUST_LOG: ${RUST_LOG:-info}
+      DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-luuniensuki}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-dev-insecure-change-me}
+      JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8001:8001"
+    restart: unless-stopped
+
   web:
     build:
       context: ./frontend

@@ -63,6 +63,22 @@ services:
       --timeout ${GUNICORN_TIMEOUT:-180}
       backend.main:app"
 
+  api_rust:
+    build:
+      context: ./backend-rust
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      API_HOST: 0.0.0.0
+      API_PORT: 8001
+      RUST_LOG: ${RUST_LOG:-info}
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
+    depends_on:
+      db:
+        condition: service_healthy
+
   web:
     build:
       context: ./frontend

@@ -371,8 +371,8 @@ export default function Page() {
 
     if (status !== "authed") {
         return (
-            <main className="mx-auto max-w-5xl px-6 py-10">
-                <div className="rounded-xl border bg-card p-6">
+            <main className="site-shell">
+                <div className="rounded-lg border bg-card p-6">
                     <h1 className="text-xl font-display font-semibold">
                         Hồ sơ cá nhân
                     </h1>
@@ -384,7 +384,7 @@ export default function Page() {
                             href="/login"
                             className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
                         >
-                            Đăng Nhập
+                            Đăng nhập
                         </Link>
                     </div>
                 </div>
@@ -394,17 +394,32 @@ export default function Page() {
 
     return (
         <>
-            <main className="mx-auto max-w-6xl p-6">
-                <div className="rounded-xl border bg-card p-6 shadow-sm">
-                    <div className="flex flex-wrap items-start justify-between gap-4">
-                        <div>
-                            <h1 className="text-2xl font-display font-bold text-foreground">
-                                Hồ sơ cá nhân
-                            </h1>
-                            <p className="mt-1 text-sm text-muted-foreground">
-                                Cập nhật tên hiển thị, giới thiệu và ảnh đại
-                                diện.
-                            </p>
+            <main className="site-shell">
+                <div className="heritage-hero p-5 md:p-6">
+                    <div className="relative grid gap-5 lg:grid-cols-[1fr_auto] lg:items-start">
+                        <div className="flex min-w-0 items-center gap-4">
+                            <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-primary/25 bg-primary/10">
+                                {hasAvatar ? (
+                                    <img
+                                        src={avatarSrc}
+                                        alt="Ảnh đại diện"
+                                        className="h-full w-full object-cover"
+                                    />
+                                ) : (
+                                    <span className="text-xl font-display font-bold text-primary">
+                                        {initials}
+                                    </span>
+                                )}
+                            </div>
+                            <div className="min-w-0">
+                                <div className="heritage-chip">Hồ sơ</div>
+                                <h1 className="mt-2 truncate text-3xl font-display font-bold text-foreground">
+                                    {user?.display_name || "Hồ sơ cá nhân"}
+                                </h1>
+                                <p className="mt-1 truncate text-sm text-muted-foreground">
+                                    {user?.username ? `@${user.username}` : user?.email}
+                                </p>
+                            </div>
                         </div>
 
                         {!isEditing ? (
@@ -441,34 +456,61 @@ export default function Page() {
                         )}
                     </div>
 
+                    <div className="relative mt-5 grid gap-3 sm:grid-cols-3">
+                        <div className="metric-pill p-4">
+                            <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                Tổng XP
+                            </div>
+                            <div className="mt-1 text-2xl font-display font-bold text-foreground">
+                                {stats?.total_xp || 0}
+                            </div>
+                        </div>
+                        <div className="metric-pill p-4">
+                            <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                Chuỗi học
+                            </div>
+                            <div className="mt-1 text-2xl font-display font-bold text-foreground">
+                                {streak?.current_streak || 0} ngày
+                            </div>
+                        </div>
+                        <div className="metric-pill p-4">
+                            <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                Huy hiệu
+                            </div>
+                            <div className="mt-1 text-2xl font-display font-bold text-foreground">
+                                {badges?.length || 0}
+                            </div>
+                        </div>
+                    </div>
+
                     {!user ? (
                         <div className="mt-6 text-sm text-muted-foreground">
                             Đang tải hồ sơ...
                         </div>
                     ) : (
-                        <div className="mt-6 grid gap-6 sm:grid-cols-[160px_1fr]">
-                            <div>
-                                <div className="flex items-center gap-4">
-                                    <div className="h-16 w-16 overflow-hidden rounded-full border border-border bg-muted flex items-center justify-center">
-                                        {hasAvatar ? (
-                                            <img
-                                                src={avatarSrc}
-                                                alt="Ảnh đại diện"
-                                                className="h-full w-full object-cover"
-                                            />
-                                        ) : (
-                                            <span className="text-sm font-semibold text-primary">
-                                                {initials}
-                                            </span>
-                                        )}
+                        <div className="relative mt-6 grid gap-6 lg:grid-cols-[260px_1fr]">
+                            <div className="focus-card p-4">
+                                <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                    Trạng thái hồ sơ
+                                </div>
+                                <div className="mt-3 rounded-lg border border-border/70 bg-background/35 p-3">
+                                    <div className="text-sm font-semibold text-foreground">
+                                        {(user.is_profile_public ?? true) ? "Công khai" : "Riêng tư"}
                                     </div>
-                                    <div className="min-w-0">
-                                        <div className="text-sm font-medium text-foreground truncate">
-                                            {user.email}
-                                        </div>
-                                        <div className="text-xs text-muted-foreground">
-                                            ID: {user.id}
-                                        </div>
+                                    <div className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                                        {(user.is_profile_public ?? true)
+                                            ? "Người học khác có thể xem hồ sơ công khai của bạn."
+                                            : "Chỉ bạn xem được hồ sơ này."}
+                                    </div>
+                                </div>
+                                <div className="mt-3 rounded-lg border border-border/70 bg-background/35 p-3">
+                                    <div className="text-sm font-semibold text-foreground">
+                                        {(user.ai_personalization_enabled ?? true) ? "Gợi ý cá nhân hóa" : "Gợi ý mặc định"}
+                                    </div>
+                                    <div className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                                        {(user.ai_personalization_enabled ?? true)
+                                            ? "Hệ thống dùng tiến độ học để gợi ý phù hợp hơn."
+                                            : "Gợi ý không dùng dữ liệu cá nhân hóa."}
                                     </div>
                                 </div>
 
@@ -501,7 +543,7 @@ export default function Page() {
                                 ) : null}
                             </div>
 
-                            <div className="grid gap-4">
+                            <div className="grid gap-4 rounded-lg border border-border/70 bg-background/25 p-4">
                                 <div>
                                     <label className="block text-xs font-medium text-muted-foreground">
                                         Tên người dùng (username)
@@ -740,12 +782,12 @@ export default function Page() {
                 </div>
 
                 {/* Gamification Hub Section */}
-                <div className="mt-6 grid gap-6 lg:grid-cols-2">
+                <div className="mt-6 grid gap-4 lg:grid-cols-2">
                     <XpProgressBar stats={stats} />
                     <StreakCalendar streak={streak} loading={loadingGamification} />
                 </div>
 
-                <div className="mt-6 grid gap-6 lg:grid-cols-3">
+                <div className="mt-6 grid gap-4 lg:grid-cols-3">
                     <div className="lg:col-span-2">
                         <StatsGrid stats={stats} collection={collection} />
                     </div>
@@ -763,7 +805,7 @@ export default function Page() {
                     />
                 </div>
 
-                <div className="mt-6 rounded-xl border border-border bg-card p-6 shadow-sm">
+                <div className="mt-6 focus-card p-5">
                     <div className="flex flex-wrap items-center justify-between gap-4">
                         <div>
                             <h2 className="text-lg font-display font-semibold text-foreground">
