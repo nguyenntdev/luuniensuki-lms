@@ -4,7 +4,8 @@ use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 pub struct Settings {
     pub bind_addr: SocketAddr,
     pub app_name: String,
-    pub legacy_api_addr: SocketAddr,
+    pub legacy_api_host: String,
+    pub legacy_api_port: u16,
     pub jwt_secret_key: String,
 }
 
@@ -23,23 +24,14 @@ impl Settings {
             .ok()
             .and_then(|value| value.parse::<u16>().ok())
             .unwrap_or(8000);
-        let legacy_ip = resolve_host(&legacy_host).unwrap_or(IpAddr::V4(Ipv4Addr::LOCALHOST));
 
         Self {
             bind_addr: SocketAddr::new(ip, port),
             app_name: "luuniensuki-api-rust".to_string(),
-            legacy_api_addr: SocketAddr::new(legacy_ip, legacy_port),
+            legacy_api_host: legacy_host,
+            legacy_api_port: legacy_port,
             jwt_secret_key: std::env::var("JWT_SECRET_KEY")
                 .unwrap_or_else(|_| "CHANGE_ME_IN_PRODUCTION".to_string()),
         }
     }
-}
-
-fn resolve_host(host: &str) -> Option<IpAddr> {
-    host.parse::<IpAddr>().ok().or_else(|| {
-        std::net::ToSocketAddrs::to_socket_addrs(&(host, 0))
-            .ok()
-            .and_then(|mut addrs| addrs.next())
-            .map(|addr| addr.ip())
-    })
 }
