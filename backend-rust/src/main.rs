@@ -50,6 +50,8 @@ fn handle_connection(
                 json_escape(&settings.app_name)
             ),
         )?;
+    } else if should_short_circuit_unauthenticated(&request_text) {
+        write_unauthorized(&mut stream)?;
     } else {
         proxy_to_legacy(&mut stream, &request, &settings)?;
     }
@@ -60,6 +62,16 @@ fn handle_connection(
 fn write_json(stream: &mut TcpStream, status: &str, body: &str) -> std::io::Result<()> {
     let response = format!(
         "HTTP/1.1 {status}\r\ncontent-type: application/json\r\ncontent-length: {}\r\nconnection: close\r\n\r\n{body}",
+        body.len()
+    );
+    stream.write_all(response.as_bytes())?;
+    stream.flush()
+}
+
+fn write_unauthorized(stream: &mut TcpStream) -> std::io::Result<()> {
+    let body = r#"{"error":{"code":"HTTP_ERROR","message":"Could not validate credentials","details":{}}}"#;
+    let response = format!(
+        "HTTP/1.1 401 Unauthorized\r\ncontent-type: application/json\r\ncontent-length: {}\r\nwww-authenticate: Bearer\r\nconnection: close\r\n\r\n{body}",
         body.len()
     );
     stream.write_all(response.as_bytes())?;
@@ -178,6 +190,44 @@ fn parse_content_length(headers: &[u8]) -> Option<usize> {
     })
 }
 
+fn should_short_circuit_unauthenticated(request: &str) -> bool {
+    let Some(path) = request_path(request) else {
+        return false;
+    };
+
+    is_native_auth_guard_path(path) && !has_auth_token(request)
+}
+
+fn request_path(request: &str) -> Option<&str> {
+    let first_line = request.lines().next()?;
+    let mut parts = first_line.split_whitespace();
+    let _method = parts.next()?;
+    let raw_path = parts.next()?;
+    Some(raw_path.split('?').next().unwrap_or(raw_path))
+}
+
+fn is_native_auth_guard_path(path: &str) -> bool {
+    matches!(
+        path,
+        "/api/v1/auth/me"
+            | "/api/v1/ranks"
+            | "/api/v1/badges"
+            | "/api/v1/urns"
+            | "/api/v1/dashboard/summary"
+            | "/api/v1/users/me/collection"
+            | "/api/v1/users/me/badges"
+            | "/api/v1/users/me/streak"
+    )
+}
+
+fn has_auth_token(request: &str) -> bool {
+    request.lines().any(|line| {
+        let lower = line.to_ascii_lowercase();
+        lower.starts_with("authorization: bearer ")
+            || (lower.starts_with("cookie:") && lower.contains("luuniensuki_access="))
+    })
+}
+
 fn json_escape(value: &str) -> String {
     value.replace('\\', "\\\\").replace('"', "\\\"")
 }
@@ -206,5 +256,40 @@ mod tests {
 
         assert!(normalized.contains("host: api:8000\r\n"));
         assert!(normalized.contains("connection: close\r\n"));
+    }
+
+    #[test]
+    fn request_path_ignores_query_string() {
+        let request = "GET /api/v1/urns?page=1 HTTP/1.1\r\n\r\n";
+
+        assert_eq!(request_path(request), Some("/api/v1/urns"));
+    }
+
+    #[test]
+    fn auth_guard_short_circuits_missing_token() {
+        let request = "GET /api/v1/badges HTTP/1.1\r\nHost: lms.histolab.icu\r\n\r\n";
+
+        assert!(should_short_circuit_unauthenticated(request));
+    }
+
+    #[test]
+    fn auth_guard_allows_bearer_token() {
+        let request = "GET /api/v1/badges HTTP/1.1\r\nAuthorization: Bearer abc\r\n\r\n";
+
+        assert!(!should_short_circuit_unauthenticated(request));
+    }
+
+    #[test]
+    fn auth_guard_allows_access_cookie() {
+        let request = "GET /api/v1/badges HTTP/1.1\r\nCookie: luuniensuki_access=abc\r\n\r\n";
+
+        assert!(!should_short_circuit_unauthenticated(request));
+    }
+
+    #[test]
+    fn auth_guard_ignores_unlisted_path() {
+        let request = "GET /api/v1/auth/login HTTP/1.1\r\n\r\n";
+
+        assert!(!should_short_circuit_unauthenticated(request));
     }
 }

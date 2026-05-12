@@ -8,6 +8,7 @@ Current scope:
 - Exposes `GET /health`.
 - Works as a gateway in front of the Python API.
 - Proxies non-native backend routes to the legacy Python API.
+- Handles selected unauthenticated 401 responses natively.
 - Uses a minimal standard-library HTTP server so it can build on the current low-memory host.
 
 Local commands:
