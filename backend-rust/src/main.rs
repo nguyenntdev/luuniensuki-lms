@@ -50,6 +50,8 @@ fn handle_connection(
                 json_escape(&settings.app_name)
             ),
         )?;
+    } else if request_text.starts_with("GET /api/v1/content/ratings ") {
+        write_json(&mut stream, "200 OK", content_ratings_json())?;
     } else if request_text.starts_with("GET /api/v1/ranks ") {
         match extract_auth_token(&request_text)
             .and_then(|token| verify_access_token(token, &settings.jwt_secret_key).ok())
@@ -522,6 +524,10 @@ fn ranks_json() -> &'static str {
     r#"[{"level":1,"name":"Lính Mới","xp":0},{"level":2,"name":"Thư Sinh","xp":500},{"level":3,"name":"Tú Tài","xp":1500},{"level":4,"name":"Cử Nhân","xp":3500},{"level":5,"name":"Tiến Sĩ","xp":7000},{"level":6,"name":"Thám Hoa","xp":12000},{"level":7,"name":"Bảng Nhãn","xp":20000},{"level":8,"name":"Trạng Nguyên","xp":35000},{"level":9,"name":"Hàn Lâm","xp":55000},{"level":10,"name":"Sử Quan","xp":80000}]"#
 }
 
+fn content_ratings_json() -> &'static str {
+    r#"{"ratings":[{"rating":"everyone","label":"Everyone","description":"Suitable for all ages","min_age":null},{"rating":"teen","label":"Teen","description":"Suitable for ages 13 and up","min_age":13},{"rating":"mature","label":"Mature","description":"Suitable for ages 18 and up","min_age":18}]}"#
+}
+
 fn json_escape(value: &str) -> String {
     value.replace('\\', "\\\\").replace('"', "\\\"")
 }
@@ -619,6 +625,14 @@ mod tests {
     fn ranks_json_matches_shape() {
         assert!(ranks_json().contains(r#""level":1"#));
         assert!(ranks_json().contains(r#""xp":80000"#));
+    }
+
+    #[test]
+    fn content_ratings_json_matches_shape() {
+        assert!(content_ratings_json().contains(r#""ratings":["#));
+        assert!(content_ratings_json().contains(r#""rating":"everyone""#));
+        assert!(content_ratings_json().contains(r#""min_age":13"#));
+        assert!(content_ratings_json().contains(r#""min_age":null"#));
     }
 
     fn test_token(secret: &str, exp: u64, token_type: &str) -> String {
