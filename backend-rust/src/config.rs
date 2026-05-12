@@ -5,6 +5,7 @@ pub struct Settings {
     pub bind_addr: SocketAddr,
     pub app_name: String,
     pub legacy_api_addr: SocketAddr,
+    pub jwt_secret_key: String,
 }
 
 impl Settings {
@@ -28,6 +29,8 @@ impl Settings {
             bind_addr: SocketAddr::new(ip, port),
             app_name: "luuniensuki-api-rust".to_string(),
             legacy_api_addr: SocketAddr::new(legacy_ip, legacy_port),
+            jwt_secret_key: std::env::var("JWT_SECRET_KEY")
+                .unwrap_or_else(|_| "CHANGE_ME_IN_PRODUCTION".to_string()),
         }
     }
 }
