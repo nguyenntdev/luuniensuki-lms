@@ -96,11 +96,13 @@ fn proxy_to_legacy(
     request: &[u8],
     settings: &Settings,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let mut upstream = TcpStream::connect(settings.legacy_api_addr)?;
+    let mut upstream =
+        TcpStream::connect((settings.legacy_api_host.as_str(), settings.legacy_api_port))?;
     upstream.set_read_timeout(Some(Duration::from_secs(180)))?;
     upstream.set_write_timeout(Some(Duration::from_secs(180)))?;
 
-    let request = normalize_proxy_request(request);
+    let request =
+        normalize_proxy_request(request, &settings.legacy_api_host, settings.legacy_api_port);
     upstream.write_all(&request)?;
     upstream.flush()?;
 
@@ -148,7 +150,7 @@ fn read_http_message(stream: &mut TcpStream) -> std::io::Result<Vec<u8>> {
     Ok(request)
 }
 
-fn normalize_proxy_request(request: &[u8]) -> Vec<u8> {
+fn normalize_proxy_request(request: &[u8], upstream_host: &str, upstream_port: u16) -> Vec<u8> {
     let text = String::from_utf8_lossy(request);
     let Some(header_end) = text.find("\r\n\r\n") else {
         return request.to_vec();
@@ -171,7 +173,7 @@ fn normalize_proxy_request(request: &[u8]) -> Vec<u8> {
             normalized.push_str("connection: close\r\n");
             saw_connection = true;
         } else if lower.starts_with("host:") {
-            normalized.push_str("host: api:8000\r\n");
+            normalized.push_str(&format!("host: {upstream_host}:{upstream_port}\r\n"));
         } else {
             normalized.push_str(line);
             normalized.push_str("\r\n");
@@ -345,7 +347,7 @@ mod tests {
     #[test]
     fn normalize_proxy_request_closes_connection() {
         let request = b"GET /api/v1/urns HTTP/1.1\r\nHost: lms.histolab.icu\r\n\r\n";
-        let normalized = String::from_utf8(normalize_proxy_request(request)).unwrap();
+        let normalized = String::from_utf8(normalize_proxy_request(request, "api", 8000)).unwrap();
 
         assert!(normalized.contains("host: api:8000\r\n"));
         assert!(normalized.contains("connection: close\r\n"));
