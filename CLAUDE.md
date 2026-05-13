@@ -368,7 +368,7 @@ gemini -m gemini-3.0-pro "Write Vietnamese translations for navigation items"
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **luuniensuki-lms** (23761 symbols, 33000 relationships, 266 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **luuniensuki-lms** (23773 symbols, 33010 relationships, 266 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 
