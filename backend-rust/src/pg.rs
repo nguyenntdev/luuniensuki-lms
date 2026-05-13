@@ -54,6 +54,19 @@ pub fn tags_json(
     Ok(tags_rows_json(&rows))
 }
 
+pub fn badges_json(database_url: &str) -> Result<String, Box<dyn std::error::Error>> {
+    let config = parse_database_url(database_url).ok_or("bad database url")?;
+    let mut stream = connect(&config)?;
+    startup(&mut stream, &config)?;
+    let rows = simple_query(
+        &mut stream,
+        "SELECT id::text, slug, name, name_en, description, icon_url, category::text, \
+         COALESCE(xp_bonus, 0)::text \
+         FROM badges WHERE is_active = true AND is_secret = false",
+    )?;
+    Ok(badges_rows_json(&rows))
+}
+
 fn connect(config: &DatabaseUrl) -> Result<TcpStream, Box<dyn std::error::Error>> {
     let mut addrs = (config.host.as_str(), config.port).to_socket_addrs()?;
     let addr = addrs.next().ok_or("database host unresolved")?;
@@ -173,6 +186,45 @@ fn tags_rows_json(rows: &[Vec<Option<String>>]) -> String {
     }
     out.push(']');
     out
+}
+
+fn badges_rows_json(rows: &[Vec<Option<String>>]) -> String {
+    let mut out = String::from("[");
+    for (index, row) in rows.iter().enumerate() {
+        if index > 0 {
+            out.push(',');
+        }
+        out.push_str("{\"id\":\"");
+        out.push_str(&json_escape(row_value(row, 0)));
+        out.push_str("\",\"slug\":\"");
+        out.push_str(&json_escape(row_value(row, 1)));
+        out.push_str("\",\"name\":\"");
+        out.push_str(&json_escape(row_value(row, 2)));
+        out.push_str("\",\"name_en\":");
+        push_json_nullable_string(&mut out, row.get(3).and_then(|value| value.as_deref()));
+        out.push_str(",\"description\":");
+        push_json_nullable_string(&mut out, row.get(4).and_then(|value| value.as_deref()));
+        out.push_str(",\"icon_url\":\"");
+        out.push_str(&json_escape(row_value(row, 5)));
+        out.push_str("\",\"category\":\"");
+        out.push_str(&json_escape(row_value(row, 6)));
+        out.push_str("\",\"xp_bonus\":");
+        out.push_str(row_value(row, 7).parse::<i64>().unwrap_or(0).to_string().as_str());
+        out.push('}');
+    }
+    out.push(']');
+    out
+}
+
+fn push_json_nullable_string(out: &mut String, value: Option<&str>) {
+    match value {
+        Some(value) => {
+            out.push('"');
+            out.push_str(&json_escape(value));
+            out.push('"');
+        }
+        None => out.push_str("null"),
+    }
 }
 
 fn row_value(row: &[Option<String>], index: usize) -> &str {
@@ -550,6 +602,24 @@ mod tests {
         assert_eq!(
             tags_rows_json(&rows),
             r#"[{"id":"00000000-0000-0000-0000-000000000001","slug":"bronze","name":"Bronze","tag_type":"topic","description":null,"is_active":true,"created_at":"2026-05-13T00:00:00.000000+00:00"}]"#
+        );
+    }
+
+    #[test]
+    fn badges_rows_json_matches_shape() {
+        let rows = vec![vec![
+            Some("00000000-0000-0000-0000-000000000001".to_string()),
+            Some("first-discovery".to_string()),
+            Some("Lan dau kham pha".to_string()),
+            None,
+            Some("Mo khoa mot hoa van".to_string()),
+            Some("/assets/badges/first-discovery.svg".to_string()),
+            Some("discovery".to_string()),
+            Some("50".to_string()),
+        ]];
+        assert_eq!(
+            badges_rows_json(&rows),
+            r#"[{"id":"00000000-0000-0000-0000-000000000001","slug":"first-discovery","name":"Lan dau kham pha","name_en":null,"description":"Mo khoa mot hoa van","icon_url":"/assets/badges/first-discovery.svg","category":"discovery","xp_bonus":50}]"#
         );
     }
 
