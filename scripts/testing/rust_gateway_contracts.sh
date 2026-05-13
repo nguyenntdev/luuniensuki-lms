@@ -77,6 +77,12 @@ status="$(request "/api/v1/ranks" "$ranks_unauth_body")"
 assert_body_contains "$ranks_unauth_body" '"HTTP_ERROR"'
 echo "OK /api/v1/ranks unauth 401"
 
+badges_unauth_body="$tmp_dir/badges-unauth.json"
+status="$(request "/api/v1/badges" "$badges_unauth_body")"
+[[ "$status" == "401" ]] || fail "/api/v1/badges unauth expected 401 got $status"
+assert_body_contains "$badges_unauth_body" '"HTTP_ERROR"'
+echo "OK /api/v1/badges unauth 401"
+
 if [[ -n "${AUTH_EMAIL:-}" && -n "${AUTH_PASSWORD:-}" ]]; then
   cookie_jar="$tmp_dir/cookies.txt"
   login_body="$tmp_dir/login.json"
@@ -104,6 +110,18 @@ if [[ -n "${AUTH_EMAIL:-}" && -n "${AUTH_PASSWORD:-}" ]]; then
   assert_body_contains "$ranks_auth_body" '"level":1'
   assert_body_contains "$ranks_auth_body" '"xp":80000'
   echo "OK /api/v1/ranks auth 200"
+
+  badges_auth_body="$tmp_dir/badges-auth.json"
+  status="$(
+    curl "${curl_args[@]}" \
+      -b "$cookie_jar" \
+      -o "$badges_auth_body" \
+      -w "%{http_code}" \
+      "$BASE_URL/api/v1/badges"
+  )"
+  [[ "$status" == "200" ]] || fail "/api/v1/badges auth expected 200 got $status body=$(cat "$badges_auth_body")"
+  grep -Eq '^\[.*\]$' "$badges_auth_body" || fail "/api/v1/badges response is not JSON array body=$(cat "$badges_auth_body")"
+  echo "OK /api/v1/badges auth 200"
 else
   echo "SKIP auth contract: set AUTH_EMAIL and AUTH_PASSWORD"
 fi

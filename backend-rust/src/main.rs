@@ -66,6 +66,21 @@ fn handle_connection(
                 proxy_to_legacy(&mut stream, &request, &settings)?;
             }
         }
+    } else if request_text.starts_with("GET /api/v1/badges ")
+        || request_text.starts_with("GET /api/v1/badges?")
+    {
+        match extract_auth_token(&request_text)
+            .and_then(|token| verify_access_token(token, &settings.jwt_secret_key).ok())
+        {
+            Some(_) => match pg::badges_json(&settings.database_url) {
+                Ok(body) => write_json(&mut stream, "200 OK", &body)?,
+                Err(error) => {
+                    eprintln!("badges query failed: {error}");
+                    proxy_to_legacy(&mut stream, &request, &settings)?;
+                }
+            },
+            None => write_unauthorized(&mut stream)?,
+        }
     } else if request_text.starts_with("GET /api/v1/ranks ") {
         match extract_auth_token(&request_text)
             .and_then(|token| verify_access_token(token, &settings.jwt_secret_key).ok())
