@@ -55,6 +55,7 @@ Scripts for testing and verification.
 - **`P0-RAG-02_API_TESTING.sh`** - Test RAG document management API
 - **`adb_automated_test.sh`** - Automated mobile app testing
 - **`install-apk.sh`** - Install mobile app via ADB
+- **`rust_gateway_contracts.sh`** - Contract smoke test for Rust-native gateway routes
 - **`verify_migration.sh`** - Verify database migrations
 
 **Usage Example:**
@@ -62,6 +63,12 @@ Scripts for testing and verification.
 # Test RAG API
 export ADMIN_TOKEN="your_jwt_token"
 ./scripts/testing/P0-RAG-02_API_TESTING.sh
+
+# Test Rust gateway contracts
+BASE_URL="https://lms.histolab.icu" ./scripts/testing/rust_gateway_contracts.sh
+
+# Include authenticated ranks contract
+AUTH_EMAIL="admin@example.com" AUTH_PASSWORD="secret" ./scripts/testing/rust_gateway_contracts.sh
 
 # Install mobile app
 ./scripts/testing/install-apk.sh
@@ -83,4 +90,3 @@ The following scripts remain at the project root for convenience:
 ## Migration Notes
 
 This organization was created to clean up the root directory and provide better structure for script management. Version-specific scripts (e.g., `commit_v1.4.0.sh`, `commit_v1.5.0.sh`) have been removed as they are no longer needed.
-
