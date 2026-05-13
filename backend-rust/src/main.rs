@@ -2,7 +2,7 @@ mod config;
 
 use std::{
     io::{Read, Write},
-    net::{TcpListener, TcpStream},
+    net::{TcpListener, TcpStream, ToSocketAddrs},
     thread,
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
@@ -50,6 +50,8 @@ fn handle_connection(
                 json_escape(&settings.app_name)
             ),
         )?;
+    } else if request_text.starts_with("GET /api/v1/internal/db-health ") {
+        write_db_health(&mut stream, &settings)?;
     } else if request_text.starts_with("GET /api/v1/content/ratings ") {
         write_json(&mut stream, "200 OK", content_ratings_json())?;
     } else if request_text.starts_with("GET /api/v1/ranks ") {
@@ -85,6 +87,24 @@ fn write_unauthorized(stream: &mut TcpStream) -> std::io::Result<()> {
     );
     stream.write_all(response.as_bytes())?;
     stream.flush()
+}
+
+fn write_db_health(stream: &mut TcpStream, settings: &Settings) -> std::io::Result<()> {
+    match check_database(&settings.database_url) {
+        Ok(()) => write_json(stream, "200 OK", db_health_json("ok")),
+        Err(error) => {
+            eprintln!("database health check failed: {error}");
+            write_json(stream, "503 Service Unavailable", db_health_json("error"))
+        }
+    }
+}
+
+fn check_database(database_url: &str) -> Result<(), Box<dyn std::error::Error>> {
+    let (host, port) = parse_postgres_host_port(database_url).ok_or("bad database url")?;
+    let mut addrs = (host.as_str(), port).to_socket_addrs()?;
+    let addr = addrs.next().ok_or("database host unresolved")?;
+    TcpStream::connect_timeout(&addr, Duration::from_secs(2))?;
+    Ok(())
 }
 
 fn proxy_to_legacy(
@@ -528,6 +548,23 @@ fn content_ratings_json() -> &'static str {
     r#"{"ratings":[{"rating":"everyone","label":"Everyone","description":"Suitable for all ages","min_age":null},{"rating":"teen","label":"Teen","description":"Suitable for ages 13 and up","min_age":13},{"rating":"mature","label":"Mature","description":"Suitable for ages 18 and up","min_age":18}]}"#
 }
 
+fn db_health_json(status: &str) -> &'static str {
+    match status {
+        "ok" => r#"{"status":"ok","database":"ok"}"#,
+        _ => r#"{"status":"error","database":"error"}"#,
+    }
+}
+
+fn parse_postgres_host_port(database_url: &str) -> Option<(String, u16)> {
+    let after_scheme = database_url.split_once("://")?.1;
+    let after_auth = after_scheme
+        .rsplit_once('@')
+        .map_or(after_scheme, |(_, rest)| rest);
+    let host_port = after_auth.split(['/', '?']).next()?;
+    let (host, port) = host_port.rsplit_once(':')?;
+    Some((host.to_string(), port.parse().ok()?))
+}
+
 fn json_escape(value: &str) -> String {
     value.replace('\\', "\\\\").replace('"', "\\\"")
 }
@@ -633,6 +670,27 @@ mod tests {
         assert!(content_ratings_json().contains(r#""rating":"everyone""#));
         assert!(content_ratings_json().contains(r#""min_age":13"#));
         assert!(content_ratings_json().contains(r#""min_age":null"#));
+    }
+
+    #[test]
+    fn db_health_json_matches_shape() {
+        assert_eq!(db_health_json("ok"), r#"{"status":"ok","database":"ok"}"#);
+        assert_eq!(
+            db_health_json("error"),
+            r#"{"status":"error","database":"error"}"#
+        );
+    }
+
+    #[test]
+    fn parse_postgres_host_port_reads_database_url() {
+        assert_eq!(
+            parse_postgres_host_port("postgres://user:pass@db:5432/luuniensuki"),
+            Some(("db".to_string(), 5432))
+        );
+        assert_eq!(
+            parse_postgres_host_port("postgresql://db.internal:6543/app?sslmode=disable"),
+            Some(("db.internal".to_string(), 6543))
+        );
     }
 
     fn test_token(secret: &str, exp: u64, token_type: &str) -> String {

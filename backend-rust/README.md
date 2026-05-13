@@ -11,6 +11,7 @@ Current scope:
 - Handles selected unauthenticated 401 responses natively.
 - Serves `GET /api/v1/ranks` natively for valid access tokens.
 - Serves `GET /api/v1/content/ratings` natively.
+- Exposes `GET /api/v1/internal/db-health` to verify Rust can query PostgreSQL.
 - Uses a minimal standard-library HTTP server so it can build on the current low-memory host.
 
 Local commands:
