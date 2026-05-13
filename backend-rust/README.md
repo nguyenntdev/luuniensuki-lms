@@ -12,6 +12,7 @@ Current scope:
 - Serves `GET /api/v1/ranks` natively for valid access tokens.
 - Serves `GET /api/v1/content/ratings` natively.
 - Exposes `GET /api/v1/internal/db-health` to verify Rust can authenticate with PostgreSQL and run `SELECT 1`.
+- Serves `GET /api/v1/tags` natively from PostgreSQL.
 - Uses a minimal standard-library HTTP server so it can build on the current low-memory host.
 
 Local commands:

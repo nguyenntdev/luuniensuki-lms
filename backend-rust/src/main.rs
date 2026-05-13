@@ -55,6 +55,17 @@ fn handle_connection(
         write_db_health(&mut stream, &settings)?;
     } else if request_text.starts_with("GET /api/v1/content/ratings ") {
         write_json(&mut stream, "200 OK", content_ratings_json())?;
+    } else if request_text.starts_with("GET /api/v1/tags ")
+        || request_text.starts_with("GET /api/v1/tags?")
+    {
+        let tag_type = query_param(&request_text, "tag_type");
+        match pg::tags_json(&settings.database_url, tag_type.as_deref()) {
+            Ok(body) => write_json(&mut stream, "200 OK", &body)?,
+            Err(error) => {
+                eprintln!("tags query failed: {error}");
+                proxy_to_legacy(&mut stream, &request, &settings)?;
+            }
+        }
     } else if request_text.starts_with("GET /api/v1/ranks ") {
         match extract_auth_token(&request_text)
             .and_then(|token| verify_access_token(token, &settings.jwt_secret_key).ok())
@@ -232,6 +243,44 @@ fn request_path(request: &str) -> Option<&str> {
     let _method = parts.next()?;
     let raw_path = parts.next()?;
     Some(raw_path.split('?').next().unwrap_or(raw_path))
+}
+
+fn query_param(request: &str, name: &str) -> Option<String> {
+    let first_line = request.lines().next()?;
+    let mut parts = first_line.split_whitespace();
+    let _method = parts.next()?;
+    let raw_path = parts.next()?;
+    let query = raw_path.split_once('?')?.1;
+    query.split('&').find_map(|pair| {
+        let (key, value) = pair.split_once('=')?;
+        if key == name {
+            Some(percent_decode(value))
+        } else {
+            None
+        }
+    })
+}
+
+fn percent_decode(value: &str) -> String {
+    let bytes = value.as_bytes();
+    let mut out = Vec::with_capacity(bytes.len());
+    let mut index = 0;
+    while index < bytes.len() {
+        if bytes[index] == b'%' && index + 2 < bytes.len() {
+            if let Ok(hex) = u8::from_str_radix(&value[index + 1..index + 3], 16) {
+                out.push(hex);
+                index += 3;
+                continue;
+            }
+        }
+        out.push(if bytes[index] == b'+' {
+            b' '
+        } else {
+            bytes[index]
+        });
+        index += 1;
+    }
+    String::from_utf8_lossy(&out).to_string()
 }
 
 fn is_native_auth_guard_path(path: &str) -> bool {
@@ -587,6 +636,17 @@ mod tests {
         let request = "GET /api/v1/urns?page=1 HTTP/1.1\r\n\r\n";
 
         assert_eq!(request_path(request), Some("/api/v1/urns"));
+    }
+
+    #[test]
+    fn query_param_reads_url_encoded_value() {
+        let request = "GET /api/v1/tags?tag_type=topic%20one&x=1 HTTP/1.1\r\n\r\n";
+
+        assert_eq!(
+            query_param(request, "tag_type"),
+            Some("topic one".to_string())
+        );
+        assert_eq!(query_param(request, "missing"), None);
     }
 
     #[test]

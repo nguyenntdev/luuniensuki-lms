@@ -65,6 +65,12 @@ status="$(request "/api/v1/internal/db-health" "$db_health_body")"
 assert_body_contains "$db_health_body" '"database":"ok"'
 echo "OK /api/v1/internal/db-health 200"
 
+tags_body="$tmp_dir/tags.json"
+status="$(request "/api/v1/tags" "$tags_body")"
+[[ "$status" == "200" ]] || fail "/api/v1/tags expected 200 got $status"
+grep -Eq '^\[.*\]$' "$tags_body" || fail "/api/v1/tags response is not JSON array body=$(cat "$tags_body")"
+echo "OK /api/v1/tags 200"
+
 ranks_unauth_body="$tmp_dir/ranks-unauth.json"
 status="$(request "/api/v1/ranks" "$ranks_unauth_body")"
 [[ "$status" == "401" ]] || fail "/api/v1/ranks unauth expected 401 got $status"

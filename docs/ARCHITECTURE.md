@@ -48,6 +48,7 @@ Rust hiện xử lý:
 - `GET /api/v1/ranks`
 - `GET /api/v1/content/ratings`
 - `GET /api/v1/internal/db-health`
+- `GET /api/v1/tags`
 - 401 native cho một số route cần auth khi request không có token
 - proxy fallback sang FastAPI cho route chưa migrate
 
@@ -97,6 +98,7 @@ Phase DB migration cần quyết định:
 | Ranks | `GET /api/v1/ranks` native |
 | Content ratings | `GET /api/v1/content/ratings` native |
 | DB foundation | Rust kiểm tra PostgreSQL bằng SQL `SELECT 1` qua `GET /api/v1/internal/db-health` |
+| Tags | `GET /api/v1/tags` native từ PostgreSQL |
 
 ## Phase Nên Làm Tiếp
 
