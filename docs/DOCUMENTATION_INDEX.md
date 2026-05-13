@@ -50,6 +50,7 @@ File này là bản đồ tài liệu của dự án. Mục tiêu là giúp ngư
 - [Rust Content Ratings Plan](plan/2026-05-12-rust-content-ratings-plan.md)
 - [Rust DB Foundation Plan](plan/2026-05-13-rust-db-foundation-plan.md)
 - [Rust Gateway Contract Tests Plan](plan/2026-05-13-rust-gateway-contract-tests-plan.md)
+- [Rust PostgreSQL SCRAM Client Plan](plan/2026-05-13-rust-postgres-scram-client-plan.md)
 
 ## Business Và Product
 

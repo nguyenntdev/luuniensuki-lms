@@ -1,8 +1,9 @@
 mod config;
+mod pg;
 
 use std::{
     io::{Read, Write},
-    net::{TcpListener, TcpStream, ToSocketAddrs},
+    net::{TcpListener, TcpStream},
     thread,
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
@@ -100,11 +101,7 @@ fn write_db_health(stream: &mut TcpStream, settings: &Settings) -> std::io::Resu
 }
 
 fn check_database(database_url: &str) -> Result<(), Box<dyn std::error::Error>> {
-    let (host, port) = parse_postgres_host_port(database_url).ok_or("bad database url")?;
-    let mut addrs = (host.as_str(), port).to_socket_addrs()?;
-    let addr = addrs.next().ok_or("database host unresolved")?;
-    TcpStream::connect_timeout(&addr, Duration::from_secs(2))?;
-    Ok(())
+    pg::check_select_one(database_url)
 }
 
 fn proxy_to_legacy(
@@ -555,16 +552,6 @@ fn db_health_json(status: &str) -> &'static str {
     }
 }
 
-fn parse_postgres_host_port(database_url: &str) -> Option<(String, u16)> {
-    let after_scheme = database_url.split_once("://")?.1;
-    let after_auth = after_scheme
-        .rsplit_once('@')
-        .map_or(after_scheme, |(_, rest)| rest);
-    let host_port = after_auth.split(['/', '?']).next()?;
-    let (host, port) = host_port.rsplit_once(':')?;
-    Some((host.to_string(), port.parse().ok()?))
-}
-
 fn json_escape(value: &str) -> String {
     value.replace('\\', "\\\\").replace('"', "\\\"")
 }
@@ -678,18 +665,6 @@ mod tests {
         assert_eq!(
             db_health_json("error"),
             r#"{"status":"error","database":"error"}"#
-        );
-    }
-
-    #[test]
-    fn parse_postgres_host_port_reads_database_url() {
-        assert_eq!(
-            parse_postgres_host_port("postgres://user:pass@db:5432/luuniensuki"),
-            Some(("db".to_string(), 5432))
-        );
-        assert_eq!(
-            parse_postgres_host_port("postgresql://db.internal:6543/app?sslmode=disable"),
-            Some(("db.internal".to_string(), 6543))
         );
     }
 

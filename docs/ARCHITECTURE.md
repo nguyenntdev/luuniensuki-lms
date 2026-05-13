@@ -51,7 +51,7 @@ Rust hiện xử lý:
 - 401 native cho một số route cần auth khi request không có token
 - proxy fallback sang FastAPI cho route chưa migrate
 
-Rust hiện vẫn dùng HTTP server tối giản bằng standard library để build ổn định trên server ít RAM. Rust đã có foundation để kiểm tra đường TCP tới PostgreSQL, nhưng chưa chạy SQL query trực tiếp. Các route DB-heavy vẫn cần DB client, contract test và build budget trước khi migrate khỏi FastAPI.
+Rust hiện vẫn dùng HTTP server tối giản bằng standard library để build ổn định trên server ít RAM. Rust đã có PostgreSQL SCRAM-SHA-256 client tối thiểu bằng std-only để xác thực và chạy `SELECT 1`. Các route DB-heavy vẫn cần query layer, contract test và migration plan riêng trước khi rời FastAPI.
 
 ## Legacy FastAPI
 
@@ -69,7 +69,7 @@ Không xoá FastAPI cho tới khi các nhóm endpoint trên có Rust implementat
 
 ## Database
 
-PostgreSQL là nguồn dữ liệu chính. Rust đã có endpoint health DB để kiểm tra PostgreSQL reachable qua TCP, nhưng route nghiệp vụ cần DB vẫn proxy sang FastAPI cho tới khi có implementation Rust và contract test tương ứng.
+PostgreSQL là nguồn dữ liệu chính. Rust đã có endpoint health DB chạy SQL thật, nhưng route nghiệp vụ cần DB vẫn proxy sang FastAPI cho tới khi có implementation Rust và contract test tương ứng.
 
 Phase DB migration cần quyết định:
 
@@ -96,7 +96,7 @@ Phase DB migration cần quyết định:
 | Auth guard | Native 401 cho một số route read khi thiếu token |
 | Ranks | `GET /api/v1/ranks` native |
 | Content ratings | `GET /api/v1/content/ratings` native |
-| DB foundation | Rust kiểm tra PostgreSQL reachable qua `GET /api/v1/internal/db-health` |
+| DB foundation | Rust kiểm tra PostgreSQL bằng SQL `SELECT 1` qua `GET /api/v1/internal/db-health` |
 
 ## Phase Nên Làm Tiếp
 
