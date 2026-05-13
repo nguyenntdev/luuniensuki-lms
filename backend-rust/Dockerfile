@@ -4,6 +4,7 @@ WORKDIR /app
 
 ENV PATH="/usr/local/cargo/bin:${PATH}"
 ENV CARGO_PROFILE_DEV_DEBUG=0
+ENV CARGO_INCREMENTAL=0
 
 COPY Cargo.toml Cargo.toml
 COPY Cargo.lock Cargo.lock
