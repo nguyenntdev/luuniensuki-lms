@@ -19,8 +19,39 @@ pub fn check_select_one(database_url: &str) -> Result<(), Box<dyn std::error::Er
     let config = parse_database_url(database_url).ok_or("bad database url")?;
     let mut stream = connect(&config)?;
     startup(&mut stream, &config)?;
-    simple_query_select_one(&mut stream)?;
-    Ok(())
+    let rows = simple_query(&mut stream, "SELECT 1::INT")?;
+    if rows
+        .first()
+        .and_then(|row| row.first())
+        .and_then(|value| value.as_deref())
+        == Some("1")
+    {
+        Ok(())
+    } else {
+        Err("database health query returned no row".into())
+    }
+}
+
+pub fn tags_json(
+    database_url: &str,
+    tag_type: Option<&str>,
+) -> Result<String, Box<dyn std::error::Error>> {
+    let config = parse_database_url(database_url).ok_or("bad database url")?;
+    let mut stream = connect(&config)?;
+    startup(&mut stream, &config)?;
+    let mut query = String::from(
+        "SELECT id::text, slug, name, tag_type, description, is_active::text, \
+         to_char(created_at AT TIME ZONE 'UTC', 'YYYY-MM-DD\"T\"HH24:MI:SS.US\"+00:00\"') \
+         FROM tags WHERE is_active = true",
+    );
+    if let Some(tag_type) = tag_type {
+        query.push_str(" AND tag_type = '");
+        query.push_str(&sql_string_escape(tag_type));
+        query.push('\'');
+    }
+    query.push_str(" ORDER BY name");
+    let rows = simple_query(&mut stream, &query)?;
+    Ok(tags_rows_json(&rows))
 }
 
 fn connect(config: &DatabaseUrl) -> Result<TcpStream, Box<dyn std::error::Error>> {
@@ -104,26 +135,106 @@ fn startup(stream: &mut TcpStream, config: &DatabaseUrl) -> Result<(), Box<dyn s
     }
 }
 
-fn simple_query_select_one(stream: &mut TcpStream) -> Result<(), Box<dyn std::error::Error>> {
-    let mut body = b"SELECT 1::INT".to_vec();
+fn tags_rows_json(rows: &[Vec<Option<String>>]) -> String {
+    let mut out = String::from("[");
+    for (index, row) in rows.iter().enumerate() {
+        if index > 0 {
+            out.push(',');
+        }
+        let id = row_value(row, 0);
+        let slug = row_value(row, 1);
+        let name = row_value(row, 2);
+        let tag_type = row_value(row, 3);
+        let description = row.get(4).and_then(|value| value.as_deref());
+        let is_active = row_value(row, 5) == "true";
+        let created_at = row_value(row, 6);
+        out.push_str("{\"id\":\"");
+        out.push_str(&json_escape(id));
+        out.push_str("\",\"slug\":\"");
+        out.push_str(&json_escape(slug));
+        out.push_str("\",\"name\":\"");
+        out.push_str(&json_escape(name));
+        out.push_str("\",\"tag_type\":\"");
+        out.push_str(&json_escape(tag_type));
+        out.push_str("\",\"description\":");
+        match description {
+            Some(value) => {
+                out.push('"');
+                out.push_str(&json_escape(value));
+                out.push('"');
+            }
+            None => out.push_str("null"),
+        }
+        out.push_str(",\"is_active\":");
+        out.push_str(if is_active { "true" } else { "false" });
+        out.push_str(",\"created_at\":\"");
+        out.push_str(&json_escape(created_at));
+        out.push_str("\"}");
+    }
+    out.push(']');
+    out
+}
+
+fn row_value(row: &[Option<String>], index: usize) -> &str {
+    row.get(index)
+        .and_then(|value| value.as_deref())
+        .unwrap_or("")
+}
+
+fn sql_string_escape(value: &str) -> String {
+    value.replace('\'', "''")
+}
+
+fn json_escape(value: &str) -> String {
+    value.replace('\\', "\\\\").replace('"', "\\\"")
+}
+
+fn simple_query(
+    stream: &mut TcpStream,
+    query: &str,
+) -> Result<Vec<Vec<Option<String>>>, Box<dyn std::error::Error>> {
+    let mut body = query.as_bytes().to_vec();
     body.push(0);
     write_typed_message(stream, b'Q', &body)?;
 
-    let mut saw_one = false;
+    let mut rows = Vec::new();
     loop {
         let message = read_message(stream)?;
         match message.tag {
-            b'D' => {
-                let value = first_data_row_value(&message.body)?;
-                saw_one = value == "1";
-            }
+            b'D' => rows.push(data_row_values(&message.body)?),
             b'C' => {}
-            b'Z' if saw_one => return Ok(()),
-            b'Z' => return Err("database health query returned no row".into()),
+            b'Z' => return Ok(rows),
             b'E' => return Err(format!("postgres error: {}", error_message(&message.body)).into()),
             _ => {}
         }
     }
+}
+
+fn data_row_values(body: &[u8]) -> Result<Vec<Option<String>>, Box<dyn std::error::Error>> {
+    if body.len() < 2 {
+        return Err("short data row".into());
+    }
+    let columns = i16::from_be_bytes(body[0..2].try_into()?);
+    if columns < 0 {
+        return Err("bad data row column count".into());
+    }
+    let mut values = Vec::with_capacity(columns as usize);
+    let mut offset = 2usize;
+    for _ in 0..columns {
+        let end = offset + 4;
+        let length_bytes = body.get(offset..end).ok_or("short data row value length")?;
+        let length = i32::from_be_bytes(length_bytes.try_into()?);
+        offset = end;
+        if length < 0 {
+            values.push(None);
+            continue;
+        }
+        let value_end = offset + length as usize;
+        let value = body.get(offset..value_end).ok_or("short data row value")?;
+        values.push(Some(std::str::from_utf8(value)?.to_string()));
+        offset = value_end;
+    }
+    Ok(values)
 }
 
 struct ScramState {
@@ -303,24 +414,6 @@ fn read_i32(buffer: &[u8], offset: usize) -> Result<i32, Box<dyn std::error::Err
     Ok(i32::from_be_bytes(bytes))
 }
 
-fn first_data_row_value(body: &[u8]) -> Result<String, Box<dyn std::error::Error>> {
-    if body.len() < 6 {
-        return Err("short data row".into());
-    }
-    let columns = i16::from_be_bytes(body[0..2].try_into()?);
-    if columns < 1 {
-        return Err("data row has no columns".into());
-    }
-    let length = i32::from_be_bytes(body[2..6].try_into()?);
-    if length < 0 {
-        return Err("data row value is null".into());
-    }
-    let start = 6;
-    let end = start + length as usize;
-    let value = body.get(start..end).ok_or("short data row value")?;
-    Ok(std::str::from_utf8(value)?.to_string())
-}
-
 fn sasl_mechanisms(body: &[u8]) -> Vec<String> {
     body.split(|byte| *byte == 0)
         .filter(|part| !part.is_empty())
@@ -431,11 +524,37 @@ mod tests {
     }
 
     #[test]
-    fn first_data_row_value_reads_text_value() {
+    fn data_row_values_reads_text_values() {
         let mut body = Vec::new();
-        body.extend_from_slice(&1i16.to_be_bytes());
+        body.extend_from_slice(&2i16.to_be_bytes());
         body.extend_from_slice(&1i32.to_be_bytes());
         body.extend_from_slice(b"1");
-        assert_eq!(first_data_row_value(&body).unwrap(), "1");
+        body.extend_from_slice(&(-1i32).to_be_bytes());
+        assert_eq!(
+            data_row_values(&body).unwrap(),
+            vec![Some("1".to_string()), None]
+        );
+    }
+
+    #[test]
+    fn tags_rows_json_matches_shape() {
+        let rows = vec![vec![
+            Some("00000000-0000-0000-0000-000000000001".to_string()),
+            Some("bronze".to_string()),
+            Some("Bronze".to_string()),
+            Some("topic".to_string()),
+            None,
+            Some("true".to_string()),
+            Some("2026-05-13T00:00:00.000000+00:00".to_string()),
+        ]];
+        assert_eq!(
+            tags_rows_json(&rows),
+            r#"[{"id":"00000000-0000-0000-0000-000000000001","slug":"bronze","name":"Bronze","tag_type":"topic","description":null,"is_active":true,"created_at":"2026-05-13T00:00:00.000000+00:00"}]"#
+        );
+    }
+
+    #[test]
+    fn sql_string_escape_doubles_quotes() {
+        assert_eq!(sql_string_escape("a'b"), "a''b");
     }
 }
