@@ -6,6 +6,7 @@ pub struct Settings {
     pub app_name: String,
     pub legacy_api_host: String,
     pub legacy_api_port: u16,
+    pub database_url: String,
     pub jwt_secret_key: String,
 }
 
@@ -30,6 +31,8 @@ impl Settings {
             app_name: "luuniensuki-api-rust".to_string(),
             legacy_api_host: legacy_host,
             legacy_api_port: legacy_port,
+            database_url: std::env::var("DATABASE_URL")
+                .unwrap_or_else(|_| "postgres://postgres:postgres@db:5432/luuniensuki".to_string()),
             jwt_secret_key: std::env::var("JWT_SECRET_KEY")
                 .unwrap_or_else(|_| "CHANGE_ME_IN_PRODUCTION".to_string()),
         }
