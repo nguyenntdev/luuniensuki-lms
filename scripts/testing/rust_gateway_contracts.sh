@@ -83,6 +83,12 @@ status="$(request "/api/v1/badges" "$badges_unauth_body")"
 assert_body_contains "$badges_unauth_body" '"HTTP_ERROR"'
 echo "OK /api/v1/badges unauth 401"
 
+streak_unauth_body="$tmp_dir/streak-unauth.json"
+status="$(request "/api/v1/users/me/streak" "$streak_unauth_body")"
+[[ "$status" == "401" ]] || fail "/api/v1/users/me/streak unauth expected 401 got $status"
+assert_body_contains "$streak_unauth_body" '"HTTP_ERROR"'
+echo "OK /api/v1/users/me/streak unauth 401"
+
 if [[ -n "${AUTH_EMAIL:-}" && -n "${AUTH_PASSWORD:-}" ]]; then
   cookie_jar="$tmp_dir/cookies.txt"
   login_body="$tmp_dir/login.json"
@@ -122,6 +128,21 @@ if [[ -n "${AUTH_EMAIL:-}" && -n "${AUTH_PASSWORD:-}" ]]; then
   [[ "$status" == "200" ]] || fail "/api/v1/badges auth expected 200 got $status body=$(cat "$badges_auth_body")"
   grep -Eq '^\[.*\]$' "$badges_auth_body" || fail "/api/v1/badges response is not JSON array body=$(cat "$badges_auth_body")"
   echo "OK /api/v1/badges auth 200"
+
+  streak_auth_body="$tmp_dir/streak-auth.json"
+  status="$(
+    curl "${curl_args[@]}" \
+      -b "$cookie_jar" \
+      -o "$streak_auth_body" \
+      -w "%{http_code}" \
+      "$BASE_URL/api/v1/users/me/streak"
+  )"
+  [[ "$status" == "200" ]] || fail "/api/v1/users/me/streak auth expected 200 got $status body=$(cat "$streak_auth_body")"
+  assert_body_contains "$streak_auth_body" '"current_streak":'
+  assert_body_contains "$streak_auth_body" '"longest_streak":'
+  assert_body_contains "$streak_auth_body" '"streak_freezes":'
+  assert_body_contains "$streak_auth_body" '"days_since_last_active":'
+  echo "OK /api/v1/users/me/streak auth 200"
 else
   echo "SKIP auth contract: set AUTH_EMAIL and AUTH_PASSWORD"
 fi

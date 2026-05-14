@@ -67,6 +67,27 @@ pub fn badges_json(database_url: &str) -> Result<String, Box<dyn std::error::Err
     Ok(badges_rows_json(&rows))
 }
 
+pub fn user_streak_json(
+    database_url: &str,
+    user_id: &str,
+) -> Result<String, Box<dyn std::error::Error>> {
+    let config = parse_database_url(database_url).ok_or("bad database url")?;
+    let mut stream = connect(&config)?;
+    startup(&mut stream, &config)?;
+    let query = format!(
+        "SELECT current_streak::text, longest_streak::text, streak_freezes::text, \
+         to_char(last_active_at AT TIME ZONE 'UTC', 'YYYY-MM-DD\"T\"HH24:MI:SS.US\"+00:00\"'), \
+         CASE WHEN last_active_at IS NULL THEN NULL ELSE \
+         ((now() AT TIME ZONE 'UTC')::date - (last_active_at AT TIME ZONE 'UTC')::date)::text END \
+         FROM users WHERE id = '{}'",
+        sql_string_escape(user_id),
+    );
+    let rows = simple_query(&mut stream, &query)?;
+    rows.first()
+        .map(|row| user_streak_row_json(row))
+        .ok_or_else(|| "user not found".into())
+}
+
 fn connect(config: &DatabaseUrl) -> Result<TcpStream, Box<dyn std::error::Error>> {
     let mut addrs = (config.host.as_str(), config.port).to_socket_addrs()?;
     let addr = addrs.next().ok_or("database host unresolved")?;
@@ -186,6 +207,30 @@ fn tags_rows_json(rows: &[Vec<Option<String>>]) -> String {
     }
     out.push(']');
     out
+}
+
+fn user_streak_row_json(row: &[Option<String>]) -> String {
+    let last_active_at = row.get(3).and_then(|value| value.as_deref());
+    let days_since_last_active = row.get(4).and_then(|value| value.as_deref());
+    let mut out = String::from("{\"current_streak\":");
+    out.push_str(&json_number_or_zero(row_value(row, 0)));
+    out.push_str(",\"longest_streak\":");
+    out.push_str(&json_number_or_zero(row_value(row, 1)));
+    out.push_str(",\"streak_freezes\":");
+    out.push_str(&json_number_or_zero(row_value(row, 2)));
+    out.push_str(",\"last_active_at\":");
+    push_json_nullable_string(&mut out, last_active_at);
+    out.push_str(",\"days_since_last_active\":");
+    match days_since_last_active.and_then(|value| value.parse::<i64>().ok()) {
+        Some(value) => out.push_str(&value.to_string()),
+        None => out.push_str("null"),
+    }
+    out.push('}');
+    out
+}
+
+fn json_number_or_zero(value: &str) -> String {
+    value.parse::<i64>().unwrap_or(0).to_string()
 }
 
 fn badges_rows_json(rows: &[Vec<Option<String>>]) -> String {
@@ -620,6 +665,36 @@ mod tests {
         assert_eq!(
             badges_rows_json(&rows),
             r#"[{"id":"00000000-0000-0000-0000-000000000001","slug":"first-discovery","name":"Lan dau kham pha","name_en":null,"description":"Mo khoa mot hoa van","icon_url":"/assets/badges/first-discovery.svg","category":"discovery","xp_bonus":50}]"#
+        );
+    }
+
+    #[test]
+    fn user_streak_row_json_matches_shape() {
+        let row = vec![
+            Some("3".to_string()),
+            Some("9".to_string()),
+            Some("1".to_string()),
+            Some("2026-05-14T01:02:03.000000+00:00".to_string()),
+            Some("0".to_string()),
+        ];
+        assert_eq!(
+            user_streak_row_json(&row),
+            r#"{"current_streak":3,"longest_streak":9,"streak_freezes":1,"last_active_at":"2026-05-14T01:02:03.000000+00:00","days_since_last_active":0}"#
+        );
+    }
+
+    #[test]
+    fn user_streak_row_json_handles_null_last_active() {
+        let row = vec![
+            Some("0".to_string()),
+            Some("0".to_string()),
+            Some("0".to_string()),
+            None,
+            None,
+        ];
+        assert_eq!(
+            user_streak_row_json(&row),
+            r#"{"current_streak":0,"longest_streak":0,"streak_freezes":0,"last_active_at":null,"days_since_last_active":null}"#
         );
     }
 

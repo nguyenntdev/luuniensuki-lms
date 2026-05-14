@@ -81,6 +81,22 @@ fn handle_connection(
             },
             None => write_unauthorized(&mut stream)?,
         }
+    } else if request_text.starts_with("GET /api/v1/users/me/streak ")
+        || request_text.starts_with("GET /api/v1/users/me/streak?")
+    {
+        match extract_auth_token(&request_text)
+            .and_then(|token| verify_access_token(token, &settings.jwt_secret_key).ok())
+            .and_then(|claims| json_string_field(&claims, "sub").map(str::to_string))
+        {
+            Some(user_id) => match pg::user_streak_json(&settings.database_url, &user_id) {
+                Ok(body) => write_json(&mut stream, "200 OK", &body)?,
+                Err(error) => {
+                    eprintln!("user streak query failed: {error}");
+                    proxy_to_legacy(&mut stream, &request, &settings)?;
+                }
+            },
+            None => write_unauthorized(&mut stream)?,
+        }
     } else if request_text.starts_with("GET /api/v1/ranks ") {
         match extract_auth_token(&request_text)
             .and_then(|token| verify_access_token(token, &settings.jwt_secret_key).ok())
