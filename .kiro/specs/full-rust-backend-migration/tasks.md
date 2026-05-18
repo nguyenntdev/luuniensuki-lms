@@ -87,7 +87,7 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
     - **Property 5: Route-coverage endpoint correctness** — JSON `status` always equals the effective dispatcher mode for every route.
     - **Validates:** Req 2.1, 2.3, 2.4, 2.5, 10.3, 13.3
 
-  - [ ] 1.12 Build `scripts/dev/generate_route_inventory.py`
+  - [x] 1.12 Build `scripts/dev/generate_route_inventory.py`
     - Import `backend.main:app` and walk `app.routes`; emit `(method, path, group)` tuples.
     - Sort deterministically by `(group, path, method)` and write `backend-rust/docs/route-inventory.json` with stable formatting.
     - Add CI lint that regenerates the file and fails on non-empty diff.

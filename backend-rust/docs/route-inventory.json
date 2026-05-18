@@ -1,0 +1,1748 @@
+[
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/ai/urns/{urn_slug}/seed",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/analytics/funnels",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/analytics/funnels/{funnel_type}",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/analytics/retention",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/analytics/retention/cohorts",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/analytics/retention/curve",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/analytics/sessions/active",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/analytics/sessions/stats",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/app/versions",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/app/versions",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/admin/app/versions/{version_id}",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/content/flags",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/content/pending-review",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/content/{content_type}/{content_id}/revert/{version}",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/content/{content_type}/{content_id}/tags",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/admin/content/{content_type}/{content_id}/tags/{tag_slug}",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/content/{content_type}/{content_id}/versions",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/content/{content_type}/{content_id}/versions/{version}",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/crash-reports",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/crash-reports/stats",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/crash-reports/{report_id}",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/crash-reports/{report_id}/resolve",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/email-templates",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/email-templates",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/admin/email-templates/{template_id}",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/experiments",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/experiments",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/admin/experiments/{experiment_id}",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/admin/experiments/{experiment_id}",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/experiments/{experiment_id}/assignments",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/experiments/{experiment_id}/events",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/experiments/{experiment_id}/metrics",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/experiments/{experiment_id}/metrics/{metric_name}",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/experiments/{experiment_id}/results",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/feature-flags",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/feature-flags",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/admin/feature-flags/{key}",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/admin/feature-flags/{key}",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/lessons",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/lessons",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/v1/admin/lessons/{lesson_id}",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/lessons/{lesson_id}/approve",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/lessons/{lesson_id}/reject",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/lessons/{lesson_id}/submit-review",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/live-sessions/maintenance/cleanup",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/push-notifications",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/push-notifications/broadcast",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/push-notifications/send",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/quiz-questions",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/quiz-questions",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/v1/admin/quiz-questions/{question_id}",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/quiz-questions/{question_id}/approve",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/quiz-questions/{question_id}/reject",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/quiz-questions/{question_id}/submit-review",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/rag/documents",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/rag/documents",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/rag/documents/upload",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/admin/rag/documents/{document_id}",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/rag/documents/{document_id}",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/admin/rag/documents/{document_id}",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/rag/documents/{document_id}/activate",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/rag/documents/{document_id}/deactivate",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/rag/embeddings/rebuild",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/rag/health",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/rag/rebuild",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/rag/rebuild/status",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/rag/rebuild/{job_id}",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/rag/settings",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/admin/rag/settings",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/rag/settings/reset",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/reports/abuse",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/reports/abuse/{report_id}",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/reports/abuse/{report_id}/assign",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/reports/abuse/{report_id}/resolve",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/scheduled-emails",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/scheduled-emails/send-test",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/tags",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/live/demo-enter",
+    "group": "ai-tutor",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/auth/forgot-password",
+    "group": "auth",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/auth/login",
+    "group": "auth",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/auth/logout",
+    "group": "auth",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/auth/me",
+    "group": "auth",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/auth/refresh",
+    "group": "auth",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/auth/register",
+    "group": "auth",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/auth/reset-password",
+    "group": "auth",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/badges",
+    "group": "badges-quests",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/quests",
+    "group": "badges-quests",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/quests/{quest_slug}",
+    "group": "badges-quests",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/quests/{quest_slug}/start",
+    "group": "badges-quests",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/users/me/badges",
+    "group": "badges-quests",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/users/me/quest-summary",
+    "group": "badges-quests",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/classrooms",
+    "group": "classrooms",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/classrooms",
+    "group": "classrooms",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/classrooms/enrolled",
+    "group": "classrooms",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/classrooms/join",
+    "group": "classrooms",
+    "status": "gateway"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/classrooms/{classroom_id}",
+    "group": "classrooms",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/classrooms/{classroom_id}",
+    "group": "classrooms",
+    "status": "gateway"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/classrooms/{classroom_id}",
+    "group": "classrooms",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/classrooms/{classroom_id}/archive",
+    "group": "classrooms",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/classrooms/{classroom_id}/assignments",
+    "group": "classrooms",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/classrooms/{classroom_id}/assignments",
+    "group": "classrooms",
+    "status": "gateway"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/classrooms/{classroom_id}/assignments/{assignment_id}",
+    "group": "classrooms",
+    "status": "gateway"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/classrooms/{classroom_id}/assignments/{assignment_id}",
+    "group": "classrooms",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/classrooms/{classroom_id}/export",
+    "group": "classrooms",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/classrooms/{classroom_id}/leaderboard",
+    "group": "classrooms",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/classrooms/{classroom_id}/live-sessions",
+    "group": "classrooms",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/classrooms/{classroom_id}/live-sessions",
+    "group": "classrooms",
+    "status": "gateway"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/classrooms/{classroom_id}/members/{member_id}",
+    "group": "classrooms",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/classrooms/{classroom_id}/progress",
+    "group": "classrooms",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/classrooms/{classroom_id}/students/{student_id}/progress",
+    "group": "classrooms",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/classrooms/{classroom_id}/unarchive",
+    "group": "classrooms",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/crash-reports",
+    "group": "crash-reports",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/health",
+    "group": "foundations",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/leaderboard",
+    "group": "leaderboards",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/leaderboard/friends",
+    "group": "leaderboards",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/leaderboard/settings",
+    "group": "leaderboards",
+    "status": "gateway"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/leaderboard/settings",
+    "group": "leaderboards",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/lessons/cache-manifest",
+    "group": "lessons",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/lessons/cached",
+    "group": "lessons",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/lessons/next",
+    "group": "lessons",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/lessons/sequence",
+    "group": "lessons",
+    "status": "gateway"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/lessons/{lesson_id}/cache",
+    "group": "lessons",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/lessons/{lesson_id}/cache",
+    "group": "lessons",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/lessons/{lesson_id}/is-unlocked",
+    "group": "lessons",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/lessons/{lesson_id}/prerequisites",
+    "group": "lessons",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/motifs/{motif_id}",
+    "group": "lessons",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/motifs/{motif_id}/complete-lesson",
+    "group": "lessons",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/motifs/{motif_id}/quiz",
+    "group": "lessons",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/preview/complete",
+    "group": "lessons",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/preview/convert",
+    "group": "lessons",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/preview/lesson",
+    "group": "lessons",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/preview/start",
+    "group": "lessons",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/urns",
+    "group": "lessons",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/urns/{urn_slug}",
+    "group": "lessons",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/urns/{urn_slug}/exam",
+    "group": "lessons",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/urns/{urn_slug}/exam/attempts/latest",
+    "group": "lessons",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/urns/{urn_slug}/exam/submit",
+    "group": "lessons",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/urns/{urn_slug}/progress",
+    "group": "lessons",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/motifs/{urn_name}",
+    "group": "lessons",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/ai/coach",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/ai/conversations",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/ai/conversations",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/ai/conversations/{conversation_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/ai/conversations/{conversation_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/ai/conversations/{conversation_id}/messages",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/ai/diagnostic",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/ai/explain",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/ai/feedback",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/ai/flashcards",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/ai/insights",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/ai/insights/{user_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/ai/lessons/generate",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/ai/qa",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/ai/qa/stream",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/ai/quizzes/generate",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/ai/review-plan",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/ai/summary",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/ai/tutor",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/ai/tutor/stream",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/app/version/check",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/assignments/mine",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/assignments/{assignment_id}/submit",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/certificates/{code}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/classes",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/classes",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/classes/{class_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/classes/{class_id}/assignments",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/classes/{class_id}/members",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/classes/{class_id}/members/{user_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/content/flags",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/daily-goal/settings",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/daily-goal/settings",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/daily-missions",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/daily-missions/history",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/daily-missions/{mission_id}/progress",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/dashboard/summary",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/experiments",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/experiments/{experiment_id}/metrics",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/experiments/{experiment_key}/events",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/features",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/features/{key}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/hearts",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/hearts/refill",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/hearts/transactions",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/hearts/use",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/hearts/use-streak-freeze",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/learning-path/complete-item",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/learning-path/generate",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/learning-path/history",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/learning-path/stats",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/learning-path/today",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/live-sessions/{live_session_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/live-sessions/{live_session_id}/ai-teacher/presence",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/live-sessions/{live_session_id}/ai-teacher/reply",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/live-sessions/{live_session_id}/ai-teacher/stt",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/live-sessions/{live_session_id}/ai-teacher/tts",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/live-sessions/{live_session_id}/dashboard",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/live-sessions/{live_session_id}/end",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/live-sessions/{live_session_id}/events",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/live-sessions/{live_session_id}/events",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/live-sessions/{live_session_id}/host/mute-all",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/live-sessions/{live_session_id}/host/remove-participant",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/live-sessions/{live_session_id}/host/settings",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/live-sessions/{live_session_id}/join",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/live-sessions/{live_session_id}/leave",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/live-sessions/{live_session_id}/observability",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/live-sessions/{live_session_id}/participants",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/v1/live-sessions/{live_session_id}/participants/{participant_id}/role",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/live-sessions/{live_session_id}/token",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/live-sessions/{live_session_id}/transcripts/export.csv",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/live-sessions/{live_session_id}/transcripts/export.json",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/livekit/webhook",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/milestones",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/milestones/pending-celebration",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/milestones/{milestone_id}/celebrate",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/new-feature",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/quiz/adaptive",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/quiz/questions/{question_id}/hint",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/quiz/questions/{question_id}/hints",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/recommendations",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/recommendations/feedback",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/recommendations/interaction",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/recommendations/similar/{content_type}/{content_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/reports/abuse",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/reports/abuse/mine",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/review/cards",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/review/due",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/review/stats",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/review/{card_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/search",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/skills",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/skills/recalculate",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/social/feed",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/social/follow/{user_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/social/follow/{user_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/social/followers",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/social/following",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/social/friend-requests",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/social/friend-requests",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/social/friend-requests/{request_id}/accept",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/social/friend-requests/{request_id}/reject",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/social/friends",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/social/peer-feedback",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/social/search",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/social/share",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/social/shares/mine",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/social/shares/{share_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/social/shares/{share_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/streak",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/streak/claim-daily",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/streak/freeze",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/streak/use-freeze",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/weekly-quests",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/weekly-quests/history",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/weekly-quests/{quest_id}/progress",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/notifications/history",
+    "group": "notifications",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/notifications/register-push",
+    "group": "notifications",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/notifications/settings",
+    "group": "notifications",
+    "status": "gateway"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/notifications/settings",
+    "group": "notifications",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/notifications/should-prompt-permission",
+    "group": "notifications",
+    "status": "gateway"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/notifications/unregister-push",
+    "group": "notifications",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/users/me/streak",
+    "group": "progress",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/users/me/streak/freeze",
+    "group": "progress",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/progress/unlock",
+    "group": "progress",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/content/ratings",
+    "group": "public-reads",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/ranks",
+    "group": "public-reads",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/tags",
+    "group": "public-reads",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/quizzes/submit",
+    "group": "quizzes",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/analytics/events",
+    "group": "sessions",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/sessions/end",
+    "group": "sessions",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/sessions/heartbeat",
+    "group": "sessions",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/onboarding/complete",
+    "group": "users",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/onboarding/goals",
+    "group": "users",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/onboarding/status",
+    "group": "users",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/u/{username_or_id}",
+    "group": "users",
+    "status": "gateway"
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/v1/users/me",
+    "group": "users",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/users/me/age-verify",
+    "group": "users",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/users/me/ai-jobs",
+    "group": "users",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/users/me/ai-jobs/{job_id}/retry",
+    "group": "users",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/users/me/avatar",
+    "group": "users",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/users/me/certificates",
+    "group": "users",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/users/me/change-password",
+    "group": "users",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/users/me/collection",
+    "group": "users",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/users/me/exam-attempts",
+    "group": "users",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/users/me/recommendations",
+    "group": "users",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/users/me/recommendations/refresh",
+    "group": "users",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/users/me/starting-path",
+    "group": "users",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/users/me/xp-boost",
+    "group": "users",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/users/me/xp-boost/activate",
+    "group": "users",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/users/{user_id}/activity",
+    "group": "users",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/users/{user_id}/public",
+    "group": "users",
+    "status": "gateway"
+  }
+]
