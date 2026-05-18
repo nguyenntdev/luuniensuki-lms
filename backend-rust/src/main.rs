@@ -10,6 +10,7 @@
 
 mod config;
 mod db;
+mod dispatcher;
 mod observability;
 
 use axum::{middleware, routing::get, Json, Router};

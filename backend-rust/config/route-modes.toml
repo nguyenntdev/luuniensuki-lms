@@ -1,0 +1,19 @@
+# Per-route runtime override. Keys are "METHOD path". Values are "native" or "gateway".
+# Missing entries default to whatever the router has wired (native if registered,
+# else gateway via fallback).
+#
+# Hot-reloaded on SIGHUP or every 30 seconds.
+
+[routes]
+"GET /health" = "native"
+"GET /api/v1/internal/db-health" = "native"
+"GET /api/v1/content/ratings" = "native"
+"GET /api/v1/ranks" = "native"
+"GET /api/v1/tags" = "native"
+"GET /api/v1/badges" = "native"
+"GET /api/v1/users/me/streak" = "native"
+
+[defaults]
+# When true, an unknown route in the inventory defaults to "gateway".
+# Production must set this true until cutover (Requirement 13.3).
+unknown_routes = "gateway"

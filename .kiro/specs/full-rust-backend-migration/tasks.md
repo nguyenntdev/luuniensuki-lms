@@ -44,7 +44,7 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
     - **Property 18: 5xx error logging** — every 5xx response emits exactly one error-level JSON line with `request_id`, route, and error chain.
     - **Validates:** Req 3.6, 12.3, 12.4
 
-  - [ ] 1.5 Implement strangler dispatcher with hot-reload
+  - [x] 1.5 Implement strangler dispatcher with hot-reload
     - Create `backend-rust/src/dispatcher.rs` holding `ArcSwap<HashMap<MethodPath, Mode>>`.
     - Parse `backend-rust/config/route-modes.toml` (`[routes]` and `[defaults]`) at startup; reject values other than `"native"` / `"gateway"`.
     - Spawn a reload task: `tokio::signal::unix::SIGHUP` for immediate reload + `tokio::time::interval(30s)` poll using mtime check.
