@@ -26,7 +26,7 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
     - Record peak release-build RSS in `backend-rust/docs/build-budget.md` for every dep added.
     - **Validates:** Req 11.1, 11.3, 11.4, 12.1; Property 20
 
-  - [ ] 1.2 Wire `sqlx::PgPool` and config
+  - [x] 1.2 Wire `sqlx::PgPool` and config
     - Add `sqlx = "0.7.x"` (postgres + chrono + uuid + json + runtime-tokio-rustls), pinned exact.
     - Implement `db::pool(&Settings)` with `PgPoolOptions::max_connections` and 5s acquire timeout.
     - Extend `config::Settings` with `database_url`, `database_max_connections`, `route_modes_path`, `route_inventory_path`, `bind_addr`, `uploads_dir`, JWT fields.
