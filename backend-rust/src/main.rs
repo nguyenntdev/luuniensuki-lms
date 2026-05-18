@@ -13,21 +13,45 @@ mod db;
 mod dispatcher;
 mod error;
 mod gateway;
+mod inventory;
 mod observability;
+mod routes;
 
-use axum::{middleware, routing::get, Json, Router};
-use serde_json::{json, Value};
+use axum::{middleware, routing::get, Router};
+use sqlx::PgPool;
 use tokio::signal;
 
+use crate::dispatcher::Dispatcher;
 use crate::gateway::GatewayState;
+use crate::inventory::AppState;
 
 #[tokio::main(flavor = "multi_thread", worker_threads = 2)]
 async fn main() -> anyhow::Result<()> {
     observability::init();
 
     let settings = config::Settings::from_env()?;
+
+    // Load the route-mode dispatcher (hot-reloadable TOML map)
+    let dispatcher = Dispatcher::load(&settings.route_modes_path)?;
+
+    // Load route inventory for coverage assertion and the internal endpoint
+    let inv = inventory::load_inventory(&settings.route_inventory_path)?;
+
+    // Assert full coverage: every inventory entry must be reachable
+    // (via native handler or gateway fallback)
+    inventory::assert_full_coverage(&inv, &dispatcher)?;
+
     let gw_state = GatewayState::new(&settings);
-    let app = build_router(gw_state);
+    let app_state = AppState {
+        inventory: inv,
+        dispatcher,
+        gateway: gw_state.clone(),
+    };
+
+    // Create the DB pool (connect_lazy — no connection until first query)
+    let pool = db::pool(&settings).await.ok();
+
+    let app = build_router(gw_state, app_state, pool);
 
     let listener = tokio::net::TcpListener::bind(settings.bind_addr).await?;
     tracing::info!(addr = %settings.bind_addr, "luuniensuki-api-rust listening");
@@ -41,17 +65,35 @@ async fn main() -> anyhow::Result<()> {
 
 /// Build the top-level Axum router. Kept as a free function so the smoke
 /// test can construct the app without spawning a listener.
-fn build_router(gw_state: GatewayState) -> Router {
+fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool>) -> Router {
+    // Internal routes that need AppState (inventory + dispatcher)
+    let internal_routes = Router::new()
+        .route(
+            "/api/v1/internal/route-coverage",
+            get(inventory::route_coverage),
+        )
+        .with_state(app_state);
+
+    // Routes that need the DB pool (optional — returns 503 when None)
+    let db_routes = Router::new()
+        .route("/api/v1/internal/db-health", get(routes::health::db_health))
+        .route("/api/v1/tags", get(routes::content::tags))
+        .route("/api/v1/badges", get(routes::badges::list_badges))
+        .with_state(pool);
+
+    // Static routes (no state needed)
+    let static_routes = Router::new()
+        .route("/health", get(routes::health::health))
+        .route("/api/v1/content/ratings", get(routes::content::content_ratings))
+        .route("/api/v1/ranks", get(routes::content::ranks));
+
     Router::new()
-        .route("/health", get(health))
+        .merge(static_routes)
+        .merge(db_routes)
+        .merge(internal_routes)
         .fallback(gateway::fallback_to_python)
         .layer(middleware::from_fn(observability::request_id_and_logging))
         .with_state(gw_state)
-}
-
-/// `GET /health` — process liveness probe (Requirement 12.1).
-async fn health() -> Json<Value> {
-    Json(json!({ "status": "ok" }))
 }
 
 /// Resolve when either `SIGTERM` or `SIGINT` (`Ctrl+C`) is received.
@@ -90,11 +132,30 @@ mod tests {
     };
     use tower::ServiceExt;
 
+    fn test_app_state(settings: &config::Settings) -> (GatewayState, AppState) {
+        let gw_state = GatewayState::new(settings);
+        let dispatcher = Dispatcher::load(&settings.route_modes_path)
+            .unwrap_or_else(|_| {
+                // Fallback: create a temp file with defaults for tests
+                let tmp = std::env::temp_dir().join("test-route-modes.toml");
+                std::fs::write(&tmp, "[defaults]\nunknown_routes = \"gateway\"\n").unwrap();
+                Dispatcher::load(&tmp).unwrap()
+            });
+        let inv = inventory::load_inventory(&settings.route_inventory_path)
+            .unwrap_or_else(|_| std::sync::Arc::new(Vec::new()));
+        let app_state = AppState {
+            inventory: inv,
+            dispatcher,
+            gateway: gw_state.clone(),
+        };
+        (gw_state, app_state)
+    }
+
     #[tokio::test]
     async fn health_returns_ok_envelope() {
         let settings = config::Settings::from_env().unwrap();
-        let gw_state = GatewayState::new(&settings);
-        let app = build_router(gw_state);
+        let (gw_state, app_state) = test_app_state(&settings);
+        let app = build_router(gw_state, app_state, None);
 
         let response = app
             .oneshot(
@@ -111,5 +172,146 @@ mod tests {
         let body = to_bytes(response.into_body(), 1024).await.unwrap();
         let parsed: serde_json::Value = serde_json::from_slice(&body).unwrap();
         assert_eq!(parsed, serde_json::json!({ "status": "ok" }));
+    }
+
+    #[tokio::test]
+    async fn route_coverage_returns_json() {
+        let settings = config::Settings::from_env().unwrap();
+        let (gw_state, app_state) = test_app_state(&settings);
+        let app = build_router(gw_state, app_state, None);
+
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .uri("/api/v1/internal/route-coverage")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::OK);
+
+        let body = to_bytes(response.into_body(), 64 * 1024).await.unwrap();
+        let parsed: serde_json::Value = serde_json::from_slice(&body).unwrap();
+
+        // Verify the response has the expected shape
+        assert!(parsed.get("routes").is_some());
+        assert!(parsed.get("summary").is_some());
+
+        let summary = parsed.get("summary").unwrap();
+        assert!(summary.get("total").is_some());
+        assert!(summary.get("native").is_some());
+        assert!(summary.get("gateway").is_some());
+        assert!(summary.get("groups_complete").is_some());
+        assert!(summary.get("groups_total").is_some());
+        assert!(summary.get("ready_for_cutover").is_some());
+    }
+
+    #[tokio::test]
+    async fn content_ratings_returns_expected_shape() {
+        let settings = config::Settings::from_env().unwrap();
+        let (gw_state, app_state) = test_app_state(&settings);
+        let app = build_router(gw_state, app_state, None);
+
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .uri("/api/v1/content/ratings")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::OK);
+
+        let body = to_bytes(response.into_body(), 4096).await.unwrap();
+        let parsed: serde_json::Value = serde_json::from_slice(&body).unwrap();
+        let ratings = parsed["ratings"].as_array().unwrap();
+        assert_eq!(ratings.len(), 3);
+        assert_eq!(ratings[0]["rating"], "everyone");
+    }
+
+    #[tokio::test]
+    async fn ranks_returns_expected_shape() {
+        let settings = config::Settings::from_env().unwrap();
+        let (gw_state, app_state) = test_app_state(&settings);
+        let app = build_router(gw_state, app_state, None);
+
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .uri("/api/v1/ranks")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::OK);
+
+        let body = to_bytes(response.into_body(), 4096).await.unwrap();
+        let parsed: serde_json::Value = serde_json::from_slice(&body).unwrap();
+        let ranks = parsed["ranks"].as_array().unwrap();
+        assert_eq!(ranks.len(), 8);
+        assert_eq!(ranks[0]["name"], "Beginner");
+    }
+
+    #[tokio::test]
+    async fn db_health_without_pool_returns_503() {
+        let settings = config::Settings::from_env().unwrap();
+        let (gw_state, app_state) = test_app_state(&settings);
+        let app = build_router(gw_state, app_state, None);
+
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .uri("/api/v1/internal/db-health")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::SERVICE_UNAVAILABLE);
+    }
+
+    #[tokio::test]
+    async fn badges_without_pool_returns_503() {
+        let settings = config::Settings::from_env().unwrap();
+        let (gw_state, app_state) = test_app_state(&settings);
+        let app = build_router(gw_state, app_state, None);
+
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .uri("/api/v1/badges")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::SERVICE_UNAVAILABLE);
+    }
+
+    #[tokio::test]
+    async fn tags_without_pool_returns_503() {
+        let settings = config::Settings::from_env().unwrap();
+        let (gw_state, app_state) = test_app_state(&settings);
+        let app = build_router(gw_state, app_state, None);
+
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .uri("/api/v1/tags")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::SERVICE_UNAVAILABLE);
     }
 }

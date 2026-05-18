@@ -20,6 +20,7 @@ pub struct Settings {
     pub route_modes_path: PathBuf,
     pub route_inventory_path: PathBuf,
     pub uploads_dir: PathBuf,
+    pub app_name: String,
 }
 
 impl Settings {
@@ -82,6 +83,8 @@ impl Settings {
             uploads_dir: std::env::var("UPLOADS_DIR")
                 .map(PathBuf::from)
                 .unwrap_or_else(|_| PathBuf::from("../uploads")),
+            app_name: std::env::var("APP_NAME")
+                .unwrap_or_else(|_| "luuniensuki-api-rust".to_string()),
         })
     }
 }

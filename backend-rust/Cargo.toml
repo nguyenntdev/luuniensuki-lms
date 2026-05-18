@@ -10,7 +10,7 @@ edition = "2021"
 # parity between this manifest and that document.
 [dependencies]
 tokio = { version = "=1.40.0", features = ["macros", "rt-multi-thread", "signal", "net", "time", "sync"] }
-axum = { version = "=0.7.7", default-features = false, features = ["http1", "json", "tokio", "matched-path", "tracing"] }
+axum = { version = "=0.7.7", default-features = false, features = ["http1", "json", "tokio", "matched-path", "tracing", "query"] }
 tower = { version = "=0.5.1", default-features = false, features = ["util"] }
 tower-http = { version = "=0.6.1", default-features = false, features = ["trace"] }
 serde = { version = "=1.0.210", features = ["derive"] }
@@ -20,7 +20,7 @@ thiserror = "=1.0.64"
 dotenvy = "=0.15.7"
 tracing = "=0.1.40"
 tracing-subscriber = { version = "=0.3.18", default-features = false, features = ["fmt", "json", "env-filter", "tracing-log"] }
-sqlx = { version = "=0.7.4", default-features = false, features = ["runtime-tokio-rustls", "postgres", "chrono", "uuid", "json"] }
+sqlx = { version = "=0.7.4", default-features = false, features = ["runtime-tokio-rustls", "postgres", "chrono", "uuid", "json", "macros"] }
 chrono = { version = "=0.4.38", features = ["serde"] }
 uuid = { version = "=1.10.0", features = ["v4", "serde"] }
 arc-swap = "=1.7.1"

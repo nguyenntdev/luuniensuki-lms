@@ -76,7 +76,7 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
     - Wire `tower_http::catch_panic` mapping panics → 500 `INTERNAL_SERVER_ERROR`.
     - **Validates:** Req 3.5, 5.6, 12.4
 
-  - [ ] 1.10 Build `inventory.rs` and `GET /api/v1/internal/route-coverage`
+  - [x] 1.10 Build `inventory.rs` and `GET /api/v1/internal/route-coverage`
     - Load `backend-rust/docs/route-inventory.json` at startup into an `Arc<Vec<InventoryEntry>>`.
     - Implement `inventory::assert_full_coverage(&Router, &Dispatcher)`: every entry must match a registered native handler OR `gateway::fallback_to_python`. On gap: return error → `main()` exits non-zero.
     - Implement `routes::internal::route_coverage` returning the JSON shape from the design (`routes[]` with `method/path/group/status/native_handler_registered/override` and `summary` with `total/native/gateway/groups_complete/groups_total/ready_for_cutover`).
@@ -108,7 +108,7 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
     - **Property 2: Ledger atomicity** — a phase header is checked iff every route in the phase is checked, every route is `native` in `route-modes.toml`, and every route's contract test passes.
     - **Validates:** Req 1.1, 1.2, 1.4, 1.5, 7.3
 
-  - [ ] 1.16 Migrate currently-native routes to the new Axum router
+  - [x] 1.16 Migrate currently-native routes to the new Axum router
     - Move `GET /health`, `GET /api/v1/internal/db-health`, `GET /api/v1/content/ratings`, `GET /api/v1/ranks`, `GET /api/v1/tags`, `GET /api/v1/badges` (list), `GET /api/v1/users/me/streak` from `backend-rust/src/main.rs` (std-lib HTTP) to Axum handlers in `routes/health.rs`, `routes/content.rs`, `routes/badges.rs`, `routes/users.rs`.
     - Delete the hand-rolled HTTP parsing once Axum routes pass their existing unit tests.
     - **Validates:** Req 3.1, 12.1, 12.2; Property 6
