@@ -25,6 +25,7 @@ chrono = { version = "=0.4.38", features = ["serde"] }
 uuid = { version = "=1.10.0", features = ["v4", "serde"] }
 arc-swap = "=1.7.1"
 reqwest = { version = "=0.12.7", default-features = false, features = ["rustls-tls", "stream", "json"] }
+jsonwebtoken = "=9.3.0"
 toml = "=0.5.11"
 
 [dev-dependencies]
