@@ -47,6 +47,7 @@ that dep present and pinned at the listed exact version.
 | arc-swap             | =1.7.1         | (default)                                                                         | 1.5           | TODO           | Hot-reload dispatcher |
 | reqwest              | =0.12.7        | rustls-tls, stream, json (default-features = false)                               | 1.5           | TODO           | Gateway proxy |
 | toml                 | =0.5.11        | (default)                                                                         | 1.5           | TODO           | Route-modes config |
+| jsonwebtoken         | =9.3.0         | (default)                                                                         | 1.5           | TODO           | JWT verify/issue |
 
 The `Peak RSS` cells will be filled in after the first successful release
 build on the build host. If `/usr/bin/time -v` is unavailable in a given
@@ -64,3 +65,26 @@ grep "Maximum resident set size" build.log
 
 Record the reported `Maximum resident set size (kbytes)` divided by 1024
 in the table above and commit alongside the dependency change.
+
+## Docker build measurement (Task 1.19)
+
+The Dockerfile uses a multi-stage cargo-chef build with the following
+memory-constraining environment variables:
+
+- `CARGO_BUILD_JOBS=1` — single compilation unit at a time
+- `CARGO_PROFILE_RELEASE_CODEGEN_UNITS=1` — one codegen unit per crate
+- `CARGO_PROFILE_RELEASE_LTO=thin` — thin LTO (lower peak RSS than full)
+
+To measure peak RSS during a Docker build:
+
+```bash
+# Option A: Build locally with memory stats
+docker build --no-cache --progress=plain -t luuniensuki-api-rust . 2>&1 | tee docker-build.log
+
+# Option B: Use /usr/bin/time inside the builder stage (add to Dockerfile temporarily)
+# RUN /usr/bin/time -v cargo build --release -j 1 2>&1 | tee /tmp/build-stats.txt
+```
+
+The cargo-chef layer caching means that dependency builds are cached
+separately from application code builds, reducing rebuild times when only
+`src/` changes.

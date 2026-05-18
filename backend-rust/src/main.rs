@@ -85,7 +85,8 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
     let static_routes = Router::new()
         .route("/health", get(routes::health::health))
         .route("/api/v1/content/ratings", get(routes::content::content_ratings))
-        .route("/api/v1/ranks", get(routes::content::ranks));
+        .route("/api/v1/ranks", get(routes::content::ranks))
+        .route("/metrics", get(routes::metrics::metrics));
 
     Router::new()
         .merge(static_routes)
@@ -313,5 +314,49 @@ mod tests {
             .unwrap();
 
         assert_eq!(response.status(), StatusCode::SERVICE_UNAVAILABLE);
+    }
+
+    #[tokio::test]
+    async fn metrics_returns_prometheus_text_format() {
+        let settings = config::Settings::from_env().unwrap();
+        let (gw_state, app_state) = test_app_state(&settings);
+        let app = build_router(gw_state, app_state, None);
+
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .uri("/metrics")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::OK);
+
+        let content_type = response
+            .headers()
+            .get("content-type")
+            .unwrap()
+            .to_str()
+            .unwrap();
+        assert!(
+            content_type.contains("text/plain"),
+            "Expected text/plain content type for Prometheus metrics"
+        );
+
+        let body = to_bytes(response.into_body(), 4096).await.unwrap();
+        let text = String::from_utf8(body.to_vec()).unwrap();
+
+        // Verify Prometheus exposition format markers
+        assert!(text.contains("# HELP http_requests_total"));
+        assert!(text.contains("# TYPE http_requests_total counter"));
+        assert!(text.contains("http_requests_total"));
+        assert!(text.contains("# HELP http_errors_total"));
+        assert!(text.contains("# TYPE http_errors_total counter"));
+        assert!(text.contains("http_errors_total"));
+        assert!(text.contains("http_requests_by_mode_total{mode=\"native\"}"));
+        assert!(text.contains("http_requests_by_mode_total{mode=\"gateway\"}"));
+        assert!(text.contains("http_request_duration_milliseconds_sum"));
     }
 }

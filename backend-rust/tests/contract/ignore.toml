@@ -1,0 +1,32 @@
+# Contract test ignore list — per-route fields to exclude from JSON comparison.
+#
+# Task 1.20: Fields listed here are expected to differ between Python and Rust
+# responses (e.g., timestamps, request IDs) and are excluded from structural
+# equality checks.
+#
+# Format:
+#   [routes."METHOD /path"]
+#   ignore_fields = ["field1", "field2"]
+#
+# Validates: Req 4.3 (documented equivalence relation)
+
+[routes."GET /health"]
+ignore_fields = []
+
+[routes."GET /api/v1/internal/db-health"]
+ignore_fields = []
+
+[routes."GET /api/v1/internal/route-coverage"]
+ignore_fields = ["request_id"]
+
+[routes."GET /api/v1/content/ratings"]
+ignore_fields = []
+
+[routes."GET /api/v1/ranks"]
+ignore_fields = []
+
+[routes."GET /api/v1/tags"]
+ignore_fields = []
+
+[routes."GET /api/v1/badges"]
+ignore_fields = []

@@ -18,7 +18,7 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
 
 ### Phase 0 — Foundations & Dispatcher
 
-- [ ] 1. Foundations & dispatcher
+- [x] 1. Foundations & dispatcher
   - [x] 1.1 Add Axum + Tokio + Tower scaffold
     - Replace the std-lib TCP server in `backend-rust/src/main.rs` with `axum::serve` + `#[tokio::main]`.
     - Add pinned exact-version deps to `backend-rust/Cargo.toml`: `tokio`, `axum`, `tower`, `tower-http`, `serde`, `serde_json`, `anyhow`, `thiserror`, `dotenvy`, `tracing`, `tracing-subscriber`.
@@ -113,7 +113,7 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
     - Delete the hand-rolled HTTP parsing once Axum routes pass their existing unit tests.
     - **Validates:** Req 3.1, 12.1, 12.2; Property 6
 
-  - [ ] 1.17 Wire `axum-prometheus` `/metrics`
+  - [x] 1.17 Wire `axum-prometheus` `/metrics`
     - Add pinned `axum-prometheus = "0.6.x"`.
     - Apply `PrometheusMetricLayer` to the top-level router; expose `GET /metrics`.
     - Label per-route counters and latency histograms with `(method, path, status, mode)`.
@@ -123,21 +123,21 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
     - **Property 19: Metrics emission per request** — exactly one counter increment and one latency observation per request, labeled `(method, path, status, mode)`.
     - **Validates:** Req 12.5
 
-  - [ ] 1.19 Update Dockerfile with cargo-chef multi-stage build
+  - [x] 1.19 Update Dockerfile with cargo-chef multi-stage build
     - Replace current Dockerfile with `chef → planner → builder → runtime` stages from the design.
     - Set `CARGO_BUILD_JOBS=1`, `CARGO_PROFILE_RELEASE_CODEGEN_UNITS=1`, `CARGO_PROFILE_RELEASE_LTO=thin`.
     - Copy `backend-rust/config/` and `backend-rust/docs/route-inventory.json` into the runtime image.
     - Document build host RSS measurement in `backend-rust/docs/build-budget.md`.
     - **Validates:** Req 11.1, 11.2, 11.3
 
-  - [ ] 1.20 Build the contract test harness
+  - [x] 1.20 Build the contract test harness
     - Create `backend-rust/tests/contract/` with a `harness.rs` that loads snapshot fixtures and a per-route ignore-list from `tests/contract/ignore.toml`.
     - Implement equivalence: status equal, `Content-Type` equal, JSON structurally equal modulo per-route `ignore_fields`.
     - Add `scripts/testing/capture_python_snapshots.py` that exercises Python with a deterministic seed corpus and writes `tests/contract/fixtures/<group>/<route>/<case>.json`.
     - For every migrated route, the harness MUST run at minimum: 1 happy path, 1 input-validation-error case, 1 auth/authz-error case.
     - **Validates:** Req 4.1, 4.2, 4.3, 4.4, 4.6, 4.7, 4.8; Property 11
 
-  - [ ] 1.21 Add CI lints
+  - [x] 1.21 Add CI lints
     - Ledger sync lint: rejects PRs that flip a route to `native` in `route-modes.toml` without ticking the matching ledger box.
     - Inventory drift lint: regenerates `route-inventory.json` and fails on non-empty diff.
     - Pinned-deps lint: scans `Cargo.toml` for unpinned versions (Property 20 enforcement).
@@ -146,7 +146,7 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
     - Migration safety lint: rejects new SQL migrations containing `DROP TABLE | DROP COLUMN | ALTER COLUMN | RENAME` against existing tables.
     - **Validates:** Req 1.3, 1.6, 2.3, 6.2, 9.2, 11.2, 11.4; Property 17, Property 20
 
-  - [ ] 1.22 Phase 0 complete: tick ledger and verify foundations
+  - [x] 1.22 Phase 0 complete: tick ledger and verify foundations
     - Ensure all foundations tests pass (`cargo test`, contract harness smoke).
     - Tick the Phase 0 routes (`/health`, `/api/v1/internal/db-health`, `/api/v1/internal/route-coverage`) in `docs/plan/full-rust-backend-migration-ledger.md` with commit SHA + date.
     - Verify `GET /api/v1/internal/route-coverage` reports the foundations routes as `native` and all unmigrated routes as `gateway`.
@@ -155,8 +155,8 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
 
 ### Phase 1 — Public Reads (Cleanup)
 
-- [ ] 2. Public reads cleanup
-  - [ ] 2.1 Verify Phase-1 native routes pass contract tests under new Axum
+- [x] 2. Public reads cleanup
+  - [x] 2.1 Verify Phase-1 native routes pass contract tests under new Axum
     - Run the contract suite for `GET /api/v1/content/ratings`, `GET /api/v1/ranks`, `GET /api/v1/tags`, `GET /api/v1/badges` (list), `GET /api/v1/users/me/streak`.
     - Each must show status equality, `Content-Type` equality, and JSON equivalence vs Python snapshots.
     - **Validates:** Req 4.2, 4.3, 4.4, 7.6; Property 11
@@ -165,7 +165,7 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
     - **Property 6: Native dispatch isolation** — for these registered routes, the gateway client is never invoked.
     - **Validates:** Req 3.1
 
-  - [ ] 2.3 Phase 1 complete: tick ledger
+  - [x] 2.3 Phase 1 complete: tick ledger
     - Tick all Phase-1 route boxes with SHA + date and tick the phase header (`Completed:` line) in the ledger.
     - Re-run the contract suite and confirm `route-coverage` reports all Phase-1 routes as `native`.
     - Ensure all tests pass; ask the user if questions arise.

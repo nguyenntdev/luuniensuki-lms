@@ -6,19 +6,25 @@ nested checkboxes per route. Updated in the same PR that lands a route.
 ## Summary
 
 - Total routes (from inventory): 291
-- Native: 0 / 291
-- Gateway: 291 / 291
-- Phases complete: 0 / 16
+- Native: 8 / 291
+- Gateway: 283 / 291
+- Phases complete: 2 / 16
 
 ---
 
-- [ ] Phase 0 — Foundations
-  - [ ] GET /health
+- [x] Phase 0 — Foundations
+  - [x] GET /health _(1cb654c, 2026-05-18)_
+  - [x] GET /api/v1/internal/db-health _(1cb654c, 2026-05-18)_
+  - [x] GET /api/v1/internal/route-coverage _(1cb654c, 2026-05-18)_
+  - [x] GET /metrics _(1cb654c, 2026-05-18)_
+  Completed: 1cb654c 2026-05-18
 
-- [ ] Phase 1 — Public reads
-  - [ ] GET /api/v1/content/ratings
-  - [ ] GET /api/v1/ranks
-  - [ ] GET /api/v1/tags
+- [x] Phase 1 — Public reads
+  - [x] GET /api/v1/content/ratings _(1cb654c, 2026-05-18)_
+  - [x] GET /api/v1/ranks _(1cb654c, 2026-05-18)_
+  - [x] GET /api/v1/tags _(1cb654c, 2026-05-18)_
+  - [x] GET /api/v1/badges _(1cb654c, 2026-05-18)_
+  Completed: 1cb654c 2026-05-18
 
 - [ ] Phase 2 — Auth
   - [ ] GET /api/v1/auth/me
