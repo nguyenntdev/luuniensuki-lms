@@ -1,0 +1,137 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - navigation [ref=e5]:
+      - generic [ref=e6]:
+        - link "Lưu Niên Sử Kí" [ref=e7] [cursor=pointer]:
+          - /url: /
+        - generic [ref=e8]:
+          - link "Khám Phá" [ref=e9] [cursor=pointer]:
+            - /url: /explore
+            - generic [ref=e10]:
+              - img [ref=e11]
+              - generic [ref=e14]: Khám Phá
+          - link "Ôn Tập" [ref=e15] [cursor=pointer]:
+            - /url: /practice
+            - generic [ref=e16]:
+              - img [ref=e17]
+              - generic [ref=e26]: Ôn Tập
+          - link "Bộ Sưu Tập" [ref=e27] [cursor=pointer]:
+            - /url: /collection
+            - generic [ref=e28]:
+              - img [ref=e29]
+              - generic [ref=e32]: Bộ Sưu Tập
+        - generic [ref=e33]:
+          - generic [ref=e34]:
+            - button "Menu" [expanded] [active] [ref=e35] [cursor=pointer]:
+              - img [ref=e36]
+              - generic [ref=e40]: Menu
+              - img [ref=e41]
+            - generic [ref=e161]:
+              - link "AI Tutor" [ref=e162] [cursor=pointer]:
+                - /url: /ai
+                - generic [ref=e163]:
+                  - img [ref=e164]
+                  - generic [ref=e169]: AI Tutor
+              - link "Hành Trình" [ref=e170] [cursor=pointer]:
+                - /url: /quests
+                - generic [ref=e171]:
+                  - img [ref=e172]
+                  - generic [ref=e176]: Hành Trình
+              - link "Bạn Bè" [ref=e177] [cursor=pointer]:
+                - /url: /friends
+                - generic [ref=e178]:
+                  - img [ref=e179]
+                  - generic [ref=e184]: Bạn Bè
+              - link "Thành Tích" [ref=e185] [cursor=pointer]:
+                - /url: /achievements
+                - generic [ref=e186]:
+                  - img [ref=e187]
+                  - generic [ref=e194]: Thành Tích
+              - link "Bảng Hạng" [ref=e195] [cursor=pointer]:
+                - /url: /leaderboard
+                - generic [ref=e196]:
+                  - img [ref=e197]
+                  - generic [ref=e204]: Bảng Hạng
+              - link "Leagues" [ref=e205] [cursor=pointer]:
+                - /url: /leagues
+                - generic [ref=e206]:
+                  - img [ref=e207]
+                  - generic [ref=e214]: Leagues
+              - link "Hồ Sơ" [ref=e215] [cursor=pointer]:
+                - /url: /profile
+                - generic [ref=e216]:
+                  - img [ref=e217]
+                  - generic [ref=e220]: Hồ Sơ
+              - link "Teacher Hub" [ref=e221] [cursor=pointer]:
+                - /url: /admin
+                - generic [ref=e222]:
+                  - img [ref=e223]
+                  - generic [ref=e225]: Teacher Hub
+          - button "L Live Demo Teacher" [ref=e44] [cursor=pointer]:
+            - generic [ref=e46]: L
+            - generic [ref=e47]: Live Demo Teacher
+            - img [ref=e48]
+          - button "vi" [ref=e51] [cursor=pointer]:
+            - img [ref=e52]
+            - generic [ref=e56]: vi
+            - img [ref=e57]
+          - link "Tiếp Tục Học" [ref=e59] [cursor=pointer]:
+            - /url: /dashboard
+            - button "Tiếp Tục Học" [ref=e60]
+    - main [ref=e61]:
+      - generic [ref=e62]:
+        - generic [ref=e63]:
+          - heading "Xin chào, Live Demo Teacher! 👋" [level=1] [ref=e64]
+          - paragraph [ref=e65]: Tiếp tục hành trình khám phá Cửu Đỉnh của bạn
+        - generic [ref=e66]:
+          - generic [ref=e67]:
+            - img [ref=e69]
+            - generic [ref=e156]: "0"
+            - generic [ref=e72]: Streak
+          - generic [ref=e73]:
+            - img [ref=e75]
+            - generic [ref=e157]: "0"
+            - generic [ref=e78]: Tổng XP
+          - generic [ref=e79]:
+            - img [ref=e81]
+            - generic [ref=e158]: "0"
+            - generic [ref=e89]: Thành Thạo
+        - generic [ref=e92]:
+          - generic [ref=e93]:
+            - heading "Tiếp Tục Học" [level=2] [ref=e94]
+            - paragraph [ref=e159]: Cao Đỉnh • 0/486 bước hoàn thành
+            - generic [ref=e97]:
+              - generic [ref=e98]: Tiến độ
+              - generic [ref=e99]: 0%
+          - link "Tiếp Tục" [ref=e101] [cursor=pointer]:
+            - /url: /urns/cao-dinh
+        - generic [ref=e102]:
+          - link "Khám Phá Xem tất cả các đỉnh và họa tiết" [ref=e103] [cursor=pointer]:
+            - /url: /explore
+            - img [ref=e105]
+            - generic [ref=e108]:
+              - heading "Khám Phá" [level=3] [ref=e109]
+              - paragraph [ref=e110]: Xem tất cả các đỉnh và họa tiết
+            - img [ref=e111]
+          - link "Bộ Sưu Tập 0 họa tiết đã khám phá" [ref=e160] [cursor=pointer]:
+            - /url: /collection
+            - img [ref=e116]
+            - generic [ref=e119]:
+              - heading "Bộ Sưu Tập" [level=3] [ref=e120]
+              - paragraph [ref=e121]: 0 họa tiết đã khám phá
+            - img [ref=e122]
+          - link "Thành Tích Huy hiệu và bảng xếp hạng" [ref=e125] [cursor=pointer]:
+            - /url: /achievements
+            - img [ref=e127]
+            - generic [ref=e134]:
+              - heading "Thành Tích" [level=3] [ref=e135]
+              - paragraph [ref=e136]: Huy hiệu và bảng xếp hạng
+            - img [ref=e137]
+          - link "Hồ Sơ Cài đặt và thông tin cá nhân" [ref=e140] [cursor=pointer]:
+            - /url: /profile
+            - img [ref=e142]
+            - generic [ref=e144]:
+              - heading "Hồ Sơ" [level=3] [ref=e145]
+              - paragraph [ref=e146]: Cài đặt và thông tin cá nhân
+            - img [ref=e147]
+  - alert [ref=e4]

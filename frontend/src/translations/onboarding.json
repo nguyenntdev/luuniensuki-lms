@@ -1,0 +1,27 @@
+{
+  "onboarding": {
+    "steps": [
+      {
+        "title": "Di Sản Trong Tầm Tay",
+        "description": "Chào mừng bạn đến với Lưu Niên Sử Kí - nơi tái hiện Cửu Đỉnh triều Nguyễn bằng công nghệ 3D sống động. Khám phá vẻ đẹp lịch sử, văn hóa và nghệ thuật đúc đồng đỉnh cao ngay trên thiết bị của bạn.",
+        "icon": "🏛️"
+      },
+      {
+        "title": "Trải Nghiệm 3D Chân Thực",
+        "description": "Tương tác trực tiếp với mô hình 3D: xoay, phóng to để chiêm ngưỡng từng chi tiết. Nhấp vào các điểm sáng (hotspots) trên thân đỉnh để khám phá câu chuyện ẩn sau mỗi họa tiết.",
+        "icon": "🔍"
+      },
+      {
+        "title": "Hành Trình Kiến Thức",
+        "description": "Hệ thống bài học được tích hợp ngay trong sidebar tiện lợi. Dễ dàng chuyển đổi giữa các tab: Tổng quan, Bài học chi tiết và Trắc nghiệm để nắm bắt kiến thức một cách trọn vẹn.",
+        "icon": "🎓"
+      },
+      {
+        "title": "Chinh Phục Thử Thách",
+        "description": "Mỗi khám phá mang lại điểm kinh nghiệm (XP) giúp bạn thăng hạng. Sưu tập trọn bộ Huy hiệu và so tài kiến thức trên Bảng xếp hạng cùng cộng đồng người yêu sử Việt.",
+        "icon": "🏆"
+      }
+    ]
+  }
+}
+

@@ -1,0 +1,358 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - navigation [ref=e4]:
+      - generic [ref=e5]:
+        - link "Lưu Niên Sử Kí" [ref=e6] [cursor=pointer]:
+          - /url: /
+        - generic [ref=e7]:
+          - link "Khám Phá" [ref=e8] [cursor=pointer]:
+            - /url: /explore
+            - generic [ref=e9]:
+              - img [ref=e10]
+              - generic [ref=e13]: Khám Phá
+          - link "Ôn Tập" [ref=e14] [cursor=pointer]:
+            - /url: /practice
+            - generic [ref=e15]:
+              - img [ref=e16]
+              - generic [ref=e25]: Ôn Tập
+          - link "Bộ Sưu Tập" [ref=e26] [cursor=pointer]:
+            - /url: /collection
+            - generic [ref=e27]:
+              - img [ref=e28]
+              - generic [ref=e31]: Bộ Sưu Tập
+        - generic [ref=e32]:
+          - button "Menu" [ref=e34] [cursor=pointer]:
+            - img [ref=e35]
+            - generic [ref=e39]: Menu
+            - img [ref=e40]
+          - button "L Live Demo Teacher" [ref=e43] [cursor=pointer]:
+            - generic [ref=e45]: L
+            - generic [ref=e46]: Live Demo Teacher
+            - img [ref=e47]
+          - button "vi" [ref=e50] [cursor=pointer]:
+            - img [ref=e51]
+            - generic [ref=e55]: vi
+            - img [ref=e56]
+          - link "Tiếp Tục Học" [ref=e58] [cursor=pointer]:
+            - /url: /dashboard
+            - button "Tiếp Tục Học" [ref=e59]
+    - main [ref=e60]:
+      - generic [ref=e62]:
+        - generic [ref=e63]:
+          - generic [ref=e64]:
+            - generic [ref=e65]: Phòng học live 3D
+            - paragraph [ref=e66]: "Mã phiên: e4ebd3d9-7384-4e3d-92ab-13ea9e5065d7"
+          - generic [ref=e67]:
+            - generic [ref=e68]: Đã kết nối
+            - generic [ref=e69]: "Chất lượng: Tốt"
+            - generic [ref=e70]: "Vai trò: Chủ phòng"
+            - link "Bảng điều khiển phiên" [ref=e71] [cursor=pointer]:
+              - /url: /live/e4ebd3d9-7384-4e3d-92ab-13ea9e5065d7/dashboard
+            - link "Về trang quản trị" [ref=e72] [cursor=pointer]:
+              - /url: /dashboard
+        - generic [ref=e73]:
+          - generic [ref=e74]: "Số lần kết nối lại: 0"
+          - generic [ref=e75]: "Người tham gia: 2"
+      - generic [ref=e76]:
+        - generic [ref=e77]:
+          - article [ref=e133]:
+            - generic [ref=e135]: Live Demo Teacher
+            - generic [ref=e136]:
+              - generic [ref=e138]: Live Demo Teacher (bạn)
+              - button "Ghim người tham gia" [ref=e139] [cursor=pointer]:
+                - img
+          - generic [ref=e82]:
+            - button "Mic tắt" [ref=e140] [cursor=pointer]:
+              - img
+              - text: Mic tắt
+            - button "Camera tắt" [ref=e141] [cursor=pointer]:
+              - img
+              - text: Camera tắt
+            - button "Giơ tay" [ref=e142] [cursor=pointer]:
+              - img
+              - text: Giơ tay
+            - button "Đang kết nối lại..." [disabled]:
+              - img
+              - text: Đang kết nối lại...
+            - button "Rời phòng" [ref=e143] [cursor=pointer]:
+              - img
+              - text: Rời phòng
+        - complementary [ref=e83]:
+          - generic [ref=e84]:
+            - generic [ref=e85]:
+              - heading "Nhiệm vụ vi mô di sản 3D" [level=2] [ref=e86]
+              - img [ref=e87]
+            - generic [ref=e145]: Đỉnh
+            - generic [ref=e97]:
+              - button "Đỉnh" [ref=e98] [cursor=pointer]
+              - button "Họa tiết" [ref=e99] [cursor=pointer]
+              - button "Chữ khắc" [ref=e100] [cursor=pointer]
+              - button "Chân đế" [ref=e101] [cursor=pointer]
+          - generic [ref=e102]:
+            - generic [ref=e103]:
+              - heading "Giọng nói AI (STT/TTS)" [level=3] [ref=e104]
+              - img [ref=e105]
+            - generic [ref=e109]: "Chế độ giọng nói: backend ưu tiên"
+            - generic [ref=e110]:
+              - generic [ref=e111]:
+                - button "Bắt đầu nói" [ref=e146] [cursor=pointer]:
+                  - img
+                  - text: Bắt đầu nói
+                - button "Nhấn giữ để nói" [ref=e147] [cursor=pointer]
+              - generic [ref=e112]:
+                - 'button "Từ khóa kích hoạt: BẬT" [ref=e113] [cursor=pointer]'
+                - 'button "Tự đọc: BẬT" [ref=e114] [cursor=pointer]':
+                  - img
+                  - text: "Tự đọc: BẬT"
+              - list [ref=e115]:
+                - listitem [ref=e148]:
+                  - generic [ref=e149]:
+                    - generic [ref=e150]: ai
+                    - generic [ref=e151]: 19:45:07
+                  - generic [ref=e152]: "**Cửu Đỉnh - Biểu tượng quyền lực và văn hóa triều Nguyễn** 1. **Biểu tượng vương quyền**: - 9 đỉnh tượng trưng cho 9 đời vua Nguyễn, khẳng định tính chính thống và sự trường tồn của triều đại. 2. **Tuyên ngôn lãnh thổ**: - Hoa văn chạm khắc (sông Hồng, sông Cửu Long, đèo Hải Vân...) thể hiện chủ quyền quốc gia [R1]. 3. **Triết lý vũ trụ**: - Số 9 (Cửu) tượng trưng cho \"Cửu trùng thiên\" - ước vọng thái bình dưới sự cai trị của thiên tử. *Ví dụ thú vị*: Cao Đỉnh (đỉnh lớn nhất) đặt ở trung tâm, thể hiện vị thế của vua Minh Mạng như \"mặt trời\" tỏa sáng. Bạn có muốn tìm hiểu thêm về mối liên hệ giữa Cửu Đỉnh và các bảo vật quốc gia khác như trống đồng? Nguồn: [R1] - Tổng quan Cửu Đỉnh (nội bộ) Checkpoint nhanh: Checkpoint nhanh: ban vua rut ra 2 y quan trong nao tu noi dung nay? Nguon tham khao: [S1] [S2]"
+                - listitem [ref=e153]:
+                  - generic [ref=e154]:
+                    - generic [ref=e155]: Bạn
+                    - generic [ref=e156]: 19:44:51
+                  - generic [ref=e157]: Hãy giải thích ngắn gọn ý nghĩa biểu tượng của Cửu Đỉnh trong lịch sử Việt Nam.
+          - generic [ref=e117]:
+            - generic [ref=e118]:
+              - button "Trò chuyện AI" [ref=e119] [cursor=pointer]:
+                - img
+                - text: Trò chuyện AI
+              - button "Người tham gia" [ref=e120] [cursor=pointer]:
+                - img
+                - text: Người tham gia
+              - button "Sự kiện live" [active] [ref=e121] [cursor=pointer]:
+                - img
+                - text: Sự kiện live
+            - generic [ref=e222]:
+              - heading "Sự kiện trực tiếp" [level=3] [ref=e223]
+              - list [ref=e224]:
+                - listitem [ref=e225]:
+                  - generic [ref=e226]:
+                    - generic [ref=e227]: Tham gia
+                    - generic [ref=e228]: 20:56:30
+                  - generic [ref=e229]: user-87a52d92-8476-4c97-b9bb-f2001533d9bf
+                - listitem [ref=e230]:
+                  - generic [ref=e231]:
+                    - generic [ref=e232]: Tham gia
+                    - generic [ref=e233]: 20:55:48
+                  - generic [ref=e234]: user-87a52d92-8476-4c97-b9bb-f2001533d9bf
+                - listitem [ref=e235]:
+                  - generic [ref=e236]:
+                    - generic [ref=e237]: Tham gia
+                    - generic [ref=e238]: 20:15:30
+                  - generic [ref=e239]: user-87a52d92-8476-4c97-b9bb-f2001533d9bf
+                - listitem [ref=e240]:
+                  - generic [ref=e241]:
+                    - generic [ref=e242]: ai_teacher_reply
+                    - generic [ref=e243]: 19:45:14
+                  - generic [ref=e244]: ai-teacher-e4ebd3d973844e3d
+                - listitem [ref=e245]:
+                  - generic [ref=e246]:
+                    - generic [ref=e247]: ai_voice_ready
+                    - generic [ref=e248]: 19:45:07
+                  - generic [ref=e249]: ai-teacher-e4ebd3d973844e3d
+                - listitem [ref=e250]:
+                  - generic [ref=e251]:
+                    - generic [ref=e252]: ai_transcript_chunk
+                    - generic [ref=e253]: 19:45:06
+                  - generic [ref=e254]: ai-teacher-e4ebd3d973844e3d
+                - listitem [ref=e255]:
+                  - generic [ref=e256]:
+                    - generic [ref=e257]: ai_teacher_checkpoint
+                    - generic [ref=e258]: 19:45:05
+                  - generic [ref=e259]: ai-teacher-e4ebd3d973844e3d
+                - listitem [ref=e260]:
+                  - generic [ref=e261]:
+                    - generic [ref=e262]: ai_transcript_chunk
+                    - generic [ref=e263]: 19:45:05
+                  - generic [ref=e264]: ai-teacher-e4ebd3d973844e3d
+                - listitem [ref=e265]:
+                  - generic [ref=e266]:
+                    - generic [ref=e267]: ai_transcript_chunk
+                    - generic [ref=e268]: 19:45:05
+                  - generic [ref=e269]: ai-teacher-e4ebd3d973844e3d
+                - listitem [ref=e270]:
+                  - generic [ref=e271]:
+                    - generic [ref=e272]: ai_transcript_chunk
+                    - generic [ref=e273]: 19:45:03
+                  - generic [ref=e274]: ai-teacher-e4ebd3d973844e3d
+                - listitem [ref=e275]:
+                  - generic [ref=e276]:
+                    - generic [ref=e277]: ai_transcript_chunk
+                    - generic [ref=e278]: 19:45:03
+                  - generic [ref=e279]: ai-teacher-e4ebd3d973844e3d
+                - listitem [ref=e280]:
+                  - generic [ref=e281]:
+                    - generic [ref=e282]: ai_transcript_chunk
+                    - generic [ref=e283]: 19:45:02
+                  - generic [ref=e284]: ai-teacher-e4ebd3d973844e3d
+                - listitem [ref=e285]:
+                  - generic [ref=e286]:
+                    - generic [ref=e287]: ai_transcript_chunk
+                    - generic [ref=e288]: 19:45:01
+                  - generic [ref=e289]: ai-teacher-e4ebd3d973844e3d
+                - listitem [ref=e290]:
+                  - generic [ref=e291]:
+                    - generic [ref=e292]: ai_transcript_chunk
+                    - generic [ref=e293]: 19:45:00
+                  - generic [ref=e294]: ai-teacher-e4ebd3d973844e3d
+                - listitem [ref=e295]:
+                  - generic [ref=e296]:
+                    - generic [ref=e297]: ai_transcript_chunk
+                    - generic [ref=e298]: 19:45:00
+                  - generic [ref=e299]: ai-teacher-e4ebd3d973844e3d
+                - listitem [ref=e300]:
+                  - generic [ref=e301]:
+                    - generic [ref=e302]: ai_transcript_chunk
+                    - generic [ref=e303]: 19:45:00
+                  - generic [ref=e304]: ai-teacher-e4ebd3d973844e3d
+                - listitem [ref=e305]:
+                  - generic [ref=e306]:
+                    - generic [ref=e307]: ai_teacher_checkpoint
+                    - generic [ref=e308]: 19:44:58
+                  - generic [ref=e309]: ai-teacher-e4ebd3d973844e3d
+                - listitem [ref=e310]:
+                  - generic [ref=e311]:
+                    - generic [ref=e312]: ai_teacher_user_message
+                    - generic [ref=e313]: 19:44:58
+                  - generic [ref=e314]: user-87a52d92-8476-4c97-b9bb-f2001533d9bf
+                - listitem [ref=e315]:
+                  - generic [ref=e316]:
+                    - generic [ref=e317]: ai_transcript_chunk
+                    - generic [ref=e318]: 19:44:58
+                  - generic [ref=e319]: ai-teacher-e4ebd3d973844e3d
+                - listitem [ref=e320]:
+                  - generic [ref=e321]:
+                    - generic [ref=e322]: ai_transcript_chunk
+                    - generic [ref=e323]: 19:44:58
+                  - generic [ref=e324]: ai-teacher-e4ebd3d973844e3d
+                - listitem [ref=e325]:
+                  - generic [ref=e326]:
+                    - generic [ref=e327]: ai_transcript_chunk
+                    - generic [ref=e328]: 19:44:58
+                  - generic [ref=e329]: ai-teacher-e4ebd3d973844e3d
+                - listitem [ref=e330]:
+                  - generic [ref=e331]:
+                    - generic [ref=e332]: ai_transcript_chunk
+                    - generic [ref=e333]: 19:44:57
+                  - generic [ref=e334]: ai-teacher-e4ebd3d973844e3d
+                - listitem [ref=e335]:
+                  - generic [ref=e336]:
+                    - generic [ref=e337]: ai_transcript_chunk
+                    - generic [ref=e338]: 19:44:57
+                  - generic [ref=e339]: ai-teacher-e4ebd3d973844e3d
+                - listitem [ref=e340]:
+                  - generic [ref=e341]:
+                    - generic [ref=e342]: ai_transcript_chunk
+                    - generic [ref=e343]: 19:44:51
+                  - generic [ref=e344]: ai-teacher-e4ebd3d973844e3d
+                - listitem [ref=e345]:
+                  - generic [ref=e346]:
+                    - generic [ref=e347]: voice_user_final
+                    - generic [ref=e348]: 19:44:51
+                  - generic [ref=e349]: user-87a52d92-8476-4c97-b9bb-f2001533d9bf
+                - listitem [ref=e350]:
+                  - generic [ref=e351]:
+                    - generic [ref=e352]: ai_voice_request
+                    - generic [ref=e353]: 19:44:46
+                  - generic [ref=e354]: user-87a52d92-8476-4c97-b9bb-f2001533d9bf
+                - listitem [ref=e355]:
+                  - generic [ref=e356]:
+                    - generic [ref=e357]: Tham gia
+                    - generic [ref=e358]: 19:44:16
+                  - generic [ref=e359]: user-87a52d92-8476-4c97-b9bb-f2001533d9bf
+                - listitem [ref=e360]:
+                  - generic [ref=e361]:
+                    - generic [ref=e362]: Tham gia
+                    - generic [ref=e363]: 00:27:34
+                  - generic [ref=e364]: user-87a52d92-8476-4c97-b9bb-f2001533d9bf
+                - listitem [ref=e365]:
+                  - generic [ref=e366]:
+                    - generic [ref=e367]: Tham gia
+                    - generic [ref=e368]: 00:27:15
+                  - generic [ref=e369]: user-87a52d92-8476-4c97-b9bb-f2001533d9bf
+                - listitem [ref=e370]:
+                  - generic [ref=e371]:
+                    - generic [ref=e372]: Tham gia
+                    - generic [ref=e373]: 00:26:26
+                  - generic [ref=e374]: user-87a52d92-8476-4c97-b9bb-f2001533d9bf
+                - listitem [ref=e375]:
+                  - generic [ref=e376]:
+                    - generic [ref=e377]: ai_teacher_reply
+                    - generic [ref=e378]: 00:22:31
+                  - generic [ref=e379]: ai-teacher-e4ebd3d973844e3d
+                - listitem [ref=e380]:
+                  - generic [ref=e381]:
+                    - generic [ref=e382]: ai_teacher_user_message
+                    - generic [ref=e383]: 00:22:31
+                  - generic [ref=e384]: user-87a52d92-8476-4c97-b9bb-f2001533d9bf
+                - listitem [ref=e385]:
+                  - generic [ref=e386]:
+                    - generic [ref=e387]: Tham gia
+                    - generic [ref=e388]: 00:22:31
+                  - generic [ref=e389]: user-87a52d92-8476-4c97-b9bb-f2001533d9bf
+                - listitem [ref=e390]:
+                  - generic [ref=e391]:
+                    - generic [ref=e392]: ai_teacher_reply
+                    - generic [ref=e393]: 00:19:23
+                  - generic [ref=e394]: ai-teacher-e4ebd3d973844e3d
+                - listitem [ref=e395]:
+                  - generic [ref=e396]:
+                    - generic [ref=e397]: ai_teacher_user_message
+                    - generic [ref=e398]: 00:19:23
+                  - generic [ref=e399]: user-87a52d92-8476-4c97-b9bb-f2001533d9bf
+                - listitem [ref=e400]:
+                  - generic [ref=e401]:
+                    - generic [ref=e402]: ai_teacher_reply
+                    - generic [ref=e403]: 00:19:05
+                  - generic [ref=e404]: ai-teacher-e4ebd3d973844e3d
+                - listitem [ref=e405]:
+                  - generic [ref=e406]:
+                    - generic [ref=e407]: ai_teacher_user_message
+                    - generic [ref=e408]: 00:19:05
+                  - generic [ref=e409]: user-87a52d92-8476-4c97-b9bb-f2001533d9bf
+                - listitem [ref=e410]:
+                  - generic [ref=e411]:
+                    - generic [ref=e412]: Tham gia
+                    - generic [ref=e413]: 00:19:05
+                  - generic [ref=e414]: user-87a52d92-8476-4c97-b9bb-f2001533d9bf
+                - listitem [ref=e415]:
+                  - generic [ref=e416]:
+                    - generic [ref=e417]: Tham gia
+                    - generic [ref=e418]: 00:15:09
+                  - generic [ref=e419]: ai-teacher-e4ebd3d973844e3d
+                - listitem [ref=e420]:
+                  - generic [ref=e421]:
+                    - generic [ref=e422]: session_created
+                    - generic [ref=e423]: 00:15:08
+                  - generic [ref=e424]: Hệ thống
+          - generic [ref=e179]:
+            - heading "Bảng điều khiển chủ phòng" [level=3] [ref=e180]
+            - generic [ref=e181]:
+              - button "Khóa phòng TẮT" [ref=e182] [cursor=pointer]:
+                - generic [ref=e183]:
+                  - img
+                  - text: Khóa phòng
+                - generic [ref=e184]: TẮT
+              - button "AI giáo viên BẬT" [ref=e185] [cursor=pointer]:
+                - generic [ref=e186]:
+                  - img
+                  - text: AI giáo viên
+                - generic [ref=e187]: BẬT
+              - generic [ref=e188]:
+                - generic [ref=e189]: Persona AI (cấp độ)
+                - generic [ref=e190]:
+                  - combobox [ref=e191] [cursor=pointer]:
+                    - generic: Trung học cơ sở
+                    - img
+                  - button "Lưu" [ref=e192] [cursor=pointer]
+              - generic [ref=e193]:
+                - generic [ref=e194]: Trần chi phí AI (USD)
+                - generic [ref=e195]:
+                  - spinbutton [ref=e196]: "3"
+                  - button "Lưu" [ref=e197] [cursor=pointer]
+            - paragraph [ref=e198]: Khóa phòng sẽ chặn học viên mới. Nút AI điều khiển trợ giảng AI, cấp độ và giới hạn chi phí.
+  - alert [ref=e132]

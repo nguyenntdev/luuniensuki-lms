@@ -1,0 +1,38 @@
+{
+  "name": "mobile-scripts",
+  "version": "1.0.0",
+  "description": "Utility scripts for mobile app asset management and 3D model compression",
+  "main": "compress-models.js",
+  "scripts": {
+    "compress-models": "node compress-models.js",
+    "compress": "node compress-models.js",
+    "compress:default": "node compress-models.js ../assets/models",
+    "compress:custom": "node compress-models.js",
+    "test": "node test-compression.js",
+    "help": "cat README.md"
+  },
+  "keywords": [
+    "gltf",
+    "glb",
+    "compression",
+    "draco",
+    "3d-models",
+    "mobile",
+    "optimization"
+  ],
+  "author": "LuuNienSuki LMS Team",
+  "license": "MIT",
+  "dependencies": {
+    "fs-extra": "^11.2.0",
+    "gltf-pipeline": "^4.1.0"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/luuniensuki-lms"
+  }
+}
+

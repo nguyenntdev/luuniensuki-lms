@@ -1,0 +1,174 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - navigation [ref=e4]:
+      - generic [ref=e5]:
+        - link "Lưu Niên Sử Kí" [ref=e6] [cursor=pointer]:
+          - /url: /
+        - generic [ref=e7]:
+          - link "Khám Phá" [ref=e8] [cursor=pointer]:
+            - /url: /explore
+            - generic [ref=e9]:
+              - img [ref=e10]
+              - generic [ref=e13]: Khám Phá
+          - link "Ôn Tập" [ref=e14] [cursor=pointer]:
+            - /url: /practice
+            - generic [ref=e15]:
+              - img [ref=e16]
+              - generic [ref=e25]: Ôn Tập
+          - link "Bộ Sưu Tập" [ref=e26] [cursor=pointer]:
+            - /url: /collection
+            - generic [ref=e27]:
+              - img [ref=e28]
+              - generic [ref=e31]: Bộ Sưu Tập
+        - generic [ref=e32]:
+          - button "Menu" [ref=e34] [cursor=pointer]:
+            - img [ref=e35]
+            - generic [ref=e39]: Menu
+            - img [ref=e40]
+          - button "L Live Demo Teacher" [ref=e43] [cursor=pointer]:
+            - generic [ref=e45]: L
+            - generic [ref=e46]: Live Demo Teacher
+            - img [ref=e47]
+          - button "vi" [ref=e50] [cursor=pointer]:
+            - img [ref=e51]
+            - generic [ref=e55]: vi
+            - img [ref=e56]
+          - link "Tiếp Tục Học" [ref=e58] [cursor=pointer]:
+            - /url: /dashboard
+            - button "Tiếp Tục Học" [ref=e59]
+    - main [ref=e60]:
+      - generic [ref=e63]:
+        - generic [ref=e64]:
+          - generic [ref=e65]: Bảng điều khiển phiên học trực tiếp
+          - generic [ref=e66]:
+            - generic [ref=e67]: Session
+            - generic [ref=e68]: e4ebd3d9-7384-4e3d-92ab-13ea9e5065d7
+        - generic [ref=e69]:
+          - button "Tải lại" [ref=e70] [cursor=pointer]:
+            - img
+            - text: Tải lại
+          - link "Về phòng live" [ref=e71] [cursor=pointer]:
+            - /url: /live/e4ebd3d9-7384-4e3d-92ab-13ea9e5065d7
+            - img
+            - text: Về phòng live
+          - button "Export JSON" [ref=e72] [cursor=pointer]:
+            - img
+            - text: Export JSON
+          - button "Export CSV" [ref=e73] [cursor=pointer]:
+            - img
+            - text: Export CSV
+      - generic [ref=e79]:
+        - tablist [ref=e80]:
+          - tab "Tổng quan" [ref=e81] [cursor=pointer]
+          - tab "Hành động phiên" [active] [selected] [ref=e82] [cursor=pointer]
+          - tab "Transcript" [ref=e83] [cursor=pointer]
+        - tabpanel "Hành động phiên" [ref=e127]:
+          - generic [ref=e128]:
+            - generic [ref=e129]:
+              - generic [ref=e130]: Nhật ký hành động
+              - generic [ref=e131]: "Tổng số: 16"
+            - table [ref=e134]:
+              - rowgroup [ref=e135]:
+                - row "Thời gian Loại Trạng thái Nội dung" [ref=e136]:
+                  - columnheader "Thời gian" [ref=e137]
+                  - columnheader "Loại" [ref=e138]
+                  - columnheader "Trạng thái" [ref=e139]
+                  - columnheader "Nội dung" [ref=e140]
+              - rowgroup [ref=e141]:
+                - row "19:45:34 23/4/2026 cost_usage recorded -" [ref=e142]:
+                  - cell "19:45:34 23/4/2026" [ref=e143]
+                  - cell "cost_usage" [ref=e144]
+                  - cell "recorded" [ref=e145]:
+                    - generic [ref=e146]: recorded
+                  - cell "-" [ref=e147]
+                - row "19:45:14 23/4/2026 rubric_feedback done -" [ref=e148]:
+                  - cell "19:45:14 23/4/2026" [ref=e149]
+                  - cell "rubric_feedback" [ref=e150]
+                  - cell "done" [ref=e151]:
+                    - generic [ref=e152]: done
+                  - cell "-" [ref=e153]
+                - row "19:45:14 23/4/2026 cost_usage recorded -" [ref=e154]:
+                  - cell "19:45:14 23/4/2026" [ref=e155]
+                  - cell "cost_usage" [ref=e156]
+                  - cell "recorded" [ref=e157]:
+                    - generic [ref=e158]: recorded
+                  - cell "-" [ref=e159]
+                - row "19:45:08 23/4/2026 cost_usage recorded -" [ref=e160]:
+                  - cell "19:45:08 23/4/2026" [ref=e161]
+                  - cell "cost_usage" [ref=e162]
+                  - cell "recorded" [ref=e163]:
+                    - generic [ref=e164]: recorded
+                  - cell "-" [ref=e165]
+                - row "19:45:06 23/4/2026 cost_usage recorded -" [ref=e166]:
+                  - cell "19:45:06 23/4/2026" [ref=e167]
+                  - cell "cost_usage" [ref=e168]
+                  - cell "recorded" [ref=e169]:
+                    - generic [ref=e170]: recorded
+                  - cell "-" [ref=e171]
+                - row "19:45:06 23/4/2026 rubric_feedback done -" [ref=e172]:
+                  - cell "19:45:06 23/4/2026" [ref=e173]
+                  - cell "rubric_feedback" [ref=e174]
+                  - cell "done" [ref=e175]:
+                    - generic [ref=e176]: done
+                  - cell "-" [ref=e177]
+                - row "19:43:36 23/4/2026 cost_usage recorded -" [ref=e178]:
+                  - cell "19:43:36 23/4/2026" [ref=e179]
+                  - cell "cost_usage" [ref=e180]
+                  - cell "recorded" [ref=e181]:
+                    - generic [ref=e182]: recorded
+                  - cell "-" [ref=e183]
+                - row "00:22:31 23/4/2026 rubric_feedback done -" [ref=e184]:
+                  - cell "00:22:31 23/4/2026" [ref=e185]
+                  - cell "rubric_feedback" [ref=e186]
+                  - cell "done" [ref=e187]:
+                    - generic [ref=e188]: done
+                  - cell "-" [ref=e189]
+                - row "00:22:31 23/4/2026 cost_usage recorded -" [ref=e190]:
+                  - cell "00:22:31 23/4/2026" [ref=e191]
+                  - cell "cost_usage" [ref=e192]
+                  - cell "recorded" [ref=e193]:
+                    - generic [ref=e194]: recorded
+                  - cell "-" [ref=e195]
+                - 'row "00:19:35 23/4/2026 low_interaction_warning open Canh bao: hoc vien tuong tac thap, de xuat host goi ten hoc vien hoac chen checkpoint." [ref=e196]':
+                  - cell "00:19:35 23/4/2026" [ref=e197]
+                  - cell "low_interaction_warning" [ref=e198]
+                  - cell "open" [ref=e199]:
+                    - generic [ref=e200]: open
+                  - 'cell "Canh bao: hoc vien tuong tac thap, de xuat host goi ten hoc vien hoac chen checkpoint." [ref=e201]'
+                - 'row "00:19:35 23/4/2026 low_interaction_warning open Canh bao: hoc vien tuong tac thap, de xuat host goi ten hoc vien hoac chen checkpoint." [ref=e202]':
+                  - cell "00:19:35 23/4/2026" [ref=e203]
+                  - cell "low_interaction_warning" [ref=e204]
+                  - cell "open" [ref=e205]:
+                    - generic [ref=e206]: open
+                  - 'cell "Canh bao: hoc vien tuong tac thap, de xuat host goi ten hoc vien hoac chen checkpoint." [ref=e207]'
+                - row "00:19:35 23/4/2026 summary_generated done -" [ref=e208]:
+                  - cell "00:19:35 23/4/2026" [ref=e209]
+                  - cell "summary_generated" [ref=e210]
+                  - cell "done" [ref=e211]:
+                    - generic [ref=e212]: done
+                  - cell "-" [ref=e213]
+                - row "00:19:23 23/4/2026 rubric_feedback done -" [ref=e214]:
+                  - cell "00:19:23 23/4/2026" [ref=e215]
+                  - cell "rubric_feedback" [ref=e216]
+                  - cell "done" [ref=e217]:
+                    - generic [ref=e218]: done
+                  - cell "-" [ref=e219]
+                - row "00:19:23 23/4/2026 cost_usage recorded -" [ref=e220]:
+                  - cell "00:19:23 23/4/2026" [ref=e221]
+                  - cell "cost_usage" [ref=e222]
+                  - cell "recorded" [ref=e223]:
+                    - generic [ref=e224]: recorded
+                  - cell "-" [ref=e225]
+                - row "00:19:05 23/4/2026 cost_usage recorded -" [ref=e226]:
+                  - cell "00:19:05 23/4/2026" [ref=e227]
+                  - cell "cost_usage" [ref=e228]
+                  - cell "recorded" [ref=e229]:
+                    - generic [ref=e230]: recorded
+                  - cell "-" [ref=e231]
+                - row "00:19:05 23/4/2026 rubric_feedback done -" [ref=e232]:
+                  - cell "00:19:05 23/4/2026" [ref=e233]
+                  - cell "rubric_feedback" [ref=e234]
+                  - cell "done" [ref=e235]:
+                    - generic [ref=e236]: done
+                  - cell "-" [ref=e237]
+  - alert [ref=e78]

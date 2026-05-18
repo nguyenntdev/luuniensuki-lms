@@ -1,0 +1,60 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - navigation [ref=e4]:
+      - generic [ref=e5]:
+        - link "Lưu Niên Sử Kí" [ref=e6] [cursor=pointer]:
+          - /url: /
+        - generic [ref=e7]:
+          - link "Khám Phá" [ref=e8] [cursor=pointer]:
+            - /url: /explore
+            - generic [ref=e9]:
+              - img [ref=e10]
+              - generic [ref=e13]: Khám Phá
+          - link "Ôn Tập" [ref=e14] [cursor=pointer]:
+            - /url: /practice
+            - generic [ref=e15]:
+              - img [ref=e16]
+              - generic [ref=e25]: Ôn Tập
+          - link "Bộ Sưu Tập" [ref=e26] [cursor=pointer]:
+            - /url: /collection
+            - generic [ref=e27]:
+              - img [ref=e28]
+              - generic [ref=e31]: Bộ Sưu Tập
+        - generic [ref=e32]:
+          - button "Menu" [ref=e34] [cursor=pointer]:
+            - img [ref=e35]
+            - generic [ref=e39]: Menu
+            - img [ref=e40]
+          - button "L Live Demo Teacher" [ref=e43] [cursor=pointer]:
+            - generic [ref=e45]: L
+            - generic [ref=e46]: Live Demo Teacher
+            - img [ref=e47]
+          - button "vi" [ref=e50] [cursor=pointer]:
+            - img [ref=e51]
+            - generic [ref=e55]: vi
+            - img [ref=e56]
+          - link "Tiếp Tục Học" [ref=e58] [cursor=pointer]:
+            - /url: /dashboard
+            - button "Tiếp Tục Học" [ref=e59]
+    - main [ref=e60]:
+      - generic [ref=e63]:
+        - generic [ref=e64]:
+          - generic [ref=e65]: Bảng điều khiển phiên học trực tiếp
+          - generic [ref=e66]:
+            - generic [ref=e67]: Session
+            - generic [ref=e68]: e4ebd3d9-7384-4e3d-92ab-13ea9e5065d7
+        - generic [ref=e69]:
+          - button "Tải lại" [ref=e70] [cursor=pointer]:
+            - img
+            - text: Tải lại
+          - link "Về phòng live" [ref=e71] [cursor=pointer]:
+            - /url: /live/e4ebd3d9-7384-4e3d-92ab-13ea9e5065d7
+            - img
+            - text: Về phòng live
+          - button "Export JSON" [ref=e72] [cursor=pointer]:
+            - img
+            - text: Export JSON
+          - button "Export CSV" [ref=e73] [cursor=pointer]:
+            - img
+            - text: Export CSV
+  - alert [ref=e78]

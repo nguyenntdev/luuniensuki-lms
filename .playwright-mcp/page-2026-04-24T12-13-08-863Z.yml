@@ -1,0 +1,143 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - navigation [ref=e5]:
+      - generic [ref=e6]:
+        - link "Lưu Niên Sử Kí" [ref=e7] [cursor=pointer]:
+          - /url: /
+        - generic [ref=e8]:
+          - link "Khám Phá" [ref=e9] [cursor=pointer]:
+            - /url: /explore
+            - generic [ref=e10]:
+              - img [ref=e11]
+              - generic [ref=e14]: Khám Phá
+          - link "Ôn Tập" [ref=e15] [cursor=pointer]:
+            - /url: /practice
+            - generic [ref=e16]:
+              - img [ref=e17]
+              - generic [ref=e26]: Ôn Tập
+          - link "Bộ Sưu Tập" [ref=e27] [cursor=pointer]:
+            - /url: /collection
+            - generic [ref=e28]:
+              - img [ref=e29]
+              - generic [ref=e32]: Bộ Sưu Tập
+        - generic [ref=e33]:
+          - button "Menu" [ref=e35] [cursor=pointer]:
+            - img [ref=e36]
+            - generic [ref=e40]: Menu
+            - img [ref=e41]
+          - button "L Live Demo Teacher" [ref=e44] [cursor=pointer]:
+            - generic [ref=e46]: L
+            - generic [ref=e47]: Live Demo Teacher
+            - img [ref=e48]
+          - button "vi" [ref=e51] [cursor=pointer]:
+            - img [ref=e52]
+            - generic [ref=e56]: vi
+            - img [ref=e57]
+          - link "Tiếp Tục Học" [ref=e59] [cursor=pointer]:
+            - /url: /dashboard
+            - button "Tiếp Tục Học" [ref=e60]
+    - main [ref=e61]:
+      - generic [ref=e63]:
+        - heading "Admin Studio" [level=1] [ref=e64]
+        - paragraph [ref=e65]: CMS nội dung, lớp học, AI/RAG và KPI giữ chân người học.
+      - generic [ref=e67]:
+        - button "Tổng quan" [ref=e68] [cursor=pointer]:
+          - img [ref=e69]
+          - generic [ref=e74]: Tổng quan
+        - button "CMS" [ref=e75] [cursor=pointer]:
+          - img [ref=e76]
+          - generic [ref=e79]: CMS
+        - button "Lớp học" [ref=e80] [cursor=pointer]:
+          - img [ref=e81]
+          - generic [ref=e86]: Lớp học
+        - button "RAG" [ref=e87] [cursor=pointer]:
+          - img [ref=e88]
+          - generic [ref=e92]: RAG
+        - button "AI Studio" [ref=e93] [cursor=pointer]:
+          - img [ref=e94]
+          - generic [ref=e99]: AI Studio
+      - generic [ref=e100]:
+        - generic [ref=e101]:
+          - generic [ref=e102]:
+            - generic [ref=e103]: Lớp học
+            - generic [ref=e104]: "1"
+            - generic [ref=e105]: 0 học viên · 0 bài tập
+          - generic [ref=e106]:
+            - generic [ref=e107]: RAG documents
+            - generic [ref=e108]: "0"
+            - generic [ref=e109]: 0% có embedding · 0 active
+          - generic [ref=e110]:
+            - generic [ref=e111]: AI jobs
+            - generic [ref=e112]: "0"
+            - generic [ref=e113]: 0 thành công · 0 lỗi
+          - generic [ref=e114]:
+            - generic [ref=e115]: RAG cập nhật
+            - generic [ref=e116]: Chưa có dữ liệu
+            - generic [ref=e117]: Đồng bộ embeddings và nội dung mới nhất
+        - generic [ref=e118]:
+          - generic [ref=e119]:
+            - generic [ref=e120]:
+              - heading "Ưu tiên giữ chân người dùng" [level=2] [ref=e121]
+              - paragraph [ref=e122]: Nhắc nhanh các trụ cột tác động đến KPI retention.
+            - generic [ref=e123]:
+              - generic [ref=e124]:
+                - generic [ref=e125]: Streak & thói quen
+                - generic [ref=e126]: Nhắc học mỗi ngày, bonus khi hoàn thành.
+              - generic [ref=e127]:
+                - generic [ref=e128]: Quest theo tuần
+                - generic [ref=e129]: Giao nhiệm vụ ngắn, dễ hoàn thành.
+              - generic [ref=e130]:
+                - generic [ref=e131]: Nội dung mới
+                - generic [ref=e132]: Bổ sung bài học/quiz mỗi tuần.
+              - generic [ref=e133]:
+                - generic [ref=e134]: AI hỗ trợ học
+                - generic [ref=e135]: Tạo bài học nhanh, giữ nhịp cập nhật.
+          - generic [ref=e136]:
+            - generic [ref=e137]:
+              - heading "Quick actions" [level=2] [ref=e138]
+              - paragraph [ref=e139]: Điều hướng nhanh tới các tác vụ thường dùng.
+            - generic [ref=e140]:
+              - button "Mở CMS nội dung" [ref=e141] [cursor=pointer]:
+                - text: Mở CMS nội dung
+                - img [ref=e142]
+              - button "Quản lý lớp học" [ref=e145] [cursor=pointer]:
+                - text: Quản lý lớp học
+                - img [ref=e146]
+              - button "Cấu hình RAG" [ref=e149] [cursor=pointer]:
+                - text: Cấu hình RAG
+                - img [ref=e150]
+              - button "AI Studio" [ref=e153] [cursor=pointer]:
+                - text: AI Studio
+                - img [ref=e154]
+        - generic [ref=e157]:
+          - generic [ref=e158]:
+            - generic [ref=e159]:
+              - generic [ref=e160]:
+                - heading "Tình trạng RAG" [level=2] [ref=e161]
+                - paragraph [ref=e162]: Theo dõi độ phủ embedding và lần cập nhật gần nhất.
+              - button "Rebuild" [ref=e163] [cursor=pointer]:
+                - img [ref=e164]
+                - text: Rebuild
+            - generic [ref=e169]:
+              - generic [ref=e170]:
+                - generic [ref=e171]: Embedding coverage
+                - generic [ref=e172]: 0%
+              - generic [ref=e174]: 0 tài liệu đang active · 0 tổng
+          - generic [ref=e175]:
+            - generic [ref=e176]:
+              - heading "AI activity" [level=2] [ref=e177]
+              - paragraph [ref=e178]: Tóm tắt lịch sử AI để kiểm soát chất lượng.
+            - generic [ref=e179]:
+              - generic [ref=e180]:
+                - generic [ref=e181]: Pending
+                - generic [ref=e182]: "0"
+              - generic [ref=e183]:
+                - generic [ref=e184]: Success
+                - generic [ref=e185]: "0"
+              - generic [ref=e186]:
+                - generic [ref=e187]: Failed
+                - generic [ref=e188]: "0"
+            - button "Xem chi tiết AI logs" [ref=e189] [cursor=pointer]:
+              - text: Xem chi tiết AI logs
+              - img [ref=e190]
+  - alert [ref=e4]

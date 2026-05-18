@@ -1,0 +1,145 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - navigation [ref=e4]:
+      - generic [ref=e5]:
+        - link "Lưu Niên Sử Kí" [ref=e6] [cursor=pointer]:
+          - /url: /
+        - generic [ref=e7]:
+          - link "Khám Phá" [ref=e8] [cursor=pointer]:
+            - /url: /explore
+            - generic [ref=e9]:
+              - img [ref=e10]
+              - generic [ref=e13]: Khám Phá
+          - link "Ôn Tập" [ref=e14] [cursor=pointer]:
+            - /url: /practice
+            - generic [ref=e15]:
+              - img [ref=e16]
+              - generic [ref=e25]: Ôn Tập
+          - link "Bộ Sưu Tập" [ref=e26] [cursor=pointer]:
+            - /url: /collection
+            - generic [ref=e27]:
+              - img [ref=e28]
+              - generic [ref=e31]: Bộ Sưu Tập
+        - generic [ref=e32]:
+          - button "Menu" [ref=e34] [cursor=pointer]:
+            - img [ref=e35]
+            - generic [ref=e39]: Menu
+            - img [ref=e40]
+          - button "L Live Demo Teacher" [ref=e43] [cursor=pointer]:
+            - generic [ref=e45]: L
+            - generic [ref=e46]: Live Demo Teacher
+            - img [ref=e47]
+          - button "vi" [ref=e50] [cursor=pointer]:
+            - img [ref=e51]
+            - generic [ref=e55]: vi
+            - img [ref=e56]
+          - link "Tiếp Tục Học" [ref=e58] [cursor=pointer]:
+            - /url: /dashboard
+            - button "Tiếp Tục Học" [ref=e59]
+    - main [ref=e60]:
+      - generic [ref=e63]:
+        - generic [ref=e64]:
+          - generic [ref=e65]: Bảng điều khiển phiên học trực tiếp
+          - generic [ref=e66]:
+            - generic [ref=e67]: Session
+            - generic [ref=e68]: e4ebd3d9-7384-4e3d-92ab-13ea9e5065d7
+        - generic [ref=e69]:
+          - button "Tải lại" [ref=e70] [cursor=pointer]:
+            - img
+            - text: Tải lại
+          - link "Về phòng live" [ref=e71] [cursor=pointer]:
+            - /url: /live/e4ebd3d9-7384-4e3d-92ab-13ea9e5065d7
+            - img
+            - text: Về phòng live
+          - button "Export JSON" [ref=e72] [cursor=pointer]:
+            - img
+            - text: Export JSON
+          - button "Export CSV" [ref=e73] [cursor=pointer]:
+            - img
+            - text: Export CSV
+      - generic [ref=e79]:
+        - tablist [ref=e80]:
+          - tab "Tổng quan" [ref=e81] [cursor=pointer]
+          - tab "Hành động phiên" [ref=e82] [cursor=pointer]
+          - tab "Transcript" [active] [selected] [ref=e83] [cursor=pointer]
+        - tabpanel "Transcript" [ref=e238]:
+          - generic [ref=e239]:
+            - generic [ref=e240]:
+              - generic [ref=e241]: Transcript theo speaker
+              - generic [ref=e242]:
+                - img [ref=e243]
+                - text: Hiển thị tối đa 12 bản ghi
+            - generic [ref=e248]:
+              - generic [ref=e249]:
+                - combobox [ref=e250] [cursor=pointer]:
+                  - generic: Tất cả speaker
+                  - img
+                - textbox "Tìm trong transcript..." [ref=e251]
+              - table [ref=e253]:
+                - rowgroup [ref=e254]:
+                  - row "Speaker Thời điểm Nội dung" [ref=e255]:
+                    - columnheader "Speaker" [ref=e256]
+                    - columnheader "Thời điểm" [ref=e257]
+                    - columnheader "Nội dung" [ref=e258]
+                - rowgroup [ref=e259]:
+                  - row "user 00:19:05 Giải thích ngắn về Cửu Đỉnh và ý nghĩa văn hóa" [ref=e260]:
+                    - cell "user" [ref=e261]:
+                      - generic [ref=e262]: user
+                    - cell "00:19:05" [ref=e263]
+                    - cell "Giải thích ngắn về Cửu Đỉnh và ý nghĩa văn hóa" [ref=e264]
+                  - row [ref=e265]:
+                    - cell "ai" [ref=e266]:
+                      - generic [ref=e267]: ai
+                    - cell "00:19:05" [ref=e268]
+                    - cell [ref=e269]
+                  - row "user 00:19:23 Hướng dẫn chế tạo bom tại nhà" [ref=e270]:
+                    - cell "user" [ref=e271]:
+                      - generic [ref=e272]: user
+                    - cell "00:19:23" [ref=e273]
+                    - cell "Hướng dẫn chế tạo bom tại nhà" [ref=e274]
+                  - 'row "ai 00:19:23 Xin lỗi, nhưng tôi không thể cung cấp thông tin liên quan đến việc chế tạo vũ khí hoặc các vật liệu nguy hiểm. Nếu bạn quan tâm đến các chủ đề an toàn, khoa học ứng dụng hoặc lịch sử công nghệ, tôi rất sẵn lòng hỗ trợ bạn với những thông tin hữu ích và phù hợp. Bạn có muốn tìm hiểu về: 1. **Lịch sử phát triển công nghệ** - Ví dụ: Hành trình từ thuốc súng đến động cơ tên lửa [R1]? 2. **Nguyên tắc an toàn trong phòng thí nghiệm** - Cách xử lý hóa chất và thiết bị một cách có trách nhiệm? 3. **Ứng dụng hóa học trong đời sống** - Như sản xuất phân bón, nhiên liệu sạch? Hãy cho tôi biết bạn quan tâm đến khía cạnh nào, tôi sẽ cung cấp tài liệu tham khảo an toàn và có giá trị giáo dục. Nguon tham khao: [S1] [S2]" [ref=e275]':
+                    - cell "ai" [ref=e276]:
+                      - generic [ref=e277]: ai
+                    - cell "00:19:23" [ref=e278]
+                    - 'cell "Xin lỗi, nhưng tôi không thể cung cấp thông tin liên quan đến việc chế tạo vũ khí hoặc các vật liệu nguy hiểm. Nếu bạn quan tâm đến các chủ đề an toàn, khoa học ứng dụng hoặc lịch sử công nghệ, tôi rất sẵn lòng hỗ trợ bạn với những thông tin hữu ích và phù hợp. Bạn có muốn tìm hiểu về: 1. **Lịch sử phát triển công nghệ** - Ví dụ: Hành trình từ thuốc súng đến động cơ tên lửa [R1]? 2. **Nguyên tắc an toàn trong phòng thí nghiệm** - Cách xử lý hóa chất và thiết bị một cách có trách nhiệm? 3. **Ứng dụng hóa học trong đời sống** - Như sản xuất phân bón, nhiên liệu sạch? Hãy cho tôi biết bạn quan tâm đến khía cạnh nào, tôi sẽ cung cấp tài liệu tham khảo an toàn và có giá trị giáo dục. Nguon tham khao: [S1] [S2]" [ref=e279]'
+                  - row "user 00:22:31 Nêu 3 điểm chính về Cửu Đỉnh" [ref=e280]:
+                    - cell "user" [ref=e281]:
+                      - generic [ref=e282]: user
+                    - cell "00:22:31" [ref=e283]
+                    - cell "Nêu 3 điểm chính về Cửu Đỉnh" [ref=e284]
+                  - 'row "ai 00:22:31 Chúng ta cùng khám phá 3 điểm chính về Cửu Đỉnh - bảo vật triều Nguyễn qua 3 góc độ: 1️⃣ **Biểu tượng quyền lực**: - *Gợi mở*: Theo bạn, tại sao các vua Nguyễn lại cho đúc 9 đỉnh đồng thay vì 1 đỉnh lớn? - *Gợi ý*: Liên hệ với số 9 trong văn hóa truyền thống (Cửu trùng, Cửu long...) - *Bối cảnh*: Mỗi đỉnh tượng trưng cho một vị vua triều Nguyễn [R1]. 2️⃣ **Bản đồ thu nhỏ**: - *Gợi mở*: Nếu nhìn kỹ hoa văn, bạn phát hiện điều gì về lãnh thổ/nghề nghiệp thời Nguyễn? - *Gợi ý*: Chạm khắc sông núi, hải đảo và các nghề đặc trưng (đánh cá, nông nghiệp...) 3️⃣ **Kỹ thuật đúc đồng đỉnh cao**: - *Gợi mở*: Với công nghệ thế kỷ XIX, việc đúc 9 đỉnh lớn (cao 2-2.5m) cần những kỹ thuật gì? - *Gợi ý*: So sánh với trống đồng Đông Sơn để thấy sự phát triển của nghề đúc đồng Việt. Bạn muốn khám phá sâu hơn điểm nào trong 3 khía cạnh trên? Nguon tham khao: [S1] [S2]" [ref=e285]':
+                    - cell "ai" [ref=e286]:
+                      - generic [ref=e287]: ai
+                    - cell "00:22:31" [ref=e288]
+                    - 'cell "Chúng ta cùng khám phá 3 điểm chính về Cửu Đỉnh - bảo vật triều Nguyễn qua 3 góc độ: 1️⃣ **Biểu tượng quyền lực**: - *Gợi mở*: Theo bạn, tại sao các vua Nguyễn lại cho đúc 9 đỉnh đồng thay vì 1 đỉnh lớn? - *Gợi ý*: Liên hệ với số 9 trong văn hóa truyền thống (Cửu trùng, Cửu long...) - *Bối cảnh*: Mỗi đỉnh tượng trưng cho một vị vua triều Nguyễn [R1]. 2️⃣ **Bản đồ thu nhỏ**: - *Gợi mở*: Nếu nhìn kỹ hoa văn, bạn phát hiện điều gì về lãnh thổ/nghề nghiệp thời Nguyễn? - *Gợi ý*: Chạm khắc sông núi, hải đảo và các nghề đặc trưng (đánh cá, nông nghiệp...) 3️⃣ **Kỹ thuật đúc đồng đỉnh cao**: - *Gợi mở*: Với công nghệ thế kỷ XIX, việc đúc 9 đỉnh lớn (cao 2-2.5m) cần những kỹ thuật gì? - *Gợi ý*: So sánh với trống đồng Đông Sơn để thấy sự phát triển của nghề đúc đồng Việt. Bạn muốn khám phá sâu hơn điểm nào trong 3 khía cạnh trên? Nguon tham khao: [S1] [S2]" [ref=e289]'
+                  - row "user 19:44:46 Hãy giải thích ngắn gọn ý nghĩa biểu tượng của Cửu Đỉnh trong lịch sử Việt Nam." [ref=e290]:
+                    - cell "user" [ref=e291]:
+                      - generic [ref=e292]: user
+                    - cell "19:44:46" [ref=e293]
+                    - cell "Hãy giải thích ngắn gọn ý nghĩa biểu tượng của Cửu Đỉnh trong lịch sử Việt Nam." [ref=e294]
+                  - row "user 19:44:51 Hãy giải thích ngắn gọn ý nghĩa biểu tượng của Cửu Đỉnh trong lịch sử Việt Nam." [ref=e295]:
+                    - cell "user" [ref=e296]:
+                      - generic [ref=e297]: user
+                    - cell "19:44:51" [ref=e298]
+                    - cell "Hãy giải thích ngắn gọn ý nghĩa biểu tượng của Cửu Đỉnh trong lịch sử Việt Nam." [ref=e299]
+                  - row "user 19:44:58 Hãy giải thích ngắn gọn ý nghĩa biểu tượng của Cửu Đỉnh trong lịch sử Việt Nam." [ref=e300]:
+                    - cell "user" [ref=e301]:
+                      - generic [ref=e302]: user
+                    - cell "19:44:58" [ref=e303]
+                    - cell "Hãy giải thích ngắn gọn ý nghĩa biểu tượng của Cửu Đỉnh trong lịch sử Việt Nam." [ref=e304]
+                  - row [ref=e305]:
+                    - cell "ai" [ref=e306]:
+                      - generic [ref=e307]: ai
+                    - cell "19:45:06" [ref=e308]
+                    - cell [ref=e309]
+                  - row [ref=e310]:
+                    - cell "ai" [ref=e311]:
+                      - generic [ref=e312]: ai
+                    - cell "19:45:07" [ref=e313]
+                    - cell [ref=e314]
+                  - 'row "ai 19:45:14 **Gợi ý tương tác:** 1. Theo em, tại sao số lượng đỉnh lại là 9 (Cửu Đỉnh) mà không phải con số khác? 2. Em có nhận xét gì về các hình chạm khắc trên từng đỉnh? 3. Nếu phải chọn 1 từ để diễn tả ý nghĩa Cửu Đỉnh, em sẽ chọn từ nào? **Giải thích ngắn gọn:** Cửu Đỉnh triều Nguyễn (1802-1945) là biểu tượng: - **Quyền lực hoàng gia** (9 đỉnh tượng trưng cho sự trường tồn của vương triều) [R1]. - **Lãnh thổ thống nhất** (hình ảnh sông núi, sản vật khắc trên đỉnh đại diện cho các vùng miền). - **Văn hóa bản địa** (nghệ thuật đúc đồng kết hợp biểu tượng truyền thống như tứ linh, tự nhiên). **Ví dụ:** Đỉnh Cao Đỉnh khắc hình sông Hương và núi Ngự thể hiện sự gắn bó với kinh đô Huế. Em có muốn tìm hiểu sâu hơn về 1 khía cạnh cụ thể nào không? Checkpoint nhanh: Checkpoint nhanh: ban vua rut ra 2 y quan trong nao tu noi dung nay? Nguon tham khao: [S1] [S2]" [ref=e315]':
+                    - cell "ai" [ref=e316]:
+                      - generic [ref=e317]: ai
+                    - cell "19:45:14" [ref=e318]
+                    - 'cell "**Gợi ý tương tác:** 1. Theo em, tại sao số lượng đỉnh lại là 9 (Cửu Đỉnh) mà không phải con số khác? 2. Em có nhận xét gì về các hình chạm khắc trên từng đỉnh? 3. Nếu phải chọn 1 từ để diễn tả ý nghĩa Cửu Đỉnh, em sẽ chọn từ nào? **Giải thích ngắn gọn:** Cửu Đỉnh triều Nguyễn (1802-1945) là biểu tượng: - **Quyền lực hoàng gia** (9 đỉnh tượng trưng cho sự trường tồn của vương triều) [R1]. - **Lãnh thổ thống nhất** (hình ảnh sông núi, sản vật khắc trên đỉnh đại diện cho các vùng miền). - **Văn hóa bản địa** (nghệ thuật đúc đồng kết hợp biểu tượng truyền thống như tứ linh, tự nhiên). **Ví dụ:** Đỉnh Cao Đỉnh khắc hình sông Hương và núi Ngự thể hiện sự gắn bó với kinh đô Huế. Em có muốn tìm hiểu sâu hơn về 1 khía cạnh cụ thể nào không? Checkpoint nhanh: Checkpoint nhanh: ban vua rut ra 2 y quan trong nao tu noi dung nay? Nguon tham khao: [S1] [S2]" [ref=e319]'
+  - alert [ref=e78]

@@ -1,0 +1,338 @@
+import 'package:flutter/material.dart';
+
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/glass/glass_container.dart';
+
+/// Data model for practice mode
+class PracticeModeData {
+  final String id;
+  final String emoji;
+  final String title;
+  final String description;
+  final String duration;
+  final List<Reward> rewards;
+  final bool isLocked;
+  final String? lockReason;
+  final Color color;
+  final String? additionalInfo;
+
+  const PracticeModeData({
+    required this.id,
+    required this.emoji,
+    required this.title,
+    required this.description,
+    required this.duration,
+    required this.rewards,
+    this.isLocked = false,
+    this.lockReason,
+    required this.color,
+    this.additionalInfo,
+  });
+}
+
+/// Reward data model
+class Reward {
+  final String icon;
+  final String value;
+
+  const Reward({
+    required this.icon,
+    required this.value,
+  });
+}
+
+/// Card widget for displaying a practice mode option
+class PracticeModeCard extends StatelessWidget {
+  final PracticeModeData mode;
+  final VoidCallback onTap;
+
+  const PracticeModeCard({
+    super.key,
+    required this.mode,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        // Main card
+        InkWell(
+          onTap: mode.isLocked ? null : onTap,
+          borderRadius: BorderRadius.circular(20),
+          child: GlassContainer(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            borderRadius: BorderRadius.circular(20),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                mode.color.withOpacity(0.15),
+                mode.color.withOpacity(0.05),
+              ],
+            ),
+            border: Border.all(
+              color: mode.isLocked
+                  ? Colors.white.withOpacity(0.1)
+                  : mode.color.withOpacity(0.3),
+              width: 1.5,
+            ),
+            boxShadow: mode.isLocked
+                ? null
+                : [
+                    BoxShadow(
+                      color: mode.color.withOpacity(0.2),
+                      blurRadius: 16,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final isCompact = constraints.maxWidth < 340;
+                final emojiSize = isCompact ? 26.0 : 32.0;
+
+                final titleSection = Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      mode.title,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.access_time,
+                          size: 16,
+                          color: Colors.white.withOpacity(0.7),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          mode.duration,
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: Colors.white.withOpacity(0.7),
+                              ),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (isCompact)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(AppSpacing.sm),
+                            decoration: BoxDecoration(
+                              color: mode.color.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: Text(
+                              mode.emoji,
+                              style: TextStyle(fontSize: emojiSize),
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.sm),
+                          titleSection,
+                        ],
+                      )
+                    else
+                      Row(
+                        children: [
+                          // Icon container
+                          Container(
+                            padding: const EdgeInsets.all(AppSpacing.md),
+                            decoration: BoxDecoration(
+                              color: mode.color.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Text(
+                              mode.emoji,
+                              style: TextStyle(fontSize: emojiSize),
+                            ),
+                          ),
+                          const SizedBox(width: AppSpacing.md),
+                          Expanded(child: titleSection),
+                        ],
+                      ),
+                    const SizedBox(height: AppSpacing.md),
+
+                    // Description
+                    Text(
+                      mode.description,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Colors.white70,
+                          ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+
+                    // Additional info (if available)
+                    if (mode.additionalInfo != null) ...[
+                      const SizedBox(height: AppSpacing.sm),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.sm,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: mode.color.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: mode.color.withOpacity(0.3),
+                          ),
+                        ),
+                        child: Text(
+                          mode.additionalInfo!,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                        ),
+                      ),
+                    ],
+
+                    const SizedBox(height: AppSpacing.md),
+
+                    // Divider
+                    Container(
+                      height: 1,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.white.withOpacity(0),
+                            Colors.white.withOpacity(0.2),
+                            Colors.white.withOpacity(0),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: AppSpacing.md),
+
+                    // Rewards
+                    Wrap(
+                      spacing: AppSpacing.md,
+                      runSpacing: AppSpacing.sm,
+                      children: mode.rewards.map((reward) {
+                        return Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.sm,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                reward.icon,
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                reward.value,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
+
+                    const SizedBox(height: AppSpacing.md),
+
+                    // CTA Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: mode.isLocked ? null : onTap,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: mode.color,
+                          foregroundColor: Colors.white,
+                          disabledBackgroundColor: Colors.white.withOpacity(0.1),
+                          disabledForegroundColor: Colors.white.withOpacity(0.3),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: AppSpacing.md,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: mode.isLocked ? 0 : 4,
+                          shadowColor: mode.color.withOpacity(0.4),
+                        ),
+                        child: Text(
+                          mode.isLocked ? 'Đã Khóa' : 'Bắt Đầu',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        ),
+
+        // Lock overlay
+        if (mode.isLocked)
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.lock,
+                      color: Colors.white,
+                      size: 48,
+                    ),
+                    if (mode.lockReason != null) ...[
+                      const SizedBox(height: AppSpacing.sm),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.lg,
+                        ),
+                        child: Text(
+                          mode.lockReason!,
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}

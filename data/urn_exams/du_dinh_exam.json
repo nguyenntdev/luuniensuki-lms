@@ -1,0 +1,102 @@
+[
+  {
+    "question_text": "Dụ Đỉnh được đúc để tôn vinh vị vua nào của triều Nguyễn?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Vua Hiển Tông (Nguyễn Phúc Chu)",
+    "options": ["Vua Gia Long", "Vua Hiển Tông (Nguyễn Phúc Chu)", "Vua Minh Mạng", "Vua Thiệu Trị"],
+    "explanation": "Dụ Đỉnh dâng tặng Hiển Tông Chương Hoàng Đế (Nguyễn Phúc Chu), người có công trong việc phát triển Đàng Trong."
+  },
+  {
+    "question_text": "Họa tiết 'Cá Chép' trên Dụ Đỉnh tượng trưng cho điều gì?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Sự vươn lên và thành công",
+    "options": ["Sự giàu có", "Sự vươn lên và thành công", "Sự trường thọ", "Mùa màng bội thu"],
+    "explanation": "Cá chép vượt vũ môn hóa rồng là biểu tượng của sự vươn lên, thành công và đổi đời."
+  },
+  {
+    "question_text": "Loài hoa nào được khắc trên Dụ Đỉnh, tượng trưng cho sự thanh cao?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Hoa sen",
+    "options": ["Hoa đào", "Hoa sen", "Hoa cúc", "Hoa mai"],
+    "explanation": "Hoa sen là biểu tượng của sự thanh cao, trong sạch 'xuất ô nhiễm nhi bất nhiễm'."
+  },
+  {
+    "question_text": "Họa tiết 'Nai' trên Dụ Đỉnh có ý nghĩa gì?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Sự nhẹ nhàng và điềm lành",
+    "options": ["Sức mạnh", "Sự nhẹ nhàng và điềm lành", "Trí tuệ", "Quyền lực"],
+    "explanation": "Nai là biểu tượng của sự nhẹ nhàng, điềm lành và thường xuất hiện trong nghệ thuật cung đình."
+  },
+  {
+    "question_text": "Địa danh 'Quảng Ngãi' trên Dụ Đỉnh có ý nghĩa lịch sử gì?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Vùng đất quan trọng trong việc mở rộng lãnh thổ về phía Nam",
+    "options": ["Nơi sinh của vua Gia Long", "Vùng đất quan trọng trong việc mở rộng lãnh thổ về phía Nam", "Nơi đúc Cửu Đỉnh", "Thủ đô đầu tiên"],
+    "explanation": "Quảng Ngãi là vùng đất quan trọng trong việc mở rộng lãnh thổ của các chúa Nguyễn về phía Nam."
+  },
+  {
+    "question_text": "Loại cây nào được khắc trên Dụ Đỉnh, tượng trưng cho sự kiên cường?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Cây tre",
+    "options": ["Cây tre", "Cây thông", "Cây mai", "Cây đào"],
+    "explanation": "Cây tre tượng trưng cho sự kiên cường, bất khuất 'trúc bất đổi tiết'."
+  },
+  {
+    "question_text": "Họa tiết 'Thuyền Buồm' trên Dụ Đỉnh thể hiện điều gì?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Giao thương biển và phát triển kinh tế",
+    "options": ["Nghệ thuật đóng tàu", "Giao thương biển và phát triển kinh tế", "Du lịch", "Đánh cá"],
+    "explanation": "Thuyền buồm là biểu tượng của giao thương biển, vận chuyển và phát triển kinh tế."
+  },
+  {
+    "question_text": "Loài chim nào được khắc trên Dụ Đỉnh, tượng trưng cho sự thanh cao?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Hạc",
+    "options": ["Công", "Hạc", "Trĩ", "Ưng"],
+    "explanation": "Hạc là biểu tượng của sự thanh cao, trường thọ và thường xuất hiện trong nghệ thuật cung đình."
+  },
+  {
+    "question_text": "Họa tiết 'Cây Cau' trên Dụ Đỉnh mang ý nghĩa gì?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Cây đặc trưng của vùng nhiệt đới và văn hóa dân gian",
+    "options": ["Sự giàu có", "Cây đặc trưng của vùng nhiệt đới và văn hóa dân gian", "Mùa màng bội thu", "Sức khỏe dồi dào"],
+    "explanation": "Cây cau là cây đặc trưng của vùng nhiệt đới Việt Nam và gắn liền với văn hóa dân gian."
+  },
+  {
+    "question_text": "Địa danh 'Phú Yên' trên Dụ Đỉnh có ý nghĩa lịch sử gì?",
+    "question_type": "multiple_choice",
+    "correct_answer": "Vùng đất ven biển quan trọng trong việc phát triển kinh tế",
+    "options": ["Nơi sinh của vua Gia Long", "Vùng đất ven biển quan trọng trong việc phát triển kinh tế", "Nơi đúc Cửu Đỉnh", "Thủ đô đầu tiên"],
+    "explanation": "Phú Yên là vùng đất ven biển quan trọng trong việc phát triển kinh tế và giao thương."
+  },
+  {
+    "question_text": "Dụ Đỉnh được đúc vào năm 1835-1837.",
+    "question_type": "true_false",
+    "correct_answer": "Đúng",
+    "explanation": "Dụ Đỉnh cùng với 8 đỉnh khác được đúc trong giai đoạn 1835-1837 dưới triều vua Minh Mạng."
+  },
+  {
+    "question_text": "Họa tiết trên Dụ Đỉnh chỉ mô tả cảnh vật thiên nhiên.",
+    "question_type": "true_false",
+    "correct_answer": "Sai",
+    "explanation": "Các họa tiết trên Dụ Đỉnh đều mang ý nghĩa lịch sử, văn hóa và kinh tế sâu sắc."
+  },
+  {
+    "question_text": "Dụ Đỉnh là đỉnh nhỏ nhất trong Cửu Đỉnh.",
+    "question_type": "true_false",
+    "correct_answer": "Sai",
+    "explanation": "Cao Đỉnh là đỉnh lớn nhất, các đỉnh còn lại có kích thước tương đương nhau."
+  },
+  {
+    "question_text": "Dụ Đỉnh được đặt ở phía Đông Nam trong bố cục Cửu Đỉnh.",
+    "question_type": "true_false",
+    "correct_answer": "Đúng",
+    "explanation": "Dụ Đỉnh được đặt ở phía Đông Nam, tượng trưng cho hướng Đông Nam và vị trí quan trọng trong bố cục."
+  },
+  {
+    "question_text": "Tất cả các họa tiết trên Dụ Đỉnh đều được khắc nổi bằng kỹ thuật đúc đồng.",
+    "question_type": "true_false",
+    "correct_answer": "Đúng",
+    "explanation": "Các họa tiết trên Cửu Đỉnh đều được tạo ra bằng kỹ thuật đúc đồng tinh xảo."
+  }
+]

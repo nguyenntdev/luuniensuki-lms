@@ -1,0 +1,218 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - navigation [ref=e5]:
+      - generic [ref=e6]:
+        - link "Lưu Niên Sử Kí" [ref=e7] [cursor=pointer]:
+          - /url: /
+        - generic [ref=e8]:
+          - link "Khám Phá" [ref=e9] [cursor=pointer]:
+            - /url: /explore
+            - generic [ref=e10]:
+              - img [ref=e11]
+              - generic [ref=e14]: Khám Phá
+          - link "Ôn Tập" [ref=e15] [cursor=pointer]:
+            - /url: /practice
+            - generic [ref=e16]:
+              - img [ref=e17]
+              - generic [ref=e26]: Ôn Tập
+          - link "Bộ Sưu Tập" [ref=e27] [cursor=pointer]:
+            - /url: /collection
+            - generic [ref=e28]:
+              - img [ref=e29]
+              - generic [ref=e32]: Bộ Sưu Tập
+        - generic [ref=e33]:
+          - button "Menu" [ref=e35] [cursor=pointer]:
+            - img [ref=e36]
+            - generic [ref=e40]: Menu
+            - img [ref=e41]
+          - button "L Live Demo Teacher" [ref=e44] [cursor=pointer]:
+            - generic [ref=e46]: L
+            - generic [ref=e47]: Live Demo Teacher
+            - img [ref=e48]
+          - button "vi" [ref=e51] [cursor=pointer]:
+            - img [ref=e52]
+            - generic [ref=e56]: vi
+            - img [ref=e57]
+          - link "Tiếp Tục Học" [ref=e59] [cursor=pointer]:
+            - /url: /dashboard
+            - button "Tiếp Tục Học" [ref=e60]
+    - main [ref=e61]:
+      - generic [ref=e63]:
+        - generic [ref=e64]:
+          - generic [ref=e65]:
+            - generic [ref=e66]: Phòng học live 3D
+            - paragraph [ref=e67]: "Mã phiên: e4ebd3d9-7384-4e3d-92ab-13ea9e5065d7"
+          - generic [ref=e68]:
+            - generic [ref=e69]: Đã kết nối
+            - generic [ref=e70]: "Chất lượng: Tốt"
+            - generic [ref=e71]: "Vai trò: Chủ phòng"
+            - link "Bảng điều khiển phiên" [ref=e72] [cursor=pointer]:
+              - /url: /live/e4ebd3d9-7384-4e3d-92ab-13ea9e5065d7/dashboard
+            - link "Về trang quản trị" [ref=e73] [cursor=pointer]:
+              - /url: /dashboard
+        - generic [ref=e74]:
+          - generic [ref=e75]: "Số lần kết nối lại: 0"
+          - generic [ref=e76]: "Người tham gia: 2"
+      - generic [ref=e77]:
+        - generic [ref=e78]:
+          - article [ref=e81]:
+            - generic [ref=e83]: Live Demo Teacher
+            - generic [ref=e84]:
+              - generic [ref=e86]: Live Demo Teacher (bạn)
+              - button "Ghim người tham gia" [ref=e87] [cursor=pointer]:
+                - img
+          - generic [ref=e89]:
+            - button "Mic tắt" [ref=e90] [cursor=pointer]:
+              - img
+              - text: Mic tắt
+            - button "Camera tắt" [ref=e91] [cursor=pointer]:
+              - img
+              - text: Camera tắt
+            - button "Giơ tay" [ref=e92] [cursor=pointer]:
+              - img
+              - text: Giơ tay
+            - button "Kết nối lại" [ref=e93] [cursor=pointer]:
+              - img
+              - text: Kết nối lại
+            - button "Rời phòng" [ref=e94] [cursor=pointer]:
+              - img
+              - text: Rời phòng
+        - complementary [ref=e95]:
+          - generic [ref=e96]:
+            - generic [ref=e97]:
+              - heading "Nhiệm vụ vi mô di sản 3D" [level=2] [ref=e98]
+              - img [ref=e99]
+            - generic [ref=e110]: Đỉnh
+            - generic [ref=e111]:
+              - button "Đỉnh" [ref=e112] [cursor=pointer]
+              - button "Họa tiết" [ref=e113] [cursor=pointer]
+              - button "Chữ khắc" [ref=e114] [cursor=pointer]
+              - button "Chân đế" [ref=e115] [cursor=pointer]
+          - generic [ref=e116]:
+            - generic [ref=e117]:
+              - heading "Giọng nói AI (STT/TTS)" [level=3] [ref=e118]
+              - img [ref=e119]
+            - generic [ref=e123]: "Chế độ giọng nói: backend ưu tiên"
+            - generic [ref=e124]:
+              - generic [ref=e125]:
+                - button "Bắt đầu nói" [ref=e126] [cursor=pointer]:
+                  - img
+                  - text: Bắt đầu nói
+                - button "Nhấn giữ để nói" [ref=e127] [cursor=pointer]
+              - generic [ref=e128]:
+                - 'button "Từ khóa kích hoạt: BẬT" [ref=e129] [cursor=pointer]'
+                - 'button "Tự đọc: BẬT" [ref=e130] [cursor=pointer]':
+                  - img
+                  - text: "Tự đọc: BẬT"
+              - list [ref=e131]:
+                - listitem [ref=e132]:
+                  - generic [ref=e133]:
+                    - generic [ref=e134]: ai
+                    - generic [ref=e135]: 20:57:36
+                  - generic [ref=e136]: "**Cửu Đỉnh - Biểu tượng quyền lực và văn hóa triều Nguyễn (1802-1945):** 1. **Biểu tượng vương triều**: - 9 đỉnh tượng trưng cho 9 đời vua Nguyễn, khẳng định sự trường tồn và tính chính thống của triều đại. 2. **Bản đồ thu nhỏ**: - Hoa văn chạm khắc sông núi (Hồng Hà, Cửu Long), địa danh và sản vật đặc trưng thể hiện chủ quyền lãnh thổ thống nhất. 3. **Tinh hoa nghệ thuật**: - Đỉnh cao kỹ thuật đúc đồng Việt thế kỷ XIX, kết hợp họa tiết tứ linh (long-ly-quy-phượng) và cảnh sinh hoạt dân gian. *Ví dụ:* **Cao Đỉnh** (đỉnh trung tâm) khắc hình sông Hương - biểu tượng cho kinh đô Huế. **Checkpoint nhanh:** - Theo bạn, tại sao Cửu Đỉnh được xem là \"bảo vật quốc gia\" ngày nay? - Nếu được chọn 1 hình ảnh đại diện từ Cửu Đỉnh, bạn sẽ chọn gì? Nguồn tham khảo: [R1], [R2] Nguon tham khao: [S1] [S2]"
+                - listitem [ref=e137]:
+                  - generic [ref=e138]:
+                    - generic [ref=e139]: Bạn
+                    - generic [ref=e140]: 20:57:21
+                  - generic [ref=e141]: Giải thích ngắn gọn ý nghĩa của Cửu Đỉnh trong lịch sử Việt Nam.
+                - listitem [ref=e142]:
+                  - generic [ref=e143]:
+                    - generic [ref=e144]: ai
+                    - generic [ref=e145]: 19:45:07
+                  - generic [ref=e146]: "**Cửu Đỉnh - Biểu tượng quyền lực và văn hóa triều Nguyễn** 1. **Biểu tượng vương quyền**: - 9 đỉnh tượng trưng cho 9 đời vua Nguyễn, khẳng định tính chính thống và sự trường tồn của triều đại. 2. **Tuyên ngôn lãnh thổ**: - Hoa văn chạm khắc (sông Hồng, sông Cửu Long, đèo Hải Vân...) thể hiện chủ quyền quốc gia [R1]. 3. **Triết lý vũ trụ**: - Số 9 (Cửu) tượng trưng cho \"Cửu trùng thiên\" - ước vọng thái bình dưới sự cai trị của thiên tử. *Ví dụ thú vị*: Cao Đỉnh (đỉnh lớn nhất) đặt ở trung tâm, thể hiện vị thế của vua Minh Mạng như \"mặt trời\" tỏa sáng. Bạn có muốn tìm hiểu thêm về mối liên hệ giữa Cửu Đỉnh và các bảo vật quốc gia khác như trống đồng? Nguồn: [R1] - Tổng quan Cửu Đỉnh (nội bộ) Checkpoint nhanh: Checkpoint nhanh: ban vua rut ra 2 y quan trong nao tu noi dung nay? Nguon tham khao: [S1] [S2]"
+                - listitem [ref=e147]:
+                  - generic [ref=e148]:
+                    - generic [ref=e149]: Bạn
+                    - generic [ref=e150]: 19:44:51
+                  - generic [ref=e151]: Hãy giải thích ngắn gọn ý nghĩa biểu tượng của Cửu Đỉnh trong lịch sử Việt Nam.
+          - generic [ref=e152]:
+            - generic [ref=e153]:
+              - button "Trò chuyện AI" [ref=e154] [cursor=pointer]:
+                - img
+                - text: Trò chuyện AI
+              - button "Người tham gia" [ref=e155] [cursor=pointer]:
+                - img
+                - text: Người tham gia
+              - button "Sự kiện live" [ref=e156] [cursor=pointer]:
+                - img
+                - text: Sự kiện live
+            - generic [ref=e157]:
+              - generic [ref=e158]:
+                - heading "AI giáo viên" [level=3] [ref=e159]
+                - combobox [ref=e160] [cursor=pointer]:
+                  - generic: Gợi ý trước
+                  - img
+              - generic [ref=e161]:
+                - generic [ref=e162]:
+                  - generic [ref=e163]: "AI giáo viên đã sẵn sàng. Mặc định là chế độ gợi ý trước: tôi sẽ gợi ý rồi mới đưa đáp án đầy đủ."
+                  - generic [ref=e164]: Hệ thống
+                - generic [ref=e165]:
+                  - generic [ref=e166]: "**Cửu Đỉnh - Biểu tượng quyền lực và văn hóa triều Nguyễn** 1. **Biểu tượng vương quyền**: - 9 đỉnh tượng trưng cho 9 đời vua Nguyễn, khẳng định tính chính thống và sự trường tồn của triều đại. 2. **Tuyên ngôn lãnh thổ**: - Hoa văn chạm khắc (sông Hồng, sông Cửu Long, đèo Hải Vân...) thể hiện chủ quyền quốc gia [R1]. 3. **Triết lý vũ trụ**: - Số 9 (Cửu) tượng trưng cho \"Cửu trùng thiên\" - ước vọng thái bình dưới sự cai trị của thiên tử. *Ví dụ thú vị*: Cao Đỉnh (đỉnh lớn nhất) đặt ở trung tâm, thể hiện vị thế của vua Minh Mạng như \"mặt trời\" tỏa sáng. Bạn có muốn tìm hiểu thêm về mối liên hệ giữa Cửu Đỉnh và các bảo vật quốc gia khác như trống đồng? Nguồn: [R1] - Tổng quan Cửu Đỉnh (nội bộ) Checkpoint nhanh: Checkpoint nhanh: ban vua rut ra 2 y quan trong nao tu noi dung nay? Nguon tham khao: [S1] [S2]"
+                  - generic [ref=e167]:
+                    - generic [ref=e168]: Câu hỏi kiểm tra nhanh
+                    - generic [ref=e169]: "Checkpoint nhanh: ban vua rut ra 2 y quan trong nao tu noi dung nay?"
+                    - button "Trả lời câu hỏi" [ref=e170] [cursor=pointer]
+                  - generic [ref=e171]:
+                    - button "Tong hop 1 phut" [ref=e172] [cursor=pointer]
+                    - button "Dao sau tiep" [ref=e173] [cursor=pointer]
+                    - button "Hoi tiep theo" [ref=e174] [cursor=pointer]
+                  - generic [ref=e175]:
+                    - generic [ref=e176]: Nguồn tham khảo nội bộ
+                    - list [ref=e177]:
+                      - listitem [ref=e178]:
+                        - text: Tong quan Cuu Dinh (nguon noi bo)
+                        - generic [ref=e179]: ": Cuu Dinh la bo dong dinh trieu Nguyen, ket hop gia tri lich su, bieu tuong quyen luc va nghe thuat duc dong."
+                      - listitem [ref=e180]:
+                        - text: Phuong phap doc hinh cham di san
+                        - generic [ref=e181]: ": Uu tien 3 buoc: mo ta hinh the, nhan dien bieu tuong, doi chieu voi boi canh lich su."
+                  - generic [ref=e182]: "Trích dẫn: S1(Tong quan Cuu Dinh (nguon noi bo)), S2(Phuong phap doc hinh cham di san)"
+                  - generic [ref=e184]: "Đánh giá mức độ hiểu: developing"
+                  - generic [ref=e185]: deepseek · deepseek-v3
+                - generic [ref=e186]:
+                  - generic [ref=e187]: "**Cửu Đỉnh - Biểu tượng quyền lực và văn hóa triều Nguyễn (1802-1945):** 1. **Biểu tượng vương triều**: - 9 đỉnh tượng trưng cho 9 đời vua Nguyễn, khẳng định sự trường tồn và tính chính thống của triều đại. 2. **Bản đồ thu nhỏ**: - Hoa văn chạm khắc sông núi (Hồng Hà, Cửu Long), địa danh và sản vật đặc trưng thể hiện chủ quyền lãnh thổ thống nhất. 3. **Tinh hoa nghệ thuật**: - Đỉnh cao kỹ thuật đúc đồng Việt thế kỷ XIX, kết hợp họa tiết tứ linh (long-ly-quy-phượng) và cảnh sinh hoạt dân gian. *Ví dụ:* **Cao Đỉnh** (đỉnh trung tâm) khắc hình sông Hương - biểu tượng cho kinh đô Huế. **Checkpoint nhanh:** - Theo bạn, tại sao Cửu Đỉnh được xem là \"bảo vật quốc gia\" ngày nay? - Nếu được chọn 1 hình ảnh đại diện từ Cửu Đỉnh, bạn sẽ chọn gì? Nguồn tham khảo: [R1], [R2] Nguon tham khao: [S1] [S2]"
+                  - generic [ref=e188]:
+                    - button "Tong hop 1 phut" [ref=e189] [cursor=pointer]
+                    - button "Dao sau tiep" [ref=e190] [cursor=pointer]
+                    - button "Hoi tiep theo" [ref=e191] [cursor=pointer]
+                  - generic [ref=e192]:
+                    - generic [ref=e193]: Nguồn tham khảo nội bộ
+                    - list [ref=e194]:
+                      - listitem [ref=e195]:
+                        - text: Tong quan Cuu Dinh (nguon noi bo)
+                        - generic [ref=e196]: ": Cuu Dinh la bo dong dinh trieu Nguyen, ket hop gia tri lich su, bieu tuong quyen luc va nghe thuat duc dong."
+                      - listitem [ref=e197]:
+                        - text: Phuong phap doc hinh cham di san
+                        - generic [ref=e198]: ": Uu tien 3 buoc: mo ta hinh the, nhan dien bieu tuong, doi chieu voi boi canh lich su."
+                  - generic [ref=e199]: "Trích dẫn: S1(Tong quan Cuu Dinh (nguon noi bo)), S2(Phuong phap doc hinh cham di san)"
+                  - generic [ref=e201]: "Đánh giá mức độ hiểu: developing"
+                  - generic [ref=e202]: deepseek · deepseek-v3
+              - generic [ref=e203]:
+                - textbox "Hỏi AI giáo viên về nội dung di sản..." [ref=e204]
+                - button "Gửi cho AI giáo viên" [disabled]
+          - generic [ref=e205]:
+            - heading "Bảng điều khiển chủ phòng" [level=3] [ref=e206]
+            - generic [ref=e207]:
+              - button "Khóa phòng TẮT" [ref=e208] [cursor=pointer]:
+                - generic [ref=e209]:
+                  - img
+                  - text: Khóa phòng
+                - generic [ref=e210]: TẮT
+              - button "AI giáo viên BẬT" [ref=e211] [cursor=pointer]:
+                - generic [ref=e212]:
+                  - img
+                  - text: AI giáo viên
+                - generic [ref=e213]: BẬT
+              - generic [ref=e214]:
+                - generic [ref=e215]: Persona AI (cấp độ)
+                - generic [ref=e216]:
+                  - combobox [ref=e217] [cursor=pointer]:
+                    - generic: Trung học cơ sở
+                    - img
+                  - button "Lưu" [ref=e218] [cursor=pointer]
+              - generic [ref=e219]:
+                - generic [ref=e220]: Trần chi phí AI (USD)
+                - generic [ref=e221]:
+                  - spinbutton [ref=e222]: "3"
+                  - button "Lưu" [ref=e223] [cursor=pointer]
+            - paragraph [ref=e224]: Khóa phòng sẽ chặn học viên mới. Nút AI điều khiển trợ giảng AI, cấp độ và giới hạn chi phí.
+  - alert [ref=e4]

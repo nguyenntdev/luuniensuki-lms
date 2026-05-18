@@ -1,0 +1,19 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e5]:
+    - heading "Lưu Niên Sử Kí" [level=1] [ref=e6]
+    - paragraph [ref=e7]: Đăng nhập để lưu tiến trình và xây dựng bộ sưu tập của bạn.
+    - generic [ref=e8]:
+      - button "Đăng nhập" [ref=e9] [cursor=pointer]
+      - button "Đăng ký" [ref=e10] [cursor=pointer]
+    - generic [ref=e11]:
+      - generic [ref=e12]:
+        - text: Địa chỉ email
+        - textbox "Địa chỉ email" [ref=e13]:
+          - /placeholder: you@example.com
+      - generic [ref=e14]:
+        - text: Mật khẩu
+        - textbox "Mật khẩu" [ref=e15]:
+          - /placeholder: ••••••••
+      - button "Đăng nhập" [ref=e16] [cursor=pointer]
+    - paragraph [ref=e17]: "API: same-origin"
+  - alert [ref=e18]

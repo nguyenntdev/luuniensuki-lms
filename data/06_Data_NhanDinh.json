@@ -1,0 +1,772 @@
+[
+  {
+    "id": "urn_nhan_dinh_01",
+    "name_vi": "Nhân Đỉnh",
+    "name_en": "The Urn of Benevolence",
+    "urn_location": "Nhân Đỉnh",
+    "category": "kien_truc",
+    "rarity": "legendary",
+    "description_short": "Nhân Đỉnh - chiếc đỉnh tượng trưng cho lòng nhân ái và đức độ của vua Minh Mạng.",
+    "description_educational": "Nhân Đỉnh là chiếc đỉnh thứ hai trong Cửu Đỉnh, được đặt bên trái của Cao Đỉnh (nếu nhìn từ trong Thế Miếu ra). Chữ 'Nhân' (仁) trong Nho giáo là đức tính quan trọng nhất, đại diện cho lòng yêu thương con người, sự nhân từ và đức độ của bậc quân tử. Vua Minh Mạng (1791-1841) là vị vua thứ hai của triều Nguyễn, người đã có công hoàn thiện bộ máy hành chính và mở rộng lãnh thổ đất nước đến cực đại. Việc lấy chữ 'Nhân' làm thụy hiệu cho đỉnh của ông thể hiện sự tôn vinh đối với công đức cai trị dựa trên nền tảng nho học và lòng nhân ái. Trên thân đỉnh, các họa tiết chạm khắc tinh xảo không chỉ là nghệ thuật mà còn là sự gửi gắm khát vọng về một xã hội hài hòa, nơi người với người đối xử với nhau bằng tình thương. Nhân Đỉnh nặng khoảng 2.500kg, thể hiện sự vững chãi và trường tồn của triều đại.",
+    "historical_context": "Được đúc vào năm 1835 cùng với các đỉnh khác, Nhân Đỉnh tôn vinh vua Minh Mạng. Dưới thời trị vì của ông, nước Đại Nam trở thành một quốc gia hùng mạnh bậc nhất Đông Nam Á. Ông là người rất coi trọng việc học hành, thi cử và củng cố nền tảng văn hóa, giáo dục của quốc gia theo tinh thần Nho giáo.",
+    "symbolism": "Chữ 'Nhân' là gốc rễ của mọi đức hạnh. Trong ngũ thường (Nhân, Lễ, Nghĩa, Trí, Tín), Nhân đứng đầu. Đặt tên đỉnh là Nhân Đỉnh khẳng định triết lý cai trị của triều Nguyễn là 'đức trị', lấy dân làm gốc, mong muốn mang lại cuộc sống ấm no, hạnh phúc cho muôn dân.",
+    "fun_fact": "Mặc dù vua Minh Mạng nổi tiếng là người nghiêm khắc trong việc điều hành đất nước, nhưng thụy hiệu của ông lại là 'Nhân', cho thấy cái nhìn của hậu thế về ông là một vị vua có tấm lòng bao dung, lo cho dân cho nước. Vị trí của Nhân Đỉnh (tả) và Chương Đỉnh (hữu) bên cạnh Cao Đỉnh tuân theo quy tắc 'tả chiêu hữu mục' trong thờ cúng tổ tiên.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Nhân Đỉnh được đúc để tôn vinh vị vua nào?",
+        "options": [
+          "A. Vua Gia Long",
+          "B. Vua Minh Mạng",
+          "C. Vua Thiệu Trị",
+          "D. Vua Tự Đức"
+        ],
+        "correct_answer": "B. Vua Minh Mạng",
+        "difficulty": 1,
+        "explanation": "Nhân Đỉnh là đỉnh thứ hai, ứng với thế thứ thứ hai trong Thế Miếu là vua Minh Mạng."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Chữ 'Nhân' trong tên đỉnh mang ý nghĩa gì?",
+        "options": [
+          "A. Sức mạnh quân sự",
+          "B. Sự giàu có",
+          "C. Lòng nhân ái, đức độ",
+          "D. Sự thông minh"
+        ],
+        "correct_answer": "C. Lòng nhân ái, đức độ",
+        "difficulty": 1,
+        "explanation": "Trong Nho giáo, 'Nhân' là đức tính đứng đầu, chỉ lòng yêu thương con người và đức độ."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_nhan_dinh_01_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/NHÂN%20DỈNH/NHÂN ĐỈNH.jpg"
+  },
+  {
+    "id": "urn_nhan_dinh_02",
+    "name_vi": "Ngô Đồng",
+    "name_en": "Chinese Parasol Tree",
+    "urn_location": "Nhân Đỉnh",
+    "category": "thao_moc",
+    "rarity": "rare",
+    "description_short": "Cây ngô đồng - loài cây vương giả, tương truyền là nơi chim phượng hoàng đậu.",
+    "description_educational": "Ngô Đồng (Firmiana simplex) là loài cây thân gỗ cao lớn, vỏ cây màu xanh, lá to xòe rộng. Trong văn hóa phương Đông, Ngô Đồng được coi là loài cây quý phái, gắn liền với huyền thoại về chim Phượng Hoàng. Người xưa có câu: 'Đất lành chim đậu', và Phượng Hoàng - loài chim chúa tể - chỉ chọn cây Ngô Đồng để đậu. Tại Kinh thành Huế, cây Ngô Đồng được trồng nhiều ở các cung điện, lăng tẩm, đặc biệt là sau lưng điện Thái Hòa. Mỗi độ xuân về, khi cây trút hết lá và nở hoa tím hồng rực rỡ cả một góc trời, nó tạo nên vẻ đẹp lộng lẫy, uy nghiêm cho chốn hoàng cung. Việc khắc cây Ngô Đồng lên Nhân Đỉnh thể hiện ước mong thu hút hiền tài (như phượng hoàng) đến giúp nước và khẳng định sự thái bình thịnh trị của vương triều.",
+    "historical_context": "Vua Minh Mạng rất yêu thích cây Ngô Đồng và đã cho người đem giống từ Quảng Đông về trồng trong Đại Nội. Ông còn cho khắc hình ảnh cây lên Nhân Đỉnh để lưu truyền mãi mãi. Ngô Đồng ở Huế không chỉ là cây cảnh quan mà còn là nhân chứng lịch sử, chứng kiến bao thăng trầm của triều đại.",
+    "symbolism": "Ngô Đồng tượng trưng cho sự cao quý, điềm lành và sự xuất hiện của thánh nhân. Nó cũng biểu thị cho lòng trung thành và sự thanh cao. Hoa Ngô Đồng nở báo hiệu mùa xuân sang, mang ý nghĩa của sự khởi đầu tốt đẹp.",
+    "fun_fact": "Cây Ngô Đồng còn có tên là 'cây tàn dù' vì tán lá xòe ra như cái dù. Một điều thú vị là quả Ngô Đồng khi chín sẽ nứt ra, hạt rơi xuống đất rất dễ nảy mầm, tượng trưng cho sự sinh sôi nảy nở. Ở Huế, mùa hoa Ngô Đồng thường vào khoảng tháng 2-3 âm lịch, rất đẹp và lãng mạn.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Theo truyền thuyết, loài chim nào chỉ đậu trên cây Ngô Đồng?",
+        "options": [
+          "A. Chim Công",
+          "B. Chim Phượng Hoàng",
+          "C. Chim Hạc",
+          "D. Chim Đại Bàng"
+        ],
+        "correct_answer": "B. Chim Phượng Hoàng",
+        "difficulty": 1,
+        "explanation": "Truyền thuyết 'Phượng hoàng đậu cây ngô đồng' là biểu tượng của điềm lành và sự xuất hiện của thánh nhân."
+      },
+      {
+        "type": "true_false",
+        "question": "Cây Ngô Đồng được trồng nhiều trong Đại Nội Huế.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Đúng",
+        "difficulty": 1,
+        "explanation": "Cây Ngô Đồng là loài cây đặc trưng của cung đình Huế, được trồng nhiều ở các khu vực trang trọng."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_nhan_dinh_02_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/NHÂN%20DỈNH/NGÔ ĐỒNG.jpg"
+  },
+  {
+    "id": "urn_nhan_dinh_03",
+    "name_vi": "Kỳ Nam",
+    "name_en": "Kyara (Highest Grade Agarwood)",
+    "urn_location": "Nhân Đỉnh",
+    "category": "thao_moc",
+    "rarity": "legendary",
+    "description_short": "Kỳ Nam - loại trầm hương thượng hạng nhất, quý hơn vàng.",
+    "description_educational": "Kỳ Nam là loại trầm hương có phẩm chất cao nhất, được hình thành từ cây Dó Bầu qua hàng trăm năm tích tụ nhựa thơm. Nếu Trầm hương đã quý, thì Kỳ Nam còn quý hiếm gấp bội, được ví là 'vua của các loại hương'. Kỳ Nam có đặc điểm mềm, dẻo, chứa lượng tinh dầu rất lớn, nếm có vị chua, cay, đắng, ngọt, mùi thơm tỏa ra ngào ngạt tự nhiên mà không cần đốt. Xưa kia, Kỳ Nam là cống phẩm chỉ dành riêng cho vua chúa. Việc khắc Kỳ Nam lên Nhân Đỉnh không chỉ khoe sự giàu có về sản vật của nước Nam mà còn mang ý nghĩa tâm linh sâu sắc, vì mùi hương của Kỳ Nam được cho là có thể thấu đến tận trời xanh, kết nối thần linh và tổ tiên.",
+    "historical_context": "Dưới triều Nguyễn, triều đình quản lý rất chặt chẽ việc khai thác Kỳ Nam. Những người đi điệu (tìm trầm) nếu tìm được Kỳ Nam phải nộp ngay cho triều đình và được ban thưởng hậu hĩnh. Kỳ Nam thường được dùng làm thuốc cứu người trong những trường hợp nguy kịch hoặc làm gối, vòng tay cho vua để trừ tà, dưỡng khí.",
+    "symbolism": "Kỳ Nam tượng trưng cho sự tinh túy, thanh khiết nhất của đất trời ngưng tụ lại. Nó đại diện cho phẩm hạnh cao quý, sự may mắn tột bậc và khả năng xua đuổi mọi tà khí, bệnh tật.",
+    "fun_fact": "Dân gian có câu 'Nhất Kỳ, nhì Trầm'. Giá trị của Kỳ Nam hiện nay có thể lên tới hàng tỷ đồng, thậm chí cả triệu đô la cho một khối nhỏ, đắt hơn vàng ròng rất nhiều. Kỳ Nam được phân thành 4 loại chính: Bạch Kỳ, Thanh Kỳ, Huỳnh Kỳ và Hắc Kỳ, trong đó Bạch Kỳ là quý nhất.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Kỳ Nam là sản phẩm đặc biệt của loài cây nào?",
+        "options": [
+          "A. Cây Gỗ Sưa",
+          "B. Cây Dó Bầu",
+          "C. Cây Quế",
+          "D. Cây Tùng"
+        ],
+        "correct_answer": "B. Cây Dó Bầu",
+        "difficulty": 2,
+        "explanation": "Kỳ Nam và Trầm hương đều được hình thành từ cây Dó Bầu bị thương, nhưng Kỳ Nam hiếm và quý hơn nhiều."
+      },
+      {
+        "type": "true_false",
+        "question": "Kỳ Nam có giá trị thấp hơn Trầm hương.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Kỳ Nam là loại trầm hương phẩm chất cao nhất, quý hiếm và đắt giá hơn Trầm hương thường rất nhiều."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_nhan_dinh_03_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/NHÂN%20DỈNH/KỲ NAM.jpg"
+  },
+  {
+    "id": "urn_nhan_dinh_04",
+    "name_vi": "Noa",
+    "name_en": "Glutinous Rice",
+    "urn_location": "Nhân Đỉnh",
+    "category": "nong_nghiep",
+    "rarity": "common",
+    "description_short": "Lúa nếp - nguyên liệu làm nên những món bánh truyền thống đậm đà bản sắc.",
+    "description_educational": "Chữ 'Noa' (糯) chỉ lúa nếp, loại lương thực quan trọng thứ hai sau lúa tẻ (Canh) trong văn hóa ẩm thực Việt Nam. Lúa nếp có hạt tròn, trắng đục, khi nấu lên rất dẻo và thơm. Nếu lúa tẻ là cơm ăn hàng ngày, thì lúa nếp là nguyên liệu chính để làm các loại xôi, bánh chưng, bánh dày, bánh tét... dùng trong các dịp lễ tết, thờ cúng tổ tiên. Hình ảnh bông lúa nếp trĩu hạt trên Nhân Đỉnh thể hiện sự sung túc, no đủ và lòng biết ơn đối với tổ tiên, đất trời. Nó cũng khẳng định nền văn minh lúa nước lâu đời và sự đa dạng của nông sản Việt Nam. Lúa nếp gắn liền với sự đoàn kết, gắn bó (như đặc tính dẻo dính của nó) trong cộng đồng làng xã.",
+    "historical_context": "Truyền thuyết 'Bánh chưng bánh dày' thời Hùng Vương đã tôn vinh lúa nếp như một sản vật quý giá nhất để dâng lên vua cha. Triều Nguyễn tiếp nối truyền thống đó, coi trọng việc trồng cấy lúa nếp để phục vụ các nghi lễ cung đình và đời sống dân gian.",
+    "symbolism": "Lúa nếp tượng trưng cho sự dẻo dai, gắn kết và lòng hiếu thảo (qua sự tích bánh chưng). Hạt nếp trắng ngần còn biểu thị sự tinh khiết và tấm lòng thơm thảo của người nông dân.",
+    "fun_fact": "Có rất nhiều giống nếp quý ở Việt Nam như nếp cái hoa vàng, nếp nương, nếp Tú Lệ... Mỗi loại có hương vị đặc trưng riêng. Rượu nếp cũng là một đặc sản được dùng để cúng lễ và đãi khách quý.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Lúa nếp thường được dùng để làm món gì trong dịp Tết?",
+        "options": [
+          "A. Cơm tẻ",
+          "B. Bánh chưng, bánh tét",
+          "C. Bún",
+          "D. Phở"
+        ],
+        "correct_answer": "B. Bánh chưng, bánh tét",
+        "difficulty": 1,
+        "explanation": "Lúa nếp là nguyên liệu chính để gói bánh chưng, bánh tét - những món ăn cổ truyền không thể thiếu trong dịp Tết."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Đặc tính nổi bật của gạo nếp khi nấu chín là gì?",
+        "options": [
+          "A. Khô và rời rạc",
+          "B. Dẻo và dính",
+          "C. Cứng và giòn",
+          "D. Chua và cay"
+        ],
+        "correct_answer": "B. Dẻo và dính",
+        "difficulty": 1,
+        "explanation": "Gạo nếp chứa nhiều amylopectin nên khi nấu chín rất dẻo và dính, tượng trưng cho sự gắn kết."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_nhan_dinh_04_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/NHÂN%20DỈNH/NOA.jpg"
+  },
+  {
+    "id": "urn_nhan_dinh_05",
+    "name_vi": "Nam Trân",
+    "name_en": "Langsat (Bon Bon Fruit)",
+    "urn_location": "Nhân Đỉnh",
+    "category": "thao_moc",
+    "rarity": "uncommon",
+    "description_short": "Trái bòn bon - 'Nam Trân' quý giá, từng cứu đói chúa Nguyễn trong lúc gian nan.",
+    "description_educational": "Nam Trân (ngọc quý phương Nam) là tên mỹ miều vua ban cho trái Bòn bon (Lansium parasiticum). Loài cây này mọc nhiều ở vùng núi Quảng Nam. Chuyện kể rằng khi chúa Nguyễn Ánh (sau này là vua Gia Long) bị quân Tây Sơn truy đuổi, phải ẩn náu trong rừng sâu, lương thực cạn kiệt. May thay, ông tìm được loại trái cây này mọc hoang, ăn vào vừa ngọt mát, vừa đỡ đói khát, nhờ đó mà qua cơn hoạn nạn. Khi lên ngôi, nhớ ơn loài cây cứu mạng, ông đã đặt tên là Nam Trân và cho khắc hình lên Nhân Đỉnh. Trái bòn bon mọc thành chùm, vỏ vàng, ruột trắng trong, vị chua ngọt thanh tao, là đặc sản tiến vua nổi tiếng.",
+    "historical_context": "Câu chuyện về Nam Trân gắn liền với giai đoạn gian khổ nằm gai nếm mật của vua Gia Long. Việc khắc nó lên đỉnh thể hiện đạo lý 'ăn quả nhớ kẻ trồng cây', không quên những gì đã giúp mình trong lúc khó khăn.",
+    "symbolism": "Bòn bon (Nam Trân) tượng trưng cho lòng trung thành, sự cứu rỗi và may mắn. Chùm quả sum suê cũng biểu thị sự sung túc, đông con nhiều cháu.",
+    "fun_fact": "Dân gian truyền rằng trên vỏ quả bòn bon thường có một dấu móng tay ấn vào, đó là dấu móng tay của chúa Nguyễn Ánh khi xưa bóc vỏ ăn, nên gọi là 'dấu móng tay vua'. Ngày nay, bòn bon Tiên Phước (Quảng Nam) vẫn là thương hiệu nổi tiếng nhất.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Tại sao trái bòn bon được vua ban tên là 'Nam Trân'?",
+        "options": [
+          "A. Vì nó có hình dáng giống viên ngọc",
+          "B. Vì nó từng cứu đói chúa Nguyễn Ánh",
+          "C. Vì nó rất đắt tiền",
+          "D. Vì nó chỉ mọc ở phương Nam"
+        ],
+        "correct_answer": "B. Vì nó từng cứu đói chúa Nguyễn Ánh",
+        "difficulty": 2,
+        "explanation": "Vua Gia Long đặt tên Nam Trân (ngọc quý phương Nam) để tri ân loài quả đã giúp ông cầm cự trong lúc lẩn trốn quân Tây Sơn."
+      },
+      {
+        "type": "true_false",
+        "question": "Bòn bon là loài cây thân leo.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 2,
+        "explanation": "Bòn bon là loài cây thân gỗ, quả mọc thành chùm trên thân và cành, không phải cây thân leo."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_nhan_dinh_05_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/NHÂN%20DỈNH/NAM TRÂN.jpg"
+  },
+  {
+    "id": "urn_nhan_dinh_06",
+    "name_vi": "Liên Hoa",
+    "name_en": "Lotus",
+    "urn_location": "Nhân Đỉnh",
+    "category": "thao_moc",
+    "rarity": "common",
+    "description_short": "Hoa sen - quốc hoa trong tâm thức người Việt, biểu tượng của sự thanh cao.",
+    "description_educational": "Liên Hoa (Hoa sen) là loài hoa gần gũi và thiêng liêng nhất trong văn hóa Việt Nam. 'Gần bùn mà chẳng hôi tanh mùi bùn', hoa sen tượng trưng cho vẻ đẹp thanh khiết, khí phách kiên cường và phẩm chất cao quý của người quân tử, giữ mình trong sạch giữa chốn bụi trần. Trên Nhân Đỉnh, hoa sen được chạm khắc mềm mại, tinh tế. Trong Phật giáo, hoa sen là biểu tượng của sự giác ngộ, thoát khỏi khổ đau luân hồi. Ở Huế, sen mọc khắp các hào nước, hồ tịnh tâm trong Kinh thành, hương sen thơm ngát ướp vào trà, hạt sen làm mứt, nấu chè... Sen hiện diện trong mọi mặt đời sống vật chất và tinh thần của người dân Cố đô.",
+    "historical_context": "Hoa sen xuất hiện dày đặc trong kiến trúc và nghệ thuật triều Nguyễn, từ đài sen dưới chân cột, họa tiết trên long bào đến các công trình như lăng Tự Đức, hồ Tịnh Tâm. Nó phản ánh sự ảnh hưởng sâu sắc của Phật giáo và Nho giáo trong tư tưởng trị nước và tu thân.",
+    "symbolism": "Hoa sen biểu tượng cho sự hoàn hảo, thuần khiết và sự tái sinh (hạt sen già rơi xuống bùn lại mọc thành cây mới). Bông sen nở rộ còn tượng trưng cho quá khứ, hiện tại và tương lai nối tiếp nhau.",
+    "fun_fact": "Tất cả các bộ phận của cây sen đều có ích: hoa để ngắm và ướp trà, hạt (liên nhục) để ăn và làm thuốc an thần, tâm sen (liên tâm) chữa mất ngủ, lá sen gói cốm, ngó sen làm nộm, củ sen hầm canh. Sen thực sự là một loài cây 'toàn năng'.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Câu thơ 'Gần bùn mà chẳng hôi tanh mùi bùn' nói về loài hoa nào?",
+        "options": [
+          "A. Hoa Hồng",
+          "B. Hoa Cúc",
+          "C. Hoa Sen",
+          "D. Hoa Đào"
+        ],
+        "correct_answer": "C. Hoa Sen",
+        "difficulty": 1,
+        "explanation": "Đây là câu thơ nổi tiếng ca ngợi phẩm chất thanh cao, tinh khiết của hoa sen."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Trong Phật giáo, hoa sen tượng trưng cho điều gì?",
+        "options": [
+          "A. Sự giàu sang",
+          "B. Sự giác ngộ và giải thoát",
+          "C. Sức mạnh chiến tranh",
+          "D. Tình yêu đôi lứa"
+        ],
+        "correct_answer": "B. Sự giác ngộ và giải thoát",
+        "difficulty": 2,
+        "explanation": "Hoa sen là biểu tượng của Phật giáo, đại diện cho trí tuệ, sự giác ngộ và sự vươn lên khỏi khổ đau."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_nhan_dinh_06_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/NHÂN%20DỈNH/LIÊN HOA.jpg"
+  },
+  {
+    "id": "urn_nhan_dinh_07",
+    "name_vi": "Khổng Tước",
+    "name_en": "Peacock",
+    "urn_location": "Nhân Đỉnh",
+    "category": "dong_vat",
+    "rarity": "rare",
+    "description_short": "Chim công - loài chim rực rỡ, biểu tượng của văn minh và sự quyền quý.",
+    "description_educational": "Khổng Tước (Chim công) được mệnh danh là nữ hoàng của các loài chim với bộ lông đuôi xòe rộng rực rỡ sắc màu như những con mắt lấp lánh. Trên Nhân Đỉnh, chim công hiện lên với vẻ đẹp kiêu sa, lộng lẫy. Trong văn hóa phương Đông, Khổng Tước là biểu tượng của sự quyền quý, vinh hoa và văn minh (văn nhã). Lông công thường được dùng để cắm vào mũ quan lại cấp cao (lông công hai mắt, một mắt tùy phẩm trật) để thể hiện uy quyền. Chim công còn được cho là hiện thân của Phượng Hoàng trên mặt đất, mang lại may mắn và cát tường.",
+    "historical_context": "Vào thời Nguyễn, việc nuôi chim quý trong vườn ngự uyển là thú vui tao nhã của vua chúa. Chim công không chỉ để ngắm mà lông của nó còn là vật phẩm trang trí quý giá cho nghi trượng và phẩm phục.",
+    "symbolism": "Hoa văn trên đuôi công giống như những đồng tiền cổ nối tiếp nhau, nên công còn tượng trưng cho tài lộc, sự giàu có. Ngoài ra, chim công còn biểu thị cho sự duyên dáng và đức hạnh của người phụ nữ hoàng tộc.",
+    "fun_fact": "Chim công trống mới có bộ đuôi đẹp để múa gọi mái. Khi múa, nó xòe đuôi thành hình quạt lớn, rung rung tạo ra tiếng xào xạc rất vui tai. Người xưa tin rằng lông công có khả năng hút năng lượng dương, điều hòa âm dương nên hay cắm lông công trong nhà.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Lông chim công thường được dùng để làm gì trong triều đình xưa?",
+        "options": [
+          "A. Làm chổi quét nhà",
+          "B. Trang trí mũ quan lại",
+          "C. Làm tên bắn",
+          "D. Làm bút viết"
+        ],
+        "correct_answer": "B. Trang trí mũ quan lại",
+        "difficulty": 1,
+        "explanation": "Lông công được cắm trên mũ của các quan lại để phân biệt phẩm cấp và tăng vẻ uy nghiêm."
+      },
+      {
+        "type": "true_false",
+        "question": "Chỉ có chim công mái mới có bộ đuôi sặc sỡ.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Chim công trống mới là con có bộ đuôi dài và sặc sỡ để thu hút bạn tình."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_nhan_dinh_07_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/NHÂN%20DỈNH/KHỔNG TƯỚC.jpg"
+  },
+  {
+    "id": "urn_nhan_dinh_08",
+    "name_vi": "Nam Hải",
+    "name_en": "South Sea",
+    "urn_location": "Nhân Đỉnh",
+    "category": "dia_ly",
+    "rarity": "epic",
+    "description_short": "Biển Nam - vùng biển trù phú và chiến lược phía Nam của tổ quốc.",
+    "description_educational": "Nam Hải (Biển Nam) chỉ vùng biển phía Nam của nước ta, bao gồm cả vùng biển Hà Tiên, Phú Quốc và Côn Đảo. Đây là vùng biển giàu tài nguyên hải sản, ngọc trai, đồi mồi... và là cửa ngõ giao thương quan trọng với các nước trong khu vực Đông Nam Á (Xiêm, Mã Lai...). Việc khắc Nam Hải lên Nhân Đỉnh (cùng với Đông Hải trên Cao Đỉnh và Tây Hải trên Chương Đỉnh) thể hiện tư duy biển đảo toàn diện của vua Minh Mạng: nước Nam ta có bờ biển dài bao bọc, biển là nguồn sống và cũng là phên dậu bảo vệ đất nước. Khẳng định chủ quyền trên Nam Hải cũng là khẳng định vị thế làm chủ vùng đất Nam Bộ mới khai phá.",
+    "historical_context": "Triều Nguyễn đã thiết lập các đội thủy quân hùng mạnh để tuần tra, kiểm soát và thu thuế trên vùng biển này. Các hải đảo như Phú Quốc, Côn Đảo, Thổ Chu được coi là những tiền đồn quan trọng trấn giữ biên cương biển.",
+    "symbolism": "Nam Hải tượng trưng cho sự giàu có, khoáng đạt và sự mở mang. Biển cả mênh mông cũng đại diện cho tấm lòng bao dung của đấng quân vương (như thụy hiệu 'Nhân' của đỉnh).",
+    "fun_fact": "Vùng biển phía Nam có khí hậu ôn hòa hơn miền Bắc, ít bão lớn, thuận lợi cho nghề cá và giao thương quanh năm. Đây cũng là nơi phát triển các thương cảng sầm uất như Hà Tiên thời Mạc Cửu.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Nam Hải trên Nhân Đỉnh chỉ vùng biển nào?",
+        "options": [
+          "A. Vịnh Bắc Bộ",
+          "B. Biển miền Trung",
+          "C. Vùng biển phía Nam (Hà Tiên, Phú Quốc...)",
+          "D. Biển Hồ"
+        ],
+        "correct_answer": "C. Vùng biển phía Nam (Hà Tiên, Phú Quốc...)",
+        "difficulty": 2,
+        "explanation": "Nam Hải là tên gọi chỉ vùng biển phía Nam của tổ quốc, nơi có nhiều đảo và tài nguyên phong phú."
+      },
+      {
+        "type": "true_false",
+        "question": "Việc khắc các vùng biển lên Cửu Đỉnh là để khẳng định chủ quyền quốc gia.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Đúng",
+        "difficulty": 1,
+        "explanation": "Các hình ảnh biển (Đông Hải, Nam Hải, Tây Hải) trên Cửu Đỉnh là tuyên bố chủ quyền lãnh thổ và lãnh hải rõ ràng của triều Nguyễn."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_nhan_dinh_08_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/NHÂN%20DỈNH/NAM HẢI.jpg"
+  },
+  {
+    "id": "urn_nhan_dinh_09",
+    "name_vi": "Phổ Lợi Hà",
+    "name_en": "Pho Loi River",
+    "urn_location": "Nhân Đỉnh",
+    "category": "dia_ly",
+    "rarity": "rare",
+    "description_short": "Sông Phổ Lợi - công trình thủy lợi nhân tạo mang lại lợi ích rộng khắp.",
+    "description_educational": "Phổ Lợi Hà là một con sông đào nằm ở huyện Phú Vang, Thừa Thiên Huế. Sông được đào vào năm 1835 dưới thời vua Minh Mạng để nối sông Hương với đầm phá Tam Giang, nhằm thoát lũ, ngăn mặn và thuận tiện cho giao thông đường thủy. Tên gọi 'Phổ Lợi' có nghĩa là 'lợi ích rộng khắp' (Phổ: rộng khắp, Lợi: lợi ích), thể hiện mong muốn của nhà vua là công trình này sẽ mang lại ấm no, thuận lợi cho muôn dân trong vùng. Việc khắc con sông đào này lên Nhân Đỉnh ghi nhận thành tựu trị thủy và sự quan tâm đến đời sống dân sinh của triều đình.",
+    "historical_context": "Vua Minh Mạng là người rất chú trọng đến thủy lợi. Ông đã cho đào nhiều con sông lớn nhỏ khắp cả nước. Sông Phổ Lợi không chỉ giúp tưới tiêu cho ruộng đồng mà còn là tuyến đường vận chuyển lúa gạo quan trọng về Kinh thành.",
+    "symbolism": "Sông Phổ Lợi tượng trưng cho trí tuệ và bàn tay cải tạo thiên nhiên của con người để phục vụ cuộc sống. Tên sông cũng là một lời chúc phúc cho nhân dân được hưởng mọi điều tốt đẹp.",
+    "fun_fact": "Dọc hai bờ sông Phổ Lợi ngày nay vẫn còn nhiều làng mạc trù phú, phong cảnh hữu tình. Con sông này là minh chứng cho thấy người xưa đã biết kết hợp hài hòa giữa phát triển kinh tế và bảo vệ môi trường sống.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Tên 'Phổ Lợi' của con sông có ý nghĩa gì?",
+        "options": [
+          "A. Dòng sông lớn",
+          "B. Lợi ích rộng khắp",
+          "C. Dòng sông đẹp",
+          "D. Chiến thắng vĩ đại"
+        ],
+        "correct_answer": "B. Lợi ích rộng khắp",
+        "difficulty": 2,
+        "explanation": "Phổ là rộng khắp, Lợi là lợi ích. Phổ Lợi là mang lại lợi ích cho đông đảo người dân."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Sông Phổ Lợi là sông tự nhiên hay nhân tạo?",
+        "options": [
+          "A. Sông tự nhiên",
+          "B. Sông đào (nhân tạo)",
+          "C. Suối nguồn",
+          "D. Một nhánh của sông Mê Kông"
+        ],
+        "correct_answer": "B. Sông đào (nhân tạo)",
+        "difficulty": 2,
+        "explanation": "Sông Phổ Lợi là công trình thủy lợi do vua Minh Mạng cho đào để phục vụ thoát lũ và giao thông."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_nhan_dinh_09_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/NHÂN%20DỈNH/PHỔ LỢI HÀ.jpg"
+  },
+  {
+    "id": "urn_nhan_dinh_10",
+    "name_vi": "Nguyệt",
+    "name_en": "The Moon",
+    "urn_location": "Nhân Đỉnh",
+    "category": "thien_van",
+    "rarity": "legendary",
+    "description_short": "Mặt trăng - Thái âm, biểu tượng của vẻ đẹp dịu dàng và sự viên mãn.",
+    "description_educational": "Nguyệt (Mặt trăng) là thiên thể đối ứng với Nhật (Mặt trời) trên Cao Đỉnh. Nếu Mặt trời tượng trưng cho vua (Dương) thì Mặt trăng tượng trưng cho hoàng hậu hoặc bề tôi hiền đức (Âm), tạo nên sự cân bằng lưỡng nghi trong vũ trụ. Trên Nhân Đỉnh, mặt trăng được khắc họa tròn đầy, tỏa sáng dịu nhẹ, tượng trưng cho sự viên mãn, hạnh phúc và an lành. Trong văn hóa nông nghiệp, mặt trăng gắn liền với lịch âm, thủy triều và mùa màng. Người xưa ngắm trăng để đoán thời tiết, tính ngày gieo cấy. Ánh trăng còn là nguồn cảm hứng bất tận cho thi ca nhạc họa.",
+    "historical_context": "Vua Minh Mạng là một nhà thơ lớn, ông có rất nhiều bài thơ vịnh trăng (Nguyệt). Việc đặt Mặt trăng lên đỉnh mang thụy hiệu 'Nhân' (vốn mang tính nhu hòa) là sự sắp xếp đầy tinh tế và thâm thúy của người xưa.",
+    "symbolism": "Mặt trăng biểu tượng cho sự tái sinh (tròn rồi khuyết, khuyết rồi tròn), sự bất tử và cõi vĩnh hằng. Nó cũng đại diện cho tính nữ, sự dịu dàng, che chở và nuôi dưỡng.",
+    "fun_fact": "Hình ảnh 'Nhật - Nguyệt' trên hai đỉnh cao nhất (Cao - Nhân) thể hiện mong ước 'Nhật nguyệt trùng minh' (Mặt trời mặt trăng cùng sáng), ám chỉ một thời đại thái bình thịnh trị, vua sáng tôi hiền, âm dương hòa hợp.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Mặt trăng (Nguyệt) trên Nhân Đỉnh đối ứng với hình tượng nào trên Cao Đỉnh?",
+        "options": [
+          "A. Các vì sao",
+          "B. Mặt trời (Nhật)",
+          "C. Mây",
+          "D. Sấm chớp"
+        ],
+        "correct_answer": "B. Mặt trời (Nhật)",
+        "difficulty": 1,
+        "explanation": "Sự đối ứng Nhật (Cao Đỉnh) - Nguyệt (Nhân Đỉnh) thể hiện triết lý cân bằng Âm Dương."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Trong văn hóa, Mặt trăng thường đại diện cho yếu tố nào?",
+        "options": [
+          "A. Dương khí, nóng bức",
+          "B. Âm khí, dịu dàng",
+          "C. Chiến tranh",
+          "D. Sự hủy diệt"
+        ],
+        "correct_answer": "B. Âm khí, dịu dàng",
+        "difficulty": 1,
+        "explanation": "Mặt trăng là Thái âm, đại diện cho tính nữ, sự mát mẻ, dịu dàng và ban đêm."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_nhan_dinh_10_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/NHÂN%20DỈNH/NGUYỆT.jpg"
+  },
+  {
+    "id": "urn_nhan_dinh_11",
+    "name_vi": "Hương Giang",
+    "name_en": "Perfume River",
+    "urn_location": "Nhân Đỉnh",
+    "category": "dia_ly",
+    "rarity": "epic",
+    "description_short": "Sông Hương - dòng sông thơ mộng, linh hồn của xứ Huế và vương triều Nguyễn.",
+    "description_educational": "Hương Giang (Sông Hương) là dòng sông biểu tượng của Huế, chảy uốn lượn qua Kinh thành, lăng tẩm và chùa chiền. Nước sông xanh biếc, êm đềm, được ví như dải lụa mềm mại vắt ngang thành phố. Tên gọi 'Sông Hương' có lẽ bắt nguồn từ hương thơm của các loài thảo mộc (thạch xương bồ) hai bên bờ thượng nguồn hòa vào dòng nước. Sông Hương không chỉ là cảnh quan thiên nhiên tuyệt mỹ mà còn là yếu tố phong thủy quan trọng ('Minh đường' thủy tụ) bảo vệ và nuôi dưỡng mạch khí cho Kinh thành Huế. Việc khắc Sông Hương lên Nhân Đỉnh khẳng định vị trí độc tôn của nó trong trái tim người dân Cố đô.",
+    "historical_context": "Sông Hương đã chứng kiến mọi thăng trầm lịch sử của triều Nguyễn, từ ngày đầu xây dựng kinh thành đến khi triều đại kết thúc. Dòng sông là nguồn cảm hứng cho Nhã nhạc cung đình và Ca Huế trên sông.",
+    "symbolism": "Sông Hương tượng trưng cho vẻ đẹp dịu dàng, sâu lắng và sự chung thủy. Nó là linh hồn của văn hóa Huế, nơi hội tụ tinh hoa đất trời và con người.",
+    "fun_fact": "Sông Hương có hai nguồn chính là Tả Trạch và Hữu Trạch, hợp lưu tại ngã ba Tuần rồi mới chảy về xuôi. Màu nước sông Hương thay đổi theo thời tiết, nhưng đẹp nhất là lúc hoàng hôn, khi mặt nước nhuộm màu tím biếc đặc trưng của Huế.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Sông Hương chảy qua thành phố nào?",
+        "options": [
+          "A. Hà Nội",
+          "B. Đà Nẵng",
+          "C. Huế",
+          "D. Hội An"
+        ],
+        "correct_answer": "C. Huế",
+        "difficulty": 1,
+        "explanation": "Sông Hương là biểu tượng gắn liền với thành phố Huế và quần thể di tích Cố đô."
+      },
+      {
+        "type": "true_false",
+        "question": "Sông Hương được coi là yếu tố 'Minh đường' trong phong thủy Kinh thành Huế.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Đúng",
+        "difficulty": 2,
+        "explanation": "Trong phong thủy, sông Hương đóng vai trò là yếu tố tụ thủy (minh đường) trước mặt Kinh thành, mang lại vượng khí."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_nhan_dinh_11_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/NHÂN%20DỈNH/HƯƠNG GIANG.jpg"
+  },
+  {
+    "id": "urn_nhan_dinh_12",
+    "name_vi": "Ngự Bình Sơn",
+    "name_en": "Ngu Binh Mountain",
+    "urn_location": "Nhân Đỉnh",
+    "category": "dia_ly",
+    "rarity": "epic",
+    "description_short": "Núi Ngự Bình - bức bình phong thiên nhiên che chở cho Kinh thành Huế.",
+    "description_educational": "Ngự Bình Sơn là ngọn núi thấp, dáng cân đối, nằm ở phía trước Kinh thành Huế, đóng vai trò là 'Tiền án' (bức bình phong) trong phong thủy. Vua Gia Long khi chọn vị trí đóng đô đã chọn núi Ngự Bình làm bình phong để che chắn gió độc và tà khí cho Kinh thành. Cùng với sông Hương, núi Ngự Bình tạo nên bộ đôi sơn thủy hữu tình 'Sông Hương - Núi Ngự', biểu tượng vĩnh cửu của xứ Huế. Trên núi trồng nhiều cây thông, quanh năm xanh tốt, dáng vẻ uy nghiêm, tĩnh tại như một người cận vệ trung thành bảo vệ hoàng cung.",
+    "historical_context": "Trước khi có tên Ngự Bình, núi có tên là Hòn Mô. Vua Gia Long thấy dáng núi đẹp, bằng phẳng như cái bàn (Bình) và lại ở vị trí ngự trị phía trước nên đổi tên là Ngự Bình. Các vua Nguyễn thường lên đây vãn cảnh và làm thơ.",
+    "symbolism": "Núi Ngự Bình tượng trưng cho sự vững chãi, bình an và sự bảo vệ che chở. Dáng núi hình thang cân đối (như cái ấn hoặc bức bình phong) biểu thị sự ổn định và quyền uy.",
+    "fun_fact": "Vào những ngày trời quang, đứng từ Lầu Ngũ Phụng (Ngọ Môn) nhìn ra xa sẽ thấy núi Ngự Bình nằm ngay chính giữa tầm mắt, tạo nên một trục thần đạo thẳng tắp từ Kinh thành ra thiên nhiên. Điều này cho thấy quy hoạch kiến trúc của Huế cực kỳ khoa học và nghệ thuật.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Trong phong thủy Kinh thành Huế, núi Ngự Bình đóng vai trò gì?",
+        "options": [
+          "A. Hậu chẩm (gối đầu)",
+          "B. Tiền án (bình phong)",
+          "C. Tả thanh long",
+          "D. Hữu bạch hổ"
+        ],
+        "correct_answer": "B. Tiền án (bình phong)",
+        "difficulty": 2,
+        "explanation": "Núi Ngự Bình là bức bình phong tự nhiên che chắn phía trước Kinh thành."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Cặp địa danh nào là biểu tượng của Huế?",
+        "options": [
+          "A. Hồ Gươm - Tháp Rùa",
+          "B. Sông Hương - Núi Ngự",
+          "C. Chợ Bến Thành - Sông Sài Gòn",
+          "D. Vịnh Hạ Long - Hòn Trống Mái"
+        ],
+        "correct_answer": "B. Sông Hương - Núi Ngự",
+        "difficulty": 1,
+        "explanation": "Sông Hương và Núi Ngự là hai danh thắng không thể tách rời khi nhắc đến Huế."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_nhan_dinh_12_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/NHÂN%20DỈNH/NGỰ BÌNH SƠN.jpg"
+  },
+  {
+    "id": "urn_nhan_dinh_13",
+    "name_vi": "Nhân Ngư",
+    "name_en": "Dugong (Sea Cow)",
+    "urn_location": "Nhân Đỉnh",
+    "category": "dong_vat",
+    "rarity": "rare",
+    "description_short": "Cá Nhân Ngư (Bò biển) - sinh vật biển kỳ lạ, hiền lành, gợi liên tưởng đến nàng tiên cá.",
+    "description_educational": "Nhân Ngư (Cá người) tên khoa học là Dugong, dân gian thường gọi là Bò biển hay Cá Cui. Đây là loài thú biển ăn cỏ, hình dáng to lớn, bơi lội chậm chạp và rất hiền lành. Sở dĩ gọi là 'Nhân Ngư' vì chúng có vú ở ngực và khi cho con bú thường nổi đầu lên mặt nước, dùng vây ôm con giống như người mẹ bế con, khiến các thủy thủ xưa nhìn nhầm thành 'người cá'. Việc khắc loài vật này lên Nhân Đỉnh cho thấy sự hiểu biết phong phú về sinh vật biển của người Việt và lòng trân trọng đối với một loài vật hiền lành, có tình mẫu tử thiêng liêng. Đây cũng là loài vật quý hiếm cần được bảo vệ.",
+    "historical_context": "Vùng biển Kiên Giang, Phú Quốc của Việt Nam xưa kia có rất nhiều Bò biển sinh sống. Người dân chài tôn trọng chúng vì tin rằng chúng là loài vật linh thiêng, giúp báo hiệu bão tố.",
+    "symbolism": "Nhân Ngư tượng trưng cho tình mẫu tử, sự hiền hòa và bí ẩn của đại dương. Trong một số truyền thuyết, nước mắt của nhân ngư (ngọc trai) được coi là báu vật.",
+    "fun_fact": "Dugong là nguyên mẫu của các truyền thuyết về 'Nàng tiên cá' ở phương Tây. Chúng là loài động vật biển duy nhất ăn thực vật (cỏ biển). Hiện nay, Dugong đang nằm trong sách đỏ có nguy cơ tuyệt chủng cao.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Nhân Ngư (Cá người) thực chất là loài động vật nào?",
+        "options": [
+          "A. Cá mập",
+          "B. Cá voi xanh",
+          "C. Bò biển (Dugong)",
+          "D. Hải cẩu"
+        ],
+        "correct_answer": "C. Bò biển (Dugong)",
+        "difficulty": 2,
+        "explanation": "Nhân Ngư là tên gọi cổ của loài Bò biển (Dugong) do dáng vẻ khi cho con bú giống người."
+      },
+      {
+        "type": "true_false",
+        "question": "Nhân Ngư là loài động vật ăn thịt hung dữ.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Nhân Ngư (Bò biển) là loài ăn thực vật (cỏ biển) và rất hiền lành."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_nhan_dinh_13_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/NHÂN%20DỈNH/NHÂN NGƯ.jpg"
+  },
+  {
+    "id": "urn_nhan_dinh_14",
+    "name_vi": "Cửu",
+    "name_en": "Chinese Chives",
+    "urn_location": "Nhân Đỉnh",
+    "category": "thao_moc",
+    "rarity": "common",
+    "description_short": "Rau hẹ - loài rau gia vị bình dị, biểu tượng của sự trường cửu và sức sống bền bỉ.",
+    "description_educational": "Chữ 'Cửu' (韭) ở đây là rau hẹ, một loại rau gia vị phổ biến, cùng họ với hành tỏi. Hẹ dễ trồng, cắt xong lại mọc, sinh sôi nảy nở không ngừng nên tượng trưng cho sự trường tồn, vĩnh cửu (đồng âm với chữ Cửu - chín, lâu dài). Trong đông y, hẹ có tính ấm, tác dụng bổ dương, chữa ho, cảm cúm rất tốt. Việc khắc rau hẹ lên Nhân Đỉnh thể hiện sự quan tâm đến sức khỏe và đời sống thường nhật của nhân dân. Món canh hẹ đậu phụ hay hẹ xào giá đỗ là những món ăn dân dã nhưng đậm đà hương vị quê hương.",
+    "historical_context": "Rau hẹ đã gắn bó với người Việt từ ngàn xưa. Trong các mâm cúng tổ tiên ngày Tết ở một số vùng, không thể thiếu đĩa rau hẹ cuốn bánh tráng, thể hiện mong ước con cháu đông đúc, dòng họ trường tồn.",
+    "symbolism": "Rau hẹ (Cửu) tượng trưng cho sự lâu dài, bền vững (trường cửu). Nó cũng đại diện cho sức sống mãnh liệt, 'cắt lại mọc', khó bị tiêu diệt.",
+    "fun_fact": "Người xưa có câu 'Tháng giêng ăn hẹ, tháng tám ăn hành' để chỉ mùa nào thức nấy tốt cho sức khỏe. Hoa hẹ màu trắng, mọc thành chùm nhỏ cũng rất đẹp và có thể ăn được, xào với gan lợn hay tôm rất ngon.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Rau hẹ (Cửu) có ý nghĩa biểu tượng gì nhờ đồng âm?",
+        "options": [
+          "A. Sự giàu sang",
+          "B. Sự trường cửu, lâu dài",
+          "C. Sự thông minh",
+          "D. Sự dũng cảm"
+        ],
+        "correct_answer": "B. Sự trường cửu, lâu dài",
+        "difficulty": 2,
+        "explanation": "Chữ Cửu (rau hẹ) đồng âm với Cửu (số 9, lâu dài), nên tượng trưng cho sự bền vững."
+      },
+      {
+        "type": "true_false",
+        "question": "Rau hẹ là một vị thuốc trong đông y.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Đúng",
+        "difficulty": 1,
+        "explanation": "Đúng, hẹ có tính ấm, được dùng để chữa ho, cảm lạnh và bổ thận dương."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_nhan_dinh_14_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/NHÂN%20DỈNH/CỬU.jpg"
+  },
+  {
+    "id": "urn_nhan_dinh_15",
+    "name_vi": "Lâu Thuyền",
+    "name_en": "Tower Ship",
+    "urn_location": "Nhân Đỉnh",
+    "category": "giao_thuong",
+    "rarity": "rare",
+    "description_short": "Lâu thuyền - chiến hạm lầu cao, pháo đài nổi uy nghi trên sông nước.",
+    "description_educational": "Lâu Thuyền là loại thuyền chiến lớn, có dựng lầu cao ở trên để tướng chỉ huy quan sát và binh lính bắn tên hoặc súng xuống đối phương. Đây được coi là 'pháo đài nổi' của thủy quân thời xưa. Trên Nhân Đỉnh, Lâu Thuyền được chạm khắc chi tiết với cấu trúc tầng lầu vững chãi, thể hiện sức mạnh và kỹ thuật đóng tàu điêu luyện của triều Nguyễn. Loại thuyền này thường được dùng trong các cuộc diễu binh, nghênh đón sứ thần hoặc các trận thủy chiến lớn trên sông, thể hiện uy thế áp đảo của triều đình.",
+    "historical_context": "Vua Minh Mạng rất tự hào về thủy quân của mình. Ông đã cho đóng nhiều loại thuyền lớn, trong đó có Lâu Thuyền, trang bị đại bác để tăng cường khả năng phòng thủ bờ biển và sông ngòi. Sự hiện diện của Lâu Thuyền trên đỉnh là lời khẳng định về sức mạnh quân sự trên sông nước.",
+    "symbolism": "Lâu Thuyền tượng trưng cho uy quyền, sự chỉ huy sáng suốt và thế thượng phong. Nó cũng là biểu tượng của sự tráng lệ và quy mô của quân đội hoàng gia.",
+    "fun_fact": "Lâu Thuyền tuy to lớn, uy nghi nhưng di chuyển khá chậm chạp, chủ yếu dựa vào sức chèo của nhiều binh lính. Do đó, nó thường đi cùng các thuyền nhỏ linh hoạt (như Mông Đồng) để hộ vệ.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Lâu Thuyền là loại thuyền gì?",
+        "options": [
+          "A. Thuyền đánh cá nhỏ",
+          "B. Thuyền chiến có lầu cao",
+          "C. Bè tre",
+          "D. Thuyền độc mộc"
+        ],
+        "correct_answer": "B. Thuyền chiến có lầu cao",
+        "difficulty": 1,
+        "explanation": "Lâu Thuyền là thuyền lớn có dựng lầu (lâu) để quan sát và chỉ huy chiến đấu."
+      },
+      {
+        "type": "true_false",
+        "question": "Lâu Thuyền di chuyển rất nhanh nhờ buồm lớn.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 2,
+        "explanation": "Sai. Lâu Thuyền to nặng, di chuyển thường chậm chạp, chủ yếu dùng trong chỉ huy hoặc phòng thủ."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_nhan_dinh_15_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/NHÂN%20DỈNH/LÂU THUYỀN.jpg"
+  },
+  {
+    "id": "urn_nhan_dinh_16",
+    "name_vi": "Luân Xa Pháo",
+    "name_en": "Cannon on Wheels",
+    "urn_location": "Nhân Đỉnh",
+    "category": "vo_bi",
+    "rarity": "uncommon",
+    "description_short": "Pháo xa - súng thần công đặt trên bánh xe, vũ khí cơ động hiện đại.",
+    "description_educational": "Luân Xa Pháo là loại súng đại bác được đặt trên giá súng có bánh xe (luân xa) để dễ dàng di chuyển. Khác với súng thần công cố định trên thành lũy, Luân Xa Pháo có tính cơ động cao, có thể kéo theo đội hình hành quân để chi viện hỏa lực trên chiến trường. Việc khắc loại vũ khí này lên Nhân Đỉnh cho thấy sự tiến bộ trong tư duy quân sự của triều Nguyễn: không chỉ chú trọng hỏa lực mạnh mà còn quan tâm đến tính linh hoạt, cơ động. Đây là minh chứng cho nỗ lực hiện đại hóa quân đội, tiếp thu kỹ thuật phương Tây thời bấy giờ.",
+    "historical_context": "Thời Minh Mạng, kỹ thuật chế tạo súng đạn của Việt Nam đã đạt trình độ cao. Các xưởng đúc súng (Súng xưởng) hoạt động nhộn nhịp. Luân Xa Pháo là một trong những thành tựu đó, giúp tăng cường đáng kể sức chiến đấu của bộ binh.",
+    "symbolism": "Luân Xa Pháo tượng trưng cho sức mạnh tấn công, sự linh hoạt và khả năng làm chủ chiến trường. Bánh xe (Luân) còn gợi ý về sự chuyển động không ngừng, sự tiến lên phía trước.",
+    "fun_fact": "Để kéo được những khẩu pháo này, người xưa thường dùng sức ngựa hoặc sức voi, đôi khi là sức lính. Việc chế tạo bánh xe chịu lực cho pháo cũng đòi hỏi kỹ thuật mộc và rèn sắt rất cao.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Điểm đặc biệt của Luân Xa Pháo so với thần công thường là gì?",
+        "options": [
+          "A. Bắn ra lửa",
+          "B. Có bánh xe để di chuyển",
+          "C. Làm bằng vàng",
+          "D. Chỉ dùng để trưng bày"
+        ],
+        "correct_answer": "B. Có bánh xe để di chuyển",
+        "difficulty": 1,
+        "explanation": "Luân Xa là xe có bánh, giúp pháo cơ động trên chiến trường."
+      },
+      {
+        "type": "true_false",
+        "question": "Luân Xa Pháo là vũ khí cố định, chỉ đặt trên thành.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Sai",
+        "difficulty": 1,
+        "explanation": "Sai. Ưu điểm chính của nó là khả năng di chuyển (cơ động) nhờ bánh xe."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_nhan_dinh_16_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/NHÂN%20DỈNH/LUÂN XA PHÁO.jpg"
+  },
+  {
+    "id": "urn_nhan_dinh_17",
+    "name_vi": "Báo",
+    "name_en": "Leopard",
+    "urn_location": "Nhân Đỉnh",
+    "category": "dong_vat",
+    "rarity": "epic",
+    "description_short": "Con báo - mãnh thú rừng xanh, biểu tượng của sự uyển chuyển và dũng mãnh.",
+    "description_educational": "Báo là loài mãnh thú thuộc họ Mèo, nổi tiếng với tốc độ, sự dẻo dai và khả năng leo trèo, săn mồi điêu luyện. Nếu Hổ là chúa sơn lâm sức mạnh vô song, thì Báo là sát thủ rừng xanh với sự khéo léo và tốc độ kinh hoàng. Hình ảnh con báo đốm khắc trên Nhân Đỉnh với dáng vẻ uyển chuyển, cơ bắp săn chắc, thể hiện vẻ đẹp hoang dã và sức sống mãnh liệt. Trong quân sự, da báo thường được dùng làm yên ngựa, bao kiếm cho các tướng lĩnh, tượng trưng cho sự oai phong lẫm liệt ('Báo thao' - lược thao của loài báo).",
+    "historical_context": "Rừng núi Việt Nam xưa kia có nhiều báo (báo hoa mai, báo gấm). Chúng vừa là nỗi khiếp sợ vừa là đối tượng săn bắn để lấy da lông quý. Việc khắc Báo lên đỉnh thể hiện sự tôn trọng sức mạnh tự nhiên và làm phong phú thêm bộ sưu tập động vật trên Cửu Đỉnh.",
+    "symbolism": "Con báo tượng trưng cho sự dũng cảm, mưu trí và tốc độ. Trong văn hóa, 'Quân tử biến như báo' (Người quân tử thay đổi nhanh chóng, rõ rệt như văn hoa của da báo) để chỉ sự đổi mới, tiến bộ không ngừng.",
+    "fun_fact": "Báo hoa mai có thể kéo con mồi nặng hơn cơ thể mình lên cây để tránh bị các loài thú khác cướp mất. Đây là loài vật có khả năng thích nghi rất tốt với nhiều môi trường sống.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Trong tự nhiên, con báo nổi tiếng nhất về khả năng gì?",
+        "options": [
+          "A. Bơi lội",
+          "B. Tốc độ và leo trèo",
+          "C. Đào hang",
+          "D. Bay lượn"
+        ],
+        "correct_answer": "B. Tốc độ và leo trèo",
+        "difficulty": 1,
+        "explanation": "Báo là loài chạy rất nhanh và leo cây rất giỏi."
+      },
+      {
+        "type": "multiple_choice",
+        "question": "Thành ngữ 'Quân tử biến như báo' có ý nghĩa gì?",
+        "options": [
+          "A. Người quân tử hung dữ như báo",
+          "B. Người quân tử thay đổi tốt đẹp, rõ rệt",
+          "C. Người quân tử chạy nhanh như báo",
+          "D. Người quân tử thích mặc áo da báo"
+        ],
+        "correct_answer": "B. Người quân tử thay đổi tốt đẹp, rõ rệt",
+        "difficulty": 3,
+        "explanation": "Câu này ý nói người quân tử khi sửa mình thì thay đổi rõ rệt, rực rỡ như hoa văn trên da báo mới thay lông."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_nhan_dinh_17_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/NHÂN%20DỈNH/BÁO.jpg"
+  },
+  {
+    "id": "urn_nhan_dinh_18",
+    "name_vi": "Đại Mạo",
+    "name_en": "Hawksbill Turtle",
+    "urn_location": "Nhân Đỉnh",
+    "category": "dong_vat",
+    "rarity": "rare",
+    "description_short": "Đồi mồi - loài rùa biển có mai tuyệt đẹp, báu vật của đại dương.",
+    "description_educational": "Đại Mạo là tên gọi của con Đồi mồi (Eretmochelys imbricata), một loài rùa biển quý hiếm. Điểm đặc biệt nhất của Đồi mồi là bộ mai có hoa văn vân vảy màu vàng nâu hổ phách cực kỳ đẹp mắt và trong suốt. Mai đồi mồi (người xưa gọi là vảy đồi mồi) là nguyên liệu quý giá để chế tác đồ mỹ nghệ như lược, trâm cài tóc, gọng kính, hộp đựng... dành cho vua chúa và giới quý tộc. Hình ảnh Đại Mạo trên Nhân Đỉnh bơi lội tung tăng trong sóng nước không chỉ tôn vinh vẻ đẹp của loài vật này mà còn khẳng định sự phong phú của tài nguyên biển Việt Nam.",
+    "historical_context": "Đồi mồi từng là sản phẩm cống nạp quan trọng và là hàng hóa xuất khẩu có giá trị cao của Việt Nam sang Trung Quốc và phương Tây. Tuy nhiên, vì vẻ đẹp của bộ mai, chúng đã bị săn bắt quá mức.",
+    "symbolism": "Đồi mồi (Đại Mạo) tượng trưng cho sự sang trọng, quý phái và trường thọ (giống như loài rùa nói chung). Nó cũng là biểu tượng của may mắn và sự bảo vệ (mai cứng).",
+    "fun_fact": "Mai đồi mồi là loại vật liệu dẻo khi gia nhiệt, có thể uốn cong thành nhiều hình dạng phức tạp. Tuy nhiên, ngày nay việc buôn bán các sản phẩm từ đồi mồi bị cấm trên toàn thế giới để bảo vệ loài vật này khỏi tuyệt chủng.",
+    "is_ai_generated": true,
+    "quiz_questions": [
+      {
+        "type": "multiple_choice",
+        "question": "Đại Mạo là tên gọi khác của con vật nào?",
+        "options": [
+          "A. Con Ba ba",
+          "B. Con Đồi mồi",
+          "C. Con Cua huỳnh đế",
+          "D. Con Cá ngựa"
+        ],
+        "correct_answer": "B. Con Đồi mồi",
+        "difficulty": 1,
+        "explanation": "Đại Mạo là tên Hán Việt của loài rùa biển Đồi mồi."
+      },
+      {
+        "type": "true_false",
+        "question": "Mai đồi mồi xưa kia thường được dùng để làm đồ trang sức, mỹ nghệ.",
+        "options": [
+          "Đúng",
+          "Sai"
+        ],
+        "correct_answer": "Đúng",
+        "difficulty": 1,
+        "explanation": "Đúng, mai đồi mồi có vân đẹp, được chế tác thành lược, trâm, hộp... rất quý giá."
+      }
+    ],
+    "3d_mesh_id": "mesh_urn_nhan_dinh_18_v1",
+    "thumbnail_url": "/assets/ban-duc-noi/NHÂN%20DỈNH/ĐẠI MẠO.jpg"
+  }
+]

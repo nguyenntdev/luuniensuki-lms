@@ -1,0 +1,21 @@
+{
+  "tooltips": {
+    "progressStepper": {
+      "discovered": "Bạn đã tìm thấy họa tiết này. Hãy bắt đầu tìm hiểu!",
+      "learned": "Bạn đã hoàn thành bài học và nắm vững kiến thức cơ bản.",
+      "mastered": "Xuất sắc! Bạn đã vượt qua bài kiểm tra và làm chủ kiến thức về họa tiết này."
+    },
+    "navigation": {
+      "explore": "Khám phá không gian ảo và tìm kiếm các họa tiết độc đáo tại các địa điểm lịch sử.",
+      "collection": "Thư viện lưu trữ tất cả các họa tiết và cổ vật mà bạn đã sưu tầm được.",
+      "achievements": "Theo dõi các huy hiệu đã đạt được và xem thứ hạng của bạn trên bảng xếp hạng.",
+      "profile": "Quản lý thông tin cá nhân, cài đặt tài khoản và xem tổng quan tiến độ học tập."
+    },
+    "sidebarTabs": {
+      "overview": "Giới thiệu chung về nguồn gốc, ý nghĩa và bối cảnh lịch sử của họa tiết.",
+      "lesson": "Nội dung bài học chi tiết. Hãy hoàn thành phần này để mở khóa bài kiểm tra.",
+      "quiz": "Bài kiểm tra đánh giá kiến thức. Tính năng này sẽ mở khóa sau khi bạn hoàn thành bài học."
+    }
+  }
+}
+

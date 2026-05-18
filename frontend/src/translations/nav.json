@@ -1,0 +1,43 @@
+{
+  "vi": {
+    "nav": {
+      "explore": "Khám Phá",
+      "collection": "Bộ Sưu Tập",
+      "achievements": "Thành Tích",
+      "profile": "Hồ Sơ"
+    },
+    "tabs": {
+      "badges": "Huy Hiệu",
+      "leaderboard": "Bảng Xếp Hạng"
+    },
+    "empty": {
+      "badges": "Bạn chưa có huy hiệu nào. Khám phá họa tiết để nhận huy hiệu đầu tiên!",
+      "leaderboard": "Chưa có dữ liệu bảng xếp hạng."
+    },
+    "loading": {
+      "badges": "Đang tải huy hiệu...",
+      "leaderboard": "Đang tải bảng xếp hạng..."
+    }
+  },
+  "en": {
+    "nav": {
+      "explore": "Explore",
+      "collection": "My Collection",
+      "achievements": "Achievements",
+      "profile": "Profile"
+    },
+    "tabs": {
+      "badges": "Badges",
+      "leaderboard": "Leaderboard"
+    },
+    "empty": {
+      "badges": "You don't have any badges yet. Discover motifs to earn your first badge!",
+      "leaderboard": "No leaderboard data available."
+    },
+    "loading": {
+      "badges": "Loading badges...",
+      "leaderboard": "Loading leaderboard..."
+    }
+  }
+}
+

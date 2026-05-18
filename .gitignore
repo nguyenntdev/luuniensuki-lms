@@ -1,0 +1,77 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Secrets / env (NEVER commit)
+.env
+.env.*
+!.env.example
+
+certbot/
+
+frontend/.next/
+frontend/node_modules/
+node_modules/
+.venv311/
+
+# macOS
+.DS_Store
+
+# Build artifacts
+builds/*.apk
+!builds/README.md
+
+# Test files
+test_screenshots/
+screenshots/
+test-results/
+playwright-report/
+
+# React Native project (if not primary)
+luuniensuki-mobile-rn/
+
+# AI chat session logs
+[0-9][0-9][0-9][0-9][0-9][0-9]
+aug-*
+codex-*
+.gitnexus
+
+# Rust build artifacts
+target/
+backend-rust/target/
+**/*.rs.bk
+
+# Backups (large tarballs / SQL dumps)
+backups/
+*.tar.gz
+*.tar.bz2
+*.zip
+*.sql.gz
+
+# Runtime user uploads
+uploads/
+
+# Secrets / keystores
+*.jks
+*.keystore
+*.pem
+*.key
+*.crt
+release-keystore.jks
+
+# Logs
+*.log
+logs/
+
+# Python virtual envs (extra)
+venv/
+.venv/
+
+# Editor / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+Thumbs.db

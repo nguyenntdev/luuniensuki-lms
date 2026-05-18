@@ -1,0 +1,131 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - navigation [ref=e5]:
+      - generic [ref=e6]:
+        - link "Lưu Niên Sử Kí" [ref=e7] [cursor=pointer]:
+          - /url: /
+        - generic [ref=e8]:
+          - link "Khám Phá" [ref=e9] [cursor=pointer]:
+            - /url: /explore
+            - generic [ref=e10]:
+              - img [ref=e11]
+              - generic [ref=e14]: Khám Phá
+          - link "Ôn Tập" [ref=e15] [cursor=pointer]:
+            - /url: /practice
+            - generic [ref=e16]:
+              - img [ref=e17]
+              - generic [ref=e26]: Ôn Tập
+          - link "Bộ Sưu Tập" [ref=e27] [cursor=pointer]:
+            - /url: /collection
+            - generic [ref=e28]:
+              - img [ref=e29]
+              - generic [ref=e32]: Bộ Sưu Tập
+        - generic [ref=e33]:
+          - button "Menu" [ref=e35] [cursor=pointer]:
+            - img [ref=e36]
+            - generic [ref=e40]: Menu
+            - img [ref=e41]
+          - button "L Live Demo Teacher" [ref=e44] [cursor=pointer]:
+            - generic [ref=e46]: L
+            - generic [ref=e47]: Live Demo Teacher
+            - img [ref=e48]
+          - button "vi" [ref=e51] [cursor=pointer]:
+            - img [ref=e52]
+            - generic [ref=e56]: vi
+            - img [ref=e57]
+          - link "Tiếp Tục Học" [ref=e59] [cursor=pointer]:
+            - /url: /dashboard
+            - button "Tiếp Tục Học" [ref=e60]
+    - main [ref=e61]:
+      - generic [ref=e63]:
+        - heading "Admin Studio" [level=1] [ref=e64]
+        - paragraph [ref=e65]: CMS nội dung, lớp học, AI/RAG và KPI giữ chân người học.
+      - generic [ref=e67]:
+        - button "Tổng quan" [ref=e68] [cursor=pointer]:
+          - img [ref=e69]
+          - generic [ref=e74]: Tổng quan
+        - button "CMS" [ref=e75] [cursor=pointer]:
+          - img [ref=e76]
+          - generic [ref=e79]: CMS
+        - button "Lớp học" [ref=e80] [cursor=pointer]:
+          - img [ref=e81]
+          - generic [ref=e86]: Lớp học
+        - button "RAG" [ref=e87] [cursor=pointer]:
+          - img [ref=e88]
+          - generic [ref=e92]: RAG
+        - button "AI Studio" [ref=e93] [cursor=pointer]:
+          - img [ref=e94]
+          - generic [ref=e99]: AI Studio
+      - generic [ref=e100]:
+        - generic [ref=e101]:
+          - heading "Lớp học" [level=2] [ref=e193]
+          - paragraph [ref=e194]: Tạo lớp mới và chọn lớp để quản lý.
+          - generic [ref=e110]:
+            - textbox "Tên lớp" [ref=e195]
+            - textbox "Mô tả lớp" [ref=e196]
+            - button "Tạo lớp" [ref=e197] [cursor=pointer]
+          - button "AI Teacher 3D Demo Class 0 học viên · 0 bài tập" [active] [ref=e198] [cursor=pointer]:
+            - generic [ref=e199]: AI Teacher 3D Demo Class
+            - generic [ref=e200]: 0 học viên · 0 bài tập
+        - generic [ref=e118]:
+          - heading "Quản lý lớp" [level=2] [ref=e201]
+          - generic [ref=e202]:
+            - generic [ref=e203]:
+              - generic [ref=e204]: Tiến độ lớp
+              - generic [ref=e205]: 0%
+              - generic [ref=e207]: 0 học viên · 0 bài tập
+            - generic [ref=e208]:
+              - heading "Thành viên" [level=3] [ref=e209]
+              - generic [ref=e210]:
+                - textbox "Email học viên" [ref=e211]
+                - button "Thêm" [ref=e212] [cursor=pointer]
+              - generic [ref=e214]: Chưa có học viên.
+            - generic [ref=e215]:
+              - heading "Giao quest" [level=3] [ref=e216]
+              - generic [ref=e217]:
+                - combobox [ref=e218]:
+                  - option "Chọn quest" [selected]
+                  - option "Khởi Đầu Hành Trình"
+                  - option "Linh Thú & Động Vật"
+                  - option "Đất & Mùa Màng"
+                  - option "Linh Thú Huyền Bí"
+                  - option "Thế Giới Động Vật"
+                  - option "Sơn Hà Xã Tắc"
+                  - option "Thảo Mộc Thiên Nhiên"
+                  - option "Võ Bị & Quân Sự"
+                  - option "Thiên Văn & Vũ Trụ"
+                  - option "Kiến Trúc Cổ"
+                  - option "Giao Thương & Buôn Bán"
+                  - option "Khám Phá Cao Đỉnh"
+                  - option "Khám Phá Nhân Đỉnh"
+                  - option "Khám Phá Chương Đỉnh"
+                  - option "Khám Phá Anh Đỉnh"
+                  - option "Khám Phá Nghị Đỉnh"
+                  - option "Khám Phá Thuần Đỉnh"
+                  - option "Khám Phá Tuyên Đỉnh"
+                  - option "Khám Phá Dụ Đỉnh"
+                  - option "Khám Phá Huyền Đỉnh"
+                  - option "Thử Thách Cửu Đỉnh"
+                  - option "Nhà Sưu Tầm Vĩ Đại"
+                  - option "Học Giả Cửu Đỉnh"
+                  - option "Speed Runner"
+                  - option "Người Khám Phá"
+                  - option "Học Sinh Chăm Chỉ"
+                - textbox [ref=e219]
+                - button "Giao" [ref=e220] [cursor=pointer]
+              - generic [ref=e222]: Chưa có bài tập.
+            - generic [ref=e223]:
+              - heading "Phong hoc live" [level=3] [ref=e224]
+              - generic [ref=e225]:
+                - textbox "Tieu de buoi hoc live" [ref=e226]
+                - textbox [ref=e227]
+                - button "Tao live" [ref=e228] [cursor=pointer]
+              - generic [ref=e230]:
+                - generic [ref=e231]:
+                  - generic [ref=e232]: AI Teacher 3D Live Session
+                  - generic [ref=e233]: live · 2 participant
+                - link "Vao phong" [ref=e234] [cursor=pointer]:
+                  - /url: /live/e4ebd3d9-7384-4e3d-92ab-13ea9e5065d7
+                - link "Dashboard" [ref=e235] [cursor=pointer]:
+                  - /url: /live/e4ebd3d9-7384-4e3d-92ab-13ea9e5065d7/dashboard
+  - alert [ref=e4]

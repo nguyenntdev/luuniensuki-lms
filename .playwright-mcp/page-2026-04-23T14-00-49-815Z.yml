@@ -1,0 +1,126 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - navigation [ref=e4]:
+      - generic [ref=e5]:
+        - link "Lưu Niên Sử Kí" [ref=e6] [cursor=pointer]:
+          - /url: /
+        - generic [ref=e7]:
+          - link "Khám Phá" [ref=e8] [cursor=pointer]:
+            - /url: /explore
+            - generic [ref=e9]:
+              - img [ref=e10]
+              - generic [ref=e13]: Khám Phá
+          - link "Ôn Tập" [ref=e14] [cursor=pointer]:
+            - /url: /practice
+            - generic [ref=e15]:
+              - img [ref=e16]
+              - generic [ref=e25]: Ôn Tập
+          - link "Bộ Sưu Tập" [ref=e26] [cursor=pointer]:
+            - /url: /collection
+            - generic [ref=e27]:
+              - img [ref=e28]
+              - generic [ref=e31]: Bộ Sưu Tập
+        - generic [ref=e32]:
+          - button "Menu" [ref=e34] [cursor=pointer]:
+            - img [ref=e35]
+            - generic [ref=e39]: Menu
+            - img [ref=e40]
+          - button "L Live Demo Teacher" [ref=e43] [cursor=pointer]:
+            - generic [ref=e45]: L
+            - generic [ref=e46]: Live Demo Teacher
+            - img [ref=e47]
+          - button "vi" [ref=e50] [cursor=pointer]:
+            - img [ref=e51]
+            - generic [ref=e55]: vi
+            - img [ref=e56]
+          - link "Tiếp Tục Học" [ref=e58] [cursor=pointer]:
+            - /url: /dashboard
+            - button "Tiếp Tục Học" [ref=e59]
+    - main [ref=e60]:
+      - generic [ref=e62]:
+        - generic [ref=e63]:
+          - generic [ref=e64]:
+            - generic [ref=e65]: Phòng học live 3D
+            - paragraph [ref=e66]: "Mã phiên: e4ebd3d9-7384-4e3d-92ab-13ea9e5065d7"
+          - generic [ref=e67]:
+            - generic [ref=e68]: Đang chờ
+            - generic [ref=e69]: "Chất lượng: Chưa rõ"
+            - generic [ref=e70]: "Vai trò: Học viên"
+            - link "Bảng điều khiển phiên" [ref=e71] [cursor=pointer]:
+              - /url: /live/e4ebd3d9-7384-4e3d-92ab-13ea9e5065d7/dashboard
+            - link "Về trang quản trị" [ref=e72] [cursor=pointer]:
+              - /url: /dashboard
+        - generic [ref=e73]:
+          - generic [ref=e74]: "Số lần kết nối lại: 0"
+          - generic [ref=e75]: "Người tham gia: 0"
+      - generic [ref=e76]:
+        - generic [ref=e77]:
+          - generic [ref=e80]: Chưa có người tham gia có video.
+          - generic [ref=e82]:
+            - button "Mic tắt" [disabled]:
+              - img
+              - text: Mic tắt
+            - button "Camera tắt" [disabled]:
+              - img
+              - text: Camera tắt
+            - button "Giơ tay" [disabled]:
+              - img
+              - text: Giơ tay
+            - button "Đang kết nối lại..." [disabled]:
+              - img
+              - text: Đang kết nối lại...
+            - button "Rời phòng" [disabled]:
+              - img
+              - text: Rời phòng
+        - complementary [ref=e83]:
+          - generic [ref=e84]:
+            - generic [ref=e85]:
+              - heading "Nhiệm vụ vi mô di sản 3D" [level=2] [ref=e86]
+              - img [ref=e87]
+            - generic [ref=e97]:
+              - button "Đỉnh" [ref=e98] [cursor=pointer]
+              - button "Họa tiết" [ref=e99] [cursor=pointer]
+              - button "Chữ khắc" [ref=e100] [cursor=pointer]
+              - button "Chân đế" [ref=e101] [cursor=pointer]
+          - generic [ref=e102]:
+            - generic [ref=e103]:
+              - heading "Giọng nói AI (STT/TTS)" [level=3] [ref=e104]
+              - img [ref=e105]
+            - generic [ref=e109]: "Chế độ giọng nói: backend ưu tiên"
+            - generic [ref=e110]:
+              - generic [ref=e111]:
+                - button "Bắt đầu nói" [disabled]:
+                  - img
+                  - text: Bắt đầu nói
+                - button "Nhấn giữ để nói" [disabled]
+              - generic [ref=e112]:
+                - 'button "Từ khóa kích hoạt: BẬT" [ref=e113] [cursor=pointer]'
+                - 'button "Tự đọc: BẬT" [ref=e114] [cursor=pointer]':
+                  - img
+                  - text: "Tự đọc: BẬT"
+              - list [ref=e115]:
+                - listitem [ref=e116]: Biên bản giọng nói sẽ hiển thị ở đây.
+          - generic [ref=e117]:
+            - generic [ref=e118]:
+              - button "Trò chuyện AI" [ref=e119] [cursor=pointer]:
+                - img
+                - text: Trò chuyện AI
+              - button "Người tham gia" [ref=e120] [cursor=pointer]:
+                - img
+                - text: Người tham gia
+              - button "Sự kiện live" [ref=e121] [cursor=pointer]:
+                - img
+                - text: Sự kiện live
+            - generic [ref=e122]:
+              - generic [ref=e123]:
+                - heading "AI giáo viên" [level=3] [ref=e124]
+                - combobox [ref=e125] [cursor=pointer]:
+                  - generic: Gợi ý trước
+                  - img
+              - generic [ref=e127]:
+                - generic [ref=e128]: "AI giáo viên đã sẵn sàng. Mặc định là chế độ gợi ý trước: tôi sẽ gợi ý rồi mới đưa đáp án đầy đủ."
+                - generic [ref=e129]: Hệ thống
+              - generic [ref=e130]:
+                - textbox "Hỏi AI giáo viên về nội dung di sản..." [ref=e131]
+                - button "Gửi cho AI giáo viên" [disabled]
+  - alert [ref=e132]

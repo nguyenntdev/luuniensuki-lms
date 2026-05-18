@@ -1,0 +1,174 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - navigation [ref=e4]:
+      - generic [ref=e5]:
+        - link "Lưu Niên Sử Kí" [ref=e6] [cursor=pointer]:
+          - /url: /
+        - generic [ref=e7]:
+          - link "Khám Phá" [ref=e8] [cursor=pointer]:
+            - /url: /explore
+            - generic [ref=e9]:
+              - img [ref=e10]
+              - generic [ref=e13]: Khám Phá
+          - link "Ôn Tập" [ref=e14] [cursor=pointer]:
+            - /url: /practice
+            - generic [ref=e15]:
+              - img [ref=e16]
+              - generic [ref=e25]: Ôn Tập
+          - link "Bộ Sưu Tập" [ref=e26] [cursor=pointer]:
+            - /url: /collection
+            - generic [ref=e27]:
+              - img [ref=e28]
+              - generic [ref=e31]: Bộ Sưu Tập
+        - generic [ref=e32]:
+          - button "Menu" [ref=e34] [cursor=pointer]:
+            - img [ref=e35]
+            - generic [ref=e39]: Menu
+            - img [ref=e40]
+          - button "L Live Demo Teacher" [ref=e43] [cursor=pointer]:
+            - generic [ref=e45]: L
+            - generic [ref=e46]: Live Demo Teacher
+            - img [ref=e47]
+          - button "vi" [ref=e50] [cursor=pointer]:
+            - img [ref=e51]
+            - generic [ref=e55]: vi
+            - img [ref=e56]
+          - link "Tiếp Tục Học" [ref=e58] [cursor=pointer]:
+            - /url: /dashboard
+            - button "Tiếp Tục Học" [ref=e59]
+    - main [ref=e60]:
+      - generic [ref=e62]:
+        - generic [ref=e63]:
+          - generic [ref=e64]:
+            - generic [ref=e65]: Phòng học live 3D
+            - paragraph [ref=e66]: "Mã phiên: e4ebd3d9-7384-4e3d-92ab-13ea9e5065d7"
+          - generic [ref=e67]:
+            - generic [ref=e68]: Đã kết nối
+            - generic [ref=e69]: "Chất lượng: Tốt"
+            - generic [ref=e70]: "Vai trò: Chủ phòng"
+            - link "Bảng điều khiển phiên" [ref=e71] [cursor=pointer]:
+              - /url: /live/e4ebd3d9-7384-4e3d-92ab-13ea9e5065d7/dashboard
+            - link "Về trang quản trị" [ref=e72] [cursor=pointer]:
+              - /url: /dashboard
+        - generic [ref=e73]:
+          - generic [ref=e74]: "Số lần kết nối lại: 0"
+          - generic [ref=e75]: "Người tham gia: 2"
+      - generic [ref=e76]:
+        - generic [ref=e77]:
+          - article [ref=e133]:
+            - generic [ref=e135]: Live Demo Teacher
+            - generic [ref=e136]:
+              - generic [ref=e138]: Live Demo Teacher (bạn)
+              - button "Ghim người tham gia" [ref=e139] [cursor=pointer]:
+                - img
+          - generic [ref=e82]:
+            - button "Mic tắt" [ref=e140] [cursor=pointer]:
+              - img
+              - text: Mic tắt
+            - button "Camera tắt" [ref=e141] [cursor=pointer]:
+              - img
+              - text: Camera tắt
+            - button "Giơ tay" [ref=e142] [cursor=pointer]:
+              - img
+              - text: Giơ tay
+            - button "Đang kết nối lại..." [disabled]:
+              - img
+              - text: Đang kết nối lại...
+            - button "Rời phòng" [ref=e143] [cursor=pointer]:
+              - img
+              - text: Rời phòng
+        - complementary [ref=e83]:
+          - generic [ref=e84]:
+            - generic [ref=e85]:
+              - heading "Nhiệm vụ vi mô di sản 3D" [level=2] [ref=e86]
+              - img [ref=e87]
+            - generic [ref=e145]: Đỉnh
+            - generic [ref=e97]:
+              - button "Đỉnh" [ref=e98] [cursor=pointer]
+              - button "Họa tiết" [ref=e99] [cursor=pointer]
+              - button "Chữ khắc" [ref=e100] [cursor=pointer]
+              - button "Chân đế" [ref=e101] [cursor=pointer]
+          - generic [ref=e102]:
+            - generic [ref=e103]:
+              - heading "Giọng nói AI (STT/TTS)" [level=3] [ref=e104]
+              - img [ref=e105]
+            - generic [ref=e109]: "Chế độ giọng nói: backend ưu tiên"
+            - generic [ref=e110]:
+              - generic [ref=e111]:
+                - button "Bắt đầu nói" [ref=e146] [cursor=pointer]:
+                  - img
+                  - text: Bắt đầu nói
+                - button "Nhấn giữ để nói" [ref=e147] [cursor=pointer]
+              - generic [ref=e112]:
+                - 'button "Từ khóa kích hoạt: BẬT" [ref=e113] [cursor=pointer]'
+                - 'button "Tự đọc: BẬT" [ref=e114] [cursor=pointer]':
+                  - img
+                  - text: "Tự đọc: BẬT"
+              - list [ref=e115]:
+                - listitem [ref=e148]:
+                  - generic [ref=e149]:
+                    - generic [ref=e150]: ai
+                    - generic [ref=e151]: 19:45:07
+                  - generic [ref=e152]: "**Cửu Đỉnh - Biểu tượng quyền lực và văn hóa triều Nguyễn** 1. **Biểu tượng vương quyền**: - 9 đỉnh tượng trưng cho 9 đời vua Nguyễn, khẳng định tính chính thống và sự trường tồn của triều đại. 2. **Tuyên ngôn lãnh thổ**: - Hoa văn chạm khắc (sông Hồng, sông Cửu Long, đèo Hải Vân...) thể hiện chủ quyền quốc gia [R1]. 3. **Triết lý vũ trụ**: - Số 9 (Cửu) tượng trưng cho \"Cửu trùng thiên\" - ước vọng thái bình dưới sự cai trị của thiên tử. *Ví dụ thú vị*: Cao Đỉnh (đỉnh lớn nhất) đặt ở trung tâm, thể hiện vị thế của vua Minh Mạng như \"mặt trời\" tỏa sáng. Bạn có muốn tìm hiểu thêm về mối liên hệ giữa Cửu Đỉnh và các bảo vật quốc gia khác như trống đồng? Nguồn: [R1] - Tổng quan Cửu Đỉnh (nội bộ) Checkpoint nhanh: Checkpoint nhanh: ban vua rut ra 2 y quan trong nao tu noi dung nay? Nguon tham khao: [S1] [S2]"
+                - listitem [ref=e153]:
+                  - generic [ref=e154]:
+                    - generic [ref=e155]: Bạn
+                    - generic [ref=e156]: 19:44:51
+                  - generic [ref=e157]: Hãy giải thích ngắn gọn ý nghĩa biểu tượng của Cửu Đỉnh trong lịch sử Việt Nam.
+          - generic [ref=e117]:
+            - generic [ref=e118]:
+              - button "Trò chuyện AI" [ref=e119] [cursor=pointer]:
+                - img
+                - text: Trò chuyện AI
+              - button "Người tham gia" [active] [ref=e120] [cursor=pointer]:
+                - img
+                - text: Người tham gia
+              - button "Sự kiện live" [ref=e121] [cursor=pointer]:
+                - img
+                - text: Sự kiện live
+            - generic [ref=e199]:
+              - generic [ref=e200]:
+                - heading "Danh sách người tham gia" [level=3] [ref=e201]
+                - button "Tắt mic tất cả" [ref=e202] [cursor=pointer]
+              - list [ref=e203]:
+                - listitem [ref=e204]:
+                  - generic [ref=e205]:
+                    - generic [ref=e206]:
+                      - generic [ref=e208]: Live Demo Teacher (bạn)
+                      - generic [ref=e209]: "Vai trò: Chủ phòng"
+                      - generic [ref=e210]: "Mic: tắt | Camera: tắt"
+                    - button "Ghim" [ref=e212] [cursor=pointer]
+                - listitem [ref=e213]:
+                  - generic [ref=e214]:
+                    - generic [ref=e215]:
+                      - generic [ref=e217]: AI Teacher
+                      - generic [ref=e218]: "Vai trò: Trợ giảng AI"
+                      - generic [ref=e219]: "Mic: tắt | Camera: tắt"
+                    - button "Ghim" [ref=e221] [cursor=pointer]
+          - generic [ref=e179]:
+            - heading "Bảng điều khiển chủ phòng" [level=3] [ref=e180]
+            - generic [ref=e181]:
+              - button "Khóa phòng TẮT" [ref=e182] [cursor=pointer]:
+                - generic [ref=e183]:
+                  - img
+                  - text: Khóa phòng
+                - generic [ref=e184]: TẮT
+              - button "AI giáo viên BẬT" [ref=e185] [cursor=pointer]:
+                - generic [ref=e186]:
+                  - img
+                  - text: AI giáo viên
+                - generic [ref=e187]: BẬT
+              - generic [ref=e188]:
+                - generic [ref=e189]: Persona AI (cấp độ)
+                - generic [ref=e190]:
+                  - combobox [ref=e191] [cursor=pointer]:
+                    - generic: Trung học cơ sở
+                    - img
+                  - button "Lưu" [ref=e192] [cursor=pointer]
+              - generic [ref=e193]:
+                - generic [ref=e194]: Trần chi phí AI (USD)
+                - generic [ref=e195]:
+                  - spinbutton [ref=e196]: "3"
+                  - button "Lưu" [ref=e197] [cursor=pointer]
+            - paragraph [ref=e198]: Khóa phòng sẽ chặn học viên mới. Nút AI điều khiển trợ giảng AI, cấp độ và giới hạn chi phí.
+  - alert [ref=e132]
