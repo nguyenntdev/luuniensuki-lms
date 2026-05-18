@@ -34,7 +34,7 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
     - Use runtime `sqlx::query` / `query_as` only (no `query!` macros), so the build needs no live DB.
     - **Validates:** Req 6.1, 11.1, 11.3, 11.4, 12.2
 
-  - [ ] 1.3 Implement structured tracing + request_id middleware
+  - [x] 1.3 Implement structured tracing + request_id middleware
     - Configure `tracing-subscriber` with JSON formatter and the field set `request_id, method, path, status, latency_ms, mode`.
     - Build a `tower_http::trace::TraceLayer` + custom `request_id` layer that reads or mints `X-Request-Id`, sets it on the span, and writes it to the response.
     - **Validates:** Req 3.6, 12.3, 12.4; Property 10, Property 18

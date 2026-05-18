@@ -10,14 +10,15 @@
 
 mod config;
 mod db;
+mod observability;
 
-use axum::{routing::get, Json, Router};
+use axum::{middleware, routing::get, Json, Router};
 use serde_json::{json, Value};
 use tokio::signal;
 
 #[tokio::main(flavor = "multi_thread", worker_threads = 2)]
 async fn main() -> anyhow::Result<()> {
-    init_tracing();
+    observability::init();
 
     let settings = config::Settings::from_env()?;
     let app = build_router();
@@ -35,28 +36,14 @@ async fn main() -> anyhow::Result<()> {
 /// Build the top-level Axum router. Kept as a free function so the smoke
 /// test can construct the app without spawning a listener.
 fn build_router() -> Router {
-    Router::new().route("/health", get(health))
+    Router::new()
+        .route("/health", get(health))
+        .layer(middleware::from_fn(observability::request_id_and_logging))
 }
 
 /// `GET /health` — process liveness probe (Requirement 12.1).
 async fn health() -> Json<Value> {
     Json(json!({ "status": "ok" }))
-}
-
-/// Initialize a basic JSON-formatted tracing subscriber. Task 1.3 will
-/// extend this with the full `request_id`, `mode`, and `latency_ms`
-/// field set required by Requirement 12.3.
-fn init_tracing() {
-    use tracing_subscriber::{fmt, EnvFilter};
-
-    // `try_init` so that integration tests which set up their own
-    // subscriber do not panic on a duplicate global.
-    let _ = fmt()
-        .json()
-        .with_env_filter(
-            EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info")),
-        )
-        .try_init();
 }
 
 /// Resolve when either `SIGTERM` or `SIGINT` (`Ctrl+C`) is received.
