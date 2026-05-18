@@ -48,6 +48,9 @@ that dep present and pinned at the listed exact version.
 | reqwest              | =0.12.7        | rustls-tls, stream, json (default-features = false)                               | 1.5           | TODO           | Gateway proxy |
 | toml                 | =0.5.11        | (default)                                                                         | 1.5           | TODO           | Route-modes config |
 | jsonwebtoken         | =9.3.0         | (default)                                                                         | 1.5           | TODO           | JWT verify/issue |
+| bcrypt               | =0.15.1        | (default)                                                                         | 3.1           | TODO           | Password hash/verify |
+| argon2               | =0.5.3         | std                                                                               | 3.1           | TODO           | Argon2id password verify |
+| validator            | =0.18.1        | derive                                                                            | 3.1           | TODO           | Request DTO validation |
 
 The `Peak RSS` cells will be filled in after the first successful release
 build on the build host. If `/usr/bin/time -v` is unavailable in a given

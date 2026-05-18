@@ -8,6 +8,7 @@
 //! `config::Settings` with all required fields. The pool is not
 //! connected at startup yet — that will happen when routes need it.
 
+mod auth;
 mod config;
 mod db;
 mod dispatcher;
@@ -17,13 +18,14 @@ mod inventory;
 mod observability;
 mod routes;
 
-use axum::{middleware, routing::get, Router};
+use axum::{middleware, routing::{get, post}, Router};
 use sqlx::PgPool;
 use tokio::signal;
 
 use crate::dispatcher::Dispatcher;
 use crate::gateway::GatewayState;
 use crate::inventory::AppState;
+use crate::routes::auth::AuthState;
 
 #[tokio::main(flavor = "multi_thread", worker_threads = 2)]
 async fn main() -> anyhow::Result<()> {
@@ -51,7 +53,7 @@ async fn main() -> anyhow::Result<()> {
     // Create the DB pool (connect_lazy — no connection until first query)
     let pool = db::pool(&settings).await.ok();
 
-    let app = build_router(gw_state, app_state, pool);
+    let app = build_router(gw_state, app_state, pool, &settings);
 
     let listener = tokio::net::TcpListener::bind(settings.bind_addr).await?;
     tracing::info!(addr = %settings.bind_addr, "luuniensuki-api-rust listening");
@@ -65,7 +67,7 @@ async fn main() -> anyhow::Result<()> {
 
 /// Build the top-level Axum router. Kept as a free function so the smoke
 /// test can construct the app without spawning a listener.
-fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool>) -> Router {
+fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool>, settings: &config::Settings) -> Router {
     // Internal routes that need AppState (inventory + dispatcher)
     let internal_routes = Router::new()
         .route(
@@ -79,7 +81,23 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
         .route("/api/v1/internal/db-health", get(routes::health::db_health))
         .route("/api/v1/tags", get(routes::content::tags))
         .route("/api/v1/badges", get(routes::badges::list_badges))
-        .with_state(pool);
+        .with_state(pool.clone());
+
+    // Auth routes (need pool + settings)
+    let auth_state = AuthState {
+        pool,
+        settings: settings.clone(),
+    };
+    let auth_routes = Router::new()
+        .route("/api/v1/auth/me", get(routes::auth::me))
+        .route("/api/v1/auth/login", post(routes::auth::login))
+        .route("/api/v1/auth/register", post(routes::auth::register))
+        .route("/api/v1/auth/refresh", post(routes::auth::refresh))
+        .route("/api/v1/auth/logout", post(routes::auth::logout))
+        .route("/api/v1/auth/forgot-password", post(routes::auth::forgot_password))
+        .route("/api/v1/auth/reset-password", post(routes::auth::reset_password))
+        .route("/api/v1/users/me/age-verify", post(routes::auth::age_verify))
+        .with_state(auth_state);
 
     // Static routes (no state needed)
     let static_routes = Router::new()
@@ -91,6 +109,7 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
     Router::new()
         .merge(static_routes)
         .merge(db_routes)
+        .merge(auth_routes)
         .merge(internal_routes)
         .fallback(gateway::fallback_to_python)
         .layer(middleware::from_fn(observability::request_id_and_logging))
@@ -156,7 +175,7 @@ mod tests {
     async fn health_returns_ok_envelope() {
         let settings = config::Settings::from_env().unwrap();
         let (gw_state, app_state) = test_app_state(&settings);
-        let app = build_router(gw_state, app_state, None);
+        let app = build_router(gw_state, app_state, None, &settings);
 
         let response = app
             .oneshot(
@@ -179,7 +198,7 @@ mod tests {
     async fn route_coverage_returns_json() {
         let settings = config::Settings::from_env().unwrap();
         let (gw_state, app_state) = test_app_state(&settings);
-        let app = build_router(gw_state, app_state, None);
+        let app = build_router(gw_state, app_state, None, &settings);
 
         let response = app
             .oneshot(
@@ -213,7 +232,7 @@ mod tests {
     async fn content_ratings_returns_expected_shape() {
         let settings = config::Settings::from_env().unwrap();
         let (gw_state, app_state) = test_app_state(&settings);
-        let app = build_router(gw_state, app_state, None);
+        let app = build_router(gw_state, app_state, None, &settings);
 
         let response = app
             .oneshot(
@@ -238,7 +257,7 @@ mod tests {
     async fn ranks_returns_expected_shape() {
         let settings = config::Settings::from_env().unwrap();
         let (gw_state, app_state) = test_app_state(&settings);
-        let app = build_router(gw_state, app_state, None);
+        let app = build_router(gw_state, app_state, None, &settings);
 
         let response = app
             .oneshot(
@@ -263,7 +282,7 @@ mod tests {
     async fn db_health_without_pool_returns_503() {
         let settings = config::Settings::from_env().unwrap();
         let (gw_state, app_state) = test_app_state(&settings);
-        let app = build_router(gw_state, app_state, None);
+        let app = build_router(gw_state, app_state, None, &settings);
 
         let response = app
             .oneshot(
@@ -282,7 +301,7 @@ mod tests {
     async fn badges_without_pool_returns_503() {
         let settings = config::Settings::from_env().unwrap();
         let (gw_state, app_state) = test_app_state(&settings);
-        let app = build_router(gw_state, app_state, None);
+        let app = build_router(gw_state, app_state, None, &settings);
 
         let response = app
             .oneshot(
@@ -301,7 +320,7 @@ mod tests {
     async fn tags_without_pool_returns_503() {
         let settings = config::Settings::from_env().unwrap();
         let (gw_state, app_state) = test_app_state(&settings);
-        let app = build_router(gw_state, app_state, None);
+        let app = build_router(gw_state, app_state, None, &settings);
 
         let response = app
             .oneshot(
@@ -320,7 +339,7 @@ mod tests {
     async fn metrics_returns_prometheus_text_format() {
         let settings = config::Settings::from_env().unwrap();
         let (gw_state, app_state) = test_app_state(&settings);
-        let app = build_router(gw_state, app_state, None);
+        let app = build_router(gw_state, app_state, None, &settings);
 
         let response = app
             .oneshot(

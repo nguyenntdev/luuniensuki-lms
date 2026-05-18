@@ -6,9 +6,9 @@ nested checkboxes per route. Updated in the same PR that lands a route.
 ## Summary
 
 - Total routes (from inventory): 291
-- Native: 8 / 291
-- Gateway: 283 / 291
-- Phases complete: 2 / 16
+- Native: 15 / 291
+- Gateway: 276 / 291
+- Phases complete: 3 / 16
 
 ---
 
@@ -26,14 +26,14 @@ nested checkboxes per route. Updated in the same PR that lands a route.
   - [x] GET /api/v1/badges _(1cb654c, 2026-05-18)_
   Completed: 1cb654c 2026-05-18
 
-- [ ] Phase 2 — Auth
-  - [ ] GET /api/v1/auth/me
-  - [ ] POST /api/v1/auth/forgot-password
-  - [ ] POST /api/v1/auth/login
-  - [ ] POST /api/v1/auth/logout
-  - [ ] POST /api/v1/auth/refresh
-  - [ ] POST /api/v1/auth/register
-  - [ ] POST /api/v1/auth/reset-password
+- [x] Phase 2 — Auth
+  - [x] GET /api/v1/auth/me _(21b7056, 2026-05-18)_
+  - [x] POST /api/v1/auth/forgot-password _(21b7056, 2026-05-18)_
+  - [x] POST /api/v1/auth/login _(21b7056, 2026-05-18)_
+  - [x] POST /api/v1/auth/logout _(21b7056, 2026-05-18)_
+  - [x] POST /api/v1/auth/refresh _(21b7056, 2026-05-18)_
+  - [x] POST /api/v1/auth/register _(21b7056, 2026-05-18)_
+  - [x] POST /api/v1/auth/reset-password _(21b7056, 2026-05-18)_
 
 - [ ] Phase 3 — Users & Profile
   - [ ] GET /api/v1/onboarding/status

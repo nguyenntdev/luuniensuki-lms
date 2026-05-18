@@ -173,8 +173,8 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
 
 ### Phase 2 — Auth
 
-- [ ] 3. Auth migration
-  - [ ] 3.1 Auth foundations
+- [x] 3. Auth migration
+  - [x] 3.1 Auth foundations
     - Add pinned `jsonwebtoken = "9"`, `bcrypt = "0.15"`, `argon2 = "0.5"`, `validator = "0.18"`.
     - Implement `auth::issue_access_token` / `auth::issue_refresh_token` with HS256 + claims `{sub, iat, exp, role, type}` matching `backend/security.py::create_jwt_token`.
     - Implement `auth::verify_access_token` / `verify_refresh_token` rejecting wrong `type`.
@@ -182,19 +182,19 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
     - Build `routes/auth.rs` module skeleton + DTOs (`LoginRequest`, `RegisterRequest`, `TokenResponse`, etc.).
     - **Validates:** Req 5.1, 5.2, 5.3, 5.4, 5.5, 5.7
 
-  - [ ] 3.2 Migrate `GET /api/v1/auth/me`, `POST /api/v1/auth/refresh`, `POST /api/v1/auth/logout`
+  - [x] 3.2 Migrate `GET /api/v1/auth/me`, `POST /api/v1/auth/refresh`, `POST /api/v1/auth/logout`
     - Implement Axum handlers using sqlx queries against `users`.
     - `/auth/me` returns the current user DTO; `/auth/refresh` rotates token using stored refresh-token rules; `/auth/logout` invalidates the session.
     - Add Phase-2 contract fixtures and ignore-list entries.
     - **Validates:** Req 5.1, 5.2, 5.5, 5.6, 7.6
 
-  - [ ] 3.3 Migrate `POST /api/v1/auth/register`, `POST /api/v1/auth/login`
+  - [x] 3.3 Migrate `POST /api/v1/auth/register`, `POST /api/v1/auth/login`
     - `/auth/register` creates the user with a bcrypt hash at the same cost (`rounds=12`) Python uses.
     - `/auth/login` verifies the password against the stored hash without rehashing.
     - Issue access + refresh cookies (`luuniensuki_access`, `luuniensuki_refresh`) with the same flags Python sets.
     - **Validates:** Req 5.3, 5.4, 5.7
 
-  - [ ] 3.4 Migrate `POST /api/v1/auth/forgot-password`, `POST /api/v1/auth/reset-password`, `POST /api/v1/auth/age-verify`
+  - [x] 3.4 Migrate `POST /api/v1/auth/forgot-password`, `POST /api/v1/auth/reset-password`, `POST /api/v1/auth/age-verify`
     - Implement reset-token lifecycle reusing the existing `password_reset_tokens` table.
     - `age-verify` writes to the user profile and returns the same DTO Python returns.
     - **Validates:** Req 5.6, 6.1
@@ -211,7 +211,7 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
     - **Property 14: Auth-error envelope parity** — for expired / malformed / unknown-key tokens, Rust returns HTTP 401 with body and headers byte-equal to Python.
     - **Validates:** Req 5.6
 
-  - [ ] 3.8 Phase 2 complete: tick ledger
+  - [x] 3.8 Phase 2 complete: tick ledger
     - Flip every `/api/v1/auth/*` route to `native` in `route-modes.toml`.
     - Tick the eight auth routes in the ledger with SHA + date; tick the phase header.
     - Re-run the contract suite (auth fixtures) and confirm `route-coverage` shows all auth routes native.
