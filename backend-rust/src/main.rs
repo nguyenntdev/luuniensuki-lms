@@ -11,18 +11,22 @@
 mod config;
 mod db;
 mod dispatcher;
+mod gateway;
 mod observability;
 
 use axum::{middleware, routing::get, Json, Router};
 use serde_json::{json, Value};
 use tokio::signal;
 
+use crate::gateway::GatewayState;
+
 #[tokio::main(flavor = "multi_thread", worker_threads = 2)]
 async fn main() -> anyhow::Result<()> {
     observability::init();
 
     let settings = config::Settings::from_env()?;
-    let app = build_router();
+    let gw_state = GatewayState::new(&settings);
+    let app = build_router(gw_state);
 
     let listener = tokio::net::TcpListener::bind(settings.bind_addr).await?;
     tracing::info!(addr = %settings.bind_addr, "luuniensuki-api-rust listening");
@@ -36,10 +40,12 @@ async fn main() -> anyhow::Result<()> {
 
 /// Build the top-level Axum router. Kept as a free function so the smoke
 /// test can construct the app without spawning a listener.
-fn build_router() -> Router {
+fn build_router(gw_state: GatewayState) -> Router {
     Router::new()
         .route("/health", get(health))
+        .fallback(gateway::fallback_to_python)
         .layer(middleware::from_fn(observability::request_id_and_logging))
+        .with_state(gw_state)
 }
 
 /// `GET /health` — process liveness probe (Requirement 12.1).
@@ -85,7 +91,9 @@ mod tests {
 
     #[tokio::test]
     async fn health_returns_ok_envelope() {
-        let app = build_router();
+        let settings = config::Settings::from_env().unwrap();
+        let gw_state = GatewayState::new(&settings);
+        let app = build_router(gw_state);
 
         let response = app
             .oneshot(

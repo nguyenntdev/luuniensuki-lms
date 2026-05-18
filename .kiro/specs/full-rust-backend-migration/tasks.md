@@ -55,7 +55,7 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
     - **Property 17: Route-mode dispatcher and AI tutor pinning** — for any `(route, mode)` mutation, new requests pick up the mode within 30s (or immediately on SIGHUP) and in-flight requests complete under their original mode.
     - **Validates:** Req 9.1, 13.1, 13.2, 13.4
 
-  - [ ] 1.7 Implement `gateway::proxy_to_python` with reqwest 0.12
+  - [x] 1.7 Implement `gateway::proxy_to_python` with reqwest 0.12
     - Add pinned `reqwest = "0.12.x"` with rustls-tls + stream + json features.
     - Build a long-lived `reqwest::Client` stored in `AppState`.
     - Forward `Authorization`, `Cookie`, `Content-Type`, `Accept`, `X-Forwarded-*`, `X-Request-Id` byte-for-byte; rewrite `Host`.
