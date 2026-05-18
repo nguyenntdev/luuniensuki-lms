@@ -41,6 +41,12 @@ that dep present and pinned at the listed exact version.
 | dotenvy              | =0.15.7        | (default)                                                                         | 1.1           | 380            | `.env` loading |
 | tracing              | =0.1.40        | (default)                                                                         | 1.1           | 380            | Span/event API |
 | tracing-subscriber   | =0.3.18        | fmt, json, env-filter, tracing-log (default-features = false)                     | 1.1           | 380            | JSON log output |
+| sqlx                 | =0.7.4         | runtime-tokio-rustls, postgres, chrono, uuid, json (default-features = false)     | 1.2           | TODO           | Async Postgres pool |
+| chrono               | =0.4.38        | serde                                                                             | 1.2           | TODO           | Timestamp types |
+| uuid                 | =1.10.0        | v4, serde                                                                         | 1.2           | TODO           | UUID types |
+| arc-swap             | =1.7.1         | (default)                                                                         | 1.5           | TODO           | Hot-reload dispatcher |
+| reqwest              | =0.12.7        | rustls-tls, stream, json (default-features = false)                               | 1.5           | TODO           | Gateway proxy |
+| toml                 | =0.5.11        | (default)                                                                         | 1.5           | TODO           | Route-modes config |
 
 The `Peak RSS` cells will be filled in after the first successful release
 build on the build host. If `/usr/bin/time -v` is unavailable in a given

@@ -97,7 +97,7 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
     - **Property 4: Inventory generator determinism** — two consecutive runs against the same FastAPI app state produce byte-identical JSON.
     - **Validates:** Req 2.2
 
-  - [ ] 1.14 Seed the migration ledger
+  - [x] 1.14 Seed the migration ledger
     - Create `docs/plan/full-rust-backend-migration-ledger.md` with the 16 phase headers and unchecked nested checkboxes for every route in the inventory.
     - Render rules: nested `- [ ]` per route, `_(commit_sha, YYYY-MM-DD)_` italic suffix on tick, `Completed: <sha> <date>` line on full-phase tick.
     - Regenerate the `Summary` section from document state.

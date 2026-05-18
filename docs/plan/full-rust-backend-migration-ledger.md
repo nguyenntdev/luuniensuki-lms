@@ -1,0 +1,341 @@
+# Full Rust Backend Migration — Ledger
+
+Source of truth for migration progress. One top-level checkbox per phase,
+nested checkboxes per route. Updated in the same PR that lands a route.
+
+## Summary
+
+- Total routes (from inventory): 291
+- Native: 0 / 291
+- Gateway: 291 / 291
+- Phases complete: 0 / 16
+
+---
+
+- [ ] Phase 0 — Foundations
+  - [ ] GET /health
+
+- [ ] Phase 1 — Public reads
+  - [ ] GET /api/v1/content/ratings
+  - [ ] GET /api/v1/ranks
+  - [ ] GET /api/v1/tags
+
+- [ ] Phase 2 — Auth
+  - [ ] GET /api/v1/auth/me
+  - [ ] POST /api/v1/auth/forgot-password
+  - [ ] POST /api/v1/auth/login
+  - [ ] POST /api/v1/auth/logout
+  - [ ] POST /api/v1/auth/refresh
+  - [ ] POST /api/v1/auth/register
+  - [ ] POST /api/v1/auth/reset-password
+
+- [ ] Phase 3 — Users & Profile
+  - [ ] GET /api/v1/onboarding/status
+  - [ ] GET /api/v1/u/{username_or_id}
+  - [ ] GET /api/v1/users/me/ai-jobs
+  - [ ] GET /api/v1/users/me/certificates
+  - [ ] GET /api/v1/users/me/collection
+  - [ ] GET /api/v1/users/me/exam-attempts
+  - [ ] GET /api/v1/users/me/recommendations
+  - [ ] GET /api/v1/users/me/xp-boost
+  - [ ] GET /api/v1/users/{user_id}/activity
+  - [ ] GET /api/v1/users/{user_id}/public
+  - [ ] PATCH /api/v1/users/me
+  - [ ] POST /api/v1/onboarding/complete
+  - [ ] POST /api/v1/onboarding/goals
+  - [ ] POST /api/v1/users/me/age-verify
+  - [ ] POST /api/v1/users/me/ai-jobs/{job_id}/retry
+  - [ ] POST /api/v1/users/me/avatar
+  - [ ] POST /api/v1/users/me/change-password
+  - [ ] POST /api/v1/users/me/recommendations/refresh
+  - [ ] POST /api/v1/users/me/starting-path
+  - [ ] POST /api/v1/users/me/xp-boost/activate
+
+- [ ] Phase 4 — Lessons & Content
+  - [ ] DELETE /api/v1/lessons/{lesson_id}/cache
+  - [ ] GET /api/v1/lessons/cache-manifest
+  - [ ] GET /api/v1/lessons/cached
+  - [ ] GET /api/v1/lessons/next
+  - [ ] GET /api/v1/lessons/sequence
+  - [ ] GET /api/v1/lessons/{lesson_id}/is-unlocked
+  - [ ] GET /api/v1/lessons/{lesson_id}/prerequisites
+  - [ ] GET /api/v1/motifs/{motif_id}
+  - [ ] GET /api/v1/motifs/{motif_id}/quiz
+  - [ ] GET /api/v1/preview/lesson
+  - [ ] GET /api/v1/urns
+  - [ ] GET /api/v1/urns/{urn_slug}
+  - [ ] GET /api/v1/urns/{urn_slug}/exam
+  - [ ] GET /api/v1/urns/{urn_slug}/exam/attempts/latest
+  - [ ] GET /api/v1/urns/{urn_slug}/progress
+  - [ ] GET /motifs/{urn_name}
+  - [ ] POST /api/v1/lessons/{lesson_id}/cache
+  - [ ] POST /api/v1/motifs/{motif_id}/complete-lesson
+  - [ ] POST /api/v1/preview/complete
+  - [ ] POST /api/v1/preview/convert
+  - [ ] POST /api/v1/preview/start
+  - [ ] POST /api/v1/urns/{urn_slug}/exam/submit
+
+- [ ] Phase 5 — Quizzes & Adaptive
+  - [ ] POST /api/v1/quizzes/submit
+
+- [ ] Phase 6 — Progress & Streaks
+  - [ ] GET /api/v1/users/me/streak
+  - [ ] POST /api/v1/users/me/streak/freeze
+  - [ ] POST /progress/unlock
+
+- [ ] Phase 7 — Badges, Quests, Achievements
+  - [ ] GET /api/v1/badges
+  - [ ] GET /api/v1/quests
+  - [ ] GET /api/v1/quests/{quest_slug}
+  - [ ] GET /api/v1/users/me/badges
+  - [ ] GET /api/v1/users/me/quest-summary
+  - [ ] POST /api/v1/quests/{quest_slug}/start
+
+- [ ] Phase 8 — Classrooms & Memberships
+  - [ ] DELETE /api/v1/classrooms/{classroom_id}
+  - [ ] DELETE /api/v1/classrooms/{classroom_id}/assignments/{assignment_id}
+  - [ ] DELETE /api/v1/classrooms/{classroom_id}/members/{member_id}
+  - [ ] GET /api/v1/classrooms
+  - [ ] GET /api/v1/classrooms/enrolled
+  - [ ] GET /api/v1/classrooms/{classroom_id}
+  - [ ] GET /api/v1/classrooms/{classroom_id}/assignments
+  - [ ] GET /api/v1/classrooms/{classroom_id}/export
+  - [ ] GET /api/v1/classrooms/{classroom_id}/leaderboard
+  - [ ] GET /api/v1/classrooms/{classroom_id}/live-sessions
+  - [ ] GET /api/v1/classrooms/{classroom_id}/progress
+  - [ ] GET /api/v1/classrooms/{classroom_id}/students/{student_id}/progress
+  - [ ] POST /api/v1/classrooms
+  - [ ] POST /api/v1/classrooms/join
+  - [ ] POST /api/v1/classrooms/{classroom_id}/archive
+  - [ ] POST /api/v1/classrooms/{classroom_id}/assignments
+  - [ ] POST /api/v1/classrooms/{classroom_id}/live-sessions
+  - [ ] POST /api/v1/classrooms/{classroom_id}/unarchive
+  - [ ] PUT /api/v1/classrooms/{classroom_id}
+  - [ ] PUT /api/v1/classrooms/{classroom_id}/assignments/{assignment_id}
+
+- [ ] Phase 9 — Leaderboards & Leagues
+  - [ ] GET /api/v1/leaderboard
+  - [ ] GET /api/v1/leaderboard/friends
+  - [ ] GET /api/v1/leaderboard/settings
+  - [ ] PUT /api/v1/leaderboard/settings
+
+- [ ] Phase 10 — Notifications
+  - [ ] DELETE /api/v1/notifications/unregister-push
+  - [ ] GET /api/v1/notifications/history
+  - [ ] GET /api/v1/notifications/settings
+  - [ ] GET /api/v1/notifications/should-prompt-permission
+  - [ ] POST /api/v1/notifications/register-push
+  - [ ] PUT /api/v1/notifications/settings
+
+- [ ] Phase 11 — Sessions, Heartbeat, Analytics
+  - [ ] POST /api/v1/analytics/events
+  - [ ] POST /api/v1/sessions/end
+  - [ ] POST /api/v1/sessions/heartbeat
+
+- [ ] Phase 12 — Crash reports
+  - [ ] POST /api/v1/crash-reports
+
+- [ ] Phase 13 — Admin
+  - [ ] DELETE /api/v1/admin/content/{content_type}/{content_id}/tags/{tag_slug}
+  - [ ] DELETE /api/v1/admin/experiments/{experiment_id}
+  - [ ] DELETE /api/v1/admin/feature-flags/{key}
+  - [ ] DELETE /api/v1/admin/rag/documents/{document_id}
+  - [ ] GET /api/v1/admin/analytics/funnels
+  - [ ] GET /api/v1/admin/analytics/funnels/{funnel_type}
+  - [ ] GET /api/v1/admin/analytics/retention
+  - [ ] GET /api/v1/admin/analytics/retention/cohorts
+  - [ ] GET /api/v1/admin/analytics/retention/curve
+  - [ ] GET /api/v1/admin/analytics/sessions/active
+  - [ ] GET /api/v1/admin/analytics/sessions/stats
+  - [ ] GET /api/v1/admin/app/versions
+  - [ ] GET /api/v1/admin/content/flags
+  - [ ] GET /api/v1/admin/content/pending-review
+  - [ ] GET /api/v1/admin/content/{content_type}/{content_id}/versions
+  - [ ] GET /api/v1/admin/content/{content_type}/{content_id}/versions/{version}
+  - [ ] GET /api/v1/admin/crash-reports
+  - [ ] GET /api/v1/admin/crash-reports/stats
+  - [ ] GET /api/v1/admin/crash-reports/{report_id}
+  - [ ] GET /api/v1/admin/email-templates
+  - [ ] GET /api/v1/admin/experiments
+  - [ ] GET /api/v1/admin/experiments/{experiment_id}/assignments
+  - [ ] GET /api/v1/admin/experiments/{experiment_id}/events
+  - [ ] GET /api/v1/admin/experiments/{experiment_id}/metrics
+  - [ ] GET /api/v1/admin/experiments/{experiment_id}/metrics/{metric_name}
+  - [ ] GET /api/v1/admin/experiments/{experiment_id}/results
+  - [ ] GET /api/v1/admin/feature-flags
+  - [ ] GET /api/v1/admin/lessons
+  - [ ] GET /api/v1/admin/push-notifications
+  - [ ] GET /api/v1/admin/quiz-questions
+  - [ ] GET /api/v1/admin/rag/documents
+  - [ ] GET /api/v1/admin/rag/documents/{document_id}
+  - [ ] GET /api/v1/admin/rag/health
+  - [ ] GET /api/v1/admin/rag/rebuild/status
+  - [ ] GET /api/v1/admin/rag/rebuild/{job_id}
+  - [ ] GET /api/v1/admin/rag/settings
+  - [ ] GET /api/v1/admin/reports/abuse
+  - [ ] GET /api/v1/admin/reports/abuse/{report_id}
+  - [ ] GET /api/v1/admin/scheduled-emails
+  - [ ] PATCH /api/v1/admin/lessons/{lesson_id}
+  - [ ] PATCH /api/v1/admin/quiz-questions/{question_id}
+  - [ ] POST /api/v1/admin/ai/urns/{urn_slug}/seed
+  - [ ] POST /api/v1/admin/app/versions
+  - [ ] POST /api/v1/admin/content/{content_type}/{content_id}/revert/{version}
+  - [ ] POST /api/v1/admin/content/{content_type}/{content_id}/tags
+  - [ ] POST /api/v1/admin/crash-reports/{report_id}/resolve
+  - [ ] POST /api/v1/admin/email-templates
+  - [ ] POST /api/v1/admin/experiments
+  - [ ] POST /api/v1/admin/feature-flags
+  - [ ] POST /api/v1/admin/lessons
+  - [ ] POST /api/v1/admin/lessons/{lesson_id}/approve
+  - [ ] POST /api/v1/admin/lessons/{lesson_id}/reject
+  - [ ] POST /api/v1/admin/lessons/{lesson_id}/submit-review
+  - [ ] POST /api/v1/admin/live-sessions/maintenance/cleanup
+  - [ ] POST /api/v1/admin/push-notifications/broadcast
+  - [ ] POST /api/v1/admin/push-notifications/send
+  - [ ] POST /api/v1/admin/quiz-questions
+  - [ ] POST /api/v1/admin/quiz-questions/{question_id}/approve
+  - [ ] POST /api/v1/admin/quiz-questions/{question_id}/reject
+  - [ ] POST /api/v1/admin/quiz-questions/{question_id}/submit-review
+  - [ ] POST /api/v1/admin/rag/documents
+  - [ ] POST /api/v1/admin/rag/documents/upload
+  - [ ] POST /api/v1/admin/rag/documents/{document_id}/activate
+  - [ ] POST /api/v1/admin/rag/documents/{document_id}/deactivate
+  - [ ] POST /api/v1/admin/rag/embeddings/rebuild
+  - [ ] POST /api/v1/admin/rag/rebuild
+  - [ ] POST /api/v1/admin/rag/settings/reset
+  - [ ] POST /api/v1/admin/reports/abuse/{report_id}/assign
+  - [ ] POST /api/v1/admin/reports/abuse/{report_id}/resolve
+  - [ ] POST /api/v1/admin/scheduled-emails/send-test
+  - [ ] POST /api/v1/admin/tags
+  - [ ] PUT /api/v1/admin/app/versions/{version_id}
+  - [ ] PUT /api/v1/admin/email-templates/{template_id}
+  - [ ] PUT /api/v1/admin/experiments/{experiment_id}
+  - [ ] PUT /api/v1/admin/feature-flags/{key}
+  - [ ] PUT /api/v1/admin/rag/documents/{document_id}
+  - [ ] PUT /api/v1/admin/rag/settings
+
+- [ ] Phase 14 — Live AI Teacher routing
+  - [ ] GET /api/v1/live/demo-enter
+
+- [ ] Phase 15 — Misc / cleanup
+  - [ ] DELETE /api/v1/ai/conversations/{conversation_id}
+  - [ ] DELETE /api/v1/classes/{class_id}/members/{user_id}
+  - [ ] DELETE /api/v1/social/follow/{user_id}
+  - [ ] DELETE /api/v1/social/shares/{share_id}
+  - [ ] GET /api/v1/ai/conversations
+  - [ ] GET /api/v1/ai/conversations/{conversation_id}
+  - [ ] GET /api/v1/ai/insights
+  - [ ] GET /api/v1/ai/insights/{user_id}
+  - [ ] GET /api/v1/ai/review-plan
+  - [ ] GET /api/v1/app/version/check
+  - [ ] GET /api/v1/assignments/mine
+  - [ ] GET /api/v1/certificates/{code}
+  - [ ] GET /api/v1/classes
+  - [ ] GET /api/v1/classes/{class_id}
+  - [ ] GET /api/v1/daily-goal/settings
+  - [ ] GET /api/v1/daily-missions
+  - [ ] GET /api/v1/daily-missions/history
+  - [ ] GET /api/v1/dashboard/summary
+  - [ ] GET /api/v1/experiments
+  - [ ] GET /api/v1/features
+  - [ ] GET /api/v1/features/{key}
+  - [ ] GET /api/v1/hearts
+  - [ ] GET /api/v1/hearts/transactions
+  - [ ] GET /api/v1/learning-path/history
+  - [ ] GET /api/v1/learning-path/stats
+  - [ ] GET /api/v1/learning-path/today
+  - [ ] GET /api/v1/live-sessions/{live_session_id}
+  - [ ] GET /api/v1/live-sessions/{live_session_id}/dashboard
+  - [ ] GET /api/v1/live-sessions/{live_session_id}/events
+  - [ ] GET /api/v1/live-sessions/{live_session_id}/observability
+  - [ ] GET /api/v1/live-sessions/{live_session_id}/participants
+  - [ ] GET /api/v1/live-sessions/{live_session_id}/transcripts/export.csv
+  - [ ] GET /api/v1/live-sessions/{live_session_id}/transcripts/export.json
+  - [ ] GET /api/v1/milestones
+  - [ ] GET /api/v1/milestones/pending-celebration
+  - [ ] GET /api/v1/new-feature
+  - [ ] GET /api/v1/quiz/adaptive
+  - [ ] GET /api/v1/quiz/questions/{question_id}/hints
+  - [ ] GET /api/v1/recommendations
+  - [ ] GET /api/v1/recommendations/similar/{content_type}/{content_id}
+  - [ ] GET /api/v1/reports/abuse/mine
+  - [ ] GET /api/v1/review/due
+  - [ ] GET /api/v1/review/stats
+  - [ ] GET /api/v1/search
+  - [ ] GET /api/v1/skills
+  - [ ] GET /api/v1/social/feed
+  - [ ] GET /api/v1/social/followers
+  - [ ] GET /api/v1/social/following
+  - [ ] GET /api/v1/social/friend-requests
+  - [ ] GET /api/v1/social/friends
+  - [ ] GET /api/v1/social/search
+  - [ ] GET /api/v1/social/shares/mine
+  - [ ] GET /api/v1/social/shares/{share_id}
+  - [ ] GET /api/v1/streak
+  - [ ] GET /api/v1/weekly-quests
+  - [ ] GET /api/v1/weekly-quests/history
+  - [ ] PATCH /api/v1/live-sessions/{live_session_id}/participants/{participant_id}/role
+  - [ ] POST /api/v1/ai/coach
+  - [ ] POST /api/v1/ai/conversations
+  - [ ] POST /api/v1/ai/conversations/{conversation_id}/messages
+  - [ ] POST /api/v1/ai/diagnostic
+  - [ ] POST /api/v1/ai/explain
+  - [ ] POST /api/v1/ai/feedback
+  - [ ] POST /api/v1/ai/flashcards
+  - [ ] POST /api/v1/ai/lessons/generate
+  - [ ] POST /api/v1/ai/qa
+  - [ ] POST /api/v1/ai/qa/stream
+  - [ ] POST /api/v1/ai/quizzes/generate
+  - [ ] POST /api/v1/ai/summary
+  - [ ] POST /api/v1/ai/tutor
+  - [ ] POST /api/v1/ai/tutor/stream
+  - [ ] POST /api/v1/assignments/{assignment_id}/submit
+  - [ ] POST /api/v1/classes
+  - [ ] POST /api/v1/classes/{class_id}/assignments
+  - [ ] POST /api/v1/classes/{class_id}/members
+  - [ ] POST /api/v1/content/flags
+  - [ ] POST /api/v1/daily-missions/{mission_id}/progress
+  - [ ] POST /api/v1/experiments/{experiment_id}/metrics
+  - [ ] POST /api/v1/experiments/{experiment_key}/events
+  - [ ] POST /api/v1/hearts/refill
+  - [ ] POST /api/v1/hearts/use
+  - [ ] POST /api/v1/hearts/use-streak-freeze
+  - [ ] POST /api/v1/learning-path/complete-item
+  - [ ] POST /api/v1/learning-path/generate
+  - [ ] POST /api/v1/live-sessions/{live_session_id}/ai-teacher/presence
+  - [ ] POST /api/v1/live-sessions/{live_session_id}/ai-teacher/reply
+  - [ ] POST /api/v1/live-sessions/{live_session_id}/ai-teacher/stt
+  - [ ] POST /api/v1/live-sessions/{live_session_id}/ai-teacher/tts
+  - [ ] POST /api/v1/live-sessions/{live_session_id}/end
+  - [ ] POST /api/v1/live-sessions/{live_session_id}/events
+  - [ ] POST /api/v1/live-sessions/{live_session_id}/host/mute-all
+  - [ ] POST /api/v1/live-sessions/{live_session_id}/host/remove-participant
+  - [ ] POST /api/v1/live-sessions/{live_session_id}/host/settings
+  - [ ] POST /api/v1/live-sessions/{live_session_id}/join
+  - [ ] POST /api/v1/live-sessions/{live_session_id}/leave
+  - [ ] POST /api/v1/live-sessions/{live_session_id}/token
+  - [ ] POST /api/v1/livekit/webhook
+  - [ ] POST /api/v1/milestones/{milestone_id}/celebrate
+  - [ ] POST /api/v1/quiz/questions/{question_id}/hint
+  - [ ] POST /api/v1/recommendations/feedback
+  - [ ] POST /api/v1/recommendations/interaction
+  - [ ] POST /api/v1/reports/abuse
+  - [ ] POST /api/v1/review/cards
+  - [ ] POST /api/v1/review/{card_id}
+  - [ ] POST /api/v1/skills/recalculate
+  - [ ] POST /api/v1/social/follow/{user_id}
+  - [ ] POST /api/v1/social/friend-requests
+  - [ ] POST /api/v1/social/friend-requests/{request_id}/accept
+  - [ ] POST /api/v1/social/friend-requests/{request_id}/reject
+  - [ ] POST /api/v1/social/peer-feedback
+  - [ ] POST /api/v1/social/share
+  - [ ] POST /api/v1/streak/claim-daily
+  - [ ] POST /api/v1/streak/freeze
+  - [ ] POST /api/v1/streak/use-freeze
+  - [ ] POST /api/v1/weekly-quests/{quest_id}/progress
+  - [ ] PUT /api/v1/daily-goal/settings
+
+- [ ] Phase 16 — Cutover
+  - [ ] Switch nginx upstream from api to api_rust
+  - [ ] Remove Python api service from docker-compose.yml
+  - [ ] Final ledger update
