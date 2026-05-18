@@ -30,17 +30,17 @@ that dep present and pinned at the listed exact version.
 
 | Dependency           | Pinned version | Features                                                                          | Added in task | Peak RSS (MiB) | Notes |
 |----------------------|----------------|------------------------------------------------------------------------------------|---------------|----------------|-------|
-| tokio                | =1.40.0        | macros, rt-multi-thread, signal, net, time, sync                                  | 1.1           | TODO           | Async runtime |
-| axum                 | =0.7.7         | http1, json, tokio, matched-path, tracing (default-features = false)              | 1.1           | TODO           | HTTP framework |
-| tower                | =0.5.1         | util (default-features = false)                                                   | 1.1           | TODO           | Service abstraction |
-| tower-http           | =0.6.1         | trace (default-features = false)                                                  | 1.1           | TODO           | Request tracing layer |
-| serde                | =1.0.210       | derive                                                                            | 1.1           | TODO           | DTO derive |
-| serde_json           | =1.0.128       | (default)                                                                         | 1.1           | TODO           | JSON encode/decode |
-| anyhow               | =1.0.89        | (default)                                                                         | 1.1           | TODO           | Error in `main()` |
-| thiserror            | =1.0.64        | (default)                                                                         | 1.1           | TODO           | Typed errors |
-| dotenvy              | =0.15.7        | (default)                                                                         | 1.1           | TODO           | `.env` loading |
-| tracing              | =0.1.40        | (default)                                                                         | 1.1           | TODO           | Span/event API |
-| tracing-subscriber   | =0.3.18        | fmt, json, env-filter, tracing-log (default-features = false)                     | 1.1           | TODO           | JSON log output |
+| tokio                | =1.40.0        | macros, rt-multi-thread, signal, net, time, sync                                  | 1.1           | 380            | Async runtime |
+| axum                 | =0.7.7         | http1, json, tokio, matched-path, tracing (default-features = false)              | 1.1           | 380            | HTTP framework |
+| tower                | =0.5.1         | util (default-features = false)                                                   | 1.1           | 380            | Service abstraction |
+| tower-http           | =0.6.1         | trace (default-features = false)                                                  | 1.1           | 380            | Request tracing layer |
+| serde                | =1.0.210       | derive                                                                            | 1.1           | 380            | DTO derive |
+| serde_json           | =1.0.128       | (default)                                                                         | 1.1           | 380            | JSON encode/decode |
+| anyhow               | =1.0.89        | (default)                                                                         | 1.1           | 380            | Error in `main()` |
+| thiserror            | =1.0.64        | (default)                                                                         | 1.1           | 380            | Typed errors |
+| dotenvy              | =0.15.7        | (default)                                                                         | 1.1           | 380            | `.env` loading |
+| tracing              | =0.1.40        | (default)                                                                         | 1.1           | 380            | Span/event API |
+| tracing-subscriber   | =0.3.18        | fmt, json, env-filter, tracing-log (default-features = false)                     | 1.1           | 380            | JSON log output |
 
 The `Peak RSS` cells will be filled in after the first successful release
 build on the build host. If `/usr/bin/time -v` is unavailable in a given

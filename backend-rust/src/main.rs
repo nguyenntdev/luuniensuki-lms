@@ -1,39 +1,29 @@
 //! Luu Nien Su Ki Rust API entry point.
 //!
-//! Task 1.1 (full-rust-backend-migration spec): replace the std-lib TCP
-//! server with `axum::serve` on `tokio`, wire a graceful-shutdown handler
-//! driven by `SIGTERM`/`SIGINT`, and serve a minimal `/health` route.
+//! Task 1.1: replaced the std-lib TCP server with `axum::serve` on
+//! `tokio`, wired a graceful-shutdown handler driven by
+//! `SIGTERM`/`SIGINT`, and serves a minimal `/health` route.
 //!
-//! The other previously-native routes (`/api/v1/content/ratings`,
-//! `/api/v1/ranks`, `/api/v1/tags`, `/api/v1/badges`,
-//! `/api/v1/users/me/streak`, `/api/v1/internal/db-health`) will be
-//! migrated to Axum handlers in task 1.16, after the dispatcher / gateway
-//! / sqlx pool foundations land in tasks 1.2–1.15. Until then, requests
-//! to those paths fall through to the Axum 404 fallback (HTTP 404 from
-//! the framework). The legacy `mod config;` / `mod pg;` modules are
-//! intentionally not declared here — they will be replaced wholesale by
-//! the new `config.rs` / `db.rs` in tasks 1.2 and 1.16.
+//! Task 1.2: wired `sqlx::PgPool` via `db` module and extended
+//! `config::Settings` with all required fields. The pool is not
+//! connected at startup yet — that will happen when routes need it.
 
-use std::net::SocketAddr;
+mod config;
+mod db;
 
 use axum::{routing::get, Json, Router};
 use serde_json::{json, Value};
 use tokio::signal;
 
-/// Bind address for the Rust service. Tasks 1.2+ will move this onto
-/// `Settings::bind_addr` once the new `config` module replaces the
-/// legacy one.
-const BIND_ADDR: &str = "0.0.0.0:8001";
-
 #[tokio::main(flavor = "multi_thread", worker_threads = 2)]
 async fn main() -> anyhow::Result<()> {
     init_tracing();
 
+    let settings = config::Settings::from_env()?;
     let app = build_router();
 
-    let addr: SocketAddr = BIND_ADDR.parse()?;
-    let listener = tokio::net::TcpListener::bind(addr).await?;
-    tracing::info!(%addr, "luuniensuki-api-rust listening");
+    let listener = tokio::net::TcpListener::bind(settings.bind_addr).await?;
+    tracing::info!(addr = %settings.bind_addr, "luuniensuki-api-rust listening");
 
     axum::serve(listener, app)
         .with_graceful_shutdown(shutdown_signal())

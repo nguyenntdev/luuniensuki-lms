@@ -19,7 +19,7 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
 ### Phase 0 — Foundations & Dispatcher
 
 - [ ] 1. Foundations & dispatcher
-  - [ ] 1.1 Add Axum + Tokio + Tower scaffold
+  - [x] 1.1 Add Axum + Tokio + Tower scaffold
     - Replace the std-lib TCP server in `backend-rust/src/main.rs` with `axum::serve` + `#[tokio::main]`.
     - Add pinned exact-version deps to `backend-rust/Cargo.toml`: `tokio`, `axum`, `tower`, `tower-http`, `serde`, `serde_json`, `anyhow`, `thiserror`, `dotenvy`, `tracing`, `tracing-subscriber`.
     - Wire a graceful-shutdown handler driven by `tokio::signal::unix::SIGTERM`/`SIGINT`.
