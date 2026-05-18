@@ -70,7 +70,7 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
     - **Property 9: Upstream-unavailable error shape** — connect failure / timeout always yields HTTP 502 + `{"detail":"upstream unavailable"}`.
     - **Validates:** Req 3.2, 3.3, 3.4, 3.5
 
-  - [ ] 1.9 Implement error envelope (`error::AppError` → `IntoResponse`)
+  - [x] 1.9 Implement error envelope (`error::AppError` → `IntoResponse`)
     - Variants: `Validation { details }` (422, `VALIDATION_ERROR`), `Http { status, message }` (`HTTP_ERROR`), `Domain { status, code, message, details }`, `Unauthorized` (401 + `WWW-Authenticate: Bearer`), `UpstreamUnavailable` (502, FastAPI shape).
     - Body envelope `{"error": {"code", "message", "details"}}` matches `backend/errors.py::app_exception_handler` byte-for-byte.
     - Wire `tower_http::catch_panic` mapping panics → 500 `INTERNAL_SERVER_ERROR`.

@@ -11,6 +11,7 @@
 mod config;
 mod db;
 mod dispatcher;
+mod error;
 mod gateway;
 mod observability;
 
