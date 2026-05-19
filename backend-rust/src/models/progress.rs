@@ -1,6 +1,8 @@
 //! Progress, Streak, Hearts, Daily Goal, and Milestone DTOs.
 //!
 //! Phase 6 (Tasks 7.1–7.3): Progress & Streaks migration.
+//!
+//! Fixed to match actual production database schema.
 
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
@@ -134,36 +136,33 @@ pub struct MilestonesResponse {
 }
 
 // ---------------------------------------------------------------------------
-// DB Row types
+// DB Row types — match actual production schema
 // ---------------------------------------------------------------------------
 
+/// Streak data from `users` table.
 #[derive(Debug, sqlx::FromRow)]
 pub struct StreakRow {
     pub current_streak: i32,
     pub longest_streak: i32,
-    pub last_activity_date: Option<chrono::NaiveDate>,
+    pub streak_freezes: i32,
+    pub last_active_at: Option<DateTime<Utc>>,
 }
 
+/// Hearts data from `user_hearts` table.
 #[derive(Debug, sqlx::FromRow)]
 pub struct HeartsRow {
-    pub hearts: i32,
+    pub current_hearts: i32,
     pub max_hearts: i32,
-    pub next_regen_at: Option<DateTime<Utc>>,
-    pub is_unlimited: bool,
+    pub hearts_refill_at: Option<DateTime<Utc>>,
+    pub unlimited_until: Option<DateTime<Utc>>,
 }
 
-#[derive(Debug, sqlx::FromRow)]
-pub struct DailyGoalRow {
-    pub daily_xp_goal: i32,
-}
-
+/// Milestone data from `user_milestones` table.
 #[derive(Debug, sqlx::FromRow)]
 pub struct MilestoneRow {
     pub id: Uuid,
     pub milestone_type: String,
-    pub title: String,
-    pub description: Option<String>,
-    pub achieved_at: Option<DateTime<Utc>>,
-    pub progress_current: i32,
-    pub progress_target: i32,
+    pub achieved_at: DateTime<Utc>,
+    pub context_data: Option<serde_json::Value>,
+    pub celebrated: bool,
 }

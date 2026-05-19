@@ -1,8 +1,11 @@
 //! Notification business logic.
 //!
 //! Phase 10 (Tasks 11.1–11.3): Notifications migration.
+//! Fixed to match actual production schema:
+//! - Settings: `user_notification_settings` table
+//! - Push token: stored in `user_notification_settings.push_token` + `push_platform`
+//! - History: `push_notifications` table
 
-use chrono::Utc;
 use sqlx::PgPool;
 use uuid::Uuid;
 
@@ -14,8 +17,9 @@ pub async fn get_settings(pool: &PgPool, user_id: Uuid) -> Result<NotificationSe
     let row = sqlx::query_as::<_, NotificationSettingsRow>(
         r#"
         SELECT user_id, push_enabled, email_enabled, streak_reminders,
-               lesson_reminders, social_notifications, marketing_notifications
-        FROM notification_settings
+               daily_mission_reminders, weekly_digest, marketing_enabled,
+               quiet_hours_start, quiet_hours_end
+        FROM user_notification_settings
         WHERE user_id = $1
         "#,
     )
@@ -30,20 +34,24 @@ pub async fn get_settings(pool: &PgPool, user_id: Uuid) -> Result<NotificationSe
             push_enabled: r.push_enabled,
             email_enabled: r.email_enabled,
             streak_reminders: r.streak_reminders,
-            lesson_reminders: r.lesson_reminders,
-            social_notifications: r.social_notifications,
-            marketing_notifications: r.marketing_notifications,
+            daily_mission_reminders: r.daily_mission_reminders,
+            weekly_digest: r.weekly_digest,
+            marketing_enabled: r.marketing_enabled,
+            quiet_hours_start: r.quiet_hours_start,
+            quiet_hours_end: r.quiet_hours_end,
         }),
         None => {
             // Return defaults if no settings row exists
             Ok(NotificationSettingsOut {
                 user_id,
-                push_enabled: true,
+                push_enabled: false,
                 email_enabled: true,
                 streak_reminders: true,
-                lesson_reminders: true,
-                social_notifications: true,
-                marketing_notifications: false,
+                daily_mission_reminders: true,
+                weekly_digest: true,
+                marketing_enabled: false,
+                quiet_hours_start: None,
+                quiet_hours_end: None,
             })
         }
     }
@@ -57,28 +65,35 @@ pub async fn update_settings(
 ) -> Result<NotificationSettingsOut, AppError> {
     let row = sqlx::query_as::<_, NotificationSettingsRow>(
         r#"
-        INSERT INTO notification_settings (user_id, push_enabled, email_enabled, streak_reminders,
-            lesson_reminders, social_notifications, marketing_notifications)
-        VALUES ($1, COALESCE($2, true), COALESCE($3, true), COALESCE($4, true),
-                COALESCE($5, true), COALESCE($6, true), COALESCE($7, false))
+        INSERT INTO user_notification_settings (id, user_id, push_enabled, email_enabled, streak_reminders,
+            daily_mission_reminders, weekly_digest, marketing_enabled, quiet_hours_start, quiet_hours_end, updated_at)
+        VALUES ($1, $2, COALESCE($3, false), COALESCE($4, true), COALESCE($5, true),
+                COALESCE($6, true), COALESCE($7, true), COALESCE($8, false), $9, $10, NOW())
         ON CONFLICT (user_id) DO UPDATE SET
-            push_enabled = COALESCE($2, notification_settings.push_enabled),
-            email_enabled = COALESCE($3, notification_settings.email_enabled),
-            streak_reminders = COALESCE($4, notification_settings.streak_reminders),
-            lesson_reminders = COALESCE($5, notification_settings.lesson_reminders),
-            social_notifications = COALESCE($6, notification_settings.social_notifications),
-            marketing_notifications = COALESCE($7, notification_settings.marketing_notifications)
+            push_enabled = COALESCE($3, user_notification_settings.push_enabled),
+            email_enabled = COALESCE($4, user_notification_settings.email_enabled),
+            streak_reminders = COALESCE($5, user_notification_settings.streak_reminders),
+            daily_mission_reminders = COALESCE($6, user_notification_settings.daily_mission_reminders),
+            weekly_digest = COALESCE($7, user_notification_settings.weekly_digest),
+            marketing_enabled = COALESCE($8, user_notification_settings.marketing_enabled),
+            quiet_hours_start = COALESCE($9, user_notification_settings.quiet_hours_start),
+            quiet_hours_end = COALESCE($10, user_notification_settings.quiet_hours_end),
+            updated_at = NOW()
         RETURNING user_id, push_enabled, email_enabled, streak_reminders,
-                  lesson_reminders, social_notifications, marketing_notifications
+                  daily_mission_reminders, weekly_digest, marketing_enabled,
+                  quiet_hours_start, quiet_hours_end
         "#,
     )
+    .bind(Uuid::new_v4())
     .bind(user_id)
     .bind(req.push_enabled)
     .bind(req.email_enabled)
     .bind(req.streak_reminders)
-    .bind(req.lesson_reminders)
-    .bind(req.social_notifications)
-    .bind(req.marketing_notifications)
+    .bind(req.daily_mission_reminders)
+    .bind(req.weekly_digest)
+    .bind(req.marketing_enabled)
+    .bind(req.quiet_hours_start)
+    .bind(req.quiet_hours_end)
     .fetch_one(pool)
     .await
     .map_err(|e| AppError::Internal(e.into()))?;
@@ -88,13 +103,16 @@ pub async fn update_settings(
         push_enabled: row.push_enabled,
         email_enabled: row.email_enabled,
         streak_reminders: row.streak_reminders,
-        lesson_reminders: row.lesson_reminders,
-        social_notifications: row.social_notifications,
-        marketing_notifications: row.marketing_notifications,
+        daily_mission_reminders: row.daily_mission_reminders,
+        weekly_digest: row.weekly_digest,
+        marketing_enabled: row.marketing_enabled,
+        quiet_hours_start: row.quiet_hours_start,
+        quiet_hours_end: row.quiet_hours_end,
     })
 }
 
 /// POST /api/v1/notifications/register-push — register push token.
+/// Push token is stored in `user_notification_settings.push_token` + `push_platform`.
 pub async fn register_push(
     pool: &PgPool,
     user_id: Uuid,
@@ -102,16 +120,19 @@ pub async fn register_push(
 ) -> Result<PushTokenResponse, AppError> {
     sqlx::query(
         r#"
-        INSERT INTO push_tokens (id, user_id, token, platform, created_at)
-        VALUES ($1, $2, $3, $4, $5)
-        ON CONFLICT (user_id, token) DO UPDATE SET platform = $4
+        INSERT INTO user_notification_settings (id, user_id, push_token, push_platform, push_enabled, updated_at)
+        VALUES ($1, $2, $3, $4, true, NOW())
+        ON CONFLICT (user_id) DO UPDATE SET
+            push_token = $3,
+            push_platform = $4,
+            push_enabled = true,
+            updated_at = NOW()
         "#,
     )
     .bind(Uuid::new_v4())
     .bind(user_id)
     .bind(&req.token)
     .bind(&req.platform)
-    .bind(Utc::now())
     .execute(pool)
     .await
     .map_err(|e| AppError::Internal(e.into()))?;
@@ -123,17 +144,23 @@ pub async fn register_push(
 }
 
 /// DELETE /api/v1/notifications/unregister-push — unregister push token.
+/// Clears push_token and disables push in `user_notification_settings`.
 pub async fn unregister_push(
     pool: &PgPool,
     user_id: Uuid,
-    req: UnregisterPushRequest,
+    _req: UnregisterPushRequest,
 ) -> Result<PushTokenResponse, AppError> {
-    sqlx::query("DELETE FROM push_tokens WHERE user_id = $1 AND token = $2")
-        .bind(user_id)
-        .bind(&req.token)
-        .execute(pool)
-        .await
-        .map_err(|e| AppError::Internal(e.into()))?;
+    sqlx::query(
+        r#"
+        UPDATE user_notification_settings
+        SET push_token = NULL, push_enabled = false, updated_at = NOW()
+        WHERE user_id = $1
+        "#,
+    )
+    .bind(user_id)
+    .execute(pool)
+    .await
+    .map_err(|e| AppError::Internal(e.into()))?;
 
     Ok(PushTokenResponse {
         success: true,
@@ -142,6 +169,7 @@ pub async fn unregister_push(
 }
 
 /// GET /api/v1/notifications/history — notification history (paginated).
+/// Queries `push_notifications` table.
 pub async fn get_history(
     pool: &PgPool,
     user_id: Uuid,
@@ -151,7 +179,7 @@ pub async fn get_history(
     let offset = (page - 1).max(0) * per_page;
 
     let total: (i64,) = sqlx::query_as(
-        "SELECT COUNT(*) FROM notifications WHERE user_id = $1",
+        "SELECT COUNT(*) FROM push_notifications WHERE user_id = $1",
     )
     .bind(user_id)
     .fetch_one(pool)
@@ -160,8 +188,8 @@ pub async fn get_history(
 
     let rows = sqlx::query_as::<_, NotificationHistoryRow>(
         r#"
-        SELECT id, notification_type, title, body, data, read, created_at
-        FROM notifications
+        SELECT id, notification_type, title, body, data_payload, status, sent_at, created_at
+        FROM push_notifications
         WHERE user_id = $1
         ORDER BY created_at DESC
         LIMIT $2 OFFSET $3
@@ -181,8 +209,9 @@ pub async fn get_history(
             notification_type: r.notification_type,
             title: r.title,
             body: r.body,
-            data: r.data,
-            read: r.read,
+            data_payload: r.data_payload,
+            status: r.status,
+            sent_at: r.sent_at,
             created_at: r.created_at,
         })
         .collect();
@@ -196,46 +225,47 @@ pub async fn get_history(
 }
 
 /// GET /api/v1/notifications/should-prompt-permission — should prompt for push permission.
+/// Checks if user has push_token set in `user_notification_settings`.
 pub async fn should_prompt_permission(
     pool: &PgPool,
     user_id: Uuid,
 ) -> Result<ShouldPromptPermissionResponse, AppError> {
-    // Check if user already has push tokens registered
-    let token_count: (i64,) = sqlx::query_as(
-        "SELECT COUNT(*) FROM push_tokens WHERE user_id = $1",
-    )
-    .bind(user_id)
-    .fetch_one(pool)
-    .await
-    .map_err(|e| AppError::Internal(e.into()))?;
-
-    if token_count.0 > 0 {
-        return Ok(ShouldPromptPermissionResponse {
-            should_prompt: false,
-            reason: Some("already_registered".to_string()),
-        });
-    }
-
-    // Check notification settings
-    let settings = sqlx::query_as::<_, NotificationSettingsRow>(
-        "SELECT user_id, push_enabled, email_enabled, streak_reminders, lesson_reminders, social_notifications, marketing_notifications FROM notification_settings WHERE user_id = $1",
+    // Check if user already has a push token registered
+    let row: Option<(Option<String>, bool)> = sqlx::query_as(
+        "SELECT push_token, push_enabled FROM user_notification_settings WHERE user_id = $1",
     )
     .bind(user_id)
     .fetch_optional(pool)
     .await
     .map_err(|e| AppError::Internal(e.into()))?;
 
-    if let Some(s) = settings {
-        if !s.push_enabled {
-            return Ok(ShouldPromptPermissionResponse {
+    match row {
+        Some((Some(_token), _)) => {
+            // Already has a push token
+            Ok(ShouldPromptPermissionResponse {
                 should_prompt: false,
-                reason: Some("push_disabled".to_string()),
-            });
+                reason: Some("already_registered".to_string()),
+            })
+        }
+        Some((None, push_enabled)) => {
+            if !push_enabled {
+                Ok(ShouldPromptPermissionResponse {
+                    should_prompt: false,
+                    reason: Some("push_disabled".to_string()),
+                })
+            } else {
+                Ok(ShouldPromptPermissionResponse {
+                    should_prompt: true,
+                    reason: None,
+                })
+            }
+        }
+        None => {
+            // No settings row — prompt
+            Ok(ShouldPromptPermissionResponse {
+                should_prompt: true,
+                reason: None,
+            })
         }
     }
-
-    Ok(ShouldPromptPermissionResponse {
-        should_prompt: true,
-        reason: None,
-    })
 }

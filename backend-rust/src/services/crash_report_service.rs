@@ -2,6 +2,11 @@
 //!
 //! Phase 12 (Task 13.1): Crash Reports migration.
 //! Phase 13 (Task 14.7): Admin crash report routes.
+//! Fixed to match actual production schema:
+//! - `crash_reports` table with `error_type`, `error_message`, `stack_trace`,
+//!   `platform`, `app_version`, `device_model`, `os_version`, `additional_data`
+//! - NO `resolved_at` or `resolved_by` columns
+//! - `resolve_crash_report` function REMOVED (no DB support)
 
 use chrono::Utc;
 use sqlx::PgPool;
@@ -21,17 +26,21 @@ pub async fn submit_crash_report(
 
     sqlx::query(
         r#"
-        INSERT INTO crash_reports (id, user_id, error_message, stack_trace, device_info, app_version, platform, created_at)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        INSERT INTO crash_reports (id, user_id, session_id, error_type, error_message, stack_trace, platform, app_version, device_model, os_version, additional_data, created_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
         "#,
     )
     .bind(id)
     .bind(user_id)
+    .bind(req.session_id)
+    .bind(&req.error_type)
     .bind(&req.error_message)
     .bind(&req.stack_trace)
-    .bind(&req.device_info)
-    .bind(&req.app_version)
     .bind(&req.platform)
+    .bind(&req.app_version)
+    .bind(&req.device_model)
+    .bind(&req.os_version)
+    .bind(&req.additional_data)
     .bind(now)
     .execute(pool)
     .await
@@ -55,7 +64,7 @@ pub async fn list_crash_reports(
 
     let rows = sqlx::query_as::<_, CrashReportRow>(
         r#"
-        SELECT id, user_id, error_message, stack_trace, device_info, app_version, platform, created_at, resolved_at, resolved_by
+        SELECT id, user_id, session_id, error_type, error_message, stack_trace, platform, app_version, device_model, os_version, additional_data, created_at
         FROM crash_reports
         ORDER BY created_at DESC
         LIMIT $1 OFFSET $2
@@ -72,14 +81,16 @@ pub async fn list_crash_reports(
         .map(|r| CrashReportOut {
             id: r.id,
             user_id: r.user_id,
+            session_id: r.session_id,
+            error_type: r.error_type,
             error_message: r.error_message,
             stack_trace: r.stack_trace,
-            device_info: r.device_info,
-            app_version: r.app_version,
             platform: r.platform,
+            app_version: r.app_version,
+            device_model: r.device_model,
+            os_version: r.os_version,
+            additional_data: r.additional_data,
             created_at: r.created_at,
-            resolved_at: r.resolved_at,
-            resolved_by: r.resolved_by,
         })
         .collect();
 
@@ -98,7 +109,7 @@ pub async fn get_crash_report(
 ) -> Result<CrashReportOut, AppError> {
     let row = sqlx::query_as::<_, CrashReportRow>(
         r#"
-        SELECT id, user_id, error_message, stack_trace, device_info, app_version, platform, created_at, resolved_at, resolved_by
+        SELECT id, user_id, session_id, error_type, error_message, stack_trace, platform, app_version, device_model, os_version, additional_data, created_at
         FROM crash_reports
         WHERE id = $1
         "#,
@@ -115,69 +126,49 @@ pub async fn get_crash_report(
     Ok(CrashReportOut {
         id: row.id,
         user_id: row.user_id,
+        session_id: row.session_id,
+        error_type: row.error_type,
         error_message: row.error_message,
         stack_trace: row.stack_trace,
-        device_info: row.device_info,
-        app_version: row.app_version,
         platform: row.platform,
+        app_version: row.app_version,
+        device_model: row.device_model,
+        os_version: row.os_version,
+        additional_data: row.additional_data,
         created_at: row.created_at,
-        resolved_at: row.resolved_at,
-        resolved_by: row.resolved_by,
-    })
-}
-
-/// POST /api/v1/admin/crash-reports/{report_id}/resolve — resolve crash report (admin).
-pub async fn resolve_crash_report(
-    pool: &PgPool,
-    report_id: Uuid,
-    admin_id: Uuid,
-) -> Result<ResolveCrashReportResponse, AppError> {
-    let now = Utc::now();
-
-    let result = sqlx::query(
-        "UPDATE crash_reports SET resolved_at = $1, resolved_by = $2 WHERE id = $3 AND resolved_at IS NULL",
-    )
-    .bind(now)
-    .bind(admin_id)
-    .bind(report_id)
-    .execute(pool)
-    .await
-    .map_err(|e| AppError::Internal(e.into()))?;
-
-    if result.rows_affected() == 0 {
-        return Err(AppError::Http {
-            status: axum::http::StatusCode::NOT_FOUND,
-            message: "Crash report not found or already resolved".to_string(),
-        });
-    }
-
-    Ok(ResolveCrashReportResponse {
-        id: report_id,
-        resolved_at: now,
-        resolved_by: admin_id,
     })
 }
 
 /// GET /api/v1/admin/crash-reports/stats — crash report stats (admin).
+/// Groups by error_type since there's no resolved_at column.
 pub async fn get_crash_report_stats(pool: &PgPool) -> Result<CrashReportStatsResponse, AppError> {
-    let stats = sqlx::query_as::<_, CrashReportStatsRow>(
-        r#"
-        SELECT
-            COUNT(*) AS total,
-            COUNT(*) FILTER (WHERE resolved_at IS NULL) AS unresolved,
-            COUNT(*) FILTER (WHERE resolved_at IS NOT NULL) AS resolved,
-            COUNT(*) FILTER (WHERE created_at::date = CURRENT_DATE) AS today
-        FROM crash_reports
-        "#,
+    let total: (i64,) = sqlx::query_as("SELECT COUNT(*) FROM crash_reports")
+        .fetch_one(pool)
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
+
+    let today: (i64,) = sqlx::query_as(
+        "SELECT COUNT(*) FROM crash_reports WHERE created_at::date = CURRENT_DATE",
     )
     .fetch_one(pool)
     .await
     .map_err(|e| AppError::Internal(e.into()))?;
 
+    let by_error_type = sqlx::query_as::<_, ErrorTypeCount>(
+        r#"
+        SELECT error_type, COUNT(*) AS count
+        FROM crash_reports
+        GROUP BY error_type
+        ORDER BY count DESC
+        "#,
+    )
+    .fetch_all(pool)
+    .await
+    .map_err(|e| AppError::Internal(e.into()))?;
+
     Ok(CrashReportStatsResponse {
-        total: stats.total,
-        unresolved: stats.unresolved,
-        resolved: stats.resolved,
-        today: stats.today,
+        total: total.0,
+        today: today.0,
+        by_error_type,
     })
 }

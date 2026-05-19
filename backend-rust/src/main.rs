@@ -140,10 +140,12 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
         .with_state(auth_state.clone());
 
     // Progress & Streak routes (Phase 6)
-    // NOTE: streak/hearts/daily-goal/milestones use wrong table names.
-    // Only /progress/unlock is native; rest fall through to gateway.
     let progress_routes = Router::new()
         .route("/api/v1/progress/unlock", post(routes::progress::unlock_motif))
+        .route("/api/v1/users/me/streak", get(routes::progress::get_streak).post(routes::progress::update_streak))
+        .route("/api/v1/users/me/hearts", get(routes::progress::get_hearts).post(routes::progress::update_hearts))
+        .route("/api/v1/users/me/daily-goal", get(routes::progress::get_daily_goal).put(routes::progress::update_daily_goal))
+        .route("/api/v1/users/me/milestones", get(routes::progress::get_milestones))
         .with_state(auth_state.clone());
 
     // Badge, Quest, Achievement routes (Phase 7)
@@ -176,17 +178,38 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
         .route("/api/v1/leagues/:league_id", get(routes::leaderboard::get_league_detail))
         .with_state(auth_state.clone());
 
-    // Notification routes (Phase 10) — table names don't match DB, gateway for now
-    // let notification_routes = ...
+    // Notification routes (Phase 10)
+    let notification_routes = Router::new()
+        .route("/api/v1/notifications/settings", get(routes::notifications::get_settings).put(routes::notifications::update_settings))
+        .route("/api/v1/notifications/register-push", post(routes::notifications::register_push))
+        .route("/api/v1/notifications/unregister-push", axum::routing::delete(routes::notifications::unregister_push))
+        .route("/api/v1/notifications/history", get(routes::notifications::get_history))
+        .route("/api/v1/notifications/should-prompt-permission", get(routes::notifications::should_prompt_permission))
+        .with_state(auth_state.clone());
 
-    // Session & Analytics routes (Phase 11) — table names don't match DB, gateway for now
-    // let session_routes = ...
+    // Session & Analytics routes (Phase 11)
+    let session_routes = Router::new()
+        .route("/api/v1/sessions/heartbeat", post(routes::sessions::heartbeat))
+        .route("/api/v1/sessions/end", post(routes::sessions::end_session))
+        .route("/api/v1/analytics/events", post(routes::sessions::ingest_events))
+        .route("/api/v1/admin/analytics/sessions/active", get(routes::sessions::get_active_sessions))
+        .route("/api/v1/admin/analytics/sessions/stats", get(routes::sessions::get_session_stats))
+        .with_state(auth_state.clone());
 
-    // Crash Report routes (Phase 12) — table names don't match DB, gateway for now
-    // let crash_report_routes = ...
+    // Crash Report routes (Phase 12)
+    let crash_report_routes = Router::new()
+        .route("/api/v1/crash-reports", post(routes::crash_reports::submit_crash_report))
+        .with_state(auth_state.clone());
 
-    // Admin routes (Phase 13) — table names don't match DB, gateway for now
-    // let admin_routes = ...
+    // Admin routes (Phase 13) — no resolve route (no DB support)
+    let admin_routes = Router::new()
+        .route("/api/v1/admin/push-notifications/send", post(routes::admin::send_push_notification))
+        .route("/api/v1/admin/push-notifications/broadcast", post(routes::admin::broadcast_push_notification))
+        .route("/api/v1/admin/push-notifications", get(routes::admin::list_push_notifications))
+        .route("/api/v1/admin/crash-reports", get(routes::admin::list_crash_reports))
+        .route("/api/v1/admin/crash-reports/stats", get(routes::admin::get_crash_report_stats))
+        .route("/api/v1/admin/crash-reports/:report_id", get(routes::admin::get_crash_report))
+        .with_state(auth_state.clone());
 
     // Misc routes (Phase 15 — preview, collection, leftovers)
     let misc_routes = Router::new()
@@ -216,11 +239,10 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
         .merge(quest_routes)
         .merge(classroom_routes)
         .merge(leaderboard_routes)
-        // Phases 10-13 routes commented out (wrong table names) — fall through to gateway
-        // .merge(notification_routes)
-        // .merge(session_routes)
-        // .merge(crash_report_routes)
-        // .merge(admin_routes)
+        .merge(notification_routes)
+        .merge(session_routes)
+        .merge(crash_report_routes)
+        .merge(admin_routes)
         .merge(misc_routes)
         .merge(internal_routes)
         .fallback(gateway::fallback_to_python)

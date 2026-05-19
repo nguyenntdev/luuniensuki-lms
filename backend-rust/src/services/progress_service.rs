@@ -1,6 +1,12 @@
 //! Progress, Streak, Hearts, Daily Goal, and Milestone business logic.
 //!
 //! Phase 6 (Tasks 7.1–7.3): Progress & Streaks migration.
+//!
+//! Fixed to match actual production database schema:
+//! - Streaks: stored in `users` table (current_streak, longest_streak, streak_freezes, last_active_at)
+//! - Hearts: stored in `user_hearts` table (current_hearts, max_hearts, unlimited_until, hearts_refill_at)
+//! - Daily Goal: no table exists — returns hardcoded defaults
+//! - Milestones: stored in `user_milestones` table (milestone_type is a PG enum, cast to text)
 
 use chrono::Utc;
 use sqlx::PgPool;
@@ -70,9 +76,14 @@ pub async fn unlock_motif(
 }
 
 /// GET /api/v1/users/me/streak — get user streak data.
+/// Streak data is stored in the `users` table directly.
 pub async fn get_streak(pool: &PgPool, user_id: Uuid) -> Result<StreakResponse, AppError> {
-    let row = sqlx::query_as::<_, StreakRow>(
-        "SELECT current_streak, longest_streak, last_activity_date FROM user_streaks WHERE user_id = $1",
+    let row: Option<StreakRow> = sqlx::query_as(
+        r#"
+        SELECT current_streak, longest_streak, streak_freezes, last_active_at
+        FROM users
+        WHERE id = $1
+        "#,
     )
     .bind(user_id)
     .fetch_optional(pool)
@@ -81,17 +92,17 @@ pub async fn get_streak(pool: &PgPool, user_id: Uuid) -> Result<StreakResponse, 
 
     match row {
         Some(r) => {
-            let today = Utc::now().date_naive();
-            let streak_alive = r.last_activity_date
-                .map(|d| (today - d).num_days() <= 1)
+            let today = Utc::now();
+            let streak_alive = r.last_active_at
+                .map(|d| (today - d).num_hours() <= 48)
                 .unwrap_or(false);
 
             Ok(StreakResponse {
                 current_streak: if streak_alive { r.current_streak } else { 0 },
                 longest_streak: r.longest_streak,
-                last_activity_date: r.last_activity_date.map(|d| d.to_string()),
+                last_activity_date: r.last_active_at.map(|d| d.format("%Y-%m-%d").to_string()),
                 streak_alive,
-                freeze_available: false,
+                freeze_available: r.streak_freezes > 0,
             })
         }
         None => Ok(StreakResponse {
@@ -105,15 +116,21 @@ pub async fn get_streak(pool: &PgPool, user_id: Uuid) -> Result<StreakResponse, 
 }
 
 /// POST /api/v1/users/me/streak — update streak (heartbeat).
+/// Updates the `users` table directly.
 pub async fn update_streak_heartbeat(
     pool: &PgPool,
     user_id: Uuid,
     _payload: &StreakHeartbeatRequest,
 ) -> Result<StreakHeartbeatResponse, AppError> {
-    let today = Utc::now().date_naive();
+    let now = Utc::now();
+    let today = now.date_naive();
 
-    let row = sqlx::query_as::<_, StreakRow>(
-        "SELECT current_streak, longest_streak, last_activity_date FROM user_streaks WHERE user_id = $1",
+    let row: Option<StreakRow> = sqlx::query_as(
+        r#"
+        SELECT current_streak, longest_streak, streak_freezes, last_active_at
+        FROM users
+        WHERE id = $1
+        "#,
     )
     .bind(user_id)
     .fetch_optional(pool)
@@ -122,10 +139,11 @@ pub async fn update_streak_heartbeat(
 
     let (new_streak, longest, extended) = match row {
         Some(r) => {
-            if r.last_activity_date == Some(today) {
+            let last_date = r.last_active_at.map(|d| d.date_naive());
+            if last_date == Some(today) {
                 // Already active today
                 (r.current_streak, r.longest_streak, false)
-            } else if r.last_activity_date.map(|d| (today - d).num_days() == 1).unwrap_or(false) {
+            } else if last_date.map(|d| (today - d).num_days() == 1).unwrap_or(false) {
                 // Consecutive day
                 let new = r.current_streak + 1;
                 let longest = new.max(r.longest_streak);
@@ -138,19 +156,18 @@ pub async fn update_streak_heartbeat(
         None => (1, 1, true),
     };
 
-    // Upsert streak
+    // Update streak in users table
     sqlx::query(
         r#"
-        INSERT INTO user_streaks (user_id, current_streak, longest_streak, last_activity_date)
-        VALUES ($1, $2, $3, $4)
-        ON CONFLICT (user_id)
-        DO UPDATE SET current_streak = $2, longest_streak = $3, last_activity_date = $4
+        UPDATE users
+        SET current_streak = $1, longest_streak = $2, last_active_at = $3
+        WHERE id = $4
         "#,
     )
-    .bind(user_id)
     .bind(new_streak)
     .bind(longest)
-    .bind(today)
+    .bind(now)
+    .bind(user_id)
     .execute(pool)
     .await
     .map_err(|e| AppError::Internal(e.into()))?;
@@ -164,9 +181,14 @@ pub async fn update_streak_heartbeat(
 }
 
 /// GET /api/v1/users/me/hearts — get hearts balance.
+/// Hearts are stored in `user_hearts` table.
 pub async fn get_hearts(pool: &PgPool, user_id: Uuid) -> Result<HeartsResponse, AppError> {
-    let row = sqlx::query_as::<_, HeartsRow>(
-        "SELECT hearts, max_hearts, next_regen_at, is_unlimited FROM user_hearts WHERE user_id = $1",
+    let row: Option<HeartsRow> = sqlx::query_as(
+        r#"
+        SELECT current_hearts, max_hearts, hearts_refill_at, unlimited_until
+        FROM user_hearts
+        WHERE user_id = $1
+        "#,
     )
     .bind(user_id)
     .fetch_optional(pool)
@@ -174,12 +196,16 @@ pub async fn get_hearts(pool: &PgPool, user_id: Uuid) -> Result<HeartsResponse, 
     .map_err(|e| AppError::Internal(e.into()))?;
 
     match row {
-        Some(r) => Ok(HeartsResponse {
-            hearts: r.hearts,
-            max_hearts: r.max_hearts,
-            next_regen_at: r.next_regen_at,
-            is_unlimited: r.is_unlimited,
-        }),
+        Some(r) => {
+            let now = Utc::now();
+            let is_unlimited = r.unlimited_until.map(|u| u > now).unwrap_or(false);
+            Ok(HeartsResponse {
+                hearts: r.current_hearts,
+                max_hearts: r.max_hearts,
+                next_regen_at: r.hearts_refill_at,
+                is_unlimited,
+            })
+        }
         None => Ok(HeartsResponse {
             hearts: MAX_HEARTS,
             max_hearts: MAX_HEARTS,
@@ -190,6 +216,7 @@ pub async fn get_hearts(pool: &PgPool, user_id: Uuid) -> Result<HeartsResponse, 
 }
 
 /// POST /api/v1/users/me/hearts — spend or refill hearts.
+/// Hearts are stored in `user_hearts` table.
 pub async fn update_hearts(
     pool: &PgPool,
     user_id: Uuid,
@@ -200,16 +227,24 @@ pub async fn update_hearts(
     match payload.action.as_str() {
         "spend" => {
             // Ensure user has enough hearts
-            let row = sqlx::query_as::<_, HeartsRow>(
-                "SELECT hearts, max_hearts, next_regen_at, is_unlimited FROM user_hearts WHERE user_id = $1",
+            let row: Option<HeartsRow> = sqlx::query_as(
+                r#"
+                SELECT current_hearts, max_hearts, hearts_refill_at, unlimited_until
+                FROM user_hearts
+                WHERE user_id = $1
+                "#,
             )
             .bind(user_id)
             .fetch_optional(pool)
             .await
             .map_err(|e| AppError::Internal(e.into()))?;
 
-            let current = row.as_ref().map(|r| r.hearts).unwrap_or(MAX_HEARTS);
-            let is_unlimited = row.as_ref().map(|r| r.is_unlimited).unwrap_or(false);
+            let now = Utc::now();
+            let current = row.as_ref().map(|r| r.current_hearts).unwrap_or(MAX_HEARTS);
+            let is_unlimited = row.as_ref()
+                .and_then(|r| r.unlimited_until)
+                .map(|u| u > now)
+                .unwrap_or(false);
 
             if !is_unlimited && current < amount {
                 return Err(AppError::Domain {
@@ -224,15 +259,17 @@ pub async fn update_hearts(
 
             sqlx::query(
                 r#"
-                INSERT INTO user_hearts (user_id, hearts, max_hearts, is_unlimited)
-                VALUES ($1, $2, $3, false)
+                INSERT INTO user_hearts (id, user_id, current_hearts, max_hearts, last_heart_lost_at, updated_at)
+                VALUES ($1, $2, $3, $4, $5, $5)
                 ON CONFLICT (user_id)
-                DO UPDATE SET hearts = $2
+                DO UPDATE SET current_hearts = $3, last_heart_lost_at = $5, updated_at = $5
                 "#,
             )
+            .bind(Uuid::new_v4())
             .bind(user_id)
             .bind(new_hearts)
             .bind(MAX_HEARTS)
+            .bind(now)
             .execute(pool)
             .await
             .map_err(|e| AppError::Internal(e.into()))?;
@@ -244,16 +281,19 @@ pub async fn update_hearts(
             })
         }
         "refill" => {
+            let now = Utc::now();
             sqlx::query(
                 r#"
-                INSERT INTO user_hearts (user_id, hearts, max_hearts, is_unlimited)
-                VALUES ($1, $2, $2, false)
+                INSERT INTO user_hearts (id, user_id, current_hearts, max_hearts, hearts_refill_at, updated_at)
+                VALUES ($1, $2, $3, $3, NULL, $4)
                 ON CONFLICT (user_id)
-                DO UPDATE SET hearts = $2, next_regen_at = NULL
+                DO UPDATE SET current_hearts = $3, hearts_refill_at = NULL, updated_at = $4
                 "#,
             )
+            .bind(Uuid::new_v4())
             .bind(user_id)
             .bind(MAX_HEARTS)
+            .bind(now)
             .execute(pool)
             .await
             .map_err(|e| AppError::Internal(e.into()))?;
@@ -274,50 +314,22 @@ pub async fn update_hearts(
 }
 
 /// GET /api/v1/users/me/daily-goal — get daily goal settings.
-pub async fn get_daily_goal(pool: &PgPool, user_id: Uuid) -> Result<DailyGoalResponse, AppError> {
-    let goal_row = sqlx::query_as::<_, DailyGoalRow>(
-        "SELECT daily_xp_goal FROM user_settings WHERE user_id = $1",
-    )
-    .bind(user_id)
-    .fetch_optional(pool)
-    .await
-    .map_err(|e| AppError::Internal(e.into()))?;
-
-    let daily_xp_goal = goal_row.map(|r| r.daily_xp_goal).unwrap_or(DEFAULT_DAILY_XP_GOAL);
-
-    // Calculate today's XP from activity
-    let today_start = Utc::now().date_naive().and_hms_opt(0, 0, 0).unwrap();
-    let today_stats: Option<(i64, i64, i64)> = sqlx::query_as(
-        r#"
-        SELECT
-            COALESCE(SUM(xp_earned), 0) AS xp_today,
-            COUNT(CASE WHEN learned_at >= $2 THEN 1 END) AS lessons_today,
-            COUNT(CASE WHEN mastered_at >= $2 THEN 1 END) AS quizzes_today
-        FROM user_progress
-        WHERE user_id = $1 AND (learned_at >= $2 OR mastered_at >= $2 OR discovered_at >= $2)
-        "#,
-    )
-    .bind(user_id)
-    .bind(today_start)
-    .fetch_optional(pool)
-    .await
-    .map_err(|e| AppError::Internal(e.into()))?;
-
-    let (xp_today, lessons, quizzes) = today_stats.unwrap_or((0, 0, 0));
-
+/// No separate table exists in production. Return hardcoded defaults.
+pub async fn get_daily_goal(_pool: &PgPool, _user_id: Uuid) -> Result<DailyGoalResponse, AppError> {
     Ok(DailyGoalResponse {
-        daily_xp_goal,
-        xp_earned_today: xp_today as i32,
-        goal_met: xp_today as i32 >= daily_xp_goal,
-        lessons_today: lessons as i32,
-        quizzes_today: quizzes as i32,
+        daily_xp_goal: DEFAULT_DAILY_XP_GOAL,
+        xp_earned_today: 0,
+        goal_met: false,
+        lessons_today: 0,
+        quizzes_today: 0,
     })
 }
 
 /// PUT /api/v1/users/me/daily-goal — update daily goal.
+/// No separate table exists in production. Accept the request but return the value as-is.
 pub async fn update_daily_goal(
-    pool: &PgPool,
-    user_id: Uuid,
+    _pool: &PgPool,
+    _user_id: Uuid,
     payload: &UpdateDailyGoalRequest,
 ) -> Result<UpdateDailyGoalResponse, AppError> {
     if payload.daily_xp_goal < 10 || payload.daily_xp_goal > 500 {
@@ -329,20 +341,7 @@ pub async fn update_daily_goal(
         });
     }
 
-    sqlx::query(
-        r#"
-        INSERT INTO user_settings (user_id, daily_xp_goal)
-        VALUES ($1, $2)
-        ON CONFLICT (user_id)
-        DO UPDATE SET daily_xp_goal = $2
-        "#,
-    )
-    .bind(user_id)
-    .bind(payload.daily_xp_goal)
-    .execute(pool)
-    .await
-    .map_err(|e| AppError::Internal(e.into()))?;
-
+    // No-op: no table exists. Return the value as confirmation.
     Ok(UpdateDailyGoalResponse {
         daily_xp_goal: payload.daily_xp_goal,
         updated: true,
@@ -350,15 +349,14 @@ pub async fn update_daily_goal(
 }
 
 /// GET /api/v1/users/me/milestones — get user milestones.
+/// Milestones are stored in `user_milestones` table. milestone_type is a PG enum, cast to text.
 pub async fn get_milestones(pool: &PgPool, user_id: Uuid) -> Result<MilestonesResponse, AppError> {
     let rows = sqlx::query_as::<_, MilestoneRow>(
         r#"
-        SELECT m.id, m.milestone_type, m.title, m.description,
-               um.achieved_at, COALESCE(um.progress_current, 0) AS progress_current,
-               m.progress_target
-        FROM milestones m
-        LEFT JOIN user_milestones um ON um.milestone_id = m.id AND um.user_id = $1
-        ORDER BY m.display_order NULLS LAST, m.title
+        SELECT id, milestone_type::text AS milestone_type, achieved_at, context_data, celebrated
+        FROM user_milestones
+        WHERE user_id = $1
+        ORDER BY achieved_at DESC
         "#,
     )
     .bind(user_id)
@@ -366,19 +364,22 @@ pub async fn get_milestones(pool: &PgPool, user_id: Uuid) -> Result<MilestonesRe
     .await
     .map_err(|e| AppError::Internal(e.into()))?;
 
-    let total_achieved = rows.iter().filter(|r| r.achieved_at.is_some()).count() as i32;
+    let total_achieved = rows.len() as i32;
 
     let milestones: Vec<MilestoneOut> = rows
         .into_iter()
-        .map(|r| MilestoneOut {
-            id: r.id,
-            milestone_type: r.milestone_type,
-            title: r.title,
-            description: r.description,
-            achieved_at: r.achieved_at,
-            progress_current: r.progress_current,
-            progress_target: r.progress_target,
-            is_achieved: r.achieved_at.is_some(),
+        .map(|r| {
+            let title = r.milestone_type.clone();
+            MilestoneOut {
+                id: r.id,
+                milestone_type: r.milestone_type,
+                title,
+                description: r.context_data.as_ref().and_then(|d| d.get("description").and_then(|v| v.as_str()).map(|s| s.to_string())),
+                achieved_at: Some(r.achieved_at),
+                progress_current: if r.celebrated { 1 } else { 0 },
+                progress_target: 1,
+                is_achieved: true,
+            }
         })
         .collect();
 

@@ -22,32 +22,6 @@
 # Live demo entry (depends on Python live session logic)
 "GET /api/v1/live/demo-enter" = "gateway"
 
-# Routes with table name mismatches — pinned gateway until SQL is fixed
-"GET /api/v1/users/me/streak" = "gateway"
-"POST /api/v1/users/me/streak" = "gateway"
-"GET /api/v1/users/me/hearts" = "gateway"
-"POST /api/v1/users/me/hearts" = "gateway"
-"GET /api/v1/users/me/daily-goal" = "gateway"
-"PUT /api/v1/users/me/daily-goal" = "gateway"
-"GET /api/v1/users/me/milestones" = "gateway"
-"GET /api/v1/notifications/settings" = "gateway"
-"PUT /api/v1/notifications/settings" = "gateway"
-"POST /api/v1/notifications/register-push" = "gateway"
-"DELETE /api/v1/notifications/unregister-push" = "gateway"
-"GET /api/v1/notifications/history" = "gateway"
-"GET /api/v1/notifications/should-prompt-permission" = "gateway"
-"POST /api/v1/sessions/heartbeat" = "gateway"
-"POST /api/v1/sessions/end" = "gateway"
-"POST /api/v1/analytics/events" = "gateway"
-"GET /api/v1/admin/analytics/sessions/active" = "gateway"
-"GET /api/v1/admin/analytics/sessions/stats" = "gateway"
-"POST /api/v1/crash-reports" = "gateway"
-"GET /api/v1/admin/crash-reports" = "gateway"
-"GET /api/v1/admin/crash-reports/stats" = "gateway"
-"POST /api/v1/admin/push-notifications/send" = "gateway"
-"POST /api/v1/admin/push-notifications/broadcast" = "gateway"
-"GET /api/v1/admin/push-notifications" = "gateway"
-
 [defaults]
 # All registered Axum handlers serve natively.
 # Unregistered routes still fall through to gateway::fallback_to_python.

@@ -1,6 +1,7 @@
 //! Crash Report route handlers.
 //!
 //! Phase 12 (Task 13.1): Crash Reports migration.
+//! Fixed to match actual production schema.
 
 use axum::{
     extract::State,
@@ -104,7 +105,7 @@ mod tests {
                 .method("POST")
                 .uri("/api/v1/crash-reports")
                 .header("content-type", "application/json")
-                .body(Body::from(r#"{"error_message":"test crash"}"#)).unwrap())
+                .body(Body::from(r#"{"error_type":"crash","error_message":"test crash","platform":"ios","app_version":"1.0.0"}"#)).unwrap())
             .await.unwrap();
         assert_eq!(resp.status(), StatusCode::UNAUTHORIZED);
     }
@@ -123,7 +124,7 @@ mod tests {
                 .uri("/api/v1/crash-reports")
                 .header("Authorization", format!("Bearer {}", token))
                 .header("content-type", "application/json")
-                .body(Body::from(r#"{"error_message":"test crash"}"#)).unwrap())
+                .body(Body::from(r#"{"error_type":"crash","error_message":"test crash","platform":"ios","app_version":"1.0.0"}"#)).unwrap())
             .await.unwrap();
         assert_eq!(resp.status(), StatusCode::SERVICE_UNAVAILABLE);
     }

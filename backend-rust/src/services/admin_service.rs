@@ -1,6 +1,9 @@
 //! Admin push notification business logic.
 //!
 //! Phase 13 (Tasks 14.1–14.8): Admin migration.
+//! Fixed to match actual production schema:
+//! - Push notifications: `push_notifications` table with `user_id`, `title`, `body`,
+//!   `notification_type`, `data_payload`, `status`, `created_at`
 
 use chrono::Utc;
 use sqlx::PgPool;
@@ -16,29 +19,20 @@ pub async fn send_push_notification(
 ) -> Result<PushNotificationResponse, AppError> {
     let id = Uuid::new_v4();
     let now = Utc::now();
+    let notification_type = req.notification_type.unwrap_or_else(|| "admin".to_string());
 
-    // Count tokens for the target user
-    let token_count: (i64,) = sqlx::query_as(
-        "SELECT COUNT(*) FROM push_tokens WHERE user_id = $1",
-    )
-    .bind(req.user_id)
-    .fetch_one(pool)
-    .await
-    .map_err(|e| AppError::Internal(e.into()))?;
-
-    // Record the notification
     sqlx::query(
         r#"
-        INSERT INTO push_notification_log (id, title, body, data, audience, sent_to, created_at)
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        INSERT INTO push_notifications (id, user_id, title, body, notification_type, data_payload, status, created_at)
+        VALUES ($1, $2, $3, $4, $5, $6, 'pending', $7)
         "#,
     )
     .bind(id)
+    .bind(req.user_id)
     .bind(&req.title)
     .bind(&req.body)
-    .bind(&req.data)
-    .bind(format!("user:{}", req.user_id))
-    .bind(token_count.0 as i32)
+    .bind(&notification_type)
+    .bind(&req.data_payload)
     .bind(now)
     .execute(pool)
     .await
@@ -46,40 +40,34 @@ pub async fn send_push_notification(
 
     Ok(PushNotificationResponse {
         id,
-        sent_to: token_count.0 as i32,
+        status: "pending".to_string(),
         created_at: now,
     })
 }
 
 /// POST /api/v1/admin/push-notifications/broadcast — broadcast push notification.
+/// Inserts a push_notification row for each user that has push_enabled = true.
 pub async fn broadcast_push_notification(
     pool: &PgPool,
     req: BroadcastPushRequest,
 ) -> Result<PushNotificationResponse, AppError> {
     let id = Uuid::new_v4();
     let now = Utc::now();
+    let notification_type = req.notification_type.unwrap_or_else(|| "broadcast".to_string());
 
-    // Count all registered push tokens
-    let token_count: (i64,) = sqlx::query_as(
-        "SELECT COUNT(DISTINCT user_id) FROM push_tokens",
-    )
-    .fetch_one(pool)
-    .await
-    .map_err(|e| AppError::Internal(e.into()))?;
-
-    // Record the broadcast
+    // Insert a notification for all users with push enabled
     sqlx::query(
         r#"
-        INSERT INTO push_notification_log (id, title, body, data, audience, sent_to, created_at)
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        INSERT INTO push_notifications (id, user_id, title, body, notification_type, data_payload, status, created_at)
+        SELECT gen_random_uuid(), uns.user_id, $1, $2, $3, $4, 'pending', $5
+        FROM user_notification_settings uns
+        WHERE uns.push_enabled = true AND uns.push_token IS NOT NULL
         "#,
     )
-    .bind(id)
     .bind(&req.title)
     .bind(&req.body)
-    .bind(&req.data)
-    .bind(&req.audience)
-    .bind(token_count.0 as i32)
+    .bind(&notification_type)
+    .bind(&req.data_payload)
     .bind(now)
     .execute(pool)
     .await
@@ -87,7 +75,7 @@ pub async fn broadcast_push_notification(
 
     Ok(PushNotificationResponse {
         id,
-        sent_to: token_count.0 as i32,
+        status: "pending".to_string(),
         created_at: now,
     })
 }
@@ -100,15 +88,15 @@ pub async fn list_push_notifications(
 ) -> Result<PushNotificationsListResponse, AppError> {
     let offset = (page - 1).max(0) * per_page;
 
-    let total: (i64,) = sqlx::query_as("SELECT COUNT(*) FROM push_notification_log")
+    let total: (i64,) = sqlx::query_as("SELECT COUNT(*) FROM push_notifications")
         .fetch_one(pool)
         .await
         .map_err(|e| AppError::Internal(e.into()))?;
 
     let rows = sqlx::query_as::<_, PushNotificationRow>(
         r#"
-        SELECT id, title, body, data, audience, sent_to, created_at
-        FROM push_notification_log
+        SELECT id, user_id, title, body, notification_type, data_payload, status, sent_at, created_at
+        FROM push_notifications
         ORDER BY created_at DESC
         LIMIT $1 OFFSET $2
         "#,
@@ -123,11 +111,13 @@ pub async fn list_push_notifications(
         .into_iter()
         .map(|r| PushNotificationOut {
             id: r.id,
+            user_id: r.user_id,
             title: r.title,
             body: r.body,
-            data: r.data,
-            audience: r.audience,
-            sent_to: r.sent_to,
+            notification_type: r.notification_type,
+            data_payload: r.data_payload,
+            status: r.status,
+            sent_at: r.sent_at,
             created_at: r.created_at,
         })
         .collect();

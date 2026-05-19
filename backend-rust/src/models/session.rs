@@ -1,6 +1,9 @@
 //! Session and Analytics DTOs.
 //!
 //! Phase 11 (Tasks 12.1–12.2): Sessions, Heartbeat, Analytics Events migration.
+//! Fixed to match actual production schema:
+//! - Sessions: `user_sessions` table with `session_id`, `device_type`, `platform`, `app_version`, `is_active`
+//! - Analytics: `analytics_events` table with `event_name`, `path`, `payload`, `session_id`, `cohort`, `event_category`, `device_info`
 
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
@@ -14,14 +17,16 @@ use uuid::Uuid;
 #[derive(Debug, Deserialize)]
 pub struct HeartbeatRequest {
     pub session_id: Option<Uuid>,
-    pub device_info: Option<serde_json::Value>,
+    pub device_type: Option<String>,
+    pub platform: Option<String>,
+    pub app_version: Option<String>,
 }
 
 /// Response for POST /api/v1/sessions/heartbeat.
 #[derive(Debug, Serialize)]
 pub struct HeartbeatResponse {
     pub session_id: Uuid,
-    pub last_heartbeat_at: DateTime<Utc>,
+    pub last_active_at: DateTime<Utc>,
 }
 
 /// Request body for POST /api/v1/sessions/end.
@@ -35,7 +40,6 @@ pub struct EndSessionRequest {
 pub struct EndSessionResponse {
     pub session_id: Uuid,
     pub ended_at: DateTime<Utc>,
-    pub duration_seconds: i64,
 }
 
 // ---------------------------------------------------------------------------
@@ -45,8 +49,13 @@ pub struct EndSessionResponse {
 /// A single analytics event in the batch.
 #[derive(Debug, Deserialize)]
 pub struct AnalyticsEventInput {
-    pub event_type: String,
-    pub event_data: Option<serde_json::Value>,
+    pub event_name: String,
+    pub path: Option<String>,
+    pub payload: Option<serde_json::Value>,
+    pub session_id: Option<Uuid>,
+    pub cohort: Option<String>,
+    pub event_category: Option<String>,
+    pub device_info: Option<serde_json::Value>,
     pub timestamp: Option<DateTime<Utc>>,
 }
 
@@ -70,10 +79,11 @@ pub struct IngestEventsResponse {
 #[derive(Debug, Serialize)]
 pub struct ActiveSessionOut {
     pub session_id: Uuid,
-    pub user_id: Uuid,
+    pub user_id: Option<Uuid>,
     pub started_at: DateTime<Utc>,
-    pub last_heartbeat_at: DateTime<Utc>,
-    pub device_info: Option<serde_json::Value>,
+    pub last_active_at: DateTime<Utc>,
+    pub device_type: String,
+    pub platform: String,
 }
 
 /// Response for GET /api/v1/admin/analytics/sessions/active.
@@ -88,7 +98,7 @@ pub struct ActiveSessionsResponse {
 pub struct SessionStatsResponse {
     pub active_sessions: i64,
     pub total_sessions_today: i64,
-    pub avg_duration_seconds: f64,
+    pub avg_session_minutes: f64,
 }
 
 // ---------------------------------------------------------------------------
@@ -98,26 +108,31 @@ pub struct SessionStatsResponse {
 #[derive(Debug, sqlx::FromRow)]
 pub struct UserSessionRow {
     pub id: Uuid,
-    pub user_id: Uuid,
+    pub session_id: Uuid,
+    pub user_id: Option<Uuid>,
     pub started_at: DateTime<Utc>,
-    pub last_heartbeat_at: DateTime<Utc>,
+    pub last_active_at: DateTime<Utc>,
     pub ended_at: Option<DateTime<Utc>>,
-    pub duration_seconds: Option<i64>,
-    pub device_info: Option<serde_json::Value>,
+    pub device_type: String,
+    pub platform: String,
+    pub app_version: Option<String>,
+    pub is_active: bool,
 }
 
 #[derive(Debug, sqlx::FromRow)]
 pub struct ActiveSessionRow {
     pub id: Uuid,
-    pub user_id: Uuid,
+    pub session_id: Uuid,
+    pub user_id: Option<Uuid>,
     pub started_at: DateTime<Utc>,
-    pub last_heartbeat_at: DateTime<Utc>,
-    pub device_info: Option<serde_json::Value>,
+    pub last_active_at: DateTime<Utc>,
+    pub device_type: String,
+    pub platform: String,
 }
 
 #[derive(Debug, sqlx::FromRow)]
 pub struct SessionStatsRow {
     pub active_sessions: i64,
     pub total_sessions_today: i64,
-    pub avg_duration_seconds: Option<f64>,
+    pub avg_session_minutes: Option<f64>,
 }

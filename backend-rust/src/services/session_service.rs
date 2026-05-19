@@ -1,6 +1,11 @@
 //! Session and Analytics business logic.
 //!
 //! Phase 11 (Tasks 12.1–12.2): Sessions, Heartbeat, Analytics Events migration.
+//! Fixed to match actual production schema:
+//! - Sessions: `user_sessions` table with `session_id`, `device_type`, `platform`,
+//!   `app_version`, `is_active`, `last_active_at`
+//! - Analytics: `analytics_events` table with `event_name`, `path`, `payload`,
+//!   `session_id`, `cohort`, `event_category`, `device_info`
 
 use chrono::Utc;
 use sqlx::PgPool;
@@ -10,7 +15,7 @@ use crate::error::AppError;
 use crate::models::session::*;
 
 /// POST /api/v1/sessions/heartbeat — session heartbeat.
-/// Creates a new session if session_id is None, otherwise updates the heartbeat.
+/// Creates a new session if session_id is None, otherwise updates last_active_at.
 pub async fn heartbeat(
     pool: &PgPool,
     user_id: Uuid,
@@ -21,7 +26,7 @@ pub async fn heartbeat(
     if let Some(session_id) = req.session_id {
         // Update existing session heartbeat
         sqlx::query(
-            "UPDATE user_sessions SET last_heartbeat_at = $1 WHERE id = $2 AND user_id = $3 AND ended_at IS NULL",
+            "UPDATE user_sessions SET last_active_at = $1 WHERE session_id = $2 AND user_id = $3 AND is_active = true",
         )
         .bind(now)
         .bind(session_id)
@@ -32,29 +37,34 @@ pub async fn heartbeat(
 
         Ok(HeartbeatResponse {
             session_id,
-            last_heartbeat_at: now,
+            last_active_at: now,
         })
     } else {
         // Create a new session
         let session_id = Uuid::new_v4();
+        let device_type = req.device_type.unwrap_or_else(|| "unknown".to_string());
+        let platform = req.platform.unwrap_or_else(|| "unknown".to_string());
+
         sqlx::query(
             r#"
-            INSERT INTO user_sessions (id, user_id, started_at, last_heartbeat_at, device_info)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO user_sessions (id, user_id, session_id, started_at, last_active_at, device_type, platform, app_version, is_active)
+            VALUES ($1, $2, $3, $4, $4, $5, $6, $7, true)
             "#,
         )
-        .bind(session_id)
+        .bind(Uuid::new_v4())
         .bind(user_id)
+        .bind(session_id)
         .bind(now)
-        .bind(now)
-        .bind(&req.device_info)
+        .bind(&device_type)
+        .bind(&platform)
+        .bind(&req.app_version)
         .execute(pool)
         .await
         .map_err(|e| AppError::Internal(e.into()))?;
 
         Ok(HeartbeatResponse {
             session_id,
-            last_heartbeat_at: now,
+            last_active_at: now,
         })
     }
 }
@@ -67,30 +77,30 @@ pub async fn end_session(
 ) -> Result<EndSessionResponse, AppError> {
     let now = Utc::now();
 
-    let row = sqlx::query_as::<_, UserSessionRow>(
+    let result = sqlx::query(
         r#"
         UPDATE user_sessions
-        SET ended_at = $1,
-            duration_seconds = EXTRACT(EPOCH FROM ($1 - started_at))::bigint
-        WHERE id = $2 AND user_id = $3 AND ended_at IS NULL
-        RETURNING id, user_id, started_at, last_heartbeat_at, ended_at, duration_seconds, device_info
+        SET ended_at = $1, is_active = false
+        WHERE session_id = $2 AND user_id = $3 AND is_active = true
         "#,
     )
     .bind(now)
     .bind(req.session_id)
     .bind(user_id)
-    .fetch_optional(pool)
+    .execute(pool)
     .await
-    .map_err(|e| AppError::Internal(e.into()))?
-    .ok_or_else(|| AppError::Http {
-        status: axum::http::StatusCode::NOT_FOUND,
-        message: "Session not found or already ended".to_string(),
-    })?;
+    .map_err(|e| AppError::Internal(e.into()))?;
+
+    if result.rows_affected() == 0 {
+        return Err(AppError::Http {
+            status: axum::http::StatusCode::NOT_FOUND,
+            message: "Session not found or already ended".to_string(),
+        });
+    }
 
     Ok(EndSessionResponse {
-        session_id: row.id,
-        ended_at: row.ended_at.unwrap_or(now),
-        duration_seconds: row.duration_seconds.unwrap_or(0),
+        session_id: req.session_id,
+        ended_at: now,
     })
 }
 
@@ -107,14 +117,19 @@ pub async fn ingest_events(
         let ts = event.timestamp.unwrap_or(now);
         sqlx::query(
             r#"
-            INSERT INTO analytics_events (id, user_id, event_type, event_data, created_at)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO analytics_events (id, user_id, event_name, path, payload, session_id, cohort, event_category, device_info, created_at)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
             "#,
         )
         .bind(Uuid::new_v4())
         .bind(user_id)
-        .bind(&event.event_type)
-        .bind(&event.event_data)
+        .bind(&event.event_name)
+        .bind(&event.path)
+        .bind(&event.payload)
+        .bind(event.session_id)
+        .bind(&event.cohort)
+        .bind(&event.event_category)
+        .bind(&event.device_info)
         .bind(ts)
         .execute(pool)
         .await
@@ -128,11 +143,11 @@ pub async fn ingest_events(
 pub async fn get_active_sessions(pool: &PgPool) -> Result<ActiveSessionsResponse, AppError> {
     let rows = sqlx::query_as::<_, ActiveSessionRow>(
         r#"
-        SELECT id, user_id, started_at, last_heartbeat_at, device_info
+        SELECT id, session_id, user_id, started_at, last_active_at, device_type, platform
         FROM user_sessions
-        WHERE ended_at IS NULL
-          AND last_heartbeat_at > NOW() - INTERVAL '5 minutes'
-        ORDER BY last_heartbeat_at DESC
+        WHERE is_active = true
+          AND last_active_at > NOW() - INTERVAL '5 minutes'
+        ORDER BY last_active_at DESC
         "#,
     )
     .fetch_all(pool)
@@ -143,11 +158,12 @@ pub async fn get_active_sessions(pool: &PgPool) -> Result<ActiveSessionsResponse
     let sessions = rows
         .into_iter()
         .map(|r| ActiveSessionOut {
-            session_id: r.id,
+            session_id: r.session_id,
             user_id: r.user_id,
             started_at: r.started_at,
-            last_heartbeat_at: r.last_heartbeat_at,
-            device_info: r.device_info,
+            last_active_at: r.last_active_at,
+            device_type: r.device_type,
+            platform: r.platform,
         })
         .collect();
 
@@ -159,9 +175,9 @@ pub async fn get_session_stats(pool: &PgPool) -> Result<SessionStatsResponse, Ap
     let stats = sqlx::query_as::<_, SessionStatsRow>(
         r#"
         SELECT
-            (SELECT COUNT(*) FROM user_sessions WHERE ended_at IS NULL AND last_heartbeat_at > NOW() - INTERVAL '5 minutes') AS active_sessions,
+            (SELECT COUNT(*) FROM user_sessions WHERE is_active = true AND last_active_at > NOW() - INTERVAL '5 minutes') AS active_sessions,
             (SELECT COUNT(*) FROM user_sessions WHERE started_at::date = CURRENT_DATE) AS total_sessions_today,
-            (SELECT AVG(duration_seconds) FROM user_sessions WHERE ended_at IS NOT NULL AND duration_seconds IS NOT NULL) AS avg_duration_seconds
+            (SELECT AVG(EXTRACT(EPOCH FROM (COALESCE(ended_at, NOW()) - started_at)) / 60.0) FROM user_sessions WHERE started_at::date = CURRENT_DATE) AS avg_session_minutes
         "#,
     )
     .fetch_one(pool)
@@ -171,6 +187,6 @@ pub async fn get_session_stats(pool: &PgPool) -> Result<SessionStatsResponse, Ap
     Ok(SessionStatsResponse {
         active_sessions: stats.active_sessions,
         total_sessions_today: stats.total_sessions_today,
-        avg_duration_seconds: stats.avg_duration_seconds.unwrap_or(0.0),
+        avg_session_minutes: stats.avg_session_minutes.unwrap_or(0.0),
     })
 }

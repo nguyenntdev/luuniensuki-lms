@@ -1,6 +1,7 @@
 //! Admin route handlers.
 //!
 //! Phase 13 (Tasks 14.1–14.8): Admin migration.
+//! Fixed: removed resolve_crash_report (no DB support), updated to match actual schema.
 
 use axum::{
     extract::{Path, Query, State},
@@ -159,18 +160,6 @@ pub async fn get_crash_report(
     Ok(Json(result))
 }
 
-/// POST /api/v1/admin/crash-reports/{report_id}/resolve
-pub async fn resolve_crash_report(
-    headers: HeaderMap,
-    State(state): State<AuthState>,
-    Path(report_id): Path<Uuid>,
-) -> Result<impl IntoResponse, AppError> {
-    let (admin_id, _) = authenticate_admin(&headers, &state.settings)?;
-    let pool = require_pool(&state.pool)?;
-    let result = crash_report_service::resolve_crash_report(pool, report_id, admin_id).await?;
-    Ok(Json(result))
-}
-
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
@@ -195,7 +184,6 @@ mod tests {
             .route("/api/v1/admin/crash-reports", get(list_crash_reports))
             .route("/api/v1/admin/crash-reports/stats", get(get_crash_report_stats))
             .route("/api/v1/admin/crash-reports/:report_id", get(get_crash_report))
-            .route("/api/v1/admin/crash-reports/:report_id/resolve", post(resolve_crash_report))
             .with_state(state)
     }
 
@@ -299,23 +287,5 @@ mod tests {
                 .body(Body::empty()).unwrap())
             .await.unwrap();
         assert_eq!(resp.status(), StatusCode::SERVICE_UNAVAILABLE);
-    }
-
-    #[tokio::test]
-    async fn resolve_crash_report_returns_403_for_non_admin() {
-        let state = test_auth_state();
-        let token = crate::auth::issue_access_token(
-            "00000000-0000-0000-0000-000000000001", "user",
-            &state.settings.jwt_secret_key, 60,
-        ).unwrap();
-        let app = test_router();
-        let resp = app
-            .oneshot(Request::builder()
-                .method("POST")
-                .uri("/api/v1/admin/crash-reports/00000000-0000-0000-0000-000000000001/resolve")
-                .header("Authorization", format!("Bearer {}", token))
-                .body(Body::empty()).unwrap())
-            .await.unwrap();
-        assert_eq!(resp.status(), StatusCode::FORBIDDEN);
     }
 }
