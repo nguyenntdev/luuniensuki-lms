@@ -420,16 +420,16 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
 
 ### Phase 10 — Notifications
 
-- [ ] 11. Notifications migration
-  - [ ] 11.1 Migrate `GET|PUT /api/v1/users/me/notification-settings`
+- [x] 11. Notifications migration
+  - [x] 11.1 Migrate `GET|PUT /api/v1/users/me/notification-settings`
     - CRUD over `notification_settings` row; preserve all field defaults.
     - **Validates:** Req 6.4
 
-  - [ ] 11.2 Migrate `POST /api/v1/push/register`, `POST /api/v1/push/unregister`
+  - [x] 11.2 Migrate `POST /api/v1/push/register`, `POST /api/v1/push/unregister`
     - Token registration / unregistration mirroring `services/push_notifications.py`.
     - **Validates:** Req 6.4, 6.5
 
-  - [ ] 11.3 Migrate `GET /api/v1/notifications/history`, `GET /api/v1/notifications/should-prompt-permission`
+  - [x] 11.3 Migrate `GET /api/v1/notifications/history`, `GET /api/v1/notifications/should-prompt-permission`
     - History query with pagination + permission-prompt heuristic identical to Python.
     - **Validates:** Req 4.5
 
@@ -444,12 +444,12 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
 
 ### Phase 11 — Sessions, Heartbeat, Analytics Events
 
-- [ ] 12. Sessions & analytics migration
-  - [ ] 12.1 Migrate `POST /api/v1/sessions`, `POST /api/v1/sessions/heartbeat`, `POST /api/v1/sessions/end`
+- [x] 12. Sessions & analytics migration
+  - [x] 12.1 Migrate `POST /api/v1/sessions`, `POST /api/v1/sessions/heartbeat`, `POST /api/v1/sessions/end`
     - Mirror session lifecycle from `services/live_session_reporting.py` (HTTP face only — the live AI worker stays in Python).
     - **Validates:** Req 6.4, 6.5
 
-  - [ ] 12.2 Migrate `POST /api/v1/analytics/events`, `POST /api/v1/analytics/batch`
+  - [x] 12.2 Migrate `POST /api/v1/analytics/events`, `POST /api/v1/analytics/batch`
     - Batch insert into the analytics-event table; honor the same payload validation Python applies.
     - **Validates:** Req 6.4
 
@@ -464,8 +464,8 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
 
 ### Phase 12 — Crash Reports
 
-- [ ] 13. Crash reports migration
-  - [ ] 13.1 Migrate `POST /api/v1/crash-reports`
+- [x] 13. Crash reports migration
+  - [x] 13.1 Migrate `POST /api/v1/crash-reports`
     - Accept the same payload shape Python accepts; persist to the crash-report table.
     - **Validates:** Req 6.4
 
@@ -481,12 +481,12 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
 
 ### Phase 13 — Admin
 
-- [ ] 14. Admin migration
-  - [ ] 14.1 Admin foundations: DTOs and authorization
+- [x] 14. Admin migration
+  - [x] 14.1 Admin foundations: DTOs and authorization
     - Add `models/admin.rs`; centralize `require_admin` extractor checking the `role` claim.
     - **Validates:** Req 5.5, 6.1
 
-  - [ ] 14.2 Migrate `POST /api/v1/admin/push-broadcast`
+  - [x] 14.2 Migrate `POST /api/v1/admin/push-broadcast`
     - Validate audience filters; enqueue / send via the existing push backend.
     - **Validates:** Req 6.4
 
@@ -506,11 +506,11 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
     - Mirror `services/ai_insights.py`, `services/embeddings.py` (HTTP face only).
     - **Validates:** Req 4.5
 
-  - [ ] 14.7 Migrate admin crash-reports: `GET /api/v1/admin/crash-reports`, `GET /api/v1/admin/crash-reports/{id}`, `POST /api/v1/admin/crash-reports/{id}/resolve`, `GET /api/v1/admin/crash-reports/stats`
+  - [x] 14.7 Migrate admin crash-reports: `GET /api/v1/admin/crash-reports`, `GET /api/v1/admin/crash-reports/{id}`, `POST /api/v1/admin/crash-reports/{id}/resolve`, `GET /api/v1/admin/crash-reports/stats`
     - Complete the admin face deferred from Phase 12.
     - **Validates:** Req 4.5, 6.4
 
-  - [ ] 14.8 Migrate admin content management: `GET|POST /api/v1/admin/content/*`
+  - [x] 14.8 Migrate admin content management: `GET|POST /api/v1/admin/content/*`
     - Mirror admin content CRUD endpoints registered in `backend/main.py`.
     - **Validates:** Req 4.5, 6.4
 
@@ -525,17 +525,17 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
 
 ### Phase 14 — Live AI Teacher Routing (Gateway-Pinned)
 
-- [ ] 15. Live AI teacher routing
-  - [ ] 15.1 Pin all `/api/v1/live/*` and `/api/v1/ai-tutor/*` routes to gateway
+- [x] 15. Live AI teacher routing
+  - [x] 15.1 Pin all `/api/v1/live/*` and `/api/v1/ai-tutor/*` routes to gateway
     - Add explicit `"<METHOD> <path>" = "gateway"` entries in `backend-rust/config/route-modes.toml` for every route in the inventory under `services/live_*` and `services/ai_tutor.py`.
     - Verify the dispatcher reports `override = "gateway"` for these routes via `route-coverage`.
     - **Validates:** Req 9.1, 9.4, 13.1, 13.2; Property 17
 
-  - [ ] 15.2 Document AI tutor routing decisions
+  - [x] 15.2 Document AI tutor routing decisions
     - Create `backend-rust/docs/ai-tutor-routing.md` listing every AI/live route with its routing strategy (`gateway` for this migration; `native rewrite` is out of scope).
     - **Validates:** Req 9.2, 9.4
 
-  - [ ] 15.3 Wire AI-tutor pinning CI lint
+  - [x] 15.3 Wire AI-tutor pinning CI lint
     - The lint asserts every route in `ai-tutor-routing.md`'s gateway list is pinned `gateway` in `route-modes.toml`. Fail CI on drift.
     - **Validates:** Req 9.1, 9.2; Property 17
 

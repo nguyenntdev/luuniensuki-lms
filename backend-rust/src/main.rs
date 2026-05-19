@@ -176,6 +176,40 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
         .route("/api/v1/leagues", get(routes::leaderboard::list_leagues))
         .route("/api/v1/leagues/me", get(routes::leaderboard::get_user_league))
         .route("/api/v1/leagues/:league_id", get(routes::leaderboard::get_league_detail))
+        .with_state(auth_state.clone());
+
+    // Notification routes (Phase 10)
+    let notification_routes = Router::new()
+        .route("/api/v1/notifications/settings", get(routes::notifications::get_settings).put(routes::notifications::update_settings))
+        .route("/api/v1/notifications/register-push", post(routes::notifications::register_push))
+        .route("/api/v1/notifications/unregister-push", axum::routing::delete(routes::notifications::unregister_push))
+        .route("/api/v1/notifications/history", get(routes::notifications::get_history))
+        .route("/api/v1/notifications/should-prompt-permission", get(routes::notifications::should_prompt_permission))
+        .with_state(auth_state.clone());
+
+    // Session & Analytics routes (Phase 11)
+    let session_routes = Router::new()
+        .route("/api/v1/sessions/heartbeat", post(routes::sessions::heartbeat))
+        .route("/api/v1/sessions/end", post(routes::sessions::end_session))
+        .route("/api/v1/analytics/events", post(routes::sessions::ingest_events))
+        .route("/api/v1/admin/analytics/sessions/active", get(routes::sessions::get_active_sessions))
+        .route("/api/v1/admin/analytics/sessions/stats", get(routes::sessions::get_session_stats))
+        .with_state(auth_state.clone());
+
+    // Crash Report routes (Phase 12)
+    let crash_report_routes = Router::new()
+        .route("/api/v1/crash-reports", post(routes::crash_reports::submit_crash_report))
+        .with_state(auth_state.clone());
+
+    // Admin routes (Phase 13)
+    let admin_routes = Router::new()
+        .route("/api/v1/admin/push-notifications/send", post(routes::admin::send_push_notification))
+        .route("/api/v1/admin/push-notifications/broadcast", post(routes::admin::broadcast_push_notification))
+        .route("/api/v1/admin/push-notifications", get(routes::admin::list_push_notifications))
+        .route("/api/v1/admin/crash-reports", get(routes::admin::list_crash_reports))
+        .route("/api/v1/admin/crash-reports/stats", get(routes::admin::get_crash_report_stats))
+        .route("/api/v1/admin/crash-reports/:report_id", get(routes::admin::get_crash_report))
+        .route("/api/v1/admin/crash-reports/:report_id/resolve", post(routes::admin::resolve_crash_report))
         .with_state(auth_state);
 
 
@@ -197,6 +231,10 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
         .merge(quest_routes)
         .merge(classroom_routes)
         .merge(leaderboard_routes)
+        .merge(notification_routes)
+        .merge(session_routes)
+        .merge(crash_report_routes)
+        .merge(admin_routes)
         .merge(internal_routes)
         .fallback(gateway::fallback_to_python)
         .layer(middleware::from_fn(observability::request_id_and_logging))

@@ -13,6 +13,21 @@
 "GET /api/v1/badges" = "native"
 "GET /api/v1/users/me/streak" = "native"
 
+# Phase 14 — Live AI Teacher routes pinned to gateway (proxied to Python AI worker)
+"GET /api/v1/live/sessions" = "gateway"
+"POST /api/v1/live/sessions" = "gateway"
+"GET /api/v1/live/sessions/active" = "gateway"
+"POST /api/v1/live/sessions/end" = "gateway"
+"POST /api/v1/live/chat" = "gateway"
+"GET /api/v1/live/chat/history" = "gateway"
+"POST /api/v1/live/feedback" = "gateway"
+"GET /api/v1/ai-tutor/status" = "gateway"
+"POST /api/v1/ai-tutor/ask" = "gateway"
+"POST /api/v1/ai-tutor/explain" = "gateway"
+"POST /api/v1/ai-tutor/hint" = "gateway"
+"GET /api/v1/ai-tutor/conversation" = "gateway"
+"DELETE /api/v1/ai-tutor/conversation" = "gateway"
+
 [defaults]
 # When true, an unknown route in the inventory defaults to "gateway".
 # Production must set this true until cutover (Requirement 13.3).

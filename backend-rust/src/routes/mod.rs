@@ -4,16 +4,21 @@
 //! Task 3.1: adds auth module skeleton (Phase 2).
 //! Task 4.1: adds users module (Phase 3).
 //! Tasks 6–10: adds quizzes, progress, quests, classrooms, leaderboard (Phases 5–9).
+//! Tasks 11–14: adds notifications, sessions, crash_reports, admin (Phases 10–13).
 
+pub mod admin;
 pub mod auth;
 pub mod badges;
 pub mod classrooms;
 pub mod content;
+pub mod crash_reports;
 pub mod health;
 pub mod leaderboard;
 pub mod lessons;
 pub mod metrics;
+pub mod notifications;
 pub mod progress;
 pub mod quests;
 pub mod quizzes;
+pub mod sessions;
 pub mod users;
