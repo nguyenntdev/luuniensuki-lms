@@ -3,7 +3,7 @@
 //! Phase 3 (Tasks 4.1–4.5): mirrors the Python handlers' DB interactions.
 
 use axum::http::StatusCode;
-use chrono::Utc;
+use chrono::{DateTime, Utc};
 use serde_json::json;
 use sqlx::PgPool;
 use uuid::Uuid;
