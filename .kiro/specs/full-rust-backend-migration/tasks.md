@@ -220,19 +220,19 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
 
 ### Phase 3 — Users & Profile
 
-- [ ] 4. Users & profile migration
-  - [ ] 4.1 Users foundations: DTOs and sqlx queries
+- [x] 4. Users & profile migration
+  - [x] 4.1 Users foundations: DTOs and sqlx queries
     - Add `models/user.rs` with row DTO + response DTO (mirroring `backend/models.py::User`).
     - Build `services/user_service.rs` with `update_profile`, `change_password`, `set_starting_path`, `get_public_profile`, `set_onboarding`, `get_onboarding`.
     - Build `routes/users.rs` skeleton with `with_state(pool)`.
     - **Validates:** Req 6.1, 6.4
 
-  - [ ] 4.2 Migrate `PATCH /api/v1/users/me`, `POST /api/v1/users/me/change-password`, `POST /api/v1/users/me/starting-path`, `GET|POST /api/v1/users/me/onboarding`
+  - [x] 4.2 Migrate `PATCH /api/v1/users/me`, `POST /api/v1/users/me/change-password`, `POST /api/v1/users/me/starting-path`, `GET|POST /api/v1/users/me/onboarding`
     - Implement Axum handlers wired to `user_service`.
     - Apply `validator` to enforce the same field rules Python applies (length, charset, allowed enums).
     - **Validates:** Req 5.3, 5.4, 6.1, 6.4
 
-  - [ ] 4.3 Migrate `POST /api/v1/users/me/avatar` (multipart upload)
+  - [x] 4.3 Migrate `POST /api/v1/users/me/avatar` (multipart upload)
     - Use `axum::extract::Multipart` to accept the same field name (`file`) Python accepts.
     - Enforce identical MIME-type allow-list and file-size limit.
     - Write to the same uploads directory and return the same publicly addressable URL pattern (`/uploads/avatars/{uuid}.{ext}`) as Python.
@@ -243,7 +243,7 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
     - **Property 16: Upload parity** — for any multipart upload, accept iff Python accepts; on-disk path and public URL match Python's; rejections return identical status + body.
     - **Validates:** Req 8.1, 8.2, 8.3, 8.4
 
-  - [ ] 4.5 Migrate `GET /api/v1/users/{id}/public` and `GET /u/{username_or_id}`
+  - [x] 4.5 Migrate `GET /api/v1/users/{id}/public` and `GET /u/{username_or_id}`
     - Resolve username vs UUID with the same precedence Python uses.
     - Return the public profile DTO (omitting private fields) byte-equivalent to Python's response.
     - **Validates:** Req 4.5, 6.1
@@ -252,7 +252,7 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
     - **Property 15: Database write parity and constraint-violation status parity** — generated profile updates produce rows equal to Python's; constraint violations (duplicate username/email) return the same status as Python.
     - **Validates:** Req 6.2, 6.3, 6.4, 6.5
 
-  - [ ] 4.7 Phase 3 complete: tick ledger
+  - [x] 4.7 Phase 3 complete: tick ledger
     - Flip Phase-3 routes to `native` in `route-modes.toml`; tick boxes with SHA + date; tick the phase header.
     - Re-run contract suite (users fixtures); verify `route-coverage`.
     - Ensure all tests pass; ask the user if questions arise.

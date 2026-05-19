@@ -21,7 +21,6 @@ use crate::config::Settings;
 use crate::error::AppError;
 use crate::models::user::{
     OnboardingStatusResponse, StartingPathResponse, UpdateProfileEnvelope,
-    UserPublicProfileResponse,
 };
 use crate::routes::auth::AuthState;
 use crate::services::user_service;
@@ -152,7 +151,6 @@ pub async fn change_password(
     Json(payload): Json<ChangePasswordRequest>,
 ) -> Result<impl IntoResponse, AppError> {
     let user_id = authenticate(&headers, &state.settings)?;
-    let pool = require_pool(&state.pool)?;
 
     // Validate new password length (min 8, matching Python's Field(..., min_length=8))
     if payload.new_password.len() < 8 {
@@ -163,6 +161,8 @@ pub async fn change_password(
             details: json!({}),
         });
     }
+
+    let pool = require_pool(&state.pool)?;
 
     user_service::change_password(
         pool,

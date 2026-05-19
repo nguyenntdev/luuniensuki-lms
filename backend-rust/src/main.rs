@@ -102,7 +102,7 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
         .with_state(auth_state.clone());
 
     // User profile routes (Phase 3 — need pool + settings via AuthState)
-    let user_routes: Router = Router::new()
+    let user_routes = Router::new()
         .route("/api/v1/users/me", patch(routes::users::update_profile))
         .route("/api/v1/users/me/change-password", post(routes::users::change_password))
         .route("/api/v1/users/me/starting-path", post(routes::users::set_starting_path))
@@ -125,6 +125,7 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
         .merge(static_routes)
         .merge(db_routes)
         .merge(auth_routes)
+        .merge(user_routes)
         .merge(internal_routes)
         .fallback(gateway::fallback_to_python)
         .layer(middleware::from_fn(observability::request_id_and_logging))
