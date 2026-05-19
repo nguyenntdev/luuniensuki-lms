@@ -10,4 +10,5 @@ pub mod notification;
 pub mod progress;
 pub mod quiz;
 pub mod session;
+pub mod streak_economy;
 pub mod user;

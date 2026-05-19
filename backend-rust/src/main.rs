@@ -211,6 +211,27 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
         .route("/api/v1/admin/crash-reports/:report_id", get(routes::admin::get_crash_report))
         .with_state(auth_state.clone());
 
+    // Streak Repair Economy routes (additive — see .kiro/specs/streak-repair-economy)
+    let streak_economy_routes = Router::new()
+        // user-facing
+        .route("/api/v1/users/me/streak/repair", post(routes::streak_repair::repair))
+        .route("/api/v1/users/me/streak/repair-options", get(routes::streak_repair::repair_options))
+        .route("/api/v1/users/me/friend-streaks", get(routes::streak_friend::list_my_friend_streaks))
+        .route("/api/v1/users/:other_id/friend-streak", get(routes::streak_friend::get_friend_streak))
+        .route("/api/v1/users/me/streak/comeback-status", get(routes::streak_comeback::comeback_status))
+        .route("/api/v1/users/me/streak-insurance", get(routes::streak_comeback::my_insurance))
+        // admin
+        .route("/api/v1/admin/streak-repair-events", get(routes::streak_admin::list_repair_events))
+        .route("/api/v1/admin/users/:user_id/streak/grant-repair", post(routes::streak_admin::grant_repair))
+        .route("/api/v1/admin/streak/big-red-button", post(routes::streak_admin::big_red_button))
+        .route("/api/v1/admin/streak/big-red-button/events", get(routes::streak_admin::brb_events))
+        .route("/api/v1/admin/streak-economy/stats", get(routes::streak_admin::stats))
+        .route(
+            "/api/v1/admin/users/:user_id/streak-insurance/grant",
+            post(routes::streak_admin::grant_insurance),
+        )
+        .with_state(auth_state.clone());
+
     // Misc routes (Phase 15 — preview, collection, leftovers)
     let misc_routes = Router::new()
         .route("/api/v1/preview/lesson", get(routes::misc::get_preview_lesson))
@@ -243,6 +264,7 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
         .merge(session_routes)
         .merge(crash_report_routes)
         .merge(admin_routes)
+        .merge(streak_economy_routes)
         .merge(misc_routes)
         .merge(internal_routes)
         .fallback(gateway::fallback_to_python)

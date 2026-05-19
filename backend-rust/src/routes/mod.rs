@@ -23,4 +23,8 @@ pub mod progress;
 pub mod quests;
 pub mod quizzes;
 pub mod sessions;
+pub mod streak_admin;
+pub mod streak_comeback;
+pub mod streak_friend;
+pub mod streak_repair;
 pub mod users;
