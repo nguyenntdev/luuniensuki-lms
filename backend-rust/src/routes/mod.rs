@@ -8,5 +8,6 @@ pub mod auth;
 pub mod badges;
 pub mod content;
 pub mod health;
+pub mod lessons;
 pub mod metrics;
 pub mod users;

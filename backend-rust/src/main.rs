@@ -112,7 +112,25 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
         .route("/api/v1/onboarding/complete", post(routes::users::complete_onboarding))
         .route("/api/v1/users/:user_id/public", get(routes::users::get_user_public_profile))
         .route("/api/v1/u/:identifier", get(routes::users::get_user_by_identifier))
+        .with_state(auth_state.clone());
+
+    // Lesson & content routes (Phase 4 — need pool + settings via AuthState)
+    let lesson_routes = Router::new()
+        .route("/api/v1/urns", get(routes::lessons::list_urns))
+        .route("/api/v1/urns/:urn_slug", get(routes::lessons::get_urn_detail))
+        .route("/api/v1/urns/:urn_slug/progress", get(routes::lessons::get_urn_progress))
+        .route("/motifs/:urn_name", get(routes::lessons::get_motifs_by_urn))
+        .route("/api/v1/motifs/:motif_id", get(routes::lessons::get_motif_detail))
+        .route("/api/v1/motifs/:motif_id/complete-lesson", post(routes::lessons::complete_lesson))
+        .route("/api/v1/lessons/cache-manifest", get(routes::lessons::get_cache_manifest))
+        .route("/api/v1/lessons/next", get(routes::lessons::get_next_lesson))
+        .route("/api/v1/lessons/:lesson_id/prerequisites", get(routes::lessons::get_lesson_prerequisites))
+        .route("/api/v1/lessons/:lesson_id/is-unlocked", get(routes::lessons::check_lesson_is_unlocked))
+        .route("/api/v1/lessons/sequence", get(routes::lessons::get_lesson_sequence))
+        .route("/api/v1/lessons/:lesson_id/cache", post(routes::lessons::mark_lesson_cached).delete(routes::lessons::remove_cached_lesson))
+        .route("/api/v1/lessons/cached", get(routes::lessons::get_cached_lessons))
         .with_state(auth_state);
+
 
     // Static routes (no state needed)
     let static_routes = Router::new()
@@ -126,6 +144,7 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
         .merge(db_routes)
         .merge(auth_routes)
         .merge(user_routes)
+        .merge(lesson_routes)
         .merge(internal_routes)
         .fallback(gateway::fallback_to_python)
         .layer(middleware::from_fn(observability::request_id_and_logging))

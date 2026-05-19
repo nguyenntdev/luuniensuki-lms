@@ -260,25 +260,25 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
 
 ### Phase 4 — Lessons & Content
 
-- [ ] 5. Lessons & content migration
-  - [ ] 5.1 Lessons foundations: DTOs and sqlx queries
+- [x] 5. Lessons & content migration
+  - [x] 5.1 Lessons foundations: DTOs and sqlx queries
     - Add `models/{urn,motif,lesson}.rs` with row + response DTOs mirroring `backend/models.py`.
     - Build `services/lesson_service.rs` covering urns, motifs, lesson sequence, prerequisites, cache manifest, next-lesson, motif coordinates, complete-lesson.
     - **Validates:** Req 6.1
 
-  - [ ] 5.2 Migrate `GET /api/v1/urns`, `GET /api/v1/urns/{id}`
+  - [x] 5.2 Migrate `GET /api/v1/urns`, `GET /api/v1/urns/{id}`
     - Implement list and detail handlers; preserve Python's deterministic ordering (e.g., `ORDER BY created_at, id`).
     - **Validates:** Req 4.5, 6.1
 
-  - [ ] 5.3 Migrate `GET /api/v1/motifs`, `GET /api/v1/motifs/{id}`, `GET /api/v1/motifs/{id}/coordinates`
+  - [x] 5.3 Migrate `GET /api/v1/motifs`, `GET /api/v1/motifs/{id}`, `GET /api/v1/motifs/{id}/coordinates`
     - Implement list, detail, and coordinates handlers.
     - **Validates:** Req 4.5, 6.1
 
-  - [ ] 5.4 Migrate `GET /api/v1/lessons/{id}/cache-manifest`, `/sequence`, `/prerequisites`, `/is-unlocked`, `/next`
+  - [x] 5.4 Migrate `GET /api/v1/lessons/{id}/cache-manifest`, `/sequence`, `/prerequisites`, `/is-unlocked`, `/next`
     - Translate `services/lesson_sequence.py` and `services/recommendations.py` business rules to Rust faithfully.
     - **Validates:** Req 4.5, 6.1, 6.4
 
-  - [ ] 5.5 Migrate `POST /api/v1/motifs/{id}/complete-lesson`
+  - [x] 5.5 Migrate `POST /api/v1/motifs/{id}/complete-lesson`
     - Update progress + streak + XP + hearts atomically in a `sqlx::Transaction`; emit the same XP/streak deltas Python emits.
     - **Validates:** Req 6.4, 6.5
 
