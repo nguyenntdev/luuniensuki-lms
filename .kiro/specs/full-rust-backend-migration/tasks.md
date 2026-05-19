@@ -295,20 +295,20 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
 
 ### Phase 5 — Quizzes & Adaptive
 
-- [ ] 6. Quizzes & adaptive migration
-  - [ ] 6.1 Quizzes foundations: DTOs and sqlx queries
+- [x] 6. Quizzes & adaptive migration
+  - [x] 6.1 Quizzes foundations: DTOs and sqlx queries
     - Add `models/quiz.rs`, `services/quiz_service.rs` mirroring `services/adaptive_quiz.py`, `services/quiz_hints.py`, `services/spaced_repetition.py`.
     - **Validates:** Req 6.1
 
-  - [ ] 6.2 Migrate `GET /api/v1/quizzes/{id}`
+  - [x] 6.2 Migrate `GET /api/v1/quizzes/{id}`
     - Return the full quiz DTO; preserve question ordering and answer-shuffling deterministically (seed by `(user_id, quiz_id)` if Python does).
     - **Validates:** Req 4.5, 6.1
 
-  - [ ] 6.3 Migrate `POST /api/v1/quizzes/{id}/submit` and `POST /api/v1/quizzes/adaptive`
+  - [x] 6.3 Migrate `POST /api/v1/quizzes/{id}/submit` and `POST /api/v1/quizzes/adaptive`
     - Score the submission, update `quiz_attempts`, write spaced-repetition state, return same DTO Python returns.
     - **Validates:** Req 6.4, 6.5
 
-  - [ ] 6.4 Migrate `GET /api/v1/quizzes/{id}/hints`
+  - [x] 6.4 Migrate `GET /api/v1/quizzes/{id}/hints`
     - Implement hint retrieval and gating identical to Python.
     - **Validates:** Req 4.5
 
@@ -323,17 +323,17 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
 
 ### Phase 6 — Progress & Streaks
 
-- [ ] 7. Progress & streaks migration
-  - [ ] 7.1 Progress foundations: DTOs and sqlx queries
+- [x] 7. Progress & streaks migration
+  - [x] 7.1 Progress foundations: DTOs and sqlx queries
     - Add `models/{progress,streak,hearts,daily_goal,milestone}.rs`.
     - Build `services/progress_service.rs` mirroring `services/student_progress.py`, `services/streak.py`, `services/hearts.py`, `services/daily_goal_settings.py`, `services/milestones.py`.
     - **Validates:** Req 6.1
 
-  - [ ] 7.2 Migrate `POST /api/v1/progress/unlock`, `GET|POST /api/v1/users/me/streak`
+  - [x] 7.2 Migrate `POST /api/v1/progress/unlock`, `GET|POST /api/v1/users/me/streak`
     - Apply streak rules with the same timezone handling Python uses.
     - **Validates:** Req 6.4, 6.5
 
-  - [ ] 7.3 Migrate `GET|POST /api/v1/users/me/hearts`, `GET|PUT /api/v1/users/me/daily-goal`, `GET /api/v1/users/me/milestones`
+  - [x] 7.3 Migrate `GET|POST /api/v1/users/me/hearts`, `GET|PUT /api/v1/users/me/daily-goal`, `GET /api/v1/users/me/milestones`
     - Implement heart regen + spend rules; daily-goal CRUD; milestone read.
     - **Validates:** Req 6.4
 
@@ -348,16 +348,16 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
 
 ### Phase 7 — Badges, Quests, Achievements
 
-- [ ] 8. Badges, quests, achievements migration
-  - [ ] 8.1 Migrate `POST /api/v1/badges/{id}/award`
+- [x] 8. Badges, quests, achievements migration
+  - [x] 8.1 Migrate `POST /api/v1/badges/{id}/award`
     - Award badge with idempotent insert (`ON CONFLICT DO NOTHING`); return Python's exact response on first vs subsequent award.
     - **Validates:** Req 6.4, 6.5
 
-  - [ ] 8.2 Migrate `GET /api/v1/quests`, `GET /api/v1/quests/{id}`, `POST /api/v1/quests/{id}/start`, `GET /api/v1/quests/weekly`
+  - [x] 8.2 Migrate `GET /api/v1/quests`, `GET /api/v1/quests/{id}`, `POST /api/v1/quests/{id}/start`, `GET /api/v1/quests/weekly`
     - Mirror `services/quest_assignments.py` and `services/weekly_quests.py`.
     - **Validates:** Req 4.5, 6.4
 
-  - [ ] 8.3 Migrate `GET /api/v1/missions/daily` (daily missions)
+  - [x] 8.3 Migrate `GET /api/v1/missions/daily` (daily missions)
     - Return the same daily-mission DTO Python returns; preserve deterministic ordering.
     - **Validates:** Req 4.5
 
@@ -372,20 +372,20 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
 
 ### Phase 8 — Classrooms & Memberships
 
-- [ ] 9. Classrooms migration
-  - [ ] 9.1 Classrooms foundations: DTOs and sqlx queries
+- [x] 9. Classrooms migration
+  - [x] 9.1 Classrooms foundations: DTOs and sqlx queries
     - Add `models/classroom.rs`; build `services/classroom_service.rs` mirroring `services/classroom.py` and the membership/sharing parts of `services/sharing.py`.
     - **Validates:** Req 6.1
 
-  - [ ] 9.2 Migrate classrooms CRUD: `POST|GET /api/v1/classrooms`, `GET|PATCH|DELETE /api/v1/classrooms/{id}`
+  - [x] 9.2 Migrate classrooms CRUD: `POST|GET /api/v1/classrooms`, `GET|PATCH|DELETE /api/v1/classrooms/{id}`
     - Owner/teacher authorization checks identical to Python's role guards.
     - **Validates:** Req 5.5, 6.4
 
-  - [ ] 9.3 Migrate members + lessons: `GET|POST|DELETE /api/v1/classrooms/{id}/members`, `GET|POST /api/v1/classrooms/{id}/lessons`
+  - [x] 9.3 Migrate members + lessons: `GET|POST|DELETE /api/v1/classrooms/{id}/members`, `GET|POST /api/v1/classrooms/{id}/lessons`
     - Enforce membership constraints; preserve Python's response on duplicate-member 409.
     - **Validates:** Req 6.4, 6.5
 
-  - [ ] 9.4 Migrate `GET /api/v1/classrooms/{id}/analytics`
+  - [x] 9.4 Migrate `GET /api/v1/classrooms/{id}/analytics`
     - Aggregation queries returning the same DTO shape Python returns.
     - **Validates:** Req 4.5
 
@@ -400,12 +400,12 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
 
 ### Phase 9 — Leaderboards & Leagues
 
-- [ ] 10. Leaderboards & leagues migration
-  - [ ] 10.1 Migrate `GET /api/v1/leaderboard`, `GET /api/v1/leaderboard/friends`
+- [x] 10. Leaderboards & leagues migration
+  - [x] 10.1 Migrate `GET /api/v1/leaderboard`, `GET /api/v1/leaderboard/friends`
     - Translate `services/leaderboard.py` window/timeframe rules.
     - **Validates:** Req 4.5
 
-  - [ ] 10.2 Migrate `GET /api/v1/leagues`, `GET /api/v1/leagues/me`, `GET /api/v1/leagues/{id}`
+  - [x] 10.2 Migrate `GET /api/v1/leagues`, `GET /api/v1/leagues/me`, `GET /api/v1/leagues/{id}`
     - Mirror `services/leagues.py` league assignment + rank window logic.
     - **Validates:** Req 4.5
 

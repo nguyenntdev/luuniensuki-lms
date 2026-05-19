@@ -129,6 +129,53 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
         .route("/api/v1/lessons/sequence", get(routes::lessons::get_lesson_sequence))
         .route("/api/v1/lessons/:lesson_id/cache", post(routes::lessons::mark_lesson_cached).delete(routes::lessons::remove_cached_lesson))
         .route("/api/v1/lessons/cached", get(routes::lessons::get_cached_lessons))
+        .with_state(auth_state.clone());
+
+    // Quiz routes (Phase 5 — Quizzes & Adaptive)
+    let quiz_routes = Router::new()
+        .route("/api/v1/quizzes/adaptive", post(routes::quizzes::adaptive_quiz))
+        .route("/api/v1/quizzes/:quiz_id", get(routes::quizzes::get_quiz))
+        .route("/api/v1/quizzes/:quiz_id/submit", post(routes::quizzes::submit_quiz))
+        .route("/api/v1/quizzes/:quiz_id/hints", get(routes::quizzes::get_quiz_hints))
+        .with_state(auth_state.clone());
+
+    // Progress & Streak routes (Phase 6)
+    let progress_routes = Router::new()
+        .route("/api/v1/progress/unlock", post(routes::progress::unlock_motif))
+        .route("/api/v1/users/me/streak", get(routes::progress::get_streak).post(routes::progress::update_streak))
+        .route("/api/v1/users/me/hearts", get(routes::progress::get_hearts).post(routes::progress::update_hearts))
+        .route("/api/v1/users/me/daily-goal", get(routes::progress::get_daily_goal).put(routes::progress::update_daily_goal))
+        .route("/api/v1/users/me/milestones", get(routes::progress::get_milestones))
+        .with_state(auth_state.clone());
+
+    // Badge, Quest, Achievement routes (Phase 7)
+    let quest_routes = Router::new()
+        .route("/api/v1/badges/:badge_id/award", post(routes::quests::award_badge))
+        .route("/api/v1/quests", get(routes::quests::list_quests))
+        .route("/api/v1/quests/weekly", get(routes::quests::get_weekly_quests))
+        .route("/api/v1/quests/:quest_slug", get(routes::quests::get_quest_detail))
+        .route("/api/v1/quests/:quest_slug/start", post(routes::quests::start_quest))
+        .route("/api/v1/users/me/quest-summary", get(routes::quests::get_quest_summary))
+        .route("/api/v1/missions/daily", get(routes::quests::get_daily_missions))
+        .with_state(auth_state.clone());
+
+    // Classroom routes (Phase 8)
+    let classroom_routes = Router::new()
+        .route("/api/v1/classrooms", post(routes::classrooms::create_classroom).get(routes::classrooms::list_classrooms))
+        .route("/api/v1/classrooms/:id", get(routes::classrooms::get_classroom).patch(routes::classrooms::update_classroom).delete(routes::classrooms::archive_classroom))
+        .route("/api/v1/classrooms/:id/members", get(routes::classrooms::list_members).post(routes::classrooms::add_member))
+        .route("/api/v1/classrooms/:id/members/:user_id", axum::routing::delete(routes::classrooms::remove_member))
+        .route("/api/v1/classrooms/:id/lessons", get(routes::classrooms::list_classroom_lessons).post(routes::classrooms::assign_lesson))
+        .route("/api/v1/classrooms/:id/analytics", get(routes::classrooms::get_classroom_analytics))
+        .with_state(auth_state.clone());
+
+    // Leaderboard & League routes (Phase 9)
+    let leaderboard_routes = Router::new()
+        .route("/api/v1/leaderboard", get(routes::leaderboard::get_leaderboard))
+        .route("/api/v1/leaderboard/friends", get(routes::leaderboard::get_friends_leaderboard))
+        .route("/api/v1/leagues", get(routes::leaderboard::list_leagues))
+        .route("/api/v1/leagues/me", get(routes::leaderboard::get_user_league))
+        .route("/api/v1/leagues/:league_id", get(routes::leaderboard::get_league_detail))
         .with_state(auth_state);
 
 
@@ -145,6 +192,11 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
         .merge(auth_routes)
         .merge(user_routes)
         .merge(lesson_routes)
+        .merge(quiz_routes)
+        .merge(progress_routes)
+        .merge(quest_routes)
+        .merge(classroom_routes)
+        .merge(leaderboard_routes)
         .merge(internal_routes)
         .fallback(gateway::fallback_to_python)
         .layer(middleware::from_fn(observability::request_id_and_logging))
