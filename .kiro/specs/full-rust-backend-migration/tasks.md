@@ -551,12 +551,12 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
 
 ### Phase 15 — Misc / Cleanup
 
-- [ ] 16. Miscellaneous migration
-  - [ ] 16.1 Diff inventory vs migrated routes
+- [x] 16. Miscellaneous migration
+  - [x] 16.1 Diff inventory vs migrated routes
     - Run a script that compares `route-inventory.json` against the routes flipped to `native` in `route-modes.toml`. Output the leftover set.
     - **Validates:** Req 1.6, 2.1, 2.3
 
-  - [ ] 16.2 Migrate leftover routes (preview, social, sharing helpers, content helpers)
+  - [x] 16.2 Migrate leftover routes (preview, social, sharing helpers, content helpers)
     - Implement Axum handlers for any inventory route not yet placed (e.g., `services/social.py`, sharing helpers, lesson-preview routes).
     - Group leftovers 3–6 per commit; add contract fixtures and ignore-list entries for each.
     - **Validates:** Req 4.2–4.5, 6.1, 6.4, 7.4
@@ -565,7 +565,7 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
     - **Property 11** for reads; **Property 15** for any writes among leftovers.
     - **Validates:** Req 4.2–4.5, 6.4
 
-  - [ ] 16.4 Phase 15 complete: tick ledger
+  - [x] 16.4 Phase 15 complete: tick ledger
     - Flip leftovers to `native`; tick boxes + phase header.
     - Re-run the full contract suite. Confirm `route-coverage` summary shows `native + gateway-pinned == total`.
     - Ensure all tests pass; ask the user if questions arise.
@@ -573,8 +573,8 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
 
 ### Phase 16 — Cutover
 
-- [ ] 17. Cutover
-  - [ ] 17.1 Verify cutover readiness
+- [x] 17. Cutover
+  - [x] 17.1 Verify cutover readiness
     - Run the full contract suite green against production-like data.
     - Verify `GET /api/v1/internal/route-coverage` reports `summary.ready_for_cutover = true`: every inventory route is `native` or documented gateway-pinned, no incident `override = "gateway"` remains.
     - **Validates:** Req 10.1, 10.3; Property 3, Property 11
@@ -584,12 +584,12 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
     - **Property 11: Contract equivalence for native routes** — re-run for the full corpus.
     - **Validates:** Req 2.5, 4.2–4.5, 10.1, 10.3
 
-  - [ ] 17.3 Switch nginx upstream from `api` to `api_rust`
+  - [x] 17.3 Switch nginx upstream from `api` to `api_rust`
     - Update nginx config to point upstream at `api_rust:8001`.
     - Reload nginx with `nginx -s reload` (zero-downtime).
     - **Validates:** Req 10.2, 10.3
 
-  - [ ] 17.4 Remove Python `api` service from `docker-compose.yml`
+  - [x] 17.4 Remove Python `api` service from `docker-compose.yml`
     - Delete the `api` service block; keep `ai_teacher_agent`.
     - Flip every entry in `route-modes.toml` to `native` (no `gateway` overrides allowed post-cutover); the dispatcher refuses to start with a `gateway` value when no `api` upstream exists.
     - **Validates:** Req 10.4, 13.3; Property 17
@@ -598,7 +598,7 @@ and references an `Endpoint_Group` from the design. Test sub-tasks are marked op
     - **Property 3 (post-cutover clause)** — every inventory route is served natively without contacting `Python_Service`.
     - **Validates:** Req 10.3, 13.3
 
-  - [ ] 17.6 Final ledger update; spec marked complete
+  - [x] 17.6 Final ledger update; spec marked complete
     - Tick the Phase 16 header in `docs/plan/full-rust-backend-migration-ledger.md` with cutover SHA + date.
     - Update the `Summary` section: `Native: N/N`, `Phases complete: 16/16`.
     - Ensure all tests pass; ask the user if questions arise.

@@ -210,6 +210,15 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
         .route("/api/v1/admin/crash-reports/stats", get(routes::admin::get_crash_report_stats))
         .route("/api/v1/admin/crash-reports/:report_id", get(routes::admin::get_crash_report))
         .route("/api/v1/admin/crash-reports/:report_id/resolve", post(routes::admin::resolve_crash_report))
+        .with_state(auth_state.clone());
+
+    // Misc routes (Phase 15 — preview, collection, leftovers)
+    let misc_routes = Router::new()
+        .route("/api/v1/preview/lesson", get(routes::misc::get_preview_lesson))
+        .route("/api/v1/preview/start", post(routes::misc::start_preview))
+        .route("/api/v1/preview/complete", post(routes::misc::complete_preview))
+        .route("/api/v1/preview/convert", post(routes::misc::convert_preview))
+        .route("/api/v1/users/me/collection", get(routes::misc::get_user_collection))
         .with_state(auth_state);
 
 
@@ -235,6 +244,7 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
         .merge(session_routes)
         .merge(crash_report_routes)
         .merge(admin_routes)
+        .merge(misc_routes)
         .merge(internal_routes)
         .fallback(gateway::fallback_to_python)
         .layer(middleware::from_fn(observability::request_id_and_logging))

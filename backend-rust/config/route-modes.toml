@@ -13,6 +13,13 @@
 "GET /api/v1/badges" = "native"
 "GET /api/v1/users/me/streak" = "native"
 
+# Phase 15 — Misc / Cleanup (preview, collection)
+"GET /api/v1/preview/lesson" = "native"
+"POST /api/v1/preview/start" = "native"
+"POST /api/v1/preview/complete" = "native"
+"POST /api/v1/preview/convert" = "native"
+"GET /api/v1/users/me/collection" = "native"
+
 # Phase 14 — Live AI Teacher routes pinned to gateway (proxied to Python AI worker)
 "GET /api/v1/live/sessions" = "gateway"
 "POST /api/v1/live/sessions" = "gateway"
