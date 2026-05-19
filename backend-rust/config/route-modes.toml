@@ -1,25 +1,9 @@
 # Per-route runtime override. Keys are "METHOD path". Values are "native" or "gateway".
-# Missing entries default to whatever the router has wired (native if registered,
-# else gateway via fallback).
+# Missing entries default to whatever [defaults] says.
 #
 # Hot-reloaded on SIGHUP or every 30 seconds.
 
 [routes]
-"GET /health" = "native"
-"GET /api/v1/internal/db-health" = "native"
-"GET /api/v1/content/ratings" = "native"
-"GET /api/v1/ranks" = "native"
-"GET /api/v1/tags" = "native"
-"GET /api/v1/badges" = "native"
-"GET /api/v1/users/me/streak" = "native"
-
-# Phase 15 — Misc / Cleanup (preview, collection)
-"GET /api/v1/preview/lesson" = "native"
-"POST /api/v1/preview/start" = "native"
-"POST /api/v1/preview/complete" = "native"
-"POST /api/v1/preview/convert" = "native"
-"GET /api/v1/users/me/collection" = "native"
-
 # Phase 14 — Live AI Teacher routes pinned to gateway (proxied to Python AI worker)
 "GET /api/v1/live/sessions" = "gateway"
 "POST /api/v1/live/sessions" = "gateway"
@@ -35,7 +19,36 @@
 "GET /api/v1/ai-tutor/conversation" = "gateway"
 "DELETE /api/v1/ai-tutor/conversation" = "gateway"
 
+# Live demo entry (depends on Python live session logic)
+"GET /api/v1/live/demo-enter" = "gateway"
+
+# Routes with table name mismatches — pinned gateway until SQL is fixed
+"GET /api/v1/users/me/streak" = "gateway"
+"POST /api/v1/users/me/streak" = "gateway"
+"GET /api/v1/users/me/hearts" = "gateway"
+"POST /api/v1/users/me/hearts" = "gateway"
+"GET /api/v1/users/me/daily-goal" = "gateway"
+"PUT /api/v1/users/me/daily-goal" = "gateway"
+"GET /api/v1/users/me/milestones" = "gateway"
+"GET /api/v1/notifications/settings" = "gateway"
+"PUT /api/v1/notifications/settings" = "gateway"
+"POST /api/v1/notifications/register-push" = "gateway"
+"DELETE /api/v1/notifications/unregister-push" = "gateway"
+"GET /api/v1/notifications/history" = "gateway"
+"GET /api/v1/notifications/should-prompt-permission" = "gateway"
+"POST /api/v1/sessions/heartbeat" = "gateway"
+"POST /api/v1/sessions/end" = "gateway"
+"POST /api/v1/analytics/events" = "gateway"
+"GET /api/v1/admin/analytics/sessions/active" = "gateway"
+"GET /api/v1/admin/analytics/sessions/stats" = "gateway"
+"POST /api/v1/crash-reports" = "gateway"
+"GET /api/v1/admin/crash-reports" = "gateway"
+"GET /api/v1/admin/crash-reports/stats" = "gateway"
+"POST /api/v1/admin/push-notifications/send" = "gateway"
+"POST /api/v1/admin/push-notifications/broadcast" = "gateway"
+"GET /api/v1/admin/push-notifications" = "gateway"
+
 [defaults]
-# When true, an unknown route in the inventory defaults to "gateway".
-# Production must set this true until cutover (Requirement 13.3).
-unknown_routes = "gateway"
+# All registered Axum handlers serve natively.
+# Unregistered routes still fall through to gateway::fallback_to_python.
+unknown_routes = "native"
