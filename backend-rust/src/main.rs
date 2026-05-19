@@ -15,10 +15,12 @@ mod dispatcher;
 mod error;
 mod gateway;
 mod inventory;
+mod models;
 mod observability;
 mod routes;
+mod services;
 
-use axum::{middleware, routing::{get, post}, Router};
+use axum::{middleware, routing::{get, patch, post}, Router};
 use sqlx::PgPool;
 use tokio::signal;
 
@@ -97,6 +99,19 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
         .route("/api/v1/auth/forgot-password", post(routes::auth::forgot_password))
         .route("/api/v1/auth/reset-password", post(routes::auth::reset_password))
         .route("/api/v1/users/me/age-verify", post(routes::auth::age_verify))
+        .with_state(auth_state.clone());
+
+    // User profile routes (Phase 3 — need pool + settings via AuthState)
+    let user_routes = Router::new()
+        .route("/api/v1/users/me", patch(routes::users::update_profile))
+        .route("/api/v1/users/me/change-password", post(routes::users::change_password))
+        .route("/api/v1/users/me/starting-path", post(routes::users::set_starting_path))
+        .route("/api/v1/users/me/avatar", post(routes::users::upload_avatar))
+        .route("/api/v1/onboarding/goals", post(routes::users::save_onboarding_goal))
+        .route("/api/v1/onboarding/status", get(routes::users::get_onboarding_status))
+        .route("/api/v1/onboarding/complete", post(routes::users::complete_onboarding))
+        .route("/api/v1/users/:user_id/public", get(routes::users::get_user_public_profile))
+        .route("/api/v1/u/:identifier", get(routes::users::get_user_by_identifier))
         .with_state(auth_state);
 
     // Static routes (no state needed)
