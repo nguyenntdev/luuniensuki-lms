@@ -150,7 +150,7 @@ pub async fn update_profile(
     if set_clauses.is_empty() {
         // Nothing to update, just fetch current state
         let row = sqlx::query_as::<_, UserRow>(
-            "SELECT id, email, display_name, avatar_url, username, bio, role, \
+            "SELECT id, email, display_name, avatar_url, username, bio, role::text AS role, \
              total_xp, starting_urn_id, is_profile_public, ai_personalization_enabled, \
              password_hash, onboarding_goal, onboarding_completed, onboarding_completed_at, \
              created_at FROM users WHERE id = $1",
@@ -169,7 +169,7 @@ pub async fn update_profile(
     // Build the full SQL and use a manual approach with sqlx::query.
     let sql = format!(
         "UPDATE users SET {} WHERE id = $1 RETURNING \
-         id, email, display_name, avatar_url, username, bio, role, \
+         id, email, display_name, avatar_url, username, bio, role::text AS role, \
          total_xp, starting_urn_id, is_profile_public, ai_personalization_enabled, \
          password_hash, onboarding_goal, onboarding_completed, onboarding_completed_at, \
          created_at",
@@ -189,7 +189,7 @@ pub async fn update_profile(
          ai_personalization_enabled = COALESCE($6, ai_personalization_enabled), \
          updated_at = NOW() \
          WHERE id = $1 \
-         RETURNING id, email, display_name, avatar_url, username, bio, role, \
+         RETURNING id, email, display_name, avatar_url, username, bio, role::text AS role, \
          total_xp, starting_urn_id, is_profile_public, ai_personalization_enabled, \
          password_hash, onboarding_goal, onboarding_completed, onboarding_completed_at, \
          created_at",
@@ -460,7 +460,7 @@ pub async fn get_public_profile(
     requester_id: Uuid,
 ) -> Result<UserPublicRow, AppError> {
     let row = sqlx::query_as::<_, UserPublicRow>(
-        "SELECT id, email, display_name, avatar_url, username, bio, role, \
+        "SELECT id, email, display_name, avatar_url, username, bio, role::text AS role, \
          total_xp, is_profile_public, created_at \
          FROM users WHERE id = $1",
     )
@@ -497,7 +497,7 @@ pub async fn resolve_user_by_id_or_username(
 
     // Fall back to username lookup
     let row = sqlx::query_as::<_, UserPublicRow>(
-        "SELECT id, email, display_name, avatar_url, username, bio, role, \
+        "SELECT id, email, display_name, avatar_url, username, bio, role::text AS role, \
          total_xp, is_profile_public, created_at \
          FROM users WHERE username = $1",
     )

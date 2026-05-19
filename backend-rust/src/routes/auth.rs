@@ -223,7 +223,7 @@ pub async fn me(
     let user_id: Uuid = claims.sub.parse().map_err(|_| AppError::Unauthorized)?;
 
     let row = sqlx::query_as::<_, UserRow>(
-        "SELECT id, email, display_name, role, avatar_url, age_verified, created_at \
+        "SELECT id, email, display_name, role::text, avatar_url, age_verified, created_at \
          FROM users WHERE id = $1",
     )
     .bind(user_id)
@@ -249,7 +249,7 @@ pub async fn login(
     let pool = require_pool(&state.pool)?;
 
     let row = sqlx::query_as::<_, UserRowWithPassword>(
-        "SELECT id, email, display_name, role, password_hash, avatar_url, \
+        "SELECT id, email, display_name, role::text AS role, password_hash, avatar_url, \
          age_verified, created_at FROM users WHERE email = $1",
     )
     .bind(&payload.email)
@@ -339,7 +339,7 @@ pub async fn register(
     let row = sqlx::query_as::<_, UserRow>(
         "INSERT INTO users (id, email, display_name, password_hash, role, created_at, updated_at) \
          VALUES ($1, $2, $3, $4, 'user', NOW(), NOW()) \
-         RETURNING id, email, display_name, role, avatar_url, age_verified, created_at",
+         RETURNING id, email, display_name, role::text AS role, avatar_url, age_verified, created_at",
     )
     .bind(new_id)
     .bind(&payload.email)
@@ -404,7 +404,7 @@ pub async fn refresh(
     let user_id: Uuid = claims.sub.parse().map_err(|_| AppError::Unauthorized)?;
 
     let row = sqlx::query_as::<_, UserRow>(
-        "SELECT id, email, display_name, role, avatar_url, age_verified, created_at \
+        "SELECT id, email, display_name, role::text, avatar_url, age_verified, created_at \
          FROM users WHERE id = $1",
     )
     .bind(user_id)

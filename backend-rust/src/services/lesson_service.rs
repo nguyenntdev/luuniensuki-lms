@@ -1228,7 +1228,7 @@ async fn check_can_view_drafts(pool: &PgPool, user_id: Uuid) -> bool {
 
 /// Get user role from DB.
 async fn get_user_role(pool: &PgPool, user_id: Uuid) -> String {
-    sqlx::query_as::<_, (String,)>("SELECT role FROM users WHERE id = $1")
+    sqlx::query_as::<_, (String,)>("SELECT role::text FROM users WHERE id = $1")
         .bind(user_id)
         .fetch_optional(pool)
         .await
