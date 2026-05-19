@@ -27,6 +27,7 @@ import {
 } from "@/stores/motifStore";
 import { shallow } from "zustand/shallow";
 import LessonSidebar from "@/components/LessonSidebar";
+import useRenderPerf from "@/hooks/useRenderPerf";
 
 THREE.Cache.enabled = true;
 
@@ -610,6 +611,7 @@ function UrnModel({
     hotspotScale,
     hotspotSegments,
     enableShadows,
+    onModelReady,
 }) {
     const gltf = useGLTF(url);
 
@@ -644,6 +646,16 @@ function UrnModel({
             }
         });
     }, [enableShadows, gltf]);
+
+    // Notify parent that the GLTF finished loading and the scene graph is
+    // attached. We schedule on the next animation frame so the first paint
+    // has actually happened.
+    useEffect(() => {
+        if (!onModelReady) return undefined;
+        let rafId = 0;
+        rafId = requestAnimationFrame(() => onModelReady());
+        return () => cancelAnimationFrame(rafId);
+    }, [gltf, onModelReady]);
 
     return (
         <group
@@ -688,6 +700,12 @@ export default function UrnViewer({
     const selectedProgress = selectedMotifId
         ? progressByMotifId[selectedMotifId]
         : null;
+
+    // Render performance instrumentation (Gap 4 — paper claim "+46% speedup").
+    // Fires one analytics event per model load. Fire-and-forget; never blocks render.
+    const { markFirstFrame, markFirstInteraction } = useRenderPerf({
+        modelUrl: urnModelUrl,
+    });
 
     const [hovered, setHovered] = useState(false);
     useCursor(hovered);
@@ -1056,6 +1074,9 @@ export default function UrnViewer({
                     onPointerMove={isTouchDevice ? undefined : handleHover}
                     onCreated={(state) => {
                         if (!state.gl) setWebglFailed(true);
+                        // Render perf: WebGL context ready ≈ ready for user
+                        // interaction (OrbitControls attached on next frame).
+                        markFirstInteraction();
                     }}
                     gl={{
                         powerPreference: "high-performance",
@@ -1094,6 +1115,7 @@ export default function UrnViewer({
                                     hotspotScale={hotspotScale}
                                     hotspotSegments={hotspotSegments}
                                     enableShadows={enableShadows}
+                                    onModelReady={markFirstFrame}
                                 />
                             ) : (
                                 fallback

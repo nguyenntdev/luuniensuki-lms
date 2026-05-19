@@ -136,3 +136,61 @@ pub struct SessionStatsRow {
     pub total_sessions_today: i64,
     pub avg_session_minutes: Option<f64>,
 }
+
+// ---------------------------------------------------------------------------
+// Render Performance DTOs (Gap 4 — paper claim "+46% speedup")
+// ---------------------------------------------------------------------------
+
+/// Percentile triple (p50/p95/p99) for a numeric metric.
+#[derive(Debug, Default, Serialize, Clone, Copy)]
+pub struct Percentiles {
+    pub p50: Option<f64>,
+    pub p95: Option<f64>,
+    pub p99: Option<f64>,
+}
+
+/// One bucket (per LOD label) of aggregated render performance.
+#[derive(Debug, Serialize)]
+pub struct RenderPerfByLod {
+    pub lod_label: String,
+    pub sample_count: i64,
+    pub avg_file_size_bytes: Option<f64>,
+    pub ttf_ms: Percentiles,
+    pub ttfi_ms: Percentiles,
+    pub avg_fps: Percentiles,
+}
+
+/// Speedup of smaller LODs vs the 2k baseline (percentages on p50 ttf_ms).
+#[derive(Debug, Default, Serialize)]
+pub struct RenderPerfSpeedup {
+    #[serde(rename = "512_vs_2k_ttf_pct")]
+    pub k512_vs_2k_ttf_pct: Option<f64>,
+    #[serde(rename = "1k_vs_2k_ttf_pct")]
+    pub k1k_vs_2k_ttf_pct: Option<f64>,
+}
+
+/// Response for GET /api/v1/admin/analytics/render-performance.
+#[derive(Debug, Serialize)]
+pub struct RenderPerfResponse {
+    pub from: DateTime<Utc>,
+    pub to: DateTime<Utc>,
+    pub by_lod: Vec<RenderPerfByLod>,
+    pub speedup_vs_2k: RenderPerfSpeedup,
+}
+
+/// Raw aggregation row from PostgreSQL `percentile_cont` query.
+#[derive(Debug, sqlx::FromRow)]
+pub struct RenderPerfAggRow {
+    pub lod_label: Option<String>,
+    pub sample_count: i64,
+    pub avg_file_size_bytes: Option<f64>,
+    pub ttf_p50: Option<f64>,
+    pub ttf_p95: Option<f64>,
+    pub ttf_p99: Option<f64>,
+    pub ttfi_p50: Option<f64>,
+    pub ttfi_p95: Option<f64>,
+    pub ttfi_p99: Option<f64>,
+    pub fps_p50: Option<f64>,
+    pub fps_p95: Option<f64>,
+    pub fps_p99: Option<f64>,
+}
