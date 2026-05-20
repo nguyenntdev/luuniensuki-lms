@@ -53,6 +53,10 @@ async fn dispatch_pass(pool: &PgPool) -> Result<i64, sqlx::Error> {
     //
     // notification_settings table is joined defensively — if a user has no
     // row, default-allow streak reminders.
+    //
+    // We also skip users who have been active within the cadence window —
+    // they don't need a reminder, and queueing one would be noise. The
+    // cadence is encoded inline as an INTERVAL chosen by pace.
     let due: Vec<(
         Uuid, // user_id
         Uuid, // trail_id
@@ -64,12 +68,21 @@ async fn dispatch_pass(pool: &PgPool) -> Result<i64, sqlx::Error> {
         SELECT p.user_id, p.trail_id, COALESCE(p.pace, 'daily'), t.slug, t.title_vi
         FROM user_trail_progress p
         JOIN trails t ON t.id = p.trail_id
+        JOIN users u ON u.id = p.user_id
         LEFT JOIN notification_settings ns ON ns.user_id = p.user_id
         WHERE p.completed_at IS NULL
           AND p.next_reminder_at IS NOT NULL
           AND p.next_reminder_at <= NOW()
           AND COALESCE(ns.streak_reminders, true) = true
-        FOR UPDATE SKIP LOCKED
+          AND (
+            u.last_active_at IS NULL
+            OR u.last_active_at < NOW() - CASE COALESCE(p.pace, 'daily')
+                 WHEN 'weekly'  THEN INTERVAL '6 days'
+                 WHEN '2x_week' THEN INTERVAL '3 days'
+                 ELSE                INTERVAL '20 hours'
+               END
+          )
+        FOR UPDATE OF p SKIP LOCKED
         LIMIT 100
         "#,
     )

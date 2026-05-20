@@ -1,38 +1,46 @@
 "use client";
 
-import { forwardRef, useEffect, useRef } from "react";
+import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
 
 const TimelineTrack = forwardRef(function TimelineTrack(
   { events, meta, selectedId, onSelect },
   ref,
 ) {
   const trackRef = useRef(null);
-  // Compose ref so parent can also reach into the DOM.
-  useEffect(() => {
-    if (!ref) return;
-    if (typeof ref === "function") ref(trackRef.current);
-    else ref.current = trackRef.current;
-  }, [ref]);
+  // Expose the underlying DOM element directly via the forwarded ref.
+  // Using `useImperativeHandle` avoids the timing race that a `useEffect`
+  // assignment introduces (the effect runs after render, so a parent
+  // requestAnimationFrame callback can fire before the ref is populated).
+  useImperativeHandle(
+    ref,
+    () => trackRef.current,
+    [],
+  );
+
+  const focusEvent = useCallback(
+    (id) => {
+      const el = trackRef.current?.querySelector(`[data-event-id="${id}"]`);
+      el?.focus();
+    },
+    [],
+  );
 
   function handleKeyDown(e, idx) {
     if (e.key === "ArrowRight") {
       e.preventDefault();
       const next = events[Math.min(idx + 1, events.length - 1)];
-      if (next) {
-        const el = trackRef.current?.querySelector(
-          `[data-event-id="${next.id}"]`,
-        );
-        el?.focus();
-      }
+      if (next) focusEvent(next.id);
     } else if (e.key === "ArrowLeft") {
       e.preventDefault();
       const prev = events[Math.max(idx - 1, 0)];
-      if (prev) {
-        const el = trackRef.current?.querySelector(
-          `[data-event-id="${prev.id}"]`,
-        );
-        el?.focus();
-      }
+      if (prev) focusEvent(prev.id);
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      if (events[0]) focusEvent(events[0].id);
+    } else if (e.key === "End") {
+      e.preventDefault();
+      const last = events[events.length - 1];
+      if (last) focusEvent(last.id);
     } else if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       onSelect(events[idx].id);
@@ -63,6 +71,9 @@ const TimelineTrack = forwardRef(function TimelineTrack(
           const year = Number((event.occurred_on || "").slice(0, 4)) || minYear;
           const left = position(year);
           const selected = event.id === selectedId;
+          // Roving tabindex: only the selected (or first when none selected)
+          // element is tabbable; the rest are focusable by arrow keys.
+          const tabbable = selected || (!selectedId && idx === 0);
           return (
             <li
               key={event.id}
@@ -70,7 +81,7 @@ const TimelineTrack = forwardRef(function TimelineTrack(
               aria-selected={selected}
               aria-label={`${event.name_vi} — ${event.occurred_on}`}
               data-event-id={event.id}
-              tabIndex={idx === 0 && !selectedId ? 0 : selected ? 0 : -1}
+              tabIndex={tabbable ? 0 : -1}
               onKeyDown={(e) => handleKeyDown(e, idx)}
               onClick={() => onSelect(event.id)}
               className={`absolute -translate-x-1/2 cursor-pointer outline-none transition focus-visible:scale-110 focus-visible:ring-4 focus-visible:ring-primary/50 ${

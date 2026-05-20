@@ -72,19 +72,30 @@ fn write_atomically(path: &Path, bytes: &[u8]) -> std::io::Result<()> {
 /// Uses a single content stream with built-in Helvetica (no font embedding).
 /// Lines are rendered using PDF text-positioning operators (`Tj` + `T*`) so
 /// the document stays small (~2 KB).
+///
+/// Long strings are truncated to fit on one page; the certificate hash is
+/// still rendered in full at small font size at the bottom.
 fn render_pdf(
     name: &str,
     trail_title: &str,
     issued_at: DateTime<Utc>,
     hash: &str,
 ) -> Vec<u8> {
+    // Approximate character budgets at each font size on an A4 595pt page
+    // with 110pt left margin. Helvetica width is ~0.5 * size for ASCII.
+    // Page usable width = 595 - 110 - 50 = 435pt.
+    //   22pt -> 435 / (22*0.5) ~= 39 chars
+    //   16pt -> 435 / (16*0.5) ~= 54 chars
+    let name_safe = truncate_with_ellipsis(name, 39);
+    let title_safe = truncate_with_ellipsis(trail_title, 54);
+
     // Build the content stream first.
     let issued = issued_at.format("%d/%m/%Y").to_string();
     let lines: [(&str, u32); 5] = [
         ("CHUNG CHI HOAN THANH", 32),
         ("Luu Nien Su Ki LMS", 14),
-        (name, 22),
-        (trail_title, 16),
+        (name_safe.as_str(), 22),
+        (title_safe.as_str(), 16),
         ("", 12),
     ];
 
@@ -194,6 +205,23 @@ fn escape_pdf_string(s: &str) -> String {
     out
 }
 
+/// Truncate `s` to at most `max_chars` characters, appending `…` when the
+/// input is too long. Operates on chars (not bytes) so multibyte input is
+/// handled before the diacritic strip runs.
+fn truncate_with_ellipsis(s: &str, max_chars: usize) -> String {
+    if max_chars == 0 {
+        return String::new();
+    }
+    let count = s.chars().count();
+    if count <= max_chars {
+        return s.to_string();
+    }
+    let take = max_chars.saturating_sub(1);
+    let mut out: String = s.chars().take(take).collect();
+    out.push('.');
+    out
+}
+
 fn strip_diacritics(c: char) -> char {
     // A small Vietnamese-aware fold to ASCII. Anything we can't map falls
     // through and gets replaced with '?' downstream.
@@ -264,5 +292,25 @@ mod tests {
     #[test]
     fn escape_pdf_string_escapes_parens_and_backslash() {
         assert_eq!(escape_pdf_string("foo (bar) \\baz"), "foo \\(bar\\) \\\\baz");
+    }
+
+    #[test]
+    fn truncate_keeps_short_strings() {
+        assert_eq!(truncate_with_ellipsis("short", 10), "short");
+        assert_eq!(truncate_with_ellipsis("", 10), "");
+    }
+
+    #[test]
+    fn truncate_clips_long_strings() {
+        let out = truncate_with_ellipsis("aaaaaaaaaaaaaaaaa", 5);
+        assert_eq!(out.chars().count(), 5);
+        assert!(out.ends_with('.'));
+    }
+
+    #[test]
+    fn truncate_handles_unicode() {
+        let s = "Linh vật Cao Đỉnh — chuyến hành trình dài lê thê qua các thời đại Nguyễn";
+        let out = truncate_with_ellipsis(s, 20);
+        assert_eq!(out.chars().count(), 20);
     }
 }

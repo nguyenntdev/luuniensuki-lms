@@ -57,7 +57,15 @@ export default function TrailPlayer({ slug }) {
     setBusy(true);
     try {
       const res = await startTrail(slug);
-      setCurrentMotif(res?.first_motif || null);
+      if (res?.first_motif) {
+        setCurrentMotif(res.first_motif);
+      } else {
+        // Server returned no motif — likely the trail has zero published
+        // steps despite being marked published. Surface a clear error.
+        setError(
+          "Lộ trình này chưa có bước nào — vui lòng liên hệ admin.",
+        );
+      }
       if (res?.progress?.pace) setPace(res.progress.pace);
       // refresh detail to update step counts
       const data = await getTrailDetail(slug);
