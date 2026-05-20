@@ -75,3 +75,8 @@ venv/
 
 # OS
 Thumbs.db
+
+
+# Local deploy secrets — never commit
+.deploy-secrets
+.commit-msg-tmp
