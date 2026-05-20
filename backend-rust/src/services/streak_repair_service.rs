@@ -291,6 +291,9 @@ pub async fn repair(
         "streak repair succeeded"
     );
 
+    crate::routes::metrics::STREAK_REPAIR_TOTAL
+        .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+
     Ok(RepairResponse {
         current_streak: streak_before_loss,
         payment: payment.as_db_str().to_string(),

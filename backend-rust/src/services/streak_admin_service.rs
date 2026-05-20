@@ -131,6 +131,9 @@ pub async fn big_red_button(
         "big red button pressed"
     );
 
+    crate::routes::metrics::STREAK_BRB_TOTAL
+        .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+
     Ok(BrbResponse {
         affected_users: inserted,
         event_id,

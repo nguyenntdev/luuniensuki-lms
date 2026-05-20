@@ -289,3 +289,46 @@ mod tests {
         assert_eq!(resp.status(), StatusCode::SERVICE_UNAVAILABLE);
     }
 }
+
+
+// ---------------------------------------------------------------------------
+// Phase 13 leftover admin endpoints (Tasks 14.3–14.6)
+// ---------------------------------------------------------------------------
+
+use crate::services::admin_extras_service;
+
+pub async fn list_audit(
+    State(state): State<AuthState>,
+    Query(params): Query<PaginationParams>,
+    headers: HeaderMap,
+) -> Result<impl IntoResponse, AppError> {
+    let pool = require_pool(&state.pool)?;
+    let _ = authenticate_admin(&headers, &state.settings)?;
+    let resp = admin_extras_service::list_audit_logs(
+        pool,
+        params.page.unwrap_or(1) as i64,
+        params.per_page.unwrap_or(50) as i64,
+    )
+    .await?;
+    Ok(Json(resp))
+}
+
+pub async fn list_feature_flags(
+    State(state): State<AuthState>,
+    headers: HeaderMap,
+) -> Result<impl IntoResponse, AppError> {
+    let pool = require_pool(&state.pool)?;
+    let _ = authenticate_admin(&headers, &state.settings)?;
+    let resp = admin_extras_service::list_feature_flags(pool).await?;
+    Ok(Json(serde_json::json!({ "feature_flags": resp })))
+}
+
+pub async fn list_experiments(
+    State(state): State<AuthState>,
+    headers: HeaderMap,
+) -> Result<impl IntoResponse, AppError> {
+    let pool = require_pool(&state.pool)?;
+    let _ = authenticate_admin(&headers, &state.settings)?;
+    let resp = admin_extras_service::list_experiments(pool).await?;
+    Ok(Json(serde_json::json!({ "experiments": resp })))
+}

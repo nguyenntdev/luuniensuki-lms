@@ -1,9 +1,14 @@
 //! Business logic services.
 
 pub mod admin_service;
+pub mod admin_extras_service;
 pub mod badge_service;
+pub mod certificate_pdf;
 pub mod classroom_service;
+pub mod cohort_service;
 pub mod crash_report_service;
+pub mod fsrs_algo;
+pub mod fsrs_service;
 pub mod leaderboard_service;
 pub mod lesson_service;
 pub mod notification_service;
@@ -14,4 +19,7 @@ pub mod streak_admin_service;
 pub mod streak_comeback_service;
 pub mod streak_friend_service;
 pub mod streak_repair_service;
+pub mod streak_rollover_service;
+pub mod timeline_service;
+pub mod trail_service;
 pub mod user_service;

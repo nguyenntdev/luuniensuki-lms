@@ -15,6 +15,7 @@ mod dispatcher;
 mod error;
 mod gateway;
 mod inventory;
+mod jobs;
 mod models;
 mod observability;
 mod routes;
@@ -54,6 +55,13 @@ async fn main() -> anyhow::Result<()> {
 
     // Create the DB pool (connect_lazy — no connection until first query)
     let pool = db::pool(&settings).await.ok();
+
+    // Spawn streak-economy background jobs if a pool is available.
+    if let Some(p) = pool.clone() {
+        tokio::spawn(jobs::streak_rollover_job::run(p.clone()));
+        tokio::spawn(jobs::friend_streak_job::run(p.clone()));
+        tokio::spawn(jobs::trail_reminder_job::run(p));
+    }
 
     let app = build_router(gw_state, app_state, pool, &settings);
 
@@ -210,6 +218,10 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
         .route("/api/v1/admin/crash-reports/stats", get(routes::admin::get_crash_report_stats))
         .route("/api/v1/admin/crash-reports/:report_id", get(routes::admin::get_crash_report))
         .route("/api/v1/admin/analytics/render-performance", get(routes::admin_render::get_render_performance))
+        // Phase 13 leftovers (tasks 14.3–14.6): read-only admin listings
+        .route("/api/v1/admin/audit", get(routes::admin::list_audit))
+        .route("/api/v1/admin/feature-flags", get(routes::admin::list_feature_flags))
+        .route("/api/v1/admin/experiments", get(routes::admin::list_experiments))
         .with_state(auth_state.clone());
 
     // Streak Repair Economy routes (additive — see .kiro/specs/streak-repair-economy)
@@ -230,6 +242,100 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
         .route(
             "/api/v1/admin/users/:user_id/streak-insurance/grant",
             post(routes::streak_admin::grant_insurance),
+        )
+        .with_state(auth_state.clone());
+
+    // FSRS Spaced Repetition routes (.kiro/specs/fsrs-spaced-repetition)
+    let fsrs_routes = Router::new()
+        .route("/api/v1/reviews/due", get(routes::reviews::get_due_reviews))
+        .route(
+            "/api/v1/reviews/:card_id/rate",
+            post(routes::reviews::rate_card),
+        )
+        .route(
+            "/api/v1/users/me/fsrs-settings",
+            get(routes::reviews::get_fsrs_settings).put(routes::reviews::update_fsrs_settings),
+        )
+        .with_state(auth_state.clone());
+
+    // Heritage Time-Lapse routes (.kiro/specs/heritage-time-lapse)
+    let timeline_routes = Router::new()
+        .route(
+            "/api/v1/timeline/events",
+            get(routes::timeline::get_timeline_events),
+        )
+        .route(
+            "/api/v1/timeline/motifs",
+            get(routes::timeline::get_timeline_motifs),
+        )
+        .route(
+            "/api/v1/motifs/compare",
+            get(routes::timeline::compare_motifs),
+        )
+        .route(
+            "/api/v1/admin/heritage-eras",
+            post(routes::timeline::create_era),
+        )
+        .route(
+            "/api/v1/admin/historical-events",
+            post(routes::timeline::create_event),
+        )
+        .route(
+            "/api/v1/admin/timeline/stats",
+            get(routes::timeline::get_timeline_stats),
+        )
+        .with_state(auth_state.clone());
+
+    // Heritage Trail Mode routes (.kiro/specs/heritage-trail-mode)
+    let trail_routes = Router::new()
+        // Public + user
+        .route("/api/v1/trails", get(routes::trails::list_trails))
+        .route("/api/v1/trails/:slug", get(routes::trails::get_trail_detail))
+        .route(
+            "/api/v1/trails/:slug/start",
+            post(routes::trails::start_trail),
+        )
+        .route(
+            "/api/v1/trails/:slug/step/:position/complete",
+            post(routes::trails::complete_step),
+        )
+        .route(
+            "/api/v1/trails/:slug/checkpoint/:idx",
+            post(routes::trails::submit_checkpoint),
+        )
+        .route(
+            "/api/v1/users/me/trails/:trail_id/pace",
+            axum::routing::put(routes::trails::set_pace),
+        )
+        .route(
+            "/api/v1/certificates/:hash/verify",
+            get(routes::trails::verify_certificate),
+        )
+        // Admin
+        .route(
+            "/api/v1/admin/trails",
+            post(routes::trail_admin::create_trail),
+        )
+        .route(
+            "/api/v1/admin/trails/:trail_id",
+            patch(routes::trail_admin::update_trail),
+        )
+        .route(
+            "/api/v1/admin/trails/:trail_id/promote",
+            post(routes::trail_admin::promote_trail),
+        )
+        .route(
+            "/api/v1/admin/trails/:trail_id/analytics",
+            get(routes::trail_admin::get_trail_analytics),
+        )
+        // Teacher
+        .route(
+            "/api/v1/teacher/trails",
+            post(routes::trail_teacher::create_teacher_trail),
+        )
+        .route(
+            "/api/v1/teacher/trails/:trail_id/submit-for-promotion",
+            post(routes::trail_teacher::submit_for_promotion),
         )
         .with_state(auth_state.clone());
 
@@ -266,6 +372,9 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
         .merge(crash_report_routes)
         .merge(admin_routes)
         .merge(streak_economy_routes)
+        .merge(fsrs_routes)
+        .merge(timeline_routes)
+        .merge(trail_routes)
         .merge(misc_routes)
         .merge(internal_routes)
         .fallback(gateway::fallback_to_python)
@@ -534,5 +643,11 @@ mod tests {
         assert!(text.contains("http_requests_by_mode_total{mode=\"native\"}"));
         assert!(text.contains("http_requests_by_mode_total{mode=\"gateway\"}"));
         assert!(text.contains("http_request_duration_milliseconds_sum"));
+
+        // Streak Repair Economy counters
+        assert!(text.contains("streak_repair_total"));
+        assert!(text.contains("streak_brb_invocations_total"));
+        assert!(text.contains("friend_streak_increments_total"));
+        assert!(text.contains("phoenix_badges_awarded_total"));
     }
 }

@@ -162,6 +162,9 @@ pub async fn increment_for_pair(
         "friend streak increment"
     );
 
+    crate::routes::metrics::FRIEND_STREAK_INCREMENT_TOTAL
+        .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+
     let _ = Utc::now();
     Ok(())
 }

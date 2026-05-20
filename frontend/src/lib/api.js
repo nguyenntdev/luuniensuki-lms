@@ -1608,3 +1608,141 @@ export async function spendGems(amount, reason) {
 export async function getGemTransactions(limit = 20) {
   return apiRequest(`/api/v1/gems/transactions?limit=${limit}`);
 }
+
+
+// =============================================================================
+// Heritage Time-Lapse (.kiro/specs/heritage-time-lapse)
+// =============================================================================
+
+export function fetchTimelineEvents({ from, to } = {}) {
+  const params = new URLSearchParams();
+  if (from) params.set("from", String(from));
+  if (to) params.set("to", String(to));
+  const qs = params.toString();
+  const path = `/api/v1/timeline/events${qs ? `?${qs}` : ""}`;
+  return apiRequest(path);
+}
+
+export function fetchTimelineMotifsByEra(eraSlug) {
+  const params = new URLSearchParams({ era: eraSlug });
+  return apiRequest(`/api/v1/timeline/motifs?${params.toString()}`);
+}
+
+export function compareMotifs(idA, idB) {
+  const params = new URLSearchParams({ ids: `${idA},${idB}` });
+  return apiRequest(`/api/v1/motifs/compare?${params.toString()}`);
+}
+
+// =============================================================================
+// Heritage Trail Mode (.kiro/specs/heritage-trail-mode)
+// =============================================================================
+
+export function listTrails({ page = 1, perPage = 20 } = {}) {
+  const params = new URLSearchParams({
+    page: String(page),
+    per_page: String(perPage),
+  });
+  return apiRequest(`/api/v1/trails?${params.toString()}`);
+}
+
+export function getTrailDetail(slug) {
+  const encoded = encodeURIComponent(slug);
+  return apiRequest(`/api/v1/trails/${encoded}`);
+}
+
+export function startTrail(slug) {
+  const encoded = encodeURIComponent(slug);
+  return apiRequest(`/api/v1/trails/${encoded}/start`, { method: "POST" });
+}
+
+export function completeTrailStep(slug, position) {
+  const encoded = encodeURIComponent(slug);
+  return apiRequest(
+    `/api/v1/trails/${encoded}/step/${position}/complete`,
+    { method: "POST" },
+  );
+}
+
+export function submitTrailCheckpoint(slug, idx, response) {
+  const encoded = encodeURIComponent(slug);
+  return apiRequest(`/api/v1/trails/${encoded}/checkpoint/${idx}`, {
+    method: "POST",
+    body: { response },
+  });
+}
+
+export function setTrailPace(trailId, pace) {
+  return apiRequest(`/api/v1/users/me/trails/${trailId}/pace`, {
+    method: "PUT",
+    body: { pace },
+  });
+}
+
+export function verifyTrailCertificate(hash) {
+  const encoded = encodeURIComponent(hash);
+  return apiRequest(`/api/v1/certificates/${encoded}/verify`);
+}
+
+// =============================================================================
+// FSRS Spaced Repetition (.kiro/specs/fsrs-spaced-repetition)
+// =============================================================================
+
+export function getDueReviews({ page = 1, pageSize = 20 } = {}) {
+  const params = new URLSearchParams({
+    page: String(page),
+    page_size: String(pageSize),
+  });
+  return apiRequest(`/api/v1/reviews/due?${params.toString()}`);
+}
+
+export function rateReviewCard(cardId, rating) {
+  const encoded = encodeURIComponent(cardId);
+  return apiRequest(`/api/v1/reviews/${encoded}/rate`, {
+    method: "POST",
+    body: { rating },
+  });
+}
+
+export function getFsrsSettings() {
+  return apiRequest(`/api/v1/users/me/fsrs-settings`);
+}
+
+export function updateFsrsSettings({ optimalRetention }) {
+  return apiRequest(`/api/v1/users/me/fsrs-settings`, {
+    method: "PUT",
+    body: { optimal_retention: optimalRetention },
+  });
+}
+
+// =============================================================================
+// Streak Repair Economy (.kiro/specs/streak-repair-economy)
+// =============================================================================
+
+export function getStreakRepairOptions() {
+  return apiRequest(`/api/v1/users/me/streak/repair-options`);
+}
+
+export function repairStreak({ payment, idempotencyKey } = {}) {
+  return apiRequest(`/api/v1/users/me/streak/repair`, {
+    method: "POST",
+    body: { payment },
+    headers: idempotencyKey ? { "Idempotency-Key": idempotencyKey } : undefined,
+  });
+}
+
+export function getMyFriendStreaks() {
+  return apiRequest(`/api/v1/users/me/friend-streaks`);
+}
+
+export function getFriendStreak(otherUserId) {
+  const encoded = encodeURIComponent(otherUserId);
+  return apiRequest(`/api/v1/users/${encoded}/friend-streak`);
+}
+
+export function getStreakComebackStatus() {
+  return apiRequest(`/api/v1/users/me/streak/comeback-status`);
+}
+
+export function getStreakInsurance() {
+  return apiRequest(`/api/v1/users/me/streak-insurance`);
+}

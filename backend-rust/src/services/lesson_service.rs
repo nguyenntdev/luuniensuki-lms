@@ -611,6 +611,16 @@ pub async fn complete_lesson(
     }
 
     // Update user XP and streak
+    // Apply comeback bonus multiplier if active.
+    let xp_awarded = if xp_awarded > 0 {
+        crate::services::streak_comeback_service::apply_xp_multiplier(
+            &mut tx, user_id, xp_awarded,
+        )
+        .await?
+    } else {
+        xp_awarded
+    };
+
     if xp_awarded > 0 {
         sqlx::query(
             "UPDATE users SET total_xp = total_xp + $1, last_active_at = $2 WHERE id = $3",
@@ -627,6 +637,13 @@ pub async fn complete_lesson(
     update_streak(&mut tx, user_id, now).await?;
 
     tx.commit().await.map_err(|e| AppError::Internal(e.into()))?;
+
+    // Best-effort Phoenix award (outside the transaction so it cannot block
+    // the lesson-complete path if it fails).
+    let _ = crate::services::streak_comeback_service::award_phoenix_if_eligible(
+        pool, user_id,
+    )
+    .await;
 
     // Fetch final total_xp
     let total_xp: (i32,) = sqlx::query_as("SELECT total_xp FROM users WHERE id = $1")
@@ -1247,52 +1264,99 @@ fn get_allowed_content_ratings(role: &str) -> Vec<&'static str> {
 }
 
 /// Update user streak in a transaction.
+///
+/// New behavior (streak-repair-economy):
+/// - On a multi-day gap, if `streak_freezes > 0`, consume one freeze and
+///   preserve `current_streak`.
+/// - Otherwise, capture the prior streak into `user_streak_history` and
+///   reset `current_streak` to 1 (today counts as the start of a new streak).
 async fn update_streak(
     tx: &mut sqlx::Transaction<'_, sqlx::Postgres>,
     user_id: Uuid,
     now: DateTime<Utc>,
 ) -> Result<(), AppError> {
-    let row: Option<(Option<DateTime<Utc>>, i32)> = sqlx::query_as(
-        "SELECT last_streak_date, current_streak FROM users WHERE id = $1 FOR UPDATE",
+    // Per-user advisory lock — prevents concurrent double-update or
+    // double-reset under request retry.
+    sqlx::query("SELECT pg_advisory_xact_lock(hashtextextended($1::text, 0))")
+        .bind(user_id)
+        .execute(&mut **tx)
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
+
+    let row: Option<(Option<DateTime<Utc>>, i32, i32)> = sqlx::query_as(
+        "SELECT last_streak_date, current_streak, COALESCE(streak_freezes, 0) \
+         FROM users WHERE id = $1 FOR UPDATE",
     )
     .bind(user_id)
     .fetch_optional(&mut **tx)
     .await
     .map_err(|e| AppError::Internal(e.into()))?;
 
-    if let Some((last_streak_date, current_streak)) = row {
+    if let Some((last_streak_date, current_streak, streak_freezes)) = row {
         let today = now.date_naive();
-        let should_increment = match last_streak_date {
-            Some(last) => {
-                let last_date = last.date_naive();
-                let diff = (today - last_date).num_days();
-                diff == 1
-            }
-            None => true,
+        let day_diff = match last_streak_date {
+            Some(last) => (today - last.date_naive()).num_days(),
+            None => i64::MAX, // first-ever activity
         };
 
-        let same_day = match last_streak_date {
-            Some(last) => last.date_naive() == today,
-            None => false,
-        };
+        if day_diff == 0 {
+            // Already counted today — nothing to do.
+            return Ok(());
+        }
 
-        if !same_day {
-            let new_streak = if should_increment {
-                current_streak + 1
-            } else {
-                1 // reset streak
-            };
-
+        if day_diff == 1 {
+            // Consecutive day: increment.
             sqlx::query(
-                "UPDATE users SET current_streak = $1, last_streak_date = $2 WHERE id = $3",
+                "UPDATE users SET current_streak = current_streak + 1, \
+                 last_streak_date = $1, updated_at = NOW() WHERE id = $2",
             )
-            .bind(new_streak)
             .bind(now)
             .bind(user_id)
             .execute(&mut **tx)
             .await
             .map_err(|e| AppError::Internal(e.into()))?;
+            return Ok(());
         }
+
+        // Multi-day gap. If a freeze is available AND a streak was running,
+        // consume one freeze and preserve the streak. Treat today as a fresh
+        // active day.
+        if current_streak >= 1 && streak_freezes > 0 {
+            sqlx::query(
+                "UPDATE users SET streak_freezes = streak_freezes - 1, \
+                 last_streak_date = $1, updated_at = NOW() WHERE id = $2",
+            )
+            .bind(now)
+            .bind(user_id)
+            .execute(&mut **tx)
+            .await
+            .map_err(|e| AppError::Internal(e.into()))?;
+            return Ok(());
+        }
+
+        // No freeze available — capture the loss into history (if any prior
+        // streak existed) and start fresh.
+        if current_streak >= 1 {
+            let started_at = last_streak_date.unwrap_or(now);
+            crate::services::streak_rollover_service::capture_streak_loss_to_history(
+                tx,
+                user_id,
+                current_streak,
+                started_at,
+            )
+            .await
+            .map_err(|e| AppError::Internal(e.into()))?;
+        }
+
+        sqlx::query(
+            "UPDATE users SET current_streak = 1, \
+             last_streak_date = $1, updated_at = NOW() WHERE id = $2",
+        )
+        .bind(now)
+        .bind(user_id)
+        .execute(&mut **tx)
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
     }
 
     Ok(())
