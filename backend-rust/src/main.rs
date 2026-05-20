@@ -210,6 +210,10 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
         .route("/api/v1/admin/crash-reports/stats", get(routes::admin::get_crash_report_stats))
         .route("/api/v1/admin/crash-reports/:report_id", get(routes::admin::get_crash_report))
         .route("/api/v1/admin/analytics/render-performance", get(routes::admin_render::get_render_performance))
+        .route("/api/v1/admin/mesh/reprocess", post(routes::admin_mesh::reprocess))
+        .route("/api/v1/admin/mesh/inventory", get(routes::admin_mesh::inventory))
+        .route("/api/v1/admin/mesh/jobs", get(routes::admin_mesh::list_jobs))
+        .route("/api/v1/admin/mesh/jobs/:id", get(routes::admin_mesh::get_job))
         .with_state(auth_state.clone());
 
     // Streak Repair Economy routes (additive — see .kiro/specs/streak-repair-economy)

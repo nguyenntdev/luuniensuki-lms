@@ -6,6 +6,7 @@ pub mod classroom;
 pub mod crash_report;
 pub mod leaderboard;
 pub mod lesson;
+pub mod mesh_jobs;
 pub mod notification;
 pub mod progress;
 pub mod quiz;

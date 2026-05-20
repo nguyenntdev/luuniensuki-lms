@@ -2,6 +2,12 @@ services:
   api:
     ports:
       - "127.0.0.1:8000:8000"
+  api_rust:
+    # Phase D / Gap 1 — let the inventory endpoint enumerate the GLB models
+    # produced by the host-side mesh-processor pipeline. Read-only mount so
+    # the api_rust container cannot corrupt the source-of-truth uploads.
+    volumes:
+      - /opt/luuniensuki-lms/models_upload:/opt/luuniensuki-lms/models_upload:ro
   web:
     ports:
       - "127.0.0.1:3000:3000"

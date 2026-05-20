@@ -9,7 +9,7 @@ edition = "2021"
 # `backend-rust/docs/build-budget.md`. The CI build-budget lint enforces
 # parity between this manifest and that document.
 [dependencies]
-tokio = { version = "=1.40.0", features = ["macros", "rt-multi-thread", "signal", "net", "time", "sync"] }
+tokio = { version = "=1.40.0", features = ["macros", "rt-multi-thread", "signal", "net", "time", "sync", "process", "io-util"] }
 axum = { version = "=0.7.7", default-features = false, features = ["http1", "json", "tokio", "matched-path", "tracing", "query", "multipart"] }
 tower = { version = "=0.5.1", default-features = false, features = ["util"] }
 tower-http = { version = "=0.6.1", default-features = false, features = ["trace"] }

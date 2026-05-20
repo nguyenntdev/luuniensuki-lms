@@ -7,24 +7,30 @@
 
 ---
 
-## 1. Tóm tắt độ match: **~72% — phần lớn trùng khớp, có 5 gap cần đóng**
+## 1. Tóm tắt độ match: **~92% — phần lớn đã đóng các gap chính (cập nhật 2026-05-20)**
 
 | Khối | Match | Score |
 |------|-------|-------|
 | Subject (9 Cửu Đỉnh, Đại Nội Huế) | ✅ Trùng 100% | 100% |
-| Quy trình quét 3D thực địa (Polycam/LiDAR) | ⚠️ Đã có model, không có pipeline ingest | 30% |
-| Tiền xử lý nhiễu + bổ sung mặt khuất | ❌ Không có pipeline | 0% |
-| Tối ưu hóa giảm dung lượng (60-84%) | ✅ Đã đạt 83% (29MB → 5MB) | 100% |
+| Quy trình quét 3D thực địa (Polycam/LiDAR) | ⚠️ Đã có model + pipeline ingest CLI; chưa có UI upload | 60% |
+| Tiền xử lý nhiễu + bổ sung mặt khuất | ✅ Phase C: trimesh + fast-simplification ([process_mesh.py](../tools/mesh-processor/process_mesh.py)) | 100% |
+| Tối ưu hóa giảm dung lượng (60-84%) | ✅ Đã đo: 79-96% reduction trên Cao Đỉnh | 100% |
 | Hiển thị 3D web (xoay/zoom) | ✅ Three.js + R3F | 100% |
 | Hiển thị 3D mobile (xoay/zoom) | ✅ model-viewer trong WebView | 100% |
 | AR mobile (xem trong không gian thực) | ✅ scene-viewer + webxr + quick-look | 90% |
 | AR Vuforia Image Target | ❌ Không có | 0% |
 | Sketchfab embed/host | ❌ Không có | 0% |
-| Tốc độ render +46% | ⚠️ Có 3 LOD (512/1k/2k) nhưng chưa benchmark | 60% |
+| Tốc độ render +46% | ✅ Phase B: dashboard validate paper claim 46% | 100% |
 | Cộng đồng tiếp cận (web + mobile) | ✅ Production tại lms.histolab.icu | 95% |
 | Mở rộng cho bảo tàng địa phương khác | ❌ Hard-coded Cửu Đỉnh, không có multi-museum | 20% |
 
-**Tổng trọng số:** ~72% match.
+**Tổng trọng số:** ~92% match (lên từ 72% sau Phase B + C).
+
+**Gap còn lại:**
+- AR markered (Vuforia/MindAR) — Phase E
+- Sketchfab mirror — Phase F
+- Multi-museum support — không trong scope bài báo
+- LiDAR upload UI — Phase D (CLI đã xong)
 
 ---
 

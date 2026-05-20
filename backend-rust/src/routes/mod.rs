@@ -8,6 +8,7 @@
 //! Task 16.2: adds misc module (Phase 15 — preview, collection, leftovers).
 
 pub mod admin;
+pub mod admin_mesh;
 pub mod admin_render;
 pub mod auth;
 pub mod badges;
