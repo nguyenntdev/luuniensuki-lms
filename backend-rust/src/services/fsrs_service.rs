@@ -16,7 +16,7 @@ use crate::models::fsrs::{
     CardState, DueCardOut, DueReviewsResponse, FsrsRating, FsrsSettingsResponse,
     RateCardResponse,
 };
-use crate::services::cohort_service::{assign_cohort, Cohort};
+use crate::services::cohort_service::assign_cohort;
 use crate::services::fsrs_algo::{schedule, DEFAULT_W};
 
 const PERSONAL_PARAMS_THRESHOLD: i64 = 50;

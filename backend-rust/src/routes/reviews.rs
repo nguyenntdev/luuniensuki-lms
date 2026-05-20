@@ -9,58 +9,20 @@
 
 use axum::{
     extract::{Path, Query, State},
-    http::{header, HeaderMap, StatusCode},
+    http::{HeaderMap, StatusCode},
     response::IntoResponse,
     Json,
 };
 use serde_json::json;
-use sqlx::PgPool;
 use uuid::Uuid;
 
-use crate::auth;
-use crate::config::Settings;
 use crate::error::AppError;
 use crate::models::fsrs::{
     DueReviewsQuery, FsrsRating, RateCardRequest, UpdateFsrsSettingsRequest,
 };
 use crate::routes::auth::AuthState;
+use crate::routes::route_helpers::{authenticate, require_pool};
 use crate::services::fsrs_service;
-
-fn extract_token_from_headers(headers: &HeaderMap) -> Option<String> {
-    if let Some(auth_header) = headers.get(header::AUTHORIZATION) {
-        if let Ok(auth_str) = auth_header.to_str() {
-            if let Some(token) = auth_str.strip_prefix("Bearer ") {
-                return Some(token.to_string());
-            }
-        }
-    }
-    if let Some(cookie_header) = headers.get(header::COOKIE) {
-        if let Ok(cookie_str) = cookie_header.to_str() {
-            for part in cookie_str.split(';') {
-                let trimmed = part.trim();
-                if let Some(value) = trimmed.strip_prefix("luuniensuki_access=") {
-                    return Some(value.to_string());
-                }
-            }
-        }
-    }
-    None
-}
-
-fn require_pool(pool: &Option<PgPool>) -> Result<&PgPool, AppError> {
-    pool.as_ref().ok_or_else(|| AppError::Http {
-        status: StatusCode::SERVICE_UNAVAILABLE,
-        message: "Database unavailable".to_string(),
-    })
-}
-
-fn authenticate(headers: &HeaderMap, settings: &Settings) -> Result<Uuid, AppError> {
-    let token = extract_token_from_headers(headers).ok_or(AppError::Unauthorized)?;
-    let claims = auth::verify_access_token(&token, &settings.jwt_secret_key)
-        .map_err(|_| AppError::Unauthorized)?;
-    let user_id: Uuid = claims.sub.parse().map_err(|_| AppError::Unauthorized)?;
-    Ok(user_id)
-}
 
 pub async fn get_due_reviews(
     State(state): State<AuthState>,

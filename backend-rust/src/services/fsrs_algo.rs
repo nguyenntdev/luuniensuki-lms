@@ -37,6 +37,7 @@ pub struct ScheduleResult {
 /// - `score >= 0.9`            → Good
 /// - `0.6 <= score < 0.9`      → Hard
 /// - `score < 0.6`             → Again
+#[allow(dead_code)] // wired into quiz integration in a follow-up
 pub fn map_score_to_rating(score: f64, easy_flag: bool) -> FsrsRating {
     if easy_flag {
         return FsrsRating::Easy;

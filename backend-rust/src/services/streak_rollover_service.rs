@@ -65,118 +65,52 @@ pub async fn capture_streak_loss_to_history(
 /// - If `streak_freezes > 0`: consume one freeze, preserve the streak.
 /// - Else: insert into `user_streak_history` and reset `current_streak = 0`.
 ///
-/// The pass uses `FOR UPDATE SKIP LOCKED` so multiple workers (or the
+/// The pass batches in groups of `BATCH_SIZE` to keep memory bounded even
+/// when there are many candidate rows. Each row is processed inside its own
+/// transaction with an advisory lock, so multiple workers (or the
 /// per-request rollover) can run concurrently without contention.
 pub async fn nightly_streak_rollover(pool: &PgPool) -> Result<RolloverStats, AppError> {
+    const BATCH_SIZE: i64 = 500;
     let mut stats = RolloverStats::default();
+    let mut last_id: Option<Uuid> = None;
 
-    // Pull the candidate set in one read. We then process each row inside its
-    // own transaction with an advisory lock to keep memory bounded.
-    let rows: Vec<(Uuid, i32, i32, Option<DateTime<Utc>>)> = sqlx::query_as(
-        r#"
-        SELECT id, current_streak, COALESCE(streak_freezes, 0), last_streak_date
-        FROM users
-        WHERE current_streak > 0
-          AND (
-            last_streak_date IS NULL
-            OR last_streak_date::date < (CURRENT_DATE - 1)
-          )
-        "#,
-    )
-    .fetch_all(pool)
-    .await
-    .map_err(|e| AppError::Internal(e.into()))?;
-
-    for (user_id, current_streak, streak_freezes, last_streak_date) in rows {
-        let mut tx = pool
-            .begin()
-            .await
-            .map_err(|e| AppError::Internal(e.into()))?;
-
-        // Per-user advisory lock to serialize with request-path streak updates.
-        sqlx::query("SELECT pg_advisory_xact_lock(hashtextextended($1::text, 0))")
-            .bind(user_id)
-            .execute(&mut *tx)
-            .await
-            .map_err(|e| AppError::Internal(e.into()))?;
-
-        // Re-read inside the lock to confirm the row still meets the condition.
-        let row: Option<(i32, i32, Option<DateTime<Utc>>)> = sqlx::query_as(
-            "SELECT current_streak, COALESCE(streak_freezes, 0), last_streak_date \
-             FROM users WHERE id = $1 FOR UPDATE",
+    loop {
+        let rows: Vec<(Uuid, i32, i32, Option<DateTime<Utc>>)> = sqlx::query_as(
+            r#"
+            SELECT id, current_streak, COALESCE(streak_freezes, 0), last_streak_date
+            FROM users
+            WHERE current_streak > 0
+              AND ($1::uuid IS NULL OR id > $1)
+              AND (
+                last_streak_date IS NULL
+                OR last_streak_date::date < (CURRENT_DATE - 1)
+              )
+            ORDER BY id
+            LIMIT $2
+            "#,
         )
-        .bind(user_id)
-        .fetch_optional(&mut *tx)
+        .bind(last_id)
+        .bind(BATCH_SIZE)
+        .fetch_all(pool)
         .await
         .map_err(|e| AppError::Internal(e.into()))?;
 
-        let (cs, sf, lsd) = match row {
-            Some(r) => r,
-            None => {
-                tx.rollback()
-                    .await
-                    .map_err(|e| AppError::Internal(e.into()))?;
-                continue;
+        if rows.is_empty() {
+            break;
+        }
+        last_id = rows.last().map(|r| r.0);
+
+        for (user_id, _current_streak, _streak_freezes, _last_streak_date) in rows {
+            if let Err(err) = process_one_user(pool, user_id, &mut stats).await {
+                // Don't abort the whole sweep on a single bad row.
+                tracing::warn!(
+                    feature = "streak_rollover",
+                    user_id = %user_id,
+                    error = ?err,
+                    "rollover row failed",
+                );
             }
-        };
-
-        // Re-check the condition; another worker may have processed this row.
-        let needs_processing = cs > 0
-            && match lsd {
-                Some(d) => {
-                    let today = Utc::now().date_naive();
-                    (today - d.date_naive()).num_days() >= 2
-                }
-                None => true,
-            };
-
-        if !needs_processing {
-            tx.rollback()
-                .await
-                .map_err(|e| AppError::Internal(e.into()))?;
-            continue;
         }
-
-        if sf > 0 {
-            // Consume one freeze, preserve the streak, mark today as last_streak_date
-            // to prevent double-consumption on subsequent passes.
-            sqlx::query(
-                "UPDATE users \
-                 SET streak_freezes = streak_freezes - 1, \
-                     last_streak_date = NOW(), \
-                     updated_at = NOW() \
-                 WHERE id = $1",
-            )
-            .bind(user_id)
-            .execute(&mut *tx)
-            .await
-            .map_err(|e| AppError::Internal(e.into()))?;
-            stats.frozen += 1;
-        } else {
-            let started_at = lsd.unwrap_or_else(Utc::now);
-            capture_streak_loss_to_history(&mut tx, user_id, cs, started_at)
-                .await
-                .map_err(|e| AppError::Internal(e.into()))?;
-            sqlx::query(
-                "UPDATE users \
-                 SET current_streak = 0, \
-                     updated_at = NOW() \
-                 WHERE id = $1",
-            )
-            .bind(user_id)
-            .execute(&mut *tx)
-            .await
-            .map_err(|e| AppError::Internal(e.into()))?;
-            stats.reset += 1;
-        }
-
-        tx.commit().await.map_err(|e| AppError::Internal(e.into()))?;
-        stats.processed += 1;
-
-        // Ignore errors here so one bad row does not abort the sweep.
-        let _ = current_streak;
-        let _ = streak_freezes;
-        let _ = last_streak_date;
     }
 
     tracing::info!(
@@ -188,6 +122,96 @@ pub async fn nightly_streak_rollover(pool: &PgPool) -> Result<RolloverStats, App
     );
 
     Ok(stats)
+}
+
+async fn process_one_user(
+    pool: &PgPool,
+    user_id: Uuid,
+    stats: &mut RolloverStats,
+) -> Result<(), AppError> {
+    let mut tx = pool
+        .begin()
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
+
+    // Per-user advisory lock to serialize with request-path streak updates.
+    sqlx::query("SELECT pg_advisory_xact_lock(hashtextextended($1::text, 0))")
+        .bind(user_id)
+        .execute(&mut *tx)
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
+
+    // Re-read inside the lock to confirm the row still meets the condition.
+    let row: Option<(i32, i32, Option<DateTime<Utc>>)> = sqlx::query_as(
+        "SELECT current_streak, COALESCE(streak_freezes, 0), last_streak_date \
+         FROM users WHERE id = $1 FOR UPDATE",
+    )
+    .bind(user_id)
+    .fetch_optional(&mut *tx)
+    .await
+    .map_err(|e| AppError::Internal(e.into()))?;
+
+    let (cs, sf, lsd) = match row {
+        Some(r) => r,
+        None => {
+            tx.rollback()
+                .await
+                .map_err(|e| AppError::Internal(e.into()))?;
+            return Ok(());
+        }
+    };
+
+    // Re-check the condition; another worker may have processed this row.
+    let needs_processing = cs > 0
+        && match lsd {
+            Some(d) => {
+                let today = Utc::now().date_naive();
+                (today - d.date_naive()).num_days() >= 2
+            }
+            None => true,
+        };
+
+    if !needs_processing {
+        tx.rollback()
+            .await
+            .map_err(|e| AppError::Internal(e.into()))?;
+        return Ok(());
+    }
+
+    if sf > 0 {
+        sqlx::query(
+            "UPDATE users \
+             SET streak_freezes = streak_freezes - 1, \
+                 last_streak_date = NOW(), \
+                 updated_at = NOW() \
+             WHERE id = $1",
+        )
+        .bind(user_id)
+        .execute(&mut *tx)
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
+        stats.frozen += 1;
+    } else {
+        let started_at = lsd.unwrap_or_else(Utc::now);
+        capture_streak_loss_to_history(&mut tx, user_id, cs, started_at)
+            .await
+            .map_err(|e| AppError::Internal(e.into()))?;
+        sqlx::query(
+            "UPDATE users \
+             SET current_streak = 0, \
+                 updated_at = NOW() \
+             WHERE id = $1",
+        )
+        .bind(user_id)
+        .execute(&mut *tx)
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
+        stats.reset += 1;
+    }
+
+    tx.commit().await.map_err(|e| AppError::Internal(e.into()))?;
+    stats.processed += 1;
+    Ok(())
 }
 
 #[cfg(test)]

@@ -67,9 +67,21 @@ export default function TrailPlayer({ slug }) {
         );
       }
       if (res?.progress?.pace) setPace(res.progress.pace);
-      // refresh detail to update step counts
-      const data = await getTrailDetail(slug);
-      setDetail(data);
+      // Apply the partial response without an extra round trip.
+      setDetail((prev) =>
+        prev
+          ? {
+              ...prev,
+              progress: {
+                current_position: res?.progress?.current_position ?? 1,
+                started_at: res?.progress?.started_at,
+                completed_at: res?.progress?.completed_at ?? null,
+                pace: res?.progress?.pace || prev.progress?.pace || "daily",
+                next_reminder_at: res?.progress?.next_reminder_at ?? null,
+              },
+            }
+          : prev,
+      );
     } catch (err) {
       setError(err?.message || "Không thể bắt đầu lộ trình");
     } finally {
@@ -122,15 +134,26 @@ export default function TrailPlayer({ slug }) {
     }
   }
 
+  const [paceStatus, setPaceStatus] = useState("idle"); // idle | saving | saved | error
+  const paceTimerRef = useRef(null);
+
   async function handlePaceChange(value) {
     if (!detail?.trail?.id) return;
     setPace(value);
+    setPaceStatus("saving");
     try {
       await setTrailPace(detail.trail.id, value);
+      setPaceStatus("saved");
+      if (paceTimerRef.current) clearTimeout(paceTimerRef.current);
+      paceTimerRef.current = setTimeout(() => setPaceStatus("idle"), 2000);
     } catch {
-      // best-effort: revert UI on next reload
+      setPaceStatus("error");
     }
   }
+
+  useEffect(() => () => {
+    if (paceTimerRef.current) clearTimeout(paceTimerRef.current);
+  }, []);
 
   if (loading) {
     return (
@@ -200,7 +223,11 @@ export default function TrailPlayer({ slug }) {
       ) : null}
 
       {started && !completed ? (
-        <PaceSelector value={pace} onChange={handlePaceChange} />
+        <PaceSelector
+          value={pace}
+          onChange={handlePaceChange}
+          status={paceStatus}
+        />
       ) : null}
 
       {pendingCheckpoint ? (
@@ -259,11 +286,11 @@ export default function TrailPlayer({ slug }) {
   );
 }
 
-function PaceSelector({ value, onChange }) {
+function PaceSelector({ value, onChange, status }) {
   return (
     <fieldset className="mt-6 rounded-lg border border-border bg-card p-4">
       <legend className="px-1 text-sm font-semibold">Nhịp học</legend>
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         {PACE_OPTIONS.map((opt) => (
           <label
             key={opt.value}
@@ -284,9 +311,43 @@ function PaceSelector({ value, onChange }) {
             {opt.label}
           </label>
         ))}
+        <PaceStatus status={status} />
       </div>
     </fieldset>
   );
+}
+
+function PaceStatus({ status }) {
+  if (status === "saving") {
+    return (
+      <span className="text-xs text-muted-foreground" role="status">
+        Đang lưu…
+      </span>
+    );
+  }
+  if (status === "saved") {
+    return (
+      <span
+        className="text-xs text-emerald-600 dark:text-emerald-400"
+        role="status"
+        aria-live="polite"
+      >
+        Đã lưu
+      </span>
+    );
+  }
+  if (status === "error") {
+    return (
+      <span
+        className="text-xs text-destructive"
+        role="alert"
+        aria-live="assertive"
+      >
+        Lỗi — thử lại
+      </span>
+    );
+  }
+  return null;
 }
 
 function CheckpointDialog({ checkpoint, busy, onSubmit }) {

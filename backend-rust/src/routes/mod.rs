@@ -24,6 +24,7 @@ pub mod progress;
 pub mod quests;
 pub mod quizzes;
 pub mod reviews;
+pub mod route_helpers;
 pub mod sessions;
 pub mod streak_admin;
 pub mod streak_comeback;

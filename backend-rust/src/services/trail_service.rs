@@ -255,57 +255,73 @@ async fn insert_steps_and_checkpoints(
 }
 
 async fn fetch_trail_out(pool: &PgPool, trail_id: Uuid) -> Result<TrailOut, AppError> {
-    let row: Option<TrailRow> = sqlx::query_as(
+    // Single round trip: trail row + step + checkpoint counts via LATERAL.
+    #[derive(sqlx::FromRow)]
+    struct Combined {
+        id: Uuid,
+        slug: String,
+        title_vi: String,
+        title_en: String,
+        description_vi: Option<String>,
+        description_en: Option<String>,
+        narrator_intro: Option<String>,
+        narrator_outro: Option<String>,
+        difficulty: String,
+        estimated_minutes: i32,
+        status: String,
+        visibility: String,
+        published_at: Option<DateTime<Utc>>,
+        created_at: DateTime<Utc>,
+        step_count: i64,
+        checkpoint_count: i64,
+    }
+    let row: Option<Combined> = sqlx::query_as(
         r#"
-        SELECT id, slug, title_vi, title_en, description_vi, description_en,
-               narrator_intro, narrator_outro, difficulty, estimated_minutes,
-               created_by_user_id, status, visibility, classroom_id,
-               published_at, created_at, updated_at
-        FROM trails WHERE id = $1
+        SELECT
+            t.id, t.slug, t.title_vi, t.title_en,
+            t.description_vi, t.description_en,
+            t.narrator_intro, t.narrator_outro,
+            t.difficulty, t.estimated_minutes,
+            t.status, t.visibility,
+            t.published_at, t.created_at,
+            COALESCE(sc.cnt, 0) AS step_count,
+            COALESCE(cc.cnt, 0) AS checkpoint_count
+        FROM trails t
+        LEFT JOIN LATERAL (
+            SELECT COUNT(*)::bigint AS cnt FROM trail_steps WHERE trail_id = t.id
+        ) sc ON true
+        LEFT JOIN LATERAL (
+            SELECT COUNT(*)::bigint AS cnt FROM trail_checkpoints WHERE trail_id = t.id
+        ) cc ON true
+        WHERE t.id = $1
         "#,
     )
     .bind(trail_id)
     .fetch_optional(pool)
     .await
     .map_err(|e| AppError::Internal(e.into()))?;
-    let row = row.ok_or_else(|| AppError::Http {
+    let r = row.ok_or_else(|| AppError::Http {
         status: StatusCode::NOT_FOUND,
         message: "Trail not found".to_string(),
     })?;
-    let step_count: i64 =
-        sqlx::query_scalar("SELECT COUNT(*)::bigint FROM trail_steps WHERE trail_id = $1")
-            .bind(trail_id)
-            .fetch_one(pool)
-            .await
-            .map_err(|e| AppError::Internal(e.into()))?;
-    let checkpoint_count: i64 =
-        sqlx::query_scalar("SELECT COUNT(*)::bigint FROM trail_checkpoints WHERE trail_id = $1")
-            .bind(trail_id)
-            .fetch_one(pool)
-            .await
-            .map_err(|e| AppError::Internal(e.into()))?;
-    Ok(row_to_out(row, step_count, checkpoint_count))
-}
-
-fn row_to_out(row: TrailRow, step_count: i64, checkpoint_count: i64) -> TrailOut {
-    TrailOut {
-        id: row.id,
-        slug: row.slug,
-        title_vi: row.title_vi,
-        title_en: row.title_en,
-        description_vi: row.description_vi,
-        description_en: row.description_en,
-        narrator_intro: row.narrator_intro,
-        narrator_outro: row.narrator_outro,
-        difficulty: row.difficulty,
-        estimated_minutes: row.estimated_minutes,
-        status: row.status,
-        visibility: row.visibility,
-        step_count,
-        checkpoint_count,
-        created_at: row.created_at,
-        published_at: row.published_at,
-    }
+    Ok(TrailOut {
+        id: r.id,
+        slug: r.slug,
+        title_vi: r.title_vi,
+        title_en: r.title_en,
+        description_vi: r.description_vi,
+        description_en: r.description_en,
+        narrator_intro: r.narrator_intro,
+        narrator_outro: r.narrator_outro,
+        difficulty: r.difficulty,
+        estimated_minutes: r.estimated_minutes,
+        status: r.status,
+        visibility: r.visibility,
+        step_count: r.step_count,
+        checkpoint_count: r.checkpoint_count,
+        created_at: r.created_at,
+        published_at: r.published_at,
+    })
 }
 
 // ---------------------------------------------------------------------------
@@ -321,15 +337,49 @@ pub async fn list_trails(
     let per_page = per_page.clamp(1, 100);
     let offset = (page - 1) * per_page;
 
-    let trails: Vec<TrailRow> = sqlx::query_as(
+    // Single query: pull each trail row alongside its step_count and
+    // checkpoint_count via correlated sub-selects. Saves N*2 round trips
+    // for N trails on a page.
+    #[derive(sqlx::FromRow)]
+    struct TrailListRow {
+        id: Uuid,
+        slug: String,
+        title_vi: String,
+        title_en: String,
+        description_vi: Option<String>,
+        description_en: Option<String>,
+        narrator_intro: Option<String>,
+        narrator_outro: Option<String>,
+        difficulty: String,
+        estimated_minutes: i32,
+        status: String,
+        visibility: String,
+        published_at: Option<DateTime<Utc>>,
+        created_at: DateTime<Utc>,
+        step_count: i64,
+        checkpoint_count: i64,
+    }
+
+    let rows: Vec<TrailListRow> = sqlx::query_as(
         r#"
-        SELECT id, slug, title_vi, title_en, description_vi, description_en,
-               narrator_intro, narrator_outro, difficulty, estimated_minutes,
-               created_by_user_id, status, visibility, classroom_id,
-               published_at, created_at, updated_at
-        FROM trails
-        WHERE status = 'published' AND visibility = 'public'
-        ORDER BY published_at DESC NULLS LAST
+        SELECT
+            t.id, t.slug, t.title_vi, t.title_en,
+            t.description_vi, t.description_en,
+            t.narrator_intro, t.narrator_outro,
+            t.difficulty, t.estimated_minutes,
+            t.status, t.visibility,
+            t.published_at, t.created_at,
+            COALESCE(sc.cnt, 0) AS step_count,
+            COALESCE(cc.cnt, 0) AS checkpoint_count
+        FROM trails t
+        LEFT JOIN LATERAL (
+            SELECT COUNT(*)::bigint AS cnt FROM trail_steps WHERE trail_id = t.id
+        ) sc ON true
+        LEFT JOIN LATERAL (
+            SELECT COUNT(*)::bigint AS cnt FROM trail_checkpoints WHERE trail_id = t.id
+        ) cc ON true
+        WHERE t.status = 'published' AND t.visibility = 'public'
+        ORDER BY t.published_at DESC NULLS LAST
         LIMIT $1 OFFSET $2
         "#,
     )
@@ -346,23 +396,27 @@ pub async fn list_trails(
     .await
     .map_err(|e| AppError::Internal(e.into()))?;
 
-    let mut outs = Vec::with_capacity(trails.len());
-    for row in trails {
-        let step_count: i64 =
-            sqlx::query_scalar("SELECT COUNT(*)::bigint FROM trail_steps WHERE trail_id = $1")
-                .bind(row.id)
-                .fetch_one(pool)
-                .await
-                .map_err(|e| AppError::Internal(e.into()))?;
-        let checkpoint_count: i64 = sqlx::query_scalar(
-            "SELECT COUNT(*)::bigint FROM trail_checkpoints WHERE trail_id = $1",
-        )
-        .bind(row.id)
-        .fetch_one(pool)
-        .await
-        .map_err(|e| AppError::Internal(e.into()))?;
-        outs.push(row_to_out(row, step_count, checkpoint_count));
-    }
+    let outs = rows
+        .into_iter()
+        .map(|r| TrailOut {
+            id: r.id,
+            slug: r.slug,
+            title_vi: r.title_vi,
+            title_en: r.title_en,
+            description_vi: r.description_vi,
+            description_en: r.description_en,
+            narrator_intro: r.narrator_intro,
+            narrator_outro: r.narrator_outro,
+            difficulty: r.difficulty,
+            estimated_minutes: r.estimated_minutes,
+            status: r.status,
+            visibility: r.visibility,
+            step_count: r.step_count,
+            checkpoint_count: r.checkpoint_count,
+            created_at: r.created_at,
+            published_at: r.published_at,
+        })
+        .collect();
 
     Ok(TrailListResponse {
         trails: outs,
@@ -377,39 +431,76 @@ pub async fn get_trail_detail(
     slug: &str,
     user_id: Uuid,
 ) -> Result<TrailDetailOut, AppError> {
-    let trail: Option<TrailRow> = sqlx::query_as(
+    // Trail + counts in a single round trip.
+    #[derive(sqlx::FromRow)]
+    struct Combined {
+        id: Uuid,
+        slug: String,
+        title_vi: String,
+        title_en: String,
+        description_vi: Option<String>,
+        description_en: Option<String>,
+        narrator_intro: Option<String>,
+        narrator_outro: Option<String>,
+        difficulty: String,
+        estimated_minutes: i32,
+        status: String,
+        visibility: String,
+        published_at: Option<DateTime<Utc>>,
+        created_at: DateTime<Utc>,
+        step_count: i64,
+        checkpoint_count: i64,
+    }
+    let row: Option<Combined> = sqlx::query_as(
         r#"
-        SELECT id, slug, title_vi, title_en, description_vi, description_en,
-               narrator_intro, narrator_outro, difficulty, estimated_minutes,
-               created_by_user_id, status, visibility, classroom_id,
-               published_at, created_at, updated_at
-        FROM trails WHERE slug = $1
+        SELECT
+            t.id, t.slug, t.title_vi, t.title_en,
+            t.description_vi, t.description_en,
+            t.narrator_intro, t.narrator_outro,
+            t.difficulty, t.estimated_minutes,
+            t.status, t.visibility,
+            t.published_at, t.created_at,
+            COALESCE(sc.cnt, 0) AS step_count,
+            COALESCE(cc.cnt, 0) AS checkpoint_count
+        FROM trails t
+        LEFT JOIN LATERAL (
+            SELECT COUNT(*)::bigint AS cnt FROM trail_steps WHERE trail_id = t.id
+        ) sc ON true
+        LEFT JOIN LATERAL (
+            SELECT COUNT(*)::bigint AS cnt FROM trail_checkpoints WHERE trail_id = t.id
+        ) cc ON true
+        WHERE t.slug = $1
         "#,
     )
     .bind(slug)
     .fetch_optional(pool)
     .await
     .map_err(|e| AppError::Internal(e.into()))?;
-    let row = trail.ok_or_else(|| AppError::Http {
+    let r = row.ok_or_else(|| AppError::Http {
         status: StatusCode::NOT_FOUND,
         message: "Trail not found".to_string(),
     })?;
-    let trail_id = row.id;
-    let step_count: i64 =
-        sqlx::query_scalar("SELECT COUNT(*)::bigint FROM trail_steps WHERE trail_id = $1")
-            .bind(trail_id)
-            .fetch_one(pool)
-            .await
-            .map_err(|e| AppError::Internal(e.into()))?;
-    let checkpoint_count: i64 =
-        sqlx::query_scalar("SELECT COUNT(*)::bigint FROM trail_checkpoints WHERE trail_id = $1")
-            .bind(trail_id)
-            .fetch_one(pool)
-            .await
-            .map_err(|e| AppError::Internal(e.into()))?;
+    let trail_id = r.id;
     let progress = fetch_progress(pool, user_id, trail_id).await?;
     Ok(TrailDetailOut {
-        trail: row_to_out(row, step_count, checkpoint_count),
+        trail: TrailOut {
+            id: r.id,
+            slug: r.slug,
+            title_vi: r.title_vi,
+            title_en: r.title_en,
+            description_vi: r.description_vi,
+            description_en: r.description_en,
+            narrator_intro: r.narrator_intro,
+            narrator_outro: r.narrator_outro,
+            difficulty: r.difficulty,
+            estimated_minutes: r.estimated_minutes,
+            status: r.status,
+            visibility: r.visibility,
+            step_count: r.step_count,
+            checkpoint_count: r.checkpoint_count,
+            created_at: r.created_at,
+            published_at: r.published_at,
+        },
         progress,
     })
 }
@@ -677,50 +768,76 @@ pub async fn complete_step(
         .await
         .map_err(|e| AppError::Internal(e.into()))?;
 
-        // Generate certificate.
+        // Generate certificate hash and persist the row WITHOUT the PDF
+        // first — we don't want to hold the DB transaction open during a
+        // synchronous disk write. The PDF rendering happens after commit.
         let now = Utc::now();
         let hash = generate_certificate_hash(user_id, trail_id, now.timestamp());
-        // Render PDF best-effort. If rendering fails, the certificate row is
-        // still created with a NULL pdf_url so the user record is durable.
-        let mut pdf_url: Option<String> = None;
-        if let Some(dir) = uploads_dir {
-            let user_name: Option<String> = sqlx::query_scalar(
+        let _ = sqlx::query(
+            "INSERT INTO trail_certificates (user_id, trail_id, hash, issued_at, pdf_url) \
+             VALUES ($1, $2, $3, $4, NULL) ON CONFLICT (user_id, trail_id) DO NOTHING",
+        )
+        .bind(user_id)
+        .bind(trail_id)
+        .bind(&hash)
+        .bind(now)
+        .execute(&mut *tx)
+        .await;
+
+        // Capture data needed for PDF rendering before dropping the tx.
+        let mut user_name: Option<String> = None;
+        let mut trail_title_for_pdf: Option<String> = None;
+        if uploads_dir.is_some() {
+            user_name = sqlx::query_scalar(
                 "SELECT display_name FROM users WHERE id = $1",
             )
             .bind(user_id)
             .fetch_optional(&mut *tx)
             .await
             .map_err(|e| AppError::Internal(e.into()))?;
-            let trail_title: Option<String> = sqlx::query_scalar(
+            trail_title_for_pdf = sqlx::query_scalar(
                 "SELECT title_vi FROM trails WHERE id = $1",
             )
             .bind(trail_id)
             .fetch_optional(&mut *tx)
             .await
             .map_err(|e| AppError::Internal(e.into()))?;
-            pdf_url = crate::services::certificate_pdf::render_to_disk(
-                dir,
-                &hash,
-                user_name.as_deref().unwrap_or(""),
-                trail_title.as_deref().unwrap_or(""),
-                now,
-            );
         }
-        let _ = sqlx::query(
-            "INSERT INTO trail_certificates (user_id, trail_id, hash, issued_at, pdf_url) \
-             VALUES ($1, $2, $3, $4, $5) ON CONFLICT (user_id, trail_id) DO NOTHING",
-        )
-        .bind(user_id)
-        .bind(trail_id)
-        .bind(&hash)
-        .bind(now)
-        .bind(pdf_url.as_deref())
-        .execute(&mut *tx)
-        .await;
 
         tx.commit()
             .await
             .map_err(|e| AppError::Internal(e.into()))?;
+
+        // PDF rendering and the URL update happen outside the tx. Failures
+        // here are non-fatal: the certificate row exists with NULL pdf_url,
+        // and a future request can re-generate.
+        let mut pdf_url: Option<String> = None;
+        if let Some(dir) = uploads_dir {
+            // Move the synchronous file I/O off the runtime thread.
+            let dir_owned = dir.to_path_buf();
+            let hash_owned = hash.clone();
+            let name = user_name.clone().unwrap_or_default();
+            let title = trail_title_for_pdf.clone().unwrap_or_default();
+            let render_result = tokio::task::spawn_blocking(move || {
+                crate::services::certificate_pdf::render_to_disk(
+                    &dir_owned, &hash_owned, &name, &title, now,
+                )
+            })
+            .await;
+            pdf_url = render_result.unwrap_or_else(|err| {
+                tracing::warn!(error = %err, "PDF render task panicked");
+                None
+            });
+            if let Some(ref url) = pdf_url {
+                let _ = sqlx::query(
+                    "UPDATE trail_certificates SET pdf_url = $2 WHERE hash = $1 AND pdf_url IS NULL",
+                )
+                .bind(&hash)
+                .bind(url)
+                .execute(pool)
+                .await;
+            }
+        }
 
         let _ = sqlx::query(
             "INSERT INTO analytics_events (id, event_type, user_id, payload, created_at) \
