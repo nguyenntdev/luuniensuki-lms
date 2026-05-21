@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { fetchTimelineEvents, logAnalyticsEvent } from "@/lib/api";
+import CompareModal from "./CompareModal";
 import EventPanel from "./EventPanel";
 import TimelineTrack from "./TimelineTrack";
 
@@ -31,6 +32,7 @@ export default function TimelineClient({ from, to } = {}) {
   });
   const [error, setError] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
+  const [comparePair, setComparePair] = useState(null); // { a, b } or null
   const trackRef = useRef(null);
 
   useEffect(() => {
@@ -122,6 +124,14 @@ export default function TimelineClient({ from, to } = {}) {
               if (el) el.focus();
             });
           }}
+          onCompare={(motifA, motifB) => setComparePair({ a: motifA, b: motifB })}
+        />
+      ) : null}
+      {comparePair ? (
+        <CompareModal
+          motifA={comparePair.a}
+          motifB={comparePair.b}
+          onClose={() => setComparePair(null)}
         />
       ) : null}
     </div>

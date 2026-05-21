@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-export default function EventPanel({ event, onClose }) {
+export default function EventPanel({ event, onClose, onCompare }) {
   const closeRef = useRef(null);
 
   useEffect(() => {
@@ -59,6 +59,20 @@ export default function EventPanel({ event, onClose }) {
             Hoạ tiết liên quan
           </p>
           <p className="font-semibold">{event.motif.name}</p>
+          {onCompare ? (
+            <button
+              type="button"
+              onClick={() =>
+                onCompare(event.motif, {
+                  id: null,
+                  name: "Chọn hoạ tiết thứ hai",
+                })
+              }
+              className="mt-2 rounded-md border border-border px-2 py-1 text-xs hover:bg-muted focus-visible:ring-2 focus-visible:ring-primary"
+            >
+              So sánh với hoạ tiết khác
+            </button>
+          ) : null}
         </div>
       ) : null}
       {event.urn ? (

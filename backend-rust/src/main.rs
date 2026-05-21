@@ -18,6 +18,7 @@ mod inventory;
 mod jobs;
 mod models;
 mod observability;
+mod rate_limit;
 mod routes;
 mod services;
 
@@ -60,7 +61,11 @@ async fn main() -> anyhow::Result<()> {
     if let Some(p) = pool.clone() {
         tokio::spawn(jobs::streak_rollover_job::run(p.clone()));
         tokio::spawn(jobs::friend_streak_job::run(p.clone()));
-        tokio::spawn(jobs::trail_reminder_job::run(p));
+        tokio::spawn(jobs::trail_reminder_job::run(p.clone()));
+        tokio::spawn(jobs::trail_certificate_retry_job::run(
+            p,
+            settings.uploads_dir.clone(),
+        ));
     }
 
     let app = build_router(gw_state, app_state, pool, &settings);
