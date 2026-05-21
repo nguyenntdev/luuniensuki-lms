@@ -90,11 +90,18 @@ export default function TrailPlayer({ slug }) {
   }
 
   async function handleComplete(position) {
+    // Optimistic step out — clear the current motif while the request is
+    // in flight so the user sees an immediate "moving on" state. Restore
+    // on error.
     setBusy(true);
+    const prevMotif = currentMotif;
+    setCurrentMotif(null);
     try {
       const res = await completeTrailStep(slug, position);
       handleStepResponse(res);
     } catch (err) {
+      // Restore the previous step so the user can retry.
+      setCurrentMotif(prevMotif);
       setError(err?.message || "Không thể hoàn thành bước này");
     } finally {
       setBusy(false);
@@ -121,11 +128,29 @@ export default function TrailPlayer({ slug }) {
 
   function handleStepResponse(res) {
     if (!res || !res.type) return;
+    // The state machine is strict: exactly one of currentMotif,
+    // pendingCheckpoint, or completion is set at any time.
     if (res.type === "next_motif") {
       setCurrentMotif(res.motif);
       setPendingCheckpoint(null);
+      setCompletion(null);
+      // Optimistically advance the local progress cursor so the UI doesn't
+      // need a follow-up GET on the trail detail.
+      setDetail((prev) =>
+        prev?.progress
+          ? {
+              ...prev,
+              progress: {
+                ...prev.progress,
+                current_position: res.position,
+              },
+            }
+          : prev,
+      );
     } else if (res.type === "checkpoint") {
       setPendingCheckpoint(res);
+      setCurrentMotif(null);
+      setCompletion(null);
     } else if (res.type === "completed") {
       setCompletion(res);
       setCurrentMotif(null);

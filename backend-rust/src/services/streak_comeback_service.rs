@@ -159,6 +159,27 @@ pub async fn award_phoenix_if_eligible(
     pool: &PgPool,
     user_id: Uuid,
 ) -> Result<bool, AppError> {
+    // Cheap read-only pre-check: skip the transaction entirely if there is
+    // no qualifying unredeemed history row. This is the common case for
+    // most users and saves the cost of opening a tx + advisory lock on
+    // every lesson completion.
+    let has_candidate: bool = sqlx::query_scalar::<_, bool>(
+        "SELECT EXISTS (\
+           SELECT 1 FROM user_streak_history \
+           WHERE user_id = $1 \
+             AND streak_value >= $2 \
+             AND phoenix_awarded = false\
+         )",
+    )
+    .bind(user_id)
+    .bind(QUALIFYING_STREAK_VALUE)
+    .fetch_one(pool)
+    .await
+    .unwrap_or(false);
+    if !has_candidate {
+        return Ok(false);
+    }
+
     let mut tx = pool
         .begin()
         .await

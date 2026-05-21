@@ -584,13 +584,12 @@ pub async fn start_trail(
 
     tx.commit().await.map_err(|e| AppError::Internal(e.into()))?;
 
-    let _ = sqlx::query(
-        "INSERT INTO analytics_events (id, event_type, user_id, payload, created_at) \
-         VALUES (gen_random_uuid(), 'trail_started', $1, $2::jsonb, NOW())",
+    log_analytics_event(
+        pool,
+        user_id,
+        "trail_started",
+        json!({"trail_id": trail_id}),
     )
-    .bind(user_id)
-    .bind(json!({"trail_id": trail_id}).to_string())
-    .execute(pool)
     .await;
 
     Ok(TrailStartResponse {
@@ -782,7 +781,16 @@ pub async fn complete_step(
         .bind(&hash)
         .bind(now)
         .execute(&mut *tx)
-        .await;
+        .await
+        .map_err(|e| {
+            tracing::warn!(
+                feature = "trail_certificate",
+                user_id = %user_id,
+                trail_id = %trail_id,
+                error = %e,
+                "certificate insert failed",
+            );
+        });
 
         // Capture data needed for PDF rendering before dropping the tx.
         let mut user_name: Option<String> = None;
@@ -829,23 +837,30 @@ pub async fn complete_step(
                 None
             });
             if let Some(ref url) = pdf_url {
-                let _ = sqlx::query(
+                if let Err(err) = sqlx::query(
                     "UPDATE trail_certificates SET pdf_url = $2 WHERE hash = $1 AND pdf_url IS NULL",
                 )
                 .bind(&hash)
                 .bind(url)
                 .execute(pool)
-                .await;
+                .await
+                {
+                    tracing::warn!(
+                        feature = "trail_certificate",
+                        hash = %hash,
+                        error = %err,
+                        "pdf_url update failed",
+                    );
+                }
             }
         }
 
-        let _ = sqlx::query(
-            "INSERT INTO analytics_events (id, event_type, user_id, payload, created_at) \
-             VALUES (gen_random_uuid(), 'trail_completed', $1, $2::jsonb, NOW())",
+        log_analytics_event(
+            pool,
+            user_id,
+            "trail_completed",
+            json!({"trail_id": trail_id, "hash": hash}),
         )
-        .bind(user_id)
-        .bind(json!({"trail_id": trail_id, "hash": hash}).to_string())
-        .execute(pool)
         .await;
 
         return Ok(StepCompleteResponse::Completed {
@@ -874,13 +889,12 @@ pub async fn complete_step(
         .await
         .map_err(|e| AppError::Internal(e.into()))?;
 
-    let _ = sqlx::query(
-        "INSERT INTO analytics_events (id, event_type, user_id, payload, created_at) \
-         VALUES (gen_random_uuid(), 'trail_step_completed', $1, $2::jsonb, NOW())",
+    log_analytics_event(
+        pool,
+        user_id,
+        "trail_step_completed",
+        json!({"trail_id": trail_id, "position": position}),
     )
-    .bind(user_id)
-    .bind(json!({"trail_id": trail_id, "position": position}).to_string())
-    .execute(pool)
     .await;
 
     Ok(StepCompleteResponse::NextMotif {
@@ -897,6 +911,16 @@ pub async fn submit_checkpoint(
     body: &CheckpointSubmitRequest,
     uploads_dir: Option<&std::path::Path>,
 ) -> Result<CheckpointResponse, AppError> {
+    // The two-phase shape is intentional:
+    // 1. Persist the response (idempotent ON CONFLICT, runs against the
+    //    `user_trail_checkpoint_responses` table only).
+    // 2. Advance through `complete_step`, which acquires the per-(user,
+    //    trail) advisory lock and re-validates `current_position`.
+    //
+    // Concurrency: two concurrent submissions for the same checkpoint will
+    // serialise on the lock in `complete_step`. The second caller will see
+    // `current_position` already advanced and return a typed
+    // `TRAIL_POSITION_MISMATCH`, which the FE can surface or swallow.
     let trail_id: Option<Uuid> =
         sqlx::query_scalar("SELECT id FROM trails WHERE slug = $1 AND status = 'published'")
             .bind(slug)
@@ -933,16 +957,14 @@ pub async fn submit_checkpoint(
     .await
     .map_err(|e| AppError::Internal(e.into()))?;
 
-    let _ = sqlx::query(
-        "INSERT INTO analytics_events (id, event_type, user_id, payload, created_at) \
-         VALUES (gen_random_uuid(), 'trail_checkpoint_responded', $1, $2::jsonb, NOW())",
+    log_analytics_event(
+        pool,
+        user_id,
+        "trail_checkpoint_responded",
+        json!({"trail_id": trail_id, "checkpoint_id": cp_id}),
     )
-    .bind(user_id)
-    .bind(json!({"trail_id": trail_id, "checkpoint_id": cp_id}).to_string())
-    .execute(pool)
     .await;
 
-    // Now advance through complete_step.
     let next = complete_step(pool, slug, after_position, user_id, uploads_dir).await?;
     let current = match &next {
         StepCompleteResponse::NextMotif { position, .. } => *position,
@@ -1322,5 +1344,35 @@ mod property_tests {
         for v in invalid {
             assert!(Pace::parse(v).is_none(), "{v} should not parse");
         }
+    }
+}
+
+
+/// Best-effort analytics event insert. Failures are logged via `tracing`
+/// but do not propagate — the trail-progression flow must remain successful
+/// even when analytics is degraded.
+async fn log_analytics_event(
+    pool: &PgPool,
+    user_id: Uuid,
+    event_type: &'static str,
+    payload: serde_json::Value,
+) {
+    if let Err(err) = sqlx::query(
+        "INSERT INTO analytics_events (id, event_type, user_id, payload, created_at) \
+         VALUES (gen_random_uuid(), $1, $2, $3::jsonb, NOW())",
+    )
+    .bind(event_type)
+    .bind(user_id)
+    .bind(payload.to_string())
+    .execute(pool)
+    .await
+    {
+        tracing::warn!(
+            feature = "trail_analytics",
+            event_type,
+            user_id = %user_id,
+            error = %err,
+            "analytics insert failed",
+        );
     }
 }

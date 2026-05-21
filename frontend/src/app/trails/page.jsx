@@ -1,3 +1,4 @@
+import ErrorBoundary from "@/components/ErrorBoundary";
 import TrailsClient from "@/components/trails/TrailsClient";
 
 export const metadata = {
@@ -24,7 +25,9 @@ export default function TrailsPage() {
           suy ngẫm và nhận chứng chỉ khi hoàn tất.
         </p>
       </header>
-      <TrailsClient />
+      <ErrorBoundary>
+        <TrailsClient />
+      </ErrorBoundary>
     </main>
   );
 }

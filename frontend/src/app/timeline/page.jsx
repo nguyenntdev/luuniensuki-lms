@@ -1,3 +1,4 @@
+import ErrorBoundary from "@/components/ErrorBoundary";
 import TimelineClient from "@/components/timeline/TimelineClient";
 
 export const metadata = {
@@ -33,7 +34,9 @@ export default function TimelinePage() {
           sự kiện và Enter để mở chi tiết.
         </p>
       </header>
-      <TimelineClient />
+      <ErrorBoundary>
+        <TimelineClient />
+      </ErrorBoundary>
     </main>
   );
 }

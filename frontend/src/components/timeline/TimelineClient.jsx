@@ -5,38 +5,70 @@ import { fetchTimelineEvents, logAnalyticsEvent } from "@/lib/api";
 import EventPanel from "./EventPanel";
 import TimelineTrack from "./TimelineTrack";
 
-export default function TimelineClient() {
-  const [events, setEvents] = useState([]);
-  const [meta, setMeta] = useState({ min_year: null, max_year: null });
-  const [loading, setLoading] = useState(true);
+// Module-level cache keyed by query window. Survives client-side route
+// changes within the same SPA session — refresh on hard reload.
+const cache = new Map();
+const CACHE_TTL_MS = 5 * 60 * 1000;
+
+function cacheKey(from, to) {
+  return `${from ?? ""}_${to ?? ""}`;
+}
+
+export default function TimelineClient({ from, to } = {}) {
+  const [events, setEvents] = useState(() => {
+    const hit = cache.get(cacheKey(from, to));
+    return hit && Date.now() - hit.at < CACHE_TTL_MS ? hit.events : [];
+  });
+  const [meta, setMeta] = useState(() => {
+    const hit = cache.get(cacheKey(from, to));
+    return hit && Date.now() - hit.at < CACHE_TTL_MS
+      ? hit.meta
+      : { min_year: null, max_year: null };
+  });
+  const [loading, setLoading] = useState(() => {
+    const hit = cache.get(cacheKey(from, to));
+    return !(hit && Date.now() - hit.at < CACHE_TTL_MS);
+  });
   const [error, setError] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
   const trackRef = useRef(null);
 
   useEffect(() => {
     let mounted = true;
-    setLoading(true);
-    fetchTimelineEvents()
-      .then((data) => {
-        if (!mounted) return;
-        setEvents(Array.isArray(data?.events) ? data.events : []);
-        setMeta(data?.meta || { min_year: null, max_year: null });
-        setLoading(false);
-        try {
-          logAnalyticsEvent({ name: "timeline_viewed", path: "/timeline" });
-        } catch {
-          // best-effort analytics
-        }
-      })
-      .catch((err) => {
-        if (!mounted) return;
-        setError(err?.message || "Không tải được dòng thời gian");
-        setLoading(false);
-      });
+    const key = cacheKey(from, to);
+    const hit = cache.get(key);
+    if (hit && Date.now() - hit.at < CACHE_TTL_MS) {
+      setEvents(hit.events);
+      setMeta(hit.meta);
+      setLoading(false);
+    } else {
+      setLoading(true);
+      fetchTimelineEvents({ from, to })
+        .then((data) => {
+          if (!mounted) return;
+          const evts = Array.isArray(data?.events) ? data.events : [];
+          const m = data?.meta || { min_year: null, max_year: null };
+          cache.set(key, { events: evts, meta: m, at: Date.now() });
+          setEvents(evts);
+          setMeta(m);
+          setLoading(false);
+        })
+        .catch((err) => {
+          if (!mounted) return;
+          setError(err?.message || "Không tải được dòng thời gian");
+          setLoading(false);
+        });
+    }
+    // Fire one analytics event per page mount, not per cache read.
+    try {
+      logAnalyticsEvent({ name: "timeline_viewed", path: "/timeline" });
+    } catch {
+      // best-effort analytics
+    }
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [from, to]);
 
   const selectedEvent = events.find((e) => e.id === selectedId) || null;
 

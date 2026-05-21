@@ -1,3 +1,4 @@
+import ErrorBoundary from "@/components/ErrorBoundary";
 import TrailPlayer from "@/components/trails/TrailPlayer";
 
 export const metadata = {
@@ -12,7 +13,9 @@ export default function TrailDetailPage({ params }) {
       className="min-h-screen bg-background text-foreground"
       aria-labelledby="trail-heading"
     >
-      <TrailPlayer slug={params.slug} />
+      <ErrorBoundary>
+        <TrailPlayer slug={params.slug} />
+      </ErrorBoundary>
     </main>
   );
 }

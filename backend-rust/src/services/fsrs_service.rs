@@ -174,8 +174,10 @@ pub async fn rate_card(
     .await
     .map_err(|e| AppError::Internal(e.into()))?;
 
-    // 5. Log analytics event (best-effort).
-    let _ = sqlx::query(
+    // 5. Log analytics event. Failure is logged but does not surface to the
+    //    user — losing one analytics row should not fail an otherwise-
+    //    successful review submission.
+    if let Err(err) = sqlx::query(
         r#"
         INSERT INTO analytics_events (id, event_type, user_id, payload, created_at)
         VALUES (gen_random_uuid(), 'review_completed', $1, $2::jsonb, NOW())
@@ -190,7 +192,15 @@ pub async fn rate_card(
         "difficulty": result.difficulty,
     }).to_string())
     .execute(pool)
-    .await;
+    .await
+    {
+        tracing::warn!(
+            feature = "fsrs_review",
+            user_id = %user_id,
+            error = %err,
+            "analytics insert failed",
+        );
+    }
 
     crate::routes::metrics::FSRS_REVIEWS_TOTAL
         .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
