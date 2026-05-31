@@ -86,7 +86,7 @@ pub struct UserOut {
     pub avatar_url: Option<String>,
     pub username: Option<String>,
     pub role: String,
-    pub total_xp: i64,
+    pub total_xp: i32,
     pub starting_urn_id: Option<String>,
     pub is_profile_public: bool,
     pub ai_personalization_enabled: bool,
@@ -97,15 +97,15 @@ pub struct UserOut {
 pub struct RankOut {
     pub level: i32,
     pub name: String,
-    pub xp: i64,
+    pub xp: i32,
 }
 
 /// User stats block inside `AuthMeResponse` — mirrors Python's `UserStatsOut`.
 #[derive(Debug, Serialize, Clone)]
 pub struct UserStatsOut {
-    pub total_xp: i64,
+    pub total_xp: i32,
     pub rank: RankOut,
-    pub xp_to_next_rank: i64,
+    pub xp_to_next_rank: i32,
     pub next_rank: Option<RankOut>,
 }
 
@@ -118,7 +118,7 @@ pub struct AuthMeResponse {
 }
 
 /// XP rank table — mirrors `backend/main.py::XP_RANKS`.
-const XP_RANKS: &[(i32, &str, i64)] = &[
+const XP_RANKS: &[(i32, &str, i32)] = &[
     (1, "Lính Mới", 0),
     (2, "Thư Sinh", 500),
     (3, "Tú Tài", 1500),
@@ -132,8 +132,8 @@ const XP_RANKS: &[(i32, &str, i64)] = &[
 ];
 
 /// Compute (current_rank, next_rank, xp_to_next) — mirrors `_compute_rank`.
-fn compute_rank(total_xp: i64) -> (RankOut, Option<RankOut>, i64) {
-    let to_rank = |&(level, name, xp): &(i32, &str, i64)| RankOut {
+fn compute_rank(total_xp: i32) -> (RankOut, Option<RankOut>, i32) {
+    let to_rank = |&(level, name, xp): &(i32, &str, i32)| RankOut {
         level,
         name: name.to_string(),
         xp,
@@ -168,7 +168,7 @@ fn build_auth_me_response(
     avatar_url: Option<String>,
     username: Option<String>,
     role: String,
-    total_xp: i64,
+    total_xp: i32,
     starting_urn_id: Option<Uuid>,
     is_profile_public: bool,
     ai_personalization_enabled: bool,
@@ -799,7 +799,7 @@ struct UserRow {
     pub role: String,
     pub avatar_url: Option<String>,
     pub username: Option<String>,
-    pub total_xp: i64,
+    pub total_xp: i32,
     pub starting_urn_id: Option<Uuid>,
     pub is_profile_public: bool,
     pub ai_personalization_enabled: bool,
@@ -835,7 +835,7 @@ struct UserRowWithPassword {
     pub password_hash: String,
     pub avatar_url: Option<String>,
     pub username: Option<String>,
-    pub total_xp: i64,
+    pub total_xp: i32,
     pub starting_urn_id: Option<Uuid>,
     pub is_profile_public: bool,
     pub ai_personalization_enabled: bool,
