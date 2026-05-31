@@ -143,7 +143,7 @@ def upgrade() -> None:
 
     op.execute(
         """
-        INSERT INTO badges (id, slug, name, name_en, description, icon_url, category, is_active, is_secret, xp_bonus)
+        INSERT INTO badges (id, slug, name, name_en, description, icon_url, category, is_active, is_secret, xp_bonus, unlock_criteria)
         VALUES (
             gen_random_uuid(),
             'phoenix',
@@ -154,7 +154,8 @@ def upgrade() -> None:
             'achievement',
             true,
             false,
-            100
+            100,
+            '{"type": "phoenix_comeback", "min_lost_streak": 30, "comeback_days": 3}'::jsonb
         )
         ON CONFLICT (slug) DO NOTHING;
         """
