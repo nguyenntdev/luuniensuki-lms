@@ -21,7 +21,7 @@ import sqlalchemy as sa
 
 
 revision = "0042_streak_repair_economy"
-down_revision = "0041_live_rate_limit_logs"
+down_revision = "0041"
 branch_labels = None
 depends_on = None
 
