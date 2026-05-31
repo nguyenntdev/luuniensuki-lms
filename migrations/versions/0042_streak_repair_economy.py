@@ -116,7 +116,7 @@ def upgrade() -> None:
             history_row_id uuid REFERENCES user_streak_history(id) ON DELETE SET NULL,
             created_at timestamptz NOT NULL DEFAULT NOW()
         );
-        CREATE INDEX idx_comeback_active ON user_comeback_bonuses(user_id) WHERE expires_at > NOW();
+        CREATE INDEX idx_comeback_active ON user_comeback_bonuses(user_id, expires_at);
         """
     )
 
