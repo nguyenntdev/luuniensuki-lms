@@ -77,17 +77,123 @@ pub struct AgeVerifyRequest {
     pub birth_year: i32,
 }
 
-/// GET /api/v1/auth/me response body.
-/// Matches Python's `AuthMeResponse` shape (simplified for Phase 2).
+/// User object inside `AuthMeResponse` — mirrors Python's `UserOut`.
 #[derive(Debug, Serialize, Clone)]
-pub struct AuthMeResponse {
+pub struct UserOut {
     pub id: String,
     pub email: String,
     pub display_name: String,
-    pub role: String,
     pub avatar_url: Option<String>,
-    pub is_age_verified: bool,
-    pub created_at: String,
+    pub username: Option<String>,
+    pub role: String,
+    pub total_xp: i64,
+    pub starting_urn_id: Option<String>,
+    pub is_profile_public: bool,
+    pub ai_personalization_enabled: bool,
+}
+
+/// A single XP rank — mirrors Python's `RankOut`.
+#[derive(Debug, Serialize, Clone)]
+pub struct RankOut {
+    pub level: i32,
+    pub name: String,
+    pub xp: i64,
+}
+
+/// User stats block inside `AuthMeResponse` — mirrors Python's `UserStatsOut`.
+#[derive(Debug, Serialize, Clone)]
+pub struct UserStatsOut {
+    pub total_xp: i64,
+    pub rank: RankOut,
+    pub xp_to_next_rank: i64,
+    pub next_rank: Option<RankOut>,
+}
+
+/// GET /api/v1/auth/me response body.
+/// Matches Python's `AuthMeResponse` shape: `{ "user": UserOut, "stats": UserStatsOut }`.
+#[derive(Debug, Serialize, Clone)]
+pub struct AuthMeResponse {
+    pub user: UserOut,
+    pub stats: UserStatsOut,
+}
+
+/// XP rank table — mirrors `backend/main.py::XP_RANKS`.
+const XP_RANKS: &[(i32, &str, i64)] = &[
+    (1, "Lính Mới", 0),
+    (2, "Thư Sinh", 500),
+    (3, "Tú Tài", 1500),
+    (4, "Cử Nhân", 3500),
+    (5, "Tiến Sĩ", 7000),
+    (6, "Thám Hoa", 12000),
+    (7, "Bảng Nhãn", 20000),
+    (8, "Trạng Nguyên", 35000),
+    (9, "Hàn Lâm", 55000),
+    (10, "Sử Quan", 80000),
+];
+
+/// Compute (current_rank, next_rank, xp_to_next) — mirrors `_compute_rank`.
+fn compute_rank(total_xp: i64) -> (RankOut, Option<RankOut>, i64) {
+    let to_rank = |&(level, name, xp): &(i32, &str, i64)| RankOut {
+        level,
+        name: name.to_string(),
+        xp,
+    };
+
+    let mut current = &XP_RANKS[0];
+    for r in XP_RANKS {
+        if total_xp >= r.2 {
+            current = r;
+        } else {
+            break;
+        }
+    }
+
+    let next = XP_RANKS.iter().find(|r| r.2 > current.2);
+    let current_rank = to_rank(current);
+    match next {
+        None => (current_rank, None, 0),
+        Some(n) => {
+            let next_rank = to_rank(n);
+            let xp_to_next = (n.2 - total_xp).max(0);
+            (current_rank, Some(next_rank), xp_to_next)
+        }
+    }
+}
+
+/// Build the wrapped `AuthMeResponse` from a user's fields.
+fn build_auth_me_response(
+    id: Uuid,
+    email: String,
+    display_name: String,
+    avatar_url: Option<String>,
+    username: Option<String>,
+    role: String,
+    total_xp: i64,
+    starting_urn_id: Option<Uuid>,
+    is_profile_public: bool,
+    ai_personalization_enabled: bool,
+) -> AuthMeResponse {
+    let (rank, next_rank, xp_to_next) = compute_rank(total_xp);
+    AuthMeResponse {
+        user: UserOut {
+            id: id.to_string(),
+            email,
+            display_name,
+            avatar_url,
+            username,
+            role,
+            total_xp,
+            starting_urn_id: starting_urn_id.map(|u| u.to_string()),
+            is_profile_public,
+            ai_personalization_enabled,
+        },
+        stats: UserStatsOut {
+            total_xp,
+            rank,
+            xp_to_next_rank: xp_to_next,
+            next_rank,
+        },
+    }
 }
 
 /// POST /api/v1/auth/forgot-password response body.
@@ -223,7 +329,8 @@ pub async fn me(
     let user_id: Uuid = claims.sub.parse().map_err(|_| AppError::Unauthorized)?;
 
     let row = sqlx::query_as::<_, UserRow>(
-        "SELECT id, email, display_name, role::text, avatar_url, age_verified, created_at \
+        "SELECT id, email, display_name, role::text AS role, avatar_url, username, total_xp, \
+         starting_urn_id, is_profile_public, ai_personalization_enabled, age_verified, created_at \
          FROM users WHERE id = $1",
     )
     .bind(user_id)
@@ -250,6 +357,7 @@ pub async fn login(
 
     let row = sqlx::query_as::<_, UserRowWithPassword>(
         "SELECT id, email, display_name, role::text AS role, password_hash, avatar_url, \
+         username, total_xp, starting_urn_id, is_profile_public, ai_personalization_enabled, \
          age_verified, created_at FROM users WHERE email = $1",
     )
     .bind(&payload.email)
@@ -339,7 +447,8 @@ pub async fn register(
     let row = sqlx::query_as::<_, UserRow>(
         "INSERT INTO users (id, email, display_name, password_hash, role, created_at, updated_at) \
          VALUES ($1, $2, $3, $4, 'user', NOW(), NOW()) \
-         RETURNING id, email, display_name, role::text AS role, avatar_url, age_verified, created_at",
+         RETURNING id, email, display_name, role::text AS role, avatar_url, username, total_xp, \
+         starting_urn_id, is_profile_public, ai_personalization_enabled, age_verified, created_at",
     )
     .bind(new_id)
     .bind(&payload.email)
@@ -404,7 +513,8 @@ pub async fn refresh(
     let user_id: Uuid = claims.sub.parse().map_err(|_| AppError::Unauthorized)?;
 
     let row = sqlx::query_as::<_, UserRow>(
-        "SELECT id, email, display_name, role::text, avatar_url, age_verified, created_at \
+        "SELECT id, email, display_name, role::text AS role, avatar_url, username, total_xp, \
+         starting_urn_id, is_profile_public, ai_personalization_enabled, age_verified, created_at \
          FROM users WHERE id = $1",
     )
     .bind(user_id)
@@ -688,21 +798,30 @@ struct UserRow {
     pub display_name: String,
     pub role: String,
     pub avatar_url: Option<String>,
+    pub username: Option<String>,
+    pub total_xp: i64,
+    pub starting_urn_id: Option<Uuid>,
+    pub is_profile_public: bool,
+    pub ai_personalization_enabled: bool,
     pub age_verified: bool,
     pub created_at: chrono::DateTime<Utc>,
 }
 
 impl UserRow {
     fn into_auth_me_response(self) -> AuthMeResponse {
-        AuthMeResponse {
-            id: self.id.to_string(),
-            email: self.email,
-            display_name: self.display_name,
-            role: self.role,
-            avatar_url: self.avatar_url,
-            is_age_verified: self.age_verified,
-            created_at: self.created_at.to_rfc3339(),
-        }
+        let _ = (self.age_verified, self.created_at);
+        build_auth_me_response(
+            self.id,
+            self.email,
+            self.display_name,
+            self.avatar_url,
+            self.username,
+            self.role,
+            self.total_xp,
+            self.starting_urn_id,
+            self.is_profile_public,
+            self.ai_personalization_enabled,
+        )
     }
 }
 
@@ -715,21 +834,30 @@ struct UserRowWithPassword {
     pub role: String,
     pub password_hash: String,
     pub avatar_url: Option<String>,
+    pub username: Option<String>,
+    pub total_xp: i64,
+    pub starting_urn_id: Option<Uuid>,
+    pub is_profile_public: bool,
+    pub ai_personalization_enabled: bool,
     pub age_verified: bool,
     pub created_at: chrono::DateTime<Utc>,
 }
 
 impl UserRowWithPassword {
     fn into_auth_me_response(self) -> AuthMeResponse {
-        AuthMeResponse {
-            id: self.id.to_string(),
-            email: self.email,
-            display_name: self.display_name,
-            role: self.role,
-            avatar_url: self.avatar_url,
-            is_age_verified: self.age_verified,
-            created_at: self.created_at.to_rfc3339(),
-        }
+        let _ = (self.age_verified, self.created_at);
+        build_auth_me_response(
+            self.id,
+            self.email,
+            self.display_name,
+            self.avatar_url,
+            self.username,
+            self.role,
+            self.total_xp,
+            self.starting_urn_id,
+            self.is_profile_public,
+            self.ai_personalization_enabled,
+        )
     }
 }
 
