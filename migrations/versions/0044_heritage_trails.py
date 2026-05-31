@@ -130,6 +130,7 @@ def upgrade() -> None:
             hash text UNIQUE NOT NULL,
             issued_at timestamptz NOT NULL DEFAULT NOW(),
             pdf_url text,
+            notes text,
             UNIQUE (user_id, trail_id)
         );
         CREATE INDEX idx_trail_certificates_hash ON trail_certificates(hash);
