@@ -80,10 +80,23 @@ def transcribe_audio_bytes(
         )
 
     endpoint = f"{_voice_base_v1()}/audio/transcriptions"
-    model = str(settings.voice_stt_model or "").strip() or "gpt-4o-mini-transcribe"
+    model = str(settings.voice_stt_model or "").strip() or "gpt-4o-transcribe"
     safe_content_type = (content_type or "").strip() or "application/octet-stream"
     safe_filename = (filename or "").strip() or "voice.webm"
     started = time.perf_counter()
+
+    # Bias the recognizer toward Vietnamese to improve accuracy and reduce
+    # latency (skips language auto-detection). An optional domain prompt nudges
+    # the model toward heritage/lich-su vocabulary.
+    form_data: dict[str, str] = {"model": model}
+    stt_language = str(settings.voice_stt_language or "").strip()
+    if stt_language:
+        form_data["language"] = stt_language
+    stt_prompt = str(settings.voice_stt_prompt or "").strip()
+    if stt_prompt:
+        form_data["prompt"] = stt_prompt
+    # Low temperature keeps transcription verbatim.
+    form_data["temperature"] = "0"
 
     try:
         live_circuit_breaker.assert_provider_available(provider)
@@ -102,7 +115,7 @@ def transcribe_audio_bytes(
         response = httpx.post(
             endpoint,
             headers={"Authorization": f"Bearer {api_key}"},
-            data={"model": model},
+            data=form_data,
             files={"file": (safe_filename, content, safe_content_type)},
             timeout=float(settings.voice_timeout_seconds or 45),
         )

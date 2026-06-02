@@ -94,8 +94,9 @@ class Settings(BaseSettings):
     # ==========================================================================
     deepseek_api_key: Optional[str] = None
     deepseek_base_url: str = "https://api.yescale.vip/v1"
-    deepseek_model: str = "deepseek-v3"
-    deepseek_timeout_seconds: int = 60
+    deepseek_model: str = "deepseek-v3.2"
+    deepseek_fallback_model: str = "deepseek-v4-flash"
+    deepseek_timeout_seconds: int = 45
     deepseek_max_retries: int = 1
     live_data_encryption_key: Optional[str] = None
 
@@ -105,6 +106,11 @@ class Settings(BaseSettings):
     voice_api_key: Optional[str] = None
     voice_base_url: Optional[str] = None
     voice_stt_model: str = "gpt-4o-transcribe"
+    voice_stt_language: str = "vi"
+    voice_stt_prompt: str = (
+        "Đây là đoạn hội thoại tiếng Việt về lịch sử và di sản Cố đô Huế, "
+        "Cửu Đỉnh và triều Nguyễn."
+    )
     voice_tts_model: str = "tts-1"
     voice_tts_voice: str = "alloy"
     voice_tts_allow_edge_fallback: bool = True

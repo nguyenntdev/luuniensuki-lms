@@ -7,6 +7,7 @@ import logging
 import math
 import re
 import secrets
+import socket
 import time
 import unicodedata
 import uuid as uuid_module
@@ -6948,8 +6949,12 @@ def live_ai_teacher_reply(
                 tokens_in=prompt_tokens,
                 tokens_out=live_reporting_service.estimate_tokens(answer),
             )
-        except RuntimeError as exc:
+        except Exception as exc:
+            # Catch broadly (RuntimeError, TimeoutError, network errors, etc.)
+            # so a flaky upstream LLM never turns into a 500 for the learner —
+            # we degrade to the curated heritage fallback response instead.
             live_circuit_service.record_failure("deepseek", str(exc))
+            logger.warning("AI teacher reply fell back to canned response: %s", exc)
             live_observability_service.record_point(
                 session_id=str(live_session.id),
                 operation="llm_reply",
@@ -11948,6 +11953,46 @@ def _call_deepseek_chat(
     if not settings.deepseek_api_key:
         raise RuntimeError("Deepseek API key not configured")
 
+    # Try the primary model first, then an optional fallback model. The yescale
+    # gateway occasionally returns 503 "temporarily unavailable" for a given
+    # model, and some models are far slower than others; falling back keeps the
+    # AI teacher responsive instead of surfacing a 500.
+    primary_model = model or settings.deepseek_model
+    fallback_model = str(getattr(settings, "deepseek_fallback_model", "") or "").strip()
+    model_candidates: list[str] = [primary_model]
+    if fallback_model and fallback_model != primary_model:
+        model_candidates.append(fallback_model)
+
+    last_error: Exception | None = None
+    for model_name in model_candidates:
+        try:
+            return _call_deepseek_chat_once(
+                messages,
+                temperature=temperature,
+                response_format=response_format,
+                model=model_name,
+            )
+        except RuntimeError as exc:
+            last_error = exc
+            logger.warning(
+                "Deepseek model '%s' failed (%s); trying next candidate",
+                model_name,
+                exc,
+            )
+            continue
+
+    raise RuntimeError(
+        f"Deepseek request failed for all models {model_candidates}: {last_error}"
+    )
+
+
+def _call_deepseek_chat_once(
+    messages: Sequence[dict[str, str]],
+    *,
+    temperature: float = 0.2,
+    response_format: Optional[dict[str, Any]] = None,
+    model: Optional[str] = None,
+) -> str:
     payload: dict[str, Any] = {
         "model": model or settings.deepseek_model,
         "messages": messages,
@@ -11982,7 +12027,10 @@ def _call_deepseek_chat(
                 time.sleep(0.6 * (attempt + 1))
                 continue
             raise RuntimeError(f"Deepseek request failed: {exc}") from exc
-        except URLError as exc:
+        except (URLError, TimeoutError, socket.timeout, OSError) as exc:
+            # urllib raises a bare TimeoutError (not URLError) on socket read
+            # timeouts; catch it here so a slow model degrades gracefully to the
+            # fallback model / fallback response instead of a 500.
             if attempt < max_retries:
                 time.sleep(0.6 * (attempt + 1))
                 continue
