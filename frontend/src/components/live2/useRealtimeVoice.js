@@ -130,7 +130,26 @@ export function useRealtimeVoice({
         ttsAbortRef.current = controller;
         const audioData = await synthesize({ sessionId, text: answer, signal: controller.signal });
         if (closingRef.current || stateRef.current !== TURN.SPEAKING) return;
-        const audioBlob = audioData instanceof Blob ? audioData : new Blob([audioData], { type: "audio/mpeg" });
+        // synthesize() (apiRequestBinary) resolves to { blob, contentType }.
+        // Accept a raw Blob/ArrayBuffer too, for safety.
+        let audioBlob;
+        if (audioData instanceof Blob) {
+          audioBlob = audioData;
+        } else if (audioData?.blob instanceof Blob) {
+          audioBlob = audioData.blob;
+        } else if (audioData instanceof ArrayBuffer) {
+          audioBlob = new Blob([audioData], { type: "audio/mpeg" });
+        } else if (audioData?.arrayBuffer || ArrayBuffer.isView(audioData)) {
+          audioBlob = new Blob([audioData], { type: "audio/mpeg" });
+        } else {
+          // Nothing playable — go back to listening instead of playing garbage.
+          setTurn(TURN.LISTENING);
+          return;
+        }
+        if (!audioBlob || audioBlob.size === 0) {
+          setTurn(TURN.LISTENING);
+          return;
+        }
         const url = URL.createObjectURL(audioBlob);
         const audio = new Audio(url);
         ttsAudioRef.current = audio;
