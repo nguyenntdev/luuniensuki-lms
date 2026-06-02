@@ -78,6 +78,15 @@ services:
       DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-luuniensuki}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY:-dev-insecure-change-me}
       JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
+      LIVE_MEDIA_BACKEND: ${LIVE_MEDIA_BACKEND:-livekit}
+      JANUS_WS_URL: ${JANUS_WS_URL:-ws://janus-gateway:8188}
+      JANUS_HTTP_URL: ${JANUS_HTTP_URL:-http://janus-gateway:8088/janus}
+      JANUS_ADMIN_URL: ${JANUS_ADMIN_URL:-http://janus-gateway:7088/admin}
+      JANUS_PUBLIC_WS_URL: ${JANUS_PUBLIC_WS_URL:-ws://localhost:8188}
+      JANUS_ADMIN_SECRET: ${JANUS_ADMIN_SECRET:-devjanusadmin}
+      JANUS_API_SECRET: ${JANUS_API_SECRET:-devjanusapi}
+      LIVE_INTERNAL_TOKEN: ${LIVE_INTERNAL_TOKEN:-devinternaltoken}
+      TURN_STATIC_AUTH_SECRET: ${TURN_STATIC_AUTH_SECRET:-}
     depends_on:
       db:
         condition: service_healthy
@@ -170,6 +179,30 @@ services:
       - "51000-51100:51000-51100/tcp"
     volumes:
       - ./certbot/conf:/etc/letsencrypt:ro
+    restart: unless-stopped
+
+  janus-gateway:
+    image: canyanio/janus-gateway:1.2.4
+    command: ["/usr/local/bin/janus", "-F", "/opt/janus/etc/janus"]
+    environment:
+      JANUS_ADMIN_SECRET: ${JANUS_ADMIN_SECRET:-devjanusadmin}
+      JANUS_API_SECRET: ${JANUS_API_SECRET:-devjanusapi}
+    ports:
+      - "127.0.0.1:8188:8188"
+      - "127.0.0.1:8088:8088"
+      - "127.0.0.1:7088:7088"
+      - "20000-20100:20000-20100/udp"
+    volumes:
+      - ./janus/etc:/opt/janus/etc/janus:ro
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 512m
     restart: unless-stopped
 
   nginx:

@@ -143,10 +143,10 @@ disk/memory-constrained host.
 
 ### Wave 6 — Deployment & cutover (operator-gated)
 
-- [ ] 18. Janus compose service + config (no traffic)
-  - [ ] 18.1 Add the pinned `janus-gateway` service to `docker-compose.prod.yml` (and dev compose) with `memory: 512m`, capped json-file logs, internal-only `:7088`/`:8188`/`:8088`, media UDP range `20000-20100` (non-overlapping with LiveKit), cert/TURN volumes reused.
-  - [ ] 18.2 Add `janus/etc` config files (videoroom plugin, admin/api secrets via env).
-  - [ ] 18.3 Document required prod env (`JANUS_ADMIN_SECRET`, `JANUS_API_SECRET`, `LIVE_INTERNAL_TOKEN`, `TURN_STATIC_AUTH_SECRET`, `LIVE_MEDIA_BACKEND`) — values supplied by the operator, never committed.
+- [x] 18. Janus compose service + config (no traffic)
+  - [x] 18.1 Add the pinned `janus-gateway` service to `docker-compose.prod.yml` (and dev compose) with `memory: 512m`, capped json-file logs, internal-only `:7088`/`:8188`/`:8088`, media UDP range `20000-20100` (non-overlapping with LiveKit), cert/TURN volumes reused.
+  - [x] 18.2 Add `janus/etc` config files (videoroom plugin, admin/api secrets via env).
+  - [x] 18.3 Document required prod env (`JANUS_ADMIN_SECRET`, `JANUS_API_SECRET`, `LIVE_INTERNAL_TOKEN`, `TURN_STATIC_AUTH_SECRET`, `LIVE_MEDIA_BACKEND`) — values supplied by the operator, never committed.
   - **Validates:** Requirements 12.2, 12.3, 12.4
 
 - [ ] 19. Phased cutover (gated, reversible)

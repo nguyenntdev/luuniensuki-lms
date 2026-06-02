@@ -77,6 +77,18 @@ services:
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
+      # Live-room (Janus) — media plane selected by LIVE_MEDIA_BACKEND.
+      LIVE_MEDIA_BACKEND: ${LIVE_MEDIA_BACKEND:-livekit}
+      JANUS_WS_URL: ${JANUS_WS_URL:-ws://janus-gateway:8188}
+      JANUS_HTTP_URL: ${JANUS_HTTP_URL:-http://janus-gateway:8088/janus}
+      JANUS_ADMIN_URL: ${JANUS_ADMIN_URL:-http://janus-gateway:7088/admin}
+      JANUS_PUBLIC_WS_URL: ${JANUS_PUBLIC_WS_URL:-wss://lms.histolab.icu/janus}
+      JANUS_ADMIN_SECRET: ${JANUS_ADMIN_SECRET:-}
+      JANUS_API_SECRET: ${JANUS_API_SECRET:-}
+      LIVE_INTERNAL_TOKEN: ${LIVE_INTERNAL_TOKEN:-}
+      LIVE_JOIN_CREDENTIAL_TTL_MINUTES: ${LIVE_JOIN_CREDENTIAL_TTL_MINUTES:-30}
+      LIVE_RECONNECT_GRACE_SECONDS: ${LIVE_RECONNECT_GRACE_SECONDS:-20}
+      TURN_STATIC_AUTH_SECRET: ${TURN_STATIC_AUTH_SECRET:-}
     depends_on:
       db:
         condition: service_healthy
@@ -160,6 +172,33 @@ services:
     volumes:
       - ./certbot/conf:/etc/letsencrypt:ro
 
+  janus-gateway:
+    image: canyanio/janus-gateway:1.2.4
+    restart: unless-stopped
+    command: ["/usr/local/bin/janus", "-F", "/opt/janus/etc/janus"]
+    environment:
+      JANUS_ADMIN_SECRET: ${JANUS_ADMIN_SECRET:?set in prod}
+      JANUS_API_SECRET: ${JANUS_API_SECRET:?set in prod}
+    expose:
+      - "8188"   # WS signaling (internal — reached by api_rust + reverse proxy)
+      - "8088"   # HTTP API (internal)
+      - "7088"   # Admin API (internal only)
+    ports:
+      # Media UDP range only (non-overlapping with LiveKit 50000-50100).
+      - "20000-20100:20000-20100/udp"
+    volumes:
+      - ./janus/etc:/opt/janus/etc/janus:ro
+      - ./certbot/conf:/etc/letsencrypt:ro
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+
   nginx:
     image: nginx:1.25-alpine
     restart: unless-stopped
@@ -177,6 +216,7 @@ services:
       - api_rust
       - ai_teacher_agent
       - livekit
+      - janus-gateway
 
 volumes:
   postgres_data:

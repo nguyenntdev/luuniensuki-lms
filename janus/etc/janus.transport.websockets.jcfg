@@ -1,0 +1,16 @@
+# Janus WebSocket transport — used by the Rust signaling broker (internal).
+general: {
+    json = "indented"
+    ws = true
+    ws_port = 8188
+    # Bind on all interfaces inside the container; the docker-compose port
+    # mapping keeps :8188 on the internal network only.
+    wss = false
+}
+
+admin: {
+    # Admin API over WebSocket is disabled; admin ops use the HTTP admin
+    # transport on :7088 (internal only).
+    admin_ws = false
+    admin_wss = false
+}
