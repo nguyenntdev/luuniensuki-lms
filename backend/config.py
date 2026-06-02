@@ -104,8 +104,8 @@ class Settings(BaseSettings):
     # ==========================================================================
     voice_api_key: Optional[str] = None
     voice_base_url: Optional[str] = None
-    voice_stt_model: str = "gpt-4o-mini-transcribe"
-    voice_tts_model: str = "gpt-4o-mini-tts"
+    voice_stt_model: str = "gpt-4o-transcribe"
+    voice_tts_model: str = "tts-1"
     voice_tts_voice: str = "alloy"
     voice_tts_allow_edge_fallback: bool = True
     voice_tts_allow_gtts_fallback: bool = True
