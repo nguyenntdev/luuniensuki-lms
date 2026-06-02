@@ -154,6 +154,12 @@ export function useRealtimeVoice({
         });
       } catch (err) {
         if (!closingRef.current) {
+          // 422 = "no speech detected" (silence/noise or a dropped STT
+          // hallucination). Not a real error — just keep listening quietly.
+          if (err?.status === 422) {
+            setTurn(TURN.LISTENING);
+            return;
+          }
           setError(String(err?.message || err || "voice loop error"));
           setTurn(TURN.LISTENING);
         }

@@ -6584,6 +6584,11 @@ async def live_ai_teacher_stt(
             content_type=file.content_type,
             session_id=str(live_session.id),
         )
+    except live_voice_service.STTNoSpeechError:
+        # No usable speech (silence/noise or a dropped hallucination). Return a
+        # clean 422 so the client simply goes back to listening instead of
+        # surfacing an error or echoing filler text.
+        raise HTTPException(status_code=422, detail="Could not detect speech")
     except RuntimeError as exc:
         raise HTTPException(status_code=503, detail=str(exc))
 

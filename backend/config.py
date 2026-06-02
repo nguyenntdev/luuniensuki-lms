@@ -105,7 +105,7 @@ class Settings(BaseSettings):
     # ==========================================================================
     voice_api_key: Optional[str] = None
     voice_base_url: Optional[str] = None
-    voice_stt_model: str = "whisper-1"
+    voice_stt_model: str = "gpt-4o-transcribe"
     voice_stt_language: str = "vi"
     voice_stt_prompt: str = (
         "Đây là đoạn hội thoại tiếng Việt về lịch sử và di sản Cố đô Huế, "

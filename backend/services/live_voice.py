@@ -26,6 +26,16 @@ except Exception:  # pragma: no cover - optional dependency in some environments
     gTTS = None
 
 
+class STTNoSpeechError(RuntimeError):
+    """Raised when STT produced no usable speech (empty or a hallucination).
+
+    Subclasses RuntimeError so existing ``except RuntimeError`` handlers keep
+    working, but callers that want to distinguish "no speech" from a real
+    provider failure can catch this type and stay silent instead of surfacing
+    an error or feeding filler text to the LLM.
+    """
+
+
 def _voice_api_key() -> str | None:
     return (settings.voice_api_key or settings.deepseek_api_key or "").strip() or None
 
@@ -57,6 +67,82 @@ def _extract_error_text(response: httpx.Response) -> str:
     if text:
         return text[:300]
     return f"HTTP {response.status_code}"
+
+
+# Known STT hallucination outputs on silence / noise / very short clips.
+# Whisper-family models frequently emit these stock phrases (often in the wrong
+# language) when the audio has little or no real speech. We drop them so they
+# never reach the LLM as a "user turn".
+_STT_HALLUCINATION_PHRASES = frozenset(
+    {
+        "you",
+        "bye",
+        "bye.",
+        "bye bye",
+        "thank you",
+        "thank you.",
+        "thanks for watching",
+        "thanks for watching!",
+        "thank you for watching",
+        "ciao",
+        "ciao.",
+        "tchau",
+        "tchau, tchau.",
+        "see you",
+        "see you.",
+        "see you, ciao.",
+        "and ciao.",
+        "okay",
+        "ok",
+        "hmm",
+        "uh",
+        "um",
+        "...",
+        ".",
+        "merci",
+        "gracias",
+        "obrigado",
+        "amara.org",
+        "subtitles by the amara.org community",
+    }
+)
+
+
+def _looks_like_vietnamese(text: str) -> bool:
+    """True if the text contains Vietnamese-specific diacritics or common words."""
+    if any(
+        ch in text
+        for ch in "ăâđêôơưĂÂĐÊÔƠƯàáảãạèéẻẽẹìíỉĩịòóỏõọùúủũụỳýỷỹỵ"
+        "ÀÁẢÃẠÈÉẺẼẸÌÍỈĨỊÒÓỎÕỌÙÚỦŨỤỲÝỶỸỴ"
+    ):
+        return True
+    lowered = f" {text.lower()} "
+    common = (
+        " là ", " gì ", " không ", " của ", " và ", " có ", " cho ", " nào ",
+        " xin ", " chào ", " được ", " thế ", " sao ", " ạ ", " nhé ",
+    )
+    return any(word in lowered for word in common)
+
+
+def _is_probable_hallucination(transcript: str) -> bool:
+    """Detect STT filler/hallucinations that should be dropped, not answered."""
+    normalized = transcript.strip().lower()
+    if not normalized:
+        return True
+    # Exact match against the known stock-phrase set.
+    if normalized in _STT_HALLUCINATION_PHRASES:
+        return True
+    # Strip surrounding punctuation/whitespace and retry.
+    stripped = normalized.strip(" .,!?\"'…-")
+    if stripped in _STT_HALLUCINATION_PHRASES:
+        return True
+    # Short, non-Vietnamese single-token output (e.g. "you", "ciao") is almost
+    # always a hallucination for a Vietnamese-only classroom.
+    if len(stripped) <= 12 and not _looks_like_vietnamese(transcript):
+        # Allow short Vietnamese-looking inputs; reject short Latin filler.
+        if all(ord(ch) < 128 for ch in stripped.replace(" ", "")):
+            return True
+    return False
 
 
 def transcribe_audio_bytes(
@@ -95,8 +181,18 @@ def transcribe_audio_bytes(
     stt_prompt = str(settings.voice_stt_prompt or "").strip()
     if stt_prompt:
         form_data["prompt"] = stt_prompt
-    # Low temperature keeps transcription verbatim.
-    form_data["temperature"] = "0"
+    # The whisper-1 endpoint on some gateways rejects the `temperature`
+    # parameter, while the gpt-4o-* transcribe models accept it. Only send a
+    # (verbatim) low temperature for the gpt-4o family.
+    is_whisper = "whisper" in model.lower()
+    if not is_whisper:
+        form_data["temperature"] = "0"
+    else:
+        # whisper-1 supports verbose_json, which returns per-segment
+        # `no_speech_prob` / `avg_logprob`. These are the most reliable signal
+        # for rejecting silence hallucinations (e.g. "Hãy subscribe...",
+        # "Thank you for watching") before they reach the LLM.
+        form_data["response_format"] = "verbose_json"
 
     try:
         live_circuit_breaker.assert_provider_available(provider)
@@ -111,25 +207,47 @@ def transcribe_audio_bytes(
         )
         raise
 
-    try:
-        response = httpx.post(
-            endpoint,
-            headers={"Authorization": f"Bearer {api_key}"},
-            data=form_data,
-            files={"file": (safe_filename, content, safe_content_type)},
-            timeout=float(settings.voice_timeout_seconds or 45),
-        )
-    except httpx.RequestError as exc:
-        live_circuit_breaker.record_failure(provider, str(exc))
-        live_observability.record_point(
-            session_id=session_id,
-            operation="stt",
-            provider=provider,
-            latency_ms=(time.perf_counter() - started) * 1000.0,
-            ok=False,
-            drop=False,
-        )
-        raise RuntimeError(f"STT request failed: {exc}") from exc
+    # Some gateways/models reject specific optional fields (e.g. whisper-1 may
+    # 400 on `temperature`). Try the full request first, then progressively
+    # strip optional params on a 400 before giving up — this keeps STT working
+    # across model/gateway differences without manual reconfiguration.
+    optional_keys = ["temperature", "prompt", "language"]
+    attempts: list[dict[str, str]] = [dict(form_data)]
+    reduced = dict(form_data)
+    for key in optional_keys:
+        if key in reduced:
+            reduced = {k: v for k, v in reduced.items() if k != key}
+            attempts.append(dict(reduced))
+
+    response = None
+    for attempt_index, attempt_data in enumerate(attempts):
+        try:
+            response = httpx.post(
+                endpoint,
+                headers={"Authorization": f"Bearer {api_key}"},
+                data=attempt_data,
+                files={"file": (safe_filename, content, safe_content_type)},
+                timeout=float(settings.voice_timeout_seconds or 45),
+            )
+        except httpx.RequestError as exc:
+            live_circuit_breaker.record_failure(provider, str(exc))
+            live_observability.record_point(
+                session_id=session_id,
+                operation="stt",
+                provider=provider,
+                latency_ms=(time.perf_counter() - started) * 1000.0,
+                ok=False,
+                drop=False,
+            )
+            raise RuntimeError(f"STT request failed: {exc}") from exc
+
+        # Retry with fewer optional params only on a 400 (bad request).
+        if response.status_code == 400 and attempt_index < len(attempts) - 1:
+            continue
+        break
+
+    if response is None:  # pragma: no cover - defensive
+        raise RuntimeError("STT request produced no response")
 
     if response.status_code >= 400:
         live_circuit_breaker.record_failure(provider, _extract_error_text(response))
@@ -156,6 +274,50 @@ def transcribe_audio_bytes(
     elif isinstance(payload.get("transcript"), str):
         transcript = payload["transcript"].strip()
 
+    # whisper verbose_json: reject clips that are almost certainly silence/noise
+    # using the per-segment no_speech_prob (high) + avg_logprob (very low). This
+    # catches the stock "subscribe / thank you for watching" hallucinations even
+    # when their exact wording is not in the phrase blocklist.
+    segments = payload.get("segments")
+    if isinstance(segments, list) and segments:
+        speechful = []
+        for seg in segments:
+            if not isinstance(seg, dict):
+                continue
+            no_speech = seg.get("no_speech_prob")
+            avg_logprob = seg.get("avg_logprob")
+            try:
+                no_speech_val = float(no_speech) if no_speech is not None else 0.0
+            except (TypeError, ValueError):
+                no_speech_val = 0.0
+            try:
+                avg_logprob_val = float(avg_logprob) if avg_logprob is not None else 0.0
+            except (TypeError, ValueError):
+                avg_logprob_val = 0.0
+            # Drop a segment that is very likely silence: high no-speech
+            # probability paired with low average token confidence.
+            if no_speech_val >= 0.6 and avg_logprob_val <= -0.4:
+                continue
+            if no_speech_val >= 0.85:
+                continue
+            speechful.append(str(seg.get("text") or ""))
+        filtered = "".join(speechful).strip()
+        # If filtering removed everything, treat as no speech.
+        if not filtered:
+            live_circuit_breaker.record_success(provider)
+            live_observability.record_point(
+                session_id=session_id,
+                operation="stt",
+                provider=provider,
+                latency_ms=(time.perf_counter() - started) * 1000.0,
+                ok=True,
+                drop=True,
+                tokens_in=0,
+                tokens_out=0,
+            )
+            raise STTNoSpeechError("Dropped STT segments with high no_speech_prob")
+        transcript = filtered
+
     if not transcript:
         live_circuit_breaker.record_failure(provider, "empty_transcript")
         live_observability.record_point(
@@ -167,6 +329,27 @@ def transcribe_audio_bytes(
             drop=False,
         )
         raise RuntimeError("STT did not return transcript text")
+
+    # Drop common hallucinations (stock phrases / wrong-language filler that
+    # Whisper-family models emit on silence or noise) so they never become a
+    # user turn. This is a successful call from the provider's perspective, so
+    # we record success on the breaker but raise a sentinel the callers treat
+    # as "no speech detected".
+    if _is_probable_hallucination(transcript):
+        live_circuit_breaker.record_success(provider)
+        live_observability.record_point(
+            session_id=session_id,
+            operation="stt",
+            provider=provider,
+            latency_ms=(time.perf_counter() - started) * 1000.0,
+            ok=True,
+            drop=True,
+            tokens_in=0,
+            tokens_out=0,
+        )
+        raise STTNoSpeechError(
+            f"Dropped probable STT hallucination: {transcript!r}"
+        )
 
     model_used = str(payload.get("model") or model).strip() or model
     live_circuit_breaker.record_success(provider)
