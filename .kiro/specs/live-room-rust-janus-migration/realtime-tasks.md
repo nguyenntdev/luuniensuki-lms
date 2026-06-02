@@ -38,7 +38,7 @@ that need `aiortc` are gated behind a host-footprint check.
 
 - [ ] 4. Streaming STT adapter (`services/live_stt_stream.py`)
   - [x] 4.1 Wrap the existing `live_voice.transcribe_audio_bytes` into a chunked/streaming interface: accept rolling audio buffers, return interim + final transcripts, provider-pluggable (`LIVE_STT_PROVIDER`), with a mock provider for tests.
-  - [ ] 4.2 Emit `voice_user_partial` / `voice_user_final` live_events (the worker already reads `voice_user_final` for history).
+  - [x] 4.2 Emit `voice_user_partial` / `voice_user_final` live_events (the worker already reads `voice_user_final` for history).
   - [x]* 4.3 Tests against the mock provider for interim→final promotion.
 
 - [ ] 5. Barge-in + turn events in the worker
@@ -66,11 +66,22 @@ that need `aiortc` are gated behind a host-footprint check.
 ### Wave 4 — Safety, cost, cutover
 
 - [ ] 9. Pedagogy + guardrails in the realtime loop (reuse `live_ai_teacher`).
-- [ ] 10. Audio-minute cost metering + ceiling (extend `live_reporting`).
-- [ ] 11. `LIVE_VOICE_MODE = legacy | realtime` per-classroom flag; circuit-breaker fallback to the legacy polled path.
+- [x] 10. Audio-minute cost metering + ceiling (extend `live_reporting`).
+- [x] 11. `LIVE_VOICE_MODE = legacy | realtime` per-classroom flag; circuit-breaker fallback to the legacy polled path.
 
 ## Notes
 - Waves 0–1 add **no heavy dependencies** and are fully unit-testable; safe to land first.
 - Wave 2 (`aiortc`) is gated on a measured footprint on the 90%-full / memory-tight host.
 - DeepSeek streaming, guardrails, citations, rubric, cost ceiling, circuit breaker are reused unchanged.
 - The legacy turn-based loop remains the fallback throughout.
+
+## Wave 2 footprint gate (Task 6) — RESULT: BLOCKED on current prod host
+
+Measured 2026: prod host is **92% disk-full (~2.9 GB free)** with **~1.3 GB RAM
+available**. `aiortc` pulls in `av`/ffmpeg (hundreds of MB) and the per-session
+Opus<->PCM transcode loop is CPU/RAM heavy. Per the gate, the in-process audio
+bridge (Tasks 7-8) MUST NOT run on this host (disk-full/OOM risk; documented
+prior incidents). Options: (a) run the bridge as a separate, opt-in service on a
+larger box; (b) provision more disk/RAM; (c) defer. Until then `LIVE_VOICE_MODE`
+stays `legacy` in prod. The orchestrator (Task 5, `live_realtime`) and all pure
+logic are done and tested, ready to plug into a bridge when a host is available.
