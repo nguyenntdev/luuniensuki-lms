@@ -95,7 +95,7 @@ class Settings(BaseSettings):
     deepseek_api_key: Optional[str] = None
     deepseek_base_url: str = "https://api.yescale.vip/v1"
     deepseek_model: str = "deepseek-v4-flash"
-    deepseek_fallback_model: str = "deepseek-v3.2"
+    deepseek_fallback_model: str = "deepseek-v3.1"
     deepseek_timeout_seconds: int = 45
     deepseek_max_retries: int = 1
     live_data_encryption_key: Optional[str] = None
