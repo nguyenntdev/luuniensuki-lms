@@ -7,6 +7,7 @@ pub mod crash_report;
 pub mod fsrs;
 pub mod leaderboard;
 pub mod lesson;
+pub mod live;
 pub mod notification;
 pub mod progress;
 pub mod quiz;

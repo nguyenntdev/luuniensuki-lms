@@ -21,6 +21,17 @@ pub struct Settings {
     pub route_inventory_path: PathBuf,
     pub uploads_dir: PathBuf,
     pub app_name: String,
+    pub janus_ws_url: String,
+    pub janus_public_ws_url: String,
+    pub janus_http_url: String,
+    pub janus_admin_url: String,
+    pub janus_admin_secret: String,
+    pub janus_api_secret: String,
+    pub live_media_backend: String,
+    pub live_reconnect_grace_seconds: u64,
+    pub live_internal_token: String,
+    pub live_join_credential_ttl_minutes: i64,
+    pub turn_static_auth_secret: String,
 }
 
 impl Settings {
@@ -61,6 +72,17 @@ impl Settings {
             .and_then(|v| v.parse().ok())
             .unwrap_or(7);
 
+        let live_reconnect_grace_seconds: u64 = std::env::var("LIVE_RECONNECT_GRACE_SECONDS")
+            .ok()
+            .and_then(|v| v.parse().ok())
+            .unwrap_or(20);
+
+        let live_join_credential_ttl_minutes: i64 =
+            std::env::var("LIVE_JOIN_CREDENTIAL_TTL_MINUTES")
+                .ok()
+                .and_then(|v| v.parse().ok())
+                .unwrap_or(30);
+
         Ok(Self {
             bind_addr: SocketAddr::new(ip, port),
             database_url: std::env::var("DATABASE_URL")
@@ -85,6 +107,26 @@ impl Settings {
                 .unwrap_or_else(|_| PathBuf::from("../uploads")),
             app_name: std::env::var("APP_NAME")
                 .unwrap_or_else(|_| "luuniensuki-api-rust".to_string()),
+            janus_ws_url: std::env::var("JANUS_WS_URL")
+                .unwrap_or_else(|_| "ws://janus-gateway:8188".to_string()),
+            janus_public_ws_url: std::env::var("JANUS_PUBLIC_WS_URL")
+                .unwrap_or_else(|_| "wss://lms.histolab.icu/janus".to_string()),
+            janus_http_url: std::env::var("JANUS_HTTP_URL")
+                .unwrap_or_else(|_| "http://janus-gateway:8088/janus".to_string()),
+            janus_admin_url: std::env::var("JANUS_ADMIN_URL")
+                .unwrap_or_else(|_| "http://janus-gateway:7088/admin".to_string()),
+            janus_admin_secret: std::env::var("JANUS_ADMIN_SECRET")
+                .unwrap_or_else(|_| "CHANGE_ME_JANUS_ADMIN".to_string()),
+            janus_api_secret: std::env::var("JANUS_API_SECRET")
+                .unwrap_or_else(|_| "CHANGE_ME_JANUS_API".to_string()),
+            live_media_backend: std::env::var("LIVE_MEDIA_BACKEND")
+                .unwrap_or_else(|_| "livekit".to_string()),
+            live_reconnect_grace_seconds,
+            live_internal_token: std::env::var("LIVE_INTERNAL_TOKEN")
+                .unwrap_or_else(|_| "CHANGE_ME_LIVE_INTERNAL".to_string()),
+            live_join_credential_ttl_minutes,
+            turn_static_auth_secret: std::env::var("TURN_STATIC_AUTH_SECRET")
+                .unwrap_or_else(|_| "".to_string()),
         })
     }
 }

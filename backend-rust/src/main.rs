@@ -227,6 +227,7 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
         .route("/api/v1/admin/audit", get(routes::admin::list_audit))
         .route("/api/v1/admin/feature-flags", get(routes::admin::list_feature_flags))
         .route("/api/v1/admin/experiments", get(routes::admin::list_experiments))
+        .route("/api/v1/admin/motif-coordinates", post(routes::admin::save_motif_coordinates))
         .with_state(auth_state.clone());
 
     // Streak Repair Economy routes (additive — see .kiro/specs/streak-repair-economy)

@@ -51,6 +51,9 @@ that dep present and pinned at the listed exact version.
 | bcrypt               | =0.15.1        | (default)                                                                         | 3.1           | TODO           | Password hash/verify |
 | argon2               | =0.5.3         | std                                                                               | 3.1           | TODO           | Argon2id password verify |
 | validator            | =0.18.1        | derive                                                                            | 3.1           | TODO           | Request DTO validation |
+| tokio-tungstenite    | =0.23.1        | (default)                                                                         | 2.1           | ~390 (est.)    | Janus WS signaling client — estimate, re-measure on build host |
+| hmac                 | =0.12.1        | (default)                                                                         | 2.1           | ~390 (est.)    | coturn REST HMAC — estimate, re-measure on build host |
+| sha1                 | =0.10.6        | (default)                                                                         | 2.1           | ~390 (est.)    | coturn REST HMAC-SHA1 — estimate, re-measure on build host |
 
 The `Peak RSS` cells will be filled in after the first successful release
 build on the build host. If `/usr/bin/time -v` is unavailable in a given

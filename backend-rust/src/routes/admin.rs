@@ -332,3 +332,30 @@ pub async fn list_experiments(
     let resp = admin_extras_service::list_experiments(pool).await?;
     Ok(Json(serde_json::json!({ "experiments": resp })))
 }
+
+// ---------------------------------------------------------------------------
+// Motif coordinate persistence (annotation tool save path)
+// ---------------------------------------------------------------------------
+
+use crate::services::coordinate_service::{self, CoordinateInput};
+
+#[derive(Debug, Deserialize)]
+pub struct SaveCoordinatesRequest {
+    pub coordinates: Vec<CoordinateInput>,
+}
+
+/// POST /api/v1/admin/motif-coordinates
+///
+/// Persists annotated marker positions onto their `motifs` rows. Admin-only;
+/// mirrors the matching logic of `import_coordinates.py` as a runtime upsert so
+/// the annotation tool can save directly instead of exporting JSON.
+pub async fn save_motif_coordinates(
+    State(state): State<AuthState>,
+    headers: HeaderMap,
+    Json(body): Json<SaveCoordinatesRequest>,
+) -> Result<impl IntoResponse, AppError> {
+    let pool = require_pool(&state.pool)?;
+    let _ = authenticate_admin(&headers, &state.settings)?;
+    let resp = coordinate_service::save_coordinates(pool, &body.coordinates).await?;
+    Ok(Json(resp))
+}

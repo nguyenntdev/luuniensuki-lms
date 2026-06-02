@@ -260,6 +260,18 @@ export function getUrns() {
   return apiRequest(`/api/v1/urns`);
 }
 
+/**
+ * Persist annotated motif coordinates (admin-only). Mirrors the
+ * import_coordinates.py matching logic server-side: each marker is matched to a
+ * motif within its urn by mesh_name then motif_name and its position updated.
+ */
+export function saveMotifCoordinates({ coordinates }) {
+  return apiRequest(`/api/v1/admin/motif-coordinates`, {
+    method: "POST",
+    body: { coordinates },
+  });
+}
+
 export function getDashboardSummary() {
   return apiRequest(`/api/v1/dashboard/summary`);
 }
