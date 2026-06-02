@@ -132,6 +132,23 @@ def _is_probable_hallucination(transcript: str) -> bool:
     # Exact match against the known stock-phrase set.
     if normalized in _STT_HALLUCINATION_PHRASES:
         return True
+    # Substring match for well-known Whisper silence hallucinations. These are
+    # YouTube outros baked into the training data and surface on silent/noisy
+    # Vietnamese clips ("Hãy subscribe cho kênh Ghiền Mì Gõ...").
+    for needle in (
+        "subscribe",
+        "ghiền mì gõ",
+        "ghien mi go",
+        "đăng ký kênh",
+        "dang ky kenh",
+        "thank you for watching",
+        "thanks for watching",
+        "hẹn gặp lại",
+        "amara.org",
+        "phụ đề",
+    ):
+        if needle in normalized:
+            return True
     # Strip surrounding punctuation/whitespace and retry.
     stripped = normalized.strip(" .,!?\"'…-")
     if stripped in _STT_HALLUCINATION_PHRASES:
