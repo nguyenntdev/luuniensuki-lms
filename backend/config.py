@@ -208,6 +208,14 @@ class Settings(BaseSettings):
     live_ai_stt_cost_per_minute_usd: float = 0.006
     live_ai_tts_cost_per_1k_chars_usd: float = 0.015
 
+    # Real-time conversational AI teacher (Path B). Per-deployment default voice
+    # mode; a classroom may override via session_metadata.voice_mode.
+    #   "legacy"   — turn-based polled STT->DeepSeek->TTS (current behavior)
+    #   "realtime" — continuous speech-to-speech loop (requires the audio bridge)
+    live_voice_mode: str = "legacy"
+    # Per-session realtime audio-minute budget (input+output). 0 = unlimited.
+    live_realtime_audio_minute_ceiling: float = 30.0
+
     # ==========================================================================
     # Computed Properties
     # ==========================================================================

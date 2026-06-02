@@ -301,6 +301,34 @@ def is_ai_enabled(live_session: LiveSession) -> bool:
     return bool(metadata.get(SESSION_METADATA_AI_ENABLED_KEY, True))
 
 
+# Real-time conversational AI teacher (Path B). A session may override the
+# deployment default voice mode via session_metadata.voice_mode for canary.
+SESSION_METADATA_VOICE_MODE_KEY = "voice_mode"
+VOICE_MODE_LEGACY = "legacy"
+VOICE_MODE_REALTIME = "realtime"
+_VALID_VOICE_MODES = {VOICE_MODE_LEGACY, VOICE_MODE_REALTIME}
+
+
+def resolve_voice_mode(live_session: LiveSession) -> str:
+    """Resolve the effective voice mode for a session.
+
+    Precedence: a valid ``session_metadata.voice_mode`` override, else the
+    deployment default ``settings.live_voice_mode``. Unknown values fall back to
+    ``"legacy"`` so a bad flag never breaks the session.
+    """
+    metadata = _session_metadata_dict(live_session)
+    raw = str(metadata.get(SESSION_METADATA_VOICE_MODE_KEY, "") or "").strip().lower()
+    if raw in _VALID_VOICE_MODES:
+        return raw
+    default = str(getattr(settings, "live_voice_mode", VOICE_MODE_LEGACY) or VOICE_MODE_LEGACY).strip().lower()
+    return default if default in _VALID_VOICE_MODES else VOICE_MODE_LEGACY
+
+
+def is_realtime_voice(live_session: LiveSession) -> bool:
+    """Whether this session should use the real-time speech-to-speech loop."""
+    return resolve_voice_mode(live_session) == VOICE_MODE_REALTIME
+
+
 def record_live_event(
     db: Session,
     *,
