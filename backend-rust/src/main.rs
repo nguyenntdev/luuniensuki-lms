@@ -352,8 +352,27 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
         .route("/api/v1/preview/complete", post(routes::misc::complete_preview))
         .route("/api/v1/preview/convert", post(routes::misc::convert_preview))
         .route("/api/v1/users/me/collection", get(routes::misc::get_user_collection))
-        .with_state(auth_state);
+        .with_state(auth_state.clone());
 
+
+    // Live virtual-classroom routes (.kiro/specs/live-room-rust-janus-migration)
+    // Native control plane + WS signaling. Media plane = Janus (feature-flagged).
+    let live_routes = Router::new()
+        .route("/api/v1/live-sessions", post(routes::live::create_session).get(routes::live::list_sessions))
+        .route("/api/v1/live-sessions/:id", get(routes::live::get_session))
+        .route("/api/v1/live-sessions/:id/end", post(routes::live::end_session))
+        .route("/api/v1/live-sessions/:id/join", post(routes::live::join_session))
+        .route("/api/v1/live-sessions/:id/token", post(routes::live::issue_credential))
+        .route("/api/v1/live-sessions/:id/leave", post(routes::live::leave_session))
+        .route("/api/v1/live-sessions/:id/participants", get(routes::live::list_participants))
+        .route("/api/v1/live-sessions/:id/participants/:pid/role", patch(routes::live::update_participant_role))
+        .route("/api/v1/live-sessions/:id/events", get(routes::live::list_events).post(routes::live::append_event))
+        .route("/api/v1/live-sessions/:id/host/settings", post(routes::live::update_settings))
+        .route("/api/v1/live-sessions/:id/host/mute-all", post(routes::live::mute_all))
+        .route("/api/v1/live-sessions/:id/host/remove-participant", post(routes::live::remove_participant))
+        .route("/api/v1/live-sessions/:id/ai-teacher/credential", post(routes::live::ai_teacher_credential))
+        .route("/api/v1/live-sessions/:id/signal", get(routes::live::signal_ws))
+        .with_state(auth_state.clone());
 
     // Static routes (no state needed)
     let static_routes = Router::new()
@@ -381,6 +400,7 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
         .merge(fsrs_routes)
         .merge(timeline_routes)
         .merge(trail_routes)
+        .merge(live_routes)
         .merge(misc_routes)
         .merge(internal_routes)
         .fallback(gateway::fallback_to_python)

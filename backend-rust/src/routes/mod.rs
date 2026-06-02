@@ -17,6 +17,7 @@ pub mod crash_reports;
 pub mod health;
 pub mod leaderboard;
 pub mod lessons;
+pub mod live;
 pub mod metrics;
 pub mod misc;
 pub mod notifications;
