@@ -7,7 +7,7 @@
 general: {
     # Admin key required to create/destroy rooms via the API. The Rust
     # JanusAdminClient supplies this; it is never sent to browsers.
-    admin_key = "${JANUS_ADMIN_SECRET}"
+    admin_key = "REPLACE_JANUS_ADMIN_SECRET"
     # Emit "joining" events so the broker can track the roster.
     # (Per-room options like publishers/bitrate/audiolevel_event are set at
     #  create time by the Rust admin client.)

@@ -9,9 +9,9 @@ general: {
     transports_folder = "/opt/janus/lib/janus/transports"
     # Keep logs modest on the disk-constrained host.
     debug_level = 4
-    admin_secret = "${JANUS_ADMIN_SECRET}"
+    admin_secret = "REPLACE_JANUS_ADMIN_SECRET"
     # API secret guards the signaling API (broker supplies it server-side).
-    api_secret = "${JANUS_API_SECRET}"
+    api_secret = "REPLACE_JANUS_API_SECRET"
     # We gate authorization at the Rust layer; no token auth here.
     token_auth = false
 }

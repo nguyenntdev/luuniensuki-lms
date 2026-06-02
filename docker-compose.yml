@@ -182,8 +182,15 @@ services:
     restart: unless-stopped
 
   janus-gateway:
-    image: canyanio/janus-gateway:1.2.4
-    command: ["/usr/local/bin/janus", "-F", "/opt/janus/etc/janus"]
+    image: mwalbeck/janus-gateway:1.4.1
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        set -e
+        mkdir -p /tmp/janus-etc
+        cp /opt/janus/etc/janus-tmpl/*.jcfg /tmp/janus-etc/
+        sed -i "s|REPLACE_JANUS_ADMIN_SECRET|$$JANUS_ADMIN_SECRET|g; s|REPLACE_JANUS_API_SECRET|$$JANUS_API_SECRET|g" /tmp/janus-etc/*.jcfg
+        exec /opt/janus/bin/janus -F /tmp/janus-etc
     environment:
       JANUS_ADMIN_SECRET: ${JANUS_ADMIN_SECRET:-devjanusadmin}
       JANUS_API_SECRET: ${JANUS_API_SECRET:-devjanusapi}
@@ -193,7 +200,7 @@ services:
       - "127.0.0.1:7088:7088"
       - "20000-20100:20000-20100/udp"
     volumes:
-      - ./janus/etc:/opt/janus/etc/janus:ro
+      - ./janus/etc:/opt/janus/etc/janus-tmpl:ro
     logging:
       driver: json-file
       options:
@@ -204,7 +211,6 @@ services:
         limits:
           memory: 512m
     restart: unless-stopped
-
   nginx:
     image: nginx:alpine
     profiles:

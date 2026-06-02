@@ -173,21 +173,29 @@ services:
       - ./certbot/conf:/etc/letsencrypt:ro
 
   janus-gateway:
-    image: canyanio/janus-gateway:1.2.4
+    image: mwalbeck/janus-gateway:1.4.1
     restart: unless-stopped
-    command: ["/usr/local/bin/janus", "-F", "/opt/janus/etc/janus"]
+    # Janus .jcfg files do not expand env vars, so substitute the secrets into a
+    # writable copy of the mounted config templates at start, then launch janus.
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        set -e
+        mkdir -p /tmp/janus-etc
+        cp /opt/janus/etc/janus-tmpl/*.jcfg /tmp/janus-etc/
+        sed -i "s|REPLACE_JANUS_ADMIN_SECRET|$$JANUS_ADMIN_SECRET|g; s|REPLACE_JANUS_API_SECRET|$$JANUS_API_SECRET|g" /tmp/janus-etc/*.jcfg
+        exec /opt/janus/bin/janus -F /tmp/janus-etc
     environment:
       JANUS_ADMIN_SECRET: ${JANUS_ADMIN_SECRET:?set in prod}
       JANUS_API_SECRET: ${JANUS_API_SECRET:?set in prod}
     expose:
-      - "8188"   # WS signaling (internal — reached by api_rust + reverse proxy)
-      - "8088"   # HTTP API (internal)
-      - "7088"   # Admin API (internal only)
+      - "8188"
+      - "8088"
+      - "7088"
     ports:
-      # Media UDP range only (non-overlapping with LiveKit 50000-50100).
       - "20000-20100:20000-20100/udp"
     volumes:
-      - ./janus/etc:/opt/janus/etc/janus:ro
+      - ./janus/etc:/opt/janus/etc/janus-tmpl:ro
       - ./certbot/conf:/etc/letsencrypt:ro
     logging:
       driver: json-file
@@ -198,7 +206,6 @@ services:
       resources:
         limits:
           memory: 512m
-
   nginx:
     image: nginx:1.25-alpine
     restart: unless-stopped
