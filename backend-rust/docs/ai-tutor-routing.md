@@ -43,6 +43,23 @@ equivalent planned.
    listed in this document is pinned `gateway` in `route-modes.toml`. Any drift
    fails the build.
 
+## Scope: AI/LLM routes vs. live-session control plane
+
+This pinning applies **only** to the AI worker's LLM/STT/TTS and chat routes
+listed above (the `/api/v1/live/*` and `/api/v1/ai-tutor/*` families). It does
+**not** cover the live virtual-classroom **control plane** at
+`/api/v1/live-sessions/*` (create/list/get/end/join/token/leave/participants/
+events/role/settings/moderation/signal), which the
+`live-room-rust-janus-migration` feature implements with **native Rust handlers**
+(`routes/live.rs`). Those control routes are flipped from `gateway` → `native`
+during that feature's phased, operator-gated cutover (not by this lint), while
+the LLM/STT/TTS routes remain `gateway`-pinned here permanently.
+
+The `ai-tutor-pinning` CI lint MUST therefore enforce gateway-pinning against the
+route list in the table above (AI/LLM/chat) and MUST NOT assert anything about
+`/api/v1/live-sessions/*`, so enabling native live-control handlers does not trip
+the lint.
+
 ## Post-Cutover Behavior
 
 After full cutover (Phase 16), the Python `api` service is removed but the

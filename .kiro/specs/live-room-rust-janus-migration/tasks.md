@@ -90,17 +90,17 @@ disk/memory-constrained host.
   - [x] 10.2 Register module; `cargo check`.
   - **Validates:** Requirements 10.1, 10.2, 10.3
 
-- [ ] 11. Session service (`services/live_session_service.rs`)
-  - [ ] 11.1 Implement `create_session` (idempotent on `(classroom_id, idempotency_key)`; insert row → provision Janus room → persist `live_janus_rooms` → `session_created` event → optional AI hook; rollback insert + 503 on Janus failure; record active `live_media_backend` in metadata).
-  - [ ] 11.2 Implement `list_sessions`, `get_session`, `update_settings`.
-  - [ ] 11.3 Implement `end_session` (scheduled→live→ended only; idempotent no-op when already ended; set `ended_at` once; `session_ended` event; destroy Janus room; on destroy failure still end + record `room_close_failed`; AI `session.ended` hook).
-  - [ ] 11.4 Register module; `cargo check`.
+- [x] 11. Session service (`services/live_session_service.rs`)
+  - [x] 11.1 Implement `create_session` (idempotent on `(classroom_id, idempotency_key)`; insert row → provision Janus room → persist `live_janus_rooms` → `session_created` event → optional AI hook; rollback insert + 503 on Janus failure; record active `live_media_backend` in metadata).
+  - [x] 11.2 Implement `list_sessions`, `get_session`, `update_settings`.
+  - [x] 11.3 Implement `end_session` (scheduled→live→ended only; idempotent no-op when already ended; set `ended_at` once; `session_ended` event; destroy Janus room; on destroy failure still end + record `room_close_failed`; AI `session.ended` hook).
+  - [x] 11.4 Register module; `cargo check`.
   - [ ]* 11.5 Property tests — Property 2 (idempotent creation) and Property 7 (state-machine validity).
   - **Validates:** Requirements 2.1–2.4, 7.1–7.3, 9.3, 11.3
 
-- [ ] 12. Moderation service (`services/live_moderation_service.rs`)
-  - [ ] 12.1 Implement `mute_all` (target non-host, non-AI; cohosts only when `include_cohosts`; report processed+failed) and `remove_participant` (Janus `kick` + set `left_at`); delegate media ops to `JanusAdmin` with the per-room secret.
-  - [ ] 12.2 Register module; `cargo check`.
+- [x] 12. Moderation service (`services/live_moderation_service.rs`)
+  - [x] 12.1 Implement `mute_all` (target non-host, non-AI; cohosts only when `include_cohosts`; report processed+failed) and `remove_participant` (Janus `kick` + set `left_at`); delegate media ops to `JanusAdmin` with the per-room secret.
+  - [x] 12.2 Register module; `cargo check`.
   - [ ]* 12.3 Property test — Property 8 (moderation invariants).
   - **Validates:** Requirements 4.2, 4.4, 4.5
 
@@ -111,27 +111,27 @@ disk/memory-constrained host.
 
 ### Wave 3 — Signaling broker
 
-- [ ] 14. Janus signaling broker (`services/janus_signaling.rs`)
-  - [ ] 14.1 Implement the per-connection `SignalingSession` over `tokio-tungstenite` to the Janus WS API: create Janus session, attach VideoRoom handle, bind to identity.
-  - [ ] 14.2 Implement the `join_publisher` → `publish` (configure + JSEP) → `answer` flow, persisting `janus_feed_id`/`janus_handle_id`; record one `participant_published` on `webrtcup`.
-  - [ ] 14.3 Implement subscriber attach (`subscribe`/`answer`), bidirectional ICE trickle forwarding (incl. end-of-candidates), and 25s Janus keepalive.
-  - [ ] 14.4 Implement reconnection grace (`LIVE_RECONNECT_GRACE_SECONDS`): reuse roster row within window, else `mark_left` + `participant_left`. Implement `leave`/disconnect cleanup (VideoRoom leave → destroy Janus session → mark left).
-  - [ ] 14.5 Register module; `cargo check`.
+- [x] 14. Janus signaling broker (`services/janus_signaling.rs`)
+  - [x] 14.1 Implement the per-connection `SignalingSession` over `tokio-tungstenite` to the Janus WS API: create Janus session, attach VideoRoom handle, bind to identity.
+  - [x] 14.2 Implement the `join_publisher` → `publish` (configure + JSEP) → `answer` flow, persisting `janus_feed_id`/`janus_handle_id`; record one `participant_published` on `webrtcup`.
+  - [x] 14.3 Implement subscriber attach (`subscribe`/`answer`), bidirectional ICE trickle forwarding (incl. end-of-candidates), and 25s Janus keepalive.
+  - [x] 14.4 Implement reconnection grace (`LIVE_RECONNECT_GRACE_SECONDS`): reuse roster row within window, else `mark_left` + `participant_left`. Implement `leave`/disconnect cleanup (VideoRoom leave → destroy Janus session → mark left).
+  - [x] 14.5 Register module; `cargo check`.
   - **Validates:** Requirements 8.1–8.7, 6.4, 3.1
 
 ### Wave 4 — Routes & wiring
 
-- [ ] 15. Live REST handlers (`routes/live.rs`)
-  - [ ] 15.1 Implement REST handlers for the full `/api/v1/live-sessions/*` surface (create, list, get, end, token, join, leave, participants, events list/append, role, settings, mute-all, remove-participant) delegating to services with auth + `AppError` mapping.
-  - [ ] 15.2 Implement the WS `signal_ws` handler (verify credential on upgrade → run `SignalingSession`; close 4401 on bad credential).
+- [x] 15. Live REST handlers (`routes/live.rs`)
+  - [x] 15.1 Implement REST handlers for the full `/api/v1/live-sessions/*` surface (create, list, get, end, token, join, leave, participants, events list/append, role, settings, mute-all, remove-participant) delegating to services with auth + `AppError` mapping.
+  - [x] 15.2 Implement the WS `signal_ws` handler (verify credential on upgrade → run `SignalingSession`; close 4401 on bad credential).
   - [ ] 15.3 Implement `ai-teacher/credential` (requires `LIVE_INTERNAL_TOKEN`) and the optional `POST /api/v1/janus/webhook` (shared secret → `webhook.<event>`).
-  - [ ] 15.4 Register `pub mod live;` in `routes/mod.rs`; `cargo check`.
+  - [x] 15.4 Register `pub mod live;` in `routes/mod.rs`; `cargo check`.
   - **Validates:** Requirements 1.6, 5.3, 5.4, 5.5, 7.3, 9.6, 10.4, 10.5
 
-- [ ] 16. Router wiring & route modes
-  - [ ] 16.1 Mount the live routes in `build_router` (`src/main.rs`) with `auth_state`; mount the WS route with the `ws` extractor.
-  - [ ] 16.2 Keep `/api/v1/live-sessions/*` and `/api/v1/live/*` entries as `gateway` in `route-modes.toml` for now (cutover is task 17.x); update `docs/ai-tutor-routing.md` so the AI-tutor pinning lint scopes to the LLM/STT/TTS routes only, not the control routes.
-  - [ ] 16.3 Run `cargo build` to verify full compilation.
+- [x] 16. Router wiring & route modes
+  - [x] 16.1 Mount the live routes in `build_router` (`src/main.rs`) with `auth_state`; mount the WS route with the `ws` extractor.
+  - [x] 16.2 Keep `/api/v1/live-sessions/*` and `/api/v1/live/*` entries as `gateway` in `route-modes.toml` for now (cutover is task 17.x); update `docs/ai-tutor-routing.md` so the AI-tutor pinning lint scopes to the LLM/STT/TTS routes only, not the control routes.
+  - [x] 16.3 Run `cargo build` to verify full compilation.
   - **Validates:** Requirements 11.1, 10.5
 
 ### Wave 5 — Integration & contract tests (optional)
