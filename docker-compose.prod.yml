@@ -31,6 +31,11 @@ services:
       DEEPSEEK_BASE_URL: ${DEEPSEEK_BASE_URL:-https://api.yescale.vip/v1}
       DEEPSEEK_MODEL: ${DEEPSEEK_MODEL:-deepseek-v3}
       DEEPSEEK_TIMEOUT_SECONDS: ${DEEPSEEK_TIMEOUT_SECONDS:-20}
+      VOICE_API_KEY: ${VOICE_API_KEY:-}
+      VOICE_BASE_URL: ${VOICE_BASE_URL:-https://api.yescale.vip/v1}
+      VOICE_STT_MODEL: ${VOICE_STT_MODEL:-gpt-4o-mini-transcribe}
+      VOICE_TTS_MODEL: ${VOICE_TTS_MODEL:-gpt-4o-mini-tts}
+      VOICE_TTS_VOICE: ${VOICE_TTS_VOICE:-alloy}
       LIVEKIT_URL: ${LIVEKIT_URL:-}
       LIVEKIT_PUBLIC_URL: ${LIVEKIT_PUBLIC_URL:-}
       LIVEKIT_API_KEY: ${LIVEKIT_API_KEY:-}
@@ -118,6 +123,11 @@ services:
       DEEPSEEK_MODEL: ${DEEPSEEK_MODEL:-deepseek-v3}
       DEEPSEEK_TIMEOUT_SECONDS: ${DEEPSEEK_TIMEOUT_SECONDS:-20}
       DEEPSEEK_MAX_RETRIES: ${DEEPSEEK_MAX_RETRIES:-1}
+      VOICE_API_KEY: ${VOICE_API_KEY:-}
+      VOICE_BASE_URL: ${VOICE_BASE_URL:-https://api.yescale.vip/v1}
+      VOICE_STT_MODEL: ${VOICE_STT_MODEL:-gpt-4o-mini-transcribe}
+      VOICE_TTS_MODEL: ${VOICE_TTS_MODEL:-gpt-4o-mini-tts}
+      VOICE_TTS_VOICE: ${VOICE_TTS_VOICE:-alloy}
       LIVEKIT_ROOM_PREFIX: ${LIVEKIT_ROOM_PREFIX:-lms-live}
     depends_on:
       db:
