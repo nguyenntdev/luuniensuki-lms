@@ -621,6 +621,38 @@ def _process_live_session(db: Session, live_session: LiveSession) -> None:
         logger.warning("Cannot ensure AI presence for session=%s: %s", live_session.id, exc)
         return
 
+    # Real-time voice mode (Path B): if this session opts into realtime AND a
+    # bridge slot is free on this (capacity-bounded) host, the AI audio bridge
+    # handles the conversation. Otherwise we transparently fall back to the
+    # legacy turn-based loop below. The decision is recorded once so the client
+    # knows which mode is active. The full WebRTC media loop is driven by the
+    # async bridge (validated only with a live session); the legacy poller below
+    # remains the always-available path.
+    try:
+        if live_session_service.is_realtime_voice(live_session):
+            from backend.services.live_audio_bridge import REGISTRY  # lazy
+
+            if REGISTRY.try_acquire(str(live_session.id)):
+                # Slot held for this session; the async bridge (if running)
+                # owns the media. The poller still serves any text voice
+                # requests so nothing is dropped during bring-up.
+                logger.info(
+                    "session=%s realtime voice ENGAGED (active=%d/%d)",
+                    live_session.id,
+                    REGISTRY.active_count,
+                    REGISTRY.max_sessions,
+                )
+            else:
+                logger.info(
+                    "session=%s realtime voice AT CAPACITY (%d/%d) -> legacy fallback",
+                    live_session.id,
+                    REGISTRY.active_count,
+                    REGISTRY.max_sessions,
+                )
+    except Exception as exc:
+        # Realtime must never break the legacy path.
+        logger.warning("realtime gate error session=%s: %s", live_session.id, exc)
+
     pending = (
         db.execute(
             select(LiveEvent)

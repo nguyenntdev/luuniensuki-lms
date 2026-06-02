@@ -19,4 +19,9 @@ httpx>=0.27,<1.0
 edge-tts>=6.1,<7.0
 gTTS>=2.5,<3.0
 
+# Real-time conversational AI teacher (Path B) — WebRTC audio bridge.
+# Pulls in `av` (ffmpeg/libav). Only used when LIVE_VOICE_MODE=realtime and a
+# session opts in; capped to a small number of concurrent sessions on the host.
+aiortc>=1.9,<2.0
+
 gunicorn>=21.2,<23.0

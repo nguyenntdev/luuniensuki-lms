@@ -215,6 +215,10 @@ class Settings(BaseSettings):
     live_voice_mode: str = "legacy"
     # Per-session realtime audio-minute budget (input+output). 0 = unlimited.
     live_realtime_audio_minute_ceiling: float = 30.0
+    # Hard cap on concurrent realtime audio bridges on this host (resource bound;
+    # the constrained box is internal-testing only). Over-cap sessions fall back
+    # to the legacy turn-based loop.
+    live_realtime_max_sessions: int = 2
 
     # ==========================================================================
     # Computed Properties
