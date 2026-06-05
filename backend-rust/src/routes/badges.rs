@@ -11,11 +11,11 @@ use sqlx::PgPool;
 /// A badge row from the database.
 #[derive(Debug, Serialize, sqlx::FromRow)]
 pub struct Badge {
-    pub id: i32,
+    pub id: String,
     pub slug: String,
     pub name: String,
-    pub name_en: String,
-    pub description: String,
+    pub name_en: Option<String>,
+    pub description: Option<String>,
     pub icon_url: Option<String>,
     pub category: Option<String>,
     pub xp_bonus: i32,
@@ -35,7 +35,7 @@ pub async fn list_badges(State(pool): State<Option<PgPool>>) -> impl IntoRespons
     };
 
     let result = sqlx::query_as::<_, Badge>(
-        "SELECT id, slug, name, name_en, description, icon_url, category::text, COALESCE(xp_bonus, 0) as xp_bonus FROM badges WHERE is_active = true AND is_secret = false ORDER BY name"
+        "SELECT id::text, slug, name, name_en, description, icon_url, category::text, COALESCE(xp_bonus, 0) as xp_bonus FROM badges WHERE is_active = true AND is_secret = false ORDER BY name"
     )
     .fetch_all(&pool)
     .await;

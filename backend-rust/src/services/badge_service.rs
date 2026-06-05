@@ -71,10 +71,14 @@ pub async fn award_badge(
 pub async fn list_quests(pool: &PgPool, _user_id: Uuid) -> Result<Vec<QuestOut>, AppError> {
     let rows = sqlx::query_as::<_, QuestRow>(
         r#"
-        SELECT id, slug, title, description, quest_type, xp_reward, requirements, is_active
+        SELECT id, slug, name AS title, description,
+               COALESCE(category, 'general') AS quest_type,
+               COALESCE((SELECT SUM(qr.amount)::int FROM quest_rewards qr
+                         WHERE qr.quest_id = quests.id AND qr.reward_type = 'xp'), 0) AS xp_reward,
+               NULL::jsonb AS requirements, is_active
         FROM quests
         WHERE is_active = true
-        ORDER BY created_at DESC
+        ORDER BY display_order NULLS LAST, name
         "#,
     )
     .fetch_all(pool)
@@ -103,7 +107,7 @@ pub async fn get_quest_detail(
     user_id: Uuid,
 ) -> Result<QuestDetailOut, AppError> {
     let quest = sqlx::query_as::<_, QuestRow>(
-        "SELECT id, slug, title, description, quest_type, xp_reward, requirements, is_active FROM quests WHERE slug = $1",
+        "SELECT id, slug, name AS title, description, COALESCE(category, 'general') AS quest_type, COALESCE((SELECT SUM(qr.amount)::int FROM quest_rewards qr WHERE qr.quest_id = quests.id AND qr.reward_type = 'xp'), 0) AS xp_reward, NULL::jsonb AS requirements, is_active FROM quests WHERE slug = $1",
     )
     .bind(quest_slug)
     .fetch_optional(pool)
@@ -116,7 +120,7 @@ pub async fn get_quest_detail(
 
     // Get steps
     let steps = sqlx::query_as::<_, QuestStepRow>(
-        "SELECT step_number, description, target_count FROM quest_steps WHERE quest_id = $1 ORDER BY step_number",
+        "SELECT display_order AS step_number, description, 1 AS target_count FROM quest_steps WHERE quest_id = $1 ORDER BY display_order",
     )
     .bind(quest.id)
     .fetch_all(pool)
@@ -125,7 +129,7 @@ pub async fn get_quest_detail(
 
     // Get user progress
     let progress = sqlx::query_as::<_, QuestProgressRow>(
-        "SELECT started_at, completed_at, current_step FROM user_quests WHERE user_id = $1 AND quest_id = $2",
+        "SELECT started_at, completed_at, 1 AS current_step FROM quest_progress WHERE user_id = $1 AND quest_id = $2",
     )
     .bind(user_id)
     .bind(quest.id)
@@ -165,7 +169,7 @@ pub async fn start_quest(
     user_id: Uuid,
 ) -> Result<QuestStartResponse, AppError> {
     let quest = sqlx::query_as::<_, QuestRow>(
-        "SELECT id, slug, title, description, quest_type, xp_reward, requirements, is_active FROM quests WHERE slug = $1",
+        "SELECT id, slug, name AS title, description, COALESCE(category, 'general') AS quest_type, COALESCE((SELECT SUM(qr.amount)::int FROM quest_rewards qr WHERE qr.quest_id = quests.id AND qr.reward_type = 'xp'), 0) AS xp_reward, NULL::jsonb AS requirements, is_active FROM quests WHERE slug = $1",
     )
     .bind(quest_slug)
     .fetch_optional(pool)
@@ -178,7 +182,7 @@ pub async fn start_quest(
 
     // Check if already started
     let existing = sqlx::query_as::<_, QuestProgressRow>(
-        "SELECT started_at, completed_at, current_step FROM user_quests WHERE user_id = $1 AND quest_id = $2",
+        "SELECT started_at, completed_at, 1 AS current_step FROM quest_progress WHERE user_id = $1 AND quest_id = $2",
     )
     .bind(user_id)
     .bind(quest.id)
@@ -198,7 +202,7 @@ pub async fn start_quest(
 
     let now = Utc::now();
     sqlx::query(
-        "INSERT INTO user_quests (id, user_id, quest_id, started_at, current_step) VALUES ($1, $2, $3, $4, 1)",
+        "INSERT INTO quest_progress (id, user_id, quest_id, started_at, status) VALUES ($1, $2, $3, $4, 'in_progress')",
     )
     .bind(Uuid::new_v4())
     .bind(user_id)
@@ -253,10 +257,14 @@ pub async fn get_quest_summary(pool: &PgPool, user_id: Uuid) -> Result<QuestSumm
 pub async fn get_weekly_quests(pool: &PgPool, _user_id: Uuid) -> Result<Vec<QuestOut>, AppError> {
     let rows = sqlx::query_as::<_, QuestRow>(
         r#"
-        SELECT id, slug, title, description, quest_type, xp_reward, requirements, is_active
+        SELECT id, slug, name AS title, description,
+               COALESCE(category, 'general') AS quest_type,
+               COALESCE((SELECT SUM(qr.amount)::int FROM quest_rewards qr
+                         WHERE qr.quest_id = quests.id AND qr.reward_type = 'xp'), 0) AS xp_reward,
+               NULL::jsonb AS requirements, is_active
         FROM quests
-        WHERE is_active = true AND quest_type = 'weekly'
-        ORDER BY created_at DESC
+        WHERE is_active = true AND category = 'weekly'
+        ORDER BY display_order NULLS LAST, name
         "#,
     )
     .fetch_all(pool)
@@ -282,15 +290,15 @@ pub async fn get_weekly_quests(pool: &PgPool, _user_id: Uuid) -> Result<Vec<Ques
 pub async fn get_daily_missions(pool: &PgPool, user_id: Uuid) -> Result<DailyMissionsResponse, AppError> {
     let rows = sqlx::query_as::<_, DailyMissionRow>(
         r#"
-        SELECT dm.id, dm.title, dm.description, dm.mission_type,
+        SELECT dm.id, dm.name AS title, dm.description, dm.mission_type::text AS mission_type,
                dm.target_count, COALESCE(udm.current_count, 0) AS current_count,
                dm.xp_reward,
                COALESCE(udm.is_completed, false) AS is_completed,
-               dm.expires_at
+               NULL::timestamptz AS expires_at
         FROM daily_missions dm
         LEFT JOIN user_daily_missions udm ON udm.mission_id = dm.id AND udm.user_id = $1
-        WHERE dm.is_active = true AND (dm.expires_at IS NULL OR dm.expires_at > NOW())
-        ORDER BY dm.display_order NULLS LAST, dm.title
+        WHERE dm.is_active = true
+        ORDER BY dm.name
         "#,
     )
     .bind(user_id)

@@ -56,8 +56,8 @@ pub struct LiveParticipant {
     pub is_ai: bool,
     pub joined_at: DateTime<Utc>,
     pub left_at: Option<DateTime<Utc>>,
-    /// JSONB connection metadata.
-    pub connection_metadata: serde_json::Value,
+    /// JSONB connection metadata (nullable in the DB; legacy/AI rows may be NULL).
+    pub connection_metadata: Option<serde_json::Value>,
     /// VideoRoom publisher feed id (nullable; bound during publish).
     pub janus_feed_id: Option<i64>,
     /// Janus plugin handle id (nullable; bound during attach).

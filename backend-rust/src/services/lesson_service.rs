@@ -815,7 +815,7 @@ pub async fn mark_lesson_cached(
     // Upsert cache entry
     let row = sqlx::query_as::<_, LessonCacheRow>(
         r#"
-        INSERT INTO lesson_caches (id, user_id, lesson_id, cached_at,
+        INSERT INTO lesson_cache (id, user_id, lesson_id, cached_at,
             cache_version, file_size_bytes, is_valid, expires_at)
         VALUES ($1, $2, $3, $4, $5, $6, true, $7)
         ON CONFLICT (user_id, lesson_id)
@@ -855,7 +855,7 @@ pub async fn remove_cached_lesson(
     user_id: Uuid,
 ) -> Result<(), AppError> {
     let result = sqlx::query(
-        "DELETE FROM lesson_caches WHERE user_id = $1 AND lesson_id = $2",
+        "DELETE FROM lesson_cache WHERE user_id = $1 AND lesson_id = $2",
     )
     .bind(user_id)
     .bind(lesson_id)
@@ -881,7 +881,7 @@ pub async fn get_cached_lessons(
         r#"
         SELECT id, user_id, lesson_id, cached_at, cache_version,
                file_size_bytes, is_valid, expires_at
-        FROM lesson_caches
+        FROM lesson_cache
         WHERE user_id = $1
         ORDER BY cached_at DESC
         "#,

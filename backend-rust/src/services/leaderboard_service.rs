@@ -102,8 +102,8 @@ pub async fn get_friends_leaderboard(
         SELECT u.id AS user_id, u.display_name, u.avatar_url, u.total_xp
         FROM users u
         WHERE u.id = $1
-           OR u.id IN (SELECT friend_id FROM friendships WHERE user_id = $1 AND status = 'accepted')
-           OR u.id IN (SELECT user_id FROM friendships WHERE friend_id = $1 AND status = 'accepted')
+           OR u.id IN (SELECT to_user_id FROM friend_requests WHERE from_user_id = $1 AND status = 'accepted')
+           OR u.id IN (SELECT from_user_id FROM friend_requests WHERE to_user_id = $1 AND status = 'accepted')
         ORDER BY u.total_xp DESC, u.display_name ASC
         LIMIT $2
         "#,
