@@ -224,7 +224,7 @@ pub async fn get_quest_summary(pool: &PgPool, user_id: Uuid) -> Result<QuestSumm
         SELECT
             COUNT(CASE WHEN qp.completed_at IS NULL THEN 1 END) AS active,
             COUNT(CASE WHEN qp.completed_at IS NOT NULL THEN 1 END) AS completed,
-            COALESCE(SUM(CASE WHEN qp.completed_at IS NOT NULL THEN COALESCE(qr.xp, 0) ELSE 0 END), 0) AS total_xp
+            COALESCE(SUM(CASE WHEN qp.completed_at IS NOT NULL THEN COALESCE(qr.xp, 0) ELSE 0 END), 0)::bigint AS total_xp
         FROM quest_progress qp
         LEFT JOIN (
             SELECT quest_id, SUM(amount) AS xp
