@@ -75,14 +75,16 @@ pub async fn save_coordinates(
             .unwrap_or(item.motif_name.as_str());
 
         // Resolve the motif id within the urn, by mesh_name first then name.
+        // Case-insensitive so annotation exports (e.g. "Linh quy") still match
+        // DB names in Title Case ("Linh Quy").
         let motif_id: Option<Uuid> = sqlx::query_scalar(
             r#"
             SELECT m.id
             FROM motifs m
             JOIN urns u ON u.id = m.urn_id
             WHERE u.slug = $1
-              AND (m.mesh_name = $2 OR m.name = $3)
-            ORDER BY (m.mesh_name = $2) DESC
+              AND (LOWER(m.mesh_name) = LOWER($2) OR LOWER(m.name) = LOWER($3))
+            ORDER BY (LOWER(m.mesh_name) = LOWER($2)) DESC
             LIMIT 1
             "#,
         )
