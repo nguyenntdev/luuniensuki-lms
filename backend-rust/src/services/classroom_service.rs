@@ -17,7 +17,7 @@ async fn require_classroom_admin(
 ) -> Result<(), AppError> {
     // Check if owner
     let owner: Option<(Uuid,)> = sqlx::query_as(
-        "SELECT owner_id FROM classrooms WHERE id = $1 AND owner_id = $2",
+        "SELECT teacher_id AS owner_id FROM classes WHERE id = $1 AND teacher_id = $2",
     )
     .bind(classroom_id)
     .bind(user_id)
@@ -31,7 +31,7 @@ async fn require_classroom_admin(
 
     // Check if teacher member
     let member = sqlx::query_as::<_, MemberRoleRow>(
-        "SELECT role FROM classroom_members WHERE classroom_id = $1 AND user_id = $2",
+        "SELECT role FROM class_members WHERE class_id = $1 AND user_id = $2",
     )
     .bind(classroom_id)
     .bind(user_id)
@@ -55,7 +55,7 @@ async fn require_classroom_member(
     user_id: Uuid,
 ) -> Result<(), AppError> {
     let owner: Option<(Uuid,)> = sqlx::query_as(
-        "SELECT owner_id FROM classrooms WHERE id = $1 AND owner_id = $2",
+        "SELECT teacher_id AS owner_id FROM classes WHERE id = $1 AND teacher_id = $2",
     )
     .bind(classroom_id)
     .bind(user_id)
@@ -68,7 +68,7 @@ async fn require_classroom_member(
     }
 
     let member: Option<(Uuid,)> = sqlx::query_as(
-        "SELECT user_id FROM classroom_members WHERE classroom_id = $1 AND user_id = $2",
+        "SELECT user_id FROM class_members WHERE class_id = $1 AND user_id = $2",
     )
     .bind(classroom_id)
     .bind(user_id)
@@ -94,12 +94,15 @@ pub async fn create_classroom(
 ) -> Result<ClassroomOut, AppError> {
     let now = Utc::now();
     let max_members = payload.max_members.unwrap_or(30);
+    // classes.class_code is required; generate a short unique-ish join code.
+    let class_code: String = Uuid::new_v4().simple().to_string()[..8].to_uppercase();
 
     let row = sqlx::query_as::<_, ClassroomRow>(
         r#"
-        INSERT INTO classrooms (id, name, description, owner_id, max_members, member_count, created_at, is_archived)
-        VALUES ($1, $2, $3, $4, $5, 0, $6, false)
-        RETURNING id, name, description, owner_id, max_members, member_count, created_at, is_archived
+        INSERT INTO classes (id, name, description, teacher_id, max_students, class_code, created_at, is_archived)
+        VALUES ($1, $2, $3, $4, $5, $7, $6, false)
+        RETURNING id, name, description, teacher_id AS owner_id, max_students AS max_members,
+                  0 AS member_count, created_at, is_archived
         "#,
     )
     .bind(Uuid::new_v4())
@@ -108,6 +111,7 @@ pub async fn create_classroom(
     .bind(user_id)
     .bind(max_members)
     .bind(now)
+    .bind(&class_code)
     .fetch_one(pool)
     .await
     .map_err(|e| AppError::Internal(e.into()))?;
@@ -128,12 +132,13 @@ pub async fn create_classroom(
 pub async fn list_classrooms(pool: &PgPool, user_id: Uuid) -> Result<Vec<ClassroomOut>, AppError> {
     let rows = sqlx::query_as::<_, ClassroomRow>(
         r#"
-        SELECT c.id, c.name, c.description, c.owner_id, c.max_members,
-               c.member_count, c.created_at, c.is_archived
-        FROM classrooms c
+        SELECT c.id, c.name, c.description, c.teacher_id AS owner_id, c.max_students AS max_members,
+               (SELECT COUNT(*)::int FROM class_members cmc WHERE cmc.class_id = c.id) AS member_count,
+               c.created_at, c.is_archived
+        FROM classes c
         WHERE c.is_archived = false
-          AND (c.owner_id = $1 OR EXISTS (
-              SELECT 1 FROM classroom_members cm WHERE cm.classroom_id = c.id AND cm.user_id = $1
+          AND (c.teacher_id = $1 OR EXISTS (
+              SELECT 1 FROM class_members cm WHERE cm.class_id = c.id AND cm.user_id = $1
           ))
         ORDER BY c.created_at DESC
         "#,
@@ -168,8 +173,9 @@ pub async fn get_classroom(
 
     let row = sqlx::query_as::<_, ClassroomRow>(
         r#"
-        SELECT id, name, description, owner_id, max_members, member_count, created_at, is_archived
-        FROM classrooms WHERE id = $1
+        SELECT id, name, description, teacher_id AS owner_id, max_students AS max_members,
+               (SELECT COUNT(*)::int FROM class_members WHERE class_id = $1) AS member_count, created_at, is_archived
+        FROM classes WHERE id = $1
         "#,
     )
     .bind(classroom_id)
@@ -205,12 +211,14 @@ pub async fn update_classroom(
     // Build dynamic update
     let row = sqlx::query_as::<_, ClassroomRow>(
         r#"
-        UPDATE classrooms SET
+        UPDATE classes SET
             name = COALESCE($2, name),
             description = COALESCE($3, description),
-            max_members = COALESCE($4, max_members)
+            max_students = COALESCE($4, max_students)
         WHERE id = $1
-        RETURNING id, name, description, owner_id, max_members, member_count, created_at, is_archived
+        RETURNING id, name, description, teacher_id AS owner_id, max_students AS max_members,
+                  (SELECT COUNT(*)::int FROM class_members WHERE class_id = classes.id) AS member_count,
+                  created_at, is_archived
         "#,
     )
     .bind(classroom_id)
@@ -245,7 +253,7 @@ pub async fn archive_classroom(
 ) -> Result<(), AppError> {
     require_classroom_admin(pool, classroom_id, user_id).await?;
 
-    let result = sqlx::query("UPDATE classrooms SET is_archived = true WHERE id = $1")
+    let result = sqlx::query("UPDATE classes SET is_archived = true WHERE id = $1")
         .bind(classroom_id)
         .execute(pool)
         .await
@@ -271,9 +279,9 @@ pub async fn list_members(
     let rows = sqlx::query_as::<_, ClassroomMemberRow>(
         r#"
         SELECT cm.user_id, u.display_name, cm.role, cm.joined_at
-        FROM classroom_members cm
+        FROM class_members cm
         JOIN users u ON u.id = cm.user_id
-        WHERE cm.classroom_id = $1
+        WHERE cm.class_id = $1
         ORDER BY cm.joined_at
         "#,
     )
@@ -307,7 +315,7 @@ pub async fn add_member(
 
     // Check capacity
     let classroom = sqlx::query_as::<_, ClassroomRow>(
-        "SELECT id, name, description, owner_id, max_members, member_count, created_at, is_archived FROM classrooms WHERE id = $1",
+        "SELECT id, name, description, teacher_id AS owner_id, max_students AS max_members, (SELECT COUNT(*)::int FROM class_members WHERE class_id = $1) AS member_count, created_at, is_archived FROM classes WHERE id = $1",
     )
     .bind(classroom_id)
     .fetch_optional(pool)
@@ -341,7 +349,7 @@ pub async fn add_member(
     // Insert member (conflict = already a member)
     sqlx::query(
         r#"
-        INSERT INTO classroom_members (id, classroom_id, user_id, role, joined_at)
+        INSERT INTO class_members (id, class_id, user_id, role, joined_at)
         VALUES ($1, $2, $3, $4, $5)
         "#,
     )
@@ -367,7 +375,7 @@ pub async fn add_member(
     })?;
 
     // Update member count
-    sqlx::query("UPDATE classrooms SET member_count = member_count + 1 WHERE id = $1")
+    sqlx::query("UPDATE classes SET updated_at = NOW() WHERE id = $1")
         .bind(classroom_id)
         .execute(pool)
         .await
@@ -391,7 +399,7 @@ pub async fn remove_member(
     require_classroom_admin(pool, classroom_id, requesting_user_id).await?;
 
     let result = sqlx::query(
-        "DELETE FROM classroom_members WHERE classroom_id = $1 AND user_id = $2",
+        "DELETE FROM class_members WHERE class_id = $1 AND user_id = $2",
     )
     .bind(classroom_id)
     .bind(target_user_id)
@@ -407,7 +415,7 @@ pub async fn remove_member(
     }
 
     // Update member count
-    sqlx::query("UPDATE classrooms SET member_count = GREATEST(member_count - 1, 0) WHERE id = $1")
+    sqlx::query("UPDATE classes SET updated_at = NOW() WHERE id = $1")
         .bind(classroom_id)
         .execute(pool)
         .await
@@ -428,10 +436,9 @@ pub async fn list_classroom_lessons(
         r#"
         SELECT cl.id, cl.motif_id, m.name AS motif_name, cl.assigned_at,
                cl.due_date, COALESCE(cl.completed_count, 0) AS completed_count,
-               c.member_count AS total_members
+               (SELECT COUNT(*)::int FROM class_members WHERE class_id = cl.classroom_id) AS total_members
         FROM classroom_lessons cl
         JOIN motifs m ON m.id = cl.motif_id
-        JOIN classrooms c ON c.id = cl.classroom_id
         WHERE cl.classroom_id = $1
         ORDER BY cl.assigned_at DESC
         "#,
@@ -477,7 +484,7 @@ pub async fn assign_lesson(
             message: "Motif not found".to_string(),
         })?;
 
-    let member_count: (i32,) = sqlx::query_as("SELECT member_count FROM classrooms WHERE id = $1")
+    let member_count: (i32,) = sqlx::query_as("SELECT (SELECT COUNT(*)::int FROM class_members WHERE class_id = $1)")
         .bind(classroom_id)
         .fetch_one(pool)
         .await
@@ -519,7 +526,7 @@ pub async fn get_classroom_analytics(
     require_classroom_admin(pool, classroom_id, user_id).await?;
 
     let classroom = sqlx::query_as::<_, ClassroomRow>(
-        "SELECT id, name, description, owner_id, max_members, member_count, created_at, is_archived FROM classrooms WHERE id = $1",
+        "SELECT id, name, description, teacher_id AS owner_id, max_students AS max_members, (SELECT COUNT(*)::int FROM class_members WHERE class_id = $1) AS member_count, created_at, is_archived FROM classes WHERE id = $1",
     )
     .bind(classroom_id)
     .fetch_optional(pool)
@@ -534,9 +541,9 @@ pub async fn get_classroom_analytics(
     let active_7d: (i64,) = sqlx::query_as(
         r#"
         SELECT COUNT(DISTINCT cm.user_id)
-        FROM classroom_members cm
+        FROM class_members cm
         JOIN users u ON u.id = cm.user_id
-        WHERE cm.classroom_id = $1 AND u.last_active_at > NOW() - INTERVAL '7 days'
+        WHERE cm.class_id = $1 AND u.last_active_at > NOW() - INTERVAL '7 days'
         "#,
     )
     .bind(classroom_id)
@@ -551,9 +558,9 @@ pub async fn get_classroom_analytics(
             COUNT(CASE WHEN up.status IN ('learned', 'mastered') THEN 1 END) AS lessons_completed,
             COALESCE(AVG(up.quiz_best_score), 0.0) AS avg_quiz_score,
             COALESCE(SUM(up.xp_earned), 0) AS total_xp
-        FROM classroom_members cm
+        FROM class_members cm
         JOIN user_progress up ON up.user_id = cm.user_id
-        WHERE cm.classroom_id = $1
+        WHERE cm.class_id = $1
         "#,
     )
     .bind(classroom_id)
@@ -569,10 +576,10 @@ pub async fn get_classroom_analytics(
         SELECT cm.user_id, u.display_name,
                COALESCE(SUM(up.xp_earned), 0)::int AS xp_earned,
                COUNT(CASE WHEN up.status IN ('learned', 'mastered') THEN 1 END)::int AS lessons_completed
-        FROM classroom_members cm
+        FROM class_members cm
         JOIN users u ON u.id = cm.user_id
         LEFT JOIN user_progress up ON up.user_id = cm.user_id
-        WHERE cm.classroom_id = $1
+        WHERE cm.class_id = $1
         GROUP BY cm.user_id, u.display_name
         ORDER BY xp_earned DESC
         LIMIT 5
