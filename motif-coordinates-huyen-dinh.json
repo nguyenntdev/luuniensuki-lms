@@ -1,0 +1,164 @@
+[
+  {
+    "urn_slug": "huyen-dinh",
+    "motif_name": "Huyền đỉnh",
+    "mesh_name": "Huyền đỉnh",
+    "pos_x": -1.7245733433371946,
+    "pos_y": 0.9432517558308962,
+    "pos_z": 0.04244762832770092,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "huyen-dinh",
+    "motif_name": "Thốc thu",
+    "mesh_name": "Thốc thu",
+    "pos_x": -1.3336189311733062,
+    "pos_y": 1.3627482722637128,
+    "pos_z": 0.8763467538661525,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "huyen-dinh",
+    "motif_name": "Sơn mã",
+    "mesh_name": "Sơn mã",
+    "pos_x": -1.3089197346077464,
+    "pos_y": 0.538297390130998,
+    "pos_z": 0.8564831265960493,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "huyen-dinh",
+    "motif_name": "Thao hà",
+    "mesh_name": "Thao hà",
+    "pos_x": -0.8039786621661682,
+    "pos_y": 0.9383422686158853,
+    "pos_z": 1.513627709424998,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "huyen-dinh",
+    "motif_name": "Miên",
+    "mesh_name": "Miên",
+    "pos_x": 0.05426931845747546,
+    "pos_y": 1.3331694751838719,
+    "pos_z": 1.5918944401750725,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "huyen-dinh",
+    "motif_name": "Tất mộc",
+    "mesh_name": "Tất mộc",
+    "pos_x": 0.03557633566855567,
+    "pos_y": 0.4642147643107711,
+    "pos_z": 1.5079195162123644,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "huyen-dinh",
+    "motif_name": "Hoàng sơn",
+    "mesh_name": "Hoàng sơn",
+    "pos_x": 0.8844525289182973,
+    "pos_y": 0.8804341669538616,
+    "pos_z": 1.4535908932777042,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "huyen-dinh",
+    "motif_name": "Nam sâm",
+    "mesh_name": "Nam sâm",
+    "pos_x": 1.452950813400043,
+    "pos_y": 1.3073283017762471,
+    "pos_z": 0.6720255029687079,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "huyen-dinh",
+    "motif_name": "Hỏa phún đồng",
+    "mesh_name": "Hỏa phún đồng",
+    "pos_x": 1.3983620960431609,
+    "pos_y": 0.47916996234868325,
+    "pos_z": 0.6949338170699757,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "huyen-dinh",
+    "motif_name": "Vũ",
+    "mesh_name": "Vũ",
+    "pos_x": 1.7127812647709444,
+    "pos_y": 0.8644743633629997,
+    "pos_z": -0.103682636191995,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "huyen-dinh",
+    "motif_name": "Toán",
+    "mesh_name": "Toán",
+    "pos_x": 1.351214455552412,
+    "pos_y": 1.277795691886744,
+    "pos_z": -0.9545921338937123,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "huyen-dinh",
+    "motif_name": "Mãng xà",
+    "mesh_name": "Mãng xà",
+    "pos_x": 1.315584667967146,
+    "pos_y": 0.4841153152480169,
+    "pos_z": -0.9176407044729877,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "huyen-dinh",
+    "motif_name": "Hậu giang, Tiền giang",
+    "mesh_name": "Hậu giang, Tiền giang",
+    "pos_x": 0.7239471359122436,
+    "pos_y": 0.8939421689912865,
+    "pos_z": -1.6064891160311672,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "huyen-dinh",
+    "motif_name": "Lệ chi",
+    "mesh_name": "Lệ chi",
+    "pos_x": -0.1357864337823661,
+    "pos_y": 1.3097589709348272,
+    "pos_z": -1.6525908204063946,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "huyen-dinh",
+    "motif_name": "Xa",
+    "mesh_name": "Xa",
+    "pos_x": -0.17975588112074975,
+    "pos_y": 0.5091894226323364,
+    "pos_z": -1.613709785918258,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "huyen-dinh",
+    "motif_name": "Hồng",
+    "mesh_name": "Hồng",
+    "pos_x": -0.9681540640566311,
+    "pos_y": 0.8930774248586936,
+    "pos_z": -1.4660707278564091,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "huyen-dinh",
+    "motif_name": "Ngũ điệp lan",
+    "mesh_name": "Ngũ điệp lan",
+    "pos_x": -1.462154610741594,
+    "pos_y": 1.3447713098170193,
+    "pos_z": -0.7373507045341846,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "huyen-dinh",
+    "motif_name": "Quế đỏ",
+    "mesh_name": "Quế đỏ",
+    "pos_x": -1.370545810798768,
+    "pos_y": 0.45745674047352824,
+    "pos_z": -0.7108540045712592,
+    "bounding_radius": 0.08
+  }
+]
