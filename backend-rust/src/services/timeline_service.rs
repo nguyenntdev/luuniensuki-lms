@@ -232,7 +232,7 @@ pub async fn list_motifs_by_era(
     }
     let rows: Vec<MotifRow> = sqlx::query_as(
         r#"
-        SELECT m.id, m.name, m.category, m.rarity, m.thumbnail_url,
+        SELECT m.id, m.name, m.category::text AS category, m.rarity::text AS rarity, m.thumbnail_url,
                u.id   AS urn_id,
                u.slug AS urn_slug,
                u.name AS urn_name
@@ -309,7 +309,7 @@ pub async fn compare_motifs(
     }
     let rows: Vec<MRow> = sqlx::query_as(
         r#"
-        SELECT m.id, m.name, m.name_en, m.description, m.category, m.rarity,
+        SELECT m.id, m.name, m.name_en, m.description, m.category::text AS category, m.rarity::text AS rarity,
                m.thumbnail_url,
                u.id   AS urn_id,
                u.slug AS urn_slug,

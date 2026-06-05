@@ -101,7 +101,7 @@ pub async fn get_urn_detail(
     let motifs = sqlx::query_as::<_, MotifWithLessonRow>(
         r#"
         SELECT m.id, m.urn_id, m.mesh_name, m.name, m.name_en,
-               m.category, m.rarity, m.pos_x, m.pos_y, m.pos_z,
+               m.category::text AS category, m.rarity::text AS rarity, m.pos_x, m.pos_y, m.pos_z,
                m.bounding_radius, m.thumbnail_url, m.silhouette_url,
                m.is_demo, m.display_order,
                lc.intro_text AS lesson_intro,
@@ -181,7 +181,7 @@ pub async fn get_urn_progress(
     let motif_progress = sqlx::query_as::<_, MotifProgressRow>(
         r#"
         SELECT m.id AS motif_id,
-               COALESCE(up.status, 'hidden') AS status,
+               COALESCE(up.status::text, 'hidden') AS status,
                up.discovered_at,
                up.lesson_viewed_at,
                up.learned_at,
@@ -250,7 +250,7 @@ pub async fn list_motifs_by_urn(
     let motifs = sqlx::query_as::<_, MotifWithLessonRow>(
         r#"
         SELECT m.id, m.urn_id, m.mesh_name, m.name, m.name_en,
-               m.category, m.rarity, m.pos_x, m.pos_y, m.pos_z,
+               m.category::text AS category, m.rarity::text AS rarity, m.pos_x, m.pos_y, m.pos_z,
                m.bounding_radius, m.thumbnail_url, m.silhouette_url,
                m.is_demo, m.display_order,
                lc.intro_text AS lesson_intro,
@@ -314,8 +314,8 @@ pub async fn get_motif_detail(
     let motif = sqlx::query_as::<_, MotifDetailRow>(
         r#"
         SELECT m.id, m.urn_id, m.mesh_name, m.name, m.name_en,
-               m.category, m.rarity, m.thumbnail_url, m.silhouette_url,
-               m.is_demo, m.display_order, m.content_rating,
+               m.category::text AS category, m.rarity::text AS rarity, m.thumbnail_url, m.silhouette_url,
+               m.is_demo, m.display_order, m.content_rating::text AS content_rating,
                u.id AS urn_id_2, u.slug AS urn_slug, u.name AS urn_name,
                u.model_url AS urn_model_url, u.thumbnail_url AS urn_thumbnail_url
         FROM motifs m
@@ -380,7 +380,7 @@ pub async fn get_motif_detail(
     // Fetch quiz questions
     let quiz_rows = sqlx::query_as::<_, QuizQuestionRow>(
         r#"
-        SELECT id, question_type, question_text, options,
+        SELECT id, question_type::text AS question_type, question_text, options,
                target_mesh_name, difficulty, explanation,
                is_active, is_published
         FROM quiz_questions
@@ -413,7 +413,7 @@ pub async fn get_motif_detail(
     // Fetch user progress
     let progress_row = sqlx::query_as::<_, UserProgressRow>(
         r#"
-        SELECT id, user_id, motif_id, status, discovered_at,
+        SELECT id, user_id, motif_id, status::text AS status, discovered_at,
                learned_at, mastered_at, xp_earned, quiz_best_score
         FROM user_progress
         WHERE user_id = $1 AND motif_id = $2
@@ -525,7 +525,7 @@ pub async fn complete_lesson(
     // Check existing progress
     let progress = sqlx::query_as::<_, ProgressUpdateRow>(
         r#"
-        SELECT id, status, xp_earned, lesson_viewed_at, learned_at, discovered_at
+        SELECT id, status::text AS status, xp_earned, lesson_viewed_at, learned_at, discovered_at
         FROM user_progress
         WHERE user_id = $1 AND motif_id = $2
         FOR UPDATE
@@ -691,7 +691,7 @@ pub async fn get_cache_manifest(
     // Get user progress for priority calculation
     let progress_map: std::collections::HashMap<Uuid, String> =
         sqlx::query_as::<_, (Uuid, String)>(
-            "SELECT motif_id, status FROM user_progress WHERE user_id = $1",
+            "SELECT motif_id, status::text AS status FROM user_progress WHERE user_id = $1",
         )
         .bind(user_id)
         .fetch_all(pool)
@@ -1168,7 +1168,7 @@ pub async fn get_lesson_sequence(
         SELECT lc.id AS lesson_id, m.id AS motif_id, m.name AS motif_name,
                m.mesh_name AS motif_slug, u.id AS urn_id, u.name AS urn_name,
                lc.difficulty_level, lc.estimated_time_minutes,
-               COALESCE(up.status, 'hidden') AS progress_status
+               COALESCE(up.status::text, 'hidden') AS progress_status
         FROM lesson_content lc
         JOIN motifs m ON m.id = lc.motif_id AND m.is_active = true
         JOIN urns u ON u.id = m.urn_id

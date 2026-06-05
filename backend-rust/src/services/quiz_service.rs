@@ -29,7 +29,7 @@ pub async fn get_quiz(pool: &PgPool, quiz_id: Uuid, _user_id: Uuid) -> Result<Qu
 
     let rows = sqlx::query_as::<_, QuizQuestionRow>(
         r#"
-        SELECT id, motif_id, question_type, question_text, options,
+        SELECT id, motif_id, question_type::text AS question_type, question_text, options,
                correct_answer, target_mesh_name, difficulty, explanation, is_active
         FROM quiz_questions
         WHERE motif_id = $1 AND is_active = true AND is_published = true
@@ -76,7 +76,7 @@ pub async fn submit_quiz(
     // Fetch correct answers
     let rows = sqlx::query_as::<_, QuizQuestionRow>(
         r#"
-        SELECT id, motif_id, question_type, question_text, options,
+        SELECT id, motif_id, question_type::text AS question_type, question_text, options,
                correct_answer, target_mesh_name, difficulty, explanation, is_active
         FROM quiz_questions
         WHERE motif_id = $1 AND is_active = true AND is_published = true
@@ -193,7 +193,7 @@ pub async fn generate_adaptive_quiz(
     let rows = if let Some(motif_id) = payload.motif_id {
         sqlx::query_as::<_, QuizQuestionRow>(
             r#"
-            SELECT id, motif_id, question_type, question_text, options,
+            SELECT id, motif_id, question_type::text AS question_type, question_text, options,
                    correct_answer, target_mesh_name, difficulty, explanation, is_active
             FROM quiz_questions
             WHERE motif_id = $1 AND is_active = true AND is_published = true
@@ -210,7 +210,7 @@ pub async fn generate_adaptive_quiz(
     } else if let Some(urn_id) = payload.urn_id {
         sqlx::query_as::<_, QuizQuestionRow>(
             r#"
-            SELECT qq.id, qq.motif_id, qq.question_type, qq.question_text, qq.options,
+            SELECT qq.id, qq.motif_id, qq.question_type::text AS question_type, qq.question_text, qq.options,
                    qq.correct_answer, qq.target_mesh_name, qq.difficulty, qq.explanation, qq.is_active
             FROM quiz_questions qq
             JOIN motifs m ON m.id = qq.motif_id
@@ -229,7 +229,7 @@ pub async fn generate_adaptive_quiz(
         // Global adaptive: pick from motifs user has discovered but not mastered
         sqlx::query_as::<_, QuizQuestionRow>(
             r#"
-            SELECT qq.id, qq.motif_id, qq.question_type, qq.question_text, qq.options,
+            SELECT qq.id, qq.motif_id, qq.question_type::text AS question_type, qq.question_text, qq.options,
                    qq.correct_answer, qq.target_mesh_name, qq.difficulty, qq.explanation, qq.is_active
             FROM quiz_questions qq
             JOIN user_progress up ON up.motif_id = qq.motif_id AND up.user_id = $1
@@ -287,7 +287,7 @@ pub async fn get_quiz_hints(pool: &PgPool, quiz_id: Uuid, _user_id: Uuid) -> Res
     // Get questions and generate hints from explanations
     let rows = sqlx::query_as::<_, QuizQuestionRow>(
         r#"
-        SELECT id, motif_id, question_type, question_text, options,
+        SELECT id, motif_id, question_type::text AS question_type, question_text, options,
                correct_answer, target_mesh_name, difficulty, explanation, is_active
         FROM quiz_questions
         WHERE motif_id = $1 AND is_active = true AND is_published = true
