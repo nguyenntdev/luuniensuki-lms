@@ -14,7 +14,16 @@ from sqlalchemy.orm import Session
 from ..config import settings
 from ..models import LiveEvent, RagDocument
 
-VALID_MODES = {"hint-first", "direct-answer"}
+VALID_MODES = {
+    "hint-first",
+    "direct-answer",
+    "explain-simpler",
+    "go-deeper",
+    "quiz",
+    "summarize",
+}
+# Modes a learner (non-moderator) may NOT request directly; they get downgraded.
+MODERATOR_ONLY_MODES = {"direct-answer"}
 CHECKPOINT_EVENT_TYPE = "ai_teacher_checkpoint"
 _INTERACTION_EVENT_TYPES = {
     "ai_teacher_user_message",
@@ -193,6 +202,7 @@ def build_system_prompt(
     session_title: str | None = None,
     learner_message: str | None = None,
     grade_level: str | None = None,
+    speaker_name: str | None = None,
 ) -> str:
     title = (session_title or "").strip()
     cluster = infer_heritage_cluster(message=learner_message or "", session_title=title)
@@ -208,6 +218,26 @@ def build_system_prompt(
             "Che do direct-answer: tra loi ro rang, ngan gon, dung trong tam, "
             "nhung neu du lieu khong chac chan thi phai noi ro muc do khong chac chan."
         )
+    elif mode == "explain-simpler":
+        policy_line = (
+            "Che do explain-simpler: giai thich lai that don gian, dung tu de hieu va "
+            "mot vi du truc quan gan gui, tranh thuat ngu phuc tap."
+        )
+    elif mode == "go-deeper":
+        policy_line = (
+            "Che do go-deeper: di sau hon ve boi canh lich su, y nghia bieu tuong va "
+            "lien he my thuat; bo sung chi tiet nang cao nhung van mach lac."
+        )
+    elif mode == "quiz":
+        policy_line = (
+            "Che do quiz: dat 1 cau hoi trac nghiem ngan (4 lua chon A-D) hoac 1 cau hoi "
+            "tu luan ngan ve noi dung vua hoc, cho biet dap an o cuoi sau khi nguoi hoc suy nghi."
+        )
+    elif mode == "summarize":
+        policy_line = (
+            "Che do summarize: tom tat 3-5 y chinh quan trong nhat ve chu de hien tai "
+            "duoi dang gach dau dong ngan gon, de ghi nho."
+        )
     else:
         policy_line = (
             "Che do hint-first: uu tien dat cau hoi goi mo, dua 1-3 buoc goi y, "
@@ -215,12 +245,21 @@ def build_system_prompt(
         )
     persona = _persona_for_grade(grade_level)
 
+    learner_line = ""
+    clean_name = " ".join(str(speaker_name or "").split())[:60]
+    if clean_name:
+        learner_line = (
+            f"Hoc sinh dang hoi ten la '{clean_name}'. Hay xung ho than thien, "
+            f"co the goi ten em khi phu hop (vi du 'Em {clean_name} oi'). "
+        )
+
     return (
         "Ban la Gia su AI thuyet minh di san Viet Nam trong lop live. "
         "Muc tieu la giup nguoi hoc hieu y nghia bieu tuong, boi canh lich su, "
         "gia tri my thuat va lien he voi Cuu Dinh khi phu hop. "
         f"{context_line} Dang day theo {cluster_label}. {script_line} "
         f"Persona hien tai: {persona['label']}, phong cach: {persona['style']}. "
+        f"{learner_line}"
         f"{policy_line} "
         "Su dung tieng Viet tu nhien, ro rang, than thien; khong viet qua dai dong. "
         "Uu tien dan y co cau truc ngan gon, nhan manh can cu nguon [S#] khi co. "

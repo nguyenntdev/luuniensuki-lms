@@ -63,6 +63,7 @@ export function useRealtimeVoice({
   const [listening, setListening] = useState(false);
   const [error, setError] = useState("");
   const [level, setLevel] = useState(0); // 0..1 mic energy, for the UI meter
+  const [outputLevel, setOutputLevel] = useState(0); // 0..1 AI speech amplitude (lip-sync)
 
   const stateRef = useRef(TURN.IDLE);
   const streamRef = useRef(null);
@@ -77,6 +78,8 @@ export function useRealtimeVoice({
   const utteranceMsRef = useRef(0);
   const ttsAudioRef = useRef(null);
   const ttsSourceRef = useRef(null); // Web Audio BufferSource (preferred playback)
+  const ttsAnalyserRef = useRef(null); // analyser on the TTS output (lip-sync)
+  const outRafRef = useRef(null); // rAF id for the output-amplitude loop
   const ttsAbortRef = useRef(null);
   const closingRef = useRef(false);
 
@@ -92,6 +95,20 @@ export function useRealtimeVoice({
       } catch {}
       ttsAbortRef.current = null;
     }
+    // Stop the output-amplitude (lip-sync) loop.
+    if (outRafRef.current) {
+      try {
+        cancelAnimationFrame(outRafRef.current);
+      } catch {}
+      outRafRef.current = null;
+    }
+    if (ttsAnalyserRef.current) {
+      try {
+        ttsAnalyserRef.current.disconnect();
+      } catch {}
+      ttsAnalyserRef.current = null;
+    }
+    setOutputLevel(0);
     // Web Audio source (preferred path).
     const src = ttsSourceRef.current;
     if (src) {
@@ -138,9 +155,38 @@ export function useRealtimeVoice({
           if (closingRef.current || stateRef.current !== TURN.SPEAKING) return false;
           const src = ctx.createBufferSource();
           src.buffer = audioBuffer;
-          src.connect(ctx.destination);
+          // Insert an analyser between the source and the destination so we can
+          // drive the avatar's mouth from the AI's actual speech amplitude.
+          let analyser = null;
+          try {
+            analyser = ctx.createAnalyser();
+            analyser.fftSize = 256;
+            src.connect(analyser);
+            analyser.connect(ctx.destination);
+            ttsAnalyserRef.current = analyser;
+            const buf = new Uint8Array(analyser.fftSize);
+            const tick = () => {
+              if (!ttsAnalyserRef.current) return;
+              ttsAnalyserRef.current.getByteTimeDomainData(buf);
+              const lvl = rms(buf);
+              // Scale up; speech RMS is small. Clamp to 0..1.
+              setOutputLevel(Math.min(1, lvl * 3.2));
+              outRafRef.current = requestAnimationFrame(tick);
+            };
+            outRafRef.current = requestAnimationFrame(tick);
+          } catch {
+            src.connect(ctx.destination);
+          }
           src.onended = () => {
             if (ttsSourceRef.current === src) ttsSourceRef.current = null;
+            if (outRafRef.current) {
+              try {
+                cancelAnimationFrame(outRafRef.current);
+              } catch {}
+              outRafRef.current = null;
+            }
+            ttsAnalyserRef.current = null;
+            setOutputLevel(0);
             if (!closingRef.current && stateRef.current === TURN.SPEAKING) {
               setTurn(TURN.LISTENING);
             }
@@ -181,7 +227,50 @@ export function useRealtimeVoice({
     [setTurn],
   );
 
-  // ---- end of a user turn: STT -> LLM -> TTS -------------------------------
+  // ---- speak an AI reply for a given user text (shared by voice + quick-actions)
+  const respond = useCallback(
+    async (userText, { mode, echoUser = false } = {}) => {
+      if (closingRef.current) return;
+      const text = String(userText || "").trim();
+      if (!text) {
+        setTurn(TURN.LISTENING);
+        return;
+      }
+      setTurn(TURN.THINKING);
+      if (echoUser) onTranscript?.({ speaker: "user", text });
+      const reply = await askTeacher({ sessionId, message: text, mode });
+      const answer = String(reply?.text || reply?.answer || "").trim();
+      if (!answer) {
+        setTurn(TURN.LISTENING);
+        return;
+      }
+      onTranscript?.({ speaker: "assistant", text: answer });
+
+      setTurn(TURN.SPEAKING);
+      const controller = new AbortController();
+      ttsAbortRef.current = controller;
+      const audioData = await synthesize({ sessionId, text: answer, signal: controller.signal });
+      if (closingRef.current || stateRef.current !== TURN.SPEAKING) return;
+      let audioBlob;
+      if (audioData instanceof Blob) audioBlob = audioData;
+      else if (audioData?.blob instanceof Blob) audioBlob = audioData.blob;
+      else if (audioData instanceof ArrayBuffer) audioBlob = new Blob([audioData], { type: "audio/mpeg" });
+      else if (audioData?.arrayBuffer || ArrayBuffer.isView(audioData)) audioBlob = new Blob([audioData], { type: "audio/mpeg" });
+      else {
+        setTurn(TURN.LISTENING);
+        return;
+      }
+      if (!audioBlob || audioBlob.size === 0) {
+        setTurn(TURN.LISTENING);
+        return;
+      }
+      const started = await playTtsBuffer(audioBlob);
+      if (!started && !closingRef.current) setTurn(TURN.LISTENING);
+    },
+    [askTeacher, onTranscript, playTtsBuffer, sessionId, setTurn, synthesize],
+  );
+
+  // ---- end of a user turn: STT -> respond ----------------------------------
   const handleUtterance = useCallback(
     async (blob) => {
       if (closingRef.current) return;
@@ -195,50 +284,10 @@ export function useRealtimeVoice({
           return;
         }
         onTranscript?.({ speaker: "user", text: userText });
-
-        const reply = await askTeacher({ sessionId, message: userText });
-        const answer = String(reply?.text || reply?.answer || "").trim();
-        if (!answer) {
-          setTurn(TURN.LISTENING);
-          return;
-        }
-        onTranscript?.({ speaker: "assistant", text: answer });
-
-        // Speak it. Barge-in cancels via ttsAbortRef + audio.pause().
-        setTurn(TURN.SPEAKING);
-        const controller = new AbortController();
-        ttsAbortRef.current = controller;
-        const audioData = await synthesize({ sessionId, text: answer, signal: controller.signal });
-        if (closingRef.current || stateRef.current !== TURN.SPEAKING) return;
-        // synthesize() (apiRequestBinary) resolves to { blob, contentType }.
-        // Accept a raw Blob/ArrayBuffer too, for safety.
-        let audioBlob;
-        if (audioData instanceof Blob) {
-          audioBlob = audioData;
-        } else if (audioData?.blob instanceof Blob) {
-          audioBlob = audioData.blob;
-        } else if (audioData instanceof ArrayBuffer) {
-          audioBlob = new Blob([audioData], { type: "audio/mpeg" });
-        } else if (audioData?.arrayBuffer || ArrayBuffer.isView(audioData)) {
-          audioBlob = new Blob([audioData], { type: "audio/mpeg" });
-        } else {
-          // Nothing playable — go back to listening instead of playing garbage.
-          setTurn(TURN.LISTENING);
-          return;
-        }
-        if (!audioBlob || audioBlob.size === 0) {
-          setTurn(TURN.LISTENING);
-          return;
-        }
-        const started = await playTtsBuffer(audioBlob);
-        if (!started && !closingRef.current) {
-          // Could not start playback at all — don't get stuck in SPEAKING.
-          setTurn(TURN.LISTENING);
-        }
+        await respond(userText, {});
       } catch (err) {
         if (!closingRef.current) {
-          // 422 = "no speech detected" (silence/noise or a dropped STT
-          // hallucination). Not a real error — just keep listening quietly.
+          // 422 = "no speech detected" — benign, keep listening quietly.
           if (err?.status === 422) {
             setTurn(TURN.LISTENING);
             return;
@@ -248,7 +297,24 @@ export function useRealtimeVoice({
         }
       }
     },
-    [askTeacher, onTranscript, sessionId, setTurn, synthesize, transcribe],
+    [onTranscript, respond, sessionId, setTurn, transcribe],
+  );
+
+  // ---- imperative quick-action ask (text prompt + chosen mode) -------------
+  const ask = useCallback(
+    async ({ message, mode } = {}) => {
+      if (closingRef.current) return;
+      try {
+        stopPlayback();
+        await respond(message, { mode, echoUser: true });
+      } catch (err) {
+        if (!closingRef.current) {
+          setError(String(err?.message || err || "voice loop error"));
+          setTurn(TURN.LISTENING);
+        }
+      }
+    },
+    [respond, setTurn, stopPlayback],
   );
 
   // ---- capture one utterance with MediaRecorder ----------------------------
@@ -434,5 +500,5 @@ export function useRealtimeVoice({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled, micDeviceId]);
 
-  return { state, listening, error, level, start, stop, interrupt };
+  return { state, listening, error, level, outputLevel, start, stop, interrupt, ask };
 }

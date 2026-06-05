@@ -2717,9 +2717,13 @@ class LiveAITeacherRequestIn(BaseModel):
     """Input for live AI teacher response."""
 
     message: str = Field(min_length=1, max_length=3000)
-    mode: str = Field(default="hint-first", pattern="^(hint-first|direct-answer)$")
+    mode: str = Field(
+        default="hint-first",
+        pattern="^(hint-first|direct-answer|explain-simpler|go-deeper|quiz|summarize)$",
+    )
     history: list[LiveAITeacherHistoryMessageIn] = Field(default_factory=list)
     grade_level: Optional[str] = Field(default=None, max_length=40)
+    speaker_name: Optional[str] = Field(default=None, max_length=80)
 
 
 class LiveAITeacherSTTOut(BaseModel):

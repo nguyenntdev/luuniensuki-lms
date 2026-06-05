@@ -6783,7 +6783,7 @@ def live_ai_teacher_reply(
     requested_mode = live_ai_teacher_service.normalize_mode(payload.mode)
     forced_hint_first = False
     mode = requested_mode
-    if requested_mode == "direct-answer" and not live_session_service.can_user_moderate_live_session(
+    if requested_mode in live_ai_teacher_service.MODERATOR_ONLY_MODES and not live_session_service.can_user_moderate_live_session(
         db,
         user=current_user,
         live_session=live_session,
@@ -6791,6 +6791,7 @@ def live_ai_teacher_reply(
     ):
         mode = "hint-first"
         forced_hint_first = True
+    speaker_name = (payload.speaker_name or current_user.display_name or "").strip()[:80]
     history_payload = live_ai_teacher_service.build_history_messages(
         [
             {"role": msg.role, "content": msg.content}
@@ -6875,6 +6876,7 @@ def live_ai_teacher_reply(
         session_title=live_session.title,
         learner_message=message_text,
         grade_level=persona_grade,
+        speaker_name=speaker_name,
     )
     if references_prompt:
         system_prompt = (

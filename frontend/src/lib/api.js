@@ -896,7 +896,7 @@ export function hostRemoveLiveParticipant({ sessionId, participantId }) {
   });
 }
 
-export function askLiveAiTeacher({ sessionId, message, mode, history, gradeLevel }) {
+export function askLiveAiTeacher({ sessionId, message, mode, history, gradeLevel, speakerName }) {
   const encoded = encodeURIComponent(sessionId);
   return apiRequest(`/api/v1/live-sessions/${encoded}/ai-teacher/reply`, {
     method: "POST",
@@ -905,6 +905,7 @@ export function askLiveAiTeacher({ sessionId, message, mode, history, gradeLevel
       mode,
       history,
       grade_level: gradeLevel,
+      ...(speakerName ? { speaker_name: speakerName } : {}),
     },
   });
 }

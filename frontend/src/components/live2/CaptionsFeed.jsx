@@ -32,9 +32,10 @@ export default function CaptionsFeed({ items = [], emptyHint = "Phụ đề sẽ
     <div className="flex h-full flex-col gap-2 overflow-y-auto px-4 py-3">
       {items.map((item) => {
         const m = speakerMeta(item.speaker);
+        const name = item.name || m.name;
         return (
           <div key={item.id} className="text-sm leading-relaxed">
-            <span className={`mr-2 font-semibold ${m.cls}`}>{m.name}:</span>
+            <span className={`mr-2 font-semibold ${m.cls}`}>{name}:</span>
             <span className="text-zinc-100">{item.text}</span>
           </div>
         );
