@@ -122,12 +122,27 @@ pub struct ConvertPreviewResponse {
 }
 
 /// A single item in the user's collection.
-#[derive(Debug, Serialize, sqlx::FromRow)]
+#[derive(Debug, Serialize)]
 pub struct CollectionItem {
     pub motif_id: String,
+    /// Display name (kept as `motif_name` too for backward compat).
+    pub name: String,
     pub motif_name: String,
+    pub name_en: Option<String>,
+    pub category: Option<String>,
+    pub rarity: Option<String>,
+    pub thumbnail_url: Option<String>,
     pub status: String,
     pub discovered_at: Option<String>,
+}
+
+/// Aggregate counts for the collection overview cards.
+#[derive(Debug, Serialize)]
+pub struct CollectionStats {
+    pub total: i64,
+    pub discovered: i64,
+    pub learned: i64,
+    pub mastered: i64,
 }
 
 /// Response for GET /api/v1/users/me/collection
@@ -135,6 +150,7 @@ pub struct CollectionItem {
 pub struct CollectionResponse {
     pub items: Vec<CollectionItem>,
     pub total: i64,
+    pub stats: CollectionStats,
 }
 
 // ---------------------------------------------------------------------------
@@ -387,17 +403,20 @@ pub async fn get_user_collection(
     let pool = require_pool(&state.pool)?;
 
     let items: Vec<CollectionItemRow> = sqlx::query_as(
-        "SELECT m.id as motif_id, m.name as motif_name, \
+        "SELECT m.id as motif_id, m.name, m.name_en, \
+         m.category::text AS category, m.rarity::text AS rarity, \
+         m.thumbnail_url, \
          CASE \
            WHEN up.mastered_at IS NOT NULL THEN 'mastered' \
            WHEN up.learned_at IS NOT NULL THEN 'learned' \
-           ELSE 'discovered' \
+           WHEN up.id IS NOT NULL THEN 'discovered' \
+           ELSE 'hidden' \
          END as status, \
          up.created_at as discovered_at \
-         FROM user_progress up \
-         JOIN motifs m ON m.id = up.motif_id \
-         WHERE up.user_id = $1 \
-         ORDER BY up.created_at DESC",
+         FROM motifs m \
+         LEFT JOIN user_progress up ON up.motif_id = m.id AND up.user_id = $1 \
+         WHERE m.is_active = true \
+         ORDER BY m.display_order NULLS LAST, m.name",
     )
     .bind(user_id)
     .fetch_all(pool)
@@ -405,11 +424,28 @@ pub async fn get_user_collection(
     .map_err(|e| AppError::Internal(e.into()))?;
 
     let total = items.len() as i64;
+    let mut discovered = 0i64;
+    let mut learned = 0i64;
+    let mut mastered = 0i64;
+    for row in &items {
+        match row.status.as_str() {
+            "mastered" => mastered += 1,
+            "learned" => learned += 1,
+            "discovered" => discovered += 1,
+            _ => {}
+        }
+    }
+
     let collection_items: Vec<CollectionItem> = items
         .into_iter()
         .map(|row| CollectionItem {
             motif_id: row.motif_id.to_string(),
-            motif_name: row.motif_name,
+            name: row.name.clone(),
+            motif_name: row.name,
+            name_en: row.name_en,
+            category: row.category,
+            rarity: row.rarity,
+            thumbnail_url: row.thumbnail_url,
             status: row.status,
             discovered_at: row.discovered_at.map(|dt| dt.to_rfc3339()),
         })
@@ -418,6 +454,12 @@ pub async fn get_user_collection(
     Ok(Json(CollectionResponse {
         items: collection_items,
         total,
+        stats: CollectionStats {
+            total,
+            discovered,
+            learned,
+            mastered,
+        },
     }))
 }
 
@@ -438,7 +480,11 @@ struct PreviewLessonRow {
 #[derive(Debug, sqlx::FromRow)]
 struct CollectionItemRow {
     pub motif_id: Uuid,
-    pub motif_name: String,
+    pub name: String,
+    pub name_en: Option<String>,
+    pub category: Option<String>,
+    pub rarity: Option<String>,
+    pub thumbnail_url: Option<String>,
     pub status: String,
     pub discovered_at: Option<chrono::DateTime<chrono::Utc>>,
 }
