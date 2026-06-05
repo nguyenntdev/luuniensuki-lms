@@ -390,7 +390,7 @@ pub async fn get_user_collection(
         "SELECT m.id as motif_id, m.name as motif_name, \
          CASE \
            WHEN up.mastered_at IS NOT NULL THEN 'mastered' \
-           WHEN up.completed_at IS NOT NULL THEN 'learned' \
+           WHEN up.learned_at IS NOT NULL THEN 'learned' \
            ELSE 'discovered' \
          END as status, \
          up.created_at as discovered_at \

@@ -222,12 +222,17 @@ pub async fn get_quest_summary(pool: &PgPool, user_id: Uuid) -> Result<QuestSumm
     let stats: Option<(i64, i64, i64)> = sqlx::query_as(
         r#"
         SELECT
-            COUNT(CASE WHEN completed_at IS NULL THEN 1 END) AS active,
-            COUNT(CASE WHEN completed_at IS NOT NULL THEN 1 END) AS completed,
-            COALESCE(SUM(CASE WHEN uq.completed_at IS NOT NULL THEN q.xp_reward ELSE 0 END), 0) AS total_xp
-        FROM user_quests uq
-        JOIN quests q ON q.id = uq.quest_id
-        WHERE uq.user_id = $1
+            COUNT(CASE WHEN qp.completed_at IS NULL THEN 1 END) AS active,
+            COUNT(CASE WHEN qp.completed_at IS NOT NULL THEN 1 END) AS completed,
+            COALESCE(SUM(CASE WHEN qp.completed_at IS NOT NULL THEN COALESCE(qr.xp, 0) ELSE 0 END), 0) AS total_xp
+        FROM quest_progress qp
+        LEFT JOIN (
+            SELECT quest_id, SUM(amount) AS xp
+            FROM quest_rewards
+            WHERE reward_type = 'xp'
+            GROUP BY quest_id
+        ) qr ON qr.quest_id = qp.quest_id
+        WHERE qp.user_id = $1
         "#,
     )
     .bind(user_id)

@@ -309,13 +309,14 @@ pub async fn compare_motifs(
     }
     let rows: Vec<MRow> = sqlx::query_as(
         r#"
-        SELECT m.id, m.name, m.name_en, m.description, m.category::text AS category, m.rarity::text AS rarity,
+        SELECT m.id, m.name, m.name_en, lc.description, m.category::text AS category, m.rarity::text AS rarity,
                m.thumbnail_url,
                u.id   AS urn_id,
                u.slug AS urn_slug,
                u.name AS urn_name
         FROM motifs m
         LEFT JOIN urns u ON u.id = m.urn_id
+        LEFT JOIN lesson_content lc ON lc.motif_id = m.id
         WHERE m.id = ANY($1)
         "#,
     )
