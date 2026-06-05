@@ -76,6 +76,7 @@ export function useRealtimeVoice({
   const inUtteranceRef = useRef(false);
   const utteranceMsRef = useRef(0);
   const ttsAudioRef = useRef(null);
+  const ttsSourceRef = useRef(null); // Web Audio BufferSource (preferred playback)
   const ttsAbortRef = useRef(null);
   const closingRef = useRef(false);
 
@@ -91,6 +92,19 @@ export function useRealtimeVoice({
       } catch {}
       ttsAbortRef.current = null;
     }
+    // Web Audio source (preferred path).
+    const src = ttsSourceRef.current;
+    if (src) {
+      try {
+        src.onended = null;
+        src.stop();
+      } catch {}
+      try {
+        src.disconnect();
+      } catch {}
+      ttsSourceRef.current = null;
+    }
+    // HTMLAudioElement fallback path.
     const audio = ttsAudioRef.current;
     if (audio) {
       try {
@@ -100,6 +114,72 @@ export function useRealtimeVoice({
       ttsAudioRef.current = null;
     }
   }, []);
+
+  // Play TTS audio bytes. Prefer the Web Audio API through the AudioContext that
+  // was unlocked by the user's "join" gesture — this bypasses the browser
+  // autoplay policy that silently blocks `new Audio().play()` after the long
+  // STT->LLM->TTS async gap. Falls back to an HTMLAudioElement if decoding
+  // fails (e.g. Safari mp3 quirks). Returns true if playback started.
+  const playTtsBuffer = useCallback(
+    async (audioBlob) => {
+      const ctx = audioCtxRef.current;
+      // Try Web Audio playback first.
+      if (ctx) {
+        try {
+          if (ctx.state === "suspended") {
+            await ctx.resume().catch(() => {});
+          }
+          const arrayBuf = await audioBlob.arrayBuffer();
+          const audioBuffer = await new Promise((resolve, reject) => {
+            // decodeAudioData supports both promise and callback forms.
+            const p = ctx.decodeAudioData(arrayBuf.slice(0), resolve, reject);
+            if (p && typeof p.then === "function") p.then(resolve, reject);
+          });
+          if (closingRef.current || stateRef.current !== TURN.SPEAKING) return false;
+          const src = ctx.createBufferSource();
+          src.buffer = audioBuffer;
+          src.connect(ctx.destination);
+          src.onended = () => {
+            if (ttsSourceRef.current === src) ttsSourceRef.current = null;
+            if (!closingRef.current && stateRef.current === TURN.SPEAKING) {
+              setTurn(TURN.LISTENING);
+            }
+          };
+          ttsSourceRef.current = src;
+          src.start(0);
+          return true;
+        } catch {
+          // Fall through to HTMLAudio.
+        }
+      }
+
+      // Fallback: HTMLAudioElement.
+      try {
+        const url = URL.createObjectURL(audioBlob);
+        const audio = new Audio(url);
+        ttsAudioRef.current = audio;
+        audio.onended = () => {
+          if (ttsAudioRef.current === audio) {
+            try {
+              URL.revokeObjectURL(url);
+            } catch {}
+            ttsAudioRef.current = null;
+          }
+          if (!closingRef.current && stateRef.current === TURN.SPEAKING) {
+            setTurn(TURN.LISTENING);
+          }
+        };
+        audio.onerror = () => {
+          if (!closingRef.current && stateRef.current === TURN.SPEAKING) setTurn(TURN.LISTENING);
+        };
+        await audio.play();
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    [setTurn],
+  );
 
   // ---- end of a user turn: STT -> LLM -> TTS -------------------------------
   const handleUtterance = useCallback(
@@ -150,27 +230,11 @@ export function useRealtimeVoice({
           setTurn(TURN.LISTENING);
           return;
         }
-        const url = URL.createObjectURL(audioBlob);
-        const audio = new Audio(url);
-        ttsAudioRef.current = audio;
-        audio.onended = () => {
-          if (ttsAudioRef.current === audio) {
-            try {
-              URL.revokeObjectURL(url);
-            } catch {}
-            ttsAudioRef.current = null;
-          }
-          if (!closingRef.current && stateRef.current === TURN.SPEAKING) {
-            setTurn(TURN.LISTENING);
-          }
-        };
-        audio.onerror = () => {
-          if (!closingRef.current && stateRef.current === TURN.SPEAKING) setTurn(TURN.LISTENING);
-        };
-        await audio.play().catch(() => {
-          // Autoplay may be blocked until a user gesture; fall back to listening.
-          if (!closingRef.current) setTurn(TURN.LISTENING);
-        });
+        const started = await playTtsBuffer(audioBlob);
+        if (!started && !closingRef.current) {
+          // Could not start playback at all — don't get stuck in SPEAKING.
+          setTurn(TURN.LISTENING);
+        }
       } catch (err) {
         if (!closingRef.current) {
           // 422 = "no speech detected" (silence/noise or a dropped STT
@@ -281,6 +345,13 @@ export function useRealtimeVoice({
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
       const ctx = new AudioCtx();
       audioCtxRef.current = ctx;
+      // Unlock the context within the user-initiated flow so later TTS playback
+      // through it is not blocked by the browser autoplay policy.
+      if (ctx.state === "suspended") {
+        try {
+          await ctx.resume();
+        } catch {}
+      }
       const source = ctx.createMediaStreamSource(stream);
       const analyser = ctx.createAnalyser();
       analyser.fftSize = 1024;
@@ -299,7 +370,10 @@ export function useRealtimeVoice({
         chunksRef.current = [];
         if (parts.length === 0) return;
         const blob = new Blob(parts, { type: mime });
-        if (blob.size > 1200) handleUtterance(blob);
+        // Require a minimum payload so we don't ship sub-300ms noise blips to
+        // STT (tiny/quiet clips make the recognizer hallucinate filler text in
+        // the wrong language). ~2.5KB of webm/opus ≈ a few hundred ms of speech.
+        if (blob.size > 2500) handleUtterance(blob);
         else if (stateRef.current === TURN.LISTENING) {
           /* too small, ignore */
         }
