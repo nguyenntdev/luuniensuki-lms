@@ -1,0 +1,164 @@
+[
+  {
+    "urn_slug": "chuong-dinh",
+    "motif_name": "Chương đỉnh",
+    "mesh_name": "Chương đỉnh",
+    "pos_x": 0.0034395982865156327,
+    "pos_y": 0.480999885283077,
+    "pos_z": 0.9213768573203415,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "chuong-dinh",
+    "motif_name": "Kê",
+    "mesh_name": "Kê",
+    "pos_x": 0.47837565255142833,
+    "pos_y": 0.6900593337282612,
+    "pos_z": 0.777466736113276,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "chuong-dinh",
+    "motif_name": "Linh quy",
+    "mesh_name": "Linh quy",
+    "pos_x": 0.42210229257847764,
+    "pos_y": 0.2831712124199513,
+    "pos_z": 0.6880644026969128,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "chuong-dinh",
+    "motif_name": "Tây Hải",
+    "mesh_name": "Tây Hải",
+    "pos_x": 0.8055065237553822,
+    "pos_y": 0.48921438924255667,
+    "pos_z": 0.449391184644108,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "chuong-dinh",
+    "motif_name": "Giới",
+    "mesh_name": "Giới",
+    "pos_x": 0.9050136207386051,
+    "pos_y": 0.6914561584614352,
+    "pos_z": 0.003975186434212519,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "chuong-dinh",
+    "motif_name": "Tê",
+    "mesh_name": "Tê",
+    "pos_x": 0.7978591327468858,
+    "pos_y": 0.27620358513167453,
+    "pos_z": -0.011828854617806278,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "chuong-dinh",
+    "motif_name": "Linh Giang",
+    "mesh_name": "Linh Giang",
+    "pos_x": 0.7806336359001288,
+    "pos_y": 0.46977206534856575,
+    "pos_z": -0.45488686640463133,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "chuong-dinh",
+    "motif_name": "Lục đậu",
+    "mesh_name": "Lục đậu",
+    "pos_x": 0.4422108883410785,
+    "pos_y": 0.6816896093955798,
+    "pos_z": -0.7747715816894195,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "chuong-dinh",
+    "motif_name": "Điểu thương",
+    "mesh_name": "Điểu thương",
+    "pos_x": 0.3929867308540632,
+    "pos_y": 0.2765318760551255,
+    "pos_z": -0.6857604639475999,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "chuong-dinh",
+    "motif_name": "Mộc tinh, Hỏa tinh, Thổ tinh, Kim tinh, Thủy tinh",
+    "mesh_name": "Mộc tinh, Hỏa tinh, Thổ tinh, Kim tinh, Thủy tinh",
+    "pos_x": -0.00709490701136041,
+    "pos_y": 0.4601133984887435,
+    "pos_z": -0.8907143425524061,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "chuong-dinh",
+    "motif_name": "Mông đồng thuyền",
+    "mesh_name": "Mông đồng thuyền",
+    "pos_x": -0.4104319911710442,
+    "pos_y": 0.2626505527907603,
+    "pos_z": -0.6699817470301082,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "chuong-dinh",
+    "motif_name": "Đậu khấu",
+    "mesh_name": "Đậu khấu",
+    "pos_x": -0.47756027380013566,
+    "pos_y": 0.6700809981710639,
+    "pos_z": -0.7580986925659637,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "chuong-dinh",
+    "motif_name": "Lợi Nông hà",
+    "mesh_name": "Lợi Nông hà",
+    "pos_x": -0.7978662358085646,
+    "pos_y": 0.4535129249838731,
+    "pos_z": -0.4232660567135191,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "chuong-dinh",
+    "motif_name": "Am la",
+    "mesh_name": "Am la",
+    "pos_x": -0.9054638530463577,
+    "pos_y": 0.6868385663372061,
+    "pos_z": 0.022735944590522333,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "chuong-dinh",
+    "motif_name": "Ngạc ngư",
+    "mesh_name": "Ngạc ngư",
+    "pos_x": -0.7929737641967959,
+    "pos_y": 0.26700420577022743,
+    "pos_z": 0.03860160781055777,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "chuong-dinh",
+    "motif_name": "Thượng sơn",
+    "mesh_name": "Thượng sơn",
+    "pos_x": -0.7818727634019547,
+    "pos_y": 0.45231295647910785,
+    "pos_z": 0.4786531531266014,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "chuong-dinh",
+    "motif_name": "Mạt lị",
+    "mesh_name": "Mạt lị",
+    "pos_x": -0.4427627639297542,
+    "pos_y": 0.6995665993530602,
+    "pos_z": 0.798482500178785,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "chuong-dinh",
+    "motif_name": "Thuận mộc",
+    "mesh_name": "Thuận mộc",
+    "pos_x": -0.3847043892405892,
+    "pos_y": 0.25884723169693,
+    "pos_z": 0.6914772921252105,
+    "bounding_radius": 0.08
+  }
+]
