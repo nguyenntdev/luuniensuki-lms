@@ -107,7 +107,7 @@ pub async fn get_urn_detail(
                lc.intro_text AS lesson_intro,
                lc.is_published AS lesson_published
         FROM motifs m
-        LEFT JOIN lesson_contents lc ON lc.motif_id = m.id
+        LEFT JOIN lesson_content lc ON lc.motif_id = m.id
         WHERE m.urn_id = $1 AND m.is_active = true
         ORDER BY m.display_order NULLS LAST, m.name
         "#,
@@ -256,7 +256,7 @@ pub async fn list_motifs_by_urn(
                lc.intro_text AS lesson_intro,
                lc.is_published AS lesson_published
         FROM motifs m
-        LEFT JOIN lesson_contents lc ON lc.motif_id = m.id
+        LEFT JOIN lesson_content lc ON lc.motif_id = m.id
         WHERE m.urn_id = $1 AND m.is_active = true
         ORDER BY m.display_order NULLS LAST, m.name
         "#,
@@ -351,7 +351,7 @@ pub async fn get_motif_detail(
         SELECT intro_text, description, historical_context, symbolism,
                fun_fact, is_ai_generated, audio_narration_url,
                additional_images, video_url, is_published
-        FROM lesson_contents WHERE motif_id = $1
+        FROM lesson_content WHERE motif_id = $1
         "#,
     )
     .bind(motif_id)
@@ -499,7 +499,7 @@ pub async fn complete_lesson(
     let can_view_drafts = user_role == "admin" || user_role == "teacher";
     if !can_view_drafts {
         let lesson_published: Option<(bool,)> = sqlx::query_as(
-            "SELECT is_published FROM lesson_contents WHERE motif_id = $1",
+            "SELECT is_published FROM lesson_content WHERE motif_id = $1",
         )
         .bind(motif_id)
         .fetch_optional(pool)
@@ -678,7 +678,7 @@ pub async fn get_cache_manifest(
         SELECT lc.id AS lesson_id, lc.motif_id, m.name AS motif_name,
                lc.version, lc.audio_narration_url, lc.video_url,
                lc.additional_images, m.thumbnail_url, m.silhouette_url
-        FROM lesson_contents lc
+        FROM lesson_content lc
         JOIN motifs m ON m.id = lc.motif_id AND m.is_active = true
         WHERE lc.is_published = true
         ORDER BY lc.updated_at DESC
@@ -796,7 +796,7 @@ pub async fn mark_lesson_cached(
 ) -> Result<LessonCacheOut, AppError> {
     // Verify lesson exists
     let exists: Option<(Uuid,)> =
-        sqlx::query_as("SELECT id FROM lesson_contents WHERE id = $1")
+        sqlx::query_as("SELECT id FROM lesson_content WHERE id = $1")
             .bind(lesson_id)
             .fetch_optional(pool)
             .await
@@ -922,7 +922,7 @@ pub async fn get_next_lesson(
         SELECT lc.id AS lesson_id, m.id AS motif_id, m.name AS motif_name,
                m.mesh_name AS motif_slug, u.id AS urn_id, u.name AS urn_name,
                lc.difficulty_level, lc.estimated_time_minutes
-        FROM lesson_contents lc
+        FROM lesson_content lc
         JOIN motifs m ON m.id = lc.motif_id AND m.is_active = true
         JOIN urns u ON u.id = m.urn_id
         LEFT JOIN user_progress up ON up.motif_id = m.id AND up.user_id = $1
@@ -988,7 +988,7 @@ pub async fn get_lesson_prerequisites(
 ) -> Result<LessonPrerequisitesOut, AppError> {
     // Verify lesson exists
     let exists: Option<(Uuid,)> =
-        sqlx::query_as("SELECT id FROM lesson_contents WHERE id = $1")
+        sqlx::query_as("SELECT id FROM lesson_content WHERE id = $1")
             .bind(lesson_id)
             .fetch_optional(pool)
             .await
@@ -1010,7 +1010,7 @@ pub async fn get_lesson_prerequisites(
                CASE WHEN up.status IN ('learned', 'mastered') THEN true
                     ELSE false END AS is_completed
         FROM lesson_prerequisites lp
-        JOIN lesson_contents lc ON lc.id = lp.prerequisite_lesson_id
+        JOIN lesson_content lc ON lc.id = lp.prerequisite_lesson_id
         JOIN motifs m ON m.id = lc.motif_id
         LEFT JOIN user_progress up ON up.motif_id = m.id AND up.user_id = $1
         WHERE lp.lesson_id = $2
@@ -1054,7 +1054,7 @@ pub async fn is_lesson_unlocked(
 ) -> Result<LessonUnlockStatusOut, AppError> {
     // Verify lesson exists
     let exists: Option<(Uuid,)> =
-        sqlx::query_as("SELECT id FROM lesson_contents WHERE id = $1")
+        sqlx::query_as("SELECT id FROM lesson_content WHERE id = $1")
             .bind(lesson_id)
             .fetch_optional(pool)
             .await
@@ -1076,7 +1076,7 @@ pub async fn is_lesson_unlocked(
                lp.is_strict,
                false AS is_completed
         FROM lesson_prerequisites lp
-        JOIN lesson_contents lc ON lc.id = lp.prerequisite_lesson_id
+        JOIN lesson_content lc ON lc.id = lp.prerequisite_lesson_id
         JOIN motifs m ON m.id = lc.motif_id
         LEFT JOIN user_progress up ON up.motif_id = m.id AND up.user_id = $1
         WHERE lp.lesson_id = $2 AND lp.is_strict = true
@@ -1098,7 +1098,7 @@ pub async fn is_lesson_unlocked(
                lp.is_strict,
                false AS is_completed
         FROM lesson_prerequisites lp
-        JOIN lesson_contents lc ON lc.id = lp.prerequisite_lesson_id
+        JOIN lesson_content lc ON lc.id = lp.prerequisite_lesson_id
         JOIN motifs m ON m.id = lc.motif_id
         LEFT JOIN user_progress up ON up.motif_id = m.id AND up.user_id = $1
         WHERE lp.lesson_id = $2 AND lp.is_strict = false
@@ -1169,7 +1169,7 @@ pub async fn get_lesson_sequence(
                m.mesh_name AS motif_slug, u.id AS urn_id, u.name AS urn_name,
                lc.difficulty_level, lc.estimated_time_minutes,
                COALESCE(up.status, 'hidden') AS progress_status
-        FROM lesson_contents lc
+        FROM lesson_content lc
         JOIN motifs m ON m.id = lc.motif_id AND m.is_active = true
         JOIN urns u ON u.id = m.urn_id
         LEFT JOIN user_progress up ON up.motif_id = m.id AND up.user_id = $1
