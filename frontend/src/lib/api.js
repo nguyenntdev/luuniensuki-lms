@@ -940,6 +940,62 @@ export function ensureLiveAiTeacherPresence({ sessionId }) {
   });
 }
 
+/**
+ * Stream an AI teacher reply via SSE. Calls onDelta(deltaText) as tokens arrive
+ * and resolves with the final structured payload ({ answer, mode, citations,
+ * rubric, ... }). Falls back to throwing on transport errors so callers can use
+ * the non-streaming askLiveAiTeacher instead.
+ */
+export async function streamLiveAiTeacherReply({ sessionId, message, mode, speakerName, signal, onDelta }) {
+  const encoded = encodeURIComponent(sessionId);
+  const res = await fetch(`${API_BASE_URL}/api/v1/live-sessions/${encoded}/ai-teacher/reply/stream`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ message, mode, ...(speakerName ? { speaker_name: speakerName } : {}) }),
+    credentials: "include",
+    cache: "no-store",
+    signal,
+  });
+  if (!res.ok || !res.body) {
+    throw new ApiError(`HTTP ${res.status}`, { status: res.status });
+  }
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let final = { answer: "" };
+  const handleLine = (line) => {
+    const trimmed = line.trim();
+    if (!trimmed.startsWith("data:")) return;
+    const jsonStr = trimmed.slice(5).trim();
+    if (!jsonStr) return;
+    let obj;
+    try {
+      obj = JSON.parse(jsonStr);
+    } catch {
+      return;
+    }
+    if (obj.delta) {
+      onDelta?.(obj.delta);
+    } else if (obj.done) {
+      final = obj;
+    }
+  };
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    let idx;
+    while ((idx = buffer.indexOf("\n\n")) >= 0) {
+      const chunk = buffer.slice(0, idx);
+      buffer = buffer.slice(idx + 2);
+      chunk.split("\n").forEach(handleLine);
+    }
+  }
+  if (buffer.trim()) buffer.split("\n").forEach(handleLine);
+  return final;
+}
+
 export function endLiveSession({ sessionId }) {
   const encoded = encodeURIComponent(sessionId);
   return apiRequest(`/api/v1/live-sessions/${encoded}/end`, {

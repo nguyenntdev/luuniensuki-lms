@@ -55,8 +55,10 @@ export function useRealtimeVoice({
   enabled,
   micDeviceId,
   onTranscript, // ({ speaker, text }) => void  (for captions feed)
+  onStreamDelta, // (fullText) => void  (live partial AI text while streaming)
   transcribe, // async ({ sessionId, file }) => { transcript }
   askTeacher, // async ({ sessionId, message }) => { text, ... }
+  streamAsk, // optional async ({ sessionId, message, mode, onDelta }) => { answer }
   synthesize, // async ({ sessionId, text, signal }) => Blob | ArrayBuffer
 }) {
   const [state, setState] = useState(TURN.IDLE);
@@ -238,12 +240,43 @@ export function useRealtimeVoice({
       }
       setTurn(TURN.THINKING);
       if (echoUser) onTranscript?.({ speaker: "user", text });
-      const reply = await askTeacher({ sessionId, message: text, mode });
-      const answer = String(reply?.text || reply?.answer || "").trim();
+
+      // Prefer SSE streaming so the caption appears live; fall back to the
+      // non-streaming ask on any transport error so the room never stalls.
+      let answer = "";
+      let streamed = false;
+      if (typeof streamAsk === "function") {
+        try {
+          let acc = "";
+          const result = await streamAsk({
+            sessionId,
+            message: text,
+            mode,
+            onDelta: (delta) => {
+              if (closingRef.current) return;
+              acc += String(delta || "");
+              onStreamDelta?.(acc);
+            },
+          });
+          answer = String(result?.answer || acc || "").trim();
+          streamed = true;
+        } catch {
+          streamed = false;
+          answer = "";
+        }
+      }
       if (!answer) {
+        const reply = await askTeacher({ sessionId, message: text, mode });
+        answer = String(reply?.text || reply?.answer || "").trim();
+      }
+      if (!answer) {
+        onStreamDelta?.("");
         setTurn(TURN.LISTENING);
         return;
       }
+      // Commit the final assistant turn to the captions feed and clear the
+      // live streaming buffer (if any).
+      onStreamDelta?.("");
       onTranscript?.({ speaker: "assistant", text: answer });
 
       setTurn(TURN.SPEAKING);
@@ -267,7 +300,7 @@ export function useRealtimeVoice({
       const started = await playTtsBuffer(audioBlob);
       if (!started && !closingRef.current) setTurn(TURN.LISTENING);
     },
-    [askTeacher, onTranscript, playTtsBuffer, sessionId, setTurn, synthesize],
+    [askTeacher, streamAsk, onStreamDelta, onTranscript, playTtsBuffer, sessionId, setTurn, synthesize],
   );
 
   // ---- end of a user turn: STT -> respond ----------------------------------

@@ -4,15 +4,91 @@ AI teacher helpers for live heritage sessions.
 
 from __future__ import annotations
 
+import json
+import logging
+import math
 import re
 from datetime import datetime, timedelta, timezone
 from typing import Any, Iterable
+from urllib.error import HTTPError, URLError
+from urllib.request import Request as UrlRequest
+from urllib.request import urlopen
 
 from sqlalchemy import and_, func, select
 from sqlalchemy.orm import Session
 
 from ..config import settings
+
+logger = logging.getLogger(__name__)
+
+
+def _embedding_url() -> str:
+    base = str(settings.embedding_base_url or "").rstrip("/")
+    if not base:
+        return ""
+    if base.endswith("/embeddings"):
+        return base
+    if base.endswith("/v1"):
+        return f"{base}/embeddings"
+    return f"{base}/v1/embeddings"
+
+
+def embed_query(text: str) -> list[float] | None:
+    """Best-effort query embedding for semantic retrieval. Returns None on any
+    failure (missing key, network, bad response) so callers degrade to keyword
+    search without raising."""
+    clean = " ".join(str(text or "").split())
+    if not clean or not settings.embedding_api_key:
+        return None
+    url = _embedding_url()
+    if not url:
+        return None
+    payload = {"model": settings.embedding_model, "input": clean[:4000]}
+    request = UrlRequest(
+        url,
+        data=json.dumps(payload).encode("utf-8"),
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {settings.embedding_api_key}",
+        },
+    )
+    try:
+        # Keep this snappy so it never stalls a live reply.
+        timeout = min(8, int(settings.embedding_timeout_seconds or 8))
+        with urlopen(request, timeout=timeout) as response:
+            body = response.read().decode("utf-8")
+    except (HTTPError, URLError, TimeoutError, OSError) as exc:
+        logger.warning("Live AI embedding failed: %s", exc)
+        return None
+    try:
+        data = json.loads(body).get("data") or []
+        vec = data[0].get("embedding") if data else None
+    except (ValueError, IndexError, AttributeError, TypeError):
+        return None
+    if not isinstance(vec, list):
+        return None
+    out: list[float] = []
+    for v in vec:
+        try:
+            out.append(float(v))
+        except (TypeError, ValueError):
+            return None
+    return out or None
+
+
+def _cosine(a: list[float], b: list[float]) -> float:
+    if not a or not b or len(a) != len(b):
+        return 0.0
+    dot = sum(x * y for x, y in zip(a, b))
+    na = math.sqrt(sum(x * x for x in a))
+    nb = math.sqrt(sum(y * y for y in b))
+    if na == 0.0 or nb == 0.0:
+        return 0.0
+    return dot / (na * nb)
+
+
 from ..models import LiveEvent, RagDocument
+
 
 VALID_MODES = {
     "hint-first",
@@ -337,13 +413,14 @@ def collect_reference_sources(
     *,
     query: str,
     limit: int = 3,
+    query_embedding: list[float] | None = None,
 ) -> list[dict[str, str]]:
     docs = (
         db.execute(
             select(RagDocument)
             .where(RagDocument.is_active.is_(True))
             .order_by(RagDocument.updated_at.desc(), RagDocument.created_at.desc())
-            .limit(40)
+            .limit(60)
         )
         .scalars()
         .all()
@@ -352,8 +429,18 @@ def collect_reference_sources(
     if not docs:
         return [dict(item) for item in _FALLBACK_REFERENCES[: max(1, limit)]]
 
+    # Hybrid retrieval: semantic (embeddings) + keyword. Embedding is best-effort
+    # and computed once per query; if unavailable we fall back to keyword only.
+    if query_embedding is None and settings.embedding_api_key:
+        query_embedding = embed_query(query)
+
     normalized_query = _normalize_text(query)
     keywords = [token for token in normalized_query.split() if len(token) >= 3][:12]
+    has_embeddings = bool(query_embedding) and any(
+        isinstance(doc.embedding, list) and doc.embedding for doc in docs
+    )
+    # When embeddings are available weight semantic similarity higher.
+    alpha = 0.65 if has_embeddings else 0.0
     scored: list[tuple[float, RagDocument]] = []
 
     for doc in docs:
@@ -365,9 +452,18 @@ def collect_reference_sources(
                 keyword_score += 2.0
             if token in content_norm:
                 keyword_score += 0.6
-        # Keep slight recency preference even when keyword score ties.
-        recency_bonus = 0.2 if keyword_score > 0 else 0.0
-        scored.append((keyword_score + recency_bonus, doc))
+        # Normalize keyword score into roughly 0..1 so the blend is meaningful.
+        keyword_norm = min(1.0, keyword_score / 6.0)
+
+        semantic_score = 0.0
+        if query_embedding and isinstance(doc.embedding, list) and doc.embedding:
+            semantic_score = _cosine(query_embedding, doc.embedding)
+
+        hybrid = (1.0 - alpha) * keyword_norm + alpha * semantic_score
+        # Tiny recency nudge to break ties.
+        if hybrid > 0:
+            hybrid += 0.01
+        scored.append((hybrid, doc))
 
     scored.sort(key=lambda item: item[0], reverse=True)
     selected_docs = [doc for score, doc in scored if score > 0][:limit]

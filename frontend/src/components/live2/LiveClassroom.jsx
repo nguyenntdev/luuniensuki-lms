@@ -19,6 +19,7 @@ import {
   leaveLiveSession,
   listLiveSessionEvents,
   listLiveSessionParticipants,
+  streamLiveAiTeacherReply,
   synthesizeLiveAiTeacherVoice,
   transcribeLiveAiTeacherVoice,
 } from "@/lib/api";
@@ -57,6 +58,7 @@ export default function LiveClassroom({ sessionId }) {
   const [panelTab, setPanelTab] = useState("people");
   const [teacherOpen, setTeacherOpen] = useState(false);
   const [handRaised, setHandRaised] = useState(false);
+  const [liveDraft, setLiveDraft] = useState(""); // transient partial AI text while streaming
 
   const eventCursorRef = useRef(null);
   const seenEventIdsRef = useRef(new Set());
@@ -75,6 +77,9 @@ export default function LiveClassroom({ sessionId }) {
     transcribe: transcribeLiveAiTeacherVoice,
     askTeacher: ({ sessionId: sid, message, mode }) =>
       askLiveAiTeacher({ sessionId: sid, message, mode: mode || "hint-first", speakerName: displayName }),
+    streamAsk: ({ sessionId: sid, message, mode, onDelta }) =>
+      streamLiveAiTeacherReply({ sessionId: sid, message, mode: mode || "hint-first", speakerName: displayName, onDelta }),
+    onStreamDelta: setLiveDraft,
     synthesize: synthesizeLiveAiTeacherVoice,
   });
 
@@ -106,8 +111,14 @@ export default function LiveClassroom({ sessionId }) {
     }
     const merged = [...items, ...systemCaptions];
     merged.sort((a, b) => String(a.at || "").localeCompare(String(b.at || "")));
-    return merged.slice(-80);
-  }, [events, systemCaptions, nameFor]);
+    const base = merged.slice(-80);
+    // While the AI reply streams in, show it as a transient live bubble until
+    // the persisted ai_teacher_reply event arrives via polling.
+    if (liveDraft && liveDraft.trim()) {
+      base.push({ id: "live-draft", speaker: "assistant", name: "Cô giáo AI", text: liveDraft, at: new Date().toISOString(), streaming: true });
+    }
+    return base;
+  }, [events, systemCaptions, nameFor, liveDraft]);
 
   // Derive shared chat from live_chat_message events.
   const chat = useMemo(() => {

@@ -7211,6 +7211,206 @@ def live_ai_teacher_reply(
     )
 
 
+@app.post("/api/v1/live-sessions/{live_session_id}/ai-teacher/reply/stream")
+def live_ai_teacher_reply_stream(
+    live_session_id: UUID,
+    payload: schemas.LiveAITeacherRequestIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Server-Sent Events variant of /ai-teacher/reply.
+
+    Streams answer tokens as they are produced so the UI can show the reply
+    appearing live, then emits a final `done` event with the full structured
+    payload (citations/rubric/persona). Falls back to the non-streaming call if
+    streaming is unavailable. The client uses the full answer for TTS.
+    """
+    from .services import live_circuit_breaker as live_circuit_service
+    from .services import live_ai_teacher as live_ai_teacher_service
+    from .services import live_session_reporting as live_reporting_service
+    from .services import live_sessions as live_session_service
+
+    live_session = live_session_service.get_live_session(db, live_session_id)
+    if live_session is None:
+        raise HTTPException(status_code=404, detail="Live session not found")
+    _check_live_rate_limit(
+        db=db, user=current_user, bucket="ai-reply", ai_path=True, live_session_id=live_session.id
+    )
+    if live_session.status == LiveSessionStatus.ended.value:
+        raise HTTPException(status_code=400, detail="Live session has ended")
+    try:
+        live_session_service.ensure_user_can_access_live_session(
+            db, user=current_user, live_session=live_session
+        )
+    except PermissionError:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc))
+    if not live_session_service.is_ai_enabled(live_session):
+        raise HTTPException(status_code=423, detail="AI teacher is disabled by host")
+
+    ai_participant = live_session_service.ensure_ai_teacher_participant(
+        db, live_session=live_session, display_name="AI Teacher", event_source="ai_teacher_api"
+    )
+    session_metadata = (
+        live_session.session_metadata if isinstance(live_session.session_metadata, dict) else {}
+    )
+    persona_grade = live_ai_teacher_service.normalize_grade_level(
+        str(payload.grade_level or session_metadata.get("grade_level") or settings.live_default_grade_level)
+    )
+    requested_mode = live_ai_teacher_service.normalize_mode(payload.mode)
+    mode = requested_mode
+    forced_hint_first = False
+    if requested_mode in live_ai_teacher_service.MODERATOR_ONLY_MODES and not live_session_service.can_user_moderate_live_session(
+        db, user=current_user, live_session=live_session, allow_cohost=True
+    ):
+        mode = "hint-first"
+        forced_hint_first = True
+    speaker_name = (payload.speaker_name or current_user.display_name or "").strip()[:80]
+    message_text = payload.message.strip()
+    history_payload = live_ai_teacher_service.build_history_messages(
+        [{"role": m.role, "content": m.content} for m in (payload.history or [])]
+    )
+
+    safety = live_ai_teacher_service.evaluate_content_safety(message_text)
+    blocked = (
+        bool(settings.live_ai_enable_guardrails)
+        and bool(settings.live_ai_block_unsafe_content)
+        and not safety.get("is_safe", True)
+    )
+    cluster = live_ai_teacher_service.infer_heritage_cluster(
+        message=message_text, session_title=live_session.title
+    )
+    references = [] if blocked else live_ai_teacher_service.collect_reference_sources(
+        db, query=message_text, limit=3
+    )
+    references_prompt = live_ai_teacher_service.format_reference_context(references)
+    system_prompt = live_ai_teacher_service.build_system_prompt(
+        mode=mode,
+        session_title=live_session.title,
+        learner_message=message_text,
+        grade_level=persona_grade,
+        speaker_name=speaker_name,
+    )
+    if references_prompt:
+        system_prompt = (
+            f"{system_prompt}\n\nNguon tham khao noi bo uu tien:\n{references_prompt}"
+        )
+    messages = [
+        {"role": "system", "content": system_prompt},
+        *history_payload,
+        {"role": "user", "content": message_text},
+    ]
+    # Record the user message turn for the shared transcript.
+    live_session_service.record_live_event(
+        db,
+        live_session_id=live_session.id,
+        event_type="ai_teacher_user_message",
+        event_source="ai_teacher_api",
+        participant_identity=live_session_service.participant_identity_for_user(current_user),
+        participant_user_id=current_user.id,
+        payload={"requested_mode": requested_mode, "mode": mode, "message": message_text, "cluster": cluster},
+    )
+    db.commit()
+
+    def _sse(obj: dict) -> str:
+        return f"data: {json.dumps(obj, ensure_ascii=False)}\n\n"
+
+    def _generate():
+        prompt_tokens = live_reporting_service.estimate_tokens(system_prompt) + sum(
+            live_reporting_service.estimate_tokens(m.get("content", "")) for m in messages
+        )
+        provider = "deepseek"
+        model_name = settings.deepseek_model
+        answer = ""
+        if blocked:
+            answer = live_ai_teacher_service.safety_response(
+                categories=list(safety.get("categories") or [])
+            )
+            provider, model_name = "guardrail", "live-safety-v1"
+            yield _sse({"delta": answer})
+        else:
+            try:
+                live_circuit_service.assert_provider_available("deepseek")
+                for delta in _call_deepseek_chat_stream(messages, temperature=0.3):
+                    if not delta:
+                        continue
+                    answer += delta
+                    yield _sse({"delta": delta})
+                live_circuit_service.record_success("deepseek")
+            except Exception as exc:  # noqa: BLE001 — degrade gracefully
+                live_circuit_service.record_failure("deepseek", str(exc))
+                logger.warning("AI teacher stream fell back: %s", exc)
+                if not answer.strip():
+                    try:
+                        answer = _call_deepseek_chat(messages, temperature=0.3)
+                        yield _sse({"delta": answer})
+                    except Exception:  # noqa: BLE001
+                        answer = live_ai_teacher_service.fallback_response(mode=mode, question=message_text)
+                        provider, model_name = "fallback_policy", "heritage-guidance-v1"
+                        yield _sse({"delta": answer})
+
+        answer, citation_items = live_ai_teacher_service.apply_citation_tags(answer, references)
+        rubric = live_ai_teacher_service.build_rubric_feedback(
+            question=message_text, answer=answer, cluster=cluster
+        )
+        try:
+            if provider == "deepseek":
+                live_reporting_service.record_ai_cost(
+                    db,
+                    live_session=live_session,
+                    component="llm",
+                    cost_usd=live_reporting_service.estimate_deepseek_cost_usd(
+                        input_tokens=prompt_tokens,
+                        output_tokens=live_reporting_service.estimate_tokens(answer),
+                    ),
+                    token_in=prompt_tokens,
+                    token_out=live_reporting_service.estimate_tokens(answer),
+                    metadata={"provider": provider, "model": model_name},
+                )
+            live_session_service.record_live_event(
+                db,
+                live_session_id=live_session.id,
+                event_type="ai_teacher_reply",
+                event_source="ai_teacher_api",
+                participant_identity=ai_participant.participant_identity,
+                participant_user_id=None,
+                payload={
+                    "mode": mode,
+                    "provider": provider,
+                    "model": model_name,
+                    "answer": answer,
+                    "cluster": cluster,
+                    "references": references,
+                    "citations": citation_items,
+                    "rubric": rubric,
+                    "persona": persona_grade,
+                },
+            )
+            db.commit()
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("AI teacher stream post-processing failed: %s", exc)
+            db.rollback()
+
+        yield _sse({
+            "done": True,
+            "answer": answer,
+            "mode": mode,
+            "provider": provider,
+            "model": model_name,
+            "forced_hint_first": forced_hint_first,
+            "persona": persona_grade,
+            "citations": [c for c in citation_items if c.get("tag")],
+            "rubric": rubric,
+        })
+
+    return StreamingResponse(
+        _generate(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )
+
+
 @app.post(
     "/api/v1/live-sessions/{live_session_id}/end",
     response_model=schemas.LiveSessionOut,
@@ -12108,7 +12308,10 @@ def _call_deepseek_chat_stream(
                             yield content_delta
                     except json.JSONDecodeError:
                         continue
-    except (HTTPError, URLError) as exc:
+    except (HTTPError, URLError, TimeoutError, OSError) as exc:
+        # urllib raises a bare TimeoutError (not URLError) on socket read
+        # timeouts; treat all transport errors uniformly so callers can fall
+        # back to the non-streaming path.
         raise RuntimeError(f"Deepseek streaming request failed: {exc}") from exc
 
 
