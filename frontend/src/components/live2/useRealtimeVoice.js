@@ -35,11 +35,18 @@ export const TURN = Object.freeze({
 });
 
 // VAD tuning (mirror backend live_vad defaults).
-const END_SILENCE_MS = 700; // trailing silence that ends a turn
-const MIN_SPEECH_MS = 300; // ignore sub-300ms blips
-const SPEECH_RMS_THRESHOLD = 0.018; // energy above this = speech
+const END_SILENCE_MS = 900; // trailing silence that ends a turn (give the speaker room)
+const MIN_SPEECH_MS = 500; // require ~0.5s of real speech before we treat it as a turn
+const SPEECH_RMS_THRESHOLD = 0.032; // energy above this = speech (raised to ignore room noise)
 const FRAME_MS = 50; // VAD evaluation cadence
 const MAX_UTTERANCE_MS = 15000; // hard cap on a single utterance
+
+// Barge-in (interrupt the AI while it is speaking) is deliberately LESS
+// sensitive than start-of-turn detection: the user must speak clearly AND for a
+// sustained moment, otherwise the AI's own TTS bleeding into the mic, a cough,
+// or a short background noise would cut it off constantly.
+const BARGE_IN_RMS_THRESHOLD = 0.06; // must be noticeably louder than ambient/TTS bleed
+const BARGE_IN_MS = 350; // must persist this long before we stop the AI
 
 function rms(timeDomain) {
   let sum = 0;
@@ -78,6 +85,7 @@ export function useRealtimeVoice({
   const silenceMsRef = useRef(0);
   const inUtteranceRef = useRef(false);
   const utteranceMsRef = useRef(0);
+  const bargeMsRef = useRef(0); // sustained loud-speech accumulator for barge-in
   const ttsAudioRef = useRef(null);
   const ttsSourceRef = useRef(null); // Web Audio BufferSource (preferred playback)
   const ttsAnalyserRef = useRef(null); // analyser on the TTS output (lip-sync)
@@ -370,16 +378,27 @@ export function useRealtimeVoice({
     const isSpeech = energy >= SPEECH_RMS_THRESHOLD;
     const cur = stateRef.current;
 
-    // Barge-in: speaking + user speech -> stop AI, go listen.
-    if (cur === TURN.SPEAKING && isSpeech) {
-      stopPlayback();
-      inUtteranceRef.current = false;
-      speechMsRef.current = 0;
-      silenceMsRef.current = 0;
-      utteranceMsRef.current = 0;
-      setTurn(TURN.LISTENING);
+    // Barge-in: only interrupt the AI when the user speaks clearly (higher
+    // threshold) AND sustains it for BARGE_IN_MS. This prevents the AI's own
+    // TTS bleeding into the mic, coughs, or brief noises from cutting it off.
+    if (cur === TURN.SPEAKING) {
+      if (energy >= BARGE_IN_RMS_THRESHOLD) {
+        bargeMsRef.current += FRAME_MS;
+      } else {
+        bargeMsRef.current = Math.max(0, bargeMsRef.current - FRAME_MS * 2);
+      }
+      if (bargeMsRef.current >= BARGE_IN_MS) {
+        stopPlayback();
+        inUtteranceRef.current = false;
+        speechMsRef.current = 0;
+        silenceMsRef.current = 0;
+        utteranceMsRef.current = 0;
+        bargeMsRef.current = 0;
+        setTurn(TURN.LISTENING);
+      }
       return;
     }
+    bargeMsRef.current = 0;
 
     if (cur !== TURN.LISTENING) return; // only run VAD turns while listening
 
@@ -469,10 +488,10 @@ export function useRealtimeVoice({
         chunksRef.current = [];
         if (parts.length === 0) return;
         const blob = new Blob(parts, { type: mime });
-        // Require a minimum payload so we don't ship sub-300ms noise blips to
+        // Require a minimum payload so we don't ship sub-second noise blips to
         // STT (tiny/quiet clips make the recognizer hallucinate filler text in
-        // the wrong language). ~2.5KB of webm/opus ≈ a few hundred ms of speech.
-        if (blob.size > 2500) handleUtterance(blob);
+        // the wrong language). ~6KB of webm/opus ≈ ~0.6-0.8s of real speech.
+        if (blob.size > 6000) handleUtterance(blob);
         else if (stateRef.current === TURN.LISTENING) {
           /* too small, ignore */
         }
@@ -514,6 +533,7 @@ export function useRealtimeVoice({
     inUtteranceRef.current = false;
     speechMsRef.current = 0;
     silenceMsRef.current = 0;
+    bargeMsRef.current = 0;
     setListening(false);
     setLevel(0);
     setTurn(TURN.IDLE);
