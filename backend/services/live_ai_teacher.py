@@ -279,6 +279,7 @@ def build_system_prompt(
     learner_message: str | None = None,
     grade_level: str | None = None,
     speaker_name: str | None = None,
+    student_memory: str | None = None,
 ) -> str:
     title = (session_title or "").strip()
     cluster = infer_heritage_cluster(message=learner_message or "", session_title=title)
@@ -329,6 +330,11 @@ def build_system_prompt(
             f"co the goi ten em khi phu hop (vi du 'Em {clean_name} oi'). "
         )
 
+    memory_line = ""
+    clean_memory = " ".join(str(student_memory or "").split())[:300]
+    if clean_memory:
+        memory_line = f"Ghi nho ve hoc sinh (de ca nhan hoa, khong nhac lai may moc): {clean_memory} "
+
     return (
         "Ban la Gia su AI thuyet minh di san Viet Nam trong lop live. "
         "Muc tieu la giup nguoi hoc hieu y nghia bieu tuong, boi canh lich su, "
@@ -336,6 +342,7 @@ def build_system_prompt(
         f"{context_line} Dang day theo {cluster_label}. {script_line} "
         f"Persona hien tai: {persona['label']}, phong cach: {persona['style']}. "
         f"{learner_line}"
+        f"{memory_line}"
         f"{policy_line} "
         "Su dung tieng Viet tu nhien, ro rang, than thien; khong viet qua dai dong. "
         "Uu tien dan y co cau truc ngan gon, nhan manh can cu nguon [S#] khi co. "
@@ -481,6 +488,64 @@ def collect_reference_sources(
             }
         )
     return references
+
+
+def summarize_student_memory(
+    db: Session,
+    *,
+    user_id: Any,
+    limit: int = 10,
+) -> str:
+    """Compact, cross-session memory of what this student has been asking about,
+    so the AI can personalize. Best-effort; returns '' on nothing/any error."""
+    if user_id is None:
+        return ""
+    try:
+        rows = (
+            db.execute(
+                select(LiveEvent.payload)
+                .where(
+                    and_(
+                        LiveEvent.participant_user_id == user_id,
+                        LiveEvent.event_type == "ai_teacher_user_message",
+                    )
+                )
+                .order_by(LiveEvent.created_at.desc())
+                .limit(limit)
+            )
+            .scalars()
+            .all()
+        )
+    except Exception:  # noqa: BLE001 — memory is best-effort
+        return ""
+
+    cluster_counts: dict[str, int] = {}
+    last_question = ""
+    for payload in rows:
+        if not isinstance(payload, dict):
+            continue
+        cluster = str(payload.get("cluster") or "").strip()
+        if cluster:
+            cluster_counts[cluster] = cluster_counts.get(cluster, 0) + 1
+        if not last_question:
+            msg = str(payload.get("message") or "").strip()
+            if msg:
+                last_question = msg[:120]
+
+    if not cluster_counts and not last_question:
+        return ""
+
+    top = sorted(cluster_counts.items(), key=lambda kv: kv[1], reverse=True)[:2]
+    topic_labels = [
+        _CLUSTER_LABELS.get(c, c).replace("cum tri thuc ve ", "").replace("cum tri thuc ", "")
+        for c, _ in top
+    ]
+    parts: list[str] = []
+    if topic_labels:
+        parts.append("thuong quan tam toi " + ", ".join(topic_labels))
+    if last_question:
+        parts.append(f'lan gan nhat hoi: "{last_question}"')
+    return "; ".join(parts)
 
 
 def format_reference_context(sources: Iterable[dict[str, Any]]) -> str:

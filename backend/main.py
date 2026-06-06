@@ -6877,6 +6877,7 @@ def live_ai_teacher_reply(
         learner_message=message_text,
         grade_level=persona_grade,
         speaker_name=speaker_name,
+        student_memory=live_ai_teacher_service.summarize_student_memory(db, user_id=current_user.id),
     )
     if references_prompt:
         system_prompt = (
@@ -7291,6 +7292,7 @@ def live_ai_teacher_reply_stream(
         learner_message=message_text,
         grade_level=persona_grade,
         speaker_name=speaker_name,
+        student_memory=live_ai_teacher_service.summarize_student_memory(db, user_id=current_user.id),
     )
     if references_prompt:
         system_prompt = (

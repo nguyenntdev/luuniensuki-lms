@@ -113,6 +113,11 @@ class Settings(BaseSettings):
     )
     voice_tts_model: str = "tts-1"
     voice_tts_voice: str = "alloy"
+    voice_tts_instructions: str = (
+        "Bạn là cô giáo người Việt thân thiện, ấm áp, kiên nhẫn đang giảng bài cho học sinh. "
+        "Nói với ngữ điệu tự nhiên, trìu mến và truyền cảm; nhấn nhá hợp lý, ngắt nghỉ theo dấu câu, "
+        "không đọc đều đều như máy. Giữ nhịp vừa phải, rõ ràng."
+    )
     voice_tts_allow_edge_fallback: bool = True
     voice_tts_allow_gtts_fallback: bool = True
     voice_edge_tts_voice: str = "vi-VN-HoaiMyNeural"

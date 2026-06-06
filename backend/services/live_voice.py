@@ -462,6 +462,13 @@ def _synthesize_with_voice_api(
         "input": text,
         "format": "mp3",
     }
+    # Expressive voice: gpt-4o(-mini)-tts accepts a style "instructions" field
+    # for a warm, natural teacher delivery. Older models (tts-1) ignore/​reject
+    # it, so only attach when the model supports it.
+    if "gpt-4o" in model.lower():
+        instructions = str(settings.voice_tts_instructions or "").strip()
+        if instructions:
+            payload["instructions"] = instructions
 
     try:
         response = httpx.post(
