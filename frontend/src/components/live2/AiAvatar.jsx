@@ -44,7 +44,7 @@ const SKIN_SHADOW = "#e0a87f";
 const HAIR = "#2b2b33";
 const AODAI = "#0ea5b7";
 
-function TeacherCharacter({ state, outputLevel }) {
+function TeacherCharacter({ state, outputLevel, level }) {
   const root = useRef(null);
   const head = useRef(null);
   const mouth = useRef(null);
@@ -71,6 +71,15 @@ function TeacherCharacter({ state, outputLevel }) {
       head.current.rotation.y = Math.sin(t * 0.5) * 0.13;
       head.current.rotation.z = Math.sin(t * 0.7) * 0.03;
       head.current.rotation.x = Math.sin(t * 0.9) * 0.02;
+      // Backchannel: while listening, nod along with the student's voice energy
+      // (a gentle "I'm following you" motion) plus a slow attentive bob.
+      if (state === TURN.LISTENING) {
+        const lvl = Math.min(1, level || 0);
+        head.current.rotation.x += Math.sin(t * 6) * (0.015 + lvl * 0.06);
+        head.current.position && (head.current.position.z = 0.04 + lvl * 0.06);
+      } else if (head.current.position) {
+        head.current.position.z += (0 - head.current.position.z) * Math.min(1, delta * 6);
+      }
     }
 
     // Blink: schedule random blinks; ~120ms close (scale eyes' Y).
@@ -91,8 +100,13 @@ function TeacherCharacter({ state, outputLevel }) {
     const target = state === TURN.SPEAKING ? Math.min(1, (outputLevel || 0) * 1.6) : 0;
     mouthVal.current += (target - mouthVal.current) * Math.min(1, delta * 16);
     if (mouth.current) {
-      mouth.current.scale.y = 0.16 + mouthVal.current * 1.5;
-      mouth.current.scale.x = 1 - mouthVal.current * 0.18;
+      // Pseudo-viseme: drive vertical (jaw open) and horizontal (spread) with
+      // slightly different phases so the mouth looks like it's forming sounds
+      // rather than just scaling uniformly.
+      const m = mouthVal.current;
+      const wobble = state === TURN.SPEAKING ? (0.85 + 0.15 * Math.sin(t * 22)) : 1;
+      mouth.current.scale.y = 0.16 + m * 1.5 * wobble;
+      mouth.current.scale.x = 1 - m * 0.18 + (state === TURN.SPEAKING ? Math.sin(t * 17) * 0.06 * m : 0);
     }
 
     // Halo: pulse a bit while speaking/listening.
@@ -232,7 +246,7 @@ class AvatarErrorBoundary extends React.Component {
   render() { return this.state.failed ? this.props.fallback : this.props.children; }
 }
 
-function AvatarScene({ state, outputLevel, useGlb, glbUrl }) {
+function AvatarScene({ state, outputLevel, level, useGlb, glbUrl }) {
   const speaking = state === TURN.SPEAKING;
   const keyColor = STATE_LIGHT[state] || STATE_LIGHT[TURN.IDLE];
   return (
@@ -249,7 +263,7 @@ function AvatarScene({ state, outputLevel, useGlb, glbUrl }) {
         {useGlb ? (
           <GlbModel url={glbUrl} state={state} outputLevel={outputLevel} />
         ) : (
-          <TeacherCharacter state={state} outputLevel={outputLevel} />
+          <TeacherCharacter state={state} outputLevel={outputLevel} level={level} />
         )}
       </Suspense>
     </Canvas>
@@ -275,7 +289,7 @@ export default function AiAvatar({ state, level = 0, outputLevel = 0, onClick, a
             className="pointer-events-none absolute inset-0 rounded-3xl opacity-70 blur-2xl transition-colors"
             style={{ background: `radial-gradient(circle at 50% 40%, ${STATE_LIGHT[state]}33, transparent 70%)` }}
           />
-          <AvatarScene state={state} outputLevel={outputLevel} useGlb={useGlb} glbUrl={glbUrl} />
+          <AvatarScene state={state} outputLevel={outputLevel} level={level} useGlb={useGlb} glbUrl={glbUrl} />
         </button>
       </AvatarErrorBoundary>
       <div className="text-center">

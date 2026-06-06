@@ -35,7 +35,11 @@ export const TURN = Object.freeze({
 });
 
 // VAD tuning (mirror backend live_vad defaults).
-const END_SILENCE_MS = 900; // trailing silence that ends a turn (give the speaker room)
+// Adaptive endpointing: a clearly-complete utterance ends fast; a short/hesitant
+// one waits longer so we don't cut the speaker off mid-thought ("ờ...", "tức là...").
+const END_SILENCE_COMPLETE_MS = 650; // long enough utterance -> end quickly
+const END_SILENCE_HESITANT_MS = 1250; // short/hesitant tail -> be patient
+const COMPLETE_SPEECH_MS = 1400; // >= this much speech counts as a "complete" turn
 const MIN_SPEECH_MS = 500; // require ~0.5s of real speech before we treat it as a turn
 const SPEECH_RMS_THRESHOLD = 0.032; // energy above this = speech (raised to ignore room noise)
 const FRAME_MS = 50; // VAD evaluation cadence
@@ -47,6 +51,8 @@ const MAX_UTTERANCE_MS = 15000; // hard cap on a single utterance
 // or a short background noise would cut it off constantly.
 const BARGE_IN_RMS_THRESHOLD = 0.06; // must be noticeably louder than ambient/TTS bleed
 const BARGE_IN_MS = 350; // must persist this long before we stop the AI
+const DUCK_RMS_THRESHOLD = 0.045; // softer threshold: lower the AI's volume while you talk
+const DUCK_GAIN = 0.28; // ducked volume (so a backchannel doesn't force a full stop)
 
 function rms(timeDomain) {
   let sum = 0;
@@ -135,6 +141,7 @@ export function useRealtimeVoice({
   const ttsAudioRef = useRef(null);
   const ttsSourceRef = useRef(null); // Web Audio BufferSource (preferred playback)
   const ttsAnalyserRef = useRef(null); // analyser on the TTS output (lip-sync)
+  const ttsGainRef = useRef(null); // gain node on TTS output (for ducking on barge-in)
   const outRafRef = useRef(null); // rAF id for the output-amplitude loop
   const ttsAbortRef = useRef(null);
   const closingRef = useRef(false);
@@ -144,6 +151,12 @@ export function useRealtimeVoice({
   const streamFinishedRef = useRef(false); // producer finished enqueuing
   const clipResolveRef = useRef(null); // resolve() of the in-flight clip's end promise
   const turnSeqRef = useRef(0); // monotonic id; invalidates a turn's producer on interrupt
+  // Thinking-filler: a short "ừm, để cô xem nhé" played during the STT+LLM gap
+  // so the avatar isn't dead-silent before the first real sentence.
+  const fillerBufferRef = useRef(null); // decoded AudioBuffer (cached)
+  const fillerSrcRef = useRef(null); // active filler BufferSource
+  const fillerTimerRef = useRef(null); // delay timer before the filler kicks in
+  const fillerPrimingRef = useRef(false);
 
   const setTurn = useCallback((next) => {
     stateRef.current = next;
@@ -156,6 +169,21 @@ export function useRealtimeVoice({
     turnSeqRef.current += 1;
     ttsQueueRef.current = [];
     streamFinishedRef.current = true;
+    // Stop the thinking-filler too.
+    if (fillerTimerRef.current) {
+      clearTimeout(fillerTimerRef.current);
+      fillerTimerRef.current = null;
+    }
+    if (fillerSrcRef.current) {
+      try {
+        fillerSrcRef.current.onended = null;
+        fillerSrcRef.current.stop();
+      } catch {}
+      try {
+        fillerSrcRef.current.disconnect();
+      } catch {}
+      fillerSrcRef.current = null;
+    }
     if (clipResolveRef.current) {
       try {
         clipResolveRef.current(false);
@@ -241,6 +269,12 @@ export function useRealtimeVoice({
                 } catch {}
                 ttsAnalyserRef.current = null;
               }
+              if (ttsGainRef.current) {
+                try {
+                  ttsGainRef.current.disconnect();
+                } catch {}
+                ttsGainRef.current = null;
+              }
               setOutputLevel(0);
               resolve(ok);
             };
@@ -251,9 +285,13 @@ export function useRealtimeVoice({
             try {
               const analyser = ctx.createAnalyser();
               analyser.fftSize = 256;
+              const gain = ctx.createGain();
+              gain.gain.value = 1;
               src.connect(analyser);
-              analyser.connect(ctx.destination);
+              analyser.connect(gain);
+              gain.connect(ctx.destination);
               ttsAnalyserRef.current = analyser;
+              ttsGainRef.current = gain;
               const buf = new Uint8Array(analyser.fftSize);
               const tick = () => {
                 if (!ttsAnalyserRef.current) return;
@@ -326,7 +364,71 @@ export function useRealtimeVoice({
     [sessionId, synthesize],
   );
 
-  // Single consumer: drains the sentence queue, synthesizing + playing each
+  // Stop any in-flight thinking-filler clip immediately.
+  const stopFiller = useCallback(() => {
+    if (fillerTimerRef.current) {
+      clearTimeout(fillerTimerRef.current);
+      fillerTimerRef.current = null;
+    }
+    const src = fillerSrcRef.current;
+    if (src) {
+      try {
+        src.onended = null;
+        src.stop();
+      } catch {}
+      try {
+        src.disconnect();
+      } catch {}
+      fillerSrcRef.current = null;
+    }
+  }, []);
+
+  // Lazily synthesize + cache the filler clip so it's ready before it's needed.
+  const primeFiller = useCallback(async () => {
+    if (fillerBufferRef.current || fillerPrimingRef.current) return;
+    const ctx = audioCtxRef.current;
+    if (!ctx) return;
+    fillerPrimingRef.current = true;
+    try {
+      const blob = await synthesizeBlob("Ừm, để cô xem nhé.");
+      if (!blob) return;
+      const arrayBuf = await blob.arrayBuffer();
+      const audioBuffer = await new Promise((resolve, reject) => {
+        const p = ctx.decodeAudioData(arrayBuf.slice(0), resolve, reject);
+        if (p && typeof p.then === "function") p.then(resolve, reject);
+      });
+      fillerBufferRef.current = audioBuffer;
+    } catch {
+      /* filler is best-effort */
+    } finally {
+      fillerPrimingRef.current = false;
+    }
+  }, [synthesizeBlob]);
+
+  // Play the cached filler once, but only while still THINKING (no real audio yet).
+  const playFiller = useCallback(() => {
+    const ctx = audioCtxRef.current;
+    const audioBuffer = fillerBufferRef.current;
+    if (!ctx || !audioBuffer || closingRef.current) return;
+    if (stateRef.current !== TURN.THINKING) return;
+    try {
+      const src = ctx.createBufferSource();
+      src.buffer = audioBuffer;
+      const gain = ctx.createGain();
+      gain.gain.value = 0.7; // a touch quieter than the real answer
+      src.connect(gain);
+      gain.connect(ctx.destination);
+      src.onended = () => {
+        if (fillerSrcRef.current === src) fillerSrcRef.current = null;
+      };
+      fillerSrcRef.current = src;
+      src.start(0);
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+
   // clip back-to-back so the AI keeps talking as later sentences arrive.
   const pumpTtsQueue = useCallback(async () => {
     if (ttsPumpActiveRef.current) return;
@@ -370,11 +472,12 @@ export function useRealtimeVoice({
     (sentence) => {
       const s = String(sentence || "").trim();
       if (!s) return;
+      stopFiller(); // real speech is ready — kill the thinking filler
       ttsQueueRef.current.push(s);
       if (stateRef.current !== TURN.SPEAKING) setTurn(TURN.SPEAKING);
       if (!ttsPumpActiveRef.current) pumpTtsQueue();
     },
-    [pumpTtsQueue, setTurn],
+    [pumpTtsQueue, setTurn, stopFiller],
   );
 
   // ---- speak an AI reply for a given user text (shared by voice + quick-actions)
@@ -388,6 +491,13 @@ export function useRealtimeVoice({
       }
       setTurn(TURN.THINKING);
       if (echoUser) onTranscript?.({ speaker: "user", text });
+
+      // Arm the thinking-filler: if no real sentence has started speaking within
+      // a short window, play a brief "ừm, để cô xem nhé" so we're not silent.
+      stopFiller();
+      fillerTimerRef.current = setTimeout(() => {
+        if (!closingRef.current && stateRef.current === TURN.THINKING) playFiller();
+      }, 700);
 
       // Reset the TTS pipeline for this turn.
       ttsQueueRef.current = [];
@@ -466,7 +576,7 @@ export function useRealtimeVoice({
         else setTurn(TURN.LISTENING);
       }
     },
-    [askTeacher, streamAsk, onStreamDelta, onTranscript, enqueueTts, sessionId, setTurn],
+    [askTeacher, streamAsk, onStreamDelta, onTranscript, enqueueTts, sessionId, setTurn, stopFiller, playFiller],
   );
 
   // ---- end of a user turn: STT -> respond ----------------------------------
@@ -540,6 +650,15 @@ export function useRealtimeVoice({
     // threshold) AND sustains it for BARGE_IN_MS. This prevents the AI's own
     // TTS bleeding into the mic, coughs, or brief noises from cutting it off.
     if (cur === TURN.SPEAKING) {
+      // Soft ducking: as soon as the user starts talking, lower the AI's volume
+      // (like a person trailing off). Only a sustained, clearly-louder voice
+      // escalates to a full stop — a short "ừ"/"vâng" backchannel just ducks.
+      const gain = ttsGainRef.current;
+      if (energy >= DUCK_RMS_THRESHOLD) {
+        if (gain) gain.gain.value = DUCK_GAIN;
+      } else if (gain && gain.gain.value !== 1) {
+        gain.gain.value = 1; // user paused -> AI returns to full voice
+      }
       if (energy >= BARGE_IN_RMS_THRESHOLD) {
         bargeMsRef.current += FRAME_MS;
       } else {
@@ -587,7 +706,11 @@ export function useRealtimeVoice({
     if (inUtteranceRef.current) {
       silenceMsRef.current += FRAME_MS;
       utteranceMsRef.current += FRAME_MS;
-      if (silenceMsRef.current >= END_SILENCE_MS) {
+      // Adaptive endpointing: end fast after a clearly-complete utterance, but
+      // wait longer when the speaker has only said a little (likely mid-thought).
+      const endSilenceNeeded =
+        speechMsRef.current >= COMPLETE_SPEECH_MS ? END_SILENCE_COMPLETE_MS : END_SILENCE_HESITANT_MS;
+      if (silenceMsRef.current >= endSilenceNeeded) {
         if (speechMsRef.current >= MIN_SPEECH_MS) {
           inUtteranceRef.current = false;
           flushUtterance(); // endpoint -> process turn
@@ -613,7 +736,19 @@ export function useRealtimeVoice({
     closingRef.current = false;
     try {
       const constraints = {
-        audio: micDeviceId && micDeviceId !== "default" ? { deviceId: { exact: micDeviceId } } : true,
+        audio:
+          micDeviceId && micDeviceId !== "default"
+            ? {
+                deviceId: { exact: micDeviceId },
+                echoCancellation: true,
+                noiseSuppression: true,
+                autoGainControl: true,
+              }
+            : {
+                echoCancellation: true,
+                noiseSuppression: true,
+                autoGainControl: true,
+              },
       };
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       streamRef.current = stream;
@@ -633,6 +768,8 @@ export function useRealtimeVoice({
       analyser.fftSize = 1024;
       source.connect(analyser);
       analyserRef.current = analyser;
+      // Pre-synthesize the thinking-filler so it's instantly available later.
+      primeFiller();
 
       const mime = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
         ? "audio/webm;codecs=opus"
@@ -664,7 +801,7 @@ export function useRealtimeVoice({
       setListening(false);
       setTurn(TURN.IDLE);
     }
-  }, [handleUtterance, micDeviceId, setTurn, vadTick]);
+  }, [handleUtterance, micDeviceId, setTurn, vadTick, primeFiller]);
 
   const stop = useCallback(() => {
     closingRef.current = true;
@@ -692,6 +829,7 @@ export function useRealtimeVoice({
     speechMsRef.current = 0;
     silenceMsRef.current = 0;
     bargeMsRef.current = 0;
+    fillerBufferRef.current = null; // tied to the closing AudioContext
     setListening(false);
     setLevel(0);
     setTurn(TURN.IDLE);
