@@ -18,6 +18,9 @@ export default function RootLayout({ children }) {
     return (
         <html lang="vi" className="dark" suppressHydrationWarning>
             <body className="min-h-dvh bg-background text-foreground">
+                <a href="#main-content" className="skip-link">
+                    Bỏ qua điều hướng
+                </a>
                 <ThemeProvider>
                     <NetworkStatusIndicator>
                         <ClientBodyWrapper>
@@ -27,7 +30,7 @@ export default function RootLayout({ children }) {
                                         <FloatingNavbar />
                                         <StartingPathGate />
                                         <Toaster position="top-center" reverseOrder={false} />
-                                        {children}
+                                        <div id="main-content">{children}</div>
                                     </BadgeUnlockProvider>
                                 </XpCelebrationProvider>
                             </AuthGate>

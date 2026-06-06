@@ -5,6 +5,7 @@ import {
   BookOpen,
   Brain,
   Compass,
+  Globe,
   Home,
   LogOut,
   Menu,
@@ -35,6 +36,7 @@ const primaryNav = [
 
 const moreNav = [
   { icon: BookOpen, label: "Bộ sưu tập", href: "/collection" },
+  { icon: Globe, label: "Tham quan 360°", href: "/vr360" },
   { icon: Users, label: "Bạn học", href: "/friends" },
   { icon: Trophy, label: "Thành tích", href: "/achievements" },
   { icon: Compass, label: "Hành trình", href: "/quests" },

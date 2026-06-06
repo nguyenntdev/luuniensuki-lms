@@ -34,9 +34,18 @@ export default function CaptionsFeed({ items = [], emptyHint = "Phụ đề sẽ
         const m = speakerMeta(item.speaker);
         const name = item.name || m.name;
         return (
-          <div key={item.id} className="text-sm leading-relaxed">
+          <div
+            key={item.id}
+            className={`text-sm leading-relaxed ${item.streaming ? "opacity-80" : ""}`}
+          >
             <span className={`mr-2 font-semibold ${m.cls}`}>{name}:</span>
             <span className="text-zinc-100">{item.text}</span>
+            {item.streaming ? (
+              <span
+                className="ml-1 inline-block h-3 w-1.5 translate-y-0.5 animate-pulse rounded-sm bg-zinc-300 align-middle"
+                aria-hidden="true"
+              />
+            ) : null}
           </div>
         );
       })}
