@@ -1,6 +1,5 @@
 import ErrorBoundary from "@/components/ErrorBoundary";
 import VirtualTours from "@/components/vr360/VirtualTours";
-import SelfHostedTour from "@/components/vr360/SelfHostedTour";
 
 export const metadata = {
   title: "Tham quan ảo 360° — Lưu Niên Sử Kí",
@@ -25,17 +24,6 @@ export default function Vr360Page() {
       <ErrorBoundary>
         <VirtualTours />
       </ErrorBoundary>
-
-      <section className="px-6 pb-10">
-        <h2 className="mb-1 text-xl font-semibold text-foreground">Bản dựng 360° nội bộ</h2>
-        <p className="mb-4 max-w-2xl text-sm text-muted-foreground">
-          Trình xem 360° tự lưu trữ của Lưu Niên Sử Kí — không phụ thuộc bên thứ ba.
-          Kéo để nhìn quanh, cuộn để phóng to.
-        </p>
-        <ErrorBoundary>
-          <SelfHostedTour />
-        </ErrorBoundary>
-      </section>
     </main>
   );
 }
