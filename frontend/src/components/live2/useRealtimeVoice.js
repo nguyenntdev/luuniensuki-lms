@@ -57,6 +57,52 @@ function rms(timeDomain) {
   return Math.sqrt(sum / timeDomain.length);
 }
 
+// --- Sentence-level TTS streaming (LiveKit-style) -------------------------
+// As LLM tokens stream in, we chunk the text into speakable sentences and
+// synthesize/play them one after another so the avatar starts talking after
+// the FIRST sentence instead of waiting for the whole answer.
+const MIN_TTS_CHUNK = 24; // don't speak fragments shorter than this (chars)
+const MAX_TTS_BUF = 200; // force-flush if no sentence boundary by here
+
+// Strip markdown / citation tags so TTS doesn't read "asterisk" or "[S1]".
+function cleanForTts(value) {
+  return String(value || "")
+    .replace(/\[[A-Za-z]{0,2}\d+\]/g, " ") // [S1] [R2]
+    .replace(/[*_`#>]/g, " ") // markdown emphasis / headings / quotes
+    .replace(/^\s*[-•]\s+/gm, " ") // bullet markers
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+// Pull complete sentences out of a growing buffer. Returns the speakable
+// chunks plus the unconsumed remainder (kept until more text arrives).
+function takeSentences(buf) {
+  const chunks = [];
+  let seg = "";
+  let consumed = 0;
+  for (let i = 0; i < buf.length; i += 1) {
+    const c = buf[i];
+    seg += c;
+    const isBoundary = c === "." || c === "!" || c === "?" || c === "…" || c === "\n";
+    if (!isBoundary) continue;
+    // absorb trailing quotes/brackets/spaces so they ride with this sentence
+    let j = i + 1;
+    while (j < buf.length && /['")\]\s]/.test(buf[j])) {
+      seg += buf[j];
+      j += 1;
+    }
+    i = j - 1;
+    const trimmed = seg.trim();
+    if (trimmed.length >= MIN_TTS_CHUNK || (c === "\n" && trimmed.length >= 8)) {
+      chunks.push(trimmed);
+      consumed = i + 1;
+      seg = "";
+    }
+  }
+  return { chunks, rest: buf.slice(consumed) };
+}
+
+
 export function useRealtimeVoice({
   sessionId,
   enabled,
@@ -92,6 +138,12 @@ export function useRealtimeVoice({
   const outRafRef = useRef(null); // rAF id for the output-amplitude loop
   const ttsAbortRef = useRef(null);
   const closingRef = useRef(false);
+  // Sentence-streaming TTS queue.
+  const ttsQueueRef = useRef([]); // pending sentence strings to synthesize
+  const ttsPumpActiveRef = useRef(false); // is the synth/play pump running
+  const streamFinishedRef = useRef(false); // producer finished enqueuing
+  const clipResolveRef = useRef(null); // resolve() of the in-flight clip's end promise
+  const turnSeqRef = useRef(0); // monotonic id; invalidates a turn's producer on interrupt
 
   const setTurn = useCallback((next) => {
     stateRef.current = next;
@@ -99,6 +151,17 @@ export function useRealtimeVoice({
   }, []);
 
   const stopPlayback = useCallback(() => {
+    // Invalidate the current speaking turn so a still-arriving SSE stream stops
+    // enqueueing sentences, and drop any queued/streaming sentences.
+    turnSeqRef.current += 1;
+    ttsQueueRef.current = [];
+    streamFinishedRef.current = true;
+    if (clipResolveRef.current) {
+      try {
+        clipResolveRef.current(false);
+      } catch {}
+      clipResolveRef.current = null;
+    }
     if (ttsAbortRef.current) {
       try {
         ttsAbortRef.current.abort();
@@ -142,99 +205,176 @@ export function useRealtimeVoice({
     }
   }, []);
 
-  // Play TTS audio bytes. Prefer the Web Audio API through the AudioContext that
-  // was unlocked by the user's "join" gesture — this bypasses the browser
-  // autoplay policy that silently blocks `new Audio().play()` after the long
-  // STT->LLM->TTS async gap. Falls back to an HTMLAudioElement if decoding
-  // fails (e.g. Safari mp3 quirks). Returns true if playback started.
-  const playTtsBuffer = useCallback(
+  // Play ONE audio clip and resolve when it finishes (or fails). Prefers the
+  // Web Audio API through the AudioContext unlocked by the join gesture (so the
+  // browser autoplay policy doesn't silently block playback after the async
+  // STT->LLM->TTS gap), with an HTMLAudio fallback. Does NOT change turn state —
+  // the sentence pump owns the idle/speaking transitions.
+  const playClip = useCallback(
     async (audioBlob) => {
+      if (!audioBlob || audioBlob.size === 0) return false;
       const ctx = audioCtxRef.current;
-      // Try Web Audio playback first.
       if (ctx) {
         try {
-          if (ctx.state === "suspended") {
-            await ctx.resume().catch(() => {});
-          }
+          if (ctx.state === "suspended") await ctx.resume().catch(() => {});
           const arrayBuf = await audioBlob.arrayBuffer();
           const audioBuffer = await new Promise((resolve, reject) => {
-            // decodeAudioData supports both promise and callback forms.
             const p = ctx.decodeAudioData(arrayBuf.slice(0), resolve, reject);
             if (p && typeof p.then === "function") p.then(resolve, reject);
           });
           if (closingRef.current || stateRef.current !== TURN.SPEAKING) return false;
-          const src = ctx.createBufferSource();
-          src.buffer = audioBuffer;
-          // Insert an analyser between the source and the destination so we can
-          // drive the avatar's mouth from the AI's actual speech amplitude.
-          let analyser = null;
-          try {
-            analyser = ctx.createAnalyser();
-            analyser.fftSize = 256;
-            src.connect(analyser);
-            analyser.connect(ctx.destination);
-            ttsAnalyserRef.current = analyser;
-            const buf = new Uint8Array(analyser.fftSize);
-            const tick = () => {
-              if (!ttsAnalyserRef.current) return;
-              ttsAnalyserRef.current.getByteTimeDomainData(buf);
-              const lvl = rms(buf);
-              // Scale up; speech RMS is small. Clamp to 0..1.
-              setOutputLevel(Math.min(1, lvl * 3.2));
-              outRafRef.current = requestAnimationFrame(tick);
+          return await new Promise((resolve) => {
+            let done = false;
+            const finish = (ok) => {
+              if (done) return;
+              done = true;
+              if (clipResolveRef.current === finish) clipResolveRef.current = null;
+              if (outRafRef.current) {
+                try {
+                  cancelAnimationFrame(outRafRef.current);
+                } catch {}
+                outRafRef.current = null;
+              }
+              if (ttsAnalyserRef.current) {
+                try {
+                  ttsAnalyserRef.current.disconnect();
+                } catch {}
+                ttsAnalyserRef.current = null;
+              }
+              setOutputLevel(0);
+              resolve(ok);
             };
-            outRafRef.current = requestAnimationFrame(tick);
-          } catch {
-            src.connect(ctx.destination);
-          }
-          src.onended = () => {
-            if (ttsSourceRef.current === src) ttsSourceRef.current = null;
-            if (outRafRef.current) {
-              try {
-                cancelAnimationFrame(outRafRef.current);
-              } catch {}
-              outRafRef.current = null;
+            clipResolveRef.current = finish;
+            const src = ctx.createBufferSource();
+            src.buffer = audioBuffer;
+            // Analyser between source and destination -> drives avatar lip-sync.
+            try {
+              const analyser = ctx.createAnalyser();
+              analyser.fftSize = 256;
+              src.connect(analyser);
+              analyser.connect(ctx.destination);
+              ttsAnalyserRef.current = analyser;
+              const buf = new Uint8Array(analyser.fftSize);
+              const tick = () => {
+                if (!ttsAnalyserRef.current) return;
+                ttsAnalyserRef.current.getByteTimeDomainData(buf);
+                setOutputLevel(Math.min(1, rms(buf) * 3.2));
+                outRafRef.current = requestAnimationFrame(tick);
+              };
+              outRafRef.current = requestAnimationFrame(tick);
+            } catch {
+              src.connect(ctx.destination);
             }
-            ttsAnalyserRef.current = null;
-            setOutputLevel(0);
-            if (!closingRef.current && stateRef.current === TURN.SPEAKING) {
-              setTurn(TURN.LISTENING);
+            src.onended = () => {
+              if (ttsSourceRef.current === src) ttsSourceRef.current = null;
+              finish(true);
+            };
+            ttsSourceRef.current = src;
+            try {
+              src.start(0);
+            } catch {
+              finish(false);
             }
-          };
-          ttsSourceRef.current = src;
-          src.start(0);
-          return true;
+          });
         } catch {
-          // Fall through to HTMLAudio.
+          // fall through to HTMLAudio
         }
       }
-
       // Fallback: HTMLAudioElement.
-      try {
-        const url = URL.createObjectURL(audioBlob);
-        const audio = new Audio(url);
-        ttsAudioRef.current = audio;
-        audio.onended = () => {
-          if (ttsAudioRef.current === audio) {
-            try {
-              URL.revokeObjectURL(url);
-            } catch {}
-            ttsAudioRef.current = null;
-          }
-          if (!closingRef.current && stateRef.current === TURN.SPEAKING) {
-            setTurn(TURN.LISTENING);
-          }
+      return await new Promise((resolve) => {
+        let done = false;
+        const finish = (ok) => {
+          if (done) return;
+          done = true;
+          if (clipResolveRef.current === finish) clipResolveRef.current = null;
+          resolve(ok);
         };
-        audio.onerror = () => {
-          if (!closingRef.current && stateRef.current === TURN.SPEAKING) setTurn(TURN.LISTENING);
-        };
-        await audio.play();
-        return true;
-      } catch {
-        return false;
-      }
+        clipResolveRef.current = finish;
+        try {
+          const url = URL.createObjectURL(audioBlob);
+          const audio = new Audio(url);
+          ttsAudioRef.current = audio;
+          audio.onended = () => {
+            if (ttsAudioRef.current === audio) {
+              try {
+                URL.revokeObjectURL(url);
+              } catch {}
+              ttsAudioRef.current = null;
+            }
+            finish(true);
+          };
+          audio.onerror = () => finish(false);
+          audio.play().catch(() => finish(false));
+        } catch {
+          finish(false);
+        }
+      });
     },
-    [setTurn],
+    [setOutputLevel],
+  );
+
+  // Normalize a synthesize() result into a playable Blob.
+  const synthesizeBlob = useCallback(
+    async (text, signal) => {
+      const audioData = await synthesize({ sessionId, text, signal });
+      if (audioData instanceof Blob) return audioData;
+      if (audioData?.blob instanceof Blob) return audioData.blob;
+      if (audioData instanceof ArrayBuffer) return new Blob([audioData], { type: "audio/mpeg" });
+      if (audioData?.arrayBuffer || ArrayBuffer.isView(audioData)) return new Blob([audioData], { type: "audio/mpeg" });
+      return null;
+    },
+    [sessionId, synthesize],
+  );
+
+  // Single consumer: drains the sentence queue, synthesizing + playing each
+  // clip back-to-back so the AI keeps talking as later sentences arrive.
+  const pumpTtsQueue = useCallback(async () => {
+    if (ttsPumpActiveRef.current) return;
+    ttsPumpActiveRef.current = true;
+    try {
+      while (!closingRef.current && stateRef.current === TURN.SPEAKING) {
+        if (ttsQueueRef.current.length === 0) {
+          if (streamFinishedRef.current) break;
+          await new Promise((r) => setTimeout(r, 60)); // wait for more tokens
+          continue;
+        }
+        const sentence = ttsQueueRef.current.shift();
+        const speakText = cleanForTts(sentence);
+        if (!speakText) continue;
+        const controller = new AbortController();
+        ttsAbortRef.current = controller;
+        let blob = null;
+        try {
+          blob = await synthesizeBlob(speakText, controller.signal);
+        } catch {
+          blob = null;
+        }
+        if (closingRef.current || stateRef.current !== TURN.SPEAKING) break;
+        if (blob) await playClip(blob);
+      }
+    } finally {
+      ttsPumpActiveRef.current = false;
+      if (
+        !closingRef.current &&
+        stateRef.current === TURN.SPEAKING &&
+        ttsQueueRef.current.length === 0 &&
+        streamFinishedRef.current
+      ) {
+        setTurn(TURN.LISTENING);
+      }
+    }
+  }, [playClip, synthesizeBlob, setTurn]);
+
+  // Enqueue a sentence for speech; flips to SPEAKING and starts the pump.
+  const enqueueTts = useCallback(
+    (sentence) => {
+      const s = String(sentence || "").trim();
+      if (!s) return;
+      ttsQueueRef.current.push(s);
+      if (stateRef.current !== TURN.SPEAKING) setTurn(TURN.SPEAKING);
+      if (!ttsPumpActiveRef.current) pumpTtsQueue();
+    },
+    [pumpTtsQueue, setTurn],
   );
 
   // ---- speak an AI reply for a given user text (shared by voice + quick-actions)
@@ -249,66 +389,84 @@ export function useRealtimeVoice({
       setTurn(TURN.THINKING);
       if (echoUser) onTranscript?.({ speaker: "user", text });
 
-      // Prefer SSE streaming so the caption appears live; fall back to the
+      // Reset the TTS pipeline for this turn.
+      ttsQueueRef.current = [];
+      streamFinishedRef.current = false;
+      const myTurn = ++turnSeqRef.current;
+
+      // Prefer SSE streaming: chunk tokens into sentences and start speaking the
+      // first sentence immediately (LiveKit-style), falling back to a single
       // non-streaming ask on any transport error so the room never stalls.
       let answer = "";
-      let streamed = false;
       if (typeof streamAsk === "function") {
         try {
           let acc = "";
+          let pending = "";
           const result = await streamAsk({
             sessionId,
             message: text,
             mode,
             onDelta: (delta) => {
-              if (closingRef.current) return;
-              acc += String(delta || "");
+              if (closingRef.current || turnSeqRef.current !== myTurn) return;
+              const d = String(delta || "");
+              acc += d;
               onStreamDelta?.(acc);
+              pending += d;
+              const { chunks, rest } = takeSentences(pending);
+              pending = rest;
+              for (const c of chunks) enqueueTts(c);
             },
           });
+          if (turnSeqRef.current !== myTurn) return; // interrupted mid-stream
           answer = String(result?.answer || acc || "").trim();
-          streamed = true;
+          if (pending.trim()) enqueueTts(pending); // flush trailing partial sentence
         } catch {
-          streamed = false;
           answer = "";
+          ttsQueueRef.current = [];
         }
       }
+      if (turnSeqRef.current !== myTurn) return; // interrupted
+
       if (!answer) {
-        const reply = await askTeacher({ sessionId, message: text, mode });
-        answer = String(reply?.text || reply?.answer || "").trim();
-      }
-      if (!answer) {
+        // Non-streaming fallback (or stream failed) — still chunk for low latency.
+        try {
+          const reply = await askTeacher({ sessionId, message: text, mode });
+          answer = String(reply?.text || reply?.answer || "").trim();
+        } catch {
+          answer = "";
+        }
+        if (turnSeqRef.current !== myTurn) return; // interrupted during fallback
+        if (!answer) {
+          onStreamDelta?.("");
+          streamFinishedRef.current = true;
+          if (stateRef.current !== TURN.SPEAKING) setTurn(TURN.LISTENING);
+          return;
+        }
         onStreamDelta?.("");
-        setTurn(TURN.LISTENING);
+        onTranscript?.({ speaker: "assistant", text: answer });
+        const { chunks, rest } = takeSentences(`${answer}\n`);
+        for (const c of chunks) enqueueTts(c);
+        if (rest.trim()) enqueueTts(rest);
+        streamFinishedRef.current = true;
+        if (!ttsPumpActiveRef.current && ttsQueueRef.current.length === 0 && stateRef.current !== TURN.SPEAKING) {
+          setTurn(TURN.LISTENING);
+        }
         return;
       }
-      // Commit the final assistant turn to the captions feed and clear the
-      // live streaming buffer (if any).
+
+      // Streaming succeeded: commit caption + mark producer done so the pump
+      // transitions back to LISTENING once the last sentence finishes.
       onStreamDelta?.("");
       onTranscript?.({ speaker: "assistant", text: answer });
-
-      setTurn(TURN.SPEAKING);
-      const controller = new AbortController();
-      ttsAbortRef.current = controller;
-      const audioData = await synthesize({ sessionId, text: answer, signal: controller.signal });
-      if (closingRef.current || stateRef.current !== TURN.SPEAKING) return;
-      let audioBlob;
-      if (audioData instanceof Blob) audioBlob = audioData;
-      else if (audioData?.blob instanceof Blob) audioBlob = audioData.blob;
-      else if (audioData instanceof ArrayBuffer) audioBlob = new Blob([audioData], { type: "audio/mpeg" });
-      else if (audioData?.arrayBuffer || ArrayBuffer.isView(audioData)) audioBlob = new Blob([audioData], { type: "audio/mpeg" });
-      else {
-        setTurn(TURN.LISTENING);
-        return;
+      streamFinishedRef.current = true;
+      if (!ttsPumpActiveRef.current && ttsQueueRef.current.length === 0 && stateRef.current !== TURN.SPEAKING) {
+        // Nothing ever got enqueued (e.g. empty after cleaning) — don't hang.
+        const whole = cleanForTts(answer);
+        if (whole) enqueueTts(whole);
+        else setTurn(TURN.LISTENING);
       }
-      if (!audioBlob || audioBlob.size === 0) {
-        setTurn(TURN.LISTENING);
-        return;
-      }
-      const started = await playTtsBuffer(audioBlob);
-      if (!started && !closingRef.current) setTurn(TURN.LISTENING);
     },
-    [askTeacher, streamAsk, onStreamDelta, onTranscript, playTtsBuffer, sessionId, setTurn, synthesize],
+    [askTeacher, streamAsk, onStreamDelta, onTranscript, enqueueTts, sessionId, setTurn],
   );
 
   // ---- end of a user turn: STT -> respond ----------------------------------
