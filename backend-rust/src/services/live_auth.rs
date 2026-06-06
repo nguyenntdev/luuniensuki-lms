@@ -96,7 +96,7 @@ pub async fn can_manage_classroom(
     }
 
     let owns: bool = sqlx::query_scalar(
-        "SELECT EXISTS(SELECT 1 FROM classrooms WHERE id = $1 AND owner_id = $2)",
+        "SELECT EXISTS(SELECT 1 FROM classes WHERE id = $1 AND teacher_id = $2)",
     )
     .bind(classroom_id)
     .bind(user_id)
@@ -122,7 +122,7 @@ pub async fn can_access_classroom(
     }
 
     let is_member: bool = sqlx::query_scalar(
-        "SELECT EXISTS(SELECT 1 FROM classroom_members WHERE classroom_id = $1 AND user_id = $2)",
+        "SELECT EXISTS(SELECT 1 FROM class_members WHERE class_id = $1 AND user_id = $2)",
     )
     .bind(classroom_id)
     .bind(user_id)
