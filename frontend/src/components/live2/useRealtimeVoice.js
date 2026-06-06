@@ -54,6 +54,13 @@ const BARGE_IN_MS = 350; // must persist this long before we stop the AI
 const DUCK_RMS_THRESHOLD = 0.045; // softer threshold: lower the AI's volume while you talk
 const DUCK_GAIN = 0.28; // ducked volume (so a backchannel doesn't force a full stop)
 
+// Streaming STT (Tier 1.3): while the user speaks, periodically transcribe the
+// audio captured so far to show a live interim caption. The final transcribe at
+// end-of-turn stays authoritative. Bounded cadence to limit STT cost.
+const PARTIAL_STT_FIRST_MS = 1500; // don't attempt a partial before this much speech
+const PARTIAL_STT_INTERVAL_MS = 1600; // min gap between partial transcribes
+const RECORDER_TIMESLICE_MS = 250; // emit data chunks during recording (for partials)
+
 function rms(timeDomain) {
   let sum = 0;
   for (let i = 0; i < timeDomain.length; i += 1) {
@@ -114,6 +121,7 @@ export function useRealtimeVoice({
   enabled,
   micDeviceId,
   onTranscript, // ({ speaker, text }) => void  (for captions feed)
+  onPartialTranscript, // (text) => void  live interim transcript of the user while speaking
   onStreamDelta, // (fullText) => void  (live partial AI text while streaming)
   transcribe, // async ({ sessionId, file }) => { transcript }
   askTeacher, // async ({ sessionId, message }) => { text, ... }
@@ -138,6 +146,9 @@ export function useRealtimeVoice({
   const inUtteranceRef = useRef(false);
   const utteranceMsRef = useRef(0);
   const bargeMsRef = useRef(0); // sustained loud-speech accumulator for barge-in
+  const mimeRef = useRef("audio/webm"); // recorder mime (for building partial blobs)
+  const partialBusyRef = useRef(false); // a partial transcribe is in flight
+  const lastPartialMsRef = useRef(0); // utteranceMs at last partial attempt
   const ttsAudioRef = useRef(null);
   const ttsSourceRef = useRef(null); // Web Audio BufferSource (preferred playback)
   const ttsAnalyserRef = useRef(null); // analyser on the TTS output (lip-sync)
@@ -584,6 +595,7 @@ export function useRealtimeVoice({
     async (blob) => {
       if (closingRef.current) return;
       setTurn(TURN.THINKING);
+      onPartialTranscript?.(""); // interim caption done; final transcript follows
       try {
         const file = new File([blob], "utterance.webm", { type: blob.type || "audio/webm" });
         const sttRes = await transcribe({ sessionId, file });
@@ -606,7 +618,7 @@ export function useRealtimeVoice({
         }
       }
     },
-    [onTranscript, respond, sessionId, setTurn, transcribe],
+    [onTranscript, onPartialTranscript, respond, sessionId, setTurn, transcribe],
   );
 
   // ---- imperative quick-action ask (text prompt + chosen mode) -------------
@@ -625,6 +637,29 @@ export function useRealtimeVoice({
     },
     [respond, setTurn, stopPlayback],
   );
+
+  // ---- streaming STT: transcribe audio-so-far for a live interim caption ----
+  const runPartialTranscribe = useCallback(async () => {
+    if (partialBusyRef.current || closingRef.current) return;
+    const parts = chunksRef.current.slice();
+    if (parts.length === 0) return;
+    const blob = new Blob(parts, { type: mimeRef.current });
+    if (blob.size < 4000) return; // too little audio to be meaningful
+    partialBusyRef.current = true;
+    try {
+      const file = new File([blob], "partial.webm", { type: mimeRef.current });
+      const res = await transcribe({ sessionId, file });
+      const txt = String(res?.transcript || "").trim();
+      // Only surface if we're still in the same listening utterance.
+      if (txt && !closingRef.current && stateRef.current === TURN.LISTENING && inUtteranceRef.current) {
+        onPartialTranscript?.(txt);
+      }
+    } catch {
+      /* partials are best-effort */
+    } finally {
+      partialBusyRef.current = false;
+    }
+  }, [transcribe, sessionId, onPartialTranscript]);
 
   // ---- capture one utterance with MediaRecorder ----------------------------
   const flushUtterance = useCallback(() => {
@@ -685,16 +720,28 @@ export function useRealtimeVoice({
         speechMsRef.current = 0;
         silenceMsRef.current = 0;
         utteranceMsRef.current = 0;
-        // Start a fresh recording for this utterance.
+        lastPartialMsRef.current = 0;
+        onPartialTranscript?.(""); // clear any stale interim caption
+        // Start a fresh recording for this utterance (timeslice so partial
+        // transcripts can be built from audio captured so far).
         try {
           chunksRef.current = [];
           const rec = recorderRef.current;
-          if (rec && rec.state === "inactive") rec.start();
+          if (rec && rec.state === "inactive") rec.start(RECORDER_TIMESLICE_MS);
         } catch {}
       }
       speechMsRef.current += FRAME_MS;
       silenceMsRef.current = 0;
       utteranceMsRef.current += FRAME_MS;
+      // Streaming STT: fire a bounded interim transcribe for a live caption.
+      if (
+        utteranceMsRef.current >= PARTIAL_STT_FIRST_MS &&
+        utteranceMsRef.current - lastPartialMsRef.current >= PARTIAL_STT_INTERVAL_MS &&
+        !partialBusyRef.current
+      ) {
+        lastPartialMsRef.current = utteranceMsRef.current;
+        runPartialTranscribe();
+      }
       if (utteranceMsRef.current >= MAX_UTTERANCE_MS) {
         inUtteranceRef.current = false;
         flushUtterance();
@@ -719,6 +766,7 @@ export function useRealtimeVoice({
           inUtteranceRef.current = false;
           speechMsRef.current = 0;
           silenceMsRef.current = 0;
+          onPartialTranscript?.("");
           try {
             const rec = recorderRef.current;
             if (rec && rec.state === "recording") rec.stop();
@@ -727,7 +775,7 @@ export function useRealtimeVoice({
         }
       }
     }
-  }, [flushUtterance, setTurn, stopPlayback]);
+  }, [flushUtterance, setTurn, stopPlayback, runPartialTranscribe, onPartialTranscript]);
 
   // ---- start / stop --------------------------------------------------------
   const start = useCallback(async () => {
@@ -774,6 +822,7 @@ export function useRealtimeVoice({
       const mime = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
         ? "audio/webm;codecs=opus"
         : "audio/webm";
+      mimeRef.current = mime;
       const recorder = new MediaRecorder(stream, { mimeType: mime });
       recorder.ondataavailable = (e) => {
         if (e.data && e.data.size > 0) chunksRef.current.push(e.data);

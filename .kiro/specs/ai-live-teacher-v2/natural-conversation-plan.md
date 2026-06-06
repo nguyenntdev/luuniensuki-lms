@@ -92,10 +92,11 @@ frontend, api for backend, api_rust only if Rust) → verify. Tier 1 first.
 ## Status
 - [x] 1.1 thinking filler — DONE, deployed
 - [x] 1.2 adaptive endpointing — DONE, deployed
-- [ ] 1.3 streaming STT — BLOCKED by provider: yescale only serves batch
-      `gpt-4o-transcribe` (no realtime/websocket STT). Mitigated via adaptive
-      endpointing (1.2) which cut the perceived end-of-turn latency. Revisit when
-      a realtime STT provider (OpenAI Realtime / Deepgram) is available.
+- [x] 1.3 streaming STT — DONE (bounded pseudo-streaming): timeslice recording +
+      mid-utterance partial transcribe shows a live interim caption while the
+      student speaks; final transcribe stays authoritative. (True realtime STT
+      still needs a websocket provider; this is the achievable version on the
+      current batch `gpt-4o-transcribe`.)
 - [x] 2.1 expressive TTS — code DONE (instructions for gpt-4o-mini-tts) but the
       model is unavailable on yescale (503); edge-tts also blocked (MS 403).
       Shipped a working nudge instead: warmer `shimmer` teacher voice on tts-1.
