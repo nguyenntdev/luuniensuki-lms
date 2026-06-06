@@ -9,6 +9,7 @@ import {
   Compass,
   Eye,
   Flame,
+  Globe,
   Medal,
   Sparkles,
   Star,
@@ -225,6 +226,7 @@ function AuthenticatedDashboard() {
 
       <section className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <QuickLink href="/explore" icon={Compass} title="Khám phá" text="Mở đỉnh và họa tiết" />
+        <QuickLink href="/vr360" icon={Globe} title="Tham quan ảo 360°" text="Đi dạo Hoàng thành Huế" />
         <QuickLink href="/practice" icon={Brain} title="Ôn tập" text="Phiên ngắn theo trí nhớ" />
         <QuickLink href="/collection" icon={BookOpen} title="Bộ sưu tập" text={`${doneSteps} họa tiết đã mở`} />
         <QuickLink href="/achievements" icon={Trophy} title="Thành tích" text="Huy hiệu và bảng hạng" />
