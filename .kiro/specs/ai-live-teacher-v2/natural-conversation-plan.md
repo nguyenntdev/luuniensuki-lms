@@ -90,12 +90,25 @@ Each item: implement → `get_diagnostics`/`py_compile` → commit+push → depl
 frontend, api for backend, api_rust only if Rust) → verify. Tier 1 first.
 
 ## Status
-- [ ] 1.1 thinking filler
-- [ ] 1.2 adaptive endpointing
-- [ ] 1.3 streaming STT
-- [ ] 2.1 expressive TTS
-- [ ] 2.2 listening backchannels
-- [ ] 2.3 viseme lip-sync
-- [ ] 3.1 mic hygiene + ducking
-- [ ] 3.2 contextual barge-in
-- [ ] 4.1 per-student memory
+- [x] 1.1 thinking filler — DONE, deployed
+- [x] 1.2 adaptive endpointing — DONE, deployed
+- [ ] 1.3 streaming STT — BLOCKED by provider: yescale only serves batch
+      `gpt-4o-transcribe` (no realtime/websocket STT). Mitigated via adaptive
+      endpointing (1.2) which cut the perceived end-of-turn latency. Revisit when
+      a realtime STT provider (OpenAI Realtime / Deepgram) is available.
+- [x] 2.1 expressive TTS — code DONE (instructions for gpt-4o-mini-tts) but the
+      model is unavailable on yescale (503); edge-tts also blocked (MS 403).
+      Shipped a working nudge instead: warmer `shimmer` teacher voice on tts-1.
+- [x] 2.2 listening backchannels — DONE, deployed
+- [x] 2.3 viseme-ish lip-sync — DONE, deployed
+- [x] 3.1 mic hygiene + ducking — DONE, deployed
+- [x] 3.2 contextual barge-in (volume duck) — DONE, deployed
+- [x] 4.1 per-student memory — DONE, deployed
+
+## Provider constraints (yescale) discovered
+- TTS: only `tts-1` works (voices alloy/echo/fable/onyx/nova/shimmer). `gpt-4o-mini-tts` → 503.
+- edge-tts (vi-VN-HoaiMyNeural) → Microsoft 403 (token); gTTS robotic fallback only.
+- STT: `gpt-4o-transcribe` batch only.
+- To unlock true human-likeness (expressive Vietnamese TTS + streaming STT), add a
+  provider that serves `gpt-4o-mini-tts`/`gpt-4o-realtime` or Deepgram/ElevenLabs.
+
