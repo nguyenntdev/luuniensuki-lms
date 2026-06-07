@@ -1,5 +1,6 @@
 import { Toaster } from "react-hot-toast";
 import FloatingNavbar from "@/components/FloatingNavbar";
+import CommandPalette from "@/components/CommandPalette";
 import ClientBodyWrapper from "@/components/ClientBodyWrapper";
 import AuthGate from "@/components/AuthGate";
 import StartingPathGate from "@/components/StartingPathGate";
@@ -28,6 +29,7 @@ export default function RootLayout({ children }) {
                                 <XpCelebrationProvider>
                                     <BadgeUnlockProvider>
                                         <FloatingNavbar />
+                                        <CommandPalette />
                                         <StartingPathGate />
                                         <Toaster position="top-center" reverseOrder={false} />
                                         <div id="main-content">{children}</div>

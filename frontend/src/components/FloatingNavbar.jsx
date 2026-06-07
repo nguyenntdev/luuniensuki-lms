@@ -10,6 +10,7 @@ import {
   LogOut,
   Menu,
   Moon,
+  Search,
   Shield,
   Sparkles,
   Sun,
@@ -181,6 +182,17 @@ export default function FloatingNavbar() {
           </div>
 
           <div className="flex shrink-0 items-center gap-1">
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new Event("open-command-palette"))}
+              className="inline-flex h-9 items-center gap-2 rounded-lg border border-border/70 bg-secondary/40 px-3 text-xs font-medium text-muted-foreground hover:bg-secondary hover:text-foreground"
+              aria-label="Tìm kiếm nhanh"
+              title="Tìm kiếm nhanh (⌘K)"
+            >
+              <Search className="h-4 w-4" />
+              <span className="hidden lg:inline">Tìm kiếm</span>
+              <kbd className="hidden rounded border border-border px-1 text-[10px] lg:inline">⌘K</kbd>
+            </button>
             <button
               type="button"
               onClick={toggleTheme}
