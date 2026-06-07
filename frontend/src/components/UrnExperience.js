@@ -8,6 +8,7 @@ import { shallow } from "zustand/shallow";
 
 import { getMyStreak, getQuestSummary, getRecommendations } from "@/lib/api";
 import { useAuthStore } from "@/stores/authStore";
+import ViewerControlsHint from "@/components/viewer/ViewerControlsHint";
 import {
     makeSelectNextUnmasteredMotif,
     selectMotifProgressSummary,
@@ -514,6 +515,8 @@ function UrnExperienceContent({ urnSlug, searchParams }) {
                 viewMode={viewMode}
                 className="absolute inset-0"
             />
+
+            <ViewerControlsHint />
         </div>
     );
 }
