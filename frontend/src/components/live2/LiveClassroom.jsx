@@ -395,18 +395,35 @@ export default function LiveClassroom({ sessionId }) {
           ) : null}
         </section>
 
-        {teacherOpen && isHost ? (
-          <TeacherConsole sessionId={sessionId} participants={participants} events={events} onClose={() => setTeacherOpen(false)} />
-        ) : panelOpen ? (
-          <SidePanel
-            open={panelOpen}
-            tab={panelTab}
-            onTab={setPanelTab}
-            onClose={() => setPanelOpen(false)}
-            participants={participants}
-            messages={chat}
-            onSendMessage={sendChat}
-          />
+        {(teacherOpen && isHost) || panelOpen ? (
+          <>
+            {/* Mobile backdrop — tap to close */}
+            <button
+              type="button"
+              aria-label="Đóng bảng"
+              onClick={() => {
+                setTeacherOpen(false);
+                setPanelOpen(false);
+              }}
+              className="fixed inset-0 z-30 bg-black/60 backdrop-blur-sm md:hidden"
+            />
+            {/* On mobile: a full-height overlay sheet; on md+: an inline side column */}
+            <div className="fixed inset-x-2 bottom-2 top-16 z-40 flex md:static md:inset-auto md:bottom-auto md:top-auto md:z-auto md:w-auto">
+              {teacherOpen && isHost ? (
+                <TeacherConsole sessionId={sessionId} participants={participants} events={events} onClose={() => setTeacherOpen(false)} />
+              ) : (
+                <SidePanel
+                  open={panelOpen}
+                  tab={panelTab}
+                  onTab={setPanelTab}
+                  onClose={() => setPanelOpen(false)}
+                  participants={participants}
+                  messages={chat}
+                  onSendMessage={sendChat}
+                />
+              )}
+            </div>
+          </>
         ) : null}
       </div>
 
