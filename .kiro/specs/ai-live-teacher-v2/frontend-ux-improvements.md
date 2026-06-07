@@ -37,6 +37,16 @@ Stack: Next.js 15 (App Router) · React 19 · Tailwind + HSL design tokens · th
   none → users hit unstyled default Next.js screens). Now heritage-themed with
   retry + error digest.
 
+### 3D urn viewer
+- **First-visit controls hint** (drag / zoom / tap hotspots) — one-time,
+  localStorage-gated, auto-hides, clears on first interaction.
+
+### Learning loop & shared UI
+- **Lesson page**: post-completion "Làm trắc nghiệm ngay" CTA (closes
+  learn → quiz → master loop).
+- **Practice page**: "all caught up" empty state when no cards are due.
+- **Shared `<EmptyState>`** component, applied to explore + practice.
+
 ## Researched roadmap (not yet done — prioritized)
 
 1. **Urn 3D viewer (`UrnExperience`)** — the centerpiece. High value, higher
