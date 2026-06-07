@@ -7,6 +7,7 @@ import Skeleton from "@/components/Skeleton";
 import DailyGoalCard from "@/components/dashboard/DailyGoalCard";
 import DailyMissionsCard from "@/components/dashboard/DailyMissionsCard";
 import ActivateBoostButton from "@/components/dashboard/ActivateBoostButton";
+import JourneyHub from "@/components/dashboard/JourneyHub";
 import {
     getDashboardSummary,
     refreshRecommendations,
@@ -341,6 +342,8 @@ export default function DashboardPage() {
                     </div>
                 </div>
             </section>
+
+            <JourneyHub />
 
             <div className="mt-5 grid gap-5 xl:grid-cols-[1.25fr_0.75fr]">
                 <div className="space-y-5">
