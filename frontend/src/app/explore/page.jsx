@@ -6,6 +6,7 @@ import { ArrowUpRight, Layers, Trophy } from "lucide-react";
 
 import { getUrns } from "@/lib/api";
 import Skeleton from "@/components/Skeleton";
+import EmptyState from "@/components/ui/EmptyState";
 
 export default function ExplorePage() {
   const [urns, setUrns] = useState([]);
@@ -216,8 +217,12 @@ export default function ExplorePage() {
       )}
 
       {!loading && urns.length === 0 && !error ? (
-        <div className="mt-6 rounded-lg border border-border/60 bg-card/60 p-4 text-sm text-muted-foreground">
-          Không tìm thấy đỉnh nào. Hãy chạy tập lệnh seed dữ liệu.
+        <div className="mt-6">
+          <EmptyState
+            icon={Layers}
+            title="Chưa có đỉnh nào"
+            description="Dữ liệu Cửu Đỉnh chưa được nạp. Hãy chạy tập lệnh seed dữ liệu để bắt đầu khám phá."
+          />
         </div>
       ) : null}
     </main>

@@ -52,6 +52,7 @@ export default function MotifLessonPage() {
   const [completing, setCompleting] = useState(false);
   const [error, setError] = useState(null);
   const [notice, setNotice] = useState(null);
+  const [completedStatus, setCompletedStatus] = useState(null);
 
   const mediaItems = useMemo(() => {
     const raw = motif?.lesson?.additional_images;
@@ -151,6 +152,7 @@ export default function MotifLessonPage() {
       const res = await completeLesson({ motifId });
       const statusLabel = STATUS_LABELS[res.status] || res.status;
       setNotice(`Đã lưu: ${statusLabel}, +${res.xp_awarded} XP`);
+      setCompletedStatus(res.status);
       useMotifStore.getState().applyProgressUpdate({
         motifId,
         status: res.status,
@@ -217,8 +219,25 @@ export default function MotifLessonPage() {
             </div>
           ) : null}
           {notice ? (
-            <div className="mt-6 rounded-lg bg-success/10 p-4 text-sm text-success border border-success/20">
-              {notice}
+            <div className="mt-6 rounded-lg border border-success/20 bg-success/10 p-4 text-sm text-success">
+              <div className="font-semibold">{notice}</div>
+              {completedStatus && completedStatus !== "mastered" ? (
+                <div className="mt-3 flex flex-wrap items-center gap-3">
+                  <span className="text-success/90">
+                    Bước tiếp theo: làm trắc nghiệm để thành thạo họa tiết này.
+                  </span>
+                  <Link
+                    href={`/motif/${motifId}/quiz`}
+                    className="inline-flex items-center rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/90"
+                  >
+                    Làm trắc nghiệm ngay →
+                  </Link>
+                </div>
+              ) : completedStatus === "mastered" ? (
+                <div className="mt-2 text-success/90">
+                  Bạn đã thành thạo họa tiết này. Tiếp tục khám phá họa tiết khác nhé!
+                </div>
+              ) : null}
             </div>
           ) : null}
 
