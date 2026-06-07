@@ -13,6 +13,7 @@ import {
 
 import { usePracticeStore } from "@/stores/practiceStore";
 import { useAuthStore } from "@/stores/authStore";
+import EmptyState from "@/components/ui/EmptyState";
 
 export default function PracticePage() {
   const router = useRouter();
@@ -141,6 +142,22 @@ export default function PracticePage() {
           <PracticeModeCard key={mode.title} {...mode} onClick={() => router.push(mode.href)} />
         ))}
       </section>
+
+      {stats && (stats.due_cards || 0) === 0 ? (
+        <section className="mt-5">
+          <EmptyState
+            icon={Sparkles}
+            title="Bạn đã ôn hết thẻ đến hạn!"
+            description={
+              stats.total_cards
+                ? "Tuyệt vời — không còn thẻ nào cần ôn lúc này. Hãy học thêm họa tiết mới để mở rộng bộ thẻ."
+                : "Bạn chưa có thẻ ôn nào. Hoàn thành bài học họa tiết để tạo thẻ ôn tập."
+            }
+            actionHref="/explore"
+            actionLabel="Khám phá họa tiết"
+          />
+        </section>
+      ) : null}
 
       {stats ? (
         <section className="heritage-surface mt-5 p-5">
