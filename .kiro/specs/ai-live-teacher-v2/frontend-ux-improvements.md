@@ -32,6 +32,11 @@ Stack: Next.js 15 (App Router) · React 19 · Tailwind + HSL design tokens · th
   avatar column on phones); inline side-column preserved on md+.
 - **Streaming caption cursor** on interim transcript bubbles.
 
+### App-level resilience
+- **Branded 404 / route-error / loading / global-error pages** (App Router had
+  none → users hit unstyled default Next.js screens). Now heritage-themed with
+  retry + error digest.
+
 ## Researched roadmap (not yet done — prioritized)
 
 1. **Urn 3D viewer (`UrnExperience`)** — the centerpiece. High value, higher
@@ -46,7 +51,7 @@ Stack: Next.js 15 (App Router) · React 19 · Tailwind + HSL design tokens · th
 5. **Performance** — audit bundle size of the 3D routes; lazy-load three.js
    only on viewer routes; image `next/image` adoption for thumbnails.
 6. **Empty/error states** — a shared `<EmptyState>`/`<ErrorState>` component
-   for consistency across pages.
+   for consistency across pages. (App-level error/404/loading pages: DONE.)
 
 ## Constraints / methodology
 - No dev server available for visual QA → changes are additive + verified via
