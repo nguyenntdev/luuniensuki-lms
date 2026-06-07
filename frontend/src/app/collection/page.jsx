@@ -37,6 +37,11 @@ const STATUSES = [
     { value: "hidden", label: "Đã khóa" },
 ];
 
+// Quick lookup: category enum -> Vietnamese label (cards showed the raw enum before).
+const CATEGORY_LABEL = Object.fromEntries(
+    CATEGORIES.filter((c) => c.value).map((c) => [c.value, c.label]),
+);
+
 export default function CollectionPage() {
     const status = useAuthStore((s) => s.status);
 
@@ -198,6 +203,30 @@ export default function CollectionPage() {
                         </div>
                       </div>
                     </div>
+                </div>
+            ) : null}
+
+            {/* Overall mastery progress */}
+            {collection?.stats && collection.stats.total > 0 ? (
+                <div className="heritage-surface mt-3 p-4">
+                  <div className="relative">
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <span className="font-semibold uppercase tracking-wider">Tiến độ thành thạo</span>
+                        <span className="font-display tabular-nums text-foreground">
+                            {Math.round((collection.stats.mastered / collection.stats.total) * 100)}%
+                        </span>
+                    </div>
+                    <div className="progress-track mt-2">
+                        <div
+                            className="progress-fill"
+                            style={{ width: `${Math.round((collection.stats.mastered / collection.stats.total) * 100)}%` }}
+                        />
+                    </div>
+                    <div className="mt-2 text-[11px] text-muted-foreground">
+                        {collection.stats.mastered}/{collection.stats.total} họa tiết đã thành thạo ·{" "}
+                        {collection.stats.discovered + collection.stats.learned + collection.stats.mastered} đã mở khóa
+                    </div>
+                  </div>
                 </div>
             ) : null}
 
@@ -399,7 +428,7 @@ export default function CollectionPage() {
                                         </h3>
                                         <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
                                             <span className="truncate">
-                                                {item.category}
+                                                {CATEGORY_LABEL[item.category] || item.category}
                                             </span>
                                         </div>
                                     </div>
