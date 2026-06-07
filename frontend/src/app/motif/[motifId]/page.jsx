@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { completeLesson, getMotifDetail, logAnalyticsEvent } from "@/lib/api";
 import { useAuthStore } from "@/stores/authStore";
 import { useMotifStore } from "@/stores/motifStore";
+import ReadingProgress from "@/components/ReadingProgress";
 
 const CATEGORY_LABELS = {
   linh_thu: "Linh Thú",
@@ -166,6 +167,7 @@ export default function MotifLessonPage() {
 
   return (
     <main className="site-shell">
+      {isDiscovered && motif ? <ReadingProgress /> : null}
       {!isDiscovered ? (
         <div className="rounded-lg border border-border bg-card p-6">
           <h1 className="text-xl font-display font-semibold text-foreground">
