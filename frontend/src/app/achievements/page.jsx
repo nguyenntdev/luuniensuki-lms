@@ -406,7 +406,32 @@ function BadgesTab({ visible }) {
                 )}
             </section>
 
-            <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+            {/* Badge collection summary */}
+            {badges.length > 0 ? (
+                <div className="heritage-surface mt-8 p-4">
+                  <div className="relative">
+                    <div className="flex items-center justify-between text-sm">
+                        <span className="font-semibold text-foreground">Bộ sưu tập huy hiệu</span>
+                        <span className="text-muted-foreground">
+                            Đã nhận{" "}
+                            <span className="font-display tabular-nums text-foreground">
+                                {badges.filter((b) => b.earned).length}
+                            </span>
+                            /
+                            <span className="font-display tabular-nums">{badges.length}</span>
+                        </span>
+                    </div>
+                    <div className="progress-track mt-2">
+                        <div
+                            className="progress-fill"
+                            style={{ width: `${Math.round((badges.filter((b) => b.earned).length / badges.length) * 100)}%` }}
+                        />
+                    </div>
+                  </div>
+                </div>
+            ) : null}
+
+            <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
                 {badges.map((badge) => (
                     <div
                         key={badge.id || badge.slug}
