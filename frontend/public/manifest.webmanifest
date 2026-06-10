@@ -1,0 +1,25 @@
+{
+  "name": "Lưu Niên Sử Kí",
+  "short_name": "Lưu Niên Sử Kí",
+  "description": "Học di sản Cửu Đỉnh triều Nguyễn qua mô hình 3D, lớp học cùng Cô giáo AI, trắc nghiệm và tham quan ảo 360°.",
+  "lang": "vi",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0b0f17",
+  "theme_color": "#0b0f17",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.ico",
+      "type": "image/x-icon",
+      "sizes": "48x48"
+    }
+  ]
+}
