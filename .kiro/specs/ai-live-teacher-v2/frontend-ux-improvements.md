@@ -37,6 +37,17 @@ Stack: Next.js 15 (App Router) · React 19 · Tailwind + HSL design tokens · th
   none → users hit unstyled default Next.js screens). Now heritage-themed with
   retry + error digest.
 
+### Achievements
+- **Badge collection progress summary** (earned X/total + bar) above the grid.
+
+### 3D viewer
+- **First-visit controls hint** (drag / zoom / tap hotspots), localStorage-gated.
+
+### SEO / PWA
+- Rich root **metadata** (title template, OpenGraph, Twitter card, icons,
+  robots) + `viewport` theme-color + **`/manifest.webmanifest`** (installable).
+  Verified: `og:*`, `theme-color`, `manifest` render in prod HTML.
+
 ### 3D urn viewer
 - **First-visit controls hint** (drag / zoom / tap hotspots) — one-time,
   localStorage-gated, auto-hides, clears on first interaction.
