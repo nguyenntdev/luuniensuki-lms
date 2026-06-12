@@ -320,7 +320,7 @@ pub async fn me(
 ) -> Result<impl IntoResponse, AppError> {
     let token = extract_token_from_headers(&headers).ok_or(AppError::Unauthorized)?;
     let claims =
-        auth::verify_access_token(&token, &state.settings.jwt_secret_key)
+        auth::verify_access_token(&token, &state.settings.jwt_secret_key, state.settings.jwt_validate_new_claims, &state.settings.jwt_issuer, &state.settings.jwt_audience)
             .map_err(|_| AppError::Unauthorized)?;
 
     let pool = require_pool(&state.pool)?;
@@ -379,6 +379,8 @@ pub async fn login(
         &row.role,
         &state.settings.jwt_secret_key,
         state.settings.access_token_expire_minutes,
+        &state.settings.jwt_issuer,
+        &state.settings.jwt_audience,
     )
     .map_err(|e| AppError::Internal(anyhow::anyhow!("{}", e)))?;
 
@@ -387,6 +389,8 @@ pub async fn login(
         &row.role,
         &state.settings.jwt_secret_key,
         state.settings.refresh_token_expire_days,
+        &state.settings.jwt_issuer,
+        &state.settings.jwt_audience,
     )
     .map_err(|e| AppError::Internal(anyhow::anyhow!("{}", e)))?;
 
@@ -477,6 +481,8 @@ pub async fn register(
         &row.role,
         &state.settings.jwt_secret_key,
         state.settings.access_token_expire_minutes,
+        &state.settings.jwt_issuer,
+        &state.settings.jwt_audience,
     )
     .map_err(|e| AppError::Internal(anyhow::anyhow!("{}", e)))?;
 
@@ -485,6 +491,8 @@ pub async fn register(
         &row.role,
         &state.settings.jwt_secret_key,
         state.settings.refresh_token_expire_days,
+        &state.settings.jwt_issuer,
+        &state.settings.jwt_audience,
     )
     .map_err(|e| AppError::Internal(anyhow::anyhow!("{}", e)))?;
 
@@ -505,7 +513,7 @@ pub async fn refresh(
     let raw_token =
         extract_refresh_token_from_headers(&headers).ok_or(AppError::Unauthorized)?;
 
-    let claims = auth::verify_refresh_token(&raw_token, &state.settings.jwt_secret_key)
+    let claims = auth::verify_refresh_token(&raw_token, &state.settings.jwt_secret_key, state.settings.jwt_validate_new_claims, &state.settings.jwt_issuer, &state.settings.jwt_audience)
         .map_err(|_| AppError::Unauthorized)?;
 
     let pool = require_pool(&state.pool)?;
@@ -529,6 +537,8 @@ pub async fn refresh(
         &row.role,
         &state.settings.jwt_secret_key,
         state.settings.access_token_expire_minutes,
+        &state.settings.jwt_issuer,
+        &state.settings.jwt_audience,
     )
     .map_err(|e| AppError::Internal(anyhow::anyhow!("{}", e)))?;
 
@@ -537,6 +547,8 @@ pub async fn refresh(
         &row.role,
         &state.settings.jwt_secret_key,
         state.settings.refresh_token_expire_days,
+        &state.settings.jwt_issuer,
+        &state.settings.jwt_audience,
     )
     .map_err(|e| AppError::Internal(anyhow::anyhow!("{}", e)))?;
 
@@ -697,7 +709,7 @@ pub async fn age_verify(
 ) -> Result<impl IntoResponse, AppError> {
     let token = extract_token_from_headers(&headers).ok_or(AppError::Unauthorized)?;
     let claims =
-        auth::verify_access_token(&token, &state.settings.jwt_secret_key)
+        auth::verify_access_token(&token, &state.settings.jwt_secret_key, state.settings.jwt_validate_new_claims, &state.settings.jwt_issuer, &state.settings.jwt_audience)
             .map_err(|_| AppError::Unauthorized)?;
 
     let pool = require_pool(&state.pool)?;
@@ -958,6 +970,8 @@ mod tests {
             "user",
             &state.settings.jwt_secret_key,
             7,
+            &state.settings.jwt_issuer,
+            &state.settings.jwt_audience,
         )
         .unwrap();
 
@@ -984,6 +998,8 @@ mod tests {
             "user",
             &state.settings.jwt_secret_key,
             60,
+            &state.settings.jwt_issuer,
+            &state.settings.jwt_audience,
         )
         .unwrap();
 

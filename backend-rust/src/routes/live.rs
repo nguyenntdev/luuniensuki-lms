@@ -56,7 +56,7 @@ fn authenticate_with_role(
 ) -> Result<(Uuid, String), AppError> {
     let token = crate::routes::route_helpers::extract_access_token(headers)
         .ok_or(AppError::Unauthorized)?;
-    let claims = crate::auth::verify_access_token(&token, &settings.jwt_secret_key)
+    let claims = crate::auth::verify_access_token(&token, &settings.jwt_secret_key, settings.jwt_validate_new_claims, &settings.jwt_issuer, &settings.jwt_audience)
         .map_err(|_| AppError::Unauthorized)?;
     let uid: Uuid = claims.sub.parse().map_err(|_| AppError::Unauthorized)?;
     Ok((uid, claims.role))

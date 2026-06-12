@@ -22,7 +22,12 @@ mod rate_limit;
 mod routes;
 mod services;
 
-use axum::{middleware, routing::{get, patch, post}, Router};
+use axum::{
+    http::{header, HeaderValue},
+    middleware,
+    routing::{get, patch, post},
+    Router,
+};
 use sqlx::PgPool;
 use tokio::signal;
 
@@ -36,6 +41,12 @@ async fn main() -> anyhow::Result<()> {
     observability::init();
 
     let settings = config::Settings::from_env()?;
+
+    // Enforce fail-closed configuration before any component initializes:
+    // in production this halts startup on sentinel/empty secrets, so the DB
+    // pool, router, and background jobs below never start with insecure config
+    // (Requirement 5.5).
+    settings.validate()?;
 
     // Load the route-mode dispatcher (hot-reloadable TOML map)
     let dispatcher = Dispatcher::load(&settings.route_modes_path)?;
@@ -404,8 +415,49 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
         .merge(misc_routes)
         .merge(internal_routes)
         .fallback(gateway::fallback_to_python)
+        .layer(middleware::from_fn(add_security_headers))
         .layer(middleware::from_fn(observability::request_id_and_logging))
         .with_state(gw_state)
+}
+
+/// Axum middleware that injects baseline security headers on every response
+/// (Requirements 25.2, 25.3). Headers are applied uniformly across all routes
+/// because this layer wraps the fully-merged router. Existing headers are not
+/// overwritten, so a handler that sets a stricter/custom policy is preserved.
+async fn add_security_headers(
+    req: axum::extract::Request,
+    next: axum::middleware::Next,
+) -> axum::response::Response {
+    let mut resp = next.run(req).await;
+    let headers = resp.headers_mut();
+
+    // X-Content-Type-Options: nosniff
+    if !headers.contains_key(header::X_CONTENT_TYPE_OPTIONS) {
+        headers.insert(
+            header::X_CONTENT_TYPE_OPTIONS,
+            HeaderValue::from_static("nosniff"),
+        );
+    }
+
+    // Strict-Transport-Security: max-age=31536000; includeSubDomains
+    if !headers.contains_key(header::STRICT_TRANSPORT_SECURITY) {
+        headers.insert(
+            header::STRICT_TRANSPORT_SECURITY,
+            HeaderValue::from_static("max-age=31536000; includeSubDomains"),
+        );
+    }
+
+    // Content-Security-Policy: default-src 'self'; frame-ancestors 'none'; object-src 'none'
+    if !headers.contains_key(header::CONTENT_SECURITY_POLICY) {
+        headers.insert(
+            header::CONTENT_SECURITY_POLICY,
+            HeaderValue::from_static(
+                "default-src 'self'; frame-ancestors 'none'; object-src 'none'",
+            ),
+        );
+    }
+
+    resp
 }
 
 /// Resolve when either `SIGTERM` or `SIGINT` (`Ctrl+C`) is received.
@@ -675,5 +727,61 @@ mod tests {
         assert!(text.contains("streak_brb_invocations_total"));
         assert!(text.contains("friend_streak_increments_total"));
         assert!(text.contains("phoenix_badges_awarded_total"));
+    }
+
+    /// The security-headers layer injects CSP, HSTS, and X-Content-Type-Options
+    /// on every response routed through it (Requirements 25.2, 25.3).
+    ///
+    /// This builds a minimal router with a trivial route and applies
+    /// `add_security_headers` exactly the way `build_router` does, then asserts
+    /// the three headers are present on the response. By construction this fails
+    /// on unfixed code (no header layer) and passes once the layer is wired.
+    #[tokio::test]
+    async fn security_headers_layer_sets_csp_hsts_nosniff() {
+        let app = Router::new()
+            .route("/t", get(|| async { "ok" }))
+            .layer(middleware::from_fn(add_security_headers));
+
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .uri("/t")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::OK);
+
+        let headers = response.headers();
+
+        assert_eq!(
+            headers
+                .get(header::X_CONTENT_TYPE_OPTIONS)
+                .and_then(|v| v.to_str().ok()),
+            Some("nosniff"),
+            "X-Content-Type-Options must be nosniff",
+        );
+
+        let hsts = headers
+            .get(header::STRICT_TRANSPORT_SECURITY)
+            .and_then(|v| v.to_str().ok())
+            .expect("Strict-Transport-Security must be present");
+        assert!(
+            hsts.contains("max-age=31536000") && hsts.contains("includeSubDomains"),
+            "Strict-Transport-Security must carry a max-age and includeSubDomains, got {hsts:?}",
+        );
+
+        let csp = headers
+            .get(header::CONTENT_SECURITY_POLICY)
+            .and_then(|v| v.to_str().ok())
+            .expect("Content-Security-Policy must be present");
+        assert!(
+            csp.contains("default-src 'self'")
+                && csp.contains("frame-ancestors 'none'")
+                && csp.contains("object-src 'none'"),
+            "Content-Security-Policy must be the conservative self-only policy, got {csp:?}",
+        );
     }
 }

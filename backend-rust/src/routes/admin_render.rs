@@ -59,7 +59,7 @@ fn require_pool(pool: &Option<PgPool>) -> Result<&PgPool, AppError> {
 
 fn authenticate_admin(headers: &HeaderMap, settings: &Settings) -> Result<(), AppError> {
     let token = extract_token_from_headers(headers).ok_or(AppError::Unauthorized)?;
-    let claims = auth::verify_access_token(&token, &settings.jwt_secret_key)
+    let claims = auth::verify_access_token(&token, &settings.jwt_secret_key, settings.jwt_validate_new_claims, &settings.jwt_issuer, &settings.jwt_audience)
         .map_err(|_| AppError::Unauthorized)?;
     if claims.role != "admin" {
         return Err(AppError::Http {
@@ -262,6 +262,8 @@ mod tests {
             "user",
             &state.settings.jwt_secret_key,
             60,
+            &state.settings.jwt_issuer,
+            &state.settings.jwt_audience,
         )
         .unwrap();
         let app = test_router();
@@ -286,6 +288,8 @@ mod tests {
             "admin",
             &state.settings.jwt_secret_key,
             60,
+            &state.settings.jwt_issuer,
+            &state.settings.jwt_audience,
         )
         .unwrap();
         let app = test_router();

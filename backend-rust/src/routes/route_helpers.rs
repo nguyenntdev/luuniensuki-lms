@@ -45,7 +45,7 @@ pub fn require_pool(pool: &Option<PgPool>) -> Result<&PgPool, AppError> {
 /// Authenticate the request and return the user id. Errors map to 401.
 pub fn authenticate(headers: &HeaderMap, settings: &Settings) -> Result<Uuid, AppError> {
     let token = extract_access_token(headers).ok_or(AppError::Unauthorized)?;
-    let claims = auth::verify_access_token(&token, &settings.jwt_secret_key)
+    let claims = auth::verify_access_token(&token, &settings.jwt_secret_key, settings.jwt_validate_new_claims, &settings.jwt_issuer, &settings.jwt_audience)
         .map_err(|_| AppError::Unauthorized)?;
     claims.sub.parse().map_err(|_| AppError::Unauthorized)
 }
@@ -53,7 +53,7 @@ pub fn authenticate(headers: &HeaderMap, settings: &Settings) -> Result<Uuid, Ap
 /// Authenticate and additionally require `role = 'admin'`.
 pub fn require_admin(headers: &HeaderMap, settings: &Settings) -> Result<Uuid, AppError> {
     let token = extract_access_token(headers).ok_or(AppError::Unauthorized)?;
-    let claims = auth::verify_access_token(&token, &settings.jwt_secret_key)
+    let claims = auth::verify_access_token(&token, &settings.jwt_secret_key, settings.jwt_validate_new_claims, &settings.jwt_issuer, &settings.jwt_audience)
         .map_err(|_| AppError::Unauthorized)?;
     if claims.role != "admin" {
         return Err(AppError::Http {
@@ -67,7 +67,7 @@ pub fn require_admin(headers: &HeaderMap, settings: &Settings) -> Result<Uuid, A
 /// Authenticate and require `role = 'teacher'` or `'admin'`.
 pub fn require_teacher(headers: &HeaderMap, settings: &Settings) -> Result<Uuid, AppError> {
     let token = extract_access_token(headers).ok_or(AppError::Unauthorized)?;
-    let claims = auth::verify_access_token(&token, &settings.jwt_secret_key)
+    let claims = auth::verify_access_token(&token, &settings.jwt_secret_key, settings.jwt_validate_new_claims, &settings.jwt_issuer, &settings.jwt_audience)
         .map_err(|_| AppError::Unauthorized)?;
     if claims.role != "teacher" && claims.role != "admin" {
         return Err(AppError::Http {
