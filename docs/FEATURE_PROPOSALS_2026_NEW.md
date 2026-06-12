@@ -1,7 +1,16 @@
 # Feature Proposals 2026 — Bổ sung cho Luuniensuki LMS
 
 Ngày: 2026-05-19
+Cập nhật trạng thái: 2026-05-20
 Tác giả: Kiro (research-driven proposal)
+
+> **Trạng thái tài liệu:** Đây là tài liệu **đề xuất (Proposed/Roadmap)**, không phải mô tả tính năng đã ship.
+> Kể từ bản gốc, **3/7 đề xuất đã được triển khai** và được đánh dấu `✅ ĐÃ SHIP` bên dưới:
+> - 2.2 Heritage Trail Mode — ✅ ĐÃ SHIP (`backend-rust/src/routes/trails.rs`, `trail_admin.rs`, `trail_teacher.rs`; spec `.kiro/specs/heritage-trail-mode/`; UI `frontend/src/app/trails`)
+> - 2.4 Heritage Time-Lapse — ✅ ĐÃ SHIP (`backend-rust/src/routes/timeline.rs`; UI `frontend/src/app/timeline`)
+> - 2.5 Streak Repair Economy — ✅ ĐÃ SHIP một phần (`streak_repair.rs`, `streak_comeback.rs`, `streak_friend.rs`, `streak_admin.rs`)
+>
+> Bốn đề xuất còn lại (2.1 Citizen Curation, 2.3 FSRS, 2.6 Offline-First, 2.7 Heritage Map) **vẫn ở dạng đề xuất**.
 
 ## 1. Bối cảnh và phạm vi
 
@@ -11,16 +20,16 @@ Tài liệu này **bổ sung** cho các đề xuất hiện có và **không tr�
 - `docs/LEARNER_EXPERIENCE_IMPROVEMENTS_2026.md` — 12 cải tiến UX (mission CTA, quiz auto-save, hearts UX, AI inline, v.v.)
 - `docs/RESEARCH_BREAKTHROUGH_FEATURES_2026.md` — 6 công nghệ đột phá (Realtime multimodal tutor, GraphRAG, Knowledge tracing, On-device AI, Eval pipeline)
 
-**Trọng tâm tài liệu này:** các tính năng có thể implement trên Rust backend hiện tại, leverage 290 native routes, không phụ thuộc nặng vào AI/LLM, có ROI rõ và bằng chứng research.
+**Trọng tâm tài liệu này:** các tính năng có thể implement trên backend hiện tại, leverage hạ tầng route sẵn có, không phụ thuộc nặng vào AI/LLM, có ROI rõ và bằng chứng research.
 
-**Bối cảnh hệ thống hiện tại (đã verify):**
+**Bối cảnh hệ thống hiện tại (đã verify 2026-05-20):**
 
-- 290/291 routes native trên Rust (Axum + SQLx + PostgreSQL)
-- Frontend Next.js + React Three Fiber cho 3D
-- Mobile Flutter app với offline cache lessons
-- Live AI Teacher worker (Python) cho realtime voice/chat
-- Đã có: streak, hearts, badges, quests, milestones, leaderboard, classrooms
-- DB: ~9 urns Cửu Đỉnh, motifs theo từng đỉnh, lesson contents, quiz questions
+- Backend **lai (hybrid)**: gateway Rust (Axum + SQLx, cổng 8001) đứng trước, FastAPI Python (cổng 8000) làm fallback. Quá trình migrate sang Rust đang **diễn ra dần** — phần lớn route read/CRUD đã có handler native Rust, nhưng các route AI tutor và Live session vẫn được proxy về Python (xem `backend-rust/config/route-modes.toml`). **Không phải "290/291 native trên Rust"** như bản gốc ghi; con số đó lấy từ file inventory và không phản ánh số handler đăng ký thực tế.
+- Frontend Next.js + React Three Fiber cho 3D (đang chuyển dần từ JS sang TypeScript — xem spec `.kiro/specs/frontend-consolidation-typing/`).
+- Mobile Flutter app với offline cache lessons (chỉ bundle sẵn model Cao Đỉnh).
+- Live AI Teacher worker (Python) cho realtime voice/chat (LiveKit; có nhánh Janus thay thế).
+- Đã có: streak (+ repair/comeback/friend), hearts, badges, quests, milestones, leaderboard, classrooms, trails, timeline, urn exams + certificates.
+- DB: 9 urns Cửu Đỉnh (`data/05..13_Data_*Dinh.json`), motifs theo từng đỉnh, lesson contents, quiz questions, 9 file urn exam (`data/urn_exams/`).
 - Production: `https://lms.histolab.icu`
 
 ---
@@ -61,7 +70,9 @@ Tài liệu này **bổ sung** cho các đề xuất hiện có và **không tr�
 
 ---
 
-### 2.2 — Heritage Trail Mode: hành trình du lịch số
+### 2.2 — Heritage Trail Mode: hành trình du lịch số  — ✅ ĐÃ SHIP
+
+> **Trạng thái:** Đã triển khai. Native Rust routes tại `backend-rust/src/routes/trails.rs` (list/detail/start/complete-step/checkpoint/set-pace + verify certificate), `trail_admin.rs`, `trail_teacher.rs`; spec `.kiro/specs/heritage-trail-mode/`; UI `frontend/src/app/trails`. Nội dung mô tả dưới đây giữ lại làm tài liệu thiết kế gốc.
 
 **Vấn đề:** App hiện tại tổ chức nội dung theo "urns / motifs / lessons" — cấu trúc kiến thức. Nhưng heritage learning hiệu quả nhất khi có **narrative arc** kiểu hành trình (chứng cứ: Heritage-based Video Games research 2025 chỉ ra "narrative-driven gameplay" và "open-world exploration" tăng retention so với task-based learning).
 
@@ -132,7 +143,9 @@ Tài liệu này **bổ sung** cho các đề xuất hiện có và **không tr�
 
 ---
 
-### 2.4 — Heritage Time-Lapse: trục thời gian tương tác
+### 2.4 — Heritage Time-Lapse: trục thời gian tương tác  — ✅ ĐÃ SHIP
+
+> **Trạng thái:** Đã triển khai. Native Rust routes tại `backend-rust/src/routes/timeline.rs` (`GET /api/v1/timeline/events`, `/timeline/motifs?era=`, `/motifs/compare?ids=`, admin create era/event, stats); UI `frontend/src/app/timeline`. Nội dung dưới đây giữ lại làm tài liệu thiết kế gốc.
 
 **Vấn đề:** Cửu Đỉnh được đúc từ 1835-1837 dưới thời vua Minh Mạng. Mỗi đỉnh đại diện một vị vua. Hiện tại app trình bày 9 đỉnh đồng thời, không có dimension lịch sử. Người học mất context "đỉnh nào ra đời trước/sau", "vị vua nào tương ứng", "bối cảnh chính trị".
 
@@ -167,7 +180,9 @@ Tài liệu này **bổ sung** cho các đề xuất hiện có và **không tr�
 
 ---
 
-### 2.5 — Streak Repair Economy: hệ thống "cứu chuỗi" thông minh
+### 2.5 — Streak Repair Economy: hệ thống "cứu chuỗi" thông minh  — ✅ ĐÃ SHIP (một phần)
+
+> **Trạng thái:** Đã triển khai phần lõi. Native Rust routes: `backend-rust/src/routes/streak_repair.rs` (repair + repair-options), `streak_comeback.rs` (Phoenix comeback), `streak_friend.rs` (friend streak), `streak_admin.rs` (Big Red Button). Phần Streak Insurance (subscription) vẫn ở dạng đề xuất vì cần payment provider. Nội dung dưới đây giữ lại làm tài liệu thiết kế gốc.
 
 **Vấn đề:** Hiện tại có `streak_freezes` cho phép "đông cứng" streak trong 1 ngày bỏ học. Nhưng (a) user không biết khi nào nên dùng, (b) chỉ có 1 cơ chế cứng, (c) không có sự an toàn khi server outage.
 
@@ -281,23 +296,21 @@ Tài liệu này **bổ sung** cho các đề xuất hiện có và **không tr�
 
 ## 3. Bảng tổng hợp ưu tiên
 
-| # | Feature | Effort (sprints) | Expected Impact | Risk | Phụ thuộc |
-|---|---------|-----------------|----------------|------|-----------|
-| 2.5 | Streak Repair Economy | 2 | 30-day retention +8pp | Low | None — leverage hearts/streak hiện có |
-| 2.3 | FSRS Spaced Repetition | 2-3 | Review time -20%, quiz pass +10pp | Low | None — Rust crate sẵn |
-| 2.4 | Heritage Time-Lapse | 2-3 | Comprehension score tăng | Low | Cần content team seed events |
-| 2.2 | Heritage Trail Mode | 4-5 | Retention +25% lessons/week | Medium | Cần curator UI cho teacher |
-| 2.6 | Offline-First Mobile | 4-5 | DAU rural +30% | Medium | Mobile team capacity |
-| 2.1 | Citizen Curation | 3-4 | Community engagement | Medium | Moderation overhead |
-| 2.7 | Heritage Map | 3-4 | New use case | Low | Mapbox integration |
+| # | Feature | Trạng thái | Effort (sprints) | Expected Impact | Risk | Phụ thuộc |
+|---|---------|-----------|-----------------|----------------|------|-----------|
+| 2.5 | Streak Repair Economy | ✅ ĐÃ SHIP (trừ subscription) | 2 | 30-day retention +8pp | Low | None — leverage hearts/streak hiện có |
+| 2.3 | FSRS Spaced Repetition | 🔜 Đề xuất | 2-3 | Review time -20%, quiz pass +10pp | Low | None — Rust crate sẵn |
+| 2.4 | Heritage Time-Lapse | ✅ ĐÃ SHIP | 2-3 | Comprehension score tăng | Low | Cần content team seed events |
+| 2.2 | Heritage Trail Mode | ✅ ĐÃ SHIP | 4-5 | Retention +25% lessons/week | Medium | Cần curator UI cho teacher |
+| 2.6 | Offline-First Mobile | 🔜 Đề xuất | 4-5 | DAU rural +30% | Medium | Mobile team capacity |
+| 2.1 | Citizen Curation | 🔜 Đề xuất | 3-4 | Community engagement | Medium | Moderation overhead |
+| 2.7 | Heritage Map | 🔜 Đề xuất | 3-4 | New use case | Low | Mapbox integration |
 
-**Recommendation thứ tự release:**
+**Thứ tự release còn lại (các mục chưa ship):**
 
-1. **Sprint 1-2:** Streak Repair Economy (quick win, leverage existing infra)
-2. **Sprint 3-5:** FSRS Spaced Repetition + Heritage Time-Lapse (parallel)
-3. **Sprint 6-10:** Heritage Trail Mode (large but high-impact)
-4. **Sprint 11-15:** Offline-First Mobile + Heritage Map (parallel)
-5. **Sprint 16-19:** Citizen Curation (cần community đủ lớn để có người curate)
+1. **FSRS Spaced Repetition** (thay thuật toán SM-2 hiện tại)
+2. **Offline-First Mobile** + **Heritage Map** (parallel)
+3. **Citizen Curation** (cần community đủ lớn để có người curate)
 
 ---
 
@@ -329,14 +342,14 @@ Mọi feature mới phải:
 - Friend streak: opt-in, không default
 - Tuân thủ Luật An ninh mạng VN + GDPR cho user EU
 
-### 4.4 Tận dụng Rust backend
+### 4.4 Tận dụng backend hiện tại
 
-Tất cả features đều có thể làm thuần native Rust (không cần fallback Python):
+Các feature có thể làm native trên Rust gateway hoặc giữ trên FastAPI fallback tuỳ độ phức tạp (migration Rust đang diễn ra dần, chưa hoàn tất):
 
 - Reuse `auth` module cho mọi endpoint mới
-- Reuse `gateway` cho legacy endpoint nếu cần backward compat
+- Reuse `gateway` để proxy về Python cho route chưa migrate
 - Add SQL migrations qua existing Alembic pipeline
-- Mỗi feature → 1 mới `routes/`, `services/`, `models/` module
+- Mỗi feature → 1 mới `routes/`, `services/`, `models/` module (theo pattern `trails.rs`/`timeline.rs` đã ship)
 
 ---
 
@@ -355,12 +368,12 @@ Tất cả features đều có thể làm thuần native Rust (không cần fall
 Bảy nhóm tính năng trên được chọn vì:
 
 - **Không trùng** với 3 docs research hiện có
-- **Tận dụng** 290 native routes Rust và schema PostgreSQL hiện tại
+- **Tận dụng** hạ tầng route Rust/Python hiện tại và schema PostgreSQL
 - **Có bằng chứng research** từ 2024-2026 (UNESCO, MDPI, Nature, ACM, FSRS, Duolingo)
 - **Có path implement rõ** với effort ước tính 2-5 sprints/feature
 - **Có KPI đo lường được** qua infrastructure A/B test sẵn có
 
-Ưu tiên triển khai theo thứ tự ROI/effort: Streak Repair → FSRS → Time-Lapse → Trails → Offline → Curation → Map.
+Đã ship: Streak Repair, Time-Lapse, Trails. Ưu tiên các mục còn lại theo ROI/effort: FSRS → Offline → Map → Curation.
 
 ---
 

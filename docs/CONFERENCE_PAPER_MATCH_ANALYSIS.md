@@ -2,12 +2,14 @@
 
 **Bài báo:** Nguyễn Đắc Quang Minh, Trần Minh Đức, Nguyễn Ngọc Thiện — "Giải pháp số hóa cổ vật chi phí thấp bằng công nghệ scan 3D LiDAR và tối ưu hóa hiển thị qua thực tế tăng cường (AR)"
 **Subject:** 9 Cửu Đỉnh tại Đại Nội Huế
-**Ngày phân tích:** 2026-05-19
-**Code base:** `/opt/luuniensuki-lms` (đã verify trên prod)
+**Ngày phân tích:** 2026-05-19 (cập nhật trạng thái: 2026-05-20)
+**Code base:** repo `luuniensuki-lms` (deploy prod tại `/opt/luuniensuki-lms`, domain `lms.histolab.icu`)
+
+> **Cập nhật 2026-05-20:** Gap 4 (render performance dashboard) đã được triển khai — xem mục 3 / Gap 4. Một vài đường dẫn file đã được sửa cho khớp codebase hiện tại (frontend đang chuyển từ JS sang TypeScript).
 
 ---
 
-## 1. Tóm tắt độ match: **~72% — phần lớn trùng khớp, có 5 gap cần đóng**
+## 1. Tóm tắt độ match: **~76% — phần lớn trùng khớp, còn 4 gap cần đóng (Gap 4 đã xong)**
 
 | Khối | Match | Score |
 |------|-------|-------|
@@ -20,7 +22,7 @@
 | AR mobile (xem trong không gian thực) | ✅ scene-viewer + webxr + quick-look | 90% |
 | AR Vuforia Image Target | ❌ Không có | 0% |
 | Sketchfab embed/host | ❌ Không có | 0% |
-| Tốc độ render +46% | ⚠️ Có 3 LOD (512/1k/2k) nhưng chưa benchmark | 60% |
+| Tốc độ render +46% | ✅ Có 3 LOD (512/1k/2k) + dashboard benchmark (admin_render) | 85% |
 | Cộng đồng tiếp cận (web + mobile) | ✅ Production tại lms.histolab.icu | 95% |
 | Mở rộng cho bảo tàng địa phương khác | ❌ Hard-coded Cửu Đỉnh, không có multi-museum | 20% |
 
@@ -86,7 +88,7 @@
 **Bài báo:** "tích hợp mô hình vào nền tảng AR Vuforia và website Sketchfab... cho phép người dùng tương tác xoay, thu phóng"
 
 **Project có:**
-- Web: `frontend/src/components/UrnViewer.js` dùng Three.js + React Three Fiber + Drei
+- Web: `frontend/src/components/UrnViewer.tsx` dùng Three.js + React Three Fiber + Drei (đã migrate sang TypeScript)
 - Mobile: `mobile/lib/features/urn_viewer/presentation/widgets/custom_model_viewer.dart` dùng `<model-viewer>` (Google) trong InAppWebView
 - Hotspot system: tap vào motif → mở lesson
 
@@ -118,18 +120,17 @@
 
 ---
 
-### 2.6 ⚠️ Tốc độ render +46% — **60% match**
+### 2.6 ✅ Tốc độ render +46% — **85% match**
 
 **Bài báo:** "tăng tốc độ hiển thị lên 46%"
 
 **Project:**
 - ✅ Có 3 LOD (Level Of Detail): 512/1k/2k
 - ✅ Có script benchmark `mobile/scripts/test-compression.js`
-- ❌ Không có metric tracking before/after trong production
-- ❌ Không có Prometheus/analytics đo render latency
-- ❌ Không có A/B test nào đã chạy để validate "+46%"
+- ✅ **Đã có dashboard đo lường production:** `backend-rust/src/routes/admin_render.rs` — endpoint `GET /api/v1/admin/analytics/render-performance` aggregate event `render_performance` (TTF/TTFI/FPS percentiles theo LOD, tính `speedup_vs_2k`) từ `UrnViewer`.
+- ⚠️ Cần thu đủ data thực tế trong production để validate con số "+46%" (logic so sánh 512-vs-2k đã có và test minh hoạ trả về đúng 46%).
 
-**Gap:** Có công cụ giảm size (đã làm), thiếu công cụ đo lường để claim "+46% speedup".
+**Gap còn lại:** Chủ yếu là vận hành — thu thập đủ sample `render_performance` từ user thật và chạy A/B cohort để công bố con số chắc chắn. Công cụ đo đã sẵn sàng.
 
 ---
 
@@ -186,21 +187,16 @@
 
 **Effort:** 2 sprints.
 
-### Gap 4: Render performance benchmark dashboard (priority MEDIUM)
+### Gap 4: Render performance benchmark dashboard (priority MEDIUM) — ✅ ĐÃ SHIP
 
-**Hiện trạng:** Có 3 LOD nhưng không track metrics.
+**Hiện trạng:** Đã triển khai. `backend-rust/src/routes/admin_render.rs` cung cấp `GET /api/v1/admin/analytics/render-performance`, aggregate event `render_performance` (do `UrnViewer` emit) theo LOD và tính `speedup_vs_2k`.
 
-**Hành động:**
-1. Frontend instrument `<UrnViewer>` với Performance Observer:
-   - Time to first frame
-   - First interaction time
-   - Average FPS over 5 seconds
-2. Send metrics lên `POST /api/v1/analytics/events` với event_name = `render_performance`, payload = {model_url, lod, ttf_ms, ttfi_ms, avg_fps}
-3. Admin dashboard `/admin/analytics/render` so sánh LOD: 512 vs 1k vs 2k
-4. A/B test cohort: random user A xem 1k LOD, user B xem 512 LOD — đo conversion từ "discover → complete lesson"
-5. Validate claim "46% speedup" với data thực
+**Còn lại (vận hành, không phải code):**
+1. Đảm bảo frontend `UrnViewer` instrument đủ: time to first frame, first interaction time, average FPS (đã định nghĩa payload `ttf_ms`/`ttfi_ms`/`avg_fps`/`lod_label`/`urn_slug`).
+2. Thu đủ sample production để con số "+46%" có ý nghĩa thống kê.
+3. A/B test cohort: random user xem 512 vs 1k LOD — đo conversion "discover → complete lesson" (dùng `Experiment` framework sẵn có).
 
-**Effort:** 1 sprint.
+**Effort còn lại:** < 1 sprint (chủ yếu thu data + phân tích).
 
 ### Gap 5: Sketchfab mirror (priority LOW)
 
@@ -220,21 +216,20 @@
 
 | # | Gap | Effort | ROI | Note |
 |---|-----|--------|-----|------|
-| 1 | **Render performance dashboard** (Gap 4) | 1 sprint | Cao | Validates bài báo claim 46%, dùng infra A/B test sẵn có |
-| 2 | **Mesh denoising service** (Gap 2) | 2 sprints | Cao | Core academic contribution, dùng được cho cổ vật khác |
-| 3 | **Scan import pipeline** (Gap 1) | 2 sprints | Cao | Owns toàn bộ chuỗi giá trị |
-| 4 | **MindAR (thay Vuforia)** marker AR (Gap 3) | 2 sprints | Trung bình | Wow-factor cho live demo bài báo |
-| 5 | **Sketchfab mirror** (Gap 5) | 0.5 sprint | Thấp | Optional, công khai data |
-| 6 | **Multi-museum support** (mở rộng) | 4 sprints | Cao về dài hạn | Đóng tinh thần "mở rộng cho bảo tàng địa phương" |
+| ✅ | **Render performance dashboard** (Gap 4) | ĐÃ SHIP | Cao | `admin_render.rs` đã xong; còn lại là thu data + A/B để công bố 46% |
+| 1 | **Mesh denoising service** (Gap 2) | 2 sprints | Cao | Core academic contribution, dùng được cho cổ vật khác |
+| 2 | **Scan import pipeline** (Gap 1) | 2 sprints | Cao | Owns toàn bộ chuỗi giá trị |
+| 3 | **MindAR (thay Vuforia)** marker AR (Gap 3) | 2 sprints | Trung bình | Wow-factor cho live demo bài báo |
+| 4 | **Sketchfab mirror** (Gap 5) | 0.5 sprint | Thấp | Optional, công khai data |
+| 5 | **Multi-museum support** (mở rộng) | 4 sprints | Cao về dài hạn | Đóng tinh thần "mở rộng cho bảo tàng địa phương" |
 
-**Recommended sprint order:**
+**Recommended sprint order (các gap còn lại):**
 
-1. **Sprint 1:** Render performance dashboard (Gap 4) — validate paper claims
-2. **Sprint 2-3:** Mesh denoising + scan import pipeline (Gap 2 + 1) — đóng phần academic core
-3. **Sprint 4:** MindAR markered (Gap 3) — wow demo
-4. **Sprint 5 (optional):** Sketchfab mirror + multi-museum
+1. **Sprint 1-2:** Mesh denoising + scan import pipeline (Gap 2 + 1) — đóng phần academic core
+2. **Sprint 3:** MindAR markered (Gap 3) — wow demo
+3. **Sprint 4 (optional):** Sketchfab mirror + multi-museum
 
-Total: ~5-6 sprints (3 tháng) để đạt **95-100% match** với bài báo.
+Total: ~4-5 sprints để đạt **95-100% match** với bài báo (Gap 4 đã hoàn thành).
 
 ---
 
@@ -254,14 +249,15 @@ Project có **3 thứ vượt scope bài báo** mà có thể đề xuất exten
 
 ## 6. Conclusion
 
-**Project hiện tại ở 72% match.** Phần lớn thì khớp, đặc biệt là:
+**Project hiện tại ở ~76% match.** Phần lớn thì khớp, đặc biệt là:
 - ✅ Cùng subject (9 Cửu Đỉnh Huế)
 - ✅ Cùng kết quả tối ưu hóa (~83% giảm dung lượng)
 - ✅ Cùng cảm giác output (xoay/zoom 3D + AR markerless)
+- ✅ Đã có dashboard benchmark render (Gap 4) để validate claim "+46%"
 
 **Để đạt 100% match cần:**
 1. Đóng gap **pipeline ingest LiDAR** + **mesh denoising** (tổng 4 sprints)
 2. Đóng gap **AR markered** (2 sprints) — recommend MindAR thay Vuforia
-3. Đóng gap **performance benchmark** (1 sprint) — validate claim 46%
+3. Thu data production cho **render benchmark** đã ship để công bố con số 46%
 
-**Budget:** ~7 sprints (3-4 tháng) với 2 dev full-time để đưa project lên 100% match + vượt scope bài báo qua gamified LMS layer.
+**Budget:** ~4-5 sprints với 2 dev full-time để đưa project lên 100% match + vượt scope bài báo qua gamified LMS layer.

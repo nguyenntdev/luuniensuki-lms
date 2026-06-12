@@ -2,9 +2,11 @@
 ## Lưu Niên Sử Kí - Interactive Heritage Learning Platform
 
 **Version:** 1.0.0  
-**Date:** 2025-12-13  
+**Date:** 2025-12-13 (status reviewed: 2026-05-20)  
 **Author:** Instructional Design Team  
-**Status:** Draft
+**Status:** Design vision (instructional design) — see note below
+
+> **Note (2026-05-20):** This is the original **instructional-design vision**, not an as-built spec. Since v1.0, the platform has shipped the core gamified loop it describes: quests, daily missions, XP/ranks, badges, streaks (with repair/comeback/friend), leaderboard, hearts, urn exams + certificates, learning paths, spaced-repetition review (SM-2), an AI tutor (DeepSeek RAG), live AI-teacher classrooms (LiveKit), plus Heritage Trails and a historical Timeline. The **API endpoint names in §6.2 are illustrative and do not all match the implemented API** (e.g. lesson completion is `POST /api/v1/progress/complete-lesson`, quiz submit is `POST /api/v1/motifs/{id}/quiz/submit`, daily challenges ship as "daily missions"). For the implemented contract see `docs/architecture/` and the backend route definitions. Quest themes/motif counts below remain the content-design reference.
 
 ---
 

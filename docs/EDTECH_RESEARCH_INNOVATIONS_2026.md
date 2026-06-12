@@ -1,6 +1,12 @@
 # Các tính năng mới dựa trên research EdTech (2024-2026)
 
-Ngày cập nhật: 2026-04-16
+Ngày cập nhật: 2026-04-16 (trạng thái rà soát: 2026-05-20)
+
+> **Trạng thái:** Tài liệu **đề xuất / roadmap nghiên cứu** — phần lớn 7 hướng dưới đây **chưa ship**. Ghi chú thực trạng codebase:
+> - Guardrailed Tutor (3.1, hint-first): **đã có một phần** trong Live AI Teacher — server ép `mode = "hint-first"` (`forced_hint_first`) cho người không có quyền moderate (`backend/main.py`, `live_ai_teacher_service`). Chưa có `tutor_mode` cho `/api/v1/ai/tutor` thường.
+> - Spaced retrieval (3.6): **đã có** nhưng dùng thuật toán SM-2 (`backend/services/spaced_repetition.py`), chưa theo cụm di sản như đề xuất.
+> - Adaptive pathway (3.4): đã có `learning_path` + `adaptive_quiz` rule-based; chưa có policy theo cohort.
+> - Các hướng còn lại (Risk Alert 3.2, SRL Copilot 3.3, Chatbot task-first 3.5, AR-CH Missions 3.7): **chưa triển khai**.
 
 ## Giải nghĩa thuật ngữ (bản dễ hiểu)
 

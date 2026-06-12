@@ -1,6 +1,8 @@
 # Cải thiện trải nghiệm người học (Learning Experience) cho Luuniensuki LMS
 
-Ngày cập nhật: 2026-04-16
+Ngày cập nhật: 2026-04-16 (trạng thái rà soát: 2026-05-20)
+
+> **Trạng thái:** Tài liệu **đề xuất UX / backlog**, không phải mô tả tính năng đã ship. Lưu ý đường dẫn file: frontend đang chuyển dần từ JS sang TypeScript, nên nhiều component trước đây `.jsx` nay là `.tsx` (xem spec `.kiro/specs/frontend-consolidation-typing/`). Các route page trong `src/app/**` phần lớn vẫn là `.jsx`.
 
 Tài liệu liên quan:
 - `docs/EDTECH_RESEARCH_INNOVATIONS_2026.md` (các tính năng mới dựa trực tiếp trên nghiên cứu EdTech 2024-2026)
@@ -16,13 +18,13 @@ Tài liệu này tập trung vào cải thiện **trải nghiệm học thực t
 ## 2) Điểm ma sát chính quan sát từ codebase hiện tại
 
 1. Daily missions hiển thị tiến độ tốt nhưng chưa có CTA đi thẳng tới hành động tiếp theo.
-- Bằng chứng: `frontend/src/components/dashboard/DailyMissionsCard.jsx` (chỉ render card/progress, chưa có nút hành động theo từng mission).
+- Bằng chứng: `frontend/src/components/dashboard/DailyMissionsCard.tsx` (chỉ render card/progress, chưa có nút hành động theo từng mission).
 
 2. Quiz có điều hướng câu hỏi và hint modal, nhưng chưa có cơ chế khôi phục phiên làm bài nếu reload/rớt mạng.
 - Bằng chứng: `frontend/src/app/motif/[motifId]/quiz/page.jsx` (state answers/timer giữ trong memory component).
 
 3. Onboarding đang là 1 lần duy nhất theo localStorage, chưa cá nhân hóa theo bối cảnh màn hình.
-- Bằng chứng: `frontend/src/components/OnboardingModal.jsx` (`hasSeenOnboarding` global key).
+- Bằng chứng: `frontend/src/components/OnboardingModal.tsx` (`hasSeenOnboarding` global key).
 
 4. Hearts UX còn thiếu một số phần trong luồng học chính.
 - Bằng chứng: `frontend/src/components/hearts/README.md` mục Future Enhancements (No hearts overlay, integration với quiz).
@@ -41,7 +43,7 @@ Tài liệu này tập trung vào cải thiện **trải nghiệm học thực t
 - Tác động kỳ vọng: tăng mission completion rate 10-18%.
 
 File/API liên quan:
-- `frontend/src/components/dashboard/DailyMissionsCard.jsx`
+- `frontend/src/components/dashboard/DailyMissionsCard.tsx`
 - `GET /api/v1/dashboard/summary`, `GET /api/v1/daily-missions`
 
 ---
@@ -90,7 +92,7 @@ File/API liên quan:
 - Tác động kỳ vọng: tăng activation các tính năng cốt lõi.
 
 File/API liên quan:
-- `frontend/src/components/OnboardingModal.jsx`
+- `frontend/src/components/OnboardingModal.tsx`
 - `frontend/src/components/viewer/*`
 
 ---
@@ -103,7 +105,7 @@ File/API liên quan:
 
 File/API liên quan:
 - `frontend/src/app/dashboard/page.jsx`
-- `frontend/src/components/UrnExperience.js`
+- `frontend/src/components/UrnExperience.tsx`
 - `GET /api/v1/dashboard/summary`
 
 ## Nhóm B: Mid-term (2-4 sprint)
@@ -142,7 +144,7 @@ File/API liên quan:
 
 File/API liên quan:
 - `frontend/src/components/hearts/README.md` (đã nêu thiếu)
-- `frontend/src/components/hearts/HeartsRefillModal.jsx`
+- `frontend/src/components/hearts/HeartsRefillModal.tsx`
 - quiz pages
 
 ---
@@ -154,8 +156,8 @@ File/API liên quan:
 - Tác động kỳ vọng: tăng streak continuity.
 
 File/API liên quan:
-- `frontend/src/components/dashboard/DailyGoalCard.jsx`
-- `frontend/src/components/dashboard/DailyMissionsCard.jsx`
+- `frontend/src/components/dashboard/DailyGoalCard.tsx`
+- `frontend/src/components/dashboard/DailyMissionsCard.tsx`
 
 ---
 

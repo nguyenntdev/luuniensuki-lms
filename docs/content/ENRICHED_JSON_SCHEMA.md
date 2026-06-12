@@ -1,5 +1,7 @@
 # Enriched Motif JSON Schema
 
+> **Status:** Current / verified against `data/05..13_Data_*Dinh.json` on 2026-05-20.
+
 This document defines the schema for the enriched motif data files (e.g., `05_Data_CaoDinh.json`, `07_Data_ChuongDinh.json`, etc.) used in the Luuniensuki LMS project.
 
 ## Root Object

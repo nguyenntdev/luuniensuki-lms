@@ -1,6 +1,14 @@
 # Nghiên cứu công nghệ đột phá để tích hợp vào Luuniensuki LMS (phiên bản 2026)
 
-Ngày cập nhật: 2026-04-16
+Ngày cập nhật: 2026-04-16 (trạng thái rà soát: 2026-05-20)
+
+> **Trạng thái:** Tài liệu **đề xuất / roadmap nghiên cứu** — 6 công nghệ dưới đây phần lớn **chưa ship**. Ghi chú thực trạng:
+> - 3.3 Guardrailed Tutor (hint-first): **đã có một phần** ở Live AI Teacher (`forced_hint_first`); chưa có `tutor_mode = direct|hint_first|socratic` cho `/api/v1/ai/tutor`.
+> - 3.1 Realtime Multimodal Tutor: đã có Live AI Teacher (LiveKit, voice/chat) nhưng chưa có speech-to-speech + image-input grounding như mô tả.
+> - 3.2 GraphRAG: **chưa có** — RAG hiện tại là hybrid keyword+semantic (`embeddings.py`, `rag_defaults.py`), AI tutor backed bởi DeepSeek.
+> - 3.4 Knowledge Tracing: **chưa có** — learning path hiện rule-based + `adaptive_quiz` (ELO-like).
+> - 3.5 On-device AI (WebGPU): **chưa có**.
+> - 3.6 Evaluation Layer: **chưa có** pipeline graders tự động.
 
 ## 1) Bối cảnh hệ thống hiện tại
 

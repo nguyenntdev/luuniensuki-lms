@@ -4,20 +4,40 @@ This document describes how to configure GitHub Actions for automatic deployment
 
 ## Workflows
 
+Both workflows live in `.github/workflows/` and are present in the repo.
+
 ### 1. CI Workflow (`ci.yml`)
 
-Runs on every push and pull request to `main` branch:
-- **Backend**: Python tests with PostgreSQL
-- **Frontend**: Lint, build, and E2E tests with Playwright
+Runs on every push and pull request to the `main` branch. Two parallel jobs:
+
+- **backend** — spins up a `postgres:15` service, sets up **Python 3.11**, installs
+  `backend/requirements.txt` + `backend/requirements-dev.txt`, then runs `pytest`
+  (with `DATABASE_URL` pointing at the service DB).
+- **frontend** (working dir `./frontend`) — Node 20, `npm ci`, `npm run lint:ci`
+  (ESLint with `--max-warnings=0`), `npm run build` (which runs `tsc --noEmit` via the
+  `prebuild` hook), installs Playwright browsers, then runs the **smoke** E2E subset
+  (`npx playwright test` with `PLAYWRIGHT_GREP='@smoke'`).
 
 ### 2. Deploy Workflow (`deploy.yml`)
 
-Runs on push to `main` branch (after CI passes):
-- Connects to production server via SSH
-- Pulls latest code
-- Rebuilds Docker containers
-- Runs database migrations
-- Performs health check
+Runs on push to `main`, or manually via `workflow_dispatch` (with a `skip_tests` boolean
+input). Jobs:
+
+- **test** (skipped when `skip_tests=true`) — postgres service, **Python 3.12**, runs
+  `pytest tests/backend`, then Node 20 frontend `npm ci` + `lint:ci` + `build`.
+- **deploy** — runs after `test` succeeds or is skipped, using the `production`
+  GitHub Environment. It SSHes to the server via `appleboy/ssh-action` and on the server:
+  - `git fetch origin main` + `git reset --hard origin/main`
+  - `docker compose -f docker-compose.prod.yml -f docker-compose.override.yml --env-file .env.prod pull`
+  - `... up -d --build`
+  - `... run --rm api alembic upgrade head`
+  - `docker image prune -f`
+  - health check: `curl -sf https://lms.histolab.icu/health`
+- **notify** — writes a deployment summary to the job summary.
+
+> The deploy job expects the repo checked out at `/opt/luuniensuki-lms` on the server with a
+> populated `.env.prod` (see [DEPLOYMENT_CUUDINH.md](DEPLOYMENT_CUUDINH.md) and
+> [SECRETS.md](SECRETS.md)).
 
 ## Required Secrets
 
@@ -94,8 +114,11 @@ Create a GitHub Environment for additional protection:
 ### Manual Trigger
 
 ```bash
-# Trigger deployment manually (with option to skip tests)
+# Trigger deployment manually
 gh workflow run deploy.yml
+
+# Skip the test job (deploy straight away)
+gh workflow run deploy.yml -f skip_tests=true
 ```
 
 ### Check Workflow Status
@@ -131,9 +154,9 @@ gh run view <run-id>
 
 ### Docker Issues
 
-1. Check container logs:
+1. Check container logs (prod stack uses both compose files):
    ```bash
-   docker compose -f docker-compose.prod.yml logs --tail=50
+   docker compose -f docker-compose.prod.yml -f docker-compose.override.yml --env-file .env.prod logs --tail=50
    ```
 
 2. Verify Docker service is running:
@@ -145,10 +168,10 @@ gh run view <run-id>
 
 1. Check if all containers are running:
    ```bash
-   docker compose -f docker-compose.prod.yml ps
+   docker compose -f docker-compose.prod.yml -f docker-compose.override.yml --env-file .env.prod ps
    ```
 
-2. Test health endpoint directly:
+2. Test health endpoint directly (served via the Rust gateway):
    ```bash
    curl -v https://lms.histolab.icu/health
    ```
@@ -212,5 +235,6 @@ gh run view <run-id>
 
 - `.github/workflows/ci.yml` - CI workflow
 - `.github/workflows/deploy.yml` - CD workflow
-- `docker-compose.prod.yml` - Production Docker config
+- `docker-compose.prod.yml` / `docker-compose.override.yml` - Production Docker config
 - `docs/DEPLOYMENT_CUUDINH.md` - Manual deployment guide
+- `docs/SECRETS.md` - Required secrets and fail-closed validation
