@@ -11,7 +11,13 @@ import os
 from functools import lru_cache
 from typing import Optional
 
+from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+# Sentinel values that are never acceptable for secrets in production. Used by
+# the startup validator to fail closed when a real secret has not been supplied.
+SENTINELS = {"", "CHANGE_ME_IN_PRODUCTION"}
 
 
 class Settings(BaseSettings):
@@ -34,8 +40,21 @@ class Settings(BaseSettings):
     # ==========================================================================
     # JWT Authentication
     # ==========================================================================
-    jwt_secret_key: str = "CHANGE_ME_IN_PRODUCTION"
+    jwt_secret_key: str = ""
     jwt_algorithm: str = "HS256"
+    # Identity claims embedded in issued tokens. Both the Python and Rust
+    # backends share these configured values so tokens issued by either
+    # service carry a consistent issuer/audience (Req 26.3).
+    jwt_issuer: str = "luuniensuki"
+    jwt_audience: str = "luuniensuki-app"
+    # Issue-then-enforce transition flag for the iss/aud identity claims
+    # (Req 26.4). When False (the default), only ``exp`` is required on the
+    # decode path and tokens are accepted whether or not they carry iss/aud,
+    # so a backend that has not yet started issuing the new claims does not
+    # break cross-backend auth during a rolling deploy. When True, both
+    # backends are known to issue the claims, so iss/aud become required and
+    # are validated against jwt_issuer / jwt_audience (mismatch is rejected).
+    jwt_validate_new_claims: bool = False
     access_token_expire_minutes: int = 60
     refresh_token_expire_days: int = 30
     password_reset_token_expire_minutes: int = 30
@@ -45,13 +64,17 @@ class Settings(BaseSettings):
     access_cookie_name: str = "luuniensuki_access"
     refresh_cookie_name: str = "luuniensuki_refresh"
     cookie_domain: Optional[str] = None
-    cookie_secure: bool = False
+    # When unset (None), the secure flag resolves based on the environment:
+    # enabled in production, disabled otherwise. An operator may force a value
+    # by setting the COOKIE_SECURE env var explicitly.
+    cookie_secure: Optional[bool] = None
     cookie_samesite: str = "lax"
     cookie_path: str = "/"
 
     # ==========================================================================
     # Application
     # ==========================================================================
+    environment: str = "development"
     log_level: str = "info"
     debug: bool = False
     app_name: str = "Cửu Đỉnh Ký"
@@ -120,6 +143,10 @@ class Settings(BaseSettings):
     # File Storage
     # ==========================================================================
     upload_dir: str = "uploads"
+    # Single configured base location used for BOTH writing uploaded avatars
+    # and serving them via the static mount, so the stored file and the served
+    # URL always resolve to the same location (Req 11.1, 11.2, 11.3).
+    avatar_dir: str = "uploads/avatars"
     max_upload_size_mb: int = 10
     allowed_image_types: str = "image/jpeg,image/png,image/gif,image/webp"
 
@@ -154,7 +181,47 @@ class Settings(BaseSettings):
     @property
     def is_production(self) -> bool:
         """Check if running in production mode."""
-        return not self.debug and self.log_level.lower() != "debug"
+        return self.environment.lower() == "production"
+
+    @property
+    def cookie_secure_effective(self) -> bool:
+        """Resolve the effective secure-cookie setting.
+
+        When the operator has not explicitly overridden ``cookie_secure``
+        (i.e. it is ``None`` because ``COOKIE_SECURE`` was not supplied), the
+        secure flag defaults to enabled in production and disabled otherwise.
+        An explicit value always takes precedence.
+        """
+        if self.cookie_secure is not None:
+            return self.cookie_secure
+        return self.is_production
+
+    # ==========================================================================
+    # Validators
+    # ==========================================================================
+
+    @model_validator(mode="after")
+    def _validate_production_security(self) -> "Settings":
+        """Fail closed when insecure settings are detected in production.
+
+        Collects offending configuration keys and raises a fatal error naming
+        them. Secret values are never included in the error message.
+        """
+        if self.is_production:
+            problems: list[str] = []
+
+            if self.jwt_secret_key in SENTINELS:
+                problems.append("JWT_SECRET_KEY")
+
+            if self.cors_allow_credentials and "*" in self.cors_origins_list:
+                problems.append("CORS_ORIGINS (wildcard with credentials)")
+
+            if problems:
+                raise RuntimeError(
+                    f"Insecure production configuration: {', '.join(problems)}"
+                )
+
+        return self
 
 
 # XP Ranks definition

@@ -12,7 +12,7 @@ import unicodedata
 import uuid as uuid_module
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any, Iterable, Optional, Sequence
+from typing import Any, Iterable, Iterator, Optional, Sequence
 from urllib.error import HTTPError, URLError
 from urllib.request import Request as UrlRequest
 from urllib.request import urlopen
@@ -30,20 +30,27 @@ from fastapi import (
     status,
 )
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import StreamingResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.staticfiles import StaticFiles
 from jose import JWTError, jwt
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
 from sqlalchemy import and_, case, create_engine, delete, func, or_, select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session, selectinload, sessionmaker
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.middleware.cors import CORSMiddleware
 
 from . import schemas
-from .config import settings
+
+# Importing config instantiates Settings via get_settings(), which runs the
+# fail-closed @model_validator. This import therefore performs production
+# security validation (e.g. rejecting sentinel JWT secrets or wildcard CORS
+# with credentials) BEFORE the SQLAlchemy engine and FastAPI app are built
+# below. See Requirements 1.1 and 28.2. (get_settings is imported so the
+# ordering can be reasserted explicitly right before engine construction.)
+from .config import get_settings, settings
 from .errors import (
     AppError,
     app_exception_handler,
@@ -109,6 +116,7 @@ from .models import (
     RagDocument,
     RagSettings,
     Recommendation,
+    RevokedRefreshToken,
     ScheduledEmail,
     SkillType,
     SpacedRepetitionCard,
@@ -137,6 +145,7 @@ from .models import (
     WeeklyQuest,
 )
 from .rag_defaults import get_rag_defaults
+from .rbac import ADMIN_ROLES, STAFF_ROLES
 from .security import create_jwt_token, hash_password, verify_password
 
 DISCOVERY_XP = 25
@@ -150,13 +159,61 @@ CERTIFICATE_ISSUER_NAME = "Lưu Niên Sử Kí"
 
 USERNAME_REGEX = re.compile(r"^[a-zA-Z0-9_]{3,20}$")
 
-AVATAR_UPLOAD_DIR = Path("/app/uploads/avatars")
+AVATAR_DIR = Path(settings.avatar_dir).resolve()
 ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp"}
 MAX_AVATAR_SIZE = 5 * 1024 * 1024
 RAG_ALLOWED_FILE_TYPES = {"text/plain", "text/markdown", "application/json"}
 
-STAFF_ROLES = {UserRole.teacher, UserRole.admin, UserRole.super_admin}
-ADMIN_ROLES = {UserRole.admin, UserRole.super_admin}
+IMAGE_EXTENSION_BY_TYPE = {
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/webp": "webp",
+}
+
+
+def _detect_image_type(contents: bytes) -> Optional[str]:
+    """Determine the true image MIME type from file content.
+
+    Returns one of the ``image/*`` strings in ``IMAGE_EXTENSION_BY_TYPE`` when the
+    bytes parse as a supported image, otherwise ``None``. Detection prefers Pillow
+    (validating the bytes actually decode) and falls back to a magic-byte sniff when
+    Pillow is unavailable.
+    """
+    if not contents:
+        return None
+
+    # Prefer Pillow if it is installed: it actually parses the image.
+    try:
+        import io as _io
+
+        from PIL import Image as _Image  # type: ignore
+
+        try:
+            img = _Image.open(_io.BytesIO(contents))
+            img.verify()
+            fmt = (img.format or "").upper()
+        except Exception:
+            return None
+        return {
+            "JPEG": "image/jpeg",
+            "PNG": "image/png",
+            "WEBP": "image/webp",
+        }.get(fmt)
+    except ImportError:
+        pass
+
+    # Fallback: magic-byte sniffing.
+    if contents.startswith(b"\xff\xd8\xff"):
+        return "image/jpeg"
+    if contents.startswith(b"\x89PNG\r\n\x1a\n"):
+        return "image/png"
+    if (
+        len(contents) >= 12
+        and contents[0:4] == b"RIFF"
+        and contents[8:12] == b"WEBP"
+    ):
+        return "image/webp"
+    return None
 
 BADGE_FIRST_DISCOVERY = "first-discovery"
 BADGE_FIRST_MASTERED = "first-mastered"
@@ -224,11 +281,18 @@ logging.basicConfig(level=getattr(logging, settings.log_level.upper(), logging.I
 logger = logging.getLogger("luuniensuki.api")
 
 
+# Re-assert fail-closed configuration validation explicitly and intentionally
+# before any infrastructure is constructed. get_settings() is @lru_cache-d, so
+# this returns the already-validated instance (or raises a fatal RuntimeError
+# if production security checks fail) without re-running side effects. This
+# guarantees validation-before-construction ordering (Requirements 1.1, 28.2).
+get_settings()
+
 engine = create_engine(settings.database_url, pool_pre_ping=True)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
 
-def get_db() -> Session:
+def get_db() -> Iterator[Session]:
     db = SessionLocal()
     try:
         yield db
@@ -236,19 +300,135 @@ def get_db() -> Session:
         db.close()
 
 
+# Content-Security-Policy applied to all responses (Requirements 25.1, 25.3).
+# This service is primarily a JSON API that also serves a static "/assets"
+# mount, so a conservative self-only policy is appropriate. Keep this as a
+# module-level constant so the policy is easy to review and tune in one place.
+CONTENT_SECURITY_POLICY = (
+    "default-src 'self'; frame-ancestors 'none'; object-src 'none'"
+)
+
 app = FastAPI(title="Luuniensuki API", version="0.1.0")
 app.add_exception_handler(AppError, app_exception_handler)
 app.add_exception_handler(StarletteHTTPException, http_exception_handler)
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
 
-# Add CORS middleware to allow cross-origin requests from mobile app
+# Add CORS middleware to allow cross-origin requests from mobile app.
+#
+# Defense-in-depth (Requirements 3.2, 3.3, 3.4): the config-level validator
+# (config.py @model_validator) already halts production startup if credentials
+# are combined with a wildcard origin. Here we add a second, non-breaking guard
+# at the middleware wiring so the browser-incompatible "reflect any origin while
+# allowing credentials" behavior can never be configured, even outside
+# production. When credentials are requested together with a "*" wildcard, we
+# disable credentials (keeping the wildcard) and log a warning; otherwise we
+# pass the validated allowlist and credential setting through unchanged.
+cors_origins = settings.cors_origins_list
+cors_allow_credentials = settings.cors_allow_credentials
+if cors_allow_credentials and "*" in cors_origins:
+    logger.warning(
+        "CORS is configured with allow_credentials=True and a wildcard '*' origin; "
+        "disabling credentials for CORS because reflecting any origin with "
+        "credentials is unsafe and not honored by browsers. Configure an explicit "
+        "origin allowlist to enable credentialed cross-origin requests."
+    )
+    cors_allow_credentials = False
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins_list,
-    allow_credentials=settings.cors_allow_credentials,
+    allow_origins=cors_origins,
+    allow_credentials=cors_allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    """Inject standard security headers on every response (Requirements 25.1, 25.3).
+
+    Adds Content-Security-Policy, Strict-Transport-Security, and
+    X-Content-Type-Options uniformly across all routes. HSTS is only meaningful
+    over HTTPS but is safe to always send. A header that a specific endpoint has
+    already set is preserved and never overwritten.
+    """
+    response = await call_next(request)
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault(
+        "Strict-Transport-Security", "max-age=31536000; includeSubDomains"
+    )
+    response.headers.setdefault("Content-Security-Policy", CONTENT_SECURITY_POLICY)
+    return response
+
+# In-process fixed-window rate limiter for authentication endpoints
+# (Requirements 12.1-12.4). Driven by the existing rate_limit_* settings:
+# up to `rate_limit_requests_per_minute + rate_limit_burst` requests are
+# allowed per 60-second window, keyed by client IP. Over-limit requests get
+# an HTTP 429 with a standard error envelope and a Retry-After header.
+#
+# NOTE: This state is per-process. With multiple workers each process keeps its
+# own counters, so the effective global limit scales with the worker count.
+# A shared store (e.g. Redis) would be required for a cluster-wide limit.
+_AUTH_RATE_LIMIT_WINDOW_SECONDS = 60
+# Maps client key -> (window_start_epoch, count).
+_auth_rate_limit_state: dict[str, tuple[float, int]] = {}
+
+
+def _auth_rate_limit_key(request: Request) -> str:
+    """Derive the rate-limit key for a request from the client IP.
+
+    Honors the first hop of X-Forwarded-For when present (the original client
+    behind a trusted proxy); otherwise falls back to the direct peer address.
+    """
+    forwarded = request.headers.get("x-forwarded-for")
+    if forwarded:
+        first_hop = forwarded.split(",")[0].strip()
+        if first_hop:
+            return first_hop
+    if request.client and request.client.host:
+        return request.client.host
+    return "unknown"
+
+
+@app.middleware("http")
+async def rate_limit_auth_endpoints(request: Request, call_next):
+    """Apply a fixed 60s-window rate limit to /api/v1/auth/* (Req 12.1-12.4).
+
+    Non-auth paths pass through untouched. For auth paths, requests beyond
+    `rate_limit_requests_per_minute + rate_limit_burst` within the current
+    window are rejected with HTTP 429.
+    """
+    if not request.url.path.startswith("/api/v1/auth/"):
+        return await call_next(request)
+
+    limit = settings.rate_limit_requests_per_minute + settings.rate_limit_burst
+    key = _auth_rate_limit_key(request)
+    now = time.time()
+
+    window_start, count = _auth_rate_limit_state.get(key, (now, 0))
+    if now - window_start >= _AUTH_RATE_LIMIT_WINDOW_SECONDS:
+        # Window expired; start a fresh one.
+        window_start, count = now, 0
+
+    if count >= limit:
+        retry_after = max(
+            1,
+            int(_AUTH_RATE_LIMIT_WINDOW_SECONDS - (now - window_start)),
+        )
+        return JSONResponse(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            content={
+                "error": {
+                    "code": "RATE_LIMITED",
+                    "message": "Too many requests",
+                    "details": {},
+                }
+            },
+            headers={"Retry-After": str(retry_after)},
+        )
+
+    _auth_rate_limit_state[key] = (window_start, count + 1)
+    return await call_next(request)
 
 # Mount static files for assets (motif images, avatars, etc.)
 ASSETS_DIR = Path(__file__).parent / "assets"
@@ -256,6 +436,12 @@ if ASSETS_DIR.exists():
     app.mount("/assets", StaticFiles(directory=str(ASSETS_DIR)), name="assets")
 else:
     logger.warning(f"Assets directory not found: {ASSETS_DIR}")
+
+# Serve uploaded avatars from the single configured avatar directory so the
+# stored file and the served URL resolve to the same location (Req 11.1-11.3).
+# The directory must exist before StaticFiles is mounted.
+AVATAR_DIR.mkdir(parents=True, exist_ok=True)
+app.mount("/uploads/avatars", StaticFiles(directory=str(AVATAR_DIR)), name="avatars")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login", auto_error=False)
 
@@ -322,10 +508,15 @@ def _record_analytics_event(
             cohort=cohort,
             device_info=device_info,
         )
-        session.add(AnalyticsEvent(**event_data))
-        session.commit()
+        # Persist the analytics event using a dedicated short-lived session so
+        # the request-shared `session` is never committed here. Committing the
+        # shared session would prematurely persist any other pending mutations
+        # and break the surrounding request's transaction atomicity
+        # (Requirements 19.1, 19.2, 19.3).
+        with SessionLocal() as analytics_session:
+            analytics_session.add(AnalyticsEvent(**event_data))
+            analytics_session.commit()
     except Exception:
-        session.rollback()
         logger.warning("Failed to record analytics event", exc_info=True)
 
 
@@ -341,23 +532,32 @@ def _apply_xp_boost(user: User, base_xp: int, now: datetime) -> int:
     Returns:
         The final XP amount (base_xp or base_xp * multiplier)
     """
-    if not user.xp_boost_active:
-        return base_xp
+    try:
+        if not user.xp_boost_active:
+            return base_xp
 
-    if user.xp_boost_expires_at is None:
-        # Boost active but no expiration set - deactivate it
-        user.xp_boost_active = False
-        return base_xp
+        if user.xp_boost_expires_at is None:
+            # Boost active but no expiration set - deactivate it
+            user.xp_boost_active = False
+            return base_xp
 
-    # Check if boost has expired
-    if now >= user.xp_boost_expires_at:
-        user.xp_boost_active = False
-        user.xp_boost_expires_at = None
-        return base_xp
+        # Check if boost has expired
+        if now >= user.xp_boost_expires_at:
+            user.xp_boost_active = False
+            user.xp_boost_expires_at = None
+            return base_xp
 
-    # Boost is active - apply multiplier
-    multiplier = user.xp_boost_multiplier if user.xp_boost_multiplier > 1 else 2
-    return base_xp * multiplier
+        # Boost is active - apply multiplier. Coerce a null/unset multiplier to
+        # the neutral value so that `None > 1` cannot raise a TypeError.
+        multiplier = user.xp_boost_multiplier or 0
+        return base_xp * (multiplier if multiplier > 1 else 2)
+    except Exception:
+        # XP application must never raise (Req 9.4) - fall back to base XP.
+        logger.warning(
+            "Failed to apply XP boost; falling back to base XP",
+            extra={"user_id": str(getattr(user, "id", None))},
+        )
+        return base_xp
 
 
 def _award_badge(session: Session, *, user: User, badge_slug: str) -> int:
@@ -703,7 +903,7 @@ def _cookie_params() -> dict[str, Any]:
     if samesite not in {"lax", "strict", "none"}:
         samesite = "lax"
     params: dict[str, Any] = {
-        "secure": settings.cookie_secure,
+        "secure": settings.cookie_secure_effective,
         "samesite": samesite,
         "path": settings.cookie_path,
     }
@@ -716,6 +916,12 @@ def _set_auth_cookies(
     response: Response, *, access_token: str, refresh_token: str
 ) -> None:
     params = _cookie_params()
+    if settings.is_production and not params["secure"]:
+        logger.warning(
+            "Secure auth cookies are DISABLED in production because "
+            "COOKIE_SECURE was explicitly overridden to a non-secure value; "
+            "session credentials may be transmitted over plaintext connections."
+        )
     access_max_age = int(settings.access_token_expire_minutes) * 60
     refresh_max_age = int(settings.refresh_token_expire_days) * 24 * 60 * 60
     response.set_cookie(
@@ -740,6 +946,111 @@ def _clear_auth_cookies(response: Response) -> None:
     response.delete_cookie(settings.refresh_cookie_name, **params)
 
 
+def _jwt_decode_kwargs() -> dict[str, Any]:
+    """Build keyword arguments for ``jose.jwt.decode``.
+
+    Implements the issue-then-enforce transition for the ``iss``/``aud``
+    identity claims (Req 26.4). When ``settings.jwt_validate_new_claims`` is
+    False (the transition default), only ``exp`` is required and no
+    issuer/audience is enforced, so tokens are accepted whether or not they
+    carry ``iss``/``aud``. When True, both backends are known to issue the
+    new claims, so ``iss``/``aud`` become required and are validated against
+    the configured issuer/audience (jose raises ``JWTError`` on mismatch).
+    """
+    kwargs: dict[str, Any] = {"algorithms": [settings.jwt_algorithm]}
+    if settings.jwt_validate_new_claims:
+        kwargs["issuer"] = settings.jwt_issuer
+        kwargs["audience"] = settings.jwt_audience
+        kwargs["options"] = {"require": ["exp", "iss", "aud"]}
+    else:
+        kwargs["options"] = {"require": ["exp"]}
+    return kwargs
+
+
+def _decode_refresh_token_best_effort(raw_token: str) -> Optional[dict[str, Any]]:
+    """Decode a refresh token tolerantly for revocation bookkeeping (Req 17.2).
+
+    Requires ``exp`` so the revocation row's ``expires_at`` can be derived, but
+    tolerates any decode failure by returning ``None`` — revocation is a
+    best-effort side effect that must never break logout / password-change.
+    Issuer/audience are intentionally not enforced here (and ``aud`` validation
+    is disabled) so tokens carrying the new identity claims still decode while
+    the issue-then-enforce transition (Task 6.4) is in progress.
+    """
+    try:
+        return jwt.decode(
+            raw_token,
+            settings.jwt_secret_key,
+            algorithms=[settings.jwt_algorithm],
+            options={"require": ["exp"], "verify_aud": False},
+        )
+    except (JWTError, ValueError):
+        return None
+
+
+def _revoke_refresh_jti(db: Session, payload: dict[str, Any]) -> None:
+    """Persist a refresh token's ``jti`` as revoked (idempotent; Req 17.2).
+
+    No-op when the payload lacks the claims needed to build a revocation row
+    (e.g. tokens issued before ``jti`` was added in Task 6.3). Uses an
+    ``ON CONFLICT DO NOTHING`` insert so repeated revocations of the same
+    token (logout after password change, double logout) are harmless.
+    """
+    jti = payload.get("jti")
+    subject = payload.get("sub")
+    exp = payload.get("exp")
+    if not jti or not subject or exp is None:
+        return
+    try:
+        user_id = UUID(str(subject))
+        expires_at = datetime.fromtimestamp(int(exp), tz=timezone.utc)
+    except (TypeError, ValueError, OverflowError, OSError):
+        return
+    try:
+        db.execute(
+            pg_insert(RevokedRefreshToken)
+            .values(jti=str(jti), user_id=user_id, expires_at=expires_at)
+            .on_conflict_do_nothing(index_elements=["jti"])
+        )
+        db.commit()
+    except SQLAlchemyError:
+        # Best-effort: a failed revocation must not break the caller's flow.
+        db.rollback()
+        logger.warning("Failed to persist refresh-token revocation", exc_info=True)
+
+
+def _is_refresh_revoked(db: Session, jti: Optional[str]) -> bool:
+    """Return ``True`` if the given refresh-token ``jti`` has been revoked."""
+    if not jti:
+        return False
+    return db.get(RevokedRefreshToken, str(jti)) is not None
+
+
+def _decode_access_token(raw_token: str) -> Optional[UUID]:
+    """Decode an access token and return its subject ``UUID``.
+
+    Shared by ``get_current_user`` and ``get_current_user_optional`` to avoid
+    duplicating the access-token decode (Req 18.3). Requires ``exp`` always;
+    iss/aud enforcement is gated by the JWT_VALIDATE_NEW_CLAIMS transition
+    flag (Req 26.4). Returns the subject ``UUID`` on success, or ``None`` on
+    any failure (``JWTError``, ``ValueError``, missing/blank ``sub``, or a
+    token whose ``type`` is not ``"access"``).
+    """
+    try:
+        payload = jwt.decode(
+            raw_token,
+            settings.jwt_secret_key,
+            **_jwt_decode_kwargs(),
+        )
+        subject = payload.get("sub")
+        token_type = payload.get("type")
+        if not subject or token_type != "access":
+            return None
+        return UUID(subject)
+    except (JWTError, ValueError):
+        return None
+
+
 def get_current_user(
     request: Request,
     token: Optional[str] = Depends(oauth2_scheme),
@@ -755,16 +1066,8 @@ def get_current_user(
     if not raw_token:
         raise credentials_exception
 
-    try:
-        payload = jwt.decode(
-            raw_token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm]
-        )
-        subject = payload.get("sub")
-        token_type = payload.get("type")
-        if not subject or token_type != "access":
-            raise credentials_exception
-        user_id = UUID(subject)
-    except (JWTError, ValueError):
+    user_id = _decode_access_token(raw_token)
+    if user_id is None:
         raise credentials_exception
 
     user = db.get(User, user_id)
@@ -786,20 +1089,11 @@ def get_current_user_optional(
     if not raw_token:
         return None
 
-    try:
-        payload = jwt.decode(
-            raw_token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm]
-        )
-        subject = payload.get("sub")
-        token_type = payload.get("type")
-        if not subject or token_type != "access":
-            return None
-        user_id = UUID(subject)
-    except (JWTError, ValueError):
+    user_id = _decode_access_token(raw_token)
+    if user_id is None:
         return None
 
-    user = db.get(User, user_id)
-    return user
+    return db.get(User, user_id)
 
 
 def _can_view_drafts(user: User) -> bool:
@@ -827,6 +1121,18 @@ def get_admin_user(current_user: User = Depends(get_current_user)) -> User:
     if current_user.role not in ADMIN_ROLES:
         raise HTTPException(status_code=403, detail="Not authorized")
     return current_user
+
+
+def _ensure_owner_or_404(resource_owner_id: UUID, current_user: User) -> None:
+    """Object-level authorization guard (Req 20).
+
+    Permit the operation only when the authenticated user owns the referenced
+    resource or holds an admin role. For anyone else, raise a generic 404 so the
+    response never discloses whether the resource exists (Req 20.2).
+    """
+    if current_user.id == resource_owner_id or current_user.role in ADMIN_ROLES:
+        return
+    raise HTTPException(status_code=404, detail="Not found")
 
 
 # Alias for consistency with other endpoints
@@ -1033,6 +1339,8 @@ def register(
         secret_key=settings.jwt_secret_key,
         algorithm=settings.jwt_algorithm,
         expires_delta=timedelta(minutes=settings.access_token_expire_minutes),
+        issuer=settings.jwt_issuer,
+        audience=settings.jwt_audience,
         extra_claims={"type": "access"},
     )
     refresh_token = create_jwt_token(
@@ -1040,6 +1348,8 @@ def register(
         secret_key=settings.jwt_secret_key,
         algorithm=settings.jwt_algorithm,
         expires_delta=timedelta(days=settings.refresh_token_expire_days),
+        issuer=settings.jwt_issuer,
+        audience=settings.jwt_audience,
         extra_claims={"type": "refresh"},
     )
 
@@ -1067,6 +1377,8 @@ def login(
         secret_key=settings.jwt_secret_key,
         algorithm=settings.jwt_algorithm,
         expires_delta=timedelta(minutes=settings.access_token_expire_minutes),
+        issuer=settings.jwt_issuer,
+        audience=settings.jwt_audience,
         extra_claims={"type": "access"},
     )
     refresh_token = create_jwt_token(
@@ -1074,6 +1386,8 @@ def login(
         secret_key=settings.jwt_secret_key,
         algorithm=settings.jwt_algorithm,
         expires_delta=timedelta(days=settings.refresh_token_expire_days),
+        issuer=settings.jwt_issuer,
+        audience=settings.jwt_audience,
         extra_claims={"type": "refresh"},
     )
 
@@ -1102,8 +1416,12 @@ def refresh_session(
         raise credentials_exception
 
     try:
+        # Require `exp` always; iss/aud enforcement is gated by the
+        # JWT_VALIDATE_NEW_CLAIMS transition flag (Req 26.4).
         payload = jwt.decode(
-            raw_token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm]
+            raw_token,
+            settings.jwt_secret_key,
+            **_jwt_decode_kwargs(),
         )
         subject = payload.get("sub")
         token_type = payload.get("type")
@@ -1113,15 +1431,26 @@ def refresh_session(
     except (JWTError, ValueError):
         raise credentials_exception
 
+    # Reject refresh tokens whose `jti` has been revoked (logout / password
+    # change). Done after decoding and before issuing new tokens (Req 17.2).
+    if _is_refresh_revoked(db, payload.get("jti")):
+        raise credentials_exception
+
     user = db.get(User, user_id)
     if user is None:
         raise credentials_exception
+
+    # Rotate: revoke the presented refresh token so the old `jti` cannot be
+    # replayed once a new refresh token is issued below (best-effort).
+    _revoke_refresh_jti(db, payload)
 
     access_token = create_jwt_token(
         subject=str(user.id),
         secret_key=settings.jwt_secret_key,
         algorithm=settings.jwt_algorithm,
         expires_delta=timedelta(minutes=settings.access_token_expire_minutes),
+        issuer=settings.jwt_issuer,
+        audience=settings.jwt_audience,
         extra_claims={"type": "access"},
     )
     refresh_token = create_jwt_token(
@@ -1129,6 +1458,8 @@ def refresh_session(
         secret_key=settings.jwt_secret_key,
         algorithm=settings.jwt_algorithm,
         expires_delta=timedelta(days=settings.refresh_token_expire_days),
+        issuer=settings.jwt_issuer,
+        audience=settings.jwt_audience,
         extra_claims={"type": "refresh"},
     )
 
@@ -1138,7 +1469,17 @@ def refresh_session(
 
 
 @app.post("/api/v1/auth/logout")
-def logout(response: Response) -> dict[str, bool]:
+def logout(
+    request: Request, response: Response, db: Session = Depends(get_db)
+) -> dict[str, bool]:
+    # Best-effort revoke the presented refresh token so it cannot be replayed
+    # after logout (Req 17.2). Decode tolerantly — a failure must never break
+    # logout, which still clears the cookies below.
+    raw_token = request.cookies.get(settings.refresh_cookie_name)
+    if raw_token:
+        payload = _decode_refresh_token_best_effort(raw_token)
+        if payload is not None:
+            _revoke_refresh_jti(db, payload)
     _clear_auth_cookies(response)
     response.headers["Cache-Control"] = "no-store"
     return {"success": True}
@@ -3254,13 +3595,15 @@ class LessonContentOut(BaseModel):
 
 
 class MotifQuizQuestionOut(BaseModel):
+    # Pre-submission payload: the answer key (correct_answer) and per-question
+    # explanation are intentionally excluded so the client never receives answers
+    # before submitting. Grading is server-authoritative (Requirement 4.2).
     id: UUID
     question_type: str
     question_text: str
     options: Optional[list[Any]] = None
     target_mesh_name: Optional[str] = None
     difficulty: int = 1
-    explanation: Optional[str] = None
     image_url: Optional[str] = None
 
 
@@ -3360,7 +3703,6 @@ def get_motif_detail(
             options=q.options if isinstance(q.options, list) else None,
             target_mesh_name=q.target_mesh_name,
             difficulty=max(1, int(q.difficulty or 1)),
-            explanation=(q.explanation or "").strip() or None,
             image_url=None,
         )
         for q in motif.quiz_questions
@@ -4300,14 +4642,6 @@ async def upload_avatar(
     db: Session = Depends(get_db),
 ):
     try:
-        if file.content_type not in ALLOWED_IMAGE_TYPES:
-            raise AppError(
-                code="INVALID_IMAGE_TYPE",
-                message="Unsupported image type",
-                status_code=status.HTTP_400_BAD_REQUEST,
-                details={"content_type": file.content_type},
-            )
-
         contents = await file.read(MAX_AVATAR_SIZE + 1)
         if len(contents) > MAX_AVATAR_SIZE:
             raise AppError(
@@ -4317,20 +4651,49 @@ async def upload_avatar(
                 details={"max_bytes": MAX_AVATAR_SIZE},
             )
 
-        extension_by_type = {
-            "image/jpeg": "jpg",
-            "image/png": "png",
-            "image/webp": "webp",
-        }
-        extension = extension_by_type[file.content_type]
+        # Validate by actual file content (magic bytes), never trusting the
+        # client-declared Content-Type. Two distinct checks with distinct codes.
+        detected_type = _detect_image_type(contents)
+
+        # 1. Content-format check: the bytes must parse as a supported image.
+        if detected_type is None:
+            raise AppError(
+                code="INVALID_IMAGE_CONTENT",
+                message="Uploaded file is not a valid image",
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # 2. Type-authorization check: the content-derived type must be allowed.
+        if detected_type not in ALLOWED_IMAGE_TYPES:
+            raise AppError(
+                code="INVALID_IMAGE_TYPE",
+                message="Unsupported image type",
+                status_code=status.HTTP_400_BAD_REQUEST,
+                details={"content_type": detected_type},
+            )
+
+        # 3. Declared-vs-actual mismatch: reject spoofed Content-Type even when
+        # both the declared and actual types are individually allowed.
+        if file.content_type and file.content_type != detected_type:
+            raise AppError(
+                code="IMAGE_TYPE_MISMATCH",
+                message="Declared content type does not match file content",
+                status_code=status.HTTP_400_BAD_REQUEST,
+                details={
+                    "declared_type": file.content_type,
+                    "detected_type": detected_type,
+                },
+            )
+
+        extension = IMAGE_EXTENSION_BY_TYPE[detected_type]
         filename = f"{current_user.id}_{uuid_module.uuid4()}.{extension}"
 
-        AVATAR_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
-        destination = AVATAR_UPLOAD_DIR / filename
+        AVATAR_DIR.mkdir(parents=True, exist_ok=True)
+        destination = AVATAR_DIR / filename
         with destination.open("wb") as handle:
             handle.write(contents)
 
-        current_user.avatar_url = f"/assets/avatars/{filename}"
+        current_user.avatar_url = f"/uploads/avatars/{filename}"
         db.commit()
 
         return {"avatar_url": current_user.avatar_url}
@@ -4372,6 +4735,7 @@ class UserCollectionResponse(BaseModel):
 @app.post("/api/v1/users/me/change-password")
 def change_password(
     request: ChangePasswordRequest,
+    http_request: Request,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -4380,6 +4744,15 @@ def change_password(
 
     current_user.password_hash = hash_password(request.new_password)
     db.commit()
+
+    # After a successful password change, revoke the presented refresh token
+    # (if any) so a previously issued session cannot be replayed (Req 17.2).
+    raw_token = http_request.cookies.get(settings.refresh_cookie_name)
+    if raw_token:
+        payload = _decode_refresh_token_best_effort(raw_token)
+        if payload is not None:
+            _revoke_refresh_jti(db, payload)
+
     return {"message": "Password changed successfully"}
 
 
@@ -7569,16 +7942,18 @@ async def upload_rag_document(
     db: Session = Depends(get_db),
 ) -> schemas.RagDocumentOut:
     """Upload a RAG document from a file (.txt, .md, .json)."""
-    # Validate file type
-    if file.content_type not in RAG_ALLOWED_FILE_TYPES:
-        # Also check by file extension for better compatibility
-        if file.filename:
-            ext = Path(file.filename).suffix.lower()
-            if ext not in {".txt", ".md", ".json"}:
-                raise HTTPException(
-                    status_code=400,
-                    detail=f"Unsupported file type. Allowed: .txt, .md, .json",
-                )
+    # Validate file type (fail closed: accept only when positively validated)
+    content_type_ok = file.content_type in RAG_ALLOWED_FILE_TYPES
+    extension_ok = bool(file.filename) and Path(file.filename).suffix.lower() in {
+        ".txt",
+        ".md",
+        ".json",
+    }
+    if not (content_type_ok or extension_ok):
+        raise HTTPException(
+            status_code=400,
+            detail="Unsupported file type. Allowed: .txt, .md, .json",
+        )
 
     # Check file size (5MB limit as per requirements)
     max_bytes = 5 * 1024 * 1024
@@ -7589,11 +7964,14 @@ async def upload_rag_document(
             detail=f"File too large. Maximum size: 5MB",
         )
 
-    # Decode content
+    # Decode content (fail closed: reject non-UTF-8 input rather than corrupting it)
     try:
         decoded = contents.decode("utf-8")
     except UnicodeDecodeError:
-        decoded = contents.decode("utf-8", errors="replace")
+        raise HTTPException(
+            status_code=400,
+            detail="File must be valid UTF-8 text",
+        )
 
     # Create document
     doc_title = title or Path(file.filename or "RAG Document").stem
@@ -8707,7 +9085,6 @@ def get_adaptive_quiz(
                 question_type=q.question_type.value,
                 options=options,
                 target_mesh_name=q.target_mesh_name,
-                explanation=q.explanation,
             )
         )
 
@@ -11910,15 +12287,16 @@ async def get_learning_insights_for_user(
     """
     from .services import ai_insights
 
-    # Check permissions
-    if current_user.id != user_id:
-        # User is trying to view someone else's insights
-        # Check if current user is admin
-        if current_user.role != "admin":
-            # Check if current user is a teacher and target user is their student
-            from .services import classroom
+    # Object-level authorization (Req 20.1/20.2): the owner or an admin may
+    # always view; a teacher may additionally view their own students. Anyone
+    # else receives a generic 404 so the response never discloses whether the
+    # user or their insights exist.
+    is_teacher_of_student = False
+    if current_user.id != user_id and current_user.role not in ADMIN_ROLES:
+        from .services import classroom  # noqa: F401
 
-            is_teacher_of_student = db.execute(
+        is_teacher_of_student = (
+            db.execute(
                 select(ClassMember)
                 .join(Classroom, ClassMember.class_id == Classroom.id)
                 .where(
@@ -11929,12 +12307,11 @@ async def get_learning_insights_for_user(
                     )
                 )
             ).first()
+            is not None
+        )
 
-            if not is_teacher_of_student:
-                raise HTTPException(
-                    status_code=403,
-                    detail="You don't have permission to view this user's insights",
-                )
+    if not is_teacher_of_student:
+        _ensure_owner_or_404(user_id, current_user)
 
     try:
         insights = await ai_insights.generate_learning_insights(

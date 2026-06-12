@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
 from typing import Any, Optional
+from uuid import uuid4
 
 import bcrypt
 from jose import jwt
@@ -31,6 +32,8 @@ def create_jwt_token(
     secret_key: str,
     algorithm: str,
     expires_delta: timedelta,
+    issuer: str,
+    audience: str,
     extra_claims: Optional[dict[str, Any]] = None,
 ) -> str:
     now = datetime.now(timezone.utc)
@@ -39,6 +42,12 @@ def create_jwt_token(
         "sub": subject,
         "iat": int(now.timestamp()),
         "exp": int(expire_at.timestamp()),
+        # Identity claims for cross-backend consistency (Req 26.3). A unique
+        # `jti` enables refresh-token revocation (Task 7); `iss`/`aud` are
+        # issued now so enforcement (Task 6.4) can be turned on later.
+        "jti": uuid4().hex,
+        "iss": issuer,
+        "aud": audience,
     }
     if extra_claims:
         payload.update(extra_claims)

@@ -306,12 +306,14 @@ class QuizOptionOut(BaseModel):
 
 
 class QuizQuestionOut(BaseModel):
+    # Pre-submission payload: the answer key (correct_answer) and per-question
+    # explanation are intentionally excluded so the client never receives answers
+    # before submitting. Grading is server-authoritative (Requirement 4.2).
     id: UUID
     question_text: str
     question_type: str
     options: list[QuizOptionOut]
     target_mesh_name: Optional[str] = None
-    explanation: Optional[str] = None
 
 
 class QuizOut(BaseModel):

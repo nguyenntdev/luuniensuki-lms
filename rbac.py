@@ -92,6 +92,10 @@ def can_manage_user(actor_role: UserRole, target_role: UserRole) -> bool:
     Returns:
         True if actor can manage target
     """
+    # super_admin can manage anyone (including other super_admins)
+    if actor_role == UserRole.super_admin:
+        return True
+
     actor_level = ROLE_HIERARCHY.get(actor_role, 0)
     target_level = ROLE_HIERARCHY.get(target_role, 0)
     
