@@ -4057,3 +4057,26 @@ class UserLeague(Base):
 
     # Relationships
     user: Mapped["User"] = relationship("User", back_populates="league_entries")
+
+
+class RevokedRefreshToken(Base):
+    """Revoked refresh tokens keyed by JWT id (`jti`) for refresh-token revocation."""
+    __tablename__ = "revoked_refresh_tokens"
+    __table_args__ = (
+        Index("idx_revoked_refresh_tokens_expires_at", "expires_at"),
+    )
+
+    jti: Mapped[str] = mapped_column(String(64), primary_key=True)
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    revoked_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    expires_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
+
+    user: Mapped["User"] = relationship("User")

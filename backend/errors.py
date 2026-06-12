@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional
 
 from fastapi import Request, status
 from fastapi.exceptions import RequestValidationError
@@ -12,7 +12,7 @@ class AppError(Exception):
         code: str,
         message: str,
         status_code: int = status.HTTP_400_BAD_REQUEST,
-        details: dict = None,
+        details: Optional[dict] = None,
     ):
         self.code = code
         self.message = message
@@ -53,9 +53,42 @@ def _serialize_error_value(value: Any) -> Any:
         return value
 
 
+# Fields whose presence in an error location indicates sensitive submitted data.
+# When a validation error targets one of these fields, even the human-readable
+# message is replaced so it cannot reflect the submitted value.
+SENSITIVE_FIELDS = {"password", "new_password", "current_password", "token", "secret"}
+
+
+def _sanitize_validation_errors(raw_errors: Any) -> list:
+    """Build a sanitized error list that exposes only field locations and messages.
+
+    Never includes the submitted input values: the ``input`` and ``ctx`` keys
+    produced by pydantic/FastAPI are explicitly dropped. When the failing field
+    is sensitive, the message is replaced with a generic value so it cannot leak
+    submitted data.
+    """
+    sanitized = []
+    for error in raw_errors:
+        loc = error.get("loc", ())
+        # Normalize the location into a list of strings (tuple → list).
+        loc_list = [str(_serialize_error_value(part)) for part in loc]
+
+        is_sensitive = len(loc_list) > 0 and loc_list[-1] in SENSITIVE_FIELDS
+        message = "invalid value" if is_sensitive else str(error.get("msg", ""))
+
+        sanitized.append(
+            {
+                "loc": loc_list,
+                "msg": message,
+                "type": str(error.get("type", "")),
+            }
+        )
+    return sanitized
+
+
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
-    # Serialize errors, converting any bytes to strings
-    errors = _serialize_error_value(exc.errors())
+    # Only expose field locations, messages, and types — never submitted input.
+    errors = _sanitize_validation_errors(exc.errors())
 
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
