@@ -47,9 +47,26 @@ def _jwt_decode_kwargs() -> dict[str, Any]:
     if settings.jwt_validate_new_claims:
         kwargs["issuer"] = settings.jwt_issuer
         kwargs["audience"] = settings.jwt_audience
-        kwargs["options"] = {"require": ["exp", "iss", "aud"]}
+        # ``exp`` is always required (Properties 2, Req 8.2); when the
+        # transition flag is set, ``iss``/``aud`` are also required and
+        # verified against the configured values.
+        kwargs["options"] = {
+            "require_exp": True,
+            "require_iss": True,
+            "require_aud": True,
+        }
     else:
-        kwargs["options"] = {"require": ["exp"]}
+        # python-jose enables verify_aud/verify_iss by default. Tokens issued
+        # by this codebase now always carry iss/aud (Req 26.3), so without
+        # explicitly disabling verification the "accept regardless" transition
+        # path rejects every token ("Invalid audience"). Disable both so tokens
+        # are accepted whether or not they carry iss/aud, matching the original
+        # pre-modularization behavior. ``exp`` remains required in both states.
+        kwargs["options"] = {
+            "require_exp": True,
+            "verify_aud": False,
+            "verify_iss": False,
+        }
     return kwargs
 
 

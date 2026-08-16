@@ -98,7 +98,11 @@ def _decode_refresh_token_best_effort(raw_token: str) -> Optional[dict[str, Any]
             raw_token,
             settings.jwt_secret_key,
             algorithms=[settings.jwt_algorithm],
-            options={"require": ["exp"], "verify_aud": False},
+            options={
+                "require_exp": True,
+                "verify_aud": False,
+                "verify_iss": False,
+            },
         )
     except (JWTError, ValueError):
         return None

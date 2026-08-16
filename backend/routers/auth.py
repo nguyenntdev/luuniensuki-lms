@@ -180,7 +180,14 @@ def refresh_session(
 
     try:
         payload = jwt.decode(
-            raw_token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm]
+            raw_token,
+            settings.jwt_secret_key,
+            algorithms=[settings.jwt_algorithm],
+            # Issued tokens carry aud/iss; without disabling verification here
+            # python-jose's default verify_aud/verify_iss rejects every token
+            # ("Invalid audience"), matching the access-token path (Req 26.4).
+            # exp is required via require_exp below.
+            options={"require_exp": True, "verify_aud": False, "verify_iss": False},
         )
         subject = payload.get("sub")
         token_type = payload.get("type")
