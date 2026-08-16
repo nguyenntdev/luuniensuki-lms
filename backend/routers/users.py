@@ -889,7 +889,7 @@ def admin_send_push_notification(
 
     Admin only endpoint.
     """
-    from .services import push_notifications
+    from ..services import push_notifications
 
     # Create notifications for each user
     created_notifications = []
@@ -944,7 +944,7 @@ def admin_broadcast_push_notification(
 
     Admin only endpoint. Can filter by user role.
     """
-    from .services import push_notifications
+    from ..services import push_notifications
 
     results = push_notifications.broadcast_notification(
         db=db,
@@ -1022,7 +1022,7 @@ def get_notification_history(
     """
     Get the current user's notification history.
     """
-    from .services import push_notifications
+    from ..services import push_notifications
 
     notifications, total = push_notifications.get_user_notification_history(
         db=db,
@@ -1701,7 +1701,7 @@ def get_user_activity(
 
     This endpoint shows only public shares.
     """
-    from .services import sharing
+    from ..services import sharing
 
     # Check if user exists
     target_user = db.query(User).filter(User.id == user_id).first()

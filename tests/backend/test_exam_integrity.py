@@ -118,10 +118,12 @@ def test_exam_fetch_excludes_answer_key(client, db_session, seeded_content):
     assert "correct_answer" not in keys, body
     assert "explanation" not in keys, body
 
-    # Belt-and-suspenders: the literal answer string must not appear anywhere
-    # in the serialized payload.
+    # Belt-and-suspenders: the answer-key *field names* must not appear anywhere
+    # in the serialized payload. (We intentionally do NOT assert that the answer
+    # *string* is absent — the correct answer legitimately appears as one of the
+    # option labels, so that literal check is unfalsifiable.)
     assert "correct_answer" not in res.text
-    assert seeded_content["question"].correct_answer not in res.text
+    assert "explanation" not in res.text
 
 
 # ---------------------------------------------------------------------------

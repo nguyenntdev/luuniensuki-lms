@@ -618,7 +618,7 @@ def list_live_sessions(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> list[schemas.LiveSessionOut]:
-    from .services import live_sessions as live_session_service
+    from ..services import live_sessions as live_session_service
 
     classroom = db.get(Classroom, classroom_id)
     if classroom is None:
@@ -644,7 +644,7 @@ def create_live_session(
     current_user: User = Depends(get_staff_user),
     db: Session = Depends(get_db),
 ) -> schemas.LiveSessionOut:
-    from .services import live_sessions as live_session_service
+    from ..services import live_sessions as live_session_service
 
     classroom = db.get(Classroom, classroom_id)
     if classroom is None:
@@ -673,7 +673,7 @@ def get_live_session_detail(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> schemas.LiveSessionOut:
-    from .services import live_sessions as live_session_service
+    from ..services import live_sessions as live_session_service
 
     live_session = live_session_service.get_live_session(db, live_session_id)
     if live_session is None:
@@ -700,7 +700,7 @@ def issue_livekit_access_token(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> schemas.LiveSessionTokenOut:
-    from .services import live_sessions as live_session_service
+    from ..services import live_sessions as live_session_service
 
     live_session = live_session_service.get_live_session(db, live_session_id)
     if live_session is None:
@@ -758,7 +758,7 @@ def join_live_session_room(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> schemas.LiveSessionJoinOut:
-    from .services import live_sessions as live_session_service
+    from ..services import live_sessions as live_session_service
 
     live_session = live_session_service.get_live_session(db, live_session_id)
     if live_session is None:
@@ -823,7 +823,7 @@ def leave_live_session_room(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> Response:
-    from .services import live_sessions as live_session_service
+    from ..services import live_sessions as live_session_service
 
     live_session = live_session_service.get_live_session(db, live_session_id)
     if live_session is None:
@@ -858,7 +858,7 @@ def list_live_session_participants(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> list[schemas.LiveParticipantOut]:
-    from .services import live_sessions as live_session_service
+    from ..services import live_sessions as live_session_service
 
     live_session = live_session_service.get_live_session(db, live_session_id)
     if live_session is None:
@@ -892,7 +892,7 @@ def list_live_session_events(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> list[schemas.LiveEventOut]:
-    from .services import live_sessions as live_session_service
+    from ..services import live_sessions as live_session_service
 
     live_session = live_session_service.get_live_session(db, live_session_id)
     if live_session is None:
@@ -927,8 +927,8 @@ def create_live_session_event(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> schemas.LiveEventOut:
-    from .services import live_ai_teacher as live_ai_teacher_service
-    from .services import live_sessions as live_session_service
+    from ..services import live_ai_teacher as live_ai_teacher_service
+    from ..services import live_sessions as live_session_service
 
     live_session = live_session_service.get_live_session(db, live_session_id)
     if live_session is None:
@@ -991,7 +991,7 @@ def update_live_session_participant_role(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> schemas.LiveParticipantOut:
-    from .services import live_sessions as live_session_service
+    from ..services import live_sessions as live_session_service
 
     live_session = live_session_service.get_live_session(db, live_session_id)
     if live_session is None:
@@ -1037,7 +1037,7 @@ def host_update_live_session_settings(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> schemas.LiveSessionOut:
-    from .services import live_sessions as live_session_service
+    from ..services import live_sessions as live_session_service
 
     live_session = live_session_service.get_live_session(db, live_session_id)
     if live_session is None:
@@ -1084,7 +1084,7 @@ def host_mute_all_live_session(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> schemas.LiveModerationActionOut:
-    from .services import live_sessions as live_session_service
+    from ..services import live_sessions as live_session_service
 
     live_session = live_session_service.get_live_session(db, live_session_id)
     if live_session is None:
@@ -1128,7 +1128,7 @@ def host_remove_live_session_participant(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> schemas.LiveModerationActionOut:
-    from .services import live_sessions as live_session_service
+    from ..services import live_sessions as live_session_service
 
     live_session = live_session_service.get_live_session(db, live_session_id)
     if live_session is None:
@@ -1176,7 +1176,7 @@ async def livekit_webhook_receiver(
     ),
     db: Session = Depends(get_db),
 ) -> dict[str, Any]:
-    from .services import live_sessions as live_session_service
+    from ..services import live_sessions as live_session_service
 
     if settings.livekit_webhook_secret and (
         x_livekit_webhook_secret != settings.livekit_webhook_secret
@@ -1211,7 +1211,7 @@ def ensure_live_ai_teacher_presence(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> schemas.LiveParticipantOut:
-    from .services import live_sessions as live_session_service
+    from ..services import live_sessions as live_session_service
 
     live_session = live_session_service.get_live_session(db, live_session_id)
     if live_session is None:
@@ -1254,10 +1254,10 @@ async def live_ai_teacher_stt(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> schemas.LiveAITeacherSTTOut:
-    from .services import live_ai_teacher as live_ai_teacher_service
-    from .services import live_session_reporting as live_reporting_service
-    from .services import live_sessions as live_session_service
-    from .services import live_voice as live_voice_service
+    from ..services import live_ai_teacher as live_ai_teacher_service
+    from ..services import live_session_reporting as live_reporting_service
+    from ..services import live_sessions as live_session_service
+    from ..services import live_voice as live_voice_service
 
     live_session = live_session_service.get_live_session(db, live_session_id)
     if live_session is None:
@@ -1373,9 +1373,9 @@ def live_ai_teacher_tts(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> StreamingResponse:
-    from .services import live_session_reporting as live_reporting_service
-    from .services import live_sessions as live_session_service
-    from .services import live_voice as live_voice_service
+    from ..services import live_session_reporting as live_reporting_service
+    from ..services import live_sessions as live_session_service
+    from ..services import live_voice as live_voice_service
 
     live_session = live_session_service.get_live_session(db, live_session_id)
     if live_session is None:
@@ -1460,11 +1460,11 @@ def live_ai_teacher_reply(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> schemas.LiveAITeacherReplyOut:
-    from .services import live_circuit_breaker as live_circuit_service
-    from .services import live_ai_teacher as live_ai_teacher_service
-    from .services import live_observability as live_observability_service
-    from .services import live_session_reporting as live_reporting_service
-    from .services import live_sessions as live_session_service
+    from ..services import live_circuit_breaker as live_circuit_service
+    from ..services import live_ai_teacher as live_ai_teacher_service
+    from ..services import live_observability as live_observability_service
+    from ..services import live_session_reporting as live_reporting_service
+    from ..services import live_sessions as live_session_service
 
     live_session = live_session_service.get_live_session(db, live_session_id)
     if live_session is None:
@@ -1955,10 +1955,10 @@ def live_ai_teacher_reply_stream(
     payload (citations/rubric/persona). Falls back to the non-streaming call if
     streaming is unavailable. The client uses the full answer for TTS.
     """
-    from .services import live_circuit_breaker as live_circuit_service
-    from .services import live_ai_teacher as live_ai_teacher_service
-    from .services import live_session_reporting as live_reporting_service
-    from .services import live_sessions as live_session_service
+    from ..services import live_circuit_breaker as live_circuit_service
+    from ..services import live_ai_teacher as live_ai_teacher_service
+    from ..services import live_session_reporting as live_reporting_service
+    from ..services import live_sessions as live_session_service
 
     live_session = live_session_service.get_live_session(db, live_session_id)
     if live_session is None:
@@ -2151,7 +2151,7 @@ def end_live_session_room(
     current_user: User = Depends(get_staff_user),
     db: Session = Depends(get_db),
 ) -> schemas.LiveSessionOut:
-    from .services import live_sessions as live_session_service
+    from ..services import live_sessions as live_session_service
 
     live_session = live_session_service.get_live_session(db, live_session_id)
     if live_session is None:
@@ -2185,9 +2185,9 @@ def get_live_session_dashboard(
     current_user: User = Depends(get_staff_user),
     db: Session = Depends(get_db),
 ) -> schemas.SessionDashboardOut:
-    from .services import live_observability as live_observability_service
-    from .services import live_session_reporting as live_reporting_service
-    from .services import live_sessions as live_session_service
+    from ..services import live_observability as live_observability_service
+    from ..services import live_session_reporting as live_reporting_service
+    from ..services import live_sessions as live_session_service
 
     live_session = live_session_service.get_live_session(db, live_session_id)
     if live_session is None:
@@ -2222,8 +2222,8 @@ def export_live_session_transcripts_json(
     current_user: User = Depends(get_staff_user),
     db: Session = Depends(get_db),
 ) -> schemas.SessionTranscriptExportOut:
-    from .services import live_session_reporting as live_reporting_service
-    from .services import live_sessions as live_session_service
+    from ..services import live_session_reporting as live_reporting_service
+    from ..services import live_sessions as live_session_service
 
     live_session = live_session_service.get_live_session(db, live_session_id)
     if live_session is None:
@@ -2251,8 +2251,8 @@ def export_live_session_transcripts_csv(
     current_user: User = Depends(get_staff_user),
     db: Session = Depends(get_db),
 ) -> Response:
-    from .services import live_session_reporting as live_reporting_service
-    from .services import live_sessions as live_session_service
+    from ..services import live_session_reporting as live_reporting_service
+    from ..services import live_sessions as live_session_service
 
     live_session = live_session_service.get_live_session(db, live_session_id)
     if live_session is None:
@@ -2286,8 +2286,8 @@ def get_live_session_observability(
     current_user: User = Depends(get_staff_user),
     db: Session = Depends(get_db),
 ) -> schemas.SessionObservabilityOut:
-    from .services import live_observability as live_observability_service
-    from .services import live_sessions as live_session_service
+    from ..services import live_observability as live_observability_service
+    from ..services import live_sessions as live_session_service
 
     live_session = live_session_service.get_live_session(db, live_session_id)
     if live_session is None:
@@ -2313,8 +2313,8 @@ def admin_live_sessions_cleanup(
     db: Session = Depends(get_db),
 ) -> dict[str, Any]:
     del current_user
-    from .services import live_rate_limits as live_rate_limit_service
-    from .services import live_session_reporting as live_reporting_service
+    from ..services import live_rate_limits as live_rate_limit_service
+    from ..services import live_session_reporting as live_reporting_service
 
     live_reporting_service.cleanup_expired_reporting_data(db)
     rate_limit_deleted = live_rate_limit_service.cleanup_old_logs(

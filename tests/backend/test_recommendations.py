@@ -3,6 +3,7 @@ from uuid import UUID
 from sqlalchemy import select
 
 import backend.main as main
+import backend.routers.gamification as gamification_module
 from backend.models import (
     ContentFlag,
     ContentProvenance,
@@ -80,7 +81,12 @@ def test_llm_recommendation_provenance(client, db_session, monkeypatch):
             "ok",
         )
 
-    monkeypatch.setattr(main, "_generate_llm_recommendations", fake_generate)
+    # The route calls its own module-global name (backend.routers.gamification),
+    # which resolves to the real backend.domain.helpers function. Patch that
+    # namespace so the mock is actually observed.
+    monkeypatch.setattr(
+        gamification_module, "_generate_llm_recommendations", fake_generate
+    )
 
     res = client.post(
         "/api/v1/users/me/recommendations/refresh", json={"use_llm": True}

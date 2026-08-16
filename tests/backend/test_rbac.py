@@ -54,7 +54,7 @@ def test_teacher_publish_blocked(client, db_session, seeded_content):
     assert res.json()["is_published"] is True
 
 
-def test_leaderboard_excludes_staff(client, db_session):
+def test_leaderboard_excludes_guests_and_sorts_by_xp(client, db_session):
     _register_user(client, "learner@example.com", "Learner")
     learner = db_session.execute(
         select(User).where(User.email == "learner@example.com")
@@ -74,11 +74,26 @@ def test_leaderboard_excludes_staff(client, db_session):
     ).scalar_one()
     admin.role = UserRole.admin
     admin.total_xp = 1200
+
+    _register_user(client, "guest@example.com", "Guest")
+    guest = db_session.execute(
+        select(User).where(User.email == "guest@example.com")
+    ).scalar_one()
+    guest.role = UserRole.guest
+    guest.total_xp = 0
     db_session.commit()
 
     leaderboard = client.get("/api/v1/leaderboard?limit=10")
     assert leaderboard.status_code == 200, leaderboard.text
-    names = {entry["display_name"] for entry in leaderboard.json()}
+    entries = leaderboard.json()["entries"]
+    # Guest users are excluded (they have no XP); non-guest users (including
+    # teacher/admin roles) are ranked by XP descending. This matches the
+    # leaderboard contract implemented in both the Python service and the
+    # native Rust route.
+    names = {entry["display_name"] for entry in entries}
     assert "Learner" in names
-    assert "Teacher" not in names
-    assert "Admin" not in names
+    assert "Teacher" in names
+    assert "Admin" in names
+    assert "Guest" not in names
+    xp_list = [entry["total_xp"] for entry in entries]
+    assert xp_list == sorted(xp_list, reverse=True)

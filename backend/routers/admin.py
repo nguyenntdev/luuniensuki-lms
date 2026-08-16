@@ -1774,7 +1774,7 @@ def start_rebuild_embeddings(
     This creates a job and rebuilds all embeddings for active RAG documents.
     Use force=true to rebuild even if embeddings already exist.
     """
-    from .services.embeddings import rebuild_all_embeddings
+    from ..services.embeddings import rebuild_all_embeddings
 
     # Create a new job
     job = EmbeddingJob(
@@ -1810,7 +1810,7 @@ def get_rebuild_status(
     """
     Get the status of the most recent embedding rebuild job.
     """
-    from .services.embeddings import get_latest_job
+    from ..services.embeddings import get_latest_job
 
     job = get_latest_job(db)
     if job is None:
@@ -1831,7 +1831,7 @@ def get_rebuild_job(
     """
     Get the status of a specific embedding rebuild job.
     """
-    from .services.embeddings import get_job_by_id
+    from ..services.embeddings import get_job_by_id
 
     job = get_job_by_id(db, job_id)
     if job is None:
@@ -1854,7 +1854,7 @@ def rebuild_rag_embeddings(
 
     Deprecated: Use POST /api/v1/admin/rag/rebuild for progress tracking.
     """
-    from .services.embeddings import update_document_embedding
+    from ..services.embeddings import update_document_embedding
 
     docs = (
         db.execute(select(RagDocument).order_by(RagDocument.updated_at.desc()))
@@ -1999,7 +1999,7 @@ def get_retention_metrics(
 
     Admin only.
     """
-    from .services.retention import calculate_overall_retention
+    from ..services.retention import calculate_overall_retention
 
     result = calculate_overall_retention(db, days_ago=days_ago)
     return schemas.RetentionMetricsOut(**result)
@@ -2030,7 +2030,7 @@ def get_cohort_retention(
 
     Admin only.
     """
-    from .services.retention import calculate_cohort_retention
+    from ..services.retention import calculate_cohort_retention
 
     result = calculate_cohort_retention(db, period=period, limit=limit)
     return schemas.CohortRetentionOut(**result)
@@ -2058,7 +2058,7 @@ def get_retention_curve(
 
     Admin only.
     """
-    from .services.retention import calculate_retention_curve
+    from ..services.retention import calculate_retention_curve
 
     result = calculate_retention_curve(db, days=days, cohort_days_ago=cohort_days_ago)
     return schemas.RetentionCurveOut(**result)
@@ -3408,7 +3408,7 @@ def admin_assign_abuse_report(
     Admin only endpoint.
     Changes status from 'pending' to 'reviewing' if applicable.
     """
-    from .services.abuse_reports import assign_abuse_report
+    from ..services.abuse_reports import assign_abuse_report
 
     try:
         report = assign_abuse_report(
@@ -3478,7 +3478,7 @@ def admin_resolve_abuse_report(
     Admin only endpoint.
     Sets status to 'resolved' or 'dismissed' with resolution notes.
     """
-    from .services.abuse_reports import resolve_abuse_report
+    from ..services.abuse_reports import resolve_abuse_report
 
     try:
         report = resolve_abuse_report(
@@ -4225,7 +4225,7 @@ def send_test_email(
     template = _get_email_template_or_404(db, payload.template_id)
 
     # Import email scheduler service
-    from .services import email_scheduler
+    from ..services import email_scheduler
 
     try:
         # Render template with test context

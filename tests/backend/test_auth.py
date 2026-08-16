@@ -74,7 +74,9 @@ def test_change_password_invalid_current_password(client):
         json={"current_password": "incorrect", "new_password": "newpassword123"},
     )
     assert change.status_code == 400, change.text
-    assert change.json()["detail"] == "Current password is incorrect"
+    assert (
+        change.json()["error"]["message"] == "Current password is incorrect"
+    )
 
 
 def test_refresh_and_logout(client):

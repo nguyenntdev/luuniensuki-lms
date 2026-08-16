@@ -584,7 +584,7 @@ def create_classroom(
     Create a new classroom.
     Generates a unique class code for students to join.
     """
-    from .services import classroom as classroom_service
+    from ..services import classroom as classroom_service
 
     classroom = classroom_service.create_classroom(
         db=db,
@@ -686,7 +686,7 @@ def update_classroom(
     """
     Update classroom details.
     """
-    from .services import classroom as classroom_service
+    from ..services import classroom as classroom_service
 
     classroom = db.get(Classroom, classroom_id)
     if classroom is None:
@@ -739,7 +739,7 @@ def archive_classroom(
     Archive a classroom.
     Archived classrooms cannot accept new students but existing data is preserved.
     """
-    from .services import classroom as classroom_service
+    from ..services import classroom as classroom_service
 
     classroom = db.get(Classroom, classroom_id)
     if classroom is None:
@@ -767,7 +767,7 @@ def unarchive_classroom(
     """
     Unarchive a classroom.
     """
-    from .services import classroom as classroom_service
+    from ..services import classroom as classroom_service
 
     classroom = db.get(Classroom, classroom_id)
     if classroom is None:
@@ -793,7 +793,7 @@ def join_classroom(
     Join a classroom using a class code.
     Available to learners only.
     """
-    from .services import classroom as classroom_service
+    from ..services import classroom as classroom_service
 
     if current_user.role != UserRole.learner:
         raise HTTPException(status_code=403, detail="Only learners can join classrooms")
@@ -871,7 +871,7 @@ def remove_member(
     """
     Remove a member from a classroom.
     """
-    from .services import classroom as classroom_service
+    from ..services import classroom as classroom_service
 
     classroom = db.get(Classroom, classroom_id)
     if classroom is None:
@@ -895,7 +895,7 @@ def get_enrolled_classrooms(
     """
     Get all classrooms where the current user is enrolled as a student.
     """
-    from .services import classroom as classroom_service
+    from ..services import classroom as classroom_service
 
     classrooms = classroom_service.get_enrolled_classrooms(db, current_user)
 
@@ -1289,7 +1289,7 @@ def get_student_progress(
     Get detailed progress for a specific student in a classroom.
     Only accessible to teachers of the classroom and admins.
     """
-    from .services import student_progress as progress_service
+    from ..services import student_progress as progress_service
 
     classroom = db.get(Classroom, classroom_id)
     if classroom is None:
@@ -1326,7 +1326,7 @@ def get_class_progress_summary(
     Get class-wide progress summary with average metrics.
     Only accessible to teachers of the classroom and admins.
     """
-    from .services import student_progress as progress_service
+    from ..services import student_progress as progress_service
 
     classroom = db.get(Classroom, classroom_id)
     if classroom is None:
@@ -1365,7 +1365,7 @@ def get_class_leaderboard(
 
     Only accessible to teachers of the classroom and admins.
     """
-    from .services import student_progress as progress_service
+    from ..services import student_progress as progress_service
 
     classroom = db.get(Classroom, classroom_id)
     if classroom is None:
@@ -1397,7 +1397,7 @@ def export_class_progress(
 
     from fastapi.responses import StreamingResponse
 
-    from .services import student_progress as progress_service
+    from ..services import student_progress as progress_service
 
     classroom = db.get(Classroom, classroom_id)
     if classroom is None:
@@ -1543,7 +1543,7 @@ def create_class_legacy(
     db: Session = Depends(get_db),
 ) -> ClassSummaryOut_Legacy:
     """Create class (legacy alias for classroom creation)."""
-    from .services import classroom as classroom_service
+    from ..services import classroom as classroom_service
 
     classroom = classroom_service.create_classroom(
         db=db,

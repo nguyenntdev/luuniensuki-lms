@@ -525,7 +525,7 @@ def ingest_analytics_events(
         return AnalyticsEventsOut(success=True, count=0)
 
     # Import analytics service for event validation
-    from .services.analytics import create_event_record
+    from ..services.analytics import create_event_record
 
     # Create validated event records
     event_records = []
@@ -683,7 +683,7 @@ def create_abuse_report(
     Reports are automatically prioritized based on reason and content type.
     High and critical priority reports trigger admin notifications.
     """
-    from .services.abuse_reports import create_abuse_report as create_report
+    from ..services.abuse_reports import create_abuse_report as create_report
 
     report = create_report(
         db=db,

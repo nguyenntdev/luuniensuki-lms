@@ -1320,7 +1320,7 @@ def get_next_lesson(
     Returns:
         Next lesson recommendation or null if no suitable lesson found
     """
-    from .services import lesson_sequence
+    from ..services import lesson_sequence
 
     next_lesson = lesson_sequence.get_next_lesson(db, current_user, urn_id)
 
@@ -1366,7 +1366,7 @@ def get_lesson_prerequisites(
     Returns:
         Prerequisite information including completion status
     """
-    from .services import lesson_sequence
+    from ..services import lesson_sequence
 
     # Verify lesson exists
     lesson = db.get(LessonContent, lesson_id)
@@ -1407,7 +1407,7 @@ def check_lesson_is_unlocked(
     Returns:
         Unlock status with missing prerequisites
     """
-    from .services import lesson_sequence
+    from ..services import lesson_sequence
 
     # Verify lesson exists
     lesson = db.get(LessonContent, lesson_id)
@@ -1476,7 +1476,7 @@ def get_lesson_sequence(
     Returns:
         Complete learning sequence with progress information
     """
-    from .services import lesson_sequence
+    from ..services import lesson_sequence
 
     sequence_data = lesson_sequence.get_lesson_sequence(db, current_user, urn_id)
 

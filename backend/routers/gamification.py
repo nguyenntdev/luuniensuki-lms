@@ -1378,10 +1378,10 @@ def get_leaderboard(
     - xp: Total experience points (default)
     - streak: Current streak
     """
-    from .services import leaderboard as leaderboard_service
+    from ..services import leaderboard as leaderboard_service
 
     if scope == "class":
-        from .services import student_progress as progress_service
+        from ..services import student_progress as progress_service
 
         if classroom_id is None:
             raise HTTPException(
@@ -1506,7 +1506,7 @@ def get_friends_leaderboard_endpoint(
     db: Session = Depends(get_db),
 ) -> schemas.EnhancedLeaderboardOut:
     """Get leaderboard of user's friends (mutual follows)."""
-    from .services import leaderboard as leaderboard_service
+    from ..services import leaderboard as leaderboard_service
 
     entries, user_rank, total_users = leaderboard_service.get_friends_leaderboard(
         db=db,
@@ -1549,7 +1549,7 @@ def get_leaderboard_settings(
     db: Session = Depends(get_db),
 ) -> schemas.LeaderboardSettingsOut:
     """Get user's leaderboard settings."""
-    from .services import leaderboard as leaderboard_service
+    from ..services import leaderboard as leaderboard_service
 
     settings = leaderboard_service.get_or_create_leaderboard_settings(
         db, current_user.id
@@ -1572,7 +1572,7 @@ def update_leaderboard_settings(
     db: Session = Depends(get_db),
 ) -> schemas.LeaderboardSettingsOut:
     """Update user's leaderboard settings."""
-    from .services import leaderboard as leaderboard_service
+    from ..services import leaderboard as leaderboard_service
 
     settings = leaderboard_service.update_leaderboard_settings(
         db=db,
@@ -1823,7 +1823,7 @@ def get_recommendations(
     - review_needed: Content needing review
     - popular: Trending content
     """
-    from .services.recommendations import get_personalized_recommendations
+    from ..services.recommendations import get_personalized_recommendations
 
     recommendations = get_personalized_recommendations(
         db, user=current_user, limit=limit, recommendation_type=recommendation_type
@@ -1858,7 +1858,7 @@ def get_similar_content_endpoint(
         content_id: ID of the content
         limit: Maximum number of recommendations
     """
-    from .services.recommendations import get_similar_content
+    from ..services.recommendations import get_similar_content
 
     if content_type not in ["lesson", "motif", "quest"]:
         raise HTTPException(
@@ -1899,7 +1899,7 @@ def record_content_interaction(
     - Saves: Content user has bookmarked
     """
     from .models import InteractionType
-    from .services.recommendations import record_interaction
+    from ..services.recommendations import record_interaction
 
     # Convert string to enum
     interaction_type_enum = InteractionType(payload.interaction_type)
@@ -1939,7 +1939,7 @@ def submit_recommendation_feedback(
     - already_seen: User has already seen this content
     """
     from .models import InteractionType
-    from .services.recommendations import record_interaction
+    from ..services.recommendations import record_interaction
 
     # Store feedback as metadata in interaction
     metadata = payload.metadata or {}
@@ -2017,7 +2017,7 @@ def update_daily_goal_settings(
     xp_target = DAILY_GOAL_LEVELS[goal_level]
     now = datetime.now(timezone.utc)
 
-    from .services.analytics import create_event_record
+    from ..services.analytics import create_event_record
 
     event_data = create_event_record(
         user_id=current_user.id,
@@ -2305,7 +2305,7 @@ def get_streak_status(
     db: Session = Depends(get_db),
 ) -> StreakStatusOut:
     """Get current streak status with milestones."""
-    from .services.streak import (
+    from ..services.streak import (
         STREAK_MILESTONES,
         get_next_milestone,
         is_streak_at_risk,
@@ -2351,7 +2351,7 @@ def claim_daily_streak(
     db: Session = Depends(get_db),
 ) -> ClaimDailyStreakOut:
     """Claim daily streak reward."""
-    from .services.streak import (
+    from ..services.streak import (
         award_daily_streak_reward,
         award_milestone_rewards,
         is_streak_maintained_today,
@@ -2394,7 +2394,7 @@ def use_streak_freeze(
     db: Session = Depends(get_db),
 ) -> UseStreakFreezeOut:
     """Use a streak freeze to protect the streak."""
-    from .services.streak import use_streak_freeze as use_freeze
+    from ..services.streak import use_streak_freeze as use_freeze
 
     now = datetime.now(timezone.utc)
 
@@ -2428,7 +2428,7 @@ def get_hearts_status(
     db: Session = Depends(get_db),
 ) -> schemas.HeartsStatusOut:
     """Get current hearts status for the user."""
-    from .services.hearts import (
+    from ..services.hearts import (
         auto_refill_hearts,
         calculate_time_until_refill,
         get_or_create_user_hearts,
@@ -2469,7 +2469,7 @@ def use_heart_endpoint(
     db: Session = Depends(get_db),
 ) -> schemas.UseHeartOut:
     """Use a heart (e.g., on wrong quiz answer)."""
-    from .services.hearts import use_heart
+    from ..services.hearts import use_heart
 
     now = datetime.now(timezone.utc)
 
@@ -2511,7 +2511,7 @@ def refill_hearts_endpoint(
     db: Session = Depends(get_db),
 ) -> schemas.RefillHeartsOut:
     """Refill hearts (purchase, ad watch, reward, etc.)."""
-    from .services.hearts import refill_hearts
+    from ..services.hearts import refill_hearts
 
     now = datetime.now(timezone.utc)
 
@@ -2559,7 +2559,7 @@ def use_streak_freeze_for_hearts_endpoint(
     db: Session = Depends(get_db),
 ) -> schemas.UseStreakFreezeForHeartsOut:
     """Use a streak freeze to restore all hearts."""
-    from .services.hearts import use_streak_freeze_for_hearts
+    from ..services.hearts import use_streak_freeze_for_hearts
 
     now = datetime.now(timezone.utc)
 
@@ -2592,7 +2592,7 @@ def get_heart_transactions_endpoint(
     db: Session = Depends(get_db),
 ) -> schemas.HeartTransactionListOut:
     """Get heart transaction history for the user."""
-    from .services.hearts import get_heart_transactions
+    from ..services.hearts import get_heart_transactions
 
     transactions, total = get_heart_transactions(db, current_user, page, page_size)
 
@@ -2620,7 +2620,7 @@ def get_weekly_quests(
     db: Session = Depends(get_db),
 ) -> schemas.WeeklyQuestsResponse:
     """Get this week's quests with progress."""
-    from .services.weekly_quests import get_week_end_date, get_week_start_date
+    from ..services.weekly_quests import get_week_end_date, get_week_start_date
 
     current_time = datetime.now(timezone.utc)
     week_start = get_week_start_date(current_time)
@@ -2706,7 +2706,7 @@ def update_weekly_quest_progress(
     db: Session = Depends(get_db),
 ) -> schemas.UpdateWeeklyQuestProgressResponse:
     """Update progress on a weekly quest."""
-    from .services.weekly_quests import get_week_start_date
+    from ..services.weekly_quests import get_week_start_date
 
     current_time = datetime.now(timezone.utc)
     week_start = get_week_start_date(current_time)
@@ -2850,7 +2850,7 @@ def get_weekly_quest_history(
     db: Session = Depends(get_db),
 ) -> schemas.WeeklyQuestHistoryResponse:
     """Get past weekly quest history."""
-    from .services.weekly_quests import get_week_start_date
+    from ..services.weekly_quests import get_week_start_date
 
     current_time = datetime.now(timezone.utc)
     current_week_start = get_week_start_date(current_time)
@@ -2913,7 +2913,7 @@ def get_due_review_cards(
 
     Returns cards that are ready to be reviewed based on spaced repetition schedule.
     """
-    from .services.spaced_repetition import get_due_cards
+    from ..services.spaced_repetition import get_due_cards
 
     now = datetime.now(timezone.utc)
     cards = get_due_cards(db=db, user_id=current_user.id, limit=limit, now=now)
@@ -2973,7 +2973,7 @@ def submit_review_result(
     - 4: Correct response after hesitation
     - 5: Perfect response
     """
-    from .services.spaced_repetition import process_review
+    from ..services.spaced_repetition import process_review
 
     now = datetime.now(timezone.utc)
 
@@ -3042,7 +3042,7 @@ def get_todays_learning_path(
 
     Automatically generates a new path if one doesn't exist for today.
     """
-    from .services import learning_path as lp_service
+    from ..services import learning_path as lp_service
 
     now = datetime.now(timezone.utc)
     path = lp_service.get_todays_learning_path(db, current_user, now)
@@ -3068,7 +3068,7 @@ def generate_learning_path(
 
     If a path already exists for the date, it will be deleted and a new one generated.
     """
-    from .services import learning_path as lp_service
+    from ..services import learning_path as lp_service
 
     now = datetime.now(timezone.utc)
     target_date = request.target_date if request.target_date else now
@@ -3110,7 +3110,7 @@ def complete_learning_path_item(
 
     This updates the progress tracking for the learning path.
     """
-    from .services import learning_path as lp_service
+    from ..services import learning_path as lp_service
 
     now = datetime.now(timezone.utc)
 
@@ -3157,7 +3157,7 @@ def get_learning_path_history(
 
     Returns up to the specified number of days of learning path history.
     """
-    from .services import learning_path as lp_service
+    from ..services import learning_path as lp_service
 
     paths = lp_service.get_path_history(db, current_user, limit=days)
 
@@ -3181,7 +3181,7 @@ def get_learning_path_stats(
 
     Returns completion rates and other metrics for the specified time period.
     """
-    from .services import learning_path as lp_service
+    from ..services import learning_path as lp_service
 
     stats = lp_service.get_path_statistics(db, current_user, days=days)
 
@@ -3198,7 +3198,7 @@ def get_review_statistics(
 
     Returns counts of total cards, due cards, reviewed today, mastered cards, etc.
     """
-    from .services.spaced_repetition import get_user_review_stats
+    from ..services.spaced_repetition import get_user_review_stats
 
     now = datetime.now(timezone.utc)
     stats = get_user_review_stats(db=db, user_id=current_user.id, now=now)
@@ -3218,7 +3218,7 @@ def add_card_to_review_deck(
     Creates a new spaced repetition card for the specified motif.
     If card already exists, returns the existing card.
     """
-    from .services.spaced_repetition import add_card_to_deck
+    from ..services.spaced_repetition import add_card_to_deck
 
     now = datetime.now(timezone.utc)
 

@@ -518,7 +518,7 @@ def get_following(
     db: Session = Depends(get_db),
 ) -> schemas.FollowListOut:
     """Get list of users that the current user is following."""
-    from .services import social
+    from ..services import social
 
     skip = (page - 1) * page_size
     follows, total = social.get_following(
@@ -553,7 +553,7 @@ def get_followers(
     db: Session = Depends(get_db),
 ) -> schemas.FollowListOut:
     """Get list of users following the current user."""
-    from .services import social
+    from ..services import social
 
     skip = (page - 1) * page_size
     follows, total = social.get_followers(
@@ -589,7 +589,7 @@ def search_social_users(
     db: Session = Depends(get_db),
 ) -> schemas.SocialUserSearchOut:
     """Search users by email, display name, or username."""
-    from .services import social
+    from ..services import social
 
     skip = (page - 1) * page_size
     users, total = social.search_users(
@@ -652,7 +652,7 @@ def follow_user(
     db: Session = Depends(get_db),
 ):
     """Follow a user."""
-    from .services import social
+    from ..services import social
 
     # Check if user exists
     target_user = db.get(User, user_id)
@@ -673,7 +673,7 @@ def unfollow_user(
     db: Session = Depends(get_db),
 ):
     """Unfollow a user."""
-    from .services import social
+    from ..services import social
 
     success = social.unfollow_user(db, current_user.id, user_id)
     if not success:
@@ -688,7 +688,7 @@ def get_friends(
     db: Session = Depends(get_db),
 ) -> schemas.FriendListOut:
     """Get list of friends (mutual follows)."""
-    from .services import social
+    from ..services import social
 
     friends = social.get_friends(db, current_user.id)
     online_status = social.get_online_status_map(db, [friend.id for friend in friends])
@@ -722,7 +722,7 @@ def send_peer_feedback(
     db: Session = Depends(get_db),
 ) -> PeerFeedbackOut:
     """Send template-based peer feedback to a friend."""
-    from .services import push_notifications, social
+    from ..services import push_notifications, social
 
     if payload.to_user_id == current_user.id:
         raise HTTPException(status_code=400, detail="Cannot send feedback to yourself")
@@ -801,7 +801,7 @@ def send_friend_request(
     db: Session = Depends(get_db),
 ) -> schemas.FriendRequestOut:
     """Send a friend request to another user."""
-    from .services import social
+    from ..services import social
 
     # Check if target user exists
     target_user = db.get(User, request_data.to_user_id)
@@ -836,7 +836,7 @@ def get_friend_requests(
     db: Session = Depends(get_db),
 ) -> schemas.FriendRequestListOut:
     """Get friend requests received by the current user."""
-    from .services import social
+    from ..services import social
 
     requests = social.get_friend_requests(db, current_user.id, status=status)
 
@@ -875,7 +875,7 @@ def accept_friend_request(
     db: Session = Depends(get_db),
 ) -> schemas.FriendRequestOut:
     """Accept a friend request."""
-    from .services import social
+    from ..services import social
 
     try:
         friend_request = social.accept_friend_request(db, request_id, current_user.id)
@@ -906,7 +906,7 @@ def reject_friend_request(
     db: Session = Depends(get_db),
 ) -> schemas.FriendRequestOut:
     """Reject a friend request."""
-    from .services import social
+    from ..services import social
 
     try:
         friend_request = social.reject_friend_request(db, request_id, current_user.id)
@@ -940,7 +940,7 @@ def get_activity_feed(
     Returns public shares from other users.
     This filters to shares from users the current user follows.
     """
-    from .services import sharing
+    from ..services import sharing
 
     shares, total = sharing.get_activity_feed(db, current_user.id, page, page_size)
 
@@ -994,7 +994,7 @@ def create_share(
 
     Allows users to share their achievements, badges, streaks, level ups, and certificates.
     """
-    from .services import sharing
+    from ..services import sharing
 
     # Validate content_id exists if provided
     if share_in.content_id:
@@ -1058,7 +1058,7 @@ def get_my_shares(
     """
     Get current user's shares.
     """
-    from .services import sharing
+    from ..services import sharing
 
     shares, total = sharing.get_user_shares(db, current_user.id, page, page_size)
 
@@ -1106,7 +1106,7 @@ def get_share_by_id(
     - Followers shares: Only followers can view
     - Private shares: Only the owner can view
     """
-    from .services import sharing
+    from ..services import sharing
 
     current_user_id = current_user.id if current_user else None
     share = sharing.get_share_by_id(db, share_id, current_user_id)
@@ -1151,7 +1151,7 @@ def delete_share(
     """
     Delete a share (user can only delete their own shares).
     """
-    from .services import sharing
+    from ..services import sharing
 
     success = sharing.delete_share(db, share_id, current_user.id)
     if not success:

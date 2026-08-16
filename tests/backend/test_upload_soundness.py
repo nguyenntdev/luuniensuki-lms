@@ -40,6 +40,7 @@ from hypothesis import settings
 from hypothesis import strategies as st
 
 import backend.main as main
+import backend.routers.users as users_module
 
 
 # ---------------------------------------------------------------------------
@@ -144,7 +145,8 @@ def avatar_tmp_dir(tmp_path_factory, monkeypatch):
     entries between examples.
     """
     target = tmp_path_factory.mktemp("avatar_soundness")
-    monkeypatch.setattr(main, "AVATAR_DIR", target)
+    # The route reads AVATAR_DIR from the router module namespace, not backend.main.
+    monkeypatch.setattr(users_module, "AVATAR_DIR", target)
     return target
 
 

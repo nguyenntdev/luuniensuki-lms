@@ -646,7 +646,7 @@ def ai_tutor(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> AIAnswerOut:
-    from .services.ai_tutor import apply_content_safety_filter
+    from ..services.ai_tutor import apply_content_safety_filter
 
     if not settings.deepseek_api_key:
         raise HTTPException(status_code=503, detail="AI not configured")
@@ -714,7 +714,7 @@ async def ai_tutor_stream(
     if not settings.deepseek_api_key:
         raise HTTPException(status_code=503, detail="AI not configured")
 
-    from .services.ai_tutor import apply_content_safety_filter
+    from ..services.ai_tutor import apply_content_safety_filter
 
     context = payload.context or AIContextIn()
     sources = _collect_ai_sources(
@@ -1337,7 +1337,7 @@ async def get_learning_insights(
     - Areas for improvement
     - Personalized recommendations
     """
-    from .services import ai_insights
+    from ..services import ai_insights
 
     try:
         insights = await ai_insights.generate_learning_insights(
@@ -1372,7 +1372,7 @@ async def get_learning_insights_for_user(
     - Admins viewing any user
     - Users viewing their own insights
     """
-    from .services import ai_insights
+    from ..services import ai_insights
 
     # Object-level authorization (Req 20.1/20.2): the owner or an admin may
     # always view; a teacher may additionally view their own students. Anyone
@@ -1380,7 +1380,7 @@ async def get_learning_insights_for_user(
     # user or their insights exist.
     is_teacher_of_student = False
     if current_user.id != user_id and current_user.role not in ADMIN_ROLES:
-        from .services import classroom  # noqa: F401
+        from ..services import classroom  # noqa: F401
 
         is_teacher_of_student = (
             db.execute(
@@ -1722,7 +1722,7 @@ def list_ai_conversations(
 
     Returns a list of conversation summaries with metadata.
     """
-    from .services import ai_tutor
+    from ..services import ai_tutor
 
     conversations, total = ai_tutor.get_user_conversations(
         db, current_user, page=page, page_size=page_size, active_only=active_only
@@ -1789,7 +1789,7 @@ def create_ai_conversation(
 
     Optionally can include an initial message to start the conversation.
     """
-    from .services import ai_tutor
+    from ..services import ai_tutor
 
     # Create conversation
     conversation = ai_tutor.create_conversation(
@@ -1837,7 +1837,7 @@ def get_ai_conversation(
     """
     Get a specific conversation with all messages.
     """
-    from .services import ai_tutor
+    from ..services import ai_tutor
 
     conversation = ai_tutor.get_conversation(db, conversation_id, current_user)
     if not conversation:
@@ -1884,7 +1884,7 @@ def send_message_to_conversation(
 
     The AI will respond based on conversation context and RAG sources.
     """
-    from .services import ai_tutor
+    from ..services import ai_tutor
 
     if not settings.deepseek_api_key:
         raise HTTPException(status_code=503, detail="AI service not configured")
@@ -1946,7 +1946,7 @@ def delete_ai_conversation(
 
     This permanently deletes the conversation and all its messages.
     """
-    from .services import ai_tutor
+    from ..services import ai_tutor
 
     success = ai_tutor.delete_conversation(db, conversation_id, current_user)
     if not success:

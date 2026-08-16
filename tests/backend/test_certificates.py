@@ -1,4 +1,6 @@
-from backend.models import UrnExam
+from sqlalchemy import select
+
+from backend.models import UnlockStatus, UrnExam, User, UserProgress
 
 
 def _register_user(client, email="cert@example.com"):
@@ -15,6 +17,18 @@ def test_certificate_issued_on_urn_exam_pass(client, db_session, seeded_content)
     urn = seeded_content["urn"]
     question = seeded_content["question"]
 
+    # Exam submission is gated on mastering every motif of the urn
+    # (_ensure_urn_exam_eligibility), so seed a mastered UserProgress + UrnExam.
+    user = db_session.execute(
+        select(User).where(User.email == "cert@example.com")
+    ).scalar_one()
+    db_session.add(
+        UserProgress(
+            user_id=user.id,
+            motif_id=seeded_content["motif"].id,
+            status=UnlockStatus.mastered,
+        )
+    )
     db_session.add(UrnExam(urn_id=urn.id, questions=[]))
     db_session.commit()
 

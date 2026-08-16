@@ -33,8 +33,8 @@ def test_full_gameplay_flow(client, seeded_content):
         json={"motif_id": motif_id, "mesh_name": seeded_content["motif"].mesh_name},
     )
     assert unlock.status_code == 200, unlock.text
-    assert unlock.json()["status"] == "discovered"
-    assert unlock.json()["xp_awarded"] >= 25  # discovery + maybe badge bonus
+    assert unlock.json()["progress"]["status"] == "discovered"
+    assert unlock.json()["xp_earned"] >= 25  # discovery + maybe badge bonus
 
     quiz_locked = client.get(f"/api/v1/motifs/{motif_id}/quiz")
     assert quiz_locked.status_code == 400
@@ -91,4 +91,6 @@ def test_full_gameplay_flow(client, seeded_content):
 
     leaderboard = client.get("/api/v1/leaderboard?limit=10")
     assert leaderboard.status_code == 200, leaderboard.text
-    assert any(entry["display_name"] == "Bob" for entry in leaderboard.json())
+    assert any(
+        entry["display_name"] == "Bob" for entry in leaderboard.json()["entries"]
+    )
