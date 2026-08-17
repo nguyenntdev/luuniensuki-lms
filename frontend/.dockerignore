@@ -10,3 +10,6 @@ pnpm-debug.log*
 coverage
 dist
 out
+# 3D models are large and served externally via Nginx proxy (/assets/models ->
+# store.histolab.icu); excluding them keeps image builds within the disk budget.
+public/assets/models/*.glb
