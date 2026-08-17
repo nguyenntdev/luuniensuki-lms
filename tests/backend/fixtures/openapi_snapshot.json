@@ -30677,6 +30677,70 @@
         ]
       }
     },
+    "/api/v1/history/map": {
+      "get": {
+        "description": "Heritage map data contract (Spec section 24.3).\n\nReturns only entities that have a geographic signal (lat/lng or a\nhistorical_geographies row), with precision/mapping-status metadata so the\nUI can render uncertainty honestly (24.4). Never fabricates coordinates.",
+        "operationId": "history_map_api_v1_history_map_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "entity_type",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Entity Type"
+            }
+          },
+          {
+            "in": "query",
+            "name": "mapping_status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Mapping Status"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "History Map",
+        "tags": [
+          "history"
+        ]
+      }
+    },
     "/api/v1/history/search": {
       "get": {
         "operationId": "search_history_api_v1_history_search_get",
@@ -30859,6 +30923,26 @@
           }
         },
         "summary": "Get History Source",
+        "tags": [
+          "history"
+        ]
+      }
+    },
+    "/api/v1/history/urns": {
+      "get": {
+        "description": "Convenience: all urn entities with their relief counts (for the public\nCửu Đỉnh overview and Atlas urn filter).",
+        "operationId": "history_urns_api_v1_history_urns_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "History Urns",
         "tags": [
           "history"
         ]
