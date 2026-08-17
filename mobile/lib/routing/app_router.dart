@@ -21,7 +21,7 @@ import '../features/urn_viewer/presentation/screens/urn_viewer_screen.dart';
 import '../features/lesson/presentation/screens/motif_detail_screen.dart';
 import '../features/quiz/presentation/screens/quiz_screen.dart';
 import '../features/help/presentation/screens/help_support_screen.dart';
-import '../features/notifications/presentation/screens/notifications_screen.dart';
+import '../features/history/presentation/history_atlas_screen.dart';import '../features/notifications/presentation/screens/notifications_screen.dart';
 import '../features/daily_goals/presentation/screens/daily_goal_screen.dart';
 import '../features/gems/presentation/screens/gems_shop_screen.dart';
 import '../features/hearts/presentation/screens/hearts_refill_screen.dart';
@@ -219,6 +219,12 @@ GoRouter appRouter(Ref ref) {
       // =======================================================================
       // URN & MOTIF ROUTES (Full screen, outside shell)
       // =======================================================================
+      GoRoute(
+        path: RoutePaths.historyAtlas,
+        name: RouteNames.historyAtlas,
+        builder: (_, __) => const HistoryAtlasScreen(),
+      ),
+
       GoRoute(
         path: '${RoutePaths.urns}/:urnSlug',
         name: 'urn',

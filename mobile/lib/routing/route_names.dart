@@ -123,6 +123,9 @@ abstract class RouteNames {
   /// Hearts refill
   static const String heartsRefill = 'hearts-refill';
 
+  /// History Atlas (public, no auth)
+  static const String historyAtlas = 'history-atlas';
+
   /// Friends
   static const String friends = 'friends';
 
@@ -189,6 +192,9 @@ abstract class RoutePaths {
   static const String gemsShop = '/gems-shop';
   static const String heartsRefill = '/hearts-refill';
   static const String friends = '/friends';
+
+  // History Atlas (public)
+  static const String historyAtlas = '/history-atlas';
 
   // Onboarding
   static const String onboarding = '/onboarding';
