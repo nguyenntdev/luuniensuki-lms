@@ -223,6 +223,7 @@ def create_app() -> FastAPI:
     from .routers import ai as ai_router
     from .routers import social as social_router
     from .routers import misc as misc_router
+    from .routers import history as history_router
 
     app.include_router(auth_router.router)
     app.include_router(users_router.router)
@@ -234,5 +235,6 @@ def create_app() -> FastAPI:
     app.include_router(ai_router.router)
     app.include_router(social_router.router)
     app.include_router(misc_router.router)
+    app.include_router(history_router.router)
 
     return app

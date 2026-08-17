@@ -4080,3 +4080,33 @@ class RevokedRefreshToken(Base):
     )
 
     user: Mapped["User"] = relationship("User")
+
+
+# --------------------------------------------------------------------------- #
+# History-First domain models (Phase 1). Defined in ``backend.history_models``
+# to keep this module's size manageable; imported here so ``Base.metadata``
+# includes the historical_* tables for conftest create_all and Alembic.
+# --------------------------------------------------------------------------- #
+from .history_models import (  # noqa: E402,F401
+    HistoricalAsset,
+    HistoricalClaim,
+    HistoricalClaimOrigin,
+    HistoricalClaimSource,
+    HistoricalClaimType,
+    HistoricalConfidence,
+    HistoricalContentAuditLog,
+    HistoricalEntity,
+    HistoricalEntityRelation,
+    HistoricalEntityType,
+    HistoricalGeoPrecision,
+    HistoricalGeography,
+    HistoricalMappingStatus,
+    HistoricalPublicationStatus,
+    HistoricalRelationPredicate,
+    HistoricalRiskLevel,
+    HistoricalSource,
+    HistoricalSourceType,
+    HistoricalSourceVerificationStatus,
+    HistoricalSupportType,
+    HistoricalVerificationStatus,
+)

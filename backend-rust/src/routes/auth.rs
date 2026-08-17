@@ -937,6 +937,9 @@ mod tests {
             exp: now - 3600, // expired 1 hour ago
             role: "user".to_string(),
             token_type: "access".to_string(),
+            iss: state.settings.jwt_issuer.clone(),
+            aud: state.settings.jwt_audience.clone(),
+            jti: String::new(),
         };
         let token = jsonwebtoken::encode(
             &jsonwebtoken::Header::default(),

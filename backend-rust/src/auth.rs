@@ -151,8 +151,13 @@ pub fn verify_access_token(
     } else {
         // Transition state: only `exp` is required so tokens lacking
         // `iss`/`aud` are still accepted (previously `required_spec_claims
-        // .clear()` allowed never-expiring tokens).
+        // .clear()` allowed never-expiring tokens). jsonwebtoken defaults
+        // `validate_aud` to true, so audience validation must be disabled
+        // explicitly to mirror the Python verifier's `verify_aud: False`
+        // transition behavior — otherwise tokens that carry `aud` are
+        // rejected even though the flag is off (cross-backend parity, Req 26.4).
         validation.set_required_spec_claims(&["exp"]);
+        validation.validate_aud = false;
     }
 
     let token_data = decode::<Claims>(
@@ -193,9 +198,11 @@ pub fn verify_refresh_token(
         validation.set_audience(&[audience]);
     } else {
         // Transition state: only `exp` is required so tokens lacking
-        // `iss`/`aud` are still accepted (previously `required_spec_claims
-        // .clear()` allowed never-expiring tokens).
+        // `iss`/`aud` are still accepted. `validate_aud` defaults to true in
+        // jsonwebtoken; disable it to mirror the Python verifier's
+        // `verify_aud: False` transition behavior (cross-backend parity, Req 26.4).
         validation.set_required_spec_claims(&["exp"]);
+        validation.validate_aud = false;
     }
 
     let token_data = decode::<Claims>(
