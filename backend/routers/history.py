@@ -15,7 +15,7 @@ from typing import Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
-from sqlalchemy import func, select
+from sqlalchemy import func, or_, select, text
 from sqlalchemy.orm import Session
 
 from ..apischemas.history import (
@@ -184,6 +184,121 @@ def list_entity_relations(
         raise AppError("HISTORY_ENTITY_NOT_FOUND", "Historical entity not found", 404)
     items, _ = gov.list_relations(db, entity_id=entity_id, offset=offset, limit=limit)
     return [HistoricalRelationOut.model_validate(r) for r in items]
+
+
+@router.get("/api/v1/history/entities/{entity_id}/graph")
+def entity_knowledge_graph(
+    entity_id: UUID,
+    depth: int = Query(default=1, ge=1, le=2),
+    db: Session = Depends(get_db),
+):
+    """Contextual knowledge graph (Spec section 26): the requested entity and
+    its 1-hop (optionally 2-hop) neighbors from historical_entity_relations.
+
+    Nodes carry type/slug/name so the explorer can render links; edges carry
+    the predicate, direction and optional source. Unverified relations are
+    included but flagged so the UI can show epistemic state honestly.
+    """
+    from ..models import HistoricalEntityRelation
+
+    root = gov.get_entity(db, entity_id)
+    if not root:
+        raise AppError("HISTORY_ENTITY_NOT_FOUND", "Historical entity not found", 404)
+
+    nodes = {str(root.id): _entity_node(root)}
+    edges = []
+
+    def _scan(entity_id_uuid: UUID, current_depth: int) -> None:
+        rels = list(
+            db.scalars(
+                select(HistoricalEntityRelation).where(
+                    or_(
+                        HistoricalEntityRelation.subject_entity_id == entity_id_uuid,
+                        HistoricalEntityRelation.object_entity_id == entity_id_uuid,
+                    )
+                )
+            )
+        )
+        for rel in rels:
+            other_id = (
+                rel.object_entity_id
+                if rel.subject_entity_id == entity_id_uuid
+                else rel.subject_entity_id
+            )
+            other = db.get(HistoricalEntity, other_id)
+            if not other:
+                continue
+            if str(other.id) not in nodes:
+                nodes[str(other.id)] = _entity_node(other)
+            edges.append(
+                {
+                    "source": str(rel.subject_entity_id),
+                    "target": str(rel.object_entity_id),
+                    "predicate": rel.predicate,
+                    "verification_status": rel.verification_status,
+                    "source_id": str(rel.source_id) if rel.source_id else None,
+                }
+            )
+            if current_depth < depth and other.entity_type not in ("urn",):
+                _scan(other_id, current_depth + 1)
+
+    _scan(entity_id, 1)
+
+    return {
+        "root_id": str(root.id),
+        "nodes": list(nodes.values()),
+        "edges": edges,
+    }
+
+
+def _entity_node(entity) -> dict:
+    return {
+        "id": str(entity.id),
+        "entity_type": entity.entity_type,
+        "slug": entity.slug,
+        "name_vi": entity.name_vi,
+        "name_en": entity.name_en,
+        "publication_status": entity.publication_status,
+        "summary_vi": entity.summary_vi,
+    }
+
+
+@router.get("/api/v1/history/events")
+def list_history_events(db: Session = Depends(get_db)):
+    """Expose heritage timeline events as graph-joinable history data.
+
+    Reads the Rust-owned ``historical_events`` table (migration 0043) so the
+    timeline and the knowledge graph share one source of truth. No fabricated
+    fields; returns what the timeline already records.
+    """
+    from sqlalchemy import text as sa_text
+
+    table_exists = db.scalar(
+        sa_text(
+            "SELECT to_regclass('public.historical_events') IS NOT NULL"
+        )
+    )
+    if not table_exists:
+        return {"items": [], "meta": {"count": 0}}
+
+    result = []
+    for (event_id, slug, name_vi, occurred_on, description_vi, era_id) in db.execute(
+        text(
+            "SELECT id, slug, name_vi, occurred_on, description_vi, era_id "
+            "FROM historical_events ORDER BY occurred_on"
+        )
+    ).all():
+        result.append(
+            {
+                "id": str(event_id),
+                "slug": slug,
+                "name_vi": name_vi,
+                "occurred_on": str(occurred_on),
+                "description_vi": description_vi,
+                "era_id": str(era_id) if era_id else None,
+            }
+        )
+    return {"items": result, "meta": {"count": len(result)}}
 
 
 @router.get(
