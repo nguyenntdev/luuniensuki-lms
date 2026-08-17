@@ -755,6 +755,9 @@ class LessonContent(Base):
     preview_eligible: Mapped[bool] = mapped_column(
         Boolean, nullable=False, server_default=text("false")
     )  # True if this lesson can be shown to guest users as a preview
+    content_validation_status: Mapped[str] = mapped_column(
+        String(50), nullable=False, server_default=text("'valid'")
+    )  # History-First MIG-005: 'valid' | 'blocked_for_authoritative_learning'
     content_rating: Mapped[ContentRating] = mapped_column(
         SAEnum(ContentRating, name="content_rating", native_enum=True),
         nullable=False,
@@ -1033,6 +1036,9 @@ class QuizQuestion(Base):
     is_active: Mapped[bool] = mapped_column(
         Boolean, nullable=False, server_default=text("true")
     )
+    content_validation_status: Mapped[str] = mapped_column(
+        String(50), nullable=False, server_default=text("'valid'")
+    )  # History-First MIG-005: 'valid' | 'blocked_for_authoritative_learning'
 
     # Review workflow fields
     status: Mapped[ContentStatus] = mapped_column(
