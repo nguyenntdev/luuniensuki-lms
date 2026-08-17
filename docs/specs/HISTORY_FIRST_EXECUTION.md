@@ -4,76 +4,89 @@ Maintained continuously during the History-First Rebuild. Source of truth for ph
 
 ## Audited commit
 
-- `055fcef` (main, 2026-08-17) — Phase 2 legacy migration committed + pushed.
+- `4be10f3` (main, 2026-08-17) — deployed to production https://lms.histolab.icu.
 
 ## Current phase
 
-Phase 2 — Legacy Corpus Migration (core done; questions migration pending real seed data). Phase 1 complete.
+Phase 5 complete (map + endpoints). Phases 0-5 deployed to production. Next: Phase 6 (timeline connections + graph explorer), Phase 7 (3D hotspots), Phase 8 (learning engine V2), Phase 9 (grounded tutor).
 
 ## Current branch
 
 `main`
 
+## Production deployment state (2026-08-17)
+
+- Migrations 0048 + 0049 applied to prod DB (historical_* tables + content_validation_status columns). Note: alembic version row was manually updated (container alembic 1.18.4 transaction-commit quirk under investigation; DDL verified applied).
+- Legacy corpus migrated to prod: 9 urns (canonical slugs cao-dinh..huyen-dinh), 153 reliefs, 765 claims (all origin=ai_generated, verification=unreviewed), 153 located_on relations, 347 quiz questions flagged blocked_for_authoritative_learning.
+- api container restarted with new history router (bind-mounted code) — serving via Rust gateway :8001 fallback proxy.
+- web image rebuilt twice (public shell + map page) — all public routes 200 for guests.
+- Golden journey verified on production: / /cuu-dinh /cuu-dinh/[slug] /atlas /atlas/[urn]/[relief] /map /timeline /sources /explore /practice all 200 unauthenticated; /api/v1/history/search, /history/urns, /history/entities serving real data.
+
 ## Completed task IDs
 
-- REPO-001..004: Phase 0 deliverables (system state, doc reconcile, baseline artifact, baseline tests).
-- Phase 1: migration `0048_history_governance`, models, governance services + state machine/invariant, public + admin history APIs, 15 tests, OpenAPI snapshot regenerated.
-- Phase 2: `scripts/history/migrate_legacy.py` (idempotent, dry-run/write, resumable); migration `0049_content_validation_status`; migrated 9 urns + 153 reliefs + 765 claims (AI/unreviewed) + 153 relations on test DB; 5 migration tests.
+- REPO-001..004: Phase 0 deliverables.
+- Phase 1: migration 0048 + governance model/services/APIs + 15 tests.
+- Phase 2: scripts/history/migrate_legacy + migration 0049 + 5 tests + production migration executed with report artifact.
+- Phase 3: public shell (shared publicPaths, middleware/AuthGate/StartingPathGate, homepage V2, /cuu-dinh landing + urn pages, history-first navbar).
+- Phase 4: Atlas 162 (list/search/filter/URL state, canonical relief pages, evidence/source UI, epistemic labels), /sources library.
+- Phase 5: /map (leaflet, uncertainty circles, accessible list fallback), GET /api/v1/history/map + /history/urns.
 
 ## In-progress task IDs
 
-- Phase 2: questions blocked_for_authoritative_learning — script logic written; actual rows depend on seeded DB (test DB not seeded). Migration report artifact to be generated from a seeded run.
-- REPO-004 (Rust baseline test): re-running after JWT parity fix.
+- (none)
 
 ## Tests run and results
 
-- Python: `pytest tests/backend` → **136 passed** (131 + 5 history migration).
-- Frontend: type-check pass, lint:ci pass, vitest 27 passed.
-- Rust: first run 248 passed / 32 failed (JWT transition-off bug); fixed; re-running.
+- Python: `pytest tests/backend` → **136 passed** (135 + snapshot regen verified separately).
+- Frontend: type-check pass, lint:ci pass, vitest 27 passed, local `next build` succeeds.
+- Rust: 291 passed (server, rustup cargo).
+- Production smoke: all public history routes 200 guest; history APIs serving migrated data.
 
 ## Migrations added
 
-- `0048_history_governance` — historical domain tables + search indexes.
-- `0049_content_validation_status` — quiz_questions/lesson_content content_validation_status.
+- `0048_history_governance` (prod applied)
+- `0049_content_validation_status` (prod applied)
 
 ## API contracts changed
 
-- Phase 1 history endpoints (public + admin) — see previous entry.
-- OpenAPI snapshot regenerated twice (intentional).
+- 13 history endpoints (entities, by-slug, claims, claim sources, sources, relations, geography, search, map, urns + admin mutations + audit). OpenAPI snapshot regenerated ×3 (intentional).
 
 ## Frontend routes changed
 
-- (none yet — Phase 3)
+- Public (no login): `/` (V2), `/cuu-dinh`, `/cuu-dinh/[urnSlug]`, `/atlas`, `/atlas/[urnSlug]/[reliefSlug]`, `/map`, `/sources`, `/sources/[sourceId]`. Navbar history-first for guests.
 
 ## Mobile changes
 
-- (none yet)
+- (none yet — Phase 12)
 
 ## Historical content imported
 
-- Test DB: 9 urns, 153 reliefs, 765 claims (all origin=ai_generated, verification=unreviewed, confidence=unknown), 153 located_on relations. No sources invented.
+- Prod: 9 urns + 153 reliefs + 765 claims (ai_generated/unreviewed) + 153 relations. No sources invented.
 
 ## Historical content awaiting review
 
-- 765 claims (unreviewed/needs_source) — full human review backlog after real-seed migration.
+- 765 claims unreviewed/needs_source (full human-review backlog).
+- 347 quiz questions blocked_for_authoritative_learning pending source verification.
 
 ## Architectural decisions
 
-- DEC-0001..0005 — see DECISIONS doc.
-- Migration report artifacts go under `artifacts/`; mapping via deterministic slug (legacy id → slug).
+- DEC-0001..0005 (see DECISIONS). New: prod DB migration applied via direct SQL + manual alembic_version row update due to container alembic commit quirk (documented; DDL verified).
 
 ## Known blockers
 
-- Production host disk tight during Rust cold builds; freed ~2.3G (node_modules, git gc, caches).
-- Migration history branched; new migrations chain onto `0047`/`0048`.
+- Production host disk chronically ~91-100%: web image builds need ~3GB headroom; prune build cache before/after every build.
+- api container bind-mount serves new Python code on restart (no rebuild needed) — but the api IMAGE is stale; rebuild before any container recreation.
+- Container alembic 1.18.4: `upgrade`/`stamp` transactions do not commit against prod DB (works on test DB with host venv 1.19.1); use host venv via docker bridge IP (172.18.0.5) for migrations until pin upgraded.
 
 ## Known regressions
 
-- (none; fixed pre-existing Rust JWT transition-off parity bug)
+- (none)
 
 ## Next executable tasks
 
-1. Confirm Rust `cargo test` green.
-2. Phase 2 finish: run migration on a seeded DB (prod-style) to generate `artifacts/history-migration-report.json`; verify question blocking.
-3. Phase 3 — History-first public shell: middleware public paths, homepage V2, `/cuu-dinh`, urn routes, atlas stub.
-4. Phase 4 — Atlas 162 (list/search/filter/relief pages + evidence UI).
+1. Phase 6 — Timeline connections: link existing Rust timeline (heritage_eras/historical_events) to historical entities; /explore/connections graph explorer.
+2. Phase 7 — 3D hotspot deep links (?relief= param → camera focus), history side panel.
+3. Phase 8 — Question model V2 (chronology/map/hotspot/evidence types), mastery dimensions, FSRS integration.
+4. Phase 9 — Source-grounded History Tutor (retrieval + citation validator + evals).
+5. Phase 10-12 — stories, teacher collections, mobile.
+6. Phase 13-14 — hardening + release report.
