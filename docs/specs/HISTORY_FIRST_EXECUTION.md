@@ -91,3 +91,16 @@ Phases 0-9 complete (code + tests + prod migration for 6/8/9). Phase 7 (3D hotsp
 - Golden journey fully operational on https://lms.histolab.icu: relief → context → evidence → map/timeline → 3D hotspot → related entities → history-native question → optional account.
 - Backend: 171 tests pass. Frontend: typecheck/lint/29 unit/build pass.
 - OpenAPI snapshot regenerated (22 history routes).
+
+## FINAL: Phases 10-14 deployed (2026-08-18)
+
+- Phase 10 stories engine + Phase 11 collections + Phase 12 mobile foundation
+  + Phase 13 SEO hardening + Phase 14 content validator + release report all
+  implemented and deployed.
+- Production golden journey fully verified: / /cuu-dinh /atlas /map /timeline
+  /stories /sources /explore/connections /compare /urns/[urn]?relief= all 200
+  for guests; search/urns/hotspot/events APIs serving real data; tutor returns
+  honest insufficient-evidence when no verified claims exist.
+- Backend: 192 tests pass. Rust: 291. Frontend: typecheck/lint/29/build pass.
+- Content validator passes on production corpus (0 errors/warnings).
+- Web image slimmed (GLBs excluded, served via Nginx proxy) to fit disk budget.
