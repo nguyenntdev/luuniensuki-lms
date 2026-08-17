@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
+import { PUBLIC_PATH_PREFIXES, PUBLIC_FILE_PATHS } from "@/lib/publicPaths";
 
 const ACCESS_COOKIE_NAME =
     process.env.ACCESS_COOKIE_NAME || "luuniensuki_access";
@@ -12,14 +13,6 @@ const REFRESH_COOKIE_NAME =
 // backend uses to sign access tokens. When it is not configured, the guard
 // falls back to the legacy cookie-presence check (see below).
 const JWT_SECRET = process.env.JWT_SECRET_KEY;
-
-const PUBLIC_PATH_PREFIXES = ["/login", "/register"];
-const PUBLIC_FILE_PATHS = [
-    "/favicon.ico",
-    "/robots.txt",
-    "/sitemap.xml",
-    "/manifest.json",
-];
 
 // Lazily-built, cached signing key. Built once per worker.
 let cachedKey: Uint8Array | null = null;

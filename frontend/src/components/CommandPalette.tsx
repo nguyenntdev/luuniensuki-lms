@@ -25,11 +25,19 @@ import {
   Clock,
   Medal,
   Mountain,
+  Landmark,
+  Library,
   CornerDownLeft,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-import { getUrns } from "@/lib/api";
+import { getUrns, searchHistory } from "@/lib/api";
+import {
+  asSearchItems,
+  urnNameFromSlug,
+  urnSlugFromReliefSlug,
+  type HistorySearchItem,
+} from "@/lib/history";
 
 interface Command {
   id: string;
@@ -78,8 +86,11 @@ export default function CommandPalette() {
   const [active, setActive] = useState(0);
   const [urns, setUrns] = useState<UrnSummary[]>([]);
   const [urnsLoaded, setUrnsLoaded] = useState(false);
+  const [historyResults, setHistoryResults] = useState<HistorySearchItem[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const searchTimerRef = useRef<number | null>(null);
+  const lastSearchRef = useRef("");
 
   // Lazily load urns the first time the palette opens.
   useEffect(() => {
@@ -98,6 +109,35 @@ export default function CommandPalette() {
       cancelled = true;
     };
   }, [open, urnsLoaded]);
+
+  // Debounced history-entity search, surfaced as top results (spec 29).
+  useEffect(() => {
+    if (!open) return undefined;
+    const q = query.trim();
+    if (searchTimerRef.current) window.clearTimeout(searchTimerRef.current);
+    if (!q) {
+      setHistoryResults([]);
+      lastSearchRef.current = "";
+      return undefined;
+    }
+    if (q === lastSearchRef.current) return undefined;
+    lastSearchRef.current = q;
+    setHistoryResults([]);
+    let cancelled = false;
+    searchTimerRef.current = window.setTimeout(() => {
+      searchHistory(q, 20)
+        .then((res) => {
+          if (!cancelled) setHistoryResults(asSearchItems(res));
+        })
+        .catch(() => {
+          if (!cancelled) setHistoryResults([]);
+        });
+    }, 250);
+    return () => {
+      cancelled = true;
+      if (searchTimerRef.current) window.clearTimeout(searchTimerRef.current);
+    };
+  }, [open, query]);
 
   // Global hotkeys: ⌘K / Ctrl+K toggles; "/" opens when not typing elsewhere.
   useEffect(() => {
@@ -148,11 +188,45 @@ export default function CommandPalette() {
         href: `/urns/${u.slug}`,
         icon: Mountain,
       }));
-    const all = [...PAGE_COMMANDS, ...urnCmds];
+
+    const historyCmds: Command[] = historyResults.map((item) => {
+      const slug = item.slug || "";
+      const urn = urnSlugFromReliefSlug(slug);
+      const type = String(item.entity_type || "").toLowerCase();
+      let href = "/timeline";
+      let icon: LucideIcon = Clock;
+      let hint = "Kết quả lịch sử";
+      if (type === "urn") {
+        href = `/cuu-dinh/${slug}`;
+        icon = Landmark;
+        hint = "Đỉnh đồng · Cửu Đỉnh";
+      } else if (type === "relief") {
+        href = `/atlas/${urn}/${slug}`;
+        icon = BookOpen;
+        hint = `Phù điêu · ${urnNameFromSlug(urn)}`;
+      } else if (type === "source") {
+        href = `/sources/${item.id}`;
+        icon = Library;
+        hint = "Nguồn sử liệu";
+      } else if (slug) {
+        href = `/atlas/${urn}/${slug}`;
+        icon = BookOpen;
+        hint = type || "Thực thể lịch sử";
+      }
+      return {
+        id: `h-${item.id ?? slug}`,
+        label: item.name_vi || item.name_en || slug || "Kết quả lịch sử",
+        hint,
+        href,
+        icon,
+      };
+    });
+
+    const all = [...historyCmds, ...PAGE_COMMANDS, ...urnCmds];
     const q = deburr(query.trim());
     if (!q) return all;
     return all.filter((c) => deburr(`${c.label} ${c.hint}`).includes(q));
-  }, [urns, query]);
+  }, [urns, query, historyResults]);
 
   useEffect(() => {
     setActive((a) => Math.min(a, Math.max(0, results.length - 1)));
@@ -207,7 +281,7 @@ export default function CommandPalette() {
               setActive(0);
             }}
             onKeyDown={onInputKey}
-            placeholder="Tìm trang hoặc đỉnh… (vd: cao đỉnh, ôn tập, 360)"
+            placeholder="Tìm đỉnh, phù điêu, nguồn hoặc trang… (vd: cao đỉnh, bản đồ)"
             className="w-full bg-transparent text-base text-foreground outline-none placeholder:text-muted-foreground"
             aria-label="Tìm kiếm"
           />

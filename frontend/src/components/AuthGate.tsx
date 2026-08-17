@@ -5,15 +5,7 @@ import type { ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 import { useAuthStore } from "@/stores/authStore";
-
-const PUBLIC_PATH_PREFIXES: string[] = ["/login", "/register"];
-
-function isPublicPath(pathname: string | null): boolean {
-    if (!pathname) return false;
-    return PUBLIC_PATH_PREFIXES.some(
-        (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
-    );
-}
+import { isPublicPath } from "@/lib/publicPaths";
 
 interface AuthGateProps {
     children: ReactNode;

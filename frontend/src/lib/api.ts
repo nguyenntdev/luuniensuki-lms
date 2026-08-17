@@ -2392,3 +2392,84 @@ export function getStreakComebackStatus(): Promise<unknown> {
 export function getStreakInsurance(): Promise<unknown> {
   return apiRequest(`/api/v1/users/me/streak-insurance`);
 }
+
+// --------------------------------------------------------------------------- //
+// History-First public surface (Phase 3+)
+// --------------------------------------------------------------------------- //
+export function listHistoryEntities(params: {
+  entityType?: string;
+  publicationStatus?: string;
+  search?: string;
+  offset?: number;
+  limit?: number;
+} = {}): Promise<unknown> {
+  const q = new URLSearchParams();
+  if (params.entityType) q.set("entity_type", params.entityType);
+  if (params.publicationStatus) q.set("publication_status", params.publicationStatus);
+  if (params.search) q.set("search", params.search);
+  if (params.offset != null) q.set("offset", String(params.offset));
+  if (params.limit != null) q.set("limit", String(params.limit));
+  const qs = q.toString();
+  return apiRequest(`/api/v1/history/entities${qs ? `?${qs}` : ""}`);
+}
+
+export function getHistoryEntityById(id: string | number): Promise<unknown> {
+  return apiRequest(`/api/v1/history/entities/${encodeURIComponent(id)}`);
+}
+
+export function getHistoryEntityBySlug(slug: string): Promise<unknown> {
+  return apiRequest(`/api/v1/history/entities/by-slug/${encodeURIComponent(slug)}`);
+}
+
+export function listHistoryEntityClaims(
+  entityId: string | number,
+  params: { verificationStatus?: string; claimType?: string } = {},
+): Promise<unknown> {
+  const q = new URLSearchParams();
+  if (params.verificationStatus) q.set("verification_status", params.verificationStatus);
+  if (params.claimType) q.set("claim_type", params.claimType);
+  const qs = q.toString();
+  return apiRequest(`/api/v1/history/entities/${encodeURIComponent(entityId)}/claims${qs ? `?${qs}` : ""}`);
+}
+
+export function getHistoryClaim(claimId: string | number): Promise<unknown> {
+  return apiRequest(`/api/v1/history/claims/${encodeURIComponent(claimId)}`);
+}
+
+export function listHistoryClaimSources(claimId: string | number): Promise<unknown> {
+  return apiRequest(`/api/v1/history/claims/${encodeURIComponent(claimId)}/sources`);
+}
+
+export function listHistorySources(params: {
+  sourceType?: string;
+  search?: string;
+  offset?: number;
+  limit?: number;
+} = {}): Promise<unknown> {
+  const q = new URLSearchParams();
+  if (params.sourceType) q.set("source_type", params.sourceType);
+  if (params.search) q.set("search", params.search);
+  if (params.offset != null) q.set("offset", String(params.offset));
+  if (params.limit != null) q.set("limit", String(params.limit));
+  const qs = q.toString();
+  return apiRequest(`/api/v1/history/sources${qs ? `?${qs}` : ""}`);
+}
+
+export function getHistorySource(sourceId: string | number): Promise<unknown> {
+  return apiRequest(`/api/v1/history/sources/${encodeURIComponent(sourceId)}`);
+}
+
+export function listHistoryEntityRelations(
+  entityId: string | number,
+): Promise<unknown> {
+  return apiRequest(`/api/v1/history/entities/${encodeURIComponent(entityId)}/relations`);
+}
+
+export function getHistoryEntityGeography(entityId: string | number): Promise<unknown> {
+  return apiRequest(`/api/v1/history/entities/${encodeURIComponent(entityId)}/geography`);
+}
+
+export function searchHistory(q: string, limit = 20): Promise<unknown> {
+  const params = new URLSearchParams({ q, limit: String(limit) });
+  return apiRequest(`/api/v1/history/search?${params.toString()}`);
+}

@@ -5,10 +5,14 @@ import type { Dispatch, ReactNode, SetStateAction } from "react";
 import {
   BookOpen,
   Brain,
+  Clock,
   Compass,
   Globe,
   Home,
+  Landmark,
+  LayoutGrid,
   LogOut,
+  Map,
   Menu,
   Moon,
   Search,
@@ -35,12 +39,21 @@ interface NavItem {
   href: string;
 }
 
-const primaryNav: NavItem[] = [
+const authedPrimaryNav: NavItem[] = [
   { icon: Home, label: "Học tập", href: "/dashboard" },
   { icon: Compass, label: "Khám phá", href: "/explore" },
   { icon: Brain, label: "Ôn tập", href: "/practice" },
   { icon: Sparkles, label: "Giáo viên AI", href: "/ai" },
   { icon: User, label: "Cá nhân", href: "/profile" },
+];
+
+// History-first navigation shown to guests (and while auth is still loading).
+const historyFirstNav: NavItem[] = [
+  { icon: Compass, label: "Khám phá", href: "/explore" },
+  { icon: Landmark, label: "Cửu Đỉnh", href: "/cuu-dinh" },
+  { icon: LayoutGrid, label: "Atlas 162", href: "/atlas" },
+  { icon: Map, label: "Bản đồ", href: "/map" },
+  { icon: Clock, label: "Dòng thời gian", href: "/timeline" },
 ];
 
 const moreNav: NavItem[] = [
@@ -141,6 +154,9 @@ export default function FloatingNavbar() {
   const user = useAuthStore((s) => s.user);
   const fetchMe = useAuthStore((s) => s.fetchMe);
   const logout = useAuthStore((s) => s.logout);
+
+  const primaryNav =
+    status === "authed" ? authedPrimaryNav : historyFirstNav;
 
   const isAuthPage = pathname === "/login" || pathname === "/register";
   const isQuizPage = /^\/motif\/[^/]+\/quiz/.test(pathname ?? "");

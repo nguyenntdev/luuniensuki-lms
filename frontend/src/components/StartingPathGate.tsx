@@ -5,8 +5,7 @@ import { usePathname } from "next/navigation";
 
 import { getUrns, logAnalyticsEvent, setStartingPath } from "@/lib/api";
 import { useAuthStore } from "@/stores/authStore";
-
-const PUBLIC_PATH_PREFIXES = ["/login", "/register"];
+import { isPublicPath } from "@/lib/publicPaths";
 
 interface Urn {
     id: string | number;
@@ -22,15 +21,7 @@ interface StartingPathResponse {
     [key: string]: unknown;
 }
 
-function isPublicPath(pathname: string | null): boolean {
-    if (!pathname) return false;
-    return PUBLIC_PATH_PREFIXES.some(
-        (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
-    );
-}
-
-export default function StartingPathGate() {
-    const pathname = usePathname();
+export default function StartingPathGate() {    const pathname = usePathname();
     const status = useAuthStore((s) => s.status);
     const user = useAuthStore((s) => s.user);
     const fetchMe = useAuthStore((s) => s.fetchMe);
