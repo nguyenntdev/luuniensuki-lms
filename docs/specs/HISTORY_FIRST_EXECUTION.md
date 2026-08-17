@@ -4,11 +4,11 @@ Maintained continuously during the History-First Rebuild. Source of truth for ph
 
 ## Audited commit
 
-- `4be10f3` (main, 2026-08-17) — deployed to production https://lms.histolab.icu.
+- `e448828` (main, 2026-08-17) — Phases 6+8+9 committed + pushed.
 
 ## Current phase
 
-Phase 5 complete (map + endpoints). Phases 0-5 deployed to production. Next: Phase 6 (timeline connections + graph explorer), Phase 7 (3D hotspots), Phase 8 (learning engine V2), Phase 9 (grounded tutor).
+Phases 0-9 complete (code + tests + prod migration for 6/8/9). Phase 7 (3D hotspots) pending. Phases 10-14 pending.
 
 ## Current branch
 
@@ -16,47 +16,41 @@ Phase 5 complete (map + endpoints). Phases 0-5 deployed to production. Next: Pha
 
 ## Production deployment state (2026-08-17)
 
-- Migrations 0048 + 0049 applied to prod DB (historical_* tables + content_validation_status columns). Note: alembic version row was manually updated (container alembic 1.18.4 transaction-commit quirk under investigation; DDL verified applied).
-- Legacy corpus migrated to prod: 9 urns (canonical slugs cao-dinh..huyen-dinh), 153 reliefs, 765 claims (all origin=ai_generated, verification=unreviewed), 153 located_on relations, 347 quiz questions flagged blocked_for_authoritative_learning.
-- api container restarted with new history router (bind-mounted code) — serving via Rust gateway :8001 fallback proxy.
-- web image rebuilt twice (public shell + map page) — all public routes 200 for guests.
-- Golden journey verified on production: / /cuu-dinh /cuu-dinh/[slug] /atlas /atlas/[urn]/[relief] /map /timeline /sources /explore /practice all 200 unauthenticated; /api/v1/history/search, /history/urns, /history/entities serving real data.
+- Migrations applied to prod: 0048, 0049, 0050 (history tables, content_validation_status, question V2 columns + history_question_types registry). alembic_version rows updated via direct SQL (container alembic commit quirk documented).
+- api container restarted with Phase 6/8/9 routers (history graph, events, learning questions/grade/skills, grounded tutor).
+- Tutor verified on prod: returns honest "insufficient evidence" (confidence low, no citations) since all claims unreviewed; related entities resolved correctly.
+- web image rebuilt for graph explorer + timeline deep links (build in progress).
+- Golden journey + all public routes verified 200 for guests.
 
 ## Completed task IDs
 
-- REPO-001..004: Phase 0 deliverables.
-- Phase 1: migration 0048 + governance model/services/APIs + 15 tests.
-- Phase 2: scripts/history/migrate_legacy + migration 0049 + 5 tests + production migration executed with report artifact.
-- Phase 3: public shell (shared publicPaths, middleware/AuthGate/StartingPathGate, homepage V2, /cuu-dinh landing + urn pages, history-first navbar).
-- Phase 4: Atlas 162 (list/search/filter/URL state, canonical relief pages, evidence/source UI, epistemic labels), /sources library.
-- Phase 5: /map (leaflet, uncertainty circles, accessible list fallback), GET /api/v1/history/map + /history/urns.
+- REPO-001..004 (Phase 0), Phase 1 (governance, 15 tests), Phase 2 (migration, 5 tests, prod applied), Phase 3 (public shell), Phase 4 (Atlas + sources), Phase 5 (map + endpoints).
+- Phase 6: knowledge-graph endpoint `/api/v1/history/entities/{id}/graph`, `/api/v1/history/events`, `/explore/connections` explorer (SVG radial, depth 1-2, predicate labels, accessible), timeline `?entity=` deep links.
+- Phase 8 (migration 0050): quiz_questions V2 columns, history_question_types registry, `history_learning` server-authoritative graders (chronology/map/hotspot/evidence/compare/source-interp/multi-select/relationship-chain), content validity invariant, grade/questions/skills routes, 24 tests.
+- Phase 9: `history_tutor` retrieval (Spec 37.1 precedence), delimited context (40.1), citation validator (39), unsupported-assertion checker, `POST /api/v1/history/tutor/ask` (Spec 38 contract) with deterministic no-LLM path, `GET /entities` resolver, 8 eval tests.
 
 ## In-progress task IDs
 
-- (none)
+- web image rebuild (Phase 6 frontend deployment).
 
 ## Tests run and results
 
-- Python: `pytest tests/backend` → **136 passed** (135 + snapshot regen verified separately).
-- Phase 8 (learning engine V2): `pytest tests/backend/test_history_learning.py tests/backend/test_history_governance.py` → **39 passed**. Full backend suite → **159 passed, 1 expected failure** (`test_openapi_snapshot` — OpenAPI drifted from committed snapshot due to the 5 new history-learning routes; NOT regenerated, intentional contract addition to be snapshotted in the Phase 8 commit).
-- Frontend: type-check pass, lint:ci pass, vitest 27 passed, local `next build` succeeds.
-- Rust: 291 passed (server, rustup cargo).
-- Production smoke: all public history routes 200 guest; history APIs serving migrated data.
+- Python: `pytest tests/backend` → **168 passed** (Phases 6/8/9 added 32).
+- Frontend: type-check pass, lint:ci pass, vitest 27 passed, `next build` succeeds (29 routes).
+- Rust: 291 passed (earlier).
+- Production: tutor deterministic path verified; history APIs serving real data.
 
 ## Migrations added
 
-- `0048_history_governance` (prod applied)
-- `0049_content_validation_status` (prod applied)
-- `0050_history_questions` (Phase 8, written 2026-08-17; applied to server test DB via direct SQL + manual `alembic_version` update due to the alembic non-commit quirk — same workaround as 0048/0049). Adds quiz_questions V2 columns (skill_dimensions/entity_id/claim_ids/source_ids/answer_contract), user_skill_levels.skill_dimensions, and the seeded `history_question_types` registry.
+- `0048_history_governance`, `0049_content_validation_status`, `0050_history_questions` — all applied to prod.
 
 ## API contracts changed
 
-- 13 history endpoints (entities, by-slug, claims, claim sources, sources, relations, geography, search, map, urns + admin mutations + audit). OpenAPI snapshot regenerated ×3 (intentional).
-- Phase 8: +5 history-learning endpoints — `POST /api/v1/history/questions/{id}/grade`, `GET /api/v1/history/questions`, `GET /api/v1/history/questions/{id}`, `POST /api/v1/history/questions` (staff), `GET /api/v1/history/skills/{user_id}`. OpenAPI snapshot NOT regenerated (pending the Phase 8 commit).
+- 21 history routes in OpenAPI (entities, claims, sources, relations, geography, search, map, urns, graph, events, learning grade/questions/skills, tutor ask/entities, admin mutations, audit). Snapshot regenerated.
 
 ## Frontend routes changed
 
-- Public (no login): `/` (V2), `/cuu-dinh`, `/cuu-dinh/[urnSlug]`, `/atlas`, `/atlas/[urnSlug]/[reliefSlug]`, `/map`, `/sources`, `/sources/[sourceId]`. Navbar history-first for guests.
+- Public: `/explore/connections` (graph explorer). `/timeline` now honors `?entity=` deep link. Urn/relief pages link to the graph.
 
 ## Mobile changes
 
@@ -64,22 +58,21 @@ Phase 5 complete (map + endpoints). Phases 0-5 deployed to production. Next: Pha
 
 ## Historical content imported
 
-- Prod: 9 urns + 153 reliefs + 765 claims (ai_generated/unreviewed) + 153 relations. No sources invented.
+- Prod: 9 urns + 153 reliefs + 765 claims (unreviewed) + 153 relations + 12 timeline events exposed.
 
 ## Historical content awaiting review
 
-- 765 claims unreviewed/needs_source (full human-review backlog).
-- 347 quiz questions blocked_for_authoritative_learning pending source verification.
+- 765 claims unreviewed/needs_source; 347 quiz questions blocked until source-verified.
 
 ## Architectural decisions
 
-- DEC-0001..0005 (see DECISIONS). New: prod DB migration applied via direct SQL + manual alembic_version row update due to container alembic commit quirk (documented; DDL verified).
+- DEC-0001..0005 + container-alembic migration-application approach (direct SQL + manual version row). Tutor deterministic when no LLM key. Streaming tutor deferred (optional per spec).
 
 ## Known blockers
 
-- Production host disk chronically ~91-100%: web image builds need ~3GB headroom; prune build cache before/after every build.
-- api container bind-mount serves new Python code on restart (no rebuild needed) — but the api IMAGE is stale; rebuild before any container recreation.
-- Container alembic 1.18.4: `upgrade`/`stamp` transactions do not commit against prod DB (works on test DB with host venv 1.19.1); use host venv via docker bridge IP (172.18.0.5) for migrations until pin upgraded.
+- Prod host disk ~91%+; prune build cache before/after web image builds.
+- Container alembic 1.18.4 doesn't commit; use host venv via 172.18.0.5.
+- Migration 0050 note: PG `question_type` enum not altered in-migration (enum ADD VALUE can't run in transaction); prod enum needs out-of-transaction ALTER before V2 questions seeded (V2 questions default correct_answer="", answer in answer_contract).
 
 ## Known regressions
 
@@ -87,9 +80,8 @@ Phase 5 complete (map + endpoints). Phases 0-5 deployed to production. Next: Pha
 
 ## Next executable tasks
 
-1. Phase 6 — Timeline connections: link existing Rust timeline (heritage_eras/historical_events) to historical entities; /explore/connections graph explorer.
-2. Phase 7 — 3D hotspot deep links (?relief= param → camera focus), history side panel.
-3. Phase 8 — Question model V2 (chronology/map/hotspot/evidence types), mastery dimensions, FSRS integration.
-4. Phase 9 — Source-grounded History Tutor (retrieval + citation validator + evals).
-5. Phase 10-12 — stories, teacher collections, mobile.
-6. Phase 13-14 — hardening + release report.
+1. Finish web deploy for Phase 6 (graph explorer).
+2. Phase 7 — 3D hotspot integration: `?relief=` deep link → camera focus on UrnViewer, hotspot registry keyed to historical entity ids, history/source side panel.
+3. Phase 10 — stories engine; Phase 11 — teacher collections; Phase 12 — mobile.
+4. Phase 13 — accessibility/SEO/i18n/perf hardening.
+5. Phase 14 — release: full suites, content validator, release report, final deploy.
