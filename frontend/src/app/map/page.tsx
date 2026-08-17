@@ -88,7 +88,7 @@ function MapView({
       maxZoom: 18,
     }).addTo(map);
 
-    const markers: Array<import("leaflet").Marker> = [];
+    const markers: Array<import("leaflet").CircleMarker> = [];
     for (const item of items) {
       if (item.lat == null || item.lng == null) continue;
       const exact = item.geo_precision === "exact";
