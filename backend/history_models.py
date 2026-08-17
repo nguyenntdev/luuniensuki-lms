@@ -516,3 +516,34 @@ class HistoryStory(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())
     published_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class HistoryCollection(Base):
+    """Teacher/editorial historical collection (Spec section 47).
+
+    References canonical entity/source/story/question ids so a collection is a
+    curated selection over the knowledge graph, not copied prose.
+    """
+
+    __tablename__ = "history_collections"
+    __table_args__ = (
+        UniqueConstraint("slug"),
+        Index("idx_history_collections_owner", "owner_id"),
+        Index("idx_history_collections_visibility", "visibility"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    owner_id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    slug: Mapped[str] = mapped_column(Text, nullable=False)
+    title_vi: Mapped[str] = mapped_column(Text, nullable=False)
+    title_en: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    description_vi: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    status: Mapped[str] = mapped_column(Text, nullable=False, default="draft")
+    visibility: Mapped[str] = mapped_column(Text, nullable=False, default="private")
+    entity_ids: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    source_ids: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    story_ids: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    question_ids: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())
+    published_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
