@@ -4,11 +4,11 @@ Maintained continuously during the History-First Rebuild. Source of truth for ph
 
 ## Audited commit
 
-- `e7d8db7` (main, 2026-08-17) — Phase 1 governance foundation committed + pushed.
+- `055fcef` (main, 2026-08-17) — Phase 2 legacy migration committed + pushed.
 
 ## Current phase
 
-Phase 1 — Historical Governance Foundation (nearly complete; Rust baseline test re-running after JWT parity fix).
+Phase 2 — Legacy Corpus Migration (core done; questions migration pending real seed data). Phase 1 complete.
 
 ## Current branch
 
@@ -16,33 +16,30 @@ Phase 1 — Historical Governance Foundation (nearly complete; Rust baseline tes
 
 ## Completed task IDs
 
-- REPO-001: `docs/CURRENT_SYSTEM_STATE.md` created (full service/route/DB/test/ops inventory).
-- REPO-002: Reconcile docs — `README.md`, `backend-rust/README.md`; stale docs logged.
-- REPO-003: Frontend consolidation debt — type-check/lint/unit green.
-- REPO-004: `artifacts/baseline-system-verification.json` created.
-- Phase 1 core: migration `0048_history_governance` (8 tables + indexes), `backend/history_models.py`, `backend/services/history_governance.py` (state machine + invariant), `backend/routers/history.py` (public reads + admin mutations + audit), 15 tests green, OpenAPI snapshot regenerated.
-- Rust JWT parity bug fixed (transition-off `validate_aud`).
+- REPO-001..004: Phase 0 deliverables (system state, doc reconcile, baseline artifact, baseline tests).
+- Phase 1: migration `0048_history_governance`, models, governance services + state machine/invariant, public + admin history APIs, 15 tests, OpenAPI snapshot regenerated.
+- Phase 2: `scripts/history/migrate_legacy.py` (idempotent, dry-run/write, resumable); migration `0049_content_validation_status`; migrated 9 urns + 153 reliefs + 765 claims (AI/unreviewed) + 153 relations on test DB; 5 migration tests.
 
 ## In-progress task IDs
 
-- REPO-004 (Rust baseline test): re-running `cargo test` after JWT fix (cold build).
-- Phase 1 remaining: decide RBAC role granularity for history_* roles; add admin review workflow UI later; integrate Rust native read routes (optional).
+- Phase 2: questions blocked_for_authoritative_learning — script logic written; actual rows depend on seeded DB (test DB not seeded). Migration report artifact to be generated from a seeded run.
+- REPO-004 (Rust baseline test): re-running after JWT parity fix.
 
 ## Tests run and results
 
-- Python: `pytest tests/backend` → **131 passed** (incl. 15 history governance + regenerated OpenAPI snapshot).
+- Python: `pytest tests/backend` → **136 passed** (131 + 5 history migration).
 - Frontend: type-check pass, lint:ci pass, vitest 27 passed.
-- Rust: `cargo test` — first run 248 passed / 32 failed (mostly JWT InvalidAudience due to pre-existing transition-off bug); fixed, re-running.
+- Rust: first run 248 passed / 32 failed (JWT transition-off bug); fixed; re-running.
 
 ## Migrations added
 
-- `0048_history_governance` — chained onto `0047_revoked_refresh_tokens`. Verified on scratch DB (all 8 tables created; branched-history note: fresh `alembic upgrade head` conflicts on pre-existing 0011 duplicate column — apply via `--sql`/targeted upgrade in prod, prod already at 0047).
+- `0048_history_governance` — historical domain tables + search indexes.
+- `0049_content_validation_status` — quiz_questions/lesson_content content_validation_status.
 
 ## API contracts changed
 
-- Added `GET /api/v1/history/entities`, `/by-slug/{slug}`, `/{id}`, `/{id}/claims`, `/{id}/relations`, `/{id}/geography`, `/search`; `GET /api/v1/history/sources`, `/sources/{id}`, `/claims/{id}`, `/claims/{id}/sources`.
-- Added admin mutations under `/api/v1/admin/history/*` (entities/sources/claims/claims/{id}/sources/claims/{id}/transition/relations/entities/{id}/geography/assets/audit).
-- OpenAPI snapshot regenerated (intentional).
+- Phase 1 history endpoints (public + admin) — see previous entry.
+- OpenAPI snapshot regenerated twice (intentional).
 
 ## Frontend routes changed
 
@@ -54,29 +51,29 @@ Phase 1 — Historical Governance Foundation (nearly complete; Rust baseline tes
 
 ## Historical content imported
 
-- (none yet — Phase 2)
+- Test DB: 9 urns, 153 reliefs, 765 claims (all origin=ai_generated, verification=unreviewed, confidence=unknown), 153 located_on relations. No sources invented.
 
 ## Historical content awaiting review
 
-- (none yet — pending legacy migration)
+- 765 claims (unreviewed/needs_source) — full human review backlog after real-seed migration.
 
 ## Architectural decisions
 
-- DEC-0001: work in git clone `luuniensuki-lms-main`.
-- DEC-0002: History domain served via new Python FastAPI router `/api/v1/history/*` (public reads) + `/api/v1/admin/history/*` (staff mutations); Rust gateway fallback proxies them natively. Stable read groups may move to Rust later.
-- DEC-0003: Claim verification invariant enforced in service layer (`_can_be_expert_verified` requires eligible source + editor review for reviewable claim types).
+- DEC-0001..0005 — see DECISIONS doc.
+- Migration report artifacts go under `artifacts/`; mapping via deterministic slug (legacy id → slug).
 
 ## Known blockers
 
-- Production host `/` hits 100% during Rust cold builds (needs ~2GB headroom; node_modules removed server-side, git gc done). Test DB on 127.0.0.1:5433.
-- Migration history branched (3 alembic heads; prod alembic_version 14 rows). New migrations chain onto `0047`.
+- Production host disk tight during Rust cold builds; freed ~2.3G (node_modules, git gc, caches).
+- Migration history branched; new migrations chain onto `0047`/`0048`.
 
 ## Known regressions
 
-- (none; existing Rust JWT transition-off bug being fixed)
+- (none; fixed pre-existing Rust JWT transition-off parity bug)
 
 ## Next executable tasks
 
-1. Confirm Rust `cargo test` green after JWT parity fix.
-2. Phase 2 — Legacy corpus migration (`scripts/history/*`): inventory, normalize 9 urns + 153 motifs, segment claims (origin=ai_generated, unreviewed), migrate questions, mapping, report.
-3. Phase 3 — Public shell (navbar, homepage V2, /cuu-dinh, urn routes, middleware public paths).
+1. Confirm Rust `cargo test` green.
+2. Phase 2 finish: run migration on a seeded DB (prod-style) to generate `artifacts/history-migration-report.json`; verify question blocking.
+3. Phase 3 — History-first public shell: middleware public paths, homepage V2, `/cuu-dinh`, urn routes, atlas stub.
+4. Phase 4 — Atlas 162 (list/search/filter/relief pages + evidence UI).
