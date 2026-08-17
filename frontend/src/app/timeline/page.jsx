@@ -9,7 +9,9 @@ export const metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default function TimelinePage() {
+export default async function TimelinePage({ searchParams }) {
+  const sp = await searchParams;
+  const entity = sp?.entity ? String(sp.entity).trim() : null;
   return (
     <main
       className="min-h-screen bg-background text-foreground"
@@ -35,7 +37,7 @@ export default function TimelinePage() {
         </p>
       </header>
       <ErrorBoundary>
-        <TimelineClient />
+        <TimelineClient entity={entity} />
       </ErrorBoundary>
     </main>
   );

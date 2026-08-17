@@ -11,6 +11,7 @@ import {
   Library,
   Link2,
   Map as MapIcon,
+  Network,
   ScrollText,
 } from "lucide-react";
 
@@ -297,6 +298,15 @@ export default function ReliefDetailPage() {
               <GitCompareArrows className="h-4 w-4 text-primary" aria-hidden="true" />
               So sánh
             </Link>
+            {entity.id != null ? (
+              <Link
+                href={`/explore/connections?entity=${encodeURIComponent(entity.id)}`}
+                className="inline-flex items-center gap-2 rounded-lg border border-border bg-secondary/60 px-5 py-2.5 text-sm font-semibold text-foreground transition hover:border-primary/40 hover:bg-secondary"
+              >
+                <Network className="h-4 w-4 text-primary" aria-hidden="true" />
+                Xem mạng lưới liên kết
+              </Link>
+            ) : null}
           </div>
         </div>
       </section>

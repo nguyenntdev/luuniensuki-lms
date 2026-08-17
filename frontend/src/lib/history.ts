@@ -258,6 +258,45 @@ export function entityName(e: HistoryEntity | null | undefined): string {
   );
 }
 
+// Display name for a relation's object, tolerant of the embedded `object`
+// object, denormalized `object_name`, or a bare id fallback.
+export function relationObjectName(
+  rel: HistoryRelation | null | undefined,
+): string {
+  if (!rel) return "";
+  return (
+    rel.object_name ||
+    rel.object?.name_vi ||
+    rel.object?.name_en ||
+    rel.object?.slug ||
+    (rel.object_entity_id != null ? `#${rel.object_entity_id}` : "")
+  );
+}
+
+export const ENTITY_TYPE_LABELS: Record<string, string> = {
+  urn: "Đỉnh",
+  relief: "Phù điêu",
+  person: "Nhân vật",
+  place: "Địa danh",
+  settlement: "Điểm dân cư",
+  region: "Vùng",
+  water_body: "Sông / biển",
+  mountain: "Núi",
+  island: "Đảo",
+  event: "Sự kiện",
+  period: "Giai đoạn",
+  source: "Nguồn",
+  object: "Hiện vật",
+  concept: "Khái niệm",
+  story: "Câu chuyện",
+};
+
+export function entityTypeLabel(type: string | null | undefined): string {
+  const t = String(type || "").trim().toLowerCase();
+  if (!t) return "Thực thể";
+  return ENTITY_TYPE_LABELS[t] || t;
+}
+
 // ---------------------------------------------------------------------------
 // Accent-insensitive search normalization
 // ---------------------------------------------------------------------------
@@ -436,6 +475,29 @@ export function publicationStatusLabel(
   const s = String(status || "").trim().toLowerCase();
   if (!s) return "";
   return PUBLICATION_STATUS_LABELS[s] || s;
+}
+
+const EPISTEMIC_BY_PUBLICATION: Record<string, EpistemicInfo> = {
+  published: { label: "Đã xuất bản", tone: "documented" },
+  verified: { label: "Đã kiểm chứng", tone: "documented" },
+  public_unverified: { label: "Công khai chưa kiểm chứng", tone: "unreviewed" },
+  draft: { label: "Bản nháp", tone: "unreviewed" },
+  internal_review: { label: "Đang rà soát nội bộ", tone: "unreviewed" },
+  disputed: { label: "Có tranh luận", tone: "disputed" },
+  archived: { label: "Đã lưu trữ", tone: "uncertain" },
+};
+
+// Map a publication_status onto an epistemic tone so pages can render the
+// established EpistemicLabel pill for entity status.
+export function publicationEpistemic(
+  status: string | null | undefined,
+): EpistemicInfo {
+  const s = String(status || "").trim().toLowerCase();
+  if (s && EPISTEMIC_BY_PUBLICATION[s]) return EPISTEMIC_BY_PUBLICATION[s];
+  const label = publicationStatusLabel(status);
+  return label
+    ? { label, tone: "unreviewed" }
+    : { label: "Chưa kiểm chứng", tone: "unreviewed" };
 }
 
 export const SOURCE_RIGHTS_LABELS: Record<string, string> = {

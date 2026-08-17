@@ -67,10 +67,39 @@ class UnlockStatus(str, Enum):
 
 
 class QuestionType(str, Enum):
+    # Legacy V1 question types.
     multiple_choice = "multiple_choice"
     true_false = "true_false"
     image_select = "image_select"
     mesh_location = "mesh_location"
+    # Historical Learning Engine V2 question types (Spec sections 32-33).
+    # The values mirror the ``history_question_types`` registry table created
+    # by migration 0050. The Python enum is extended so fresh databases built
+    # via ``Base.metadata.create_all`` (tests) include the full enum; the
+    # migration keeps the existing Postgres enum untouched for prod safety.
+    chronology_order = "chronology_order"
+    image_identification = "image_identification"
+    map_location = "map_location"
+    urn_hotspot = "urn_hotspot"
+    evidence_match = "evidence_match"
+    entity_match = "entity_match"
+    compare_two = "compare_two"
+    source_interpretation = "source_interpretation"
+    short_response = "short_response"
+    multi_select = "multi_select"
+    relationship_chain = "relationship_chain"
+
+
+class MasterySkill(str, Enum):
+    """Historical mastery skill dimensions (Spec section 34)."""
+    recognition = "recognition"
+    factual_recall = "factual_recall"
+    chronology = "chronology"
+    geography = "geography"
+    source_literacy = "source_literacy"
+    evidence_reasoning = "evidence_reasoning"
+    comparison = "comparison"
+    contextualization = "contextualization"
 
 
 class BadgeCategory(str, Enum):
@@ -1040,6 +1069,24 @@ class QuizQuestion(Base):
         String(50), nullable=False, server_default=text("'valid'")
     )  # History-First MIG-005: 'valid' | 'blocked_for_authoritative_learning'
 
+    # Historical Learning Engine V2 columns (migration 0050, Spec 32.1):
+    # skill_dimensions      — list of mastery skill tags this question trains
+    # entity_id             — canonical historical entity the question targets
+    # claim_ids             — claim UUIDs the question's answer depends on
+    # source_ids            — source UUIDs surfaced to the learner
+    # answer_contract       — typed answer rubric per question type (Spec 33)
+    skill_dimensions: Mapped[Optional[list[Any]]] = mapped_column(
+        JSONB, nullable=True
+    )
+    entity_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("historical_entities.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    claim_ids: Mapped[Optional[list[Any]]] = mapped_column(JSONB, nullable=True)
+    source_ids: Mapped[Optional[list[Any]]] = mapped_column(JSONB, nullable=True)
+    answer_contract: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
+
     # Review workflow fields
     status: Mapped[ContentStatus] = mapped_column(
         SAEnum(ContentStatus, name="content_status", native_enum=True),
@@ -1187,6 +1234,10 @@ class UserSkillLevel(Base):
     correct_answers: Mapped[int] = mapped_column(
         Integer, nullable=False, server_default=text("0")
     )
+    # Historical Learning Engine V2 (migration 0050): per-dimension weighted
+    # breakdown for the mastery dimensions. Holds e.g.
+    # {"dimension": "chronology", "attempts": 5, "correct": 4, "last_score": 0.8}.
+    skill_dimensions: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
     last_updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
     )
@@ -4086,6 +4137,28 @@ class RevokedRefreshToken(Base):
     )
 
     user: Mapped["User"] = relationship("User")
+
+
+class HistoryQuestionType(Base):
+    """Registry of the Historical Learning Engine V2 question types (Spec 32).
+
+    Migration 0050 seeds the 11 V2 keys. The ``quiz_questions.question_type``
+    enum remains the Postgres enum; this table is the human-readable registry
+    (label_vi/label_en + sort order) used by authoring/admin tooling.
+    """
+    __tablename__ = "history_question_types"
+    __table_args__ = (
+        UniqueConstraint("key", name="uq_history_question_types_key"),
+        Index("idx_history_question_types_sort", "sort_order"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    key: Mapped[str] = mapped_column(String(50), nullable=False)
+    label_vi: Mapped[str] = mapped_column(String(255), nullable=False)
+    label_en: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    sort_order: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
 
 # --------------------------------------------------------------------------- #

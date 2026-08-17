@@ -38,6 +38,7 @@ Phase 5 complete (map + endpoints). Phases 0-5 deployed to production. Next: Pha
 ## Tests run and results
 
 - Python: `pytest tests/backend` → **136 passed** (135 + snapshot regen verified separately).
+- Phase 8 (learning engine V2): `pytest tests/backend/test_history_learning.py tests/backend/test_history_governance.py` → **39 passed**. Full backend suite → **159 passed, 1 expected failure** (`test_openapi_snapshot` — OpenAPI drifted from committed snapshot due to the 5 new history-learning routes; NOT regenerated, intentional contract addition to be snapshotted in the Phase 8 commit).
 - Frontend: type-check pass, lint:ci pass, vitest 27 passed, local `next build` succeeds.
 - Rust: 291 passed (server, rustup cargo).
 - Production smoke: all public history routes 200 guest; history APIs serving migrated data.
@@ -46,10 +47,12 @@ Phase 5 complete (map + endpoints). Phases 0-5 deployed to production. Next: Pha
 
 - `0048_history_governance` (prod applied)
 - `0049_content_validation_status` (prod applied)
+- `0050_history_questions` (Phase 8, written 2026-08-17; applied to server test DB via direct SQL + manual `alembic_version` update due to the alembic non-commit quirk — same workaround as 0048/0049). Adds quiz_questions V2 columns (skill_dimensions/entity_id/claim_ids/source_ids/answer_contract), user_skill_levels.skill_dimensions, and the seeded `history_question_types` registry.
 
 ## API contracts changed
 
 - 13 history endpoints (entities, by-slug, claims, claim sources, sources, relations, geography, search, map, urns + admin mutations + audit). OpenAPI snapshot regenerated ×3 (intentional).
+- Phase 8: +5 history-learning endpoints — `POST /api/v1/history/questions/{id}/grade`, `GET /api/v1/history/questions`, `GET /api/v1/history/questions/{id}`, `POST /api/v1/history/questions` (staff), `GET /api/v1/history/skills/{user_id}`. OpenAPI snapshot NOT regenerated (pending the Phase 8 commit).
 
 ## Frontend routes changed
 

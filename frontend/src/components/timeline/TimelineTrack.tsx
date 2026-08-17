@@ -14,10 +14,12 @@ interface TimelineTrackProps {
   meta?: TimelineMeta;
   selectedId: string | number | null;
   onSelect: (id: string | number) => void;
+  /** Optional set of event ids to emphasise (e.g. from a ?entity= deep link). */
+  highlightedIds?: Set<string | number>;
 }
 
 const TimelineTrack = forwardRef<HTMLDivElement, TimelineTrackProps>(
-  function TimelineTrack({ events, meta, selectedId, onSelect }, ref) {
+  function TimelineTrack({ events, meta, selectedId, onSelect, highlightedIds }, ref) {
     const trackRef = useRef<HTMLDivElement | null>(null);
     // Expose the underlying DOM element directly via the forwarded ref.
     // Using `useImperativeHandle` avoids the timing race that a `useEffect`
@@ -83,6 +85,7 @@ const TimelineTrack = forwardRef<HTMLDivElement, TimelineTrackProps>(
             const year = Number((event.occurred_on || "").slice(0, 4)) || minYear;
             const left = position(year);
             const selected = event.id === selectedId;
+            const highlighted = highlightedIds?.has(event.id) ?? false;
             // Roving tabindex: only the selected (or first when none selected)
             // element is tabbable; the rest are focusable by arrow keys.
             const tabbable = selected || (!selectedId && idx === 0);
@@ -105,6 +108,12 @@ const TimelineTrack = forwardRef<HTMLDivElement, TimelineTrackProps>(
                   className="h-4 w-4 rounded-full border-2 border-background shadow"
                   style={{ backgroundColor: (event.era as TimelineEra | undefined)?.color_hex || "#666" }}
                 />
+                {highlighted ? (
+                  <span
+                    className="absolute -inset-1.5 rounded-full border-2 border-primary/70"
+                    aria-hidden="true"
+                  />
+                ) : null}
                 <span className="mt-1 block whitespace-nowrap text-xs text-muted-foreground">
                   {year}
                 </span>

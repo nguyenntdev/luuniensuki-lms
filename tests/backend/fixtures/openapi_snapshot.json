@@ -11472,6 +11472,638 @@
         "title": "HistoricalSourceUpdate",
         "type": "object"
       },
+      "HistoryQuestionCreate": {
+        "properties": {
+          "answer_contract": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Answer Contract"
+          },
+          "claim_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Claim Ids"
+          },
+          "correct_answer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Correct Answer"
+          },
+          "difficulty": {
+            "default": 1,
+            "maximum": 5.0,
+            "minimum": 1.0,
+            "title": "Difficulty",
+            "type": "integer"
+          },
+          "entity_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entity Id"
+          },
+          "explanation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Explanation"
+          },
+          "is_active": {
+            "default": true,
+            "title": "Is Active",
+            "type": "boolean"
+          },
+          "is_published": {
+            "default": true,
+            "title": "Is Published",
+            "type": "boolean"
+          },
+          "motif_id": {
+            "format": "uuid",
+            "title": "Motif Id",
+            "type": "string"
+          },
+          "options": {
+            "anyOf": [
+              {
+                "items": {},
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Options"
+          },
+          "question_text": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Question Text",
+            "type": "string"
+          },
+          "question_type": {
+            "title": "Question Type",
+            "type": "string"
+          },
+          "skill_dimensions": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Skill Dimensions"
+          },
+          "skill_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Skill Type"
+          },
+          "source_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Ids"
+          },
+          "target_mesh_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Mesh Name"
+          }
+        },
+        "required": [
+          "motif_id",
+          "question_type",
+          "question_text"
+        ],
+        "title": "HistoryQuestionCreate",
+        "type": "object"
+      },
+      "HistoryQuestionGradeIn": {
+        "description": "Client submits ONLY the raw answer. Correctness is never accepted from\nthe client — the server derives it from the answer contract (Spec 33.4).",
+        "properties": {
+          "answer": {
+            "additionalProperties": true,
+            "title": "Answer",
+            "type": "object"
+          }
+        },
+        "required": [
+          "answer"
+        ],
+        "title": "HistoryQuestionGradeIn",
+        "type": "object"
+      },
+      "HistoryQuestionGradeOut": {
+        "properties": {
+          "correct": {
+            "title": "Correct",
+            "type": "boolean"
+          },
+          "feedback_vi": {
+            "title": "Feedback Vi",
+            "type": "string"
+          },
+          "score": {
+            "title": "Score",
+            "type": "number"
+          },
+          "skill_dimensions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Skill Dimensions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "correct",
+          "score",
+          "feedback_vi",
+          "skill_dimensions"
+        ],
+        "title": "HistoryQuestionGradeOut",
+        "type": "object"
+      },
+      "HistoryQuestionListOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/HistoryQuestionOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "offset",
+          "limit"
+        ],
+        "title": "HistoryQuestionListOut",
+        "type": "object"
+      },
+      "HistoryQuestionOut": {
+        "properties": {
+          "answer_contract": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Answer Contract"
+          },
+          "claim_ids": {
+            "anyOf": [
+              {
+                "items": {},
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Claim Ids"
+          },
+          "content_validation_status": {
+            "title": "Content Validation Status",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "difficulty": {
+            "title": "Difficulty",
+            "type": "integer"
+          },
+          "entity_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entity Id"
+          },
+          "explanation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Explanation"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "is_active": {
+            "title": "Is Active",
+            "type": "boolean"
+          },
+          "is_published": {
+            "title": "Is Published",
+            "type": "boolean"
+          },
+          "options": {
+            "anyOf": [
+              {
+                "items": {},
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Options"
+          },
+          "question_text": {
+            "title": "Question Text",
+            "type": "string"
+          },
+          "question_type": {
+            "title": "Question Type",
+            "type": "string"
+          },
+          "skill_dimensions": {
+            "anyOf": [
+              {
+                "items": {},
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Skill Dimensions"
+          },
+          "skill_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Skill Type"
+          },
+          "source_ids": {
+            "anyOf": [
+              {
+                "items": {},
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Ids"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "target_mesh_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Mesh Name"
+          }
+        },
+        "required": [
+          "id",
+          "question_type",
+          "question_text",
+          "difficulty",
+          "is_published",
+          "is_active",
+          "content_validation_status",
+          "created_at"
+        ],
+        "title": "HistoryQuestionOut",
+        "type": "object"
+      },
+      "HistorySkillsOut": {
+        "properties": {
+          "dimensions": {
+            "items": {
+              "$ref": "#/components/schemas/MasteryDimensionOut"
+            },
+            "title": "Dimensions",
+            "type": "array"
+          },
+          "overall": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Overall"
+          },
+          "user_id": {
+            "format": "uuid",
+            "title": "User Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "user_id",
+          "dimensions"
+        ],
+        "title": "HistorySkillsOut",
+        "type": "object"
+      },
+      "HistoryTutorAskIn": {
+        "properties": {
+          "entity_filter": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional entity slug or UUID to pin entity resolution.",
+            "title": "Entity Filter"
+          },
+          "include_unverified": {
+            "default": false,
+            "description": "When true, unreviewed/needs_source claims may be retrieved but are always clearly labelled as unverified (Spec 37.1).",
+            "title": "Include Unverified",
+            "type": "boolean"
+          },
+          "question": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Question",
+            "type": "string"
+          }
+        },
+        "required": [
+          "question"
+        ],
+        "title": "HistoryTutorAskIn",
+        "type": "object"
+      },
+      "HistoryTutorAskOut": {
+        "properties": {
+          "answer_markdown": {
+            "title": "Answer Markdown",
+            "type": "string"
+          },
+          "citations": {
+            "items": {
+              "$ref": "#/components/schemas/HistoryTutorCitation"
+            },
+            "title": "Citations",
+            "type": "array"
+          },
+          "confidence": {
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ],
+            "title": "Confidence",
+            "type": "string"
+          },
+          "epistemic_summary": {
+            "title": "Epistemic Summary",
+            "type": "string"
+          },
+          "grounding": {
+            "$ref": "#/components/schemas/HistoryTutorGrounding"
+          },
+          "related_entities": {
+            "items": {
+              "$ref": "#/components/schemas/HistoryTutorRelatedEntity"
+            },
+            "title": "Related Entities",
+            "type": "array"
+          },
+          "suggested_actions": {
+            "items": {
+              "$ref": "#/components/schemas/HistoryTutorSuggestedAction"
+            },
+            "title": "Suggested Actions",
+            "type": "array"
+          },
+          "uncertainties": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Uncertainties",
+            "type": "array"
+          }
+        },
+        "required": [
+          "answer_markdown",
+          "confidence",
+          "epistemic_summary",
+          "grounding"
+        ],
+        "title": "HistoryTutorAskOut",
+        "type": "object"
+      },
+      "HistoryTutorCitation": {
+        "properties": {
+          "claim_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Claim Ids",
+            "type": "array"
+          },
+          "locator": {
+            "title": "Locator",
+            "type": "string"
+          },
+          "source_id": {
+            "title": "Source Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source_id",
+          "claim_ids",
+          "locator"
+        ],
+        "title": "HistoryTutorCitation",
+        "type": "object"
+      },
+      "HistoryTutorGrounding": {
+        "properties": {
+          "claims_retrieved": {
+            "title": "Claims Retrieved",
+            "type": "integer"
+          },
+          "claims_used": {
+            "title": "Claims Used",
+            "type": "integer"
+          },
+          "sources_used": {
+            "title": "Sources Used",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "claims_retrieved",
+          "claims_used",
+          "sources_used"
+        ],
+        "title": "HistoryTutorGrounding",
+        "type": "object"
+      },
+      "HistoryTutorRelatedEntity": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "label"
+        ],
+        "title": "HistoryTutorRelatedEntity",
+        "type": "object"
+      },
+      "HistoryTutorSuggestedAction": {
+        "properties": {
+          "entity_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entity Id"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "title": "HistoryTutorSuggestedAction",
+        "type": "object"
+      },
       "LeaderboardEntryOut": {
         "description": "Single entry in the class leaderboard.",
         "properties": {
@@ -13441,6 +14073,51 @@
           "expires_at"
         ],
         "title": "LiveSessionTokenOut",
+        "type": "object"
+      },
+      "MasteryDimensionOut": {
+        "properties": {
+          "correct_answers": {
+            "default": 0,
+            "title": "Correct Answers",
+            "type": "integer"
+          },
+          "dimension": {
+            "title": "Dimension",
+            "type": "string"
+          },
+          "last_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Score"
+          },
+          "total_questions": {
+            "default": 0,
+            "title": "Total Questions",
+            "type": "integer"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "dimension"
+        ],
+        "title": "MasteryDimensionOut",
         "type": "object"
       },
       "MetricComparisonOut": {
@@ -30607,6 +31284,60 @@
         ]
       }
     },
+    "/api/v1/history/entities/{entity_id}/graph": {
+      "get": {
+        "description": "Contextual knowledge graph (Spec section 26): the requested entity and\nits 1-hop (optionally 2-hop) neighbors from historical_entity_relations.\n\nNodes carry type/slug/name so the explorer can render links; edges carry\nthe predicate, direction and optional source. Unverified relations are\nincluded but flagged so the UI can show epistemic state honestly.",
+        "operationId": "entity_knowledge_graph_api_v1_history_entities__entity_id__graph_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "entity_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Entity Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "depth",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "maximum": 2,
+              "minimum": 1,
+              "title": "Depth",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Entity Knowledge Graph",
+        "tags": [
+          "history"
+        ]
+      }
+    },
     "/api/v1/history/entities/{entity_id}/relations": {
       "get": {
         "operationId": "list_entity_relations_api_v1_history_entities__entity_id__relations_get",
@@ -30677,6 +31408,26 @@
         ]
       }
     },
+    "/api/v1/history/events": {
+      "get": {
+        "description": "Expose heritage timeline events as graph-joinable history data.\n\nReads the Rust-owned ``historical_events`` table (migration 0043) so the\ntimeline and the knowledge graph share one source of truth. No fabricated\nfields; returns what the timeline already records.",
+        "operationId": "list_history_events_api_v1_history_events_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List History Events",
+        "tags": [
+          "history"
+        ]
+      }
+    },
     "/api/v1/history/map": {
       "get": {
         "description": "Heritage map data contract (Spec section 24.3).\n\nReturns only entities that have a geographic signal (lat/lng or a\nhistorical_geographies row), with precision/mapping-status metadata so the\nUI can render uncertainty honestly (24.4). Never fabricates coordinates.",
@@ -30741,6 +31492,256 @@
         ]
       }
     },
+    "/api/v1/history/questions": {
+      "get": {
+        "operationId": "list_history_questions_api_v1_history_questions_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "question_type",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Question Type"
+            }
+          },
+          {
+            "in": "query",
+            "name": "entity_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Entity Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "content_validation_status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Content Validation Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryQuestionListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List History Questions",
+        "tags": [
+          "history-learning"
+        ]
+      },
+      "post": {
+        "operationId": "create_history_question_api_v1_history_questions_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HistoryQuestionCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryQuestionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Create History Question",
+        "tags": [
+          "history-learning"
+        ]
+      }
+    },
+    "/api/v1/history/questions/{question_id}": {
+      "get": {
+        "operationId": "get_history_question_api_v1_history_questions__question_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "question_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Question Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryQuestionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get History Question",
+        "tags": [
+          "history-learning"
+        ]
+      }
+    },
+    "/api/v1/history/questions/{question_id}/grade": {
+      "post": {
+        "operationId": "grade_history_question_api_v1_history_questions__question_id__grade_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "question_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Question Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HistoryQuestionGradeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryQuestionGradeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Grade History Question",
+        "tags": [
+          "history-learning"
+        ]
+      }
+    },
     "/api/v1/history/search": {
       "get": {
         "operationId": "search_history_api_v1_history_search_get",
@@ -30794,6 +31795,54 @@
         "summary": "Search History",
         "tags": [
           "history"
+        ]
+      }
+    },
+    "/api/v1/history/skills/{user_id}": {
+      "get": {
+        "operationId": "get_history_skills_api_v1_history_skills__user_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "User Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistorySkillsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get History Skills",
+        "tags": [
+          "history-learning"
         ]
       }
     },
@@ -30925,6 +31974,94 @@
         "summary": "Get History Source",
         "tags": [
           "history"
+        ]
+      }
+    },
+    "/api/v1/history/tutor/ask": {
+      "post": {
+        "operationId": "history_tutor_ask_api_v1_history_tutor_ask_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HistoryTutorAskIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryTutorAskOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "History Tutor Ask",
+        "tags": [
+          "history-tutor"
+        ]
+      }
+    },
+    "/api/v1/history/tutor/entities": {
+      "get": {
+        "operationId": "history_tutor_entities_api_v1_history_tutor_entities_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 1,
+              "title": "Q",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "History Tutor Entities",
+        "tags": [
+          "history-tutor"
         ]
       }
     },

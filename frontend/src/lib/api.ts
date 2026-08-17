@@ -2484,3 +2484,69 @@ export function getHistoryMap(params: { entityType?: string } = {}): Promise<unk
 export function listHistoryUrns(): Promise<unknown> {
   return apiRequest(`/api/v1/history/urns`);
 }
+
+export interface HistoryGraphNode {
+  id?: string | number;
+  entity_type?: string | null;
+  slug?: string | null;
+  name_vi?: string | null;
+  name_en?: string | null;
+  publication_status?: string | null;
+  summary_vi?: string | null;
+  summary?: string | null;
+  [key: string]: unknown;
+}
+
+export interface HistoryGraphEdge {
+  source?: string | number;
+  target?: string | number;
+  predicate?: string | null;
+  verification_status?: string | null;
+  source_id?: string | number | null;
+  [key: string]: unknown;
+}
+
+export interface HistoryGraph {
+  root_id?: string | number | null;
+  nodes?: HistoryGraphNode[];
+  edges?: HistoryGraphEdge[];
+  [key: string]: unknown;
+}
+
+export function getHistoryGraph(
+  entityId: string | number,
+  depth = 1,
+): Promise<HistoryGraph> {
+  const params = new URLSearchParams({ depth: String(depth) });
+  return apiRequest<HistoryGraph>(
+    `/api/v1/history/entities/${encodeURIComponent(entityId)}/graph?${params.toString()}`,
+  );
+}
+
+export interface HistoryEventItem {
+  id?: string | number;
+  slug?: string | null;
+  name_vi?: string | null;
+  name_en?: string | null;
+  occurred_on?: string | null;
+  description_vi?: string | null;
+  era_id?: string | number | null;
+  [key: string]: unknown;
+}
+
+export interface HistoryEventsResponse {
+  items?: HistoryEventItem[];
+  meta?: { count?: number };
+  [key: string]: unknown;
+}
+
+export function getHistoryEvents(
+  params: { limit?: number } = {},
+): Promise<HistoryEventsResponse> {
+  const q = new URLSearchParams();
+  if (params.limit != null) q.set("limit", String(params.limit));
+  const qs = q.toString();
+  return apiRequest<HistoryEventsResponse>(
+    `/api/v1/history/events${qs ? `?${qs}` : ""}`,
+  );
+}

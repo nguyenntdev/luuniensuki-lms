@@ -1,7 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { fetchTimelineEvents, logAnalyticsEvent } from "@/lib/api";
+import {
+  fetchTimelineEvents,
+  getHistoryEntityById,
+  getHistoryEntityBySlug,
+  getHistoryEvents,
+  logAnalyticsEvent,
+  type HistoryEventItem,
+} from "@/lib/api";
+import { deburr, entityName, type HistoryEntity } from "@/lib/history";
 import CompareModal from "./CompareModal";
 import EventPanel from "./EventPanel";
 import type { TimelineEvent, TimelineMotifRef } from "./EventPanel";
@@ -26,6 +34,8 @@ type YearBound = number | string | undefined;
 interface TimelineClientProps {
   from?: YearBound;
   to?: YearBound;
+  /** Optional entity id or slug from `?entity=` — deep-links to relevant events. */
+  entity?: string | null;
 }
 
 // Module-level cache keyed by query window. Survives client-side route
@@ -37,7 +47,7 @@ function cacheKey(from: YearBound, to: YearBound): string {
   return `${from ?? ""}_${to ?? ""}`;
 }
 
-export default function TimelineClient({ from, to }: TimelineClientProps = {}) {
+export default function TimelineClient({ from, to, entity }: TimelineClientProps = {}) {
   const [events, setEvents] = useState<TimelineEvent[]>(() => {
     const hit = cache.get(cacheKey(from, to));
     return hit && Date.now() - hit.at < CACHE_TTL_MS ? hit.events : [];
@@ -55,6 +65,11 @@ export default function TimelineClient({ from, to }: TimelineClientProps = {}) {
   const [error, setError] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | number | null>(null);
   const [comparePair, setComparePair] = useState<{ a: TimelineMotifRef; b: TimelineMotifRef } | null>(null);
+  const [highlightedIds, setHighlightedIds] = useState<Set<string | number>>(new Set());
+  const [entityNote, setEntityNote] = useState<string | null>(null);
+  const [matchKeys, setMatchKeys] = useState<Set<string> | null>(null);
+  const [matchedHistoryNames, setMatchedHistoryNames] = useState<Set<string>>(new Set());
+  const [entityLabel, setEntityLabel] = useState<string | null>(null);
   const trackRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -95,6 +110,111 @@ export default function TimelineClient({ from, to }: TimelineClientProps = {}) {
     };
   }, [from, to]);
 
+  // Resolve the ?entity= deep link into search keys + matched history events.
+  useEffect(() => {
+    if (!entity) {
+      setMatchKeys(null);
+      setMatchedHistoryNames(new Set());
+      setEntityLabel(null);
+      return;
+    }
+    let mounted = true;
+    const keys = new Set<string>();
+    const addKey = (value: unknown) => {
+      const d = deburr(value);
+      if (d) keys.add(d);
+    };
+    addKey(entity);
+    (async () => {
+      let entityObj: HistoryEntity | null = null;
+      try {
+        const raw = /^\d+$/.test(entity)
+          ? await getHistoryEntityById(Number(entity))
+          : await getHistoryEntityBySlug(entity);
+        entityObj = (raw as HistoryEntity | null | undefined) || null;
+      } catch {
+        entityObj = null;
+      }
+      if (!mounted) return;
+      if (entityObj) {
+        addKey(entityObj.name_vi);
+        addKey(entityObj.name_en);
+        addKey(entityObj.slug);
+        setEntityLabel(entityName(entityObj) || entity);
+      } else {
+        setEntityLabel(entity);
+      }
+
+      let historyEvents: HistoryEventItem[] = [];
+      try {
+        const res = await getHistoryEvents();
+        historyEvents = Array.isArray(res?.items) ? res.items : [];
+      } catch {
+        historyEvents = [];
+      }
+      if (!mounted) return;
+      const matchedNames = new Set<string>();
+      for (const ev of historyEvents) {
+        const hay = deburr(
+          `${ev.name_vi || ""} ${ev.slug || ""} ${ev.description_vi || ""} ${ev.name_en || ""}`,
+        );
+        let matched = false;
+        for (const k of keys) {
+          if (k && hay.includes(k)) {
+            matched = true;
+            break;
+          }
+        }
+        if (matched) {
+          const dn = deburr(ev.name_vi);
+          if (dn) matchedNames.add(dn);
+        }
+      }
+      if (!mounted) return;
+      setMatchKeys(keys);
+      setMatchedHistoryNames(matchedNames);
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, [entity]);
+
+  // Highlight/select timeline events that mention the deep-linked entity.
+  useEffect(() => {
+    if (!entity || !matchKeys || events.length === 0) {
+      setHighlightedIds(new Set());
+      if (entity) {
+        setEntityNote(entityLabel ? `Không tìm thấy sự kiện liên quan đến “${entityLabel}”.` : null);
+      }
+      return;
+    }
+    const matched = new Set<string | number>();
+    for (const ev of events) {
+      const hay = deburr(`${ev.name_vi || ""} ${ev.description_vi || ""}`);
+      let matchedDirect = false;
+      for (const k of matchKeys) {
+        if (k && hay.includes(k)) {
+          matchedDirect = true;
+          break;
+        }
+      }
+      const nameMatch = matchedHistoryNames.has(deburr(ev.name_vi));
+      if (matchedDirect || nameMatch) matched.add(ev.id);
+    }
+    setHighlightedIds(matched);
+    if (matched.size > 0) {
+      const first = events.find((e) => matched.has(e.id));
+      if (first) setSelectedId(first.id);
+      setEntityNote(
+        `Có ${matched.size} sự kiện liên quan đến “${entityLabel || entity}”.`,
+      );
+    } else {
+      setEntityNote(
+        `Không tìm thấy sự kiện liên quan đến “${entityLabel || entity}”.`,
+      );
+    }
+  }, [entity, entityLabel, events, matchKeys, matchedHistoryNames]);
+
   const selectedEvent = events.find((e) => e.id === selectedId) || null;
 
   if (loading) {
@@ -132,8 +252,17 @@ export default function TimelineClient({ from, to }: TimelineClientProps = {}) {
         events={events}
         meta={meta}
         selectedId={selectedId}
+        highlightedIds={highlightedIds}
         onSelect={(id) => setSelectedId(id)}
       />
+      {entityNote ? (
+        <p
+          role="status"
+          className="mt-4 rounded-md border border-border/70 bg-secondary/40 px-4 py-2 text-xs text-muted-foreground"
+        >
+          {entityNote}
+        </p>
+      ) : null}
       {selectedEvent ? (
         <EventPanel
           event={selectedEvent}
