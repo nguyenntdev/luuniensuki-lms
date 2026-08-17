@@ -85,3 +85,9 @@ Phases 0-9 complete (code + tests + prod migration for 6/8/9). Phase 7 (3D hotsp
 3. Phase 10 — stories engine; Phase 11 — teacher collections; Phase 12 — mobile.
 4. Phase 13 — accessibility/SEO/i18n/perf hardening.
 5. Phase 14 — release: full suites, content validator, release report, final deploy.
+## Update: Phase 7 deployed (2026-08-17)
+
+- Hotspot endpoint live; 3D `?relief=` deep links focus camera + open side panel on production.
+- Golden journey fully operational on https://lms.histolab.icu: relief → context → evidence → map/timeline → 3D hotspot → related entities → history-native question → optional account.
+- Backend: 171 tests pass. Frontend: typecheck/lint/29 unit/build pass.
+- OpenAPI snapshot regenerated (22 history routes).
