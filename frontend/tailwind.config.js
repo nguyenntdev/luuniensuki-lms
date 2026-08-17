@@ -65,6 +65,14 @@ module.exports = {
         ivory: "hsl(var(--ivory))",
         "xp-gold": "hsl(var(--xp-gold))",
         "xp-gold-dark": "hsl(var(--xp-gold-dark))",
+        paper: "hsl(var(--paper))",
+        "paper-elevated": "hsl(var(--paper-elevated))",
+        ink: "hsl(var(--ink))",
+        "ink-muted": "hsl(var(--ink-muted))",
+        "bronze-accent": "hsl(var(--bronze-accent))",
+        "bronze-muted": "hsl(var(--bronze-muted))",
+        "jade-accent": "hsl(var(--jade-accent))",
+        "heritage-gold": "hsl(var(--heritage-gold))",
         success: {
           DEFAULT: "hsl(var(--success))",
           foreground: "hsl(var(--success-foreground))",
@@ -82,6 +90,10 @@ module.exports = {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      maxWidth: {
+        content: "var(--content-max)",
+        reading: "var(--content-reading)",
       },
       fontFamily: {
         serif: ["Playfair Display", "Georgia", "serif"],

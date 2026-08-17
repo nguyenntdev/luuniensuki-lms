@@ -194,6 +194,22 @@
         --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         --transition-spring: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 
+        /* ------------------------------------------------------------------ */
+        /* Museum Editorial tokens (UI/UX redesign, Phase 1)                  */
+        /* Semantically named surfaces + ink + bronze + jade accents, derived */
+        /* from the existing warm palette so no visual break occurs.         */
+        /* ------------------------------------------------------------------ */
+        --paper: 42 35% 97%;
+        --paper-elevated: 42 45% 99%;
+        --ink: 222 28% 13%;
+        --ink-muted: 220 12% 42%;
+        --bronze-accent: 30 58% 42%;
+        --bronze-muted: 30 30% 62%;
+        --jade-accent: 166 42% 34%;
+        --heritage-gold: 38 72% 44%;
+        --content-max: 80rem;
+        --content-reading: 68ch;
+
         --sidebar-background: 42 42% 99%;
         --sidebar-foreground: 222 28% 13%;
         --sidebar-primary: 39 73% 48%;
@@ -273,6 +289,18 @@
 
         --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         --transition-spring: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+        /* Museum Editorial tokens — dark variant */
+        --paper: 220 24% 8%;
+        --paper-elevated: 220 20% 11%;
+        --ink: 42 26% 94%;
+        --ink-muted: 218 10% 70%;
+        --bronze-accent: 30 58% 46%;
+        --bronze-muted: 30 28% 55%;
+        --jade-accent: 166 47% 38%;
+        --heritage-gold: 42 78% 58%;
+        --content-max: 80rem;
+        --content-reading: 68ch;
 
         --sidebar-background: 220 20% 10%;
         --sidebar-foreground: 43 28% 92%;
@@ -578,7 +606,7 @@
     }
 
     .shadow-elegant {
-        box-shadow: 0 20px 60px -20px hsl(0 0% 0% / 0.5);
+        box-shadow: var(--shadow-elegant);
     }
 
     .shadow-glow {
