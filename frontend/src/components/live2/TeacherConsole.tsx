@@ -289,18 +289,22 @@ export default function TeacherConsole({
     return list.slice(-3).reverse();
   }, [events]);
 
-  const engagement: EngagementMetrics = dashboard?.metrics?.engagement || {};
+  const engagement: EngagementMetrics = useMemo(
+    () => dashboard?.metrics?.engagement || {},
+    [dashboard],
+  );
   const aiCost: AiCost = dashboard?.ai_cost || {};
 
-  // Low-interaction warning from metrics or a live event.
-  const lowInteraction = useMemo(() => {
-    if (engagement?.low_interaction) return true;
-    return (events || []).some(
-      (ev) =>
-        ev?.event_type === "session_action" &&
-        ev?.payload?.action_type === "low_interaction_warning",
-    );
-  }, [engagement, events]);
+  const lowInteraction = useMemo(
+    () =>
+      engagement?.low_interaction ||
+      (events || []).some(
+        (ev) =>
+          ev?.event_type === "session_action" &&
+          ev?.payload?.action_type === "low_interaction_warning",
+      ),
+    [engagement, events],
+  );
 
   const manageable = useMemo(
     () => (participants || []).filter((p) => !p?.is_ai && !p?.left_at),
