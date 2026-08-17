@@ -1,0 +1,15 @@
+{
+  "audited_commit": "cd637b5",
+  "timestamp": "2026-08-17T00:00:00Z",
+  "rust": {"tests": "pending", "count": 0},
+  "python": {"tests": "pass", "count": 116},
+  "frontend": {"typecheck": "pass", "lint": "pass", "unit": "pass", "unit_count": 27},
+  "playwright": {"status": "not_run_locally", "count": 0},
+  "flutter": {"status": "not_run", "count": 0},
+  "known_failures": [
+    "Rust cargo test requires rustup toolchain (system cargo 1.75 too old for lockfile v4); running on server via /root/.cargo/bin/cargo",
+    "Playwright suite requires full local stack (web + api + db); CI runs it with PLAYWRIGHT_GREP=@smoke",
+    "Flutter analyze/test requires Flutter SDK + Android toolchain; not available on this host",
+    "Production host disk at ~95-98% capacity — must free space before any image builds"
+  ]
+}

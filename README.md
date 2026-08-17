@@ -1,15 +1,19 @@
-# Lưu Niên Sử Kí LMS
+# Lưu Niên Sử Kí — Interactive Historical Atlas of the Nine Dynastic Urns
 
-Nền tảng học tập gamified về di sản Việt Nam, tập trung vào Cửu Đỉnh triều Nguyễn.
+Bách khoa tương tác về Cửu Đỉnh — nền tảng kiến thức lịch sử và học tập tập trung vào **Cửu Đỉnh triều Nguyễn**: 9 đỉnh đồng, 162 hình đúc, bản đồ di sản, dòng thời gian, nguồn tư liệu và bằng chứng, 3D, và lớp học tập (quiz, FSRS, mastery, gamification).
 
 Production: `https://lms.histolab.icu`
 
+Đây là bản rebuild **history-first**: khám phá lịch sử công khai (không cần đăng nhập) là trải nghiệm chính; gamification là lớp động lực phụ trợ. Xem master spec tại `docs/specs/HISTORY_FIRST_MASTER_SPEC.md`.
+
 ## Ứng Dụng Làm Gì
 
-- Người học học bài, khám phá motif, làm nhiệm vụ, làm quiz, ôn tập giãn cách, nhận rank, huy hiệu và streak.
-- Giáo viên và admin quản lý lớp học, phiên học live, tiến độ học tập, nội dung, phân tích dữ liệu và kiểm duyệt.
-- Web app có trải nghiệm di sản 3D, hỗ trợ học bằng AI, giao diện sáng/tối và luồng dùng tối ưu cho mobile.
-- Live learning dùng LiveKit. Các job nền cho Giáo viên AI vẫn chạy song song với API chính.
+- Khám phá công khai: Cửu Đỉnh, Atlas 162 hình đúc, bản đồ di sản, dòng thời gian, câu chuyện, nguồn tư liệu — không bắt buộc đăng nhập.
+- Thực thể lịch sử có nguồn và bằng chứng: entity / claim / source, trạng thái kiểm chứng, quan hệ liên kết.
+- Học: bài học, quiz đa dạng, ôn tập giãn cách (FSRS), mastery, rank, huy hiệu, streak.
+- Giáo viên và admin: lớp học, phiên học live, trail, nội dung, phân tích dữ liệu và kiểm duyệt nguồn.
+- Web app có trải nghiệm di sản 3D, AI History Tutor grounded theo nguồn, LiveKit cho lớp học live.
+- Các job nền cho Giáo viên AI vẫn chạy song song với API chính.
 
 ## Kiến Trúc Hiện Tại
 
@@ -35,11 +39,9 @@ Các service chính:
 
 Phạm vi Rust hiện tại:
 
-- `GET /health`
-- API gateway đứng trước Python backend
-- chặn unauthenticated native cho một số API read
-- native `GET /api/v1/ranks`
-- proxy fallback cho các route chưa migrate
+- API gateway đứng trước Python backend; route dispatch config-driven (`config/route-modes.toml`), default **native** cho mọi route đã đăng ký trong `backend-rust/src/routes/*` (auth, users, content, lessons, quizzes, progress, quests, classrooms, leaderboards, admin, timeline, trails, FSRS, streak, live...).
+- Proxy fallback sang FastAPI cho route chưa native (hiện chỉ live AI teacher + AI tutor + live demo-enter).
+- Chặn unauthenticated native cho một số API read.
 
 ## Chạy Local
 

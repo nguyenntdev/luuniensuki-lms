@@ -4,12 +4,11 @@ Maintained continuously during the History-First Rebuild. Source of truth for ph
 
 ## Audited commit
 
-- `b9b2ebdb27c933ad0dbae0df01aa4840a106c46b` (main @ clone, Aug 17 2026)
-- Local working copy replaced with git checkout of `https://github.com/nguyenntdev/luuniensuki-lms.git`.
+- `cd637b5` (main, 2026-08-17) — pushed to GitHub. Includes spec at `docs/specs/`, baseline frontend fixes, `docs/CURRENT_SYSTEM_STATE.md`, baseline artifact.
 
 ## Current phase
 
-Phase 0 — Truth Reconciliation (in progress).
+Phase 0 — Truth Reconciliation (nearly complete; Rust baseline test running on server).
 
 ## Current branch
 
@@ -17,18 +16,20 @@ Phase 0 — Truth Reconciliation (in progress).
 
 ## Completed task IDs
 
-- (none yet)
+- REPO-001: `docs/CURRENT_SYSTEM_STATE.md` created (full service/route/DB/test/ops inventory).
+- REPO-002: Reconcile docs — `README.md` (history-first + current Rust scope), `backend-rust/README.md` (current scope). `docs/ARCHITECTURE.md` verified current; stale docs logged in CURRENT_SYSTEM_STATE.
+- REPO-003: Frontend consolidation debt — type-check green, lint:ci green, vitest 27 green. api.ts committed already; committed lint/test-fix leftovers (c2a727d).
+- REPO-004: `artifacts/baseline-system-verification.json` created.
 
 ## In-progress task IDs
 
-- REPO-001: `docs/CURRENT_SYSTEM_STATE.md`
-- REPO-002: Reconcile documentation
-- REPO-003: Frontend consolidation debt (api.ts committed, typecheck, lint, Playwright)
-- REPO-004: `artifacts/baseline-system-verification.json`
+- REPO-004 (Rust baseline test): running `cargo test` on server via rustup cargo (system cargo 1.75 too old). 116 Python tests pass.
 
 ## Tests run and results
 
-- (baseline runs being recorded; see `artifacts/baseline-system-verification.json`)
+- Python: `pytest tests/backend` → **116 passed** (server test DB on 127.0.0.1:5433, db luuniensuki_test).
+- Frontend: type-check pass, lint:ci pass, vitest 27 passed.
+- Rust: cargo test in progress (cold build).
 
 ## Migrations added
 
@@ -56,11 +57,13 @@ Phase 0 — Truth Reconciliation (in progress).
 
 ## Architectural decisions
 
-- (see `docs/specs/HISTORY_FIRST_DECISIONS.md`)
+- DEC-0001: work in git clone `luuniensuki-lms-main` (not stale snapshot).
+- History domain will be built as new tables/migrations chained onto `0047_revoked_refresh_tokens`, served via a new Python FastAPI `/api/v1/history/*` router, proxied by the Rust gateway fallback; stable read groups may move to Rust native later. (See DECISIONS doc.)
 
 ## Known blockers
 
-- (none yet)
+- Production host `/` at 95-98% capacity. Free space before any image builds. Test DB available on 127.0.0.1:5433.
+- Migration history branched (3 alembic heads; prod alembic_version has 14 rows). New migrations chain onto `0047`.
 
 ## Known regressions
 
@@ -68,7 +71,11 @@ Phase 0 — Truth Reconciliation (in progress).
 
 ## Next executable tasks
 
-1. Complete Phase 0 audit → `docs/CURRENT_SYSTEM_STATE.md`
-2. Reconcile stale docs
-3. Baseline test artifact
-4. Begin Phase 1 historical governance foundation
+1. Confirm Rust baseline test result; finalize `artifacts/baseline-system-verification.json`.
+2. Begin Phase 1 — Historical Governance Foundation:
+   - Migration `0048_history_governance` (entities, claims, sources, claim_sources, relations, geographies, assets, audit log).
+   - SQLAlchemy models in `backend/models.py`.
+   - New `backend/routers/history.py` + `backend/services/history/*` + schemas.
+   - RBAC roles (history_*).
+   - Admin CRUD + public read endpoints under `/api/v1/history/*`.
+   - Unit + integration tests (verification invariant, source eligibility).
