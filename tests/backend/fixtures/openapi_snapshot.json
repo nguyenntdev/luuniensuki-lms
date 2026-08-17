@@ -31742,6 +31742,56 @@
         ]
       }
     },
+    "/api/v1/history/reliefs/{urn_slug}/{relief_slug}/hotspot": {
+      "get": {
+        "description": "Canonical 3D hotspot for a relief (Spec 42.3).\n\nResolves the relief entity and maps it to the legacy motif mesh + DB\ncoordinates (pos_x/y/z, mesh_name) so the 3D viewer can focus it. Returns\n404 when the relief or its model hotspot is unknown — never fabricates\ncoordinates.",
+        "operationId": "relief_hotspot_api_v1_history_reliefs__urn_slug___relief_slug__hotspot_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "urn_slug",
+            "required": true,
+            "schema": {
+              "title": "Urn Slug",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "relief_slug",
+            "required": true,
+            "schema": {
+              "title": "Relief Slug",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Relief Hotspot",
+        "tags": [
+          "history"
+        ]
+      }
+    },
     "/api/v1/history/search": {
       "get": {
         "operationId": "search_history_api_v1_history_search_get",
