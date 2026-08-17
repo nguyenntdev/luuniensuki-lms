@@ -1,15 +1,29 @@
 {
-  "audited_commit": "cd637b5",
+  "audited_commit": "055fcef",
   "timestamp": "2026-08-17T00:00:00Z",
-  "rust": {"tests": "pending", "count": 0},
-  "python": {"tests": "pass", "count": 116},
+  "rust": {"tests": "pass", "count": 291},
+  "python": {"tests": "pass", "count": 136},
   "frontend": {"typecheck": "pass", "lint": "pass", "unit": "pass", "unit_count": 27},
   "playwright": {"status": "not_run_locally", "count": 0},
   "flutter": {"status": "not_run", "count": 0},
   "known_failures": [
-    "Rust cargo test requires rustup toolchain (system cargo 1.75 too old for lockfile v4); running on server via /root/.cargo/bin/cargo",
+    "Rust cargo test requires rustup toolchain (system cargo 1.75 too old for lockfile v4); server uses /root/.cargo/bin/cargo",
     "Playwright suite requires full local stack (web + api + db); CI runs it with PLAYWRIGHT_GREP=@smoke",
     "Flutter analyze/test requires Flutter SDK + Android toolchain; not available on this host",
-    "Production host disk at ~95-98% capacity — must free space before any image builds"
-  ]
+    "Production host disk at ~96% capacity — must free space before any image builds",
+    "Baseline fixed pre-existing Rust JWT transition-off parity bug (validate_aud disabled in transition mode) — was 32 failing, now 0"
+  ],
+  "history_governance": {
+    "phase_1_tests": 15,
+    "phase_2_tests": 5,
+    "migrations": ["0048_history_governance", "0049_content_validation_status"],
+    "migrated_test_db": {
+      "urns": 9,
+      "reliefs": 153,
+      "claims": 765,
+      "claims_origin_ai_generated": 765,
+      "claims_verification_unreviewed": 765,
+      "relations": 153
+    }
+  }
 }
