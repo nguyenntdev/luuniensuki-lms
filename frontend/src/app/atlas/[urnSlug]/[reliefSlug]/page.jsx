@@ -285,11 +285,18 @@ export default function ReliefDetailPage() {
 
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
-              href={`/cuu-dinh/${effectiveUrnSlug}`}
+              href={`/urns/${effectiveUrnSlug}?relief=${encodeURIComponent(reliefSlug)}`}
               className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90"
             >
               <Boxes className="h-4 w-4" aria-hidden="true" />
               Xem trên đỉnh {urnName} (3D)
+            </Link>
+            <Link
+              href={`/cuu-dinh/${effectiveUrnSlug}`}
+              className="inline-flex items-center gap-2 rounded-lg border border-border bg-secondary/60 px-5 py-2.5 text-sm font-semibold text-foreground transition hover:border-primary/40 hover:bg-secondary"
+            >
+              <Landmark className="h-4 w-4" aria-hidden="true" />
+              Trang {urnName}
             </Link>
             <Link
               href={compareHref}
@@ -547,7 +554,7 @@ export default function ReliefDetailPage() {
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
             <Link
-              href={`/cuu-dinh/${effectiveUrnSlug}`}
+              href={`/urns/${effectiveUrnSlug}?relief=${encodeURIComponent(reliefSlug)}`}
               className="inline-flex items-center gap-2 rounded-lg border border-border bg-secondary/60 px-5 py-2.5 text-sm font-semibold text-foreground transition hover:border-primary/40 hover:bg-secondary"
             >
               <Boxes className="h-4 w-4" aria-hidden="true" />

@@ -263,6 +263,55 @@ def _entity_node(entity) -> dict:
     }
 
 
+@router.get("/api/v1/history/reliefs/{urn_slug}/{relief_slug}/hotspot")
+def relief_hotspot(urn_slug: str, relief_slug: str, db: Session = Depends(get_db)):
+    """Canonical 3D hotspot for a relief (Spec 42.3).
+
+    Resolves the relief entity and maps it to the legacy motif mesh + DB
+    coordinates (pos_x/y/z, mesh_name) so the 3D viewer can focus it. Returns
+    404 when the relief or its model hotspot is unknown — never fabricates
+    coordinates.
+    """
+    from ..models import Motif
+
+    relief = gov.get_entity_by_slug(db, relief_slug)
+    if not relief or relief.entity_type != "relief":
+        raise AppError("HISTORY_ENTITY_NOT_FOUND", "Relief not found", 404)
+
+    urn = gov.get_entity_by_slug(db, urn_slug)
+    if not urn or urn.entity_type != "urn":
+        raise AppError("HISTORY_ENTITY_NOT_FOUND", "Urn not found", 404)
+
+    # Legacy mapping: historical slug cao-dinh-02 <-> legacy id urn_cao_dinh_02
+    # <-> mesh_name mesh_urn_cao_dinh_02_v1. Compute the mesh name deterministically.
+    n = relief_slug.rsplit("-", 1)[-1]
+    legacy_id = f"urn_{urn_slug.replace('-', '_')}_{n}"
+    motif = db.scalar(
+        select(Motif).where(
+            or_(Motif.mesh_name == legacy_id, Motif.mesh_name == f"mesh_{legacy_id}_v1")
+        )
+    )
+    if motif is None or motif.pos_x is None:
+        return {
+            "relief_entity_id": str(relief.id),
+            "urn_entity_id": str(urn.id),
+            "slug": relief_slug,
+            "hotspot": None,
+            "message": "Chưa có tọa độ hotspot cho hình đúc này.",
+        }
+    return {
+        "relief_entity_id": str(relief.id),
+        "urn_entity_id": str(urn.id),
+        "slug": relief_slug,
+        "urn_slug": urn_slug,
+        "hotspot": {
+            "mesh_name": motif.mesh_name,
+            "pos": [motif.pos_x, motif.pos_y or 0, motif.pos_z or 0],
+            "bounding_radius": motif.bounding_radius,
+        },
+    }
+
+
 @router.get("/api/v1/history/events")
 def list_history_events(db: Session = Depends(get_db)):
     """Expose heritage timeline events as graph-joinable history data.

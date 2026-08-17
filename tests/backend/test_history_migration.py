@@ -15,6 +15,8 @@ from backend.models import (
     HistoricalClaim,
     HistoricalEntity,
     HistoricalEntityRelation,
+    Motif,
+    Urn,
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -112,3 +114,86 @@ def test_migration_slugs_are_unique_and_deterministic(client, db_session, migrat
         .having(func.count() > 1)
     ).all()
     assert rows == []
+
+
+# --------------------------------------------------------------------------- #
+# 3D hotspot deep-link (Phase 7)
+# --------------------------------------------------------------------------- #
+@pytest.fixture
+def seeded_urn_and_motif(db_session):
+    """Seed the legacy `urns` + `motifs` rows the 3D hotspot endpoints resolve
+    against (the corpus migration only creates historical_entities)."""
+    from sqlalchemy import select
+
+    urn_row = db_session.scalar(
+        select(Urn).where(Urn.slug == "cao-dinh")
+    )
+    if urn_row is None:
+        urn_row = Urn(
+            slug="cao-dinh",
+            name="Cao Đỉnh",
+            name_han="高",
+            represents="Cao",
+            model_url="/assets/models/CAO-DINH-v1.glb",
+            display_order=1,
+            is_demo=False,
+        )
+        db_session.add(urn_row)
+        db_session.flush()
+    motif_row = db_session.scalar(
+        select(Motif).where(Motif.mesh_name == "mesh_urn_cao_dinh_02_v1")
+    )
+    if motif_row is None:
+        motif_row = Motif(
+            mesh_name="mesh_urn_cao_dinh_02_v1",
+            name="Long",
+            urn_id=urn_row.id,
+            category="linh_thu",
+            pos_x=-0.5,
+            pos_y=0.9,
+            pos_z=0.87,
+            bounding_radius=0.08,
+            display_order=2,
+            is_demo=False,
+            is_active=True,
+        )
+        db_session.add(motif_row)
+        db_session.flush()
+    return urn_row, motif_row
+
+
+def test_relief_hotspot_returns_canonical_mesh(
+    client, db_session, migrated_corpus, seeded_urn_and_motif
+):
+    """A migrated relief maps to a canonical hotspot (mesh_name + position).
+
+    Cao Đỉnh motifs have seeded coordinates; the endpoint must return the
+    deterministic mesh reference and real coordinates — never fabricated."""
+    hotspot = client.get("/api/v1/history/reliefs/cao-dinh/cao-dinh-02/hotspot")
+    assert hotspot.status_code == 200, hotspot.text
+    body = hotspot.json()
+    assert body["slug"] == "cao-dinh-02"
+    assert body["hotspot"] is not None
+    assert body["hotspot"]["mesh_name"] == "mesh_urn_cao_dinh_02_v1"
+    pos = body["hotspot"]["pos"]
+    assert len(pos) == 3
+    assert all(isinstance(v, (int, float)) for v in pos)
+
+
+def test_relief_hotspot_unknown_relief_404(client, db_session, migrated_corpus):
+    res = client.get("/api/v1/history/reliefs/cao-dinh/not-a-relief/hotspot")
+    assert res.status_code == 404
+
+
+def test_relief_hotspot_mesh_name_matches_db(
+    client, db_session, migrated_corpus, seeded_urn_and_motif
+):
+    from sqlalchemy import select
+
+    from backend.models import Motif
+
+    motif = db_session.scalar(
+        select(Motif).where(Motif.mesh_name == "mesh_urn_cao_dinh_02_v1")
+    )
+    assert motif is not None
+    assert motif.pos_x is not None and motif.pos_z is not None

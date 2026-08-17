@@ -113,3 +113,52 @@ describe("no client-side static answer-key grading path remains (Req 4.2)", () =
     expect(exportNames.some((n) => /answerKey|answer_key/i.test(n))).toBe(false);
   });
 });
+
+describe("getReliefHotspot deep-link API (Phase 7)", () => {
+  it("requests the hotspot endpoint with the encoded urn and relief slugs", async () => {
+    const payload = {
+      relief_entity_id: 42,
+      urn_entity_id: 7,
+      slug: "cao-dinh-02",
+      urn_slug: "cao-dinh",
+      hotspot: {
+        mesh_name: "mesh_urn_cao_dinh_02_v1",
+        pos: [-0.5, 0.9, 0.87],
+        bounding_radius: 0.35,
+      },
+    };
+    const fetchMock = vi.fn().mockResolvedValue(
+      makeResponse({ ok: true, status: 200, text: JSON.stringify(payload) }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await api.getReliefHotspot("cao-dinh", "cao-dinh-02");
+
+    expect(result).toEqual(payload);
+    const [url] = fetchMock.mock.calls[0];
+    expect(url).toContain("/api/v1/history/reliefs/cao-dinh/cao-dinh-02/hotspot");
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("surfaces a null hotspot when the relief has no coordinates", async () => {
+    const payload = {
+      relief_entity_id: 42,
+      urn_entity_id: 7,
+      slug: "cao-dinh-02",
+      urn_slug: "cao-dinh",
+      hotspot: null,
+      message: "no coordinates for relief",
+    };
+    const fetchMock = vi.fn().mockResolvedValue(
+      makeResponse({ ok: true, status: 200, text: JSON.stringify(payload) }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await api.getReliefHotspot("cao-dinh", "cao-dinh-02");
+
+    expect(result.hotspot).toBeNull();
+    expect(result.message).toBe("no coordinates for relief");
+    const [url] = fetchMock.mock.calls[0];
+    expect(url).toContain(encodeURIComponent("cao-dinh-02"));
+  });
+});

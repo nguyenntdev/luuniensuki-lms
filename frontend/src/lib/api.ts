@@ -2469,6 +2469,30 @@ export function getHistoryEntityGeography(entityId: string | number): Promise<un
   return apiRequest(`/api/v1/history/entities/${encodeURIComponent(entityId)}/geography`);
 }
 
+export interface ReliefHotspotResponse {
+  relief_entity_id?: string | number | null;
+  urn_entity_id?: string | number | null;
+  slug?: string | null;
+  urn_slug?: string | null;
+  hotspot?: {
+    mesh_name?: string | null;
+    pos?: [number, number, number] | number[] | null;
+    bounding_radius?: number | null;
+  } | null;
+  message?: string | null;
+}
+
+export function getReliefHotspot(
+  urnSlug: string,
+  reliefSlug: string,
+): Promise<ReliefHotspotResponse> {
+  const urn = encodeURIComponent(urnSlug);
+  const relief = encodeURIComponent(reliefSlug);
+  return apiRequest<ReliefHotspotResponse>(
+    `/api/v1/history/reliefs/${urn}/${relief}/hotspot`,
+  );
+}
+
 export function searchHistory(q: string, limit = 20): Promise<unknown> {
   const params = new URLSearchParams({ q, limit: String(limit) });
   return apiRequest(`/api/v1/history/search?${params.toString()}`);

@@ -6,13 +6,19 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { shallow } from "zustand/shallow";
 
-import { getMyStreak, getQuestSummary, getRecommendations } from "@/lib/api";
+import {
+    getMyStreak,
+    getQuestSummary,
+    getRecommendations,
+    getReliefHotspot,
+} from "@/lib/api";
 import { useAuthStore } from "@/stores/authStore";
 import ViewerControlsHint from "@/components/viewer/ViewerControlsHint";
 import {
     makeSelectNextUnmasteredMotif,
     selectMotifProgressSummary,
     useMotifStore,
+    type Motif,
 } from "@/stores/motifStore";
 
 type MotifId = string | number;
@@ -77,9 +83,14 @@ function UrnExperienceContent({
     const loadingMotifs = useMotifStore((s) => s.loadingMotifs);
     const loadingProgress = useMotifStore((s) => s.loadingProgress);
     const selectedMotifId = useMotifStore((s) => s.selectedMotifId);
+    const setSelectedMotifId = useMotifStore((s) => s.setSelectedMotifId);
+    const motifsByMesh = useMotifStore((s) => s.motifsByMesh);
+    const motifsById = useMotifStore((s) => s.motifsById);
 
     const focusNext = searchParams?.get("focus") === "next";
     const originMotifId = searchParams?.get("fromMotif") || null;
+    const reliefSlugParam = searchParams?.get("relief") || null;
+    const motifParam = searchParams?.get("motif") || null;
     useEffect(() => {
         if (!urnSlug) return;
         ensureMotifsLoaded(urnSlug);
@@ -134,6 +145,68 @@ function UrnExperienceContent({
         autoFocusRef.current = true;
         triggerFocusNext();
     }, [focusNext, nextUnmasteredMotif, triggerFocusNext]);
+
+    // Deep-link focus: ?relief=<reliefSlug> (or ?motif=<motifId>) focuses the
+    // matching motif once motifs are loaded. Degrades gracefully when the
+    // hotspot API returns null coordinates or the mesh has no motif.
+    const deepLinkAppliedRef = useRef<string | null>(null);
+    useEffect(() => {
+        const targetKey = reliefSlugParam
+            ? `relief:${reliefSlugParam}`
+            : motifParam
+              ? `motif:${motifParam}`
+              : "";
+        if (!urnSlug || !targetKey) return;
+        if (deepLinkAppliedRef.current === `${urnSlug}::${targetKey}`) return;
+        if (loadingMotifs) return;
+        const hasMotifs =
+            Object.keys(motifsByMesh).length > 0 ||
+            Object.keys(motifsById).length > 0;
+        if (!hasMotifs) return;
+
+        let cancelled = false;
+        async function applyDeepLink() {
+            let motif: Motif | undefined;
+            try {
+                if (reliefSlugParam) {
+                    const hotspotRes = await getReliefHotspot(
+                        urnSlug,
+                        reliefSlugParam,
+                    );
+                    const meshName = hotspotRes?.hotspot?.mesh_name;
+                    if (!meshName) return;
+                    motif = useMotifStore.getState().motifsByMesh[meshName];
+                } else if (motifParam) {
+                    motif =
+                        useMotifStore.getState().motifsById[motifParam] ||
+                        useMotifStore.getState().motifsById[String(motifParam)];
+                }
+            } catch (err) {
+                if (cancelled) return;
+                console.warn(
+                    "[UrnExperience] failed to resolve relief deep-link",
+                    err,
+                );
+                return;
+            }
+            if (cancelled || !motif || motif.id == null) return;
+            deepLinkAppliedRef.current = `${urnSlug}::${targetKey}`;
+            setSelectedMotifId(motif.id);
+            setFocusMotifId(motif.id);
+        }
+        applyDeepLink();
+        return () => {
+            cancelled = true;
+        };
+    }, [
+        urnSlug,
+        reliefSlugParam,
+        motifParam,
+        loadingMotifs,
+        motifsByMesh,
+        motifsById,
+        setSelectedMotifId,
+    ]);
 
     useEffect(() => {
         return () => {
