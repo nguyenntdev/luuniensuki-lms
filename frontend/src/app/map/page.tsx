@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { setPageMeta } from "@/lib/seo";
 
 interface MapItem {
   entity_id: string;
@@ -178,7 +179,11 @@ export default function MapPage() {
   }, [entityType]);
 
   useEffect(() => {
-    document.title = "Bản đồ di sản — Lưu Niên Sử Kí";
+    setPageMeta({
+      title: "Bản đồ di sản — Lưu Niên Sử Kí",
+      description: "Khám phá các địa danh và mối liên hệ địa lý của Cửu Đỉnh với độ chính xác được nêu rõ.",
+      path: "/map",
+    });
   }, []);
 
   const selected = useMemo(

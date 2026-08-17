@@ -14,6 +14,7 @@ import Skeleton from "@/components/Skeleton";
 import SectionHeading from "@/components/history/SectionHeading";
 import VerificationNote from "@/components/history/VerificationNote";
 import { Badge } from "@/components/ui/badge";
+import { setPageMeta } from "@/lib/seo";
 
 export default function SourcesPage() {
   const [sources, setSources] = useState([]);
@@ -23,7 +24,11 @@ export default function SourcesPage() {
   const [typeFilter, setTypeFilter] = useState("");
 
   useEffect(() => {
-    document.title = "Thư viện nguồn — Lưu Niên Sử Kí";
+    setPageMeta({
+      title: "Thư viện nguồn — Lưu Niên Sử Kí",
+      description: "Thư viện nguồn tư liệu và bằng chứng liên quan đến Cửu Đỉnh.",
+      path: "/sources",
+    });
   }, []);
 
   useEffect(() => {

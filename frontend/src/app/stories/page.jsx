@@ -10,6 +10,7 @@ import Skeleton from "@/components/Skeleton";
 import VerificationNote from "@/components/history/VerificationNote";
 import EpistemicLabel from "@/components/history/EpistemicLabel";
 import { Badge } from "@/components/ui/badge";
+import { setPageMeta } from "@/lib/seo";
 
 export default function StoriesPage() {
   const [stories, setStories] = useState([]);
@@ -17,7 +18,11 @@ export default function StoriesPage() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    document.title = "Truyện sử — Lưu Niên Sử Kí";
+    setPageMeta({
+      title: "Truyện sử — Lưu Niên Sử Kí",
+      description: "Những câu chuyện lịch sử được dựng từ thực thể, nguồn và bằng chứng về Cửu Đỉnh.",
+      path: "/stories",
+    });
   }, []);
 
   useEffect(() => {

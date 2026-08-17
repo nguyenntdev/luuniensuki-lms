@@ -22,6 +22,7 @@ import EntityCard from "@/components/history/EntityCard";
 import SectionHeading from "@/components/history/SectionHeading";
 import VerificationNote from "@/components/history/VerificationNote";
 import { Input } from "@/components/ui/input";
+import { setPageMeta } from "@/lib/seo";
 
 const SORT_OPTIONS = [
   { value: "slug", label: "Theo slug" },
@@ -85,7 +86,11 @@ export default function AtlasPage() {
   }, []);
 
   useEffect(() => {
-    document.title = "Atlas — 162 hình đúc · Lưu Niên Sử Kí";
+    setPageMeta({
+      title: "Atlas — 162 hình đúc · Lưu Niên Sử Kí",
+      description: "Tra cứu 162 hình đúc trên Cửu Đỉnh theo tên, đỉnh và trạng thái kiểm chứng.",
+      path: "/atlas",
+    });
   }, []);
 
   useEffect(() => {
