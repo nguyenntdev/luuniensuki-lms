@@ -1,0 +1,18 @@
+{
+  "legacy_files_scanned": 9,
+  "legacy_records_scanned": 162,
+  "urn_entities_created": 9,
+  "relief_entities_created": 153,
+  "other_entities_created": 0,
+  "claims_created": 765,
+  "ai_generated_claims": 765,
+  "claims_needing_source": 765,
+  "sources_created": 0,
+  "relations_created": 153,
+  "questions_migrated": 347,
+  "questions_blocked_for_verification": 347,
+  "duplicates": [],
+  "invalid_records": [],
+  "unmapped_records": [],
+  "timestamp": "2026-08-17T07:24:20.824056+00:00"
+}

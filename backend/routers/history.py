@@ -15,6 +15,7 @@ from typing import Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from ..apischemas.history import (
@@ -44,7 +45,7 @@ from ..apischemas.history import (
 from ..db import get_db
 from ..deps import get_admin_user, get_current_user, get_staff_user
 from ..errors import AppError
-from ..models import User
+from ..models import HistoricalEntity, HistoricalEntityRelation, User
 from ..services import history_governance as gov
 
 router = APIRouter(tags=["history"])
@@ -194,6 +195,90 @@ def get_entity_geography(entity_id: UUID, db: Session = Depends(get_db)):
     if not geo:
         raise AppError("HISTORY_GEO_NOT_FOUND", "Historical geography not found", 404)
     return HistoricalGeographyOut.model_validate(geo)
+
+
+@router.get("/api/v1/history/map")
+def history_map(
+    entity_type: Optional[str] = Query(default=None),
+    mapping_status: Optional[str] = Query(default=None),
+    db: Session = Depends(get_db),
+):
+    """Heritage map data contract (Spec section 24.3).
+
+    Returns only entities that have a geographic signal (lat/lng or a
+    historical_geographies row), with precision/mapping-status metadata so the
+    UI can render uncertainty honestly (24.4). Never fabricates coordinates.
+    """
+    q = select(HistoricalEntity).where(
+        HistoricalEntity.deleted_at.is_(None),
+        HistoricalEntity.latitude.isnot(None),
+        HistoricalEntity.longitude.isnot(None),
+    )
+    if entity_type:
+        q = q.where(HistoricalEntity.entity_type == entity_type)
+    if mapping_status:
+        q = q.join(
+            HistoricalGeography,
+            HistoricalGeography.entity_id == HistoricalEntity.id,
+        ).where(HistoricalGeography.mapping_status == mapping_status)
+
+    items = []
+    for entity in db.scalars(q):
+        geo = db.get(HistoricalGeography, entity.id)
+        related = gov.list_relations(db, entity_id=entity.id, offset=0, limit=50)[0]
+        items.append(
+            {
+                "entity_id": str(entity.id),
+                "entity_type": entity.entity_type,
+                "slug": entity.slug,
+                "name": entity.name_vi,
+                "lat": entity.latitude,
+                "lng": entity.longitude,
+                "geo_precision": (geo.geo_precision if geo else entity.geo_precision),
+                "mapping_status": (geo.mapping_status if geo else None),
+                "related_reliefs": [
+                    str(r.object_entity_id)
+                    for r in related
+                    if r.predicate == "depicts" and r.object_entity_id
+                ],
+                "urns": [
+                    str(r.object_entity_id)
+                    for r in related
+                    if r.predicate in ("located_on", "part_of") and r.object_entity_id
+                ],
+            }
+        )
+    return {"items": items, "meta": {"count": len(items)}}
+
+
+@router.get("/api/v1/history/urns")
+def history_urns(db: Session = Depends(get_db)):
+    """Convenience: all urn entities with their relief counts (for the public
+    Cửu Đỉnh overview and Atlas urn filter)."""
+    urns, _ = gov.list_entities(db, entity_type="urn", offset=0, limit=50)
+    result = []
+    for urn in urns:
+        count = db.scalar(
+            select(func.count())
+            .select_from(HistoricalEntityRelation)
+            .where(
+                HistoricalEntityRelation.predicate == "located_on",
+                HistoricalEntityRelation.object_entity_id == urn.id,
+            )
+        )
+        result.append(
+            {
+                "id": str(urn.id),
+                "slug": urn.slug,
+                "name_vi": urn.name_vi,
+                "name_en": urn.name_en,
+                "summary_vi": urn.summary_vi,
+                "publication_status": urn.publication_status,
+                "relief_count": int(count or 0),
+            }
+        )
+    result.sort(key=lambda u: u["slug"])
+    return {"items": result, "total": len(result)}
 
 
 @router.get("/api/v1/history/search", response_model=HistoricalSearchOut)

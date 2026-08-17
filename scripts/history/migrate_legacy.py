@@ -84,11 +84,14 @@ def _slugify(name: str) -> str:
 
 
 def _legacy_file_id_to_slug(legacy_id: str) -> str:
-    # e.g. urn_cao_dinh_02 -> cao-dinh-02
+    # e.g. urn_cao_dinh_02 -> cao-dinh-02; urn_cao_dinh_01 (the urn itself) -> cao-dinh
     parts = legacy_id.split("_")
     if len(parts) >= 4 and parts[0] == "urn":
         urn_slug = f"{parts[1]}-{parts[2]}"
-        return f"{urn_slug}-{int(parts[3]):02d}"
+        n = int(parts[3])
+        if n == 1:
+            return urn_slug
+        return f"{urn_slug}-{n:02d}"
     return _slugify(legacy_id)
 
 

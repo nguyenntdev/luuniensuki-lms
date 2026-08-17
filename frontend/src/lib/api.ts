@@ -2473,3 +2473,14 @@ export function searchHistory(q: string, limit = 20): Promise<unknown> {
   const params = new URLSearchParams({ q, limit: String(limit) });
   return apiRequest(`/api/v1/history/search?${params.toString()}`);
 }
+
+export function getHistoryMap(params: { entityType?: string } = {}): Promise<unknown> {
+  const q = new URLSearchParams();
+  if (params.entityType) q.set("entity_type", params.entityType);
+  const qs = q.toString();
+  return apiRequest(`/api/v1/history/map${qs ? `?${qs}` : ""}`);
+}
+
+export function listHistoryUrns(): Promise<unknown> {
+  return apiRequest(`/api/v1/history/urns`);
+}
