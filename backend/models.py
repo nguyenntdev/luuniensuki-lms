@@ -4188,4 +4188,5 @@ from .history_models import (  # noqa: E402,F401
     HistoricalSourceVerificationStatus,
     HistoricalSupportType,
     HistoricalVerificationStatus,
+    HistoryStory,
 )

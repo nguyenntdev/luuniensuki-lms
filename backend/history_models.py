@@ -481,3 +481,38 @@ class HistoricalContentAuditLog(Base):
     reason: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     request_id: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+
+
+class HistoryStory(Base):
+    """Block-based story engine table (Spec section 30).
+
+    A story is an ordered list of typed blocks stored in ``blocks`` JSONB
+    (30.1) — never one giant HTML field. Blocks reference entities/sources by
+    UUID (30.2) so the frontend can deep-link into the atlas/urns/map/timeline
+    surfaces.
+    """
+
+    __tablename__ = "history_stories"
+    __table_args__ = (
+        UniqueConstraint("slug"),
+        Index("idx_history_stories_status", "status"),
+        Index("idx_history_stories_featured", "featured"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    slug: Mapped[str] = mapped_column(Text, nullable=False)
+    title_vi: Mapped[str] = mapped_column(Text, nullable=False)
+    title_en: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    summary_vi: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    summary_en: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    hero_image_url: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    blocks: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    status: Mapped[str] = mapped_column(Text, nullable=False, default="draft")
+    publication_status: Mapped[str] = mapped_column(Text, nullable=False, default="unreviewed")
+    featured: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    created_by: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("users.id"), nullable=True
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())
+    published_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)

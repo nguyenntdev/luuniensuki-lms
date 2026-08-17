@@ -154,6 +154,31 @@ export function asSourceList(payload: unknown): HistorySource[] {
   return [];
 }
 
+export interface HistoryStory {
+  id?: string | number;
+  slug?: string | null;
+  title_vi?: string | null;
+  title_en?: string | null;
+  summary_vi?: string | null;
+  summary_en?: string | null;
+  hero_image_url?: string | null;
+  blocks?: Array<Record<string, unknown>> | null;
+  status?: string | null;
+  publication_status?: string | null;
+  featured?: boolean | null;
+  published_at?: string | null;
+  [key: string]: unknown;
+}
+
+export function asStoryList(payload: unknown): HistoryStory[] {
+  if (Array.isArray(payload)) return payload as HistoryStory[];
+  if (payload && typeof payload === "object") {
+    const items = (payload as HistoryListResponse<HistoryStory>).items;
+    if (Array.isArray(items)) return items;
+  }
+  return [];
+}
+
 export function asRelations(payload: unknown): HistoryRelation[] {
   if (Array.isArray(payload)) return payload as HistoryRelation[];
   if (payload && typeof payload === "object") {

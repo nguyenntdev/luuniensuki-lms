@@ -2574,3 +2574,53 @@ export function getHistoryEvents(
     `/api/v1/history/events${qs ? `?${qs}` : ""}`,
   );
 }
+
+// --------------------------------------------------------------------------- //
+// History Story Engine (Phase 10, Spec section 30)
+// --------------------------------------------------------------------------- //
+export interface StoryBlock {
+  type?: string | null;
+  title?: string | null;
+  body?: string | null;
+  quote?: string | null;
+  attribution?: string | null;
+  image_url?: string | null;
+  caption?: string | null;
+  entity_id?: string | number | null;
+  entity_slug?: string | null;
+  entity_ids?: Array<string | number> | null;
+  urn_slug?: string | null;
+  source_id?: string | number | null;
+  quiz_id?: string | number | null;
+  question?: string | null;
+  [key: string]: unknown;
+}
+
+export interface HistoryStory {
+  id?: string | number;
+  slug?: string | null;
+  title_vi?: string | null;
+  title_en?: string | null;
+  summary_vi?: string | null;
+  summary_en?: string | null;
+  hero_image_url?: string | null;
+  blocks?: StoryBlock[];
+  status?: string | null;
+  publication_status?: string | null;
+  featured?: boolean | null;
+  published_at?: string | null;
+  [key: string]: unknown;
+}
+
+export function listHistoryStories(params: {
+  featuredOnly?: boolean;
+} = {}): Promise<unknown> {
+  const q = new URLSearchParams();
+  if (params.featuredOnly) q.set("featured_only", "true");
+  const qs = q.toString();
+  return apiRequest(`/api/v1/history/stories${qs ? `?${qs}` : ""}`);
+}
+
+export function getHistoryStory(slug: string): Promise<unknown> {
+  return apiRequest(`/api/v1/history/stories/${encodeURIComponent(slug)}`);
+}
