@@ -35,6 +35,7 @@ import {
   publicationStatusLabel,
   relationObjectName,
   reliefNumberFromSlug,
+  reliefThumbnailUrl,
   urnNameFromSlug,
   urnSlugFromReliefSlug,
 } from "@/lib/history";
@@ -302,7 +303,10 @@ export default function ReliefDetailClient() {
   const hasHotspot = Boolean(
     hotspot?.hotspot?.pos && Array.isArray(hotspot.hotspot.pos),
   );
-  const thumbnailUrl = entity.thumbnail_url || entity.thumbnailUrl;
+  const thumbnailUrl =
+    entity.thumbnail_url ||
+    entity.thumbnailUrl ||
+    reliefThumbnailUrl(reliefSlug || entity.slug);
 
   return (
     <main className="site-shell">

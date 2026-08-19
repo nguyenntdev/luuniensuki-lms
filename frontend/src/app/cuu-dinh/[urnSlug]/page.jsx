@@ -42,6 +42,7 @@ import {
   publicationStatusLabel,
   relationPredicateLabel,
   reliefNumberFromSlug,
+  reliefThumbnailUrl,
   urnNameFromSlug,
   urnSlugFromReliefSlug,
 } from "@/lib/history";
@@ -137,7 +138,7 @@ function ReliefMuseumCard({ relief, urnSlug }) {
   const atlasHref = `/atlas/${urnSlug}/${relief.slug}`;
   const deepLinkHref = `/urns/${urnSlug}?relief=${encodeURIComponent(relief.slug)}`;
   const num = reliefNumberFromSlug(relief.slug);
-  const thumbnail = relief.thumbnail_url;
+  const thumbnail = relief.thumbnail_url || reliefThumbnailUrl(relief.slug);
   const summary = firstSentence(
     relief.summary_vi || relief.summary || relief.summary_en,
   );

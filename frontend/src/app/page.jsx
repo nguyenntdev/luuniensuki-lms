@@ -49,6 +49,7 @@ import {
   KNOWN_URNS,
   listTotal,
   reliefNumberFromSlug,
+  reliefThumbnailUrl,
   urnNameFromSlug,
   urnSlugFromReliefSlug,
 } from "@/lib/history";
@@ -768,7 +769,7 @@ export default function HomePage() {
                 const urnSlug = relief.urn_slug || urnSlugFromReliefSlug(relief.slug);
                 const num = reliefNumberFromSlug(relief.slug);
                 const hanNom = relief.name_han_nom || relief.han_nom;
-                const thumb = relief.thumbnail_url;
+                const thumb = relief.thumbnail_url || reliefThumbnailUrl(relief.slug);
                 const urnProfile = URN_PROFILES.find((u) => u.slug === urnSlug);
                 const fallbackImg = urnProfile?.image || "/assets/ban-duc-noi/CAO%20DINH/CAO%20%C4%90%E1%BB%88NH.jpg";
 
