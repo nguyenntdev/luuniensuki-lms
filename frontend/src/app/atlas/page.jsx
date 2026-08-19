@@ -139,9 +139,9 @@ export default function AtlasPage() {
 
   useEffect(() => {
     setPageMeta({
-      title: "Atlas — 162 hình đúc · Lưu Niên Sử Kí",
+      title: "Atlas — 162 bản đúc nổi · Lưu Niên Sử Kí",
       description:
-        "Tra cứu 162 hình đúc trên Cửu Đỉnh theo tên, đỉnh và trạng thái kiểm chứng.",
+        "Tra cứu 162 bản đúc nổi trên Cửu Đỉnh theo tên, đỉnh và trạng thái kiểm chứng.",
       path: "/atlas",
     });
   }, []);
@@ -153,12 +153,12 @@ export default function AtlasPage() {
       setError(null);
       try {
         const res = await listHistoryEntities({
-          entityType: "relief",
           limit: 200,
         });
         if (cancelled) return;
-        setReliefs(asEntityList(res));
-        setTotal(listTotal(res) ?? asEntityList(res).length);
+        const items = asEntityList(res);
+        setReliefs(items);
+        setTotal(items.length);
       } catch (err) {
         if (!cancelled)
           setError(err instanceof Error ? err.message : String(err));
@@ -266,15 +266,13 @@ export default function AtlasPage() {
         <div className="relative max-w-4xl">
           <div className="heritage-chip">
             <Layers className="h-4 w-4" aria-hidden="true" />
-            Bộ sưu tập phù điêu
+            Bộ sưu tập 162 bản đúc nổi
           </div>
           <h1 className="mt-5 font-display text-3xl font-bold tracking-tight text-foreground md:text-5xl">
-            Atlas — {total ?? 162} hình đúc
+            Atlas — {total ?? 162} bản đúc nổi
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground md:text-lg">
-            Toàn bộ hình tượng khắc nổi trên chín chiếc đỉnh đồng. Tìm kiếm theo
-            tên, lọc theo đỉnh hoặc trạng thái xuất bản, và mở từng phù điêu để
-            xem mô tả cùng nguồn sử liệu.
+            Toàn bộ 162 bản đúc nổi trên chín chiếc đỉnh đồng (gồm 9 đồ án chữ thụy hiệu mang tên đỉnh và 153 phù điêu họa tiết cảnh vật). Tìm kiếm theo tên, lọc theo đỉnh hoặc mở từng bản đúc để xem hồ sơ và nguồn sử liệu.
           </p>
 
           <div className="relative mt-6 max-w-2xl">
@@ -429,7 +427,7 @@ export default function AtlasPage() {
         <p className="mt-3 text-xs text-muted-foreground" aria-live="polite">
           {loading
             ? "Đang tải dữ liệu…"
-            : `Hiển thị ${filtered.length} phù điêu${
+            : `Hiển thị ${filtered.length} bản đúc nổi${
                 hasFilters ? " sau khi lọc" : ""
               }.`}
         </p>
@@ -451,11 +449,13 @@ export default function AtlasPage() {
           {filtered.map((relief) => {
             const urnSlug =
               relief.urn_slug || urnSlugFromReliefSlug(relief.slug);
+            const isUrn = relief.entity_type === "urn";
+            const href = isUrn ? `/cuu-dinh/${urnSlug}` : `/atlas/${urnSlug}/${relief.slug}`;
             return (
               <EntityCard
                 key={relief.slug || relief.id}
                 entity={relief}
-                href={`/atlas/${urnSlug}/${relief.slug}`}
+                href={href}
                 badge={urnNameFromSlug(urnSlug)}
               />
             );
@@ -469,12 +469,12 @@ export default function AtlasPage() {
               aria-hidden="true"
             />
             <h2 className="font-display text-base font-semibold text-foreground">
-              Không tìm thấy phù điêu nào
+              Không tìm thấy bản đúc nổi nào
             </h2>
             <p className="mt-1 max-w-md text-sm text-muted-foreground">
               {hasFilters
                 ? "Thử điều chỉnh từ khóa hoặc bộ lọc."
-                : "Chưa có dữ liệu phù điêu nào được nạp từ máy chủ lịch sử."}
+                : "Chưa có dữ liệu bản đúc nào được nạp từ máy chủ lịch sử."}
             </p>
             {hasFilters ? (
               <button

@@ -268,7 +268,9 @@ export function reliefNumberFromSlug(
 ): string {
   const s = String(slug || "").trim();
   const m = s.match(/-(\d{1,3})$/);
-  return m ? m[1] : "";
+  if (m) return m[1];
+  if (KNOWN_URNS.some((u) => u.slug === s)) return "01";
+  return "";
 }
 
 // Legacy motif mesh names (e.g. `mesh_urn_cao_dinh_02_v1` or the bare legacy

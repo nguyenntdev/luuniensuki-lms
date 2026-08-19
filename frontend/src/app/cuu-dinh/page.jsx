@@ -168,11 +168,10 @@ export default function CuuDinhLanding() {
               <div className="rounded-lg border border-border bg-card/60 p-5">
                 <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
                   <Boxes className="h-4 w-4 text-primary" aria-hidden="true" />
-                  9 đỉnh đồng
+                  9 đỉnh đồng · 162 bản đúc nổi
                 </div>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Mỗi đỉnh mang 17 phù điêu (theo số liệu hiện có), tạo thành bộ
-                  sưu tập 162 hình tượng.
+                  Mỗi đỉnh mang đúng 18 bản đúc nổi (gồm 1 đồ án chữ thụy hiệu mang tên đỉnh ở chính diện tầng trên và 17 phù điêu họa tiết), tạo thành bộ sưu tập trọn vẹn 162 bản đúc nổi trên Cửu Đỉnh.
                 </p>
               </div>
               <div className="rounded-lg border border-border bg-card/60 p-5">

@@ -94,16 +94,25 @@ export default function UrnAccessibleFallback({
   const urnName = urnNameFromSlug(selectedUrn) || "Cao Đỉnh";
   const details = URN_DETAILS[selectedUrn] || URN_DETAILS["cao-dinh"];
 
-  // Generate 17 relief representations for the active urn
-  const reliefs = Array.from({ length: 17 }, (_, index) => {
-    const numStr = String(index + 2).padStart(2, "0");
-    const slug = `${selectedUrn}-${numStr}`;
-    const tier = index < 6 ? "Hàng trên (Thượng)" : index < 12 ? "Hàng giữa (Trung)" : "Hàng dưới (Hạ)";
+  // Generate 18 relief representations for the active urn (01 = Inscription/Urn Name, 02..18 = Pictorial motifs)
+  const reliefs = Array.from({ length: 18 }, (_, index) => {
+    const numStr = String(index + 1).padStart(2, "0");
+    const slug = index === 0 ? selectedUrn : `${selectedUrn}-${numStr}`;
+    const name = index === 0 ? `Thụy hiệu Chữ Hán (${urnName})` : `Phù điêu ${slug}`;
+    const tier =
+      index === 0
+        ? "Hàng trên (Chính diện)"
+        : index <= 6
+          ? "Hàng trên (Thượng)"
+          : index <= 12
+            ? "Hàng giữa (Trung)"
+            : "Hàng dưới (Hạ)";
     return {
       num: numStr,
       slug,
+      name,
       tier,
-      href: `/atlas/${selectedUrn}/${slug}`,
+      href: index === 0 ? `/cuu-dinh/${selectedUrn}` : `/atlas/${selectedUrn}/${slug}`,
     };
   });
 
@@ -177,14 +186,14 @@ export default function UrnAccessibleFallback({
         </div>
       </div>
 
-      {/* Accessible Table of 17 Reliefs */}
+      {/* Accessible Table of 18 Reliefs */}
       <div className="mt-8">
         <h3 className="font-serif text-lg font-bold mb-3 flex items-center gap-2">
           <FileText className="h-5 w-5 text-primary" aria-hidden="true" />
-          Danh sách 17 Phù điêu trên {urnName}
+          Danh sách 18 Bản đúc nổi trên {urnName}
         </h3>
         <p className="text-xs text-muted-foreground mb-4" id={`relief-table-desc-${selectedUrn}`}>
-          Bảng liệt kê 17 họa tiết đúc nổi (phù điêu) phân chia theo 3 tầng trên thân {urnName}.
+          Bảng liệt kê 18 họa tiết đúc nổi (gồm 1 đồ án chữ thụy hiệu và 17 phù điêu cảnh vật) phân chia theo 3 tầng trên thân {urnName}.
         </p>
 
         <div className="overflow-x-auto rounded-xl border border-border">
@@ -192,11 +201,11 @@ export default function UrnAccessibleFallback({
             className="w-full text-left text-sm"
             aria-describedby={`relief-table-desc-${selectedUrn}`}
           >
-            <caption className="sr-only">Bảng 17 phù điêu trên {urnName}</caption>
+            <caption className="sr-only">Bảng 18 bản đúc nổi trên {urnName}</caption>
             <thead className="bg-secondary/60 text-xs font-semibold uppercase tracking-wider text-muted-foreground border-b border-border">
               <tr>
                 <th scope="col" className="px-4 py-3">STT</th>
-                <th scope="col" className="px-4 py-3">Mã phù điêu</th>
+                <th scope="col" className="px-4 py-3">Bản đúc / Phù điêu</th>
                 <th scope="col" className="px-4 py-3">Tầng vị trí</th>
                 <th scope="col" className="px-4 py-3">Chi tiết & Hồ sơ</th>
               </tr>
@@ -208,7 +217,7 @@ export default function UrnAccessibleFallback({
                     {r.num}
                   </td>
                   <td className="px-4 py-3 font-medium text-foreground">
-                    Phù điêu {r.slug}
+                    {r.name}
                   </td>
                   <td className="px-4 py-3 text-xs text-muted-foreground">
                     {r.tier}

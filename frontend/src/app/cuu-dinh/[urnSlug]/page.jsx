@@ -135,8 +135,11 @@ function urnOrdinalLabel(slug) {
 
 function ReliefMuseumCard({ relief, urnSlug }) {
   const name = entityName(relief);
-  const atlasHref = `/atlas/${urnSlug}/${relief.slug}`;
-  const deepLinkHref = `/urns/${urnSlug}?relief=${encodeURIComponent(relief.slug)}`;
+  const isUrn = relief.entity_type === "urn";
+  const atlasHref = isUrn ? `/cuu-dinh/${urnSlug}` : `/atlas/${urnSlug}/${relief.slug}`;
+  const deepLinkHref = isUrn
+    ? `/urns/${urnSlug}`
+    : `/urns/${urnSlug}?relief=${encodeURIComponent(relief.slug)}`;
   const num = reliefNumberFromSlug(relief.slug);
   const thumbnail = relief.thumbnail_url || reliefThumbnailUrl(relief.slug);
   const summary = firstSentence(
@@ -147,7 +150,7 @@ function ReliefMuseumCard({ relief, urnSlug }) {
     <article className="group flex flex-col gap-2">
       <Link
         href={atlasHref}
-        aria-label={`Mở phù điêu ${name} trong Atlas`}
+        aria-label={`Mở bản đúc ${name} trong Atlas`}
         className="focus-ring block rounded-lg"
       >
         <div className="relative flex aspect-[16/10] w-full items-center justify-center overflow-hidden rounded-lg border border-border/70 bg-gradient-to-br from-secondary via-card to-secondary/40 transition duration-200 group-hover:border-primary/40">
@@ -167,7 +170,7 @@ function ReliefMuseumCard({ relief, urnSlug }) {
             </span>
           )}
           <span className="heritage-chip absolute left-3 top-3 text-[10px]">
-            Phù điêu {num}
+            {isUrn ? "Bản đúc #01" : `Phù điêu ${num}`}
           </span>
         </div>
       </Link>
@@ -244,10 +247,17 @@ export default function UrnDetailPage() {
           limit: 200,
         });
         const allReliefs = asEntityList(reliefRes);
-        const mine = allReliefs.filter(
+        const pictorialReliefs = allReliefs.filter(
           (r) =>
             (r.urn_slug || urnSlugFromReliefSlug(r.slug)) === urnSlug,
         );
+        const urnItem = {
+          ...entityRes,
+          entity_type: "urn",
+          slug: entityRes.slug,
+          name_vi: entityRes.name_vi,
+        };
+        const mine = [urnItem, ...pictorialReliefs];
         if (cancelled) return;
         setReliefs(mine);
 
@@ -465,7 +475,7 @@ export default function UrnDetailPage() {
           <div className="mt-6 flex flex-wrap gap-6 text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-2">
               <Landmark className="h-4 w-4 text-primary" aria-hidden="true" />
-              {reliefs.length} phù điêu trên đỉnh
+              {reliefs.length} bản đúc nổi trên đỉnh
             </span>
             {pubLabel ? (
               <span className="inline-flex items-center gap-2">
@@ -594,9 +604,9 @@ export default function UrnDetailPage() {
         className="mt-16 scroll-mt-28 md:scroll-mt-40"
       >
         <SectionHeading
-          kicker="Phù điêu"
-          title={`${reliefs.length} phù điêu trên ${name}`}
-          lead="Mỗi phù điêu là một mục tra cứu riêng trong Atlas. Mở từng phù điêu để xem mô tả, diễn giải và nguồn sử liệu, hoặc định vị trực tiếp trên đỉnh trong trình xem 3D."
+          kicker="Bản đúc & Phù điêu"
+          title={`${reliefs.length} bản đúc nổi trên ${name}`}
+          lead="Mỗi đỉnh mang 18 bản đúc nổi gồm 1 đồ án chữ thụy hiệu mang tên đỉnh ở chính diện hàng trên và 17 phù điêu họa tiết cảnh vật. Mở từng bản đúc để xem mô tả, diễn giải và nguồn sử liệu."
         />
         {reliefs.length > 0 ? (
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
