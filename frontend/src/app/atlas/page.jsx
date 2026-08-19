@@ -120,6 +120,7 @@ export default function AtlasPage() {
   const [total, setTotal] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [displayLimit, setDisplayLimit] = useState(36);
   const [params, setParams] = useState({
     q: "",
     urn: "",
@@ -181,6 +182,7 @@ export default function AtlasPage() {
 
   const commitParams = (next) => {
     setParams(next);
+    setDisplayLimit(36);
     const p = new URLSearchParams();
     if (next.q) p.set("q", next.q);
     if (next.urn) p.set("urn", next.urn);
@@ -445,22 +447,44 @@ export default function AtlasPage() {
           ))}
         </div>
       ) : filtered.length > 0 ? (
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filtered.map((relief) => {
-            const urnSlug =
-              relief.urn_slug || urnSlugFromReliefSlug(relief.slug);
-            const isUrn = relief.entity_type === "urn";
-            const href = isUrn ? `/cuu-dinh/${urnSlug}` : `/atlas/${urnSlug}/${relief.slug}`;
-            return (
-              <EntityCard
-                key={relief.slug || relief.id}
-                entity={relief}
-                href={href}
-                badge={urnNameFromSlug(urnSlug)}
-              />
-            );
-          })}
-        </div>
+        <>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {filtered.slice(0, displayLimit).map((relief) => {
+              const urnSlug =
+                relief.urn_slug || urnSlugFromReliefSlug(relief.slug);
+              const isUrn = relief.entity_type === "urn";
+              const href = isUrn ? `/cuu-dinh/${urnSlug}` : `/atlas/${urnSlug}/${relief.slug}`;
+              return (
+                <EntityCard
+                  key={relief.slug || relief.id}
+                  entity={relief}
+                  href={href}
+                  badge={urnNameFromSlug(urnSlug)}
+                />
+              );
+            })}
+          </div>
+
+          {filtered.length > displayLimit ? (
+            <div className="mt-10 flex flex-col items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={() => setDisplayLimit((prev) => prev + 36)}
+                className="inline-flex items-center gap-2 rounded-xl border border-primary/40 bg-card/80 px-6 py-3 text-sm font-bold text-primary shadow-sm transition hover:bg-primary hover:text-primary-foreground focus-visible:ring-2 focus-visible:ring-primary"
+              >
+                <Layers className="h-4 w-4" aria-hidden="true" />
+                Xem thêm {Math.min(36, filtered.length - displayLimit)} bản đúc ({Math.min(displayLimit, filtered.length)}/{filtered.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => setDisplayLimit(filtered.length)}
+                className="text-xs text-muted-foreground hover:text-foreground hover:underline"
+              >
+                Hiển thị tất cả ({filtered.length})
+              </button>
+            </div>
+          ) : null}
+        </>
       ) : (
         <div className="mt-6">
           <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border/70 bg-card/45 px-6 py-14 text-center">

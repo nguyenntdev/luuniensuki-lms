@@ -42,8 +42,9 @@ export default function EntityCard({
   return (
     <Link
       href={href}
+      prefetch={false}
       className={cn(
-        "heritage-card focus-card group flex flex-col overflow-hidden rounded-2xl border border-border/70 bg-card/70 p-4 transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/50 hover:shadow-xl focus-visible:ring-2 focus-visible:ring-primary",
+        "heritage-card focus-card group flex flex-col overflow-hidden rounded-2xl border border-border/70 bg-card/70 p-4 transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/50 hover:shadow-xl focus-visible:ring-2 focus-visible:ring-primary [content-visibility:auto] [contain-intrinsic-size:1px_300px]",
         className,
       )}
     >

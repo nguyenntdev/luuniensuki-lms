@@ -337,11 +337,11 @@ export default function HomePage() {
         />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[750px] h-[750px] rounded-full bg-primary/15 blur-[140px] opacity-70"
+          className="pointer-events-none absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full [background:radial-gradient(circle,hsl(var(--primary)/0.18)_0%,transparent_70%)] opacity-70"
         />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute bottom-10 right-10 w-[500px] h-[500px] rounded-full bg-accent/10 blur-[130px] opacity-40"
+          className="pointer-events-none absolute bottom-10 right-10 w-[500px] h-[500px] rounded-full [background:radial-gradient(circle,hsl(var(--accent)/0.15)_0%,transparent_70%)] opacity-50"
         />
 
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
@@ -777,7 +777,8 @@ export default function HomePage() {
                   <Link
                     key={relief.slug || relief.id}
                     href={`/atlas/${urnSlug}/${relief.slug}`}
-                    className="focus-card group flex flex-col overflow-hidden rounded-2xl border border-border/70 bg-card/70 p-3.5 transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/50 hover:shadow-xl focus-visible:ring-2 focus-visible:ring-primary"
+                    prefetch={false}
+                    className="focus-card group flex flex-col overflow-hidden rounded-2xl border border-border/70 bg-card/70 p-3.5 transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/50 hover:shadow-xl focus-visible:ring-2 focus-visible:ring-primary [content-visibility:auto] [contain-intrinsic-size:1px_220px]"
                   >
                     <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-black mb-3">
                       <img

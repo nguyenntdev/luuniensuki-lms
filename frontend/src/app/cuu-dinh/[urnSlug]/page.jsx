@@ -147,9 +147,10 @@ function ReliefMuseumCard({ relief, urnSlug }) {
   );
 
   return (
-    <article className="group flex flex-col gap-2">
+    <article className="group flex flex-col gap-2 [content-visibility:auto] [contain-intrinsic-size:1px_320px]">
       <Link
         href={atlasHref}
+        prefetch={false}
         aria-label={`Mở bản đúc ${name} trong Atlas`}
         className="focus-ring block rounded-lg"
       >
@@ -159,6 +160,7 @@ function ReliefMuseumCard({ relief, urnSlug }) {
               src={thumbnail}
               alt={name}
               loading="lazy"
+              decoding="async"
               className="h-full w-full object-cover"
             />
           ) : (
@@ -177,6 +179,7 @@ function ReliefMuseumCard({ relief, urnSlug }) {
       <EntityCard entity={relief} href={atlasHref} className="flex-1" />
       <Link
         href={deepLinkHref}
+        prefetch={false}
         className="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-card/60 px-3 py-2 text-xs font-semibold text-foreground transition hover:border-primary/40 hover:bg-secondary"
       >
         <Boxes className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
