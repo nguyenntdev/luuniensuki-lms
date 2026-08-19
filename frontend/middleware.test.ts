@@ -151,12 +151,34 @@ describe("middleware route guard (Req 13.1)", () => {
     expect(res.url.searchParams.get("returnUrl")).toBe("/lessons/42?tab=quiz");
   });
 
-  it("allows public routes (/login) through without token checks", async () => {
-    const res = (await middleware(makeRequest({ pathname: "/login" }))) as unknown as {
-      kind: string;
-    };
+  it("allows public routes (/login, /, /cuu-dinh, /urns/cao-dinh, /atlas, /stories) through without token checks", async () => {
+    const publicPaths = [
+      "/",
+      "/login",
+      "/register",
+      "/cuu-dinh",
+      "/cuu-dinh/cao-dinh",
+      "/urns/cao-dinh",
+      "/atlas",
+      "/atlas/cao-dinh/cao-dinh-02",
+      "/map",
+      "/timeline",
+      "/stories",
+      "/stories/huyen-tich-cuu-dinh",
+      "/collections",
+      "/sources",
+      "/explore",
+      "/vr360",
+      "/ai",
+    ];
 
-    expect(res.kind).toBe("next");
+    for (const pathname of publicPaths) {
+      const res = (await middleware(makeRequest({ pathname }))) as unknown as {
+        kind: string;
+      };
+      expect(res.kind).toBe("next");
+    }
+
     expect(jwtVerifyMock).not.toHaveBeenCalled();
   });
 });

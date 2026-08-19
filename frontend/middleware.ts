@@ -98,10 +98,21 @@ export async function middleware(request: NextRequest) {
         }
     }
 
+    if (pathname === "/" || pathname === "") {
+        return NextResponse.next();
+    }
+
+    const normalizedPath =
+        pathname.endsWith("/") && pathname.length > 1
+            ? pathname.slice(0, -1)
+            : pathname;
+
     if (
         PUBLIC_PATH_PREFIXES.some(
             (prefix) =>
-                pathname === prefix || pathname.startsWith(`${prefix}/`),
+                prefix !== "/" &&
+                (normalizedPath === prefix ||
+                    normalizedPath.startsWith(`${prefix}/`)),
         )
     ) {
         return NextResponse.next();

@@ -8,14 +8,22 @@ export const PUBLIC_PATH_PREFIXES: string[] = [
   "/register",
   // History-first public surface
   "/cuu-dinh",
+  "/urns",
   "/atlas",
   "/map",
   "/timeline",
   "/stories",
+  "/collections",
   "/sources",
-  "/practice",
   "/compare",
   "/explore",
+  "/vr360",
+  "/ai",
+  "/motif",
+  "/trails",
+  "/certificates",
+  "/u",
+  "/share",
 ];
 
 export const PUBLIC_FILE_PATHS: string[] = [
@@ -28,9 +36,11 @@ export const PUBLIC_FILE_PATHS: string[] = [
 ];
 
 export function isPublicPath(pathname: string | null | undefined): boolean {
-  if (!pathname) return false;
-  if (pathname === "/") return true;
+  if (!pathname || pathname === "" || pathname === "/") return true;
+  const normalized = pathname.endsWith("/") && pathname.length > 1 ? pathname.slice(0, -1) : pathname;
+  if (normalized === "/") return true;
   return PUBLIC_PATH_PREFIXES.some(
-    (prefix) => prefix !== "/" && (pathname === prefix || pathname.startsWith(`${prefix}/`)),
+    (prefix) => prefix !== "/" && (normalized === prefix || normalized.startsWith(`${prefix}/`)),
   );
 }
+
