@@ -163,10 +163,11 @@ def _migrate_file(
     existing_urn = db.scalar(
         select(HistoricalEntity).where(HistoricalEntity.slug == urn_slug)
     )
+    urn_entity = existing_urn
     if existing_urn is None:
         report.data["urn_entities_created"] += 1
         if write:
-            entity = gov.create_entity(
+            urn_entity = gov.create_entity(
                 db,
                 data={
                     "entity_type": "urn",
@@ -179,9 +180,9 @@ def _migrate_file(
                     "content_version": 1,
                 },
                 actor_id=None,
+                flush=False,
             )
-            legacy_map[urn_legacy_id] = str(entity.id)
-            db.flush()
+            legacy_map[urn_legacy_id] = str(urn_entity.id)
     else:
         legacy_map[urn_legacy_id] = str(existing_urn.id)
 
@@ -202,9 +203,11 @@ def _migrate_file(
         relief_entity = db.scalar(
             select(HistoricalEntity).where(HistoricalEntity.slug == relief_slug)
         )
+        is_new_relief = False
         if relief_entity is None:
             report.data["relief_entities_created"] += 1
             if write:
+                is_new_relief = True
                 entity = gov.create_entity(
                     db,
                     data={
@@ -218,10 +221,10 @@ def _migrate_file(
                         "content_version": 1,
                     },
                     actor_id=None,
+                    flush=False,
                 )
                 relief_entity = entity
                 legacy_map[legacy_id] = str(entity.id)
-                db.flush()
             else:
                 relief_entity = None
         else:
@@ -255,7 +258,7 @@ def _migrate_file(
                 continue
             if relief_entity is None:
                 continue
-            existing_claim = db.scalar(
+            existing_claim = None if is_new_relief else db.scalar(
                 select(HistoricalClaim).where(
                     HistoricalClaim.entity_id == relief_entity.id,
                     HistoricalClaim.claim_key == f"legacy_{field}",
@@ -275,43 +278,42 @@ def _migrate_file(
                         "risk_level": "normal",
                     },
                     actor_id=None,
+                    flush=False,
                 )
                 report.data["claims_created"] += 1
                 report.data["ai_generated_claims"] += 1
                 report.data["claims_needing_source"] += 1
-                db.flush()
 
         # ---- located_on relation (relief -> urn) ----
         if write:
-            if relief_entity is not None:
-                urn_entity = db.scalar(
-                    select(HistoricalEntity).where(HistoricalEntity.slug == urn_slug)
-                )
-                if urn_entity is not None:
-                    rel_exists = db.scalar(
-                        select(HistoricalEntityRelation).where(
-                            HistoricalEntityRelation.subject_entity_id == relief_entity.id,
-                            HistoricalEntityRelation.predicate == "located_on",
-                            HistoricalEntityRelation.object_entity_id == urn_entity.id,
-                        )
+            if relief_entity is not None and urn_entity is not None:
+                rel_exists = None if is_new_relief else db.scalar(
+                    select(HistoricalEntityRelation).where(
+                        HistoricalEntityRelation.subject_entity_id == relief_entity.id,
+                        HistoricalEntityRelation.predicate == "located_on",
+                        HistoricalEntityRelation.object_entity_id == urn_entity.id,
                     )
-                    if rel_exists is None:
-                        gov.create_relation(
-                            db,
-                            data={
-                                "subject_entity_id": relief_entity.id,
-                                "predicate": "located_on",
-                                "object_entity_id": urn_entity.id,
-                                "confidence": "medium",
-                                "verification_status": "unreviewed",
-                            },
-                            actor_id=None,
-                        )
-                        report.data["relations_created"] += 1
-                        db.flush()
+                )
+                if rel_exists is None:
+                    gov.create_relation(
+                        db,
+                        data={
+                            "subject_entity_id": relief_entity.id,
+                            "predicate": "located_on",
+                            "object_entity_id": urn_entity.id,
+                            "confidence": "medium",
+                            "verification_status": "unreviewed",
+                        },
+                        actor_id=None,
+                        flush=False,
+                    )
+                    report.data["relations_created"] += 1
         else:
             # Plan-only: one located_on relation per relief to be created.
             report.data["relations_created"] += 1
+
+    if write:
+        db.flush()
 
 
 def _migrate_questions(
@@ -328,17 +330,24 @@ def _migrate_questions(
     """
     from backend.models import LessonContent
 
-    lessons = list(db.scalars(select(LessonContent)))
-    for lesson in lessons:
-        if not lesson.is_ai_generated:
-            continue
-        qs = list(db.scalars(select(QuizQuestion).where(QuizQuestion.motif_id == lesson.motif_id)))
-        for q in qs:
-            if getattr(q, "content_validation_status", None) != "blocked_for_authoritative_learning":
-                if write:
-                    q.content_validation_status = "blocked_for_authoritative_learning"  # type: ignore[attr-defined]
-                report.data["questions_migrated"] += 1
-                report.data["questions_blocked_for_verification"] += 1
+    ai_motif_ids = set(
+        db.scalars(
+            select(LessonContent.motif_id).where(LessonContent.is_ai_generated.is_(True))
+        )
+    )
+    if not ai_motif_ids:
+        return
+    qs = list(
+        db.scalars(
+            select(QuizQuestion).where(QuizQuestion.motif_id.in_(ai_motif_ids))
+        )
+    )
+    for q in qs:
+        if getattr(q, "content_validation_status", None) != "blocked_for_authoritative_learning":
+            if write:
+                q.content_validation_status = "blocked_for_authoritative_learning"  # type: ignore[attr-defined]
+            report.data["questions_migrated"] += 1
+            report.data["questions_blocked_for_verification"] += 1
     if write:
         db.flush()
 

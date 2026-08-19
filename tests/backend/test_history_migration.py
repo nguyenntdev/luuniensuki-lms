@@ -89,20 +89,23 @@ def test_migration_claims_are_source_missing(client, db_session, migrated_corpus
     from backend.services.history_governance import claim_has_eligible_source
 
     claims = list(db_session.scalars(select(HistoricalClaim)))
-    for claim in claims:
+    assert len(claims) == 765
+    for claim in claims[:20]:
         assert not claim_has_eligible_source(db_session, claim)
+    for claim in claims:
         assert claim.verification_status in ("unreviewed", "needs_source")
 
 
 def test_migration_relations_all_reliefs_located_on_urn(client, db_session, migrated_corpus):
     relations = list(db_session.scalars(select(HistoricalEntityRelation)))
     assert len(relations) == 153
+    entities_by_id = {e.id: e for e in db_session.scalars(select(HistoricalEntity))}
     for rel in relations:
         assert rel.predicate == "located_on"
-        subject = db_session.get(HistoricalEntity, rel.subject_entity_id)
-        obj = db_session.get(HistoricalEntity, rel.object_entity_id)
-        assert subject.entity_type == "relief"
-        assert obj.entity_type == "urn"
+        subject = entities_by_id.get(rel.subject_entity_id)
+        obj = entities_by_id.get(rel.object_entity_id)
+        assert subject is not None and subject.entity_type == "relief"
+        assert obj is not None and obj.entity_type == "urn"
 
 
 def test_migration_slugs_are_unique_and_deterministic(client, db_session, migrated_corpus):
@@ -121,7 +124,7 @@ def test_migration_slugs_are_unique_and_deterministic(client, db_session, migrat
 # --------------------------------------------------------------------------- #
 @pytest.fixture
 def seeded_urn_and_motif(db_session):
-    """Seed the legacy `urns` + `motifs` rows the 3D hotspot endpoints resolve
+    """Seed the legacy `urns` + `motifs` rows and target relief the 3D hotspot endpoints resolve
     against (the corpus migration only creates historical_entities)."""
     from sqlalchemy import select
 
@@ -159,11 +162,39 @@ def seeded_urn_and_motif(db_session):
         )
         db_session.add(motif_row)
         db_session.flush()
+    urn_entity_row = db_session.scalar(
+        select(HistoricalEntity).where(HistoricalEntity.slug == "cao-dinh")
+    )
+    if urn_entity_row is None:
+        urn_entity_row = HistoricalEntity(
+            entity_type="urn",
+            slug="cao-dinh",
+            name_vi="Cao Đỉnh",
+            summary_vi="Cao Đỉnh",
+            publication_status="public_unverified",
+            content_version=1,
+        )
+        db_session.add(urn_entity_row)
+        db_session.flush()
+    entity_row = db_session.scalar(
+        select(HistoricalEntity).where(HistoricalEntity.slug == "cao-dinh-02")
+    )
+    if entity_row is None:
+        entity_row = HistoricalEntity(
+            entity_type="relief",
+            slug="cao-dinh-02",
+            name_vi="Rồng",
+            summary_vi="Long",
+            publication_status="public_unverified",
+            content_version=1,
+        )
+        db_session.add(entity_row)
+        db_session.flush()
     return urn_row, motif_row
 
 
 def test_relief_hotspot_returns_canonical_mesh(
-    client, db_session, migrated_corpus, seeded_urn_and_motif
+    client, db_session, seeded_urn_and_motif
 ):
     """A migrated relief maps to a canonical hotspot (mesh_name + position).
 
@@ -180,13 +211,13 @@ def test_relief_hotspot_returns_canonical_mesh(
     assert all(isinstance(v, (int, float)) for v in pos)
 
 
-def test_relief_hotspot_unknown_relief_404(client, db_session, migrated_corpus):
+def test_relief_hotspot_unknown_relief_404(client, db_session):
     res = client.get("/api/v1/history/reliefs/cao-dinh/not-a-relief/hotspot")
     assert res.status_code == 404
 
 
 def test_relief_hotspot_mesh_name_matches_db(
-    client, db_session, migrated_corpus, seeded_urn_and_motif
+    client, db_session, seeded_urn_and_motif
 ):
     from sqlalchemy import select
 

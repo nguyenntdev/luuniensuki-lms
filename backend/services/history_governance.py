@@ -115,13 +115,17 @@ def create_entity(
     *,
     data: dict[str, Any],
     actor_id: Optional[UUID] = None,
+    flush: bool = True,
 ) -> HistoricalEntity:
-    entity = HistoricalEntity(**data)
+    entity_data = {**data}
+    entity_data.setdefault("id", uuid.uuid4())
+    entity = HistoricalEntity(**entity_data)
     if actor_id:
         entity.created_by = actor_id
         entity.updated_by = actor_id
     db.add(entity)
-    db.flush()
+    if flush:
+        db.flush()
     audit_action(
         db,
         actor_id=actor_id,
@@ -208,12 +212,16 @@ def create_source(
     *,
     data: dict[str, Any],
     actor_id: Optional[UUID] = None,
+    flush: bool = True,
 ) -> HistoricalSource:
-    source = HistoricalSource(**data)
+    source_data = {**data}
+    source_data.setdefault("id", uuid.uuid4())
+    source = HistoricalSource(**source_data)
     if actor_id:
         source.created_by = actor_id
     db.add(source)
-    db.flush()
+    if flush:
+        db.flush()
     audit_action(
         db,
         actor_id=actor_id,
@@ -330,12 +338,16 @@ def create_claim(
     *,
     data: dict[str, Any],
     actor_id: Optional[UUID] = None,
+    flush: bool = True,
 ) -> HistoricalClaim:
-    claim = HistoricalClaim(**data)
+    claim_data = {**data}
+    claim_data.setdefault("id", uuid.uuid4())
+    claim = HistoricalClaim(**claim_data)
     if actor_id:
         claim.created_by = actor_id
     db.add(claim)
-    db.flush()
+    if flush:
+        db.flush()
     audit_action(
         db,
         actor_id=actor_id,
@@ -519,12 +531,16 @@ def create_relation(
     *,
     data: dict[str, Any],
     actor_id: Optional[UUID] = None,
+    flush: bool = True,
 ) -> HistoricalEntityRelation:
-    relation = HistoricalEntityRelation(**data)
+    rel_data = {**data}
+    rel_data.setdefault("id", uuid.uuid4())
+    relation = HistoricalEntityRelation(**rel_data)
     if actor_id:
         relation.created_by = actor_id
     db.add(relation)
-    db.flush()
+    if flush:
+        db.flush()
     audit_action(
         db,
         actor_id=actor_id,

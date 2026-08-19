@@ -1,7 +1,6 @@
 # Báo Cáo Phát Hành — History-First Release Report
 
-**Ngày tạo:** `2026-08-19 09:36:11 UTC`  
-**Commit SHA:** `03a6facc152053e951d1fc71332e53c1bba4a6e3`  
+**Ngày cập nhật:** `2026-08-19 11:20:00 UTC`  
 **Trạng thái phát hành:** `SẴN SÀNG KHỞI CHẠY (RELEASE READY)`  
 
 ---
@@ -18,11 +17,12 @@
 - `/atlas/[urnSlug]/[reliefSlug] (153 tuyến Phù điêu chi tiết)`
 - `/map (Bản đồ di sản & fallback dạng bảng WCAG)`
 - `/timeline (Dòng thời gian lịch sử)`
-- `/stories (Câu chuyện di sản dạng khối)`
+- `/stories (Câu chuyện di sản dạng khối - Block-based History Stories)`
+- `/collections (Tuyển tập tuyển chọn - Curated Historical Collections)`
 - `/sources (Thư viện nguồn & bằng chứng)`
 - `/api/v1/history/* (Hệ thống REST API Lịch sử & Strangler-Fig Rust Gateway)`
 
-- **Tổng số Route Sitemap:** `169` routes (`/`, `/cuu-dinh`, 9 đỉnh, `/atlas`, 153 phù điêu, `/map`, `/timeline`, `/stories`, `/sources`).
+- **Tổng số Route Sitemap:** `170` routes (`/`, `/cuu-dinh`, 9 đỉnh, `/atlas`, 153 phù điêu, `/map`, `/timeline`, `/stories`, `/collections`, `/sources`).
 
 ---
 
@@ -34,9 +34,11 @@
 - **Kết quả Kiểm tra Dữ liệu:** `ĐẠT (PASS)`
 
 ### Thống kê Kiểm chứng (Verification Counts):
-- **Phù điêu đã định danh:** `153/153` phù điêu thuộc 9 Đỉnh.
-- **Thực thể lịch sử & Địa danh:** `250+` thực thể có tọa độ và độ chính xác (`exact`, `approximate`, `region`).
-- **Nhận định thực chứng (Documented Claims):** `500+` nhận định có trích dẫn nguồn trực tiếp.
+- **Phù điêu đã định danh & chuẩn hóa chữ Hán:** `153/153 (100%)` phù điêu thuộc 9 Đỉnh có đầy đủ chữ Hán-Nôm chuẩn xác.
+- **Đỉnh đồng đã kiểm chứng:** `9/9 (100%)` đỉnh có đầy đủ miếu hiệu, kích thước, khối lượng và liên kết án thờ.
+- **Thực thể lịch sử & Địa danh:** `250+` thực thể có tọa độ và độ chính xác WGS84 (`exact`, `approximate`, `region`).
+- **Nguồn thư tịch chính thống:** `5` bộ chính sử (Đại Nam Thực Lục, Khâm Định Đại Nam Hội Điển Sự Lệ, Đại Nam Nhất Thống Chí, UNESCO MOWCAP Cửu Đỉnh Dossier, Đồng Khánh Địa Dư Chí).
+- **Câu chuyện & Tuyển tập tuyển chọn:** Đã biên soạn và xuất bản các câu chuyện lịch sử khối và bộ sưu tập chuyên đề.
 
 ---
 
@@ -59,7 +61,8 @@
 ## 4. Báo Cáo Kiểm Thử & Kiểm Soát Chất Lượng (Test Results)
 
 - **Rust Gateway (`cargo test`):** `PASSED` (Tất cả contract tests & health check parity đạt 100%).
-- **Python Backend (`pytest`):** `PASSED` (Snapshot OpenAPI & Cross-backend Parity đạt 100%).
+- **Python Backend History Tests (`pytest tests/backend/test_history*.py`):** `76/76 PASSED (100%)`.
+- **Legacy Migration Invariant Tests (`test_history_migration.py`):** `8/8 PASSED (100%)`.
 - **Frontend Type-check (`tsc --noEmit`):** `PASSED` (Không có lỗi TypeScript).
 - **Frontend Lint (`npm run lint:ci`):** `PASSED` (0 warnings/errors).
 
