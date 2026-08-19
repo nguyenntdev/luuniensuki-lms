@@ -45,7 +45,12 @@ from ..apischemas.history import (
 from ..db import get_db
 from ..deps import get_admin_user, get_current_user, get_staff_user
 from ..errors import AppError
-from ..models import HistoricalEntity, HistoricalEntityRelation, User
+from ..models import (
+    HistoricalEntity,
+    HistoricalEntityRelation,
+    HistoricalGeography,
+    User,
+)
 from ..services import history_governance as gov
 
 router = APIRouter(tags=["history"])
