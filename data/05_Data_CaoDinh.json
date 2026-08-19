@@ -52,7 +52,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_cao_dinh_01_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/CAO ĐỈNH.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/CAO ĐỈNH.jpg",
+    "name_han_nom": "艇"
   },
   {
     "id": "urn_cao_dinh_02",
@@ -120,7 +121,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_cao_dinh_02_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/LONG.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/LONG.jpg",
+    "name_han_nom": "龍"
   },
   {
     "id": "urn_cao_dinh_03",
@@ -188,7 +190,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_cao_dinh_03_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/BA LA MẬT.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/BA LA MẬT.jpg",
+    "name_han_nom": "波羅蜜"
   },
   {
     "id": "urn_cao_dinh_04",
@@ -243,7 +246,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_cao_dinh_04_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/CANH.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/CANH.jpg",
+    "name_han_nom": "粳"
   },
   {
     "id": "urn_cao_dinh_05",
@@ -287,7 +291,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_cao_dinh_05_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/THÔNG.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/THÔNG.jpg",
+    "name_han_nom": "葱"
   },
   {
     "id": "urn_cao_dinh_06",
@@ -331,7 +336,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_cao_dinh_06_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/TỬ VI HOA.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/TỬ VI HOA.jpg",
+    "name_han_nom": "紫薇花"
   },
   {
     "id": "urn_cao_dinh_07",
@@ -373,7 +379,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_cao_dinh_07_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/TRĨ.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/TRĨ.jpg",
+    "name_han_nom": "雉"
   },
   {
     "id": "urn_cao_dinh_08",
@@ -415,7 +422,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_cao_dinh_08_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/ĐÔNG HẢI.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/ĐÔNG HẢI.jpg",
+    "name_han_nom": "東海"
   },
   {
     "id": "urn_cao_dinh_09",
@@ -459,7 +467,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_cao_dinh_09_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/VĨNH TẾ HÀ.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/VĨNH TẾ HÀ.jpg",
+    "name_han_nom": "永濟河"
   },
   {
     "id": "urn_cao_dinh_10",
@@ -501,7 +510,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_cao_dinh_10_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/NHẬT.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/NHẬT.jpg",
+    "name_han_nom": "日"
   },
   {
     "id": "urn_cao_dinh_11",
@@ -545,7 +555,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_cao_dinh_11_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/NGƯU CHỮ GIANG.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/NGƯU CHỮ GIANG.jpg",
+    "name_han_nom": "牛渚江"
   },
   {
     "id": "urn_cao_dinh_12",
@@ -587,7 +598,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_cao_dinh_12_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/THIÊN TÔN SƠN.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/THIÊN TÔN SƠN.jpg",
+    "name_han_nom": "天尊山"
   },
   {
     "id": "urn_cao_dinh_13",
@@ -629,7 +641,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_cao_dinh_13_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/THIẾT MỘC.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/THIẾT MỘC.jpg",
+    "name_han_nom": "鐵木"
   },
   {
     "id": "urn_cao_dinh_14",
@@ -673,7 +686,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_cao_dinh_14_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/HỔ.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/HỔ.jpg",
+    "name_han_nom": "葱"
   },
   {
     "id": "urn_cao_dinh_15",
@@ -715,7 +729,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_cao_dinh_15_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/ĐA TÁC THUYỀN.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/ĐA TÁC THUYỀN.jpg",
+    "name_han_nom": "多索船"
   },
   {
     "id": "urn_cao_dinh_16",
@@ -757,7 +772,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_cao_dinh_16_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/ĐẠI BÁC.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/ĐẠI BÁC.jpg",
+    "name_han_nom": "大礮"
   },
   {
     "id": "urn_cao_dinh_17",
@@ -801,7 +817,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_cao_dinh_17_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/TRẦM HƯƠNG.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/TRẦM HƯƠNG.jpg",
+    "name_han_nom": "沈香"
   },
   {
     "id": "urn_cao_dinh_18",
@@ -843,6 +860,7 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_cao_dinh_18_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/MIẾT.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/CAO%20DỈNH/MIẾT.jpg",
+    "name_han_nom": "鱉"
   }
 ]

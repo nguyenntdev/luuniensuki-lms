@@ -41,7 +41,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_thuan_dinh_01_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/THUAN%20DINH.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/THUAN%20DINH.jpg",
+    "name_han_nom": "艇"
   },
   {
     "id": "urn_thuan_dinh_02",
@@ -83,7 +84,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_thuan_dinh_02_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/ĐÀO.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/ĐÀO.jpg",
+    "name_han_nom": "海道船"
   },
   {
     "id": "urn_thuan_dinh_03",
@@ -125,7 +127,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_thuan_dinh_03_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/SÚC%20SA%20MẬT.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/SÚC%20SA%20MẬT.jpg",
+    "name_han_nom": "馬"
   },
   {
     "id": "urn_thuan_dinh_04",
@@ -167,7 +170,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_thuan_dinh_04_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/HƯỚNG%20NHU.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/HƯỚNG%20NHU.jpg",
+    "name_han_nom": "糯"
   },
   {
     "id": "urn_thuan_dinh_05",
@@ -209,7 +213,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_thuan_dinh_05_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/HOÀNG%20ĐẬU.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/HOÀNG%20ĐẬU.jpg",
+    "name_han_nom": "虎"
   },
   {
     "id": "urn_thuan_dinh_06",
@@ -253,7 +258,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_thuan_dinh_06_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/QUỲ%20HOA.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/QUỲ%20HOA.jpg",
+    "name_han_nom": "虎"
   },
   {
     "id": "urn_thuan_dinh_07",
@@ -295,7 +301,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_thuan_dinh_07_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/HOÀNG%20ANH.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/HOÀNG%20ANH.jpg",
+    "name_han_nom": "虎"
   },
   {
     "id": "urn_thuan_dinh_08",
@@ -339,7 +346,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_thuan_dinh_08_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/TẢN%20VIÊN%20SƠN.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/TẢN%20VIÊN%20SƠN.jpg",
+    "name_han_nom": "傘圓山"
   },
   {
     "id": "urn_thuan_dinh_09",
@@ -383,7 +391,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_thuan_dinh_09_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/VĨNH%20ĐỊNH%20HÀ.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/VĨNH%20ĐỊNH%20HÀ.jpg",
+    "name_han_nom": "永定河"
   },
   {
     "id": "urn_thuan_dinh_10",
@@ -425,7 +434,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_thuan_dinh_10_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/PHONG.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/PHONG.jpg",
+    "name_han_nom": "虎"
   },
   {
     "id": "urn_thuan_dinh_11",
@@ -467,7 +477,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_thuan_dinh_11_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/THẠCH%20HÃN%20GIANG.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/THẠCH%20HÃN%20GIANG.jpg",
+    "name_han_nom": "石扞江"
   },
   {
     "id": "urn_thuan_dinh_12",
@@ -511,7 +522,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_thuan_dinh_12_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/CẦN%20GIỜ%20HẢI%20KHẨU.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/CẦN%20GIỜ%20HẢI%20KHẨU.jpg",
+    "name_han_nom": "芹滁海口"
   },
   {
     "id": "urn_thuan_dinh_13",
@@ -595,7 +607,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_thuan_dinh_14_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/BẠNG.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/BẠNG.jpg",
+    "name_han_nom": "蚌蛤"
   },
   {
     "id": "urn_thuan_dinh_15",
@@ -637,7 +650,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_thuan_dinh_15_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/BÀI%20ĐAO.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/BÀI%20ĐAO.jpg",
+    "name_han_nom": "牌刀"
   },
   {
     "id": "urn_thuan_dinh_16",
@@ -681,7 +695,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_thuan_dinh_16_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/ĐỈNH.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/ĐỈNH.jpg",
+    "name_han_nom": "永定河"
   },
   {
     "id": "urn_thuan_dinh_17",
@@ -723,7 +738,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_thuan_dinh_17_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/NAM%20MỘC.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/NAM%20MỘC.jpg",
+    "name_han_nom": "楠木"
   },
   {
     "id": "urn_thuan_dinh_18",
@@ -765,6 +781,7 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_thuan_dinh_18_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/LY%20NGƯU.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/THUAN%20DINH/LY%20NGƯU.jpg",
+    "name_han_nom": "犂牛"
   }
 ]

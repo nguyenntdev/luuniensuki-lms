@@ -41,7 +41,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_tuyen_dinh_01_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/TUYEN%20DINH.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/TUYEN%20DINH.jpg",
+    "name_han_nom": "艇"
   },
   {
     "id": "urn_tuyen_dinh_02",
@@ -83,7 +84,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_tuyen_dinh_02_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/TẦN%20CÁT%20LIỄU.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/TẦN%20CÁT%20LIỄU.jpg",
+    "name_han_nom": "秦吉了"
   },
   {
     "id": "urn_tuyen_dinh_03",
@@ -125,7 +127,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_tuyen_dinh_03_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/YẾN%20OA.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/YẾN%20OA.jpg",
+    "name_han_nom": "燕窩"
   },
   {
     "id": "urn_tuyen_dinh_04",
@@ -169,7 +172,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_tuyen_dinh_04_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/LONG%20NHÃN.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/LONG%20NHÃN.jpg",
+    "name_han_nom": "龍"
   },
   {
     "id": "urn_tuyen_dinh_05",
@@ -211,7 +215,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_tuyen_dinh_05_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/TRÂN%20CHÂU%20HOA.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/TRÂN%20CHÂU%20HOA.jpg",
+    "name_han_nom": "虎"
   },
   {
     "id": "urn_tuyen_dinh_06",
@@ -253,7 +258,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_tuyen_dinh_06_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/ĐỊA%20ĐẬU.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/ĐỊA%20ĐẬU.jpg",
+    "name_han_nom": "地豆"
   },
   {
     "id": "urn_tuyen_dinh_07",
@@ -297,7 +303,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_tuyen_dinh_07_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/BÁ.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/BÁ.jpg",
+    "name_han_nom": "波羅蜜"
   },
   {
     "id": "urn_tuyen_dinh_08",
@@ -339,7 +346,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_tuyen_dinh_08_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/DUỆ%20SƠN.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/DUỆ%20SƠN.jpg",
+    "name_han_nom": "嶠山"
   },
   {
     "id": "urn_tuyen_dinh_09",
@@ -383,7 +391,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_tuyen_dinh_09_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/NHĨ%20HÀ.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/NHĨ%20HÀ.jpg",
+    "name_han_nom": "洱河"
   },
   {
     "id": "urn_tuyen_dinh_10",
@@ -425,7 +434,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_tuyen_dinh_10_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/VÂN.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/VÂN.jpg",
+    "name_han_nom": "雲"
   },
   {
     "id": "urn_tuyen_dinh_11",
@@ -511,7 +521,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_tuyen_dinh_12_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/LAM%20GIANG.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/LAM%20GIANG.jpg",
+    "name_han_nom": "藍江"
   },
   {
     "id": "urn_tuyen_dinh_13",
@@ -553,7 +564,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_tuyen_dinh_13_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/HẬU%20NGƯ.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/HẬU%20NGƯ.jpg",
+    "name_han_nom": "鱟"
   },
   {
     "id": "urn_tuyen_dinh_14",
@@ -595,7 +607,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_tuyen_dinh_14_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/KHƯƠNG.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/KHƯƠNG.jpg",
+    "name_han_nom": "薑"
   },
   {
     "id": "urn_tuyen_dinh_15",
@@ -639,7 +652,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_tuyen_dinh_15_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/NỖ.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/NỖ.jpg",
+    "name_han_nom": "利農河"
   },
   {
     "id": "urn_tuyen_dinh_16",
@@ -681,7 +695,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_tuyen_dinh_16_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/LÊ%20THUYỀN.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/LÊ%20THUYỀN.jpg",
+    "name_han_nom": "黎船"
   },
   {
     "id": "urn_tuyen_dinh_17",
@@ -723,7 +738,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_tuyen_dinh_17_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/THỈ.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/THỈ.jpg",
+    "name_han_nom": "天尊山"
   },
   {
     "id": "urn_tuyen_dinh_18",
@@ -765,6 +781,7 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_tuyen_dinh_18_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/NGOAN.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/NGOAN.jpg",
+    "name_han_nom": "黿"
   }
 ]

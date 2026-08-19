@@ -39,7 +39,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_huyen_dinh_01_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/HUYỀN%20ĐỈNH.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/HUYỀN%20ĐỈNH.jpg",
+    "name_han_nom": "艇"
   },
   {
     "id": "urn_huyen_dinh_02",
@@ -81,7 +82,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_huyen_dinh_02_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/NGỮ%20ĐIỆP%20LAN.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/NGỮ%20ĐIỆP%20LAN.jpg",
+    "name_han_nom": "五葉蘭"
   },
   {
     "id": "urn_huyen_dinh_03",
@@ -125,7 +127,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_huyen_dinh_03_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/LỆ%20CHI.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/LỆ%20CHI.jpg",
+    "name_han_nom": "荔枝"
   },
   {
     "id": "urn_huyen_dinh_04",
@@ -167,7 +170,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_huyen_dinh_04_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/TOÁN.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/TOÁN.jpg",
+    "name_han_nom": "蒜"
   },
   {
     "id": "urn_huyen_dinh_05",
@@ -209,7 +213,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_huyen_dinh_05_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/NAM%20SÂM.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/NAM%20SÂM.jpg",
+    "name_han_nom": "南參"
   },
   {
     "id": "urn_huyen_dinh_06",
@@ -251,7 +256,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_huyen_dinh_06_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/MIÊN.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/MIÊN.jpg",
+    "name_han_nom": "棉"
   },
   {
     "id": "urn_huyen_dinh_07",
@@ -293,7 +299,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_huyen_dinh_07_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/THỐC%20THU.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/THỐC%20THU.jpg",
+    "name_han_nom": "虎"
   },
   {
     "id": "urn_huyen_dinh_08",
@@ -335,7 +342,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_huyen_dinh_08_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/HỒNG.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/HỒNG.jpg",
+    "name_han_nom": "葱"
   },
   {
     "id": "urn_huyen_dinh_09",
@@ -379,7 +387,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_huyen_dinh_09_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/HẬU%20GIANG%20-%20TIỀN%20GIANG.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/HẬU%20GIANG%20-%20TIỀN%20GIANG.jpg",
+    "name_han_nom": "鱟"
   },
   {
     "id": "urn_huyen_dinh_10",
@@ -421,7 +430,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_huyen_dinh_10_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/VŨ.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/VŨ.jpg",
+    "name_han_nom": "鸚鵡"
   },
   {
     "id": "urn_huyen_dinh_11",
@@ -465,7 +475,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_huyen_dinh_11_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/HOÀNG%20SƠN.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/HOÀNG%20SƠN.jpg",
+    "name_han_nom": "虎"
   },
   {
     "id": "urn_huyen_dinh_12",
@@ -549,7 +560,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_huyen_dinh_13_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/QUẾ%20ĐỎ.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/QUẾ%20ĐỎ.jpg",
+    "name_han_nom": "桂"
   },
   {
     "id": "urn_huyen_dinh_14",
@@ -591,7 +603,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_huyen_dinh_14_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/XA.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/XA.jpg",
+    "name_han_nom": "輪車礮"
   },
   {
     "id": "urn_huyen_dinh_15",
@@ -633,7 +646,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_huyen_dinh_15_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/MÃNG%20XÀ.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/MÃNG%20XÀ.jpg",
+    "name_han_nom": "馬"
   },
   {
     "id": "urn_huyen_dinh_16",
@@ -675,7 +689,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_huyen_dinh_16_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/HỎA%20PHÚN%20ĐỒNG.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/HỎA%20PHÚN%20ĐỒNG.jpg",
+    "name_han_nom": "虎"
   },
   {
     "id": "urn_huyen_dinh_17",
@@ -717,7 +732,8 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_huyen_dinh_17_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/SƠN%20MÃ.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/SƠN%20MÃ.jpg",
+    "name_han_nom": "馬"
   },
   {
     "id": "urn_huyen_dinh_18",
@@ -759,6 +775,7 @@
       }
     ],
     "3d_mesh_id": "mesh_urn_huyen_dinh_18_v1",
-    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/TẤT%20MỘC.jpg"
+    "thumbnail_url": "/assets/ban-duc-noi/HUYEN%20DINH/TẤT%20MỘC.jpg",
+    "name_han_nom": "漆木"
   }
 ]
