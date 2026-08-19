@@ -24,7 +24,11 @@ from sqlalchemy import create_engine, select, text
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import Session, sessionmaker
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
+REPO_ROOT = (
+    Path(__file__).resolve().parents[2]
+    if "__file__" in globals()
+    else Path("/app")
+)
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
