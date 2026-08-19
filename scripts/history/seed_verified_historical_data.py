@@ -868,10 +868,37 @@ def seed_verified_data(session: Session) -> dict:
             stats["urns_updated"] += 1
     session.commit()
 
-    # 3. Enrich Relief Entities with Hán-Nôm characters
-    print("-> Enriching Relief entities with authentic Hán-Nôm characters...")
+    # 3. Enrich Relief Entities with Hán-Nôm characters & real thumbnail URLs
+    print("-> Enriching Relief entities with authentic Hán-Nôm characters & thumbnail URLs...")
+    # Scan legacy data files to map slug to real thumbnail_url
+    slug_thumb_map = {}
+    data_dir = REPO_ROOT / "data"
+    for p in data_dir.glob("*_Data_*.json"):
+        try:
+            with open(p, "r", encoding="utf-8") as f:
+                items = json.load(f)
+                if isinstance(items, list):
+                    for idx, item in enumerate(items):
+                        leg_id = item.get("id", "")
+                        thumb = item.get("thumbnail_url")
+                        if not thumb:
+                            continue
+                        parts = leg_id.split("_")
+                        if len(parts) == 4 and parts[0] == "urn":
+                            u_slug = f"{parts[1]}-{parts[2]}"
+                            num = int(parts[3])
+                            s_key = u_slug if num == 1 else f"{u_slug}-{num:02d}"
+                            slug_thumb_map[s_key] = thumb
+                        elif len(parts) == 3 and parts[0] == "urn":
+                            s_key = f"{parts[1]}-{parts[2]}"
+                            slug_thumb_map[s_key] = thumb
+        except Exception as e:
+            print(f"Warning reading {p}: {e}")
+
     all_entities = session.execute(select(HistoricalEntity)).scalars().all()
     for ent in all_entities:
+        if ent.slug in slug_thumb_map:
+            ent.thumbnail_url = slug_thumb_map[ent.slug]
         if ent.entity_type == "relief":
             stripped_name = strip_accents(ent.name_vi)
             for k, han in HAN_NOM_MOTIF_MAP.items():

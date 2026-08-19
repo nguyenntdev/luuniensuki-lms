@@ -14,10 +14,8 @@ import {
   Eye,
   FileText,
   Flame,
-  Globe,
   Globe2,
   GraduationCap,
-  Heart,
   History,
   Info,
   Landmark,
@@ -25,30 +23,16 @@ import {
   Library,
   Map as MapIcon,
   MapPin,
-  Maximize2,
-  Medal,
-  Milestone,
   Mountain,
   Network,
   RotateCcw,
   Scale,
   Scroll,
-  ScrollText,
-  Search,
-  Share2,
-  Shield,
   ShieldCheck,
   Sparkles,
-  Star,
   TreePine,
-  Trophy,
-  UserCheck,
   UserRound,
-  Users,
-  Video,
-  Volume2,
   Waves,
-  ZoomIn,
 } from "lucide-react";
 
 import { useAuthStore } from "@/stores/authStore";
@@ -94,8 +78,8 @@ const URN_PROFILES = [
     position: "Trung vị (Chính giữa)",
     weight: "2.603 kg",
     height: "2,50 m",
+    image: "/assets/ban-duc-noi/CAO%20DINH/CAO%20%C4%90%E1%BB%88NH.jpg",
     highlights: ["Rồng (Long)", "Đông Hải (Biển Đông)", "Kênh Vĩnh Tế", "Núi Thiên Tôn", "Trầm Hương"],
-    colorBadge: "from-amber-500/20 to-primary/10",
   },
   {
     slug: "nhan-dinh",
@@ -105,8 +89,8 @@ const URN_PROFILES = [
     position: "Tả nhất (Trái thứ nhất)",
     weight: "2.515 kg",
     height: "2,31 m",
+    image: "/assets/ban-duc-noi/NHAN%20DINH/NH%C3%82N%20%C4%90%E1%BB%88NH.jpg",
     highlights: ["Kỳ Lân", "Nam Hải (Biển Nam)", "Sông Hương", "Núi Ngự Bình", "Cây Ngô Đồng"],
-    colorBadge: "from-emerald-500/20 to-accent/10",
   },
   {
     slug: "chuong-dinh",
@@ -116,8 +100,8 @@ const URN_PROFILES = [
     position: "Hữu nhất (Phải thứ nhất)",
     weight: "2.060 kg",
     height: "2,30 m",
-    highlights: ["Linh Quy", "Tây Hải (Vịnh Thái Lan)", "Sông Gianh", "Núi Kim Phụng", "Mông Đồng Thuyền"],
-    colorBadge: "from-blue-500/20 to-sky-500/10",
+    image: "/assets/ban-duc-noi/CHUONG%20DINH/CH%C6%AF%C6%A0NG%20%C4%90%E1%BB%88NH.jpg",
+    highlights: ["Linh Quy (Rùa thần)", "Tây Hải (Vịnh Thái Lan)", "Sông Gianh", "Núi Kim Phụng", "Mông Đồng Thuyền"],
   },
   {
     slug: "anh-dinh",
@@ -127,8 +111,8 @@ const URN_PROFILES = [
     position: "Tả nhị (Trái thứ hai)",
     weight: "2.595 kg",
     height: "2,31 m",
+    image: "/assets/ban-duc-noi/ANH%20DINH/ANH%20%C4%90%E1%BB%88NH.jpg",
     highlights: ["Nghê thần", "Sao Bắc Đẩu", "Sông Mã", "Sông Lô", "Núi Hồng Lĩnh"],
-    colorBadge: "from-purple-500/20 to-indigo-500/10",
   },
   {
     slug: "nghi-dinh",
@@ -138,8 +122,8 @@ const URN_PROFILES = [
     position: "Hữu nhị (Phải thứ hai)",
     weight: "2.593 kg",
     height: "2,31 m",
+    image: "/assets/ban-duc-noi/NGHI%20DINH/NGHI%20DINH.jpg",
     highlights: ["Voi (Tượng)", "Bạch Đằng Giang", "Cửa Thuận An", "Quảng Bình Quan", "Gỗ Đàn Mộc"],
-    colorBadge: "from-rose-500/20 to-red-500/10",
   },
   {
     slug: "thuan-dinh",
@@ -149,8 +133,8 @@ const URN_PROFILES = [
     position: "Tả tam (Trái thứ ba)",
     weight: "2.383 kg",
     height: "2,32 m",
+    image: "/assets/ban-duc-noi/THUAN%20DINH/THU%E1%BA%A6N%20%C4%90%E1%BB%88NH.jpg",
     highlights: ["Lý Ngưu (Trâu rừng)", "Sông Thạch Hãn", "Cửa Cần Giờ", "Núi Tản Viên", "Cá Leo Núi"],
-    colorBadge: "from-orange-500/20 to-amber-500/10",
   },
   {
     slug: "tuyen-dinh",
@@ -160,8 +144,8 @@ const URN_PROFILES = [
     position: "Hữu tam (Phải thứ ba)",
     weight: "2.064 kg",
     height: "2,31 m",
+    image: "/assets/ban-duc-noi/TUYEN%20DINH/TUYEN%20DINH.jpg",
     highlights: ["Heo rừng (Thỉ)", "Sông Hồng (Nhĩ Hà)", "Sông Lam", "Mũi Đại Lãnh", "Tổ Yến"],
-    colorBadge: "from-teal-500/20 to-cyan-500/10",
   },
   {
     slug: "du-dinh",
@@ -171,8 +155,8 @@ const URN_PROFILES = [
     position: "Tả tứ (Trái ngoài cùng)",
     weight: "2.016 kg",
     height: "2,34 m",
+    image: "/assets/ban-duc-noi/DU%20DINH/D%E1%BB%A4%20%C4%90%E1%BB%88NH.jpg",
     highlights: ["Dê (Dương)", "Sông Vệ", "Cửa Hàn (Đà Nẵng)", "Đèo Hải Vân", "Cây Tùng"],
-    colorBadge: "from-lime-500/20 to-emerald-500/10",
   },
   {
     slug: "huyen-dinh",
@@ -182,8 +166,8 @@ const URN_PROFILES = [
     position: "Hữu tứ (Phải ngoài cùng)",
     weight: "1.935 kg",
     height: "2,31 m",
+    image: "/assets/ban-duc-noi/HUYEN%20DINH/HUY%E1%BB%80N%20%C4%90%E1%BB%88NH.jpg",
     highlights: ["Trăn gấm (Mãng Xà)", "Tiền Giang & Hậu Giang", "Sông Thao", "Đèo Hoành Sơn", "Hoa Lan"],
-    colorBadge: "from-slate-500/20 to-zinc-500/10",
   },
 ];
 
@@ -195,8 +179,6 @@ const SOLUTION_CARDS = [
     desc: "Tái hiện chính xác 9 đỉnh đồng và 162 họa tiết nổi trong không gian 3D tương tác. Phóng to, xoay 360 độ và dò tìm điểm chạm lịch sử.",
     href: "/urns/cao-dinh",
     cta: "Trải nghiệm 3D",
-    gradient: "from-amber-500/15 via-primary/5 to-transparent",
-    accentColor: "text-amber-500",
   },
   {
     step: "02",
@@ -205,8 +187,6 @@ const SOLUTION_CARDS = [
     desc: "Tọa độ vệ tinh WGS84 cho toàn bộ danh sơn, đại giang, hải khẩu và ba vùng biển Đông Hải, Nam Hải, Tây Hải được khắc trên đỉnh.",
     href: "/map",
     cta: "Mở bản đồ di sản",
-    gradient: "from-emerald-500/15 via-accent/5 to-transparent",
-    accentColor: "text-emerald-500",
   },
   {
     step: "03",
@@ -215,8 +195,6 @@ const SOLUTION_CARDS = [
     desc: "Hệ thống AI đối chiếu ngữ liệu thời gian thực, tuyệt đối không bịa đặt nguồn, trích dẫn chuẩn xác theo Đại Nam Thực Lục và Hội Điển.",
     href: "/ai",
     cta: "Hỏi đáp cùng Cô giáo AI",
-    gradient: "from-blue-500/15 via-sky-500/5 to-transparent",
-    accentColor: "text-blue-500",
   },
   {
     step: "04",
@@ -225,8 +203,6 @@ const SOLUTION_CARDS = [
     desc: "Trắc nghiệm di sản thông minh, lộ trình tích lũy điểm kinh nghiệm (XP), bảng vàng xếp hạng và chứng chỉ hoàn thành học phần.",
     href: "/practice",
     cta: "Vào luyện tập ngay",
-    gradient: "from-purple-500/15 via-indigo-500/5 to-transparent",
-    accentColor: "text-purple-500",
   },
 ];
 
@@ -352,7 +328,7 @@ export default function HomePage() {
       {/* ========================================================================= */}
       {/* 1. CINEMATIC HERO SECTION                                                 */}
       {/* ========================================================================= */}
-      <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden py-16 md:py-24">
+      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden py-16 md:py-24">
         {/* Imperial Gold Ambient Glow Background */}
         <div
           aria-hidden="true"
@@ -360,7 +336,7 @@ export default function HomePage() {
         />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-primary/15 blur-[140px] opacity-70"
+          className="pointer-events-none absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[750px] h-[750px] rounded-full bg-primary/15 blur-[140px] opacity-70"
         />
         <div
           aria-hidden="true"
@@ -462,33 +438,30 @@ export default function HomePage() {
       ) : null}
 
       {/* ========================================================================= */}
-      {/* 2. PROBLEM & CONTEXT SECTION (From luuniensuki.pages.dev inspiration)     */}
+      {/* 2. PROBLEM & CONTEXT SECTION — With Real Antique Engraving Photo          */}
       {/* ========================================================================= */}
       <section className="relative py-20 md:py-28 overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            {/* Left Column: Imperial Arched Frame */}
+            {/* Left Column: Imperial Arched Frame with Real Photograph */}
             <div className="relative flex justify-center">
               <div className="relative max-w-md w-full">
                 {/* Rotating decorative gold rings */}
                 <div className="absolute -inset-4 border border-primary/30 rounded-t-full rounded-b-2xl transform rotate-1 scale-[1.02] pointer-events-none" />
                 <div className="absolute -inset-4 border border-primary/15 rounded-t-full rounded-b-2xl transform -rotate-1 scale-[1.04] pointer-events-none" />
 
-                <div className="relative rounded-t-full rounded-b-2xl overflow-hidden shadow-2xl border border-primary/30 aspect-[3/4] bg-card group">
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-black/30 to-transparent z-10 opacity-90" />
-                  
-                  {/* Decorative engraving silhouette backdrop */}
-                  <div className="flex h-full w-full items-center justify-center p-8 text-center bg-secondary/40">
-                    <div className="flex flex-col items-center gap-4">
-                      <span className="font-serif text-7xl font-bold text-gradient-gold glow-gold">Cửu Đỉnh</span>
-                      <p className="font-serif text-lg italic text-bronze-accent max-w-xs">
-                        Pho bách khoa toàn thư bằng đồng của giang sơn Đại Nam
-                      </p>
-                    </div>
-                  </div>
+                <div className="relative rounded-t-full rounded-b-2xl overflow-hidden shadow-2xl border border-primary/40 aspect-[3/4] bg-card group">
+                  {/* REAL PHOTOGRAPH of Cao Dinh Bronze Relief */}
+                  <img
+                    src="/assets/ban-duc-noi/CAO%20DINH/CAO%20%C4%90%E1%BB%88NH.jpg"
+                    alt="Hiện vật Cao Đỉnh tại sân Thế Miếu"
+                    className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/30 to-transparent z-10" />
 
                   {/* Floating Museum Caption Card */}
-                  <div className="absolute bottom-6 left-6 right-6 p-5 bg-background/85 backdrop-blur-md border border-primary/30 rounded-2xl z-20">
+                  <div className="absolute bottom-6 left-6 right-6 p-5 bg-background/90 backdrop-blur-md border border-primary/30 rounded-2xl z-20 shadow-xl">
                     <div className="flex items-start gap-3.5">
                       <Scroll className="w-6 h-6 text-primary shrink-0 mt-0.5" />
                       <div>
@@ -588,7 +561,7 @@ export default function HomePage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 4. THE NINE DYNASTIC URNS MASTER SECTION                                 */}
+      {/* 4. THE NINE DYNASTIC URNS MASTER SECTION — With Real Urn Photos           */}
       {/* ========================================================================= */}
       <section className="relative py-20 md:py-28 overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
@@ -611,7 +584,7 @@ export default function HomePage() {
             </Link>
           </div>
 
-          {/* Urn Selector Tabs */}
+          {/* Urn Selector Tabs with Thumbnail Preview */}
           <div className="grid grid-cols-3 sm:grid-cols-9 gap-2 mb-8">
             {URN_PROFILES.map((urn) => {
               const isSelected = urn.slug === selectedUrnSlug;
@@ -621,25 +594,33 @@ export default function HomePage() {
                   type="button"
                   onClick={() => setSelectedUrnSlug(urn.slug)}
                   className={cn(
-                    "flex flex-col items-center gap-1.5 p-3 rounded-xl border transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary",
+                    "group relative flex flex-col items-center gap-1.5 p-2.5 rounded-xl border transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary overflow-hidden",
                     isSelected
-                      ? "border-primary bg-primary/15 text-primary shadow-md shadow-primary/20 scale-105"
-                      : "border-border/70 bg-card/50 text-muted-foreground hover:border-primary/40 hover:bg-secondary hover:text-foreground",
+                      ? "border-primary bg-primary/20 text-primary shadow-md shadow-primary/25 scale-105 ring-2 ring-primary/40"
+                      : "border-border/70 bg-card/60 text-muted-foreground hover:border-primary/40 hover:bg-secondary hover:text-foreground",
                   )}
                 >
-                  <span className="font-serif text-2xl font-bold">{urn.hanNom}</span>
-                  <span className="text-xs font-semibold">{urn.nameVi.split(" ")[0]}</span>
+                  <div className="relative w-8 h-8 rounded-lg overflow-hidden border border-border/80">
+                    <img
+                      src={urn.image}
+                      alt={urn.nameVi}
+                      className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
+                      loading="lazy"
+                    />
+                  </div>
+                  <span className="font-serif text-base font-bold">{urn.hanNom}</span>
+                  <span className="text-[11px] font-semibold truncate w-full text-center">{urn.nameVi.split(" ")[0]}</span>
                 </button>
               );
             })}
           </div>
 
-          {/* Spotlight Detailed Card for Selected Urn */}
+          {/* Spotlight Detailed Card for Selected Urn with Real Photo */}
           <div className="heritage-surface rounded-2xl border border-border/80 p-6 sm:p-8 md:p-10 shadow-2xl backdrop-blur-xl">
             <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-8 items-center">
               <div>
                 <div className="flex items-center gap-3 mb-4">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/15 font-serif text-xl font-bold text-primary ring-1 ring-primary/30">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/15 font-serif text-2xl font-bold text-primary ring-1 ring-primary/40 shadow-sm">
                     {activeUrn.hanNom}
                   </span>
                   <div>
@@ -696,16 +677,24 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Urn Visual Art Panel */}
-              <div className="relative flex aspect-[4/3] flex-col items-center justify-center rounded-2xl border border-border/80 bg-gradient-to-br from-secondary/60 via-card/70 to-background p-8 text-center shadow-inner">
-                <div className="font-serif text-6xl md:text-8xl font-black text-gradient-gold glow-gold mb-3">
-                  {activeUrn.hanNom}
-                </div>
-                <div className="font-serif text-xl font-bold text-foreground mb-1">{activeUrn.nameVi}</div>
-                <p className="text-xs text-muted-foreground max-w-xs">{activeUrn.emperor}</p>
-                <div className="mt-4 inline-flex items-center gap-1.5 text-[11px] font-semibold text-primary bg-primary/10 px-3 py-1 rounded-full">
-                  <Boxes className="w-3 h-3" />
-                  18 hình khắc nổi bằng đồng tinh xảo
+              {/* Urn Real Photograph Panel */}
+              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-primary/30 shadow-2xl group bg-black">
+                <img
+                  src={activeUrn.image}
+                  alt={activeUrn.nameVi}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
+
+                <div className="absolute bottom-4 left-4 right-4 z-20 flex items-center justify-between">
+                  <div>
+                    <span className="font-serif text-2xl font-bold text-white drop-shadow">{activeUrn.nameVi}</span>
+                    <p className="text-xs text-white/80">{activeUrn.emperor}</p>
+                  </div>
+                  <span className="bg-primary/90 text-primary-foreground text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm">
+                    18 Hình Đúc
+                  </span>
                 </div>
               </div>
             </div>
@@ -714,7 +703,7 @@ export default function HomePage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 5. ATLAS 162 MOTIF SPECTRUM                                               */}
+      {/* 5. ATLAS 162 MOTIF SPECTRUM — With Real Relief Photographs                */}
       {/* ========================================================================= */}
       <section className="relative py-20 md:py-28 overflow-hidden bg-secondary/20 border-y border-border/60">
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
@@ -761,7 +750,7 @@ export default function HomePage() {
             })}
           </div>
 
-          {/* Reliefs Cards Showcase */}
+          {/* Reliefs Cards Showcase with Real Photos */}
           {loading ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
               {[...Array(12)].map((_, i) => (
@@ -780,6 +769,8 @@ export default function HomePage() {
                 const num = reliefNumberFromSlug(relief.slug);
                 const hanNom = relief.name_han_nom || relief.han_nom;
                 const thumb = relief.thumbnail_url;
+                const urnProfile = URN_PROFILES.find((u) => u.slug === urnSlug);
+                const fallbackImg = urnProfile?.image || "/assets/ban-duc-noi/CAO%20DINH/CAO%20%C4%90%E1%BB%88NH.jpg";
 
                 return (
                   <Link
@@ -787,37 +778,31 @@ export default function HomePage() {
                     href={`/atlas/${urnSlug}/${relief.slug}`}
                     className="focus-card group flex flex-col overflow-hidden rounded-2xl border border-border/70 bg-card/70 p-3.5 transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/50 hover:shadow-xl focus-visible:ring-2 focus-visible:ring-primary"
                   >
-                    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-secondary/50 mb-3">
-                      {thumb ? (
-                        <img
-                          src={thumb}
-                          alt={name}
-                          loading="lazy"
-                          decoding="async"
-                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                        />
-                      ) : (
-                        <div className="flex h-full w-full flex-col items-center justify-center gap-1 text-muted-foreground p-2">
-                          {hanNom ? (
-                            <span className="font-serif text-3xl font-bold text-bronze-accent transition group-hover:scale-110">
-                              {hanNom}
-                            </span>
-                          ) : (
-                            <span className="font-serif text-xl text-bronze-accent">#{num || "·"}</span>
-                          )}
-                        </div>
-                      )}
+                    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-black mb-3">
+                      <img
+                        src={thumb || fallbackImg}
+                        alt={name}
+                        loading="lazy"
+                        decoding="async"
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        onError={(e) => {
+                          if (e.currentTarget.src !== fallbackImg) {
+                            e.currentTarget.src = fallbackImg;
+                          }
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent z-10" />
 
                       {/* Number Badge */}
                       {num ? (
-                        <span className="absolute left-2 top-2 rounded-md bg-black/70 px-1.5 py-0.5 text-[10px] font-bold text-white backdrop-blur-sm">
+                        <span className="absolute left-2 top-2 z-20 rounded-md bg-black/80 px-1.5 py-0.5 text-[10px] font-bold text-white backdrop-blur-sm">
                           #{num}
                         </span>
                       ) : null}
 
                       {/* Han Nom Glyph Overlay */}
-                      {thumb && hanNom ? (
-                        <span className="absolute bottom-2 right-2 rounded-md bg-background/90 px-1.5 py-0.5 font-serif text-xs font-bold text-primary backdrop-blur-sm shadow-sm">
+                      {hanNom ? (
+                        <span className="absolute bottom-2 right-2 z-20 rounded-md bg-background/90 px-1.5 py-0.5 font-serif text-xs font-bold text-primary backdrop-blur-sm shadow-sm">
                           {hanNom}
                         </span>
                       ) : null}
