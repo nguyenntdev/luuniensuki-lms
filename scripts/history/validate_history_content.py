@@ -103,7 +103,7 @@ def main() -> int:
                         )
 
             # Broken source FK on a binding
-            sources = {s.id for s in db.scalars(select(HistoricalSource.id))}
+            sources = set(db.scalars(select(HistoricalSource.id)))
             for b in bindings:
                 if b.source_id not in sources:
                     errors.append(f"broken source FK on binding claim {b.claim_id}")
