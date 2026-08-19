@@ -808,7 +808,8 @@ def get_quest_summary(
             Quest.is_active.is_(True),
         )
         .order_by(QuestProgress.started_at.desc())
-    ).scalar_one_or_none()
+        .limit(1)
+    ).scalars().first()
 
     quest = None
     progress_entry = None
@@ -1685,7 +1686,8 @@ def get_my_recommendations(
         select(Recommendation)
         .where(Recommendation.user_id == current_user.id)
         .order_by(Recommendation.created_at.desc())
-    ).scalar_one_or_none()
+        .limit(1)
+    ).scalars().first()
 
     if recommendation is None:
         items = _build_rules_recommendations(db, user=current_user)
@@ -1698,8 +1700,8 @@ def get_my_recommendations(
         select(ContentProvenance).where(
             ContentProvenance.content_type == "recommendation",
             ContentProvenance.content_id == recommendation.id,
-        )
-    ).scalar_one_or_none()
+        ).limit(1)
+    ).scalars().first()
 
     return RecommendationOut(
         id=recommendation.id,
