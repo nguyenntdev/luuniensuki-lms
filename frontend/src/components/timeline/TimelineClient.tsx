@@ -128,8 +128,12 @@ export default function TimelineClient({ from, to, entity }: TimelineClientProps
     (async () => {
       let entityObj: HistoryEntity | null = null;
       try {
-        const raw = /^\d+$/.test(entity)
-          ? await getHistoryEntityById(Number(entity))
+        const isUuid =
+          /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+            entity,
+          );
+        const raw = isUuid
+          ? await getHistoryEntityById(entity)
           : await getHistoryEntityBySlug(entity);
         entityObj = (raw as HistoryEntity | null | undefined) || null;
       } catch {

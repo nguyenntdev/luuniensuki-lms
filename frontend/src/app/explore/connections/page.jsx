@@ -70,11 +70,27 @@ function toEntity(value) {
   return value && typeof value === "object" ? value : null;
 }
 
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
 async function resolveEntityRef(ref) {
   const raw = String(ref || "").trim();
   if (!raw) return null;
-  if (/^\d+$/.test(raw)) return toEntity(await getHistoryEntityById(Number(raw)));
-  return toEntity(await getHistoryEntityBySlug(raw));
+  if (UUID_RE.test(raw)) {
+    try {
+      const entity = toEntity(await getHistoryEntityById(raw));
+      if (entity) return entity;
+    } catch {
+      // Fallback to slug search below if UUID fetch fails
+    }
+  }
+  try {
+    const bySlug = toEntity(await getHistoryEntityBySlug(raw));
+    if (bySlug) return bySlug;
+  } catch {
+    // If slug fails and it might be an ID or search term
+  }
+  return null;
 }
 
 // Radial layout: root centered, 1-hop neighbors on an inner ring, 2-hop
