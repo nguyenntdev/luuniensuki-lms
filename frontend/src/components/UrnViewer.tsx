@@ -825,9 +825,6 @@ export default function UrnViewer({
         modelUrl: urnModelUrl,
     });
 
-    const [hovered, setHovered] = useState(false);
-    useCursor(hovered);
-
     const controlsRef = useRef<OrbitControlsImpl>(null);
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -871,13 +868,12 @@ export default function UrnViewer({
         () => (isMobileViewport ? 1.5 : 1),
         [isMobileViewport],
     );
-    const enableShadows = !isLowPowerDevice;
-    const hotspotSegments = isLowPowerDevice ? 12 : 24;
+    const enableShadows = false; // Disabled dynamically for high-fps WebGL rendering across mobile & desktop
+    const hotspotSegments = isLowPowerDevice ? 12 : 20;
     const renderDpr = useMemo(() => {
         if (typeof window === "undefined") return 1;
-        const deviceDpr = window.devicePixelRatio || 1;
         if (isLowPowerDevice) return 1;
-        return Math.min(deviceDpr, 1.5);
+        return Math.min(window.devicePixelRatio || 1, 1.25);
     }, [isLowPowerDevice]);
 
     const [ripples, setRipples] = useState<Ripple[]>([]);
@@ -1022,12 +1018,13 @@ export default function UrnViewer({
         (e: ThreeEvent<PointerEvent>) => {
             const meshName = e?.object?.name;
             const key = meshName ? meshName.toLowerCase() : "";
-            setHovered(
-                Boolean(
-                    meshName &&
-                    (motifsByMesh[meshName] || clickableMeshesLower.has(key)),
-                ),
+            const isClickable = Boolean(
+                meshName &&
+                (motifsByMesh[meshName] || clickableMeshesLower.has(key)),
             );
+            if (typeof document !== "undefined") {
+                document.body.style.cursor = isClickable ? "pointer" : "auto";
+            }
         },
         [clickableMeshesLower, motifsByMesh],
     );

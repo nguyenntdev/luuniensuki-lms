@@ -44,6 +44,7 @@ const TOURS: Tour[] = [
 
 export default function VirtualTours() {
   const [active, setActive] = useState(TOURS[0].key);
+  const [isLoaded, setIsLoaded] = useState(false);
   const tour = TOURS.find((t) => t.key === active) || TOURS[0];
 
   return (
@@ -54,7 +55,10 @@ export default function VirtualTours() {
           <button
             key={t.key}
             type="button"
-            onClick={() => setActive(t.key)}
+            onClick={() => {
+              setActive(t.key);
+              setIsLoaded(false);
+            }}
             className={`inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition ${
               t.key === active
                 ? "border-primary/50 bg-primary/10 text-foreground"
@@ -84,20 +88,36 @@ export default function VirtualTours() {
           </a>
         </div>
 
-        {/* 360 embed (16:9, tall on mobile). If the provider blocks framing,
-            the "Mở tour" button above always works. */}
+        {/* 360 embed with on-demand interactive launcher */}
         <div className="relative w-full overflow-hidden rounded-lg bg-black ring-1 ring-white/10" style={{ aspectRatio: "16 / 9", minHeight: "360px" }}>
-          <iframe
-            key={tour.key}
-            src={tour.url}
-            title={tour.title}
-            className="absolute inset-0 h-full w-full"
-            style={{ border: 0 }}
-            loading="lazy"
-            allow="fullscreen; accelerometer; gyroscope; xr-spatial-tracking"
-            allowFullScreen
-            referrerPolicy="no-referrer-when-downgrade"
-          />
+          {isLoaded ? (
+            <iframe
+              key={tour.key}
+              src={tour.url}
+              title={tour.title}
+              className="absolute inset-0 h-full w-full"
+              style={{ border: 0 }}
+              loading="lazy"
+              allow="fullscreen; accelerometer; gyroscope; xr-spatial-tracking"
+              allowFullScreen
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          ) : (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-card via-background to-secondary p-6 text-center">
+              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/15 text-primary ring-1 ring-primary/30">
+                <MapPin className="h-8 w-8" />
+              </div>
+              <h3 className="font-serif text-xl font-bold text-foreground">{tour.title}</h3>
+              <p className="mt-1 max-w-md text-xs text-muted-foreground">{tour.blurb}</p>
+              <button
+                type="button"
+                onClick={() => setIsLoaded(true)}
+                className="mt-5 inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:scale-105 hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-primary"
+              >
+                <span>Bắt đầu tham quan 360°</span>
+              </button>
+            </div>
+          )}
         </div>
 
         <p className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">

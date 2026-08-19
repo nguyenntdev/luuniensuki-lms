@@ -63,6 +63,22 @@ export const viewport = {
 export default function RootLayout({ children }) {
     return (
         <html lang="vi" className="dark" suppressHydrationWarning>
+            <head>
+                <link
+                    rel="preload"
+                    href="/fonts/playfair-vietnamese.woff2"
+                    as="font"
+                    type="font/woff2"
+                    crossOrigin="anonymous"
+                />
+                <link
+                    rel="preload"
+                    href="/fonts/inter-vietnamese.woff2"
+                    as="font"
+                    type="font/woff2"
+                    crossOrigin="anonymous"
+                />
+            </head>
             <body className="min-h-dvh bg-background text-foreground">
                 <a href="#main-content" className="skip-link">
                     Bỏ qua điều hướng

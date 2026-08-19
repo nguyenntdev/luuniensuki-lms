@@ -3,6 +3,8 @@ const nextConfig = {
     reactStrictMode: true,
     output: "standalone",
     outputFileTracingRoot: __dirname,
+    compress: true,
+    poweredByHeader: false,
     eslint: {
         ignoreDuringBuilds: true,
     },

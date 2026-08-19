@@ -468,11 +468,10 @@
         overflow: hidden;
         border: 1px solid hsl(var(--primary) / 0.14);
         background:
-            linear-gradient(145deg, hsl(var(--card) / 0.9), hsl(var(--secondary) / 0.7)),
+            linear-gradient(145deg, hsl(var(--card) / 0.95), hsl(var(--secondary) / 0.85)),
             radial-gradient(circle at 14% 12%, hsl(var(--primary) / 0.045), transparent 42%);
         box-shadow: var(--shadow-elegant);
-        -webkit-backdrop-filter: blur(8px);
-        backdrop-filter: blur(8px);
+        transform: translateZ(0);
     }
 
     .heritage-surface::before,
@@ -500,19 +499,12 @@
     .heritage-card {
         border-radius: 0.5rem;
         box-shadow: 0 12px 30px -28px hsl(0 0% 0% / 0.86);
+        content-visibility: auto;
+        contain-intrinsic-size: 1px 300px;
     }
 
     .heritage-card::before {
         opacity: 0.28;
-    }
-
-    @media (max-width: 767px) {
-        .heritage-surface,
-        .heritage-hero,
-        .heritage-card {
-            -webkit-backdrop-filter: blur(6px);
-            backdrop-filter: blur(6px);
-        }
     }
 
     .heritage-chip {
