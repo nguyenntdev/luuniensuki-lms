@@ -2624,3 +2624,35 @@ export function listHistoryStories(params: {
 export function getHistoryStory(slug: string): Promise<unknown> {
   return apiRequest(`/api/v1/history/stories/${encodeURIComponent(slug)}`);
 }
+
+export interface HistoryCollectionItem {
+  id?: string | number;
+  slug?: string | null;
+  title_vi?: string | null;
+  title_en?: string | null;
+  description_vi?: string | null;
+  status?: string | null;
+  visibility?: string | null;
+  entity_ids?: string[];
+  source_ids?: string[];
+  story_ids?: string[];
+  question_ids?: string[];
+  published_at?: string | null;
+  [key: string]: unknown;
+}
+
+export function listHistoryCollections(params: {
+  offset?: number;
+  limit?: number;
+} = {}): Promise<unknown> {
+  const q = new URLSearchParams();
+  if (params.offset != null) q.set("offset", String(params.offset));
+  if (params.limit != null) q.set("limit", String(params.limit));
+  const qs = q.toString();
+  return apiRequest(`/api/v1/history/collections${qs ? `?${qs}` : ""}`);
+}
+
+export function getHistoryCollection(slug: string): Promise<unknown> {
+  return apiRequest(`/api/v1/history/collections/${encodeURIComponent(slug)}`);
+}
+

@@ -179,6 +179,31 @@ export function asStoryList(payload: unknown): HistoryStory[] {
   return [];
 }
 
+export interface HistoryCollection {
+  id?: string | number;
+  slug?: string | null;
+  title_vi?: string | null;
+  title_en?: string | null;
+  description_vi?: string | null;
+  status?: string | null;
+  visibility?: string | null;
+  entity_ids?: string[];
+  source_ids?: string[];
+  story_ids?: string[];
+  question_ids?: string[];
+  published_at?: string | null;
+  [key: string]: unknown;
+}
+
+export function asCollectionList(payload: unknown): HistoryCollection[] {
+  if (Array.isArray(payload)) return payload as HistoryCollection[];
+  if (payload && typeof payload === "object") {
+    const items = (payload as HistoryListResponse<HistoryCollection>).items;
+    if (Array.isArray(items)) return items;
+  }
+  return [];
+}
+
 export function asRelations(payload: unknown): HistoryRelation[] {
   if (Array.isArray(payload)) return payload as HistoryRelation[];
   if (payload && typeof payload === "object") {
@@ -291,7 +316,7 @@ export const KNOWN_URNS: Array<{ slug: string; nameVi: string }> = [
   { slug: "anh-dinh", nameVi: "Anh Đỉnh" },
   { slug: "nghi-dinh", nameVi: "Nghị Đỉnh" },
   { slug: "thuan-dinh", nameVi: "Thuần Đỉnh" },
-  { slug: "tuyen-dinh", nameVi: "Tuyền Đỉnh" },
+  { slug: "tuyen-dinh", nameVi: "Tuyên Đỉnh" },
   { slug: "du-dinh", nameVi: "Dụ Đỉnh" },
   { slug: "huyen-dinh", nameVi: "Huyền Đỉnh" },
 ];
