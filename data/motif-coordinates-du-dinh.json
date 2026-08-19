@@ -1,0 +1,164 @@
+[
+  {
+    "urn_slug": "du-dinh",
+    "motif_name": "Dụ Đỉnh",
+    "mesh_name": "Dụ Đỉnh",
+    "pos_x": 0.0,
+    "pos_y": 0.5,
+    "pos_z": 1.15,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "du-dinh",
+    "motif_name": "Anh Vũ",
+    "mesh_name": "Anh Vũ",
+    "pos_x": 0.393323,
+    "pos_y": 0.759808,
+    "pos_z": 1.080647,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "du-dinh",
+    "motif_name": "Lê",
+    "mesh_name": "Lê",
+    "pos_x": 0.739206,
+    "pos_y": 0.759808,
+    "pos_z": 0.880951,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "du-dinh",
+    "motif_name": "Phù Lưu",
+    "mesh_name": "Phù Lưu",
+    "pos_x": 0.995929,
+    "pos_y": 0.5,
+    "pos_z": 0.575,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "du-dinh",
+    "motif_name": "Bạch Đầu",
+    "mesh_name": "Bạch Đầu",
+    "pos_x": 1.132529,
+    "pos_y": 0.240192,
+    "pos_z": 0.199695,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "du-dinh",
+    "motif_name": "Thuần Hoa",
+    "mesh_name": "Thuần Hoa",
+    "pos_x": 1.132529,
+    "pos_y": 0.240192,
+    "pos_z": -0.199695,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "du-dinh",
+    "motif_name": "Tùng",
+    "mesh_name": "Tùng",
+    "pos_x": 0.995929,
+    "pos_y": 0.5,
+    "pos_z": -0.575,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "du-dinh",
+    "motif_name": "Hải Vân Quan",
+    "mesh_name": "Hải Vân Quan",
+    "pos_x": 0.739206,
+    "pos_y": 0.759808,
+    "pos_z": -0.880951,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "du-dinh",
+    "motif_name": "Vĩnh Điện Hà",
+    "mesh_name": "Vĩnh Điện Hà",
+    "pos_x": 0.393323,
+    "pos_y": 0.759808,
+    "pos_z": -1.080647,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "du-dinh",
+    "motif_name": "Lôi",
+    "mesh_name": "Lôi",
+    "pos_x": 0.0,
+    "pos_y": 0.5,
+    "pos_z": -1.15,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "du-dinh",
+    "motif_name": "Vệ Giang",
+    "mesh_name": "Vệ Giang",
+    "pos_x": -0.393323,
+    "pos_y": 0.240192,
+    "pos_z": -1.080647,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "du-dinh",
+    "motif_name": "Đà Nẵng Hải Khẩu",
+    "mesh_name": "Đà Nẵng Hải Khẩu",
+    "pos_x": -0.739206,
+    "pos_y": 0.240192,
+    "pos_z": -0.880951,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "du-dinh",
+    "motif_name": "Thạch Thủ Ngư",
+    "mesh_name": "Thạch Thủ Ngư",
+    "pos_x": -0.995929,
+    "pos_y": 0.5,
+    "pos_z": -0.575,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "du-dinh",
+    "motif_name": "Tử Tô",
+    "mesh_name": "Tử Tô",
+    "pos_x": -1.132529,
+    "pos_y": 0.759808,
+    "pos_z": -0.199695,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "du-dinh",
+    "motif_name": "Ô Thuyền",
+    "mesh_name": "Ô Thuyền",
+    "pos_x": -1.132529,
+    "pos_y": 0.759808,
+    "pos_z": 0.199695,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "du-dinh",
+    "motif_name": "Phác Đao",
+    "mesh_name": "Phác Đao",
+    "pos_x": -0.995929,
+    "pos_y": 0.5,
+    "pos_z": 0.575,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "du-dinh",
+    "motif_name": "Cáp",
+    "mesh_name": "Cáp",
+    "pos_x": -0.739206,
+    "pos_y": 0.240192,
+    "pos_z": 0.880951,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "du-dinh",
+    "motif_name": "Dương",
+    "mesh_name": "Dương",
+    "pos_x": -0.393323,
+    "pos_y": 0.240192,
+    "pos_z": 1.080647,
+    "bounding_radius": 0.08
+  }
+]

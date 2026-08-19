@@ -1,0 +1,477 @@
+{
+  "urn_slug": "thuan-dinh",
+  "model_version": 1,
+  "hotspot_version": 1,
+  "lods": {
+    "low": {
+      "url": "/assets/models/THUAN-DINH-v1-512.glb",
+      "fallback_url": "/assets/models/CAO-DINH-v1-512.glb",
+      "sha256": "placeholder-sha256-512",
+      "bytes": 524288
+    },
+    "medium": {
+      "url": "/assets/models/THUAN-DINH-v1-1k.glb",
+      "fallback_url": "/assets/models/CAO-DINH-v1-1k.glb",
+      "sha256": "placeholder-sha256-1k",
+      "bytes": 1048576
+    },
+    "high": {
+      "url": "/assets/models/THUAN-DINH-v1-2k.glb",
+      "fallback_url": "/assets/models/CAO-DINH-v1-2k.glb",
+      "sha256": "placeholder-sha256-2k",
+      "bytes": 2097152
+    }
+  },
+  "hotspots": [
+    {
+      "hotspot_id": "thuan-dinh-thuan-dinh",
+      "urn_slug": "thuan-dinh",
+      "relief_slug": "thuan-dinh",
+      "relief_name": "Thuần Đỉnh",
+      "mesh_name": "Thuần Đỉnh",
+      "pos": [
+        0.0,
+        0.5,
+        1.15
+      ],
+      "camera_position": [
+        0.0,
+        0.7,
+        2.65
+      ],
+      "camera_target": [
+        0.0,
+        0.5,
+        1.15
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "thuan-dinh-dao",
+      "urn_slug": "thuan-dinh",
+      "relief_slug": "dao",
+      "relief_name": "Đào",
+      "mesh_name": "Đào",
+      "pos": [
+        0.3933,
+        0.7598,
+        1.0806
+      ],
+      "camera_position": [
+        0.9064,
+        0.9598,
+        2.4902
+      ],
+      "camera_target": [
+        0.3933,
+        0.7598,
+        1.0806
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "thuan-dinh-suc-sa-mat",
+      "urn_slug": "thuan-dinh",
+      "relief_slug": "suc-sa-mat",
+      "relief_name": "Súc Sa Mật",
+      "mesh_name": "Súc Sa Mật",
+      "pos": [
+        0.7392,
+        0.7598,
+        0.881
+      ],
+      "camera_position": [
+        1.7034,
+        0.9598,
+        2.03
+      ],
+      "camera_target": [
+        0.7392,
+        0.7598,
+        0.881
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "thuan-dinh-huong-nhu",
+      "urn_slug": "thuan-dinh",
+      "relief_slug": "huong-nhu",
+      "relief_name": "Hướng Nhu",
+      "mesh_name": "Hướng Nhu",
+      "pos": [
+        0.9959,
+        0.5,
+        0.575
+      ],
+      "camera_position": [
+        2.295,
+        0.7,
+        1.325
+      ],
+      "camera_target": [
+        0.9959,
+        0.5,
+        0.575
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "thuan-dinh-hoang-dau",
+      "urn_slug": "thuan-dinh",
+      "relief_slug": "hoang-dau",
+      "relief_name": "Hoàng Đậu",
+      "mesh_name": "Hoàng Đậu",
+      "pos": [
+        1.1325,
+        0.2402,
+        0.1997
+      ],
+      "camera_position": [
+        2.6097,
+        0.4402,
+        0.4602
+      ],
+      "camera_target": [
+        1.1325,
+        0.2402,
+        0.1997
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "thuan-dinh-quy-hoa",
+      "urn_slug": "thuan-dinh",
+      "relief_slug": "quy-hoa",
+      "relief_name": "Quỳ Hoa",
+      "mesh_name": "Quỳ Hoa",
+      "pos": [
+        1.1325,
+        0.2402,
+        -0.1997
+      ],
+      "camera_position": [
+        2.6097,
+        0.4402,
+        -0.4602
+      ],
+      "camera_target": [
+        1.1325,
+        0.2402,
+        -0.1997
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "thuan-dinh-hoang-anh",
+      "urn_slug": "thuan-dinh",
+      "relief_slug": "hoang-anh",
+      "relief_name": "Hoàng Anh",
+      "mesh_name": "Hoàng Anh",
+      "pos": [
+        0.9959,
+        0.5,
+        -0.575
+      ],
+      "camera_position": [
+        2.295,
+        0.7,
+        -1.325
+      ],
+      "camera_target": [
+        0.9959,
+        0.5,
+        -0.575
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "thuan-dinh-tan-vien-son",
+      "urn_slug": "thuan-dinh",
+      "relief_slug": "tan-vien-son",
+      "relief_name": "Tản Viên Sơn",
+      "mesh_name": "Tản Viên Sơn",
+      "pos": [
+        0.7392,
+        0.7598,
+        -0.881
+      ],
+      "camera_position": [
+        1.7034,
+        0.9598,
+        -2.03
+      ],
+      "camera_target": [
+        0.7392,
+        0.7598,
+        -0.881
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "thuan-dinh-vinh-dinh-ha",
+      "urn_slug": "thuan-dinh",
+      "relief_slug": "vinh-dinh-ha",
+      "relief_name": "Vĩnh Định Hà",
+      "mesh_name": "Vĩnh Định Hà",
+      "pos": [
+        0.3933,
+        0.7598,
+        -1.0806
+      ],
+      "camera_position": [
+        0.9064,
+        0.9598,
+        -2.4902
+      ],
+      "camera_target": [
+        0.3933,
+        0.7598,
+        -1.0806
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "thuan-dinh-phong",
+      "urn_slug": "thuan-dinh",
+      "relief_slug": "phong",
+      "relief_name": "Phong",
+      "mesh_name": "Phong",
+      "pos": [
+        0.0,
+        0.5,
+        -1.15
+      ],
+      "camera_position": [
+        0.0,
+        0.7,
+        -2.65
+      ],
+      "camera_target": [
+        0.0,
+        0.5,
+        -1.15
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "thuan-dinh-thach-han-giang",
+      "urn_slug": "thuan-dinh",
+      "relief_slug": "thach-han-giang",
+      "relief_name": "Thạch Hãn Giang",
+      "mesh_name": "Thạch Hãn Giang",
+      "pos": [
+        -0.3933,
+        0.2402,
+        -1.0806
+      ],
+      "camera_position": [
+        -0.9064,
+        0.4402,
+        -2.4902
+      ],
+      "camera_target": [
+        -0.3933,
+        0.2402,
+        -1.0806
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "thuan-dinh-can-gio-hai-khau",
+      "urn_slug": "thuan-dinh",
+      "relief_slug": "can-gio-hai-khau",
+      "relief_name": "Cần Giờ Hải Khẩu",
+      "mesh_name": "Cần Giờ Hải Khẩu",
+      "pos": [
+        -0.7392,
+        0.2402,
+        -0.881
+      ],
+      "camera_position": [
+        -1.7034,
+        0.4402,
+        -2.03
+      ],
+      "camera_target": [
+        -0.7392,
+        0.2402,
+        -0.881
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "thuan-dinh-dang-son-ngu",
+      "urn_slug": "thuan-dinh",
+      "relief_slug": "dang-son-ngu",
+      "relief_name": "Đăng Sơn Ngư",
+      "mesh_name": "Đăng Sơn Ngư",
+      "pos": [
+        -0.9959,
+        0.5,
+        -0.575
+      ],
+      "camera_position": [
+        -2.295,
+        0.7,
+        -1.325
+      ],
+      "camera_target": [
+        -0.9959,
+        0.5,
+        -0.575
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "thuan-dinh-bang",
+      "urn_slug": "thuan-dinh",
+      "relief_slug": "bang",
+      "relief_name": "Bạng",
+      "mesh_name": "Bạng",
+      "pos": [
+        -1.1325,
+        0.7598,
+        -0.1997
+      ],
+      "camera_position": [
+        -2.6097,
+        0.9598,
+        -0.4602
+      ],
+      "camera_target": [
+        -1.1325,
+        0.7598,
+        -0.1997
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "thuan-dinh-bai-dao",
+      "urn_slug": "thuan-dinh",
+      "relief_slug": "bai-dao",
+      "relief_name": "Bài Đao",
+      "mesh_name": "Bài Đao",
+      "pos": [
+        -1.1325,
+        0.7598,
+        0.1997
+      ],
+      "camera_position": [
+        -2.6097,
+        0.9598,
+        0.4602
+      ],
+      "camera_target": [
+        -1.1325,
+        0.7598,
+        0.1997
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "thuan-dinh-dinh",
+      "urn_slug": "thuan-dinh",
+      "relief_slug": "dinh",
+      "relief_name": "Đỉnh",
+      "mesh_name": "Đỉnh",
+      "pos": [
+        -0.9959,
+        0.5,
+        0.575
+      ],
+      "camera_position": [
+        -2.295,
+        0.7,
+        1.325
+      ],
+      "camera_target": [
+        -0.9959,
+        0.5,
+        0.575
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "thuan-dinh-nam-moc",
+      "urn_slug": "thuan-dinh",
+      "relief_slug": "nam-moc",
+      "relief_name": "Nam Mộc",
+      "mesh_name": "Nam Mộc",
+      "pos": [
+        -0.7392,
+        0.2402,
+        0.881
+      ],
+      "camera_position": [
+        -1.7034,
+        0.4402,
+        2.03
+      ],
+      "camera_target": [
+        -0.7392,
+        0.2402,
+        0.881
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "thuan-dinh-ly-nguu",
+      "urn_slug": "thuan-dinh",
+      "relief_slug": "ly-nguu",
+      "relief_name": "Ly Ngưu",
+      "mesh_name": "Ly Ngưu",
+      "pos": [
+        -0.3933,
+        0.2402,
+        1.0806
+      ],
+      "camera_position": [
+        -0.9064,
+        0.4402,
+        2.4902
+      ],
+      "camera_target": [
+        -0.3933,
+        0.2402,
+        1.0806
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    }
+  ]
+}

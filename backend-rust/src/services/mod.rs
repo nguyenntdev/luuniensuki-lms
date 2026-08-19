@@ -10,6 +10,7 @@ pub mod coordinate_service;
 pub mod crash_report_service;
 pub mod fsrs_algo;
 pub mod fsrs_service;
+pub mod history_service;
 pub mod leaderboard_service;
 pub mod lesson_service;
 pub mod live_auth;

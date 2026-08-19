@@ -3,8 +3,13 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { Landmark } from "lucide-react";
 
 import { completeLesson, getMotifDetail, logAnalyticsEvent } from "@/lib/api";
+import {
+  reliefSlugFromMeshName,
+  urnSlugFromReliefSlug,
+} from "@/lib/history";
 import { useAuthStore } from "@/stores/authStore";
 import { useMotifStore } from "@/stores/motifStore";
 import ReadingProgress from "@/components/ReadingProgress";
@@ -110,6 +115,17 @@ export default function MotifLessonPage() {
     }
     return `/ai?${params.toString()}`;
   }, [motif?.urn?.slug, motifId]);
+
+  // Cross-link back to the canonical Atlas relief page. Only rendered when the
+  // legacy mesh name reliably parses into a KNOWN_URNS relief slug; position
+  // 01 (the urn self-portrait) is not a relief entity and is skipped.
+  const atlasReliefHref = useMemo(() => {
+    if (!motif?.mesh_name) return null;
+    const slug = reliefSlugFromMeshName(motif.mesh_name);
+    if (!slug) return null;
+    const urn = motif?.urn?.slug || urnSlugFromReliefSlug(slug);
+    return `/atlas/${urn}/${slug}`;
+  }, [motif?.mesh_name, motif?.urn?.slug]);
 
   useEffect(() => {
     let cancelled = false;
@@ -287,6 +303,15 @@ export default function MotifLessonPage() {
                   </div>
 
                   <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                    {atlasReliefHref ? (
+                      <Link
+                        href={atlasReliefHref}
+                        className="inline-flex justify-center items-center gap-2 rounded-lg border border-border bg-card px-5 py-2.5 text-sm font-semibold text-muted-foreground shadow-sm hover:bg-muted hover:text-foreground transition-colors"
+                      >
+                        <Landmark className="h-4 w-4 text-primary" aria-hidden="true" />
+                        Xem trong Atlas
+                      </Link>
+                    ) : null}
                     <Link
                       href={aiHref}
                       className="inline-flex justify-center items-center rounded-lg border border-primary/40 bg-primary/10 px-5 py-2.5 text-sm font-semibold text-primary shadow-sm hover:bg-primary/15 transition-colors"

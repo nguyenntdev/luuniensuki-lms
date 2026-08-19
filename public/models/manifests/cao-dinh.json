@@ -1,0 +1,477 @@
+{
+  "urn_slug": "cao-dinh",
+  "model_version": 1,
+  "hotspot_version": 1,
+  "lods": {
+    "low": {
+      "url": "/assets/models/CAO-DINH-v1-512.glb",
+      "fallback_url": "/assets/models/CAO-DINH-v1-512.glb",
+      "sha256": "placeholder-sha256-512",
+      "bytes": 524288
+    },
+    "medium": {
+      "url": "/assets/models/CAO-DINH-v1-1k.glb",
+      "fallback_url": "/assets/models/CAO-DINH-v1-1k.glb",
+      "sha256": "placeholder-sha256-1k",
+      "bytes": 1048576
+    },
+    "high": {
+      "url": "/assets/models/CAO-DINH-v1-2k.glb",
+      "fallback_url": "/assets/models/CAO-DINH-v1-2k.glb",
+      "sha256": "placeholder-sha256-2k",
+      "bytes": 2097152
+    }
+  },
+  "hotspots": [
+    {
+      "hotspot_id": "cao-dinh-cao-dinh",
+      "urn_slug": "cao-dinh",
+      "relief_slug": "cao-dinh",
+      "relief_name": "Cao Đỉnh",
+      "mesh_name": "Cao Đỉnh",
+      "pos": [
+        0.005,
+        0.6418,
+        1.0899
+      ],
+      "camera_position": [
+        0.0118,
+        0.8418,
+        2.5898
+      ],
+      "camera_target": [
+        0.005,
+        0.6418,
+        1.0899
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "cao-dinh-miet",
+      "urn_slug": "cao-dinh",
+      "relief_slug": "miet",
+      "relief_name": "Miết",
+      "mesh_name": "Miết",
+      "pos": [
+        0.5445,
+        0.3029,
+        0.8953
+      ],
+      "camera_position": [
+        1.3238,
+        0.5029,
+        2.1769
+      ],
+      "camera_target": [
+        0.5445,
+        0.3029,
+        0.8953
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "cao-dinh-thien-ton-son",
+      "urn_slug": "cao-dinh",
+      "relief_slug": "thien-ton-son",
+      "relief_name": "Thiên Tôn sơn",
+      "mesh_name": "Thiên Tôn sơn",
+      "pos": [
+        1.0345,
+        0.5562,
+        0.5341
+      ],
+      "camera_position": [
+        2.3674,
+        0.7562,
+        1.2222
+      ],
+      "camera_target": [
+        1.0345,
+        0.5562,
+        0.5341
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "cao-dinh-tu-vi-hoa",
+      "urn_slug": "cao-dinh",
+      "relief_slug": "tu-vi-hoa",
+      "relief_name": "Tử vi hoa",
+      "mesh_name": "Tử vi hoa",
+      "pos": [
+        1.1539,
+        0.776,
+        -0.063
+      ],
+      "camera_position": [
+        2.6517,
+        0.976,
+        -0.1447
+      ],
+      "camera_target": [
+        1.1539,
+        0.776,
+        -0.063
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "cao-dinh-tram-huong",
+      "urn_slug": "cao-dinh",
+      "relief_slug": "tram-huong",
+      "relief_name": "Trầm hương",
+      "mesh_name": "Trầm hương",
+      "pos": [
+        1.076,
+        0.2316,
+        -0.0074
+      ],
+      "camera_position": [
+        2.5759,
+        0.4316,
+        -0.0176
+      ],
+      "camera_target": [
+        1.076,
+        0.2316,
+        -0.0074
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "cao-dinh-nguu-chu-giang",
+      "urn_slug": "cao-dinh",
+      "relief_slug": "nguu-chu-giang",
+      "relief_name": "Ngưu Chữ giang",
+      "mesh_name": "Ngưu Chữ giang",
+      "pos": [
+        1.0297,
+        0.4388,
+        -0.6507
+      ],
+      "camera_position": [
+        2.2977,
+        0.6388,
+        -1.4521
+      ],
+      "camera_target": [
+        1.0297,
+        0.4388,
+        -0.6507
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "cao-dinh-thong",
+      "urn_slug": "cao-dinh",
+      "relief_slug": "thong",
+      "relief_name": "Thông",
+      "mesh_name": "Thông",
+      "pos": [
+        0.5824,
+        0.7175,
+        -1.0447
+      ],
+      "camera_position": [
+        1.3128,
+        0.9175,
+        -2.3549
+      ],
+      "camera_target": [
+        0.5824,
+        0.7175,
+        -1.0447
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "cao-dinh-nhat",
+      "urn_slug": "cao-dinh",
+      "relief_slug": "nhat",
+      "relief_name": "Nhật",
+      "mesh_name": "Nhật",
+      "pos": [
+        0.0567,
+        0.3682,
+        -1.2227
+      ],
+      "camera_position": [
+        0.1263,
+        0.5682,
+        -2.7211
+      ],
+      "camera_target": [
+        0.0567,
+        0.3682,
+        -1.2227
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "cao-dinh-dai-bac",
+      "urn_slug": "cao-dinh",
+      "relief_slug": "dai-bac",
+      "relief_name": "Đại bác",
+      "mesh_name": "Đại bác",
+      "pos": [
+        0.5684,
+        0.1229,
+        -0.9489
+      ],
+      "camera_position": [
+        1.3393,
+        0.3229,
+        -2.2357
+      ],
+      "camera_target": [
+        0.5684,
+        0.1229,
+        -0.9489
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "cao-dinh-tri",
+      "urn_slug": "cao-dinh",
+      "relief_slug": "tri",
+      "relief_name": "Trĩ",
+      "mesh_name": "Trĩ",
+      "pos": [
+        0.5879,
+        0.8678,
+        0.8783
+      ],
+      "camera_position": [
+        1.4223,
+        1.0678,
+        2.1249
+      ],
+      "camera_target": [
+        0.5879,
+        0.8678,
+        0.8783
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "cao-dinh-canh",
+      "urn_slug": "cao-dinh",
+      "relief_slug": "canh",
+      "relief_name": "Canh",
+      "mesh_name": "Canh",
+      "pos": [
+        -0.5279,
+        0.7038,
+        -1.0491
+      ],
+      "camera_position": [
+        -1.2021,
+        0.9038,
+        -2.389
+      ],
+      "camera_target": [
+        -0.5279,
+        0.7038,
+        -1.0491
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "cao-dinh-da-tac-thuyen",
+      "urn_slug": "cao-dinh",
+      "relief_slug": "da-tac-thuyen",
+      "relief_name": "Đa tác thuyền",
+      "mesh_name": "Đa tác thuyền",
+      "pos": [
+        -0.4832,
+        0.1122,
+        -0.9621
+      ],
+      "camera_position": [
+        -1.1564,
+        0.3122,
+        -2.3025
+      ],
+      "camera_target": [
+        -0.4832,
+        0.1122,
+        -0.9621
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "cao-dinh-vinh-te-ha",
+      "urn_slug": "cao-dinh",
+      "relief_slug": "vinh-te-ha",
+      "relief_name": "Vĩnh Tế hà",
+      "mesh_name": "Vĩnh Tế hà",
+      "pos": [
+        -0.9806,
+        0.4398,
+        -0.6356
+      ],
+      "camera_position": [
+        -2.2392,
+        0.6398,
+        -1.4515
+      ],
+      "camera_target": [
+        -0.9806,
+        0.4398,
+        -0.6356
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "cao-dinh-ba-la-mat",
+      "urn_slug": "cao-dinh",
+      "relief_slug": "ba-la-mat",
+      "relief_name": "Ba la mật",
+      "mesh_name": "Ba la mật",
+      "pos": [
+        -1.0882,
+        0.7936,
+        -0.0859
+      ],
+      "camera_position": [
+        -2.5836,
+        0.9936,
+        -0.2039
+      ],
+      "camera_target": [
+        -1.0882,
+        0.7936,
+        -0.0859
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "cao-dinh-ho",
+      "urn_slug": "cao-dinh",
+      "relief_slug": "ho",
+      "relief_name": "Hổ",
+      "mesh_name": "Hổ",
+      "pos": [
+        -1.0229,
+        0.197,
+        -0.0574
+      ],
+      "camera_position": [
+        -2.5206,
+        0.397,
+        -0.1414
+      ],
+      "camera_target": [
+        -1.0229,
+        0.197,
+        -0.0574
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "cao-dinh-dong-hai",
+      "urn_slug": "cao-dinh",
+      "relief_slug": "dong-hai",
+      "relief_name": "Đông Hải",
+      "mesh_name": "Đông Hải",
+      "pos": [
+        -0.9805,
+        0.5331,
+        0.5275
+      ],
+      "camera_position": [
+        -2.3015,
+        0.7331,
+        1.2382
+      ],
+      "camera_target": [
+        -0.9805,
+        0.5331,
+        0.5275
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "cao-dinh-long",
+      "urn_slug": "cao-dinh",
+      "relief_slug": "long",
+      "relief_name": "Long",
+      "mesh_name": "Long",
+      "pos": [
+        -0.5001,
+        0.9047,
+        0.8732
+      ],
+      "camera_position": [
+        -1.2455,
+        1.1047,
+        2.1749
+      ],
+      "camera_target": [
+        -0.5001,
+        0.9047,
+        0.8732
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "cao-dinh-thiet-moc",
+      "urn_slug": "cao-dinh",
+      "relief_slug": "thiet-moc",
+      "relief_name": "Thiết mộc",
+      "mesh_name": "Thiết mộc",
+      "pos": [
+        -0.5055,
+        0.2923,
+        0.8725
+      ],
+      "camera_position": [
+        -1.2576,
+        0.4923,
+        2.1704
+      ],
+      "camera_target": [
+        -0.5055,
+        0.2923,
+        0.8725
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    }
+  ]
+}

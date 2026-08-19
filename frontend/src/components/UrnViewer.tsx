@@ -22,6 +22,7 @@ import {
 import * as THREE from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import Link from "next/link";
+import UrnAccessibleFallback from "./UrnAccessibleFallback";
 
 import {
     selectMotifListSorted,
@@ -63,6 +64,7 @@ interface RewardSnapshot {
 
 interface WebGLErrorBoundaryProps {
     children?: ReactNode;
+    urnSlug?: string;
 }
 
 interface WebGLErrorBoundaryState {
@@ -181,33 +183,8 @@ class WebGLErrorBoundary extends Component<
     render() {
         if (this.state.hasError) {
             return (
-                <div className="absolute inset-0 flex items-center justify-center bg-background">
-                    <div className="max-w-md p-8 text-center">
-                        <div className="mb-4 text-6xl">⚠️</div>
-                        <h2 className="mb-4 text-xl font-display font-bold text-foreground">
-                            WebGL Không Khả Dụng
-                        </h2>
-                        <p className="mb-6 text-sm text-muted-foreground">
-                            Trình duyệt của bạn không hỗ trợ WebGL hoặc WebGL đã
-                            bị tắt. Vui lòng bật WebGL trong cài đặt trình duyệt
-                            hoặc sử dụng trình duyệt khác (Chrome, Firefox,
-                            Edge) để xem mô hình 3D.
-                        </p>
-                        <div className="space-y-2">
-                            <Link
-                                href="/explore"
-                                className="block w-full py-2 px-4 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors"
-                            >
-                                Quay Lại Khám Phá
-                            </Link>
-                            <Link
-                                href="/collection"
-                                className="block w-full py-2 px-4 bg-muted text-foreground rounded-lg text-sm font-medium hover:bg-muted/80 transition-colors"
-                            >
-                                Xem bộ sưu tập
-                            </Link>
-                        </div>
-                    </div>
+                <div className="absolute inset-0 overflow-y-auto p-4 md:p-8 bg-background">
+                    <UrnAccessibleFallback urnSlug={this.props.urnSlug} />
                 </div>
             );
         }
@@ -1156,41 +1133,14 @@ export default function UrnViewer({
     // Fallback UI when WebGL fails
     if (webglFailed) {
         return (
-            <div className={className}>
-                <div className="absolute inset-0 flex items-center justify-center bg-background">
-                    <div className="max-w-md p-8 text-center">
-                        <div className="mb-4 text-6xl">⚠️</div>
-                        <h2 className="mb-4 text-xl font-display font-bold text-foreground">
-                            WebGL Không Khả Dụng
-                        </h2>
-                        <p className="mb-6 text-sm text-muted-foreground">
-                            Trình duyệt của bạn không hỗ trợ WebGL hoặc WebGL đã
-                            bị tắt. Vui lòng bật WebGL trong cài đặt trình duyệt
-                            hoặc sử dụng trình duyệt khác (Chrome, Firefox,
-                            Edge) để xem mô hình 3D.
-                        </p>
-                        <div className="space-y-2">
-                            <Link
-                                href="/explore"
-                                className="block w-full py-2 px-4 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors"
-                            >
-                                Quay Lại Khám Phá
-                            </Link>
-                            <Link
-                                href="/collection"
-                                className="block w-full py-2 px-4 bg-muted text-foreground rounded-lg text-sm font-medium hover:bg-muted/80 transition-colors"
-                            >
-                                Xem bộ sưu tập
-                            </Link>
-                        </div>
-                    </div>
-                </div>
+            <div className={`relative h-full w-full overflow-y-auto p-4 md:p-8 bg-background ${className}`}>
+                <UrnAccessibleFallback urnSlug={urnSlug} />
             </div>
         );
     }
 
     return (
-        <WebGLErrorBoundary>
+        <WebGLErrorBoundary urnSlug={urnSlug}>
             <div
                 ref={containerRef}
                 className={`relative h-full w-full ${className}`}

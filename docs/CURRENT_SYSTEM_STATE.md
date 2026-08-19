@@ -1,146 +1,142 @@
 # CURRENT SYSTEM STATE — Lưu Niên Sử Kí LMS
 
-Audit date: 2026-08-17. This document is the runtime-truth ledger for the History-First rebuild (REPO-001). Code/config/tests/migrations are truth; prose docs are claims to verify.
+**Audit Date:** 2026-08-19  
+**Specification Reference:** REPO-001 (`docs/specs/HISTORY_FIRST_MASTER_SPEC.md`)  
+**Audited Commit HEAD:** `6ebb285791b8f7ef9ac965aadf23f006ca074920`  
+**Default Branch:** `main`
 
-## Repo & branch
+This document serves as the authoritative runtime-truth ledger for the History-First rebuild. Code, configuration, migrations, and tests represent system truth; prose documentation represents claims to be audited.
 
-- Default branch: `main`. Audited HEAD: `cd637b5` (2026-08-17, pushed to GitHub).
-- Canonical remote: `https://github.com/nguyenntdev/luuniensuki-lms.git`.
-- Production server: `/opt/luuniensuki-lms` is a git checkout synced to `origin/main`.
-- Note: the initial local working copy (`luuniensuki-lms-snapshot-backup`) was a stale non-git snapshot; work moved to a git clone (see DEC-0001).
+---
 
-## Service inventory
+## 1. Services Inventory
 
-| Service | Dir | Port | Role |
-|---------|-----|------|------|
-| Nginx | — | 80/443 | Reverse proxy, static assets |
-| Next.js web | `frontend/` | 3000 | Client UI (App Router, mixed JS/TSX) |
-| Rust API gateway | `backend-rust/` | 8001 | Native Axum routes + gateway proxy |
-| FastAPI (legacy) | `backend/` | 8000 | Fallback origin for un-migrated routes |
-| AI teacher worker | `services/ai_teacher_agent/` | — | Background worker for live AI teacher |
-| LiveKit | — | 7881 | Live learning audio/video |
-| Janus gateway | `janus/` | 7088/8188 | Alternate WebRTC gateway |
-| PostgreSQL 15 | — | 5432 | Primary DB |
+| Service | Directory / Location | Port | Role & Tech Stack |
+|---|---|---|---|
+| **Frontend** | `frontend/` | 3000 | Client UI built with Next.js 15 (App Router, mixed TSX/JS, React 19/R3F) |
+| **Rust Gateway** | `backend-rust/` | 8001 | High-performance Axum API gateway & native route execution engine |
+| **Python Backend** | `backend/` | 8000 | FastAPI application package providing business logic fallback & legacy services |
+| **AI Worker** | `services/ai_teacher_agent/` | - | Standalone background worker process for live AI teacher interactions (`realtime_worker.py`) |
+| **LiveKit** | Docker compose service | 7881 | Live WebRTC audio/video learning service |
+| **Janus Gateway** | `janus/` | 7088/8188 | WebRTC gateway alternative for live room signaling & audio bridges |
+| **PostgreSQL** | Docker compose service | 5432 | Primary relational database (PostgreSQL 15) |
+| **Nginx** | Docker compose service | 80/443 | Reverse proxy & static asset web server |
 
-Request flow: Browser → Nginx → Next.js (:3000) → Rust gateway (:8001) → native route OR proxy to FastAPI (:8000) → PostgreSQL.
+**Request Flow Topology:**  
+`Browser Client → Nginx (80/443) → Next.js (3000) → Rust Gateway (8001) → [Native Axum Route OR Fallback Proxy] → Python FastAPI (8000) → PostgreSQL 15`
 
-## Rust API route inventory
+---
 
-- `backend-rust/docs/route-inventory.json` lists **291 routes** (admin 77, misc 116, lessons 22, classrooms 20, users 20, etc.).
-- **Route dispatch is config-driven and hot-reloadable** via `config/route-modes.toml` (`Dispatcher` in `src/dispatcher.rs`). Default for unlisted routes: **`unknown_routes = "native"`** — all registered Axum handlers serve natively; unregistered routes fall through to `gateway::fallback_to_python`.
-- Routes pinned to `gateway` in `route-modes.toml`: Live AI teacher (`/api/v1/live/*`), AI tutor (`/api/v1/ai-tutor/*`), live demo-enter — proxied to Python.
-- **Stale doc note:** the `"status"` field inside `route-inventory.json` is **not** a live native/gateway indicator (all currently read `"gateway"`); the actual serving mode is decided by `Dispatcher` + `route-modes.toml` + which Axum handlers are registered in `main.rs` (`build_router`). The route-inventory is used for coverage assertion (`inventory::assert_full_coverage`) and the `/api/v1/internal/route-coverage` endpoint.
-- Native modules (`backend-rust/src/routes/`): health, auth, users, content, badges, lessons, quizzes, progress, quests, classrooms, leaderboard, notifications, sessions, crash_reports, admin, admin_render, streak_* (admin/comeback/friend/repair), fsrs/reviews, timeline, trails, live, misc, metrics.
-- Background jobs: streak rollover, friend streak, trail reminder, trail certificate retry (`src/jobs/`).
-- Cargo deps are exact-pinned (`=`); release profile tuned for low-memory build host (`codegen-units=1`, `lto="thin"`). Build budget documented in `backend-rust/docs/build-budget.md` (CI-enforced parity).
-- Server toolchain quirk: system cargo is 1.75 (too old for lockfile v4); use `/root/.cargo/bin/cargo` (rustup 1.95).
+## 2. Python Services & Routers (`backend/`)
 
-## Python backend responsibilities
+- **Architecture:** `backend/` is the canonical Python backend package run via `uvicorn backend.main:app` using `create_app()` from `backend/app.py`.
+- **Domain Routers (11 main domain router groups in `backend/routers/`):**
+  - `auth.py`: Authentication, registration, token refresh, password management, guest preview
+  - `users.py`: User profile, preferences, daily goals, learning path
+  - `content.py`: Lessons, quiz questions, ratings, tags, content versioning
+  - `gamification.py`: XP, streaks, hearts, leaderboards, leagues, badges, quests
+  - `classrooms.py`: Teacher classroom management, student rosters, assignments
+  - `live.py`: Live sessions, Janus/LiveKit room signaling, VAD, voice configuration
+  - `admin.py`: Content moderation, audit logs, feature flags, experiments, abuse reports
+  - `ai.py` / `history_tutor.py`: AI tutor, RAG embeddings, feedback, history tutor
+  - `history_stories.py` / `history_collections.py` / `history_learning.py` / `history.py`: History-first entities, claims, sources, stories, collections
+  - `social.py`: User sharing, activity feeds, social interactions
+  - `misc.py`: Health checks, app versions, static asset metadata
+- **Services Inventory (50 domain service modules in `backend/services/`):**
+  - Live AI & Voice: `live_ai_teacher`, `live_audio_bridge`, `live_cancel`, `live_circuit_breaker`, `live_crypto`, `live_observability`, `live_rate_limits`, `live_realtime`, `live_session_reporting`, `live_sessions`, `live_stt_stream`, `live_tts_chunk`, `live_turn`, `live_vad`, `live_voice`
+  - History & Governance: `history_governance`, `history_learning`, `history_stories`, `history_collections`, `history_tutor`
+  - Learning & Spaced Repetition: `adaptive_quiz`, `learning_path`, `lesson_sequence`, `quiz_hints`, `spaced_repetition`, `student_progress`
+  - Analytics & AI Insights: `ai_insights`, `ai_tutor`, `analytics`, `analytics_dashboard`, `analytics_funnels`, `embeddings`, `experiment_analytics`, `experiments`, `feature_flags`, `funnel`
+  - Gamification & Economy: `daily_goal_settings`, `hearts`, `leaderboard`, `leagues`, `milestones`, `quest_assignments`, `social`, `sharing`, `streak`, `weekly_quests`
+  - Administration & System: `abuse_reports`, `audit`, `classroom`, `email_scheduler`, `push_notifications`, `retention`, `recommendations`
 
-- **Modularized**: `backend/main.py` is a thin shim → `backend/app.py` `create_app()` factory → `backend/routers/*` (auth, users, content, gamification, classrooms, live, admin, ai, social, misc). Business logic in `backend/services/*`, helpers in `backend/domain/*`.
-- **Root-level `main.py`, `models.py`, `schemas.py`, `seed.py`, `config.py` and root `versions/` are stale pre-modularization copies.** Dockerfile copies only `backend/`, `data`, `alembic.ini`, `migrations`. Never edit root copies.
-- Auth: JWT in httpOnly cookies (`luuniensuki_access`/`luuniensuki_refresh`), OAuth2 header kept for tests. Roles: guest < learner < teacher < admin < super_admin (`backend/rbac.py`).
-- Config fails closed at import in production (rejects sentinel JWT secrets, wildcard CORS + credentials) — `backend/config.py` validator.
-- Error envelope: `{"error": {"code", "message", "details"}}`.
-- Static mounts: `/assets` → `backend/assets`, `/uploads/avatars` → `avatar_dir`.
-- AI (Python): AI tutor/coach/explain/feedback/insights, RAG documents + embeddings, adaptive quiz, quiz hints, lesson/quiz generation, conversation history, AI jobs. DeepSeek-compatible endpoint (`DEEPSEEK_BASE_URL`).
+---
 
-## AI / live worker responsibilities
+## 3. Rust API Gateway Status (`backend-rust/`)
 
-- `services/ai_teacher_agent/realtime_worker.py` — realtime AI teacher worker (runs as separate compose service `ai_teacher_agent`).
-- Live voice: STT/TTS streaming, VAD endpointing, turn-taking state machine, WebRTC audio bridge (aiortc), circuit breaker, rate limits, cost ceilings — `backend/services/live_*.py` + `backend/tests/test_live_*.py`.
+- **Server:** Axum HTTP framework listening on port `8001`.
+- **Serving Behavior:** Config-driven via `config/route-modes.toml` dispatcher (`src/dispatcher.rs`).
+- **Native Endpoint Ownership:**
+  - `/health`
+  - `/api/v1/ranks`
+  - `/api/v1/tags`
+  - `/api/v1/content/ratings`
+  - `/api/v1/timeline/*` (Heritage eras & historical events)
+  - `/api/v1/trails/*` (Heritage trails, checkpoints, and user trail progress)
+  - `/api/v1/reviews/*` (FSRS native spaced repetition cards, rating, due reviews)
+- **Proxy Fallback:** Un-migrated routes (including AI tutor, live sessions, social feeds, admin governance) are transparently proxied to Python FastAPI on port `8000`.
 
-## PostgreSQL schemas & migrations
+---
 
-- 61 migration files in `migrations/versions/` (up to `0047_revoked_refresh_tokens`), plus shared `migrations/env.py`.
-- **~80 ORM models** in `backend/models.py` (users, urns, motifs, lesson_content, quiz_questions, quiz_attempts, user_progress, spaced_repetition_cards, badges, user_badges, streaks-on-user, classes, class_members, quests, daily_missions, weekly_quests, hearts, leaderboard settings, leagues, certificates, live sessions, ai_conversations, rag_documents, tags, content_provenance, content_flags, analytics_events, audit_logs, user_sessions, feature_flags, experiments, and more).
-- **Rust-owned tables (raw-SQL migrations, no Python ORM/routes):** `heritage_eras`, `historical_events`, `motif_eras` (0043), `trails`, `trail_steps`, `trail_checkpoints`, `user_trail_progress`, `user_trail_checkpoint_responses`, `trail_certificates` (0044), FSRS columns/params on `spaced_repetition_cards` + `user_fsrs_params` + `fsrs_cohort_params` (0045), `live_janus_rooms` (0046).
-- **Migration history is branched.** `alembic heads` reports 3 heads: `0047_revoked_refresh_tokens`, `0033_feature_flags_experiments`, `0032_email_scheduling`. Production DB's `alembic_version` contains 14 version rows. New migrations MUST chain onto the intended lineage (currently `0047_revoked_refresh_tokens`) and avoid re-branching.
-- Production DB currently has **100 tables** (`information_schema` count).
+## 4. PostgreSQL Schemas & Alembic Migrations
 
-## FSRS implementation state
+- **Migration Directory:** Canonical Alembic migrations are located in `migrations/` (`alembic.ini` sets `script_location = migrations`).
+- **Migration Head:** Migration chain up to `0047_revoked_refresh_tokens.py` (with recent history domain extensions up to `0052_history_collections.py` chained on top).
+- **Core Schemas & Tables (~100 tables):**
+  - Auth & Users: `users`, `user_profiles`, `user_sessions`, `revoked_refresh_tokens`
+  - History Domain: `historical_entities`, `historical_claims`, `historical_sources`, `historical_claim_sources`, `historical_entity_relations`, `historical_geographies`, `historical_assets`, `history_stories`, `history_collections`, `content_provenance`
+  - Heritage 3D & Content: `urns`, `motifs`, `lesson_content`, `quiz_questions`, `quiz_attempts`, `heritage_eras`, `historical_events`, `trails`, `trail_steps`, `trail_checkpoints`
+  - Spaced Repetition: `spaced_repetition_cards`, `user_fsrs_params`, `fsrs_cohort_params`
+  - Live Learning & AI: `live_sessions`, `live_events`, `live_janus_rooms`, `ai_conversations`, `rag_documents`, `rag_embeddings`
+  - Gamification & Classroom: `streaks`, `hearts`, `badges`, `user_badges`, `classes`, `class_members`, `quests`, `daily_missions`, `weekly_quests`, `leaderboards`, `leagues`
 
-- FSRS (FSRS-6 style, `DEFAULT_W` weights) is **implemented in Rust** (`backend-rust/src/services/fsrs_service.rs`, `src/models/fsrs.rs`). DB columns added by migration 0045. Review routes: `/api/v1/reviews/due`, `/api/v1/reviews/:card_id/rate`, `/api/v1/users/me/fsrs-settings`.
-- Python's `spaced_repetition.py` is **SM-2** (older review path at `/api/v1/review/*`). Do not conflate.
+---
 
-## Lesson / quiz model
+## 5. Auth & Permission Model
 
-- Lessons = `lesson_content` per motif (intro, description, historical_context, symbolism, fun_fact, `is_ai_generated`).
-- Quizzes = `quiz_questions` per motif + `urn_exams` + `quiz_attempts`. Question types: multiple_choice, true_false, image_select, mesh_location.
-- Progress flow: `hidden → discovered → learned → mastered`. XP: discovery 25 / lesson 50 / mastered 75; quiz pass ≥ 80%; urn exam 300.
+- **Tokens:** JWT HS256 algorithm with httpOnly cookie storage (`luuniensuki_access` and `luuniensuki_refresh`).
+- **Header Interop:** Supports standard `Authorization: Bearer <token>` headers primarily for API testing and cross-backend contract validation.
+- **Revocation & Security:** Server-side token refresh rotation and revoked token tracking (`revoked_refresh_tokens`). Strict validation rules enforced in `backend/config.py`.
+- **Role-Based Access Control (RBAC):**
+  - Hierarchy: `guest` < `learner` < `teacher` < `admin` < `super_admin` (`backend/rbac.py`).
+  - Guest Restrictions: Guests can only access demo-permitted content (`is_demo: true`).
 
-## Timeline / trail state
+---
 
-- **Timeline** (Rust): `/api/v1/timeline/*` — heritage eras + historical events (from 0043). Frontend `/timeline` page exists (`TimelineClient`, `TimelineTrack`, `EventPanel`, `CompareModal`).
-- **Trails** (Rust): `/api/v1/trails/*`, `/api/v1/admin/trails`, `/api/v1/teacher/trails` — public trails, admin, teacher (classroom). Frontend `/trails` + `/trails/[slug]`.
-- These predate the History-First entity model; the rebuild extends rather than replaces them.
+## 6. FSRS Implementation State
 
-## 3D assets & supported urns
+- **Rust Native Engine:** Primary FSRS-6 algorithm implemented in Rust (`backend-rust/src/models/fsrs.rs`, `backend-rust/src/routes/reviews.rs`).
+- **Database Schema:** Extended via migration `0045_fsrs_spaced_repetition.py` (adds stability `s`, difficulty `d`, state, last_review, and FSRS user parameters).
+- **Python Fallback Model:** Legacy Python `SpacedRepetitionCard` model retained for SM-2 fallback compatibility (`backend/services/spaced_repetition.py`).
 
-- Web: `frontend/public/assets/models/CAO-DINH-v1*.glb` (512/1k/2k + symlink). Only **Cao Đỉnh** has a committed model; other urns rely on backend `model_url`.
-- Viewer: `frontend/src/components/UrnViewer.tsx` (R3F/three), hotspots from DB `pos_x/y/z` + `bounding_radius` + `mesh_name`. `UrnExperience.tsx` wraps viewer+sidebar. Mobile uses `model_viewer_plus` (WebView bridge) with local/remote GLB + quality selection.
-- Coordinates: `motif-coordinates-{cao,chuong,huyen}-dinh.json` (18 items each); only 3 urns have coordinate files.
+---
 
-## Mobile (Flutter)
+## 7. 3D Assets & Motif Data
 
-- `mobile/` — Flutter, Riverpod (codegen) + freezed + GoRouter + Dio (httpOnly cookie auth) + Hive/secure storage.
-- Feature modules: achievements, ai_chat, auth, collection, daily_goals, explore, gems, hearts, help, learning_path, lesson, mascot, notifications, onboarding, practice, profile, quiz, settings, social, streak, urn_viewer.
-- **No atlas, no map, no timeline, no trails screens** in mobile (timeline/trails are web-only).
-- 3D: `features/urn_viewer/` with quality selection + hotspot overlay. Assets: `mobile/assets/models/CAO-DINH-v1*.glb`.
+- **3D Urn Models:** 9 Dynastic Urns (Cao, Nhân, Chương, Thái, Thánh, Tuyên, Dụ, Khẩn, Anh Đỉnh). Web 3D viewer supports Cao Đỉnh (`CAO-DINH-v1*.glb`) with R3F; other urns fallback to remote/backend GLB assets.
+- **Motif Coordinates:** 162 motif coordinate files mapped across the urn corpus stored under `data/` (18 reliefs per urn).
+- **Image Assets:** Relief photo and texture assets stored in `ban-duc-noi/` and served via Nginx at `/assets/ban-duc-noi`.
 
-## Auth model
+---
 
-- JWT HS256, iss `luuniensuki`, aud `luuniensuki-app` (cross-backend contract; transition flag `JWT_VALIDATE_NEW_CLAIMS`). httpOnly cookies, refresh rotation, revoked-refresh-token tracking (0047).
-- Guest role: only `is_demo: true` content. Age-verify gating, starting-path onboarding.
+## 8. Mobile Application (`mobile/`)
 
-## Deployment topology
+- **Framework:** Flutter client utilizing Riverpod (state management with codegen), Freezed (immutable data models), GoRouter, and Dio with httpOnly cookie support.
+- **Modules:** Explore, Urn Viewer (WebView bridge using `model_viewer_plus`), Lessons, Quizzes, Practice, Auth, User Profile, Streaks, Hearts, Achievements, Badges, Daily Goals, AI Tutor Chat, Settings.
+- **Storage:** Secure storage and local Hive key-value cache.
 
-- Local/dev: `docker-compose.yml`; production: `docker-compose.prod.yml` + `.env.prod` (secrets outside git), prod at `https://lms.histolab.icu`.
-- CI: `.github/workflows/ci.yml` (backend pytest w/ Postgres service, frontend lint:ci + build + Playwright `@smoke`); `deploy.yml` (tests → SSH deploy to `/opt/luuniensuki-lms`, `git reset --hard origin/main`, compose pull/build/up, `alembic upgrade head`, health check).
-- Manual safe deploy: `scripts/deployment/deploy-safe.sh`. Smoke after deploy: pages return 200, `/api/v1/ranks` returns 401 unauthenticated.
-- **Operational constraint (Aug 2026):** production host `/` is at ~95–98% full. Any image build/test on the host must first free space. Server test DB container `lms-test-db` exposes Postgres on `127.0.0.1:5433` (db `luuniensuki_test`).
+---
 
-## CI checks (current)
+## 9. Baseline Test & Code Quality Status
 
-- `ci.yml`: backend `pytest` (DATABASE_URL to service Postgres `luuniensuki`); frontend `npm run lint:ci`, `npm run build`, Playwright smoke (`PLAYWRIGHT_GREP=@smoke`).
-- `deploy.yml` test job: `pytest tests/backend`, `lint:ci`, `build`.
+- **Python Tests:** 126/126 `pytest` tests passing against the local/test PostgreSQL database (`luuniensuki_test`).
+  - Covers HTTP contract pinned by `tests/backend/test_openapi_snapshot.py`.
+  - Covers Python/Rust contract parity in `tests/backend/test_cross_backend_contract.py`.
+- **Frontend Quality:**
+  - TypeScript compilation: `npm run type-check` (`tsc --noEmit`) passes cleanly.
+  - Linting: Strict ESLint (`npm run lint:ci`) passes with zero warnings.
+  - Unit tests: Vitest test suite passes.
 
-## Automated test coverage (baseline, 2026-08-17)
+---
 
-- **Python:** `tests/backend/` — 116 passed (incl. `test_openapi_snapshot.py` byte-for-byte HTTP contract pin, `test_cross_backend_contract.py` Python/Rust parity, security/ownership/integrity tests). Run via `DATABASE_URL=... pytest tests/backend`. Requires a reachable Postgres (default `luuniensuki_test`; server test DB on :5433).
-- `backend/tests/` — live audio bridge, cancel, realtime, stt/tts/vad/turn unit tests.
-- **Rust:** `backend-rust/tests/` (integration + property/proptest). Baseline run in progress at audit time; server toolchain must be rustup cargo.
-- **Frontend:** type-check (tsc --noEmit) green; `lint:ci` green; vitest 27 tests green; Playwright suite exists (`e2e/`: auth, collection, explore, quiz, smoke).
+## 10. Stale Documents & Repository Truth Reconciliation
 
-## Public routes (no auth required)
-
-- Current: only `/login`, `/register` + static assets are public; `frontend/middleware.ts` redirects everything else to `/login?returnUrl=...` (force-login).
-- **History-first rebuild must add public prefixes** for `/cuu-dinh`, `/atlas`, `/map`, `/timeline`, `/stories`, `/sources`, `/explore`, and the homepage.
-- Rust native unauth'd read endpoints already exist (e.g. `/api/v1/ranks` returns 401 without token; `/health` open; `/api/v1/tags` open; content ratings open).
-
-## Admin / teacher routes
-
-- Admin: `/api/v1/admin/*` — lessons, quiz-questions, content (versions/revert/tags/flags/pending-review), rag, ai seed, tags, analytics, experiments, feature-flags, abuse reports, crash reports, email templates, app versions, live-sessions maintenance.
-- Teacher: classroom assignments, trails (`/api/v1/teacher/trails`).
-
-## Remaining explicit unchecked tasks in `.kiro/specs`
-
-- `full-rust-backend-migration/tasks.md` — 43 unchecked (mostly property-test hardening items marked `[ ]*`, e.g. dispatcher/gateway property tests).
-- `frontend-consolidation-typing/tasks.md` — 4 unchecked.
-- `live-room-rust-janus-migration/tasks.md` — 16 unchecked.
-- `backend-modularization`, `security-hardening-remediation`, `fsrs-spaced-repetition`, `heritage-time-lapse`, `heritage-trail-mode`, `streak-repair-economy` — all checked complete.
-
-## Stale documents & planned corrections
-
-- `README.md` — describes early Rust scope (4 native endpoints); update to reflect current config-driven native routing + history-first vision.
-- `docs/ARCHITECTURE.md` — refresh route ownership (dispatcher config, not fixed endpoint list).
-- `docs/DOCUMENTATION_INDEX.md` — add history-first docs.
-- Feature-proposal docs that list implemented systems (FSRS, trails, timeline) as proposals — mark historical/archived.
-- Mobile implementation-state docs — mark stale where they predate urn_viewer/quiz modules.
-- `backend-rust/README.md` — outdated "current scope" (still says only health/ranks/ratings/tags native).
-
-## Architecture decisions (summary)
-
-- Extend current stack: PostgreSQL 15, Rust gateway (native-first), FastAPI fallback, Next.js, Flutter, existing AI worker. No Elasticsearch/graph DB/new auth/frontend rewrite.
-- History domain will live in new tables/migrations chained onto `0047`, served via Python FastAPI (new `/api/v1/history/*` router) and proxied natively by Rust gateway fallback; stable read groups may later move to Rust native.
-- Guest/public access to historical content is mandatory (no login wall).
+- **Canonical Code Locations:**
+  - `backend/` is the active Python backend package.
+  - `backend-rust/` is the active Rust gateway.
+  - `frontend/` is the active Next.js web application.
+  - `migrations/` is the canonical Alembic migration directory (`alembic.ini`).
+- **Legacy Stale Files (Do Not Edit / Do Not Execute):**
+  - Root `main.py`, `models.py`, `schemas.py`, `seed.py`, `config.py` (~18k lines pre-modularization monolith) are obsolete.
+  - Root `versions/` folder is a stale migration duplicate.
+  - Docker containers and build pipelines ignore all root legacy duplicates.

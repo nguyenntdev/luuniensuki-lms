@@ -13,20 +13,15 @@ import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import { useRouter } from "next/navigation";
 import {
   Search,
-  Home,
   Compass,
-  Brain,
-  Sparkles,
-  User,
   BookOpen,
-  Globe,
-  Trophy,
-  Users,
   Clock,
-  Medal,
-  Mountain,
+  GraduationCap,
   Landmark,
+  LayoutGrid,
   Library,
+  Map,
+  Mountain,
   CornerDownLeft,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -64,19 +59,14 @@ function deburr(s: unknown): string {
 }
 
 const PAGE_COMMANDS: Command[] = [
-  { id: "p-dashboard", label: "Học tập", hint: "Bảng điều khiển", href: "/dashboard", icon: Home },
-  { id: "p-explore", label: "Khám phá", hint: "Mở đỉnh và họa tiết", href: "/explore", icon: Compass },
-  { id: "p-practice", label: "Ôn tập", hint: "Phiên ngắn theo trí nhớ", href: "/practice", icon: Brain },
-  { id: "p-ai", label: "Giáo viên AI", hint: "Hỏi đáp với gia sư AI", href: "/ai", icon: Sparkles },
-  { id: "p-vr360", label: "Tham quan ảo 360°", hint: "Đi dạo Hoàng thành Huế", href: "/vr360", icon: Globe },
-  { id: "p-collection", label: "Bộ sưu tập", hint: "Họa tiết đã mở khóa", href: "/collection", icon: BookOpen },
-  { id: "p-quests", label: "Hành trình", hint: "Nhiệm vụ và lộ trình", href: "/quests", icon: Compass },
-  { id: "p-trails", label: "Lộ trình di sản", hint: "Chuỗi họa tiết theo chủ đề", href: "/trails", icon: Mountain },
-  { id: "p-leaderboard", label: "Bảng xếp hạng", hint: "Thứ hạng người học", href: "/leaderboard", icon: Trophy },
-  { id: "p-achievements", label: "Thành tích", hint: "Huy hiệu và cột mốc", href: "/achievements", icon: Medal },
-  { id: "p-friends", label: "Bạn học", hint: "Kết nối bạn bè", href: "/friends", icon: Users },
-  { id: "p-timeline", label: "Dòng thời gian", hint: "Lịch sử triều Nguyễn", href: "/timeline", icon: Clock },
-  { id: "p-profile", label: "Cá nhân", hint: "Hồ sơ của bạn", href: "/profile", icon: User },
+  { id: "p-cuu-dinh", label: "Cửu Đỉnh", hint: "Chín chiếc đỉnh đồng triều Nguyễn", href: "/cuu-dinh", icon: Landmark },
+  { id: "p-atlas", label: "Atlas 162", hint: "Toàn bộ phù điêu theo không gian", href: "/atlas", icon: LayoutGrid },
+  { id: "p-explore", label: "Khám phá", hint: "Trung tâm khám phá di sản", href: "/explore", icon: Compass },
+  { id: "p-sources", label: "Nguồn", hint: "Kho tư liệu và nguồn sử liệu", href: "/sources", icon: Library },
+  { id: "p-map", label: "Bản đồ", hint: "Định vị di sản theo không gian", href: "/map", icon: Map },
+  { id: "p-timeline", label: "Dòng thời gian", hint: "Lịch sử triều Nguyễn theo niên đại", href: "/timeline", icon: Clock },
+  { id: "p-stories", label: "Câu chuyện", hint: "Bài viết và hành trình di sản", href: "/stories", icon: BookOpen },
+  { id: "p-dashboard", label: "Học của tôi", hint: "Bảng điều khiển người học", href: "/dashboard", icon: GraduationCap },
 ];
 
 export default function CommandPalette() {

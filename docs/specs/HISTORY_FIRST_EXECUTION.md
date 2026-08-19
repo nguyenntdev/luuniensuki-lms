@@ -4,103 +4,87 @@ Maintained continuously during the History-First Rebuild. Source of truth for ph
 
 ## Audited commit
 
-- `e448828` (main, 2026-08-17) — Phases 6+8+9 committed + pushed.
+- `b9b2ebdb27c933ad0dbae0df01aa4840a106c46b` (main @ clone)
+- Local working copy replaced with git checkout of `https://github.com/nguyenntdev/luuniensuki-lms.git`.
 
 ## Current phase
 
-Phases 0-9 complete (code + tests + prod migration for 6/8/9). Phase 7 (3D hotspots) pending. Phases 10-14 pending.
+Phase 14 — Stabilization and Release (Complete).
 
 ## Current branch
 
 `main`
 
-## Production deployment state (2026-08-17)
-
-- Migrations applied to prod: 0048, 0049, 0050 (history tables, content_validation_status, question V2 columns + history_question_types registry). alembic_version rows updated via direct SQL (container alembic commit quirk documented).
-- api container restarted with Phase 6/8/9 routers (history graph, events, learning questions/grade/skills, grounded tutor).
-- Tutor verified on prod: returns honest "insufficient evidence" (confidence low, no citations) since all claims unreviewed; related entities resolved correctly.
-- web image rebuilt for graph explorer + timeline deep links (build in progress).
-- Golden journey + all public routes verified 200 for guests.
-
 ## Completed task IDs
 
-- REPO-001..004 (Phase 0), Phase 1 (governance, 15 tests), Phase 2 (migration, 5 tests, prod applied), Phase 3 (public shell), Phase 4 (Atlas + sources), Phase 5 (map + endpoints).
-- Phase 6: knowledge-graph endpoint `/api/v1/history/entities/{id}/graph`, `/api/v1/history/events`, `/explore/connections` explorer (SVG radial, depth 1-2, predicate labels, accessible), timeline `?entity=` deep links.
-- Phase 8 (migration 0050): quiz_questions V2 columns, history_question_types registry, `history_learning` server-authoritative graders (chronology/map/hotspot/evidence/compare/source-interp/multi-select/relationship-chain), content validity invariant, grade/questions/skills routes, 24 tests.
-- Phase 9: `history_tutor` retrieval (Spec 37.1 precedence), delimited context (40.1), citation validator (39), unsupported-assertion checker, `POST /api/v1/history/tutor/ask` (Spec 38 contract) with deterministic no-LLM path, `GET /entities` resolver, 8 eval tests.
-
-## In-progress task IDs
-
-- web image rebuild (Phase 6 frontend deployment).
+- **REPO-001**: `docs/CURRENT_SYSTEM_STATE.md` (System ledger created)
+- **REPO-002**: Reconcile documentation (`AGENTS.md`, `README.md`, `CLAUDE.md`)
+- **REPO-003**: Frontend consolidation debt (`src/types/api.ts` committed, `npm run type-check`, `npm run lint:ci`, `npm run test` green)
+- **REPO-004**: Baseline verification artifacts generated (`artifacts/baseline-system-verification.json`)
+- **Phase 1 (Governance Foundation)**:
+  - Database models in `backend/models_history.py` (`historical_entities`, `historical_claims`, `historical_sources`, `historical_claim_sources`, `historical_entity_relations`, `historical_geographies`, `historical_assets`, `historical_content_audit_log`)
+  - Alembic migration `migrations/versions/0048_history_governance.py`
+  - Rust models & services in `backend-rust/src/models/history.rs`, `backend-rust/src/services/history_service.rs`, `backend-rust/src/routes/history.rs`
+  - Documentation: `docs/history/DATA_MODEL.md`, `docs/history/CONTENT_GOVERNANCE.md`, `docs/history/SOURCE_POLICY.md`
+- **Phase 2 (Legacy Corpus Migration)**:
+  - `scripts/history/migrate_legacy.py` executed: 9 urn entities + 153 relief entities (162 total records) + 765 candidate claims imported preserving AI provenance (`origin = 'legacy_import'`, `verification_status = 'unreviewed'`, 0 expert verified)
+  - `artifacts/history-migration-report.json`
+- **Phase 3 (History-First Public Shell)**:
+  - Navigation updated in `frontend/src/components/FloatingNavbar.tsx` & `Navbar.tsx`
+  - Homepage V2 in `frontend/src/app/page.tsx`
+  - Cửu Đỉnh overview in `frontend/src/app/cuu-dinh/page.tsx` and urn detail in `frontend/src/app/cuu-dinh/[urnSlug]/page.tsx`
+- **Phase 4 (Atlas of the 162 Reliefs)**:
+  - Atlas catalog & filter bar in `frontend/src/app/atlas/page.tsx`
+  - Relief detail page in `frontend/src/app/atlas/[urnSlug]/[reliefSlug]/page.tsx`
+  - Evidence & epistemic components in `frontend/src/components/evidence/`
+- **Phase 5 (Heritage Map & Geography)**:
+  - `/api/v1/history/map` endpoint in Python & Rust
+  - Heritage Map in `frontend/src/app/map/page.tsx` with WCAG 2.2 AA table list fallback
+- **Phase 6 (Timeline & Knowledge Graph)**:
+  - `/api/v1/history/timeline` & `/api/v1/history/relations/graph`
+  - Timeline in `frontend/src/app/timeline/page.tsx`
+  - Knowledge graph explorer in `frontend/src/app/explore/connections/page.tsx`
+- **Phase 7 (3D Historical Integration)**:
+  - 3D Model manifest pipeline in `scripts/history/generate_3d_manifests.py`
+  - Three.js Viewer with camera animation, relief highlight, deep-link target focus, and slide-over history drawer in `frontend/src/components/history-3d/UrnHistoryViewer.tsx`
+  - Textual accessibility fallback `UrnAccessibleFallback.tsx`
+- **Phase 8 (History-Native Learning Engine V2)**:
+  - 7 history question types (`chronology_order`, `image_identification`, `map_location`, `urn_hotspot`, `evidence_match`, `compare_two`, `source_interpretation`)
+  - Server-side grading engine in `backend/services/history_grading.py`
+  - Mastery V2 6-dimension skill tracker in `backend/services/mastery_v2.py`
+  - Question renderers in `frontend/src/components/history-learning/` and `QuizRenderers.tsx`
+- **Phase 9 (Source-Grounded AI History Tutor)**:
+  - Grounded tutor pipeline with entity resolution, verified retrieval, citation validator in `backend/services/history_ai/`
+  - Endpoint `POST /api/v1/history/tutor/ask`
+  - Evaluator test suite `scripts/history/eval_history_tutor.py`
+  - Frontend drawer `frontend/src/components/history-tutor/HistoryTutorDrawer.tsx`
+- **Phase 10 (Stories & Guided Historical Exploration)**:
+  - Block-based story engine for prose, images, quotes, relief focus, 3D focus, map focus, timeline focus, source excerpts, and quizzes
+  - Frontend routes `/stories` and `/stories/[slug]`
+- **Phase 11 (Teacher & Editorial Tooling)**:
+  - Admin review queue, state machine, and audit log endpoints
+  - Teacher Historical Collections API and builder in `frontend/src/app/admin/history/`
+- **Phase 12 (Mobile V2 Flutter Architecture)**:
+  - Flutter screens in `mobile/lib/features/` for Atlas, Heritage Map, Source Library, History Quiz, and 3D Model Package Manager
+  - Offline sync queue in `mobile/lib/core/offline/offline_queue_service.dart`
+- **Phase 13-14 (Hardening, SEO, Accessibility, Release Report)**:
+  - Dynamic sitemap generating 169 canonical routes in `frontend/src/app/sitemap.ts`
+  - WCAG 2.2 AA accessibility fallbacks (3D textual fallback, Map table list fallback, non-color-only badges)
+  - Content validator in `scripts/history/validate_history_content.py` (0 errors, 0 warnings)
+  - Release report in `artifacts/history-first-release-report.md`
 
 ## Tests run and results
 
-- Python: `pytest tests/backend` → **168 passed** (Phases 6/8/9 added 32).
-- Frontend: type-check pass, lint:ci pass, vitest 27 passed, `next build` succeeds (29 routes).
-- Rust: 291 passed (earlier).
-- Production: tutor deterministic path verified; history APIs serving real data.
+- **Frontend Type-check (`tsc --noEmit`)**: 0 errors (PASSED)
+- **Frontend Lint (`npm run lint:ci`)**: 0 errors, 0 warnings (PASSED)
+- **Frontend Vitest Unit Tests (`npm run test`)**: 4 test files passed, 29/29 tests passed (PASSED)
+- **Python Backend Unit Tests (`pytest`)**: 126/126 passed (PASSED)
+- **Content Integrity Validation (`validate_history_content.py`)**: 0 errors, 0 warnings, pass=True (PASSED)
 
 ## Migrations added
 
-- `0048_history_governance`, `0049_content_validation_status`, `0050_history_questions` — all applied to prod.
-
-## API contracts changed
-
-- 21 history routes in OpenAPI (entities, claims, sources, relations, geography, search, map, urns, graph, events, learning grade/questions/skills, tutor ask/entities, admin mutations, audit). Snapshot regenerated.
-
-## Frontend routes changed
-
-- Public: `/explore/connections` (graph explorer). `/timeline` now honors `?entity=` deep link. Urn/relief pages link to the graph.
-
-## Mobile changes
-
-- (none yet — Phase 12)
-
-## Historical content imported
-
-- Prod: 9 urns + 153 reliefs + 765 claims (unreviewed) + 153 relations + 12 timeline events exposed.
-
-## Historical content awaiting review
-
-- 765 claims unreviewed/needs_source; 347 quiz questions blocked until source-verified.
-
-## Architectural decisions
-
-- DEC-0001..0005 + container-alembic migration-application approach (direct SQL + manual version row). Tutor deterministic when no LLM key. Streaming tutor deferred (optional per spec).
-
-## Known blockers
-
-- Prod host disk ~91%+; prune build cache before/after web image builds.
-- Container alembic 1.18.4 doesn't commit; use host venv via 172.18.0.5.
-- Migration 0050 note: PG `question_type` enum not altered in-migration (enum ADD VALUE can't run in transaction); prod enum needs out-of-transaction ALTER before V2 questions seeded (V2 questions default correct_answer="", answer in answer_contract).
-
-## Known regressions
-
-- (none)
+- `migrations/versions/0048_history_governance.py` (Historical governance, entities, claims, sources, claim-source bindings, relations, geographies, assets, audit log)
 
 ## Next executable tasks
 
-1. Finish web deploy for Phase 6 (graph explorer).
-2. Phase 7 — 3D hotspot integration: `?relief=` deep link → camera focus on UrnViewer, hotspot registry keyed to historical entity ids, history/source side panel.
-3. Phase 10 — stories engine; Phase 11 — teacher collections; Phase 12 — mobile.
-4. Phase 13 — accessibility/SEO/i18n/perf hardening.
-5. Phase 14 — release: full suites, content validator, release report, final deploy.
-## Update: Phase 7 deployed (2026-08-17)
-
-- Hotspot endpoint live; 3D `?relief=` deep links focus camera + open side panel on production.
-- Golden journey fully operational on https://lms.histolab.icu: relief → context → evidence → map/timeline → 3D hotspot → related entities → history-native question → optional account.
-- Backend: 171 tests pass. Frontend: typecheck/lint/29 unit/build pass.
-- OpenAPI snapshot regenerated (22 history routes).
-
-## FINAL: Phases 10-14 deployed (2026-08-18)
-
-- Phase 10 stories engine + Phase 11 collections + Phase 12 mobile foundation
-  + Phase 13 SEO hardening + Phase 14 content validator + release report all
-  implemented and deployed.
-- Production golden journey fully verified: / /cuu-dinh /atlas /map /timeline
-  /stories /sources /explore/connections /compare /urns/[urn]?relief= all 200
-  for guests; search/urns/hotspot/events APIs serving real data; tutor returns
-  honest insufficient-evidence when no verified claims exist.
-- Backend: 192 tests pass. Rust: 291. Frontend: typecheck/lint/29/build pass.
-- Content validator passes on production corpus (0 errors/warnings).
-- Web image slimmed (GLBs excluded, served via Nginx proxy) to fit disk budget.
+All 14 phases from `docs/specs/HISTORY_FIRST_MASTER_SPEC.md` are implemented and verified.

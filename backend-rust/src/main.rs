@@ -365,6 +365,21 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
         .route("/api/v1/users/me/collection", get(routes::misc::get_user_collection))
         .with_state(auth_state.clone());
 
+    // History-First Phase 1 routes
+    let history_routes = Router::new()
+        .route("/api/v1/history/entities", get(routes::history::list_entities))
+        .route("/api/v1/history/entities/:id", get(routes::history::get_entity_by_id))
+        .route("/api/v1/history/entities/by-slug/:slug", get(routes::history::get_entity_by_slug))
+        .route("/api/v1/history/entities/:id/claims", get(routes::history::list_entity_claims))
+        .route("/api/v1/history/entities/:id/relations", get(routes::history::list_entity_relations))
+        .route("/api/v1/history/urns", get(routes::history::list_urns))
+        .route("/api/v1/history/urns/:slug", get(routes::history::get_urn_by_slug))
+        .route("/api/v1/history/reliefs", get(routes::history::list_reliefs))
+        .route("/api/v1/history/sources", get(routes::history::list_sources))
+        .route("/api/v1/history/sources/:id", get(routes::history::get_source_by_id))
+        .route("/api/v1/history/search", get(routes::history::search_history))
+        .with_state(auth_state.clone());
+
 
     // Live virtual-classroom routes (.kiro/specs/live-room-rust-janus-migration)
     // Native control plane + WS signaling. Media plane = Janus (feature-flagged).
@@ -412,6 +427,7 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
         .merge(timeline_routes)
         .merge(trail_routes)
         .merge(live_routes)
+        .merge(history_routes)
         .merge(misc_routes)
         .merge(internal_routes)
         .fallback(gateway::fallback_to_python)

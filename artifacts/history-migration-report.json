@@ -9,10 +9,10 @@
   "claims_needing_source": 765,
   "sources_created": 0,
   "relations_created": 153,
-  "questions_migrated": 347,
-  "questions_blocked_for_verification": 347,
+  "questions_migrated": 0,
+  "questions_blocked_for_verification": 0,
   "duplicates": [],
   "invalid_records": [],
   "unmapped_records": [],
-  "timestamp": "2026-08-17T07:24:20.824056+00:00"
+  "timestamp": "2026-08-19T07:22:59.718672+00:00"
 }

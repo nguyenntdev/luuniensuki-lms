@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { shallow } from "zustand/shallow";
+import { ArrowLeft } from "lucide-react";
 
 import {
     getMyStreak,
@@ -401,6 +402,16 @@ function UrnExperienceContent({
                         >
                             Trang Chủ
                         </Link>
+                        {urnSlug ? (
+                            <Link
+                                href={`/cuu-dinh/${urnSlug}`}
+                                title="Trang lịch sử của chiếc đỉnh này"
+                                className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 font-medium text-white/80 hover:bg-white/10 hover:text-white"
+                            >
+                                <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+                                Trang lịch sử
+                            </Link>
+                        ) : null}
                         <Link
                             href="/profile"
                             className="rounded-full px-3 py-1.5 font-medium text-white/80 hover:bg-white/10 hover:text-white"

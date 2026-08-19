@@ -1,12 +1,13 @@
+import type { MetadataRoute } from "next";
+
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://lms.histolab.icu";
 
-export default function robots() {
+export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
       {
         userAgent: "*",
         allow: "/",
-        // Keep private/authed surfaces and tools out of the index.
         disallow: ["/admin", "/profile", "/dashboard", "/tools", "/live/", "/u/", "/share/"],
       },
     ],

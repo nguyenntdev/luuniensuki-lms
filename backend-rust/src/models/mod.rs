@@ -5,6 +5,7 @@ pub mod badge;
 pub mod classroom;
 pub mod crash_report;
 pub mod fsrs;
+pub mod history;
 pub mod leaderboard;
 pub mod lesson;
 pub mod live;

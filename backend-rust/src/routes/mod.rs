@@ -15,6 +15,7 @@ pub mod classrooms;
 pub mod content;
 pub mod crash_reports;
 pub mod health;
+pub mod history;
 pub mod leaderboard;
 pub mod lessons;
 pub mod live;

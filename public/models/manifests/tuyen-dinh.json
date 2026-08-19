@@ -1,0 +1,477 @@
+{
+  "urn_slug": "tuyen-dinh",
+  "model_version": 1,
+  "hotspot_version": 1,
+  "lods": {
+    "low": {
+      "url": "/assets/models/TUYEN-DINH-v1-512.glb",
+      "fallback_url": "/assets/models/CAO-DINH-v1-512.glb",
+      "sha256": "placeholder-sha256-512",
+      "bytes": 524288
+    },
+    "medium": {
+      "url": "/assets/models/TUYEN-DINH-v1-1k.glb",
+      "fallback_url": "/assets/models/CAO-DINH-v1-1k.glb",
+      "sha256": "placeholder-sha256-1k",
+      "bytes": 1048576
+    },
+    "high": {
+      "url": "/assets/models/TUYEN-DINH-v1-2k.glb",
+      "fallback_url": "/assets/models/CAO-DINH-v1-2k.glb",
+      "sha256": "placeholder-sha256-2k",
+      "bytes": 2097152
+    }
+  },
+  "hotspots": [
+    {
+      "hotspot_id": "tuyen-dinh-tuyen-dinh",
+      "urn_slug": "tuyen-dinh",
+      "relief_slug": "tuyen-dinh",
+      "relief_name": "Tuyên Đỉnh",
+      "mesh_name": "Tuyên Đỉnh",
+      "pos": [
+        0.0,
+        0.5,
+        1.15
+      ],
+      "camera_position": [
+        0.0,
+        0.7,
+        2.65
+      ],
+      "camera_target": [
+        0.0,
+        0.5,
+        1.15
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "tuyen-dinh-tan-cat-lieu",
+      "urn_slug": "tuyen-dinh",
+      "relief_slug": "tan-cat-lieu",
+      "relief_name": "Tần Cát Liễu",
+      "mesh_name": "Tần Cát Liễu",
+      "pos": [
+        0.3933,
+        0.7598,
+        1.0806
+      ],
+      "camera_position": [
+        0.9064,
+        0.9598,
+        2.4902
+      ],
+      "camera_target": [
+        0.3933,
+        0.7598,
+        1.0806
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "tuyen-dinh-yen-oa",
+      "urn_slug": "tuyen-dinh",
+      "relief_slug": "yen-oa",
+      "relief_name": "Yến Oa",
+      "mesh_name": "Yến Oa",
+      "pos": [
+        0.7392,
+        0.7598,
+        0.881
+      ],
+      "camera_position": [
+        1.7034,
+        0.9598,
+        2.03
+      ],
+      "camera_target": [
+        0.7392,
+        0.7598,
+        0.881
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "tuyen-dinh-long-nhan",
+      "urn_slug": "tuyen-dinh",
+      "relief_slug": "long-nhan",
+      "relief_name": "Long Nhãn",
+      "mesh_name": "Long Nhãn",
+      "pos": [
+        0.9959,
+        0.5,
+        0.575
+      ],
+      "camera_position": [
+        2.295,
+        0.7,
+        1.325
+      ],
+      "camera_target": [
+        0.9959,
+        0.5,
+        0.575
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "tuyen-dinh-tran-chau-hoa",
+      "urn_slug": "tuyen-dinh",
+      "relief_slug": "tran-chau-hoa",
+      "relief_name": "Trân Châu Hoa",
+      "mesh_name": "Trân Châu Hoa",
+      "pos": [
+        1.1325,
+        0.2402,
+        0.1997
+      ],
+      "camera_position": [
+        2.6097,
+        0.4402,
+        0.4602
+      ],
+      "camera_target": [
+        1.1325,
+        0.2402,
+        0.1997
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "tuyen-dinh-dia-dau",
+      "urn_slug": "tuyen-dinh",
+      "relief_slug": "dia-dau",
+      "relief_name": "Địa Đậu",
+      "mesh_name": "Địa Đậu",
+      "pos": [
+        1.1325,
+        0.2402,
+        -0.1997
+      ],
+      "camera_position": [
+        2.6097,
+        0.4402,
+        -0.4602
+      ],
+      "camera_target": [
+        1.1325,
+        0.2402,
+        -0.1997
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "tuyen-dinh-ba",
+      "urn_slug": "tuyen-dinh",
+      "relief_slug": "ba",
+      "relief_name": "Bá",
+      "mesh_name": "Bá",
+      "pos": [
+        0.9959,
+        0.5,
+        -0.575
+      ],
+      "camera_position": [
+        2.295,
+        0.7,
+        -1.325
+      ],
+      "camera_target": [
+        0.9959,
+        0.5,
+        -0.575
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "tuyen-dinh-due-son",
+      "urn_slug": "tuyen-dinh",
+      "relief_slug": "due-son",
+      "relief_name": "Duệ Sơn",
+      "mesh_name": "Duệ Sơn",
+      "pos": [
+        0.7392,
+        0.7598,
+        -0.881
+      ],
+      "camera_position": [
+        1.7034,
+        0.9598,
+        -2.03
+      ],
+      "camera_target": [
+        0.7392,
+        0.7598,
+        -0.881
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "tuyen-dinh-nhi-ha",
+      "urn_slug": "tuyen-dinh",
+      "relief_slug": "nhi-ha",
+      "relief_name": "Nhĩ Hà",
+      "mesh_name": "Nhĩ Hà",
+      "pos": [
+        0.3933,
+        0.7598,
+        -1.0806
+      ],
+      "camera_position": [
+        0.9064,
+        0.9598,
+        -2.4902
+      ],
+      "camera_target": [
+        0.3933,
+        0.7598,
+        -1.0806
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "tuyen-dinh-van",
+      "urn_slug": "tuyen-dinh",
+      "relief_slug": "van",
+      "relief_name": "Vân",
+      "mesh_name": "Vân",
+      "pos": [
+        0.0,
+        0.5,
+        -1.15
+      ],
+      "camera_position": [
+        0.0,
+        0.7,
+        -2.65
+      ],
+      "camera_target": [
+        0.0,
+        0.5,
+        -1.15
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "tuyen-dinh-dai-lanh",
+      "urn_slug": "tuyen-dinh",
+      "relief_slug": "dai-lanh",
+      "relief_name": "Đại Lãnh",
+      "mesh_name": "Đại Lãnh",
+      "pos": [
+        -0.3933,
+        0.2402,
+        -1.0806
+      ],
+      "camera_position": [
+        -0.9064,
+        0.4402,
+        -2.4902
+      ],
+      "camera_target": [
+        -0.3933,
+        0.2402,
+        -1.0806
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "tuyen-dinh-lam-giang",
+      "urn_slug": "tuyen-dinh",
+      "relief_slug": "lam-giang",
+      "relief_name": "Lam Giang",
+      "mesh_name": "Lam Giang",
+      "pos": [
+        -0.7392,
+        0.2402,
+        -0.881
+      ],
+      "camera_position": [
+        -1.7034,
+        0.4402,
+        -2.03
+      ],
+      "camera_target": [
+        -0.7392,
+        0.2402,
+        -0.881
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "tuyen-dinh-hau-ngu",
+      "urn_slug": "tuyen-dinh",
+      "relief_slug": "hau-ngu",
+      "relief_name": "Hậu Ngư",
+      "mesh_name": "Hậu Ngư",
+      "pos": [
+        -0.9959,
+        0.5,
+        -0.575
+      ],
+      "camera_position": [
+        -2.295,
+        0.7,
+        -1.325
+      ],
+      "camera_target": [
+        -0.9959,
+        0.5,
+        -0.575
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "tuyen-dinh-khuong",
+      "urn_slug": "tuyen-dinh",
+      "relief_slug": "khuong",
+      "relief_name": "Khương",
+      "mesh_name": "Khương",
+      "pos": [
+        -1.1325,
+        0.7598,
+        -0.1997
+      ],
+      "camera_position": [
+        -2.6097,
+        0.9598,
+        -0.4602
+      ],
+      "camera_target": [
+        -1.1325,
+        0.7598,
+        -0.1997
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "tuyen-dinh-no",
+      "urn_slug": "tuyen-dinh",
+      "relief_slug": "no",
+      "relief_name": "Nỗ",
+      "mesh_name": "Nỗ",
+      "pos": [
+        -1.1325,
+        0.7598,
+        0.1997
+      ],
+      "camera_position": [
+        -2.6097,
+        0.9598,
+        0.4602
+      ],
+      "camera_target": [
+        -1.1325,
+        0.7598,
+        0.1997
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "tuyen-dinh-le-thuyen",
+      "urn_slug": "tuyen-dinh",
+      "relief_slug": "le-thuyen",
+      "relief_name": "Lê Thuyền",
+      "mesh_name": "Lê Thuyền",
+      "pos": [
+        -0.9959,
+        0.5,
+        0.575
+      ],
+      "camera_position": [
+        -2.295,
+        0.7,
+        1.325
+      ],
+      "camera_target": [
+        -0.9959,
+        0.5,
+        0.575
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "tuyen-dinh-thi",
+      "urn_slug": "tuyen-dinh",
+      "relief_slug": "thi",
+      "relief_name": "Thỉ",
+      "mesh_name": "Thỉ",
+      "pos": [
+        -0.7392,
+        0.2402,
+        0.881
+      ],
+      "camera_position": [
+        -1.7034,
+        0.4402,
+        2.03
+      ],
+      "camera_target": [
+        -0.7392,
+        0.2402,
+        0.881
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    },
+    {
+      "hotspot_id": "tuyen-dinh-ngoan",
+      "urn_slug": "tuyen-dinh",
+      "relief_slug": "ngoan",
+      "relief_name": "Ngoan",
+      "mesh_name": "Ngoan",
+      "pos": [
+        -0.3933,
+        0.2402,
+        1.0806
+      ],
+      "camera_position": [
+        -0.9064,
+        0.4402,
+        2.4902
+      ],
+      "camera_target": [
+        -0.3933,
+        0.2402,
+        1.0806
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1
+    }
+  ]
+}

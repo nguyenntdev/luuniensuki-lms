@@ -246,6 +246,42 @@ export function reliefNumberFromSlug(
   return m ? m[1] : "";
 }
 
+// Legacy motif mesh names (e.g. `mesh_urn_cao_dinh_02_v1` or the bare legacy
+// id `urn_cao_dinh_02`) map deterministically to the canonical relief slug
+// `cao-dinh-02`. Returns null when the mesh does not parse into a KNOWN_URNS
+// relief — in particular the urns' own self-portrait meshes at position `01`,
+// which are modeled as urn entities, not relief entities, in the history DB.
+export function reliefSlugFromMeshName(
+  meshName: string | null | undefined,
+): string | null {
+  const m = String(meshName || "").trim();
+  if (!m) return null;
+  const match = m.match(/^(?:mesh_)?urn_(.+?)(?:_v\d+)?$/i);
+  if (!match) return null;
+  const slug = match[1].replace(/_/g, "-").toLowerCase();
+  if (!/^[a-z]+(?:-[a-z]+)*-\d{1,3}$/.test(slug)) return null;
+  if (!KNOWN_URNS.some((u) => u.slug === urnSlugFromReliefSlug(slug))) {
+    return null;
+  }
+  const number = reliefNumberFromSlug(slug);
+  if (!number || parseInt(number, 10) < 2) return null;
+  return slug;
+}
+
+// Inverse of `reliefSlugFromMeshName`: build the deterministic legacy mesh
+// name for a relief slug (e.g. `cao-dinh-02` → `mesh_urn_cao_dinh_02_v1`) so
+// pages can look up the matching legacy lesson motif without a fragile
+// mapping table. Returns null for slugs that cannot be expressed as a mesh.
+export function meshNameFromReliefSlug(
+  slug: string | null | undefined,
+): string | null {
+  const s = String(slug || "").trim();
+  const urnSlug = urnSlugFromReliefSlug(s);
+  const number = reliefNumberFromSlug(s);
+  if (!urnSlug || !number) return null;
+  return `mesh_urn_${urnSlug.replace(/-/g, "_")}_${number}_v1`;
+}
+
 // The nine urns migrated so far. Used for display fallback and filter labels
 // only — the authoritative names always come from the API when available.
 export const KNOWN_URNS: Array<{ slug: string; nameVi: string }> = [

@@ -2,12 +2,16 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   MapPin,
   AlertCircle,
   CheckCircle2,
   HelpCircle,
   List,
+  Table as TableIcon,
+  Map as MapIcon,
+  ArrowRight,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -145,12 +149,22 @@ function MapView({
 }
 
 export default function MapPage() {
+  const searchParams = useSearchParams();
+  const isListViewParam = searchParams.get("view") === "list";
+
   const [items, setItems] = useState<MapItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [entityType, setEntityType] = useState<string>("");
   const [showList, setShowList] = useState(true);
+  const [viewMode, setViewMode] = useState<"map" | "table">(isListViewParam ? "table" : "map");
+
+  useEffect(() => {
+    if (isListViewParam) {
+      setViewMode("table");
+    }
+  }, [isListViewParam]);
 
   useEffect(() => {
     let cancelled = false;
@@ -196,6 +210,11 @@ export default function MapPage() {
 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 pb-24 pt-20 md:pt-24">
+      {/* Screen reader live region for filter updates */}
+      <div className="sr-only" aria-live="polite" aria-atomic="true">
+        {loading ? "Đang tải dữ liệu địa lý di sản..." : `Hiển thị ${items.length} thực thể địa lý trên bản đồ.`}
+      </div>
+
       <header className="mb-6">
         <p className="text-xs font-semibold uppercase tracking-widest text-primary/80">
           Địa lý lịch sử
@@ -209,45 +228,141 @@ export default function MapPage() {
         </p>
       </header>
 
-      <div className="mb-4 flex flex-wrap items-center gap-2">
-        <label className="text-xs font-semibold text-muted-foreground" htmlFor="map-type">
-          Loại thực thể
-        </label>
-        <select
-          id="map-type"
-          value={entityType}
-          onChange={(e) => setEntityType(e.target.value)}
-          className="rounded-lg border border-border bg-secondary/40 px-3 py-1.5 text-sm"
-        >
-          <option value="">Tất cả</option>
-          <option value="place">Địa danh</option>
-          <option value="mountain">Núi</option>
-          <option value="water_body">Sông / biển</option>
-          <option value="island">Đảo</option>
-          <option value="settlement">Điểm dân cư</option>
-          <option value="region">Vùng</option>
-        </select>
-        <button
-          type="button"
-          onClick={() => setShowList((v) => !v)}
-          className="ml-auto inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-muted-foreground hover:bg-secondary"
-        >
-          <List className="h-3.5 w-3.5" />
-          {showList ? "Ẩn danh sách" : "Xem danh sách"}
-        </button>
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        <div className="flex items-center gap-2">
+          <label className="text-xs font-semibold text-muted-foreground" htmlFor="map-type">
+            Loại thực thể:
+          </label>
+          <select
+            id="map-type"
+            value={entityType}
+            onChange={(e) => setEntityType(e.target.value)}
+            className="rounded-lg border border-border bg-secondary/40 px-3 py-1.5 text-sm"
+          >
+            <option value="">Tất cả</option>
+            <option value="place">Địa danh</option>
+            <option value="mountain">Núi</option>
+            <option value="water_body">Sông / biển</option>
+            <option value="island">Đảo</option>
+            <option value="settlement">Điểm dân cư</option>
+            <option value="region">Vùng</option>
+          </select>
+        </div>
+
+        <div className="ml-auto flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setViewMode("map")}
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-semibold transition",
+              viewMode === "map"
+                ? "bg-primary text-primary-foreground border-primary"
+                : "text-muted-foreground hover:bg-secondary"
+            )}
+            aria-pressed={viewMode === "map"}
+          >
+            <MapIcon className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>Bản đồ</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode("table")}
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-semibold transition",
+              viewMode === "table"
+                ? "bg-primary text-primary-foreground border-primary"
+                : "text-muted-foreground hover:bg-secondary"
+            )}
+            aria-pressed={viewMode === "table"}
+          >
+            <TableIcon className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>Danh sách bảng (WCAG AA)</span>
+          </button>
+          {viewMode === "map" ? (
+            <button
+              type="button"
+              onClick={() => setShowList((v) => !v)}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-muted-foreground hover:bg-secondary"
+            >
+              <List className="h-3.5 w-3.5" />
+              {showList ? "Ẩn danh sách" : "Xem danh sách"}
+            </button>
+          ) : null}
+        </div>
       </div>
 
       {error ? (
-        <div className="rounded-xl border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive">
+        <div className="rounded-xl border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive" role="alert">
           {error}
         </div>
       ) : loading ? (
-        <div className="h-[420px] animate-pulse rounded-xl border border-border bg-secondary/30 md:h-[560px]" />
+        <div className="h-[420px] animate-pulse rounded-xl border border-border bg-secondary/30 md:h-[560px]" aria-busy="true" />
       ) : items.length === 0 ? (
         <div className="rounded-xl border border-border bg-secondary/30 p-8 text-center text-sm text-muted-foreground">
           Chưa có thực thể nào được gắn tọa độ đã kiểm chứng. Dữ liệu địa lý sẽ
           được bổ sung trong quá trình kiểm chứng nguồn.
         </div>
+      ) : viewMode === "table" ? (
+        /* WCAG 2.2 AA Accessible Table Fallback */
+        <section role="region" aria-label="Bảng danh sách di sản địa lý">
+          <div className="overflow-x-auto rounded-xl border border-border bg-card">
+            <table className="w-full text-left text-sm" role="table" aria-label="Bảng di sản địa lý">
+              <caption className="sr-only">Bảng liệt kê chi tiết các địa danh và thực thể địa lý trên Cửu Đỉnh</caption>
+              <thead className="bg-secondary/60 text-xs font-semibold uppercase tracking-wider text-muted-foreground border-b border-border">
+                <tr>
+                  <th scope="col" className="px-4 py-3">Thực thể</th>
+                  <th scope="col" className="px-4 py-3">Loại</th>
+                  <th scope="col" className="px-4 py-3">Tọa độ (Lat, Lng)</th>
+                  <th scope="col" className="px-4 py-3">Độ chính xác</th>
+                  <th scope="col" className="px-4 py-3">Trạng thái</th>
+                  <th scope="col" className="px-4 py-3">Chi tiết</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {items.map((item) => {
+                  const Icon = precisionIcon(item.geo_precision);
+                  const detailHref = item.entity_type === "relief"
+                    ? `/atlas/${item.slug.split("-").slice(0, 2).join("-")}/${item.slug}`
+                    : `/cuu-dinh/${item.slug}`;
+
+                  return (
+                    <tr key={item.entity_id} className="hover:bg-secondary/40 transition-colors">
+                      <th scope="row" className="px-4 py-3 font-medium text-foreground">
+                        {item.name}
+                      </th>
+                      <td className="px-4 py-3 text-xs text-muted-foreground uppercase">
+                        {item.entity_type}
+                      </td>
+                      <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
+                        {item.lat != null && item.lng != null
+                          ? `${item.lat.toFixed(3)}, ${item.lng.toFixed(3)}`
+                          : "Chưa có"}
+                      </td>
+                      <td className="px-4 py-3 text-xs">
+                        <div className="flex items-center gap-1.5">
+                          <Icon className={cn("h-3.5 w-3.5 shrink-0", item.geo_precision === "exact" ? "text-emerald-600" : "text-amber-600")} aria-hidden="true" />
+                          <span>{PRECISION_LABELS[item.geo_precision ?? "unknown"] || "Chưa rõ"}</span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-xs text-muted-foreground">
+                        {STATUS_LABELS[item.mapping_status ?? "unknown"] || "Chưa rõ"}
+                      </td>
+                      <td className="px-4 py-3">
+                        <Link
+                          href={detailHref}
+                          className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline focus-visible:ring-2 focus-visible:ring-ring rounded px-1.5 py-1"
+                        >
+                          <span>Xem</span>
+                          <ArrowRight className="h-3 w-3" aria-hidden="true" />
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </section>
       ) : (
         <div className="grid gap-4 lg:grid-cols-[1fr_340px]">
           <MapView
@@ -288,6 +403,7 @@ export default function MapPage() {
                             ? "text-emerald-600"
                             : "text-amber-600",
                         )}
+                        aria-hidden="true"
                       />
                       <span className="min-w-0 flex-1 truncate">{item.name}</span>
                       <span className="text-[10px] uppercase text-muted-foreground/70">
@@ -302,7 +418,7 @@ export default function MapPage() {
         </div>
       )}
 
-      {selected ? (
+      {selected && viewMode === "map" ? (
         <div className="mt-4 rounded-xl border border-border bg-popover p-4">
           <div className="flex items-start justify-between gap-3">
             <div>

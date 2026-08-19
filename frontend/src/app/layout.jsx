@@ -1,11 +1,13 @@
 import { Toaster } from "react-hot-toast";
-import FloatingNavbar from "@/components/FloatingNavbar";
 import CommandPalette from "@/components/CommandPalette";
 import ClientBodyWrapper from "@/components/ClientBodyWrapper";
 import AuthGate from "@/components/AuthGate";
 import StartingPathGate from "@/components/StartingPathGate";
 import NetworkStatusIndicator from "@/components/NetworkStatusIndicator";
 import ThemeProvider from "@/components/ThemeProvider";
+import GlobalHeader from "@/components/shell/GlobalHeader";
+import MobileNavigation from "@/components/shell/MobileNavigation";
+import SiteFooter from "@/components/shell/SiteFooter";
 import { XpCelebrationProvider } from "@/lib/xpCelebrationContext";
 import BadgeUnlockProvider from "@/components/badges/BadgeUnlockProvider";
 import "./globals.css";
@@ -71,11 +73,13 @@ export default function RootLayout({ children }) {
                             <AuthGate>
                                 <XpCelebrationProvider>
                                     <BadgeUnlockProvider>
-                                        <FloatingNavbar />
+                                        <GlobalHeader />
+                                        <MobileNavigation />
                                         <CommandPalette />
                                         <StartingPathGate />
                                         <Toaster position="top-center" reverseOrder={false} />
                                         <div id="main-content">{children}</div>
+                                        <SiteFooter />
                                     </BadgeUnlockProvider>
                                 </XpCelebrationProvider>
                             </AuthGate>

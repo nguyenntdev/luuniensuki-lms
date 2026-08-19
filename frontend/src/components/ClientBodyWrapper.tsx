@@ -2,6 +2,7 @@
 
 import type { ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
+import { isShellRoute } from '@/lib/shellRoutes';
 
 interface ClientBodyWrapperProps {
   children: ReactNode;
@@ -9,14 +10,12 @@ interface ClientBodyWrapperProps {
 
 export default function ClientBodyWrapper({ children }: ClientBodyWrapperProps) {
   const pathname = usePathname();
-  const isUrnPage = pathname?.startsWith('/urns/');
-  const isQuizPage = /^\/motif\/[^/]+\/quiz/.test(pathname || '');
-  const isExamPage = /^\/urns\/[^/]+\/exam/.test(pathname || '');
-  // Quiz/exam pages hide FloatingNavbar, so no bottom padding needed.
-  // Desktop navigation is now top-fixed; mobile keeps the bottom command bar.
-  const noPadding = isUrnPage || isQuizPage || isExamPage;
+  // When the shell (sticky header + fixed mobile bottom nav) is hidden, no
+  // extra bottom clearance is needed. Otherwise the mobile bottom nav floats
+  // over content, so we reserve space below it on small screens.
+  const showShell = isShellRoute(pathname);
   return (
-    <div className={noPadding ? "" : "pb-24 md:pb-0"}>
+    <div className={showShell ? 'pb-24 md:pb-0' : ''}>
       {children}
     </div>
   );
