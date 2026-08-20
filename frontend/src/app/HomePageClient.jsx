@@ -475,23 +475,23 @@ export default function HomePageClient() {
             <div className="space-y-6">
               <div className="inline-flex items-center gap-2 text-primary font-bold tracking-widest uppercase text-xs border-b border-primary/30 pb-2">
                 <Info className="w-4 h-4" />
-                <span>Thực trạng & Thách thức bảo tồn</span>
+                <span>Hành trình bảo tồn di sản</span>
               </div>
 
               <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
-                Khoảng cách thế hệ & <br />
-                <span className="text-gradient-gold glow-gold">Nghệ thuật đúc đồng 187 năm</span>
+                Để báu vật ngàn năm <br />
+                <span className="text-gradient-gold glow-gold">Sống mãi cùng thế hệ trẻ</span>
               </h2>
 
               <div className="space-y-4 text-base md:text-lg text-muted-foreground leading-relaxed">
                 <p>
-                  Trải qua gần hai thế kỷ chịu đựng thời tiết khắc nghiệt và chiến tranh, các hoa văn chạm nổi trên chín chiếc đỉnh đồng tại Thế Miếu đối mặt với nguy cơ mài mòn, phai mờ thông điệp lịch sử.
+                  Trải qua gần hai thế kỷ dãi dầu sương gió nơi cố đô Huế, những đường nét chạm khắc kỳ công trên chín chiếc đỉnh đồng vẫn trầm mặc lắng đọng hồn cốt tiền nhân.
                 </p>
                 <p>
-                  Chữ Hán-Nôm cổ cùng cách thức trưng bày tĩnh tại bảo tàng khiến thế hệ trẻ và công chúng quốc tế gặp không ít rào cản khi muốn tiếp cận, giải mã ý nghĩa sâu xa của từng họa tiết.
+                  Thế nhưng, chữ Hán-Nôm cổ kính cùng cách trưng bày tĩnh lặng nơi bảo tàng vô tình tạo nên khoảng cách với thế hệ trẻ hôm nay. Làm sao để người trẻ không chỉ ngắm nhìn, mà thực sự thấu hiểu và tự hào về từng đóa hoa, con sóng, ngọn núi được tiền nhân gửi gắm?
                 </p>
                 <blockquote className="border-l-4 border-primary pl-5 py-2 italic text-foreground text-lg md:text-xl font-serif">
-                  "Lịch sử không hề khô khan, chỉ là chúng ta chưa tìm thấy chiếc cầu nối công nghệ thích hợp để chạm vào chiều sâu văn hóa dân tộc."
+                  "Lịch sử không hề khô khan — lịch sử luôn sống động khi ta tìm thấy chiếc cầu nối công nghệ để chạm vào chiều sâu văn hóa dân tộc."
                 </blockquote>
               </div>
             </div>
