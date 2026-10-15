@@ -209,7 +209,9 @@ async fn process_one_user(
         stats.reset += 1;
     }
 
-    tx.commit().await.map_err(|e| AppError::Internal(e.into()))?;
+    tx.commit()
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
     stats.processed += 1;
     Ok(())
 }

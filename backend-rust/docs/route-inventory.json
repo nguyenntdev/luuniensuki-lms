@@ -228,6 +228,84 @@
     "status": "gateway"
   },
   {
+    "method": "POST",
+    "path": "/api/v1/admin/history/assets",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/history/audit",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/history/claims",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/v1/admin/history/claims/{claim_id}",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/history/claims/{claim_id}/sources",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/history/claims/{claim_id}/transition",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/history/entities",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/v1/admin/history/entities/{entity_id}",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/admin/history/entities/{entity_id}/geography",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/history/relations",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/admin/history/relations/{relation_id}",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/history/sources",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/v1/admin/history/sources/{source_id}",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
     "method": "GET",
     "path": "/api/v1/admin/lessons",
     "group": "admin",
@@ -1116,6 +1194,204 @@
     "status": "gateway"
   },
   {
+    "method": "GET",
+    "path": "/api/v1/history/claims/{claim_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/claims/{claim_id}/sources",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/collections",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/history/collections",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/v1/history/collections/{collection_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/history/collections/{collection_id}/publish",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/collections/{slug}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/entities",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/entities/by-slug/{slug}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/entities/{entity_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/entities/{entity_id}/claims",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/entities/{entity_id}/geography",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/entities/{entity_id}/graph",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/entities/{entity_id}/relations",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/events",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/map",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/questions",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/history/questions",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/questions/{question_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/history/questions/{question_id}/grade",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/reliefs/{urn_slug}/{relief_slug}/hotspot",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/search",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/skills/{user_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/sources",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/sources/{source_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/stories",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/history/stories",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/stories/{slug}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/v1/history/stories/{story_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/history/stories/{story_id}/publish",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/history/tutor/ask",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/tutor/entities",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/urns",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
     "method": "POST",
     "path": "/api/v1/learning-path/complete-item",
     "group": "misc",
@@ -1160,6 +1436,12 @@
   {
     "method": "POST",
     "path": "/api/v1/live-sessions/{live_session_id}/ai-teacher/reply",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/live-sessions/{live_session_id}/ai-teacher/reply/stream",
     "group": "misc",
     "status": "gateway"
   },
@@ -1286,12 +1568,6 @@
   {
     "method": "POST",
     "path": "/api/v1/milestones/{milestone_id}/celebrate",
-    "group": "misc",
-    "status": "gateway"
-  },
-  {
-    "method": "GET",
-    "path": "/api/v1/new-feature",
     "group": "misc",
     "status": "gateway"
   },

@@ -719,6 +719,44 @@ function HotspotRing({
     );
 }
 
+function disposeMaterial(mat: THREE.Material) {
+    if (!mat) return;
+
+    for (const key of Object.keys(mat)) {
+        const prop = (mat as unknown as Record<string, unknown>)[key];
+        if (
+            prop &&
+            typeof prop === "object" &&
+            "isTexture" in prop &&
+            (prop as THREE.Texture).isTexture
+        ) {
+            (prop as THREE.Texture).dispose();
+        }
+    }
+
+    mat.dispose();
+}
+
+function disposeObject3D(root: THREE.Object3D) {
+    if (!root) return;
+
+    root.traverse((child: THREE.Object3D) => {
+        if ((child as THREE.Mesh).isMesh) {
+            const mesh = child as THREE.Mesh;
+            if (mesh.geometry) {
+                mesh.geometry.dispose();
+            }
+            if (mesh.material) {
+                if (Array.isArray(mesh.material)) {
+                    mesh.material.forEach((mat) => disposeMaterial(mat));
+                } else {
+                    disposeMaterial(mesh.material);
+                }
+            }
+        }
+    });
+}
+
 function UrnModel({
     url,
     motifs,
@@ -732,6 +770,20 @@ function UrnModel({
     onModelReady,
 }: UrnModelProps) {
     const gltf = useGLTF(url) as unknown as { scene: THREE.Group };
+
+    // Deep disposal of Three.js geometry, material, and textures on component
+    // unmount and model URL changes to eliminate GPU VRAM leaks.
+    useEffect(() => {
+        const scene = gltf.scene;
+        return () => {
+            disposeObject3D(scene);
+            try {
+                useGLTF.clear(url);
+            } catch {
+                // Ignore if clear fails or is unsupported
+            }
+        };
+    }, [gltf.scene, url]);
 
     const fit = useMemo(() => {
         const box = new THREE.Box3().setFromObject(gltf.scene);

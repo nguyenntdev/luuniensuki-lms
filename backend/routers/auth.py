@@ -104,7 +104,7 @@ def register(
         expires_delta=timedelta(minutes=settings.access_token_expire_minutes),
         issuer=settings.jwt_issuer,
         audience=settings.jwt_audience,
-        extra_claims={"type": "access"},
+        extra_claims={"type": "access", "role": user.role.value},
     )
     refresh_token = create_jwt_token(
         subject=str(user.id),
@@ -113,7 +113,7 @@ def register(
         expires_delta=timedelta(days=settings.refresh_token_expire_days),
         issuer=settings.jwt_issuer,
         audience=settings.jwt_audience,
-        extra_claims={"type": "refresh"},
+        extra_claims={"type": "refresh", "role": user.role.value},
     )
 
     _set_auth_cookies(response, access_token=access_token, refresh_token=refresh_token)
@@ -142,7 +142,7 @@ def login(
         expires_delta=timedelta(minutes=settings.access_token_expire_minutes),
         issuer=settings.jwt_issuer,
         audience=settings.jwt_audience,
-        extra_claims={"type": "access"},
+        extra_claims={"type": "access", "role": user.role.value},
     )
     refresh_token = create_jwt_token(
         subject=str(user.id),
@@ -151,7 +151,7 @@ def login(
         expires_delta=timedelta(days=settings.refresh_token_expire_days),
         issuer=settings.jwt_issuer,
         audience=settings.jwt_audience,
-        extra_claims={"type": "refresh"},
+        extra_claims={"type": "refresh", "role": user.role.value},
     )
 
     _set_auth_cookies(response, access_token=access_token, refresh_token=refresh_token)
@@ -217,7 +217,7 @@ def refresh_session(
         expires_delta=timedelta(minutes=settings.access_token_expire_minutes),
         issuer=settings.jwt_issuer,
         audience=settings.jwt_audience,
-        extra_claims={"type": "access"},
+        extra_claims={"type": "access", "role": user.role.value},
     )
     refresh_token = create_jwt_token(
         subject=str(user.id),
@@ -226,7 +226,7 @@ def refresh_session(
         expires_delta=timedelta(days=settings.refresh_token_expire_days),
         issuer=settings.jwt_issuer,
         audience=settings.jwt_audience,
-        extra_claims={"type": "refresh"},
+        extra_claims={"type": "refresh", "role": user.role.value},
     )
 
     _set_auth_cookies(response, access_token=access_token, refresh_token=refresh_token)

@@ -44,94 +44,117 @@ This project is indexed by GitNexus as **luuniensuki-lms** (23912 symbols, 33359
 
 # AGENTS.md
 
-Gamified LMS for Vietnamese heritage (Cửu Đỉnh). Polyglot monorepo mid-migration from Python to Rust.
+Gamified LMS for Vietnamese heritage (Cửu Đỉnh). Polyglot monorepo with Axum/Rust API gateway + FastAPI/Python backend + Next.js frontend + Flutter mobile.
 
-## Critical: where the real code lives
+## Critical: Where the Real Code Lives
 
-- The real Python backend is the **`backend/` package**, run as `uvicorn backend.main:app`. `backend/main.py` is a thin shim → app factory in `backend/app.py`, routes in `backend/routers/*`, business logic in `backend/services/*`, shared helpers in `backend/domain/*`.
-- **Root-level `main.py` (~18k lines), `models.py`, `schemas.py`, `seed.py`, `config.py`, etc. and root `versions/` are stale pre-modularization copies of the old monolith.** Nothing imports them and Docker does not copy them. Never edit them — edit the counterpart in `backend/`.
-- Alembic migrations live in `migrations/` (`alembic.ini` sets `script_location = migrations`); root `versions/` is a stale duplicate.
+- **Active Python Backend**: The real Python backend is the modular **`backend/`** package (factory in `backend/app.py`, thin entrypoint shim in `backend/main.py`, routers in `backend/routers/*`, schemas in `backend/apischemas/*`, business logic in `backend/services/*`, domain helpers in `backend/domain/*`).
+- **DO NOT TOUCH STALE MONOLITH FILES**: Root-level `main.py` (~18.3k lines), `models.py`, `schemas.py`, `seed.py`, `config.py`, `rbac.py`, `security.py`, `errors.py`, and root `versions/` are obsolete pre-modularization artifacts. Nothing in runtime or Docker imports them. Always edit files inside `backend/`.
+- **Database Migrations**: Real Alembic migrations live in **`migrations/`** (`alembic.ini` sets `script_location = migrations`). Root `versions/` is an obsolete duplicate.
 
-## Architecture
+## Architecture & Request Routing
 
-Request flow: Browser → Nginx → Next.js (`frontend/`, :3000) → Rust API gateway (`backend-rust/`, :8001) → either native Rust route or fallback proxy to FastAPI (`backend/`, :8000) → PostgreSQL 15.
+Request flow: `Browser -> Nginx (:80/:443) -> Next.js (frontend/, :3000) -> Rust Gateway (backend-rust/, :8001) -> PostgreSQL 15`.
 
-- Strangler-fig migration: Rust gateway owns `GET /health`, `GET /api/v1/ranks`, `GET /api/v1/content/ratings`, `GET /api/v1/tags`, and proxies everything else to Python.
-- `services/ai_teacher_agent/realtime_worker.py` — background worker for AI teacher live sessions (runs as separate compose service).
-- Live learning uses LiveKit (compose service `livekit`) with a Janus gateway alternative.
-- `mobile/` — Flutter client. `ban-duc-noi/` — motif image assets served by Nginx at `/assets/ban-duc-noi`.
-- Production: `https://lms.histolab.icu`, stack in `docker-compose.prod.yml`.
+- **Rust Gateway & Native Endpoints**: `backend-rust/` serves 291 routes natively (auth, users, content, lessons, quizzes, progress, quests, classrooms, leaderboards, admin, timeline, trails, FSRS reviews, streak economy).
+- **Python Proxy Fallback**: Managed via `backend-rust/config/route-modes.toml` (hot-reloaded). Routes pinned to `"gateway"` (`/api/v1/live/*`, `/api/v1/ai-tutor/*`, `/api/v1/live/demo-enter`) are proxied to Python (`backend/`, :8000). All other routes serve natively from Rust.
+- **AI Background Worker**: `services/ai_teacher_agent/realtime_worker.py` (compose service `ai_teacher_agent`).
+- **Real-Time Media**: LiveKit (`livekit`, :7880/:7881) with Janus WebRTC gateway (`janus-gateway`, :8188/:8088/:7088) as alternative.
+- **Static Assets**:
+  - `ban-duc-noi/` — motif image assets mounted at `/var/www/assets/ban-duc-noi` (served at `/assets/ban-duc-noi`).
+  - `public/models/` — 3D GLB models (`CAO-DINH-v1-*.glb`) and urn manifests (`manifests/*.json`).
+  - `data/` — JSON seed data for urns, motifs, coordinates, and exams.
 
 ## Commands
 
-### Python backend
+### Rust Backend (`cd backend-rust`)
 
 ```bash
-# Tests require a running PostgreSQL. Test DB defaults to luuniensuki_test
-# (conftest.py setdefault; CI uses luuniensuki). The DB must exist; conftest
-# drop_all/create_all's it per session.
+cargo fmt --check
+cargo test              # Unit & contract tests
+cargo run               # Runs gateway on 0.0.0.0:8001
+
+# CI Lints & Checks (run from repo root)
+./scripts/ci/lint-pinned-deps.sh       # Enforces exact (=) Cargo version pins
+./scripts/ci/lint-build-budget.sh      # Enforces Cargo.toml <-> build-budget.md parity
+./scripts/ci/lint-inventory-drift.sh   # Verifies route-inventory.json is up to date
+./scripts/ci/lint-ai-tutor-pinning.sh  # Verifies AI tutor routes stay pinned to gateway
+./scripts/ci/lint-migration-safety.sh  # Blocks destructive SQL operations
+./scripts/ci/lint-ledger-sync.sh       # Verifies route-modes.toml matches migration ledger
+```
+
+### Python Backend
+
+```bash
+# Tests require a running PostgreSQL instance. Test DB defaults to luuniensuki_test.
+# conftest.py drops and recreates tables per session.
 DATABASE_URL="postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test" pytest
 
-# Single test
+# Run single test file or specific test case
 pytest tests/backend/test_auth.py::test_register -v
 
-# Migrations / seed
+# Run live audio / STT / TTS unit tests
+pytest backend/tests/test_live_audio_bridge.py -v
+
+# Migrations & database seeding
 alembic upgrade head
 python -m backend.seed --seed-path data --image-path ban-duc-noi
 
-# In docker
+# In docker container
 docker compose exec api pytest
 ```
-
-- `tests/backend/test_openapi_snapshot.py` pins the HTTP contract byte-for-byte. For intentional contract changes only: `REGENERATE_OPENAPI_SNAPSHOT=1 pytest tests/backend/test_openapi_snapshot.py`, then commit the fixture. Never regenerate as a side effect of refactoring.
-- `tests/backend/test_cross_backend_contract.py` verifies Python/Rust parity — relevant whenever migrating a route.
 
 ### Frontend (`cd frontend`)
 
 ```bash
-npm run dev          # Next.js on :3000
-npm run lint:ci      # strict lint (ESLINT_USE_FLAT_CONFIG=true, --max-warnings=0)
-npm run type-check   # tsc --noEmit (also runs via prebuild)
-npm run test         # vitest run
-npx playwright test  # E2E; starts its own dev server (webServer in playwright.config.ts)
-PLAYWRIGHT_GREP=@smoke npx playwright test   # smoke subset (what CI runs)
-npm run gen:api      # regenerate src/types/api.ts from backend OpenAPI schema (openapi-typescript)
+npm run dev          # Next.js development server on :3000
+npm run lint:ci      # Strict ESLint check (ESLINT_USE_FLAT_CONFIG=true, --max-warnings=0)
+npm run type-check   # tsc --noEmit (enforced as prebuild check)
+npm run test         # Vitest unit test suite
+npm run test:watch   # Vitest interactive watcher
+npx playwright test  # E2E test suite (spawns dev server on :3000 automatically)
+PLAYWRIGHT_GREP=@smoke npx playwright test  # Smoke test subset for CI
+npm run gen:api      # Regenerate src/types/api.ts from backend OpenAPI schema
 ```
 
-- Frontend is mixed JS/TSX; don't assume TS everywhere.
-
-### Rust (`cd backend-rust`)
+### Mobile Client (`cd mobile`)
 
 ```bash
-cargo fmt --check
-cargo test
-cargo run
+# Code generation for Freezed / Riverpod models
+flutter pub run build_runner build --delete-conflicting-outputs
+# Alternatively use helper script from root:
+./scripts/build/generate_hearts_code.sh
 ```
 
-- All Cargo dependencies are exact-pinned (`=`) for the strangler-fig migration. When adding/bumping a dep, record peak release-build RSS in `backend-rust/docs/build-budget.md` — a CI lint enforces parity between the manifest and that doc.
-
-### Local stack
+### Local Docker Stack
 
 ```bash
 cp .env.example .env
 docker compose up -d db api api_rust web
-curl -s http://127.0.0.1:8001/health
+curl -s http://127.0.0.1:8001/health  # Verify gateway health (returns status: ok)
 ```
 
-## Conventions & gotchas
+## Testing Quirks & Contract Enforcement
 
-- Error envelope everywhere: `{"error": {"code": ..., "message": ..., "details": {}}}`.
-- Auth: JWT in httpOnly cookies (`luuniensuki_access`/`luuniensuki_refresh`); OAuth2 header kept for tests. Guest role can only access `is_demo: true` content.
-- Rust migration rules: one stable endpoint group per small PR, keep response shapes frontend-compatible, keep the Python fallback until contract tests + production smoke test pass, run `cargo test` before deploy.
-- XP: discovery 25 / lesson 50 / mastered 75; quiz pass ≥ 80%. Progress flow: `hidden → discovered → learned → mastered`.
-- Config fails closed at import time (rejects sentinel JWT secrets, wildcard CORS + credentials) — see `backend/config.py` validator before adding settings.
-- Deploy scripts in `scripts/deployment/` (`deploy-safe.sh` is the safe path). Smoke test after deploy: pages return 200, `/api/v1/ranks` returns 401 unauthenticated.
-- Never commit secrets. The production server at `/opt/luuniensuki-lms` may not be a git checkout — use a GitHub clone for commits/PRs.
-- Flutter codegen (freezed/riverpod): `scripts/build/generate_hearts_code.sh`.
+- **OpenAPI Snapshot Pinning**: `tests/backend/test_openapi_snapshot.py` locks the FastAPI HTTP contract byte-for-byte. For deliberate, reviewed contract changes only:
+  ```bash
+  REGENERATE_OPENAPI_SNAPSHOT=1 pytest tests/backend/test_openapi_snapshot.py
+  ```
+  Never regenerate snapshots as an unreviewed side effect of a refactor.
+- **Route Inventory**: Update when modifying endpoints: `python scripts/dev/generate_route_inventory.py`.
+- **Cross-Backend Parity**: `tests/backend/test_cross_backend_contract.py` validates JWT acceptance and token compatibility across Python and Rust.
 
-## Key docs
+## Conventions & Gotchas
 
-- `docs/DOCUMENTATION_INDEX.md` — map of all docs
-- `docs/ARCHITECTURE.md` — current architecture + Rust migration
-- `docs/plan/2026-05-12-rust-backend-refactor-plan.md` — phased migration plan
-- `CLAUDE.md` — older but detailed domain notes (XP/badges/streaks/quiz logic); trust code over it where they diverge
+- **Error Envelope Standard**: Every API error must strictly follow:
+  ```json
+  {"error": {"code": "ERROR_CODE", "message": "Human readable message", "details": {}}}
+  ```
+- **Authentication**: JWT stored in httpOnly cookies (`luuniensuki_access` / `luuniensuki_refresh`); Bearer Authorization header supported for tests. Guest users (`role: "guest"`) can only access content with `is_demo: true`. Shared JWT secret (HS256) and claim set (`sub, iat, exp, role, type, jti, iss, aud`) are shared between Rust and Python.
+- **Config Fails Closed**: `backend/config.py` validates settings at startup. In production (`ENVIRONMENT=production`), it fails fatally if `JWT_SECRET_KEY` is a sentinel value or if wildcard CORS origins are paired with credentials.
+- **Migration Safety**: Schema changes must be purely additive (`CREATE TABLE`, `CREATE INDEX`, `ADD COLUMN`). Destructive operations (`DROP TABLE`, `DROP COLUMN`, `ALTER TYPE`, `RENAME`) are blocked by `scripts/ci/lint-migration-safety.sh`.
+- **Rust Dependency Rule**: Every direct dependency in `backend-rust/Cargo.toml` must use an exact version pin (`=x.y.z`) and have its peak RSS recorded in `backend-rust/docs/build-budget.md`.
+- **Gamification Domain Logic**:
+  - XP awards: Discovery (25 XP), Lesson (50 XP), Mastered (75 XP). Quiz pass threshold: ≥ 80%.
+  - Progression lifecycle: `hidden -> discovered -> learned -> mastered`.
+- **Deployment**: Production deployed at `https://lms.histolab.icu` via `docker-compose.prod.yml`. Safe deployment script: `./scripts/deployment/deploy-safe.sh`. Post-deploy smoke test: `./scripts/testing/rust_gateway_contracts.sh`.

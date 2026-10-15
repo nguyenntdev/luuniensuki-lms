@@ -142,6 +142,65 @@ describe("middleware route guard (Req 13.1)", () => {
     expect(res.url.pathname).toBe("/login");
   });
 
+  it("allows request when access token is expired but refresh token is valid", async () => {
+    // Access token fails verification (expired)
+    jwtVerifyMock.mockRejectedValueOnce(new Error("ERR_JWT_EXPIRED"));
+    // Refresh token succeeds verification with type: 'refresh'
+    jwtVerifyMock.mockResolvedValueOnce({
+      payload: { type: "refresh", sub: "user-1" },
+      protectedHeader: { alg: "HS256" },
+    } as never);
+
+    const res = (await middleware(
+      makeRequest({
+        cookies: {
+          [ACCESS_COOKIE]: "expired.access.jwt",
+          [REFRESH_COOKIE]: "valid.refresh.jwt",
+        },
+      }),
+    )) as unknown as { kind: string };
+
+    expect(jwtVerifyMock).toHaveBeenCalledTimes(2);
+    expect(res.kind).toBe("next");
+  });
+
+  it("redirects to /login when refresh token is unverified/unsigned (bypasses prevented)", async () => {
+    // Access token is missing or expired
+    jwtVerifyMock.mockRejectedValueOnce(new Error("ERR_JWS_INVALID"));
+
+    const res = (await middleware(
+      makeRequest({
+        cookies: {
+          [REFRESH_COOKIE]: "forged-or-unsigned-cookie-value",
+        },
+      }),
+    )) as unknown as { kind: string; url: { pathname: string } };
+
+    expect(jwtVerifyMock).toHaveBeenCalledTimes(1);
+    expect(res.kind).toBe("redirect");
+    expect(res.url.pathname).toBe("/login");
+  });
+
+  it("redirects to /login when refresh token has type !== 'refresh'", async () => {
+    // Refresh cookie contains a valid JWT but with type: 'access'
+    jwtVerifyMock.mockResolvedValueOnce({
+      payload: { type: "access", sub: "user-1" },
+      protectedHeader: { alg: "HS256" },
+    } as never);
+
+    const res = (await middleware(
+      makeRequest({
+        cookies: {
+          [REFRESH_COOKIE]: "access.token.in.refresh.cookie",
+        },
+      }),
+    )) as unknown as { kind: string; url: { pathname: string } };
+
+    expect(jwtVerifyMock).toHaveBeenCalledTimes(1);
+    expect(res.kind).toBe("redirect");
+    expect(res.url.pathname).toBe("/login");
+  });
+
   it("preserves the original path as returnUrl on redirect", async () => {
     const res = (await middleware(
       makeRequest({ pathname: "/lessons/42", search: "?tab=quiz" }),
@@ -165,7 +224,7 @@ describe("middleware route guard (Req 13.1)", () => {
       "/timeline",
       "/stories",
       "/stories/huyen-tich-cuu-dinh",
-      "/collections",
+      "/collection",
       "/sources",
       "/explore",
       "/vr360",
@@ -180,6 +239,30 @@ describe("middleware route guard (Req 13.1)", () => {
     }
 
     expect(jwtVerifyMock).not.toHaveBeenCalled();
+  });
+
+  it("fails closed in production if JWT_SECRET_KEY is missing (redirects to /login)", async () => {
+    const origSecret = process.env.JWT_SECRET_KEY;
+    const origEnv = process.env.ENVIRONMENT;
+    try {
+      process.env.JWT_SECRET_KEY = "";
+      process.env.ENVIRONMENT = "production";
+
+      const res = (await middleware(
+        makeRequest({
+          cookies: {
+            [ACCESS_COOKIE]: "some-access-cookie",
+            [REFRESH_COOKIE]: "some-refresh-cookie",
+          },
+        }),
+      )) as unknown as { kind: string; url: { pathname: string } };
+
+      expect(res.kind).toBe("redirect");
+      expect(res.url.pathname).toBe("/login");
+    } finally {
+      process.env.JWT_SECRET_KEY = origSecret;
+      process.env.ENVIRONMENT = origEnv;
+    }
   });
 });
 

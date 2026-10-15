@@ -156,8 +156,16 @@ fn retrievability(t: f64, s: f64) -> f64 {
 }
 
 fn recall_stability(d: f64, s: f64, r: f64, rating: FsrsRating, w: &[f64; 21]) -> f64 {
-    let hard_penalty = if rating == FsrsRating::Hard { w[15] } else { 1.0 };
-    let easy_bonus = if rating == FsrsRating::Easy { w[16] } else { 1.0 };
+    let hard_penalty = if rating == FsrsRating::Hard {
+        w[15]
+    } else {
+        1.0
+    };
+    let easy_bonus = if rating == FsrsRating::Easy {
+        w[16]
+    } else {
+        1.0
+    };
     let inc = (w[8].exp())
         * (11.0 - d)
         * (s.powf(-w[9]))
@@ -168,10 +176,7 @@ fn recall_stability(d: f64, s: f64, r: f64, rating: FsrsRating, w: &[f64; 21]) -
 }
 
 fn forgetting_stability(d: f64, s: f64, r: f64, w: &[f64; 21]) -> f64 {
-    let v = w[11]
-        * d.powf(-w[12])
-        * ((s + 1.0).powf(w[13]) - 1.0)
-        * ((1.0 - r) * w[14]).exp();
+    let v = w[11] * d.powf(-w[12]) * ((s + 1.0).powf(w[13]) - 1.0) * ((1.0 - r) * w[14]).exp();
     v.max(0.1)
 }
 
@@ -271,7 +276,12 @@ mod tests {
 
     #[test]
     fn difficulty_clamped() {
-        for rating in [FsrsRating::Again, FsrsRating::Hard, FsrsRating::Good, FsrsRating::Easy] {
+        for rating in [
+            FsrsRating::Again,
+            FsrsRating::Hard,
+            FsrsRating::Good,
+            FsrsRating::Easy,
+        ] {
             let r = schedule(
                 CardState::Review,
                 Some(1.0),
@@ -287,7 +297,6 @@ mod tests {
         }
     }
 }
-
 
 #[cfg(test)]
 mod property_tests {
@@ -332,15 +341,8 @@ mod property_tests {
                     for &s in &stabilities {
                         for &t in &deltas {
                             for &r in &retentions {
-                                let res = schedule(
-                                    state,
-                                    Some(d),
-                                    Some(s),
-                                    t,
-                                    rating,
-                                    &DEFAULT_W,
-                                    r,
-                                );
+                                let res =
+                                    schedule(state, Some(d), Some(s), t, rating, &DEFAULT_W, r);
                                 assert!(
                                     res.difficulty >= 1.0 && res.difficulty <= 10.0,
                                     "difficulty out of range: {}",

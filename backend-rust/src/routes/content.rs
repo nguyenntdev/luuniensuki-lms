@@ -86,7 +86,9 @@ pub async fn tags(
     let Some(pool) = pool else {
         return (
             StatusCode::SERVICE_UNAVAILABLE,
-            Json(json!({ "error": { "code": "SERVICE_UNAVAILABLE", "message": "Database not available", "details": {} } })),
+            Json(
+                json!({ "error": { "code": "SERVICE_UNAVAILABLE", "message": "Database not available", "details": {} } }),
+            ),
         );
     };
 
@@ -114,7 +116,9 @@ pub async fn tags(
             tracing::error!(error = %e, "failed to fetch tags");
             (
                 StatusCode::INTERNAL_SERVER_ERROR,
-                Json(json!({ "error": { "code": "INTERNAL_SERVER_ERROR", "message": "Failed to fetch tags", "details": {} } })),
+                Json(
+                    json!({ "error": { "code": "INTERNAL_SERVER_ERROR", "message": "Failed to fetch tags", "details": {} } }),
+                ),
             )
         }
     }

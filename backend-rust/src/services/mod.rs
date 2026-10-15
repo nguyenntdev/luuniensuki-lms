@@ -1,7 +1,8 @@
 //! Business logic services.
 
-pub mod admin_service;
 pub mod admin_extras_service;
+pub mod admin_service;
+pub mod ai_hook_client;
 pub mod badge_service;
 pub mod certificate_pdf;
 pub mod classroom_service;
@@ -11,6 +12,8 @@ pub mod crash_report_service;
 pub mod fsrs_algo;
 pub mod fsrs_service;
 pub mod history_service;
+pub mod janus_admin;
+pub mod janus_signaling;
 pub mod leaderboard_service;
 pub mod lesson_service;
 pub mod live_auth;
@@ -20,9 +23,6 @@ pub mod live_moderation_service;
 pub mod live_participant_service;
 pub mod live_rate_limit_service;
 pub mod live_session_service;
-pub mod janus_admin;
-pub mod janus_signaling;
-pub mod ai_hook_client;
 pub mod notification_service;
 pub mod progress_service;
 pub mod quiz_service;

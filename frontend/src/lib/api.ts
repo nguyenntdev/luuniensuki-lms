@@ -56,23 +56,34 @@ export function normalizeUser(
 
 let refreshPromise: Promise<unknown> | null = null;
 
-async function buildApiError(res: Response): Promise<ApiError> {
-  let errorMessage = `HTTP ${res.status} ${res.statusText}`;
+export async function buildApiError(res: Response): Promise<ApiError> {
+  let errorMessage = `HTTP ${res.status} ${res.statusText}`.trim();
   let errorData: ApiErrorBody | undefined;
-  try {
-    errorData = (await res.json()) as ApiErrorBody;
-    if (errorData?.error?.message) {
-      errorMessage = errorData.error.message;
-    } else if (errorData?.detail) {
-      errorMessage =
-        typeof errorData.detail === "string"
-          ? errorData.detail
-          : JSON.stringify(errorData.detail);
+
+  const text = await res.text().catch(() => "");
+  if (text) {
+    try {
+      const parsed = JSON.parse(text) as ApiErrorBody;
+      if (parsed && typeof parsed === "object") {
+        errorData = parsed;
+        if (errorData?.error?.message) {
+          errorMessage = errorData.error.message;
+        } else if (errorData?.detail) {
+          errorMessage =
+            typeof errorData.detail === "string"
+              ? errorData.detail
+              : JSON.stringify(errorData.detail);
+        } else {
+          errorMessage = `${errorMessage}: ${text}`;
+        }
+      } else {
+        errorMessage = `${errorMessage}: ${text}`;
+      }
+    } catch {
+      errorMessage = `${errorMessage}: ${text}`;
     }
-  } catch {
-    const text = await res.text().catch(() => "");
-    if (text) errorMessage = `${errorMessage}: ${text}`;
   }
+
   return new ApiError(errorMessage, {
     status: res.status,
     data: errorData,
@@ -84,6 +95,7 @@ async function refreshSession(): Promise<unknown> {
   refreshPromise = (async () => {
     const res = await fetch(`${API_BASE_URL}/api/v1/auth/refresh`, {
       method: "POST",
+      headers: { "X-Requested-With": "XMLHttpRequest" },
       cache: "no-store",
       credentials: "include",
     });
@@ -110,9 +122,37 @@ async function parseApiResponse(res: Response): Promise<unknown> {
   }
 }
 
+const MUTATING_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
+
+function isMutatingMethod(method?: string): boolean {
+  if (!method) return false;
+  return MUTATING_METHODS.has(method.toUpperCase());
+}
+
+function mergeHeaders(
+  baseHeaders: Record<string, string>,
+  customHeaders?: HeadersInit,
+): HeadersInit {
+  if (!customHeaders) return baseHeaders;
+  const headers = { ...baseHeaders };
+  if (customHeaders instanceof Headers) {
+    customHeaders.forEach((value, key) => {
+      headers[key] = value;
+    });
+  } else if (Array.isArray(customHeaders)) {
+    for (const [key, value] of customHeaders) {
+      headers[key] = value;
+    }
+  } else {
+    Object.assign(headers, customHeaders);
+  }
+  return headers;
+}
+
 export interface ApiRequestOptions {
   method?: string;
   body?: unknown;
+  headers?: HeadersInit;
   skipRefresh?: boolean;
   cache?: RequestCache;
   keepalive?: boolean;
@@ -130,13 +170,18 @@ export async function apiRequest<T = unknown>(
   {
     method = "GET",
     body,
+    headers: customHeaders,
     skipRefresh,
     cache = "no-store",
     keepalive,
   }: ApiRequestOptions = {},
 ): Promise<T> {
-  const headers: Record<string, string> = {};
-  if (body) headers["content-type"] = "application/json";
+  const baseHeaders: Record<string, string> = {};
+  if (isMutatingMethod(method)) {
+    baseHeaders["X-Requested-With"] = "XMLHttpRequest";
+  }
+  if (body) baseHeaders["content-type"] = "application/json";
+  const headers = mergeHeaders(baseHeaders, customHeaders);
 
   const res = await fetch(`${API_BASE_URL}${path}`, {
     method,
@@ -151,7 +196,14 @@ export async function apiRequest<T = unknown>(
     const isAuthEndpoint = AUTH_ENDPOINTS.includes(path);
     if (!isAuthEndpoint) {
       await refreshSession();
-      return apiRequest<T>(path, { method, body, skipRefresh: true });
+      return apiRequest<T>(path, {
+        method,
+        body,
+        headers: customHeaders,
+        skipRefresh: true,
+        cache,
+        keepalive,
+      });
     }
   }
 
@@ -165,6 +217,7 @@ export async function apiRequest<T = unknown>(
 export interface ApiFormDataOptions {
   method?: string;
   body?: BodyInit;
+  headers?: HeadersInit;
   skipRefresh?: boolean;
   cache?: RequestCache;
   keepalive?: boolean;
@@ -175,13 +228,21 @@ export async function apiRequestFormData<T = unknown>(
   {
     method = "POST",
     body,
+    headers: customHeaders,
     skipRefresh,
     cache = "no-store",
     keepalive,
   }: ApiFormDataOptions = {},
 ): Promise<T> {
+  const baseHeaders: Record<string, string> = {};
+  if (isMutatingMethod(method)) {
+    baseHeaders["X-Requested-With"] = "XMLHttpRequest";
+  }
+  const headers = mergeHeaders(baseHeaders, customHeaders);
+
   const res = await fetch(`${API_BASE_URL}${path}`, {
     method,
+    headers: Object.keys(headers).length > 0 ? headers : undefined,
     body,
     cache,
     credentials: "include",
@@ -192,7 +253,14 @@ export async function apiRequestFormData<T = unknown>(
     const isAuthEndpoint = AUTH_ENDPOINTS.includes(path);
     if (!isAuthEndpoint) {
       await refreshSession();
-      return apiRequestFormData<T>(path, { method, body, skipRefresh: true });
+      return apiRequestFormData<T>(path, {
+        method,
+        body,
+        headers: customHeaders,
+        skipRefresh: true,
+        cache,
+        keepalive,
+      });
     }
   }
 
@@ -224,16 +292,22 @@ export async function apiRequestBinary(
   {
     method = "POST",
     body,
-    headers,
+    headers: customHeaders,
     skipRefresh,
     cache = "no-store",
     keepalive,
     signal,
   }: ApiBinaryOptions = {},
 ): Promise<BinaryResponse> {
+  const baseHeaders: Record<string, string> = {};
+  if (isMutatingMethod(method)) {
+    baseHeaders["X-Requested-With"] = "XMLHttpRequest";
+  }
+  const headers = mergeHeaders(baseHeaders, customHeaders);
+
   const res = await fetch(`${API_BASE_URL}${path}`, {
     method,
-    headers,
+    headers: Object.keys(headers).length > 0 ? headers : undefined,
     body,
     cache,
     credentials: "include",
@@ -248,7 +322,7 @@ export async function apiRequestBinary(
       return apiRequestBinary(path, {
         method,
         body,
-        headers,
+        headers: customHeaders,
         skipRefresh: true,
         cache,
         keepalive,
@@ -732,14 +806,10 @@ export async function updateProfile(
 export async function uploadAvatar(file: File): Promise<unknown> {
   const formData = new FormData();
   formData.append("file", file);
-  const res = await fetch(`${API_BASE}/users/me/avatar`, {
+  return apiRequestFormData(`/api/v1/users/me/avatar`, {
     method: "POST",
     body: formData,
-    cache: "no-store",
-    credentials: "include",
   });
-  if (!res.ok) throw new Error("Upload failed");
-  return res.json();
 }
 
 export async function changePassword(
@@ -1213,7 +1283,10 @@ export async function streamLiveAiTeacherReply({
     `${API_BASE_URL}/api/v1/live-sessions/${encoded}/ai-teacher/reply/stream`,
     {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: {
+        "content-type": "application/json",
+        "X-Requested-With": "XMLHttpRequest",
+      },
       body: JSON.stringify({
         message,
         mode,
@@ -1561,6 +1634,7 @@ export async function aiTutorStream({
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "X-Requested-With": "XMLHttpRequest",
       },
       body: JSON.stringify({ message, history, context, level }),
       cache: "no-store",
@@ -1672,6 +1746,7 @@ export async function aiQaStream({
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "X-Requested-With": "XMLHttpRequest",
       },
       body: JSON.stringify({ question, context, limit }),
       cache: "no-store",

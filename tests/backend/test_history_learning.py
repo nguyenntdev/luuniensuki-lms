@@ -503,6 +503,33 @@ def test_skills_endpoint_returns_eight_null_dimensions(client, db_session):
     assert body["overall"] is None
 
 
+def test_skills_endpoint_idor_protection(client, db_session):
+    student1 = _make_user(client, db_session, "hlearn-student1@example.com", "Student One", UserRole.learner)
+    student2 = _make_user(client, db_session, "hlearn-student2@example.com", "Student Two", UserRole.learner)
+    teacher = _make_user(client, db_session, "hlearn-teacher1@example.com", "Teacher One", UserRole.teacher)
+    admin = _make_user(client, db_session, "hlearn-admin1@example.com", "Admin One", UserRole.admin)
+
+    # Student 2 tries to access Student 1's skills -> 403 Forbidden
+    _login(client, student2.email)
+    res = client.get(f"/api/v1/history/skills/{student1.id}")
+    assert res.status_code == 403
+
+    # Student 1 accesses own skills -> 200 OK
+    _login(client, student1.email)
+    res = client.get(f"/api/v1/history/skills/{student1.id}")
+    assert res.status_code == 200
+
+    # Teacher accesses Student 1's skills -> 200 OK
+    _login(client, teacher.email)
+    res = client.get(f"/api/v1/history/skills/{student1.id}")
+    assert res.status_code == 200
+
+    # Admin accesses Student 1's skills -> 200 OK
+    _login(client, admin.email)
+    res = client.get(f"/api/v1/history/skills/{student1.id}")
+    assert res.status_code == 200
+
+
 def test_skills_endpoint_reflects_graded_dimensions(client, db_session, seeded_content):
     user = _make_user(client, db_session, "hlearn-staff10@example.com", "HLearn Staff10", UserRole.admin)
     q = _create_question(

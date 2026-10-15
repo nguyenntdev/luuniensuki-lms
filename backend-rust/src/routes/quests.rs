@@ -51,8 +51,14 @@ fn require_pool(pool: &Option<PgPool>) -> Result<&PgPool, AppError> {
 
 fn authenticate(headers: &HeaderMap, settings: &Settings) -> Result<Uuid, AppError> {
     let token = extract_token_from_headers(headers).ok_or(AppError::Unauthorized)?;
-    let claims = auth::verify_access_token(&token, &settings.jwt_secret_key, settings.jwt_validate_new_claims, &settings.jwt_issuer, &settings.jwt_audience)
-        .map_err(|_| AppError::Unauthorized)?;
+    let claims = auth::verify_access_token(
+        &token,
+        &settings.jwt_secret_key,
+        settings.jwt_validate_new_claims,
+        &settings.jwt_issuer,
+        &settings.jwt_audience,
+    )
+    .map_err(|_| AppError::Unauthorized)?;
     let user_id: Uuid = claims.sub.parse().map_err(|_| AppError::Unauthorized)?;
     Ok(user_id)
 }
@@ -148,12 +154,20 @@ pub async fn get_daily_missions(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use axum::{body::Body, http::Request, routing::{get, post}, Router};
+    use axum::{
+        body::Body,
+        http::Request,
+        routing::{get, post},
+        Router,
+    };
     use tower::ServiceExt;
 
     fn test_auth_state() -> AuthState {
         let settings = crate::config::Settings::from_env().unwrap();
-        AuthState { pool: None, settings }
+        AuthState {
+            pool: None,
+            settings,
+        }
     }
 
     fn test_router() -> Router {
@@ -173,11 +187,15 @@ mod tests {
     async fn award_badge_returns_401_without_token() {
         let app = test_router();
         let resp = app
-            .oneshot(Request::builder()
-                .method("POST")
-                .uri("/api/v1/badges/00000000-0000-0000-0000-000000000001/award")
-                .body(Body::empty()).unwrap())
-            .await.unwrap();
+            .oneshot(
+                Request::builder()
+                    .method("POST")
+                    .uri("/api/v1/badges/00000000-0000-0000-0000-000000000001/award")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
         assert_eq!(resp.status(), StatusCode::UNAUTHORIZED);
     }
 
@@ -185,10 +203,14 @@ mod tests {
     async fn list_quests_returns_401_without_token() {
         let app = test_router();
         let resp = app
-            .oneshot(Request::builder()
-                .uri("/api/v1/quests")
-                .body(Body::empty()).unwrap())
-            .await.unwrap();
+            .oneshot(
+                Request::builder()
+                    .uri("/api/v1/quests")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
         assert_eq!(resp.status(), StatusCode::UNAUTHORIZED);
     }
 
@@ -196,18 +218,25 @@ mod tests {
     async fn list_quests_returns_503_without_pool() {
         let state = test_auth_state();
         let token = crate::auth::issue_access_token(
-            "00000000-0000-0000-0000-000000000001", "user",
-            &state.settings.jwt_secret_key, 60,
+            "00000000-0000-0000-0000-000000000001",
+            "user",
+            &state.settings.jwt_secret_key,
+            60,
             &state.settings.jwt_issuer,
             &state.settings.jwt_audience,
-        ).unwrap();
+        )
+        .unwrap();
         let app = test_router();
         let resp = app
-            .oneshot(Request::builder()
-                .uri("/api/v1/quests")
-                .header("Authorization", format!("Bearer {}", token))
-                .body(Body::empty()).unwrap())
-            .await.unwrap();
+            .oneshot(
+                Request::builder()
+                    .uri("/api/v1/quests")
+                    .header("Authorization", format!("Bearer {}", token))
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
         assert_eq!(resp.status(), StatusCode::SERVICE_UNAVAILABLE);
     }
 
@@ -215,10 +244,14 @@ mod tests {
     async fn quest_detail_returns_401_without_token() {
         let app = test_router();
         let resp = app
-            .oneshot(Request::builder()
-                .uri("/api/v1/quests/test-quest")
-                .body(Body::empty()).unwrap())
-            .await.unwrap();
+            .oneshot(
+                Request::builder()
+                    .uri("/api/v1/quests/test-quest")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
         assert_eq!(resp.status(), StatusCode::UNAUTHORIZED);
     }
 
@@ -226,11 +259,15 @@ mod tests {
     async fn start_quest_returns_401_without_token() {
         let app = test_router();
         let resp = app
-            .oneshot(Request::builder()
-                .method("POST")
-                .uri("/api/v1/quests/test-quest/start")
-                .body(Body::empty()).unwrap())
-            .await.unwrap();
+            .oneshot(
+                Request::builder()
+                    .method("POST")
+                    .uri("/api/v1/quests/test-quest/start")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
         assert_eq!(resp.status(), StatusCode::UNAUTHORIZED);
     }
 
@@ -238,10 +275,14 @@ mod tests {
     async fn quest_summary_returns_401_without_token() {
         let app = test_router();
         let resp = app
-            .oneshot(Request::builder()
-                .uri("/api/v1/users/me/quest-summary")
-                .body(Body::empty()).unwrap())
-            .await.unwrap();
+            .oneshot(
+                Request::builder()
+                    .uri("/api/v1/users/me/quest-summary")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
         assert_eq!(resp.status(), StatusCode::UNAUTHORIZED);
     }
 
@@ -249,10 +290,14 @@ mod tests {
     async fn daily_missions_returns_401_without_token() {
         let app = test_router();
         let resp = app
-            .oneshot(Request::builder()
-                .uri("/api/v1/missions/daily")
-                .body(Body::empty()).unwrap())
-            .await.unwrap();
+            .oneshot(
+                Request::builder()
+                    .uri("/api/v1/missions/daily")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
         assert_eq!(resp.status(), StatusCode::UNAUTHORIZED);
     }
 }

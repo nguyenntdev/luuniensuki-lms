@@ -1,3 +1,6 @@
+from jose import jwt
+
+
 def test_auth_register_login_me(client):
     email = "alice@example.com"
     password = "password123"
@@ -10,6 +13,9 @@ def test_auth_register_login_me(client):
     assert register.cookies.get("luuniensuki_access")
     assert register.cookies.get("luuniensuki_refresh")
 
+    reg_claims = jwt.get_unverified_claims(register.cookies.get("luuniensuki_access"))
+    assert reg_claims.get("role") == "learner"
+
     me = client.get("/api/v1/auth/me")
     assert me.status_code == 200, me.text
     payload = me.json()
@@ -21,6 +27,9 @@ def test_auth_register_login_me(client):
     assert login.status_code == 200, login.text
     assert login.cookies.get("luuniensuki_access")
     assert login.cookies.get("luuniensuki_refresh")
+
+    login_claims = jwt.get_unverified_claims(login.cookies.get("luuniensuki_access"))
+    assert login_claims.get("role") == "learner"
 
 
 def test_auth_register_duplicate_email(client):
@@ -95,8 +104,23 @@ def test_refresh_and_logout(client):
     assert refresh.status_code == 200, refresh.text
     assert refresh.cookies.get("luuniensuki_access")
 
+    refreshed_claims = jwt.get_unverified_claims(refresh.cookies.get("luuniensuki_access"))
+    assert refreshed_claims.get("role") == "learner"
+
     logout = client.post("/api/v1/auth/logout")
     assert logout.status_code == 200, logout.text
 
     me = client.get("/api/v1/auth/me")
     assert me.status_code == 401, me.text
+
+
+def test_forgot_password_default_does_not_return_token(client):
+    email = "forgot@example.com"
+    client.post(
+        "/api/v1/auth/register",
+        json={"email": email, "password": "password123", "display_name": "Forgot User"},
+    )
+    resp = client.post("/api/v1/auth/forgot-password", json={"email": email})
+    assert resp.status_code == 200, resp.text
+    payload = resp.json()
+    assert payload["reset_token"] is None

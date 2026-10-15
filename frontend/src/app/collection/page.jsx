@@ -2,10 +2,21 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { Lock, LogIn, Sparkles, UserPlus } from "lucide-react";
 
-import { getMyCollection } from "@/lib/api";
+import { getMyCollection, listHistoryEntities } from "@/lib/api";
 import { useAuthStore } from "@/stores/authStore";
 import Skeleton from "@/components/Skeleton";
+import {
+    asEntityList,
+    deburr,
+    entityName,
+    KNOWN_URNS,
+    RELIEF_IMAGE_MAP,
+    reliefThumbnailUrl,
+    urnNameFromSlug,
+    urnSlugFromReliefSlug,
+} from "@/lib/history";
 
 const CATEGORIES = [
     { value: "", label: "Tất cả danh mục" },
@@ -41,6 +52,370 @@ const STATUSES = [
 const CATEGORY_LABEL = Object.fromEntries(
     CATEGORIES.filter((c) => c.value).map((c) => [c.value, c.label]),
 );
+
+function buildFallbackMotifs() {
+    return Object.keys(RELIEF_IMAGE_MAP).map((slug) => {
+        const urnSlug = urnSlugFromReliefSlug(slug);
+        const urnName = urnNameFromSlug(urnSlug);
+        return {
+            id: slug,
+            slug,
+            urn_slug: urnSlug,
+            name_vi: slug.includes("-") ? `${urnName} — ${slug}` : urnName,
+            thumbnail_url: reliefThumbnailUrl(slug),
+        };
+    });
+}
+
+function GuestCollectionPreview() {
+    const [items, setItems] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [selectedUrn, setSelectedUrn] = useState("");
+
+    useEffect(() => {
+        let cancelled = false;
+        async function load() {
+            setLoading(true);
+            try {
+                const res = await listHistoryEntities({ limit: 200 });
+                if (cancelled) return;
+                const list = asEntityList(res);
+                const reliefs = list.filter(
+                    (e) => e.entity_type === "relief" || !e.entity_type,
+                );
+                if (reliefs.length > 0) {
+                    setItems(reliefs);
+                } else {
+                    setItems(buildFallbackMotifs());
+                }
+            } catch {
+                if (!cancelled) setItems(buildFallbackMotifs());
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
+        }
+        load();
+        return () => {
+            cancelled = true;
+        };
+    }, []);
+
+    const filteredItems = useMemo(() => {
+        return items.filter((item) => {
+            if (selectedUrn) {
+                const itemUrn =
+                    item.urn_slug || urnSlugFromReliefSlug(item.slug);
+                if (itemUrn !== selectedUrn) return false;
+            }
+            if (searchQuery.trim()) {
+                const q = deburr(searchQuery.trim().toLowerCase());
+                const name = deburr(
+                    String(
+                        entityName(item) || item.name_vi || item.name || "",
+                    ).toLowerCase(),
+                );
+                const han = String(
+                    item.name_han_nom || item.han_nom || "",
+                ).toLowerCase();
+                const slug = String(item.slug || "").toLowerCase();
+                if (
+                    !name.includes(q) &&
+                    !han.includes(q) &&
+                    !slug.includes(q)
+                )
+                    return false;
+            }
+            return true;
+        });
+    }, [items, selectedUrn, searchQuery]);
+
+    return (
+        <main className="site-shell">
+            {/* Guest Hero */}
+            <section className="heritage-hero p-5 md:p-8">
+                <div className="relative flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+                    <div className="max-w-2xl">
+                        <div className="heritage-chip">
+                            <Sparkles className="h-3.5 w-3.5" />
+                            Kho báu 162 bản đúc nổi
+                        </div>
+                        <h1 className="mt-3 text-3xl font-display font-bold tracking-tight text-foreground md:text-4xl">
+                            Bộ sưu tập 162 bản đúc nổi Cửu Đỉnh
+                        </h1>
+                        <p className="mt-3 text-sm leading-relaxed text-muted-foreground md:text-base">
+                            Toàn bộ 162 phù điêu và đồ án đúc nổi trên chín đỉnh đồng Hoàng cung Huế (Di sản Tư liệu Ký ức Thế giới UNESCO). Bạn đang xem ở chế độ Khách xem trước — đăng nhập để lưu trữ bộ sưu tập cá nhân, làm bài kiểm tra và mở khóa danh hiệu!
+                        </p>
+                        <div className="mt-5 flex flex-wrap items-center gap-3">
+                            <Link
+                                href="/login"
+                                className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-md transition hover:bg-primary/90"
+                            >
+                                <LogIn className="h-4 w-4" />
+                                Đăng nhập để lưu tiến trình
+                            </Link>
+                            <Link
+                                href="/register"
+                                className="inline-flex items-center gap-2 rounded-lg border border-primary/30 bg-primary/10 px-4 py-2.5 text-sm font-semibold text-primary transition hover:bg-primary/20"
+                            >
+                                <UserPlus className="h-4 w-4" />
+                                Tạo tài khoản mới
+                            </Link>
+                        </div>
+                    </div>
+
+                    <div className="rounded-xl border border-primary/20 bg-background/50 p-5 backdrop-blur-sm lg:max-w-xs">
+                        <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                            Chế độ khách
+                        </div>
+                        <div className="mt-2 text-sm font-medium text-foreground">
+                            Đăng nhập để nhận các quyền lợi:
+                        </div>
+                        <ul className="mt-2.5 space-y-1.5 text-xs text-muted-foreground">
+                            <li className="flex items-center gap-1.5">
+                                <span className="text-success">✓</span> Theo dõi tiến độ mở khóa 162 họa tiết
+                            </li>
+                            <li className="flex items-center gap-1.5">
+                                <span className="text-success">✓</span> Làm bài kiểm tra và ôn tập FSRS
+                            </li>
+                            <li className="flex items-center gap-1.5">
+                                <span className="text-success">✓</span> Tích lũy XP, duy trì chuỗi học và nhận chứng chỉ
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            {/* Quick Stats Overview */}
+            <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <div className="heritage-card p-4 text-center">
+                    <div className="relative">
+                        <div className="font-display tabular-nums text-2xl font-bold text-foreground">
+                            162
+                        </div>
+                        <div className="text-xs font-medium text-muted-foreground">
+                            Tổng họa tiết
+                        </div>
+                    </div>
+                </div>
+                <div className="heritage-card p-4 text-center">
+                    <div className="relative">
+                        <div className="font-display tabular-nums text-2xl font-bold text-primary">
+                            9
+                        </div>
+                        <div className="text-xs font-medium text-muted-foreground">
+                            Đỉnh đồng
+                        </div>
+                    </div>
+                </div>
+                <div className="heritage-card p-4 text-center">
+                    <div className="relative">
+                        <div className="font-display tabular-nums text-2xl font-bold text-success">
+                            18
+                        </div>
+                        <div className="text-xs font-medium text-muted-foreground">
+                            Bản đúc mỗi đỉnh
+                        </div>
+                    </div>
+                </div>
+                <div className="heritage-card p-4 text-center">
+                    <div className="relative">
+                        <div className="font-display tabular-nums text-2xl font-bold text-bronze">
+                            0 / 162
+                        </div>
+                        <div className="text-xs font-medium text-muted-foreground">
+                            Đã mở khóa (Khách)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Filters */}
+            <div className="heritage-surface mt-5 p-4">
+                <div className="relative grid gap-4 sm:grid-cols-2">
+                    <div>
+                        <label className="block text-xs font-medium text-muted-foreground">
+                            Tìm kiếm họa tiết
+                        </label>
+                        <input
+                            type="text"
+                            placeholder="Lọc theo tên, chữ Hán, chủ đề..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="mt-1 block w-full rounded-lg border border-input bg-background/60 px-3 py-2 text-foreground shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-xs font-medium text-muted-foreground">
+                            Lọc theo Đỉnh đồng
+                        </label>
+                        <select
+                            value={selectedUrn}
+                            onChange={(e) => setSelectedUrn(e.target.value)}
+                            className="mt-1 block w-full rounded-lg border border-input bg-background/60 px-3 py-2 text-foreground shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                        >
+                            <option value="">Tất cả 9 đỉnh đồng</option>
+                            {KNOWN_URNS.map((u) => (
+                                <option key={u.slug} value={u.slug}>
+                                    {u.name} ({u.slug})
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            {/* Count & Grid */}
+            <div className="mt-6">
+                <div className="mb-4 flex items-center justify-between text-sm text-muted-foreground">
+                    <span>
+                        Hiển thị <span className="font-display font-semibold tabular-nums text-foreground">{filteredItems.length}</span> / 162 bản đúc nổi (Bản xem trước)
+                    </span>
+                    {(searchQuery || selectedUrn) && (
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setSearchQuery("");
+                                setSelectedUrn("");
+                            }}
+                            className="text-xs text-primary hover:underline"
+                        >
+                            Đặt lại bộ lọc
+                        </button>
+                    )}
+                </div>
+
+                {loading ? (
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+                        {[...Array(12)].map((_, i) => (
+                            <div key={i} className="heritage-card aspect-[4/5] p-3">
+                                <div className="relative h-full">
+                                    <Skeleton className="h-[75%] w-full rounded-lg" />
+                                    <div className="mt-3">
+                                        <Skeleton className="h-4 w-2/3" />
+                                        <Skeleton className="mt-1 h-3 w-1/2" />
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : filteredItems.length === 0 ? (
+                    <div className="rounded-lg border border-dashed border-input bg-card/45 py-12 text-center">
+                        <p className="text-muted-foreground">
+                            Không tìm thấy họa tiết nào phù hợp với từ khóa của bạn.
+                        </p>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setSearchQuery("");
+                                setSelectedUrn("");
+                            }}
+                            className="mt-2 text-sm font-medium text-primary hover:underline"
+                        >
+                            Xóa bộ lọc
+                        </button>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+                        {filteredItems.map((item) => {
+                            const urnSlug =
+                                item.urn_slug || urnSlugFromReliefSlug(item.slug);
+                            const urnName = urnNameFromSlug(urnSlug);
+                            const name =
+                                entityName(item) ||
+                                item.name_vi ||
+                                item.name ||
+                                item.slug;
+                            const hanNom = item.name_han_nom || item.han_nom;
+                            const thumb =
+                                item.thumbnail_url ||
+                                reliefThumbnailUrl(item.slug);
+                            const href =
+                                urnSlug && item.slug
+                                    ? `/atlas/${urnSlug}/${item.slug}`
+                                    : `/cuu-dinh/${urnSlug || "cao-dinh"}`;
+
+                            return (
+                                <Link
+                                    key={item.id || item.slug}
+                                    href={href}
+                                    className="group relative flex aspect-[4/5] flex-col overflow-hidden rounded-lg border border-primary/15 bg-card/75 shadow-[0_12px_30px_-26px_rgba(0,0,0,0.8)] transition duration-200 hover:border-primary/40 hover:-translate-y-0.5"
+                                >
+                                    <div className="relative flex-1 overflow-hidden bg-muted">
+                                        {thumb ? (
+                                            <img
+                                                src={thumb}
+                                                alt={name}
+                                                loading="lazy"
+                                                decoding="async"
+                                                className="h-full w-full object-cover transition duration-200 group-hover:scale-[1.03]"
+                                            />
+                                        ) : (
+                                            <div className="flex h-full w-full items-center justify-center text-sm text-muted-foreground">
+                                                Chưa có ảnh
+                                            </div>
+                                        )}
+                                        <div className="absolute right-2 top-2">
+                                            <span className="inline-flex items-center gap-1 rounded-md bg-black/70 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
+                                                <Lock className="h-2.5 w-2.5" />
+                                                Xem trước
+                                            </span>
+                                        </div>
+                                        {hanNom ? (
+                                            <span className="absolute bottom-2 left-2 rounded-md bg-black/70 px-1.5 py-0.5 font-serif text-[11px] font-bold text-amber-300 backdrop-blur-sm">
+                                                {hanNom}
+                                            </span>
+                                        ) : null}
+                                    </div>
+
+                                    <div className="border-t p-2.5">
+                                        <h3
+                                            className="truncate text-xs font-display font-semibold text-foreground"
+                                            title={name}
+                                        >
+                                            {name}
+                                        </h3>
+                                        <div className="mt-1 flex items-center justify-between text-[11px] text-muted-foreground">
+                                            <span className="truncate">
+                                                {urnName}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </Link>
+                            );
+                        })}
+                    </div>
+                )}
+            </div>
+
+            {/* Bottom CTA Banner */}
+            <div className="heritage-surface mt-8 p-6 text-center">
+                <div className="relative mx-auto max-w-xl">
+                    <h2 className="text-xl font-display font-bold text-foreground">
+                        Bắt đầu hành trình chinh phục di sản Cửu Đỉnh
+                    </h2>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                        Đăng ký tài khoản để ghi nhận từng họa tiết bạn khám phá, làm bài kiểm tra trắc nghiệm và nhận huy hiệu danh giá.
+                    </p>
+                    <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+                        <Link
+                            href="/register"
+                            className="rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow transition hover:bg-primary/90"
+                        >
+                            Đăng ký tài khoản
+                        </Link>
+                        <Link
+                            href="/login"
+                            className="rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-foreground hover:bg-muted"
+                        >
+                            Đăng nhập
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        </main>
+    );
+}
 
 export default function CollectionPage() {
     const status = useAuthStore((s) => s.status);
@@ -104,28 +479,7 @@ export default function CollectionPage() {
     }, [collection, searchQuery, filterCategory, filterRarity, filterStatus]);
 
     if (status !== "authed") {
-        return (
-            <main className="site-shell">
-                <div className="heritage-surface p-6">
-                  <div className="relative">
-                    <h1 className="text-xl font-display font-semibold">
-                        Bộ sưu tập
-                    </h1>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                        Vui lòng đăng nhập để xem bộ sưu tập của bạn.
-                    </p>
-                    <div className="mt-4">
-                        <Link
-                            href="/login"
-                            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
-                        >
-                            Đăng nhập
-                        </Link>
-                    </div>
-                  </div>
-                </div>
-            </main>
-        );
+        return <GuestCollectionPreview />;
     }
 
     return (

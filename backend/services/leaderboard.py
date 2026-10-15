@@ -83,45 +83,55 @@ def get_global_leaderboard(
     Returns:
         Tuple of (entries, user_rank, total_users)
     """
-    # Get all users with leaderboard settings
-    settings_map = {}
-    all_settings = db.execute(select(UserLeaderboardSettings)).scalars().all()
-    for s in all_settings:
-        settings_map[s.user_id] = s
+    # Build visibility filter: exclude guests, and respect show_on_global settings (default True)
+    visibility_condition = and_(
+        User.role != UserRole.guest,
+        or_(
+            UserLeaderboardSettings.show_on_global.is_(None),
+            UserLeaderboardSettings.show_on_global.is_(True),
+        ),
+    )
 
-    # Build base query - include all users (guest excluded as they have no XP)
-    base_query = select(User).where(User.role != UserRole.guest)
+    base_query = (
+        select(User)
+        .outerjoin(
+            UserLeaderboardSettings,
+            User.id == UserLeaderboardSettings.user_id,
+        )
+        .where(visibility_condition)
+    )
 
     # Apply ordering
     if order_by == "streak":
         base_query = base_query.order_by(
             User.current_streak.desc(),
             User.total_xp.desc(),
-            User.created_at.asc()
+            User.created_at.asc(),
         )
     else:  # default to xp
         base_query = base_query.order_by(
             User.total_xp.desc(),
-            User.created_at.asc()
+            User.created_at.asc(),
         )
 
-    # Get all users
-    all_users = db.execute(base_query).scalars().all()
+    # Get total count of visible users
+    total_query = (
+        select(func.count(User.id))
+        .outerjoin(
+            UserLeaderboardSettings,
+            User.id == UserLeaderboardSettings.user_id,
+        )
+        .where(visibility_condition)
+    )
+    total_users = db.execute(total_query).scalar() or 0
 
-    # Filter by visibility settings (show_on_global)
-    visible_users = []
-    for user in all_users:
-        settings = settings_map.get(user.id)
-        # Default to visible if no settings
-        if settings is None or settings.show_on_global:
-            visible_users.append(user)
-
-    total_users = len(visible_users)
+    # Get top users directly with SQL limit
+    users = db.execute(base_query.limit(limit)).scalars().all()
 
     # Build entries
     entries = []
     user_rank = None
-    for rank, user in enumerate(visible_users[:limit], start=1):
+    for rank, user in enumerate(users, start=1):
         entries.append({
             "rank": rank,
             "user_id": user.id,
@@ -133,12 +143,52 @@ def get_global_leaderboard(
         if current_user_id and user.id == current_user_id:
             user_rank = rank
 
-    # If user not in top results, find their rank
+    # If current user is not in top results, calculate their rank via SQL count
     if current_user_id and user_rank is None:
-        for rank, user in enumerate(visible_users, start=1):
-            if user.id == current_user_id:
-                user_rank = rank
-                break
+        user_settings = db.execute(
+            select(UserLeaderboardSettings).where(
+                UserLeaderboardSettings.user_id == current_user_id
+            )
+        ).scalar_one_or_none()
+        is_visible = user_settings is None or user_settings.show_on_global
+
+        current_user = db.get(User, current_user_id)
+        if current_user and current_user.role != UserRole.guest and is_visible:
+            if order_by == "streak":
+                rank_condition = or_(
+                    User.current_streak > current_user.current_streak,
+                    and_(
+                        User.current_streak == current_user.current_streak,
+                        User.total_xp > current_user.total_xp,
+                    ),
+                    and_(
+                        User.current_streak == current_user.current_streak,
+                        User.total_xp == current_user.total_xp,
+                        User.created_at < current_user.created_at,
+                    ),
+                )
+            else:
+                rank_condition = or_(
+                    User.total_xp > current_user.total_xp,
+                    and_(
+                        User.total_xp == current_user.total_xp,
+                        User.created_at < current_user.created_at,
+                    ),
+                )
+
+            higher_count_query = (
+                select(func.count(User.id))
+                .outerjoin(
+                    UserLeaderboardSettings,
+                    User.id == UserLeaderboardSettings.user_id,
+                )
+                .where(
+                    visibility_condition,
+                    rank_condition,
+                )
+            )
+            higher_count = db.execute(higher_count_query).scalar() or 0
+            user_rank = higher_count + 1
 
     return entries, user_rank, total_users
 

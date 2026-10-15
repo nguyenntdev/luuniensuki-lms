@@ -82,8 +82,7 @@ pub async fn update_profile(
             return Err(AppError::Domain {
                 status: StatusCode::BAD_REQUEST,
                 code: "INVALID_DISPLAY_NAME".to_string(),
-                message: "Display name must contain only letters, numbers, and spaces"
-                    .to_string(),
+                message: "Display name must contain only letters, numbers, and spaces".to_string(),
                 details: json!({}),
             });
         }
@@ -103,14 +102,13 @@ pub async fn update_profile(
         }
 
         // Check uniqueness
-        let existing: Option<(Uuid,)> = sqlx::query_as(
-            "SELECT id FROM users WHERE username = $1 AND id != $2",
-        )
-        .bind(uname)
-        .bind(user_id)
-        .fetch_optional(pool)
-        .await
-        .map_err(|e| AppError::Internal(e.into()))?;
+        let existing: Option<(Uuid,)> =
+            sqlx::query_as("SELECT id FROM users WHERE username = $1 AND id != $2")
+                .bind(uname)
+                .bind(user_id)
+                .fetch_optional(pool)
+                .await
+                .map_err(|e| AppError::Internal(e.into()))?;
 
         if existing.is_some() {
             return Err(AppError::Domain {
@@ -122,32 +120,13 @@ pub async fn update_profile(
         }
     }
 
-    // Build dynamic UPDATE query
-    let mut set_clauses: Vec<String> = Vec::new();
-    let mut param_idx: usize = 2; // $1 is user_id
+    let has_updates = display_name.is_some()
+        || username.is_some()
+        || bio.is_some()
+        || is_profile_public.is_some()
+        || ai_personalization_enabled.is_some();
 
-    if display_name.is_some() {
-        param_idx += 1;
-        set_clauses.push(format!("display_name = ${}", param_idx));
-    }
-    if username.is_some() {
-        param_idx += 1;
-        set_clauses.push(format!("username = ${}", param_idx));
-    }
-    if bio.is_some() {
-        param_idx += 1;
-        set_clauses.push(format!("bio = ${}", param_idx));
-    }
-    if is_profile_public.is_some() {
-        param_idx += 1;
-        set_clauses.push(format!("is_profile_public = ${}", param_idx));
-    }
-    if ai_personalization_enabled.is_some() {
-        param_idx += 1;
-        set_clauses.push(format!("ai_personalization_enabled = ${}", param_idx));
-    }
-
-    if set_clauses.is_empty() {
+    if !has_updates {
         // Nothing to update, just fetch current state
         let row = sqlx::query_as::<_, UserRow>(
             "SELECT id, email, display_name, avatar_url, username, bio, role::text AS role, \
@@ -162,23 +141,6 @@ pub async fn update_profile(
         .ok_or(AppError::Unauthorized)?;
         return Ok(row);
     }
-
-    set_clauses.push("updated_at = NOW()".to_string());
-
-    // We need to use a raw query approach since we have dynamic params.
-    // Build the full SQL and use a manual approach with sqlx::query.
-    let sql = format!(
-        "UPDATE users SET {} WHERE id = $1 RETURNING \
-         id, email, display_name, avatar_url, username, bio, role::text AS role, \
-         total_xp, starting_urn_id, is_profile_public, ai_personalization_enabled, \
-         password_hash, onboarding_goal, onboarding_completed, onboarding_completed_at, \
-         created_at",
-        set_clauses.join(", ")
-    );
-
-    // Since sqlx doesn't support truly dynamic bind params easily with query_as,
-    // we'll use a simpler approach: always update all fields (using COALESCE pattern).
-    // This is cleaner and avoids the dynamic SQL complexity.
 
     let row = sqlx::query_as::<_, UserRow>(
         "UPDATE users SET \
@@ -218,9 +180,6 @@ pub async fn update_profile(
     })?
     .ok_or(AppError::Unauthorized)?;
 
-    // Drop the unused `sql` binding (we used COALESCE approach instead)
-    let _ = sql;
-
     Ok(row)
 }
 
@@ -236,21 +195,18 @@ pub async fn change_password(
     new_password: &str,
 ) -> Result<(), AppError> {
     // Fetch current hash
-    let row: Option<(String,)> =
-        sqlx::query_as("SELECT password_hash FROM users WHERE id = $1")
-            .bind(user_id)
-            .fetch_optional(pool)
-            .await
-            .map_err(|e| AppError::Internal(e.into()))?;
+    let row: Option<(String,)> = sqlx::query_as("SELECT password_hash FROM users WHERE id = $1")
+        .bind(user_id)
+        .fetch_optional(pool)
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
 
     let (hash,) = row.ok_or(AppError::Unauthorized)?;
 
     // Verify current password
-    let valid = auth::verify_password(current_password, &hash).map_err(|_| {
-        AppError::Http {
-            status: StatusCode::BAD_REQUEST,
-            message: "Current password is incorrect".to_string(),
-        }
+    let valid = auth::verify_password(current_password, &hash).map_err(|_| AppError::Http {
+        status: StatusCode::BAD_REQUEST,
+        message: "Current password is incorrect".to_string(),
     })?;
 
     if !valid {
@@ -377,22 +333,17 @@ pub async fn set_onboarding_goal(
         return Err(AppError::Domain {
             status: StatusCode::BAD_REQUEST,
             code: "INVALID_GOAL".to_string(),
-            message: format!(
-                "Invalid goal. Must be one of: {}",
-                VALID_GOALS.join(", ")
-            ),
+            message: format!("Invalid goal. Must be one of: {}", VALID_GOALS.join(", ")),
             details: json!({}),
         });
     }
 
-    sqlx::query(
-        "UPDATE users SET onboarding_goal = $1, updated_at = NOW() WHERE id = $2",
-    )
-    .bind(goal)
-    .bind(user_id)
-    .execute(pool)
-    .await
-    .map_err(|e| AppError::Internal(e.into()))?;
+    sqlx::query("UPDATE users SET onboarding_goal = $1, updated_at = NOW() WHERE id = $2")
+        .bind(goal)
+        .bind(user_id)
+        .execute(pool)
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
 
     Ok(goal.to_string())
 }

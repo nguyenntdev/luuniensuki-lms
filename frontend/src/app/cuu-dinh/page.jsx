@@ -1,4 +1,5 @@
 import CuuDinhLandingClient from "./CuuDinhLandingClient";
+import { safeJsonLd } from "@/lib/seo";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://lms.histolab.icu";
 const TITLE = "Cửu Đỉnh Triều Nguyễn — Chín Chiếc Đỉnh Đồng Báu Vật | Lưu Niên Sử Kí";
@@ -92,7 +93,7 @@ export default function CuuDinhPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
       <CuuDinhLandingClient />
     </>

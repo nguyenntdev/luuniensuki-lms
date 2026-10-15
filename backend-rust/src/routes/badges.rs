@@ -30,7 +30,9 @@ pub async fn list_badges(State(pool): State<Option<PgPool>>) -> impl IntoRespons
     let Some(pool) = pool else {
         return (
             StatusCode::SERVICE_UNAVAILABLE,
-            Json(json!({ "error": { "code": "SERVICE_UNAVAILABLE", "message": "Database not available", "details": {} } })),
+            Json(
+                json!({ "error": { "code": "SERVICE_UNAVAILABLE", "message": "Database not available", "details": {} } }),
+            ),
         );
     };
 
@@ -46,7 +48,9 @@ pub async fn list_badges(State(pool): State<Option<PgPool>>) -> impl IntoRespons
             tracing::error!(error = %e, "failed to fetch badges");
             (
                 StatusCode::INTERNAL_SERVER_ERROR,
-                Json(json!({ "error": { "code": "INTERNAL_SERVER_ERROR", "message": "Failed to fetch badges", "details": {} } })),
+                Json(
+                    json!({ "error": { "code": "INTERNAL_SERVER_ERROR", "message": "Failed to fetch badges", "details": {} } }),
+                ),
             )
         }
     }

@@ -362,8 +362,10 @@ mod tests {
             "http://ai-worker.internal:9000/internal/ai/session.created"
         );
 
-        let without_slash =
-            AiHookClient::new("http://ai-worker.internal:9000".to_string(), "tok".to_string());
+        let without_slash = AiHookClient::new(
+            "http://ai-worker.internal:9000".to_string(),
+            "tok".to_string(),
+        );
         assert_eq!(
             without_slash.build_url("/internal/ai/session.ended"),
             "http://ai-worker.internal:9000/internal/ai/session.ended"
@@ -373,6 +375,9 @@ mod tests {
     #[test]
     fn ai_hook_error_displays_delivery_context() {
         let err = AiHookError::Delivery("connection refused".to_string());
-        assert_eq!(err.to_string(), "ai hook delivery failed: connection refused");
+        assert_eq!(
+            err.to_string(),
+            "ai hook delivery failed: connection refused"
+        );
     }
 }

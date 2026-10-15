@@ -26,9 +26,7 @@
 
 use chrono::{DateTime, Duration, Utc};
 use hmac::{Hmac, Mac};
-use jsonwebtoken::{
-    decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation,
-};
+use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
 use serde::{Deserialize, Serialize};
 use sha1::Sha1;
 use uuid::Uuid;
@@ -197,8 +195,7 @@ pub fn issue_ice_credentials(
 /// byte HMAC-SHA1 digest. Uses the standard alphabet (`A–Z a–z 0–9 + /`) and
 /// `=` padding.
 fn b64(bytes: &[u8]) -> String {
-    const ALPHABET: &[u8; 64] =
-        b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    const ALPHABET: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
     let mut out = String::with_capacity((bytes.len() + 2) / 3 * 4);
 
@@ -242,8 +239,7 @@ mod tests {
     #[test]
     fn issue_then_verify_round_trips_identity_and_session() {
         let sid = Uuid::new_v4();
-        let (token, expires_at) =
-            issue_join_credential(sid, "alice", "host", 30, SECRET).unwrap();
+        let (token, expires_at) = issue_join_credential(sid, "alice", "host", 30, SECRET).unwrap();
 
         let claims = verify_join_credential(&token, SECRET).unwrap();
         assert_eq!(claims.sub, "alice");

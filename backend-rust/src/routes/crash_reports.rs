@@ -51,10 +51,19 @@ fn require_pool(pool: &Option<PgPool>) -> Result<&PgPool, AppError> {
     })
 }
 
-fn authenticate(headers: &HeaderMap, settings: &Settings) -> Result<(Uuid, auth::Claims), AppError> {
+fn authenticate(
+    headers: &HeaderMap,
+    settings: &Settings,
+) -> Result<(Uuid, auth::Claims), AppError> {
     let token = extract_token_from_headers(headers).ok_or(AppError::Unauthorized)?;
-    let claims = auth::verify_access_token(&token, &settings.jwt_secret_key, settings.jwt_validate_new_claims, &settings.jwt_issuer, &settings.jwt_audience)
-        .map_err(|_| AppError::Unauthorized)?;
+    let claims = auth::verify_access_token(
+        &token,
+        &settings.jwt_secret_key,
+        settings.jwt_validate_new_claims,
+        &settings.jwt_issuer,
+        &settings.jwt_audience,
+    )
+    .map_err(|_| AppError::Unauthorized)?;
     let user_id: Uuid = claims.sub.parse().map_err(|_| AppError::Unauthorized)?;
     Ok((user_id, claims))
 }
@@ -87,7 +96,10 @@ mod tests {
 
     fn test_auth_state() -> AuthState {
         let settings = crate::config::Settings::from_env().unwrap();
-        AuthState { pool: None, settings }
+        AuthState {
+            pool: None,
+            settings,
+        }
     }
 
     fn test_router() -> Router {
@@ -114,11 +126,14 @@ mod tests {
     async fn submit_crash_report_returns_503_without_pool() {
         let state = test_auth_state();
         let token = crate::auth::issue_access_token(
-            "00000000-0000-0000-0000-000000000001", "user",
-            &state.settings.jwt_secret_key, 60,
+            "00000000-0000-0000-0000-000000000001",
+            "user",
+            &state.settings.jwt_secret_key,
+            60,
             &state.settings.jwt_issuer,
             &state.settings.jwt_audience,
-        ).unwrap();
+        )
+        .unwrap();
         let app = test_router();
         let resp = app
             .oneshot(Request::builder()

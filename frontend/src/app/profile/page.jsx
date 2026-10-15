@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
-import UserProfile from "@/components/UserProfile";
 import {
     ApiError,
     apiRequest,
@@ -393,9 +392,8 @@ export default function Page() {
     }
 
     return (
-        <>
-            <main className="site-shell">
-                <div className="heritage-hero p-5 md:p-6">
+        <main className="site-shell">
+            <div className="heritage-hero p-5 md:p-6">
                     <div className="relative grid gap-5 lg:grid-cols-[1fr_auto] lg:items-start">
                         <div className="flex min-w-0 items-center gap-4">
                             <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-primary/25 bg-primary/10">
@@ -847,9 +845,6 @@ export default function Page() {
                         </div>
                     </div>
                 </div>
-            </main>
-
-            <UserProfile />
-        </>
+        </main>
     );
 }

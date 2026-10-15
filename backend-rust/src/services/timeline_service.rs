@@ -10,10 +10,10 @@ use uuid::Uuid;
 
 use crate::error::AppError;
 use crate::models::timeline::{
-    ComparedMotif, ComparedPair, CompareResponse, CreateEraRequest, CreateEventRequest,
-    EraSummary, HeritageEraRow, HistoricalEventOut, HistoricalEventRow, MotifByEraOut,
-    MotifSummary, MotifsByEraResponse, TimelineEventsMeta, TimelineEventsResponse,
-    TimelineStatsResponse, UrnSummary, WeeklyView,
+    CompareResponse, ComparedMotif, ComparedPair, CreateEraRequest, CreateEventRequest, EraSummary,
+    HeritageEraRow, HistoricalEventOut, HistoricalEventRow, MotifByEraOut, MotifSummary,
+    MotifsByEraResponse, TimelineEventsMeta, TimelineEventsResponse, TimelineStatsResponse,
+    UrnSummary, WeeklyView,
 };
 
 const COMPARISON_AXES: &[&str] = &["category", "rarity", "era", "urn"];
@@ -271,10 +271,7 @@ pub async fn list_motifs_by_era(
 // Compare
 // ---------------------------------------------------------------------------
 
-pub async fn compare_motifs(
-    pool: &PgPool,
-    raw_ids: &str,
-) -> Result<CompareResponse, AppError> {
+pub async fn compare_motifs(pool: &PgPool, raw_ids: &str) -> Result<CompareResponse, AppError> {
     let parts: Vec<&str> = raw_ids.split(',').filter(|s| !s.is_empty()).collect();
     if parts.len() != 2 {
         return Err(AppError::Domain {
@@ -349,15 +346,12 @@ pub async fn compare_motifs(
     use std::collections::HashMap;
     let mut eras_by_motif: HashMap<Uuid, Vec<EraSummary>> = HashMap::new();
     for (motif_id, era_id, slug, name_vi, color_hex) in era_rows {
-        eras_by_motif
-            .entry(motif_id)
-            .or_default()
-            .push(EraSummary {
-                id: era_id,
-                slug,
-                name_vi,
-                color_hex,
-            });
+        eras_by_motif.entry(motif_id).or_default().push(EraSummary {
+            id: era_id,
+            slug,
+            name_vi,
+            color_hex,
+        });
     }
 
     let motifs = rows
@@ -444,9 +438,7 @@ pub async fn get_timeline_stats(pool: &PgPool) -> Result<TimelineStatsResponse, 
 // ---------------------------------------------------------------------------
 
 fn is_valid_color_hex(s: &str) -> bool {
-    s.len() == 7
-        && s.starts_with('#')
-        && s[1..].chars().all(|c| c.is_ascii_hexdigit())
+    s.len() == 7 && s.starts_with('#') && s[1..].chars().all(|c| c.is_ascii_hexdigit())
 }
 
 #[cfg(test)]

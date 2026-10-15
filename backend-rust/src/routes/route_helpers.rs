@@ -45,17 +45,29 @@ pub fn require_pool(pool: &Option<PgPool>) -> Result<&PgPool, AppError> {
 /// Authenticate the request and return the user id. Errors map to 401.
 pub fn authenticate(headers: &HeaderMap, settings: &Settings) -> Result<Uuid, AppError> {
     let token = extract_access_token(headers).ok_or(AppError::Unauthorized)?;
-    let claims = auth::verify_access_token(&token, &settings.jwt_secret_key, settings.jwt_validate_new_claims, &settings.jwt_issuer, &settings.jwt_audience)
-        .map_err(|_| AppError::Unauthorized)?;
+    let claims = auth::verify_access_token(
+        &token,
+        &settings.jwt_secret_key,
+        settings.jwt_validate_new_claims,
+        &settings.jwt_issuer,
+        &settings.jwt_audience,
+    )
+    .map_err(|_| AppError::Unauthorized)?;
     claims.sub.parse().map_err(|_| AppError::Unauthorized)
 }
 
-/// Authenticate and additionally require `role = 'admin'`.
+/// Authenticate and additionally require `role = 'admin'` or `'super_admin'`.
 pub fn require_admin(headers: &HeaderMap, settings: &Settings) -> Result<Uuid, AppError> {
     let token = extract_access_token(headers).ok_or(AppError::Unauthorized)?;
-    let claims = auth::verify_access_token(&token, &settings.jwt_secret_key, settings.jwt_validate_new_claims, &settings.jwt_issuer, &settings.jwt_audience)
-        .map_err(|_| AppError::Unauthorized)?;
-    if claims.role != "admin" {
+    let claims = auth::verify_access_token(
+        &token,
+        &settings.jwt_secret_key,
+        settings.jwt_validate_new_claims,
+        &settings.jwt_issuer,
+        &settings.jwt_audience,
+    )
+    .map_err(|_| AppError::Unauthorized)?;
+    if claims.role != "admin" && claims.role != "super_admin" {
         return Err(AppError::Http {
             status: StatusCode::FORBIDDEN,
             message: "Admin access required".to_string(),
@@ -64,12 +76,18 @@ pub fn require_admin(headers: &HeaderMap, settings: &Settings) -> Result<Uuid, A
     claims.sub.parse().map_err(|_| AppError::Unauthorized)
 }
 
-/// Authenticate and require `role = 'teacher'` or `'admin'`.
+/// Authenticate and require `role = 'teacher'`, `'admin'`, or `'super_admin'`.
 pub fn require_teacher(headers: &HeaderMap, settings: &Settings) -> Result<Uuid, AppError> {
     let token = extract_access_token(headers).ok_or(AppError::Unauthorized)?;
-    let claims = auth::verify_access_token(&token, &settings.jwt_secret_key, settings.jwt_validate_new_claims, &settings.jwt_issuer, &settings.jwt_audience)
-        .map_err(|_| AppError::Unauthorized)?;
-    if claims.role != "teacher" && claims.role != "admin" {
+    let claims = auth::verify_access_token(
+        &token,
+        &settings.jwt_secret_key,
+        settings.jwt_validate_new_claims,
+        &settings.jwt_issuer,
+        &settings.jwt_audience,
+    )
+    .map_err(|_| AppError::Unauthorized)?;
+    if claims.role != "teacher" && claims.role != "admin" && claims.role != "super_admin" {
         return Err(AppError::Http {
             status: StatusCode::FORBIDDEN,
             message: "Teacher access required".to_string(),
@@ -129,5 +147,43 @@ mod tests {
     fn extract_token_handles_cookie_with_equals_in_value() {
         let h = header_map(&[("cookie", "luuniensuki_access=eyJ0eXAi=")]);
         assert_eq!(extract_access_token(&h).as_deref(), Some("eyJ0eXAi="));
+    }
+
+    #[test]
+    fn require_admin_and_teacher_permit_super_admin() {
+        let settings = Settings::from_env().unwrap();
+        let user_id = Uuid::new_v4();
+        let token = auth::issue_access_token(
+            &user_id.to_string(),
+            "super_admin",
+            &settings.jwt_secret_key,
+            60,
+            &settings.jwt_issuer,
+            &settings.jwt_audience,
+        )
+        .unwrap();
+        let h = header_map(&[("authorization", &format!("Bearer {}", token))]);
+
+        assert_eq!(require_admin(&h, &settings).unwrap(), user_id);
+        assert_eq!(require_teacher(&h, &settings).unwrap(), user_id);
+    }
+
+    #[test]
+    fn require_admin_rejects_teacher() {
+        let settings = Settings::from_env().unwrap();
+        let user_id = Uuid::new_v4();
+        let token = auth::issue_access_token(
+            &user_id.to_string(),
+            "teacher",
+            &settings.jwt_secret_key,
+            60,
+            &settings.jwt_issuer,
+            &settings.jwt_audience,
+        )
+        .unwrap();
+        let h = header_map(&[("authorization", &format!("Bearer {}", token))]);
+
+        assert!(require_admin(&h, &settings).is_err());
+        assert_eq!(require_teacher(&h, &settings).unwrap(), user_id);
     }
 }

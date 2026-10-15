@@ -30,7 +30,8 @@ pub async fn list_trails(
 ) -> Result<impl IntoResponse, AppError> {
     let pool = require_pool(&state.pool)?;
     let _user = authenticate(&headers, &state.settings)?;
-    let resp = trail_service::list_trails(pool, q.page.unwrap_or(1), q.per_page.unwrap_or(20)).await?;
+    let resp =
+        trail_service::list_trails(pool, q.page.unwrap_or(1), q.per_page.unwrap_or(20)).await?;
     Ok(Json(resp))
 }
 

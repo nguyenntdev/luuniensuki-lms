@@ -1,7 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { GraduationCapIcon, LogOutIcon, UserIcon } from "lucide-react";
+import {
+  AwardIcon,
+  FolderHeartIcon,
+  GraduationCapIcon,
+  LogOutIcon,
+  UserIcon,
+} from "lucide-react";
 
 import { useAuthStore } from "@/stores/authStore";
 
@@ -54,13 +60,25 @@ export default function UserMenu() {
         <DropdownMenuItem asChild>
           <Link href="/profile">
             <UserIcon aria-hidden="true" />
-            Hồ sơ
+            Hồ sơ & Tiến trình
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/collection">
+            <FolderHeartIcon aria-hidden="true" />
+            Bộ sưu tập
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/practice">
             <GraduationCapIcon aria-hidden="true" />
-            Ôn tập
+            Ôn tập thông minh
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/achievements">
+            <AwardIcon aria-hidden="true" />
+            Thành tích & BXH
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />

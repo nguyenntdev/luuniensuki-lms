@@ -53,8 +53,14 @@ fn require_pool(pool: &Option<PgPool>) -> Result<&PgPool, AppError> {
 
 fn authenticate(headers: &HeaderMap, settings: &Settings) -> Result<Uuid, AppError> {
     let token = extract_token_from_headers(headers).ok_or(AppError::Unauthorized)?;
-    let claims = auth::verify_access_token(&token, &settings.jwt_secret_key, settings.jwt_validate_new_claims, &settings.jwt_issuer, &settings.jwt_audience)
-        .map_err(|_| AppError::Unauthorized)?;
+    let claims = auth::verify_access_token(
+        &token,
+        &settings.jwt_secret_key,
+        settings.jwt_validate_new_claims,
+        &settings.jwt_issuer,
+        &settings.jwt_audience,
+    )
+    .map_err(|_| AppError::Unauthorized)?;
     let user_id: Uuid = claims.sub.parse().map_err(|_| AppError::Unauthorized)?;
     Ok(user_id)
 }
@@ -152,22 +158,39 @@ pub async fn should_prompt_permission(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use axum::{body::Body, http::Request, routing::{get, put, post, delete}, Router};
+    use axum::{
+        body::Body,
+        http::Request,
+        routing::{delete, get, post, put},
+        Router,
+    };
     use tower::ServiceExt;
 
     fn test_auth_state() -> AuthState {
         let settings = crate::config::Settings::from_env().unwrap();
-        AuthState { pool: None, settings }
+        AuthState {
+            pool: None,
+            settings,
+        }
     }
 
     fn test_router() -> Router {
         let state = test_auth_state();
         Router::new()
-            .route("/api/v1/notifications/settings", get(get_settings).put(update_settings))
+            .route(
+                "/api/v1/notifications/settings",
+                get(get_settings).put(update_settings),
+            )
             .route("/api/v1/notifications/register-push", post(register_push))
-            .route("/api/v1/notifications/unregister-push", delete(unregister_push))
+            .route(
+                "/api/v1/notifications/unregister-push",
+                delete(unregister_push),
+            )
             .route("/api/v1/notifications/history", get(get_history))
-            .route("/api/v1/notifications/should-prompt-permission", get(should_prompt_permission))
+            .route(
+                "/api/v1/notifications/should-prompt-permission",
+                get(should_prompt_permission),
+            )
             .with_state(state)
     }
 
@@ -175,10 +198,14 @@ mod tests {
     async fn get_settings_returns_401_without_token() {
         let app = test_router();
         let resp = app
-            .oneshot(Request::builder()
-                .uri("/api/v1/notifications/settings")
-                .body(Body::empty()).unwrap())
-            .await.unwrap();
+            .oneshot(
+                Request::builder()
+                    .uri("/api/v1/notifications/settings")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
         assert_eq!(resp.status(), StatusCode::UNAUTHORIZED);
     }
 
@@ -186,18 +213,25 @@ mod tests {
     async fn get_settings_returns_503_without_pool() {
         let state = test_auth_state();
         let token = crate::auth::issue_access_token(
-            "00000000-0000-0000-0000-000000000001", "user",
-            &state.settings.jwt_secret_key, 60,
+            "00000000-0000-0000-0000-000000000001",
+            "user",
+            &state.settings.jwt_secret_key,
+            60,
             &state.settings.jwt_issuer,
             &state.settings.jwt_audience,
-        ).unwrap();
+        )
+        .unwrap();
         let app = test_router();
         let resp = app
-            .oneshot(Request::builder()
-                .uri("/api/v1/notifications/settings")
-                .header("Authorization", format!("Bearer {}", token))
-                .body(Body::empty()).unwrap())
-            .await.unwrap();
+            .oneshot(
+                Request::builder()
+                    .uri("/api/v1/notifications/settings")
+                    .header("Authorization", format!("Bearer {}", token))
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
         assert_eq!(resp.status(), StatusCode::SERVICE_UNAVAILABLE);
     }
 
@@ -205,12 +239,16 @@ mod tests {
     async fn register_push_returns_401_without_token() {
         let app = test_router();
         let resp = app
-            .oneshot(Request::builder()
-                .method("POST")
-                .uri("/api/v1/notifications/register-push")
-                .header("content-type", "application/json")
-                .body(Body::from(r#"{"token":"abc","platform":"ios"}"#)).unwrap())
-            .await.unwrap();
+            .oneshot(
+                Request::builder()
+                    .method("POST")
+                    .uri("/api/v1/notifications/register-push")
+                    .header("content-type", "application/json")
+                    .body(Body::from(r#"{"token":"abc","platform":"ios"}"#))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
         assert_eq!(resp.status(), StatusCode::UNAUTHORIZED);
     }
 
@@ -218,10 +256,14 @@ mod tests {
     async fn history_returns_401_without_token() {
         let app = test_router();
         let resp = app
-            .oneshot(Request::builder()
-                .uri("/api/v1/notifications/history")
-                .body(Body::empty()).unwrap())
-            .await.unwrap();
+            .oneshot(
+                Request::builder()
+                    .uri("/api/v1/notifications/history")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
         assert_eq!(resp.status(), StatusCode::UNAUTHORIZED);
     }
 
@@ -229,10 +271,14 @@ mod tests {
     async fn should_prompt_returns_401_without_token() {
         let app = test_router();
         let resp = app
-            .oneshot(Request::builder()
-                .uri("/api/v1/notifications/should-prompt-permission")
-                .body(Body::empty()).unwrap())
-            .await.unwrap();
+            .oneshot(
+                Request::builder()
+                    .uri("/api/v1/notifications/should-prompt-permission")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
         assert_eq!(resp.status(), StatusCode::UNAUTHORIZED);
     }
 }

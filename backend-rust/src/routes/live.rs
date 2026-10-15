@@ -56,8 +56,14 @@ fn authenticate_with_role(
 ) -> Result<(Uuid, String), AppError> {
     let token = crate::routes::route_helpers::extract_access_token(headers)
         .ok_or(AppError::Unauthorized)?;
-    let claims = crate::auth::verify_access_token(&token, &settings.jwt_secret_key, settings.jwt_validate_new_claims, &settings.jwt_issuer, &settings.jwt_audience)
-        .map_err(|_| AppError::Unauthorized)?;
+    let claims = crate::auth::verify_access_token(
+        &token,
+        &settings.jwt_secret_key,
+        settings.jwt_validate_new_claims,
+        &settings.jwt_issuer,
+        &settings.jwt_audience,
+    )
+    .map_err(|_| AppError::Unauthorized)?;
     let uid: Uuid = claims.sub.parse().map_err(|_| AppError::Unauthorized)?;
     Ok((uid, claims.role))
 }
@@ -142,8 +148,8 @@ pub async fn list_sessions(
         });
     }
 
-    let sessions = live_session_service::list_sessions(pool, q.classroom_id, q.limit.unwrap_or(20))
-        .await?;
+    let sessions =
+        live_session_service::list_sessions(pool, q.classroom_id, q.limit.unwrap_or(20)).await?;
     let mut out = Vec::with_capacity(sessions.len());
     for s in sessions {
         let count = live_participant_service::count_active(pool, s.id).await?;
@@ -186,8 +192,8 @@ pub async fn end_session(
     }
 
     let janus = janus_client(&state);
-    let ended = live_session_service::end_session(pool, &janus, None, &session, Some(actor_id))
-        .await?;
+    let ended =
+        live_session_service::end_session(pool, &janus, None, &session, Some(actor_id)).await?;
     let count = live_participant_service::count_active(pool, ended.id).await?;
     Ok(Json(ended.to_out(count)))
 }
@@ -211,9 +217,15 @@ pub async fn join_session(
         } else {
             "learner"
         };
-    let participant =
-        live_participant_service::upsert_join(pool, session.id, Some(actor_id), &identity, None, part_role)
-            .await?;
+    let participant = live_participant_service::upsert_join(
+        pool,
+        session.id,
+        Some(actor_id),
+        &identity,
+        None,
+        part_role,
+    )
+    .await?;
 
     let _ = live_event_service::record(
         pool,
@@ -309,8 +321,9 @@ pub async fn leave_session(
     live_auth::ensure_can_access(pool, actor_id, &role, &session).await?;
 
     let identity = live_participant_service::identity_for_user(actor_id);
-    let left = live_participant_service::mark_left(pool, session.id, Some(actor_id), Some(&identity))
-        .await?;
+    let left =
+        live_participant_service::mark_left(pool, session.id, Some(actor_id), Some(&identity))
+            .await?;
     if left.is_some() {
         let _ = live_event_service::record(
             pool,
@@ -345,7 +358,9 @@ pub async fn list_participants(
     .await
     .map_err(|e| AppError::Internal(e.into()))?;
 
-    Ok(Json(rows.into_iter().map(LiveParticipantOut::from).collect()))
+    Ok(Json(
+        rows.into_iter().map(LiveParticipantOut::from).collect(),
+    ))
 }
 
 /// GET /api/v1/live-sessions/:id/events — events feed (access).
@@ -609,7 +624,11 @@ async fn run_signaling(mut socket: WebSocket, identity: String) {
                     code: "MEDIA_BACKEND_NOT_READY".to_string(),
                     message: "Janus media relay is not yet active for this deployment".to_string(),
                 };
-                if socket.send(Message::Text(server_signal_text(&sig))).await.is_err() {
+                if socket
+                    .send(Message::Text(server_signal_text(&sig)))
+                    .await
+                    .is_err()
+                {
                     break;
                 }
             }
@@ -618,7 +637,11 @@ async fn run_signaling(mut socket: WebSocket, identity: String) {
                     code: "BAD_SIGNAL".to_string(),
                     message: format!("Could not parse signal: {e}"),
                 };
-                if socket.send(Message::Text(server_signal_text(&sig))).await.is_err() {
+                if socket
+                    .send(Message::Text(server_signal_text(&sig)))
+                    .await
+                    .is_err()
+                {
                     break;
                 }
             }

@@ -66,16 +66,17 @@ struct PassStats {
 async fn run_pass(pool: &PgPool, uploads_dir: &PathBuf) -> Result<PassStats, sqlx::Error> {
     let mut stats = PassStats::default();
 
-    // Fetch a bounded batch of NULL-pdf rows. We rely on `notes` to encode
-    // the attempt counter as `pdf_attempts:N`; the cap check happens in
-    // Rust after the read so we don't need a stored function in the DB.
+    // Fetch a bounded batch of NULL-pdf rows excluding permanently failed records.
+    // We rely on `notes` to encode the attempt counter as `pdf_attempts:N`.
     let rows: Vec<(Uuid, String, Uuid, Uuid, DateTime<Utc>, Option<String>)> = sqlx::query_as(
         r#"
         SELECT c.id, c.hash, c.user_id, c.trail_id, c.issued_at, c.notes
         FROM trail_certificates c
         WHERE c.pdf_url IS NULL
+          AND (c.notes IS NULL OR c.notes NOT LIKE 'pdf_attempts:3%')
         ORDER BY c.issued_at ASC
         LIMIT $1
+        FOR UPDATE SKIP LOCKED
         "#,
     )
     .bind(BATCH_SIZE)
@@ -92,22 +93,20 @@ async fn run_pass(pool: &PgPool, uploads_dir: &PathBuf) -> Result<PassStats, sql
         stats.attempted += 1;
 
         // Look up the names for the PDF copy.
-        let user_name: Option<String> = sqlx::query_scalar(
-            "SELECT display_name FROM users WHERE id = $1",
-        )
-        .bind(user_id)
-        .fetch_optional(pool)
-        .await
-        .ok()
-        .flatten();
-        let trail_title: Option<String> = sqlx::query_scalar(
-            "SELECT title_vi FROM trails WHERE id = $1",
-        )
-        .bind(trail_id)
-        .fetch_optional(pool)
-        .await
-        .ok()
-        .flatten();
+        let user_name: Option<String> =
+            sqlx::query_scalar("SELECT display_name FROM users WHERE id = $1")
+                .bind(user_id)
+                .fetch_optional(pool)
+                .await
+                .ok()
+                .flatten();
+        let trail_title: Option<String> =
+            sqlx::query_scalar("SELECT title_vi FROM trails WHERE id = $1")
+                .bind(trail_id)
+                .fetch_optional(pool)
+                .await
+                .ok()
+                .flatten();
 
         // Render PDF off the runtime thread.
         let dir = uploads_dir.clone();
@@ -143,13 +142,11 @@ async fn run_pass(pool: &PgPool, uploads_dir: &PathBuf) -> Result<PassStats, sql
             .await;
             stats.succeeded += 1;
         } else {
-            let _ = sqlx::query(
-                "UPDATE trail_certificates SET notes = $2 WHERE id = $1",
-            )
-            .bind(cert_id)
-            .bind(format!("pdf_attempts:{}", new_attempts))
-            .execute(pool)
-            .await;
+            let _ = sqlx::query("UPDATE trail_certificates SET notes = $2 WHERE id = $1")
+                .bind(cert_id)
+                .bind(format!("pdf_attempts:{}", new_attempts))
+                .execute(pool)
+                .await;
             stats.failed += 1;
         }
     }

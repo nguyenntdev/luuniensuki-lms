@@ -143,7 +143,8 @@ mod tests {
 
     #[test]
     fn coordinate_input_deserializes_with_defaults() {
-        let json = r#"{"urn_slug":"cao-dinh","motif_name":"Long","pos_x":1.0,"pos_y":2.0,"pos_z":3.0}"#;
+        let json =
+            r#"{"urn_slug":"cao-dinh","motif_name":"Long","pos_x":1.0,"pos_y":2.0,"pos_z":3.0}"#;
         let parsed: CoordinateInput = serde_json::from_str(json).unwrap();
         assert_eq!(parsed.urn_slug, "cao-dinh");
         assert_eq!(parsed.motif_name, "Long");

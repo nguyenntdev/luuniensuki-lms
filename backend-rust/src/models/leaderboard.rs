@@ -88,6 +88,16 @@ pub struct LeaderboardRow {
 }
 
 #[derive(Debug, sqlx::FromRow)]
+pub struct RankedLeaderboardRow {
+    pub user_id: Uuid,
+    pub display_name: String,
+    pub avatar_url: Option<String>,
+    pub total_xp: i32,
+    pub rank: i64,
+}
+
+#[allow(dead_code)]
+#[derive(Debug, sqlx::FromRow)]
 pub struct LeagueRow {
     pub id: Uuid,
     pub name: String,
@@ -98,6 +108,7 @@ pub struct LeagueRow {
     pub member_count: i32,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, sqlx::FromRow)]
 pub struct UserLeagueRow {
     pub league_id: Option<Uuid>,

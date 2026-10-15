@@ -240,10 +240,7 @@ pub struct TrailStartResponse {
 #[serde(tag = "type")]
 pub enum StepCompleteResponse {
     #[serde(rename = "next_motif")]
-    NextMotif {
-        position: i32,
-        motif: StepMotif,
-    },
+    NextMotif { position: i32, motif: StepMotif },
     #[serde(rename = "checkpoint")]
     Checkpoint {
         checkpoint_id: Uuid,

@@ -168,9 +168,7 @@ pub async fn list_entity_relations(
 }
 
 /// GET /api/v1/history/urns
-pub async fn list_urns(
-    State(state): State<AuthState>,
-) -> Result<impl IntoResponse, AppError> {
+pub async fn list_urns(State(state): State<AuthState>) -> Result<impl IntoResponse, AppError> {
     let pool = require_pool(&state.pool)?;
     let urns = history_service::get_urns(pool).await?;
     let total = urns.len();
@@ -272,7 +270,8 @@ pub async fn search_history(
     let search_term = q.q.as_deref().or(q.query.as_deref()).unwrap_or("");
     let limit = q.limit.unwrap_or(20).clamp(1, 50);
 
-    let items = history_service::search_history(pool, search_term, q.types.as_deref(), limit).await?;
+    let items =
+        history_service::search_history(pool, search_term, q.types.as_deref(), limit).await?;
     let total = items.len();
 
     Ok(Json(SearchHistoryResponse {

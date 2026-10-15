@@ -310,10 +310,7 @@ pub fn compute_diff(broker_feed_ids: &[i64], janus_feed_ids: &[i64]) -> RosterDi
     let broker: BTreeSet<i64> = broker_feed_ids.iter().copied().collect();
     let janus: BTreeSet<i64> = janus_feed_ids.iter().copied().collect();
 
-    let only_in_broker = broker
-        .difference(&janus)
-        .map(|id| id.to_string())
-        .collect();
+    let only_in_broker = broker.difference(&janus).map(|id| id.to_string()).collect();
     let only_in_janus = janus.difference(&broker).copied().collect();
 
     RosterDiff {

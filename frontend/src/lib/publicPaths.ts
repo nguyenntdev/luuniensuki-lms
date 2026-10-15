@@ -13,7 +13,7 @@ export const PUBLIC_PATH_PREFIXES: string[] = [
   "/map",
   "/timeline",
   "/stories",
-  "/collections",
+  "/collection",
   "/sources",
   "/compare",
   "/explore",

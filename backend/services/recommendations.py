@@ -358,7 +358,7 @@ def get_similar_content(
                 results.append({
                     "content_type": "quest",
                     "content_id": str(quest.id),
-                    "title": quest.title,
+                    "title": quest.name,
                     "description": quest.description,
                     "similarity_score": float(overlap_count) / len(source_tags),
                     "reason": "similar_tags",

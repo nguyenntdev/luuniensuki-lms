@@ -19,9 +19,9 @@ use uuid::Uuid;
 
 use crate::error::AppError;
 use crate::models::streak_economy::{
-    BrbEventSummary, BrbEventsResponse, BrbResponse, GrantInsuranceRequest,
-    KpiBuckets, RepairEventsQuery, RepairEventsResponse, StreakEconomyStats,
-    StreakInsuranceRow, StreakRepairEventRow,
+    BrbEventSummary, BrbEventsResponse, BrbResponse, GrantInsuranceRequest, KpiBuckets,
+    RepairEventsQuery, RepairEventsResponse, StreakEconomyStats, StreakInsuranceRow,
+    StreakRepairEventRow,
 };
 
 const BRB_RATE_LIMIT_PER_24H: i64 = 5;
@@ -119,7 +119,9 @@ pub async fn big_red_button(
     .await
     .map_err(|e| AppError::Internal(e.into()))?;
 
-    tx.commit().await.map_err(|e| AppError::Internal(e.into()))?;
+    tx.commit()
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
 
     tracing::info!(
         feature = "brb",
@@ -131,8 +133,7 @@ pub async fn big_red_button(
         "big red button pressed"
     );
 
-    crate::routes::metrics::STREAK_BRB_TOTAL
-        .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+    crate::routes::metrics::STREAK_BRB_TOTAL.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
 
     Ok(BrbResponse {
         affected_users: inserted,
@@ -223,7 +224,9 @@ pub async fn grant_repair(
     .await
     .map_err(|e| AppError::Internal(e.into()))?;
 
-    tx.commit().await.map_err(|e| AppError::Internal(e.into()))?;
+    tx.commit()
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
 
     tracing::info!(
         feature = "streak_repair",
@@ -306,7 +309,9 @@ pub async fn grant_insurance(
     .await
     .map_err(|e| AppError::Internal(e.into()))?;
 
-    tx.commit().await.map_err(|e| AppError::Internal(e.into()))?;
+    tx.commit()
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
 
     tracing::info!(
         feature = "streak_insurance_grant",

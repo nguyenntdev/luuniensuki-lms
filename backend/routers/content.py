@@ -763,11 +763,17 @@ def get_urn_detail(
     if urn is None:
         raise HTTPException(status_code=404, detail="Urn not found")
 
+    allowed_ratings = get_allowed_content_ratings(current_user)
+
     motifs = (
         db.execute(
             select(Motif)
             .options(selectinload(Motif.lesson))
-            .where(Motif.urn_id == urn.id, Motif.is_active.is_(True))
+            .where(
+                Motif.urn_id == urn.id,
+                Motif.is_active.is_(True),
+                Motif.content_rating.in_(allowed_ratings),
+            )
             .order_by(Motif.display_order.nulls_last(), Motif.name)
         )
         .scalars()

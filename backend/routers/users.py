@@ -981,18 +981,22 @@ def admin_list_push_notifications(
     """
     # Build query
     query = select(PushNotification)
+    count_query = select(func.count(PushNotification.id))
 
     if user_id:
         query = query.where(PushNotification.user_id == user_id)
+        count_query = count_query.where(PushNotification.user_id == user_id)
 
     if status:
         query = query.where(PushNotification.status == status)
+        count_query = count_query.where(PushNotification.status == status)
 
     if notification_type:
         query = query.where(PushNotification.notification_type == notification_type)
+        count_query = count_query.where(PushNotification.notification_type == notification_type)
 
     # Get total count
-    total = len(db.execute(query).scalars().all())
+    total = db.scalar(count_query) or 0
 
     # Get paginated results
     query = (
@@ -1484,13 +1488,13 @@ def end_session(
 
 
 @router.post("/api/v1/users/me/avatar")
-async def upload_avatar(
+def upload_avatar(
     file: UploadFile = File(...),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     try:
-        contents = await file.read(MAX_AVATAR_SIZE + 1)
+        contents = file.file.read(MAX_AVATAR_SIZE + 1)
         if len(contents) > MAX_AVATAR_SIZE:
             raise AppError(
                 code="AVATAR_TOO_LARGE",
@@ -1546,7 +1550,7 @@ async def upload_avatar(
 
         return {"avatar_url": current_user.avatar_url}
     finally:
-        await file.close()
+        file.file.close()
 
 
 @router.post("/api/v1/users/me/change-password")

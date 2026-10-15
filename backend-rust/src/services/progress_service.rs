@@ -19,6 +19,14 @@ const DISCOVERY_XP: i32 = 10;
 const MAX_HEARTS: i32 = 5;
 const DEFAULT_DAILY_XP_GOAL: i32 = 50;
 
+#[derive(Debug, sqlx::FromRow)]
+struct ExistingProgressRow {
+    status: String,
+    discovered_at: Option<chrono::DateTime<Utc>>,
+    #[allow(dead_code)]
+    xp_earned: i32,
+}
+
 /// POST /api/v1/progress/unlock — unlock/discover a motif.
 pub async fn unlock_motif(
     pool: &PgPool,
@@ -26,52 +34,127 @@ pub async fn unlock_motif(
     payload: &UnlockMotifRequest,
 ) -> Result<UnlockMotifResponse, AppError> {
     // Verify motif exists
-    let _motif: (Uuid,) = sqlx::query_as("SELECT id FROM motifs WHERE id = $1 AND is_active = true")
-        .bind(payload.motif_id)
-        .fetch_optional(pool)
-        .await
-        .map_err(|e| AppError::Internal(e.into()))?
-        .ok_or_else(|| AppError::Http {
-            status: axum::http::StatusCode::NOT_FOUND,
-            message: "Motif not found".to_string(),
-        })?;
+    let _motif: (Uuid,) =
+        sqlx::query_as("SELECT id FROM motifs WHERE id = $1 AND is_active = true")
+            .bind(payload.motif_id)
+            .fetch_optional(pool)
+            .await
+            .map_err(|e| AppError::Internal(e.into()))?
+            .ok_or_else(|| AppError::Http {
+                status: axum::http::StatusCode::NOT_FOUND,
+                message: "Motif not found".to_string(),
+            })?;
 
     let now = Utc::now();
+    let mut tx = pool
+        .begin()
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
 
-    // Upsert progress to 'discovered'
-    sqlx::query(
+    // Check existing progress status with FOR UPDATE to prevent race conditions and infinite XP grinding
+    let existing = sqlx::query_as::<_, ExistingProgressRow>(
         r#"
-        INSERT INTO user_progress (id, user_id, motif_id, status, discovered_at, xp_earned)
-        VALUES ($1, $2, $3, 'discovered', $4, $5)
-        ON CONFLICT (user_id, motif_id)
-        DO UPDATE SET
-            discovered_at = COALESCE(user_progress.discovered_at, $4),
-            status = CASE WHEN user_progress.status = 'hidden' THEN 'discovered' ELSE user_progress.status END
+        SELECT status::text AS status, discovered_at, xp_earned
+        FROM user_progress
+        WHERE user_id = $1 AND motif_id = $2
+        FOR UPDATE
         "#,
     )
-    .bind(Uuid::new_v4())
     .bind(user_id)
     .bind(payload.motif_id)
-    .bind(now)
-    .bind(DISCOVERY_XP)
-    .execute(pool)
+    .fetch_optional(&mut *tx)
     .await
     .map_err(|e| AppError::Internal(e.into()))?;
 
-    // Award XP
-    sqlx::query("UPDATE users SET total_xp = total_xp + $1, last_active_at = $2 WHERE id = $3")
-        .bind(DISCOVERY_XP)
-        .bind(now)
-        .bind(user_id)
-        .execute(pool)
+    let (final_status, final_discovered_at, xp_awarded) = match existing {
+        None => {
+            // New entry: insert and award discovery XP
+            sqlx::query(
+                r#"
+                INSERT INTO user_progress (id, user_id, motif_id, status, discovered_at, xp_earned)
+                VALUES ($1, $2, $3, 'discovered', $4, $5)
+                "#,
+            )
+            .bind(Uuid::new_v4())
+            .bind(user_id)
+            .bind(payload.motif_id)
+            .bind(now)
+            .bind(DISCOVERY_XP)
+            .execute(&mut *tx)
+            .await
+            .map_err(|e| AppError::Internal(e.into()))?;
+
+            // Award XP to user
+            sqlx::query(
+                "UPDATE users SET total_xp = total_xp + $1, last_active_at = $2 WHERE id = $3",
+            )
+            .bind(DISCOVERY_XP)
+            .bind(now)
+            .bind(user_id)
+            .execute(&mut *tx)
+            .await
+            .map_err(|e| AppError::Internal(e.into()))?;
+
+            ("discovered".to_string(), now, DISCOVERY_XP)
+        }
+        Some(p) if p.status == "hidden" => {
+            // Previously hidden: transition to discovered and award discovery XP
+            let discovered_at = p.discovered_at.unwrap_or(now);
+            sqlx::query(
+                r#"
+                UPDATE user_progress
+                SET status = 'discovered',
+                    discovered_at = COALESCE(discovered_at, $1),
+                    xp_earned = xp_earned + $2
+                WHERE user_id = $3 AND motif_id = $4
+                "#,
+            )
+            .bind(now)
+            .bind(DISCOVERY_XP)
+            .bind(user_id)
+            .bind(payload.motif_id)
+            .execute(&mut *tx)
+            .await
+            .map_err(|e| AppError::Internal(e.into()))?;
+
+            // Award XP to user
+            sqlx::query(
+                "UPDATE users SET total_xp = total_xp + $1, last_active_at = $2 WHERE id = $3",
+            )
+            .bind(DISCOVERY_XP)
+            .bind(now)
+            .bind(user_id)
+            .execute(&mut *tx)
+            .await
+            .map_err(|e| AppError::Internal(e.into()))?;
+
+            ("discovered".to_string(), discovered_at, DISCOVERY_XP)
+        }
+        Some(p) => {
+            // Already discovered / learned / mastered: do not award XP again
+            let discovered_at = p.discovered_at.unwrap_or(now);
+
+            // Update user last_active_at only
+            sqlx::query("UPDATE users SET last_active_at = $1 WHERE id = $2")
+                .bind(now)
+                .bind(user_id)
+                .execute(&mut *tx)
+                .await
+                .map_err(|e| AppError::Internal(e.into()))?;
+
+            (p.status, discovered_at, 0)
+        }
+    };
+
+    tx.commit()
         .await
         .map_err(|e| AppError::Internal(e.into()))?;
 
     Ok(UnlockMotifResponse {
         motif_id: payload.motif_id,
-        status: "discovered".to_string(),
-        discovered_at: now,
-        xp_awarded: DISCOVERY_XP,
+        status: final_status,
+        discovered_at: final_discovered_at,
+        xp_awarded,
     })
 }
 
@@ -93,7 +176,8 @@ pub async fn get_streak(pool: &PgPool, user_id: Uuid) -> Result<StreakResponse, 
     match row {
         Some(r) => {
             let today = Utc::now();
-            let streak_alive = r.last_active_at
+            let streak_alive = r
+                .last_active_at
                 .map(|d| (today - d).num_hours() <= 48)
                 .unwrap_or(false);
 
@@ -143,7 +227,10 @@ pub async fn update_streak_heartbeat(
             if last_date == Some(today) {
                 // Already active today
                 (r.current_streak, r.longest_streak, false)
-            } else if last_date.map(|d| (today - d).num_days() == 1).unwrap_or(false) {
+            } else if last_date
+                .map(|d| (today - d).num_days() == 1)
+                .unwrap_or(false)
+            {
                 // Consecutive day
                 let new = r.current_streak + 1;
                 let longest = new.max(r.longest_streak);
@@ -224,6 +311,15 @@ pub async fn update_hearts(
 ) -> Result<HeartsActionResponse, AppError> {
     let amount = payload.amount.unwrap_or(1);
 
+    if amount <= 0 || amount > MAX_HEARTS {
+        return Err(AppError::Domain {
+            status: axum::http::StatusCode::BAD_REQUEST,
+            code: "INVALID_AMOUNT".to_string(),
+            message: format!("Heart amount must be between 1 and {}", MAX_HEARTS),
+            details: serde_json::json!({"amount": amount, "min": 1, "max": MAX_HEARTS}),
+        });
+    }
+
     match payload.action.as_str() {
         "spend" => {
             // Ensure user has enough hearts
@@ -241,7 +337,8 @@ pub async fn update_hearts(
 
             let now = Utc::now();
             let current = row.as_ref().map(|r| r.current_hearts).unwrap_or(MAX_HEARTS);
-            let is_unlimited = row.as_ref()
+            let is_unlimited = row
+                .as_ref()
                 .and_then(|r| r.unlimited_until)
                 .map(|u| u > now)
                 .unwrap_or(false);
@@ -255,7 +352,11 @@ pub async fn update_hearts(
                 });
             }
 
-            let new_hearts = if is_unlimited { current } else { (current - amount).max(0) };
+            let new_hearts = if is_unlimited {
+                current
+            } else {
+                (current - amount).max(0)
+            };
 
             sqlx::query(
                 r#"
@@ -374,7 +475,11 @@ pub async fn get_milestones(pool: &PgPool, user_id: Uuid) -> Result<MilestonesRe
                 id: r.id,
                 milestone_type: r.milestone_type,
                 title,
-                description: r.context_data.as_ref().and_then(|d| d.get("description").and_then(|v| v.as_str()).map(|s| s.to_string())),
+                description: r.context_data.as_ref().and_then(|d| {
+                    d.get("description")
+                        .and_then(|v| v.as_str())
+                        .map(|s| s.to_string())
+                }),
                 achieved_at: Some(r.achieved_at),
                 progress_current: if r.celebrated { 1 } else { 0 },
                 progress_target: 1,
@@ -387,4 +492,23 @@ pub async fn get_milestones(pool: &PgPool, user_id: Uuid) -> Result<MilestonesRe
         milestones,
         total_achieved,
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn validate_heart_amount_limits() {
+        assert_eq!(MAX_HEARTS, 5);
+        let is_valid = |amount: i32| amount > 0 && amount <= MAX_HEARTS;
+        assert!(!is_valid(0));
+        assert!(!is_valid(-1));
+        assert!(!is_valid(-5));
+        assert!(!is_valid(6));
+        assert!(!is_valid(100));
+        assert!(is_valid(1));
+        assert!(is_valid(3));
+        assert!(is_valid(5));
+    }
 }

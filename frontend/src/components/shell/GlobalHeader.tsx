@@ -8,6 +8,7 @@ import { isShellRoute } from "@/lib/shellRoutes";
 import { cn } from "@/lib/utils";
 
 import GlobalSearch from "./GlobalSearch";
+import HeritageMegaMenu from "./HeritageMegaMenu";
 import UserMenu from "./UserMenu";
 
 const PRIMARY_NAV = [
@@ -54,6 +55,7 @@ export default function GlobalHeader() {
             aria-label="Điều hướng chính"
             className="flex min-w-0 flex-1 items-center justify-center gap-1"
           >
+            <HeritageMegaMenu />
             {PRIMARY_NAV.map((item) => {
               const active = isActive(pathname, item.href);
               return (

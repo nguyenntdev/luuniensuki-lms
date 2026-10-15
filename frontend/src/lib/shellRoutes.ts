@@ -7,6 +7,8 @@ export function isShellRoute(
   const p = pathname ?? "";
   if (p === "/login" || p === "/register") return false;
   if (/^\/motif\/[^/]+\/quiz/.test(p)) return false;
-  if (/^\/urns\/[^/]+\/exam/.test(p)) return false;
+  if (/^\/urns\/[^/]+$/.test(p)) return false;
+  if (/^\/urns\/[^/]+\/exam(\/.*)?$/.test(p)) return false;
+  if (/^\/live\/[^/]+$/.test(p)) return false;
   return true;
 }

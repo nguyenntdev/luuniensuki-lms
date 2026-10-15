@@ -223,8 +223,11 @@ pub struct AgeVerifyResponse {
 }
 
 // ---------------------------------------------------------------------------
-// Cookie helpers
+// Cookie & Security helpers
 // ---------------------------------------------------------------------------
+
+/// Constant dummy bcrypt cost-12 hash used for timing attack mitigation when email is not found.
+const DUMMY_BCRYPT_HASH: &str = "$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4Qcpe4cGS6";
 
 /// Cookie name for the access token.
 const ACCESS_COOKIE_NAME: &str = "luuniensuki_access";
@@ -248,11 +251,54 @@ fn build_clear_cookie(name: &str, secure: bool) -> String {
     build_cookie(name, "", 0, secure)
 }
 
-/// Determine if cookies should be Secure (true in production).
-fn is_secure() -> bool {
-    std::env::var("COOKIE_SECURE")
-        .map(|v| v == "true" || v == "1")
-        .unwrap_or(false)
+/// Determine if cookies should be Secure.
+/// Checks `COOKIE_SECURE` env var if explicitly set; otherwise falls back to `settings.is_production()`.
+fn is_secure(settings: &Settings) -> bool {
+    if let Ok(val) = std::env::var("COOKIE_SECURE") {
+        let v = val.trim();
+        v.eq_ignore_ascii_case("true") || v == "1"
+    } else {
+        settings.is_production()
+    }
+}
+
+/// Extract the best-effort client IP from proxy headers or fallback to "unknown".
+fn client_ip_or_unknown(headers: &HeaderMap) -> String {
+    if let Some(h) = headers.get("x-forwarded-for") {
+        if let Ok(s) = h.to_str() {
+            if let Some(first) = s.split(',').next() {
+                let trimmed = first.trim();
+                if !trimmed.is_empty() {
+                    return trimmed.to_string();
+                }
+            }
+        }
+    }
+    if let Some(h) = headers.get("x-real-ip") {
+        if let Ok(s) = h.to_str() {
+            let trimmed = s.trim();
+            if !trimmed.is_empty() {
+                return trimmed.to_string();
+            }
+        }
+    }
+    "unknown".to_string()
+}
+
+/// Enforce per-IP token bucket rate limiting on sensitive auth endpoints.
+fn check_auth_rate_limit(headers: &HeaderMap, action: &str) -> Result<(), AppError> {
+    let ip = client_ip_or_unknown(headers);
+    let key = format!("auth:{action}:{ip}");
+    // 70 burst capacity, refilling at 1 token/second (matching rate_limit_requests_per_minute + burst = 70).
+    if !crate::rate_limit::try_acquire(&key, 70.0, 1.0) {
+        return Err(AppError::Domain {
+            status: StatusCode::TOO_MANY_REQUESTS,
+            code: "RATE_LIMITED".to_string(),
+            message: "Rate limit exceeded. Please try again later.".to_string(),
+            details: json!({}),
+        });
+    }
+    Ok(())
 }
 
 // ---------------------------------------------------------------------------
@@ -319,12 +365,16 @@ pub async fn me(
     State(state): State<AuthState>,
 ) -> Result<impl IntoResponse, AppError> {
     let token = extract_token_from_headers(&headers).ok_or(AppError::Unauthorized)?;
-    let claims =
-        auth::verify_access_token(&token, &state.settings.jwt_secret_key, state.settings.jwt_validate_new_claims, &state.settings.jwt_issuer, &state.settings.jwt_audience)
-            .map_err(|_| AppError::Unauthorized)?;
+    let claims = auth::verify_access_token(
+        &token,
+        &state.settings.jwt_secret_key,
+        state.settings.jwt_validate_new_claims,
+        &state.settings.jwt_issuer,
+        &state.settings.jwt_audience,
+    )
+    .map_err(|_| AppError::Unauthorized)?;
 
     let pool = require_pool(&state.pool)?;
-
 
     let user_id: Uuid = claims.sub.parse().map_err(|_| AppError::Unauthorized)?;
 
@@ -344,9 +394,12 @@ pub async fn me(
 
 /// POST /api/v1/auth/login — authenticate with email + password.
 pub async fn login(
+    headers: HeaderMap,
     State(state): State<AuthState>,
     Json(payload): Json<LoginRequest>,
 ) -> Result<Response, AppError> {
+    check_auth_rate_limit(&headers, "login")?;
+
     if let Err(e) = payload.validate() {
         return Err(AppError::Validation {
             details: serde_json::to_value(e).unwrap_or(json!({})),
@@ -363,15 +416,24 @@ pub async fn login(
     .bind(&payload.email)
     .fetch_optional(pool)
     .await
-    .map_err(|e| AppError::Internal(e.into()))?
-    .ok_or(AppError::Unauthorized)?;
+    .map_err(|e| AppError::Internal(e.into()))?;
 
-    // Verify password
-    let valid = auth::verify_password(&payload.password, &row.password_hash)
-        .map_err(|_| AppError::Unauthorized)?;
-    if !valid {
-        return Err(AppError::Unauthorized);
-    }
+    let row = match row {
+        Some(r) => {
+            // Verify password
+            let valid = auth::verify_password(&payload.password, &r.password_hash)
+                .map_err(|_| AppError::Unauthorized)?;
+            if !valid {
+                return Err(AppError::Unauthorized);
+            }
+            r
+        }
+        None => {
+            // Mitigate timing attack by executing dummy password verification
+            let _ = auth::verify_password(&payload.password, DUMMY_BCRYPT_HASH);
+            return Err(AppError::Unauthorized);
+        }
+    };
 
     let user_id_str = row.id.to_string();
     let access_token = auth::issue_access_token(
@@ -396,7 +458,12 @@ pub async fn login(
 
     let body = row.into_auth_me_response();
     let mut response = Json(body).into_response();
-    append_auth_cookies(&mut response, &access_token, &refresh_token, &state.settings);
+    append_auth_cookies(
+        &mut response,
+        &access_token,
+        &refresh_token,
+        &state.settings,
+    );
     response
         .headers_mut()
         .insert(header::CACHE_CONTROL, "no-store".parse().unwrap());
@@ -405,9 +472,12 @@ pub async fn login(
 
 /// POST /api/v1/auth/register — create a new user account.
 pub async fn register(
+    headers: HeaderMap,
     State(state): State<AuthState>,
     Json(payload): Json<RegisterRequest>,
 ) -> Result<Response, AppError> {
+    check_auth_rate_limit(&headers, "register")?;
+
     if let Err(e) = payload.validate() {
         return Err(AppError::Validation {
             details: serde_json::to_value(e).unwrap_or(json!({})),
@@ -417,12 +487,11 @@ pub async fn register(
     let pool = require_pool(&state.pool)?;
 
     // Check if email already taken
-    let existing: Option<(Uuid,)> =
-        sqlx::query_as("SELECT id FROM users WHERE email = $1")
-            .bind(&payload.email)
-            .fetch_optional(pool)
-            .await
-            .map_err(|e| AppError::Internal(e.into()))?;
+    let existing: Option<(Uuid,)> = sqlx::query_as("SELECT id FROM users WHERE email = $1")
+        .bind(&payload.email)
+        .fetch_optional(pool)
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
 
     if existing.is_some() {
         return Err(AppError::Domain {
@@ -450,7 +519,7 @@ pub async fn register(
     let new_id = Uuid::new_v4();
     let row = sqlx::query_as::<_, UserRow>(
         "INSERT INTO users (id, email, display_name, password_hash, role, created_at, updated_at) \
-         VALUES ($1, $2, $3, $4, 'user', NOW(), NOW()) \
+         VALUES ($1, $2, $3, $4, 'learner', NOW(), NOW()) \
          RETURNING id, email, display_name, role::text AS role, avatar_url, username, total_xp, \
          starting_urn_id, is_profile_public, ai_personalization_enabled, age_verified, created_at",
     )
@@ -498,7 +567,12 @@ pub async fn register(
 
     let body = row.into_auth_me_response();
     let mut response = (StatusCode::CREATED, Json(body)).into_response();
-    append_auth_cookies(&mut response, &access_token, &refresh_token, &state.settings);
+    append_auth_cookies(
+        &mut response,
+        &access_token,
+        &refresh_token,
+        &state.settings,
+    );
     response
         .headers_mut()
         .insert(header::CACHE_CONTROL, "no-store".parse().unwrap());
@@ -510,13 +584,32 @@ pub async fn refresh(
     headers: HeaderMap,
     State(state): State<AuthState>,
 ) -> Result<Response, AppError> {
-    let raw_token =
-        extract_refresh_token_from_headers(&headers).ok_or(AppError::Unauthorized)?;
+    let raw_token = extract_refresh_token_from_headers(&headers).ok_or(AppError::Unauthorized)?;
 
-    let claims = auth::verify_refresh_token(&raw_token, &state.settings.jwt_secret_key, state.settings.jwt_validate_new_claims, &state.settings.jwt_issuer, &state.settings.jwt_audience)
-        .map_err(|_| AppError::Unauthorized)?;
+    let claims = auth::verify_refresh_token(
+        &raw_token,
+        &state.settings.jwt_secret_key,
+        state.settings.jwt_validate_new_claims,
+        &state.settings.jwt_issuer,
+        &state.settings.jwt_audience,
+    )
+    .map_err(|_| AppError::Unauthorized)?;
 
     let pool = require_pool(&state.pool)?;
+
+    // Check if refresh token has been revoked
+    if !claims.jti.is_empty() {
+        let is_revoked: Option<(String,)> =
+            sqlx::query_as("SELECT jti FROM revoked_refresh_tokens WHERE jti = $1")
+                .bind(&claims.jti)
+                .fetch_optional(pool)
+                .await
+                .map_err(|e| AppError::Internal(e.into()))?;
+
+        if is_revoked.is_some() {
+            return Err(AppError::Unauthorized);
+        }
+    }
 
     let user_id: Uuid = claims.sub.parse().map_err(|_| AppError::Unauthorized)?;
 
@@ -530,6 +623,23 @@ pub async fn refresh(
     .await
     .map_err(|e| AppError::Internal(e.into()))?
     .ok_or(AppError::Unauthorized)?;
+
+    // Revoke the presented refresh token (token rotation)
+    if !claims.jti.is_empty() {
+        let expires_at = chrono::DateTime::from_timestamp(claims.exp, 0).unwrap_or_else(|| {
+            Utc::now() + chrono::Duration::days(state.settings.refresh_token_expire_days)
+        });
+        let _ = sqlx::query(
+            "INSERT INTO revoked_refresh_tokens (jti, user_id, revoked_at, expires_at) \
+             VALUES ($1, $2, NOW(), $3) \
+             ON CONFLICT (jti) DO NOTHING",
+        )
+        .bind(&claims.jti)
+        .bind(user_id)
+        .bind(expires_at)
+        .execute(pool)
+        .await;
+    }
 
     let user_id_str = row.id.to_string();
     let access_token = auth::issue_access_token(
@@ -554,7 +664,12 @@ pub async fn refresh(
 
     let body = row.into_auth_me_response();
     let mut response = Json(body).into_response();
-    append_auth_cookies(&mut response, &access_token, &refresh_token, &state.settings);
+    append_auth_cookies(
+        &mut response,
+        &access_token,
+        &refresh_token,
+        &state.settings,
+    );
     response
         .headers_mut()
         .insert(header::CACHE_CONTROL, "no-store".parse().unwrap());
@@ -562,16 +677,54 @@ pub async fn refresh(
 }
 
 /// POST /api/v1/auth/logout — clear auth cookies.
-pub async fn logout() -> Response {
-    let secure = is_secure();
+pub async fn logout(headers: HeaderMap, State(state): State<AuthState>) -> Response {
+    if let Some(raw_token) = extract_refresh_token_from_headers(&headers) {
+        if let Ok(claims) = auth::verify_refresh_token(
+            &raw_token,
+            &state.settings.jwt_secret_key,
+            false,
+            &state.settings.jwt_issuer,
+            &state.settings.jwt_audience,
+        ) {
+            if !claims.jti.is_empty() {
+                if let Ok(user_id) = claims.sub.parse::<Uuid>() {
+                    if let Some(pool) = &state.pool {
+                        let expires_at = chrono::DateTime::from_timestamp(claims.exp, 0)
+                            .unwrap_or_else(|| {
+                                Utc::now()
+                                    + chrono::Duration::days(
+                                        state.settings.refresh_token_expire_days,
+                                    )
+                            });
+                        let _ = sqlx::query(
+                            "INSERT INTO revoked_refresh_tokens (jti, user_id, revoked_at, expires_at) \
+                             VALUES ($1, $2, NOW(), $3) \
+                             ON CONFLICT (jti) DO NOTHING",
+                        )
+                        .bind(&claims.jti)
+                        .bind(user_id)
+                        .bind(expires_at)
+                        .execute(pool)
+                        .await;
+                    }
+                }
+            }
+        }
+    }
+
+    let secure = is_secure(&state.settings);
     let mut response = Json(LogoutResponse { success: true }).into_response();
     response.headers_mut().append(
         header::SET_COOKIE,
-        build_clear_cookie(ACCESS_COOKIE_NAME, secure).parse().unwrap(),
+        build_clear_cookie(ACCESS_COOKIE_NAME, secure)
+            .parse()
+            .unwrap(),
     );
     response.headers_mut().append(
         header::SET_COOKIE,
-        build_clear_cookie(REFRESH_COOKIE_NAME, secure).parse().unwrap(),
+        build_clear_cookie(REFRESH_COOKIE_NAME, secure)
+            .parse()
+            .unwrap(),
     );
     response
         .headers_mut()
@@ -581,9 +734,12 @@ pub async fn logout() -> Response {
 
 /// POST /api/v1/auth/forgot-password — request a password reset token.
 pub async fn forgot_password(
+    headers: HeaderMap,
     State(state): State<AuthState>,
     Json(payload): Json<ForgotPasswordRequest>,
 ) -> Result<Json<ForgotPasswordResponse>, AppError> {
+    check_auth_rate_limit(&headers, "forgot-password")?;
+
     if let Err(e) = payload.validate() {
         return Err(AppError::Validation {
             details: serde_json::to_value(e).unwrap_or(json!({})),
@@ -593,12 +749,11 @@ pub async fn forgot_password(
     let pool = require_pool(&state.pool)?;
 
     // Look up user — don't reveal if email exists
-    let user: Option<(Uuid,)> =
-        sqlx::query_as("SELECT id FROM users WHERE email = $1")
-            .bind(&payload.email)
-            .fetch_optional(pool)
-            .await
-            .map_err(|e| AppError::Internal(e.into()))?;
+    let user: Option<(Uuid,)> = sqlx::query_as("SELECT id FROM users WHERE email = $1")
+        .bind(&payload.email)
+        .fetch_optional(pool)
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
 
     if let Some((user_id,)) = user {
         // Generate a random reset token
@@ -630,15 +785,20 @@ pub async fn forgot_password(
 
     // Always return the same message to prevent account enumeration
     Ok(Json(ForgotPasswordResponse {
-        message: "If an account exists for this email, a password reset instruction has been generated.".to_string(),
+        message:
+            "If an account exists for this email, a password reset instruction has been generated."
+                .to_string(),
     }))
 }
 
 /// POST /api/v1/auth/reset-password — reset password using a valid token.
 pub async fn reset_password(
+    headers: HeaderMap,
     State(state): State<AuthState>,
     Json(payload): Json<ResetPasswordRequest>,
 ) -> Result<Json<ResetPasswordResponse>, AppError> {
+    check_auth_rate_limit(&headers, "reset-password")?;
+
     if let Err(e) = payload.validate() {
         return Err(AppError::Validation {
             details: serde_json::to_value(e).unwrap_or(json!({})),
@@ -646,26 +806,6 @@ pub async fn reset_password(
     }
 
     let pool = require_pool(&state.pool)?;
-
-    let token_hash = sha256_hex(&payload.token);
-
-    // Look up valid, unused, non-expired token
-    let reset_row: Option<(Uuid, Uuid)> = sqlx::query_as(
-        "SELECT id, user_id FROM password_reset_tokens \
-         WHERE token_hash = $1 AND used_at IS NULL AND expires_at > NOW() \
-         ORDER BY created_at DESC LIMIT 1",
-    )
-    .bind(&token_hash)
-    .fetch_optional(pool)
-    .await
-    .map_err(|e| AppError::Internal(e.into()))?;
-
-    let (token_id, user_id) = reset_row.ok_or_else(|| AppError::Domain {
-        status: StatusCode::BAD_REQUEST,
-        code: "INVALID_OR_EXPIRED_RESET_TOKEN".to_string(),
-        message: "Invalid or expired password reset token".to_string(),
-        details: json!({}),
-    })?;
 
     // Hash new password
     let new_hash = auth::hash_password(&payload.new_password).map_err(|e| {
@@ -681,18 +821,40 @@ pub async fn reset_password(
         }
     })?;
 
+    let token_hash = sha256_hex(&payload.token);
+
+    let mut tx = pool
+        .begin()
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
+
+    // Look up and mark token as used atomically in a single statement
+    let reset_row: Option<(Uuid, Uuid)> = sqlx::query_as(
+        "UPDATE password_reset_tokens SET used_at = NOW() \
+         WHERE token_hash = $1 AND used_at IS NULL AND expires_at > NOW() \
+         RETURNING id, user_id",
+    )
+    .bind(&token_hash)
+    .fetch_optional(&mut *tx)
+    .await
+    .map_err(|e| AppError::Internal(e.into()))?;
+
+    let (_token_id, user_id) = reset_row.ok_or_else(|| AppError::Domain {
+        status: StatusCode::BAD_REQUEST,
+        code: "INVALID_OR_EXPIRED_RESET_TOKEN".to_string(),
+        message: "Invalid or expired password reset token".to_string(),
+        details: json!({}),
+    })?;
+
     // Update user's password
     sqlx::query("UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2")
         .bind(&new_hash)
         .bind(user_id)
-        .execute(pool)
+        .execute(&mut *tx)
         .await
         .map_err(|e| AppError::Internal(e.into()))?;
 
-    // Mark token as used
-    sqlx::query("UPDATE password_reset_tokens SET used_at = NOW() WHERE id = $1")
-        .bind(token_id)
-        .execute(pool)
+    tx.commit()
         .await
         .map_err(|e| AppError::Internal(e.into()))?;
 
@@ -708,9 +870,14 @@ pub async fn age_verify(
     Json(payload): Json<AgeVerifyRequest>,
 ) -> Result<impl IntoResponse, AppError> {
     let token = extract_token_from_headers(&headers).ok_or(AppError::Unauthorized)?;
-    let claims =
-        auth::verify_access_token(&token, &state.settings.jwt_secret_key, state.settings.jwt_validate_new_claims, &state.settings.jwt_issuer, &state.settings.jwt_audience)
-            .map_err(|_| AppError::Unauthorized)?;
+    let claims = auth::verify_access_token(
+        &token,
+        &state.settings.jwt_secret_key,
+        state.settings.jwt_validate_new_claims,
+        &state.settings.jwt_issuer,
+        &state.settings.jwt_audience,
+    )
+    .map_err(|_| AppError::Unauthorized)?;
 
     let pool = require_pool(&state.pool)?;
 
@@ -722,10 +889,7 @@ pub async fn age_verify(
         return Err(AppError::Domain {
             status: StatusCode::BAD_REQUEST,
             code: "INVALID_BIRTH_YEAR".to_string(),
-            message: format!(
-                "Birth year must be between 1900 and {}",
-                current_year
-            ),
+            message: format!("Birth year must be between 1900 and {}", current_year),
             details: json!({}),
         });
     }
@@ -761,7 +925,7 @@ fn append_auth_cookies(
     refresh_token: &str,
     settings: &Settings,
 ) {
-    let secure = is_secure();
+    let secure = is_secure(settings);
     let access_max_age = settings.access_token_expire_minutes * 60;
     let refresh_max_age = settings.refresh_token_expire_days * 24 * 60 * 60;
 
@@ -944,9 +1108,7 @@ mod tests {
         let token = jsonwebtoken::encode(
             &jsonwebtoken::Header::default(),
             &claims,
-            &jsonwebtoken::EncodingKey::from_secret(
-                state.settings.jwt_secret_key.as_bytes(),
-            ),
+            &jsonwebtoken::EncodingKey::from_secret(state.settings.jwt_secret_key.as_bytes()),
         )
         .unwrap();
 
@@ -1202,5 +1364,58 @@ mod tests {
             hash,
             "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824"
         );
+    }
+
+    #[test]
+    fn dummy_bcrypt_hash_verifies_correctly() {
+        // Verify dummy hash format parses and verify_password executes without error
+        let result = auth::verify_password("wrong-password", DUMMY_BCRYPT_HASH);
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap(), false);
+    }
+
+    #[test]
+    fn is_secure_respects_settings_and_env() {
+        let mut settings = crate::config::Settings::from_env().unwrap();
+        settings.app_env = "development".to_string();
+
+        // When COOKIE_SECURE is unset in dev, is_secure is false
+        std::env::remove_var("COOKIE_SECURE");
+        assert_eq!(is_secure(&settings), false);
+
+        // When app_env is production, is_secure defaults to true
+        settings.app_env = "production".to_string();
+        assert_eq!(is_secure(&settings), true);
+
+        // When COOKIE_SECURE is explicitly true, returns true
+        std::env::set_var("COOKIE_SECURE", "true");
+        assert_eq!(is_secure(&settings), true);
+
+        // When COOKIE_SECURE is explicitly false, returns false even in production
+        std::env::set_var("COOKIE_SECURE", "false");
+        assert_eq!(is_secure(&settings), false);
+
+        std::env::remove_var("COOKIE_SECURE");
+    }
+
+    #[test]
+    fn rate_limiting_exhausts_and_blocks() {
+        let mut headers = HeaderMap::new();
+        headers.insert("x-forwarded-for", "198.51.100.42".parse().unwrap());
+
+        // We can acquire up to 70 requests
+        for _ in 0..70 {
+            assert!(check_auth_rate_limit(&headers, "test-action").is_ok());
+        }
+
+        // 71st request should be rate limited (429)
+        let err = check_auth_rate_limit(&headers, "test-action").unwrap_err();
+        match err {
+            AppError::Domain { status, code, .. } => {
+                assert_eq!(status, StatusCode::TOO_MANY_REQUESTS);
+                assert_eq!(code, "RATE_LIMITED");
+            }
+            _ => panic!("expected AppError::Domain with RATE_LIMITED"),
+        }
     }
 }

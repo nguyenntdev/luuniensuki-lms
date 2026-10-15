@@ -55,13 +55,12 @@ pub async fn comeback_status(
             // `current_streak` (capped at any post-loss value) as the count
             // of consecutive comeback days, and additionally check that the
             // user's `last_active_at` falls strictly after the loss.
-            let row: Option<(i32, Option<DateTime<Utc>>)> = sqlx::query_as(
-                "SELECT current_streak, last_active_at FROM users WHERE id = $1",
-            )
-            .bind(user_id)
-            .fetch_optional(pool)
-            .await
-            .map_err(|e| AppError::Internal(e.into()))?;
+            let row: Option<(i32, Option<DateTime<Utc>>)> =
+                sqlx::query_as("SELECT current_streak, last_active_at FROM users WHERE id = $1")
+                    .bind(user_id)
+                    .fetch_optional(pool)
+                    .await
+                    .map_err(|e| AppError::Internal(e.into()))?;
 
             match row {
                 Some((streak, Some(last_active))) if last_active > ended_at => streak,
@@ -140,7 +139,6 @@ async fn active_comeback_bonus(
     }))
 }
 
-
 /// Award the Phoenix badge if the user is eligible.
 ///
 /// Eligibility:
@@ -155,10 +153,7 @@ async fn active_comeback_bonus(
 /// Returns `Ok(true)` if the badge was awarded in this call, `Ok(false)`
 /// otherwise. Idempotent under concurrent calls (guarded by the
 /// `phoenix_awarded` boolean).
-pub async fn award_phoenix_if_eligible(
-    pool: &PgPool,
-    user_id: Uuid,
-) -> Result<bool, AppError> {
+pub async fn award_phoenix_if_eligible(pool: &PgPool, user_id: Uuid) -> Result<bool, AppError> {
     // Cheap read-only pre-check: skip the transaction entirely if there is
     // no qualifying unredeemed history row. This is the common case for
     // most users and saves the cost of opening a tx + advisory lock on
@@ -223,18 +218,15 @@ pub async fn award_phoenix_if_eligible(
     };
 
     // Check the user's current streak and last activity.
-    let row: Option<(i32, Option<DateTime<Utc>>)> = sqlx::query_as(
-        "SELECT current_streak, last_active_at FROM users WHERE id = $1",
-    )
-    .bind(user_id)
-    .fetch_optional(&mut *tx)
-    .await
-    .map_err(|e| AppError::Internal(e.into()))?;
+    let row: Option<(i32, Option<DateTime<Utc>>)> =
+        sqlx::query_as("SELECT current_streak, last_active_at FROM users WHERE id = $1")
+            .bind(user_id)
+            .fetch_optional(&mut *tx)
+            .await
+            .map_err(|e| AppError::Internal(e.into()))?;
 
     let eligible = match row {
-        Some((streak, Some(last_active))) => {
-            streak >= DAYS_REQUIRED && last_active > ended_at
-        }
+        Some((streak, Some(last_active))) => streak >= DAYS_REQUIRED && last_active > ended_at,
         _ => false,
     };
 
@@ -282,13 +274,11 @@ pub async fn award_phoenix_if_eligible(
     .map_err(|e| AppError::Internal(e.into()))?;
 
     // Mark the history row as redeemed.
-    sqlx::query(
-        "UPDATE user_streak_history SET phoenix_awarded = true WHERE id = $1",
-    )
-    .bind(history_id)
-    .execute(&mut *tx)
-    .await
-    .map_err(|e| AppError::Internal(e.into()))?;
+    sqlx::query("UPDATE user_streak_history SET phoenix_awarded = true WHERE id = $1")
+        .bind(history_id)
+        .execute(&mut *tx)
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
 
     // Insert the comeback bonus row.
     sqlx::query(
@@ -307,7 +297,9 @@ pub async fn award_phoenix_if_eligible(
     .await
     .map_err(|e| AppError::Internal(e.into()))?;
 
-    tx.commit().await.map_err(|e| AppError::Internal(e.into()))?;
+    tx.commit()
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
 
     tracing::info!(
         feature = "phoenix_award",
@@ -316,8 +308,7 @@ pub async fn award_phoenix_if_eligible(
         "phoenix badge awarded with comeback bonus",
     );
 
-    crate::routes::metrics::PHOENIX_BADGE_TOTAL
-        .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+    crate::routes::metrics::PHOENIX_BADGE_TOTAL.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
 
     Ok(true)
 }
@@ -344,9 +335,7 @@ pub async fn apply_xp_multiplier(
     .await
     .map_err(|e| AppError::Internal(e.into()))?;
 
-    let multiplier = row
-        .and_then(|r| r.0.parse::<f64>().ok())
-        .unwrap_or(1.0);
+    let multiplier = row.and_then(|r| r.0.parse::<f64>().ok()).unwrap_or(1.0);
     let multiplied = ((base_xp as f64) * multiplier).floor() as i32;
     Ok(multiplied)
 }

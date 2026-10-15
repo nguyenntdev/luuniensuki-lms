@@ -1,4 +1,5 @@
 import AtlasClient from "./AtlasClient";
+import { safeJsonLd } from "@/lib/seo";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://lms.histolab.icu";
 const TITLE = "Atlas 162 Bản Đúc Nổi Cửu Đỉnh Triều Nguyễn | Lưu Niên Sử Kí";
@@ -90,7 +91,7 @@ export default function AtlasPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
       <AtlasClient />
     </>

@@ -11,7 +11,6 @@ import {
     getUserPublicProfile,
     getUserPublicProfileByUsername,
 } from "@/lib/api";
-import { useAuthStore } from "@/stores/authStore";
 
 function isUuid(value) {
     return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
@@ -60,7 +59,6 @@ const STATUS_LABELS = {
 export default function PublicUserPage() {
     const params = useParams();
     const userId = params?.userId;
-    const status = useAuthStore((s) => s.status);
 
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -70,7 +68,6 @@ export default function PublicUserPage() {
 
     useEffect(() => {
         if (!userId) return;
-        if (status !== "authed") return;
         let cancelled = false;
 
         async function load() {
@@ -112,7 +109,7 @@ export default function PublicUserPage() {
         return () => {
             cancelled = true;
         };
-    }, [status, userId]);
+    }, [userId]);
 
     useEffect(() => {
         if (!userId) return;
@@ -144,29 +141,6 @@ export default function PublicUserPage() {
         } catch {
             // ignore
         }
-    }
-
-    if (status !== "authed") {
-        return (
-            <main className="site-shell">
-                <div className="rounded-lg border border-border bg-card p-8">
-                    <div className="font-display text-2xl font-semibold text-foreground">
-                        Cần đăng nhập
-                    </div>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                        Vui lòng đăng nhập để xem hồ sơ công khai.
-                    </p>
-                    <div className="mt-6">
-                        <Link
-                            className="text-sm font-medium text-primary hover:underline"
-                            href="/login"
-                        >
-                            Đăng nhập
-                        </Link>
-                    </div>
-                </div>
-            </main>
-        );
     }
 
     if (loading) {

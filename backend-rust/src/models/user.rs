@@ -121,16 +121,13 @@ impl UserRow {
 impl UserPublicRow {
     /// Convert to the public profile response DTO.
     pub fn into_public_response(self) -> UserPublicProfileResponse {
-        let username = self
-            .username
-            .clone()
-            .unwrap_or_else(|| {
-                self.email
-                    .split('@')
-                    .next()
-                    .unwrap_or(&self.id.to_string())
-                    .to_string()
-            });
+        let username = self.username.clone().unwrap_or_else(|| {
+            self.email
+                .split('@')
+                .next()
+                .unwrap_or(&self.id.to_string())
+                .to_string()
+        });
         UserPublicProfileResponse {
             id: self.id.to_string(),
             username,

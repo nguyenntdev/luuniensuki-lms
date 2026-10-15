@@ -185,7 +185,10 @@ pub async fn route_coverage(State(state): State<AppState>) -> Json<RouteCoverage
     }
 
     let groups_total = groups.len();
-    let groups_complete = groups.values().filter(|(total, native)| total == native).count();
+    let groups_complete = groups
+        .values()
+        .filter(|(total, native)| total == native)
+        .count();
     let ready_for_cutover = inventory.len() > 0 && native_count == inventory.len();
 
     let summary = CoverageSummary {
@@ -238,10 +241,8 @@ mod tests {
     fn assert_full_coverage_succeeds_with_gateway_fallback() {
         // Create a dispatcher with default gateway mode
         let mut f = NamedTempFile::new().unwrap();
-        f.write_all(
-            b"[defaults]\nunknown_routes = \"gateway\"\n",
-        )
-        .unwrap();
+        f.write_all(b"[defaults]\nunknown_routes = \"gateway\"\n")
+            .unwrap();
 
         let dispatcher = Dispatcher::load(f.path()).unwrap();
 

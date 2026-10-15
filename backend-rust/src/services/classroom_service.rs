@@ -67,14 +67,13 @@ async fn require_classroom_member(
         return Ok(());
     }
 
-    let member: Option<(Uuid,)> = sqlx::query_as(
-        "SELECT user_id FROM class_members WHERE class_id = $1 AND user_id = $2",
-    )
-    .bind(classroom_id)
-    .bind(user_id)
-    .fetch_optional(pool)
-    .await
-    .map_err(|e| AppError::Internal(e.into()))?;
+    let member: Option<(Uuid,)> =
+        sqlx::query_as("SELECT user_id FROM class_members WHERE class_id = $1 AND user_id = $2")
+            .bind(classroom_id)
+            .bind(user_id)
+            .fetch_optional(pool)
+            .await
+            .map_err(|e| AppError::Internal(e.into()))?;
 
     if member.is_some() {
         return Ok(());
@@ -86,14 +85,36 @@ async fn require_classroom_member(
     })
 }
 
+/// Validate `max_members` is within allowed bounds (`1..=500`).
+pub fn validate_max_members(max_members: i32) -> Result<(), AppError> {
+    if !(1..=500).contains(&max_members) {
+        return Err(AppError::Validation {
+            details: serde_json::json!({"max_members": "must be between 1 and 500"}),
+        });
+    }
+    Ok(())
+}
+
+/// Validate member role against whitelist (`student`, `teacher`).
+pub fn validate_member_role(role: &str) -> Result<(), AppError> {
+    if role != "student" && role != "teacher" {
+        return Err(AppError::Validation {
+            details: serde_json::json!({"role": "must be either 'student' or 'teacher'"}),
+        });
+    }
+    Ok(())
+}
+
 /// POST /api/v1/classrooms — create classroom.
 pub async fn create_classroom(
     pool: &PgPool,
     user_id: Uuid,
     payload: &CreateClassroomRequest,
 ) -> Result<ClassroomOut, AppError> {
-    let now = Utc::now();
     let max_members = payload.max_members.unwrap_or(30);
+    validate_max_members(max_members)?;
+
+    let now = Utc::now();
     // classes.class_code is required; generate a short unique-ish join code.
     let class_code: String = Uuid::new_v4().simple().to_string()[..8].to_uppercase();
 
@@ -163,6 +184,44 @@ pub async fn list_classrooms(pool: &PgPool, user_id: Uuid) -> Result<Vec<Classro
         .collect())
 }
 
+/// GET /api/v1/classrooms/enrolled — list enrolled classrooms for current user.
+pub async fn list_enrolled_classrooms(
+    pool: &PgPool,
+    user_id: Uuid,
+) -> Result<Vec<ClassroomOut>, AppError> {
+    let rows = sqlx::query_as::<_, ClassroomRow>(
+        r#"
+        SELECT c.id, c.name, c.description, c.teacher_id AS owner_id, c.max_students AS max_members,
+               (SELECT COUNT(*)::int FROM class_members cmc WHERE cmc.class_id = c.id) AS member_count,
+               c.created_at, c.is_archived
+        FROM classes c
+        JOIN class_members cm ON cm.class_id = c.id
+        WHERE c.is_archived = false
+          AND cm.user_id = $1
+          AND (cm.role = 'student' OR cm.role = 'learner')
+        ORDER BY c.created_at DESC
+        "#,
+    )
+    .bind(user_id)
+    .fetch_all(pool)
+    .await
+    .map_err(|e| AppError::Internal(e.into()))?;
+
+    Ok(rows
+        .into_iter()
+        .map(|r| ClassroomOut {
+            id: r.id,
+            name: r.name,
+            description: r.description,
+            owner_id: r.owner_id,
+            max_members: r.max_members,
+            member_count: r.member_count,
+            created_at: r.created_at,
+            is_archived: r.is_archived,
+        })
+        .collect())
+}
+
 /// GET /api/v1/classrooms/{id} — classroom detail.
 pub async fn get_classroom(
     pool: &PgPool,
@@ -207,6 +266,10 @@ pub async fn update_classroom(
     payload: &UpdateClassroomRequest,
 ) -> Result<ClassroomOut, AppError> {
     require_classroom_admin(pool, classroom_id, user_id).await?;
+
+    if let Some(mm) = payload.max_members {
+        validate_max_members(mm)?;
+    }
 
     // Build dynamic update
     let row = sqlx::query_as::<_, ClassroomRow>(
@@ -311,14 +374,27 @@ pub async fn add_member(
     require_classroom_admin(pool, classroom_id, user_id).await?;
 
     let role = payload.role.as_deref().unwrap_or("student");
-    let now = Utc::now();
+    validate_member_role(role)?;
 
-    // Check capacity
+    let now = Utc::now();
+    let mut tx = pool
+        .begin()
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
+
+    // Check capacity within transaction with FOR UPDATE lock on classroom to prevent TOCTOU race conditions
     let classroom = sqlx::query_as::<_, ClassroomRow>(
-        "SELECT id, name, description, teacher_id AS owner_id, max_students AS max_members, (SELECT COUNT(*)::int FROM class_members WHERE class_id = $1) AS member_count, created_at, is_archived FROM classes WHERE id = $1",
+        r#"
+        SELECT id, name, description, teacher_id AS owner_id, max_students AS max_members,
+               (SELECT COUNT(*)::int FROM class_members WHERE class_id = classes.id) AS member_count,
+               created_at, is_archived
+        FROM classes
+        WHERE id = $1
+        FOR UPDATE
+        "#,
     )
     .bind(classroom_id)
-    .fetch_optional(pool)
+    .fetch_optional(&mut *tx)
     .await
     .map_err(|e| AppError::Internal(e.into()))?
     .ok_or_else(|| AppError::Http {
@@ -338,7 +414,7 @@ pub async fn add_member(
     // Get user display name
     let user_row: (String,) = sqlx::query_as("SELECT display_name FROM users WHERE id = $1")
         .bind(payload.user_id)
-        .fetch_optional(pool)
+        .fetch_optional(&mut *tx)
         .await
         .map_err(|e| AppError::Internal(e.into()))?
         .ok_or_else(|| AppError::Http {
@@ -358,7 +434,7 @@ pub async fn add_member(
     .bind(payload.user_id)
     .bind(role)
     .bind(now)
-    .execute(pool)
+    .execute(&mut *tx)
     .await
     .map_err(|e| {
         if let Some(db_err) = e.as_database_error() {
@@ -377,7 +453,11 @@ pub async fn add_member(
     // Update member count
     sqlx::query("UPDATE classes SET updated_at = NOW() WHERE id = $1")
         .bind(classroom_id)
-        .execute(pool)
+        .execute(&mut *tx)
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
+
+    tx.commit()
         .await
         .map_err(|e| AppError::Internal(e.into()))?;
 
@@ -398,14 +478,12 @@ pub async fn remove_member(
 ) -> Result<(), AppError> {
     require_classroom_admin(pool, classroom_id, requesting_user_id).await?;
 
-    let result = sqlx::query(
-        "DELETE FROM class_members WHERE class_id = $1 AND user_id = $2",
-    )
-    .bind(classroom_id)
-    .bind(target_user_id)
-    .execute(pool)
-    .await
-    .map_err(|e| AppError::Internal(e.into()))?;
+    let result = sqlx::query("DELETE FROM class_members WHERE class_id = $1 AND user_id = $2")
+        .bind(classroom_id)
+        .bind(target_user_id)
+        .execute(pool)
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
 
     if result.rows_affected() == 0 {
         return Err(AppError::Http {
@@ -474,21 +552,23 @@ pub async fn assign_lesson(
     let now = Utc::now();
 
     // Verify motif exists
-    let motif_name: (String,) = sqlx::query_as("SELECT name FROM motifs WHERE id = $1 AND is_active = true")
-        .bind(payload.motif_id)
-        .fetch_optional(pool)
-        .await
-        .map_err(|e| AppError::Internal(e.into()))?
-        .ok_or_else(|| AppError::Http {
-            status: axum::http::StatusCode::NOT_FOUND,
-            message: "Motif not found".to_string(),
-        })?;
+    let motif_name: (String,) =
+        sqlx::query_as("SELECT name FROM motifs WHERE id = $1 AND is_active = true")
+            .bind(payload.motif_id)
+            .fetch_optional(pool)
+            .await
+            .map_err(|e| AppError::Internal(e.into()))?
+            .ok_or_else(|| AppError::Http {
+                status: axum::http::StatusCode::NOT_FOUND,
+                message: "Motif not found".to_string(),
+            })?;
 
-    let member_count: (i32,) = sqlx::query_as("SELECT (SELECT COUNT(*)::int FROM class_members WHERE class_id = $1)")
-        .bind(classroom_id)
-        .fetch_one(pool)
-        .await
-        .map_err(|e| AppError::Internal(e.into()))?;
+    let member_count: (i32,) =
+        sqlx::query_as("SELECT (SELECT COUNT(*)::int FROM class_members WHERE class_id = $1)")
+            .bind(classroom_id)
+            .fetch_one(pool)
+            .await
+            .map_err(|e| AppError::Internal(e.into()))?;
 
     let id = Uuid::new_v4();
     sqlx::query(
@@ -607,4 +687,38 @@ pub async fn get_classroom_analytics(
             })
             .collect(),
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn validate_max_members_accepts_valid_range() {
+        assert!(validate_max_members(1).is_ok());
+        assert!(validate_max_members(30).is_ok());
+        assert!(validate_max_members(500).is_ok());
+    }
+
+    #[test]
+    fn validate_max_members_rejects_out_of_bounds() {
+        assert!(validate_max_members(0).is_err());
+        assert!(validate_max_members(-5).is_err());
+        assert!(validate_max_members(501).is_err());
+        assert!(validate_max_members(1000).is_err());
+    }
+
+    #[test]
+    fn validate_member_role_accepts_whitelist() {
+        assert!(validate_member_role("student").is_ok());
+        assert!(validate_member_role("teacher").is_ok());
+    }
+
+    #[test]
+    fn validate_member_role_rejects_unlisted() {
+        assert!(validate_member_role("admin").is_err());
+        assert!(validate_member_role("owner").is_err());
+        assert!(validate_member_role("guest").is_err());
+        assert!(validate_member_role("").is_err());
+    }
 }

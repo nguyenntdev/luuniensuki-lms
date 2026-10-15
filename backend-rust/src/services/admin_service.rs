@@ -53,7 +53,9 @@ pub async fn broadcast_push_notification(
 ) -> Result<PushNotificationResponse, AppError> {
     let id = Uuid::new_v4();
     let now = Utc::now();
-    let notification_type = req.notification_type.unwrap_or_else(|| "broadcast".to_string());
+    let notification_type = req
+        .notification_type
+        .unwrap_or_else(|| "broadcast".to_string());
 
     // Insert a notification for all users with push enabled
     sqlx::query(

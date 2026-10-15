@@ -63,10 +63,12 @@ pub fn generate_room_name() -> String {
 }
 
 /// Derive a positive numeric Janus VideoRoom id from a fresh UUID. Janus
-/// VideoRoom ids are signed 64-bit; we keep them strictly positive.
+/// VideoRoom ids are signed 64-bit; we keep them strictly positive and mask
+/// to 53 bits (JavaScript safe integer limit) so web clients do not suffer
+/// IEEE-754 floating-point truncation.
 pub fn generate_janus_room_id() -> i64 {
-    // Take the low 63 bits of a v4 UUID and force non-zero.
-    let raw = (Uuid::new_v4().as_u128() as u64) & 0x7fff_ffff_ffff_ffff;
+    // Take the low 53 bits of a v4 UUID and force non-zero.
+    let raw = (Uuid::new_v4().as_u128() as u64) & 0x001f_ffff_ffff_ffff;
     (raw as i64).max(1)
 }
 
@@ -74,10 +76,7 @@ pub fn generate_janus_room_id() -> i64 {
 /// object, preserving every existing key (lock_room, ai_enabled, grade_level,
 /// ai_cost_ceiling_usd, ...). Non-object inputs are treated as an empty object.
 pub fn metadata_with_backend(base: Option<&Value>, media_backend: &str) -> Value {
-    let mut map: Map<String, Value> = base
-        .and_then(Value::as_object)
-        .cloned()
-        .unwrap_or_default();
+    let mut map: Map<String, Value> = base.and_then(Value::as_object).cloned().unwrap_or_default();
     map.insert(META_MEDIA_BACKEND.to_string(), json!(media_backend));
     Value::Object(map)
 }
@@ -109,7 +108,10 @@ fn clamp_limit(n: i64) -> i64 {
 
 /// Read a string-valued metadata key.
 fn meta_str(metadata: &Value, key: &str) -> Option<String> {
-    metadata.get(key).and_then(Value::as_str).map(str::to_string)
+    metadata
+        .get(key)
+        .and_then(Value::as_str)
+        .map(str::to_string)
 }
 
 /// Read an f64-valued metadata key.
@@ -429,7 +431,9 @@ mod tests {
     #[test]
     fn janus_room_id_is_positive() {
         for _ in 0..1000 {
-            assert!(generate_janus_room_id() > 0);
+            let id = generate_janus_room_id();
+            assert!(id > 0);
+            assert!(id <= 0x001f_ffff_ffff_ffff);
         }
     }
 

@@ -1,164 +1,164 @@
 [
   {
     "urn_slug": "cao-dinh",
-    "motif_name": "Cao Đỉnh",
-    "mesh_name": "Cao Đỉnh",
-    "pos_x": 0.00496560768293052,
-    "pos_y": 0.6417533398688602,
-    "pos_z": 1.0898653990289742,
-    "bounding_radius": 0.08
-  },
-  {
-    "urn_slug": "cao-dinh",
-    "motif_name": "Miết",
-    "mesh_name": "Miết",
-    "pos_x": 0.5444515293235955,
-    "pos_y": 0.30285911910571867,
-    "pos_z": 0.8953134672114189,
-    "bounding_radius": 0.08
-  },
-  {
-    "urn_slug": "cao-dinh",
-    "motif_name": "Thiên Tôn sơn",
-    "mesh_name": "Thiên Tôn sơn",
-    "pos_x": 1.0345306298375119,
-    "pos_y": 0.5561559082682939,
-    "pos_z": 0.5340906220965631,
-    "bounding_radius": 0.08
-  },
-  {
-    "urn_slug": "cao-dinh",
-    "motif_name": "Tử vi hoa",
-    "mesh_name": "Tử vi hoa",
-    "pos_x": 1.153897400834117,
-    "pos_y": 0.7760149046306966,
-    "pos_z": -0.06297482425088925,
-    "bounding_radius": 0.08
-  },
-  {
-    "urn_slug": "cao-dinh",
-    "motif_name": "Trầm hương",
-    "mesh_name": "Trầm hương",
-    "pos_x": 1.075950567056262,
-    "pos_y": 0.23162659065368874,
-    "pos_z": -0.007364296367156228,
-    "bounding_radius": 0.08
-  },
-  {
-    "urn_slug": "cao-dinh",
-    "motif_name": "Ngưu Chữ giang",
-    "mesh_name": "Ngưu Chữ giang",
-    "pos_x": 1.0297107974466961,
-    "pos_y": 0.4387734145269959,
-    "pos_z": -0.650742996375418,
-    "bounding_radius": 0.08
-  },
-  {
-    "urn_slug": "cao-dinh",
-    "motif_name": "Thông",
-    "mesh_name": "Thông",
-    "pos_x": 0.5823912052707503,
-    "pos_y": 0.7174642311212104,
-    "pos_z": -1.0446982913316094,
-    "bounding_radius": 0.08
-  },
-  {
-    "urn_slug": "cao-dinh",
     "motif_name": "Nhật",
     "mesh_name": "Nhật",
-    "pos_x": 0.05673156856783691,
-    "pos_y": 0.368221556501426,
-    "pos_z": -1.2226943996738895,
-    "bounding_radius": 0.08
-  },
-  {
-    "urn_slug": "cao-dinh",
-    "motif_name": "Đại bác",
-    "mesh_name": "Đại bác",
-    "pos_x": 0.5684226586653739,
-    "pos_y": 0.12291245618942563,
-    "pos_z": -0.9488855007047088,
-    "bounding_radius": 0.08
-  },
-  {
-    "urn_slug": "cao-dinh",
-    "motif_name": "Trĩ",
-    "mesh_name": "Trĩ",
-    "pos_x": 0.5879267650672756,
-    "pos_y": 0.8677716380554719,
-    "pos_z": 0.8783399018703302,
-    "bounding_radius": 0.08
-  },
-  {
-    "urn_slug": "cao-dinh",
-    "motif_name": "Canh",
-    "mesh_name": "Canh",
-    "pos_x": -0.5278875796026324,
-    "pos_y": 0.7038275138465205,
-    "pos_z": -1.0491007507847194,
-    "bounding_radius": 0.08
-  },
-  {
-    "urn_slug": "cao-dinh",
-    "motif_name": "Đa tác thuyền",
-    "mesh_name": "Đa tác thuyền",
-    "pos_x": -0.48320695734084845,
-    "pos_y": 0.11221217647592253,
-    "pos_z": -0.9621006785058689,
-    "bounding_radius": 0.08
-  },
-  {
-    "urn_slug": "cao-dinh",
-    "motif_name": "Vĩnh Tế hà",
-    "mesh_name": "Vĩnh Tế hà",
-    "pos_x": -0.9805553606202025,
-    "pos_y": 0.4398174116535003,
-    "pos_z": -0.6356118506456917,
-    "bounding_radius": 0.08
-  },
-  {
-    "urn_slug": "cao-dinh",
-    "motif_name": "Ba la mật",
-    "mesh_name": "Ba la mật",
-    "pos_x": -1.0882239918518042,
-    "pos_y": 0.7935606108352063,
-    "pos_z": -0.08588156866485357,
+    "pos_x": 0.297642,
+    "pos_y": 0.7598,
+    "pos_z": 1.110815,
     "bounding_radius": 0.08
   },
   {
     "urn_slug": "cao-dinh",
     "motif_name": "Hổ",
     "mesh_name": "Hổ",
-    "pos_x": -1.022942232362345,
-    "pos_y": 0.19697962338559274,
-    "pos_z": -0.057401334719647965,
+    "pos_x": 1.110815,
+    "pos_y": 0.7598,
+    "pos_z": 0.297642,
     "bounding_radius": 0.08
   },
   {
     "urn_slug": "cao-dinh",
-    "motif_name": "Đông Hải",
-    "mesh_name": "Đông Hải",
-    "pos_x": -0.9805469724591374,
-    "pos_y": 0.5331056757827836,
-    "pos_z": 0.5275305841945664,
+    "motif_name": "Đa Tác Thuyền",
+    "mesh_name": "Đa Tác Thuyền",
+    "pos_x": 0.813173,
+    "pos_y": 0.7598,
+    "pos_z": -0.813173,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "cao-dinh",
+    "motif_name": "Đại Bác",
+    "mesh_name": "Đại Bác",
+    "pos_x": -0.297642,
+    "pos_y": 0.7598,
+    "pos_z": -1.110815,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "cao-dinh",
+    "motif_name": "Trầm Hương",
+    "mesh_name": "Trầm Hương",
+    "pos_x": -1.110815,
+    "pos_y": 0.7598,
+    "pos_z": -0.297642,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "cao-dinh",
+    "motif_name": "Miết",
+    "mesh_name": "Miết",
+    "pos_x": -0.813173,
+    "pos_y": 0.7598,
+    "pos_z": 0.813173,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "cao-dinh",
+    "motif_name": "Cao Đỉnh",
+    "mesh_name": "Cao Đỉnh",
+    "pos_x": 0.0,
+    "pos_y": 0.5,
+    "pos_z": 1.15,
     "bounding_radius": 0.08
   },
   {
     "urn_slug": "cao-dinh",
     "motif_name": "Long",
     "mesh_name": "Long",
-    "pos_x": -0.5000829551205324,
-    "pos_y": 0.9046839075890194,
-    "pos_z": 0.8732417042823537,
+    "pos_x": 0.995929,
+    "pos_y": 0.5,
+    "pos_z": 0.575,
     "bounding_radius": 0.08
   },
   {
     "urn_slug": "cao-dinh",
-    "motif_name": "Thiết mộc",
-    "mesh_name": "Thiết mộc",
-    "pos_x": -0.5055434592629419,
-    "pos_y": 0.29227224002802127,
-    "pos_z": 0.8724834702677216,
+    "motif_name": "Đông Hải",
+    "mesh_name": "Đông Hải",
+    "pos_x": 0.995929,
+    "pos_y": 0.5,
+    "pos_z": -0.575,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "cao-dinh",
+    "motif_name": "Vĩnh Tế Hà",
+    "mesh_name": "Vĩnh Tế Hà",
+    "pos_x": 0.0,
+    "pos_y": 0.5,
+    "pos_z": -1.15,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "cao-dinh",
+    "motif_name": "Ngưu Chữ Giang",
+    "mesh_name": "Ngưu Chữ Giang",
+    "pos_x": -0.995929,
+    "pos_y": 0.5,
+    "pos_z": -0.575,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "cao-dinh",
+    "motif_name": "Thiên Tôn Sơn",
+    "mesh_name": "Thiên Tôn Sơn",
+    "pos_x": -0.995929,
+    "pos_y": 0.5,
+    "pos_z": 0.575,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "cao-dinh",
+    "motif_name": "Ba La Mật",
+    "mesh_name": "Ba La Mật",
+    "pos_x": -0.297642,
+    "pos_y": 0.2402,
+    "pos_z": 1.110815,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "cao-dinh",
+    "motif_name": "Canh",
+    "mesh_name": "Canh",
+    "pos_x": 0.813173,
+    "pos_y": 0.2402,
+    "pos_z": 0.813173,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "cao-dinh",
+    "motif_name": "Thông",
+    "mesh_name": "Thông",
+    "pos_x": 1.110815,
+    "pos_y": 0.2402,
+    "pos_z": -0.297642,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "cao-dinh",
+    "motif_name": "Tử Vi Hoa",
+    "mesh_name": "Tử Vi Hoa",
+    "pos_x": 0.297642,
+    "pos_y": 0.2402,
+    "pos_z": -1.110815,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "cao-dinh",
+    "motif_name": "Trĩ",
+    "mesh_name": "Trĩ",
+    "pos_x": -0.813173,
+    "pos_y": 0.2402,
+    "pos_z": -0.813173,
+    "bounding_radius": 0.08
+  },
+  {
+    "urn_slug": "cao-dinh",
+    "motif_name": "Thiết Mộc",
+    "mesh_name": "Thiết Mộc",
+    "pos_x": -1.110815,
+    "pos_y": 0.2402,
+    "pos_z": 0.297642,
     "bounding_radius": 0.08
   }
 ]

@@ -103,7 +103,10 @@ pub async fn mute_all<J: JanusAdminApi>(
         // Only participants actually publishing (bound feed id) can be muted.
         let Some(feed_id) = feed_id else { continue };
 
-        match janus.moderate_mute(janus_room_id, &secret, feed_id, true).await {
+        match janus
+            .moderate_mute(janus_room_id, &secret, feed_id, true)
+            .await
+        {
             Ok(()) => processed += 1,
             Err(e) => {
                 failed += 1;
@@ -166,13 +169,9 @@ pub async fn remove_participant<J: JanusAdminApi>(
     }
 
     // Mark the participant left regardless of the media-plane outcome.
-    let marked = live_participant_service::mark_left(
-        pool,
-        session_id,
-        None,
-        Some(participant_identity),
-    )
-    .await?;
+    let marked =
+        live_participant_service::mark_left(pool, session_id, None, Some(participant_identity))
+            .await?;
 
     let processed = if marked.is_some() { 1 } else { 0 };
 

@@ -107,14 +107,15 @@ def main():
     if os.path.exists(main_py):
         all_routes.extend(extract_routes_from_file(main_py))
 
-    # Parse backend/routes/*.py
-    routes_dir = os.path.join(BACKEND_DIR, "routes")
-    if os.path.isdir(routes_dir):
-        for fname in sorted(os.listdir(routes_dir)):
-            if fname.endswith(".py") and fname != "__init__.py":
-                all_routes.extend(
-                    extract_routes_from_file(os.path.join(routes_dir, fname))
-                )
+    # Parse backend/routes/*.py and backend/routers/*.py
+    for dir_name in ("routes", "routers"):
+        routes_dir = os.path.join(BACKEND_DIR, dir_name)
+        if os.path.isdir(routes_dir):
+            for fname in sorted(os.listdir(routes_dir)):
+                if fname.endswith(".py") and fname != "__init__.py":
+                    all_routes.extend(
+                        extract_routes_from_file(os.path.join(routes_dir, fname))
+                    )
 
     # Deduplicate (same method+path from different files)
     seen = set()

@@ -21,9 +21,7 @@ use sqlx::{PgPool, Postgres, Transaction};
 use uuid::Uuid;
 
 use crate::error::AppError;
-use crate::models::streak_economy::{
-    RepairOptions, RepairResponse, StreakRepairEventRow,
-};
+use crate::models::streak_economy::{RepairOptions, RepairResponse, StreakRepairEventRow};
 
 pub const REPAIR_HEARTS_COST: i32 = 50;
 pub const REPAIR_XP_COST: i32 = 200;
@@ -109,7 +107,9 @@ pub async fn repair(
         .await
         .map_err(|e| AppError::Internal(e.into()))?
         {
-            tx.commit().await.map_err(|e| AppError::Internal(e.into()))?;
+            tx.commit()
+                .await
+                .map_err(|e| AppError::Internal(e.into()))?;
             return Ok(RepairResponse {
                 current_streak: existing.streak_restored_to,
                 payment: existing.payment_method,
@@ -213,14 +213,13 @@ pub async fn repair(
             .map_err(|e| AppError::Internal(e.into()))?;
         }
         PaymentMethod::Xp => {
-            let current: i32 = sqlx::query_scalar::<_, i32>(
-                "SELECT total_xp FROM users WHERE id = $1",
-            )
-            .bind(user_id)
-            .fetch_optional(&mut *tx)
-            .await
-            .map_err(|e| AppError::Internal(e.into()))?
-            .unwrap_or(0);
+            let current: i32 =
+                sqlx::query_scalar::<_, i32>("SELECT total_xp FROM users WHERE id = $1")
+                    .bind(user_id)
+                    .fetch_optional(&mut *tx)
+                    .await
+                    .map_err(|e| AppError::Internal(e.into()))?
+                    .unwrap_or(0);
 
             if current < REPAIR_XP_COST {
                 return Err(AppError::Domain {
@@ -281,7 +280,9 @@ pub async fn repair(
     .await
     .map_err(|e| AppError::Internal(e.into()))?;
 
-    tx.commit().await.map_err(|e| AppError::Internal(e.into()))?;
+    tx.commit()
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
 
     tracing::info!(
         feature = "streak_repair",
@@ -291,8 +292,7 @@ pub async fn repair(
         "streak repair succeeded"
     );
 
-    crate::routes::metrics::STREAK_REPAIR_TOTAL
-        .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+    crate::routes::metrics::STREAK_REPAIR_TOTAL.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
 
     Ok(RepairResponse {
         current_streak: streak_before_loss,
@@ -302,10 +302,7 @@ pub async fn repair(
 }
 
 /// `GET /api/v1/users/me/streak/repair-options`.
-pub async fn get_repair_options(
-    pool: &PgPool,
-    user_id: Uuid,
-) -> Result<RepairOptions, AppError> {
+pub async fn get_repair_options(pool: &PgPool, user_id: Uuid) -> Result<RepairOptions, AppError> {
     // Latest streak loss in the last 48h.
     let last_loss: Option<DateTime<Utc>> = sqlx::query_scalar::<_, DateTime<Utc>>(
         r#"
@@ -342,14 +339,13 @@ pub async fn get_repair_options(
         DEFAULT_MONTHLY_LIMIT
     };
 
-    let hearts: i32 = sqlx::query_scalar::<_, i32>(
-        "SELECT current_hearts FROM user_hearts WHERE user_id = $1",
-    )
-    .bind(user_id)
-    .fetch_optional(pool)
-    .await
-    .map_err(|e| AppError::Internal(e.into()))?
-    .unwrap_or(0);
+    let hearts: i32 =
+        sqlx::query_scalar::<_, i32>("SELECT current_hearts FROM user_hearts WHERE user_id = $1")
+            .bind(user_id)
+            .fetch_optional(pool)
+            .await
+            .map_err(|e| AppError::Internal(e.into()))?
+            .unwrap_or(0);
 
     let xp: i32 = sqlx::query_scalar::<_, i32>("SELECT total_xp FROM users WHERE id = $1")
         .bind(user_id)

@@ -94,12 +94,11 @@ pub async fn list_entities(
             (items, count.0)
         }
         _ => {
-            let count: (i64,) = sqlx::query_as(
-                "SELECT COUNT(*) FROM historical_entities WHERE deleted_at IS NULL",
-            )
-            .fetch_one(pool)
-            .await
-            .map_err(|e| AppError::Internal(e.into()))?;
+            let count: (i64,) =
+                sqlx::query_as("SELECT COUNT(*) FROM historical_entities WHERE deleted_at IS NULL")
+                    .fetch_one(pool)
+                    .await
+                    .map_err(|e| AppError::Internal(e.into()))?;
 
             let items = sqlx::query_as::<_, HistoricalEntityRow>(
                 r#"
@@ -189,7 +188,9 @@ pub async fn list_sources_paginated(
     limit: i64,
     offset: i64,
 ) -> Result<(Vec<HistoricalSourceRow>, i64), AppError> {
-    let q_pattern = query.filter(|q| !q.trim().is_empty()).map(|q| format!("%{}%", q));
+    let q_pattern = query
+        .filter(|q| !q.trim().is_empty())
+        .map(|q| format!("%{}%", q));
     let st_filter = source_type.filter(|s| !s.trim().is_empty());
 
     let (rows, total) = match (q_pattern, st_filter) {
@@ -258,13 +259,12 @@ pub async fn list_sources_paginated(
             (items, count.0)
         }
         (None, Some(st)) => {
-            let count: (i64,) = sqlx::query_as(
-                "SELECT COUNT(*) FROM historical_sources WHERE source_type = $1",
-            )
-            .bind(st)
-            .fetch_one(pool)
-            .await
-            .map_err(|e| AppError::Internal(e.into()))?;
+            let count: (i64,) =
+                sqlx::query_as("SELECT COUNT(*) FROM historical_sources WHERE source_type = $1")
+                    .bind(st)
+                    .fetch_one(pool)
+                    .await
+                    .map_err(|e| AppError::Internal(e.into()))?;
 
             let items = sqlx::query_as::<_, HistoricalSourceRow>(
                 r#"

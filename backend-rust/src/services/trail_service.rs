@@ -62,7 +62,9 @@ pub async fn create_trail(
     .map_err(|e| AppError::Internal(e.into()))?;
 
     insert_steps_and_checkpoints(&mut tx, row.id, &payload.steps, &payload.checkpoints).await?;
-    tx.commit().await.map_err(|e| AppError::Internal(e.into()))?;
+    tx.commit()
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
 
     fetch_trail_out(pool, row.id).await
 }
@@ -105,11 +107,13 @@ pub async fn update_trail(
         match target {
             "published" => publish_trail_inner(pool, trail_id).await?,
             "archived" => {
-                sqlx::query("UPDATE trails SET status = 'archived', updated_at = NOW() WHERE id = $1")
-                    .bind(trail_id)
-                    .execute(pool)
-                    .await
-                    .map_err(|e| AppError::Internal(e.into()))?;
+                sqlx::query(
+                    "UPDATE trails SET status = 'archived', updated_at = NOW() WHERE id = $1",
+                )
+                .bind(trail_id)
+                .execute(pool)
+                .await
+                .map_err(|e| AppError::Internal(e.into()))?;
             }
             "draft" => {
                 sqlx::query("UPDATE trails SET status = 'draft', updated_at = NOW() WHERE id = $1")
@@ -192,10 +196,22 @@ async fn publish_trail_inner(pool: &PgPool, trail_id: Uuid) -> Result<(), AppErr
     if (step_count as usize) > MAX_STEPS {
         errors.push(format!("must have at most {} steps", MAX_STEPS));
     }
-    if trail.narrator_intro.as_deref().unwrap_or("").trim().is_empty() {
+    if trail
+        .narrator_intro
+        .as_deref()
+        .unwrap_or("")
+        .trim()
+        .is_empty()
+    {
         errors.push("narrator_intro must not be empty".to_string());
     }
-    if trail.narrator_outro.as_deref().unwrap_or("").trim().is_empty() {
+    if trail
+        .narrator_outro
+        .as_deref()
+        .unwrap_or("")
+        .trim()
+        .is_empty()
+    {
         errors.push("narrator_outro must not be empty".to_string());
     }
     if !errors.is_empty() {
@@ -510,23 +526,30 @@ async fn fetch_progress(
     user_id: Uuid,
     trail_id: Uuid,
 ) -> Result<Option<UserTrailProgressOut>, AppError> {
-    let row: Option<(i32, DateTime<Utc>, Option<DateTime<Utc>>, Option<String>, Option<DateTime<Utc>>)> =
-        sqlx::query_as(
-            "SELECT current_position, started_at, completed_at, pace, next_reminder_at \
+    let row: Option<(
+        i32,
+        DateTime<Utc>,
+        Option<DateTime<Utc>>,
+        Option<String>,
+        Option<DateTime<Utc>>,
+    )> = sqlx::query_as(
+        "SELECT current_position, started_at, completed_at, pace, next_reminder_at \
              FROM user_trail_progress WHERE user_id = $1 AND trail_id = $2",
-        )
-        .bind(user_id)
-        .bind(trail_id)
-        .fetch_optional(pool)
-        .await
-        .map_err(|e| AppError::Internal(e.into()))?;
-    Ok(row.map(|(pos, started, completed, pace, reminder)| UserTrailProgressOut {
-        current_position: pos,
-        started_at: started,
-        completed_at: completed,
-        pace: pace.unwrap_or_else(|| "daily".to_string()),
-        next_reminder_at: reminder,
-    }))
+    )
+    .bind(user_id)
+    .bind(trail_id)
+    .fetch_optional(pool)
+    .await
+    .map_err(|e| AppError::Internal(e.into()))?;
+    Ok(row.map(
+        |(pos, started, completed, pace, reminder)| UserTrailProgressOut {
+            current_position: pos,
+            started_at: started,
+            completed_at: completed,
+            pace: pace.unwrap_or_else(|| "daily".to_string()),
+            next_reminder_at: reminder,
+        },
+    ))
 }
 
 // ---------------------------------------------------------------------------
@@ -562,9 +585,14 @@ pub async fn start_trail(
         .await
         .map_err(|e| AppError::Internal(e.into()))?;
 
-    let row: (i32, DateTime<Utc>, Option<DateTime<Utc>>, Option<String>, Option<DateTime<Utc>>) =
-        sqlx::query_as(
-            r#"
+    let row: (
+        i32,
+        DateTime<Utc>,
+        Option<DateTime<Utc>>,
+        Option<String>,
+        Option<DateTime<Utc>>,
+    ) = sqlx::query_as(
+        r#"
             INSERT INTO user_trail_progress
                 (user_id, trail_id, current_position, started_at, last_activity_at)
             VALUES ($1, $2, 1, NOW(), NOW())
@@ -572,17 +600,19 @@ pub async fn start_trail(
             SET last_activity_at = NOW()
             RETURNING current_position, started_at, completed_at, pace, next_reminder_at
             "#,
-        )
-        .bind(user_id)
-        .bind(trail_id)
-        .fetch_one(&mut *tx)
-        .await
-        .map_err(|e| AppError::Internal(e.into()))?;
+    )
+    .bind(user_id)
+    .bind(trail_id)
+    .fetch_one(&mut *tx)
+    .await
+    .map_err(|e| AppError::Internal(e.into()))?;
     let (pos, started, completed, pace, reminder) = row;
 
     let first_motif = fetch_step_motif(pool, trail_id, pos).await?;
 
-    tx.commit().await.map_err(|e| AppError::Internal(e.into()))?;
+    tx.commit()
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
 
     log_analytics_event(
         pool,
@@ -623,13 +653,15 @@ async fn fetch_step_motif(
     .fetch_optional(pool)
     .await
     .map_err(|e| AppError::Internal(e.into()))?;
-    Ok(row.map(|(motif_id, position, name, thumb, desc)| StepMotif {
-        motif_id,
-        position,
-        motif_name: name,
-        thumbnail_url: thumb,
-        description: desc,
-    }))
+    Ok(
+        row.map(|(motif_id, position, name, thumb, desc)| StepMotif {
+            motif_id,
+            position,
+            motif_name: name,
+            thumbnail_url: thumb,
+            description: desc,
+        }),
+    )
 }
 
 pub async fn complete_step(
@@ -767,106 +799,137 @@ pub async fn complete_step(
         .await
         .map_err(|e| AppError::Internal(e.into()))?;
 
-        // Generate certificate hash and persist the row WITHOUT the PDF
-        // first — we don't want to hold the DB transaction open during a
-        // synchronous disk write. The PDF rendering happens after commit.
-        let now = Utc::now();
-        let hash = generate_certificate_hash(user_id, trail_id, now.timestamp());
-        let _ = sqlx::query(
-            "INSERT INTO trail_certificates (user_id, trail_id, hash, issued_at, pdf_url) \
-             VALUES ($1, $2, $3, $4, NULL) ON CONFLICT (user_id, trail_id) DO NOTHING",
+        // Check if certificate row already exists for (user_id, trail_id).
+        let existing_cert: Option<(String, DateTime<Utc>, Option<String>)> = sqlx::query_as(
+            "SELECT hash, issued_at, pdf_url FROM trail_certificates WHERE user_id = $1 AND trail_id = $2 FOR UPDATE",
         )
         .bind(user_id)
         .bind(trail_id)
-        .bind(&hash)
-        .bind(now)
-        .execute(&mut *tx)
+        .fetch_optional(&mut *tx)
         .await
-        .map_err(|e| {
-            tracing::warn!(
-                feature = "trail_certificate",
-                user_id = %user_id,
-                trail_id = %trail_id,
-                error = %e,
-                "certificate insert failed",
-            );
-        });
+        .map_err(|e| AppError::Internal(e.into()))?;
 
-        // Capture data needed for PDF rendering before dropping the tx.
+        // Capture data needed for PDF rendering.
         let mut user_name: Option<String> = None;
         let mut trail_title_for_pdf: Option<String> = None;
         if uploads_dir.is_some() {
-            user_name = sqlx::query_scalar(
-                "SELECT display_name FROM users WHERE id = $1",
-            )
-            .bind(user_id)
-            .fetch_optional(&mut *tx)
-            .await
-            .map_err(|e| AppError::Internal(e.into()))?;
-            trail_title_for_pdf = sqlx::query_scalar(
-                "SELECT title_vi FROM trails WHERE id = $1",
-            )
-            .bind(trail_id)
-            .fetch_optional(&mut *tx)
-            .await
-            .map_err(|e| AppError::Internal(e.into()))?;
+            user_name = sqlx::query_scalar("SELECT display_name FROM users WHERE id = $1")
+                .bind(user_id)
+                .fetch_optional(&mut *tx)
+                .await
+                .map_err(|e| AppError::Internal(e.into()))?;
+            trail_title_for_pdf = sqlx::query_scalar("SELECT title_vi FROM trails WHERE id = $1")
+                .bind(trail_id)
+                .fetch_optional(&mut *tx)
+                .await
+                .map_err(|e| AppError::Internal(e.into()))?;
         }
+
+        let (final_hash, final_pdf_url) = match existing_cert {
+            Some((hash, _issued_at, Some(url))) => {
+                // Already has certificate and PDF url generated.
+                (hash, Some(url))
+            }
+            Some((hash, issued_at, None)) => {
+                // Certificate exists but pdf_url was not generated yet.
+                let mut pdf_url = None;
+                if let Some(dir) = uploads_dir {
+                    let dir_owned = dir.to_path_buf();
+                    let hash_owned = hash.clone();
+                    let name = user_name.clone().unwrap_or_default();
+                    let title = trail_title_for_pdf.clone().unwrap_or_default();
+                    let render_result = tokio::task::spawn_blocking(move || {
+                        crate::services::certificate_pdf::render_to_disk(
+                            &dir_owned,
+                            &hash_owned,
+                            &name,
+                            &title,
+                            issued_at,
+                        )
+                    })
+                    .await;
+                    pdf_url = render_result.unwrap_or_else(|err| {
+                        tracing::warn!(error = %err, "PDF render task panicked");
+                        None
+                    });
+                }
+                if let Some(ref url) = pdf_url {
+                    sqlx::query(
+                        "UPDATE trail_certificates SET pdf_url = $3, notes = NULL WHERE user_id = $1 AND trail_id = $2",
+                    )
+                    .bind(user_id)
+                    .bind(trail_id)
+                    .bind(url)
+                    .execute(&mut *tx)
+                    .await
+                    .map_err(|e| AppError::Internal(e.into()))?;
+                }
+                (hash, pdf_url)
+            }
+            None => {
+                // First-time generation.
+                let now = Utc::now();
+                let hash = generate_certificate_hash(user_id, trail_id, now.timestamp());
+                let mut pdf_url = None;
+                if let Some(dir) = uploads_dir {
+                    let dir_owned = dir.to_path_buf();
+                    let hash_owned = hash.clone();
+                    let name = user_name.clone().unwrap_or_default();
+                    let title = trail_title_for_pdf.clone().unwrap_or_default();
+                    let render_result = tokio::task::spawn_blocking(move || {
+                        crate::services::certificate_pdf::render_to_disk(
+                            &dir_owned,
+                            &hash_owned,
+                            &name,
+                            &title,
+                            now,
+                        )
+                    })
+                    .await;
+                    pdf_url = render_result.unwrap_or_else(|err| {
+                        tracing::warn!(error = %err, "PDF render task panicked");
+                        None
+                    });
+                }
+
+                let row: (String, Option<String>) = sqlx::query_as(
+                    r#"
+                    INSERT INTO trail_certificates (user_id, trail_id, hash, issued_at, pdf_url)
+                    VALUES ($1, $2, $3, $4, $5)
+                    ON CONFLICT (user_id, trail_id) DO UPDATE
+                    SET pdf_url = COALESCE(trail_certificates.pdf_url, EXCLUDED.pdf_url)
+                    RETURNING hash, pdf_url
+                    "#,
+                )
+                .bind(user_id)
+                .bind(trail_id)
+                .bind(&hash)
+                .bind(now)
+                .bind(&pdf_url)
+                .fetch_one(&mut *tx)
+                .await
+                .map_err(|e| AppError::Internal(e.into()))?;
+
+                row
+            }
+        };
 
         tx.commit()
             .await
             .map_err(|e| AppError::Internal(e.into()))?;
 
-        // PDF rendering and the URL update happen outside the tx. Failures
-        // here are non-fatal: the certificate row exists with NULL pdf_url,
-        // and a future request can re-generate.
-        let mut pdf_url: Option<String> = None;
-        if let Some(dir) = uploads_dir {
-            // Move the synchronous file I/O off the runtime thread.
-            let dir_owned = dir.to_path_buf();
-            let hash_owned = hash.clone();
-            let name = user_name.clone().unwrap_or_default();
-            let title = trail_title_for_pdf.clone().unwrap_or_default();
-            let render_result = tokio::task::spawn_blocking(move || {
-                crate::services::certificate_pdf::render_to_disk(
-                    &dir_owned, &hash_owned, &name, &title, now,
-                )
-            })
-            .await;
-            pdf_url = render_result.unwrap_or_else(|err| {
-                tracing::warn!(error = %err, "PDF render task panicked");
-                None
-            });
-            if let Some(ref url) = pdf_url {
-                if let Err(err) = sqlx::query(
-                    "UPDATE trail_certificates SET pdf_url = $2 WHERE hash = $1 AND pdf_url IS NULL",
-                )
-                .bind(&hash)
-                .bind(url)
-                .execute(pool)
-                .await
-                {
-                    tracing::warn!(
-                        feature = "trail_certificate",
-                        hash = %hash,
-                        error = %err,
-                        "pdf_url update failed",
-                    );
-                }
-            }
-        }
-
         log_analytics_event(
             pool,
             user_id,
             "trail_completed",
-            json!({"trail_id": trail_id, "hash": hash}),
+            json!({"trail_id": trail_id, "hash": final_hash}),
         )
         .await;
 
         return Ok(StepCompleteResponse::Completed {
             outro,
-            certificate_hash: Some(hash),
-            certificate_url: pdf_url,
+            certificate_hash: Some(final_hash),
+            certificate_url: final_pdf_url,
         });
     }
 
@@ -987,22 +1050,27 @@ pub async fn set_pace(
         details: json!({"pace": "must be one of: daily, 2x_week, weekly"}),
     })?;
     let next_reminder = Utc::now() + Duration::hours(pace.reminder_hours());
-    let row: Option<(i32, DateTime<Utc>, Option<DateTime<Utc>>, Option<String>, Option<DateTime<Utc>>)> =
-        sqlx::query_as(
-            r#"
+    let row: Option<(
+        i32,
+        DateTime<Utc>,
+        Option<DateTime<Utc>>,
+        Option<String>,
+        Option<DateTime<Utc>>,
+    )> = sqlx::query_as(
+        r#"
             UPDATE user_trail_progress
             SET pace = $3, next_reminder_at = $4, last_activity_at = NOW()
             WHERE user_id = $1 AND trail_id = $2
             RETURNING current_position, started_at, completed_at, pace, next_reminder_at
             "#,
-        )
-        .bind(user_id)
-        .bind(trail_id)
-        .bind(pace.as_str())
-        .bind(next_reminder)
-        .fetch_optional(pool)
-        .await
-        .map_err(|e| AppError::Internal(e.into()))?;
+    )
+    .bind(user_id)
+    .bind(trail_id)
+    .bind(pace.as_str())
+    .bind(next_reminder)
+    .fetch_optional(pool)
+    .await
+    .map_err(|e| AppError::Internal(e.into()))?;
     let row = row.ok_or_else(|| AppError::Http {
         status: StatusCode::NOT_FOUND,
         message: "User has not started this trail".to_string(),
@@ -1026,12 +1094,11 @@ pub async fn create_teacher_trail(
     payload: &CreateTeacherTrailRequest,
 ) -> Result<TrailOut, AppError> {
     // Verify the teacher owns the classroom.
-    let owner: Option<Uuid> =
-        sqlx::query_scalar("SELECT owner_id FROM classrooms WHERE id = $1")
-            .bind(payload.classroom_id)
-            .fetch_optional(pool)
-            .await
-            .map_err(|e| AppError::Internal(e.into()))?;
+    let owner: Option<Uuid> = sqlx::query_scalar("SELECT owner_id FROM classrooms WHERE id = $1")
+        .bind(payload.classroom_id)
+        .fetch_optional(pool)
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
     let owner = owner.ok_or_else(|| AppError::Http {
         status: StatusCode::NOT_FOUND,
         message: "Classroom not found".to_string(),
@@ -1077,7 +1144,9 @@ pub async fn create_teacher_trail(
     .map_err(|e| AppError::Internal(e.into()))?;
 
     insert_steps_and_checkpoints(&mut tx, row.id, &payload.steps, &payload.checkpoints).await?;
-    tx.commit().await.map_err(|e| AppError::Internal(e.into()))?;
+    tx.commit()
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
 
     fetch_trail_out(pool, row.id).await
 }
@@ -1111,13 +1180,11 @@ pub async fn submit_for_promotion(
             details: json!({"current_status": status}),
         });
     }
-    sqlx::query(
-        "UPDATE trails SET status = 'pending_review', updated_at = NOW() WHERE id = $1",
-    )
-    .bind(trail_id)
-    .execute(pool)
-    .await
-    .map_err(|e| AppError::Internal(e.into()))?;
+    sqlx::query("UPDATE trails SET status = 'pending_review', updated_at = NOW() WHERE id = $1")
+        .bind(trail_id)
+        .execute(pool)
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
     fetch_trail_out(pool, trail_id).await
 }
 
@@ -1295,7 +1362,6 @@ mod tests {
     }
 }
 
-
 #[cfg(test)]
 mod property_tests {
     //! Loop-based property tests for trail certificate hashing and pace.
@@ -1323,11 +1389,7 @@ mod property_tests {
     /// Property 8: pace cadence is exactly the documented hours.
     #[test]
     fn property_pace_reminder_hours() {
-        for (input, expected) in [
-            ("daily", 24),
-            ("2x_week", 84),
-            ("weekly", 168),
-        ] {
+        for (input, expected) in [("daily", 24), ("2x_week", 84), ("weekly", 168)] {
             let p = Pace::parse(input).unwrap();
             assert_eq!(p.reminder_hours(), expected);
         }
@@ -1346,7 +1408,6 @@ mod property_tests {
         }
     }
 }
-
 
 /// Best-effort analytics event insert. Failures are logged via `tracing`
 /// but do not propagate — the trail-progression flow must remain successful

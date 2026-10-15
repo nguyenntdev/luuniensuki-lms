@@ -71,13 +71,8 @@ fn json_equivalence_harness_works() {
     };
 
     let actual_body = serde_json::json!({"status": "ok"});
-    let result = assert_contract_equivalence(
-        &fixture,
-        200,
-        "application/json",
-        Some(&actual_body),
-        &[],
-    );
+    let result =
+        assert_contract_equivalence(&fixture, 200, "application/json", Some(&actual_body), &[]);
     assert!(result.is_ok());
 }
 
@@ -99,13 +94,8 @@ fn json_equivalence_detects_status_mismatch() {
     };
 
     let actual_body = serde_json::json!({"status": "ok"});
-    let result = assert_contract_equivalence(
-        &fixture,
-        500,
-        "application/json",
-        Some(&actual_body),
-        &[],
-    );
+    let result =
+        assert_contract_equivalence(&fixture, 500, "application/json", Some(&actual_body), &[]);
     assert!(result.is_err());
     assert!(result.unwrap_err().contains("Status mismatch"));
 }

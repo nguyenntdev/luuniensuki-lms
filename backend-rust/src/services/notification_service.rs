@@ -13,7 +13,10 @@ use crate::error::AppError;
 use crate::models::notification::*;
 
 /// GET /api/v1/notifications/settings — get notification settings.
-pub async fn get_settings(pool: &PgPool, user_id: Uuid) -> Result<NotificationSettingsOut, AppError> {
+pub async fn get_settings(
+    pool: &PgPool,
+    user_id: Uuid,
+) -> Result<NotificationSettingsOut, AppError> {
     let row = sqlx::query_as::<_, NotificationSettingsRow>(
         r#"
         SELECT user_id, push_enabled, email_enabled, streak_reminders,
@@ -178,13 +181,12 @@ pub async fn get_history(
 ) -> Result<NotificationHistoryResponse, AppError> {
     let offset = (page - 1).max(0) * per_page;
 
-    let total: (i64,) = sqlx::query_as(
-        "SELECT COUNT(*) FROM push_notifications WHERE user_id = $1",
-    )
-    .bind(user_id)
-    .fetch_one(pool)
-    .await
-    .map_err(|e| AppError::Internal(e.into()))?;
+    let total: (i64,) =
+        sqlx::query_as("SELECT COUNT(*) FROM push_notifications WHERE user_id = $1")
+            .bind(user_id)
+            .fetch_one(pool)
+            .await
+            .map_err(|e| AppError::Internal(e.into()))?;
 
     let rows = sqlx::query_as::<_, NotificationHistoryRow>(
         r#"

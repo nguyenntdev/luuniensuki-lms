@@ -94,3 +94,52 @@ def test_full_gameplay_flow(client, seeded_content):
     assert any(
         entry["display_name"] == "Bob" for entry in leaderboard.json()["entries"]
     )
+
+
+def test_urn_detail_content_rating_filtering(client, db_session, seeded_content):
+    from backend.models import ContentRating, Motif, MotifCategory, MotifRarity, User
+    from datetime import datetime, timezone
+
+    urn = seeded_content["urn"]
+
+    # Add a mature motif to the same urn
+    mature_motif = Motif(
+        urn_id=urn.id,
+        mesh_name="mesh_urn_cao_mature_v1",
+        name="Họa tiết nhạy cảm",
+        name_en="Sensitive Motif",
+        category=MotifCategory.dong_vat,
+        rarity=MotifRarity.rare,
+        pos_x=1.0,
+        pos_y=1.0,
+        pos_z=1.0,
+        bounding_radius=1.0,
+        content_rating=ContentRating.mature,
+        is_demo=True,
+        is_active=True,
+        display_order=2,
+    )
+    db_session.add(mature_motif)
+    db_session.commit()
+
+    # Register an unverified user (defaults to everyone only)
+    _register_user(client, email="young_user@example.com")
+
+    res = client.get(f"/api/v1/urns/{urn.slug}")
+    assert res.status_code == 200, res.text
+    motif_names = [m["name"] for m in res.json()["motifs"]]
+    assert "Hổ" in motif_names
+    assert "Họa tiết nhạy cảm" not in motif_names
+
+    # Now verify user as 20 years old
+    current_year = datetime.now(timezone.utc).year
+    user = db_session.query(User).filter_by(email="young_user@example.com").one()
+    user.age_verified = True
+    user.birth_year = current_year - 20
+    db_session.commit()
+
+    res_verified = client.get(f"/api/v1/urns/{urn.slug}")
+    assert res_verified.status_code == 200, res_verified.text
+    motif_names_verified = [m["name"] for m in res_verified.json()["motifs"]]
+    assert "Hổ" in motif_names_verified
+    assert "Họa tiết nhạy cảm" in motif_names_verified

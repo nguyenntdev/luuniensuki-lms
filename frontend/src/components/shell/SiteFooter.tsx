@@ -1,4 +1,8 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { isShellRoute } from "@/lib/shellRoutes";
 
 const PRIMARY_NAV = [
   { label: "Cửu Đỉnh", href: "/cuu-dinh" },
@@ -28,6 +32,10 @@ function FooterLink({ href, children }: { href: string; children: React.ReactNod
 }
 
 export default function SiteFooter() {
+  const pathname = usePathname();
+
+  if (!isShellRoute(pathname)) return null;
+
   return (
     <footer className="border-t border-border bg-paper">
       <div className="mx-auto w-full max-w-[94rem] px-4 py-12 lg:px-8">

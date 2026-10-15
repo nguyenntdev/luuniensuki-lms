@@ -51,10 +51,19 @@ fn require_pool(pool: &Option<PgPool>) -> Result<&PgPool, AppError> {
     })
 }
 
-fn authenticate(headers: &HeaderMap, settings: &Settings) -> Result<(Uuid, auth::Claims), AppError> {
+fn authenticate(
+    headers: &HeaderMap,
+    settings: &Settings,
+) -> Result<(Uuid, auth::Claims), AppError> {
     let token = extract_token_from_headers(headers).ok_or(AppError::Unauthorized)?;
-    let claims = auth::verify_access_token(&token, &settings.jwt_secret_key, settings.jwt_validate_new_claims, &settings.jwt_issuer, &settings.jwt_audience)
-        .map_err(|_| AppError::Unauthorized)?;
+    let claims = auth::verify_access_token(
+        &token,
+        &settings.jwt_secret_key,
+        settings.jwt_validate_new_claims,
+        &settings.jwt_issuer,
+        &settings.jwt_audience,
+    )
+    .map_err(|_| AppError::Unauthorized)?;
     let user_id: Uuid = claims.sub.parse().map_err(|_| AppError::Unauthorized)?;
     Ok((user_id, claims))
 }
@@ -163,15 +172,37 @@ pub async fn get_preview_lesson(
 ) -> Result<impl IntoResponse, AppError> {
     let pool = require_pool(&state.pool)?;
 
-    // Fetch the designated preview lesson (first published lesson marked as previewable)
+    // Fetch the designated preview lesson (preview-eligible or published lesson_content)
     let row: Option<PreviewLessonRow> = sqlx::query_as(
-        "SELECT id, title, description, content_type, difficulty, duration_minutes \
-         FROM lessons WHERE is_preview = true AND published = true \
-         ORDER BY sort_order ASC, created_at ASC LIMIT 1",
+        "SELECT lc.id, m.name AS title, lc.description, \
+         'lesson' AS content_type, \
+         COALESCE(lc.difficulty_level::text, 'beginner') AS difficulty, \
+         COALESCE(lc.estimated_time_minutes, 5) AS duration_minutes \
+         FROM lesson_content lc \
+         JOIN motifs m ON m.id = lc.motif_id \
+         WHERE lc.preview_eligible = true AND lc.is_published = true \
+         ORDER BY lc.created_at ASC LIMIT 1",
     )
     .fetch_optional(pool)
     .await
     .map_err(|e| AppError::Internal(e.into()))?;
+
+    let row = match row {
+        Some(r) => Some(r),
+        None => sqlx::query_as(
+            "SELECT lc.id, m.name AS title, lc.description, \
+             'lesson' AS content_type, \
+             COALESCE(lc.difficulty_level::text, 'beginner') AS difficulty, \
+             COALESCE(lc.estimated_time_minutes, 5) AS duration_minutes \
+             FROM lesson_content lc \
+             JOIN motifs m ON m.id = lc.motif_id \
+             WHERE lc.is_published = true \
+             ORDER BY lc.created_at ASC LIMIT 1",
+        )
+        .fetch_optional(pool)
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?,
+    };
 
     match row {
         Some(lesson) => Ok(Json(PreviewLessonResponse {
@@ -183,10 +214,15 @@ pub async fn get_preview_lesson(
             duration_minutes: lesson.duration_minutes.unwrap_or(5),
             preview: true,
         })),
-        None => Err(AppError::Http {
-            status: StatusCode::NOT_FOUND,
-            message: "No preview lesson available".to_string(),
-        }),
+        None => Ok(Json(PreviewLessonResponse {
+            id: Uuid::nil().to_string(),
+            title: "Khám Phá Cửu Đỉnh".to_string(),
+            description: "Bài học trải nghiệm khám phá di sản Cửu Đỉnh Huế".to_string(),
+            content_type: "lesson".to_string(),
+            difficulty: "beginner".to_string(),
+            duration_minutes: 5,
+            preview: true,
+        })),
     }
 }
 
@@ -208,31 +244,48 @@ pub async fn start_preview(
     } else {
         // Default to the first preview lesson
         let row: Option<(Uuid,)> = sqlx::query_as(
-            "SELECT id FROM lessons WHERE is_preview = true AND published = true \
-             ORDER BY sort_order ASC, created_at ASC LIMIT 1",
+            "SELECT id FROM lesson_content WHERE preview_eligible = true AND is_published = true \
+             ORDER BY created_at ASC LIMIT 1",
         )
         .fetch_optional(pool)
         .await
         .map_err(|e| AppError::Internal(e.into()))?;
 
-        row.ok_or(AppError::Http {
-            status: StatusCode::NOT_FOUND,
-            message: "No preview lesson available".to_string(),
-        })?.0
+        match row {
+            Some((id,)) => id,
+            None => {
+                let any_row: Option<(Uuid,)> = sqlx::query_as(
+                    "SELECT id FROM lesson_content WHERE is_published = true ORDER BY created_at ASC LIMIT 1",
+                )
+                .fetch_optional(pool)
+                .await
+                .map_err(|e| AppError::Internal(e.into()))?;
+
+                any_row.map(|(id,)| id).unwrap_or_else(Uuid::nil)
+            }
+        }
     };
 
-    let session_id = Uuid::new_v4();
+    let session_uuid = Uuid::new_v4();
+    let session_id = session_uuid.to_string();
     let now = chrono::Utc::now();
+    let lesson_opt = if lesson_id.is_nil() {
+        None
+    } else {
+        Some(lesson_id)
+    };
+    let device_meta = body.device_id.as_ref().map(|d| json!({ "device_id": d }));
 
-    // Insert preview session record
+    // Insert guest preview record
     sqlx::query(
-        "INSERT INTO preview_sessions (id, lesson_id, device_id, started_at) \
-         VALUES ($1, $2, $3, $4)",
+        "INSERT INTO guest_previews (id, session_id, preview_lesson_id, started_at, device_info) \
+         VALUES ($1, $2, $3, $4, $5)",
     )
-    .bind(session_id)
-    .bind(lesson_id)
-    .bind(body.device_id.as_deref())
+    .bind(session_uuid)
+    .bind(&session_id)
+    .bind(lesson_opt)
     .bind(now)
+    .bind(device_meta)
     .execute(pool)
     .await
     .map_err(|e| AppError::Internal(e.into()))?;
@@ -240,7 +293,7 @@ pub async fn start_preview(
     Ok((
         StatusCode::CREATED,
         Json(StartPreviewResponse {
-            session_id: session_id.to_string(),
+            session_id,
             lesson_id: lesson_id.to_string(),
             started_at: now.to_rfc3339(),
         }),
@@ -254,18 +307,21 @@ pub async fn complete_preview(
 ) -> Result<impl IntoResponse, AppError> {
     let pool = require_pool(&state.pool)?;
 
-    let session_id = Uuid::parse_str(&body.session_id).map_err(|_| AppError::Domain {
-        status: StatusCode::BAD_REQUEST,
-        code: "INVALID_SESSION_ID".to_string(),
-        message: "Invalid session ID format".to_string(),
-        details: json!({}),
-    })?;
+    let session_id_str = body.session_id.trim();
+    if session_id_str.is_empty() {
+        return Err(AppError::Domain {
+            status: StatusCode::BAD_REQUEST,
+            code: "INVALID_SESSION_ID".to_string(),
+            message: "Invalid session ID format".to_string(),
+            details: json!({}),
+        });
+    }
 
     let result = sqlx::query(
-        "UPDATE preview_sessions SET completed_at = NOW() \
-         WHERE id = $1 AND completed_at IS NULL",
+        "UPDATE guest_previews SET completed_at = NOW() \
+         WHERE (session_id = $1 OR id::text = $1) AND completed_at IS NULL",
     )
-    .bind(session_id)
+    .bind(session_id_str)
     .execute(pool)
     .await
     .map_err(|e| AppError::Internal(e.into()))?;
@@ -291,21 +347,23 @@ pub async fn convert_preview(
 ) -> Result<impl IntoResponse, AppError> {
     let pool = require_pool(&state.pool)?;
 
-    let session_id = Uuid::parse_str(&body.session_id).map_err(|_| AppError::Domain {
-        status: StatusCode::BAD_REQUEST,
-        code: "INVALID_SESSION_ID".to_string(),
-        message: "Invalid session ID format".to_string(),
-        details: json!({}),
-    })?;
+    let session_id_str = body.session_id.trim();
+    if session_id_str.is_empty() {
+        return Err(AppError::Domain {
+            status: StatusCode::BAD_REQUEST,
+            code: "INVALID_SESSION_ID".to_string(),
+            message: "Invalid session ID format".to_string(),
+            details: json!({}),
+        });
+    }
 
     // Verify the preview session exists
-    let session_exists: Option<(Uuid,)> = sqlx::query_as(
-        "SELECT id FROM preview_sessions WHERE id = $1",
-    )
-    .bind(session_id)
-    .fetch_optional(pool)
-    .await
-    .map_err(|e| AppError::Internal(e.into()))?;
+    let session_exists: Option<(Uuid,)> =
+        sqlx::query_as("SELECT id FROM guest_previews WHERE session_id = $1 OR id::text = $1")
+            .bind(session_id_str)
+            .fetch_optional(pool)
+            .await
+            .map_err(|e| AppError::Internal(e.into()))?;
 
     if session_exists.is_none() {
         return Err(AppError::Http {
@@ -315,12 +373,11 @@ pub async fn convert_preview(
     }
 
     // Check if email already taken
-    let existing: Option<(Uuid,)> =
-        sqlx::query_as("SELECT id FROM users WHERE email = $1")
-            .bind(&body.email)
-            .fetch_optional(pool)
-            .await
-            .map_err(|e| AppError::Internal(e.into()))?;
+    let existing: Option<(Uuid,)> = sqlx::query_as("SELECT id FROM users WHERE email = $1")
+        .bind(&body.email)
+        .fetch_optional(pool)
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
 
     if existing.is_some() {
         return Err(AppError::Domain {
@@ -373,10 +430,10 @@ pub async fn convert_preview(
 
     // Link the preview session to the new user
     let _ = sqlx::query(
-        "UPDATE preview_sessions SET converted_user_id = $1, converted_at = NOW() WHERE id = $2",
+        "UPDATE guest_previews SET converted_to_user_id = $1 WHERE session_id = $2 OR id::text = $2",
     )
     .bind(new_user_id)
-    .bind(session_id)
+    .bind(session_id_str)
     .execute(pool)
     .await;
 
@@ -496,12 +553,20 @@ struct CollectionItemRow {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use axum::{body::Body, http::Request, routing::{get, post}, Router};
+    use axum::{
+        body::Body,
+        http::Request,
+        routing::{get, post},
+        Router,
+    };
     use tower::ServiceExt;
 
     fn test_auth_state() -> AuthState {
         let settings = crate::config::Settings::from_env().unwrap();
-        AuthState { pool: None, settings }
+        AuthState {
+            pool: None,
+            settings,
+        }
     }
 
     fn test_router() -> Router {
@@ -519,10 +584,14 @@ mod tests {
     async fn preview_lesson_returns_503_without_pool() {
         let app = test_router();
         let resp = app
-            .oneshot(Request::builder()
-                .uri("/api/v1/preview/lesson")
-                .body(Body::empty()).unwrap())
-            .await.unwrap();
+            .oneshot(
+                Request::builder()
+                    .uri("/api/v1/preview/lesson")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
         assert_eq!(resp.status(), StatusCode::SERVICE_UNAVAILABLE);
     }
 
@@ -530,12 +599,16 @@ mod tests {
     async fn start_preview_returns_503_without_pool() {
         let app = test_router();
         let resp = app
-            .oneshot(Request::builder()
-                .method("POST")
-                .uri("/api/v1/preview/start")
-                .header("content-type", "application/json")
-                .body(Body::from(r#"{}"#)).unwrap())
-            .await.unwrap();
+            .oneshot(
+                Request::builder()
+                    .method("POST")
+                    .uri("/api/v1/preview/start")
+                    .header("content-type", "application/json")
+                    .body(Body::from(r#"{}"#))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
         assert_eq!(resp.status(), StatusCode::SERVICE_UNAVAILABLE);
     }
 
@@ -543,12 +616,18 @@ mod tests {
     async fn complete_preview_returns_503_without_pool() {
         let app = test_router();
         let resp = app
-            .oneshot(Request::builder()
-                .method("POST")
-                .uri("/api/v1/preview/complete")
-                .header("content-type", "application/json")
-                .body(Body::from(r#"{"session_id":"00000000-0000-0000-0000-000000000001"}"#)).unwrap())
-            .await.unwrap();
+            .oneshot(
+                Request::builder()
+                    .method("POST")
+                    .uri("/api/v1/preview/complete")
+                    .header("content-type", "application/json")
+                    .body(Body::from(
+                        r#"{"session_id":"00000000-0000-0000-0000-000000000001"}"#,
+                    ))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
         assert_eq!(resp.status(), StatusCode::SERVICE_UNAVAILABLE);
     }
 
@@ -569,10 +648,14 @@ mod tests {
     async fn collection_returns_401_without_token() {
         let app = test_router();
         let resp = app
-            .oneshot(Request::builder()
-                .uri("/api/v1/users/me/collection")
-                .body(Body::empty()).unwrap())
-            .await.unwrap();
+            .oneshot(
+                Request::builder()
+                    .uri("/api/v1/users/me/collection")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
         assert_eq!(resp.status(), StatusCode::UNAUTHORIZED);
     }
 
@@ -580,18 +663,25 @@ mod tests {
     async fn collection_returns_503_without_pool() {
         let state = test_auth_state();
         let token = crate::auth::issue_access_token(
-            "00000000-0000-0000-0000-000000000001", "user",
-            &state.settings.jwt_secret_key, 60,
+            "00000000-0000-0000-0000-000000000001",
+            "user",
+            &state.settings.jwt_secret_key,
+            60,
             &state.settings.jwt_issuer,
             &state.settings.jwt_audience,
-        ).unwrap();
+        )
+        .unwrap();
         let app = test_router();
         let resp = app
-            .oneshot(Request::builder()
-                .uri("/api/v1/users/me/collection")
-                .header("Authorization", format!("Bearer {}", token))
-                .body(Body::empty()).unwrap())
-            .await.unwrap();
+            .oneshot(
+                Request::builder()
+                    .uri("/api/v1/users/me/collection")
+                    .header("Authorization", format!("Bearer {}", token))
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
         assert_eq!(resp.status(), StatusCode::SERVICE_UNAVAILABLE);
     }
 }

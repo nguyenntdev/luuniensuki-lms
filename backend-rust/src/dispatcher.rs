@@ -78,10 +78,8 @@ impl Dispatcher {
             interval.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
 
             #[cfg(unix)]
-            let mut sighup = tokio::signal::unix::signal(
-                tokio::signal::unix::SignalKind::hangup(),
-            )
-            .expect("install SIGHUP handler");
+            let mut sighup = tokio::signal::unix::signal(tokio::signal::unix::SignalKind::hangup())
+                .expect("install SIGHUP handler");
 
             loop {
                 #[cfg(unix)]
@@ -209,10 +207,7 @@ unknown_routes = "gateway"
 
         let d = Dispatcher::load(f.path()).unwrap();
 
-        assert_eq!(
-            d.mode_for(&MethodPath::new("GET", "/health")),
-            Mode::Native
-        );
+        assert_eq!(d.mode_for(&MethodPath::new("GET", "/health")), Mode::Native);
         assert_eq!(
             d.mode_for(&MethodPath::new("POST", "/api/v1/auth/login")),
             Mode::Gateway

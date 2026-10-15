@@ -156,7 +156,9 @@ impl JanusAdminClient {
         opts: &RoomOpts,
         secret: &str,
     ) -> Result<(), JanusError> {
-        let resp = self.videoroom_request(build_create_body(room, opts, secret)).await?;
+        let resp = self
+            .videoroom_request(build_create_body(room, opts, secret))
+            .await?;
         let data = extract_plugin_data(&resp)?;
         // allow_benign = true: "already exists" is success-equivalent for create.
         interpret_plugin_result(data, true)
@@ -166,7 +168,9 @@ impl JanusAdminClient {
     ///
     /// Validates: Requirements 9.2, 9.4
     pub async fn destroy_room(&self, room: i64, secret: &str) -> Result<(), JanusError> {
-        let resp = self.videoroom_request(build_destroy_body(room, secret)).await?;
+        let resp = self
+            .videoroom_request(build_destroy_body(room, secret))
+            .await?;
         let data = extract_plugin_data(&resp)?;
         // allow_benign = true: "no such room" is success-equivalent for destroy.
         interpret_plugin_result(data, true)
@@ -186,7 +190,9 @@ impl JanusAdminClient {
     ///
     /// Validates: Requirements 9.5
     pub async fn kick(&self, room: i64, secret: &str, feed_id: i64) -> Result<(), JanusError> {
-        let resp = self.videoroom_request(build_kick_body(room, secret, feed_id)).await?;
+        let resp = self
+            .videoroom_request(build_kick_body(room, secret, feed_id))
+            .await?;
         let data = extract_plugin_data(&resp)?;
         interpret_plugin_result(data, false)
     }
@@ -494,7 +500,9 @@ fn parse_participants(data: &Value) -> Result<Vec<JanusParticipant>, JanusError>
         .get("participants")
         .and_then(Value::as_array)
         .ok_or_else(|| {
-            JanusError::Unexpected(format!("listparticipants missing participants array: {data}"))
+            JanusError::Unexpected(format!(
+                "listparticipants missing participants array: {data}"
+            ))
         })?;
 
     arr.iter()
@@ -502,10 +510,7 @@ fn parse_participants(data: &Value) -> Result<Vec<JanusParticipant>, JanusError>
             let id = p.get("id").and_then(Value::as_i64).ok_or_else(|| {
                 JanusError::Unexpected(format!("participant missing numeric id: {p}"))
             })?;
-            let display = p
-                .get("display")
-                .and_then(Value::as_str)
-                .map(str::to_string);
+            let display = p.get("display").and_then(Value::as_str).map(str::to_string);
             let publisher = p.get("publisher").and_then(Value::as_bool).unwrap_or(false);
             Ok(JanusParticipant {
                 id,
@@ -665,16 +670,28 @@ mod tests {
         assert_eq!(
             parsed,
             vec![
-                JanusParticipant { id: 1, display: Some("Alice".to_string()), publisher: true },
-                JanusParticipant { id: 2, display: None, publisher: false },
+                JanusParticipant {
+                    id: 1,
+                    display: Some("Alice".to_string()),
+                    publisher: true
+                },
+                JanusParticipant {
+                    id: 2,
+                    display: None,
+                    publisher: false
+                },
             ]
         );
     }
 
     #[test]
     fn parse_exists_defaults_false() {
-        assert!(parse_exists(&json!({ "videoroom": "success", "exists": true })));
-        assert!(!parse_exists(&json!({ "videoroom": "success", "exists": false })));
+        assert!(parse_exists(
+            &json!({ "videoroom": "success", "exists": true })
+        ));
+        assert!(!parse_exists(
+            &json!({ "videoroom": "success", "exists": false })
+        ));
         assert!(!parse_exists(&json!({ "videoroom": "success" })));
     }
 

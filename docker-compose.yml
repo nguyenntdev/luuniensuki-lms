@@ -107,6 +107,8 @@ services:
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-}
+    environment:
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-dev-insecure-change-me}
     depends_on:
       - api_rust
     ports:

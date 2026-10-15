@@ -280,13 +280,26 @@ pub struct PublisherInfo {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum ClientSignal {
-    JoinPublisher { display_name: String },
-    Publish { sdp_offer: String, audio: bool, video: bool },
-    Subscribe { feed_id: i64 },
+    JoinPublisher {
+        display_name: String,
+    },
+    Publish {
+        sdp_offer: String,
+        audio: bool,
+        video: bool,
+    },
+    Subscribe {
+        feed_id: i64,
+    },
     /// Answer for a subscriber handle.
-    Answer { feed_id: i64, sdp_answer: String },
+    Answer {
+        feed_id: i64,
+        sdp_answer: String,
+    },
     /// `candidate: None` signals end-of-candidates.
-    Trickle { candidate: Option<IceCandidate> },
+    Trickle {
+        candidate: Option<IceCandidate>,
+    },
     Unpublish,
     Leave,
 }
@@ -295,15 +308,33 @@ pub enum ClientSignal {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum ServerSignal {
-    Joined { feed_id: i64, publishers: Vec<PublisherInfo> },
+    Joined {
+        feed_id: i64,
+        publishers: Vec<PublisherInfo>,
+    },
     /// Publisher answer.
-    Answer { sdp: String },
+    Answer {
+        sdp: String,
+    },
     /// Subscriber offer.
-    Offer { feed_id: i64, sdp: String },
-    Publishers { publishers: Vec<PublisherInfo> },
-    Trickle { feed_id: Option<i64>, candidate: Option<IceCandidate> },
-    Leaving { feed_id: i64 },
-    Error { code: String, message: String },
+    Offer {
+        feed_id: i64,
+        sdp: String,
+    },
+    Publishers {
+        publishers: Vec<PublisherInfo>,
+    },
+    Trickle {
+        feed_id: Option<i64>,
+        candidate: Option<IceCandidate>,
+    },
+    Leaving {
+        feed_id: i64,
+    },
+    Error {
+        code: String,
+        message: String,
+    },
 }
 
 // ---------------------------------------------------------------------------

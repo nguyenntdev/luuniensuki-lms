@@ -52,8 +52,14 @@ fn require_pool(pool: &Option<PgPool>) -> Result<&PgPool, AppError> {
 
 fn authenticate(headers: &HeaderMap, settings: &Settings) -> Result<auth::Claims, AppError> {
     let token = extract_token_from_headers(headers).ok_or(AppError::Unauthorized)?;
-    let claims = auth::verify_access_token(&token, &settings.jwt_secret_key, settings.jwt_validate_new_claims, &settings.jwt_issuer, &settings.jwt_audience)
-        .map_err(|_| AppError::Unauthorized)?;
+    let claims = auth::verify_access_token(
+        &token,
+        &settings.jwt_secret_key,
+        settings.jwt_validate_new_claims,
+        &settings.jwt_issuer,
+        &settings.jwt_audience,
+    )
+    .map_err(|_| AppError::Unauthorized)?;
     Ok(claims)
 }
 
@@ -141,12 +147,20 @@ pub async fn get_session_stats(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use axum::{body::Body, http::Request, routing::{get, post}, Router};
+    use axum::{
+        body::Body,
+        http::Request,
+        routing::{get, post},
+        Router,
+    };
     use tower::ServiceExt;
 
     fn test_auth_state() -> AuthState {
         let settings = crate::config::Settings::from_env().unwrap();
-        AuthState { pool: None, settings }
+        AuthState {
+            pool: None,
+            settings,
+        }
     }
 
     fn test_router() -> Router {
@@ -155,8 +169,14 @@ mod tests {
             .route("/api/v1/sessions/heartbeat", post(heartbeat))
             .route("/api/v1/sessions/end", post(end_session))
             .route("/api/v1/analytics/events", post(ingest_events))
-            .route("/api/v1/admin/analytics/sessions/active", get(get_active_sessions))
-            .route("/api/v1/admin/analytics/sessions/stats", get(get_session_stats))
+            .route(
+                "/api/v1/admin/analytics/sessions/active",
+                get(get_active_sessions),
+            )
+            .route(
+                "/api/v1/admin/analytics/sessions/stats",
+                get(get_session_stats),
+            )
             .with_state(state)
     }
 
@@ -164,12 +184,16 @@ mod tests {
     async fn heartbeat_returns_401_without_token() {
         let app = test_router();
         let resp = app
-            .oneshot(Request::builder()
-                .method("POST")
-                .uri("/api/v1/sessions/heartbeat")
-                .header("content-type", "application/json")
-                .body(Body::from(r#"{}"#)).unwrap())
-            .await.unwrap();
+            .oneshot(
+                Request::builder()
+                    .method("POST")
+                    .uri("/api/v1/sessions/heartbeat")
+                    .header("content-type", "application/json")
+                    .body(Body::from(r#"{}"#))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
         assert_eq!(resp.status(), StatusCode::UNAUTHORIZED);
     }
 
@@ -177,12 +201,18 @@ mod tests {
     async fn end_session_returns_401_without_token() {
         let app = test_router();
         let resp = app
-            .oneshot(Request::builder()
-                .method("POST")
-                .uri("/api/v1/sessions/end")
-                .header("content-type", "application/json")
-                .body(Body::from(r#"{"session_id":"00000000-0000-0000-0000-000000000001"}"#)).unwrap())
-            .await.unwrap();
+            .oneshot(
+                Request::builder()
+                    .method("POST")
+                    .uri("/api/v1/sessions/end")
+                    .header("content-type", "application/json")
+                    .body(Body::from(
+                        r#"{"session_id":"00000000-0000-0000-0000-000000000001"}"#,
+                    ))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
         assert_eq!(resp.status(), StatusCode::UNAUTHORIZED);
     }
 
@@ -190,12 +220,16 @@ mod tests {
     async fn ingest_events_returns_401_without_token() {
         let app = test_router();
         let resp = app
-            .oneshot(Request::builder()
-                .method("POST")
-                .uri("/api/v1/analytics/events")
-                .header("content-type", "application/json")
-                .body(Body::from(r#"{"events":[]}"#)).unwrap())
-            .await.unwrap();
+            .oneshot(
+                Request::builder()
+                    .method("POST")
+                    .uri("/api/v1/analytics/events")
+                    .header("content-type", "application/json")
+                    .body(Body::from(r#"{"events":[]}"#))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
         assert_eq!(resp.status(), StatusCode::UNAUTHORIZED);
     }
 
@@ -203,20 +237,27 @@ mod tests {
     async fn heartbeat_returns_503_without_pool() {
         let state = test_auth_state();
         let token = crate::auth::issue_access_token(
-            "00000000-0000-0000-0000-000000000001", "user",
-            &state.settings.jwt_secret_key, 60,
+            "00000000-0000-0000-0000-000000000001",
+            "user",
+            &state.settings.jwt_secret_key,
+            60,
             &state.settings.jwt_issuer,
             &state.settings.jwt_audience,
-        ).unwrap();
+        )
+        .unwrap();
         let app = test_router();
         let resp = app
-            .oneshot(Request::builder()
-                .method("POST")
-                .uri("/api/v1/sessions/heartbeat")
-                .header("Authorization", format!("Bearer {}", token))
-                .header("content-type", "application/json")
-                .body(Body::from(r#"{}"#)).unwrap())
-            .await.unwrap();
+            .oneshot(
+                Request::builder()
+                    .method("POST")
+                    .uri("/api/v1/sessions/heartbeat")
+                    .header("Authorization", format!("Bearer {}", token))
+                    .header("content-type", "application/json")
+                    .body(Body::from(r#"{}"#))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
         assert_eq!(resp.status(), StatusCode::SERVICE_UNAVAILABLE);
     }
 
@@ -224,10 +265,14 @@ mod tests {
     async fn admin_active_sessions_returns_401_without_token() {
         let app = test_router();
         let resp = app
-            .oneshot(Request::builder()
-                .uri("/api/v1/admin/analytics/sessions/active")
-                .body(Body::empty()).unwrap())
-            .await.unwrap();
+            .oneshot(
+                Request::builder()
+                    .uri("/api/v1/admin/analytics/sessions/active")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
         assert_eq!(resp.status(), StatusCode::UNAUTHORIZED);
     }
 
@@ -235,18 +280,25 @@ mod tests {
     async fn admin_active_sessions_returns_403_for_non_admin() {
         let state = test_auth_state();
         let token = crate::auth::issue_access_token(
-            "00000000-0000-0000-0000-000000000001", "user",
-            &state.settings.jwt_secret_key, 60,
+            "00000000-0000-0000-0000-000000000001",
+            "user",
+            &state.settings.jwt_secret_key,
+            60,
             &state.settings.jwt_issuer,
             &state.settings.jwt_audience,
-        ).unwrap();
+        )
+        .unwrap();
         let app = test_router();
         let resp = app
-            .oneshot(Request::builder()
-                .uri("/api/v1/admin/analytics/sessions/active")
-                .header("Authorization", format!("Bearer {}", token))
-                .body(Body::empty()).unwrap())
-            .await.unwrap();
+            .oneshot(
+                Request::builder()
+                    .uri("/api/v1/admin/analytics/sessions/active")
+                    .header("Authorization", format!("Bearer {}", token))
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
         assert_eq!(resp.status(), StatusCode::FORBIDDEN);
     }
 
@@ -254,18 +306,25 @@ mod tests {
     async fn admin_session_stats_returns_403_for_non_admin() {
         let state = test_auth_state();
         let token = crate::auth::issue_access_token(
-            "00000000-0000-0000-0000-000000000001", "user",
-            &state.settings.jwt_secret_key, 60,
+            "00000000-0000-0000-0000-000000000001",
+            "user",
+            &state.settings.jwt_secret_key,
+            60,
             &state.settings.jwt_issuer,
             &state.settings.jwt_audience,
-        ).unwrap();
+        )
+        .unwrap();
         let app = test_router();
         let resp = app
-            .oneshot(Request::builder()
-                .uri("/api/v1/admin/analytics/sessions/stats")
-                .header("Authorization", format!("Bearer {}", token))
-                .body(Body::empty()).unwrap())
-            .await.unwrap();
+            .oneshot(
+                Request::builder()
+                    .uri("/api/v1/admin/analytics/sessions/stats")
+                    .header("Authorization", format!("Bearer {}", token))
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
         assert_eq!(resp.status(), StatusCode::FORBIDDEN);
     }
 
@@ -273,18 +332,25 @@ mod tests {
     async fn admin_session_stats_returns_503_for_admin_without_pool() {
         let state = test_auth_state();
         let token = crate::auth::issue_access_token(
-            "00000000-0000-0000-0000-000000000001", "admin",
-            &state.settings.jwt_secret_key, 60,
+            "00000000-0000-0000-0000-000000000001",
+            "admin",
+            &state.settings.jwt_secret_key,
+            60,
             &state.settings.jwt_issuer,
             &state.settings.jwt_audience,
-        ).unwrap();
+        )
+        .unwrap();
         let app = test_router();
         let resp = app
-            .oneshot(Request::builder()
-                .uri("/api/v1/admin/analytics/sessions/stats")
-                .header("Authorization", format!("Bearer {}", token))
-                .body(Body::empty()).unwrap())
-            .await.unwrap();
+            .oneshot(
+                Request::builder()
+                    .uri("/api/v1/admin/analytics/sessions/stats")
+                    .header("Authorization", format!("Bearer {}", token))
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
         assert_eq!(resp.status(), StatusCode::SERVICE_UNAVAILABLE);
     }
 }

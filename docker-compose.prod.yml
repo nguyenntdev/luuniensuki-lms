@@ -3,9 +3,9 @@ services:
     image: postgres:15-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:?POSTGRES_DB is required in production}
+      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER is required in production}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required in production}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -20,10 +20,12 @@ services:
       dockerfile: backend/Dockerfile
     restart: unless-stopped
     environment:
-      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      ENVIRONMENT: ${ENVIRONMENT:-production}
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}}
       LOG_LEVEL: ${LOG_LEVEL:-info}
+      CORS_ORIGINS: ${CORS_ORIGINS:-https://lms.histolab.icu,https://learn.histolab.icu}
       INTERACTION_TOLERANCE_MULTIPLIER: ${INTERACTION_TOLERANCE_MULTIPLIER:-1.25}
-      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:?JWT_SECRET_KEY is required in production}
       JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
       ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-60}
       REFRESH_TOKEN_EXPIRE_DAYS: ${REFRESH_TOKEN_EXPIRE_DAYS:-30}
@@ -76,13 +78,14 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     environment:
+      APP_ENV: ${APP_ENV:-production}
       API_HOST: 0.0.0.0
       API_PORT: 8001
       RUST_LOG: ${RUST_LOG:-info}
       LEGACY_API_HOST: api
       LEGACY_API_PORT: 8000
-      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
-      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      DATABASE_URL: ${DATABASE_URL:-postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:?JWT_SECRET_KEY is required in production}
       JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
       # Live-room (Janus) — media plane selected by LIVE_MEDIA_BACKEND.
       LIVE_MEDIA_BACKEND: ${LIVE_MEDIA_BACKEND:-livekit}
@@ -107,6 +110,7 @@ services:
     restart: unless-stopped
     environment:
       NODE_ENV: production
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:?JWT_SECRET_KEY is required in production}
       # Prefer same-origin API in production. Leave NEXT_PUBLIC_API_BASE_URL unset
       # so the frontend can call "/api/..." through Nginx.
     depends_on:
@@ -118,8 +122,11 @@ services:
       dockerfile: backend/Dockerfile
     restart: unless-stopped
     environment:
-      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      ENVIRONMENT: ${ENVIRONMENT:-production}
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}}
       LOG_LEVEL: ${LOG_LEVEL:-info}
+      CORS_ORIGINS: ${CORS_ORIGINS:-https://lms.histolab.icu,https://learn.histolab.icu}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:?JWT_SECRET_KEY is required in production}
       DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
       DEEPSEEK_BASE_URL: ${DEEPSEEK_BASE_URL:-https://api.yescale.vip/v1}
       DEEPSEEK_MODEL: ${DEEPSEEK_MODEL:-deepseek-v4-flash}
@@ -151,7 +158,7 @@ services:
       - --node-ip
       - ${LIVEKIT_NODE_IP:-127.0.0.1}
       - --keys
-      - "${LIVEKIT_API_KEY:-devkey}: ${LIVEKIT_API_SECRET:-secret}"
+      - "${LIVEKIT_API_KEY:?LIVEKIT_API_KEY is required in production}: ${LIVEKIT_API_SECRET:?LIVEKIT_API_SECRET is required in production}"
       - --port
       - "7880"
       - --rtc.tcp_port
@@ -200,8 +207,8 @@ services:
         sed -i "s|REPLACE_JANUS_ADMIN_SECRET|$$JANUS_ADMIN_SECRET|g; s|REPLACE_JANUS_API_SECRET|$$JANUS_API_SECRET|g" /tmp/janus-etc/*.jcfg
         exec /opt/janus/bin/janus -F /tmp/janus-etc
     environment:
-      JANUS_ADMIN_SECRET: ${JANUS_ADMIN_SECRET:?set in prod}
-      JANUS_API_SECRET: ${JANUS_API_SECRET:?set in prod}
+      JANUS_ADMIN_SECRET: ${JANUS_ADMIN_SECRET:?JANUS_ADMIN_SECRET is required in production}
+      JANUS_API_SECRET: ${JANUS_API_SECRET:?JANUS_API_SECRET is required in production}
     expose:
       - "8188"
       - "8088"

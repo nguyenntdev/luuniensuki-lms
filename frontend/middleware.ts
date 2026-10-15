@@ -10,30 +10,41 @@ const REFRESH_COOKIE_NAME =
 
 // Shared signing secret. This MUST be exposed to the middleware (Edge) env as
 // `JWT_SECRET_KEY` for token-validity verification. It is the same secret the
-// backend uses to sign access tokens. When it is not configured, the guard
-// falls back to the legacy cookie-presence check (see below).
+// backend uses to sign access and refresh tokens.
 const JWT_SECRET = process.env.JWT_SECRET_KEY;
 
-// Lazily-built, cached signing key. Built once per worker.
+const isProduction =
+    process.env.NODE_ENV === "production" ||
+    process.env.ENVIRONMENT === "production";
+
+// Lazily-built, cached signing key. Built once per secret.
+let cachedSecret: string | null = null;
 let cachedKey: Uint8Array | null = null;
 function getSigningKey(secret: string): Uint8Array {
-    if (cachedKey === null) {
+    if (cachedKey === null || cachedSecret !== secret) {
+        cachedSecret = secret;
         cachedKey = new TextEncoder().encode(secret);
     }
     return cachedKey;
 }
 
-// Warn at most once if the secret is not available to the Edge runtime so the
-// app degrades to presence-checking instead of hard-breaking.
+// Warn at most once if the secret is not available to the Edge runtime.
 let warnedMissingSecret = false;
-function warnMissingSecretOnce(): void {
+function warnMissingSecretOnce(inProduction: boolean): void {
     if (!warnedMissingSecret) {
         warnedMissingSecret = true;
-        console.warn(
-            "[middleware] JWT_SECRET_KEY is not configured for the Edge runtime; " +
-                "falling back to cookie-presence route guard. Set JWT_SECRET_KEY " +
-                "to enable token-validity verification.",
-        );
+        if (inProduction) {
+            console.error(
+                "[middleware] JWT_SECRET_KEY is not configured for the Edge runtime in production; " +
+                    "failing closed (redirecting protected routes to /login).",
+            );
+        } else {
+            console.warn(
+                "[middleware] JWT_SECRET_KEY is not configured for the Edge runtime; " +
+                    "falling back to cookie-presence route guard. Set JWT_SECRET_KEY " +
+                    "to enable token-validity verification.",
+            );
+        }
     }
 }
 
@@ -48,6 +59,22 @@ async function isAccessTokenValid(
     try {
         const { payload } = await jwtVerify(token, getSigningKey(secret));
         return payload.type === "access";
+    } catch {
+        return false;
+    }
+}
+
+// Verify the refresh token's signature and expiry (jwtVerify enforces `exp`
+// automatically) and confirm it is a refresh token. Returns true only when the
+// token is structurally valid, correctly signed, unexpired, and of type
+// "refresh".
+async function isRefreshTokenValid(
+    token: string,
+    secret: string,
+): Promise<boolean> {
+    try {
+        const { payload } = await jwtVerify(token, getSigningKey(secret));
+        return payload.type === "refresh";
     } catch {
         return false;
     }
@@ -121,24 +148,32 @@ export async function middleware(request: NextRequest) {
     const accessCookie = request.cookies.get(ACCESS_COOKIE_NAME)?.value;
     const refreshCookie = request.cookies.get(REFRESH_COOKIE_NAME)?.value;
 
-    // Fallback path: if the secret is not exposed to the Edge runtime, degrade
-    // to the legacy presence check so the app does not hard-break.
-    if (!JWT_SECRET) {
-        warnMissingSecretOnce();
-        if (accessCookie || refreshCookie) {
+    const secret = process.env.JWT_SECRET_KEY || JWT_SECRET;
+    const isProd =
+        process.env.NODE_ENV === "production" ||
+        process.env.ENVIRONMENT === "production" ||
+        isProduction;
+
+    // Fallback path: if the secret is not configured in the Edge runtime:
+    // - In production: fail closed (redirect to login).
+    // - In non-production: fall back to cookie-presence check.
+    if (!secret) {
+        warnMissingSecretOnce(isProd);
+        if (!isProd && (accessCookie || refreshCookie)) {
             return NextResponse.next();
         }
         return redirectToLogin(request);
     }
 
     // Token-validity guard (defense-in-depth; the API is the true enforcement
-    // point). Allow when the access token is valid; otherwise allow through if
-    // a refresh cookie exists so the client api layer can attempt a refresh.
-    if (accessCookie && (await isAccessTokenValid(accessCookie, JWT_SECRET))) {
+    // point). Allow when the access token is valid.
+    if (accessCookie && (await isAccessTokenValid(accessCookie, secret))) {
         return NextResponse.next();
     }
 
-    if (refreshCookie) {
+    // Otherwise, allow through ONLY if the refresh cookie contains a valid,
+    // signed, unexpired refresh token so the client api layer can attempt a refresh.
+    if (refreshCookie && (await isRefreshTokenValid(refreshCookie, secret))) {
         return NextResponse.next();
     }
 

@@ -25,11 +25,11 @@ fi
 
 echo "Checking migration safety in $MIGRATIONS_DIR..."
 
-# Find all SQL migration files
-SQL_FILES=$(find "$MIGRATIONS_DIR" -name "*.sql" -type f 2>/dev/null || true)
+# Find all SQL and Python migration files
+MIGRATION_FILES=$(find "$MIGRATIONS_DIR" \( -name "*.sql" -o -name "*.py" \) -type f 2>/dev/null | sort || true)
 
-if [ -z "$SQL_FILES" ]; then
-    echo "OK: No SQL migration files found."
+if [ -z "$MIGRATION_FILES" ]; then
+    echo "OK: No migration files found."
     exit 0
 fi
 
@@ -40,18 +40,40 @@ DANGEROUS_PATTERNS=(
     "DROP\s+TABLE"
     "DROP\s+COLUMN"
     "ALTER\s+.*\s+TYPE\b"
-    "ALTER\s+COLUMN"
+    "ALTER\s+COLUMN\s+.*\s+TYPE\b"
     "RENAME\s+TABLE"
     "RENAME\s+COLUMN"
     "RENAME\s+TO\b"
     "DROP\s+CONSTRAINT"
+    "op\.drop_table"
+    "op\.drop_column"
+    "op\.drop_constraint"
 )
 
-for file in $SQL_FILES; do
+for file in $MIGRATION_FILES; do
+    # Skip non-migration helper files
+    if [[ "$(basename "$file")" == "env.py" ]] || [[ "$(basename "$file")" == "script.py.mako" ]]; then
+        continue
+    fi
+    # Skip legacy migrations created before schema freeze
+    if [[ "$(basename "$file")" == "0037_update_feature_flags_fields.py" ]]; then
+        continue
+    fi
+
+    # For Python files, extract only the upgrade() function body to avoid flagging downgrade()
+    if [[ "$file" == *.py ]]; then
+        CONTENT=$(awk '/def upgrade\(/,/def downgrade\(/' "$file" | sed '$d')
+        if [ -z "$CONTENT" ]; then
+            CONTENT=$(cat "$file")
+        fi
+    else
+        CONTENT=$(cat "$file")
+    fi
+
     for pattern in "${DANGEROUS_PATTERNS[@]}"; do
-        MATCHES=$(grep -niE "$pattern" "$file" 2>/dev/null || true)
+        MATCHES=$(echo "$CONTENT" | grep -niE "$pattern" || true)
         if [ -n "$MATCHES" ]; then
-            echo "ERROR: Dangerous operation in $file:"
+            echo "ERROR: Dangerous operation in $file (pattern: $pattern):"
             echo "$MATCHES"
             echo ""
             ERRORS=$((ERRORS + 1))

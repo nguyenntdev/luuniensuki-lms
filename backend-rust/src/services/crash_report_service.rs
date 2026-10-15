@@ -15,6 +15,22 @@ use uuid::Uuid;
 use crate::error::AppError;
 use crate::models::crash_report::*;
 
+pub const MAX_ERROR_TYPE_CHARS: usize = 20;
+pub const MAX_ERROR_MESSAGE_CHARS: usize = 2000;
+pub const MAX_STACK_TRACE_CHARS: usize = 10000;
+pub const MAX_PLATFORM_CHARS: usize = 20;
+pub const MAX_APP_VERSION_CHARS: usize = 20;
+pub const MAX_DEVICE_MODEL_CHARS: usize = 100;
+pub const MAX_OS_VERSION_CHARS: usize = 50;
+
+/// Truncate a string slice to at most `max_chars` Unicode characters without splitting code points.
+pub fn truncate_chars(s: &str, max_chars: usize) -> &str {
+    match s.char_indices().nth(max_chars) {
+        None => s,
+        Some((idx, _)) => &s[..idx],
+    }
+}
+
 /// POST /api/v1/crash-reports — submit crash report.
 pub async fn submit_crash_report(
     pool: &PgPool,
@@ -23,6 +39,23 @@ pub async fn submit_crash_report(
 ) -> Result<SubmitCrashReportResponse, AppError> {
     let id = Uuid::new_v4();
     let now = Utc::now();
+
+    let error_type = truncate_chars(&req.error_type, MAX_ERROR_TYPE_CHARS);
+    let error_message = truncate_chars(&req.error_message, MAX_ERROR_MESSAGE_CHARS);
+    let stack_trace = req
+        .stack_trace
+        .as_deref()
+        .map(|st| truncate_chars(st, MAX_STACK_TRACE_CHARS));
+    let platform = truncate_chars(&req.platform, MAX_PLATFORM_CHARS);
+    let app_version = truncate_chars(&req.app_version, MAX_APP_VERSION_CHARS);
+    let device_model = req
+        .device_model
+        .as_deref()
+        .map(|dm| truncate_chars(dm, MAX_DEVICE_MODEL_CHARS));
+    let os_version = req
+        .os_version
+        .as_deref()
+        .map(|os| truncate_chars(os, MAX_OS_VERSION_CHARS));
 
     sqlx::query(
         r#"
@@ -33,20 +66,23 @@ pub async fn submit_crash_report(
     .bind(id)
     .bind(user_id)
     .bind(req.session_id)
-    .bind(&req.error_type)
-    .bind(&req.error_message)
-    .bind(&req.stack_trace)
-    .bind(&req.platform)
-    .bind(&req.app_version)
-    .bind(&req.device_model)
-    .bind(&req.os_version)
+    .bind(error_type)
+    .bind(error_message)
+    .bind(stack_trace)
+    .bind(platform)
+    .bind(app_version)
+    .bind(device_model)
+    .bind(os_version)
     .bind(&req.additional_data)
     .bind(now)
     .execute(pool)
     .await
     .map_err(|e| AppError::Internal(e.into()))?;
 
-    Ok(SubmitCrashReportResponse { id, created_at: now })
+    Ok(SubmitCrashReportResponse {
+        id,
+        created_at: now,
+    })
 }
 
 /// GET /api/v1/admin/crash-reports — list crash reports (admin).
@@ -103,10 +139,7 @@ pub async fn list_crash_reports(
 }
 
 /// GET /api/v1/admin/crash-reports/{report_id} — crash report detail (admin).
-pub async fn get_crash_report(
-    pool: &PgPool,
-    report_id: Uuid,
-) -> Result<CrashReportOut, AppError> {
+pub async fn get_crash_report(pool: &PgPool, report_id: Uuid) -> Result<CrashReportOut, AppError> {
     let row = sqlx::query_as::<_, CrashReportRow>(
         r#"
         SELECT id, user_id, session_id, error_type, error_message, stack_trace, platform, app_version, device_model, os_version, additional_data, created_at
@@ -147,12 +180,11 @@ pub async fn get_crash_report_stats(pool: &PgPool) -> Result<CrashReportStatsRes
         .await
         .map_err(|e| AppError::Internal(e.into()))?;
 
-    let today: (i64,) = sqlx::query_as(
-        "SELECT COUNT(*) FROM crash_reports WHERE created_at::date = CURRENT_DATE",
-    )
-    .fetch_one(pool)
-    .await
-    .map_err(|e| AppError::Internal(e.into()))?;
+    let today: (i64,) =
+        sqlx::query_as("SELECT COUNT(*) FROM crash_reports WHERE created_at::date = CURRENT_DATE")
+            .fetch_one(pool)
+            .await
+            .map_err(|e| AppError::Internal(e.into()))?;
 
     let by_error_type = sqlx::query_as::<_, ErrorTypeCount>(
         r#"
@@ -171,4 +203,43 @@ pub async fn get_crash_report_stats(pool: &PgPool) -> Result<CrashReportStatsRes
         today: today.0,
         by_error_type,
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_truncate_chars_short() {
+        assert_eq!(truncate_chars("hello", 10), "hello");
+        assert_eq!(truncate_chars("", 5), "");
+    }
+
+    #[test]
+    fn test_truncate_chars_exact() {
+        assert_eq!(truncate_chars("hello", 5), "hello");
+    }
+
+    #[test]
+    fn test_truncate_chars_long() {
+        assert_eq!(truncate_chars("hello world", 5), "hello");
+    }
+
+    #[test]
+    fn test_truncate_chars_multibyte() {
+        let text = "Cửu Đỉnh Huế";
+        assert_eq!(truncate_chars(text, 3), "Cửu");
+        assert_eq!(truncate_chars(text, 8), "Cửu Đỉnh");
+    }
+
+    #[test]
+    fn test_crash_report_bounds_constants() {
+        assert_eq!(MAX_ERROR_MESSAGE_CHARS, 2000);
+        assert_eq!(MAX_STACK_TRACE_CHARS, 10000);
+        assert_eq!(MAX_PLATFORM_CHARS, 20);
+        assert_eq!(MAX_APP_VERSION_CHARS, 20);
+        assert_eq!(MAX_ERROR_TYPE_CHARS, 20);
+        assert_eq!(MAX_DEVICE_MODEL_CHARS, 100);
+        assert_eq!(MAX_OS_VERSION_CHARS, 50);
+    }
 }

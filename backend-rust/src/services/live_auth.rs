@@ -321,22 +321,32 @@ mod tests {
 
     #[test]
     fn is_room_locked_false_when_flag_unset_or_missing() {
-        assert!(!is_room_locked(&session_with_metadata(json!({ "lock_room": false }))));
+        assert!(!is_room_locked(&session_with_metadata(
+            json!({ "lock_room": false })
+        )));
         assert!(!is_room_locked(&session_with_metadata(json!({}))));
         // Non-boolean / wrong type falls back to the default (false).
-        assert!(!is_room_locked(&session_with_metadata(json!({ "lock_room": "yes" }))));
+        assert!(!is_room_locked(&session_with_metadata(
+            json!({ "lock_room": "yes" })
+        )));
     }
 
     #[test]
     fn is_ai_enabled_defaults_to_true_when_missing() {
         assert!(is_ai_enabled(&session_with_metadata(json!({}))));
         // Non-boolean / wrong type falls back to the default (true).
-        assert!(is_ai_enabled(&session_with_metadata(json!({ "ai_enabled": "no" }))));
+        assert!(is_ai_enabled(&session_with_metadata(
+            json!({ "ai_enabled": "no" })
+        )));
     }
 
     #[test]
     fn is_ai_enabled_respects_explicit_flag() {
-        assert!(is_ai_enabled(&session_with_metadata(json!({ "ai_enabled": true }))));
-        assert!(!is_ai_enabled(&session_with_metadata(json!({ "ai_enabled": false }))));
+        assert!(is_ai_enabled(&session_with_metadata(
+            json!({ "ai_enabled": true })
+        )));
+        assert!(!is_ai_enabled(&session_with_metadata(
+            json!({ "ai_enabled": false })
+        )));
     }
 }

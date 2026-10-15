@@ -166,17 +166,15 @@ pub async fn get_urn_progress(
     urn_slug: &str,
     user_id: Uuid,
 ) -> Result<UrnProgressResponse, AppError> {
-    let urn = sqlx::query_as::<_, UrnIdSlugRow>(
-        "SELECT id, slug FROM urns WHERE slug = $1",
-    )
-    .bind(urn_slug)
-    .fetch_optional(pool)
-    .await
-    .map_err(|e| AppError::Internal(e.into()))?
-    .ok_or_else(|| AppError::Http {
-        status: axum::http::StatusCode::NOT_FOUND,
-        message: "Urn not found".to_string(),
-    })?;
+    let urn = sqlx::query_as::<_, UrnIdSlugRow>("SELECT id, slug FROM urns WHERE slug = $1")
+        .bind(urn_slug)
+        .fetch_optional(pool)
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?
+        .ok_or_else(|| AppError::Http {
+            status: axum::http::StatusCode::NOT_FOUND,
+            message: "Urn not found".to_string(),
+        })?;
 
     let motif_progress = sqlx::query_as::<_, MotifProgressRow>(
         r#"
@@ -338,8 +336,7 @@ pub async fn get_motif_detail(
     if !allowed_ratings.contains(&motif.content_rating.as_str()) {
         return Err(AppError::Http {
             status: axum::http::StatusCode::FORBIDDEN,
-            message: "You do not have access to this content. Please verify your age."
-                .to_string(),
+            message: "You do not have access to this content. Please verify your age.".to_string(),
         });
     }
 
@@ -404,7 +401,11 @@ pub async fn get_motif_detail(
             difficulty: q.difficulty.unwrap_or(1).max(1),
             explanation: q.explanation.and_then(|e| {
                 let trimmed = e.trim().to_string();
-                if trimmed.is_empty() { None } else { Some(trimmed) }
+                if trimmed.is_empty() {
+                    None
+                } else {
+                    Some(trimmed)
+                }
             }),
             image_url: None,
         })
@@ -498,13 +499,12 @@ pub async fn complete_lesson(
     // Check lesson is published (unless admin/teacher)
     let can_view_drafts = user_role == "admin" || user_role == "teacher";
     if !can_view_drafts {
-        let lesson_published: Option<(bool,)> = sqlx::query_as(
-            "SELECT is_published FROM lesson_content WHERE motif_id = $1",
-        )
-        .bind(motif_id)
-        .fetch_optional(pool)
-        .await
-        .map_err(|e| AppError::Internal(e.into()))?;
+        let lesson_published: Option<(bool,)> =
+            sqlx::query_as("SELECT is_published FROM lesson_content WHERE motif_id = $1")
+                .bind(motif_id)
+                .fetch_optional(pool)
+                .await
+                .map_err(|e| AppError::Internal(e.into()))?;
 
         if let Some((published,)) = lesson_published {
             if !published {
@@ -520,7 +520,10 @@ pub async fn complete_lesson(
     let target_xp = DISCOVERY_XP + LESSON_XP;
 
     // Use a transaction for atomicity
-    let mut tx = pool.begin().await.map_err(|e| AppError::Internal(e.into()))?;
+    let mut tx = pool
+        .begin()
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
 
     // Check existing progress
     let progress = sqlx::query_as::<_, ProgressUpdateRow>(
@@ -569,7 +572,7 @@ pub async fn complete_lesson(
         sqlx::query(
             r#"
             UPDATE user_progress
-            SET status = $1, learned_at = COALESCE(learned_at, $2),
+            SET status = $1::unlock_status, learned_at = COALESCE(learned_at, $2),
                 discovered_at = COALESCE(discovered_at, $2),
                 lesson_viewed_at = COALESCE(lesson_viewed_at, $2),
                 xp_earned = GREATEST(xp_earned, $3)
@@ -585,7 +588,6 @@ pub async fn complete_lesson(
         .await
         .map_err(|e| AppError::Internal(e.into()))?;
     } else {
-
         // Create new progress entry
         final_status = "learned".to_string();
         final_learned_at = Some(now);
@@ -613,37 +615,33 @@ pub async fn complete_lesson(
     // Update user XP and streak
     // Apply comeback bonus multiplier if active.
     let xp_awarded = if xp_awarded > 0 {
-        crate::services::streak_comeback_service::apply_xp_multiplier(
-            &mut tx, user_id, xp_awarded,
-        )
-        .await?
+        crate::services::streak_comeback_service::apply_xp_multiplier(&mut tx, user_id, xp_awarded)
+            .await?
     } else {
         xp_awarded
     };
 
     if xp_awarded > 0 {
-        sqlx::query(
-            "UPDATE users SET total_xp = total_xp + $1, last_active_at = $2 WHERE id = $3",
-        )
-        .bind(xp_awarded)
-        .bind(now)
-        .bind(user_id)
-        .execute(&mut *tx)
-        .await
-        .map_err(|e| AppError::Internal(e.into()))?;
+        sqlx::query("UPDATE users SET total_xp = total_xp + $1, last_active_at = $2 WHERE id = $3")
+            .bind(xp_awarded)
+            .bind(now)
+            .bind(user_id)
+            .execute(&mut *tx)
+            .await
+            .map_err(|e| AppError::Internal(e.into()))?;
     }
 
     // Update streak
     update_streak(&mut tx, user_id, now).await?;
 
-    tx.commit().await.map_err(|e| AppError::Internal(e.into()))?;
+    tx.commit()
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
 
     // Best-effort Phoenix award (outside the transaction so it cannot block
     // the lesson-complete path if it fails).
-    let _ = crate::services::streak_comeback_service::award_phoenix_if_eligible(
-        pool, user_id,
-    )
-    .await;
+    let _ =
+        crate::services::streak_comeback_service::award_phoenix_if_eligible(pool, user_id).await;
 
     // Fetch final total_xp
     let total_xp: (i32,) = sqlx::query_as("SELECT total_xp FROM users WHERE id = $1")
@@ -774,7 +772,11 @@ pub async fn get_cache_manifest(
     }
 
     // Sort by priority then name
-    items.sort_by(|a, b| a.priority.cmp(&b.priority).then(a.motif_name.cmp(&b.motif_name)));
+    items.sort_by(|a, b| {
+        a.priority
+            .cmp(&b.priority)
+            .then(a.motif_name.cmp(&b.motif_name))
+    });
 
     Ok(CacheManifestOut {
         lessons: items,
@@ -795,12 +797,11 @@ pub async fn mark_lesson_cached(
     payload: &LessonCacheIn,
 ) -> Result<LessonCacheOut, AppError> {
     // Verify lesson exists
-    let exists: Option<(Uuid,)> =
-        sqlx::query_as("SELECT id FROM lesson_content WHERE id = $1")
-            .bind(lesson_id)
-            .fetch_optional(pool)
-            .await
-            .map_err(|e| AppError::Internal(e.into()))?;
+    let exists: Option<(Uuid,)> = sqlx::query_as("SELECT id FROM lesson_content WHERE id = $1")
+        .bind(lesson_id)
+        .fetch_optional(pool)
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
 
     if exists.is_none() {
         return Err(AppError::Http {
@@ -854,14 +855,12 @@ pub async fn remove_cached_lesson(
     lesson_id: Uuid,
     user_id: Uuid,
 ) -> Result<(), AppError> {
-    let result = sqlx::query(
-        "DELETE FROM lesson_cache WHERE user_id = $1 AND lesson_id = $2",
-    )
-    .bind(user_id)
-    .bind(lesson_id)
-    .execute(pool)
-    .await
-    .map_err(|e| AppError::Internal(e.into()))?;
+    let result = sqlx::query("DELETE FROM lesson_cache WHERE user_id = $1 AND lesson_id = $2")
+        .bind(user_id)
+        .bind(lesson_id)
+        .execute(pool)
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
 
     if result.rows_affected() == 0 {
         return Err(AppError::Http {
@@ -942,13 +941,12 @@ pub async fn get_next_lesson(
     match row {
         Some(r) => {
             // Check if this lesson has prerequisites
-            let has_prereqs: (i64,) = sqlx::query_as(
-                "SELECT COUNT(*) FROM lesson_prerequisites WHERE lesson_id = $1",
-            )
-            .bind(r.lesson_id)
-            .fetch_one(pool)
-            .await
-            .map_err(|e| AppError::Internal(e.into()))?;
+            let has_prereqs: (i64,) =
+                sqlx::query_as("SELECT COUNT(*) FROM lesson_prerequisites WHERE lesson_id = $1")
+                    .bind(r.lesson_id)
+                    .fetch_one(pool)
+                    .await
+                    .map_err(|e| AppError::Internal(e.into()))?;
 
             Ok(NextLessonOut {
                 lesson_id: Some(r.lesson_id),
@@ -987,12 +985,11 @@ pub async fn get_lesson_prerequisites(
     user_id: Uuid,
 ) -> Result<LessonPrerequisitesOut, AppError> {
     // Verify lesson exists
-    let exists: Option<(Uuid,)> =
-        sqlx::query_as("SELECT id FROM lesson_content WHERE id = $1")
-            .bind(lesson_id)
-            .fetch_optional(pool)
-            .await
-            .map_err(|e| AppError::Internal(e.into()))?;
+    let exists: Option<(Uuid,)> = sqlx::query_as("SELECT id FROM lesson_content WHERE id = $1")
+        .bind(lesson_id)
+        .fetch_optional(pool)
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
 
     if exists.is_none() {
         return Err(AppError::Http {
@@ -1053,12 +1050,11 @@ pub async fn is_lesson_unlocked(
     user_id: Uuid,
 ) -> Result<LessonUnlockStatusOut, AppError> {
     // Verify lesson exists
-    let exists: Option<(Uuid,)> =
-        sqlx::query_as("SELECT id FROM lesson_content WHERE id = $1")
-            .bind(lesson_id)
-            .fetch_optional(pool)
-            .await
-            .map_err(|e| AppError::Internal(e.into()))?;
+    let exists: Option<(Uuid,)> = sqlx::query_as("SELECT id FROM lesson_content WHERE id = $1")
+        .bind(lesson_id)
+        .fetch_optional(pool)
+        .await
+        .map_err(|e| AppError::Internal(e.into()))?;
 
     if exists.is_none() {
         return Err(AppError::Http {
@@ -1193,8 +1189,7 @@ pub async fn get_lesson_sequence(
         .into_iter()
         .enumerate()
         .map(|(i, r)| {
-            let is_completed =
-                r.progress_status == "learned" || r.progress_status == "mastered";
+            let is_completed = r.progress_status == "learned" || r.progress_status == "mastered";
             if is_completed {
                 completed_lessons += 1;
             }

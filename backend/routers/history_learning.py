@@ -14,7 +14,7 @@ from __future__ import annotations
 from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
@@ -37,6 +37,7 @@ from ..models import (
     QuizQuestion,
     User,
 )
+from ..rbac import ADMIN_ROLES, STAFF_ROLES
 from ..services import history_learning as hl
 
 router = APIRouter(tags=["history-learning"])
@@ -219,6 +220,8 @@ def get_history_skills(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+    if current_user.id != user_id and current_user.role not in (ADMIN_ROLES | STAFF_ROLES):
+        raise HTTPException(status_code=403, detail="Not authorized")
     dimensions = hl.get_mastery_dimensions(db, user_id)
     values = [d["value"] for d in dimensions if d["value"] is not None]
     overall = round(sum(values) / len(values), 4) if values else None

@@ -15,7 +15,9 @@ import { isShellRoute } from "@/lib/shellRoutes";
 import { cn } from "@/lib/utils";
 
 import GlobalSearch from "./GlobalSearch";
+import MobileDrawer from "./MobileDrawer";
 import ThemeToggle from "./ThemeToggle";
+import { MenuIcon } from "lucide-react";
 
 interface BottomNavItem {
   label: string;
@@ -60,6 +62,17 @@ export default function MobileNavigation() {
           <div className="ml-auto flex items-center gap-1">
             <GlobalSearch />
             <ThemeToggle />
+            <MobileDrawer
+              trigger={
+                <button
+                  type="button"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                  aria-label="Mở danh mục menu"
+                >
+                  <MenuIcon className="h-5 w-5" aria-hidden="true" />
+                </button>
+              }
+            />
           </div>
         </div>
       </div>

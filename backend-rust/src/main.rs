@@ -93,7 +93,12 @@ async fn main() -> anyhow::Result<()> {
 
 /// Build the top-level Axum router. Kept as a free function so the smoke
 /// test can construct the app without spawning a listener.
-fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool>, settings: &config::Settings) -> Router {
+fn build_router(
+    gw_state: GatewayState,
+    app_state: AppState,
+    pool: Option<PgPool>,
+    settings: &config::Settings,
+) -> Router {
     // Internal routes that need AppState (inventory + dispatcher)
     let internal_routes = Router::new()
         .route(
@@ -120,142 +125,379 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
         .route("/api/v1/auth/register", post(routes::auth::register))
         .route("/api/v1/auth/refresh", post(routes::auth::refresh))
         .route("/api/v1/auth/logout", post(routes::auth::logout))
-        .route("/api/v1/auth/forgot-password", post(routes::auth::forgot_password))
-        .route("/api/v1/auth/reset-password", post(routes::auth::reset_password))
-        .route("/api/v1/users/me/age-verify", post(routes::auth::age_verify))
+        .route(
+            "/api/v1/auth/forgot-password",
+            post(routes::auth::forgot_password),
+        )
+        .route(
+            "/api/v1/auth/reset-password",
+            post(routes::auth::reset_password),
+        )
+        .route(
+            "/api/v1/users/me/age-verify",
+            post(routes::auth::age_verify),
+        )
         .with_state(auth_state.clone());
 
     // User profile routes (Phase 3 — need pool + settings via AuthState)
     let user_routes = Router::new()
         .route("/api/v1/users/me", patch(routes::users::update_profile))
-        .route("/api/v1/users/me/change-password", post(routes::users::change_password))
-        .route("/api/v1/users/me/starting-path", post(routes::users::set_starting_path))
-        .route("/api/v1/users/me/avatar", post(routes::users::upload_avatar))
-        .route("/api/v1/onboarding/goals", post(routes::users::save_onboarding_goal))
-        .route("/api/v1/onboarding/status", get(routes::users::get_onboarding_status))
-        .route("/api/v1/onboarding/complete", post(routes::users::complete_onboarding))
-        .route("/api/v1/users/:user_id/public", get(routes::users::get_user_public_profile))
-        .route("/api/v1/u/:identifier", get(routes::users::get_user_by_identifier))
+        .route(
+            "/api/v1/users/me/change-password",
+            post(routes::users::change_password),
+        )
+        .route(
+            "/api/v1/users/me/starting-path",
+            post(routes::users::set_starting_path),
+        )
+        .route(
+            "/api/v1/users/me/avatar",
+            post(routes::users::upload_avatar),
+        )
+        .route(
+            "/api/v1/onboarding/goals",
+            post(routes::users::save_onboarding_goal),
+        )
+        .route(
+            "/api/v1/onboarding/status",
+            get(routes::users::get_onboarding_status),
+        )
+        .route(
+            "/api/v1/onboarding/complete",
+            post(routes::users::complete_onboarding),
+        )
+        .route(
+            "/api/v1/users/:user_id/public",
+            get(routes::users::get_user_public_profile),
+        )
+        .route(
+            "/api/v1/u/:identifier",
+            get(routes::users::get_user_by_identifier),
+        )
         .with_state(auth_state.clone());
 
     // Lesson & content routes (Phase 4 — need pool + settings via AuthState)
     let lesson_routes = Router::new()
         .route("/api/v1/urns", get(routes::lessons::list_urns))
-        .route("/api/v1/urns/:urn_slug", get(routes::lessons::get_urn_detail))
-        .route("/api/v1/urns/:urn_slug/progress", get(routes::lessons::get_urn_progress))
+        .route(
+            "/api/v1/urns/:urn_slug",
+            get(routes::lessons::get_urn_detail),
+        )
+        .route(
+            "/api/v1/urns/:urn_slug/progress",
+            get(routes::lessons::get_urn_progress),
+        )
         .route("/motifs/:urn_name", get(routes::lessons::get_motifs_by_urn))
-        .route("/api/v1/motifs/:motif_id", get(routes::lessons::get_motif_detail))
-        .route("/api/v1/motifs/:motif_id/complete-lesson", post(routes::lessons::complete_lesson))
-        .route("/api/v1/lessons/cache-manifest", get(routes::lessons::get_cache_manifest))
-        .route("/api/v1/lessons/next", get(routes::lessons::get_next_lesson))
-        .route("/api/v1/lessons/:lesson_id/prerequisites", get(routes::lessons::get_lesson_prerequisites))
-        .route("/api/v1/lessons/:lesson_id/is-unlocked", get(routes::lessons::check_lesson_is_unlocked))
-        .route("/api/v1/lessons/sequence", get(routes::lessons::get_lesson_sequence))
-        .route("/api/v1/lessons/:lesson_id/cache", post(routes::lessons::mark_lesson_cached).delete(routes::lessons::remove_cached_lesson))
-        .route("/api/v1/lessons/cached", get(routes::lessons::get_cached_lessons))
+        .route(
+            "/api/v1/motifs/:motif_id",
+            get(routes::lessons::get_motif_detail),
+        )
+        .route(
+            "/api/v1/motifs/:motif_id/complete-lesson",
+            post(routes::lessons::complete_lesson),
+        )
+        .route(
+            "/api/v1/lessons/cache-manifest",
+            get(routes::lessons::get_cache_manifest),
+        )
+        .route(
+            "/api/v1/lessons/next",
+            get(routes::lessons::get_next_lesson),
+        )
+        .route(
+            "/api/v1/lessons/:lesson_id/prerequisites",
+            get(routes::lessons::get_lesson_prerequisites),
+        )
+        .route(
+            "/api/v1/lessons/:lesson_id/is-unlocked",
+            get(routes::lessons::check_lesson_is_unlocked),
+        )
+        .route(
+            "/api/v1/lessons/sequence",
+            get(routes::lessons::get_lesson_sequence),
+        )
+        .route(
+            "/api/v1/lessons/:lesson_id/cache",
+            post(routes::lessons::mark_lesson_cached).delete(routes::lessons::remove_cached_lesson),
+        )
+        .route(
+            "/api/v1/lessons/cached",
+            get(routes::lessons::get_cached_lessons),
+        )
         .with_state(auth_state.clone());
 
     // Quiz routes (Phase 5 — Quizzes & Adaptive)
     let quiz_routes = Router::new()
-        .route("/api/v1/quizzes/adaptive", post(routes::quizzes::adaptive_quiz))
+        .route(
+            "/api/v1/quizzes/adaptive",
+            post(routes::quizzes::adaptive_quiz),
+        )
         .route("/api/v1/quizzes/:quiz_id", get(routes::quizzes::get_quiz))
-        .route("/api/v1/quizzes/:quiz_id/submit", post(routes::quizzes::submit_quiz))
-        .route("/api/v1/quizzes/:quiz_id/hints", get(routes::quizzes::get_quiz_hints))
+        .route(
+            "/api/v1/quizzes/:quiz_id/submit",
+            post(routes::quizzes::submit_quiz),
+        )
+        .route(
+            "/api/v1/quizzes/:quiz_id/hints",
+            get(routes::quizzes::get_quiz_hints),
+        )
         .with_state(auth_state.clone());
 
     // Progress & Streak routes (Phase 6)
     let progress_routes = Router::new()
-        .route("/api/v1/progress/unlock", post(routes::progress::unlock_motif))
-        .route("/api/v1/users/me/streak", get(routes::progress::get_streak).post(routes::progress::update_streak))
-        .route("/api/v1/users/me/hearts", get(routes::progress::get_hearts).post(routes::progress::update_hearts))
-        .route("/api/v1/users/me/daily-goal", get(routes::progress::get_daily_goal).put(routes::progress::update_daily_goal))
-        .route("/api/v1/users/me/milestones", get(routes::progress::get_milestones))
+        .route(
+            "/api/v1/progress/unlock",
+            post(routes::progress::unlock_motif),
+        )
+        .route(
+            "/api/v1/users/me/streak",
+            get(routes::progress::get_streak).post(routes::progress::update_streak),
+        )
+        .route(
+            "/api/v1/users/me/hearts",
+            get(routes::progress::get_hearts).post(routes::progress::update_hearts),
+        )
+        .route(
+            "/api/v1/users/me/daily-goal",
+            get(routes::progress::get_daily_goal).put(routes::progress::update_daily_goal),
+        )
+        .route(
+            "/api/v1/users/me/milestones",
+            get(routes::progress::get_milestones),
+        )
         .with_state(auth_state.clone());
 
     // Badge, Quest, Achievement routes (Phase 7)
     let quest_routes = Router::new()
-        .route("/api/v1/badges/:badge_id/award", post(routes::quests::award_badge))
+        .route(
+            "/api/v1/badges/:badge_id/award",
+            post(routes::quests::award_badge),
+        )
         .route("/api/v1/quests", get(routes::quests::list_quests))
-        .route("/api/v1/quests/weekly", get(routes::quests::get_weekly_quests))
-        .route("/api/v1/quests/:quest_slug", get(routes::quests::get_quest_detail))
-        .route("/api/v1/quests/:quest_slug/start", post(routes::quests::start_quest))
-        .route("/api/v1/users/me/quest-summary", get(routes::quests::get_quest_summary))
-        .route("/api/v1/missions/daily", get(routes::quests::get_daily_missions))
+        .route(
+            "/api/v1/quests/weekly",
+            get(routes::quests::get_weekly_quests),
+        )
+        .route(
+            "/api/v1/quests/:quest_slug",
+            get(routes::quests::get_quest_detail),
+        )
+        .route(
+            "/api/v1/quests/:quest_slug/start",
+            post(routes::quests::start_quest),
+        )
+        .route(
+            "/api/v1/users/me/quest-summary",
+            get(routes::quests::get_quest_summary),
+        )
+        .route(
+            "/api/v1/missions/daily",
+            get(routes::quests::get_daily_missions),
+        )
         .with_state(auth_state.clone());
 
     // Classroom routes (Phase 8)
     let classroom_routes = Router::new()
-        .route("/api/v1/classrooms", post(routes::classrooms::create_classroom).get(routes::classrooms::list_classrooms))
-        .route("/api/v1/classrooms/:id", get(routes::classrooms::get_classroom).patch(routes::classrooms::update_classroom).delete(routes::classrooms::archive_classroom))
-        .route("/api/v1/classrooms/:id/members", get(routes::classrooms::list_members).post(routes::classrooms::add_member))
-        .route("/api/v1/classrooms/:id/members/:user_id", axum::routing::delete(routes::classrooms::remove_member))
-        .route("/api/v1/classrooms/:id/lessons", get(routes::classrooms::list_classroom_lessons).post(routes::classrooms::assign_lesson))
-        .route("/api/v1/classrooms/:id/analytics", get(routes::classrooms::get_classroom_analytics))
+        .route(
+            "/api/v1/classrooms",
+            post(routes::classrooms::create_classroom).get(routes::classrooms::list_classrooms),
+        )
+        .route(
+            "/api/v1/classrooms/enrolled",
+            get(routes::classrooms::list_enrolled_classrooms),
+        )
+        .route(
+            "/api/v1/classrooms/:id",
+            get(routes::classrooms::get_classroom)
+                .patch(routes::classrooms::update_classroom)
+                .delete(routes::classrooms::archive_classroom),
+        )
+        .route(
+            "/api/v1/classrooms/:id/members",
+            get(routes::classrooms::list_members).post(routes::classrooms::add_member),
+        )
+        .route(
+            "/api/v1/classrooms/:id/members/:user_id",
+            axum::routing::delete(routes::classrooms::remove_member),
+        )
+        .route(
+            "/api/v1/classrooms/:id/lessons",
+            get(routes::classrooms::list_classroom_lessons).post(routes::classrooms::assign_lesson),
+        )
+        .route(
+            "/api/v1/classrooms/:id/analytics",
+            get(routes::classrooms::get_classroom_analytics),
+        )
         .with_state(auth_state.clone());
 
     // Leaderboard & League routes (Phase 9)
     let leaderboard_routes = Router::new()
-        .route("/api/v1/leaderboard", get(routes::leaderboard::get_leaderboard))
-        .route("/api/v1/leaderboard/friends", get(routes::leaderboard::get_friends_leaderboard))
+        .route(
+            "/api/v1/leaderboard",
+            get(routes::leaderboard::get_leaderboard),
+        )
+        .route(
+            "/api/v1/leaderboard/friends",
+            get(routes::leaderboard::get_friends_leaderboard),
+        )
         .route("/api/v1/leagues", get(routes::leaderboard::list_leagues))
-        .route("/api/v1/leagues/me", get(routes::leaderboard::get_user_league))
-        .route("/api/v1/leagues/:league_id", get(routes::leaderboard::get_league_detail))
+        .route(
+            "/api/v1/leagues/me",
+            get(routes::leaderboard::get_user_league),
+        )
+        .route(
+            "/api/v1/leagues/:league_id",
+            get(routes::leaderboard::get_league_detail),
+        )
         .with_state(auth_state.clone());
 
     // Notification routes (Phase 10)
     let notification_routes = Router::new()
-        .route("/api/v1/notifications/settings", get(routes::notifications::get_settings).put(routes::notifications::update_settings))
-        .route("/api/v1/notifications/register-push", post(routes::notifications::register_push))
-        .route("/api/v1/notifications/unregister-push", axum::routing::delete(routes::notifications::unregister_push))
-        .route("/api/v1/notifications/history", get(routes::notifications::get_history))
-        .route("/api/v1/notifications/should-prompt-permission", get(routes::notifications::should_prompt_permission))
+        .route(
+            "/api/v1/notifications/settings",
+            get(routes::notifications::get_settings).put(routes::notifications::update_settings),
+        )
+        .route(
+            "/api/v1/notifications/register-push",
+            post(routes::notifications::register_push),
+        )
+        .route(
+            "/api/v1/notifications/unregister-push",
+            axum::routing::delete(routes::notifications::unregister_push),
+        )
+        .route(
+            "/api/v1/notifications/history",
+            get(routes::notifications::get_history),
+        )
+        .route(
+            "/api/v1/notifications/should-prompt-permission",
+            get(routes::notifications::should_prompt_permission),
+        )
         .with_state(auth_state.clone());
 
     // Session & Analytics routes (Phase 11)
     let session_routes = Router::new()
-        .route("/api/v1/sessions/heartbeat", post(routes::sessions::heartbeat))
+        .route(
+            "/api/v1/sessions/heartbeat",
+            post(routes::sessions::heartbeat),
+        )
         .route("/api/v1/sessions/end", post(routes::sessions::end_session))
-        .route("/api/v1/analytics/events", post(routes::sessions::ingest_events))
-        .route("/api/v1/admin/analytics/sessions/active", get(routes::sessions::get_active_sessions))
-        .route("/api/v1/admin/analytics/sessions/stats", get(routes::sessions::get_session_stats))
+        .route(
+            "/api/v1/analytics/events",
+            post(routes::sessions::ingest_events),
+        )
+        .route(
+            "/api/v1/admin/analytics/sessions/active",
+            get(routes::sessions::get_active_sessions),
+        )
+        .route(
+            "/api/v1/admin/analytics/sessions/stats",
+            get(routes::sessions::get_session_stats),
+        )
         .with_state(auth_state.clone());
 
     // Crash Report routes (Phase 12)
     let crash_report_routes = Router::new()
-        .route("/api/v1/crash-reports", post(routes::crash_reports::submit_crash_report))
+        .route(
+            "/api/v1/crash-reports",
+            post(routes::crash_reports::submit_crash_report),
+        )
         .with_state(auth_state.clone());
 
     // Admin routes (Phase 13) — no resolve route (no DB support)
     let admin_routes = Router::new()
-        .route("/api/v1/admin/push-notifications/send", post(routes::admin::send_push_notification))
-        .route("/api/v1/admin/push-notifications/broadcast", post(routes::admin::broadcast_push_notification))
-        .route("/api/v1/admin/push-notifications", get(routes::admin::list_push_notifications))
-        .route("/api/v1/admin/crash-reports", get(routes::admin::list_crash_reports))
-        .route("/api/v1/admin/crash-reports/stats", get(routes::admin::get_crash_report_stats))
-        .route("/api/v1/admin/crash-reports/:report_id", get(routes::admin::get_crash_report))
-        .route("/api/v1/admin/analytics/render-performance", get(routes::admin_render::get_render_performance))
+        .route(
+            "/api/v1/admin/push-notifications/send",
+            post(routes::admin::send_push_notification),
+        )
+        .route(
+            "/api/v1/admin/push-notifications/broadcast",
+            post(routes::admin::broadcast_push_notification),
+        )
+        .route(
+            "/api/v1/admin/push-notifications",
+            get(routes::admin::list_push_notifications),
+        )
+        .route(
+            "/api/v1/admin/crash-reports",
+            get(routes::admin::list_crash_reports),
+        )
+        .route(
+            "/api/v1/admin/crash-reports/stats",
+            get(routes::admin::get_crash_report_stats),
+        )
+        .route(
+            "/api/v1/admin/crash-reports/:report_id",
+            get(routes::admin::get_crash_report),
+        )
+        .route(
+            "/api/v1/admin/analytics/render-performance",
+            get(routes::admin_render::get_render_performance),
+        )
         // Phase 13 leftovers (tasks 14.3–14.6): read-only admin listings
         .route("/api/v1/admin/audit", get(routes::admin::list_audit))
-        .route("/api/v1/admin/feature-flags", get(routes::admin::list_feature_flags))
-        .route("/api/v1/admin/experiments", get(routes::admin::list_experiments))
-        .route("/api/v1/admin/motif-coordinates", post(routes::admin::save_motif_coordinates))
+        .route(
+            "/api/v1/admin/feature-flags",
+            get(routes::admin::list_feature_flags),
+        )
+        .route(
+            "/api/v1/admin/experiments",
+            get(routes::admin::list_experiments),
+        )
+        .route(
+            "/api/v1/admin/motif-coordinates",
+            post(routes::admin::save_motif_coordinates),
+        )
         .with_state(auth_state.clone());
 
     // Streak Repair Economy routes (additive — see .kiro/specs/streak-repair-economy)
     let streak_economy_routes = Router::new()
         // user-facing
-        .route("/api/v1/users/me/streak/repair", post(routes::streak_repair::repair))
-        .route("/api/v1/users/me/streak/repair-options", get(routes::streak_repair::repair_options))
-        .route("/api/v1/users/me/friend-streaks", get(routes::streak_friend::list_my_friend_streaks))
-        .route("/api/v1/users/:other_id/friend-streak", get(routes::streak_friend::get_friend_streak))
-        .route("/api/v1/users/me/streak/comeback-status", get(routes::streak_comeback::comeback_status))
-        .route("/api/v1/users/me/streak-insurance", get(routes::streak_comeback::my_insurance))
+        .route(
+            "/api/v1/users/me/streak/repair",
+            post(routes::streak_repair::repair),
+        )
+        .route(
+            "/api/v1/users/me/streak/repair-options",
+            get(routes::streak_repair::repair_options),
+        )
+        .route(
+            "/api/v1/users/me/friend-streaks",
+            get(routes::streak_friend::list_my_friend_streaks),
+        )
+        .route(
+            "/api/v1/users/:other_id/friend-streak",
+            get(routes::streak_friend::get_friend_streak),
+        )
+        .route(
+            "/api/v1/users/me/streak/comeback-status",
+            get(routes::streak_comeback::comeback_status),
+        )
+        .route(
+            "/api/v1/users/me/streak-insurance",
+            get(routes::streak_comeback::my_insurance),
+        )
         // admin
-        .route("/api/v1/admin/streak-repair-events", get(routes::streak_admin::list_repair_events))
-        .route("/api/v1/admin/users/:user_id/streak/grant-repair", post(routes::streak_admin::grant_repair))
-        .route("/api/v1/admin/streak/big-red-button", post(routes::streak_admin::big_red_button))
-        .route("/api/v1/admin/streak/big-red-button/events", get(routes::streak_admin::brb_events))
-        .route("/api/v1/admin/streak-economy/stats", get(routes::streak_admin::stats))
+        .route(
+            "/api/v1/admin/streak-repair-events",
+            get(routes::streak_admin::list_repair_events),
+        )
+        .route(
+            "/api/v1/admin/users/:user_id/streak/grant-repair",
+            post(routes::streak_admin::grant_repair),
+        )
+        .route(
+            "/api/v1/admin/streak/big-red-button",
+            post(routes::streak_admin::big_red_button),
+        )
+        .route(
+            "/api/v1/admin/streak/big-red-button/events",
+            get(routes::streak_admin::brb_events),
+        )
+        .route(
+            "/api/v1/admin/streak-economy/stats",
+            get(routes::streak_admin::stats),
+        )
         .route(
             "/api/v1/admin/users/:user_id/streak-insurance/grant",
             post(routes::streak_admin::grant_insurance),
@@ -307,7 +549,10 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
     let trail_routes = Router::new()
         // Public + user
         .route("/api/v1/trails", get(routes::trails::list_trails))
-        .route("/api/v1/trails/:slug", get(routes::trails::get_trail_detail))
+        .route(
+            "/api/v1/trails/:slug",
+            get(routes::trails::get_trail_detail),
+        )
         .route(
             "/api/v1/trails/:slug/start",
             post(routes::trails::start_trail),
@@ -358,52 +603,135 @@ fn build_router(gw_state: GatewayState, app_state: AppState, pool: Option<PgPool
 
     // Misc routes (Phase 15 — preview, collection, leftovers)
     let misc_routes = Router::new()
-        .route("/api/v1/preview/lesson", get(routes::misc::get_preview_lesson))
+        .route(
+            "/api/v1/preview/lesson",
+            get(routes::misc::get_preview_lesson),
+        )
         .route("/api/v1/preview/start", post(routes::misc::start_preview))
-        .route("/api/v1/preview/complete", post(routes::misc::complete_preview))
-        .route("/api/v1/preview/convert", post(routes::misc::convert_preview))
-        .route("/api/v1/users/me/collection", get(routes::misc::get_user_collection))
+        .route(
+            "/api/v1/preview/complete",
+            post(routes::misc::complete_preview),
+        )
+        .route(
+            "/api/v1/preview/convert",
+            post(routes::misc::convert_preview),
+        )
+        .route(
+            "/api/v1/users/me/collection",
+            get(routes::misc::get_user_collection),
+        )
         .with_state(auth_state.clone());
 
     // History-First Phase 1 routes
     let history_routes = Router::new()
-        .route("/api/v1/history/entities", get(routes::history::list_entities))
-        .route("/api/v1/history/entities/:id", get(routes::history::get_entity_by_id))
-        .route("/api/v1/history/entities/by-slug/:slug", get(routes::history::get_entity_by_slug))
-        .route("/api/v1/history/entities/:id/claims", get(routes::history::list_entity_claims))
-        .route("/api/v1/history/entities/:id/relations", get(routes::history::list_entity_relations))
+        .route(
+            "/api/v1/history/entities",
+            get(routes::history::list_entities),
+        )
+        .route(
+            "/api/v1/history/entities/:id",
+            get(routes::history::get_entity_by_id),
+        )
+        .route(
+            "/api/v1/history/entities/by-slug/:slug",
+            get(routes::history::get_entity_by_slug),
+        )
+        .route(
+            "/api/v1/history/entities/:id/claims",
+            get(routes::history::list_entity_claims),
+        )
+        .route(
+            "/api/v1/history/entities/:id/relations",
+            get(routes::history::list_entity_relations),
+        )
         .route("/api/v1/history/urns", get(routes::history::list_urns))
-        .route("/api/v1/history/urns/:slug", get(routes::history::get_urn_by_slug))
-        .route("/api/v1/history/reliefs", get(routes::history::list_reliefs))
-        .route("/api/v1/history/sources", get(routes::history::list_sources))
-        .route("/api/v1/history/sources/:id", get(routes::history::get_source_by_id))
-        .route("/api/v1/history/search", get(routes::history::search_history))
+        .route(
+            "/api/v1/history/urns/:slug",
+            get(routes::history::get_urn_by_slug),
+        )
+        .route(
+            "/api/v1/history/reliefs",
+            get(routes::history::list_reliefs),
+        )
+        .route(
+            "/api/v1/history/sources",
+            get(routes::history::list_sources),
+        )
+        .route(
+            "/api/v1/history/sources/:id",
+            get(routes::history::get_source_by_id),
+        )
+        .route(
+            "/api/v1/history/search",
+            get(routes::history::search_history),
+        )
         .with_state(auth_state.clone());
-
 
     // Live virtual-classroom routes (.kiro/specs/live-room-rust-janus-migration)
     // Native control plane + WS signaling. Media plane = Janus (feature-flagged).
     let live_routes = Router::new()
-        .route("/api/v1/live-sessions", post(routes::live::create_session).get(routes::live::list_sessions))
+        .route(
+            "/api/v1/live-sessions",
+            post(routes::live::create_session).get(routes::live::list_sessions),
+        )
         .route("/api/v1/live-sessions/:id", get(routes::live::get_session))
-        .route("/api/v1/live-sessions/:id/end", post(routes::live::end_session))
-        .route("/api/v1/live-sessions/:id/join", post(routes::live::join_session))
-        .route("/api/v1/live-sessions/:id/token", post(routes::live::issue_credential))
-        .route("/api/v1/live-sessions/:id/leave", post(routes::live::leave_session))
-        .route("/api/v1/live-sessions/:id/participants", get(routes::live::list_participants))
-        .route("/api/v1/live-sessions/:id/participants/:pid/role", patch(routes::live::update_participant_role))
-        .route("/api/v1/live-sessions/:id/events", get(routes::live::list_events).post(routes::live::append_event))
-        .route("/api/v1/live-sessions/:id/host/settings", post(routes::live::update_settings))
-        .route("/api/v1/live-sessions/:id/host/mute-all", post(routes::live::mute_all))
-        .route("/api/v1/live-sessions/:id/host/remove-participant", post(routes::live::remove_participant))
-        .route("/api/v1/live-sessions/:id/ai-teacher/credential", post(routes::live::ai_teacher_credential))
-        .route("/api/v1/live-sessions/:id/signal", get(routes::live::signal_ws))
+        .route(
+            "/api/v1/live-sessions/:id/end",
+            post(routes::live::end_session),
+        )
+        .route(
+            "/api/v1/live-sessions/:id/join",
+            post(routes::live::join_session),
+        )
+        .route(
+            "/api/v1/live-sessions/:id/token",
+            post(routes::live::issue_credential),
+        )
+        .route(
+            "/api/v1/live-sessions/:id/leave",
+            post(routes::live::leave_session),
+        )
+        .route(
+            "/api/v1/live-sessions/:id/participants",
+            get(routes::live::list_participants),
+        )
+        .route(
+            "/api/v1/live-sessions/:id/participants/:pid/role",
+            patch(routes::live::update_participant_role),
+        )
+        .route(
+            "/api/v1/live-sessions/:id/events",
+            get(routes::live::list_events).post(routes::live::append_event),
+        )
+        .route(
+            "/api/v1/live-sessions/:id/host/settings",
+            post(routes::live::update_settings),
+        )
+        .route(
+            "/api/v1/live-sessions/:id/host/mute-all",
+            post(routes::live::mute_all),
+        )
+        .route(
+            "/api/v1/live-sessions/:id/host/remove-participant",
+            post(routes::live::remove_participant),
+        )
+        .route(
+            "/api/v1/live-sessions/:id/ai-teacher/credential",
+            post(routes::live::ai_teacher_credential),
+        )
+        .route(
+            "/api/v1/live-sessions/:id/signal",
+            get(routes::live::signal_ws),
+        )
         .with_state(auth_state.clone());
 
     // Static routes (no state needed)
     let static_routes = Router::new()
         .route("/health", get(routes::health::health))
-        .route("/api/v1/content/ratings", get(routes::content::content_ratings))
+        .route(
+            "/api/v1/content/ratings",
+            get(routes::content::content_ratings),
+        )
         .route("/api/v1/ranks", get(routes::content::ranks))
         .route("/metrics", get(routes::metrics::metrics));
 
@@ -514,13 +842,12 @@ mod tests {
 
     fn test_app_state(settings: &config::Settings) -> (GatewayState, AppState) {
         let gw_state = GatewayState::new(settings);
-        let dispatcher = Dispatcher::load(&settings.route_modes_path)
-            .unwrap_or_else(|_| {
-                // Fallback: create a temp file with defaults for tests
-                let tmp = std::env::temp_dir().join("test-route-modes.toml");
-                std::fs::write(&tmp, "[defaults]\nunknown_routes = \"gateway\"\n").unwrap();
-                Dispatcher::load(&tmp).unwrap()
-            });
+        let dispatcher = Dispatcher::load(&settings.route_modes_path).unwrap_or_else(|_| {
+            // Fallback: create a temp file with defaults for tests
+            let tmp = std::env::temp_dir().join("test-route-modes.toml");
+            std::fs::write(&tmp, "[defaults]\nunknown_routes = \"gateway\"\n").unwrap();
+            Dispatcher::load(&tmp).unwrap()
+        });
         let inv = inventory::load_inventory(&settings.route_inventory_path)
             .unwrap_or_else(|_| std::sync::Arc::new(Vec::new()));
         let app_state = AppState {
@@ -759,12 +1086,7 @@ mod tests {
             .layer(middleware::from_fn(add_security_headers));
 
         let response = app
-            .oneshot(
-                Request::builder()
-                    .uri("/t")
-                    .body(Body::empty())
-                    .unwrap(),
-            )
+            .oneshot(Request::builder().uri("/t").body(Body::empty()).unwrap())
             .await
             .unwrap();
 

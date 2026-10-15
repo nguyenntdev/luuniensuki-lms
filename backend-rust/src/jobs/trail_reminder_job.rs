@@ -47,6 +47,8 @@ pub async fn run(pool: PgPool) {
 }
 
 async fn dispatch_pass(pool: &PgPool) -> Result<i64, sqlx::Error> {
+    let mut tx = pool.begin().await?;
+
     // Pull rows where the reminder is due, the trail is not completed, and
     // the user opted in to streak reminders. We grab pace + slug + title so
     // the inserted notification has useful copy.
@@ -58,8 +60,8 @@ async fn dispatch_pass(pool: &PgPool) -> Result<i64, sqlx::Error> {
     // they don't need a reminder, and queueing one would be noise. The
     // cadence is encoded inline as an INTERVAL chosen by pace.
     let due: Vec<(
-        Uuid, // user_id
-        Uuid, // trail_id
+        Uuid,   // user_id
+        Uuid,   // trail_id
         String, // pace
         String, // slug
         String, // title_vi
@@ -86,7 +88,7 @@ async fn dispatch_pass(pool: &PgPool) -> Result<i64, sqlx::Error> {
         LIMIT 100
         "#,
     )
-    .fetch_all(pool)
+    .fetch_all(&mut *tx)
     .await?;
 
     if due.is_empty() {
@@ -100,7 +102,6 @@ async fn dispatch_pass(pool: &PgPool) -> Result<i64, sqlx::Error> {
             "2x_week" => Utc::now() + Duration::hours(84),
             _ => Utc::now() + Duration::hours(24),
         };
-        let mut tx = pool.begin().await?;
 
         // Insert notification.
         sqlx::query(
@@ -128,9 +129,10 @@ async fn dispatch_pass(pool: &PgPool) -> Result<i64, sqlx::Error> {
         .execute(&mut *tx)
         .await?;
 
-        tx.commit().await?;
         queued += 1;
     }
+
+    tx.commit().await?;
 
     Ok(queued)
 }

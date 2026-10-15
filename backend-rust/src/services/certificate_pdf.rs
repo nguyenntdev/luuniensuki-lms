@@ -15,6 +15,9 @@
 use chrono::{DateTime, Utc};
 use std::io::Write;
 use std::path::{Path, PathBuf};
+use std::sync::atomic::{AtomicU64, Ordering};
+
+static TMP_COUNTER: AtomicU64 = AtomicU64::new(0);
 
 /// Render and write a certificate PDF to `<uploads_dir>/certificates/<hash>.pdf`.
 ///
@@ -57,14 +60,23 @@ fn sanitize_hash(hash: &str) -> String {
 }
 
 fn write_atomically(path: &Path, bytes: &[u8]) -> std::io::Result<()> {
-    let mut tmp = PathBuf::from(path);
-    tmp.set_extension("pdf.tmp");
-    {
+    let parent = path.parent().unwrap_or_else(|| Path::new("."));
+    let stem = path.file_stem().and_then(|s| s.to_str()).unwrap_or("cert");
+    let pid = std::process::id();
+    let counter = TMP_COUNTER.fetch_add(1, Ordering::Relaxed);
+    let tmp = parent.join(format!("{stem}.{pid}.{counter}.tmp"));
+
+    let res = (|| {
         let mut f = std::fs::File::create(&tmp)?;
         f.write_all(bytes)?;
         f.sync_all()?;
+        std::fs::rename(&tmp, path)
+    })();
+
+    if res.is_err() {
+        let _ = std::fs::remove_file(&tmp);
     }
-    std::fs::rename(tmp, path)
+    res
 }
 
 /// Build the PDF byte stream.
@@ -75,12 +87,7 @@ fn write_atomically(path: &Path, bytes: &[u8]) -> std::io::Result<()> {
 ///
 /// Long strings are truncated to fit on one page; the certificate hash is
 /// still rendered in full at small font size at the bottom.
-fn render_pdf(
-    name: &str,
-    trail_title: &str,
-    issued_at: DateTime<Utc>,
-    hash: &str,
-) -> Vec<u8> {
+fn render_pdf(name: &str, trail_title: &str, issued_at: DateTime<Utc>, hash: &str) -> Vec<u8> {
     // Approximate character budgets at each font size on an A4 595pt page
     // with 110pt left margin. Helvetica width is ~0.5 * size for ASCII.
     // Page usable width = 595 - 110 - 50 = 435pt.
@@ -115,16 +122,10 @@ fn render_pdf(
     content.push_str(&format!("({}) Tj\n", escape_pdf_string(lines[3].0)));
     // Issued date
     content.push_str("0 -60 Td\n/F1 12 Tf\n");
-    content.push_str(&format!(
-        "(Cap ngay {}) Tj\n",
-        escape_pdf_string(&issued),
-    ));
+    content.push_str(&format!("(Cap ngay {}) Tj\n", escape_pdf_string(&issued),));
     // Hash
     content.push_str("0 -180 Td\n/F1 8 Tf\n");
-    content.push_str(&format!(
-        "(Ma xac thuc: {}) Tj\n",
-        escape_pdf_string(hash),
-    ));
+    content.push_str(&format!("(Ma xac thuc: {}) Tj\n", escape_pdf_string(hash),));
     content.push_str("ET\n");
 
     let content_bytes = content.into_bytes();
@@ -152,7 +153,9 @@ fn render_pdf(
 
     // Object 4: Contents
     offsets.push(buf.len());
-    buf.extend_from_slice(format!("4 0 obj\n<< /Length {} >>\nstream\n", content_bytes.len()).as_bytes());
+    buf.extend_from_slice(
+        format!("4 0 obj\n<< /Length {} >>\nstream\n", content_bytes.len()).as_bytes(),
+    );
     buf.extend_from_slice(&content_bytes);
     buf.extend_from_slice(b"\nendstream\nendobj\n");
 
@@ -173,9 +176,7 @@ fn render_pdf(
 
     // trailer
     buf.extend_from_slice(b"trailer\n");
-    buf.extend_from_slice(
-        format!("<< /Size {} /Root 1 0 R >>\n", offsets.len() + 1).as_bytes(),
-    );
+    buf.extend_from_slice(format!("<< /Size {} /Root 1 0 R >>\n", offsets.len() + 1).as_bytes());
     buf.extend_from_slice(b"startxref\n");
     buf.extend_from_slice(format!("{}\n", xref_offset).as_bytes());
     buf.extend_from_slice(b"%%EOF\n");
@@ -226,18 +227,18 @@ fn strip_diacritics(c: char) -> char {
     // A small Vietnamese-aware fold to ASCII. Anything we can't map falls
     // through and gets replaced with '?' downstream.
     match c {
-        'à' | 'á' | 'ả' | 'ã' | 'ạ' | 'ă' | 'ằ' | 'ắ' | 'ẳ' | 'ẵ' | 'ặ'
-        | 'â' | 'ầ' | 'ấ' | 'ẩ' | 'ẫ' | 'ậ' => 'a',
-        'À' | 'Á' | 'Ả' | 'Ã' | 'Ạ' | 'Ă' | 'Ằ' | 'Ắ' | 'Ẳ' | 'Ẵ' | 'Ặ'
-        | 'Â' | 'Ầ' | 'Ấ' | 'Ẩ' | 'Ẫ' | 'Ậ' => 'A',
+        'à' | 'á' | 'ả' | 'ã' | 'ạ' | 'ă' | 'ằ' | 'ắ' | 'ẳ' | 'ẵ' | 'ặ' | 'â' | 'ầ' | 'ấ' | 'ẩ'
+        | 'ẫ' | 'ậ' => 'a',
+        'À' | 'Á' | 'Ả' | 'Ã' | 'Ạ' | 'Ă' | 'Ằ' | 'Ắ' | 'Ẳ' | 'Ẵ' | 'Ặ' | 'Â' | 'Ầ' | 'Ấ' | 'Ẩ'
+        | 'Ẫ' | 'Ậ' => 'A',
         'è' | 'é' | 'ẻ' | 'ẽ' | 'ẹ' | 'ê' | 'ề' | 'ế' | 'ể' | 'ễ' | 'ệ' => 'e',
         'È' | 'É' | 'Ẻ' | 'Ẽ' | 'Ẹ' | 'Ê' | 'Ề' | 'Ế' | 'Ể' | 'Ễ' | 'Ệ' => 'E',
         'ì' | 'í' | 'ỉ' | 'ĩ' | 'ị' => 'i',
         'Ì' | 'Í' | 'Ỉ' | 'Ĩ' | 'Ị' => 'I',
-        'ò' | 'ó' | 'ỏ' | 'õ' | 'ọ' | 'ô' | 'ồ' | 'ố' | 'ổ' | 'ỗ' | 'ộ'
-        | 'ơ' | 'ờ' | 'ớ' | 'ở' | 'ỡ' | 'ợ' => 'o',
-        'Ò' | 'Ó' | 'Ỏ' | 'Õ' | 'Ọ' | 'Ô' | 'Ồ' | 'Ố' | 'Ổ' | 'Ỗ' | 'Ộ'
-        | 'Ơ' | 'Ờ' | 'Ớ' | 'Ở' | 'Ỡ' | 'Ợ' => 'O',
+        'ò' | 'ó' | 'ỏ' | 'õ' | 'ọ' | 'ô' | 'ồ' | 'ố' | 'ổ' | 'ỗ' | 'ộ' | 'ơ' | 'ờ' | 'ớ' | 'ở'
+        | 'ỡ' | 'ợ' => 'o',
+        'Ò' | 'Ó' | 'Ỏ' | 'Õ' | 'Ọ' | 'Ô' | 'Ồ' | 'Ố' | 'Ổ' | 'Ỗ' | 'Ộ' | 'Ơ' | 'Ờ' | 'Ớ' | 'Ở'
+        | 'Ỡ' | 'Ợ' => 'O',
         'ù' | 'ú' | 'ủ' | 'ũ' | 'ụ' | 'ư' | 'ừ' | 'ứ' | 'ử' | 'ữ' | 'ự' => 'u',
         'Ù' | 'Ú' | 'Ủ' | 'Ũ' | 'Ụ' | 'Ư' | 'Ừ' | 'Ứ' | 'Ử' | 'Ữ' | 'Ự' => 'U',
         'ỳ' | 'ý' | 'ỷ' | 'ỹ' | 'ỵ' => 'y',
@@ -254,12 +255,7 @@ mod tests {
 
     #[test]
     fn pdf_starts_with_header_and_ends_with_eof() {
-        let pdf = render_pdf(
-            "Nguyen Van A",
-            "Linh vat Cao Dinh",
-            Utc::now(),
-            "abc123",
-        );
+        let pdf = render_pdf("Nguyen Van A", "Linh vat Cao Dinh", Utc::now(), "abc123");
         assert!(pdf.starts_with(b"%PDF-1.4"));
         let trailing = String::from_utf8_lossy(&pdf[pdf.len().saturating_sub(8)..]);
         assert!(trailing.contains("%%EOF"));
@@ -270,7 +266,10 @@ mod tests {
         let pdf = render_pdf("Nguyễn Văn A", "Linh vật Cao Đỉnh", Utc::now(), "abc");
         let text = String::from_utf8_lossy(&pdf);
         assert!(text.contains("Nguyen Van A"), "expected ASCII-folded name");
-        assert!(text.contains("Linh vat Cao Dinh"), "expected ASCII-folded title");
+        assert!(
+            text.contains("Linh vat Cao Dinh"),
+            "expected ASCII-folded title"
+        );
         assert!(text.contains("abc"));
     }
 
@@ -291,7 +290,10 @@ mod tests {
 
     #[test]
     fn escape_pdf_string_escapes_parens_and_backslash() {
-        assert_eq!(escape_pdf_string("foo (bar) \\baz"), "foo \\(bar\\) \\\\baz");
+        assert_eq!(
+            escape_pdf_string("foo (bar) \\baz"),
+            "foo \\(bar\\) \\\\baz"
+        );
     }
 
     #[test]
@@ -312,5 +314,64 @@ mod tests {
         let s = "Linh vật Cao Đỉnh — chuyến hành trình dài lê thê qua các thời đại Nguyễn";
         let out = truncate_with_ellipsis(s, 20);
         assert_eq!(out.chars().count(), 20);
+    }
+
+    #[test]
+    fn test_write_atomically_creates_target_file() {
+        let dir = tempfile::tempdir().unwrap();
+        let target = dir.path().join("cert123.pdf");
+        let content = b"%PDF-1.4 test content";
+
+        write_atomically(&target, content).unwrap();
+
+        assert!(target.exists());
+        let read_back = std::fs::read(&target).unwrap();
+        assert_eq!(read_back, content);
+    }
+
+    #[test]
+    fn test_write_atomically_concurrent_writes() {
+        use std::sync::Arc;
+        let dir = tempfile::tempdir().unwrap();
+        let dir_path = Arc::new(dir.path().to_path_buf());
+
+        let mut handles = Vec::new();
+        for i in 0..10 {
+            let dir_clone = Arc::clone(&dir_path);
+            handles.push(std::thread::spawn(move || {
+                let target = dir_clone.join(format!("cert_concurrent_{}.pdf", i % 3));
+                let content = format!("content_{}", i).into_bytes();
+                write_atomically(&target, &content).unwrap();
+            }));
+        }
+
+        for h in handles {
+            h.join().unwrap();
+        }
+
+        // Verify target files exist and are valid
+        for i in 0..3 {
+            let target = dir.path().join(format!("cert_concurrent_{}.pdf", i));
+            assert!(target.exists());
+        }
+    }
+
+    #[test]
+    fn test_render_to_disk() {
+        let dir = tempfile::tempdir().unwrap();
+        let hash = "deadbeef12345678";
+        let url = render_to_disk(
+            dir.path(),
+            hash,
+            "Nguyen Van B",
+            "Cao Dinh Discovery",
+            Utc::now(),
+        );
+        assert_eq!(url, Some(format!("/uploads/certificates/{}.pdf", hash)));
+        let expected_file = dir
+            .path()
+            .join("certificates")
+            .join(format!("{}.pdf", hash));
+        assert!(expected_file.exists());
     }
 }

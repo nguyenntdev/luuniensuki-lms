@@ -556,7 +556,7 @@ def _record_analytics_event(
     device_info: Optional[dict[str, Any]] = None,
 ) -> None:
     try:
-        from .services.analytics import create_event_record
+        from ..services.analytics import create_event_record
 
         event_data = create_event_record(
             user_id=user_id,
@@ -955,7 +955,7 @@ def _check_live_rate_limit(
     ai_path: bool = False,
     live_session_id: UUID | None = None,
 ) -> None:
-    from .services import live_rate_limits as live_rate_limit_service
+    from ..services import live_rate_limits as live_rate_limit_service
 
     max_requests = (
         settings.live_ai_rate_limit_requests_per_minute
@@ -1078,7 +1078,7 @@ def _ensure_class_access(current_user: User, classroom: Classroom) -> None:
 def _build_live_session_out(
     db: Session, live_session: LiveSession
 ) -> schemas.LiveSessionOut:
-    from .services import live_sessions as live_session_service
+    from ..services import live_sessions as live_session_service
 
     participant_count = live_session_service.count_active_participants(db, live_session.id)
     return schemas.LiveSessionOut(
@@ -2720,7 +2720,7 @@ def _ensure_weekly_quests_for_user(
     db: Session, user_id: UUID, current_time: datetime
 ) -> list[UserWeeklyQuest]:
     """Ensure user has all active recurring weekly quests assigned for the current week."""
-    from .services.weekly_quests import ensure_weekly_quests_for_user
+    from ..services.weekly_quests import ensure_weekly_quests_for_user
 
     return ensure_weekly_quests_for_user(db, user_id, current_time)
 

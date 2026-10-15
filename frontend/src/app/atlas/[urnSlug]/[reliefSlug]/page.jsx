@@ -1,5 +1,6 @@
 import ReliefDetailClient from "./ReliefDetailClient";
 import { reliefThumbnailUrl, urnNameFromSlug } from "@/lib/history";
+import { safeJsonLd } from "@/lib/seo";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://lms.histolab.icu";
 
@@ -113,7 +114,7 @@ export default function ReliefPage({ params }) {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
       <ReliefDetailClient />
     </>

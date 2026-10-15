@@ -19,9 +19,7 @@ use uuid::Uuid;
 use crate::auth;
 use crate::config::Settings;
 use crate::error::AppError;
-use crate::models::user::{
-    OnboardingStatusResponse, StartingPathResponse, UpdateProfileEnvelope,
-};
+use crate::models::user::{OnboardingStatusResponse, StartingPathResponse, UpdateProfileEnvelope};
 use crate::routes::auth::AuthState;
 use crate::services::user_service;
 
@@ -108,8 +106,14 @@ fn require_pool(pool: &Option<PgPool>) -> Result<&PgPool, AppError> {
 /// Extract and verify the authenticated user ID from headers.
 fn authenticate(headers: &HeaderMap, settings: &Settings) -> Result<Uuid, AppError> {
     let token = extract_token_from_headers(headers).ok_or(AppError::Unauthorized)?;
-    let claims = auth::verify_access_token(&token, &settings.jwt_secret_key, settings.jwt_validate_new_claims, &settings.jwt_issuer, &settings.jwt_audience)
-        .map_err(|_| AppError::Unauthorized)?;
+    let claims = auth::verify_access_token(
+        &token,
+        &settings.jwt_secret_key,
+        settings.jwt_validate_new_claims,
+        &settings.jwt_issuer,
+        &settings.jwt_audience,
+    )
+    .map_err(|_| AppError::Unauthorized)?;
     let user_id: Uuid = claims.sub.parse().map_err(|_| AppError::Unauthorized)?;
     Ok(user_id)
 }
@@ -184,13 +188,9 @@ pub async fn set_starting_path(
     let user_id = authenticate(&headers, &state.settings)?;
     let pool = require_pool(&state.pool)?;
 
-    let (urn_id, urn_slug) = user_service::set_starting_path(
-        pool,
-        user_id,
-        payload.urn_id,
-        payload.urn_slug.as_deref(),
-    )
-    .await?;
+    let (urn_id, urn_slug) =
+        user_service::set_starting_path(pool, user_id, payload.urn_id, payload.urn_slug.as_deref())
+            .await?;
 
     Ok(Json(StartingPathResponse {
         starting_urn_id: urn_id.to_string(),
@@ -224,8 +224,7 @@ pub async fn get_onboarding_status(
     let user_id = authenticate(&headers, &state.settings)?;
     let pool = require_pool(&state.pool)?;
 
-    let (completed, goal, completed_at) =
-        user_service::get_onboarding(pool, user_id).await?;
+    let (completed, goal, completed_at) = user_service::get_onboarding(pool, user_id).await?;
 
     Ok(Json(OnboardingStatusResponse {
         onboarding_completed: completed,
@@ -242,8 +241,7 @@ pub async fn complete_onboarding(
     let user_id = authenticate(&headers, &state.settings)?;
     let pool = require_pool(&state.pool)?;
 
-    let (completed, completed_at) =
-        user_service::complete_onboarding(pool, user_id).await?;
+    let (completed, completed_at) = user_service::complete_onboarding(pool, user_id).await?;
 
     let message = if completed_at.is_some() {
         "Onboarding completed successfully"
@@ -271,14 +269,10 @@ pub async fn upload_avatar(
     // Extract the file field from multipart
     let mut file_data: Option<(String, Vec<u8>)> = None;
 
-    while let Some(field) = multipart
-        .next_field()
-        .await
-        .map_err(|e| AppError::Http {
-            status: StatusCode::BAD_REQUEST,
-            message: format!("Invalid multipart data: {}", e),
-        })?
-    {
+    while let Some(field) = multipart.next_field().await.map_err(|e| AppError::Http {
+        status: StatusCode::BAD_REQUEST,
+        message: format!("Invalid multipart data: {}", e),
+    })? {
         let name = field.name().unwrap_or("").to_string();
         if name == "file" {
             let content_type = field
@@ -297,13 +291,10 @@ pub async fn upload_avatar(
             }
 
             // Read file data with size limit
-            let data = field
-                .bytes()
-                .await
-                .map_err(|e| AppError::Http {
-                    status: StatusCode::BAD_REQUEST,
-                    message: format!("Failed to read file: {}", e),
-                })?;
+            let data = field.bytes().await.map_err(|e| AppError::Http {
+                status: StatusCode::BAD_REQUEST,
+                message: format!("Failed to read file: {}", e),
+            })?;
 
             if data.len() > MAX_AVATAR_SIZE {
                 return Err(AppError::Domain {
@@ -367,8 +358,7 @@ pub async fn get_user_public_profile(
     let requester_id = authenticate(&headers, &state.settings)?;
     let pool = require_pool(&state.pool)?;
 
-    let row =
-        user_service::get_public_profile(pool, target_user_id, requester_id).await?;
+    let row = user_service::get_public_profile(pool, target_user_id, requester_id).await?;
 
     Ok(Json(row.into_public_response()))
 }
@@ -382,12 +372,7 @@ pub async fn get_user_by_identifier(
     let requester_id = authenticate(&headers, &state.settings)?;
     let pool = require_pool(&state.pool)?;
 
-    let row = user_service::resolve_user_by_id_or_username(
-        pool,
-        &identifier,
-        requester_id,
-    )
-    .await?;
+    let row = user_service::resolve_user_by_id_or_username(pool, &identifier, requester_id).await?;
 
     Ok(Json(row.into_public_response()))
 }
@@ -420,23 +405,11 @@ mod tests {
         let state = test_auth_state();
         Router::new()
             .route("/api/v1/users/me", patch(update_profile))
-            .route(
-                "/api/v1/users/me/change-password",
-                post(change_password),
-            )
-            .route(
-                "/api/v1/users/me/starting-path",
-                post(set_starting_path),
-            )
+            .route("/api/v1/users/me/change-password", post(change_password))
+            .route("/api/v1/users/me/starting-path", post(set_starting_path))
             .route("/api/v1/onboarding/goals", post(save_onboarding_goal))
-            .route(
-                "/api/v1/onboarding/status",
-                get(get_onboarding_status),
-            )
-            .route(
-                "/api/v1/onboarding/complete",
-                post(complete_onboarding),
-            )
+            .route("/api/v1/onboarding/status", get(get_onboarding_status))
+            .route("/api/v1/onboarding/complete", post(complete_onboarding))
             .route("/api/v1/users/me/avatar", post(upload_avatar))
             .route(
                 "/api/v1/users/:user_id/public",
@@ -539,10 +512,7 @@ mod tests {
                 Request::builder()
                     .method("POST")
                     .uri("/api/v1/users/me/avatar")
-                    .header(
-                        "content-type",
-                        "multipart/form-data; boundary=boundary123",
-                    )
+                    .header("content-type", "multipart/form-data; boundary=boundary123")
                     .body(Body::from(
                         "--boundary123\r\n\
                          Content-Disposition: form-data; name=\"file\"; filename=\"test.png\"\r\n\

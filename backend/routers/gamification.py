@@ -1900,7 +1900,7 @@ def record_content_interaction(
     - Likes: Content user has favorited
     - Saves: Content user has bookmarked
     """
-    from .models import InteractionType
+    from ..models import InteractionType
     from ..services.recommendations import record_interaction
 
     # Convert string to enum
@@ -1940,7 +1940,7 @@ def submit_recommendation_feedback(
     - irrelevant: Recommendation was not relevant
     - already_seen: User has already seen this content
     """
-    from .models import InteractionType
+    from ..models import InteractionType
     from ..services.recommendations import record_interaction
 
     # Store feedback as metadata in interaction

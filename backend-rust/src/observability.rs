@@ -4,17 +4,14 @@
 //! field set `request_id, method, path, status, latency_ms, mode`.
 //! Build a `request_id` layer that reads or mints `X-Request-Id`.
 
-use axum::{
-    extract::Request,
-    http::HeaderValue,
-    middleware::Next,
-    response::Response,
-};
+use axum::{extract::Request, http::HeaderValue, middleware::Next, response::Response};
 use std::sync::atomic::Ordering;
 use std::time::Instant;
 use uuid::Uuid;
 
-use crate::routes::metrics::{ERROR_COUNT, GATEWAY_COUNT, LATENCY_SUM_MS, NATIVE_COUNT, REQUEST_COUNT};
+use crate::routes::metrics::{
+    ERROR_COUNT, GATEWAY_COUNT, LATENCY_SUM_MS, NATIVE_COUNT, REQUEST_COUNT,
+};
 
 /// Header name for the request identifier.
 pub const REQUEST_ID_HEADER: &str = "x-request-id";
@@ -97,8 +94,12 @@ pub async fn request_id_and_logging(mut req: Request, next: Next) -> Response {
     REQUEST_COUNT.fetch_add(1, Ordering::Relaxed);
     LATENCY_SUM_MS.fetch_add(latency_ms, Ordering::Relaxed);
     match mode {
-        "gateway" => { GATEWAY_COUNT.fetch_add(1, Ordering::Relaxed); }
-        _ => { NATIVE_COUNT.fetch_add(1, Ordering::Relaxed); }
+        "gateway" => {
+            GATEWAY_COUNT.fetch_add(1, Ordering::Relaxed);
+        }
+        _ => {
+            NATIVE_COUNT.fetch_add(1, Ordering::Relaxed);
+        }
     }
 
     // Add request_id to response headers

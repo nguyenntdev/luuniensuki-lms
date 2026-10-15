@@ -36,8 +36,7 @@ pub enum AppError {
     #[error("unauthorized")]
     Unauthorized,
 
-    /// 502 — upstream Python API unreachable (Req 3.5).
-    /// Uses FastAPI's `{"detail": ...}` shape intentionally.
+    /// 502 — upstream service unreachable.
     #[error("upstream unavailable")]
     UpstreamUnavailable,
 
@@ -96,20 +95,20 @@ impl IntoResponse for AppError {
                     }
                 });
                 let mut resp = (StatusCode::UNAUTHORIZED, Json(body)).into_response();
-                resp.headers_mut().insert(
-                    "www-authenticate",
-                    HeaderValue::from_static("Bearer"),
-                );
+                resp.headers_mut()
+                    .insert("www-authenticate", HeaderValue::from_static("Bearer"));
                 resp
             }
 
             AppError::UpstreamUnavailable => {
-                let body = r#"{"detail":"upstream unavailable"}"#;
-                Response::builder()
-                    .status(StatusCode::BAD_GATEWAY)
-                    .header("content-type", "application/json")
-                    .body(axum::body::Body::from(body))
-                    .unwrap()
+                let body = json!({
+                    "error": {
+                        "code": "UPSTREAM_UNAVAILABLE",
+                        "message": "Upstream service unavailable",
+                        "details": {}
+                    }
+                });
+                (StatusCode::BAD_GATEWAY, Json(body)).into_response()
             }
 
             AppError::Internal(e) => {
@@ -137,10 +136,7 @@ mod tests {
         let resp = AppError::Unauthorized.into_response();
 
         assert_eq!(resp.status(), StatusCode::UNAUTHORIZED);
-        assert_eq!(
-            resp.headers().get("www-authenticate").unwrap(),
-            "Bearer"
-        );
+        assert_eq!(resp.headers().get("www-authenticate").unwrap(), "Bearer");
 
         let body = to_bytes(resp.into_body(), 4096).await.unwrap();
         let parsed: Value = serde_json::from_slice(&body).unwrap();
@@ -149,14 +145,16 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn upstream_unavailable_matches_fastapi_shape() {
+    async fn upstream_unavailable_returns_standard_envelope() {
         let resp = AppError::UpstreamUnavailable.into_response();
 
         assert_eq!(resp.status(), StatusCode::BAD_GATEWAY);
 
         let body = to_bytes(resp.into_body(), 4096).await.unwrap();
         let parsed: Value = serde_json::from_slice(&body).unwrap();
-        assert_eq!(parsed["detail"], "upstream unavailable");
+        assert_eq!(parsed["error"]["code"], "UPSTREAM_UNAVAILABLE");
+        assert_eq!(parsed["error"]["message"], "Upstream service unavailable");
+        assert_eq!(parsed["error"]["details"], json!({}));
     }
 
     #[tokio::test]

@@ -7,12 +7,18 @@ import backend.routers.gamification as gamification_module
 from backend.models import (
     ContentFlag,
     ContentProvenance,
+    ContentTag,
+    Quest,
     QuizAttempt,
+    Tag,
+    TagType,
     UnlockStatus,
     User,
+    UserContentInteraction,
     UserProgress,
     UserRole,
 )
+from backend.services.recommendations import get_similar_content
 
 
 def _register_user(client, email="reco@example.com"):
@@ -139,3 +145,83 @@ def test_content_flag_create_and_list(client, db_session, seeded_content):
     assert res.status_code == 200, res.text
     items = res.json()
     assert any(item["id"] == str(flag_id) for item in items)
+
+
+def test_record_interaction_endpoint(client, db_session, seeded_content):
+    _register_user(client, "interactor@example.com")
+    motif = seeded_content["motif"]
+
+    res = client.post(
+        "/api/v1/recommendations/interaction",
+        json={
+            "content_type": "motif",
+            "content_id": str(motif.id),
+            "interaction_type": "view",
+            "duration_seconds": 30,
+            "metadata": {"source": "test"},
+        },
+    )
+    assert res.status_code == 200, res.text
+    payload = res.json()
+    assert payload["success"] is True
+    assert "interaction_id" in payload
+
+    interaction_id = UUID(payload["interaction_id"])
+    interaction = db_session.execute(
+        select(UserContentInteraction).where(UserContentInteraction.id == interaction_id)
+    ).scalar_one_or_none()
+    assert interaction is not None
+    assert interaction.content_type == "motif"
+
+
+def test_recommendation_feedback_endpoint(client, db_session, seeded_content):
+    _register_user(client, "feedbacker@example.com")
+    motif = seeded_content["motif"]
+
+    res = client.post(
+        "/api/v1/recommendations/feedback",
+        json={
+            "content_type": "motif",
+            "content_id": str(motif.id),
+            "feedback_type": "helpful",
+            "metadata": {"page": "explore"},
+        },
+    )
+    assert res.status_code == 200, res.text
+    payload = res.json()
+    assert payload["success"] is True
+
+
+def test_quest_content_based_recommendation_title(db_session, seeded_content):
+    motif = seeded_content["motif"]
+    user = db_session.execute(select(User)).scalars().first()
+
+    tag = Tag(name="heritage_test", slug="heritage-test", tag_type=TagType.topic)
+    db_session.add(tag)
+    db_session.flush()
+
+    quest = Quest(
+        slug="test-quest-slug",
+        name="Hành Trình Cửu Đỉnh",
+        description="Khám phá biểu tượng hoàng gia",
+        is_active=True,
+    )
+    db_session.add(quest)
+    db_session.flush()
+
+    db_session.add(ContentTag(content_type="motif", content_id=motif.id, tag_id=tag.id))
+    db_session.add(ContentTag(content_type="quest", content_id=quest.id, tag_id=tag.id))
+    db_session.commit()
+
+    recs = get_similar_content(
+        db=db_session,
+        content_type="motif",
+        content_id=motif.id,
+        user=user,
+        limit=5,
+    )
+    quest_recs = [r for r in recs if r["content_type"] == "quest"]
+    assert len(quest_recs) == 1
+    assert quest_recs[0]["title"] == "Hành Trình Cửu Đỉnh"
+    assert quest_recs[0]["content_id"] == str(quest.id)
+

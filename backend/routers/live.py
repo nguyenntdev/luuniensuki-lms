@@ -587,7 +587,7 @@ def demo_live_enter(
         expires_delta=timedelta(minutes=settings.access_token_expire_minutes),
         issuer=settings.jwt_issuer,
         audience=settings.jwt_audience,
-        extra_claims={"type": "access"},
+        extra_claims={"type": "access", "role": user.role.value},
     )
     refresh_token = create_jwt_token(
         subject=str(user.id),
@@ -596,7 +596,7 @@ def demo_live_enter(
         expires_delta=timedelta(days=settings.refresh_token_expire_days),
         issuer=settings.jwt_issuer,
         audience=settings.jwt_audience,
-        extra_claims={"type": "refresh"},
+        extra_claims={"type": "refresh", "role": user.role.value},
     )
 
     response = RedirectResponse(
@@ -1178,10 +1178,19 @@ async def livekit_webhook_receiver(
 ) -> dict[str, Any]:
     from ..services import live_sessions as live_session_service
 
-    if settings.livekit_webhook_secret and (
-        x_livekit_webhook_secret != settings.livekit_webhook_secret
-    ):
-        raise HTTPException(status_code=401, detail="Invalid webhook secret")
+    expected_secret = str(settings.livekit_webhook_secret or "").strip()
+    if not expected_secret:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Webhook secret is not configured",
+        )
+
+    provided_secret = str(x_livekit_webhook_secret or "").strip()
+    if not provided_secret or not secrets.compare_digest(provided_secret, expected_secret):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid webhook secret",
+        )
 
     try:
         payload = await request.json()
@@ -1284,16 +1293,29 @@ async def live_ai_teacher_stt(
     if not live_session_service.is_ai_enabled(live_session):
         raise HTTPException(status_code=423, detail="AI teacher is disabled by host")
 
-    content = await file.read()
-    await file.close()
+    max_audio_bytes = int(settings.voice_max_audio_bytes or 0)
+    chunk_size = 64 * 1024
+    chunks: list[bytes] = []
+    total_read = 0
+
+    try:
+        while True:
+            chunk = await file.read(chunk_size)
+            if not chunk:
+                break
+            total_read += len(chunk)
+            if max_audio_bytes > 0 and total_read > max_audio_bytes:
+                raise HTTPException(
+                    status_code=413,
+                    detail="Audio file is too large",
+                )
+            chunks.append(chunk)
+    finally:
+        await file.close()
+
+    content = b"".join(chunks)
     if not content:
         raise HTTPException(status_code=400, detail="Audio file is empty")
-    max_audio_bytes = int(settings.voice_max_audio_bytes or 0)
-    if max_audio_bytes > 0 and len(content) > max_audio_bytes:
-        raise HTTPException(
-            status_code=413,
-            detail="Audio file is too large",
-        )
 
     estimated_seconds = max(0.5, len(content) / 32000.0)
     projected_cost = live_reporting_service.estimate_stt_cost_usd(audio_seconds=estimated_seconds)

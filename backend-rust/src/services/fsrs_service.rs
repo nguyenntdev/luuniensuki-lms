@@ -13,8 +13,7 @@ use uuid::Uuid;
 
 use crate::error::AppError;
 use crate::models::fsrs::{
-    CardState, DueCardOut, DueReviewsResponse, FsrsRating, FsrsSettingsResponse,
-    RateCardResponse,
+    CardState, DueCardOut, DueReviewsResponse, FsrsRating, FsrsSettingsResponse, RateCardResponse,
 };
 use crate::services::cohort_service::assign_cohort;
 use crate::services::fsrs_algo::{schedule, DEFAULT_W};
@@ -32,9 +31,16 @@ pub async fn get_due_cards(
     let page_size = page_size.clamp(1, 100);
     let offset = ((page - 1) * page_size) as i64;
 
-    let rows: Vec<(Uuid, Uuid, Option<String>, Option<f64>, Option<f64>, Option<DateTime<Utc>>, Option<String>)> =
-        sqlx::query_as(
-            r#"
+    let rows: Vec<(
+        Uuid,
+        Uuid,
+        Option<String>,
+        Option<f64>,
+        Option<f64>,
+        Option<DateTime<Utc>>,
+        Option<String>,
+    )> = sqlx::query_as(
+        r#"
             SELECT c.id,
                    c.motif_id,
                    m.name AS motif_name,
@@ -49,13 +55,13 @@ pub async fn get_due_cards(
             ORDER BY COALESCE(c.fsrs_due_date, c.next_review_at) ASC
             LIMIT $2 OFFSET $3
             "#,
-        )
-        .bind(user_id)
-        .bind(page_size as i64)
-        .bind(offset)
-        .fetch_all(pool)
-        .await
-        .map_err(|e| AppError::Internal(e.into()))?;
+    )
+    .bind(user_id)
+    .bind(page_size as i64)
+    .bind(offset)
+    .fetch_all(pool)
+    .await
+    .map_err(|e| AppError::Internal(e.into()))?;
 
     let total: i64 = sqlx::query_scalar::<_, i64>(
         "SELECT COUNT(*)::bigint FROM spaced_repetition_cards \
@@ -113,14 +119,13 @@ pub async fn rate_card(
     .await
     .map_err(|e| AppError::Internal(e.into()))?;
 
-    let (owner_id, state_str, difficulty, stability, _due, last_review) = row.ok_or_else(|| {
-        AppError::Domain {
+    let (owner_id, state_str, difficulty, stability, _due, last_review) =
+        row.ok_or_else(|| AppError::Domain {
             status: StatusCode::NOT_FOUND,
             code: "CARD_NOT_FOUND".to_string(),
             message: "Review card not found".to_string(),
             details: json!({}),
-        }
-    })?;
+        })?;
 
     if owner_id != user_id {
         return Err(AppError::Domain {
@@ -145,7 +150,15 @@ pub async fn rate_card(
         Some(t) => (now - t).num_seconds() as f64 / 86_400.0,
         None => 0.0,
     };
-    let result = schedule(state, difficulty, stability, delta_t, rating, &params, optimal_retention);
+    let result = schedule(
+        state,
+        difficulty,
+        stability,
+        delta_t,
+        rating,
+        &params,
+        optimal_retention,
+    );
 
     // 4. Persist state.
     let due_date = now + Duration::seconds((result.interval_days * 86_400.0) as i64);
@@ -184,13 +197,16 @@ pub async fn rate_card(
         "#,
     )
     .bind(user_id)
-    .bind(json!({
-        "card_id": card_id,
-        "rating": rating.as_str(),
-        "cohort": cohort.name(),
-        "stability": result.stability,
-        "difficulty": result.difficulty,
-    }).to_string())
+    .bind(
+        json!({
+            "card_id": card_id,
+            "rating": rating.as_str(),
+            "cohort": cohort.name(),
+            "stability": result.stability,
+            "difficulty": result.difficulty,
+        })
+        .to_string(),
+    )
     .execute(pool)
     .await
     {
@@ -202,8 +218,7 @@ pub async fn rate_card(
         );
     }
 
-    crate::routes::metrics::FSRS_REVIEWS_TOTAL
-        .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+    crate::routes::metrics::FSRS_REVIEWS_TOTAL.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
 
     Ok(RateCardResponse {
         card_id,
@@ -217,10 +232,7 @@ pub async fn rate_card(
 }
 
 /// `GET /api/v1/users/me/fsrs-settings`
-pub async fn get_settings(
-    pool: &PgPool,
-    user_id: Uuid,
-) -> Result<FsrsSettingsResponse, AppError> {
+pub async fn get_settings(pool: &PgPool, user_id: Uuid) -> Result<FsrsSettingsResponse, AppError> {
     let cohort = assign_cohort(&user_id);
 
     let row: Option<(Vec<f64>, f64, Option<DateTime<Utc>>)> = sqlx::query_as(
@@ -292,10 +304,7 @@ pub async fn update_settings(
 }
 
 /// Load weights + retention for a user, falling back to cohort defaults.
-async fn load_params(
-    pool: &PgPool,
-    user_id: Uuid,
-) -> Result<([f64; 21], f64), AppError> {
+async fn load_params(pool: &PgPool, user_id: Uuid) -> Result<([f64; 21], f64), AppError> {
     let row: Option<(Vec<f64>, f64)> = sqlx::query_as(
         "SELECT parameters, optimal_retention FROM user_fsrs_params WHERE user_id = $1",
     )

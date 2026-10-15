@@ -56,7 +56,7 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 60
     refresh_token_expire_days: int = 30
     password_reset_token_expire_minutes: int = 30
-    password_reset_return_token: bool = True
+    password_reset_return_token: bool = False
 
     # Cookie settings for JWT tokens
     access_cookie_name: str = "luuniensuki_access"
@@ -309,6 +309,9 @@ class Settings(BaseSettings):
 
             if self.cors_allow_credentials and "*" in self.cors_origins_list:
                 problems.append("CORS_ORIGINS (wildcard with credentials)")
+
+            if self.password_reset_return_token:
+                problems.append("PASSWORD_RESET_RETURN_TOKEN")
 
             if problems:
                 raise RuntimeError(

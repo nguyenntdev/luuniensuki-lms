@@ -103,9 +103,8 @@ pub fn json_equivalent(
                 match act_map.get(key) {
                     Some(act_val) => {
                         // Recurse without ignore_fields (only top-level ignores)
-                        json_equivalent(exp_val, act_val, &[]).map_err(|e| {
-                            format!("field \"{}\": {}", key, e)
-                        })?;
+                        json_equivalent(exp_val, act_val, &[])
+                            .map_err(|e| format!("field \"{}\": {}", key, e))?;
                     }
                     None => {
                         return Err(format!("missing field \"{}\" in actual response", key));
@@ -141,7 +140,10 @@ pub fn json_equivalent(
             if expected == actual {
                 Ok(())
             } else {
-                Err(format!("value mismatch: expected {:?}, got {:?}", expected, actual))
+                Err(format!(
+                    "value mismatch: expected {:?}, got {:?}",
+                    expected, actual
+                ))
             }
         }
     }
@@ -175,9 +177,8 @@ pub fn assert_contract_equivalence(
     // 3. JSON structural equality modulo ignore_fields (Req 4.3)
     match (&fixture.expected.body, actual_body) {
         (Some(expected_body), Some(actual_body)) => {
-            json_equivalent(expected_body, actual_body, ignore_fields).map_err(|e| {
-                format!("[{}] Body mismatch: {}", fixture.name, e)
-            })?;
+            json_equivalent(expected_body, actual_body, ignore_fields)
+                .map_err(|e| format!("[{}] Body mismatch: {}", fixture.name, e))?;
         }
         (None, None) => {}
         (Some(_), None) => {

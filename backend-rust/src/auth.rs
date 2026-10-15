@@ -24,6 +24,7 @@ pub struct Claims {
     /// Expiry timestamp (unix seconds).
     pub exp: i64,
     /// User role: "user", "admin", "teacher".
+    #[serde(default)]
     pub role: String,
     /// Token type: "access" or "refresh".
     #[serde(rename = "type")]
@@ -266,11 +267,17 @@ mod tests {
 
     #[test]
     fn issue_and_verify_access_token_roundtrip() {
-        let token =
-            issue_access_token("user-123", "admin", TEST_SECRET, 60, TEST_ISSUER, TEST_AUDIENCE)
-                .unwrap();
-        let claims = verify_access_token(&token, TEST_SECRET, false, TEST_ISSUER, TEST_AUDIENCE)
-            .unwrap();
+        let token = issue_access_token(
+            "user-123",
+            "admin",
+            TEST_SECRET,
+            60,
+            TEST_ISSUER,
+            TEST_AUDIENCE,
+        )
+        .unwrap();
+        let claims =
+            verify_access_token(&token, TEST_SECRET, false, TEST_ISSUER, TEST_AUDIENCE).unwrap();
 
         assert_eq!(claims.sub, "user-123");
         assert_eq!(claims.role, "admin");
@@ -284,11 +291,17 @@ mod tests {
 
     #[test]
     fn issue_and_verify_refresh_token_roundtrip() {
-        let token =
-            issue_refresh_token("user-456", "teacher", TEST_SECRET, 7, TEST_ISSUER, TEST_AUDIENCE)
-                .unwrap();
-        let claims = verify_refresh_token(&token, TEST_SECRET, false, TEST_ISSUER, TEST_AUDIENCE)
-            .unwrap();
+        let token = issue_refresh_token(
+            "user-456",
+            "teacher",
+            TEST_SECRET,
+            7,
+            TEST_ISSUER,
+            TEST_AUDIENCE,
+        )
+        .unwrap();
+        let claims =
+            verify_refresh_token(&token, TEST_SECRET, false, TEST_ISSUER, TEST_AUDIENCE).unwrap();
 
         assert_eq!(claims.sub, "user-456");
         assert_eq!(claims.role, "teacher");
@@ -376,8 +389,40 @@ mod tests {
     }
 
     #[test]
+    fn verify_access_token_defaults_missing_role_to_empty_string() {
+        let now = Utc::now().timestamp();
+        let claims = serde_json::json!({
+            "sub": "user-no-role",
+            "iat": now,
+            "exp": now + 3600,
+            "type": "access",
+            "iss": TEST_ISSUER,
+            "aud": TEST_AUDIENCE,
+            "jti": Uuid::new_v4().to_string(),
+        });
+        let token = encode(
+            &Header::default(),
+            &claims,
+            &EncodingKey::from_secret(TEST_SECRET.as_bytes()),
+        )
+        .unwrap();
+
+        let decoded = verify_access_token(&token, TEST_SECRET, false, TEST_ISSUER, TEST_AUDIENCE)
+            .expect("token without role claim should deserialize successfully");
+        assert_eq!(decoded.role, "");
+    }
+
+    #[test]
     fn verify_access_token_rejects_refresh_token() {
-        let token = issue_refresh_token("user-111", "user", TEST_SECRET, 7, TEST_ISSUER, TEST_AUDIENCE).unwrap();
+        let token = issue_refresh_token(
+            "user-111",
+            "user",
+            TEST_SECRET,
+            7,
+            TEST_ISSUER,
+            TEST_AUDIENCE,
+        )
+        .unwrap();
         let result = verify_access_token(&token, TEST_SECRET, false, TEST_ISSUER, TEST_AUDIENCE);
         assert!(result.is_err());
         match result.unwrap_err() {
@@ -391,7 +436,15 @@ mod tests {
 
     #[test]
     fn verify_refresh_token_rejects_access_token() {
-        let token = issue_access_token("user-222", "user", TEST_SECRET, 60, TEST_ISSUER, TEST_AUDIENCE).unwrap();
+        let token = issue_access_token(
+            "user-222",
+            "user",
+            TEST_SECRET,
+            60,
+            TEST_ISSUER,
+            TEST_AUDIENCE,
+        )
+        .unwrap();
         let result = verify_refresh_token(&token, TEST_SECRET, false, TEST_ISSUER, TEST_AUDIENCE);
         assert!(result.is_err());
         match result.unwrap_err() {
@@ -405,7 +458,15 @@ mod tests {
 
     #[test]
     fn verify_access_token_rejects_wrong_secret() {
-        let token = issue_access_token("user-333", "user", TEST_SECRET, 60, TEST_ISSUER, TEST_AUDIENCE).unwrap();
+        let token = issue_access_token(
+            "user-333",
+            "user",
+            TEST_SECRET,
+            60,
+            TEST_ISSUER,
+            TEST_AUDIENCE,
+        )
+        .unwrap();
         let result = verify_access_token(&token, "wrong-secret", false, TEST_ISSUER, TEST_AUDIENCE);
         assert!(result.is_err());
     }
@@ -414,20 +475,37 @@ mod tests {
     fn verify_access_token_validates_new_claims_when_enabled() {
         // With the transition flag ON, a token carrying the correct
         // `iss`/`aud` (as issued by `issue_access_token`) must pass.
-        let token =
-            issue_access_token("user-444", "user", TEST_SECRET, 60, TEST_ISSUER, TEST_AUDIENCE)
-                .unwrap();
+        let token = issue_access_token(
+            "user-444",
+            "user",
+            TEST_SECRET,
+            60,
+            TEST_ISSUER,
+            TEST_AUDIENCE,
+        )
+        .unwrap();
         let claims =
             verify_access_token(&token, TEST_SECRET, true, TEST_ISSUER, TEST_AUDIENCE).unwrap();
         assert_eq!(claims.iss, TEST_ISSUER);
         assert_eq!(claims.aud, TEST_AUDIENCE);
 
         // A token with the wrong issuer must be rejected when enforcement is on.
-        let wrong_issuer_token =
-            issue_access_token("user-555", "user", TEST_SECRET, 60, "evil-issuer", TEST_AUDIENCE)
-                .unwrap();
-        let result =
-            verify_access_token(&wrong_issuer_token, TEST_SECRET, true, TEST_ISSUER, TEST_AUDIENCE);
+        let wrong_issuer_token = issue_access_token(
+            "user-555",
+            "user",
+            TEST_SECRET,
+            60,
+            "evil-issuer",
+            TEST_AUDIENCE,
+        )
+        .unwrap();
+        let result = verify_access_token(
+            &wrong_issuer_token,
+            TEST_SECRET,
+            true,
+            TEST_ISSUER,
+            TEST_AUDIENCE,
+        );
         assert!(
             result.is_err(),
             "token with mismatched issuer must be rejected when validate_new_claims is true"
@@ -587,9 +665,8 @@ mod tests {
         assert_eq!(claims_off.sub, "python-contract-user");
         assert_eq!(claims_off.token_type, "access");
 
-        let claims_on =
-            verify_access_token(&token, TEST_SECRET, true, TEST_ISSUER, TEST_AUDIENCE)
-                .expect("peer-issued token must be accepted with new-claim enforcement on");
+        let claims_on = verify_access_token(&token, TEST_SECRET, true, TEST_ISSUER, TEST_AUDIENCE)
+            .expect("peer-issued token must be accepted with new-claim enforcement on");
         assert_eq!(claims_on.iss, TEST_ISSUER);
         assert_eq!(claims_on.aud, TEST_AUDIENCE);
     }
@@ -608,13 +685,25 @@ mod tests {
         )
         .unwrap();
         assert!(
-            verify_access_token(&wrong_key_token, TEST_SECRET, false, TEST_ISSUER, TEST_AUDIENCE)
-                .is_err(),
+            verify_access_token(
+                &wrong_key_token,
+                TEST_SECRET,
+                false,
+                TEST_ISSUER,
+                TEST_AUDIENCE
+            )
+            .is_err(),
             "wrong-key peer token must be rejected (transition flag off)"
         );
         assert!(
-            verify_access_token(&wrong_key_token, TEST_SECRET, true, TEST_ISSUER, TEST_AUDIENCE)
-                .is_err(),
+            verify_access_token(
+                &wrong_key_token,
+                TEST_SECRET,
+                true,
+                TEST_ISSUER,
+                TEST_AUDIENCE
+            )
+            .is_err(),
             "wrong-key peer token must be rejected (new-claim enforcement on)"
         );
 
@@ -630,13 +719,25 @@ mod tests {
         )
         .unwrap();
         assert!(
-            verify_access_token(&expired_token, TEST_SECRET, false, TEST_ISSUER, TEST_AUDIENCE)
-                .is_err(),
+            verify_access_token(
+                &expired_token,
+                TEST_SECRET,
+                false,
+                TEST_ISSUER,
+                TEST_AUDIENCE
+            )
+            .is_err(),
             "past-exp peer token must be rejected (transition flag off)"
         );
         assert!(
-            verify_access_token(&expired_token, TEST_SECRET, true, TEST_ISSUER, TEST_AUDIENCE)
-                .is_err(),
+            verify_access_token(
+                &expired_token,
+                TEST_SECRET,
+                true,
+                TEST_ISSUER,
+                TEST_AUDIENCE
+            )
+            .is_err(),
             "past-exp peer token must be rejected (new-claim enforcement on)"
         );
     }
@@ -647,9 +748,7 @@ mod tests {
         let hash = hash_password(password).unwrap();
 
         // Hash should start with bcrypt prefix
-        assert!(
-            hash.starts_with("$2b$") || hash.starts_with("$2a$") || hash.starts_with("$2y$")
-        );
+        assert!(hash.starts_with("$2b$") || hash.starts_with("$2a$") || hash.starts_with("$2y$"));
 
         // Correct password verifies
         assert!(verify_password(password, &hash).unwrap());

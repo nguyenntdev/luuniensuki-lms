@@ -43,6 +43,7 @@ _RELEVANT_ENV_VARS = (
     "JWT_SECRET_KEY",
     "CORS_ORIGINS",
     "CORS_ALLOW_CREDENTIALS",
+    "PASSWORD_RESET_RETURN_TOKEN",
 )
 
 # A realistic, non-sentinel secret used for the "valid secrets" cases. Defined
@@ -130,6 +131,23 @@ def test_production_wildcard_with_credentials_rejected(
         )
 
     assert "CORS_ORIGINS" in str(exc_info.value)
+
+
+def test_production_password_reset_return_token_rejected(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Returning reset token in production must be refused at startup."""
+    with pytest.raises(RuntimeError) as exc_info:
+        _make_settings(
+            monkeypatch,
+            environment="production",
+            jwt_secret_key=STRONG_SECRET,
+            cors_origins="https://app.example.com",
+            cors_allow_credentials=True,
+            password_reset_return_token=True,
+        )
+
+    assert "PASSWORD_RESET_RETURN_TOKEN" in str(exc_info.value)
 
 
 def test_development_permits_sentinel_secrets(

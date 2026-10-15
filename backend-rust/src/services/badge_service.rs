@@ -222,7 +222,10 @@ pub async fn start_quest(
 }
 
 /// GET /api/v1/users/me/quest-summary — quest summary.
-pub async fn get_quest_summary(pool: &PgPool, user_id: Uuid) -> Result<QuestSummaryResponse, AppError> {
+pub async fn get_quest_summary(
+    pool: &PgPool,
+    user_id: Uuid,
+) -> Result<QuestSummaryResponse, AppError> {
     let stats: Option<(i64, i64, i64)> = sqlx::query_as(
         r#"
         SELECT
@@ -287,7 +290,10 @@ pub async fn get_weekly_quests(pool: &PgPool, _user_id: Uuid) -> Result<Vec<Ques
 }
 
 /// GET /api/v1/missions/daily — daily missions.
-pub async fn get_daily_missions(pool: &PgPool, user_id: Uuid) -> Result<DailyMissionsResponse, AppError> {
+pub async fn get_daily_missions(
+    pool: &PgPool,
+    user_id: Uuid,
+) -> Result<DailyMissionsResponse, AppError> {
     let rows = sqlx::query_as::<_, DailyMissionRow>(
         r#"
         SELECT dm.id, dm.name AS title, dm.description, dm.mission_type::text AS mission_type,

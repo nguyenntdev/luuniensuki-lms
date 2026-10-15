@@ -29,7 +29,7 @@ echo "Checking ledger sync..."
 
 # Get routes that are set to "native" in route-modes.toml
 # Format in TOML: "METHOD /path" = "native"
-NATIVE_ROUTES=$(grep -E '=\s*"native"' "$ROUTE_MODES" \
+NATIVE_ROUTES=$(grep -E '^\s*"[A-Z]+\s+[^"]+"\s*=\s*"native"' "$ROUTE_MODES" \
     | sed -E 's/^\s*"([^"]+)"\s*=.*/\1/' \
     | sort -u 2>/dev/null || true)
 

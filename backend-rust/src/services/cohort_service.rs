@@ -67,7 +67,6 @@ mod tests {
     }
 }
 
-
 #[cfg(test)]
 mod property_tests {
     //! Loop-based property tests for cohort assignment.

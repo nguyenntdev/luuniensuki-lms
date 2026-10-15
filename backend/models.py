@@ -2379,6 +2379,7 @@ class UserDailyMission(Base):
         Index("idx_user_daily_missions_mission", "mission_id"),
         Index("idx_user_daily_missions_date", "mission_date"),
         Index("idx_user_daily_missions_completed", "is_completed"),
+        Index("idx_user_daily_missions_user_date", "user_id", "mission_date"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -2580,6 +2581,7 @@ class UserWeeklyQuest(Base):
         Index("idx_user_weekly_quests_quest", "quest_id"),
         Index("idx_user_weekly_quests_week", "week_start_date"),
         Index("idx_user_weekly_quests_completed", "is_completed"),
+        Index("idx_user_weekly_quests_user_week", "user_id", "week_start_date"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(

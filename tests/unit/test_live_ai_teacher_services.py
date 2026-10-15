@@ -1,19 +1,27 @@
 from __future__ import annotations
 
+import io
 import sys
+import uuid
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+from fastapi import HTTPException, UploadFile
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO_ROOT))
 
 from backend.config import settings
+from backend.models import LiveEvent, LiveSession, User
+from backend.routers import live
 from backend.services import live_ai_teacher
 from backend.services import live_observability
 from backend.services import live_session_reporting
 from backend.services import live_voice
+from services.ai_teacher_agent import realtime_worker
 
 
 def test_grade_level_normalization_aliases() -> None:
@@ -180,3 +188,232 @@ def test_tts_combines_errors_when_all_providers_fail(monkeypatch: pytest.MonkeyP
 
     with pytest.raises(RuntimeError, match="Primary provider down"):
         live_voice.synthesize_speech_bytes(text="Xin chao")
+
+
+def test_voice_api_key_does_not_leak_deepseek_key_to_third_party(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(settings, "deepseek_api_key", "sk-deepseek-secret")
+    monkeypatch.setattr(settings, "deepseek_base_url", "https://api.yescale.vip/v1")
+    monkeypatch.setattr(settings, "voice_api_key", None)
+    monkeypatch.setattr(settings, "voice_base_url", "https://api.openai.com/v1")
+
+    # Should NOT return the deepseek key because voice_base_url is a third-party host
+    assert live_voice._voice_api_key() is None
+
+
+def test_voice_api_key_returns_explicit_voice_key(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(settings, "deepseek_api_key", "sk-deepseek-secret")
+    monkeypatch.setattr(settings, "voice_api_key", "sk-voice-secret")
+    monkeypatch.setattr(settings, "voice_base_url", "https://api.openai.com/v1")
+
+    assert live_voice._voice_api_key() == "sk-voice-secret"
+
+
+def test_voice_api_key_allows_deepseek_key_for_same_base_url(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(settings, "deepseek_api_key", "sk-deepseek-secret")
+    monkeypatch.setattr(settings, "deepseek_base_url", "https://api.yescale.vip/v1")
+    monkeypatch.setattr(settings, "voice_api_key", None)
+    monkeypatch.setattr(settings, "voice_base_url", None)
+
+    assert live_voice._voice_api_key() == "sk-deepseek-secret"
+
+    monkeypatch.setattr(settings, "voice_base_url", "https://api.yescale.vip")
+    assert live_voice._voice_api_key() == "sk-deepseek-secret"
+
+
+@pytest.mark.asyncio
+async def test_livekit_webhook_fails_closed_when_secret_unconfigured(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(settings, "livekit_webhook_secret", None)
+    req = AsyncMock()
+
+    with pytest.raises(HTTPException) as exc_info:
+        await live.livekit_webhook_receiver(
+            request=req,
+            x_livekit_webhook_secret="any-secret",
+            db=MagicMock(),
+        )
+    assert exc_info.value.status_code == 401
+    assert "not configured" in exc_info.value.detail
+
+
+@pytest.mark.asyncio
+async def test_livekit_webhook_rejects_invalid_secret(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(settings, "livekit_webhook_secret", "secret-webhook-key")
+    req = AsyncMock()
+
+    # Wrong secret
+    with pytest.raises(HTTPException) as exc_info:
+        await live.livekit_webhook_receiver(
+            request=req,
+            x_livekit_webhook_secret="wrong-secret",
+            db=MagicMock(),
+        )
+    assert exc_info.value.status_code == 401
+    assert "Invalid webhook secret" in exc_info.value.detail
+
+    # Missing secret header
+    with pytest.raises(HTTPException) as exc_info:
+        await live.livekit_webhook_receiver(
+            request=req,
+            x_livekit_webhook_secret=None,
+            db=MagicMock(),
+        )
+    assert exc_info.value.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_livekit_webhook_accepts_valid_secret(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(settings, "livekit_webhook_secret", "secret-webhook-key")
+    req = AsyncMock()
+    req.json = AsyncMock(
+        return_value={
+            "event": "participant_joined",
+            "room": {"name": "test-room"},
+            "participant": {"identity": "p1"},
+        }
+    )
+    mock_db = MagicMock()
+    mock_db.execute.return_value.scalar_one_or_none.return_value = None
+
+    res = await live.livekit_webhook_receiver(
+        request=req,
+        x_livekit_webhook_secret="secret-webhook-key",
+        db=mock_db,
+    )
+    assert res.get("ok") is True
+
+
+@pytest.mark.asyncio
+async def test_live_ai_teacher_stt_chunked_streaming_bounds_rejects_oversized_audio(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(settings, "voice_max_audio_bytes", 100)
+    mock_db = MagicMock()
+    mock_session = LiveSession(
+        id=uuid.uuid4(),
+        title="Test Session",
+        room_name="room-1",
+        status="live",
+        session_metadata={"ai_enabled": True},
+    )
+    mock_user = User(id=uuid.uuid4(), email="student@test.com")
+    mock_db.get.return_value = mock_session
+    mock_db.execute.return_value.scalar_one_or_none.return_value = None
+
+    # Oversized payload
+    large_data = b"a" * 200
+    upload_file = UploadFile(file=io.BytesIO(large_data), filename="audio.webm")
+
+    with patch("backend.services.live_sessions.ensure_user_can_access_live_session", return_value=None), \
+         patch("backend.services.live_sessions.is_ai_enabled", return_value=True):
+        with pytest.raises(HTTPException) as exc_info:
+            await live.live_ai_teacher_stt(
+                live_session_id=mock_session.id,
+                file=upload_file,
+                current_user=mock_user,
+                db=mock_db,
+            )
+        assert exc_info.value.status_code == 413
+        assert "too large" in exc_info.value.detail
+
+
+def test_realtime_worker_claim_voice_request_atomicity_and_protection() -> None:
+    event_id = uuid.uuid4()
+    event = LiveEvent(id=event_id, payload={"text": "Hello AI Teacher"})
+
+    class MockClaimDB:
+        def __init__(self, target_event: LiveEvent):
+            self.target_event = target_event
+            self.locked_by_other = False
+            self.committed = 0
+
+        def execute(self, stmt):
+            class Result:
+                def __init__(self, item):
+                    self.item = item
+                def scalar_one_or_none(self):
+                    return self.item
+            if self.locked_by_other:
+                return Result(None)
+            return Result(self.target_event)
+
+        def get(self, model, eid):
+            return self.target_event if self.target_event.id == eid else None
+
+        def commit(self):
+            self.committed += 1
+
+        def rollback(self):
+            pass
+
+    db = MockClaimDB(event)
+
+    # First worker claims the event
+    first_claim = realtime_worker._claim_voice_request(db, event_id)
+    assert first_claim is True
+    assert event.payload.get("_ai_worker_claimed") is True
+    assert event.payload.get("_ai_worker_status") == "processing"
+    assert "_ai_worker_claimed_at" in event.payload
+
+    # Second worker attempts to claim the same event while in-progress
+    second_claim = realtime_worker._claim_voice_request(db, event_id)
+    assert second_claim is False
+
+    # Once marked done, claim cannot be taken
+    realtime_worker._mark_event_done(db, event_id=event_id, status="ok")
+    assert event.payload.get("_ai_worker_done") is True
+    assert realtime_worker._claim_voice_request(db, event_id) is False
+
+
+def test_realtime_worker_claim_voice_request_stale_claim_recovery() -> None:
+    event_id = uuid.uuid4()
+    stale_time = (datetime.now(timezone.utc) - timedelta(seconds=400)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    event = LiveEvent(
+        id=event_id,
+        payload={
+            "text": "Stale question",
+            "_ai_worker_claimed": True,
+            "_ai_worker_status": "processing",
+            "_ai_worker_claimed_at": stale_time,
+        },
+    )
+
+    class MockClaimDB:
+        def __init__(self, target_event: LiveEvent):
+            self.target_event = target_event
+
+        def execute(self, stmt):
+            class Result:
+                def __init__(self, item):
+                    self.item = item
+                def scalar_one_or_none(self):
+                    return self.item
+            return Result(self.target_event)
+
+        def get(self, model, eid):
+            return self.target_event if self.target_event.id == eid else None
+
+        def commit(self):
+            pass
+
+        def rollback(self):
+            pass
+
+    db = MockClaimDB(event)
+
+    # Stale claim (> 300s) should be reclaimable
+    assert realtime_worker._claim_voice_request(db, event_id) is True
+    assert event.payload.get("_ai_worker_claimed") is True
+
+

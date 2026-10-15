@@ -91,6 +91,8 @@ if [[ -n "$SERVER_PASS" ]]; then
   require_cmd sshpass
 fi
 
+SSH_OPTS=(-o StrictHostKeyChecking=accept-new -o ConnectTimeout=15 -p "$SSH_PORT")
+
 run_ssh() {
   local remote_cmd="$1"
   if [[ "$DRY_RUN" -eq 1 ]]; then
@@ -99,15 +101,31 @@ run_ssh() {
   fi
 
   if [[ -n "$SERVER_PASS" ]]; then
-    sshpass -p "$SERVER_PASS" ssh -o StrictHostKeyChecking=no -p "$SSH_PORT" \
+    sshpass -p "$SERVER_PASS" ssh "${SSH_OPTS[@]}" \
       "${SERVER_USER}@${SERVER_IP}" "$remote_cmd"
   else
-    ssh -p "$SSH_PORT" "${SERVER_USER}@${SERVER_IP}" "$remote_cmd"
+    ssh "${SSH_OPTS[@]}" "${SERVER_USER}@${SERVER_IP}" "$remote_cmd"
+  fi
+}
+
+run_ssh_stdin() {
+  local env_prefix="$1"
+  if [[ "$DRY_RUN" -eq 1 ]]; then
+    log "[dry-run] remote deploy script execution skipped"
+    return 0
+  fi
+
+  if [[ -n "$SERVER_PASS" ]]; then
+    sshpass -p "$SERVER_PASS" ssh "${SSH_OPTS[@]}" \
+      "${SERVER_USER}@${SERVER_IP}" "${env_prefix} bash -s"
+  else
+    ssh "${SSH_OPTS[@]}" "${SERVER_USER}@${SERVER_IP}" "${env_prefix} bash -s"
   fi
 }
 
 run_rsync() {
   local -a args=("$@")
+  local rsync_ssh="ssh -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15 -p ${SSH_PORT}"
   if [[ "$DRY_RUN" -eq 1 ]]; then
     log "[dry-run] rsync ${args[*]}"
     return 0
@@ -115,9 +133,9 @@ run_rsync() {
 
   if [[ -n "$SERVER_PASS" ]]; then
     sshpass -p "$SERVER_PASS" rsync "${args[@]}" \
-      -e "ssh -o StrictHostKeyChecking=no -p ${SSH_PORT}"
+      -e "$rsync_ssh"
   else
-    rsync "${args[@]}" -e "ssh -p ${SSH_PORT}"
+    rsync "${args[@]}" -e "$rsync_ssh"
   fi
 }
 
@@ -147,6 +165,13 @@ if [[ "$RUN_SYNC" -eq 1 ]]; then
     --exclude=frontend/playwright-report
     --exclude=mobile/build
     --exclude=mobile/.dart_tool
+    --exclude=target
+    --exclude=backend-rust/target
+    --exclude=.cargo
+    --exclude=*.log
+    --exclude=.coverage
+    --exclude=.ruff_cache
+    --exclude=.mypy_cache
     --exclude=*.pyc
     --exclude=.env
     --exclude=.env.local
@@ -164,13 +189,7 @@ else
 fi
 
 log "Step 3/5: Build and start services on remote host"
-if [[ "$DRY_RUN" -eq 1 ]]; then
-  log "[dry-run] remote deploy steps skipped"
-else
-  if [[ -n "$SERVER_PASS" ]]; then
-    sshpass -p "$SERVER_PASS" ssh -o StrictHostKeyChecking=no -p "$SSH_PORT" \
-      "${SERVER_USER}@${SERVER_IP}" \
-      "REMOTE_DIR='${REMOTE_DIR}' REBUILD_ALL='${REBUILD_ALL}' RUN_MIGRATIONS='${RUN_MIGRATIONS}' SKIP_HEALTH='${SKIP_HEALTH}' DOMAIN='${DOMAIN}' bash -s" <<'REMOTE'
+run_ssh_stdin "REMOTE_DIR='${REMOTE_DIR}' REBUILD_ALL='${REBUILD_ALL}' RUN_MIGRATIONS='${RUN_MIGRATIONS}' SKIP_HEALTH='${SKIP_HEALTH}' DOMAIN='${DOMAIN}'" <<'REMOTE'
 set -Eeuo pipefail
 
 APP_DIR="${REMOTE_DIR}"
@@ -213,32 +232,37 @@ build_service() {
 }
 
 build_service api
+build_service api_rust
 build_service ai_teacher_agent
 build_service web
 
 echo "Starting base services..."
-"${compose_cmd[@]}" up -d db livekit nginx
-echo "Starting app services..."
-"${compose_cmd[@]}" up -d api ai_teacher_agent web
+"${compose_cmd[@]}" up -d db livekit janus-gateway
 
 if [[ "${RUN_MIGRATIONS}" == "1" ]]; then
   echo "Running migrations..."
   "${compose_cmd[@]}" run --rm api alembic upgrade heads
 fi
 
+echo "Starting app services..."
+"${compose_cmd[@]}" up -d api api_rust ai_teacher_agent web
+
+echo "Starting reverse proxy edge..."
+"${compose_cmd[@]}" up -d nginx
+
 if [[ "${SKIP_HEALTH}" != "1" ]]; then
   echo "Waiting for health endpoint..."
   success=0
-  for i in $(seq 1 24); do
-    code="$(curl -sk -o /dev/null -w '%{http_code}' https://127.0.0.1:8443/health || true)"
+  for i in $(seq 1 30); do
+    code="$(curl -sk -H "Host: ${DOMAIN}" -o /dev/null -w '%{http_code}' https://127.0.0.1:8443/health || true)"
     if [[ "${code}" == "200" ]]; then
       success=1
       break
     fi
-    sleep 5
+    sleep 3
   done
   if [[ "${success}" -ne 1 ]]; then
-    echo "Health check failed after deployment."
+    echo "Health check failed after deployment (HTTP ${code:-none})."
     "${compose_cmd[@]}" ps
     exit 1
   fi
@@ -247,93 +271,12 @@ fi
 echo "Container status:"
 "${compose_cmd[@]}" ps
 REMOTE
-  else
-    ssh -p "$SSH_PORT" "${SERVER_USER}@${SERVER_IP}" \
-      "REMOTE_DIR='${REMOTE_DIR}' REBUILD_ALL='${REBUILD_ALL}' RUN_MIGRATIONS='${RUN_MIGRATIONS}' SKIP_HEALTH='${SKIP_HEALTH}' DOMAIN='${DOMAIN}' bash -s" <<'REMOTE'
-set -Eeuo pipefail
-
-APP_DIR="${REMOTE_DIR}"
-cd "${APP_DIR}"
-
-[[ -f ".env.prod" ]] || { echo "Missing ${APP_DIR}/.env.prod"; exit 1; }
-[[ -f "docker-compose.prod.yml" ]] || { echo "Missing ${APP_DIR}/docker-compose.prod.yml"; exit 1; }
-
-compose_files=(-f docker-compose.prod.yml)
-if [[ -f docker-compose.override.yml ]]; then
-  compose_files+=(-f docker-compose.override.yml)
-fi
-compose_cmd=(docker compose "${compose_files[@]}" --env-file .env.prod)
-
-disk_free_gb="$(df -BG / | awk 'NR==2 {gsub("G","",$4); print $4+0}')"
-if [[ "${disk_free_gb}" -lt 2 ]]; then
-  echo "Low disk free space: ${disk_free_gb}GB (<2GB). Aborting."
-  exit 1
-fi
-
-echo "Compose files: ${compose_files[*]}"
-"${compose_cmd[@]}" config >/dev/null
-
-build_args=(--pull)
-if [[ "${REBUILD_ALL}" == "1" ]]; then
-  build_args+=(--no-cache)
-fi
-
-build_service() {
-  local svc="$1"
-  echo "Building ${svc}..."
-  if ! "${compose_cmd[@]}" build "${build_args[@]}" "${svc}"; then
-    if [[ "${svc}" == "web" ]]; then
-      echo "BuildKit build failed for web; retrying with DOCKER_BUILDKIT=0"
-      DOCKER_BUILDKIT=0 "${compose_cmd[@]}" build "${svc}"
-    else
-      return 1
-    fi
-  fi
-}
-
-build_service api
-build_service ai_teacher_agent
-build_service web
-
-echo "Starting base services..."
-"${compose_cmd[@]}" up -d db livekit nginx
-echo "Starting app services..."
-"${compose_cmd[@]}" up -d api ai_teacher_agent web
-
-if [[ "${RUN_MIGRATIONS}" == "1" ]]; then
-  echo "Running migrations..."
-  "${compose_cmd[@]}" run --rm api alembic upgrade heads
-fi
-
-if [[ "${SKIP_HEALTH}" != "1" ]]; then
-  echo "Waiting for health endpoint..."
-  success=0
-  for i in $(seq 1 24); do
-    code="$(curl -sk -o /dev/null -w '%{http_code}' https://127.0.0.1:8443/health || true)"
-    if [[ "${code}" == "200" ]]; then
-      success=1
-      break
-    fi
-    sleep 5
-  done
-  if [[ "${success}" -ne 1 ]]; then
-    echo "Health check failed after deployment."
-    "${compose_cmd[@]}" ps
-    exit 1
-  fi
-fi
-
-echo "Container status:"
-"${compose_cmd[@]}" ps
-REMOTE
-  fi
-fi
 
 log "Step 4/5: Post-deploy verification"
-run_ssh "cd '${REMOTE_DIR}' && docker compose -f docker-compose.prod.yml -f docker-compose.override.yml --env-file .env.prod ps"
+run_ssh "cd '${REMOTE_DIR}' && compose_args=(-f docker-compose.prod.yml) && [[ -f docker-compose.override.yml ]] && compose_args+=(-f docker-compose.override.yml); docker compose \"\${compose_args[@]}\" --env-file .env.prod ps"
 
 if [[ "$SKIP_HEALTH" -eq 0 ]]; then
-  run_ssh "curl -sk -o /dev/null -w 'HTTPS /health => %{http_code}\n' https://127.0.0.1:8443/health"
+  run_ssh "curl -sk -H 'Host: ${DOMAIN}' -o /dev/null -w 'HTTPS /health => %{http_code}\n' https://127.0.0.1:8443/health"
 fi
 
 log "Step 5/5: Done"

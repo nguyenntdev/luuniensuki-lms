@@ -19,6 +19,7 @@ import json
 import logging
 import sys
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 from urllib.error import HTTPError, URLError
@@ -181,12 +182,60 @@ def _mark_event_done(
         return
     payload = _event_payload_dict(event)
     payload["_ai_worker_done"] = True
+    payload["_ai_worker_claimed"] = True
     payload["_ai_worker_status"] = status
     payload["_ai_worker_at"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     if detail:
         payload["_ai_worker_detail"] = detail[:400]
     event.payload = payload
     db.commit()
+
+
+def _claim_voice_request(db: Session, event_id: Any) -> bool:
+    """Atomically claim a pending voice request event for processing.
+
+    Returns True if this worker successfully claimed the event, False if another
+    worker has already claimed or completed it.
+    """
+    try:
+        stmt = (
+            select(LiveEvent)
+            .where(LiveEvent.id == event_id)
+            .with_for_update(skip_locked=True)
+        )
+        event = db.execute(stmt).scalar_one_or_none()
+    except Exception:
+        db.rollback()
+        event = db.get(LiveEvent, event_id)
+
+    if event is None:
+        return False
+
+    payload = _event_payload_dict(event)
+    if payload.get("_ai_worker_done") is True or payload.get("_ai_worker_claimed") is True:
+        claimed_at_str = payload.get("_ai_worker_claimed_at")
+        is_stale = False
+        if payload.get("_ai_worker_claimed") is True and not payload.get("_ai_worker_done"):
+            if claimed_at_str:
+                try:
+                    claimed_dt = datetime.fromisoformat(str(claimed_at_str).replace("Z", "+00:00"))
+                    if (datetime.now(timezone.utc) - claimed_dt).total_seconds() > 300:
+                        is_stale = True
+                except Exception:
+                    pass
+        if not is_stale:
+            return False
+
+    payload["_ai_worker_claimed"] = True
+    payload["_ai_worker_status"] = "processing"
+    payload["_ai_worker_claimed_at"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+    event.payload = payload
+    try:
+        db.commit()
+        return True
+    except Exception:
+        db.rollback()
+        return False
 
 
 def _build_history_from_recent_events(
@@ -277,6 +326,7 @@ def _answer_one_voice_request(
     live_session: LiveSession,
     event: LiveEvent,
 ) -> None:
+    db.refresh(event)
     payload = _event_payload_dict(event)
     if payload.get("_ai_worker_done") is True:
         return
@@ -669,6 +719,11 @@ def _process_live_session(db: Session, live_session: LiveSession) -> None:
         .all()
     )
     for event in pending:
+        payload = _event_payload_dict(event)
+        if payload.get("_ai_worker_done") is True or payload.get("_ai_worker_claimed") is True:
+            continue
+        if not _claim_voice_request(db, event.id):
+            continue
         try:
             _answer_one_voice_request(
                 db,

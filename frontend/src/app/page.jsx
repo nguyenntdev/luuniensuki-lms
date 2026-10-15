@@ -1,4 +1,5 @@
 import HomePageClient from "./HomePageClient";
+import { safeJsonLd } from "@/lib/seo";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://lms.histolab.icu";
 const TITLE = "Lưu Niên Sử Kí — Cửu Đỉnh Triều Nguyễn | Bảo Vật Hoàng Cung & 162 Bản Đúc Nổi 3D";
@@ -132,7 +133,7 @@ export default function HomePage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(structuredData) }}
       />
       <HomePageClient />
     </>

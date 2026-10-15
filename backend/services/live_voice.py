@@ -36,8 +36,28 @@ class STTNoSpeechError(RuntimeError):
     """
 
 
+def _normalize_base_url(url: str | None) -> str:
+    raw = (url or "").strip().rstrip("/")
+    if raw.endswith("/v1"):
+        raw = raw[:-3].rstrip("/")
+    return raw
+
+
 def _voice_api_key() -> str | None:
-    return (settings.voice_api_key or settings.deepseek_api_key or "").strip() or None
+    voice_key = (settings.voice_api_key or "").strip()
+    if voice_key:
+        return voice_key
+
+    voice_base = (settings.voice_base_url or "").strip()
+    deepseek_base = (settings.deepseek_base_url or "").strip()
+    deepseek_key = (settings.deepseek_api_key or "").strip()
+
+    # Prevent leaking deepseek_api_key to a third-party voice base URL
+    # when voice_api_key is not explicitly configured.
+    if voice_base and _normalize_base_url(voice_base) != _normalize_base_url(deepseek_base):
+        return None
+
+    return deepseek_key or None
 
 
 def _voice_base_v1() -> str:

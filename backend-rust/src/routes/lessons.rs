@@ -53,8 +53,14 @@ fn require_pool(pool: &Option<PgPool>) -> Result<&PgPool, AppError> {
 
 fn authenticate(headers: &HeaderMap, settings: &Settings) -> Result<Uuid, AppError> {
     let token = extract_token_from_headers(headers).ok_or(AppError::Unauthorized)?;
-    let claims = auth::verify_access_token(&token, &settings.jwt_secret_key, settings.jwt_validate_new_claims, &settings.jwt_issuer, &settings.jwt_audience)
-        .map_err(|_| AppError::Unauthorized)?;
+    let claims = auth::verify_access_token(
+        &token,
+        &settings.jwt_secret_key,
+        settings.jwt_validate_new_claims,
+        &settings.jwt_issuer,
+        &settings.jwt_audience,
+    )
+    .map_err(|_| AppError::Unauthorized)?;
     let user_id: Uuid = claims.sub.parse().map_err(|_| AppError::Unauthorized)?;
     Ok(user_id)
 }
@@ -186,8 +192,7 @@ pub async fn get_lesson_prerequisites(
 ) -> Result<impl IntoResponse, AppError> {
     let user_id = authenticate(&headers, &state.settings)?;
     let pool = require_pool(&state.pool)?;
-    let prereqs =
-        lesson_service::get_lesson_prerequisites(pool, lesson_id, user_id).await?;
+    let prereqs = lesson_service::get_lesson_prerequisites(pool, lesson_id, user_id).await?;
     Ok(Json(prereqs))
 }
 
@@ -211,8 +216,7 @@ pub async fn get_lesson_sequence(
 ) -> Result<impl IntoResponse, AppError> {
     let user_id = authenticate(&headers, &state.settings)?;
     let pool = require_pool(&state.pool)?;
-    let seq =
-        lesson_service::get_lesson_sequence(pool, user_id, params.urn_id).await?;
+    let seq = lesson_service::get_lesson_sequence(pool, user_id, params.urn_id).await?;
     Ok(Json(seq))
 }
 
@@ -225,8 +229,7 @@ pub async fn mark_lesson_cached(
 ) -> Result<impl IntoResponse, AppError> {
     let user_id = authenticate(&headers, &state.settings)?;
     let pool = require_pool(&state.pool)?;
-    let cache =
-        lesson_service::mark_lesson_cached(pool, lesson_id, user_id, &payload).await?;
+    let cache = lesson_service::mark_lesson_cached(pool, lesson_id, user_id, &payload).await?;
     Ok(Json(cache))
 }
 

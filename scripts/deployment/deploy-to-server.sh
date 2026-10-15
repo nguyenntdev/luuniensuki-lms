@@ -198,8 +198,9 @@ echo -e "${YELLOW}[Step 5/6] Getting SSL certificate from Let's Encrypt...${NC}"
 
 read -p "Enter your email for Let's Encrypt notifications: " CERT_EMAIL
 
-ssh -p "$SSH_PORT" "${SERVER_USER}@${SERVER_IP}" << REMOTE_SCRIPT
+ssh -p "$SSH_PORT" "${SERVER_USER}@${SERVER_IP}" "bash -s -- \"$CERT_EMAIL\"" << 'REMOTE_SCRIPT'
 set -e
+CERT_EMAIL="$1"
 cd /opt/luuniensuki-lms
 
 DOMAIN="lms.histolab.icu"
@@ -210,7 +211,7 @@ docker run --rm \
     -v "/opt/luuniensuki-lms/certbot/conf:/etc/letsencrypt" \
     certbot/certbot certonly --webroot \
     -w /var/www/certbot \
-    -d "\$DOMAIN" \
+    -d "$DOMAIN" \
     --email "$CERT_EMAIL" --agree-tos --no-eff-email --force-renewal || echo "SSL certificate request completed"
 
 echo "Restarting nginx with new certificate..."

@@ -81,17 +81,20 @@ pub async fn create_event(
     let pool = require_pool(&state.pool)?;
     let _admin = require_admin(&headers, &state.settings)?;
     let row = timeline_service::create_event(pool, &payload).await?;
-    Ok((StatusCode::CREATED, Json(serde_json::json!({
-        "id": row.id,
-        "slug": row.slug,
-        "name_vi": row.name_vi,
-        "name_en": row.name_en,
-        "occurred_on": row.occurred_on,
-        "importance": row.importance,
-        "era_id": row.era_id,
-        "motif_id": row.motif_id,
-        "urn_id": row.urn_id,
-    }))))
+    Ok((
+        StatusCode::CREATED,
+        Json(serde_json::json!({
+            "id": row.id,
+            "slug": row.slug,
+            "name_vi": row.name_vi,
+            "name_en": row.name_en,
+            "occurred_on": row.occurred_on,
+            "importance": row.importance,
+            "era_id": row.era_id,
+            "motif_id": row.motif_id,
+            "urn_id": row.urn_id,
+        })),
+    ))
 }
 
 pub async fn get_timeline_stats(

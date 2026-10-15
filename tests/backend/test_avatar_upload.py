@@ -1,8 +1,19 @@
+import io
 from pathlib import Path
 
 import backend.routers.users as users_module
 
-# Minimal valid PNG signature (magic-byte sniff path; Pillow not a hard dep).
+# Valid PNG image bytes (works with Pillow verification and magic-byte sniff fallback).
+def _make_png_bytes() -> bytes:
+    try:
+        from PIL import Image
+
+        buf = io.BytesIO()
+        Image.new("RGB", (1, 1), (200, 30, 30)).save(buf, format="PNG")
+        return buf.getvalue()
+    except Exception:
+        return b"\x89PNG\r\n\x1a\n" + b"\x00" * 32
+
 PNG_MAGIC = b"\x89PNG\r\n\x1a\n"
 
 
@@ -27,7 +38,7 @@ def test_upload_avatar_success(client, monkeypatch, tmp_path):
     _register_user(client)
     response = client.post(
         "/api/v1/users/me/avatar",
-        files={"file": ("avatar.png", PNG_MAGIC + b"fake-png-bytes", "image/png")},
+        files={"file": ("avatar.png", _make_png_bytes(), "image/png")},
     )
     assert response.status_code == 200, response.text
     avatar_url = response.json()["avatar_url"]

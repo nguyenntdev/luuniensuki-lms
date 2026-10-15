@@ -26,9 +26,12 @@ fi
 echo "Checking AI-tutor route pinning..."
 
 # Extract routes from the AI tutor routing doc
-# Expected format: lines containing route patterns like `GET /api/v1/live/...`
-# or `POST /api/v1/ai-tutor/...` (in backticks or plain text)
-AI_ROUTES=$(grep -oE '(GET|POST|PUT|PATCH|DELETE)\s+/api/v1/(live|ai-tutor)[^\s`]*' "$AI_TUTOR_DOC" \
+# Handles both:
+# 1. Markdown tables: `| `/api/v1/live/...` | GET |`
+# 2. Inline/plain text: `GET /api/v1/live/...`
+AI_ROUTES=$( (grep -oE '(GET|POST|PUT|PATCH|DELETE)\s+/api/v1/(live|ai-tutor)[^\s`]*' "$AI_TUTOR_DOC" 2>/dev/null || true; \
+    grep -E '^\|\s*`?/api/v1/(live|ai-tutor)' "$AI_TUTOR_DOC" 2>/dev/null \
+    | awk -F'|' '{gsub(/[` ]/, "", $2); gsub(/[` ]/, "", $3); if ($3 != "" && $2 != "") print $3, $2}' || true) \
     | sort -u 2>/dev/null || true)
 
 if [ -z "$AI_ROUTES" ]; then

@@ -7,7 +7,7 @@ test('should display collection and filter items', async ({ page }) => {
   const name = 'Collection User';
 
   await page.goto('/login');
-  await page.getByRole('button', { name: 'Register' }).click();
+  await page.getByRole('button', { name: 'Đăng ký' }).click();
   await page.getByPlaceholder('Sử Quan Tập Sự').fill(name);
   await page.getByPlaceholder('you@example.com').fill(email);
   await page.getByPlaceholder('••••••••').fill(password);
@@ -17,20 +17,20 @@ test('should display collection and filter items', async ({ page }) => {
   // Go to collection
   await page.goto('/collection');
   
-  await expect(page.getByText('Your Collection')).toBeVisible();
+  await expect(page.getByText('Bộ sưu tập của bạn')).toBeVisible();
   
   // Wait for loading to finish (stats visible)
-  await expect(page.getByText('Total Motifs')).toBeVisible();
+  await expect(page.getByText('Tổng họa tiết')).toBeVisible();
 
   // Test Status Filter: Discovered (should be empty for new user)
-  await page.getByLabel('Status').selectOption('discovered'); // value is lowercase
-  await expect(page.getByText('No motifs found matching your filters')).toBeVisible();
+  await page.getByLabel('Trạng thái').selectOption('discovered'); // value is lowercase
+  await expect(page.getByText('Không tìm thấy họa tiết nào phù hợp với bộ lọc của bạn.')).toBeVisible();
   
   // Clear filters
-  await page.getByRole('button', { name: 'Clear all filters' }).click();
-  await expect(page.getByText('No motifs found matching your filters')).not.toBeVisible();
+  await page.getByRole('button', { name: 'Xóa tất cả bộ lọc' }).click();
+  await expect(page.getByText('Không tìm thấy họa tiết nào phù hợp với bộ lọc của bạn.')).not.toBeVisible();
   
   // Test Search Filter (random string)
-  await page.getByLabel('Search').fill('NonExistentMotifXYZ');
-  await expect(page.getByText('No motifs found matching your filters')).toBeVisible();
+  await page.getByLabel('Tìm kiếm').fill('NonExistentMotifXYZ');
+  await expect(page.getByText('Không tìm thấy họa tiết nào phù hợp với bộ lọc của bạn.')).toBeVisible();
 });

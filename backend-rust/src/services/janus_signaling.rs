@@ -441,7 +441,9 @@ mod tests {
 
     #[test]
     fn server_signal_serializes_with_type_tag() {
-        let s = server_signal_text(&ServerSignal::Answer { sdp: "v=0".to_string() });
+        let s = server_signal_text(&ServerSignal::Answer {
+            sdp: "v=0".to_string(),
+        });
         assert!(s.contains("\"type\":\"answer\""));
         assert!(s.contains("\"sdp\":\"v=0\""));
 
@@ -459,7 +461,10 @@ mod tests {
             classify_client_frame(&AxumMessage::Text("hi".to_string())),
             Some(Some("hi"))
         );
-        assert_eq!(classify_client_frame(&AxumMessage::Binary(vec![1])), Some(None));
+        assert_eq!(
+            classify_client_frame(&AxumMessage::Binary(vec![1])),
+            Some(None)
+        );
         assert!(classify_client_frame(&AxumMessage::Close(None)).is_none());
     }
 }

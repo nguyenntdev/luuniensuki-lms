@@ -67,9 +67,7 @@ impl Settings {
             .ok()
             .and_then(|v| v.parse().ok())
             .unwrap_or(8001);
-        let ip: IpAddr = host
-            .parse()
-            .unwrap_or(IpAddr::V4(Ipv4Addr::UNSPECIFIED));
+        let ip: IpAddr = host.parse().unwrap_or(IpAddr::V4(Ipv4Addr::UNSPECIFIED));
 
         let database_max_connections: u32 = std::env::var("DATABASE_MAX_CONNECTIONS")
             .ok()
@@ -112,12 +110,9 @@ impl Settings {
             database_max_connections,
             legacy_api_host,
             legacy_api_port,
-            jwt_secret_key: std::env::var("JWT_SECRET_KEY")
-                .unwrap_or_else(|_| String::new()),
-            jwt_algorithm: std::env::var("JWT_ALGORITHM")
-                .unwrap_or_else(|_| "HS256".to_string()),
-            jwt_issuer: std::env::var("JWT_ISSUER")
-                .unwrap_or_else(|_| "luuniensuki".to_string()),
+            jwt_secret_key: std::env::var("JWT_SECRET_KEY").unwrap_or_else(|_| String::new()),
+            jwt_algorithm: std::env::var("JWT_ALGORITHM").unwrap_or_else(|_| "HS256".to_string()),
+            jwt_issuer: std::env::var("JWT_ISSUER").unwrap_or_else(|_| "luuniensuki".to_string()),
             jwt_audience: std::env::var("JWT_AUDIENCE")
                 .unwrap_or_else(|_| "luuniensuki-app".to_string()),
             jwt_validate_new_claims: std::env::var("JWT_VALIDATE_NEW_CLAIMS")
@@ -149,8 +144,7 @@ impl Settings {
                 .unwrap_or_else(|_| "http://janus-gateway:7088/admin".to_string()),
             janus_admin_secret: std::env::var("JANUS_ADMIN_SECRET")
                 .unwrap_or_else(|_| String::new()),
-            janus_api_secret: std::env::var("JANUS_API_SECRET")
-                .unwrap_or_else(|_| String::new()),
+            janus_api_secret: std::env::var("JANUS_API_SECRET").unwrap_or_else(|_| String::new()),
             live_media_backend: std::env::var("LIVE_MEDIA_BACKEND")
                 .unwrap_or_else(|_| "livekit".to_string()),
             live_reconnect_grace_seconds,

@@ -114,11 +114,7 @@ pub async fn get_friend_streak(
 /// Idempotent per UTC day: a second call within the same date is a no-op.
 /// TODO: gate the caller on a future `user_friendships` mutual-follow check.
 #[allow(dead_code)]
-pub async fn increment_for_pair(
-    pool: &PgPool,
-    user_a: Uuid,
-    user_b: Uuid,
-) -> Result<(), AppError> {
+pub async fn increment_for_pair(pool: &PgPool, user_a: Uuid, user_b: Uuid) -> Result<(), AppError> {
     if user_a == user_b {
         return Ok(());
     }

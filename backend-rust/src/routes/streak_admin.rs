@@ -57,8 +57,14 @@ fn require_pool(pool: &Option<PgPool>) -> Result<&PgPool, AppError> {
 
 fn authenticate_admin(headers: &HeaderMap, settings: &Settings) -> Result<Uuid, AppError> {
     let token = extract_token_from_headers(headers).ok_or(AppError::Unauthorized)?;
-    let claims = auth::verify_access_token(&token, &settings.jwt_secret_key, settings.jwt_validate_new_claims, &settings.jwt_issuer, &settings.jwt_audience)
-        .map_err(|_| AppError::Unauthorized)?;
+    let claims = auth::verify_access_token(
+        &token,
+        &settings.jwt_secret_key,
+        settings.jwt_validate_new_claims,
+        &settings.jwt_issuer,
+        &settings.jwt_audience,
+    )
+    .map_err(|_| AppError::Unauthorized)?;
     if claims.role != "admin" {
         return Err(AppError::Http {
             status: StatusCode::FORBIDDEN,
@@ -168,16 +174,28 @@ mod tests {
 
     fn test_state() -> AuthState {
         let settings = crate::config::Settings::from_env().unwrap();
-        AuthState { pool: None, settings }
+        AuthState {
+            pool: None,
+            settings,
+        }
     }
 
     fn test_router() -> Router {
         let s = test_state();
         Router::new()
-            .route("/api/v1/admin/streak-repair-events", get(list_repair_events))
-            .route("/api/v1/admin/users/:user_id/streak/grant-repair", post(grant_repair))
+            .route(
+                "/api/v1/admin/streak-repair-events",
+                get(list_repair_events),
+            )
+            .route(
+                "/api/v1/admin/users/:user_id/streak/grant-repair",
+                post(grant_repair),
+            )
             .route("/api/v1/admin/streak/big-red-button", post(big_red_button))
-            .route("/api/v1/admin/streak/big-red-button/events", get(brb_events))
+            .route(
+                "/api/v1/admin/streak/big-red-button/events",
+                get(brb_events),
+            )
             .route("/api/v1/admin/streak-economy/stats", get(stats))
             .route(
                 "/api/v1/admin/users/:user_id/streak-insurance/grant",
