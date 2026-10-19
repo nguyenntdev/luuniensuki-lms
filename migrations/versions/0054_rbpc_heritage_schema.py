@@ -59,6 +59,7 @@ def upgrade() -> None:
             historical_summary_en TEXT,
             editorial_status VARCHAR(32) NOT NULL DEFAULT 'candidate',
             content_scope VARCHAR(32) NOT NULL DEFAULT 'RBPC_HUE',
+            thumbnail_url TEXT,
             published_at TIMESTAMPTZ,
             created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
             updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -67,6 +68,7 @@ def upgrade() -> None:
         )
         """
     )
+    op.execute("ALTER TABLE heritage_places ADD COLUMN IF NOT EXISTS thumbnail_url TEXT;")
     op.execute("CREATE INDEX IF NOT EXISTS idx_heritage_places_editorial ON heritage_places(editorial_status, content_scope)")
     op.execute("CREATE INDEX IF NOT EXISTS idx_heritage_places_category ON heritage_places(heritage_category, editorial_status)")
     op.execute("CREATE INDEX IF NOT EXISTS idx_heritage_places_type ON heritage_places(entity_type, editorial_status)")
@@ -80,6 +82,7 @@ def upgrade() -> None:
             from_place_id UUID NOT NULL REFERENCES heritage_places(id) ON DELETE CASCADE,
             to_place_id UUID NOT NULL REFERENCES heritage_places(id) ON DELETE CASCADE,
             relationship_type VARCHAR(64) NOT NULL,
+            claim_id UUID,
             review_state VARCHAR(32) NOT NULL DEFAULT 'draft',
             description_vi TEXT,
             description_en TEXT,
@@ -88,6 +91,7 @@ def upgrade() -> None:
         )
         """
     )
+    op.execute("ALTER TABLE heritage_heritage_relations ADD COLUMN IF NOT EXISTS claim_id UUID;")
     op.execute("CREATE INDEX IF NOT EXISTS idx_heritage_rel_from ON heritage_heritage_relations(from_place_id)")
     op.execute("CREATE INDEX IF NOT EXISTS idx_heritage_rel_to ON heritage_heritage_relations(to_place_id)")
 

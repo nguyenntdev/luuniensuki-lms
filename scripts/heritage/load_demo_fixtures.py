@@ -11,9 +11,9 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from backend.database import SessionLocal
+from backend.db import SessionLocal
 from backend.services.demo_fixtures import verify_demo_fixtures_integrity
-from scripts.heritage.seed_hue_heritage import run_seed
+from backend.services.heritage_import import import_heritage_data
 
 
 def main():
@@ -25,7 +25,7 @@ def main():
     try:
         if not args.verify_only:
             print("Seeding verified heritage and commercial data...")
-            run_seed(commit=True)
+            import_heritage_data(db=db, dry_run=False)
 
         report = verify_demo_fixtures_integrity(db)
         print("Demo Fixtures Integrity Report:")
