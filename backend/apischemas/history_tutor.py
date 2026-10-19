@@ -23,6 +23,10 @@ class HistoryTutorAskIn(BaseModel):
             "always clearly labelled as unverified (Spec 37.1)."
         ),
     )
+    heritage_scope: Optional[str] = Field(
+        default="ALL",
+        description="Heritage scope filter: CUU_DINH, RBPC_HUE, or ALL.",
+    )
 
 
 class HistoryTutorCitation(BaseModel):

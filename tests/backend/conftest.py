@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
-from sqlalchemy import event
+from sqlalchemy import event, text
 from sqlalchemy.orm import sessionmaker
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -28,13 +28,18 @@ os.environ.setdefault(
     "postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test",
 )
 
+import backend.history_models  # noqa: F401
+import backend.models_rbpc  # noqa: F401
 import backend.main as main  # noqa: E402  (DATABASE_URL must be set before importing)
 
 
 @pytest.fixture(scope="session")
 def engine():
     engine = create_engine(os.environ["DATABASE_URL"], pool_pre_ping=True)
-    Base.metadata.drop_all(engine)
+    with engine.connect() as conn:
+        conn.execute(text("DROP SCHEMA public CASCADE; CREATE SCHEMA public;"))
+        conn.execute(text("CREATE EXTENSION IF NOT EXISTS pgcrypto; CREATE EXTENSION IF NOT EXISTS unaccent; CREATE EXTENSION IF NOT EXISTS pg_trgm;"))
+        conn.commit()
     Base.metadata.create_all(engine)
     return engine
 

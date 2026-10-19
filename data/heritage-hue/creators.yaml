@@ -1,0 +1,65 @@
+# LƯU NIÊN — RBPC 2026: Consented Artisan & Maker Profiles
+# Content Scope: RBPC_HUE
+# S0-S4 Rubric: S4 (Consented Commercial - verified written consent)
+# Invariant: Never conflate 1835 royal relics with contemporary craft workshops
+
+creators:
+  - id: "c1010001-0001-4000-8000-000000000001"
+    slug: "nghe-nhan-nguyen-van-sinh"
+    public_name: "Nghệ nhân Nhân dân Nguyễn Văn Sinh"
+    craft_tradition: "Đúc đồng Phường Đúc"
+    craft_category: "traditional_craft"
+    public_region: "Phường Đúc, Thành phố Huế"
+    workshop_address_approx: "Đường Bùi Thị Xuân, Phường Đúc, TP. Huế"
+    years_of_practice: 52
+    generation_lineage: "Hậu duệ đời thứ 11 dòng họ đúc đồng Nguyễn Văn (khởi thủy từ thế kỷ 17)"
+    display_consent_ref: "CONSENT-PD-001"
+    consent_status: "consented"
+    is_verified: true
+    approved_bio_vi: "Nghệ nhân Nhân dân Nguyễn Văn Sinh sinh ra trong một gia đình có truyền thống đúc đồng lâu đời tại làng đúc đồng Phường Đúc bên bờ sông Hương. Với hơn nửa thế kỷ gắn bó với nghề nung đồng và nặn khuôn đất sét pha trấu, ông đã phục chế và đúc nhiều đại hồng chung, đỉnh đồng và pháp khí cho các danh lam cổ tự trên khắp đất nước. Ông gìn giữ phương pháp đúc khuôn sáp và kỹ thuật pha chế hợp kim đồng truyền thống được truyền thừa qua nhiều thế hệ."
+    approved_bio_en: "People's Artisan Nguyễn Văn Sinh was born into a long-standing bronze-casting family in the Phường Đúc foundry quarter along the Perfume River. With over half a century devoted to furnace firing and traditional clay-and-chaff molding, he has cast and restored numerous monumental temple bells, bronze cauldrons, and sacred ceremonial vessels nationwide. He actively preserves the lost-wax technique and ancient alloy formulations handed down through eleven generations."
+    portrait_asset_url: "/assets/creators/nguyen-van-sinh.webp"
+    associated_places:
+      - "kinh-thanh-hue"
+      - "chua-thien-mu"
+      - "the-mieu"
+
+  - id: "c1010001-0002-4000-8000-000000000002"
+    slug: "nghe-nhan-do-huu-triet"
+    public_name: "Thạc sĩ - Nghệ nhân Đỗ Hữu Triết"
+    craft_tradition: "Nghệ thuật Pháp lam Huế"
+    craft_category: "vitreous_enamel"
+    public_region: "Thành phố Huế"
+    workshop_address_approx: "Đường Chi Lăng, Phường Phú Cát, TP. Huế"
+    years_of_practice: 25
+    generation_lineage: "Nhà nghiên cứu & Nghệ nhân tiên phong phục hồi nghệ thuật Pháp lam Huế sau hơn 100 năm thất truyền"
+    display_consent_ref: "CONSENT-PL-002"
+    consent_status: "consented"
+    is_verified: true
+    approved_bio_vi: "Thạc sĩ Đỗ Hữu Triết là người đã dành hơn hai thập kỷ nghiên cứu tài liệu Hán-Nôm, mẫu vật khảo cổ và công nghệ vật liệu silicat để giải mã thành công bí quyết chế tác Pháp lam hoàng cung triều Nguyễn (họa pháp lam trên cốt đồng). Nhóm nghiên cứu của ông đã tham gia trực tiếp vào công tác bảo tồn, phục chế các chi tiết pháp lam trên bờ nóc điện Thái Hòa, điện Kiến Trung và lăng vua Khải Định, đưa nghệ thuật men màu cung đình trở lại đời sống nghệ thuật đương đại."
+    approved_bio_en: "Master of Science and Artisan Đỗ Hữu Triết dedicated over two decades to decoding Hán-Nôm manuscripts, archaeological fragments, and silicate materials science to successfully resurrect the lost imperial art of Huế Pháp Lam (vitreous enamel on copper substrate). His research atelier has directly contributed to the historic restoration of architectural enamel ornaments atop Thái Hòa Palace, Kiến Trung Palace, and Khải Định Tomb, reintroducing vibrant royal enamel craft to contemporary culture."
+    portrait_asset_url: "/assets/creators/do-huu-triet.webp"
+    associated_places:
+      - "dien-thai-hoa"
+      - "dien-kien-trung"
+      - "lang-khai-dinh"
+
+  - id: "c1010001-0003-4000-8000-000000000003"
+    slug: "nghe-nhan-than-van-huy"
+    public_name: "Nghệ nhân Ưu tú Thân Văn Huy"
+    craft_tradition: "Nghề làm hoa giấy truyền thống Thanh Tiên"
+    craft_category: "paper_craft"
+    public_region: "Xã Phú Mậu, Thành phố Huế"
+    workshop_address_approx: "Làng Thanh Tiên, Xã Phú Mậu, TP. Huế"
+    years_of_practice: 40
+    generation_lineage: "Gia tộc nghệ nhân gìn giữ bí quyết nhuộm màu tự nhiên và phục hồi hoa sen giấy Thanh Tiên"
+    display_consent_ref: "CONSENT-TT-003"
+    consent_status: "consented"
+    is_verified: true
+    approved_bio_vi: "Nghệ nhân Ưu tú Thân Văn Huy là linh hồn của phong trào chấn hưng làng nghề hoa giấy Thanh Tiên ven sông Hương. Xuất phát từ nghề làm hoa giấy thờ cúng truyền thống có lịch sử hơn 300 năm, ông đã dày công phục dựng nghệ thuật làm hoa sen giấy tinh xảo, sử dụng tre cật vót mỏng, giấy thủ công và các sắc tố chiết xuất từ thảo mộc thiên nhiên (như hoa hòe, cây dành dành, vỏ cây vang). Tác phẩm hoa sen giấy Thanh Tiên của ông đã được trưng bày tại nhiều festival quốc tế và đại diện cho vẻ đẹp thanh tao của văn hóa Huế."
+    approved_bio_en: "Meritorious Artisan Thân Văn Huy is the driving force behind the cultural revival of Thanh Tiên Paper Flower Village along the lower Perfume River. Rooted in a 300-year-old ritual folk tradition of paper floral offerings, he painstakingly reconstructed the refined art of the handmade paper lotus. Utilizing hand-planed bamboo ribs, local artisanal paper, and botanical dye pigments (sappanwood, gardenia, pagoda tree pods), his paper lotuses have been exhibited at international cultural festivals as an emblem of Huế's spiritual serenity."
+    portrait_asset_url: "/assets/creators/than-van-huy.webp"
+    associated_places:
+      - "dien-hon-chen"
+      - "chua-thien-mu"
+      - "kinh-thanh-hue"

@@ -4192,3 +4192,37 @@ from .history_models import (  # noqa: E402,F401
     HistoryStory,
     HistoryCollection,
 )
+
+# --------------------------------------------------------------------------- #
+# RBPC 2026 Living Heritage & Commercial domain models (Phase 1).
+# Defined in ``backend.models_rbpc``; imported here so ``Base.metadata``
+# includes the heritage_* and rbpc_* tables for conftest create_all and Alembic.
+# --------------------------------------------------------------------------- #
+from .models_rbpc import (  # noqa: E402,F401
+    HeritageAccuracyGrade,
+    HeritageCommercialUseStatus,
+    HeritageEmbedPermissionStatus,
+    HeritageEntityType,
+    HeritageEvidenceStatus,
+    HeritageHeritageRelation,
+    HeritageMediaAsset,
+    HeritageMediaType,
+    HeritagePlace,
+    HeritageRecordStatus,
+    HeritageReuseRights,
+    HeritageSourceEvidence,
+    RbpcAvailabilityMode,
+    RbpcClaimEvidence,
+    RbpcConsentStatus,
+    RbpcContactChannel,
+    RbpcContentAudit,
+    RbpcCreator,
+    RbpcEvent,
+    RbpcExperience,
+    RbpcInquiry,
+    RbpcInquiryStatus,
+    RbpcStory,
+    RbpcStoryStatus,
+    RbpcSupportType,
+)
+

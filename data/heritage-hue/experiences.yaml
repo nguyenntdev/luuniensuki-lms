@@ -1,0 +1,125 @@
+# LƯU NIÊN — RBPC 2026: Workshop Experiences Catalogue
+# Content Scope: RBPC_HUE
+# S0-S4 Rubric: S4 (Verified offering with transparent inquiry terms)
+# Commercial Honesty Rule: availability_mode is strictly 'inquiry_only' (NEVER instant payment)
+
+experiences:
+  - id: "e1010001-0001-4000-8000-000000000001"
+    slug: "workshop-duc-dong-phuong-duc"
+    creator_slug: "nghe-nhan-nguyen-van-sinh"
+    creator_name: "Nghệ nhân Nhân dân Nguyễn Văn Sinh"
+    provider_name: "Xưởng Đúc Đồng Gia Tộc Nguyễn Văn (Phường Đúc)"
+    title_vi: "Trải nghiệm nghệ thuật nặn khuôn sáp & đúc đồng truyền thống Phường Đúc"
+    title_en: "Hands-on Traditional Bronze Casting & Lost-Wax Molding Masterclass"
+    description_vi: "Tham gia trực tiếp cùng Nghệ nhân Nhân dân Nguyễn Văn Sinh tại lò đúc có hơn năm thế kỷ truyền thống. Quý khách được tìm hiểu lịch sử hợp kim đồng thời Nguyễn, trực tiếp nhào nặn đất sét pha trấu, khắc họa văn hoa sáp ong và chứng kiến quá trình rót đồng nóng chảy 1200°C để đúc thành một chiếc phù điêu/chuông kỷ niệm mang về."
+    description_en: "Step into an active five-century foundry alongside People's Artisan Nguyễn Văn Sinh. Learn the metallurgy of Nguyễn dynasty imperial bronzes, knead traditional clay-and-chaff refractory molds, sculpt beeswax motifs, and witness the 1,200°C bronze molten pour to craft your own heirloom talisman."
+    area_public: "Phường Đúc, Thành phố Huế"
+    duration_minutes: 180
+    pricing_display: "Từ 650.000 VNĐ / khách"
+    currency: "VND"
+    availability_mode: "inquiry_only"
+    max_party_size: 8
+    min_party_size: 2
+    languages_supported:
+      - "vi"
+      - "en"
+    cancellation_policy_text_vi: "Hủy trước 48 giờ để được hoàn toàn bộ chi phí chuẩn bị phôi đồng; thông báo sớm giúp xưởng điều chỉnh vật liệu nung."
+    cancellation_policy_text_en: "Free cancellation up to 48 hours before session; advance notice ensures optimal furnace clay preparation."
+    notice: "Yêu cầu trải nghiệm chỉ là bước đăng ký giữ chỗ và xác nhận thời gian với nghệ nhân; không thu phí trực tuyến tức thì."
+    syllabus:
+      - step: 1
+        title_vi: "Khám phá lịch sử lò đúc Phường Đúc & Triết lý hợp kim thời Nguyễn"
+        title_en: "History of Phường Đúc Foundries & Imperial Metallurgy"
+        duration_minutes: 30
+      - step: 2
+        title_vi: "Thực hành nặn khuôn đất sét pha trấu & Khắc họa sáp ong"
+        title_en: "Hands-on Clay-Chaff Molding & Beeswax Motif Carving"
+        duration_minutes: 60
+      - step: 3
+        title_vi: "Chứng kiến quy trình nấu đồng & Rót khuôn nhiệt độ cao"
+        title_en: "Molten Bronze Smelting Observation & Crucible Pour"
+        duration_minutes: 45
+      - step: 4
+        title_vi: "Làm nguội, gọt giũa và thưởng trà đàm đạo cùng nghệ nhân"
+        title_en: "Quenching, Finishing Polish & Tea Conversation with the Master"
+        duration_minutes: 45
+
+  - id: "e1010001-0002-4000-8000-000000000002"
+    slug: "workshop-phap-lam-hue"
+    creator_slug: "nghe-nhan-do-huu-triet"
+    creator_name: "Thạc sĩ - Nghệ nhân Đỗ Hữu Triết"
+    provider_name: "Trung tâm Nghiên cứu & Ứng dụng Pháp lam Huế"
+    title_vi: "Lớp học nghệ thuật họa Pháp lam hoàng cung trên cốt đồng"
+    title_en: "Royal Huế Vitreous Enamel Painting Masterclass"
+    description_vi: "Tìm hiểu bí mật phục hồi nghệ thuật men màu cung đình thời Minh Mạng. Du khách được tự tay phác thảo họa tiết cung đình trên tấm đồng đỏ nguyên chất, phối trộn các loại bột màu khoáng silicat và thực hành nung tác phẩm trong lò nhiệt 850°C để tạo ra chiếc phù điêu/móc khóa pháp lam vĩnh cửu."
+    description_en: "Discover the scientific revival of 19th-century imperial vitreous enamel craft. Sketch royal motifs onto pure copper plates, apply vibrant silicate mineral pigments, and kiln-fire your creation at 850°C to produce an everlasting jewel-toned enamel artwork."
+    area_public: "Phường Phú Cát, Thành phố Huế"
+    duration_minutes: 150
+    pricing_display: "Từ 550.000 VNĐ / khách"
+    currency: "VND"
+    availability_mode: "inquiry_only"
+    max_party_size: 6
+    min_party_size: 1
+    languages_supported:
+      - "vi"
+      - "en"
+    cancellation_policy_text_vi: "Vui lòng thông báo trước 24 giờ nếu cần dời lịch hẹn để xưởng chuẩn bị men khoáng."
+    cancellation_policy_text_en: "Please inform us 24 hours prior if rescheduling is needed to prepare mineral pigments."
+    notice: "Yêu cầu trải nghiệm chỉ là bước liên hệ xác nhận lịch hẹn, không phải giao dịch thanh toán trực tuyến tức thì."
+    syllabus:
+      - step: 1
+        title_vi: "Dấu ấn Pháp Lam từ Minh Mạng đến hiện đại"
+        title_en: "Pháp Lam Legacy from Minh Mạng to Modernity"
+        duration_minutes: 30
+      - step: 2
+        title_vi: "Pha trộn bột màu khoáng silicat & Chuẩn bị cốt đồng"
+        title_en: "Silicate Pigment Preparation & Copper Shaping"
+        duration_minutes: 30
+      - step: 3
+        title_vi: "Tự tay vẽ men màu trên cốt đồng"
+        title_en: "Hands-on Enamel Painting on Copper"
+        duration_minutes: 50
+      - step: 4
+        title_vi: "Nung lò 850°C, đánh bóng hoàn thiện tác phẩm"
+        title_en: "Kiln Firing at 850°C & Polishing"
+        duration_minutes: 40
+
+  - id: "e1010001-0003-4000-8000-000000000003"
+    slug: "workshop-hoa-giay-thanh-tien"
+    creator_slug: "nghe-nhan-than-van-huy"
+    creator_name: "Nghệ nhân Ưu tú Thân Văn Huy"
+    provider_name: "Xưởng Hoa Giấy Nhà Rường Thân Văn Huy"
+    title_vi: "Trải nghiệm nghệ thuật vuốt cánh hoa sen giấy làng cổ Thanh Tiên"
+    title_en: "Traditional Thanh Tiên Paper Lotus Crafting in a Historic Rường House"
+    description_vi: "Hành trình về miền quê Phú Mậu yên bình bên hạ lưu sông Hương. Trong không gian ngôi nhà rường cổ trăm năm, Nghệ nhân Ưu tú Thân Văn Huy sẽ hướng dẫn quý khách cách vót nan tre cật, nhận diện các loại màu nhuộm thảo mộc tự nhiên và kỹ thuật vuốt nếp cánh sen tinh xảo để hoàn thành một đóa hoa sen giấy bất tử."
+    description_en: "Journey downriver to the pastoral village of Phú Mậu. Hosted within a century-old traditional timber Rường house, Meritorious Artisan Thân Văn Huy guides you through hand-planing bamboo ribs, identifying organic botanical dyes, and crimping paper petals into an everlasting lotus flower."
+    area_public: "Xã Phú Mậu, Thành phố Huế"
+    duration_minutes: 120
+    pricing_display: "Từ 350.000 VNĐ / khách"
+    currency: "VND"
+    availability_mode: "inquiry_only"
+    max_party_size: 12
+    min_party_size: 1
+    languages_supported:
+      - "vi"
+      - "en"
+    cancellation_policy_text_vi: "Hủy hẹn trước 12 giờ hoàn toàn miễn phí; xưởng luôn sẵn sàng đón tiếp du khách yêu mến hoa sen."
+    cancellation_policy_text_en: "Free cancellation up to 12 hours prior; the family workshop warmly welcomes all cultural visitors."
+    notice: "Yêu cầu trải nghiệm chỉ là bước kết nối lịch hẹn với xưởng nghệ nhân; thanh toán thực hiện trực tiếp tại xưởng khi tham gia."
+    syllabus:
+      - step: 1
+        title_vi: "Thăm không gian nhà rường và nghe chuyện nghề 300 năm"
+        title_en: "Rường House Tour & 300 Years of Folk Craft History"
+        duration_minutes: 25
+      - step: 2
+        title_vi: "Khám phá bí mật nhuộm màu từ thảo dược thiên nhiên"
+        title_en: "Botanical Dyes: Sappanwood, Gardenia & Turmeric"
+        duration_minutes: 25
+      - step: 3
+        title_vi: "Kỹ thuật bấm nếp, vuốt cánh hoa sen bằng chông sắt"
+        title_en: "Petal Crimping & Rib Assembly Techniques"
+        duration_minutes: 45
+      - step: 4
+        title_vi: "Hoàn thiện cành sen và chụp ảnh lưu niệm tại vườn hoa"
+        title_en: "Final Assembly & Keepsake Photo in the Garden"
+        duration_minutes: 25

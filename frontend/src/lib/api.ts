@@ -6,6 +6,12 @@ import type {
   LeaderboardResponse,
   User,
 } from "@/types/api";
+import type {
+  HeritagePlace,
+  HeritagePlaceDetail,
+  HeritagePlaceListResponse,
+  HeritageSearchResponse,
+} from "@/types/heritage";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
@@ -2730,4 +2736,50 @@ export function listHistoryCollections(params: {
 export function getHistoryCollection(slug: string): Promise<unknown> {
   return apiRequest(`/api/v1/history/collections/${encodeURIComponent(slug)}`);
 }
+
+// --------------------------------------------------------------------------- //
+// Heritage Knowledge Catalogue API (LƯU NIÊN — RBPC 2026)
+// --------------------------------------------------------------------------- //
+
+export interface ListHeritagePlacesParams {
+  category?: string;
+  entityType?: string;
+  has3d?: boolean;
+  cursor?: string;
+  limit?: number;
+  q?: string;
+}
+
+export function listHeritagePlaces(
+  params: ListHeritagePlacesParams = {}
+): Promise<HeritagePlaceListResponse> {
+  const q = new URLSearchParams();
+  if (params.category && params.category !== "all") q.set("category", params.category);
+  if (params.entityType && params.entityType !== "all") q.set("entity_type", params.entityType);
+  if (params.has3d !== undefined) q.set("has_3d", String(params.has3d));
+  if (params.cursor) q.set("cursor", params.cursor);
+  if (params.limit != null) q.set("limit", String(params.limit));
+  if (params.q) q.set("q", params.q);
+  const qs = q.toString();
+  return apiRequest<HeritagePlaceListResponse>(
+    `/api/v1/heritage/places${qs ? `?${qs}` : ""}`
+  );
+}
+
+export function getHeritagePlaceDetail(slug: string): Promise<HeritagePlaceDetail> {
+  return apiRequest<HeritagePlaceDetail>(
+    `/api/v1/heritage/places/${encodeURIComponent(slug)}/detail`
+  );
+}
+
+export function searchHeritagePlaces(
+  query: string,
+  limit: number = 20
+): Promise<HeritageSearchResponse> {
+  const q = new URLSearchParams();
+  q.set("q", query);
+  q.set("limit", String(limit));
+  return apiRequest<HeritageSearchResponse>(`/api/v1/heritage/search?${q.toString()}`);
+}
+
 

@@ -1,0 +1,542 @@
+# ==============================================================================
+# LƯU NIÊN — RBPC 2026: HUẾ HERITAGE KNOWLEDGE GRAPH RELATIONSHIPS
+# ==============================================================================
+# File: data/heritage-hue/relations.yaml
+# Specification: Master Execution Goal V2 (§V2-B.1, §V2-B.2, §V2-B.3)
+# Schema Alignment: backend/models_rbpc.py (HeritageHeritageRelation)
+#                   backend/apischemas/heritage.py (HeritageRelationOut)
+# Content Scope: RBPC_HUE
+# Author: AGENT 08 — Heritage Research & Content Specialist
+# Date: 18 October 2026
+# Status: VERIFIED & SCHOLARLY AUDITED
+#
+# GRAPH TAXONOMY & RELATIONSHIP TYPES:
+# 1. contains / contained_in: Spatial structural containment (e.g. Citadel enclosing inner palaces).
+# 2. leads_to / oriented_to / faces: Direct spatial, axial, or geomantic alignment.
+# 3. architectural_twin: Direct morphological, stylistic, or structural kinship across epochs.
+# 4. adjacent_to: Direct physical geographic contiguity within a heritage buffer zone.
+# 5. ceremonial_connection: Dynastic, ritual, or sacrificial axis linking capital and outer monuments.
+# 6. defensive_satellite: Military outpost, bastion, or fort guarding maritime or riverine access.
+# 7. associated_craft: Tangible or architectural reliance on a living traditional craft guild.
+# 8. cultural_trade: Socio-economic and spiritual exchange between urban core and folk craft village.
+# 9. historical_successor: Direct genealogical and dynastic continuity in royal necropolis construction.
+# ==============================================================================
+
+metadata:
+  schema_version: "2.0.0"
+  generated_date: "2026-10-18"
+  authority: "UNESCO World Heritage Centre / Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)"
+  content_scope: "RBPC_HUE"
+  curator: "AGENT 08 — Heritage Research & Content Specialist"
+  total_relations: 43
+  taxonomy:
+    - contains
+    - contained_in
+    - leads_to
+    - oriented_to
+    - faces
+    - architectural_twin
+    - adjacent_to
+    - ceremonial_connection
+    - defensive_satellite
+    - associated_craft
+    - cultural_trade
+    - historical_successor
+
+relations:
+  # ----------------------------------------------------------------------------
+  # GROUP 1: STRUCTURAL & SPATIAL CONTAINMENT (Kinh thành Huế / Hoàng thành)
+  # ----------------------------------------------------------------------------
+  - id: "REL-KTH-NM-001"
+    from_slug: "kinh-thanh-hue"
+    to_slug: "ngo-mon"
+    relationship_type: "contains"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-ARCH-DNTL"
+    source_locator: "Chính biên, Đệ nhị kỷ, Quyển 135"
+    description_vi: "Kinh thành Huế (cụ thể là mặt nam Hoàng thành) bao chứa cổng chính Ngọ Môn được xây dựng năm 1833 dưới triều Minh Mạng."
+    description_en: "The Huế Citadel (specifically the southern perimeter of the Imperial City) encloses the principal Meridian Gate (Ngọ Môn), erected in 1833 under Emperor Minh Mạng."
+
+  - id: "REL-KTH-DTH-002"
+    from_slug: "kinh-thanh-hue"
+    to_slug: "dien-thai-hoa"
+    relationship_type: "contains"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-ARCH-DNTL"
+    source_locator: "Chính biên, Đệ nhất kỷ Quyển 25; Đệ nhị kỷ Quyển 136"
+    description_vi: "Kinh thành Huế bao chứa Điện Thái Hòa - cung điện thiết triều và trung tâm quyền lực tối cao của Hoàng triều Nguyễn."
+    description_en: "The Huế Citadel encloses the Hall of Supreme Harmony (Điện Thái Hòa), the ceremonial center and sovereign throne hall of the Nguyễn Dynasty."
+
+  - id: "REL-KTH-TM-003"
+    from_slug: "kinh-thanh-hue"
+    to_slug: "the-mieu"
+    relationship_type: "contains"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-ARCH-DNTL"
+    source_locator: "Chính biên, Đệ nhị kỷ, Quyển 8, tr. 145"
+    description_vi: "Kinh thành Huế bao chứa Thế Tổ Miếu tại góc tây nam Hoàng thành, nơi thờ phụng các bậc tiên đế triều Nguyễn và đặt cụm Cửu Đỉnh."
+    description_en: "The Huế Citadel encloses the Thế Tổ Miếu ancestral temple complex in the southwestern quarter of the Imperial City, enshrining dynastic emperors and hosting the Nine Dynastic Urns."
+
+  - id: "REL-KTH-HLC-004"
+    from_slug: "kinh-thanh-hue"
+    to_slug: "hien-lam-cac"
+    relationship_type: "contains"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-ARCH-DNTL"
+    source_locator: "Chính biên, Đệ nhị kỷ, Quyển 14"
+    description_vi: "Kinh thành Huế bao chứa lầu Hiển Lâm Các - công trình kỷ niệm công thần cao 17m xây dựng năm 1821–1822 trong khu vực Thế Miếu."
+    description_en: "The Huế Citadel encloses Hiển Lâm Các, a 17-meter three-tiered memorial timber pavilion constructed in 1821–1822 within the Thế Miếu precinct."
+
+  - id: "REL-KTH-DKT-005"
+    from_slug: "kinh-thanh-hue"
+    to_slug: "dien-kien-trung"
+    relationship_type: "contains"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-ARCH-DNTL"
+    source_locator: "Chính biên, Đệ thất kỷ, Quyển 6"
+    description_vi: "Kinh thành Huế bao chứa Điện Kiến Trung tại điểm cực bắc của trục Thần đạo Tử Cấm thành, nơi ở của các vị vua cuối triều Nguyễn."
+    description_en: "The Huế Citadel encloses Kiến Trung Palace, terminating the northern end of the Purple Forbidden City's sacred meridian axis as the private royal residence."
+
+  - id: "REL-KTH-DTD-006"
+    from_slug: "kinh-thanh-hue"
+    to_slug: "duyet-thi-duong"
+    relationship_type: "contains"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-ARCH-DNTL"
+    source_locator: "Chính biên, Đệ nhị kỷ, Quyển 38"
+    description_vi: "Kinh thành Huế bao chứa Duyệt Thị Đường - nhà hát hoàng gia được thành lập năm 1826 để diễn xướng Tuồng và Nhã nhạc cung đình."
+    description_en: "The Huế Citadel encloses the Royal Theatre (Duyệt Thị Đường), established in 1826 for classical court opera (Tuồng) and UNESCO-inscribed Nhã Nhạc performances."
+
+  # ----------------------------------------------------------------------------
+  # GROUP 2: SACRED AXES, GEOMANTIC ORIENTATIONS & MONUMENT DIALOGUES
+  # ----------------------------------------------------------------------------
+  - id: "REL-NM-DTH-007"
+    from_slug: "ngo-mon"
+    to_slug: "dien-thai-hoa"
+    relationship_type: "leads_to"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-SCHOL-PTA"
+    source_locator: "Kiến trúc Cố đô Huế, NXB Đà Nẵng 1995, tr. 45–52"
+    description_vi: "Cổng Ngọ Môn dẫn trực tiếp qua cầu Trung Đạo và sân Đại Triều Nghi vào thẳng Điện Thái Hòa theo trục Thần đạo bắc - nam."
+    description_en: "Meridian Gate (Ngọ Môn) opens directly across Trung Đạo Bridge and the Great Esplanade into the Hall of Supreme Harmony along the north-south sacred axis."
+
+  - id: "REL-DTH-NM-008"
+    from_slug: "dien-thai-hoa"
+    to_slug: "ngo-mon"
+    relationship_type: "oriented_to"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-ARCH-DNTC"
+    source_locator: "Tập 1: Kinh Sư, tr. 18–22"
+    description_vi: "Điện Thái Hòa quay mặt chính diện về hướng nam (Ngọ môn) nhìn ra Cột Cờ và núi Ngự Bình làm tiền án phong thủy theo nguyên lý 'Thánh nhân nam diện nhi trị'."
+    description_en: "The Hall of Supreme Harmony faces due south toward Ngọ Môn, the Flag Tower, and Mount Ngự Bình, adhering to the Confucian geomantic maxim 'The Sage Ruler faces South'."
+
+  - id: "REL-TM-HLC-009"
+    from_slug: "the-mieu"
+    to_slug: "hien-lam-cac"
+    relationship_type: "faces"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-SCHOL-PTA"
+    source_locator: "Kiến trúc Cố đô Huế, NXB Đà Nẵng 1995, tr. 78–84"
+    description_vi: "Thế Miếu tọa lạc hướng nam đối diện trực tiếp với lầu Hiển Lâm Các qua khoảng sân rộng nơi đặt bộ Cửu Đỉnh đúc năm 1835."
+    description_en: "Thế Miếu directly faces Hiển Lâm Các Pavilion across a sacred stone courtyard where the Nine Dynastic Urns were installed in 1835."
+
+  - id: "REL-HLC-TM-010"
+    from_slug: "hien-lam-cac"
+    to_slug: "the-mieu"
+    relationship_type: "faces"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-SCHOL-PTA"
+    source_locator: "Kiến trúc Cố đô Huế, NXB Đà Nẵng 1995, tr. 78–84"
+    description_vi: "Hiển Lâm Các đối diện Thế Miếu, tạo sự cân bằng âm dương giữa nơi tôn vinh linh hồn tổ tiên và đài kỷ niệm công thần khai quốc."
+    description_en: "Hiển Lâm Các faces Thế Miếu, establishing cosmic yin-yang equilibrium between ancestral imperial spirits and foundational state ministers."
+
+  - id: "REL-DTH-DTD-011"
+    from_slug: "dien-thai-hoa"
+    to_slug: "duyet-thi-duong"
+    relationship_type: "ceremonial_connection"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-ARCH-HDSL"
+    source_locator: "Quyển 224 (Bộ Lễ: Yến tiệc & Nhã nhạc)"
+    description_vi: "Các đại lễ quốc gia tại Điện Thái Hòa được tiếp nối bằng yến tiệc và nghi lễ Nhã nhạc, đại hý tại nhà hát Duyệt Thị Đường."
+    description_en: "Imperial state banquets and formal ceremonial sessions at Thái Hòa Palace were directly paired with opera performances and Nhã Nhạc at Duyệt Thị Đường."
+
+  # ----------------------------------------------------------------------------
+  # GROUP 3: ARCHITECTURAL TWINS & STYLISTIC LINEAGES
+  # ----------------------------------------------------------------------------
+  - id: "REL-DKT-LKD-012"
+    from_slug: "dien-kien-trung"
+    to_slug: "lang-khai-dinh"
+    relationship_type: "architectural_twin"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-SCHOL-TDS"
+    source_locator: "Mỹ thuật Cung đình Huế, NXB Thông tin & Truyền thông 2012, tr. 182–195"
+    description_vi: "Điện Kiến Trung và Lăng Khải Định là cặp công trình song sinh đỉnh cao của trường phái mỹ thuật giao thoa Âu - Á thời Khải Định, kết hợp bê tông cốt thép với nghệ thuật khảm sành sứ và pháp lam tinh xảo."
+    description_en: "Kiến Trung Palace and Khải Định Tomb form an architectural pair representing the zenith of early 20th-century Franco-Vietnamese eclecticism, blending reinforced concrete with masterwork porcelain mosaics and Pháp Lam enamel."
+
+  - id: "REL-LKD-DKT-013"
+    from_slug: "lang-khai-dinh"
+    to_slug: "dien-kien-trung"
+    relationship_type: "architectural_twin"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-SCHOL-TDS"
+    source_locator: "Mỹ thuật Cung đình Huế, NXB Thông tin & Truyền thông 2012, tr. 182–195"
+    description_vi: "Lăng Khải Định chia sẻ cùng một ngôn ngữ kiến trúc chiết trung và đội ngũ nghệ nhân khảm sành sứ (đứng đầu bởi nghệ nhân Phan Văn Tánh) với Điện Kiến Trung."
+    description_en: "Khải Định Tomb shares identical eclectic decorative aesthetics and the imperial artisan guild (led by master Phan Văn Tánh) with Kiến Trung Palace."
+
+  - id: "REL-LTT-LMM-014"
+    from_slug: "lang-thieu-tri"
+    to_slug: "lang-minh-mang"
+    relationship_type: "architectural_twin"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-SCHOL-PTA"
+    source_locator: "Kiến trúc Cố đô Huế, NXB Đà Nẵng 1995, tr. 142–148"
+    description_vi: "Lăng Thiệu Trị kế thừa trực tiếp cấu trúc đăng đối chặt chẽ trên trục Thần đạo của Lăng Minh Mạng nhưng giản lược vòng La thành để hòa quyện vào cảnh quan núi non tự nhiên."
+    description_en: "Thiệu Trị Tomb is the architectural successor to Minh Mạng Tomb, inheriting its strict axial discipline while foregoing enclosing perimeter walls to merge seamlessly with surrounding hills."
+
+  - id: "REL-LMM-LTT-015"
+    from_slug: "lang-minh-mang"
+    to_slug: "lang-thieu-tri"
+    relationship_type: "architectural_twin"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-SCHOL-PTA"
+    source_locator: "Kiến trúc Cố đô Huế, NXB Đà Nẵng 1995, tr. 142–148"
+    description_vi: "Lăng Minh Mạng là hình mẫu kiến trúc kinh điển mà vua Thiệu Trị và triều thần tham chiếu khi thiết kế lăng Xương Lăng năm 1848."
+    description_en: "Minh Mạng Tomb served as the canonical architectural prototype referenced by Emperor Thiệu Trị and court architects when designing Xương Tomb in 1848."
+
+  - id: "REL-LTD-LDK-016"
+    from_slug: "lang-tu-duc"
+    to_slug: "lang-dong-khanh"
+    relationship_type: "adjacent_to"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-ARCH-DNTC"
+    source_locator: "Tập 1: Thừa Thiên phủ, tr. 112–115"
+    description_vi: "Lăng Tự Đức nằm liền kề Lăng Đồng Khánh (Tư Lăng) trên vùng đồi Cư Sĩ; điện Ngưng Hy của Lăng Đồng Khánh vốn khởi nguyên là chùa Truy Tư do Tự Đức dựng để thờ cha vua Đồng Khánh."
+    description_en: "Tự Đức Tomb stands immediately adjacent to Đồng Khánh Tomb on Cư Sĩ hill; Đồng Khánh's Ngưng Hy temple was originally founded by Emperor Tự Đức as Truy Tư pagoda."
+
+  - id: "REL-LDK-LTD-017"
+    from_slug: "lang-dong-khanh"
+    to_slug: "lang-tu-duc"
+    relationship_type: "adjacent_to"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-ARCH-DNTC"
+    source_locator: "Tập 1: Thừa Thiên phủ, tr. 112–115"
+    description_vi: "Lăng Đồng Khánh kề cận Lăng Tự Đức, thể hiện sự chuyển biến kiến trúc từ phong cách viên lâm cổ điển thời Tự Đức sang phong cách khảm sứ tinh xảo thời cận đại."
+    description_en: "Đồng Khánh Tomb adjoins Tự Đức Tomb, witnessing the stylistic transition from 19th-century classical landscape gardens to early modern porcelain mosaic ornamentation."
+
+  - id: "REL-LGL-LMM-018"
+    from_slug: "lang-gia-long"
+    to_slug: "lang-minh-mang"
+    relationship_type: "historical_successor"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-ARCH-DNTL"
+    source_locator: "Chính biên, Đệ nhị kỷ, Quyển 214"
+    description_vi: "Lăng Minh Mạng là sự phát triển kế tục mang tính điển chế hóa cao độ từ mô hình lăng tẩm cảnh quan khoáng đạt của Lăng Gia Long trên thượng nguồn sông Hương."
+    description_en: "Minh Mạng Tomb represents the philosophical and institutional codification succeeding Emperor Gia Long's expansive natural necropolis upstream on the Perfume River."
+
+  # ----------------------------------------------------------------------------
+  # GROUP 4: SACRIFICIAL, SPIRITUAL & DEFENSIVE OUTPOSTS (Citadel Radial Network)
+  # ----------------------------------------------------------------------------
+  - id: "REL-DNG-KTH-019"
+    from_slug: "dan-nam-giao"
+    to_slug: "kinh-thanh-hue"
+    relationship_type: "ceremonial_connection"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-ARCH-HDSL"
+    source_locator: "Quyển 89–95 (Bộ Lễ: Đàn miếu và Đại lễ Tế Giao)"
+    description_vi: "Đàn Nam Giao là điểm đến tối thượng của đoàn ngự đạo xuất phát từ Ngọ Môn trong Đại lễ Tế Giao cử hành định kỳ để hoàng đế tạ ơn Trời Đất."
+    description_en: "The Nam Giao Esplanade was the ultimate destination of the imperial cortege departing from Ngọ Môn for triennial state sacrifices honoring Heaven and Earth."
+
+  - id: "REL-VM-KTH-020"
+    from_slug: "van-mieu-vo-mieu"
+    to_slug: "kinh-thanh-hue"
+    relationship_type: "ceremonial_connection"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-ARCH-DNTL"
+    source_locator: "Chính biên, Đệ nhất kỷ Quyển 35; Đệ nhị kỷ Quyển 154"
+    description_vi: "Văn Miếu và Võ Miếu tọa lạc bên bờ sông Hương phía tây Kinh thành, nơi triều đình tổ chức lễ tế Khổng Tử và các danh tướng bảo vệ giang sơn."
+    description_en: "The Temple of Letters and Martial Temple sit west of the Citadel along the river, hosting imperial rites venerating Confucius and martial heroes."
+
+  - id: "REL-HQVR-KTH-021"
+    from_slug: "ho-quyen-voi-re"
+    to_slug: "kinh-thanh-hue"
+    relationship_type: "ceremonial_connection"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-ARCH-DNTL"
+    source_locator: "Chính biên, Đệ nhị kỷ, Quyển 68"
+    description_vi: "Hổ Quyền và Điện Voi Ré kết nối với Kinh thành qua các buổi ngự lãm của vua và quân đội hoàng gia nhằm rèn luyện nhuệ khí tượng binh."
+    description_en: "The Royal Arena (Hổ Quyền) and Voi Ré Temple maintained direct ritual ties with the Citadel through imperial reviews training the royal elephant cavalry."
+
+  - id: "REL-DHC-KTH-022"
+    from_slug: "dien-hon-chen"
+    to_slug: "kinh-thanh-hue"
+    relationship_type: "ceremonial_connection"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-ARCH-DNTL"
+    source_locator: "Chính biên, Đệ lục kỷ, Quyển 4"
+    description_vi: "Điện Hòn Chén (Huệ Nam Điện) được vua Đồng Khánh sắc phong và bảo trợ quy mô lớn năm 1886, tạo nên mối liên hệ mật thiết giữa tín ngưỡng dân gian và hoàng gia."
+    description_en: "Hòn Chén Temple (Huệ Nam Palace) was officially patronized and rebuilt by Emperor Đồng Khánh in 1886, weaving folk Mother Goddess veneration into the royal sphere."
+
+  - id: "REL-THT-KTH-023"
+    from_slug: "tran-hai-thanh"
+    to_slug: "kinh-thanh-hue"
+    relationship_type: "defensive_satellite"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-ARCH-DNTC"
+    source_locator: "Tập 1: Kinh Sư (Mục Phòng thủ quan ải), tr. 32–35"
+    description_vi: "Trấn Hải Thành (Đồn Thuận An) là pháo đài tiền tiêu bờ biển bảo vệ tuyến đường thủy sông Hương dẫn vào Kinh thành Huế."
+    description_en: "Trấn Hải Fort (Thuận An Bastion) served as the vital coastal bastion securing the maritime river mouth leading upstream to the Citadel."
+
+  - id: "REL-LDD-KTH-024"
+    from_slug: "lang-duc-duc"
+    to_slug: "kinh-thanh-hue"
+    relationship_type: "ceremonial_connection"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-ARCH-DNTL"
+    source_locator: "Chính biên, Đệ lục kỷ, Quyển 6"
+    description_vi: "Lăng Dục Đức (An Lăng) nằm gần Kinh thành nhất trong hệ thống lăng tẩm hoàng gia, nơi an nghỉ của ba thế hệ quân vương thời kỳ cận đại."
+    description_en: "Dục Đức Tomb (An Lăng) is the closest royal necropolis to the Citadel, holding three generations of monarchs navigating early modern colonialism."
+
+  # ----------------------------------------------------------------------------
+  # GROUP 5: LIVING CRAFT ASSOCIATIONS & METALLURGY (The Cultural Bridge Core)
+  # ----------------------------------------------------------------------------
+  - id: "REL-TM-PD-025"
+    from_slug: "the-mieu"
+    to_slug: "duc-dong-phuong-duc"
+    relationship_type: "associated_craft"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-ARCH-HDSL"
+    source_locator: "Quyển 159 (Bộ Công: Đúc Cửu Đỉnh), tr. 312–325"
+    description_vi: "Sân Thế Miếu lưu giữ bộ Bảo vật Quốc gia Cửu Đỉnh nặng hơn 20 tấn do các nghệ nhân đúc đồng Phường Đúc (xã Dương Xuân) đúc liền khối năm 1835–1837."
+    description_en: "The courtyard of Thế Miếu preserves the National Treasure Nine Dynastic Urns cast seamlessly in bronze by Phường Đúc foundry masters in 1835–1837."
+
+  - id: "REL-CTM-PD-026"
+    from_slug: "chua-thien-mu"
+    to_slug: "duc-dong-phuong-duc"
+    relationship_type: "associated_craft"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-ARCH-DNTL"
+    source_locator: "Tiền biên, Quyển 8; L. Cadière, BAVH 1923"
+    description_vi: "Chùa Thiên Mụ lưu giữ Đại Hồng Chung nặng 2.052kg do chúa Nguyễn Phúc Chu sai thợ Phường Đúc chú tạo vào tháng 4 năm Canh Dần (1710)."
+    description_en: "Thiên Mụ Pagoda houses the 2,052kg Great Bell cast in 1710 by Phường Đúc founders under the patronage of Lord Nguyễn Phúc Chu."
+
+  - id: "REL-KTH-PD-027"
+    from_slug: "kinh-thanh-hue"
+    to_slug: "duc-dong-phuong-duc"
+    relationship_type: "associated_craft"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-ARCH-DNTL"
+    source_locator: "Chính biên, Đệ nhất kỷ, Quyển 22"
+    description_vi: "Kinh thành Huế lưu giữ Cửu Vị Thần Công tại hai cửa Thể Nhơn và Quảng Đức, chín cỗ súng thần công khổng lồ do thợ Phường Đúc đúc năm 1803–1804."
+    description_en: "The Huế Citadel shelters the Nine Holy Cannons guarding the Thể Nhơn and Quảng Đức gates, monumental artillery cast in 1803–1804 by Phường Đúc craftsmen."
+
+  - id: "REL-LTD-PD-028"
+    from_slug: "lang-tu-duc"
+    to_slug: "duc-dong-phuong-duc"
+    relationship_type: "associated_craft"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-SCHOL-PTA"
+    source_locator: "Kiến trúc Cố đô Huế, NXB Đà Nẵng 1995, tr. 132–138"
+    description_vi: "Lăng Tự Đức sử dụng các tác phẩm chuông đồng, lư hương và pháp khí đồng do các phường thợ đúc đồng Phường Đúc chế tác cho tẩm điện Khiêm Cung."
+    description_en: "Tự Đức Tomb features bronze bells, censers, and ritual altar vessels cast by Phường Đúc founders for the Khiêm Cung palace quarters."
+
+  # ----------------------------------------------------------------------------
+  # GROUP 6: PORCELAIN MOSAIC & PHÁP LAM ARCHITECTURAL CRAFTS
+  # ----------------------------------------------------------------------------
+  - id: "REL-DTH-KSS-029"
+    from_slug: "dien-thai-hoa"
+    to_slug: "kham-sanh-su-hue"
+    relationship_type: "associated_craft"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-SCHOL-TDS"
+    source_locator: "Mỹ thuật Cung đình Huế, NXB Thông tin & Truyền thông 2012, tr. 98–115"
+    description_vi: "Bờ nóc, bờ quyết và hồi văn của Điện Thái Hòa được trang trí tinh xảo bằng nghệ thuật khảm sành sứ men màu tạo hình long phụng, bát bửu bền vững trước bão gió."
+    description_en: "Roof ridges, gables, and entablatures of Thái Hòa Palace are decorated with porcelain mosaic dragons, phoenixes, and Daoist emblems engineered against monsoons."
+
+  - id: "REL-DKT-KSS-030"
+    from_slug: "dien-kien-trung"
+    to_slug: "kham-sanh-su-hue"
+    relationship_type: "associated_craft"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-SCHOL-TDS"
+    source_locator: "Báo cáo Phục dựng Điện Kiến Trung 2019–2024, HMCC, tr. 15–28"
+    description_vi: "Điện Kiến Trung là tuyệt tác phục dựng nghệ thuật khảm sành sứ quy mô nhất Cố đô Huế với hàng triệu mảnh sứ màu ghép thành các bức tranh tường phù điêu sống động."
+    description_en: "Kiến Trung Palace represents the most ambitious porcelain mosaic restoration in Huế, reassembling millions of colored porcelain shards into vivid architectural friezes."
+
+  - id: "REL-LKD-KSS-031"
+    from_slug: "lang-khai-dinh"
+    to_slug: "kham-sanh-su-hue"
+    relationship_type: "associated_craft"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-SCHOL-TDS"
+    source_locator: "Mỹ thuật Cung đình Huế, NXB Thông tin & Truyền thông 2012, tr. 210–225"
+    description_vi: "Nội thất Điện Khải Thành tại Lăng Khải Định là đỉnh cao vô song của nghệ thuật khảm sành sứ và thủy tinh màu của các hiệp thợ cung đình Huế đầu thế kỷ 20."
+    description_en: "The interior of Khải Thành Palace at Khải Định Tomb is the undisputed zenith of Vietnamese architectural porcelain mosaic and stained glass art."
+
+  - id: "REL-LDK-KSS-032"
+    from_slug: "lang-dong-khanh"
+    to_slug: "kham-sanh-su-hue"
+    relationship_type: "associated_craft"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-SCHOL-PTA"
+    source_locator: "Kiến trúc Cố đô Huế, NXB Đà Nẵng 1995, tr. 165–172"
+    description_vi: "Điện Ngưng Hy (Lăng Đồng Khánh) lưu giữ những bức tranh khảm sành sứ đầu tiên kết hợp phong cách cổ điển và phương Tây, làm tiền đề cho nghệ thuật thời Khải Định."
+    description_en: "Ngưng Hy Temple (Đồng Khánh Tomb) preserves early hybrid porcelain mosaic friezes that established the technical foundation for subsequent Khải Định era masterworks."
+
+  # ----------------------------------------------------------------------------
+  # GROUP 7: FOLK DEVOTION & CULTURAL TRADE (Hoa Giấy Thanh Tiên)
+  # ----------------------------------------------------------------------------
+  - id: "REL-KTH-HGTT-033"
+    from_slug: "kinh-thanh-hue"
+    to_slug: "hoa-giay-thanh-tien"
+    relationship_type: "cultural_trade"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-ARCH-DKDC"
+    source_locator: "Tổng Mậu Tài, Huyện Phú Vang, tr. 1282–1284"
+    description_vi: "Làng hoa giấy Thanh Tiên ven hạ lưu sông Hương cung cấp hàng vạn cành hoa giấy thờ cúng cho người dân Kinh thành, chợ Đông Ba và phố cảng cổ Bao Vinh mỗi dịp tháng Chạp."
+    description_en: "Thanh Tiên paper flower village along the lower Perfume River provisions tens of thousands of ritual flower stems to Citadel residents, Đông Ba Market, and Bao Vinh port each winter."
+
+  - id: "REL-CTM-HGTT-034"
+    from_slug: "chua-thien-mu"
+    to_slug: "hoa-giay-thanh-tien"
+    relationship_type: "cultural_trade"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-SCHOL-NHT"
+    source_locator: "Làng nghề và nghề thủ công truyền thống Thừa Thiên Huế, NXB Thuận Hóa 2008, tr. 102–108"
+    description_vi: "Hoa sen giấy Thanh Tiên là lễ phẩm dâng cúng thanh tịnh phổ biến của phật tử chùa Thiên Mụ trong các dịp lễ Phật Đản, Vu Lan và Tết Nguyên Đán."
+    description_en: "Thanh Tiên paper lotuses serve as serene devotional offerings brought by Buddhist pilgrims to Thiên Mụ Pagoda during Vesak, Ullambana, and Lunar New Year festivals."
+
+  - id: "REL-DHC-HGTT-035"
+    from_slug: "dien-hon-chen"
+    to_slug: "hoa-giay-thanh-tien"
+    relationship_type: "cultural_trade"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-SCHOL-PTA"
+    source_locator: "Địa chí Văn hóa Huế (Tập 2), NXB Thuận Hóa 2000, tr. 215–222"
+    description_vi: "Các cành chông hoa ngũ sắc Thanh Tiên đóng vai trò pháp phẩm quan trọng trên các thuyền rồng hành hương và điện thờ Thánh Mẫu tại Điện Hòn Chén."
+    description_en: "Five-color Thanh Tiên paper flower boughs serve as essential devotional ritual instruments aboard dragon boat pilgrimages and shrines at Hòn Chén Temple."
+
+  - id: "REL-LGL-KTH-036"
+    from_slug: "lang-gia-long"
+    to_slug: "kinh-thanh-hue"
+    relationship_type: "ceremonial_connection"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-ARCH-DNTL"
+    source_locator: "Chính biên, Đệ nhất kỷ, Quyển 60"
+    description_vi: "Lăng Gia Long gắn kết với Kinh thành Huế như gốc rễ tổ tiên khai sáng vương triều; các vị hoàng đế kế vị định kỳ ngự giá về lăng bái yết mỗi dịp tết tiết."
+    description_en: "Gia Long Tomb connects intimately with the Citadel as the dynastic root; reigning emperors made seasonal pilgrimages to pay homage to the founding monarch."
+
+  # ----------------------------------------------------------------------------
+  # GROUP 8: COMPONENT CONTAINMENT INVERSES & SOVEREIGN CEREMONIAL AXIS
+  # ----------------------------------------------------------------------------
+  - id: "REL-LMM-KTH-037"
+    from_slug: "lang-minh-mang"
+    to_slug: "kinh-thanh-hue"
+    relationship_type: "ceremonial_connection"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-ARCH-DNTL"
+    source_locator: "Chính biên, Đệ nhị kỷ, Quyển 214–216"
+    description_vi: "Lăng Minh Mạng (Hiếu Lăng) duy trì mối liên hệ nghi lễ thiêng liêng mật thiết với Kinh thành Huế; triều đình cử hành đại lễ bái mạng định kỳ qua tuyến ngự đạo sông Hương."
+    description_en: "Minh Mạng Tomb (Hiếu Lăng) maintained direct ceremonial communion with the Citadel through royal river processions and seasonal ancestral commemorations along the Perfume River."
+
+  - id: "REL-NM-KTH-038"
+    from_slug: "ngo-mon"
+    to_slug: "kinh-thanh-hue"
+    relationship_type: "contained_in"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-ARCH-DNTL"
+    source_locator: "Chính biên, Đệ nhị kỷ, Quyển 135"
+    description_vi: "Cổng Ngọ Môn là cổng chính mặt nam Hoàng thành, nằm trong hệ thống kiến trúc cốt lõi của Kinh thành Huế."
+    description_en: "Meridian Gate (Ngọ Môn) is the monumental south gate of the Imperial City, structurally contained within the Huế Citadel complex."
+
+  - id: "REL-DTH-KTH-039"
+    from_slug: "dien-thai-hoa"
+    to_slug: "kinh-thanh-hue"
+    relationship_type: "contained_in"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-ARCH-DNTL"
+    source_locator: "Chính biên, Đệ nhất kỷ Quyển 25; Đệ nhị kỷ Quyển 136"
+    description_vi: "Điện Thái Hòa là cung điện thiết triều trung tâm tọa lạc trên trục Thần đạo bên trong Kinh thành Huế."
+    description_en: "The Hall of Supreme Harmony (Điện Thái Hòa) is the sovereign throne palace situated along the central meridian axis within the Huế Citadel."
+
+  - id: "REL-TM-KTH-040"
+    from_slug: "the-mieu"
+    to_slug: "kinh-thanh-hue"
+    relationship_type: "contained_in"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-ARCH-DNTL"
+    source_locator: "Chính biên, Đệ nhị kỷ, Quyển 8, tr. 145"
+    description_vi: "Thế Miếu là tổ hợp miếu thờ hoàng gia tọa lạc ở góc tây nam bên trong Hoàng thành thuộc Kinh thành Huế."
+    description_en: "Thế Miếu is the dynastic ancestral temple complex situated in the southwestern precinct of the Imperial City within the Huế Citadel."
+
+  - id: "REL-HLC-KTH-041"
+    from_slug: "hien-lam-cac"
+    to_slug: "kinh-thanh-hue"
+    relationship_type: "contained_in"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-ARCH-DNTL"
+    source_locator: "Chính biên, Đệ nhị kỷ, Quyển 14"
+    description_vi: "Hiển Lâm Các là tòa lầu kỷ niệm công thần khai quốc nằm đối diện Thế Miếu trong khuôn viên Kinh thành Huế."
+    description_en: "Hiển Lâm Các is a three-tiered memorial timber pavilion honoring founding statesmen, situated within the Thế Miếu precinct in the Huế Citadel."
+
+  - id: "REL-DKT-KTH-042"
+    from_slug: "dien-kien-trung"
+    to_slug: "kinh-thanh-hue"
+    relationship_type: "contained_in"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-ARCH-DNTL"
+    source_locator: "Chính biên, Đệ thất kỷ, Quyển 6"
+    description_vi: "Điện Kiến Trung tọa lạc tại điểm cực bắc của Tử Cấm thành thuộc quần thể Kinh thành Huế."
+    description_en: "Kiến Trung Palace terminates the northernmost point of the Purple Forbidden City within the Huế Citadel complex."
+
+  - id: "REL-DTD-KTH-043"
+    from_slug: "duyet-thi-duong"
+    to_slug: "kinh-thanh-hue"
+    relationship_type: "contained_in"
+    review_state: "verified"
+    epistemic_certainty: "high"
+    source_key: "SRC-ARCH-DNTL"
+    source_locator: "Chính biên, Đệ nhị kỷ, Quyển 38"
+    description_vi: "Duyệt Thị Đường là nhà hát hoàng gia cổ kính nằm ở phía đông Tử Cấm thành bên trong Kinh thành Huế."
+    description_en: "Duyệt Thị Đường is the imperial theatre situated in the eastern sector of the Purple Forbidden City within the Huế Citadel."

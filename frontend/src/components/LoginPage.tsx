@@ -9,7 +9,7 @@ import { useAuthStore } from "@/stores/authStore";
 function LoginForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const returnUrl = searchParams.get("returnUrl");
+    const returnUrl = searchParams?.get("returnUrl");
     const redirectPath = useMemo<string | null>(() => {
         if (!returnUrl) return null;
         const trimmed = returnUrl.trim();
@@ -60,9 +60,17 @@ function LoginForm() {
                     Đăng nhập để lưu tiến trình và tiếp tục học.
                 </p>
 
-                <div className="mt-6 flex rounded-lg bg-muted p-1">
+                <div
+                    role="tablist"
+                    aria-label="Chế độ xác thực"
+                    className="mt-6 flex rounded-lg bg-muted p-1"
+                >
                     <button
                         type="button"
+                        role="tab"
+                        id="auth-tab-login"
+                        aria-selected={!isRegister}
+                        aria-controls="auth-form"
                         onClick={() => setMode("login")}
                         className={[
                             "flex-1 rounded-md px-3 py-2 text-sm",
@@ -75,6 +83,10 @@ function LoginForm() {
                     </button>
                     <button
                         type="button"
+                        role="tab"
+                        id="auth-tab-register"
+                        aria-selected={isRegister}
+                        aria-controls="auth-form"
                         onClick={() => setMode("register")}
                         className={[
                             "flex-1 rounded-md px-3 py-2 text-sm",
@@ -88,6 +100,9 @@ function LoginForm() {
                 </div>
 
                 <form
+                    id="auth-form"
+                    role="tabpanel"
+                    aria-labelledby={isRegister ? "auth-tab-register" : "auth-tab-login"}
                     onSubmit={onSubmit}
                     className="mt-6 space-y-4 rounded-xl bg-card border border-border p-6"
                 >

@@ -141,7 +141,11 @@ async def rate_limit_auth_endpoints(request: Request, call_next):
                     "details": {},
                 }
             },
-            headers={"Retry-After": str(retry_after)},
+            headers={
+                "Retry-After": str(retry_after),
+                "X-RateLimit-Limit": str(limit),
+                "X-RateLimit-Remaining": "0",
+            },
         )
 
     _auth_rate_limit_state[key] = (window_start, count + 1)
@@ -228,6 +232,8 @@ def create_app() -> FastAPI:
     from .routers import history_stories as history_stories_router
     from .routers import history_tutor as history_tutor_router
     from .routers import history_collections as history_collections_router
+    from .routers import heritage as heritage_router
+    from .routers import rbpc as rbpc_router
 
     app.include_router(auth_router.router)
     app.include_router(users_router.router)
@@ -244,5 +250,7 @@ def create_app() -> FastAPI:
     app.include_router(history_stories_router.router)
     app.include_router(history_tutor_router.router)
     app.include_router(history_collections_router.router)
+    app.include_router(heritage_router.router)
+    app.include_router(rbpc_router.router)
 
     return app

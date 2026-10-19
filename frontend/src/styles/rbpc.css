@@ -1,0 +1,816 @@
+/**
+ * LƯU NIÊN — RBPC 2026: Contemporary Huế Editorial Design System Tokens & Utility Classes
+ * Scope: Modern cultural editorial × trustworthy service design × authentic Huế warmth.
+ * Spec Reference: Master Spec Section 4.3, 4.5 & V2-A.2
+ *
+ * Grounding Principles:
+ * - Scoped under :root and .rbpc-theme / [data-theme="rbpc"]
+ * - Self-hosted Playfair Display (Serif) & Inter (Humanist Sans)
+ * - Vietnamese typography line-heights: 1.6–1.8 (prevents diacritic clipping)
+ * - Card elevations: Subtle 1px solid borders + ambient paper shadows; NO heavy backdrop-blur
+ * - Minimum interactive touch-target: 44×44 CSS pixels
+ * - Focus outlines: Minimum 2px solid #1E675A with 2px offset
+ * - Reduced motion safe: Complete animation dampening under prefers-reduced-motion: reduce
+ */
+
+:root,
+.rbpc-theme,
+[data-theme="rbpc"] {
+  /* ==========================================================================
+     1. COLOR PALETTE TOKENS
+     ========================================================================== */
+
+  /* Background & Surfaces (Warm Paper & Ivory) */
+  --rbpc-bg: #F7F4EE;               /* Warm paper backdrop */
+  --rbpc-surface: #FFFCF7;          /* Primary paper cards and editorial panels */
+  --rbpc-surface-elevated: #FFFFFF; /* High-elevation modals, menus, drawers */
+  --rbpc-surface-muted: #EFECE4;    /* Inset panels and secondary callouts */
+
+  /* Ink & Typography */
+  --rbpc-ink: #242C2B;              /* Deep charcoal/slate for body & headings (WCAG AAA) */
+  --rbpc-ink-subtle: #424D4B;       /* Secondary text */
+  --rbpc-muted: #66706B;            /* Secondary metadata, captions, timestamps (WCAG AA) */
+
+  /* Primary Editorial Green (Imperial Moss / Huế Deep Green) */
+  --rbpc-primary: #325B52;          /* Primary buttons, key brand anchors (WCAG AA) */
+  --rbpc-primary-hover: #25453E;    /* Button hover & active states */
+  --rbpc-primary-subtle: rgba(50, 91, 82, 0.08); /* Tints & hover backgrounds */
+  --rbpc-primary-border: rgba(50, 91, 82, 0.25);
+
+  /* Highlight & Accents (Quiet Terracotta / Huế Imperial Brick & Copper) */
+  --rbpc-highlight: #A66A45;        /* Editorial highlights, badges, warm accents */
+  --rbpc-highlight-hover: #8F5938;  /* Highlight hover state */
+  --rbpc-highlight-subtle: rgba(166, 106, 69, 0.08);
+  --rbpc-highlight-border: rgba(166, 106, 69, 0.25);
+
+  /* Dividers & Borders */
+  --rbpc-divider: #D8D7CE;          /* Understated 1px borders */
+  --rbpc-divider-subtle: #E8E7DF;   /* Delicate inner section rules */
+
+  /* Focus Indicator (High-Contrast Emerald Teal) */
+  --rbpc-focus: #1E675A;            /* Visible keyboard focus outline (≥2px solid) */
+  --rbpc-focus-ring: rgba(30, 103, 90, 0.25);
+
+  /* Semantic Feedback States */
+  --rbpc-error: #A33A35;            /* Validated form errors, critical alerts */
+  --rbpc-error-hover: #8C2E2A;
+  --rbpc-error-subtle: rgba(163, 58, 53, 0.08);
+  --rbpc-error-border: rgba(163, 58, 53, 0.25);
+
+  --rbpc-success: #216248;          /* Verified state, success confirmation */
+  --rbpc-success-hover: #1A4F3A;
+  --rbpc-success-subtle: rgba(33, 98, 72, 0.08);
+  --rbpc-success-border: rgba(33, 98, 72, 0.25);
+
+  --rbpc-warning: #B37D28;          /* Unverified state / needs review */
+  --rbpc-warning-subtle: rgba(179, 125, 40, 0.08);
+  --rbpc-warning-border: rgba(179, 125, 40, 0.25);
+
+  /* Epistemic Certainty Badge Tokens */
+  --rbpc-badge-unesco-bg: rgba(50, 91, 82, 0.1);
+  --rbpc-badge-unesco-text: #216248;
+  --rbpc-badge-unesco-border: rgba(50, 91, 82, 0.25);
+
+  --rbpc-badge-verified-bg: rgba(33, 98, 72, 0.1);
+  --rbpc-badge-verified-text: #216248;
+  --rbpc-badge-verified-border: rgba(33, 98, 72, 0.25);
+
+  --rbpc-badge-review-bg: rgba(166, 106, 69, 0.1);
+  --rbpc-badge-review-text: #8F5938;
+  --rbpc-badge-review-border: rgba(166, 106, 69, 0.25);
+
+  --rbpc-badge-tradition-bg: rgba(78, 64, 88, 0.08);
+  --rbpc-badge-tradition-text: #533E60;
+  --rbpc-badge-tradition-border: rgba(78, 64, 88, 0.22);
+
+  --rbpc-badge-interpretation-bg: rgba(43, 76, 102, 0.08);
+  --rbpc-badge-interpretation-text: #2B4C66;
+  --rbpc-badge-interpretation-border: rgba(43, 76, 102, 0.22);
+
+  --rbpc-badge-gap-bg: rgba(102, 112, 107, 0.1);
+  --rbpc-badge-gap-text: #4D5652;
+  --rbpc-badge-gap-border: rgba(102, 112, 107, 0.25);
+
+  /* ==========================================================================
+     2. TYPOGRAPHY SYSTEM TOKENS
+     ========================================================================== */
+
+  /* Font Families (Self-hosted Inter & Playfair Display) */
+  --rbpc-font-serif: "Playfair Display", Georgia, Cambria, "Times New Roman", serif;
+  --rbpc-font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --rbpc-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Responsive Type Scales (clamp rules for seamless Mobile -> Desktop transitions) */
+  --rbpc-text-display: clamp(2.25rem, 5vw, 4.5rem);  /* 36px – 72px */
+  --rbpc-text-h1: clamp(2rem, 4vw, 3.25rem);         /* 32px – 52px */
+  --rbpc-text-h2: clamp(1.625rem, 3vw, 2.5rem);      /* 26px – 40px */
+  --rbpc-text-h3: clamp(1.25rem, 2vw, 1.75rem);      /* 20px – 28px */
+  --rbpc-text-h4: clamp(1.125rem, 1.5vw, 1.375rem);  /* 18px – 22px */
+  --rbpc-text-lead: clamp(1.125rem, 1.4vw, 1.25rem); /* 18px – 20px */
+  --rbpc-text-body: clamp(1rem, 1.2vw, 1.125rem);     /* 16px – 18px */
+  --rbpc-text-sm: 0.875rem;                          /* 14px */
+  --rbpc-text-xs: 0.75rem;                           /* 12px */
+
+  /* Line Heights (Vietnamese editorial requirement: 1.6–1.8 for generous diacritic breath) */
+  --rbpc-lh-tight: 1.15;
+  --rbpc-lh-heading: 1.28;
+  --rbpc-lh-lead: 1.62;
+  --rbpc-lh-body: 1.72;
+  --rbpc-lh-relaxed: 1.82;
+
+  /* Letter Spacing */
+  --rbpc-tracking-tighter: -0.025em;
+  --rbpc-tracking-tight: -0.015em;
+  --rbpc-tracking-normal: 0em;
+  --rbpc-tracking-wide: 0.025em;
+  --rbpc-tracking-wider: 0.06em;
+  --rbpc-tracking-widest: 0.12em;
+
+  /* ==========================================================================
+     3. SPACING & LAYOUT TOKENS
+     ========================================================================== */
+
+  /* 8pt Spatial Scale */
+  --rbpc-space-1: 0.25rem;  /* 4px */
+  --rbpc-space-2: 0.5rem;   /* 8px */
+  --rbpc-space-3: 0.75rem;  /* 12px */
+  --rbpc-space-4: 1rem;     /* 16px */
+  --rbpc-space-5: 1.25rem;  /* 20px */
+  --rbpc-space-6: 1.5rem;   /* 24px */
+  --rbpc-space-8: 2rem;     /* 32px */
+  --rbpc-space-10: 2.5rem;  /* 40px */
+  --rbpc-space-12: 3rem;    /* 48px */
+  --rbpc-space-16: 4rem;    /* 64px */
+  --rbpc-space-20: 5rem;    /* 80px */
+  --rbpc-space-24: 6.5rem;  /* 104px */
+
+  /* Container Boundaries */
+  --rbpc-content-max: 1180px;
+  --rbpc-reading-max: 720px;
+  --rbpc-drawer-max: 480px;
+
+  /* Corner Radii */
+  --rbpc-radius-sm: 8px;
+  --rbpc-radius-md: 12px;
+  --rbpc-radius-lg: 16px;
+  --rbpc-radius-full: 9999px;
+
+  /* Elevation Shadows (Modest, Paper-like; NO heavy rasterization or backdrop-blur) */
+  --rbpc-shadow-sm: 0 1px 2px 0 rgba(36, 44, 43, 0.04);
+  --rbpc-shadow-md: 0 4px 12px -2px rgba(36, 44, 43, 0.05), 0 2px 4px -1px rgba(36, 44, 43, 0.03);
+  --rbpc-shadow-lg: 0 12px 28px -4px rgba(36, 44, 43, 0.07), 0 4px 8px -2px rgba(36, 44, 43, 0.04);
+  --rbpc-shadow-focus: 0 0 0 3px var(--rbpc-focus-ring);
+
+  /* Touch Target Minimum (WCAG 2.5.5 / 2.5.8 Standard) */
+  --rbpc-touch-target: 44px;
+
+  /* Transitions */
+  --rbpc-transition-fast: 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  --rbpc-transition-base: 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ==========================================================================
+   4. BASE APPLICATION STYLES (SCOPED)
+   ========================================================================== */
+
+.rbpc-theme,
+[data-theme="rbpc"] {
+  background-color: var(--rbpc-bg);
+  color: var(--rbpc-ink);
+  font-family: var(--rbpc-font-sans);
+  font-size: var(--rbpc-text-body);
+  line-height: var(--rbpc-lh-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ==========================================================================
+   5. COMPONENT: BUTTON VARIANTS (Min 44×44px Touch Target)
+   ========================================================================== */
+
+.rbpc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--rbpc-space-2);
+  min-height: var(--rbpc-touch-target);
+  min-width: var(--rbpc-touch-target);
+  padding: 0.625rem 1.25rem;
+  font-family: var(--rbpc-font-sans);
+  font-size: var(--rbpc-text-sm);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: var(--rbpc-tracking-normal);
+  text-decoration: none;
+  border-radius: var(--rbpc-radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color var(--rbpc-transition-fast),
+              border-color var(--rbpc-transition-fast),
+              color var(--rbpc-transition-fast),
+              box-shadow var(--rbpc-transition-fast);
+}
+
+.rbpc-btn:focus-visible {
+  outline: 2px solid var(--rbpc-focus);
+  outline-offset: 2px;
+}
+
+.rbpc-btn:disabled,
+.rbpc-btn[aria-disabled="true"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Primary Button: Huế Deep Green */
+.rbpc-btn-primary {
+  background-color: var(--rbpc-primary);
+  color: #FFFFFF;
+  border-color: var(--rbpc-primary);
+  box-shadow: var(--rbpc-shadow-sm);
+}
+
+.rbpc-btn-primary:hover:not(:disabled) {
+  background-color: var(--rbpc-primary-hover);
+  border-color: var(--rbpc-primary-hover);
+}
+
+.rbpc-btn-primary:active:not(:disabled) {
+  background-color: #1E3731;
+  border-color: #1E3731;
+}
+
+/* Secondary Button: Paper Surface with Subtle 1px Border */
+.rbpc-btn-secondary {
+  background-color: var(--rbpc-surface);
+  color: var(--rbpc-ink);
+  border-color: var(--rbpc-divider);
+  box-shadow: var(--rbpc-shadow-sm);
+}
+
+.rbpc-btn-secondary:hover:not(:disabled) {
+  background-color: var(--rbpc-bg);
+  border-color: var(--rbpc-primary);
+  color: var(--rbpc-primary);
+}
+
+.rbpc-btn-secondary:active:not(:disabled) {
+  background-color: var(--rbpc-surface-muted);
+}
+
+/* Subtle / Ghost Button: Transparent with hover tint */
+.rbpc-btn-subtle {
+  background-color: transparent;
+  color: var(--rbpc-primary);
+  border-color: transparent;
+}
+
+.rbpc-btn-subtle:hover:not(:disabled) {
+  background-color: var(--rbpc-primary-subtle);
+  color: var(--rbpc-primary-hover);
+}
+
+.rbpc-btn-subtle:active:not(:disabled) {
+  background-color: rgba(50, 91, 82, 0.14);
+}
+
+/* Highlight Button: Terracotta / Copper Accent */
+.rbpc-btn-highlight {
+  background-color: var(--rbpc-highlight);
+  color: #FFFFFF;
+  border-color: var(--rbpc-highlight);
+  box-shadow: var(--rbpc-shadow-sm);
+}
+
+.rbpc-btn-highlight:hover:not(:disabled) {
+  background-color: var(--rbpc-highlight-hover);
+  border-color: var(--rbpc-highlight-hover);
+}
+
+.rbpc-btn-highlight:active:not(:disabled) {
+  background-color: #794A2D;
+  border-color: #794A2D;
+}
+
+/* Small Button Variant (Preserves 44px hit-box via padding/alignment) */
+.rbpc-btn-sm {
+  min-height: 36px;
+  padding: 0.375rem 0.875rem;
+  font-size: var(--rbpc-text-xs);
+  border-radius: var(--rbpc-radius-sm);
+}
+
+/* ==========================================================================
+   6. COMPONENT: CARD ELEVATIONS (Subtle 1px border, NO heavy backdrop-blur)
+   ========================================================================== */
+
+.rbpc-card {
+  background-color: var(--rbpc-surface);
+  border: 1px solid var(--rbpc-divider);
+  border-radius: var(--rbpc-radius-md);
+  box-shadow: var(--rbpc-shadow-sm);
+  padding: var(--rbpc-space-6);
+  position: relative;
+  overflow: hidden;
+  /* Strictly NO backdrop-filter / backdrop-blur here to protect frame rates and battery */
+}
+
+.rbpc-card-lg {
+  border-radius: var(--rbpc-radius-lg);
+  padding: var(--rbpc-space-8);
+}
+
+.rbpc-card-sm {
+  border-radius: var(--rbpc-radius-sm);
+  padding: var(--rbpc-space-4);
+}
+
+/* Interactive Card: Hover Elevation without Blur */
+.rbpc-card-interactive {
+  transition: transform var(--rbpc-transition-base),
+              box-shadow var(--rbpc-transition-base),
+              border-color var(--rbpc-transition-base);
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
+.rbpc-card-interactive:hover {
+  transform: translateY(-2px);
+  border-color: var(--rbpc-primary-border);
+  box-shadow: var(--rbpc-shadow-md);
+}
+
+.rbpc-card-interactive:focus-visible {
+  outline: 2px solid var(--rbpc-focus);
+  outline-offset: 2px;
+}
+
+.rbpc-card-interactive:active {
+  transform: translateY(0);
+}
+
+/* Inset / Subtle Card */
+.rbpc-card-inset {
+  background-color: var(--rbpc-bg);
+  border: 1px dashed var(--rbpc-divider);
+  box-shadow: none;
+}
+
+/* ==========================================================================
+   7. COMPONENT: EPISTEMIC CERTAINTY & STATUS BADGES
+   ========================================================================== */
+
+.rbpc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rbpc-space-1);
+  padding: 0.25rem 0.625rem;
+  font-family: var(--rbpc-font-sans);
+  font-size: var(--rbpc-text-xs);
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: var(--rbpc-tracking-wide);
+  border-radius: var(--rbpc-radius-full);
+  border: 1px solid transparent;
+  white-space: nowrap;
+  user-select: none;
+}
+
+/* UNESCO World Heritage Inscription Badge */
+.rbpc-badge-unesco {
+  background-color: var(--rbpc-badge-unesco-bg);
+  color: var(--rbpc-badge-unesco-text);
+  border-color: var(--rbpc-badge-unesco-border);
+}
+
+/* Verified Source Badge */
+.rbpc-badge-verified {
+  background-color: var(--rbpc-badge-verified-bg);
+  color: var(--rbpc-badge-verified-text);
+  border-color: var(--rbpc-badge-verified-border);
+}
+
+/* Needs Review / Evidence Gap Badge */
+.rbpc-badge-review {
+  background-color: var(--rbpc-badge-review-bg);
+  color: var(--rbpc-badge-review-text);
+  border-color: var(--rbpc-badge-review-border);
+}
+
+/* Living Tradition / Artisan Community Badge */
+.rbpc-badge-tradition {
+  background-color: var(--rbpc-badge-tradition-bg);
+  color: var(--rbpc-badge-tradition-text);
+  border-color: var(--rbpc-badge-tradition-border);
+}
+
+/* Academic Interpretation Badge */
+.rbpc-badge-interpretation {
+  background-color: var(--rbpc-badge-interpretation-bg);
+  color: var(--rbpc-badge-interpretation-text);
+  border-color: var(--rbpc-badge-interpretation-border);
+}
+
+/* Evidence Gap / Unresolved Badge */
+.rbpc-badge-gap {
+  background-color: var(--rbpc-badge-gap-bg);
+  color: var(--rbpc-badge-gap-text);
+  border-color: var(--rbpc-badge-gap-border);
+}
+
+/* Subtle dot indicator inside badges */
+.rbpc-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: currentColor;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   8. COMPONENT: CITATION DRAWERS & DIALOGS
+   ========================================================================== */
+
+/* Drawer Dim Overlay (NO heavy blur, uses solid tinted alpha) */
+.rbpc-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(36, 44, 43, 0.45);
+  z-index: 900;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--rbpc-transition-base);
+}
+
+.rbpc-drawer-overlay[data-state="open"],
+.rbpc-drawer-overlay.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Drawer Paper Panel (Slides from Right) */
+.rbpc-drawer-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: var(--rbpc-drawer-max);
+  background-color: var(--rbpc-surface);
+  border-left: 1px solid var(--rbpc-divider);
+  box-shadow: var(--rbpc-shadow-lg);
+  z-index: 910;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform var(--rbpc-transition-base);
+  overflow: hidden;
+}
+
+.rbpc-drawer-panel[data-state="open"],
+.rbpc-drawer-panel.is-open {
+  transform: translateX(0);
+}
+
+.rbpc-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--rbpc-space-5) var(--rbpc-space-6);
+  border-bottom: 1px solid var(--rbpc-divider);
+  background-color: var(--rbpc-surface);
+}
+
+.rbpc-drawer-title {
+  font-family: var(--rbpc-font-serif);
+  font-size: var(--rbpc-text-h3);
+  font-weight: 600;
+  color: var(--rbpc-ink);
+  line-height: var(--rbpc-lh-heading);
+  margin: 0;
+}
+
+.rbpc-drawer-body {
+  flex: 1;
+  padding: var(--rbpc-space-6);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.rbpc-drawer-footer {
+  padding: var(--rbpc-space-4) var(--rbpc-space-6);
+  border-top: 1px solid var(--rbpc-divider);
+  background-color: var(--rbpc-bg);
+}
+
+/* Citation Item Inside Drawer */
+.rbpc-citation-item {
+  padding: var(--rbpc-space-4);
+  border: 1px solid var(--rbpc-divider);
+  border-radius: var(--rbpc-radius-md);
+  background-color: var(--rbpc-bg);
+  margin-bottom: var(--rbpc-space-3);
+}
+
+.rbpc-citation-title {
+  font-family: var(--rbpc-font-serif);
+  font-size: var(--rbpc-text-sm);
+  font-weight: 600;
+  color: var(--rbpc-ink);
+  margin-bottom: var(--rbpc-space-1);
+}
+
+.rbpc-citation-meta {
+  font-size: var(--rbpc-text-xs);
+  color: var(--rbpc-muted);
+  line-height: 1.5;
+}
+
+.rbpc-citation-locator {
+  font-family: var(--rbpc-font-mono);
+  font-size: 0.75rem;
+  color: var(--rbpc-primary);
+  background-color: var(--rbpc-primary-subtle);
+  padding: 0.125rem 0.375rem;
+  border-radius: var(--rbpc-radius-sm);
+  display: inline-block;
+  margin-top: var(--rbpc-space-2);
+}
+
+/* ==========================================================================
+   9. COMPONENT: ACCESSIBLE FORM FIELDS
+   ========================================================================== */
+
+.rbpc-form-group {
+  margin-bottom: var(--rbpc-space-5);
+}
+
+.rbpc-label {
+  display: block;
+  font-family: var(--rbpc-font-sans);
+  font-size: var(--rbpc-text-sm);
+  font-weight: 500;
+  color: var(--rbpc-ink);
+  margin-bottom: var(--rbpc-space-2);
+}
+
+.rbpc-label-required::after {
+  content: " *";
+  color: var(--rbpc-error);
+}
+
+.rbpc-input,
+.rbpc-textarea,
+.rbpc-select {
+  width: 100%;
+  min-height: var(--rbpc-touch-target);
+  padding: 0.625rem 0.875rem;
+  font-family: var(--rbpc-font-sans);
+  font-size: var(--rbpc-text-body);
+  line-height: 1.5;
+  color: var(--rbpc-ink);
+  background-color: var(--rbpc-surface);
+  border: 1px solid var(--rbpc-divider);
+  border-radius: var(--rbpc-radius-md);
+  box-shadow: inset 0 1px 2px rgba(36, 44, 43, 0.03);
+  transition: border-color var(--rbpc-transition-fast),
+              box-shadow var(--rbpc-transition-fast);
+}
+
+.rbpc-input:hover,
+.rbpc-textarea:hover,
+.rbpc-select:hover {
+  border-color: var(--rbpc-muted);
+}
+
+.rbpc-input:focus,
+.rbpc-textarea:focus,
+.rbpc-select:focus {
+  outline: 2px solid var(--rbpc-focus);
+  outline-offset: 2px;
+  border-color: var(--rbpc-focus);
+  box-shadow: var(--rbpc-shadow-focus);
+}
+
+.rbpc-input[aria-invalid="true"],
+.rbpc-textarea[aria-invalid="true"],
+.rbpc-input-error {
+  border-color: var(--rbpc-error);
+  background-color: #FFFDFD;
+}
+
+.rbpc-input[aria-invalid="true"]:focus,
+.rbpc-textarea[aria-invalid="true"]:focus {
+  outline-color: var(--rbpc-error);
+}
+
+.rbpc-field-error {
+  display: flex;
+  align-items: center;
+  gap: var(--rbpc-space-1);
+  font-size: var(--rbpc-text-xs);
+  color: var(--rbpc-error);
+  margin-top: var(--rbpc-space-1);
+}
+
+.rbpc-field-helper {
+  font-size: var(--rbpc-text-xs);
+  color: var(--rbpc-muted);
+  margin-top: var(--rbpc-space-1);
+}
+
+/* Consent Checkbox with minimum 44×44px hit-area */
+.rbpc-checkbox-wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--rbpc-space-3);
+  min-height: var(--rbpc-touch-target);
+  padding: var(--rbpc-space-2) 0;
+  cursor: pointer;
+  user-select: none;
+}
+
+.rbpc-checkbox {
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  accent-color: var(--rbpc-primary);
+  border: 1px solid var(--rbpc-divider);
+  border-radius: 4px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.rbpc-checkbox:focus-visible {
+  outline: 2px solid var(--rbpc-focus);
+  outline-offset: 2px;
+}
+
+.rbpc-checkbox-label {
+  font-size: var(--rbpc-text-sm);
+  color: var(--rbpc-ink);
+  line-height: var(--rbpc-lh-lead);
+}
+
+/* ==========================================================================
+   10. LAYOUT & RESPONSIVE UTILITY CLASSES
+   ========================================================================== */
+
+/* Editorial Content Container (max 1180px) */
+.rbpc-container {
+  width: 100%;
+  max-width: var(--rbpc-content-max);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--rbpc-space-4);
+  padding-right: var(--rbpc-space-4);
+}
+
+@media (min-width: 640px) {
+  .rbpc-container {
+    padding-left: var(--rbpc-space-6);
+    padding-right: var(--rbpc-space-6);
+  }
+}
+
+@media (min-width: 1024px) {
+  .rbpc-container {
+    padding-left: var(--rbpc-space-8);
+    padding-right: var(--rbpc-space-8);
+  }
+}
+
+/* Editorial Long-Form Reading Container (680–740px, optimal 65–75 chars/line) */
+.rbpc-reading-container {
+  width: 100%;
+  max-width: var(--rbpc-reading-max);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Explicit Touch-Target Utility */
+.rbpc-touch-target {
+  min-width: var(--rbpc-touch-target);
+  min-height: var(--rbpc-touch-target);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Typography Utility Classes */
+.rbpc-font-serif {
+  font-family: var(--rbpc-font-serif);
+}
+
+.rbpc-font-sans {
+  font-family: var(--rbpc-font-sans);
+}
+
+.rbpc-heading-display {
+  font-family: var(--rbpc-font-serif);
+  font-size: var(--rbpc-text-display);
+  line-height: var(--rbpc-lh-tight);
+  font-weight: 700;
+  color: var(--rbpc-ink);
+  letter-spacing: var(--rbpc-tracking-tighter);
+}
+
+.rbpc-heading-1 {
+  font-family: var(--rbpc-font-serif);
+  font-size: var(--rbpc-text-h1);
+  line-height: var(--rbpc-lh-heading);
+  font-weight: 600;
+  color: var(--rbpc-ink);
+  letter-spacing: var(--rbpc-tracking-tight);
+}
+
+.rbpc-heading-2 {
+  font-family: var(--rbpc-font-serif);
+  font-size: var(--rbpc-text-h2);
+  line-height: var(--rbpc-lh-heading);
+  font-weight: 600;
+  color: var(--rbpc-ink);
+}
+
+.rbpc-heading-3 {
+  font-family: var(--rbpc-font-serif);
+  font-size: var(--rbpc-text-h3);
+  line-height: var(--rbpc-lh-heading);
+  font-weight: 600;
+  color: var(--rbpc-ink);
+}
+
+.rbpc-lead {
+  font-size: var(--rbpc-text-lead);
+  line-height: var(--rbpc-lh-lead);
+  color: var(--rbpc-ink-subtle);
+}
+
+.rbpc-caption {
+  font-size: var(--rbpc-text-xs);
+  line-height: 1.5;
+  color: var(--rbpc-muted);
+}
+
+.rbpc-eyebrow {
+  font-family: var(--rbpc-font-sans);
+  font-size: var(--rbpc-text-xs);
+  font-weight: 600;
+  letter-spacing: var(--rbpc-tracking-widest);
+  text-transform: uppercase;
+  color: var(--rbpc-primary);
+}
+
+/* Editorial Dividers */
+.rbpc-divider-hr {
+  border: 0;
+  height: 1px;
+  background-color: var(--rbpc-divider);
+  margin: var(--rbpc-space-8) 0;
+}
+
+/* ==========================================================================
+   11. ACCESSIBILITY & MOTION PREFERENCES
+   ========================================================================== */
+
+/* High-contrast focus outline for any interactive element */
+.rbpc-focus-ring:focus-visible {
+  outline: 2px solid var(--rbpc-focus);
+  outline-offset: 2px;
+}
+
+/* Screen Reader Only Utility */
+.rbpc-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Respect User Motion Preferences (WCAG 2.3.3) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .rbpc-card-interactive:hover {
+    transform: none !important;
+  }
+
+  .rbpc-drawer-panel {
+    transition: none !important;
+  }
+}

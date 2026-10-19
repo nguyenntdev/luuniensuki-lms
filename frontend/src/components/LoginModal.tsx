@@ -116,9 +116,13 @@ export default function LoginModal({ isOpen, onClose, onSuccess }: LoginModalPro
                 Đăng nhập để lưu tiến trình và tiếp tục học.
               </p>
 
-              <div className="mt-6 flex rounded-lg bg-muted p-1">
+              <div role="tablist" aria-label="Chế độ xác thực" className="mt-6 flex rounded-lg bg-muted p-1">
                 <button
                   type="button"
+                  role="tab"
+                  id="modal-tab-login"
+                  aria-selected={!isRegister}
+                  aria-controls="modal-auth-form"
                   onClick={() => setMode("login")}
                   className={[
                     "flex-1 rounded-md px-3 py-2 text-sm transition-colors focus-ring",
@@ -129,6 +133,10 @@ export default function LoginModal({ isOpen, onClose, onSuccess }: LoginModalPro
                 </button>
                 <button
                   type="button"
+                  role="tab"
+                  id="modal-tab-register"
+                  aria-selected={isRegister}
+                  aria-controls="modal-auth-form"
                   onClick={() => setMode("register")}
                   className={[
                     "flex-1 rounded-md px-3 py-2 text-sm transition-colors focus-ring",
@@ -139,7 +147,7 @@ export default function LoginModal({ isOpen, onClose, onSuccess }: LoginModalPro
                 </button>
               </div>
 
-              <form onSubmit={onSubmit} className="mt-6 space-y-4 rounded-xl bg-card border border-border p-6">
+              <form id="modal-auth-form" role="tabpanel" aria-labelledby={isRegister ? "modal-tab-register" : "modal-tab-login"} onSubmit={onSubmit} className="mt-6 space-y-4 rounded-xl bg-card border border-border p-6">
                 {isRegister ? (
                   <label className="block">
                     <span className="text-xs text-muted-foreground">Tên hiển thị</span>

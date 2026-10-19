@@ -122,6 +122,18 @@ class Settings(BaseSettings):
     live_data_encryption_key: Optional[str] = None
 
     # ==========================================================================
+    # Clara Gemini AI Gateway & Token Budget Guardrails (RBPC 2026)
+    # ==========================================================================
+    clara_router_url: str = "https://router.theclaracare.com/v1"
+    clara_api_key: Optional[str] = None
+    clara_model: str = "gemini-3.8-flash-tiered"
+    clara_timeout_seconds: int = 30
+    clara_max_retries: int = 2
+    ai_max_tokens_per_session: int = 4096
+    ai_daily_token_budget_ceiling: int = 500_000
+    ai_daily_cost_circuit_breaker_usd: float = 5.0
+
+    # ==========================================================================
     # Backend Voice (STT/TTS)
     # ==========================================================================
     voice_api_key: Optional[str] = None

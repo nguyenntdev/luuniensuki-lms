@@ -7,7 +7,10 @@ test('should display collection and filter items', async ({ page }) => {
   const name = 'Collection User';
 
   await page.goto('/login');
-  await page.getByRole('button', { name: 'Đăng ký' }).click();
+  await page
+    .getByRole('tab', { name: 'Đăng ký' })
+    .or(page.getByRole('button', { name: 'Đăng ký' }))
+    .click();
   await page.getByPlaceholder('Sử Quan Tập Sự').fill(name);
   await page.getByPlaceholder('you@example.com').fill(email);
   await page.getByPlaceholder('••••••••').fill(password);

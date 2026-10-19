@@ -13,26 +13,41 @@ class AppError(Exception):
         message: str,
         status_code: int = status.HTTP_400_BAD_REQUEST,
         details: Optional[dict] = None,
+        headers: Optional[dict[str, str]] = None,
     ):
         self.code = code
         self.message = message
         self.status_code = status_code
         self.details = details or {}
+        self.headers = headers
 
 
 async def app_exception_handler(request: Request, exc: AppError):
+    headers = dict(exc.headers) if exc.headers else {}
+    if exc.status_code == status.HTTP_429_TOO_MANY_REQUESTS:
+        retry_val = str(exc.details.get("retry_after_seconds", 3600)) if exc.details else "3600"
+        headers.setdefault("Retry-After", retry_val)
+        headers.setdefault("X-RateLimit-Limit", "5")
+        headers.setdefault("X-RateLimit-Remaining", "0")
     return JSONResponse(
         status_code=exc.status_code,
         content={
             "error": {"code": exc.code, "message": exc.message, "details": exc.details}
         },
+        headers=headers if headers else None,
     )
 
 
 async def http_exception_handler(request: Request, exc: StarletteHTTPException):
+    headers = dict(exc.headers) if getattr(exc, "headers", None) else {}
+    if exc.status_code == status.HTTP_429_TOO_MANY_REQUESTS:
+        headers.setdefault("Retry-After", "60")
+        headers.setdefault("X-RateLimit-Limit", "5")
+        headers.setdefault("X-RateLimit-Remaining", "0")
     return JSONResponse(
         status_code=exc.status_code,
         content={"error": {"code": "HTTP_ERROR", "message": exc.detail, "details": {}}},
+        headers=headers if headers else None,
     )
 
 

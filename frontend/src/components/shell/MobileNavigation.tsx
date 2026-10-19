@@ -66,7 +66,7 @@ export default function MobileNavigation() {
               trigger={
                 <button
                   type="button"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                  className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                   aria-label="Mở danh mục menu"
                 >
                   <MenuIcon className="h-5 w-5" aria-hidden="true" />

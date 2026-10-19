@@ -261,6 +261,7 @@ class HistoricalEntity(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())
     deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    content_scope: Mapped[Optional[str]] = mapped_column(Text, nullable=True, default=None)
 
     claims: Mapped[list["HistoricalClaim"]] = relationship(
         "HistoricalClaim", back_populates="entity", cascade="all, delete-orphan"
@@ -346,6 +347,7 @@ class HistoricalClaim(Base):
         PG_UUID(as_uuid=True), ForeignKey("historical_claims.id"), nullable=True
     )
     is_current: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    content_scope: Mapped[Optional[str]] = mapped_column(Text, nullable=True, default=None)
 
     entity: Mapped["HistoricalEntity"] = relationship("HistoricalEntity", back_populates="claims")
     source_bindings: Mapped[list["HistoricalClaimSource"]] = relationship(

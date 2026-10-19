@@ -13,10 +13,10 @@ from __future__ import annotations
 
 import logging
 import re
-from typing import Optional
+from typing import Any, Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from ..apischemas.history_tutor import (
@@ -33,6 +33,7 @@ from ..deps import get_current_user_optional
 from ..domain.helpers import _call_deepseek_chat
 from ..models import HistoricalClaim, User
 from ..services import history_tutor as tutor
+from ..services import rbpc_ai
 
 logger = logging.getLogger("luuniensuki.api")
 
@@ -60,18 +61,55 @@ _LLM_SYSTEM_PROMPT = (
 )
 
 
+def _is_scope_match(
+    item_scope: Optional[str], item_type: Optional[str], target_scope: str
+) -> bool:
+    if target_scope == "ALL":
+        return True
+    resolved_scope = item_scope
+    if not resolved_scope:
+        if item_type in ("urn", "relief"):
+            resolved_scope = "CUU_DINH"
+        else:
+            resolved_scope = "RBPC_HUE"
+    return resolved_scope == target_scope
+
+
 @router.post(
     "/api/v1/history/tutor/ask",
     response_model=HistoryTutorAskOut,
 )
 def history_tutor_ask(
     payload: HistoryTutorAskIn,
+    heritage_scope: Optional[str] = Query(
+        None,
+        description="Optional heritage scope filter: CUU_DINH, RBPC_HUE, ALL",
+    ),
     db: Session = Depends(get_db),
     current_user: Optional[User] = Depends(get_current_user_optional),
 ) -> HistoryTutorAskOut:
+    raw_scope = heritage_scope or payload.heritage_scope or "ALL"
+    effective_scope = raw_scope.strip().upper()
+    if effective_scope not in ("CUU_DINH", "RBPC_HUE", "ALL"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid heritage_scope. Must be one of: CUU_DINH, RBPC_HUE, ALL",
+        )
+
     entities = tutor.resolve_entities(
         db, payload.question, entity_filter=payload.entity_filter, limit=5
     )
+    if effective_scope != "ALL":
+        entities = [
+            e
+            for e in entities
+            if _is_scope_match(
+                getattr(e, "content_scope", None),
+                getattr(e, "entity_type", None),
+                effective_scope,
+            )
+        ]
+
     entity_ids = [e.id for e in entities]
     entity_map = {
         str(e.id): {
@@ -111,6 +149,17 @@ def history_tutor_ask(
         limit=20,
         include_unverified=payload.include_unverified,
     )
+    if effective_scope != "ALL":
+        claims = [
+            c
+            for c in claims
+            if _is_scope_match(
+                getattr(c, "content_scope", None),
+                getattr(c.entity, "entity_type", None) if getattr(c, "entity", None) else None,
+                effective_scope,
+            )
+        ]
+
     sources = tutor.retrieve_sources(db, [c.id for c in claims])
     context = tutor.build_retrieval_context(claims, sources, entities=entity_map)
 
@@ -124,12 +173,34 @@ def history_tutor_ask(
             ),
         )
 
-    if settings.deepseek_api_key:
-        result = _generate_with_llm(payload.question, context, payload.include_unverified)
+    if effective_scope == "RBPC_HUE":
+        system_prompt = rbpc_ai.build_rbpc_system_prompt("vi")
     else:
-        result = tutor.build_deterministic_answer(
-            payload.question, claims, context, include_unverified=payload.include_unverified
+        system_prompt = _LLM_SYSTEM_PROMPT
+
+    if settings.deepseek_api_key:
+        result = _generate_with_llm(
+            payload.question,
+            context,
+            payload.include_unverified,
+            system_prompt=system_prompt,
         )
+    else:
+        if effective_scope == "RBPC_HUE":
+            result = rbpc_ai.build_rbpc_deterministic_answer(
+                payload.question,
+                claims,
+                context,
+                locale="vi",
+                include_unverified=payload.include_unverified,
+            )
+        else:
+            result = tutor.build_deterministic_answer(
+                payload.question,
+                claims,
+                context,
+                include_unverified=payload.include_unverified,
+            )
 
     answer_md = result["answer_markdown"]
     citations = result.get("citations", [])
@@ -221,11 +292,15 @@ def history_tutor_entities(
 # Generation helpers
 # --------------------------------------------------------------------------- #
 def _generate_with_llm(
-    question: str, context: tutor.RetrievalContext, include_unverified: bool = False
+    question: str,
+    context: tutor.RetrievalContext,
+    include_unverified: bool = False,
+    system_prompt: Optional[str] = None,
 ) -> dict[str, Any]:
     """Draft the answer with the configured LLM, then let the validator police it."""
+    prompt = system_prompt or _LLM_SYSTEM_PROMPT
     messages = [
-        {"role": "system", "content": _LLM_SYSTEM_PROMPT},
+        {"role": "system", "content": prompt},
         {
             "role": "user",
             "content": (

@@ -1195,6 +1195,42 @@
   },
   {
     "method": "GET",
+    "path": "/api/v1/heritage/places",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/heritage/places/{slug}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/heritage/places/{slug}/3d",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/heritage/places/{slug}/detail",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/heritage/places/{slug}/media",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/heritage/search",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
     "path": "/api/v1/history/claims/{claim_id}",
     "group": "misc",
     "status": "gateway"
@@ -1586,6 +1622,78 @@
   {
     "method": "GET",
     "path": "/api/v1/quiz/questions/{question_id}/hints",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/config",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/creators/{slug}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/rbpc/cultural-bridge",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/rbpc/editor/creators/{id}/consent",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/experiences/{slug}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/impact",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/rbpc/inquiries",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/inquiries/status/{opaqueToken}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/partner/inquiries",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/v1/rbpc/partner/inquiries/{id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/stories",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/stories/{slug}",
     "group": "misc",
     "status": "gateway"
   },

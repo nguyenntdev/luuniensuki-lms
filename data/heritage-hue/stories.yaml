@@ -1,0 +1,123 @@
+# LƯU NIÊN — RBPC 2026: Curated Cultural Stories Dataset
+# Content Scope: RBPC_HUE
+# S0-S4 Rubric: S3 (Featured Story with verified citations & living practitioner bridge)
+
+stories:
+  - id: "s1010001-0001-4000-8000-000000000001"
+    slug: "tieng-chuong-khiem-cung"
+    title_vi: "Tiếng Đồng Phường Đúc & Chuông Vọng Khiêm Cung"
+    title_en: "The Foundry Fires of Phường Đúc: From Imperial Bells to Living Hearth"
+    intro_vi: "Hành trình ngược dòng sông Hương từ tiếng chuông đại hồng chung Thiên Mụ đến lò đúc 500 năm tuổi của những người thợ gìn giữ ngọn lửa kinh kỳ."
+    intro_en: "A journey along the Perfume River from the sacred resonance of the 1710 Thiên Mụ bell to the five-century-old crucibles keeping Huế's foundry fires alive."
+    place_slug: "lang-tu-duc"
+    category: "craft_living_culture"
+    estimated_reading_minutes: 5
+    status: "published"
+    primary_asset_url: "/assets/stories/tieng-chuong-khiem-cung.webp"
+    creator_slug: "nghe-nhan-nguyen-van-sinh"
+    experience_slug: "workshop-duc-dong-phuong-duc"
+    claims:
+      - statement_vi: "Đại Hồng Chung chùa Thiên Mụ được chúa Nguyễn Phúc Chu cho đúc vào năm Canh Dần (1710), nặng 3.285 cân (khoảng hơn 2 tấn), là một trong những kiệt tác đỉnh cao của kỹ thuật đúc đồng Phường Đúc."
+        statement_en: "The Great Bell of Thiên Mụ Pagoda was cast in 1710 under Lord Nguyễn Phúc Chu, weighing 3,285 catties (over 2 tonnes), representing a masterwork of early Phường Đúc metallurgy."
+        source_title: "Đại Nam Thực Lục Tiền Biên & Văn bia Ngự kiến Linh Mụ tự bi (1715)"
+        source_locator: "Tiền Biên, Quyển 8, Tập 1, tr. 124-126 (NXB Giáo dục 2002); BAVH 1923, tr. 145-148"
+        epistemic_certainty: "verified_source"
+        support_type: "direct"
+      - statement_vi: "Năm 1835, vua Minh Mạng ban chỉ dụ điều động thợ đúc đồng Phường Đúc về kinh đô đúc cụm Cửu Đỉnh nặng hơn 20 tấn đặt trước Thế Miếu."
+        statement_en: "In 1835, Emperor Minh Mạng mobilized Phường Đúc master founders to cast the Nine Dynastic Urns weighing over 20 tonnes in front of Thế Miếu."
+        source_title: "Khâm Định Đại Nam Hội Điển Sự Lệ (Công bộ: Đúc Cửu Đỉnh)"
+        source_locator: "Quyển 159, Tập 10, tr. 312-325 (NXB Thuận Hóa 1993)"
+        epistemic_certainty: "verified_source"
+        support_type: "direct"
+    chapters:
+      - chapter_number: 1
+        title_vi: "Hồi ức tiếng chuông trên đồi Hà Khê"
+        title_en: "The Resonance over Hà Khê Hill"
+        content_vi: "Sáng sớm trên đồi Hà Khê, khi sương mù sông Hương còn bảng lảng, tiếng chuông chùa Thiên Mụ ngân vang trầm ấm làm thức giấc cả một vùng cố đô. Ít ai biết rằng, để tiếng chuông có thể vang xa hàng chục dặm mà âm sắc vẫn trong trẻo, những người thợ đúc đồng Phường Đúc thời chúa Nguyễn đã phải tính toán tỉ lệ vàng giữa đồng đỏ, thiếc, kẽm và vàng ròng theo công thức bí truyền lưu truyền qua nhiều thế hệ."
+        content_en: "At dawn atop Hà Khê hill, as mist floats over the Perfume River, the deep resonance of Thiên Mụ Pagoda's bell awakens the ancient capital. Few realize that to achieve an acoustic resonance carrying across tens of kilometers, Phường Đúc foundry masters calculated an exact secret alloy ratio of copper, tin, zinc, and gold."
+      - chapter_number: 2
+        title_vi: "Ngọn lửa nung chảy 20 tấn đồng đúc Cửu Đỉnh"
+        title_en: "Smelting Twenty Tonnes of Imperial Bronze"
+        content_vi: "Mùa đông năm Ất Mùi (1835), dưới sự chỉ đạo của Công bộ triều đình Minh Mạng, hàng chục lò nung đất sét tại Phường Đúc rực lửa ngày đêm. Để đúc nên chín đỉnh đồng khổng lồ với 162 bức phù điêu chạm khắc cương vực non sông, người thợ phải nặn từng khuôn đất trộn rơm trấu, quét sáp ong tạo hoa văn ngược và đổ đồng nóng chảy liên tục không được đứt đoạn."
+        content_en: "In the winter of 1835, under the direction of the Ministry of Public Works, dozens of clay kilns in Phường Đúc burned day and night. To cast nine colossal urns with 162 relief motifs of the empire's geography, artisans carved reverse motifs in beeswax molds and executed flawless continuous molten bronze pours."
+      - chapter_number: 3
+        title_vi: "Gặp người giữ lửa hôm nay"
+        title_en: "Meeting the Hearth Keeper Today"
+        content_vi: "Rời chốn cung cấm uy nghiêm, bước vào con ngõ nhỏ của Phường Đúc hôm nay, tiếng gõ đục đẽo khuôn đồng vẫn rộn rã. Nghệ nhân Nhân dân Nguyễn Văn Sinh, tóc đã bạc hoa râm, vẫn ngày ngày cặm cụi bên những mẻ đồng sôi đỏ rực, sẵn sàng đón tiếp những du khách muốn tự tay chạm vào hồn cốt đất kinh kỳ."
+        content_en: "Leaving the quiet Citadel palaces and walking into the alleys of Phường Đúc today, the rhythmic hammer blows against bronze molds still echo. People's Artisan Nguyễn Văn Sinh, with silver hair and weathered hands, still stands by the glowing furnaces, welcoming travelers who wish to touch the living soul of ancient metallurgy."
+
+  - id: "s1010001-0002-4000-8000-000000000002"
+    slug: "nghe-thuat-phap-lam-hue"
+    title_vi: "Pháp Lam Hoàng Cung: Ngũ Sắc Trầm Mặc Trên Bờ Nóc Điện"
+    title_en: "Imperial Pháp Lam: Vibrant Enamel upon Royal Rooftops"
+    intro_vi: "Bí mật về nghệ thuật tráng men màu ngũ sắc trên cốt đồng từng làm rực rỡ điện Thái Hòa và hành trình phục dựng kỳ tích sau một thế kỷ thất truyền."
+    intro_en: "The secret of five-color vitreous enamel on copper that adorned the palaces of the Forbidden City and its scientific revival after a century of silence."
+    place_slug: "dien-thai-hoa"
+    category: "imperial_architecture"
+    estimated_reading_minutes: 4
+    status: "published"
+    primary_asset_url: "/assets/stories/phap-lam-hoang-cung.webp"
+    creator_slug: "nghe-nhan-do-huu-triet"
+    experience_slug: "workshop-phap-lam-hue"
+    claims:
+      - statement_vi: "Nghệ thuật Pháp lam được vua Minh Mạng cho du nhập và lập nên 'Pháp lam tượng cục' vào năm Minh Mạng thứ 8 (1827) để chế tác ngói lợp và đồ thờ cung đình."
+        statement_en: "The art of Pháp Lam was established by Emperor Minh Mạng in 1827 with the founding of the Imperial Enamel Bureau to craft architectural tiles and ritual vessels."
+        source_title: "Đại Nam Thực Lục Chính Biên (Đệ nhị kỷ)"
+        source_locator: "Đệ Nhị Kỷ, Quyển 47, Tập 2, tr. 612-615 (NXB Giáo dục 2004)"
+        epistemic_certainty: "verified_source"
+        support_type: "direct"
+      - statement_vi: "Pháp lam Huế sử dụng kỹ thuật nung men silicat trên nền đồng đỏ ở nhiệt độ 800°C đến 850°C, tạo nên lớp men bóng bền vững qua nắng mưa khắc nghiệt của miền Trung."
+        statement_en: "Huế Pháp Lam applies silicate vitreous enamel onto red copper fired at 800°C–850°C, producing weather-resistant jewel glazes that withstand Central Vietnam's tropical monsoons."
+        source_title: "Pháp Lam Huế (TS. Trần Đức Anh Sơn)"
+        source_locator: "NXB Thuận Hóa 2004, Chương 2, tr. 45-68"
+        epistemic_certainty: "verified_source"
+        support_type: "direct"
+    chapters:
+      - chapter_number: 1
+        title_vi: "Mảnh ghép rực rỡ trên mái ngói hoàng cung"
+        title_en: "Jewel Tiles upon the Imperial Ridge"
+        content_vi: "Dưới ánh nắng vàng xứ Huế, những bờ nóc cung điện như điện Thái Hòa, điện Kiến Trung lấp lánh sắc xanh ngọc bích, vàng hoàng gia và đỏ son rực rỡ. Đó chính là Pháp lam - đỉnh cao mỹ thuật kết hợp giữa nghệ thuật hội họa phương Đông và công nghệ nung men thủy tinh phương Tây được các nghệ nhân cung đình triều Nguyễn đúc kết."
+        content_en: "Under the golden sunlight of Huế, palace roofs such as Thái Hòa and Kiến Trung gleam with imperial emerald, yellow, and cinnabar hues. This is Pháp Lam - the pinnacle of Vietnamese decorative craft fusing Eastern painting sensibilities with Western vitreous glass-firing science."
+      - chapter_number: 2
+        title_vi: "Hành trình giải mã công thức bí truyền"
+        title_en: "Decoding the Lost Formulation"
+        content_vi: "Sau chiến tranh và sự sụp đổ của triều đại, nghề làm Pháp lam từng biến mất hoàn toàn suốt hơn 100 năm. Đến đầu thế kỷ 21, Thạc sĩ Đỗ Hữu Triết cùng các cộng sự đã kiên trì nghiên cứu, phục hồi thành công quy trình chế tác men màu silicat trên cốt đồng, mở đường cho việc phục chế chuẩn xác các mảng hoa văn trên mái điện Thái Hòa."
+        content_en: "Following decades of war and dynastic decline, the art of Pháp Lam vanished for over a century. In the early 21st century, Master of Science Đỗ Hữu Triết and fellow researchers persevered through historical manuscripts and chemical trials, successfully reviving the copper-enamel process to faithfully restore imperial monuments."
+
+  - id: "s1010001-0003-4000-8000-000000000003"
+    slug: "hoa-giay-thanh-tien"
+    title_vi: "Sắc Hoa Giấy Thanh Tiên: Linh Hồn Hoa Đạo Trong Tín Ngưỡng Xứ Huế"
+    title_en: "The Everlasting Petals of Thanh Tiên: Folk Devotion and Paper Art"
+    intro_vi: "Chuyện về làng nghề 300 năm bên hạ lưu sông Hương nơi những đóa hoa sen giấy mộc mạc lưu giữ lòng thành kính trên bàn thờ gia tiên xứ Huế."
+    intro_en: "The tale of a 300-year-old riverside village where humble paper lotuses preserve devotion upon ancestral altars across Central Vietnam."
+    place_slug: "chua-thien-mu"
+    category: "craft_living_culture"
+    estimated_reading_minutes: 4
+    status: "published"
+    primary_asset_url: "/assets/stories/hoa-giay-thanh-tien.webp"
+    creator_slug: "nghe-nhan-than-van-huy"
+    experience_slug: "workshop-hoa-giay-thanh-tien"
+    claims:
+      - statement_vi: "Làng Thanh Tiên thuộc tổng Mậu Tài, nay là xã Phú Mậu, nổi tiếng từ thế kỷ 18 với nghề làm hoa giấy thờ cúng trong mùa mưa lũ khi hoa tươi khan hiếm."
+        statement_en: "Thanh Tiên village in Mậu Tài canton has been renowned since the 18th century for crafting ritual paper flowers during the monsoon winter when fresh blossoms were scarce."
+        source_title: "Đồng Khánh Địa Dư Chí (Tổng Mậu Tài, huyện Phú Vang)"
+        source_locator: "Tập 2, tr. 1282-1284 (EFEO & NXB Thế Giới 2003)"
+        epistemic_certainty: "verified_source"
+        support_type: "direct"
+      - statement_vi: "Hoa sen giấy Thanh Tiên được phục dựng thành công vào đầu thập niên 2000 bởi Nghệ nhân Thân Văn Huy, sử dụng kỹ thuật nhuộm màu tự nhiên từ thảo mộc."
+        statement_en: "The artistic Thanh Tiên paper lotus was successfully revived in the early 2000s by Artisan Thân Văn Huy using traditional botanical dye formulations."
+        source_title: "Làng nghề thủ công truyền thống Huế (PGS. TS. Nguyễn Hữu Thông)"
+        source_locator: "NXB Thuận Hóa 2008, tr. 98-115"
+        epistemic_certainty: "verified_source"
+        support_type: "direct"
+    chapters:
+      - chapter_number: 1
+        title_vi: "Mùa đông xứ Huế và sắc hoa trên trang thờ"
+        title_en: "Huế's Monsoon and Petals on the Altar"
+        content_vi: "Mỗi độ đông về, mưa dầm dề rả rích khắp các xóm ngõ cố đô khiến hoa tươi trong vườn hiếm hoi. Từ sự khó khăn ấy, người dân Thanh Tiên đã sáng tạo nên những cành hoa giấy rực rỡ từ nan tre vót mỏng và phẩm màu cây cỏ, dâng lên trang thờ gia tiên trong ngày 23 tháng Chạp để tiễn ông Táo về trời."
+        content_en: "Each winter, persistent monsoons blanket the capital, making garden flowers scarce. From this seasonal hardship, the villagers of Thanh Tiên crafted colorful paper blossoms from planed bamboo ribs and plant pigments, offering them on household altars for the Kitchen Gods ceremony."
+      - chapter_number: 2
+        title_vi: "Hoa sen giấy vươn ra thế giới"
+        title_en: "The Paper Lotus Blooms Internationally"
+        content_vi: "Bằng tình yêu tha thiết với di sản quê hương, Nghệ nhân Ưu tú Thân Văn Huy đã dành nhiều năm tìm kiếm lại công thức nhuộm màu từ thảo mộc tự nhiên để tạo nên đóa hoa sen giấy Thanh Tiên với từng cánh sen vuốt nếp mềm mại, đưa hoa sen giấy từ bàn thờ gia đình thành sản phẩm văn hóa độc đáo tại các kỳ Festival Huế."
+        content_en: "Driven by deep devotion to his heritage, Meritorious Artisan Thân Văn Huy spent years rediscovering botanical dye formulations to fashion paper lotuses with delicately crimped petals, elevating a ritual folk offering into an international symbol of Vietnamese grace."

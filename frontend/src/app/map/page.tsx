@@ -150,7 +150,7 @@ function MapView({
 
 export default function MapPage() {
   const searchParams = useSearchParams();
-  const isListViewParam = searchParams.get("view") === "list";
+  const isListViewParam = searchParams?.get("view") === "list";
 
   const [items, setItems] = useState<MapItem[]>([]);
   const [loading, setLoading] = useState(true);

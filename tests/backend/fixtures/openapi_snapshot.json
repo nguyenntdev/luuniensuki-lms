@@ -8383,6 +8383,1314 @@
         "title": "HeartsStatusOut",
         "type": "object"
       },
+      "HeritageAccuracyGrade": {
+        "enum": [
+          "survey_grade",
+          "measured_photogrammetry",
+          "historian_reviewed",
+          "illustrative_only",
+          "unreviewed",
+          "rejected_accuracy"
+        ],
+        "title": "HeritageAccuracyGrade",
+        "type": "string"
+      },
+      "HeritageCommercialUseStatus": {
+        "enum": [
+          "permitted",
+          "blocked_nc",
+          "unreviewed",
+          "requires_custom_grant"
+        ],
+        "title": "HeritageCommercialUseStatus",
+        "type": "string"
+      },
+      "HeritageEmbedPermissionStatus": {
+        "enum": [
+          "permitted",
+          "needs_rights_review",
+          "blocked",
+          "author_contacted"
+        ],
+        "title": "HeritageEmbedPermissionStatus",
+        "type": "string"
+      },
+      "HeritageEngagementOut": {
+        "description": "Structured engagement CTA attached to a heritage place.",
+        "properties": {
+          "cta_kind": {
+            "default": "none",
+            "description": "Call to action kind: none, story_journey, experience_inquiry, maker_profile.",
+            "title": "Cta Kind",
+            "type": "string"
+          },
+          "notice": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notice"
+          },
+          "target_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Slug of the target story, maker, or experience.",
+            "title": "Target Slug"
+          },
+          "title_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title En"
+          },
+          "title_vi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title Vi"
+          }
+        },
+        "title": "HeritageEngagementOut",
+        "type": "object"
+      },
+      "HeritageEntityType": {
+        "enum": [
+          "site",
+          "monument",
+          "building",
+          "object",
+          "landscape",
+          "intangible",
+          "community",
+          "collection"
+        ],
+        "title": "HeritageEntityType",
+        "type": "string"
+      },
+      "HeritageEvidenceStatus": {
+        "enum": [
+          "needs_review",
+          "verified",
+          "disputed",
+          "rejected"
+        ],
+        "title": "HeritageEvidenceStatus",
+        "type": "string"
+      },
+      "HeritageMediaAssetOut": {
+        "description": "Media asset with comprehensive rights, accuracy grade, and 3D embed metadata.",
+        "properties": {
+          "accuracy_grade": {
+            "$ref": "#/components/schemas/HeritageAccuracyGrade",
+            "default": "unreviewed"
+          },
+          "attribution_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Mandatory legal attribution line for public display.",
+            "title": "Attribution Text"
+          },
+          "commercial_use_status": {
+            "$ref": "#/components/schemas/HeritageCommercialUseStatus",
+            "default": "unreviewed"
+          },
+          "content_scope": {
+            "default": "RBPC_HUE",
+            "title": "Content Scope",
+            "type": "string"
+          },
+          "content_status": {
+            "default": "candidate",
+            "description": "Publication readiness: candidate, cleared_for_this_use, blocked, withdrawn.",
+            "title": "Content Status",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "creator_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Creator Name"
+          },
+          "creator_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Creator Url"
+          },
+          "embed_permission_status": {
+            "$ref": "#/components/schemas/HeritageEmbedPermissionStatus",
+            "default": "needs_rights_review"
+          },
+          "embed_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Sanitized direct embed iframe endpoint (only populated when rights are cleared).",
+            "title": "Embed Url"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "license_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Licence name (e.g. CC BY 4.0, CC BY-NC-SA 4.0, Public Domain).",
+            "title": "License Label"
+          },
+          "license_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "License Url"
+          },
+          "media_type": {
+            "$ref": "#/components/schemas/HeritageMediaType"
+          },
+          "model_uid": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Exact 32-character hexadecimal identifier for Sketchfab models.",
+            "title": "Model Uid"
+          },
+          "noai": {
+            "default": false,
+            "description": "Strict NoAI flag: prohibit AI ingestion, CV training, or generative scraping.",
+            "title": "Noai",
+            "type": "boolean"
+          },
+          "original_url": {
+            "description": "Canonical source URL of the asset.",
+            "title": "Original Url",
+            "type": "string"
+          },
+          "place_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Place Id"
+          },
+          "provenance_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Historical or technical provenance explanation (e.g. photogrammetry dataset, survey).",
+            "title": "Provenance Notes"
+          },
+          "source_platform": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Upstream platform name (e.g. sketchfab, wikimedia, openheritage3d, cyark).",
+            "title": "Source Platform"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "required": [
+          "id",
+          "media_type",
+          "original_url",
+          "created_at"
+        ],
+        "title": "HeritageMediaAssetOut",
+        "type": "object"
+      },
+      "HeritageMediaType": {
+        "enum": [
+          "photo",
+          "audio",
+          "video",
+          "sketchfab_embed",
+          "glb",
+          "document"
+        ],
+        "title": "HeritageMediaType",
+        "type": "string"
+      },
+      "HeritagePlaceDetailOut": {
+        "description": "Deep representation of a heritage place including relational evidence and media.",
+        "properties": {
+          "access_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Access Notes"
+          },
+          "child_places": {
+            "items": {
+              "$ref": "#/components/schemas/HeritagePlaceOut"
+            },
+            "title": "Child Places",
+            "type": "array"
+          },
+          "content_scope": {
+            "default": "RBPC_HUE",
+            "title": "Content Scope",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "current_access_status": {
+            "default": "unknown",
+            "description": "Visitor access status: open, restricted, undergoing_restoration, closed, unknown.",
+            "title": "Current Access Status",
+            "type": "string"
+          },
+          "editorial_status": {
+            "$ref": "#/components/schemas/HeritageRecordStatus",
+            "default": "candidate"
+          },
+          "engagement": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HeritageEngagementOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "entity_type": {
+            "$ref": "#/components/schemas/HeritageEntityType"
+          },
+          "geo_precision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Precision level: exact_gps, approximate_site, polygon_centroid, none_intangible.",
+            "title": "Geo Precision"
+          },
+          "has_3d": {
+            "default": false,
+            "description": "Whether rights-cleared 3D media is available.",
+            "title": "Has 3D",
+            "type": "boolean"
+          },
+          "heritage_category": {
+            "description": "Domain category (e.g. imperial_architecture, royal_tomb, craft_living_culture, music_performance).",
+            "title": "Heritage Category",
+            "type": "string"
+          },
+          "historical_state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Architectural state: standing, restored, partially_lost, ruins, vanished.",
+            "title": "Historical State"
+          },
+          "historical_summary_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Historical Summary En"
+          },
+          "historical_summary_vi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Historical Summary Vi"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "location_lat": {
+            "anyOf": [
+              {
+                "maximum": 90.0,
+                "minimum": -90.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location Lat"
+          },
+          "location_lon": {
+            "anyOf": [
+              {
+                "maximum": 180.0,
+                "minimum": -180.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location Lon"
+          },
+          "media": {
+            "items": {
+              "$ref": "#/components/schemas/HeritageMediaAssetOut"
+            },
+            "title": "Media",
+            "type": "array"
+          },
+          "name_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Official English designation.",
+            "title": "Name En"
+          },
+          "name_vi": {
+            "description": "Canonical Vietnamese name with correct diacritics.",
+            "title": "Name Vi",
+            "type": "string"
+          },
+          "official_designation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Official legal or UNESCO designation (e.g. UNESCO World Heritage Component, Special National Monument).",
+            "title": "Official Designation"
+          },
+          "official_reference_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Formal inventory ID (e.g. UNESCO 678-001, 678-007).",
+            "title": "Official Reference Id"
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Id"
+          },
+          "parent_place": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HeritagePlaceOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "period_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Historical epoch or construction era (e.g. Thời Nguyễn (1802-1945), Triều Tự Đức (1864)).",
+            "title": "Period Label"
+          },
+          "published_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Published At"
+          },
+          "relations": {
+            "items": {
+              "$ref": "#/components/schemas/HeritageRelationOut"
+            },
+            "title": "Relations",
+            "type": "array"
+          },
+          "slug": {
+            "description": "URL-safe unique identifier.",
+            "title": "Slug",
+            "type": "string"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/HeritageSourceEvidenceOut"
+            },
+            "title": "Sources",
+            "type": "array"
+          },
+          "thumbnail_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Thumbnail Url"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "visitor_summary_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Visitor Summary En"
+          },
+          "visitor_summary_vi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Visitor Summary Vi"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "name_vi",
+          "entity_type",
+          "heritage_category",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "HeritagePlaceDetailOut",
+        "type": "object"
+      },
+      "HeritagePlaceListOut": {
+        "description": "Paginated list of heritage places with cursor pagination indicators.",
+        "properties": {
+          "has_more": {
+            "default": false,
+            "description": "True if more records exist beyond this page.",
+            "title": "Has More",
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/HeritagePlaceOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Opaque token to pass in cursor query param for next page, or null if end of catalogue.",
+            "title": "Next Cursor"
+          },
+          "total_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Total published records matching query filters, when computed.",
+            "title": "Total Count"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "HeritagePlaceListOut",
+        "type": "object"
+      },
+      "HeritagePlaceOut": {
+        "description": "Summary representation of a heritage place for catalogue grids and search cards.",
+        "properties": {
+          "content_scope": {
+            "default": "RBPC_HUE",
+            "title": "Content Scope",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "current_access_status": {
+            "default": "unknown",
+            "description": "Visitor access status: open, restricted, undergoing_restoration, closed, unknown.",
+            "title": "Current Access Status",
+            "type": "string"
+          },
+          "editorial_status": {
+            "$ref": "#/components/schemas/HeritageRecordStatus",
+            "default": "candidate"
+          },
+          "entity_type": {
+            "$ref": "#/components/schemas/HeritageEntityType"
+          },
+          "geo_precision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Precision level: exact_gps, approximate_site, polygon_centroid, none_intangible.",
+            "title": "Geo Precision"
+          },
+          "has_3d": {
+            "default": false,
+            "description": "Whether rights-cleared 3D media is available.",
+            "title": "Has 3D",
+            "type": "boolean"
+          },
+          "heritage_category": {
+            "description": "Domain category (e.g. imperial_architecture, royal_tomb, craft_living_culture, music_performance).",
+            "title": "Heritage Category",
+            "type": "string"
+          },
+          "historical_state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Architectural state: standing, restored, partially_lost, ruins, vanished.",
+            "title": "Historical State"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "location_lat": {
+            "anyOf": [
+              {
+                "maximum": 90.0,
+                "minimum": -90.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location Lat"
+          },
+          "location_lon": {
+            "anyOf": [
+              {
+                "maximum": 180.0,
+                "minimum": -180.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location Lon"
+          },
+          "name_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Official English designation.",
+            "title": "Name En"
+          },
+          "name_vi": {
+            "description": "Canonical Vietnamese name with correct diacritics.",
+            "title": "Name Vi",
+            "type": "string"
+          },
+          "official_designation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Official legal or UNESCO designation (e.g. UNESCO World Heritage Component, Special National Monument).",
+            "title": "Official Designation"
+          },
+          "official_reference_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Formal inventory ID (e.g. UNESCO 678-001, 678-007).",
+            "title": "Official Reference Id"
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Id"
+          },
+          "period_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Historical epoch or construction era (e.g. Thời Nguyễn (1802-1945), Triều Tự Đức (1864)).",
+            "title": "Period Label"
+          },
+          "published_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Published At"
+          },
+          "slug": {
+            "description": "URL-safe unique identifier.",
+            "title": "Slug",
+            "type": "string"
+          },
+          "thumbnail_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Thumbnail Url"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "visitor_summary_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Visitor Summary En"
+          },
+          "visitor_summary_vi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Visitor Summary Vi"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "name_vi",
+          "entity_type",
+          "heritage_category",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "HeritagePlaceOut",
+        "type": "object"
+      },
+      "HeritageRecordStatus": {
+        "enum": [
+          "candidate",
+          "draft",
+          "source_backed",
+          "in_review",
+          "approved",
+          "published",
+          "withdrawn"
+        ],
+        "title": "HeritageRecordStatus",
+        "type": "string"
+      },
+      "HeritageRelationOut": {
+        "description": "Bidirectional or hierarchical relationship between two heritage places.",
+        "properties": {
+          "claim_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Claim Id"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "from_place_id": {
+            "format": "uuid",
+            "title": "From Place Id",
+            "type": "string"
+          },
+          "from_place_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "From Place Name"
+          },
+          "from_place_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "From Place Slug"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "relationship_type": {
+            "description": "Relationship semantic: contains, contained_in, honors, architectural_twin, historical_successor, associated_craft, ceremonial_connection.",
+            "title": "Relationship Type",
+            "type": "string"
+          },
+          "review_state": {
+            "default": "draft",
+            "description": "Verification state of relationship: draft, verified, disputed.",
+            "title": "Review State",
+            "type": "string"
+          },
+          "to_place_id": {
+            "format": "uuid",
+            "title": "To Place Id",
+            "type": "string"
+          },
+          "to_place_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To Place Name"
+          },
+          "to_place_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To Place Slug"
+          }
+        },
+        "required": [
+          "id",
+          "from_place_id",
+          "to_place_id",
+          "relationship_type",
+          "created_at"
+        ],
+        "title": "HeritageRelationOut",
+        "type": "object"
+      },
+      "HeritageReuseRights": {
+        "enum": [
+          "public_domain",
+          "cc_by",
+          "cc_by_sa",
+          "cc_by_nc_sa",
+          "educational_fair_use",
+          "restricted",
+          "unknown"
+        ],
+        "title": "HeritageReuseRights",
+        "type": "string"
+      },
+      "HeritageSearchItemOut": {
+        "description": "Individual search hit with highlight metadata and relevance score.",
+        "properties": {
+          "entity_type": {
+            "$ref": "#/components/schemas/HeritageEntityType"
+          },
+          "has_3d": {
+            "default": false,
+            "title": "Has 3D",
+            "type": "boolean"
+          },
+          "heritage_category": {
+            "title": "Heritage Category",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "matched_on": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Field where match was found: name_vi, name_en, official_reference_id, summary.",
+            "title": "Matched On"
+          },
+          "name_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name En"
+          },
+          "name_vi": {
+            "title": "Name Vi",
+            "type": "string"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          },
+          "thumbnail_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Thumbnail Url"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "name_vi",
+          "entity_type",
+          "heritage_category"
+        ],
+        "title": "HeritageSearchItemOut",
+        "type": "object"
+      },
+      "HeritageSearchOut": {
+        "description": "Unified search response across the heritage knowledge catalogue.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/HeritageSearchItemOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "query": {
+            "title": "Query",
+            "type": "string"
+          },
+          "scope": {
+            "default": "RBPC_HUE",
+            "title": "Scope",
+            "type": "string"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "query"
+        ],
+        "title": "HeritageSearchOut",
+        "type": "object"
+      },
+      "HeritageSourceEvidenceOut": {
+        "description": "Authoritative source citation and claim verification for a heritage place.",
+        "properties": {
+          "cited_page": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Exact page number or folio reference in the original publication.",
+            "title": "Cited Page"
+          },
+          "cited_section": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Specific chapter, decree, or gazetteer volume.",
+            "title": "Cited Section"
+          },
+          "content_scope": {
+            "default": "RBPC_HUE",
+            "title": "Content Scope",
+            "type": "string"
+          },
+          "evidence_status": {
+            "$ref": "#/components/schemas/HeritageEvidenceStatus",
+            "default": "needs_review"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "interpretation_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Contextual or historiographical note distinguishing fact from folklore/legend.",
+            "title": "Interpretation Note"
+          },
+          "place_id": {
+            "format": "uuid",
+            "title": "Place Id",
+            "type": "string"
+          },
+          "publication_year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Publication Year"
+          },
+          "publisher": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Publisher"
+          },
+          "retrieved_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retrieved At"
+          },
+          "reuse_rights": {
+            "$ref": "#/components/schemas/HeritageReuseRights",
+            "default": "unknown"
+          },
+          "reviewed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed At"
+          },
+          "reviewer_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewer Id"
+          },
+          "source_author": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Author"
+          },
+          "source_title": {
+            "description": "Bibliographic or archival source title.",
+            "title": "Source Title",
+            "type": "string"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          },
+          "statement": {
+            "description": "Verified factual statement or extracted claim supported by this source.",
+            "title": "Statement",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "place_id",
+          "source_title",
+          "statement"
+        ],
+        "title": "HeritageSourceEvidenceOut",
+        "type": "object"
+      },
       "HistoricalAssetCreate": {
         "properties": {
           "asset_type": {
@@ -12615,6 +13923,19 @@
             ],
             "description": "Optional entity slug or UUID to pin entity resolution.",
             "title": "Entity Filter"
+          },
+          "heritage_scope": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "ALL",
+            "description": "Heritage scope filter: CUU_DINH, RBPC_HUE, or ALL.",
+            "title": "Heritage Scope"
           },
           "include_unverified": {
             "default": false,
@@ -18242,6 +19563,1648 @@
         ],
         "title": "RankOut",
         "type": "object"
+      },
+      "RbpcAvailabilityMode": {
+        "enum": [
+          "inquiry_only",
+          "disabled"
+        ],
+        "title": "RbpcAvailabilityMode",
+        "type": "string"
+      },
+      "RbpcClaimEvidenceOut": {
+        "description": "Grounded historical or artisanal claim supporting a story.",
+        "properties": {
+          "citation_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Bibliographic short code or footnote reference.",
+            "title": "Citation Label"
+          },
+          "claim_category": {
+            "default": "historical_fact",
+            "description": "Category: historical_fact, maker_technique, cultural_symbolism, contemporary_practice.",
+            "title": "Claim Category",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "locale": {
+            "default": "vi",
+            "title": "Locale",
+            "type": "string"
+          },
+          "review_status": {
+            "default": "verified",
+            "description": "Review status: verified, published_human_approved.",
+            "title": "Review Status",
+            "type": "string"
+          },
+          "source_title": {
+            "description": "Title of the source backing this claim.",
+            "title": "Source Title",
+            "type": "string"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          },
+          "statement": {
+            "description": "Factual or contextual statement.",
+            "title": "Statement",
+            "type": "string"
+          },
+          "support_type": {
+            "$ref": "#/components/schemas/RbpcSupportType",
+            "default": "direct"
+          }
+        },
+        "required": [
+          "id",
+          "statement",
+          "source_title"
+        ],
+        "title": "RbpcClaimEvidenceOut",
+        "type": "object"
+      },
+      "RbpcConfigOut": {
+        "description": "Platform runtime configuration, feature flags, and consent metadata.",
+        "properties": {
+          "ai_enabled": {
+            "default": true,
+            "description": "Cultural Bridge AI feature availability.",
+            "title": "Ai Enabled",
+            "type": "boolean"
+          },
+          "consent_version": {
+            "default": "rbpc-inquiry-v1",
+            "description": "Active consent document version required for inquiry submission.",
+            "title": "Consent Version",
+            "type": "string"
+          },
+          "default_locale": {
+            "default": "vi",
+            "description": "Fallback default locale.",
+            "title": "Default Locale",
+            "type": "string"
+          },
+          "demo_mode": {
+            "default": true,
+            "description": "Demo/competition mode flag (indicates non-commercial student pilot).",
+            "title": "Demo Mode",
+            "type": "boolean"
+          },
+          "enabled": {
+            "default": true,
+            "description": "Master feature flag for RBPC module.",
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "inquiry_enabled": {
+            "default": true,
+            "description": "Booking inquiry availability flag.",
+            "title": "Inquiry Enabled",
+            "type": "boolean"
+          },
+          "privacy_notice_url": {
+            "default": "/privacy",
+            "description": "URL to the privacy notice covering inquiry processing.",
+            "title": "Privacy Notice Url",
+            "type": "string"
+          },
+          "supported_locales": {
+            "description": "Supported ISO 639-1 language codes.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Supported Locales",
+            "type": "array"
+          },
+          "terms_url": {
+            "default": "/terms",
+            "description": "URL to platform terms of use.",
+            "title": "Terms Url",
+            "type": "string"
+          },
+          "version": {
+            "default": "1.0.0",
+            "description": "API contract semantic version.",
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "title": "RbpcConfigOut",
+        "type": "object"
+      },
+      "RbpcConsentIn": {
+        "description": "Explicit visitor opt-in consent for availability inquiry.",
+        "properties": {
+          "accepted": {
+            "description": "Explicit consent checkbox. Must be true; requests with false are rejected.",
+            "title": "Accepted",
+            "type": "boolean"
+          },
+          "privacy_accepted": {
+            "default": true,
+            "description": "Acknowledgement of privacy policy and temporary contact retention.",
+            "title": "Privacy Accepted",
+            "type": "boolean"
+          },
+          "version": {
+            "description": "Consent document version.",
+            "maxLength": 50,
+            "minLength": 1,
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "version",
+          "accepted"
+        ],
+        "title": "RbpcConsentIn",
+        "type": "object"
+      },
+      "RbpcConsentStatus": {
+        "enum": [
+          "consented",
+          "verified_written_consent",
+          "pending_review",
+          "revoked"
+        ],
+        "title": "RbpcConsentStatus",
+        "type": "string"
+      },
+      "RbpcContactIn": {
+        "description": "Visitor contact information.",
+        "properties": {
+          "method": {
+            "$ref": "#/components/schemas/RbpcContactMethod",
+            "description": "Preferred contact channel (email, phone, zalo)."
+          },
+          "name": {
+            "description": "Visitor contact name.",
+            "maxLength": 100,
+            "minLength": 2,
+            "title": "Name",
+            "type": "string"
+          },
+          "value": {
+            "description": "Email address or phone number.",
+            "maxLength": 150,
+            "minLength": 3,
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "method",
+          "value"
+        ],
+        "title": "RbpcContactIn",
+        "type": "object"
+      },
+      "RbpcContactMethod": {
+        "enum": [
+          "email",
+          "phone",
+          "zalo"
+        ],
+        "title": "RbpcContactMethod",
+        "type": "string"
+      },
+      "RbpcCreatorConsentUpdate": {
+        "description": "Editor request payload to update artisan consent state.",
+        "properties": {
+          "consent_status": {
+            "$ref": "#/components/schemas/RbpcConsentStatus",
+            "description": "Target consent state: consented, pending_review, revoked."
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Editorial justification or consent document reference.",
+            "title": "Notes"
+          }
+        },
+        "required": [
+          "consent_status"
+        ],
+        "title": "RbpcCreatorConsentUpdate",
+        "type": "object"
+      },
+      "RbpcCreatorOut": {
+        "description": "Consented artisan or master practitioner profile with craft lineage.",
+        "properties": {
+          "approved_bio_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Reviewer- and artisan-approved biography in English.",
+            "title": "Approved Bio En"
+          },
+          "approved_bio_vi": {
+            "description": "Reviewer- and artisan-approved biography in Vietnamese.",
+            "title": "Approved Bio Vi",
+            "type": "string"
+          },
+          "approved_portrait_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Rights-cleared portrait asset URL.",
+            "title": "Approved Portrait Url"
+          },
+          "approved_story_slugs": {
+            "description": "Slugs of curated stories featuring this practitioner.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Approved Story Slugs",
+            "type": "array"
+          },
+          "consent_status": {
+            "$ref": "#/components/schemas/RbpcConsentStatus",
+            "default": "consented",
+            "description": "Verification state of the practitioner's written consent."
+          },
+          "craft_tradition_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Craft tradition name in English.",
+            "title": "Craft Tradition En"
+          },
+          "craft_tradition_vi": {
+            "description": "Craft tradition name in Vietnamese (e.g. Đúc đồng Phường Đúc, Hoa giấy Thanh Tiên).",
+            "title": "Craft Tradition Vi",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "experience_slugs": {
+            "description": "Slugs of real-world experiences hosted by this practitioner.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Experience Slugs",
+            "type": "array"
+          },
+          "generation_lineage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Family or craft generational lineage (e.g. Đời thứ 4 dòng họ Nguyễn).",
+            "title": "Generation Lineage"
+          },
+          "heritage_place_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Associated heritage place slug if tied to a specific community monument.",
+            "title": "Heritage Place Slug"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "public_name": {
+            "description": "Public display name or artisan title.",
+            "title": "Public Name",
+            "type": "string"
+          },
+          "public_region": {
+            "description": "Public geographic locality (e.g. Phường Đúc, TP. Huế; Phú Mậu, Phú Vang).",
+            "title": "Public Region",
+            "type": "string"
+          },
+          "slug": {
+            "description": "URL-safe identifier.",
+            "title": "Slug",
+            "type": "string"
+          },
+          "years_of_practice": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Years dedicated to the craft tradition.",
+            "title": "Years Of Practice"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "public_name",
+          "craft_tradition_vi",
+          "approved_bio_vi",
+          "public_region",
+          "created_at"
+        ],
+        "title": "RbpcCreatorOut",
+        "type": "object"
+      },
+      "RbpcCulturalBridgeCitation": {
+        "description": "Strict citation reference mapping back to a verified claim and source.",
+        "properties": {
+          "claim_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "UUID of the specific supporting claim in the database.",
+            "title": "Claim Id"
+          },
+          "locator": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Page number, decree section, or interview excerpt locator.",
+            "title": "Locator"
+          },
+          "source_id": {
+            "description": "UUID or approved key of the source.",
+            "title": "Source Id",
+            "type": "string"
+          },
+          "support": {
+            "$ref": "#/components/schemas/RbpcSupportType",
+            "default": "direct",
+            "description": "Type of evidence support: direct, contextual, interpretation."
+          },
+          "title": {
+            "description": "Title of the cited source.",
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source_id",
+          "title"
+        ],
+        "title": "RbpcCulturalBridgeCitation",
+        "type": "object"
+      },
+      "RbpcCulturalBridgeRequest": {
+        "description": "Visitor query to the source-grounded Cultural Bridge AI.",
+        "properties": {
+          "context_preferences": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional visitor preferences (e.g. beginner_friendly, craft_focus).",
+            "title": "Context Preferences"
+          },
+          "locale": {
+            "default": "vi",
+            "description": "Desired response locale (vi or en).",
+            "pattern": "^(vi|en)$",
+            "title": "Locale",
+            "type": "string"
+          },
+          "question": {
+            "description": "User's cultural inquiry question.",
+            "maxLength": 1000,
+            "minLength": 2,
+            "title": "Question",
+            "type": "string"
+          },
+          "story_slug": {
+            "description": "Slug of the published story scoping the query.",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Story Slug",
+            "type": "string"
+          }
+        },
+        "required": [
+          "story_slug",
+          "question"
+        ],
+        "title": "RbpcCulturalBridgeRequest",
+        "type": "object"
+      },
+      "RbpcCulturalBridgeResponse": {
+        "description": "Source-grounded Cultural Bridge response with explicit epistemic certainty.",
+        "properties": {
+          "answer": {
+            "description": "Culturally respectful, source-grounded explanation.",
+            "title": "Answer",
+            "type": "string"
+          },
+          "citations": {
+            "description": "Array of verified citations. Empty citations trigger epistemic uncertainty flag.",
+            "items": {
+              "$ref": "#/components/schemas/RbpcCulturalBridgeCitation"
+            },
+            "title": "Citations",
+            "type": "array"
+          },
+          "context_boundary": {
+            "description": "Explicit boundary note separating verified history from contemporary artisan testimony.",
+            "title": "Context Boundary",
+            "type": "string"
+          },
+          "epistemic_certainty": {
+            "$ref": "#/components/schemas/RbpcEpistemicCertainty",
+            "default": "high",
+            "description": "Certainty evaluation: high, medium, contested, insufficient_sources."
+          },
+          "linked_creator_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Public display name of recommended living artisan.",
+            "title": "Linked Creator Name"
+          },
+          "linked_creator_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Slug of recommended living artisan matching the cultural inquiry.",
+            "title": "Linked Creator Slug"
+          },
+          "linked_experience_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Slug of recommended workshop experience.",
+            "title": "Linked Experience Slug"
+          },
+          "linked_experience_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Title of recommended workshop experience.",
+            "title": "Linked Experience Title"
+          },
+          "locale": {
+            "default": "vi",
+            "title": "Locale",
+            "type": "string"
+          },
+          "model_version": {
+            "description": "Private server model and prompt version identifier.",
+            "title": "Model Version",
+            "type": "string"
+          },
+          "review_status": {
+            "default": "published_human_approved_context",
+            "description": "Editorial status of the backing corpus.",
+            "title": "Review Status",
+            "type": "string"
+          },
+          "status": {
+            "default": "supported",
+            "description": "Response status: supported, insufficient_evidence, out_of_scope, fallback_to_curated.",
+            "title": "Status",
+            "type": "string"
+          },
+          "suggested_followups": {
+            "description": "Suggested follow-up questions relevant to this story.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Suggested Followups",
+            "type": "array"
+          },
+          "uncertainty_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Specific historiographical caveat or note on conflicting traditions.",
+            "title": "Uncertainty Note"
+          }
+        },
+        "required": [
+          "answer",
+          "context_boundary",
+          "model_version"
+        ],
+        "title": "RbpcCulturalBridgeResponse",
+        "type": "object"
+      },
+      "RbpcEpistemicCertainty": {
+        "enum": [
+          "high",
+          "medium",
+          "contested",
+          "insufficient_sources"
+        ],
+        "title": "RbpcEpistemicCertainty",
+        "type": "string"
+      },
+      "RbpcExperienceOut": {
+        "description": "Real-world cultural experience with honest inquiry-only notice.",
+        "properties": {
+          "area_public": {
+            "description": "Neighborhood / community location (e.g. Làng Thanh Tiên, Phú Mậu).",
+            "title": "Area Public",
+            "type": "string"
+          },
+          "availability_mode": {
+            "$ref": "#/components/schemas/RbpcAvailabilityMode",
+            "default": "inquiry_only",
+            "description": "Commercial flow mode: inquiry_only (no simulated instant booking)."
+          },
+          "cancellation_policy_text_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancellation Policy Text En"
+          },
+          "cancellation_policy_text_vi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancellation Policy Text Vi"
+          },
+          "creator_name": {
+            "description": "Public name of the practitioner.",
+            "title": "Creator Name",
+            "type": "string"
+          },
+          "creator_slug": {
+            "description": "Slug of the host practitioner.",
+            "title": "Creator Slug",
+            "type": "string"
+          },
+          "currency": {
+            "default": "VND",
+            "description": "Currency ISO 4217 code.",
+            "title": "Currency",
+            "type": "string"
+          },
+          "description_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Detailed description in English.",
+            "title": "Description En"
+          },
+          "description_vi": {
+            "description": "Detailed itinerary/description in Vietnamese.",
+            "title": "Description Vi",
+            "type": "string"
+          },
+          "duration_minutes": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Approximate duration in minutes.",
+            "title": "Duration Minutes"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "indicative_price_amount": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Raw indicative amount in local currency.",
+            "title": "Indicative Price Amount"
+          },
+          "indicative_pricing_display": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Human-readable indicative price (e.g. Từ 350.000 VNĐ / khách).",
+            "title": "Indicative Pricing Display"
+          },
+          "languages_supported": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Languages Supported",
+            "type": "array"
+          },
+          "max_party_size": {
+            "anyOf": [
+              {
+                "maximum": 50.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": 10,
+            "title": "Max Party Size"
+          },
+          "notice": {
+            "default": "Yêu cầu trải nghiệm chỉ là bước liên hệ xác nhận, không phải giao dịch thanh toán tức thì.",
+            "description": "Honest transparency disclosure.",
+            "title": "Notice",
+            "type": "string"
+          },
+          "publication_state": {
+            "default": "published",
+            "title": "Publication State",
+            "type": "string"
+          },
+          "slug": {
+            "description": "URL-safe identifier.",
+            "title": "Slug",
+            "type": "string"
+          },
+          "title_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Experience title in English.",
+            "title": "Title En"
+          },
+          "title_vi": {
+            "description": "Experience title in Vietnamese.",
+            "title": "Title Vi",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "creator_slug",
+          "creator_name",
+          "title_vi",
+          "description_vi",
+          "area_public"
+        ],
+        "title": "RbpcExperienceOut",
+        "type": "object"
+      },
+      "RbpcImpactMetricsOut": {
+        "description": "Complete impact reporting payload separating observed reality from forward projections.",
+        "properties": {
+          "generated_at": {
+            "format": "date-time",
+            "title": "Generated At",
+            "type": "string"
+          },
+          "observed_metrics": {
+            "$ref": "#/components/schemas/RbpcObservedMetrics"
+          },
+          "projected_metrics": {
+            "$ref": "#/components/schemas/RbpcProjectedMetrics"
+          },
+          "scope": {
+            "default": "RBPC_HUE",
+            "title": "Scope",
+            "type": "string"
+          }
+        },
+        "required": [
+          "observed_metrics",
+          "projected_metrics",
+          "generated_at"
+        ],
+        "title": "RbpcImpactMetricsOut",
+        "type": "object"
+      },
+      "RbpcInquiryCreate": {
+        "description": "Visitor inquiry submission request payload.",
+        "properties": {
+          "consent": {
+            "$ref": "#/components/schemas/RbpcConsentIn"
+          },
+          "contact": {
+            "$ref": "#/components/schemas/RbpcContactIn"
+          },
+          "experience_slug": {
+            "description": "Target experience offering slug.",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Experience Slug",
+            "type": "string"
+          },
+          "idempotency_key": {
+            "description": "Client-generated unique UUID or nonce preventing accidental duplicate submissions.",
+            "maxLength": 128,
+            "minLength": 16,
+            "title": "Idempotency Key",
+            "type": "string"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional inquiry notes or dietary/accessibility requests.",
+            "title": "Message"
+          },
+          "party_size": {
+            "default": 1,
+            "description": "Number of participants (1-50).",
+            "maximum": 50.0,
+            "minimum": 1.0,
+            "title": "Party Size",
+            "type": "integer"
+          },
+          "preferred_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Desired workshop/tour date (must be in the future).",
+            "title": "Preferred Date"
+          }
+        },
+        "required": [
+          "experience_slug",
+          "contact",
+          "consent",
+          "idempotency_key"
+        ],
+        "title": "RbpcInquiryCreate",
+        "type": "object"
+      },
+      "RbpcInquiryOut": {
+        "description": "Immediate response upon inquiry submission containing tracking tokens.",
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "message": {
+            "default": "Yêu cầu đã được ghi nhận. Nhà cung cấp sẽ liên hệ xác nhận lịch trống.",
+            "description": "Honest receipt message.",
+            "title": "Message",
+            "type": "string"
+          },
+          "reference": {
+            "description": "Non-sequential public reference code (e.g. INQ-7F89-A23C).",
+            "title": "Reference",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RbpcInquiryStatus",
+            "default": "new",
+            "description": "Initial status: new."
+          },
+          "status_token": {
+            "description": "High-entropy secret token for anonymous status checks (stored on client).",
+            "title": "Status Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reference",
+          "status_token",
+          "created_at"
+        ],
+        "title": "RbpcInquiryOut",
+        "type": "object"
+      },
+      "RbpcInquiryStatus": {
+        "enum": [
+          "new",
+          "contacted",
+          "confirmed",
+          "declined",
+          "closed"
+        ],
+        "title": "RbpcInquiryStatus",
+        "type": "string"
+      },
+      "RbpcInquiryStatusOut": {
+        "description": "Public status inquiry output: ZERO PII returned.",
+        "properties": {
+          "experience_title": {
+            "description": "Title of the requested experience.",
+            "title": "Experience Title",
+            "type": "string"
+          },
+          "last_updated_at": {
+            "format": "date-time",
+            "title": "Last Updated At",
+            "type": "string"
+          },
+          "party_size": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Party Size"
+          },
+          "preferred_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preferred Date"
+          },
+          "reference": {
+            "description": "Non-sequential reference code.",
+            "title": "Reference",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RbpcInquiryStatus",
+            "description": "Current inquiry lifecycle state."
+          },
+          "status_message": {
+            "description": "Human-readable explanation of the current status.",
+            "title": "Status Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reference",
+          "experience_title",
+          "status",
+          "status_message",
+          "last_updated_at"
+        ],
+        "title": "RbpcInquiryStatusOut",
+        "type": "object"
+      },
+      "RbpcObservedMetrics": {
+        "description": "Real, verified aggregate statistics observed in the database.",
+        "properties": {
+          "active_experiences_count": {
+            "default": 0,
+            "description": "Total published experience listings open for inquiries.",
+            "title": "Active Experiences Count",
+            "type": "integer"
+          },
+          "consented_creators_count": {
+            "default": 0,
+            "description": "Total living practitioners with verified written consent.",
+            "title": "Consented Creators Count",
+            "type": "integer"
+          },
+          "published_stories_count": {
+            "default": 0,
+            "description": "Total human-reviewed, source-grounded stories currently published.",
+            "title": "Published Stories Count",
+            "type": "integer"
+          },
+          "sponsor_support_vnd_verified": {
+            "default": 202360638.0,
+            "description": "Total verified in-kind sponsorship value (VND) supported by signed documents (BNIX + Phổ Tuệ).",
+            "title": "Sponsor Support Vnd Verified",
+            "type": "number"
+          },
+          "total_inquiries_received": {
+            "default": 0,
+            "description": "Total visitor inquiry requests logged.",
+            "title": "Total Inquiries Received",
+            "type": "integer"
+          },
+          "verified_heritage_places_count": {
+            "default": 0,
+            "description": "Total Huế heritage places catalogued with authoritative source citations.",
+            "title": "Verified Heritage Places Count",
+            "type": "integer"
+          },
+          "verified_source_citations_count": {
+            "default": 0,
+            "description": "Total bibliographic claims verified across the knowledge graph.",
+            "title": "Verified Source Citations Count",
+            "type": "integer"
+          }
+        },
+        "title": "RbpcObservedMetrics",
+        "type": "object"
+      },
+      "RbpcPartnerInquiryListOut": {
+        "description": "List of inquiries for an authenticated partner inbox.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RbpcPartnerInquiryOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total"
+        ],
+        "title": "RbpcPartnerInquiryListOut",
+        "type": "object"
+      },
+      "RbpcPartnerInquiryOut": {
+        "description": "Partner-facing inquiry representation with contact details (provider-scoped).",
+        "properties": {
+          "contact_method": {
+            "$ref": "#/components/schemas/RbpcContactMethod"
+          },
+          "contact_name": {
+            "title": "Contact Name",
+            "type": "string"
+          },
+          "contact_value": {
+            "title": "Contact Value",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "experience_slug": {
+            "title": "Experience Slug",
+            "type": "string"
+          },
+          "experience_title": {
+            "title": "Experience Title",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "party_size": {
+            "default": 1,
+            "title": "Party Size",
+            "type": "integer"
+          },
+          "preferred_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preferred Date"
+          },
+          "reference": {
+            "title": "Reference",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RbpcInquiryStatus"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "reference",
+          "experience_slug",
+          "experience_title",
+          "contact_name",
+          "contact_method",
+          "contact_value",
+          "status",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "RbpcPartnerInquiryOut",
+        "type": "object"
+      },
+      "RbpcPartnerInquiryUpdate": {
+        "description": "Partner action to advance or conclude the inquiry lifecycle.",
+        "properties": {
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Private internal partner note regarding the conversation.",
+            "title": "Note"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RbpcInquiryStatus",
+            "description": "Target status: contacted, confirmed, declined, closed."
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "RbpcPartnerInquiryUpdate",
+        "type": "object"
+      },
+      "RbpcProjectedMetrics": {
+        "description": "Estimated forward-looking commercial and economic impact hypotheses.",
+        "properties": {
+          "estimated_monthly_demand": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Projected qualified monthly visitor inquiry volume based on pilot conversion rates.",
+            "title": "Estimated Monthly Demand"
+          },
+          "projected_local_value_addition_vnd": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Projected economic value directed to local artisan communities.",
+            "title": "Projected Local Value Addition Vnd"
+          },
+          "projection_basis": {
+            "default": "Các số liệu dự phóng là giả định mô hình kinh doanh phục vụ nghiên cứu và đề án RBPC 2026, không phải doanh thu đã ghi nhận.",
+            "description": "Mandatory disclaimer distinguishing projection from observed financial results.",
+            "title": "Projection Basis",
+            "type": "string"
+          }
+        },
+        "title": "RbpcProjectedMetrics",
+        "type": "object"
+      },
+      "RbpcStoryDetailOut": {
+        "description": "Deep representation of a curated story including claims, creator, and media.",
+        "properties": {
+          "approved_summary_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Curator-approved canonical summary in English.",
+            "title": "Approved Summary En"
+          },
+          "approved_summary_vi": {
+            "description": "Curator-approved canonical summary in Vietnamese.",
+            "title": "Approved Summary Vi",
+            "type": "string"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "content_scope": {
+            "default": "RBPC_HUE",
+            "title": "Content Scope",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "creator": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RbpcCreatorOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "creator_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Creator Slug"
+          },
+          "evidence_claims": {
+            "items": {
+              "$ref": "#/components/schemas/RbpcClaimEvidenceOut"
+            },
+            "title": "Evidence Claims",
+            "type": "array"
+          },
+          "experience": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RbpcExperienceOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "experience_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Experience Slug"
+          },
+          "heritage_place_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Heritage Place Slug"
+          },
+          "historical_context": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Historical Context"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "intro_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Intro En"
+          },
+          "intro_vi": {
+            "title": "Intro Vi",
+            "type": "string"
+          },
+          "media_assets": {
+            "items": {
+              "$ref": "#/components/schemas/HeritageMediaAssetOut"
+            },
+            "title": "Media Assets",
+            "type": "array"
+          },
+          "primary_asset_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Primary Asset Url"
+          },
+          "published_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Published At"
+          },
+          "reading_time_minutes": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reading Time Minutes"
+          },
+          "rights_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rights Id"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "status": {
+            "default": "published",
+            "title": "Status",
+            "type": "string"
+          },
+          "title_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title En"
+          },
+          "title_vi": {
+            "title": "Title Vi",
+            "type": "string"
+          },
+          "version": {
+            "default": 1,
+            "description": "Content version integer.",
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "title_vi",
+          "intro_vi",
+          "created_at",
+          "approved_summary_vi"
+        ],
+        "title": "RbpcStoryDetailOut",
+        "type": "object"
+      },
+      "RbpcStoryListOut": {
+        "description": "List of published stories.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RbpcStoryOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "locale": {
+            "default": "vi",
+            "title": "Locale",
+            "type": "string"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total"
+        ],
+        "title": "RbpcStoryListOut",
+        "type": "object"
+      },
+      "RbpcStoryOut": {
+        "description": "Summary representation of a curated cultural story.",
+        "properties": {
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "content_scope": {
+            "default": "RBPC_HUE",
+            "title": "Content Scope",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "creator_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Creator Slug"
+          },
+          "experience_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Experience Slug"
+          },
+          "heritage_place_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Heritage Place Slug"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "intro_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Intro En"
+          },
+          "intro_vi": {
+            "title": "Intro Vi",
+            "type": "string"
+          },
+          "primary_asset_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Primary Asset Url"
+          },
+          "published_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Published At"
+          },
+          "reading_time_minutes": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reading Time Minutes"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "status": {
+            "default": "published",
+            "title": "Status",
+            "type": "string"
+          },
+          "title_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title En"
+          },
+          "title_vi": {
+            "title": "Title Vi",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "title_vi",
+          "intro_vi",
+          "created_at"
+        ],
+        "title": "RbpcStoryOut",
+        "type": "object"
+      },
+      "RbpcSupportType": {
+        "enum": [
+          "direct",
+          "contextual",
+          "interpretation",
+          "unverified"
+        ],
+        "title": "RbpcSupportType",
+        "type": "string"
       },
       "RecommendationAIOut": {
         "properties": {
@@ -31551,6 +34514,456 @@
         "summary": "Use Streak Freeze For Hearts Endpoint"
       }
     },
+    "/api/v1/heritage/places": {
+      "get": {
+        "description": "Browse and filter heritage places with cursor pagination.\n\nPublic visitors receive only ``published`` records. Staff may filter by any\neditorial status or inspect all statuses.",
+        "operationId": "list_heritage_places_api_v1_heritage_places_get",
+        "parameters": [
+          {
+            "description": "Filter by heritage category.",
+            "in": "query",
+            "name": "category",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by heritage category.",
+              "title": "Category"
+            }
+          },
+          {
+            "description": "Filter by structural entity type.",
+            "in": "query",
+            "name": "entity_type",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/HeritageEntityType"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by structural entity type.",
+              "title": "Entity Type"
+            }
+          },
+          {
+            "description": "Filter by editorial status (staff only).",
+            "in": "query",
+            "name": "editorial_status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/HeritageRecordStatus"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by editorial status (staff only).",
+              "title": "Editorial Status"
+            }
+          },
+          {
+            "description": "Content scope isolation.",
+            "in": "query",
+            "name": "content_scope",
+            "required": false,
+            "schema": {
+              "default": "RBPC_HUE",
+              "description": "Content scope isolation.",
+              "title": "Content Scope",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by availability of rights-cleared 3D models.",
+            "in": "query",
+            "name": "has_3d",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by availability of rights-cleared 3D models.",
+              "title": "Has 3D"
+            }
+          },
+          {
+            "description": "Keyset pagination cursor.",
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Keyset pagination cursor.",
+              "title": "Cursor"
+            }
+          },
+          {
+            "description": "Items per page.",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "description": "Items per page.",
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Search keyword filter.",
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Search keyword filter.",
+              "title": "Q"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HeritagePlaceListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "List Heritage Places",
+        "tags": [
+          "heritage"
+        ]
+      }
+    },
+    "/api/v1/heritage/places/{slug}": {
+      "get": {
+        "description": "Retrieve comprehensive heritage place dossier by unique slug.\n\nReturns the deep composite representation with parent/child hierarchies,\nrelational knowledge graph links, verified source citations, rights-cleared\nmedia, and commercial story engagement CTAs.",
+        "operationId": "get_heritage_place_detail_api_v1_heritage_places__slug__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": {
+              "title": "Slug",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HeritagePlaceDetailOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Heritage Place Detail",
+        "tags": [
+          "heritage"
+        ]
+      }
+    },
+    "/api/v1/heritage/places/{slug}/3d": {
+      "get": {
+        "description": "Retrieve approved 3D Sketchfab viewer embeds for a heritage place.\n\nEnforces strict 3D quality and rights guardrails:\n- SF-020 (nguyenduc0) and any models with accuracy_grade='rejected_accuracy' are BLOCKED.\n- CC BY-NC-SA models (blocked_nc) are excluded from commercial presentation.\n- Results are sorted by confidence and photogrammetric measurement fidelity.\n- If no rights-cleared 3D model exists, returns empty array [] enabling graceful 2D fallback.",
+        "operationId": "get_heritage_place_3d_models_api_v1_heritage_places__slug__3d_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": {
+              "title": "Slug",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/HeritageMediaAssetOut"
+                  },
+                  "title": "Response Get Heritage Place 3D Models Api V1 Heritage Places  Slug  3D Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Heritage Place 3D Models",
+        "tags": [
+          "heritage"
+        ]
+      }
+    },
+    "/api/v1/heritage/places/{slug}/detail": {
+      "get": {
+        "description": "Retrieve comprehensive heritage place dossier by unique slug.\n\nReturns the deep composite representation with parent/child hierarchies,\nrelational knowledge graph links, verified source citations, rights-cleared\nmedia, and commercial story engagement CTAs.",
+        "operationId": "get_heritage_place_detail_api_v1_heritage_places__slug__detail_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": {
+              "title": "Slug",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HeritagePlaceDetailOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Heritage Place Detail",
+        "tags": [
+          "heritage"
+        ]
+      }
+    },
+    "/api/v1/heritage/places/{slug}/media": {
+      "get": {
+        "description": "Retrieve rights-cleared media assets for a heritage place.\n\nStrictly omits inaccurate, rejected, or rights-restricted assets.",
+        "operationId": "get_heritage_place_media_api_v1_heritage_places__slug__media_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": {
+              "title": "Slug",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/HeritageMediaAssetOut"
+                  },
+                  "title": "Response Get Heritage Place Media Api V1 Heritage Places  Slug  Media Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Heritage Place Media",
+        "tags": [
+          "heritage"
+        ]
+      }
+    },
+    "/api/v1/heritage/search": {
+      "get": {
+        "description": "Accent-tolerant, diacritic-insensitive search across heritage places.\n\nMatches query against Vietnamese names, English names, UNESCO reference IDs,\nand summaries with relevance scoring. Public visitors only search published entries.",
+        "operationId": "search_heritage_places_api_v1_heritage_search_get",
+        "parameters": [
+          {
+            "description": "Search keyword.",
+            "in": "query",
+            "name": "q",
+            "required": true,
+            "schema": {
+              "description": "Search keyword.",
+              "minLength": 2,
+              "title": "Q",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Content scope.",
+            "in": "query",
+            "name": "scope",
+            "required": false,
+            "schema": {
+              "default": "RBPC_HUE",
+              "description": "Content scope.",
+              "title": "Scope",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Max search results.",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "description": "Max search results.",
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HeritageSearchOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Search Heritage Places",
+        "tags": [
+          "heritage"
+        ]
+      }
+    },
     "/api/v1/history/claims/{claim_id}": {
       "get": {
         "operationId": "get_history_claim_api_v1_history_claims__claim_id__get",
@@ -33203,6 +36616,26 @@
     "/api/v1/history/tutor/ask": {
       "post": {
         "operationId": "history_tutor_ask_api_v1_history_tutor_ask_post",
+        "parameters": [
+          {
+            "description": "Optional heritage scope filter: CUU_DINH, RBPC_HUE, ALL",
+            "in": "query",
+            "name": "heritage_scope",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Optional heritage scope filter: CUU_DINH, RBPC_HUE, ALL",
+              "title": "Heritage Scope"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -36247,6 +39680,525 @@
           }
         ],
         "summary": "List Ranks"
+      }
+    },
+    "/api/v1/rbpc/config": {
+      "get": {
+        "description": "Retrieve runtime configuration, active feature flags, and consent versions.\n\nZero secrets or internal keys are ever exposed.",
+        "operationId": "get_rbpc_config_api_v1_rbpc_config_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcConfigOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Rbpc Config",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/creators/{slug}": {
+      "get": {
+        "description": "Retrieve living practitioner profile with verified written consent.",
+        "operationId": "get_rbpc_creator_api_v1_rbpc_creators__slug__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": {
+              "title": "Slug",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcCreatorOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Rbpc Creator",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/cultural-bridge": {
+      "post": {
+        "description": "Ask a source-grounded question to the AI Cultural Bridge.\n\nScoped strictly to the selected published story and its verified claims.\nResponses require strict 5-check citation validation. When evidence is\ninsufficient or entities unknown, fails closed to canonical text without\nhallucination.",
+        "operationId": "rbpc_cultural_bridge_ask_api_v1_rbpc_cultural_bridge_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcCulturalBridgeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcCulturalBridgeResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Rbpc Cultural Bridge Ask",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/editor/creators/{id}/consent": {
+      "post": {
+        "description": "Allow editors to update artisan consent state (consented, pending_review, revoked).\n\nEnforces editor/staff permissions (STAFF_ROLES) and logs cryptographic audit trail.",
+        "operationId": "update_creator_consent_api_v1_rbpc_editor_creators__id__consent_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcCreatorConsentUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcCreatorOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Update Creator Consent",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/experiences/{slug}": {
+      "get": {
+        "description": "Retrieve details of a cultural workshop offering with honest inquiry-only notice.",
+        "operationId": "get_rbpc_experience_api_v1_rbpc_experiences__slug__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": {
+              "title": "Slug",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcExperienceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Rbpc Experience",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/impact": {
+      "get": {
+        "description": "Retrieve aggregate platform metrics.\n\nSeparates real database-observed statistics from forward commercial projections.\nIncludes verified 202,360,638 VND sponsor in-kind support.",
+        "operationId": "get_rbpc_impact_metrics_api_v1_rbpc_impact_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcImpactMetricsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Rbpc Impact Metrics",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/inquiries": {
+      "post": {
+        "description": "Submit a visitor booking/availability inquiry.\n\nRequires idempotency key, explicit opt-in consent, and future preferred date.\nZero automated simulated payment: routes to partner review.",
+        "operationId": "create_rbpc_inquiry_api_v1_rbpc_inquiries_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcInquiryCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcInquiryOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Rbpc Inquiry",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/inquiries/status/{opaqueToken}": {
+      "get": {
+        "description": "Visitor status lookup via high-entropy secret bearer token.\n\nZERO PII Invariant: Email, phone, name, and partner internal notes are\nnever disclosed in this response.",
+        "operationId": "get_inquiry_status_by_token_api_v1_rbpc_inquiries_status__opaqueToken__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "opaqueToken",
+            "required": true,
+            "schema": {
+              "title": "Opaquetoken",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcInquiryStatusOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Inquiry Status By Token",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/partner/inquiries": {
+      "get": {
+        "description": "Retrieve incoming visitor inquiries for the authenticated provider.\n\nEnforces strict server-side scoping: non-staff callers only view inquiries\nbelonging to their own provider account.",
+        "operationId": "list_partner_inquiries_api_v1_rbpc_partner_inquiries_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcPartnerInquiryListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "List Partner Inquiries",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/partner/inquiries/{id}": {
+      "patch": {
+        "description": "Transition inquiry status (new -> contacted -> confirmed / declined / closed).\n\nRejects unauthorized access with 403 FORBIDDEN_SCOPE.\nEnforces valid lifecycle state transitions.",
+        "operationId": "update_partner_inquiry_status_api_v1_rbpc_partner_inquiries__id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcPartnerInquiryUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcPartnerInquiryOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Update Partner Inquiry Status",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/stories": {
+      "get": {
+        "description": "Retrieve published curated cultural stories.\n\nDraft or archived stories are omitted for public visitors.",
+        "operationId": "list_rbpc_stories_api_v1_rbpc_stories_get",
+        "parameters": [
+          {
+            "description": "Response locale.",
+            "in": "query",
+            "name": "locale",
+            "required": false,
+            "schema": {
+              "default": "vi",
+              "description": "Response locale.",
+              "title": "Locale",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Story category filter.",
+            "in": "query",
+            "name": "category",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Story category filter.",
+              "title": "Category"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcStoryListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "List Rbpc Stories",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/stories/{slug}": {
+      "get": {
+        "description": "Retrieve comprehensive story narrative with verified claims, artisan, and media.",
+        "operationId": "get_rbpc_story_detail_api_v1_rbpc_stories__slug__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": {
+              "title": "Slug",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcStoryDetailOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Rbpc Story Detail",
+        "tags": [
+          "rbpc"
+        ]
       }
     },
     "/api/v1/recommendations": {

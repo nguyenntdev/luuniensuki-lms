@@ -24,6 +24,13 @@ export const PUBLIC_PATH_PREFIXES: string[] = [
   "/certificates",
   "/u",
   "/share",
+  // RBPC 2026 Living Heritage & Visitor Journeys
+  "/learn",
+  "/people",
+  "/experiences",
+  "/about",
+  "/heritage",
+  "/rbpc",
 ];
 
 export const PUBLIC_FILE_PATHS: string[] = [

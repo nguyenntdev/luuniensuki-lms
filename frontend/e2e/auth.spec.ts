@@ -7,7 +7,10 @@ test('should register and land on post-auth flow', async ({ page }) => {
 
   await page.goto('/login');
 
-  await page.getByRole('button', { name: 'Đăng ký' }).click();
+  await page
+    .getByRole('tab', { name: 'Đăng ký' })
+    .or(page.getByRole('button', { name: 'Đăng ký' }))
+    .click();
 
   await page.getByPlaceholder('Sử Quan Tập Sự').fill(name);
   await page.getByPlaceholder('you@example.com').fill(email);
