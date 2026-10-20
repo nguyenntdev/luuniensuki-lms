@@ -1,0 +1,232 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4096 3072" width="4096" height="3072" style="background:#131a19;">
+  <defs>
+    <!-- Gradients & Patterns -->
+    <radialGradient id="vignette" cx="50%" cy="50%" r="65%">
+      <stop offset="60%" stop-color="#141c19" stop-opacity="0" />
+      <stop offset="100%" stop-color="#0a0e0c" stop-opacity="0.85" />
+    </radialGradient>
+
+    <linearGradient id="grassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#223326" />
+      <stop offset="50%" stop-color="#1c2c20" />
+      <stop offset="100%" stop-color="#18261b" />
+    </linearGradient>
+
+    <linearGradient id="waterGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1b3638" />
+      <stop offset="50%" stop-color="#142c2f" />
+      <stop offset="100%" stop-color="#0f2224" />
+    </linearGradient>
+
+    <linearGradient id="brickGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#3d332a" />
+      <stop offset="100%" stop-color="#2a231d" />
+    </linearGradient>
+
+    <linearGradient id="stoneAxisGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#6e5d48" />
+      <stop offset="50%" stop-color="#8a755d" />
+      <stop offset="100%" stop-color="#5a4c3a" />
+    </linearGradient>
+
+    <linearGradient id="palaceRoof" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c98a2c" />
+      <stop offset="45%" stop-color="#d49a37" />
+      <stop offset="55%" stop-color="#9e6919" />
+      <stop offset="100%" stop-color="#734a0f" />
+    </linearGradient>
+
+    <linearGradient id="templeRoof" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a65432" />
+      <stop offset="100%" stop-color="#692d17" />
+    </linearGradient>
+
+    <linearGradient id="wallStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#735e47" />
+      <stop offset="100%" stop-color="#4a3c2c" />
+    </linearGradient>
+
+    <filter id="shadow" x="-5%" y="-5%" width="115%" height="115%">
+      <feDropShadow dx="0" dy="16" stdDeviation="14" flood-color="#000000" flood-opacity="0.65" />
+    </filter>
+  </defs>
+
+  <!-- Background Terrain: Imperial Citadel Lawn -->
+  <rect x="0" y="0" width="4096" height="3072" fill="url(#grassGrad)" />
+
+  <!-- Outer City Surrounding Waters & Moats (Hộ Thành Hào / Kim Thủy Trì) -->
+  <!-- Outer Moat Loop -->
+  <rect x="360" y="240" width="3376" height="2640" rx="30" fill="none" stroke="url(#waterGrad)" stroke-width="120" />
+  
+  <!-- Outer Fortress Wall (Hoàng Thành Thành Trì) -->
+  <rect x="440" y="320" width="3216" height="2480" rx="20" fill="#1b241e" stroke="url(#wallStroke)" stroke-width="48" filter="url(#shadow)" />
+  
+  <!-- Outer Bastions (Pháo đài giác đài) -->
+  <rect x="400" y="280" width="160" height="160" fill="#4a3c2c" />
+  <rect x="3536" y="280" width="160" height="160" fill="#4a3c2c" />
+  <rect x="400" y="2632" width="160" height="160" fill="#4a3c2c" />
+  <rect x="3536" y="2632" width="160" height="160" fill="#4a3c2c" />
+
+  <!-- Inner Moat: Kim Thủy Hà (Hồ Ngoại Kim Thủy) -->
+  <path d="M 680,2560 L 3416,2560 L 3416,2420 L 680,2420 Z" fill="url(#waterGrad)" />
+  <path d="M 1720,2580 L 1720,2340 L 2376,2340 L 2376,2580 Z" fill="url(#waterGrad)" opacity="0.6" />
+
+  <!-- Thai Dịch Lake (Hồ Thái Dịch) at v ~ 0.77 (y ~ 2368) -->
+  <rect x="1560" y="2310" width="976" height="130" rx="8" fill="url(#waterGrad)" stroke="#234244" stroke-width="8" filter="url(#shadow)" />
+
+  <!-- CENTRAL CEREMONIAL AXIS PAVING (Thần Đạo / Trục Trung Tâm) -->
+  <!-- Vertical Processional Path from Ngọ Môn through Điện Thái Hòa to Điện Cần Chánh -->
+  <rect x="1988" y="550" width="120" height="2150" fill="url(#stoneAxisGrad)" filter="url(#shadow)" />
+
+  <!-- =============================================================== -->
+  <!-- PURPLE FORBIDDEN CITY INNER WALL (Tử Cấm Thành Tường Vây)        -->
+  <!-- =============================================================== -->
+  <rect x="1350" y="520" width="1396" height="1300" rx="12" fill="#19211c" stroke="url(#wallStroke)" stroke-width="28" filter="url(#shadow)" />
+
+  <!-- Inner Courtyards Paving -->
+  <rect x="1450" y="600" width="1196" height="1140" fill="url(#brickGrad)" opacity="0.45" />
+
+  <!-- =============================================================== -->
+  <!-- 1. CENTRAL CEREMONIAL AXIS SITES                                 -->
+  <!-- =============================================================== -->
+  
+  <!-- Ngọ Môn (u: 0.5002, v: 0.8524 -> x: 2049, y: 2618) -->
+  <g id="ngo-mon-geom" filter="url(#shadow)">
+    <!-- U-shaped Fortress Base -->
+    <path d="M 1820,2660 L 2276,2660 L 2276,2580 L 2176,2580 L 2176,2605 L 1920,2605 L 1920,2580 L 1820,2580 Z" fill="#4d3e33" stroke="#2b231d" stroke-width="10" />
+    <!-- Lầu Ngũ Phụng (Five Phoenix Pavilion) Roofs -->
+    <rect x="1870" y="2595" width="356" height="50" rx="6" fill="url(#palaceRoof)" stroke="#ffe082" stroke-width="4" />
+    <rect x="1940" y="2580" width="216" height="30" rx="4" fill="url(#palaceRoof)" stroke="#ffd54f" stroke-width="3" />
+    <!-- 5 Gates Marks -->
+    <circle cx="2048" cy="2618" r="6" fill="#fff" />
+  </g>
+
+  <!-- Cầu Trung Đạo (u: 0.5002, v: 0.7712 -> x: 2049, y: 2368) -->
+  <g id="cau-trung-dao-geom">
+    <rect x="2008" y="2305" width="80" height="140" rx="4" fill="#a89a86" stroke="#3d372e" stroke-width="4" filter="url(#shadow)" />
+    <!-- Bronze Gate arches (Cửa Đồng Quán) -->
+    <line x1="1998" y1="2315" x2="2098" y2="2315" stroke="#b08b3c" stroke-width="6" />
+    <line x1="1998" y1="2435" x2="2098" y2="2435" stroke="#b08b3c" stroke-width="6" />
+  </g>
+
+  <!-- Sân Đại Triều Nghi (u: 0.5002, v: 0.7085 -> x: 2049, y: 2176) -->
+  <g id="san-dai-trieu-nghi-geom">
+    <!-- Two-tiered Stone Terrace -->
+    <rect x="1780" y="2100" width="536" height="160" rx="6" fill="#383029" stroke="#54483d" stroke-width="6" />
+    <line x1="1780" y1="2180" x2="2316" y2="2180" stroke="#756555" stroke-width="4" stroke-dasharray="16,8" />
+    <!-- Phẩm tán stone stele markers (two rows) -->
+    <g fill="#998774">
+      <circle cx="1960" cy="2140" r="4" /><circle cx="1960" cy="2165" r="4" /><circle cx="1960" cy="2200" r="4" /><circle cx="1960" cy="2230" r="4" />
+      <circle cx="2136" cy="2140" r="4" /><circle cx="2136" cy="2165" r="4" /><circle cx="2136" cy="2200" r="4" /><circle cx="2136" cy="2230" r="4" />
+    </g>
+  </g>
+
+  <!-- Điện Thái Hòa (u: 0.5002, v: 0.6384 -> x: 2049, y: 1961) -->
+  <g id="dien-thai-hoa-geom" filter="url(#shadow)">
+    <!-- Palace Platform -->
+    <rect x="1830" y="1905" width="436" height="114" rx="8" fill="#4a3e35" stroke="#6b584a" stroke-width="6" />
+    <!-- Trùng thiềm điệp ốc Double Roofs -->
+    <rect x="1855" y="1915" width="386" height="44" rx="6" fill="url(#palaceRoof)" stroke="#ffe082" stroke-width="4" />
+    <rect x="1855" y="1962" width="386" height="44" rx="6" fill="url(#palaceRoof)" stroke="#ffe082" stroke-width="4" />
+    <!-- Golden Imperial Ridge Dragons -->
+    <line x1="1880" y1="1915" x2="2216" y2="1915" stroke="#fff" stroke-width="2" opacity="0.6" />
+  </g>
+
+  <!-- =============================================================== -->
+  <!-- 2. ANCESTRAL WORSHIP SPACE (Tây Nam & Đông Nam)                  -->
+  <!-- =============================================================== -->
+
+  <!-- Thế Tổ Miếu Enclosure (u: 0.3621, v: 0.7022 -> x: 1483, y: 2157) -->
+  <g id="the-mieu-complex" filter="url(#shadow)">
+    <rect x="1310" y="2000" width="350" height="380" rx="6" fill="#1e2620" stroke="url(#wallStroke)" stroke-width="12" />
+    <!-- Thế Miếu Main Hall (9 gian 2 chái) -->
+    <rect x="1340" y="2120" width="290" height="80" rx="6" fill="url(#templeRoof)" stroke="#ffab91" stroke-width="4" />
+    <!-- Hiển Lâm Các (u: 0.3621, v: 0.7625 -> x: 1483, y: 2341) -->
+    <rect x="1440" y="2315" width="86" height="56" rx="4" fill="url(#templeRoof)" stroke="#ffcc80" stroke-width="4" />
+    <!-- Nine Dynastic Urns Row (Cửu Đỉnh) in front of Hien Lam Cac -->
+    <g fill="#8d6e63">
+      <circle cx="1445" cy="2295" r="5" /><circle cx="1455" cy="2295" r="5" /><circle cx="1465" cy="2295" r="5" />
+      <circle cx="1475" cy="2295" r="5" /><circle cx="1485" cy="2290" r="6" fill="#ffd54f" /><!-- Cao Đỉnh -->
+      <circle cx="1495" cy="2295" r="5" /><circle cx="1505" cy="2295" r="5" /><circle cx="1515" cy="2295" r="5" />
+      <circle cx="1525" cy="2295" r="5" />
+    </g>
+    <!-- Hưng Tổ Miếu (u: 0.3621, v: 0.6352 -> x: 1483, y: 1951) -->
+    <rect x="1420" y="1925" width="126" height="60" rx="4" fill="url(#templeRoof)" stroke="#ffab91" stroke-width="3" />
+  </g>
+
+  <!-- Triệu Tổ Miếu (u: 0.6385, v: 0.7022 -> x: 2615, y: 2157) at East -->
+  <g id="trieu-mieu-complex" filter="url(#shadow)">
+    <rect x="2440" y="2000" width="350" height="380" rx="6" fill="#1e2620" stroke="url(#wallStroke)" stroke-width="12" />
+    <rect x="2480" y="2120" width="270" height="74" rx="6" fill="url(#templeRoof)" stroke="#ffab91" stroke-width="4" />
+    <!-- Thái Miếu -->
+    <rect x="2500" y="2250" width="230" height="60" rx="4" fill="url(#templeRoof)" stroke="#d7ccc8" stroke-width="3" />
+  </g>
+
+  <!-- Điện Phụng Tiên (u: 0.3854, v: 0.5284 -> x: 1579, y: 1623) -->
+  <g id="phung-tien-complex" filter="url(#shadow)">
+    <rect x="1510" y="1570" width="140" height="110" rx="4" fill="#242d25" stroke="#5d4037" stroke-width="8" stroke-dasharray="12,6" />
+    <rect x="1535" y="1600" width="90" height="50" rx="3" fill="#3e2723" opacity="0.7" />
+  </g>
+
+  <!-- =============================================================== -->
+  <!-- 3. PURPLE FORBIDDEN CITY SITES (Tử Cấm Thành)                    -->
+  <!-- =============================================================== -->
+
+  <!-- Đại Cung Môn (u: 0.5002, v: 0.5651 -> x: 2049, y: 1736) -->
+  <g id="dai-cung-mon-geom" filter="url(#shadow)">
+    <rect x="1940" y="1720" width="218" height="36" rx="4" fill="#3e2723" stroke="#8d6e63" stroke-width="4" stroke-dasharray="8,4" />
+  </g>
+
+  <!-- Điện Cần Chánh (u: 0.5002, v: 0.4981 -> x: 2049, y: 1530) -->
+  <g id="dien-can-chanh-geom" filter="url(#shadow)">
+    <rect x="1870" y="1485" width="358" height="90" rx="6" fill="#3a2f26" stroke="#8d6e63" stroke-width="5" stroke-dasharray="10,5" />
+    <rect x="1920" y="1510" width="258" height="42" fill="#543e2f" opacity="0.6" />
+  </g>
+
+  <!-- Duyệt Thị Đường (u: 0.5924, v: 0.4482 -> x: 2426, y: 1377) -->
+  <g id="duyet-thi-duong-geom" filter="url(#shadow)">
+    <rect x="2350" y="1330" width="154" height="96" rx="6" fill="url(#palaceRoof)" stroke="#ffb74d" stroke-width="4" />
+    <rect x="2380" y="1350" width="94" height="56" fill="#4e342e" opacity="0.5" />
+  </g>
+
+  <!-- Thái Bình Lâu (u: 0.5742, v: 0.3251 -> x: 2352, y: 999) -->
+  <g id="thai-binh-lau-geom" filter="url(#shadow)">
+    <!-- Surrounding garden pond -->
+    <rect x="2290" y="950" width="130" height="100" rx="16" fill="url(#waterGrad)" />
+    <rect x="2318" y="975" width="70" height="50" rx="4" fill="url(#palaceRoof)" stroke="#80deea" stroke-width="3" />
+  </g>
+
+  <!-- Điện Kiến Trung (u: 0.5002, v: 0.2245 -> x: 2049, y: 690) -->
+  <g id="dien-kien-trung-geom" filter="url(#shadow)">
+    <rect x="1880" y="640" width="338" height="105" rx="8" fill="url(#palaceRoof)" stroke="#fff59d" stroke-width="5" />
+    <!-- Art Nouveau European style terraces -->
+    <rect x="1850" y="730" width="398" height="24" rx="4" fill="#a1887f" />
+    <circle cx="2049" cy="690" r="16" fill="#ffe082" opacity="0.5" />
+  </g>
+
+  <!-- =============================================================== -->
+  <!-- 4. ROYAL LIVING & GARDENS (Tây Bắc)                              -->
+  <!-- =============================================================== -->
+
+  <!-- Cung Diên Thọ (u: 0.3325, v: 0.4221 -> x: 1362, y: 1297) -->
+  <g id="cung-dien-tho-complex" filter="url(#shadow)">
+    <rect x="1220" y="1190" width="284" height="215" rx="6" fill="#1b241e" stroke="url(#wallStroke)" stroke-width="10" />
+    <!-- Diên Thọ Chính điện -->
+    <rect x="1280" y="1270" width="164" height="60" rx="5" fill="url(#palaceRoof)" stroke="#ffcc80" stroke-width="4" />
+    <!-- Tịnh Minh Lâu & Tạ Trường Du -->
+    <rect x="1250" y="1215" width="70" height="42" rx="3" fill="#5d4037" stroke="#bcaaa4" stroke-width="2" />
+    <rect x="1390" y="1215" width="60" height="40" rx="3" fill="#2e7d32" opacity="0.8" />
+  </g>
+
+  <!-- Cung Trường Sanh (u: 0.3152, v: 0.2852 -> x: 1291, y: 876) -->
+  <g id="cung-truong-sanh-complex" filter="url(#shadow)">
+    <rect x="1160" y="770" width="260" height="210" rx="8" fill="#17221b" stroke="url(#wallStroke)" stroke-width="10" />
+    <!-- Serpentine moats and islands -->
+    <path d="M 1180,810 Q 1290,790 1390,810 Q 1400,910 1370,950 Q 1250,960 1180,920 Z" fill="url(#waterGrad)" />
+    <!-- Main Residence -->
+    <rect x="1240" y="850" width="104" height="54" rx="4" fill="url(#palaceRoof)" stroke="#ffe082" stroke-width="3" />
+  </g>
+
+  <!-- Vignette Lighting Overlay -->
+  <rect x="0" y="0" width="4096" height="3072" fill="url(#vignette)" pointer-events="none" />
+</svg>

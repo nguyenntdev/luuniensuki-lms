@@ -1,0 +1,631 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "content_scope": "STTT_IMPERIAL_CITY",
+  "version": "1.0.0",
+  "updated_at": "2026-10-15T00:00:00Z",
+  "zones": [
+    {
+      "id": "zone-central-ceremonial-axis",
+      "slug": "central-ceremonial-axis",
+      "title_vi": "Trục trung tâm",
+      "title_en": "Central Ceremonial Axis",
+      "description_vi": "Trục chính đạo thiết lập trật tự không gian quyền lực và nghi lễ tối cao của triều đình nhà Nguyễn, kéo dài từ Ngọ Môn qua cầu Trung Đạo, sân Đại Triều Nghi đến điện Thái Hòa.",
+      "display_order": 1
+    },
+    {
+      "id": "zone-ancestral-worship-space",
+      "slug": "ancestral-worship-space",
+      "title_vi": "Không gian thờ tự",
+      "title_en": "Ancestral Worship Space",
+      "description_vi": "Khu vực các miếu điện linh thiêng nằm ở phía nam và tây nam Hoàng Thành dành cho việc phụng thờ tổ tiên và các vị vua triều Nguyễn, thể hiện đạo hiếu và tính chính danh triều đại.",
+      "display_order": 2
+    },
+    {
+      "id": "zone-purple-forbidden-city",
+      "slug": "purple-forbidden-city",
+      "title_vi": "Tử Cấm Thành",
+      "title_en": "Purple Forbidden City",
+      "description_vi": "Khu vực cấm địa trung tâm bảo mật tuyệt đối, nơi hoàng đế thiết triều thường nhật, làm việc văn hóa, giải trí và sinh hoạt nội bộ của hoàng gia.",
+      "display_order": 3
+    },
+    {
+      "id": "zone-royal-living-gardens",
+      "slug": "royal-living-gardens",
+      "title_vi": "Không gian sinh hoạt",
+      "title_en": "Royal Living and Gardens",
+      "description_vi": "Cụm cung điện và hoa viên ở phía tây bắc dành riêng cho hoàng gia, tiêu biểu là nơi cư ngụ, phụng dưỡng Hoàng Thái Hậu và Thái Hoàng Thái Hậu.",
+      "display_order": 4
+    }
+  ],
+  "sites": [
+    {
+      "id": "site-ngo-mon",
+      "slug": "ngo-mon",
+      "zone_slug": "central-ceremonial-axis",
+      "name_vi": "Ngọ Môn",
+      "name_en": "Meridian Gate",
+      "alternative_names": ["Cửa Ngọ Môn", "Lầu Ngũ Phụng"],
+      "learning_level": "L2_LEARNING_READY",
+      "condition": "extant",
+      "condition_description_vi": "Còn nguyên vẹn qua các đợt đại trùng tu (1990 - 2021)",
+      "construction_year": 1833,
+      "reign": "Minh Mạng",
+      "historical_summary": "Cổng chính phía nam của Hoàng Thành Huế, được xây dựng năm Minh Mạng thứ 14 (1833) trên vị trí đài Nam Sách cũ. Công trình có cấu trúc dưới đài đá hình chữ U trổ năm cửa ngõ, trên là lầu Ngũ Phụng mái chồng diềm, là nơi hoàng đế ban bố lịch Sóc, truyền loa vinh quy tiến sĩ và ngự kiến lễ thoái vị năm 1945.",
+      "guiding_inquiry_question": "Vì sao cấu trúc không gian và năm cửa của Ngọ Môn lại phản ánh tập quyền tuyệt đối và quy thức lễ nghi triều Nguyễn?",
+      "primary_sources": [
+        {
+          "source_title": "Đại Nam Thực Lục Chính Biên",
+          "volume_or_chapter": "Đệ nhị kỷ, Quyển 98",
+          "citation": "Tháng 3 năm Quý Tỵ (1833), dựng cổng Ngọ Môn ở đài Nam Sách cũ; dưới trổ 5 cửa: cửa giữa dành cho thiên tử, hai bên tả hữu dành cho bá quan, cửa tả hữu dực dành cho binh mã cấm vệ.",
+          "archival_unit": "Quốc Sử Quán triều Nguyễn / Viện Sử học",
+          "reliability_level": "verified_primary_source"
+        },
+        {
+          "source_title": "Khâm Định Đại Nam Hội Điển Sự Lệ",
+          "volume_or_chapter": "Quyển 168 (Lễ bộ - Lễ nghi)",
+          "citation": "Quy định thể thức nghi lễ tổ chức tại lầu Ngũ Phụng và việc ra vào các cửa theo phẩm trật quan viên.",
+          "archival_unit": "Nội các triều Nguyễn",
+          "reliability_level": "verified_primary_source"
+        }
+      ],
+      "pedagogical_task": {
+        "title": "Khảo sát tính phân tầng không gian tại Ngọ Môn",
+        "task_prompt": "Dựa vào hình ảnh mặt đứng và sử liệu Đại Nam Thực Lục, học sinh hãy đối chiếu quy chế phân tầng của 5 cửa ngõ và lầu Ngũ Phụng, giải thích mối liên hệ giữa thẩm quyền chính trị và cấu trúc kiến trúc phòng thủ - nghi lễ.",
+        "deliverable_type": "evidence_based_explanation",
+        "expected_evidence": "Học sinh xác định đúng cửa giữa (ngự đạo), hai giáp môn (quan văn võ), hai dịch môn (binh mã), và đối chiếu với văn bản Hội Điển Sự Lệ.",
+        "transfer_activity": "Liên hệ trục thần đạo từ Ngọ Môn qua cầu Trung Đạo tới sân Đại Triều Nghi.",
+        "uncertainty_prompt": "Điều em biết chắc: quy chế phân luồng 5 cửa qua văn bản chính sử. Điều cần xác minh: sự thay đổi vật liệu lợp ngói qua các thời kỳ tu sửa."
+      },
+      "rubrics": {
+        "S1_spatial": "Xác định chính xác vị trí tiền tiêu trên trục Trung Đạo và vai trò kết nối giữa Kỳ Đài và sân Đại Triều.",
+        "S2_temporal": "Phân biệt được thời điểm xây cất năm 1833 thời Minh Mạng với đài Nam Sách thời Gia Long; nhận diện sự kiện lịch sử 1945.",
+        "S3_evidence": "Trích dẫn được đoạn chép trong Đại Nam Thực Lục về quy chế 5 cửa ra vào và chức năng lầu Ngũ Phụng.",
+        "S4_argument": "Lập luận thuyết phục về vai trò biểu tượng vương quyền gắn liền với công năng thực tế của cổng nghi môn hoàng gia."
+      },
+      "published": true
+    },
+    {
+      "id": "site-cau-trung-dao",
+      "slug": "cau-trung-dao",
+      "zone_slug": "central-ceremonial-axis",
+      "name_vi": "Cầu Trung Đạo",
+      "name_en": "Trung Dao Bridge",
+      "alternative_names": ["Cầu bắc qua hồ Thái Dịch"],
+      "learning_level": "L1_DOCUMENTED",
+      "condition": "extant",
+      "condition_description_vi": "Bắc qua hồ Thái Dịch, đã trùng tu phục hồi lan can đá cẩm thạch",
+      "construction_year": 1833,
+      "reign": "Minh Mạng",
+      "historical_summary": "Chiếc cầu bắc qua hồ Thái Dịch, nằm trên trục thần đạo nối liền Ngọ Môn và sân Đại Triều Nghi, xây dựng thời Minh Mạng (1833). Mặt cầu lát đá thanh, hai đầu cầu có hai cửa đồng quán (vọng lâu bằng đồng).",
+      "guiding_inquiry_question": "Cầu Trung Đạo và hồ Thái Dịch đóng vai trò gì trong việc tạo chiều sâu phong thủy và nhịp chuyển tiếp tâm lý trước khi bước vào sân thiết đại triều?",
+      "primary_sources": [
+        {
+          "source_title": "Đại Nam Nhất Thống Chí",
+          "volume_or_chapter": "Quyển 1 (Kinh sư)",
+          "citation": "Miêu tả hồ Thái Dịch và cầu Trung Đạo trên trục chính đạo dẫn vào điện Thái Hòa.",
+          "archival_unit": "Quốc Sử Quán triều Nguyễn",
+          "reliability_level": "verified_primary_source"
+        }
+      ],
+      "published": true
+    },
+    {
+      "id": "site-san-dai-trieu-nghi",
+      "slug": "san-dai-trieu-nghi",
+      "zone_slug": "central-ceremonial-axis",
+      "name_vi": "Sân Đại Triều Nghi",
+      "name_en": "Grand Ceremony Court",
+      "alternative_names": ["Sân Bái Mạng", "Long Trì"],
+      "learning_level": "L2_LEARNING_READY",
+      "condition": "extant",
+      "condition_description_vi": "Hai tầng sân lát gạch và đá thanh, hai hàng phẩm tán giữ nguyên vị trí",
+      "construction_year": 1805,
+      "reign": "Gia Long",
+      "historical_summary": "Khoảng sân rộng hai tầng trước điện Thái Hòa, nơi bách quan văn võ đứng dự lễ Đại triều (mỗi tháng vào ngày mùng 1 và rằm). Sân được chia làm hai tầng: tầng trên dành cho quan tứ phẩm trở lên và tầng dưới dành cho quan ngũ phẩm đến cửu phẩm. Hai bên sân dựng hai hàng bia đá nhỏ ghi rõ phẩm trật từ chánh nhất phẩm đến tòng cửu phẩm, quan văn đứng bên tả, quan võ đứng bên hữu.",
+      "guiding_inquiry_question": "Sự phân chia hai tầng sân và hệ thống bia phẩm trật (phẩm tán) tại sân Đại Triều Nghi tổ chức trật tự nghi lễ quan văn - quan võ như thế nào trong các buổi đại triều?",
+      "primary_sources": [
+        {
+          "source_title": "Khâm Định Đại Nam Hội Điển Sự Lệ",
+          "volume_or_chapter": "Quyển 65 (Lại bộ - Lễ Triều nghi)",
+          "citation": "Văn võ bá quan sắp hàng theo bia phẩm trật: quan văn đứng bên tả, quan võ đứng bên hữu, theo thứ tự từ Chánh nhất phẩm đến Tòng cửu phẩm tề chỉnh bái mạng.",
+          "archival_unit": "Nội các triều Nguyễn",
+          "reliability_level": "verified_primary_source"
+        },
+        {
+          "source_title": "Đại Nam Thực Lục Chính Biên",
+          "volume_or_chapter": "Đệ nhị kỷ, Quyển 102",
+          "citation": "Ghi chép về quy chế dựng bia đá ghi phẩm cấp năm Minh Mạng tại sân Đại Triều Nghi.",
+          "archival_unit": "Quốc Sử Quán triều Nguyễn",
+          "reliability_level": "verified_primary_source"
+        }
+      ],
+      "pedagogical_task": {
+        "title": "Phân tích trật tự phẩm hàm trên sân Đại Triều Nghi",
+        "task_prompt": "Quan sát mặt bằng hai tầng sân và vị trí các bia phẩm trật, học sinh hãy giải thích quy tắc phân hàng văn tả - võ hữu và mối quan hệ giữa khoảng cách đến ngai vàng với phẩm hàm triều thần.",
+        "deliverable_type": "evidence_based_explanation",
+        "expected_evidence": "Học sinh lập bản đồ vị trí quan văn (phía đông) và võ (phía tây), phân tích tầng sân trên dưới theo trật tự tứ phẩm.",
+        "transfer_activity": "Đối chiếu vị trí đứng ngoài sân với vị trí ngồi của hoàng thân quốc thích và đại thần bên trong điện Thái Hòa.",
+        "uncertainty_prompt": "Điều biết chắc: vị trí phân ngôi thứ theo bia phẩm trật đá. Điều cần xác minh: số lượng quan viên thực tế tham gia mỗi buổi lễ đại triều qua từng thời kỳ."
+      },
+      "rubrics": {
+        "S1_spatial": "Xác định tầng sân trên dành cho đại thần cao cấp và tầng sân dưới dành cho hạ phẩm quan lại.",
+        "S2_temporal": "Hiểu rõ sự liên tục của nghi lễ đại triều từ thời Gia Long đến thời Bảo Đại.",
+        "S3_evidence": "Trích dẫn chính xác quy chế sắp hàng từ Khâm Định Đại Nam Hội Điển Sự Lệ.",
+        "S4_argument": "Rút ra kết luận về việc kiến trúc không gian trực tiếp phục vụ việc củng cố quyền uy phong kiến và kỷ cương Nho giáo."
+      },
+      "published": true
+    },
+    {
+      "id": "site-dien-thai-hoa",
+      "slug": "dien-thai-hoa",
+      "zone_slug": "central-ceremonial-axis",
+      "name_vi": "Điện Thái Hòa",
+      "name_en": "Supreme Harmony Palace",
+      "alternative_names": ["Thái Hòa Điện"],
+      "learning_level": "L2_LEARNING_READY",
+      "condition": "extant",
+      "condition_description_vi": "Hoàn tất đại trùng tu bảo tồn tổng thể toàn diện giai đoạn 2021 - 2025",
+      "construction_year": 1805,
+      "reign": "Gia Long (chuyển dời và mở rộng thời Minh Mạng năm 1833)",
+      "historical_summary": "Tòa điện quan trọng bậc nhất trong Hoàng Thành Huế, biểu trưng cho quyền lực tối cao của hoàng triều. Điện xây theo thức 'trùng thiềm điệp ốc' với 80 cột gỗ lim sơn son thếp vàng thế thiếp long vân, mái lợp ngói hoàng lưu ly. Nơi tổ chức các nghi lễ đăng quang, vạn thọ, tiếp sứ thần và lễ Đại triều thường kỳ. Bên trong đặt ngai vàng thiên tử dưới bửu tán tinh xảo.",
+      "guiding_inquiry_question": "Kết cấu kiến trúc 'trùng thiềm điệp ốc' (nhà kép chồng mái) và cách bài trí ngai vàng ở điện Thái Hòa thể hiện triết lý quyền lực thiên tử và vũ trụ quan của triều Nguyễn như thế nào?",
+      "primary_sources": [
+        {
+          "source_title": "Đại Nam Thực Lục Chính Biên",
+          "volume_or_chapter": "Đệ nhất kỷ (Quyển 26) và Đệ nhị kỷ (Quyển 105)",
+          "citation": "Tháng 3 năm Ất Sửu (1805), khởi công dựng điện Thái Hòa. Năm Quý Tỵ (1833) dời lui về phía sau, quy mô thêm đồ sộ uy nghiêm, làm nơi tuyên chỉ, tiếp sứ và thiết đại lễ.",
+          "archival_unit": "Viện Sử học Việt Nam",
+          "reliability_level": "verified_primary_source"
+        },
+        {
+          "source_title": "Khâm Định Đại Nam Hội Điển Sự Lệ",
+          "volume_or_chapter": "Quyển 64 (Công bộ - Doanh tạo)",
+          "citation": "Ghi rõ quy thức kiến trúc trùng thiềm điệp ốc, 80 cột gỗ lim và vật liệu thi công điện Thái Hòa.",
+          "archival_unit": "Nội các triều Nguyễn",
+          "reliability_level": "verified_primary_source"
+        }
+      ],
+      "pedagogical_task": {
+        "title": "Đọc giải thông điệp văn hiến qua thơ văn trên kiến trúc Điện Thái Hòa",
+        "task_prompt": "Hãy chỉ ra 3 yếu tố kiến trúc độc đáo của điện Thái Hòa (mái kép, trần vỏ cua, hệ thống liên ba trang trí thơ văn chữ Hán) và phân tích ý nghĩa biểu tượng của chúng đối với tính chính thống của triều đại.",
+        "deliverable_type": "textual_and_architectural_analysis",
+        "expected_evidence": "Trích dẫn được 2 bài thơ ngự chế trên ô hộc liên ba ca ngợi nền văn hiến và thái bình thịnh trị.",
+        "transfer_activity": "So sánh vị thế nghi lễ của điện Thái Hòa với không gian điều hành hành chính thực tế tại điện Cần Chánh.",
+        "uncertainty_prompt": "Điều biết chắc: kết cấu vì kèo trùng thiềm điệp ốc và vị trí ngai vàng. Điều cần xác minh: các lớp màu sơn thếp nguyên bản thời Minh Mạng qua các lần trùng tu cận đại."
+      },
+      "rubrics": {
+        "S1_spatial": "Định vị điện Thái Hòa ở trung tâm trục cán cân quyền lực của Hoàng Thành.",
+        "S2_temporal": "Chỉ rõ mốc khởi dựng năm 1805 và cuộc đại di chuyển quy hoạch năm 1833 của vua Minh Mạng.",
+        "S3_evidence": "Dẫn chứng được các ô thơ 'nhất thi nhất họa' ngự chế trên hệ thống liên ba nội điện.",
+        "S4_argument": "Đánh giá được chiều sâu tư tưởng độc lập, tự chủ văn hóa của triều Nguyễn thông qua kiến trúc cung đình."
+      },
+      "published": true
+    },
+    {
+      "id": "site-the-to-mieu",
+      "slug": "the-to-mieu",
+      "zone_slug": "ancestral-worship-space",
+      "name_vi": "Thế Tổ Miếu",
+      "name_en": "The To Ancestral Temple",
+      "alternative_names": ["Thế Miếu"],
+      "learning_level": "L2_LEARNING_READY",
+      "condition": "extant",
+      "condition_description_vi": "Được bảo tồn nguyên vẹn kiến trúc gỗ truyền thống và hệ thống khám thờ",
+      "construction_year": 1821,
+      "reign": "Minh Mạng",
+      "historical_summary": "Tổ hợp đền miếu phụng thờ các vị hoàng đế triều Nguyễn, do vua Minh Mạng khởi dựng năm 1821 theo quy tắc cổ truyền 'tả chiêu hữu mục'. Tòa miếu chính có 9 gian 2 chái, thiết kế theo kiểu 'trùng thiềm điệp ốc', phía trước là tiền điện. Gian chính giữa thờ Thế Tổ Cao Hoàng Đế (Gia Long), các gian bên sắp đặt bài vị các vị vua kế vị.",
+      "guiding_inquiry_question": "Thế Tổ Miếu được quy hoạch với 9 gian 2 chái phản ánh nguyên tắc phụng thờ tổ tiên và trật tự kế vị của các hoàng đế triều Nguyễn như thế nào?",
+      "primary_sources": [
+        {
+          "source_title": "Đại Nam Thực Lục Chính Biên",
+          "volume_or_chapter": "Đệ nhị kỷ, Quyển 9",
+          "citation": "Tháng 10 năm Tân Tỵ (1821), vua Minh Mạng chuẩn định quy mô dựng Thế Tổ Miếu phụng thờ liệt thánh, định rõ quy thức tả chiêu hữu mục đời đời tôn kính gia pháp hoàng gia.",
+          "archival_unit": "Quốc Sử Quán triều Nguyễn",
+          "reliability_level": "verified_primary_source"
+        },
+        {
+          "source_title": "Khâm Định Đại Nam Hội Điển Sự Lệ",
+          "volume_or_chapter": "Quyển 83 (Lễ bộ - Tế tự)",
+          "citation": "Quy tắc sắp đặt bài vị, án thờ theo nguyên tắc chiêu mục và quy chuẩn lễ tế bốn mùa.",
+          "archival_unit": "Nội các triều Nguyễn",
+          "reliability_level": "verified_primary_source"
+        }
+      ],
+      "pedagogical_task": {
+        "title": "Giải mã sơ đồ phân bố án vị theo nguyên tắc Chiêu - Mục",
+        "task_prompt": "Dựa vào sơ đồ phân bổ án thờ trong Thế Miếu và nguyên tắc 'tả chiêu hữu mục' chép trong Hội Điển, em hãy giải thích vị trí án thờ vua Gia Long ở gian chính giữa và thứ tự các gian thờ tiếp theo.",
+        "deliverable_type": "spatial_schema_analysis",
+        "expected_evidence": "Học sinh giải thích được nguyên tắc gian giữa thờ vị vua khai sáng, bên tả (trái) là Chiêu, bên hữu (phải) là Mục.",
+        "transfer_activity": "Liên hệ vị trí Thế Miếu ở góc tây nam với Triệu Miếu ở góc đông nam Hoàng Thành.",
+        "uncertainty_prompt": "Điều biết chắc: quy tắc chiêu mục quy định trong điển lệ. Điều cần xác minh: các thời điểm triều đình đưa thêm án thờ các vị vua sau này (như Hàm Nghi, Thành Thái, Duy Tân vào năm 1959)."
+      },
+      "rubrics": {
+        "S1_spatial": "Chỉ rõ vị trí của Thế Miếu tại góc tây nam Hoàng Thành ứng với không gian thờ tổ phụ.",
+        "S2_temporal": "Xác định năm khởi lập 1821 và các mốc thời gian bổ sung án thờ các vị hoàng đế kế tiếp.",
+        "S3_evidence": "Sử dụng đúng tư liệu ghi chép về lễ tế bốn mùa Hưởng tiến từ điển lệ triều đình.",
+        "S4_argument": "Lập luận sâu sắc về vai trò của đạo hiếu Nho giáo kết hợp thể chế pháp quyền gia tộc thời Nguyễn."
+      },
+      "published": true
+    },
+    {
+      "id": "site-hien-lam-cac",
+      "slug": "hien-lam-cac",
+      "zone_slug": "ancestral-worship-space",
+      "name_vi": "Hiển Lâm Các",
+      "name_en": "Hien Lam Pavilion",
+      "alternative_names": ["Các Hiển Lâm"],
+      "learning_level": "L2_LEARNING_READY",
+      "condition": "extant",
+      "condition_description_vi": "Tòa lầu gỗ ba tầng cổ kính cao nhất trong Hoàng Thành, cấu trúc nguyên bản",
+      "construction_year": 1821,
+      "reign": "Minh Mạng",
+      "historical_summary": "Tòa lầu ba tầng bằng gỗ dựng năm Minh Mạng thứ 2 (1821 - 1822) trong khuôn viên Thế Miếu, cao 17m, là công trình kiến trúc cao nhất trong Hoàng Thành Huế. Hiển Lâm Các được coi là đài tưởng niệm ghi nhớ công đức của các đấng tiên vương và các công thần khai quốc giúp triều Nguyễn lập nên cơ nghiệp. Tầng dưới có 3 gian 2 chái, hai bên có hai nhà Tả Vu và Hữu Vu phụng thờ các danh thần văn võ có công lớn.",
+      "guiding_inquiry_question": "Với vị trí án ngữ phía trước Thế Miếu và chiều cao vượt trội, Hiển Lâm Các mang ý nghĩa biểu tượng gì trong kiến trúc tưởng niệm công thần và tổ tiên vương triều?",
+      "primary_sources": [
+        {
+          "source_title": "Đại Nam Thực Lục Chính Biên",
+          "volume_or_chapter": "Đệ nhị kỷ, Quyển 15",
+          "citation": "Hoàn thành dựng Hiển Lâm Các, định quy chế phụng thờ trung hưng khai quốc công thần ở hai bên tả hữu vu.",
+          "archival_unit": "Quốc Sử Quán triều Nguyễn",
+          "reliability_level": "verified_primary_source"
+        },
+        {
+          "source_title": "Khâm Định Đại Nam Hội Điển Sự Lệ",
+          "volume_or_chapter": "Quyển 85",
+          "citation": "Quy định về việc xuân thu nhị kỳ tế tự các công thần phối hưởng hai bên tả hữu.",
+          "archival_unit": "Nội các triều Nguyễn",
+          "reliability_level": "verified_primary_source"
+        }
+      ],
+      "pedagogical_task": {
+        "title": "Khảo sát ý nghĩa tri ân công thần qua bài trí Tả Vu - Hữu Vu cạnh Hiển Lâm Các",
+        "task_prompt": "Tại sao luật triều đình cấm xây dựng bất kỳ công trình nào trong Đại Nội cao hơn tầng cao nhất của Hiển Lâm Các? Hãy phân tích ý nghĩa biểu tượng thẩm mỹ và trật tự tôn ti qua việc quan sát mặt cắt công trình.",
+        "deliverable_type": "historical_inquiry_essay",
+        "expected_evidence": "Học sinh nêu bật chiều cao 17m, kiến trúc 3 tầng bằng gỗ lim và chức năng vinh danh công thần xã tắc.",
+        "transfer_activity": "Quan sát khoảng cách không gian giữa Hiển Lâm Các và tiền sảnh Thế Tổ Miếu.",
+        "uncertainty_prompt": "Điều biết chắc: kết cấu 3 tầng gỗ lim tồn tại nguyên vẹn từ 1822. Điều cần xác minh: danh sách chi tiết các công thần được đưa vào phối thờ qua các đợt sắc phong."
+      },
+      "rubrics": {
+        "S1_spatial": "Định vị vị trí án ngữ mặt tiền phía nam sân Thế Miếu của Hiển Lâm Các.",
+        "S2_temporal": "Nhận biết thời kỳ hưng thịnh thế chế đầu thế kỷ XIX dưới triều vua Minh Mạng.",
+        "S3_evidence": "Dẫn chứng từ Đại Nam Nhất Thống Chí về chức năng biểu dương công trạng tiết liệt.",
+        "S4_argument": "Đánh giá được chính sách thu phục nhân tâm và duy trì liên minh giai cấp thống trị thời Nguyễn."
+      },
+      "published": true
+    },
+    {
+      "id": "site-hung-to-mieu",
+      "slug": "hung-to-mieu",
+      "zone_slug": "ancestral-worship-space",
+      "name_vi": "Hưng Tổ Miếu",
+      "name_en": "Hung To Ancestral Temple",
+      "alternative_names": ["Hưng Miếu"],
+      "learning_level": "L1_DOCUMENTED",
+      "condition": "extant",
+      "condition_description_vi": "Công trình kiến trúc gỗ được phục dựng lại sau hỏa hoạn năm 1951",
+      "construction_year": 1804,
+      "reign": "Gia Long",
+      "historical_summary": "Ngôi miếu phụng thờ phụ thân và mẫu thân của vua Gia Long là Thế tử Nguyễn Phúc Luân (được truy tôn Hưng Tổ Hiếu Khang Hoàng đế) và Hoàng thái hậu Thoại Thánh. Xây dựng năm Gia Long thứ 3 (1804), nằm phía sau Thế Tổ Miếu.",
+      "guiding_inquiry_question": "Vị trí độc lập của Hưng Miếu bên cạnh Thế Miếu phản ánh quy chuẩn hiếu lễ riêng biệt đối với thân phụ hoàng đế khai triều ra sao?",
+      "primary_sources": [
+        {
+          "source_title": "Đại Nam Nhất Thống Chí",
+          "volume_or_chapter": "Quyển 1 (Kinh sư - Miếu đền)",
+          "citation": "Ghi chép về quy chế xây cất Hoàng Khảo Miếu (sau đổi tên thành Hưng Tổ Miếu) ở góc tây nam kinh thành.",
+          "archival_unit": "Quốc Sử Quán triều Nguyễn",
+          "reliability_level": "verified_primary_source"
+        }
+      ],
+      "published": true
+    },
+    {
+      "id": "site-trieu-to-mieu",
+      "slug": "trieu-to-mieu",
+      "zone_slug": "ancestral-worship-space",
+      "name_vi": "Triệu Tổ Miếu",
+      "name_en": "Trieu To Ancestral Temple",
+      "alternative_names": ["Triệu Miếu"],
+      "learning_level": "L1_DOCUMENTED",
+      "condition": "extant",
+      "condition_description_vi": "Bảo tồn tương đối nguyên trạng kết cấu gỗ truyền thống và án thờ thủy tổ",
+      "construction_year": 1804,
+      "reign": "Gia Long",
+      "historical_summary": "Miếu thờ vị khởi tổ khai sáng dòng chúa Nguyễn là Triệu Tổ Tĩnh Hoàng đế Nguyễn Kim và phu nhân, xây dựng năm Gia Long thứ 3 (1804) tại góc đông nam Hoàng Thành.",
+      "guiding_inquiry_question": "Sự đối xứng giữa Triệu Miếu ở phía đông và Thế Miếu ở phía tây phản ánh quan niệm nguồn cội dòng họ và sự thành lập triều đại như thế nào?",
+      "primary_sources": [
+        {
+          "source_title": "Đại Nam Thực Lục Chính Biên",
+          "volume_or_chapter": "Đệ nhất kỷ, Quyển 24",
+          "citation": "Ghi chép việc định vị Triệu Miếu ở cung góc đông nam tương ứng theo thuyết ngũ hành và tổ chức thờ cúng khởi tổ.",
+          "archival_unit": "Quốc Sử Quán triều Nguyễn",
+          "reliability_level": "verified_primary_source"
+        }
+      ],
+      "published": true
+    },
+    {
+      "id": "site-dai-cung-mon",
+      "slug": "dai-cung-mon",
+      "zone_slug": "purple-forbidden-city",
+      "name_vi": "Đại Cung Môn",
+      "name_en": "Great Palace Gate",
+      "alternative_names": ["Cửa chính Tử Cấm Thành"],
+      "learning_level": "L1_DOCUMENTED",
+      "condition": "foundation_ruin",
+      "condition_description_vi": "Phá hủy năm 1947 trong chiến tranh, hiện còn lại nền móng gạch và hệ thống bậc đá",
+      "construction_year": 1833,
+      "reign": "Minh Mạng",
+      "historical_summary": "Cửa chính diện ở mặt nam dẫn vào Tử Cấm Thành, làm năm Minh Mạng thứ 14 (1833), gồm 5 gian có 3 cửa, sơn son thếp vàng lộng lẫy, chỉ dành riêng cho hoàng đế ra vào. Công trình bị tàn phá năm 1947, hiện nay Trung tâm Bảo tồn Di tích Cố đô Huế đang thực hiện công tác khảo cổ học và chuẩn bị dự án phục hồi.",
+      "guiding_inquiry_question": "Dấu tích nền móng Đại Cung Môn cho biết điều gì về sự chuyển đổi ranh giới phân định giữa không gian nghi lễ đối ngoại và nội bộ hoàng gia?",
+      "primary_sources": [
+        {
+          "source_title": "Khâm Định Đại Nam Hội Điển Sự Lệ",
+          "volume_or_chapter": "Quyển 167 (Quy chế cửa cấm)",
+          "citation": "Quy định nghiêm ngặt về canh gác, tuần tra và mở khóa Đại Cung Môn của thị vệ và cấm binh.",
+          "archival_unit": "Nội các triều Nguyễn",
+          "reliability_level": "verified_primary_source"
+        }
+      ],
+      "published": true
+    },
+    {
+      "id": "site-dien-can-chanh",
+      "slug": "dien-can-chanh",
+      "zone_slug": "purple-forbidden-city",
+      "name_vi": "Điện Cần Chánh",
+      "name_en": "Can Chanh Palace",
+      "alternative_names": ["Cần Chánh Điện"],
+      "learning_level": "L2_LEARNING_READY",
+      "condition": "foundation_ruin",
+      "condition_description_vi": "Phá hủy năm 1947, nền móng đá thanh được gia cố bảo tồn, dự án phục dựng đang nghiên cứu chi tiết",
+      "construction_year": 1804,
+      "reign": "Gia Long (trùng tu mở rộng thời Minh Mạng năm 1827)",
+      "historical_summary": "Ngôi điện nằm ngay sau Đại Cung Môn trên trục chính Tử Cấm Thành, xây dựng năm Gia Long thứ 3 (1804). Đây là nơi vua thiết triều thường nhật (thường triều), xử lý chính sự hàng ngày với viện Cơ Mật và lục Bộ, cũng như thiết yến tiếp đãi sứ bộ quan trọng. Điện có kiến trúc gỗ lim tinh xảo với 5 gian 2 chái nhà kép. Tòa điện bị chiến tranh tàn phá năm 1947, hiện chỉ còn lại hệ thống nền móng đá thanh cùng dấu tích chân cột.",
+      "guiding_inquiry_question": "Điện Cần Chánh đóng vai trò gì như là trung tâm hành chính và thiết triều thường nhật của hoàng đế, và tư liệu lịch sử cho phép tái hiện không gian kiến trúc bị phá hủy này ra sao?",
+      "primary_sources": [
+        {
+          "source_title": "Đại Nam Thực Lục Chính Biên",
+          "volume_or_chapter": "Đệ nhất kỷ (Quyển 24) và Đệ nhị kỷ (Quyển 92)",
+          "citation": "Ghi chép về lịch trình thiết triều vào các ngày 5, 10, 20, 25 hàng tháng tại điện Cần Chánh.",
+          "archival_unit": "Viện Sử học Việt Nam",
+          "reliability_level": "verified_primary_source"
+        },
+        {
+          "source_title": "Khâm Định Đại Nam Hội Điển Sự Lệ",
+          "volume_or_chapter": "Quyển 66 (Thường triều nghi thức)",
+          "citation": "Quy định cụ thể các bước tấu trình công việc, văn thư lưu chuyển từ Cơ Mật Viện đến trước ngự tọa điện Cần Chánh.",
+          "archival_unit": "Nội các triều Nguyễn",
+          "reliability_level": "verified_primary_source"
+        }
+      ],
+      "pedagogical_task": {
+        "title": "So sánh hiện trạng phế tích và tư liệu ảnh lịch sử Điện Cần Chánh",
+        "task_prompt": "So sánh chức năng của Điện Thái Hòa và Điện Cần Chánh: Tại sao triều Nguyễn lại phân chia hai không gian riêng biệt cho nghi lễ quốc gia và điều hành công việc hàng ngày? Nêu 2 căn cứ từ tư liệu văn bản để bảo vệ luận điểm của em.",
+        "deliverable_type": "archival_comparison_task",
+        "expected_evidence": "Học sinh dẫn chứng quy định thường triều ngày 5-10-20-25 tại Cần Chánh so với đại triều ngày mồng một và ngày rằm tại Thái Hòa.",
+        "transfer_activity": "Quan sát dấu tích nền móng Cần Chánh nối liền với sân chầu và hai bên Tả Vu - Hữu Vu.",
+        "uncertainty_prompt": "Điều biết chắc: vị trí tọa lạc và quy thức thường triều chép trong Hội Điển. Điều cần xác minh: các chi tiết trang trí nội thất bị cháy năm 1947 qua ảnh tư liệu Pháp chụp trước chiến tranh."
+      },
+      "rubrics": {
+        "S1_spatial": "Phân biệt vị trí chức năng giữa điện Thái Hòa (đại lễ quốc gia) và điện Cần Chánh (điều hành chính sự thường nhật).",
+        "S2_temporal": "Khảo sát hiện trạng phế tích nền móng đối chiếu với các bản vẽ ảnh tư liệu đầu thế kỷ 20.",
+        "S3_evidence": "Khai thác sử liệu Hội Điển chứng minh vai trò hành chính thực quyền.",
+        "S4_argument": "Đưa ra nhận định có bằng chứng về tầm quan trọng của việc bảo tồn khảo cổ trước khi tiến hành phục dựng kiến trúc."
+      },
+      "published": true
+    },
+    {
+      "id": "site-dien-kien-trung",
+      "slug": "dien-kien-trung",
+      "zone_slug": "purple-forbidden-city",
+      "name_vi": "Điện Kiến Trung",
+      "name_en": "Kien Trung Palace",
+      "alternative_names": ["Kiến Trung Điện"],
+      "learning_level": "L2_LEARNING_READY",
+      "condition": "restored_2023",
+      "condition_description_vi": "Phục hồi hoàn thành năm 2023 dựa trên hồ sơ lưu trữ và ảnh tư liệu lịch sử sau khi bị phá hủy năm 1947",
+      "construction_year": 1923,
+      "reign": "Khải Định (hoàn tất thời Khải Định, sử dụng thời Bảo Đại)",
+      "historical_summary": "Cung điện tọa lạc tại điểm cực bắc của Tử Cấm Thành, xây dựng dưới thời vua Khải Định (1921 - 1923) trên nền lầu Du Cửu cũ. Tòa nhà hai tầng mang phong cách kiến trúc hỗn hợp Á - Âu, kết hợp giữa phong cách cổ điển Pháp, phong cách Phục hưng Ý với nghệ thuật khảm sành sứ cung đình Việt Nam. Đây là nơi sinh sống và làm việc của vua Khải Định và sau đó là gia đình vua Bảo Đại cùng Hoàng hậu Nam Phương. Công trình bị san phẳng trong chiến sự năm 1947 và được phục hồi nguyên mẫu thành công vào năm 2023.",
+      "guiding_inquiry_question": "Sự kết hợp giữa nghệ thuật khảm sành sứ truyền thống Việt Nam và phong cách kiến trúc Pháp - Phục hưng tại Điện Kiến Trung phản ánh sự giao thoa văn hóa thời Khải Định - Bảo Đại như thế nào?",
+      "primary_sources": [
+        {
+          "source_title": "Đại Nam Thực Lục Chính Biên",
+          "volume_or_chapter": "Đệ thất kỷ (thời Khải Định)",
+          "citation": "Ghi chép về việc khởi công xây cất điện Kiến Trung năm 1921 trên nền lầu Du Cửu cũ.",
+          "archival_unit": "Quốc Sử Quán triều Nguyễn",
+          "reliability_level": "verified_primary_source"
+        },
+        {
+          "source_title": "Hồ sơ lưu trữ EFEO và Trung tâm Bảo tồn Di tích Cố đô Huế",
+          "volume_or_chapter": "Bản vẽ kiến trúc mặt đứng và ảnh tư liệu hoàng gia (1923 - 1945)",
+          "citation": "Bản vẽ thiết kế chi tiết hoa văn khảm sứ và mặt cắt kiến trúc phục vụ dự án phục hồi 2019 - 2023.",
+          "archival_unit": "Viện Viễn đông Bác cổ / TTBTDT Cố đô Huế",
+          "reliability_level": "verified_primary_source"
+        }
+      ],
+      "pedagogical_task": {
+        "title": "Phân tích nghệ thuật ghép mảnh sành sứ tại Điện Kiến Trung",
+        "task_prompt": "Quan sát hoa văn khảm sành sứ trên mặt tiền Điện Kiến Trung và phân tích sự kết hợp giữa mô típ hoa lá phương Tây với hình tượng rồng mây cung đình. Em hãy giải thích tại sao công trình này được coi là đỉnh cao của nghệ thuật khảm sành sứ thời Nguyễn.",
+        "deliverable_type": "art_history_analysis",
+        "expected_evidence": "Học sinh chỉ ra chi tiết cửa vòm kiểu Phục hưng kết hợp khảm hoa cúc, tùng trúc mai và chữ thọ bằng sành sứ nhiều màu.",
+        "transfer_activity": "So sánh nghệ thuật khảm sành sứ tại điện Kiến Trung với lăng Khải Định và Thái Bình Lâu.",
+        "uncertainty_prompt": "Điều biết chắc: kiến trúc hoàn thành năm 1923 và được phục dựng năm 2023. Điều cần xác minh: mức độ khác biệt giữa vật liệu sành sứ công nghiệp nhập khẩu đầu thế kỷ XX và đồ gốm sứ thủ công phục chế hiện đại."
+      },
+      "rubrics": {
+        "S1_spatial": "Xác định vị trí then chốt kết thúc trục trung tâm tại hậu cung Tử Cấm Thành.",
+        "S2_temporal": "Chỉ rõ tính chuyển giao thời đại trong giai đoạn tiếp xúc văn hóa Đông - Tây nửa đầu thế kỷ XX.",
+        "S3_evidence": "Trích dẫn tài liệu phục hồi khoa học và ảnh tư liệu hoàng gia thời kỳ 1923 - 1945.",
+        "S4_argument": "Đánh giá đa chiều về nghệ thuật kiến trúc giao thoa Đông - Tây mà không định kiến chủ quan."
+      },
+      "published": true
+    },
+    {
+      "id": "site-duyet-thi-duong",
+      "slug": "duyet-thi-duong",
+      "zone_slug": "purple-forbidden-city",
+      "name_vi": "Duyệt Thị Đường",
+      "name_en": "Duyet Thi Duong Royal Theater",
+      "alternative_names": ["Nhà hát hoàng gia Duyệt Thị Đường"],
+      "learning_level": "L2_LEARNING_READY",
+      "condition": "extant",
+      "condition_description_vi": "Nhà hát cổ được trùng tu bảo tồn, hiện là không gian diễn xướng Nhã nhạc cung đình Huế",
+      "construction_year": 1826,
+      "reign": "Minh Mạng",
+      "historical_summary": "Nhà hát hoàng gia nằm trong khuôn viên Tử Cấm Thành, được xây dựng năm Minh Mạng thứ 7 (1826). Đây là nhà hát cổ nhất còn tồn tại của Việt Nam, nơi chuyên tổ chức các buổi biểu diễn Nhã nhạc cung đình và Tuồng cung đình phục vụ vua, hoàng thân quốc thích và các sứ thần. Nhà hát có diện tích hơn 11.000m2 bao gồm cả khuôn viên, sàn diễn ở chính giữa, trần nhà vẽ hình trăng sao và mây trời, xung quanh có các tầng khán đài phân định vị trí ngồi nghiêm ngặt theo phẩm cấp.",
+      "guiding_inquiry_question": "Cấu trúc không gian sân khấu hình vuông và cách bố trí chỗ ngồi tại Duyệt Thị Đường phản ánh quy chế thưởng thức nghệ thuật Tuồng và Nhã nhạc trong cung đình Huế như thế nào?",
+      "primary_sources": [
+        {
+          "source_title": "Đại Nam Thực Lục Chính Biên",
+          "volume_or_chapter": "Đệ nhị kỷ, Quyển 41",
+          "citation": "Chép việc lập Duyệt Thị Đường năm Bính Tuất (1826) để diễn các vở tuồng ca ngợi trung hiếu tiết nghĩa, răn dạy đạo làm người.",
+          "archival_unit": "Quốc Sử Quán triều Nguyễn",
+          "reliability_level": "verified_primary_source"
+        },
+        {
+          "source_title": "Khâm Định Đại Nam Hội Điển Sự Lệ",
+          "volume_or_chapter": "Quyển 98 (Thường triều nghi thức - Yến tiệc & diễn xướng)",
+          "citation": "Quy định các dịp tổ chức hòa nhạc, phục trang của đội nhạc công và vũ công Thanh Bình Thự.",
+          "archival_unit": "Nội các triều Nguyễn",
+          "reliability_level": "verified_primary_source"
+        }
+      ],
+      "pedagogical_task": {
+        "title": "Tìm hiểu mối quan hệ giữa Nhã nhạc cung đình và không gian nhà hát cổ",
+        "task_prompt": "Dựa vào sơ đồ phân bố chỗ ngồi (ngự tọa của vua trên lầu cao nhìn thẳng xuống sân khấu, vị trí hoàng thân hai bên tả hữu), hãy giải thích quy tắc thưởng thức nghệ thuật phản ánh tôn ti trật tự cung đình như thế nào.",
+        "deliverable_type": "acoustic_and_cultural_report",
+        "expected_evidence": "Học sinh mô tả vị trí ngự tọa trung tâm trên gác cao, trần vẽ nhật nguyệt tinh tú, và trật tự ngồi của thị vệ cung tần.",
+        "transfer_activity": "Liên hệ với nhà hát Tĩnh Quan Viện ở Cung Diên Thọ dành riêng cho Thái Hoàng Thái Hậu.",
+        "uncertainty_prompt": "Điều biết chắc: kết cấu sân khấu vuông và niên đại khởi dựng 1826. Điều cần xác minh: quy mô hệ thống chum vại cách âm lòng đất dưới gầm sân khấu qua các đợt khai quật trùng tu."
+      },
+      "rubrics": {
+        "S1_spatial": "Xác định tọa độ nhà hát nằm ở phía đông bắc Tử Cấm Thành, gần Thái Bình Lâu.",
+        "S2_temporal": "Phân biệt việc biểu diễn tuồng cung đình thời phong kiến và hoạt động bảo tồn Di sản Phi vật thể nhân loại hiện nay.",
+        "S3_evidence": "Dẫn đúng quy định Hội Điển về vai trò giáo hóa đạo đức của nghệ thuật sân khấu cung đình.",
+        "S4_argument": "Lập luận mối liên hệ giữa cấu trúc âm học truyền thống của tòa nhà gỗ với nghệ thuật ca múa nhạc cung đình."
+      },
+      "published": true
+    },
+    {
+      "id": "site-thai-binh-lau",
+      "slug": "thai-binh-lau",
+      "zone_slug": "purple-forbidden-city",
+      "name_vi": "Thái Bình Lâu",
+      "name_en": "Thai Binh Lau Library",
+      "alternative_names": ["Lầu Thái Bình", "Thư viện hoàng gia"],
+      "learning_level": "L1_DOCUMENTED",
+      "condition": "extant",
+      "condition_description_vi": "Bảo tồn tương đối nguyên vẹn, phục hồi trang trí sành sứ và hồ cảnh năm 2015",
+      "construction_year": 1921,
+      "reign": "Khải Định (khởi đầu từ thời Khải Định trên nền đình Tiêu Nhàn thời Thiệu Trị)",
+      "historical_summary": "Tòa lầu thư viện hai tầng bằng gỗ nằm ở phía đông bắc Tử Cấm Thành, được khởi dựng thời vua Khải Định (1919 - 1921) trên nền đình sách thời Thiệu Trị. Đây là nơi nhà vua tĩnh dưỡng, đọc sách báo, ngâm thơ và viết văn.",
+      "guiding_inquiry_question": "Không gian sinh thái hồ sen và kiến trúc thanh cảnh quanh Thái Bình Lâu phục vụ cho lối sống tĩnh tâm thư thái của nhà vua như thế nào?",
+      "primary_sources": [
+        {
+          "source_title": "Đại Nam Thực Lục Chính Biên",
+          "volume_or_chapter": "Đệ thất kỷ",
+          "citation": "Ghi chép về việc xây cất Thái Bình Lâu làm nơi lưu giữ thư tịch và đọc sách ngự lãm.",
+          "archival_unit": "Quốc Sử Quán triều Nguyễn",
+          "reliability_level": "verified_primary_source"
+        }
+      ],
+      "published": true
+    },
+    {
+      "id": "site-cung-dien-tho",
+      "slug": "cung-dien-tho",
+      "zone_slug": "royal-living-gardens",
+      "name_vi": "Cung Diên Thọ",
+      "name_en": "Dien Tho Palace",
+      "alternative_names": ["Cung Trường Thọ", "Cung Gia Thọ"],
+      "learning_level": "L2_LEARNING_READY",
+      "condition": "extant",
+      "condition_description_vi": "Khuôn viên cung điện quy mô lớn còn nguyên vẹn nhất, gồm chính điện, lầu Tịnh Minh, nhà Tạ Trường Du",
+      "construction_year": 1804,
+      "reign": "Gia Long (trùng tu lớn các thời Tự Đức, Thành Thái, Khải Định)",
+      "historical_summary": "Quần thể cung điện tọa lạc ở phía tây bắc Hoàng Thành, được xây dựng năm Gia Long thứ 3 (1804) với tên ban đầu là cung Trường Thọ, sau đổi thành Cung Diên Thọ. Đây là nơi ở của Hoàng Thái Hậu hoặc Thái Hoàng Thái Hậu dưới các triều vua Nguyễn. Quần thể gồm hơn 10 công trình kiến trúc liên kết bằng hệ thống hành lang có mái che, hồ bán nguyệt, lầu Tịnh Minh (xây năm 1927 kiểu Pháp) và nhà Tạ Trường Du bên hồ nước tĩnh lặng.",
+      "guiding_inquiry_question": "Tổ chức không gian kiến trúc và cảnh quan sân vườn tại Cung Diên Thọ phản ánh chuẩn mực chữ Hiếu và địa vị của Hoàng Thái Hậu trong hoàng tộc triều Nguyễn như thế nào?",
+      "primary_sources": [
+        {
+          "source_title": "Đại Nam Thực Lục Chính Biên",
+          "volume_or_chapter": "Đệ nhất kỷ, Quyển 24",
+          "citation": "Ghi chép việc vua Gia Long đích thân chỉ đạo xây dựng cung điện cho thân mẫu là Hiếu Khang Hoàng Thái hậu.",
+          "archival_unit": "Viện Sử học Việt Nam",
+          "reliability_level": "verified_primary_source"
+        },
+        {
+          "source_title": "Khâm Định Đại Nam Hội Điển Sự Lệ",
+          "volume_or_chapter": "Quyển 169 (Cung phi - Quy chế thỉnh an)",
+          "citation": "Quy định nghi thức vua thân hành sang cung Diên Thọ mỗi tuần để thăm hỏi sức khỏe thân mẫu.",
+          "archival_unit": "Nội các triều Nguyễn",
+          "reliability_level": "verified_primary_source"
+        }
+      ],
+      "pedagogical_task": {
+        "title": "Khảo sát không gian phụng dưỡng tại Cung Diên Thọ qua trục trường lang",
+        "task_prompt": "Hãy khảo sát sơ đồ đường đi có mái che (hành lang) nối chính điện Cung Diên Thọ với Tạ Trường Du và lầu Tịnh Minh. Em hãy giải thích thiết kế này phục vụ nhu cầu sinh hoạt, đi lại của Thái Hoàng Thái Hậu trong điều kiện thời tiết khắc nghiệt của xứ Huế như thế nào?",
+        "deliverable_type": "architectural_living_analysis",
+        "expected_evidence": "Học sinh phân tích vai trò che nắng tránh mưa của trường lang và giải pháp vi khí hậu mặt nước hồ sen.",
+        "transfer_activity": "So sánh không gian Diên Thọ với Cung Trường Sanh liền kề phía bắc.",
+        "uncertainty_prompt": "Điều biết chắc: chức năng nơi ở của Hoàng Thái Hậu từ thời Gia Long. Điều cần xác minh: quá trình cải tạo nội thất theo lối phương Tây thời vua Khải Định và Bảo Đại."
+      },
+      "rubrics": {
+        "S1_spatial": "Định vị quần thể cung Diên Thọ ở phía tây bắc Hoàng Thành, tách biệt với sự náo nhiệt của khu vực triều chính.",
+        "S2_temporal": "Nhận biết sự biến đổi kiến trúc qua các thời kỳ từ nhà rường truyền thống đến sự xuất hiện của lầu Tịnh Minh kiến trúc tân cổ điển.",
+        "S3_evidence": "Sử dụng sử liệu Thực Lục để chứng minh tầm quan trọng của chữ Hiếu trong luật tục hoàng gia.",
+        "S4_argument": "Đánh giá giải pháp vi khí hậu trong việc thiết kế nhà tạ, hồ nước và hành lang nối tạo môi trường sống tĩnh dưỡng cho người cao tuổi."
+      },
+      "published": true
+    },
+    {
+      "id": "site-cung-truong-sanh",
+      "slug": "cung-truong-sanh",
+      "zone_slug": "royal-living-gardens",
+      "name_vi": "Cung Trường Sanh",
+      "name_en": "Truong Sanh Palace",
+      "alternative_names": ["Cung Trường Ninh"],
+      "learning_level": "L1_DOCUMENTED",
+      "condition": "extant",
+      "condition_description_vi": "Được trùng tu toàn diện năm 2007, cảnh quan hồ Đào Thái và hòn non bộ bảo tồn đẹp",
+      "construction_year": 1821,
+      "reign": "Minh Mạng",
+      "historical_summary": "Quần thể hoa viên và cung điện nằm ở góc tây bắc Hoàng Thành, xây dựng năm Minh Mạng thứ 2 (1821) với tên Cung Trường Ninh, sau đổi thành Cung Trường Sanh. Ban đầu là hoa viên nghỉ ngơi thư giãn của vua, về sau trở thành nơi cư trú của một số Thái Hoàng Thái Hậu.",
+      "guiding_inquiry_question": "Sự chuyển đổi công năng từ ngự uyển sang cung cư ngụ của các bậc mẫu nghi phản ánh sự biến đổi nhu cầu không gian hoàng gia thế nào?",
+      "primary_sources": [
+        {
+          "source_title": "Đại Nam Nhất Thống Chí",
+          "volume_or_chapter": "Quyển 1 (Kinh sư - Cung viên)",
+          "citation": "Miêu tả cảnh quan non bộ, rạch nước tự nhiên và kiến trúc hoa mỹ của cung Trường Ninh.",
+          "archival_unit": "Quốc Sử Quán triều Nguyễn",
+          "reliability_level": "verified_primary_source"
+        }
+      ],
+      "published": true
+    },
+    {
+      "id": "site-dien-phung-tien",
+      "slug": "dien-phung-tien",
+      "zone_slug": "ancestral-worship-space",
+      "name_vi": "Điện Phụng Tiên",
+      "name_en": "Phung Tien Palace",
+      "alternative_names": ["Phụng Tiên Điện"],
+      "learning_level": "L1_DOCUMENTED",
+      "condition": "foundation_ruin",
+      "condition_description_vi": "Bị phá hủy năm 1947, hiện còn cổng Tam Quan, tường gác bảo vệ và dấu tích nền móng khảo cổ",
+      "construction_year": 1829,
+      "reign": "Minh Mạng",
+      "historical_summary": "Ngôi điện phụng thờ tổ tiên dành riêng cho các phi tần và nữ giới hoàng tộc đến dâng hương lễ bái (do phụ nữ không được vào Thế Miếu), xây dựng thời Minh Mạng thứ 10 (1829) ở phía tây Hoàng Thành, đối xứng với Thế Miếu. Điện bị hủy hoại năm 1947, hiện nay Trung tâm Bảo tồn Di tích Cố đô Huế đã tiến hành phục hồi hệ thống tường bao, cổng ngõ và đang bảo tồn dấu tích nền móng.",
+      "guiding_inquiry_question": "Quy chế phân định giới tính trong nghi lễ cúng bái tổ tiên thời Nguyễn được thể hiện như thế nào qua sự tồn tại song song giữa Thế Miếu và Điện Phụng Tiên?",
+      "primary_sources": [
+        {
+          "source_title": "Khâm Định Đại Nam Hội Điển Sự Lệ",
+          "volume_or_chapter": "Quyển 84 (Tế tự phụng thờ)",
+          "citation": "Quy định quy thức phụng tự của nữ giới hoàng tộc tại điện Phụng Tiên, giữ đúng lễ số nghiêm ngặt.",
+          "archival_unit": "Nội các triều Nguyễn",
+          "reliability_level": "verified_primary_source"
+        }
+      ],
+      "published": true
+    }
+  ]
+}

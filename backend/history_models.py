@@ -276,6 +276,7 @@ class HistoricalSource(Base):
     __table_args__ = (
         Index("idx_historical_sources_type", "source_type"),
         Index("idx_historical_sources_year", "publication_year"),
+        Index("idx_historical_sources_scope", "content_scope"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -309,6 +310,7 @@ class HistoricalSource(Base):
     created_by: Mapped[Optional[uuid.UUID]] = mapped_column(PG_UUID(as_uuid=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())
+    content_scope: Mapped[Optional[str]] = mapped_column(Text, nullable=True, default=None)
 
 
 class HistoricalClaim(Base):

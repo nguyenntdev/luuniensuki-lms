@@ -1,0 +1,2202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "content_scope": "STTT_IMPERIAL_CITY_AUDIO_GUIDES",
+  "version": "1.0.0",
+  "updated_at": "2026-10-16T00:00:00Z",
+  "audio_guides": [
+    {
+      "id": "audio-ngo-mon",
+      "monument_slug": "ngo-mon",
+      "site_slug": "ngo-mon",
+      "title_vi": "Ngọ Môn",
+      "site_name_vi": "Ngọ Môn",
+      "duration_seconds": 128,
+      "duration": 128,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/ngo-mon.mp3",
+      "script_text": "Chào mừng các bạn đến với Ngọ Môn — chiếc cổng chính sừng sững tại mặt nam Hoàng Thành Huế. Khởi dựng vào năm Minh Mạng thứ 14, tức năm 1833, Ngọ Môn được xây trên nền đài Nam Sách cũ thời vua Gia Long. Nhìn từ chính diện, đài đá hình chữ U trổ đúng năm cửa ngõ, thể hiện tư tưởng trung quân và trật tự điển lễ nghiêm ngặt. Lối chính giữa mang tên Ngọ Môn, cửa lát đá thanh, chỉ dành riêng cho thiên tử xuất nhập. Hai bên là Tả Giáp Môn và Hữu Giáp Môn dành cho bá quan văn võ triều đình. Ở hai cánh gà chữ U là Tả Dịch Môn và Hữu Dịch Môn — lối di chuyển của binh mã, voi trận và quân cấm vệ tuần thám. Cấu trúc chữ U vươn ra hai bên không chỉ tăng tính uy nghiêm mà còn đóng vai trò pháo đài khép góc, bảo đảm phòng thủ tối đa cho Hoàng cung. Ngự trên đài đá kiên cố là Lầu Ngũ Phụng với một trăm cột gỗ lim vững chãi, mái ngói lưu ly vàng và thanh lưu ly xanh biếc đan xen. Đây là nơi diễn ra các nghi điển trọng thể bậc nhất: lễ Ban Sóc đầu năm, lễ Truyền Loa xướng danh tân khoa tiến sĩ, và cuộc thoái vị lịch sử mùa thu năm 1945. Ngọ Môn không đơn thuần là một cổng thành, mà là kiệt tác nghệ thuật kiến trúc gỗ và đá của tiền nhân, kết tinh đỉnh cao kỹ nghệ xây dựng triều Nguyễn và biểu tượng bất diệt của Cố đô Huế.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Chào mừng các bạn đến với Ngọ Môn — chiếc cổng chính sừng sững tại mặt nam Hoàng Thành Huế. Khởi dựng vào năm Minh Mạng thứ 14, tức năm 1833, Ngọ Môn được xây trên nền đài Nam Sách cũ thời vua Gia Long."
+        },
+        {
+          "time_sec": 18.0,
+          "text": "Nhìn từ chính diện, đài đá hình chữ U trổ đúng năm cửa ngõ, thể hiện tư tưởng trung quân và trật tự điển lễ nghiêm ngặt. Lối chính giữa mang tên Ngọ Môn, cửa lát đá thanh, chỉ dành riêng cho thiên tử xuất nhập. Hai bên là Tả Giáp Môn và Hữu Giáp Môn dành cho bá quan văn võ triều đình."
+        },
+        {
+          "time_sec": 44.0,
+          "text": "Ở hai cánh gà chữ U là Tả Dịch Môn và Hữu Dịch Môn — lối di chuyển của binh mã, voi trận và quân cấm vệ tuần thám. Cấu trúc chữ U vươn ra hai bên không chỉ tăng tính uy nghiêm mà còn đóng vai trò pháo đài khép góc, bảo đảm phòng thủ tối đa cho Hoàng cung."
+        },
+        {
+          "time_sec": 76.0,
+          "text": "Ngự trên đài đá kiên cố là Lầu Ngũ Phụng với một trăm cột gỗ lim vững chãi, mái ngói lưu ly vàng và thanh lưu ly xanh biếc đan xen. Đây là nơi diễn ra các nghi điển trọng thể bậc nhất: lễ Ban Sóc đầu năm, lễ Truyền Loa xướng danh tân khoa tiến sĩ, và cuộc thoái vị lịch sử mùa thu năm 1945."
+        },
+        {
+          "time_sec": 104.0,
+          "text": "Ngọ Môn không đơn thuần là một cổng thành, mà là kiệt tác nghệ thuật kiến trúc gỗ và đá của tiền nhân, kết tinh đỉnh cao kỹ nghệ xây dựng triều Nguyễn và biểu tượng bất diệt của Cố đô Huế."
+        }
+      ],
+      "summary": "Khám phá quy chuẩn phân tầng quyền lực qua cấu trúc ngũ môn và biểu tượng lầu Ngũ Phụng trên trục chính đạo Hoàng Thành Huế.",
+      "tags": [
+        "Trục chính đạo",
+        "Kiến trúc phòng thủ",
+        "Lễ nghi triều đình",
+        "UNESCO"
+      ],
+      "transcript": [
+        {
+          "id": "ngo-mon-cue-1",
+          "startTime": 0,
+          "endTime": 18,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Lời mở đầu & Bối cảnh",
+          "textVi": "Chào mừng các bạn đến với Ngọ Môn — chiếc cổng chính sừng sững tại mặt nam Hoàng Thành Huế. Khởi dựng vào năm Minh Mạng thứ 14, tức năm 1833, Ngọ Môn được xây trên nền đài Nam Sách cũ thời vua Gia Long."
+        },
+        {
+          "id": "ngo-mon-cue-2",
+          "startTime": 18,
+          "endTime": 44,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Cấu trúc Ngũ Môn & Phân tầng quyền lực",
+          "textVi": "Nhìn từ chính diện, đài đá hình chữ U trổ đúng năm cửa ngõ, thể hiện tư tưởng trung quân và trật tự điển lễ nghiêm ngặt. Lối chính giữa mang tên Ngọ Môn, cửa lát đá thanh, chỉ dành riêng cho thiên tử xuất nhập. Hai bên là Tả Giáp Môn và Hữu Giáp Môn dành cho bá quan văn võ triều đình."
+        },
+        {
+          "id": "ngo-mon-cue-3",
+          "startTime": 44,
+          "endTime": 76,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Lối chuyển quân & Cánh gà",
+          "textVi": "Ở hai cánh gà chữ U là Tả Dịch Môn và Hữu Dịch Môn — lối di chuyển của binh mã, voi trận và quân cấm vệ tuần thám. Cấu trúc chữ U vươn ra hai bên không chỉ tăng tính uy nghiêm mà còn đóng vai trò pháo đài khép góc, bảo đảm phòng thủ tối đa cho Hoàng cung."
+        },
+        {
+          "id": "ngo-mon-cue-4",
+          "startTime": 76,
+          "endTime": 104,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Lầu Ngũ Phụng & Nghi lễ triều đình",
+          "textVi": "Ngự trên đài đá kiên cố là Lầu Ngũ Phụng với một trăm cột gỗ lim vững chãi, mái ngói lưu ly vàng và thanh lưu ly xanh biếc đan xen. Đây là nơi diễn ra các nghi điển trọng thể bậc nhất: lễ Ban Sóc đầu năm, lễ Truyền Loa xướng danh tân khoa tiến sĩ, và cuộc thoái vị lịch sử mùa thu năm 1945."
+        },
+        {
+          "id": "ngo-mon-cue-5",
+          "startTime": 104,
+          "endTime": 128,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Ý nghĩa lịch sử",
+          "textVi": "Ngọ Môn không đơn thuần là một cổng thành, mà là kiệt tác nghệ thuật kiến trúc gỗ và đá của tiền nhân, kết tinh đỉnh cao kỹ nghệ xây dựng triều Nguyễn và biểu tượng bất diệt của Cố đô Huế."
+        }
+      ]
+    },
+    {
+      "id": "audio-cau-trung-dao",
+      "monument_slug": "cau-trung-dao",
+      "site_slug": "cau-trung-dao",
+      "title_vi": "Cầu Trung Đạo",
+      "site_name_vi": "Cầu Trung Đạo",
+      "duration_seconds": 95,
+      "duration": 95,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/cau-trung-dao.mp3",
+      "script_text": "Bước qua khỏi vòm cổng Ngọ Môn, không gian mở òa ra trước mắt bạn là hồ Thái Dịch phẳng lặng như gương sen, và nhịp cầu đá thẳng tắp mang tên Cầu Trung Đạo. Cầu được khởi lập vào năm Minh Mạng thứ 14. Hai đầu cầu dựng hai cổng đồng quán với các hoa văn pháp lam và chạm nổi rồng mây tinh xảo. 'Trung Đạo' không chỉ chỉ con đường đi ở chính giữa, mà còn hàm ý đạo Trung dung của Nho gia — chuẩn mực hành xử không thiên lệch của đấng quân vương và các bậc bề tôi. Mặt nước hồ Thái Dịch giữ vai trò máy điều hòa tự nhiên, phản chiếu bóng mây trời và giảm bớt cái nắng gay gắt của miền Trung. Đi trên cầu Trung Đạo, mỗi bước chân là một nhịp chuyển tiếp tâm lý tĩnh tại, chuẩn bị diện kiến không gian quyền lực tối thượng tại Điện Thái Hòa.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Bước qua khỏi vòm cổng Ngọ Môn, không gian mở òa ra trước mắt bạn là hồ Thái Dịch phẳng lặng như gương sen, và nhịp cầu đá thẳng tắp mang tên Cầu Trung Đạo. Cầu được khởi lập vào năm Minh Mạng thứ 14."
+        },
+        {
+          "time_sec": 22.0,
+          "text": "Hai đầu cầu dựng hai cổng đồng quán với các hoa văn pháp lam và chạm nổi rồng mây tinh xảo. 'Trung Đạo' không chỉ chỉ con đường đi ở chính giữa, mà còn hàm ý đạo Trung dung của Nho gia — chuẩn mực hành xử không thiên lệch của đấng quân vương và các bậc bề tôi."
+        },
+        {
+          "time_sec": 54.0,
+          "text": "Mặt nước hồ Thái Dịch giữ vai trò máy điều hòa tự nhiên, phản chiếu bóng mây trời và giảm bớt cái nắng gay gắt của miền Trung. Đi trên cầu Trung Đạo, mỗi bước chân là một nhịp chuyển tiếp tâm lý tĩnh tại, chuẩn bị diện kiến không gian quyền lực tối thượng tại Điện Thái Hòa."
+        }
+      ],
+      "summary": "Cầu đá thanh bắc qua hồ Thái Dịch tạo vùng đệm vi khí hậu và trục tâm lý trang nghiêm trước khi tiến vào sân Đại Triều Nghi.",
+      "tags": [
+        "Trục chính đạo",
+        "Thủy đạo",
+        "Phong thủy cảnh quan"
+      ],
+      "transcript": [
+        {
+          "id": "cau-trung-dao-cue-1",
+          "startTime": 0,
+          "endTime": 22,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Vị trí & Thủy đạo Thái Dịch",
+          "textVi": "Bước qua khỏi vòm cổng Ngọ Môn, không gian mở òa ra trước mắt bạn là hồ Thái Dịch phẳng lặng như gương sen, và nhịp cầu đá thẳng tắp mang tên Cầu Trung Đạo. Cầu được khởi lập vào năm Minh Mạng thứ 14."
+        },
+        {
+          "id": "cau-trung-dao-cue-2",
+          "startTime": 22,
+          "endTime": 54,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Cửa đồng quán & Triết lý trung đạo",
+          "textVi": "Hai đầu cầu dựng hai cổng đồng quán với các hoa văn pháp lam và chạm nổi rồng mây tinh xảo. 'Trung Đạo' không chỉ chỉ con đường đi ở chính giữa, mà còn hàm ý đạo Trung dung của Nho gia — chuẩn mực hành xử không thiên lệch của đấng quân vương và các bậc bề tôi."
+        },
+        {
+          "id": "cau-trung-dao-cue-3",
+          "startTime": 54,
+          "endTime": 95,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Vi khí hậu & Chuyển tiếp tâm lý",
+          "textVi": "Mặt nước hồ Thái Dịch giữ vai trò máy điều hòa tự nhiên, phản chiếu bóng mây trời và giảm bớt cái nắng gay gắt của miền Trung. Đi trên cầu Trung Đạo, mỗi bước chân là một nhịp chuyển tiếp tâm lý tĩnh tại, chuẩn bị diện kiến không gian quyền lực tối thượng tại Điện Thái Hòa."
+        }
+      ]
+    },
+    {
+      "id": "audio-san-dai-trieu-nghi",
+      "monument_slug": "san-dai-trieu-nghi",
+      "site_slug": "san-dai-trieu-nghi",
+      "title_vi": "Sân Đại Triều Nghi",
+      "site_name_vi": "Sân Đại Triều Nghi",
+      "duration_seconds": 115,
+      "duration": 115,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/san-dai-trieu-nghi.mp3",
+      "script_text": "Trước mắt bạn là Sân Đại Triều Nghi, nơi từng diễn ra các nghi lễ quan trọng bậc nhất của quốc gia thời phong kiến. Mặt sân được chia làm hai tầng bậc rõ rệt: tầng trên gọi là Bái Mạng, tầng dưới dành cho các quan thứ phẩm. Dọc hai bên sân là hai hàng bia đá nhỏ khắc rõ phẩm trật từ Chánh nhất phẩm đến Tòng cửu phẩm. Quan văn đứng bên tả hướng Đông, quan võ đứng bên hữu hướng Tây. Thứ bậc triều thần được phân định rạch ròi bằng thước đo không gian, không ai được phép vượt quá vị trí phẩm hàm của mình. Mỗi tháng hai lần, vào ngày mồng một và ngày rằm, các quan mặc triều phục đại lễ, tề tựu chỉnh tề từ sáng sớm. Khi tiếng chuông trống ngân vang và nhã nhạc cử lên, bá quan đồng loạt hướng về ngai vàng trong điện Thái Hòa làm lễ ba quỳ chín lạy. Sân Đại Triều Nghi không chỉ là khoảng sân gạch đơn thuần, mà là hiện thân không gian của kỷ cương, phép nước và trật tự chính trị quân chủ tập quyền thời nhà Nguyễn.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Trước mắt bạn là Sân Đại Triều Nghi, nơi từng diễn ra các nghi lễ quan trọng bậc nhất của quốc gia thời phong kiến. Mặt sân được chia làm hai tầng bậc rõ rệt: tầng trên gọi là Bái Mạng, tầng dưới dành cho các quan thứ phẩm."
+        },
+        {
+          "time_sec": 24.0,
+          "text": "Dọc hai bên sân là hai hàng bia đá nhỏ khắc rõ phẩm trật từ Chánh nhất phẩm đến Tòng cửu phẩm. Quan văn đứng bên tả hướng Đông, quan võ đứng bên hữu hướng Tây. Thứ bậc triều thần được phân định rạch ròi bằng thước đo không gian, không ai được phép vượt quá vị trí phẩm hàm của mình."
+        },
+        {
+          "time_sec": 58.0,
+          "text": "Mỗi tháng hai lần, vào ngày mồng một và ngày rằm, các quan mặc triều phục đại lễ, tề tựu chỉnh tề từ sáng sớm. Khi tiếng chuông trống ngân vang và nhã nhạc cử lên, bá quan đồng loạt hướng về ngai vàng trong điện Thái Hòa làm lễ ba quỳ chín lạy."
+        },
+        {
+          "time_sec": 88.0,
+          "text": "Sân Đại Triều Nghi không chỉ là khoảng sân gạch đơn thuần, mà là hiện thân không gian của kỷ cương, phép nước và trật tự chính trị quân chủ tập quyền thời nhà Nguyễn."
+        }
+      ],
+      "summary": "Khoảng sân hai tầng lát đá thanh và gạch Bát Tràng, nơi tổ chức các buổi lễ đại triều mồng một và ngày rằm hàng tháng với hệ thống bia phẩm trật.",
+      "tags": [
+        "Trục chính đạo",
+        "Nghi lễ bái mạng",
+        "Bia phẩm trật"
+      ],
+      "transcript": [
+        {
+          "id": "san-dai-trieu-nghi-cue-1",
+          "startTime": 0,
+          "endTime": 24,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Sân Bái Mạng & Bố cục hai tầng",
+          "textVi": "Trước mắt bạn là Sân Đại Triều Nghi, nơi từng diễn ra các nghi lễ quan trọng bậc nhất của quốc gia thời phong kiến. Mặt sân được chia làm hai tầng bậc rõ rệt: tầng trên gọi là Bái Mạng, tầng dưới dành cho các quan thứ phẩm."
+        },
+        {
+          "id": "san-dai-trieu-nghi-cue-2",
+          "startTime": 24,
+          "endTime": 58,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Hệ thống bia phẩm trật đá",
+          "textVi": "Dọc hai bên sân là hai hàng bia đá nhỏ khắc rõ phẩm trật từ Chánh nhất phẩm đến Tòng cửu phẩm. Quan văn đứng bên tả hướng Đông, quan võ đứng bên hữu hướng Tây. Thứ bậc triều thần được phân định rạch ròi bằng thước đo không gian, không ai được phép vượt quá vị trí phẩm hàm của mình."
+        },
+        {
+          "id": "san-dai-trieu-nghi-cue-3",
+          "startTime": 58,
+          "endTime": 88,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Nghi thức Đại Triều thường kỳ",
+          "textVi": "Mỗi tháng hai lần, vào ngày mồng một và ngày rằm, các quan mặc triều phục đại lễ, tề tựu chỉnh tề từ sáng sớm. Khi tiếng chuông trống ngân vang và nhã nhạc cử lên, bá quan đồng loạt hướng về ngai vàng trong điện Thái Hòa làm lễ ba quỳ chín lạy."
+        },
+        {
+          "id": "san-dai-trieu-nghi-cue-4",
+          "startTime": 88,
+          "endTime": 115,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Biểu tượng trật tự quốc gia",
+          "textVi": "Sân Đại Triều Nghi không chỉ là khoảng sân gạch đơn thuần, mà là hiện thân không gian của kỷ cương, phép nước và trật tự chính trị quân chủ tập quyền thời nhà Nguyễn."
+        }
+      ]
+    },
+    {
+      "id": "audio-dien-thai-hoa",
+      "monument_slug": "dien-thai-hoa",
+      "site_slug": "dien-thai-hoa",
+      "title_vi": "Điện Thái Hòa",
+      "site_name_vi": "Điện Thái Hòa",
+      "duration_seconds": 140,
+      "duration": 140,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/dien-thai-hoa.mp3",
+      "script_text": "Bạn đang diện kiến Điện Thái Hòa — tòa điện nguy nga nhất và là biểu tượng quyền lực tối cao của mười ba đời vua Nguyễn. Tòa điện được khởi dựng năm 1805 thời Gia Long và được vua Minh Mạng dời lui, nâng cấp quy mô hoành tráng vào năm 1833. Điện được xây theo lối 'trùng thiềm điệp ốc', tức nhà kép chồng mái, nối liền nhau bằng máng xối vỏ cua. Hệ thống 80 cột gỗ lim to lớn được sơn son thếp vàng lộng lẫy, vẽ rồng mây uốn lượn tinh xảo, chống đỡ toàn bộ hai tầng mái lợp ngói hoàng lưu lý rực rỡ. Tâm điểm của nội điện là ngai vàng sơn son thếp vàng của hoàng đế, đặt trên bệ đá ba tầng uy nghiêm. Phía trên che bửu tán bằng gỗ chạm lộng hoa văn rồng bay phụng múa rực sáng, biểu trưng cho thiên mệnh che chở giang sơn xã tắc. Ngước nhìn lên dải liên ba, bạn sẽ thấy hàng trăm ô hộc khắc thơ chữ Hán và tranh vẽ thếp vàng theo lối 'nhất thi nhất họa'. Những áng thơ ngự chế ca ngợi non sông gấm vóc, thái bình thịnh trị và khẳng định chủ quyền độc lập thiêng liêng của dân tộc. Nơi đây từng chứng kiến lễ đăng quang của các bậc hoàng đế, lễ vạn thọ mừng sinh nhật vua, và là nơi đón tiếp trọng thể các đoàn sứ bộ ngoại giao bang giao quốc tế.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Bạn đang diện kiến Điện Thái Hòa — tòa điện nguy nga nhất và là biểu tượng quyền lực tối cao của mười ba đời vua Nguyễn. Tòa điện được khởi dựng năm 1805 thời Gia Long và được vua Minh Mạng dời lui, nâng cấp quy mô hoành tráng vào năm 1833."
+        },
+        {
+          "time_sec": 28.0,
+          "text": "Điện được xây theo lối 'trùng thiềm điệp ốc', tức nhà kép chồng mái, nối liền nhau bằng máng xối vỏ cua. Hệ thống 80 cột gỗ lim to lớn được sơn son thếp vàng lộng lẫy, vẽ rồng mây uốn lượn tinh xảo, chống đỡ toàn bộ hai tầng mái lợp ngói hoàng lưu lý rực rỡ."
+        },
+        {
+          "time_sec": 58.0,
+          "text": "Tâm điểm của nội điện là ngai vàng sơn son thếp vàng của hoàng đế, đặt trên bệ đá ba tầng uy nghiêm. Phía trên che bửu tán bằng gỗ chạm lộng hoa văn rồng bay phụng múa rực sáng, biểu trưng cho thiên mệnh che chở giang sơn xã tắc."
+        },
+        {
+          "time_sec": 92.0,
+          "text": "Ngước nhìn lên dải liên ba, bạn sẽ thấy hàng trăm ô hộc khắc thơ chữ Hán và tranh vẽ thếp vàng theo lối 'nhất thi nhất họa'. Những áng thơ ngự chế ca ngợi non sông gấm vóc, thái bình thịnh trị và khẳng định chủ quyền độc lập thiêng liêng của dân tộc."
+        },
+        {
+          "time_sec": 118.0,
+          "text": "Nơi đây từng chứng kiến lễ đăng quang của các bậc hoàng đế, lễ vạn thọ mừng sinh nhật vua, và là nơi đón tiếp trọng thể các đoàn sứ bộ ngoại giao bang giao quốc tế."
+        }
+      ],
+      "summary": "Trọng tâm quyền lực của Hoàng triều Nguyễn với kiến trúc trùng thiềm điệp ốc 80 cột gỗ lim thếp vàng, ngai vàng bửu tán và thơ văn liên ba.",
+      "tags": [
+        "Trục chính đạo",
+        "Kiến trúc trùng thiềm điệp ốc",
+        "Ngai vàng",
+        "Di sản tư liệu"
+      ],
+      "transcript": [
+        {
+          "id": "dien-thai-hoa-cue-1",
+          "startTime": 0,
+          "endTime": 28,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Tòa điện tối thượng của vương triều",
+          "textVi": "Bạn đang diện kiến Điện Thái Hòa — tòa điện nguy nga nhất và là biểu tượng quyền lực tối cao của mười ba đời vua Nguyễn. Tòa điện được khởi dựng năm 1805 thời Gia Long và được vua Minh Mạng dời lui, nâng cấp quy mô hoành tráng vào năm 1833."
+        },
+        {
+          "id": "dien-thai-hoa-cue-2",
+          "startTime": 28,
+          "endTime": 58,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Kiến trúc Trùng thiềm điệp ốc",
+          "textVi": "Điện được xây theo lối 'trùng thiềm điệp ốc', tức nhà kép chồng mái, nối liền nhau bằng máng xối vỏ cua. Hệ thống 80 cột gỗ lim to lớn được sơn son thếp vàng lộng lẫy, vẽ rồng mây uốn lượn tinh xảo, chống đỡ toàn bộ hai tầng mái lợp ngói hoàng lưu lý rực rỡ."
+        },
+        {
+          "id": "dien-thai-hoa-cue-3",
+          "startTime": 58,
+          "endTime": 92,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Ngai vàng thiên tử & Bửu tán",
+          "textVi": "Tâm điểm của nội điện là ngai vàng sơn son thếp vàng của hoàng đế, đặt trên bệ đá ba tầng uy nghiêm. Phía trên che bửu tán bằng gỗ chạm lộng hoa văn rồng bay phụng múa rực sáng, biểu trưng cho thiên mệnh che chở giang sơn xã tắc."
+        },
+        {
+          "id": "dien-thai-hoa-cue-4",
+          "startTime": 92,
+          "endTime": 118,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Hệ thống ô hộc 'Nhất thi nhất họa'",
+          "textVi": "Ngước nhìn lên dải liên ba, bạn sẽ thấy hàng trăm ô hộc khắc thơ chữ Hán và tranh vẽ thếp vàng theo lối 'nhất thi nhất họa'. Những áng thơ ngự chế ca ngợi non sông gấm vóc, thái bình thịnh trị và khẳng định chủ quyền độc lập thiêng liêng của dân tộc."
+        },
+        {
+          "id": "dien-thai-hoa-cue-5",
+          "startTime": 118,
+          "endTime": 140,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Đại lễ đăng quang & Ngoại giao",
+          "textVi": "Nơi đây từng chứng kiến lễ đăng quang của các bậc hoàng đế, lễ vạn thọ mừng sinh nhật vua, và là nơi đón tiếp trọng thể các đoàn sứ bộ ngoại giao bang giao quốc tế."
+        }
+      ]
+    },
+    {
+      "id": "audio-the-to-mieu",
+      "monument_slug": "the-to-mieu",
+      "site_slug": "the-to-mieu",
+      "title_vi": "Thế Tổ Miếu",
+      "site_name_vi": "Thế Tổ Miếu",
+      "duration_seconds": 125,
+      "duration": 125,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/the-to-mieu.mp3",
+      "script_text": "Chào mừng bạn đến với Thế Tổ Miếu, hay thường gọi là Thế Miếu. Ngôi miếu linh thiêng tọa lạc ở góc tây nam Hoàng Thành, được vua Minh Mạng khởi dựng vào năm 1821 để phụng thờ các vị tiên đế triều Nguyễn. Tòa miếu chính có kết cấu trùng thiềm điệp ốc rộng chín gian hai chái, lợp ngói hoàng lưu ly. Toàn bộ khung gỗ lim vững chãi được sơn son thếp vàng, mang đậm phong vị kiến trúc đền miếu cổ truyền Việt Nam. Bên trong Thế Miếu, việc sắp đặt các án thờ tuân thủ nghiêm ngặt nguyên tắc 'tả chiêu hữu mục': gian chính giữa phụng thờ vua Gia Long, bên tả là Chiêu thờ các vua đời lẻ, bên hữu là Mục thờ các vua đời chẵn. Mỗi án thờ đều có long ngai, bài vị và hòm đựng bảo kiếm, ngọc phả thiêng liêng. Hàng năm, triều đình tổ chức các kỳ đại tế xuân, hạ, thu, đông với nghi thức cung đình nghiêm trang. Thế Miếu là biểu hiện cao nhất của đạo hiếu và tính chính thống vương quyền triều Nguyễn.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Chào mừng bạn đến với Thế Tổ Miếu, hay thường gọi là Thế Miếu. Ngôi miếu linh thiêng tọa lạc ở góc tây nam Hoàng Thành, được vua Minh Mạng khởi dựng vào năm 1821 để phụng thờ các vị tiên đế triều Nguyễn."
+        },
+        {
+          "time_sec": 24.0,
+          "text": "Tòa miếu chính có kết cấu trùng thiềm điệp ốc rộng chín gian hai chái, lợp ngói hoàng lưu ly. Toàn bộ khung gỗ lim vững chãi được sơn son thếp vàng, mang đậm phong vị kiến trúc đền miếu cổ truyền Việt Nam."
+        },
+        {
+          "time_sec": 56.0,
+          "text": "Bên trong Thế Miếu, việc sắp đặt các án thờ tuân thủ nghiêm ngặt nguyên tắc 'tả chiêu hữu mục': gian chính giữa phụng thờ vua Gia Long, bên tả là Chiêu thờ các vua đời lẻ, bên hữu là Mục thờ các vua đời chẵn. Mỗi án thờ đều có long ngai, bài vị và hòm đựng bảo kiếm, ngọc phả thiêng liêng."
+        },
+        {
+          "time_sec": 92.0,
+          "text": "Hàng năm, triều đình tổ chức các kỳ đại tế xuân, hạ, thu, đông với nghi thức cung đình nghiêm trang. Thế Miếu là biểu hiện cao nhất của đạo hiếu và tính chính thống vương quyền triều Nguyễn."
+        }
+      ],
+      "summary": "Không gian thờ tự linh thiêng phụng thờ các vị hoàng đế triều Nguyễn với cấu trúc 9 gian 2 chái và nguyên tắc bài trí tả chiêu hữu mục.",
+      "tags": [
+        "Không gian thờ tự",
+        "Đạo hiếu",
+        "Tả chiêu hữu mục"
+      ],
+      "transcript": [
+        {
+          "id": "the-to-mieu-cue-1",
+          "startTime": 0,
+          "endTime": 24,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Không gian phụng thờ liệt thánh",
+          "textVi": "Chào mừng bạn đến với Thế Tổ Miếu, hay thường gọi là Thế Miếu. Ngôi miếu linh thiêng tọa lạc ở góc tây nam Hoàng Thành, được vua Minh Mạng khởi dựng vào năm 1821 để phụng thờ các vị tiên đế triều Nguyễn."
+        },
+        {
+          "id": "the-to-mieu-cue-2",
+          "startTime": 24,
+          "endTime": 56,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Kiến trúc chín gian hai chái",
+          "textVi": "Tòa miếu chính có kết cấu trùng thiềm điệp ốc rộng chín gian hai chái, lợp ngói hoàng lưu ly. Toàn bộ khung gỗ lim vững chãi được sơn son thếp vàng, mang đậm phong vị kiến trúc đền miếu cổ truyền Việt Nam."
+        },
+        {
+          "id": "the-to-mieu-cue-3",
+          "startTime": 56,
+          "endTime": 92,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Nguyên tắc bài trí Tả chiêu hữu mục",
+          "textVi": "Bên trong Thế Miếu, việc sắp đặt các án thờ tuân thủ nghiêm ngặt nguyên tắc 'tả chiêu hữu mục': gian chính giữa phụng thờ vua Gia Long, bên tả là Chiêu thờ các vua đời lẻ, bên hữu là Mục thờ các vua đời chẵn. Mỗi án thờ đều có long ngai, bài vị và hòm đựng bảo kiếm, ngọc phả thiêng liêng."
+        },
+        {
+          "id": "the-to-mieu-cue-4",
+          "startTime": 92,
+          "endTime": 125,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Lễ tế bốn mùa & Tôn vinh cội nguồn",
+          "textVi": "Hàng năm, triều đình tổ chức các kỳ đại tế xuân, hạ, thu, đông với nghi thức cung đình nghiêm trang. Thế Miếu là biểu hiện cao nhất của đạo hiếu và tính chính thống vương quyền triều Nguyễn."
+        }
+      ]
+    },
+    {
+      "id": "audio-hien-lam-cac",
+      "monument_slug": "hien-lam-cac",
+      "site_slug": "hien-lam-cac",
+      "title_vi": "Hiển Lâm Các",
+      "site_name_vi": "Hiển Lâm Các",
+      "duration_seconds": 110,
+      "duration": 110,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/hien-lam-cac.mp3",
+      "script_text": "Đứng sừng sững trước sân Thế Tổ Miếu là Hiển Lâm Các — tòa vọng lâu cao ba tầng, đạt chiều cao 17 mét. Suốt thời Nguyễn, triều đình ra sắc lệnh không bất cứ công trình nào trong Thành Nội được phép xây cao hơn Hiển Lâm Các. Tòa gác được nâng đỡ bởi 24 cột gỗ lim nguyên khối thanh thoát. Tầng dưới có không gian thoáng đãng; tầng hai và tầng ba thu nhỏ dần với các cửa sổ tròn chạm hoa văn chữ Thọ đón gió bốn phương, mái lợp ngói hoàng lưu ly rực sáng dưới ánh bình minh. Hiển Lâm Các mang ý nghĩa ngợi ca công đức tổ tiên và ghi danh các vị khai quốc công thần đã phò tá triều đại. Phía trước gác là hai tòa nhà Tả Vu và Hữu Vu, nơi phụng thờ trang trọng bài vị các bậc đại thần văn võ có công lao hiển hách với giang sơn xã tắc. Sự kết hợp giữa nét thanh tú của Hiển Lâm Các và nét thâm nghiêm của các miếu điện phụng tự xung quanh đã tạo nên một chỉnh thể kiến trúc nghệ thuật vô song của văn hóa Cố đô.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Đứng sừng sững trước sân Thế Tổ Miếu là Hiển Lâm Các — tòa vọng lâu cao ba tầng, đạt chiều cao 17 mét. Suốt thời Nguyễn, triều đình ra sắc lệnh không bất cứ công trình nào trong Thành Nội được phép xây cao hơn Hiển Lâm Các."
+        },
+        {
+          "time_sec": 26.0,
+          "text": "Tòa gác được nâng đỡ bởi 24 cột gỗ lim nguyên khối thanh thoát. Tầng dưới có không gian thoáng đãng; tầng hai và tầng ba thu nhỏ dần với các cửa sổ tròn chạm hoa văn chữ Thọ đón gió bốn phương, mái lợp ngói hoàng lưu ly rực sáng dưới ánh bình minh."
+        },
+        {
+          "time_sec": 56.0,
+          "text": "Hiển Lâm Các mang ý nghĩa ngợi ca công đức tổ tiên và ghi danh các vị khai quốc công thần đã phò tá triều đại. Phía trước gác là hai tòa nhà Tả Vu và Hữu Vu, nơi phụng thờ trang trọng bài vị các bậc đại thần văn võ có công lao hiển hách với giang sơn xã tắc."
+        },
+        {
+          "time_sec": 84.0,
+          "text": "Sự kết hợp giữa nét thanh tú của Hiển Lâm Các và nét thâm nghiêm của các miếu điện phụng tự xung quanh đã tạo nên một chỉnh thể kiến trúc nghệ thuật vô song của văn hóa Cố đô."
+        }
+      ],
+      "summary": "Công trình bằng gỗ cao nhất Hoàng Thành Huế với ba tầng gác uy nghi, tôn vinh công lao các bậc tiền nhân và các vị công thần khai quốc.",
+      "tags": [
+        "Đài tưởng niệm",
+        "Kiến trúc gỗ",
+        "Công thần xã tắc"
+      ],
+      "transcript": [
+        {
+          "id": "hien-lam-cac-cue-1",
+          "startTime": 0,
+          "endTime": 26,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Tòa nhà cao nhất Hoàng thành",
+          "textVi": "Đứng sừng sững trước sân Thế Tổ Miếu là Hiển Lâm Các — tòa vọng lâu cao ba tầng, đạt chiều cao 17 mét. Suốt thời Nguyễn, triều đình ra sắc lệnh không bất cứ công trình nào trong Thành Nội được phép xây cao hơn Hiển Lâm Các."
+        },
+        {
+          "id": "hien-lam-cac-cue-2",
+          "startTime": 26,
+          "endTime": 56,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Kết cấu ba tầng chồng diêm",
+          "textVi": "Tòa gác được nâng đỡ bởi 24 cột gỗ lim nguyên khối thanh thoát. Tầng dưới có không gian thoáng đãng; tầng hai và tầng ba thu nhỏ dần với các cửa sổ tròn chạm hoa văn chữ Thọ đón gió bốn phương, mái lợp ngói hoàng lưu ly rực sáng dưới ánh bình minh."
+        },
+        {
+          "id": "hien-lam-cac-cue-3",
+          "startTime": 56,
+          "endTime": 84,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Đài tưởng niệm & Công thần khai quốc",
+          "textVi": "Hiển Lâm Các mang ý nghĩa ngợi ca công đức tổ tiên và ghi danh các vị khai quốc công thần đã phò tá triều đại. Phía trước gác là hai tòa nhà Tả Vu và Hữu Vu, nơi phụng thờ trang trọng bài vị các bậc đại thần văn võ có công lao hiển hách với giang sơn xã tắc."
+        },
+        {
+          "id": "hien-lam-cac-cue-4",
+          "startTime": 84,
+          "endTime": 110,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Tổng kết kiến trúc tưởng niệm",
+          "textVi": "Sự kết hợp giữa nét thanh tú của Hiển Lâm Các và nét thâm nghiêm của các miếu điện phụng tự xung quanh đã tạo nên một chỉnh thể kiến trúc nghệ thuật vô song của văn hóa Cố đô."
+        }
+      ]
+    },
+    {
+      "id": "audio-hung-to-mieu",
+      "monument_slug": "hung-to-mieu",
+      "site_slug": "hung-to-mieu",
+      "title_vi": "Hưng Tổ Miếu",
+      "site_name_vi": "Hưng Tổ Miếu",
+      "duration_seconds": 95,
+      "duration": 95,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/hung-to-mieu.mp3",
+      "script_text": "Nằm về phía bắc Thế Miếu là Hưng Tổ Miếu, ngôi đền trang nghiêm được vua Gia Long xây dựng vào năm 1804 để phụng thờ thân phụ là Nguyễn Phúc Luân, được truy tôn là Hưng Tổ Khang Hoàng Đế, cùng thân mẫu là Hiếu Khang Hoàng Hậu. Tòa miếu nhỏ nhắn được dựng theo thức nhà rường truyền thống ba gian hai chái, với hàng cột gỗ thếp vàng trang nhã. Không gian nơi đây toát lên sự tĩnh mịch, thanh tịnh của chốn từ đường gia tộc. Dù không trực tiếp lên ngôi vua, công ơn sinh thành của Hưng Tổ Hoàng Đế luôn được con cháu triều Nguyễn đời đời tưởng nhớ. Hưng Miếu là minh chứng cảm động cho chữ hiếu của vua Gia Long giữa lòng Hoàng Thành.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Nằm về phía bắc Thế Miếu là Hưng Tổ Miếu, ngôi đền trang nghiêm được vua Gia Long xây dựng vào năm 1804 để phụng thờ thân phụ là Nguyễn Phúc Luân, được truy tôn là Hưng Tổ Khang Hoàng Đế, cùng thân mẫu là Hiếu Khang Hoàng Hậu."
+        },
+        {
+          "time_sec": 25.0,
+          "text": "Tòa miếu nhỏ nhắn được dựng theo thức nhà rường truyền thống ba gian hai chái, với hàng cột gỗ thếp vàng trang nhã. Không gian nơi đây toát lên sự tĩnh mịch, thanh tịnh của chốn từ đường gia tộc."
+        },
+        {
+          "time_sec": 58.0,
+          "text": "Dù không trực tiếp lên ngôi vua, công ơn sinh thành của Hưng Tổ Hoàng Đế luôn được con cháu triều Nguyễn đời đời tưởng nhớ. Hưng Miếu là minh chứng cảm động cho chữ hiếu của vua Gia Long giữa lòng Hoàng Thành."
+        }
+      ],
+      "summary": "Ngôi miếu cổ kính phụng thờ Thế tử Nguyễn Phúc Luân và phu nhân, thân sinh của vị vua sáng lập triều Nguyễn.",
+      "tags": [
+        "Tổ miếu",
+        "Hiếu đạo"
+      ],
+      "transcript": [
+        {
+          "id": "hung-to-mieu-cue-1",
+          "startTime": 0,
+          "endTime": 25,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Bối cảnh lập miếu",
+          "textVi": "Nằm về phía bắc Thế Miếu là Hưng Tổ Miếu, ngôi đền trang nghiêm được vua Gia Long xây dựng vào năm 1804 để phụng thờ thân phụ là Nguyễn Phúc Luân, được truy tôn là Hưng Tổ Khang Hoàng Đế, cùng thân mẫu là Hiếu Khang Hoàng Hậu."
+        },
+        {
+          "id": "hung-to-mieu-cue-2",
+          "startTime": 25,
+          "endTime": 58,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Kiến trúc nhà rường truyền thống",
+          "textVi": "Tòa miếu nhỏ nhắn được dựng theo thức nhà rường truyền thống ba gian hai chái, với hàng cột gỗ thếp vàng trang nhã. Không gian nơi đây toát lên sự tĩnh mịch, thanh tịnh của chốn từ đường gia tộc."
+        },
+        {
+          "id": "hung-to-mieu-cue-3",
+          "startTime": 58,
+          "endTime": 95,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Ý nghĩa hiếu đạo",
+          "textVi": "Dù không trực tiếp lên ngôi vua, công ơn sinh thành của Hưng Tổ Hoàng Đế luôn được con cháu triều Nguyễn đời đời tưởng nhớ. Hưng Miếu là minh chứng cảm động cho chữ hiếu của vua Gia Long giữa lòng Hoàng Thành."
+        }
+      ]
+    },
+    {
+      "id": "audio-trieu-to-mieu",
+      "monument_slug": "trieu-to-mieu",
+      "site_slug": "trieu-to-mieu",
+      "title_vi": "Triệu Tổ Miếu",
+      "site_name_vi": "Triệu Tổ Miếu",
+      "duration_seconds": 90,
+      "duration": 90,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/trieu-to-mieu.mp3",
+      "script_text": "Tọa lạc tại góc đông nam Hoàng Thành, Triệu Tổ Miếu là ngôi miếu phụng thờ Triệu Tổ Tĩnh Hoàng Đế Nguyễn Kim — vị tiền bối đã mở đường cho các chúa Nguyễn khai phá phương Nam. Xây dựng năm 1804 cùng thời điểm với Hưng Miếu, Triệu Miếu có kiến trúc tương đồng nhưng chiếm vị trí phía đông theo quy hoạch phong thủy tả hữu đối ứng trong kinh thành. Án thờ Triệu Tổ được đặt trang trọng ở gian giữa, quanh năm hương khói nghi ngút. Đây là điểm tựa tâm linh nhắc nhở con cháu về cội nguồn gian khổ thời mở cõi lập nghiệp.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Tọa lạc tại góc đông nam Hoàng Thành, Triệu Tổ Miếu là ngôi miếu phụng thờ Triệu Tổ Tĩnh Hoàng Đế Nguyễn Kim — vị tiền bối đã mở đường cho các chúa Nguyễn khai phá phương Nam."
+        },
+        {
+          "time_sec": 26.0,
+          "text": "Xây dựng năm 1804 cùng thời điểm với Hưng Miếu, Triệu Miếu có kiến trúc tương đồng nhưng chiếm vị trí phía đông theo quy hoạch phong thủy tả hữu đối ứng trong kinh thành."
+        },
+        {
+          "time_sec": 56.0,
+          "text": "Án thờ Triệu Tổ được đặt trang trọng ở gian giữa, quanh năm hương khói nghi ngút. Đây là điểm tựa tâm linh nhắc nhở con cháu về cội nguồn gian khổ thời mở cõi lập nghiệp."
+        }
+      ],
+      "summary": "Ngôi miếu cổ bậc nhất phụng thờ Triệu Tổ Tĩnh Hoàng Đế Nguyễn Kim, người đặt nền móng dựng nghiệp của dòng họ Nguyễn.",
+      "tags": [
+        "Tổ miếu",
+        "Triệu Miếu",
+        "Gốc tích dòng họ"
+      ],
+      "transcript": [
+        {
+          "id": "trieu-to-mieu-cue-1",
+          "startTime": 0,
+          "endTime": 26,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Khởi nguyên vương triều",
+          "textVi": "Tọa lạc tại góc đông nam Hoàng Thành, Triệu Tổ Miếu là ngôi miếu phụng thờ Triệu Tổ Tĩnh Hoàng Đế Nguyễn Kim — vị tiền bối đã mở đường cho các chúa Nguyễn khai phá phương Nam."
+        },
+        {
+          "id": "trieu-to-mieu-cue-2",
+          "startTime": 26,
+          "endTime": 56,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Kiến trúc đối xứng phong thủy",
+          "textVi": "Xây dựng năm 1804 cùng thời điểm với Hưng Miếu, Triệu Miếu có kiến trúc tương đồng nhưng chiếm vị trí phía đông theo quy hoạch phong thủy tả hữu đối ứng trong kinh thành."
+        },
+        {
+          "id": "trieu-to-mieu-cue-3",
+          "startTime": 56,
+          "endTime": 90,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Bài vị & Án thờ thủy tổ",
+          "textVi": "Án thờ Triệu Tổ được đặt trang trọng ở gian giữa, quanh năm hương khói nghi ngút. Đây là điểm tựa tâm linh nhắc nhở con cháu về cội nguồn gian khổ thời mở cõi lập nghiệp."
+        }
+      ]
+    },
+    {
+      "id": "audio-dai-cung-mon",
+      "monument_slug": "dai-cung-mon",
+      "site_slug": "dai-cung-mon",
+      "title_vi": "Đại Cung Môn",
+      "site_name_vi": "Đại Cung Môn",
+      "duration_seconds": 105,
+      "duration": 105,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/dai-cung-mon.mp3",
+      "script_text": "Ngay sau lưng điện Thái Hòa, bạn đang đứng trước vị trí của Đại Cung Môn — cửa chính diện dẫn vào khu vực bảo mật tuyệt đối: Tử Cấm Thành. Được dựng năm Minh Mạng thứ 14, cửa trổ năm gian ba cửa. Cửa giữa chỉ dành riêng cho hoàng đế, hai cửa bên dành cho cung tần và quan viên nội vụ có chỉ truyền. Đội thị vệ túc trực ngày đêm, kiểm soát từng bước chân qua lại cửa cấm bằng thẻ bài nghiêm ngặt. Trải qua chiến sự năm 1947, công trình gỗ đã bị thiêu hủy, chỉ còn lại hệ thống thềm bậc đá thanh chạm rồng và chân cột gạch vồ. Dự án nghiên cứu khảo cổ đang từng bước mở đường phục hồi cánh cổng quyền uy này.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Ngay sau lưng điện Thái Hòa, bạn đang đứng trước vị trí của Đại Cung Môn — cửa chính diện dẫn vào khu vực bảo mật tuyệt đối: Tử Cấm Thành. Được dựng năm Minh Mạng thứ 14, cửa trổ năm gian ba cửa."
+        },
+        {
+          "time_sec": 28.0,
+          "text": "Cửa giữa chỉ dành riêng cho hoàng đế, hai cửa bên dành cho cung tần và quan viên nội vụ có chỉ truyền. Đội thị vệ túc trực ngày đêm, kiểm soát từng bước chân qua lại cửa cấm bằng thẻ bài nghiêm ngặt."
+        },
+        {
+          "time_sec": 62.0,
+          "text": "Trải qua chiến sự năm 1947, công trình gỗ đã bị thiêu hủy, chỉ còn lại hệ thống thềm bậc đá thanh chạm rồng và chân cột gạch vồ. Dự án nghiên cứu khảo cổ đang từng bước mở đường phục hồi cánh cổng quyền uy này."
+        }
+      ],
+      "summary": "Cửa chính diện mặt Nam của Tử Cấm Thành, ranh giới nghiêm ngặt giữa không gian hành chính triều nghi và cấm địa sinh hoạt hoàng gia.",
+      "tags": [
+        "Tử Cấm Thành",
+        "Cổng hoàng cung",
+        "Khảo cổ học"
+      ],
+      "transcript": [
+        {
+          "id": "dai-cung-mon-cue-1",
+          "startTime": 0,
+          "endTime": 28,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Ngưỡng cửa Tử Cấm Thành",
+          "textVi": "Ngay sau lưng điện Thái Hòa, bạn đang đứng trước vị trí của Đại Cung Môn — cửa chính diện dẫn vào khu vực bảo mật tuyệt đối: Tử Cấm Thành. Được dựng năm Minh Mạng thứ 14, cửa trổ năm gian ba cửa."
+        },
+        {
+          "id": "dai-cung-mon-cue-2",
+          "startTime": 28,
+          "endTime": 62,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Quy chế canh gác nghiêm ngặt",
+          "textVi": "Cửa giữa chỉ dành riêng cho hoàng đế, hai cửa bên dành cho cung tần và quan viên nội vụ có chỉ truyền. Đội thị vệ túc trực ngày đêm, kiểm soát từng bước chân qua lại cửa cấm bằng thẻ bài nghiêm ngặt."
+        },
+        {
+          "id": "dai-cung-mon-cue-3",
+          "startTime": 62,
+          "endTime": 105,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Dấu tích lịch sử & Phục hồi khảo cổ",
+          "textVi": "Trải qua chiến sự năm 1947, công trình gỗ đã bị thiêu hủy, chỉ còn lại hệ thống thềm bậc đá thanh chạm rồng và chân cột gạch vồ. Dự án nghiên cứu khảo cổ đang từng bước mở đường phục hồi cánh cổng quyền uy này."
+        }
+      ]
+    },
+    {
+      "id": "audio-dien-can-chanh",
+      "monument_slug": "dien-can-chanh",
+      "site_slug": "dien-can-chanh",
+      "title_vi": "Điện Cần Chánh",
+      "site_name_vi": "Điện Cần Chánh",
+      "duration_seconds": 115,
+      "duration": 115,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/dien-can-chanh.mp3",
+      "script_text": "Điện Cần Chánh là nơi hoàng đế thiết triều thường nhật vào các ngày năm, mười, hai mươi và hai mươi lăm hàng tháng. Khởi dựng năm 1804 thời Gia Long, đây là trung tâm điều hành chính sự thực quyền của triều đình. Tại ngôi điện này, vua trực tiếp phê duyệt châu phê trên các tấu sớ của Lục Bộ, bàn việc quân cơ tối mật cùng Viện Cơ Mật, và tiếp kiến các quan viên đầu ngành tấu trình việc dân quốc. Tòa điện xưa kia có kết cấu gỗ lim năm gian hai chái trùng thiềm điệp ốc, trang trí nội thất hoa mỹ bậc nhất. Đáng tiếc, khói lửa chiến tranh năm 1947 đã biến tòa điện thành phế tích. Hiện nay, nền móng đá thanh cùng hệ thống chân tảng đá tảng lim vẫn được bảo tồn nghiêm ngặt, chuẩn bị cho dự án phục dựng quy mô lớn tái hiện trung tâm quyền lực xưa.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Điện Cần Chánh là nơi hoàng đế thiết triều thường nhật vào các ngày năm, mười, hai mươi và hai mươi lăm hàng tháng. Khởi dựng năm 1804 thời Gia Long, đây là trung tâm điều hành chính sự thực quyền của triều đình."
+        },
+        {
+          "time_sec": 26.0,
+          "text": "Tại ngôi điện này, vua trực tiếp phê duyệt châu phê trên các tấu sớ của Lục Bộ, bàn việc quân cơ tối mật cùng Viện Cơ Mật, và tiếp kiến các quan viên đầu ngành tấu trình việc dân quốc."
+        },
+        {
+          "time_sec": 60.0,
+          "text": "Tòa điện xưa kia có kết cấu gỗ lim năm gian hai chái trùng thiềm điệp ốc, trang trí nội thất hoa mỹ bậc nhất. Đáng tiếc, khói lửa chiến tranh năm 1947 đã biến tòa điện thành phế tích."
+        },
+        {
+          "time_sec": 88.0,
+          "text": "Hiện nay, nền móng đá thanh cùng hệ thống chân tảng đá tảng lim vẫn được bảo tồn nghiêm ngặt, chuẩn bị cho dự án phục dựng quy mô lớn tái hiện trung tâm quyền lực xưa."
+        }
+      ],
+      "summary": "Trung tâm hành chính điều hành đất nước của hoàng đế triều Nguyễn, nơi diễn ra các buổi thường triều và xử lý quốc sự trọng yếu.",
+      "tags": [
+        "Tử Cấm Thành",
+        "Thường triều",
+        "Cơ mật viện",
+        "Nền móng di tích"
+      ],
+      "transcript": [
+        {
+          "id": "dien-can-chanh-cue-1",
+          "startTime": 0,
+          "endTime": 26,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Trụ sở thiết thường triều",
+          "textVi": "Điện Cần Chánh là nơi hoàng đế thiết triều thường nhật vào các ngày năm, mười, hai mươi và hai mươi lăm hàng tháng. Khởi dựng năm 1804 thời Gia Long, đây là trung tâm điều hành chính sự thực quyền của triều đình."
+        },
+        {
+          "id": "dien-can-chanh-cue-2",
+          "startTime": 26,
+          "endTime": 60,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Bộ máy Cơ Mật Viện & Lục Bộ",
+          "textVi": "Tại ngôi điện này, vua trực tiếp phê duyệt châu phê trên các tấu sớ của Lục Bộ, bàn việc quân cơ tối mật cùng Viện Cơ Mật, và tiếp kiến các quan viên đầu ngành tấu trình việc dân quốc."
+        },
+        {
+          "id": "dien-can-chanh-cue-3",
+          "startTime": 60,
+          "endTime": 88,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Kiến trúc gỗ tinh mỹ đã mất",
+          "textVi": "Tòa điện xưa kia có kết cấu gỗ lim năm gian hai chái trùng thiềm điệp ốc, trang trí nội thất hoa mỹ bậc nhất. Đáng tiếc, khói lửa chiến tranh năm 1947 đã biến tòa điện thành phế tích."
+        },
+        {
+          "id": "dien-can-chanh-cue-4",
+          "startTime": 88,
+          "endTime": 115,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Bảo tồn nền móng & Tương lai phục dựng",
+          "textVi": "Hiện nay, nền móng đá thanh cùng hệ thống chân tảng đá tảng lim vẫn được bảo tồn nghiêm ngặt, chuẩn bị cho dự án phục dựng quy mô lớn tái hiện trung tâm quyền lực xưa."
+        }
+      ]
+    },
+    {
+      "id": "audio-dien-kien-trung",
+      "monument_slug": "dien-kien-trung",
+      "site_slug": "dien-kien-trung",
+      "title_vi": "Điện Kiến Trung",
+      "site_name_vi": "Điện Kiến Trung",
+      "duration_seconds": 135,
+      "duration": 135,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/dien-kien-trung.mp3",
+      "script_text": "Tọa lạc tại điểm cực bắc của trục dũng đạo Tử Cấm Thành là Điện Kiến Trung — tòa lâu đài rực rỡ mang phong cách tân cổ điển giao thoa Pháp, Ý và nghệ thuật cung đình Huế. Công trình được vua Khải Định khởi công xây dựng từ năm 1921. Mặt tiền hai tầng của điện Kiến Trung là bữa tiệc thị giác của nghệ thuật khảm sành sứ và thủy tinh màu. Hàng vạn mảnh sứ men màu được người nghệ nhân Huế cắt ghép tinh xảo thành hoa văn rồng mây uốn lượn, hoa lá phương Tây và các bức phù điêu sống động. Sau khi hoàn thành, điện trở thành nơi làm việc và nơi ở của vua Khải Định, sau đó là tổ ấm của gia đình vua Bảo Đại cùng Hoàng hậu Nam Phương và các hoàng tử, công chúa với những tiện nghi hiện đại đầu tiên trong cung cấm. Bị san phẳng vào năm 1947, sau gần 80 năm phế tích, dự án phục hồi kỳ công kéo dài từ năm 2019 đến 2023 đã hồi sinh trọn vẹn tòa điện kiệt tác, trở thành điểm nhấn rực rỡ bậc nhất của Đại Nội hôm nay.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Tọa lạc tại điểm cực bắc của trục dũng đạo Tử Cấm Thành là Điện Kiến Trung — tòa lâu đài rực rỡ mang phong cách tân cổ điển giao thoa Pháp, Ý và nghệ thuật cung đình Huế. Công trình được vua Khải Định khởi công xây dựng từ năm 1921."
+        },
+        {
+          "time_sec": 28.0,
+          "text": "Mặt tiền hai tầng của điện Kiến Trung là bữa tiệc thị giác của nghệ thuật khảm sành sứ và thủy tinh màu. Hàng vạn mảnh sứ men màu được người nghệ nhân Huế cắt ghép tinh xảo thành hoa văn rồng mây uốn lượn, hoa lá phương Tây và các bức phù điêu sống động."
+        },
+        {
+          "time_sec": 62.0,
+          "text": "Sau khi hoàn thành, điện trở thành nơi làm việc và nơi ở của vua Khải Định, sau đó là tổ ấm của gia đình vua Bảo Đại cùng Hoàng hậu Nam Phương và các hoàng tử, công chúa với những tiện nghi hiện đại đầu tiên trong cung cấm."
+        },
+        {
+          "time_sec": 98.0,
+          "text": "Bị san phẳng vào năm 1947, sau gần 80 năm phế tích, dự án phục hồi kỳ công kéo dài từ năm 2019 đến 2023 đã hồi sinh trọn vẹn tòa điện kiệt tác, trở thành điểm nhấn rực rỡ bậc nhất của Đại Nội hôm nay."
+        }
+      ],
+      "summary": "Tuyệt tác giao thoa Á - Âu thời Khải Định và Bảo Đại, phục hồi thành công rực rỡ năm 2023 sau khi bị chiến tranh phá hủy năm 1947.",
+      "tags": [
+        "Tử Cấm Thành",
+        "Kiến trúc Đông Tây",
+        "Khảm sành sứ",
+        "Phục hồi 2023"
+      ],
+      "transcript": [
+        {
+          "id": "dien-kien-trung-cue-1",
+          "startTime": 0,
+          "endTime": 28,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Đỉnh cao kiến trúc giao thoa Đông - Tây",
+          "textVi": "Tọa lạc tại điểm cực bắc của trục dũng đạo Tử Cấm Thành là Điện Kiến Trung — tòa lâu đài rực rỡ mang phong cách tân cổ điển giao thoa Pháp, Ý và nghệ thuật cung đình Huế. Công trình được vua Khải Định khởi công xây dựng từ năm 1921."
+        },
+        {
+          "id": "dien-kien-trung-cue-2",
+          "startTime": 28,
+          "endTime": 62,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Nghệ thuật khảm sành sứ đỉnh cao",
+          "textVi": "Mặt tiền hai tầng của điện Kiến Trung là bữa tiệc thị giác của nghệ thuật khảm sành sứ và thủy tinh màu. Hàng vạn mảnh sứ men màu được người nghệ nhân Huế cắt ghép tinh xảo thành hoa văn rồng mây uốn lượn, hoa lá phương Tây và các bức phù điêu sống động."
+        },
+        {
+          "id": "dien-kien-trung-cue-3",
+          "startTime": 62,
+          "endTime": 98,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Không gian sinh hoạt hoàng gia thời Bảo Đại",
+          "textVi": "Sau khi hoàn thành, điện trở thành nơi làm việc và nơi ở của vua Khải Định, sau đó là tổ ấm của gia đình vua Bảo Đại cùng Hoàng hậu Nam Phương và các hoàng tử, công chúa với những tiện nghi hiện đại đầu tiên trong cung cấm."
+        },
+        {
+          "id": "dien-kien-trung-cue-4",
+          "startTime": 98,
+          "endTime": 135,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Kỳ tích phục hồi bảo tồn",
+          "textVi": "Bị san phẳng vào năm 1947, sau gần 80 năm phế tích, dự án phục hồi kỳ công kéo dài từ năm 2019 đến 2023 đã hồi sinh trọn vẹn tòa điện kiệt tác, trở thành điểm nhấn rực rỡ bậc nhất của Đại Nội hôm nay."
+        }
+      ]
+    },
+    {
+      "id": "audio-duyet-thi-duong",
+      "monument_slug": "duyet-thi-duong",
+      "site_slug": "duyet-thi-duong",
+      "title_vi": "Duyệt Thị Đường",
+      "site_name_vi": "Duyệt Thị Đường",
+      "duration_seconds": 120,
+      "duration": 120,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/duyet-thi-duong.mp3",
+      "script_text": "Duyệt Thị Đường được vua Minh Mạng cho xây dựng vào năm 1826 bên trong Tử Cấm Thành. Đây là nhà hát hoàng gia cổ nhất còn bảo tồn được của đất nước ta, chuyên phục vụ thưởng thức nghệ thuật tuồng và nhã nhạc của vua chúa. Sân khấu diễn xướng hình vuông ở chính giữa, trần nhà vẽ hình trăng sao lấp lánh như vòm trời đêm. Dưới gầm sàn diễn, người xưa chôn các lu sành lớn để tạo hiệu ứng âm vang tự nhiên, giúp tiếng đàn tiếng hát lan tỏa ấm áp khắp khán phòng. Vua ngự trên tầng lầu cao nhìn thẳng xuống sân khấu, hai bên cánh tả hữu là vị trí ngồi của hoàng thân quốc thích và các vị đại thần theo đúng phẩm cấp quy định. Ngày nay, Duyệt Thị Đường là không gian biểu diễn Nhã nhạc Cung đình Huế — Di sản Văn hóa Phi vật thể đại diện của nhân loại, nơi âm sắc cung đình ngân vang sống động giữa lòng di sản.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Duyệt Thị Đường được vua Minh Mạng cho xây dựng vào năm 1826 bên trong Tử Cấm Thành. Đây là nhà hát hoàng gia cổ nhất còn bảo tồn được của đất nước ta, chuyên phục vụ thưởng thức nghệ thuật tuồng và nhã nhạc của vua chúa."
+        },
+        {
+          "time_sec": 26.0,
+          "text": "Sân khấu diễn xướng hình vuông ở chính giữa, trần nhà vẽ hình trăng sao lấp lánh như vòm trời đêm. Dưới gầm sàn diễn, người xưa chôn các lu sành lớn để tạo hiệu ứng âm vang tự nhiên, giúp tiếng đàn tiếng hát lan tỏa ấm áp khắp khán phòng."
+        },
+        {
+          "time_sec": 58.0,
+          "text": "Vua ngự trên tầng lầu cao nhìn thẳng xuống sân khấu, hai bên cánh tả hữu là vị trí ngồi của hoàng thân quốc thích và các vị đại thần theo đúng phẩm cấp quy định."
+        },
+        {
+          "time_sec": 90.0,
+          "text": "Ngày nay, Duyệt Thị Đường là không gian biểu diễn Nhã nhạc Cung đình Huế — Di sản Văn hóa Phi vật thể đại diện của nhân loại, nơi âm sắc cung đình ngân vang sống động giữa lòng di sản."
+        }
+      ],
+      "summary": "Nhà hát hoàng gia cổ nhất Việt Nam xây dựng năm 1826, không gian diễn xướng Nhã nhạc cung đình Huế và Tuồng cung đình mẫu mực.",
+      "tags": [
+        "Tử Cấm Thành",
+        "Nhà hát cổ",
+        "Nhã nhạc cung đình",
+        "UNESCO"
+      ],
+      "transcript": [
+        {
+          "id": "duyet-thi-duong-cue-1",
+          "startTime": 0,
+          "endTime": 26,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Nhà hát cổ nhất Việt Nam",
+          "textVi": "Duyệt Thị Đường được vua Minh Mạng cho xây dựng vào năm 1826 bên trong Tử Cấm Thành. Đây là nhà hát hoàng gia cổ nhất còn bảo tồn được của đất nước ta, chuyên phục vụ thưởng thức nghệ thuật tuồng và nhã nhạc của vua chúa."
+        },
+        {
+          "id": "duyet-thi-duong-cue-2",
+          "startTime": 26,
+          "endTime": 58,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Cấu trúc âm học truyền thống",
+          "textVi": "Sân khấu diễn xướng hình vuông ở chính giữa, trần nhà vẽ hình trăng sao lấp lánh như vòm trời đêm. Dưới gầm sàn diễn, người xưa chôn các lu sành lớn để tạo hiệu ứng âm vang tự nhiên, giúp tiếng đàn tiếng hát lan tỏa ấm áp khắp khán phòng."
+        },
+        {
+          "id": "duyet-thi-duong-cue-3",
+          "startTime": 58,
+          "endTime": 90,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Vị trí ngự tọa & Khán đài phân tầng",
+          "textVi": "Vua ngự trên tầng lầu cao nhìn thẳng xuống sân khấu, hai bên cánh tả hữu là vị trí ngồi của hoàng thân quốc thích và các vị đại thần theo đúng phẩm cấp quy định."
+        },
+        {
+          "id": "duyet-thi-duong-cue-4",
+          "startTime": 90,
+          "endTime": 120,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Bảo tồn Nhã nhạc di sản nhân loại",
+          "textVi": "Ngày nay, Duyệt Thị Đường là không gian biểu diễn Nhã nhạc Cung đình Huế — Di sản Văn hóa Phi vật thể đại diện của nhân loại, nơi âm sắc cung đình ngân vang sống động giữa lòng di sản."
+        }
+      ]
+    },
+    {
+      "id": "audio-thai-binh-lau",
+      "monument_slug": "thai-binh-lau",
+      "site_slug": "thai-binh-lau",
+      "title_vi": "Thái Bình Lâu",
+      "site_name_vi": "Thái Bình Lâu",
+      "duration_seconds": 100,
+      "duration": 100,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/thai-binh-lau.mp3",
+      "script_text": "Thái Bình Lâu là tòa nhà hai tầng bằng gỗ nép mình thanh tịnh ở góc đông bắc Tử Cấm Thành. Được vua Khải Định xây dựng từ năm 1919 trên nền đình đọc sách cũ của vua Thiệu Trị. Ngoại thất Thái Bình Lâu nổi bật với kỹ nghệ khảm sành sứ rực rỡ và bờ nóc đắp các hoa văn pháp lam tuyệt xảo hình rồng chầu mặt nguyệt. Mặt trước là hồ nước nhỏ với hòn non bộ thanh cảnh soi bóng hoa sen. Bên trong lầu từng lưu giữ hàng nghìn tập thư tịch ngự chế quý giá. Đây là chốn nhà vua lui tới sau những giờ thiết triều căng thẳng để đọc sách, ngâm vịnh thơ văn và suy ngẫm kế sách trị nước an dân.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Thái Bình Lâu là tòa nhà hai tầng bằng gỗ nép mình thanh tịnh ở góc đông bắc Tử Cấm Thành. Được vua Khải Định xây dựng từ năm 1919 trên nền đình đọc sách cũ của vua Thiệu Trị."
+        },
+        {
+          "time_sec": 24.0,
+          "text": "Ngoại thất Thái Bình Lâu nổi bật với kỹ nghệ khảm sành sứ rực rỡ và bờ nóc đắp các hoa văn pháp lam tuyệt xảo hình rồng chầu mặt nguyệt. Mặt trước là hồ nước nhỏ với hòn non bộ thanh cảnh soi bóng hoa sen."
+        },
+        {
+          "time_sec": 56.0,
+          "text": "Bên trong lầu từng lưu giữ hàng nghìn tập thư tịch ngự chế quý giá. Đây là chốn nhà vua lui tới sau những giờ thiết triều căng thẳng để đọc sách, ngâm vịnh thơ văn và suy ngẫm kế sách trị nước an dân."
+        }
+      ],
+      "summary": "Thư viện hoàng gia tao nhã bên hồ sen thơm ngát, nơi các hoàng đế triều Nguyễn đọc sách, ngâm vịnh thi phú và tĩnh tâm trị quốc.",
+      "tags": [
+        "Tử Cấm Thành",
+        "Thư viện hoàng gia",
+        "Khảm sành sứ",
+        "Pháp lam"
+      ],
+      "transcript": [
+        {
+          "id": "thai-binh-lau-cue-1",
+          "startTime": 0,
+          "endTime": 24,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Thư phòng tao nhã của hoàng đế",
+          "textVi": "Thái Bình Lâu là tòa nhà hai tầng bằng gỗ nép mình thanh tịnh ở góc đông bắc Tử Cấm Thành. Được vua Khải Định xây dựng từ năm 1919 trên nền đình đọc sách cũ của vua Thiệu Trị."
+        },
+        {
+          "id": "thai-binh-lau-cue-2",
+          "startTime": 24,
+          "endTime": 56,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Trang trí pháp lam & Khảm sứ tinh mỹ",
+          "textVi": "Ngoại thất Thái Bình Lâu nổi bật với kỹ nghệ khảm sành sứ rực rỡ và bờ nóc đắp các hoa văn pháp lam tuyệt xảo hình rồng chầu mặt nguyệt. Mặt trước là hồ nước nhỏ với hòn non bộ thanh cảnh soi bóng hoa sen."
+        },
+        {
+          "id": "thai-binh-lau-cue-3",
+          "startTime": 56,
+          "endTime": 100,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Không gian lưu giữ điển tịch",
+          "textVi": "Bên trong lầu từng lưu giữ hàng nghìn tập thư tịch ngự chế quý giá. Đây là chốn nhà vua lui tới sau những giờ thiết triều căng thẳng để đọc sách, ngâm vịnh thơ văn và suy ngẫm kế sách trị nước an dân."
+        }
+      ]
+    },
+    {
+      "id": "audio-cung-dien-tho",
+      "monument_slug": "cung-dien-tho",
+      "site_slug": "cung-dien-tho",
+      "title_vi": "Cung Diên Thọ",
+      "site_name_vi": "Cung Diên Thọ",
+      "duration_seconds": 120,
+      "duration": 120,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/cung-dien-tho.mp3",
+      "script_text": "Tọa lạc ở phía tây bắc Hoàng Thành, Cung Diên Thọ là quần thể cung điện bề thế và hoàn chỉnh nhất còn lưu lại đến nay. Khởi dựng năm 1804 thời vua Gia Long với tên Trường Thọ Cung, nơi đây là chốn phụng dưỡng các bậc Hoàng Thái Hậu triều Nguyễn. Quần thể gồm hơn mười công trình liên hoàn: chính điện Diên Thọ uy nghiêm bằng gỗ lim, lầu Tịnh Minh tân cổ điển xây năm 1927, và nhà Tạ Trường Du thơ mộng bên hồ sen. Toàn bộ các công trình được kết nối bởi hệ thống trường lang có mái che chống mưa nắng miền Trung. Mỗi tuần một lần, các vị hoàng đế đều đích thân ngự giá sang Cung Diên Thọ để làm lễ vấn an sức khỏe thân mẫu. Chữ Hiếu được coi là nền tảng đạo đức mẫu mực để trị nước yên dân của đấng thiên tử. Khuôn viên Cung Diên Thọ với cây cối xanh tươi và tiếng nước róc rách mang lại vẻ đẹp tĩnh lặng, thanh cao, tách biệt khỏi sự náo nhiệt nơi triều đình.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Tọa lạc ở phía tây bắc Hoàng Thành, Cung Diên Thọ là quần thể cung điện bề thế và hoàn chỉnh nhất còn lưu lại đến nay. Khởi dựng năm 1804 thời vua Gia Long với tên Trường Thọ Cung, nơi đây là chốn phụng dưỡng các bậc Hoàng Thái Hậu triều Nguyễn."
+        },
+        {
+          "time_sec": 26.0,
+          "text": "Quần thể gồm hơn mười công trình liên hoàn: chính điện Diên Thọ uy nghiêm bằng gỗ lim, lầu Tịnh Minh tân cổ điển xây năm 1927, và nhà Tạ Trường Du thơ mộng bên hồ sen. Toàn bộ các công trình được kết nối bởi hệ thống trường lang có mái che chống mưa nắng miền Trung."
+        },
+        {
+          "time_sec": 60.0,
+          "text": "Mỗi tuần một lần, các vị hoàng đế đều đích thân ngự giá sang Cung Diên Thọ để làm lễ vấn an sức khỏe thân mẫu. Chữ Hiếu được coi là nền tảng đạo đức mẫu mực để trị nước yên dân của đấng thiên tử."
+        },
+        {
+          "time_sec": 92.0,
+          "text": "Khuôn viên Cung Diên Thọ với cây cối xanh tươi và tiếng nước róc rách mang lại vẻ đẹp tĩnh lặng, thanh cao, tách biệt khỏi sự náo nhiệt nơi triều đình."
+        }
+      ],
+      "summary": "Quần thể cung điện quy mô và nguyên vẹn nhất Hoàng Thành Huế, nơi ngụ cư phụng dưỡng Hoàng Thái Hậu với chuẩn mực hiếu đạo hoàng gia.",
+      "tags": [
+        "Không gian sinh hoạt",
+        "Hoàng Thái Hậu",
+        "Trường lang",
+        "Hiếu đạo"
+      ],
+      "transcript": [
+        {
+          "id": "cung-dien-tho-cue-1",
+          "startTime": 0,
+          "endTime": 26,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Cung điện của Hoàng Thái Hậu",
+          "textVi": "Tọa lạc ở phía tây bắc Hoàng Thành, Cung Diên Thọ là quần thể cung điện bề thế và hoàn chỉnh nhất còn lưu lại đến nay. Khởi dựng năm 1804 thời vua Gia Long với tên Trường Thọ Cung, nơi đây là chốn phụng dưỡng các bậc Hoàng Thái Hậu triều Nguyễn."
+        },
+        {
+          "id": "cung-dien-tho-cue-2",
+          "startTime": 26,
+          "endTime": 60,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Tổ hợp kiến trúc đa dạng & Trường lang",
+          "textVi": "Quần thể gồm hơn mười công trình liên hoàn: chính điện Diên Thọ uy nghiêm bằng gỗ lim, lầu Tịnh Minh tân cổ điển xây năm 1927, và nhà Tạ Trường Du thơ mộng bên hồ sen. Toàn bộ các công trình được kết nối bởi hệ thống trường lang có mái che chống mưa nắng miền Trung."
+        },
+        {
+          "id": "cung-dien-tho-cue-3",
+          "startTime": 60,
+          "endTime": 92,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Quy chế thỉnh an hiếu đạo",
+          "textVi": "Mỗi tuần một lần, các vị hoàng đế đều đích thân ngự giá sang Cung Diên Thọ để làm lễ vấn an sức khỏe thân mẫu. Chữ Hiếu được coi là nền tảng đạo đức mẫu mực để trị nước yên dân của đấng thiên tử."
+        },
+        {
+          "id": "cung-dien-tho-cue-4",
+          "startTime": 92,
+          "endTime": 120,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Không gian thanh nhã của các bậc mẫu nghi",
+          "textVi": "Khuôn viên Cung Diên Thọ với cây cối xanh tươi và tiếng nước róc rách mang lại vẻ đẹp tĩnh lặng, thanh cao, tách biệt khỏi sự náo nhiệt nơi triều đình."
+        }
+      ]
+    },
+    {
+      "id": "audio-cung-truong-sanh",
+      "monument_slug": "cung-truong-sanh",
+      "site_slug": "cung-truong-sanh",
+      "title_vi": "Cung Trường Sanh",
+      "site_name_vi": "Cung Trường Sanh",
+      "duration_seconds": 105,
+      "duration": 105,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/cung-truong-sanh.mp3",
+      "script_text": "Nằm ở góc tây bắc Hoàng Thành, Cung Trường Sanh được vua Minh Mạng cho xây dựng vào năm 1821 với tên gọi ban đầu là Cung Trường Ninh. Ban đầu đây là khu ngự uyển hoa viên để vua đến du ngoạn ngắm cảnh. Điểm độc đáo nhất của cung là hồ Đào Thái uốn lượn quanh các tòa nhà, kết nối bằng những cây cầu đá nhỏ và hệ thống hòn non bộ điệp trùng. Cảnh quan sinh thái mặt nước tạo nên vi khí hậu mát mẻ quanh năm. Về sau, cung được triều đình chuyển đổi thành nơi ở an nhàn của các bậc Thái Hoàng Thái Hậu. Kiến trúc thanh thoát hòa quyện cùng thiên nhiên đã biến Trường Sanh thành biểu tượng của sự trường thọ và an lành trong hoàng cung.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Nằm ở góc tây bắc Hoàng Thành, Cung Trường Sanh được vua Minh Mạng cho xây dựng vào năm 1821 với tên gọi ban đầu là Cung Trường Ninh. Ban đầu đây là khu ngự uyển hoa viên để vua đến du ngoạn ngắm cảnh."
+        },
+        {
+          "time_sec": 24.0,
+          "text": "Điểm độc đáo nhất của cung là hồ Đào Thái uốn lượn quanh các tòa nhà, kết nối bằng những cây cầu đá nhỏ và hệ thống hòn non bộ điệp trùng. Cảnh quan sinh thái mặt nước tạo nên vi khí hậu mát mẻ quanh năm."
+        },
+        {
+          "time_sec": 58.0,
+          "text": "Về sau, cung được triều đình chuyển đổi thành nơi ở an nhàn của các bậc Thái Hoàng Thái Hậu. Kiến trúc thanh thoát hòa quyện cùng thiên nhiên đã biến Trường Sanh thành biểu tượng của sự trường thọ và an lành trong hoàng cung."
+        }
+      ],
+      "summary": "Ngự uyển và hoa viên thanh bình với hồ Đào Thái uốn lượn, nơi nghỉ dưỡng và sinh hoạt an nhàn của các bậc Thái Hoàng Thái Hậu.",
+      "tags": [
+        "Không gian sinh hoạt",
+        "Ngự uyển",
+        "Hồ Đào Thái",
+        "Cảnh quan non bộ"
+      ],
+      "transcript": [
+        {
+          "id": "cung-truong-sanh-cue-1",
+          "startTime": 0,
+          "endTime": 24,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Hoa viên ngự uyển Cung Trường Sanh",
+          "textVi": "Nằm ở góc tây bắc Hoàng Thành, Cung Trường Sanh được vua Minh Mạng cho xây dựng vào năm 1821 với tên gọi ban đầu là Cung Trường Ninh. Ban đầu đây là khu ngự uyển hoa viên để vua đến du ngoạn ngắm cảnh."
+        },
+        {
+          "id": "cung-truong-sanh-cue-2",
+          "startTime": 24,
+          "endTime": 58,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Hồ Đào Thái & Cảnh quan non bộ",
+          "textVi": "Điểm độc đáo nhất của cung là hồ Đào Thái uốn lượn quanh các tòa nhà, kết nối bằng những cây cầu đá nhỏ và hệ thống hòn non bộ điệp trùng. Cảnh quan sinh thái mặt nước tạo nên vi khí hậu mát mẻ quanh năm."
+        },
+        {
+          "id": "cung-truong-sanh-cue-3",
+          "startTime": 58,
+          "endTime": 105,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Chốn tĩnh dưỡng của Thái Hoàng Thái Hậu",
+          "textVi": "Về sau, cung được triều đình chuyển đổi thành nơi ở an nhàn của các bậc Thái Hoàng Thái Hậu. Kiến trúc thanh thoát hòa quyện cùng thiên nhiên đã biến Trường Sanh thành biểu tượng của sự trường thọ và an lành trong hoàng cung."
+        }
+      ]
+    },
+    {
+      "id": "audio-dien-phung-tien",
+      "monument_slug": "dien-phung-tien",
+      "site_slug": "dien-phung-tien",
+      "title_vi": "Điện Phụng Tiên",
+      "site_name_vi": "Điện Phụng Tiên",
+      "duration_seconds": 110,
+      "duration": 110,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/dien-phung-tien.mp3",
+      "script_text": "Nằm ở phía tây Hoàng Thành đối xứng với Thế Miếu, Điện Phụng Tiên được vua Minh Mạng xây dựng vào năm 1829. Đây là ngôi đền phụng thờ liệt thánh hoàng đế dành riêng cho các bậc mẫu nghi và cung phi trong hoàng cung. Theo quy định triều Nguyễn, phụ nữ hoàng tộc không được phép bước chân vào Thế Tổ Miếu. Do đó, triều đình dựng Điện Phụng Tiên để các bà Hoàng Thái Hậu, Hoàng Hậu và cung tần có thể trực tiếp đến dâng hương bày tỏ lòng hiếu kính tổ tiên. Sau chiến tranh năm 1947, tòa chính điện đã bị thiêu rụi hoàn toàn, song cổng Tam Quan gạch vôi rêu phong và bức bình phong đắp nổi hoa văn gốm sứ vẫn đứng vững như chứng nhân thời gian. Các hoạt động khảo cổ học và bảo tồn gần đây đang làm sống lại câu chuyện về vai trò và đời sống tâm linh của người phụ nữ trong hoàng gia triều Nguyễn.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Nằm ở phía tây Hoàng Thành đối xứng với Thế Miếu, Điện Phụng Tiên được vua Minh Mạng xây dựng vào năm 1829. Đây là ngôi đền phụng thờ liệt thánh hoàng đế dành riêng cho các bậc mẫu nghi và cung phi trong hoàng cung."
+        },
+        {
+          "time_sec": 25.0,
+          "text": "Theo quy định triều Nguyễn, phụ nữ hoàng tộc không được phép bước chân vào Thế Tổ Miếu. Do đó, triều đình dựng Điện Phụng Tiên để các bà Hoàng Thái Hậu, Hoàng Hậu và cung tần có thể trực tiếp đến dâng hương bày tỏ lòng hiếu kính tổ tiên."
+        },
+        {
+          "time_sec": 58.0,
+          "text": "Sau chiến tranh năm 1947, tòa chính điện đã bị thiêu rụi hoàn toàn, song cổng Tam Quan gạch vôi rêu phong và bức bình phong đắp nổi hoa văn gốm sứ vẫn đứng vững như chứng nhân thời gian."
+        },
+        {
+          "time_sec": 88.0,
+          "text": "Các hoạt động khảo cổ học và bảo tồn gần đây đang làm sống lại câu chuyện về vai trò và đời sống tâm linh của người phụ nữ trong hoàng gia triều Nguyễn."
+        }
+      ],
+      "summary": "Ngôi điện phụng thờ tổ tiên dành riêng cho nữ giới hoàng tộc đến dâng hương lễ bái, phản ánh quy chế điển lễ độc đáo của triều Nguyễn.",
+      "tags": [
+        "Không gian thờ tự",
+        "Nữ giới hoàng tộc",
+        "Cổng Tam Quan",
+        "Phế tích khảo cổ"
+      ],
+      "transcript": [
+        {
+          "id": "dien-phung-tien-cue-1",
+          "startTime": 0,
+          "endTime": 25,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Ngôi điện thờ của nữ giới hoàng tộc",
+          "textVi": "Nằm ở phía tây Hoàng Thành đối xứng với Thế Miếu, Điện Phụng Tiên được vua Minh Mạng xây dựng vào năm 1829. Đây là ngôi đền phụng thờ liệt thánh hoàng đế dành riêng cho các bậc mẫu nghi và cung phi trong hoàng cung."
+        },
+        {
+          "id": "dien-phung-tien-cue-2",
+          "startTime": 25,
+          "endTime": 58,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Quy chế phân biệt nghi lễ khắt khe",
+          "textVi": "Theo quy định triều Nguyễn, phụ nữ hoàng tộc không được phép bước chân vào Thế Tổ Miếu. Do đó, triều đình dựng Điện Phụng Tiên để các bà Hoàng Thái Hậu, Hoàng Hậu và cung tần có thể trực tiếp đến dâng hương bày tỏ lòng hiếu kính tổ tiên."
+        },
+        {
+          "id": "dien-phung-tien-cue-3",
+          "startTime": 58,
+          "endTime": 88,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Dấu tích cổng Tam Quan & Bình phong",
+          "textVi": "Sau chiến tranh năm 1947, tòa chính điện đã bị thiêu rụi hoàn toàn, song cổng Tam Quan gạch vôi rêu phong và bức bình phong đắp nổi hoa văn gốm sứ vẫn đứng vững như chứng nhân thời gian."
+        },
+        {
+          "id": "dien-phung-tien-cue-4",
+          "startTime": 88,
+          "endTime": 110,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Bảo tồn giá trị văn hóa nhân văn",
+          "textVi": "Các hoạt động khảo cổ học và bảo tồn gần đây đang làm sống lại câu chuyện về vai trò và đời sống tâm linh của người phụ nữ trong hoàng gia triều Nguyễn."
+        }
+      ]
+    }
+  ],
+  "tracks": [
+    {
+      "id": "audio-ngo-mon",
+      "monument_slug": "ngo-mon",
+      "site_slug": "ngo-mon",
+      "title_vi": "Ngọ Môn",
+      "site_name_vi": "Ngọ Môn",
+      "duration_seconds": 128,
+      "duration": 128,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/ngo-mon.mp3",
+      "script_text": "Chào mừng các bạn đến với Ngọ Môn — chiếc cổng chính sừng sững tại mặt nam Hoàng Thành Huế. Khởi dựng vào năm Minh Mạng thứ 14, tức năm 1833, Ngọ Môn được xây trên nền đài Nam Sách cũ thời vua Gia Long. Nhìn từ chính diện, đài đá hình chữ U trổ đúng năm cửa ngõ, thể hiện tư tưởng trung quân và trật tự điển lễ nghiêm ngặt. Lối chính giữa mang tên Ngọ Môn, cửa lát đá thanh, chỉ dành riêng cho thiên tử xuất nhập. Hai bên là Tả Giáp Môn và Hữu Giáp Môn dành cho bá quan văn võ triều đình. Ở hai cánh gà chữ U là Tả Dịch Môn và Hữu Dịch Môn — lối di chuyển của binh mã, voi trận và quân cấm vệ tuần thám. Cấu trúc chữ U vươn ra hai bên không chỉ tăng tính uy nghiêm mà còn đóng vai trò pháo đài khép góc, bảo đảm phòng thủ tối đa cho Hoàng cung. Ngự trên đài đá kiên cố là Lầu Ngũ Phụng với một trăm cột gỗ lim vững chãi, mái ngói lưu ly vàng và thanh lưu ly xanh biếc đan xen. Đây là nơi diễn ra các nghi điển trọng thể bậc nhất: lễ Ban Sóc đầu năm, lễ Truyền Loa xướng danh tân khoa tiến sĩ, và cuộc thoái vị lịch sử mùa thu năm 1945. Ngọ Môn không đơn thuần là một cổng thành, mà là kiệt tác nghệ thuật kiến trúc gỗ và đá của tiền nhân, kết tinh đỉnh cao kỹ nghệ xây dựng triều Nguyễn và biểu tượng bất diệt của Cố đô Huế.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Chào mừng các bạn đến với Ngọ Môn — chiếc cổng chính sừng sững tại mặt nam Hoàng Thành Huế. Khởi dựng vào năm Minh Mạng thứ 14, tức năm 1833, Ngọ Môn được xây trên nền đài Nam Sách cũ thời vua Gia Long."
+        },
+        {
+          "time_sec": 18.0,
+          "text": "Nhìn từ chính diện, đài đá hình chữ U trổ đúng năm cửa ngõ, thể hiện tư tưởng trung quân và trật tự điển lễ nghiêm ngặt. Lối chính giữa mang tên Ngọ Môn, cửa lát đá thanh, chỉ dành riêng cho thiên tử xuất nhập. Hai bên là Tả Giáp Môn và Hữu Giáp Môn dành cho bá quan văn võ triều đình."
+        },
+        {
+          "time_sec": 44.0,
+          "text": "Ở hai cánh gà chữ U là Tả Dịch Môn và Hữu Dịch Môn — lối di chuyển của binh mã, voi trận và quân cấm vệ tuần thám. Cấu trúc chữ U vươn ra hai bên không chỉ tăng tính uy nghiêm mà còn đóng vai trò pháo đài khép góc, bảo đảm phòng thủ tối đa cho Hoàng cung."
+        },
+        {
+          "time_sec": 76.0,
+          "text": "Ngự trên đài đá kiên cố là Lầu Ngũ Phụng với một trăm cột gỗ lim vững chãi, mái ngói lưu ly vàng và thanh lưu ly xanh biếc đan xen. Đây là nơi diễn ra các nghi điển trọng thể bậc nhất: lễ Ban Sóc đầu năm, lễ Truyền Loa xướng danh tân khoa tiến sĩ, và cuộc thoái vị lịch sử mùa thu năm 1945."
+        },
+        {
+          "time_sec": 104.0,
+          "text": "Ngọ Môn không đơn thuần là một cổng thành, mà là kiệt tác nghệ thuật kiến trúc gỗ và đá của tiền nhân, kết tinh đỉnh cao kỹ nghệ xây dựng triều Nguyễn và biểu tượng bất diệt của Cố đô Huế."
+        }
+      ],
+      "summary": "Khám phá quy chuẩn phân tầng quyền lực qua cấu trúc ngũ môn và biểu tượng lầu Ngũ Phụng trên trục chính đạo Hoàng Thành Huế.",
+      "tags": [
+        "Trục chính đạo",
+        "Kiến trúc phòng thủ",
+        "Lễ nghi triều đình",
+        "UNESCO"
+      ],
+      "transcript": [
+        {
+          "id": "ngo-mon-cue-1",
+          "startTime": 0,
+          "endTime": 18,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Lời mở đầu & Bối cảnh",
+          "textVi": "Chào mừng các bạn đến với Ngọ Môn — chiếc cổng chính sừng sững tại mặt nam Hoàng Thành Huế. Khởi dựng vào năm Minh Mạng thứ 14, tức năm 1833, Ngọ Môn được xây trên nền đài Nam Sách cũ thời vua Gia Long."
+        },
+        {
+          "id": "ngo-mon-cue-2",
+          "startTime": 18,
+          "endTime": 44,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Cấu trúc Ngũ Môn & Phân tầng quyền lực",
+          "textVi": "Nhìn từ chính diện, đài đá hình chữ U trổ đúng năm cửa ngõ, thể hiện tư tưởng trung quân và trật tự điển lễ nghiêm ngặt. Lối chính giữa mang tên Ngọ Môn, cửa lát đá thanh, chỉ dành riêng cho thiên tử xuất nhập. Hai bên là Tả Giáp Môn và Hữu Giáp Môn dành cho bá quan văn võ triều đình."
+        },
+        {
+          "id": "ngo-mon-cue-3",
+          "startTime": 44,
+          "endTime": 76,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Lối chuyển quân & Cánh gà",
+          "textVi": "Ở hai cánh gà chữ U là Tả Dịch Môn và Hữu Dịch Môn — lối di chuyển của binh mã, voi trận và quân cấm vệ tuần thám. Cấu trúc chữ U vươn ra hai bên không chỉ tăng tính uy nghiêm mà còn đóng vai trò pháo đài khép góc, bảo đảm phòng thủ tối đa cho Hoàng cung."
+        },
+        {
+          "id": "ngo-mon-cue-4",
+          "startTime": 76,
+          "endTime": 104,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Lầu Ngũ Phụng & Nghi lễ triều đình",
+          "textVi": "Ngự trên đài đá kiên cố là Lầu Ngũ Phụng với một trăm cột gỗ lim vững chãi, mái ngói lưu ly vàng và thanh lưu ly xanh biếc đan xen. Đây là nơi diễn ra các nghi điển trọng thể bậc nhất: lễ Ban Sóc đầu năm, lễ Truyền Loa xướng danh tân khoa tiến sĩ, và cuộc thoái vị lịch sử mùa thu năm 1945."
+        },
+        {
+          "id": "ngo-mon-cue-5",
+          "startTime": 104,
+          "endTime": 128,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Ý nghĩa lịch sử",
+          "textVi": "Ngọ Môn không đơn thuần là một cổng thành, mà là kiệt tác nghệ thuật kiến trúc gỗ và đá của tiền nhân, kết tinh đỉnh cao kỹ nghệ xây dựng triều Nguyễn và biểu tượng bất diệt của Cố đô Huế."
+        }
+      ]
+    },
+    {
+      "id": "audio-cau-trung-dao",
+      "monument_slug": "cau-trung-dao",
+      "site_slug": "cau-trung-dao",
+      "title_vi": "Cầu Trung Đạo",
+      "site_name_vi": "Cầu Trung Đạo",
+      "duration_seconds": 95,
+      "duration": 95,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/cau-trung-dao.mp3",
+      "script_text": "Bước qua khỏi vòm cổng Ngọ Môn, không gian mở òa ra trước mắt bạn là hồ Thái Dịch phẳng lặng như gương sen, và nhịp cầu đá thẳng tắp mang tên Cầu Trung Đạo. Cầu được khởi lập vào năm Minh Mạng thứ 14. Hai đầu cầu dựng hai cổng đồng quán với các hoa văn pháp lam và chạm nổi rồng mây tinh xảo. 'Trung Đạo' không chỉ chỉ con đường đi ở chính giữa, mà còn hàm ý đạo Trung dung của Nho gia — chuẩn mực hành xử không thiên lệch của đấng quân vương và các bậc bề tôi. Mặt nước hồ Thái Dịch giữ vai trò máy điều hòa tự nhiên, phản chiếu bóng mây trời và giảm bớt cái nắng gay gắt của miền Trung. Đi trên cầu Trung Đạo, mỗi bước chân là một nhịp chuyển tiếp tâm lý tĩnh tại, chuẩn bị diện kiến không gian quyền lực tối thượng tại Điện Thái Hòa.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Bước qua khỏi vòm cổng Ngọ Môn, không gian mở òa ra trước mắt bạn là hồ Thái Dịch phẳng lặng như gương sen, và nhịp cầu đá thẳng tắp mang tên Cầu Trung Đạo. Cầu được khởi lập vào năm Minh Mạng thứ 14."
+        },
+        {
+          "time_sec": 22.0,
+          "text": "Hai đầu cầu dựng hai cổng đồng quán với các hoa văn pháp lam và chạm nổi rồng mây tinh xảo. 'Trung Đạo' không chỉ chỉ con đường đi ở chính giữa, mà còn hàm ý đạo Trung dung của Nho gia — chuẩn mực hành xử không thiên lệch của đấng quân vương và các bậc bề tôi."
+        },
+        {
+          "time_sec": 54.0,
+          "text": "Mặt nước hồ Thái Dịch giữ vai trò máy điều hòa tự nhiên, phản chiếu bóng mây trời và giảm bớt cái nắng gay gắt của miền Trung. Đi trên cầu Trung Đạo, mỗi bước chân là một nhịp chuyển tiếp tâm lý tĩnh tại, chuẩn bị diện kiến không gian quyền lực tối thượng tại Điện Thái Hòa."
+        }
+      ],
+      "summary": "Cầu đá thanh bắc qua hồ Thái Dịch tạo vùng đệm vi khí hậu và trục tâm lý trang nghiêm trước khi tiến vào sân Đại Triều Nghi.",
+      "tags": [
+        "Trục chính đạo",
+        "Thủy đạo",
+        "Phong thủy cảnh quan"
+      ],
+      "transcript": [
+        {
+          "id": "cau-trung-dao-cue-1",
+          "startTime": 0,
+          "endTime": 22,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Vị trí & Thủy đạo Thái Dịch",
+          "textVi": "Bước qua khỏi vòm cổng Ngọ Môn, không gian mở òa ra trước mắt bạn là hồ Thái Dịch phẳng lặng như gương sen, và nhịp cầu đá thẳng tắp mang tên Cầu Trung Đạo. Cầu được khởi lập vào năm Minh Mạng thứ 14."
+        },
+        {
+          "id": "cau-trung-dao-cue-2",
+          "startTime": 22,
+          "endTime": 54,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Cửa đồng quán & Triết lý trung đạo",
+          "textVi": "Hai đầu cầu dựng hai cổng đồng quán với các hoa văn pháp lam và chạm nổi rồng mây tinh xảo. 'Trung Đạo' không chỉ chỉ con đường đi ở chính giữa, mà còn hàm ý đạo Trung dung của Nho gia — chuẩn mực hành xử không thiên lệch của đấng quân vương và các bậc bề tôi."
+        },
+        {
+          "id": "cau-trung-dao-cue-3",
+          "startTime": 54,
+          "endTime": 95,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Vi khí hậu & Chuyển tiếp tâm lý",
+          "textVi": "Mặt nước hồ Thái Dịch giữ vai trò máy điều hòa tự nhiên, phản chiếu bóng mây trời và giảm bớt cái nắng gay gắt của miền Trung. Đi trên cầu Trung Đạo, mỗi bước chân là một nhịp chuyển tiếp tâm lý tĩnh tại, chuẩn bị diện kiến không gian quyền lực tối thượng tại Điện Thái Hòa."
+        }
+      ]
+    },
+    {
+      "id": "audio-san-dai-trieu-nghi",
+      "monument_slug": "san-dai-trieu-nghi",
+      "site_slug": "san-dai-trieu-nghi",
+      "title_vi": "Sân Đại Triều Nghi",
+      "site_name_vi": "Sân Đại Triều Nghi",
+      "duration_seconds": 115,
+      "duration": 115,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/san-dai-trieu-nghi.mp3",
+      "script_text": "Trước mắt bạn là Sân Đại Triều Nghi, nơi từng diễn ra các nghi lễ quan trọng bậc nhất của quốc gia thời phong kiến. Mặt sân được chia làm hai tầng bậc rõ rệt: tầng trên gọi là Bái Mạng, tầng dưới dành cho các quan thứ phẩm. Dọc hai bên sân là hai hàng bia đá nhỏ khắc rõ phẩm trật từ Chánh nhất phẩm đến Tòng cửu phẩm. Quan văn đứng bên tả hướng Đông, quan võ đứng bên hữu hướng Tây. Thứ bậc triều thần được phân định rạch ròi bằng thước đo không gian, không ai được phép vượt quá vị trí phẩm hàm của mình. Mỗi tháng hai lần, vào ngày mồng một và ngày rằm, các quan mặc triều phục đại lễ, tề tựu chỉnh tề từ sáng sớm. Khi tiếng chuông trống ngân vang và nhã nhạc cử lên, bá quan đồng loạt hướng về ngai vàng trong điện Thái Hòa làm lễ ba quỳ chín lạy. Sân Đại Triều Nghi không chỉ là khoảng sân gạch đơn thuần, mà là hiện thân không gian của kỷ cương, phép nước và trật tự chính trị quân chủ tập quyền thời nhà Nguyễn.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Trước mắt bạn là Sân Đại Triều Nghi, nơi từng diễn ra các nghi lễ quan trọng bậc nhất của quốc gia thời phong kiến. Mặt sân được chia làm hai tầng bậc rõ rệt: tầng trên gọi là Bái Mạng, tầng dưới dành cho các quan thứ phẩm."
+        },
+        {
+          "time_sec": 24.0,
+          "text": "Dọc hai bên sân là hai hàng bia đá nhỏ khắc rõ phẩm trật từ Chánh nhất phẩm đến Tòng cửu phẩm. Quan văn đứng bên tả hướng Đông, quan võ đứng bên hữu hướng Tây. Thứ bậc triều thần được phân định rạch ròi bằng thước đo không gian, không ai được phép vượt quá vị trí phẩm hàm của mình."
+        },
+        {
+          "time_sec": 58.0,
+          "text": "Mỗi tháng hai lần, vào ngày mồng một và ngày rằm, các quan mặc triều phục đại lễ, tề tựu chỉnh tề từ sáng sớm. Khi tiếng chuông trống ngân vang và nhã nhạc cử lên, bá quan đồng loạt hướng về ngai vàng trong điện Thái Hòa làm lễ ba quỳ chín lạy."
+        },
+        {
+          "time_sec": 88.0,
+          "text": "Sân Đại Triều Nghi không chỉ là khoảng sân gạch đơn thuần, mà là hiện thân không gian của kỷ cương, phép nước và trật tự chính trị quân chủ tập quyền thời nhà Nguyễn."
+        }
+      ],
+      "summary": "Khoảng sân hai tầng lát đá thanh và gạch Bát Tràng, nơi tổ chức các buổi lễ đại triều mồng một và ngày rằm hàng tháng với hệ thống bia phẩm trật.",
+      "tags": [
+        "Trục chính đạo",
+        "Nghi lễ bái mạng",
+        "Bia phẩm trật"
+      ],
+      "transcript": [
+        {
+          "id": "san-dai-trieu-nghi-cue-1",
+          "startTime": 0,
+          "endTime": 24,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Sân Bái Mạng & Bố cục hai tầng",
+          "textVi": "Trước mắt bạn là Sân Đại Triều Nghi, nơi từng diễn ra các nghi lễ quan trọng bậc nhất của quốc gia thời phong kiến. Mặt sân được chia làm hai tầng bậc rõ rệt: tầng trên gọi là Bái Mạng, tầng dưới dành cho các quan thứ phẩm."
+        },
+        {
+          "id": "san-dai-trieu-nghi-cue-2",
+          "startTime": 24,
+          "endTime": 58,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Hệ thống bia phẩm trật đá",
+          "textVi": "Dọc hai bên sân là hai hàng bia đá nhỏ khắc rõ phẩm trật từ Chánh nhất phẩm đến Tòng cửu phẩm. Quan văn đứng bên tả hướng Đông, quan võ đứng bên hữu hướng Tây. Thứ bậc triều thần được phân định rạch ròi bằng thước đo không gian, không ai được phép vượt quá vị trí phẩm hàm của mình."
+        },
+        {
+          "id": "san-dai-trieu-nghi-cue-3",
+          "startTime": 58,
+          "endTime": 88,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Nghi thức Đại Triều thường kỳ",
+          "textVi": "Mỗi tháng hai lần, vào ngày mồng một và ngày rằm, các quan mặc triều phục đại lễ, tề tựu chỉnh tề từ sáng sớm. Khi tiếng chuông trống ngân vang và nhã nhạc cử lên, bá quan đồng loạt hướng về ngai vàng trong điện Thái Hòa làm lễ ba quỳ chín lạy."
+        },
+        {
+          "id": "san-dai-trieu-nghi-cue-4",
+          "startTime": 88,
+          "endTime": 115,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Biểu tượng trật tự quốc gia",
+          "textVi": "Sân Đại Triều Nghi không chỉ là khoảng sân gạch đơn thuần, mà là hiện thân không gian của kỷ cương, phép nước và trật tự chính trị quân chủ tập quyền thời nhà Nguyễn."
+        }
+      ]
+    },
+    {
+      "id": "audio-dien-thai-hoa",
+      "monument_slug": "dien-thai-hoa",
+      "site_slug": "dien-thai-hoa",
+      "title_vi": "Điện Thái Hòa",
+      "site_name_vi": "Điện Thái Hòa",
+      "duration_seconds": 140,
+      "duration": 140,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/dien-thai-hoa.mp3",
+      "script_text": "Bạn đang diện kiến Điện Thái Hòa — tòa điện nguy nga nhất và là biểu tượng quyền lực tối cao của mười ba đời vua Nguyễn. Tòa điện được khởi dựng năm 1805 thời Gia Long và được vua Minh Mạng dời lui, nâng cấp quy mô hoành tráng vào năm 1833. Điện được xây theo lối 'trùng thiềm điệp ốc', tức nhà kép chồng mái, nối liền nhau bằng máng xối vỏ cua. Hệ thống 80 cột gỗ lim to lớn được sơn son thếp vàng lộng lẫy, vẽ rồng mây uốn lượn tinh xảo, chống đỡ toàn bộ hai tầng mái lợp ngói hoàng lưu lý rực rỡ. Tâm điểm của nội điện là ngai vàng sơn son thếp vàng của hoàng đế, đặt trên bệ đá ba tầng uy nghiêm. Phía trên che bửu tán bằng gỗ chạm lộng hoa văn rồng bay phụng múa rực sáng, biểu trưng cho thiên mệnh che chở giang sơn xã tắc. Ngước nhìn lên dải liên ba, bạn sẽ thấy hàng trăm ô hộc khắc thơ chữ Hán và tranh vẽ thếp vàng theo lối 'nhất thi nhất họa'. Những áng thơ ngự chế ca ngợi non sông gấm vóc, thái bình thịnh trị và khẳng định chủ quyền độc lập thiêng liêng của dân tộc. Nơi đây từng chứng kiến lễ đăng quang của các bậc hoàng đế, lễ vạn thọ mừng sinh nhật vua, và là nơi đón tiếp trọng thể các đoàn sứ bộ ngoại giao bang giao quốc tế.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Bạn đang diện kiến Điện Thái Hòa — tòa điện nguy nga nhất và là biểu tượng quyền lực tối cao của mười ba đời vua Nguyễn. Tòa điện được khởi dựng năm 1805 thời Gia Long và được vua Minh Mạng dời lui, nâng cấp quy mô hoành tráng vào năm 1833."
+        },
+        {
+          "time_sec": 28.0,
+          "text": "Điện được xây theo lối 'trùng thiềm điệp ốc', tức nhà kép chồng mái, nối liền nhau bằng máng xối vỏ cua. Hệ thống 80 cột gỗ lim to lớn được sơn son thếp vàng lộng lẫy, vẽ rồng mây uốn lượn tinh xảo, chống đỡ toàn bộ hai tầng mái lợp ngói hoàng lưu lý rực rỡ."
+        },
+        {
+          "time_sec": 58.0,
+          "text": "Tâm điểm của nội điện là ngai vàng sơn son thếp vàng của hoàng đế, đặt trên bệ đá ba tầng uy nghiêm. Phía trên che bửu tán bằng gỗ chạm lộng hoa văn rồng bay phụng múa rực sáng, biểu trưng cho thiên mệnh che chở giang sơn xã tắc."
+        },
+        {
+          "time_sec": 92.0,
+          "text": "Ngước nhìn lên dải liên ba, bạn sẽ thấy hàng trăm ô hộc khắc thơ chữ Hán và tranh vẽ thếp vàng theo lối 'nhất thi nhất họa'. Những áng thơ ngự chế ca ngợi non sông gấm vóc, thái bình thịnh trị và khẳng định chủ quyền độc lập thiêng liêng của dân tộc."
+        },
+        {
+          "time_sec": 118.0,
+          "text": "Nơi đây từng chứng kiến lễ đăng quang của các bậc hoàng đế, lễ vạn thọ mừng sinh nhật vua, và là nơi đón tiếp trọng thể các đoàn sứ bộ ngoại giao bang giao quốc tế."
+        }
+      ],
+      "summary": "Trọng tâm quyền lực của Hoàng triều Nguyễn với kiến trúc trùng thiềm điệp ốc 80 cột gỗ lim thếp vàng, ngai vàng bửu tán và thơ văn liên ba.",
+      "tags": [
+        "Trục chính đạo",
+        "Kiến trúc trùng thiềm điệp ốc",
+        "Ngai vàng",
+        "Di sản tư liệu"
+      ],
+      "transcript": [
+        {
+          "id": "dien-thai-hoa-cue-1",
+          "startTime": 0,
+          "endTime": 28,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Tòa điện tối thượng của vương triều",
+          "textVi": "Bạn đang diện kiến Điện Thái Hòa — tòa điện nguy nga nhất và là biểu tượng quyền lực tối cao của mười ba đời vua Nguyễn. Tòa điện được khởi dựng năm 1805 thời Gia Long và được vua Minh Mạng dời lui, nâng cấp quy mô hoành tráng vào năm 1833."
+        },
+        {
+          "id": "dien-thai-hoa-cue-2",
+          "startTime": 28,
+          "endTime": 58,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Kiến trúc Trùng thiềm điệp ốc",
+          "textVi": "Điện được xây theo lối 'trùng thiềm điệp ốc', tức nhà kép chồng mái, nối liền nhau bằng máng xối vỏ cua. Hệ thống 80 cột gỗ lim to lớn được sơn son thếp vàng lộng lẫy, vẽ rồng mây uốn lượn tinh xảo, chống đỡ toàn bộ hai tầng mái lợp ngói hoàng lưu lý rực rỡ."
+        },
+        {
+          "id": "dien-thai-hoa-cue-3",
+          "startTime": 58,
+          "endTime": 92,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Ngai vàng thiên tử & Bửu tán",
+          "textVi": "Tâm điểm của nội điện là ngai vàng sơn son thếp vàng của hoàng đế, đặt trên bệ đá ba tầng uy nghiêm. Phía trên che bửu tán bằng gỗ chạm lộng hoa văn rồng bay phụng múa rực sáng, biểu trưng cho thiên mệnh che chở giang sơn xã tắc."
+        },
+        {
+          "id": "dien-thai-hoa-cue-4",
+          "startTime": 92,
+          "endTime": 118,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Hệ thống ô hộc 'Nhất thi nhất họa'",
+          "textVi": "Ngước nhìn lên dải liên ba, bạn sẽ thấy hàng trăm ô hộc khắc thơ chữ Hán và tranh vẽ thếp vàng theo lối 'nhất thi nhất họa'. Những áng thơ ngự chế ca ngợi non sông gấm vóc, thái bình thịnh trị và khẳng định chủ quyền độc lập thiêng liêng của dân tộc."
+        },
+        {
+          "id": "dien-thai-hoa-cue-5",
+          "startTime": 118,
+          "endTime": 140,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Đại lễ đăng quang & Ngoại giao",
+          "textVi": "Nơi đây từng chứng kiến lễ đăng quang của các bậc hoàng đế, lễ vạn thọ mừng sinh nhật vua, và là nơi đón tiếp trọng thể các đoàn sứ bộ ngoại giao bang giao quốc tế."
+        }
+      ]
+    },
+    {
+      "id": "audio-the-to-mieu",
+      "monument_slug": "the-to-mieu",
+      "site_slug": "the-to-mieu",
+      "title_vi": "Thế Tổ Miếu",
+      "site_name_vi": "Thế Tổ Miếu",
+      "duration_seconds": 125,
+      "duration": 125,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/the-to-mieu.mp3",
+      "script_text": "Chào mừng bạn đến với Thế Tổ Miếu, hay thường gọi là Thế Miếu. Ngôi miếu linh thiêng tọa lạc ở góc tây nam Hoàng Thành, được vua Minh Mạng khởi dựng vào năm 1821 để phụng thờ các vị tiên đế triều Nguyễn. Tòa miếu chính có kết cấu trùng thiềm điệp ốc rộng chín gian hai chái, lợp ngói hoàng lưu ly. Toàn bộ khung gỗ lim vững chãi được sơn son thếp vàng, mang đậm phong vị kiến trúc đền miếu cổ truyền Việt Nam. Bên trong Thế Miếu, việc sắp đặt các án thờ tuân thủ nghiêm ngặt nguyên tắc 'tả chiêu hữu mục': gian chính giữa phụng thờ vua Gia Long, bên tả là Chiêu thờ các vua đời lẻ, bên hữu là Mục thờ các vua đời chẵn. Mỗi án thờ đều có long ngai, bài vị và hòm đựng bảo kiếm, ngọc phả thiêng liêng. Hàng năm, triều đình tổ chức các kỳ đại tế xuân, hạ, thu, đông với nghi thức cung đình nghiêm trang. Thế Miếu là biểu hiện cao nhất của đạo hiếu và tính chính thống vương quyền triều Nguyễn.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Chào mừng bạn đến với Thế Tổ Miếu, hay thường gọi là Thế Miếu. Ngôi miếu linh thiêng tọa lạc ở góc tây nam Hoàng Thành, được vua Minh Mạng khởi dựng vào năm 1821 để phụng thờ các vị tiên đế triều Nguyễn."
+        },
+        {
+          "time_sec": 24.0,
+          "text": "Tòa miếu chính có kết cấu trùng thiềm điệp ốc rộng chín gian hai chái, lợp ngói hoàng lưu ly. Toàn bộ khung gỗ lim vững chãi được sơn son thếp vàng, mang đậm phong vị kiến trúc đền miếu cổ truyền Việt Nam."
+        },
+        {
+          "time_sec": 56.0,
+          "text": "Bên trong Thế Miếu, việc sắp đặt các án thờ tuân thủ nghiêm ngặt nguyên tắc 'tả chiêu hữu mục': gian chính giữa phụng thờ vua Gia Long, bên tả là Chiêu thờ các vua đời lẻ, bên hữu là Mục thờ các vua đời chẵn. Mỗi án thờ đều có long ngai, bài vị và hòm đựng bảo kiếm, ngọc phả thiêng liêng."
+        },
+        {
+          "time_sec": 92.0,
+          "text": "Hàng năm, triều đình tổ chức các kỳ đại tế xuân, hạ, thu, đông với nghi thức cung đình nghiêm trang. Thế Miếu là biểu hiện cao nhất của đạo hiếu và tính chính thống vương quyền triều Nguyễn."
+        }
+      ],
+      "summary": "Không gian thờ tự linh thiêng phụng thờ các vị hoàng đế triều Nguyễn với cấu trúc 9 gian 2 chái và nguyên tắc bài trí tả chiêu hữu mục.",
+      "tags": [
+        "Không gian thờ tự",
+        "Đạo hiếu",
+        "Tả chiêu hữu mục"
+      ],
+      "transcript": [
+        {
+          "id": "the-to-mieu-cue-1",
+          "startTime": 0,
+          "endTime": 24,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Không gian phụng thờ liệt thánh",
+          "textVi": "Chào mừng bạn đến với Thế Tổ Miếu, hay thường gọi là Thế Miếu. Ngôi miếu linh thiêng tọa lạc ở góc tây nam Hoàng Thành, được vua Minh Mạng khởi dựng vào năm 1821 để phụng thờ các vị tiên đế triều Nguyễn."
+        },
+        {
+          "id": "the-to-mieu-cue-2",
+          "startTime": 24,
+          "endTime": 56,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Kiến trúc chín gian hai chái",
+          "textVi": "Tòa miếu chính có kết cấu trùng thiềm điệp ốc rộng chín gian hai chái, lợp ngói hoàng lưu ly. Toàn bộ khung gỗ lim vững chãi được sơn son thếp vàng, mang đậm phong vị kiến trúc đền miếu cổ truyền Việt Nam."
+        },
+        {
+          "id": "the-to-mieu-cue-3",
+          "startTime": 56,
+          "endTime": 92,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Nguyên tắc bài trí Tả chiêu hữu mục",
+          "textVi": "Bên trong Thế Miếu, việc sắp đặt các án thờ tuân thủ nghiêm ngặt nguyên tắc 'tả chiêu hữu mục': gian chính giữa phụng thờ vua Gia Long, bên tả là Chiêu thờ các vua đời lẻ, bên hữu là Mục thờ các vua đời chẵn. Mỗi án thờ đều có long ngai, bài vị và hòm đựng bảo kiếm, ngọc phả thiêng liêng."
+        },
+        {
+          "id": "the-to-mieu-cue-4",
+          "startTime": 92,
+          "endTime": 125,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Lễ tế bốn mùa & Tôn vinh cội nguồn",
+          "textVi": "Hàng năm, triều đình tổ chức các kỳ đại tế xuân, hạ, thu, đông với nghi thức cung đình nghiêm trang. Thế Miếu là biểu hiện cao nhất của đạo hiếu và tính chính thống vương quyền triều Nguyễn."
+        }
+      ]
+    },
+    {
+      "id": "audio-hien-lam-cac",
+      "monument_slug": "hien-lam-cac",
+      "site_slug": "hien-lam-cac",
+      "title_vi": "Hiển Lâm Các",
+      "site_name_vi": "Hiển Lâm Các",
+      "duration_seconds": 110,
+      "duration": 110,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/hien-lam-cac.mp3",
+      "script_text": "Đứng sừng sững trước sân Thế Tổ Miếu là Hiển Lâm Các — tòa vọng lâu cao ba tầng, đạt chiều cao 17 mét. Suốt thời Nguyễn, triều đình ra sắc lệnh không bất cứ công trình nào trong Thành Nội được phép xây cao hơn Hiển Lâm Các. Tòa gác được nâng đỡ bởi 24 cột gỗ lim nguyên khối thanh thoát. Tầng dưới có không gian thoáng đãng; tầng hai và tầng ba thu nhỏ dần với các cửa sổ tròn chạm hoa văn chữ Thọ đón gió bốn phương, mái lợp ngói hoàng lưu ly rực sáng dưới ánh bình minh. Hiển Lâm Các mang ý nghĩa ngợi ca công đức tổ tiên và ghi danh các vị khai quốc công thần đã phò tá triều đại. Phía trước gác là hai tòa nhà Tả Vu và Hữu Vu, nơi phụng thờ trang trọng bài vị các bậc đại thần văn võ có công lao hiển hách với giang sơn xã tắc. Sự kết hợp giữa nét thanh tú của Hiển Lâm Các và nét thâm nghiêm của các miếu điện phụng tự xung quanh đã tạo nên một chỉnh thể kiến trúc nghệ thuật vô song của văn hóa Cố đô.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Đứng sừng sững trước sân Thế Tổ Miếu là Hiển Lâm Các — tòa vọng lâu cao ba tầng, đạt chiều cao 17 mét. Suốt thời Nguyễn, triều đình ra sắc lệnh không bất cứ công trình nào trong Thành Nội được phép xây cao hơn Hiển Lâm Các."
+        },
+        {
+          "time_sec": 26.0,
+          "text": "Tòa gác được nâng đỡ bởi 24 cột gỗ lim nguyên khối thanh thoát. Tầng dưới có không gian thoáng đãng; tầng hai và tầng ba thu nhỏ dần với các cửa sổ tròn chạm hoa văn chữ Thọ đón gió bốn phương, mái lợp ngói hoàng lưu ly rực sáng dưới ánh bình minh."
+        },
+        {
+          "time_sec": 56.0,
+          "text": "Hiển Lâm Các mang ý nghĩa ngợi ca công đức tổ tiên và ghi danh các vị khai quốc công thần đã phò tá triều đại. Phía trước gác là hai tòa nhà Tả Vu và Hữu Vu, nơi phụng thờ trang trọng bài vị các bậc đại thần văn võ có công lao hiển hách với giang sơn xã tắc."
+        },
+        {
+          "time_sec": 84.0,
+          "text": "Sự kết hợp giữa nét thanh tú của Hiển Lâm Các và nét thâm nghiêm của các miếu điện phụng tự xung quanh đã tạo nên một chỉnh thể kiến trúc nghệ thuật vô song của văn hóa Cố đô."
+        }
+      ],
+      "summary": "Công trình bằng gỗ cao nhất Hoàng Thành Huế với ba tầng gác uy nghi, tôn vinh công lao các bậc tiền nhân và các vị công thần khai quốc.",
+      "tags": [
+        "Đài tưởng niệm",
+        "Kiến trúc gỗ",
+        "Công thần xã tắc"
+      ],
+      "transcript": [
+        {
+          "id": "hien-lam-cac-cue-1",
+          "startTime": 0,
+          "endTime": 26,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Tòa nhà cao nhất Hoàng thành",
+          "textVi": "Đứng sừng sững trước sân Thế Tổ Miếu là Hiển Lâm Các — tòa vọng lâu cao ba tầng, đạt chiều cao 17 mét. Suốt thời Nguyễn, triều đình ra sắc lệnh không bất cứ công trình nào trong Thành Nội được phép xây cao hơn Hiển Lâm Các."
+        },
+        {
+          "id": "hien-lam-cac-cue-2",
+          "startTime": 26,
+          "endTime": 56,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Kết cấu ba tầng chồng diêm",
+          "textVi": "Tòa gác được nâng đỡ bởi 24 cột gỗ lim nguyên khối thanh thoát. Tầng dưới có không gian thoáng đãng; tầng hai và tầng ba thu nhỏ dần với các cửa sổ tròn chạm hoa văn chữ Thọ đón gió bốn phương, mái lợp ngói hoàng lưu ly rực sáng dưới ánh bình minh."
+        },
+        {
+          "id": "hien-lam-cac-cue-3",
+          "startTime": 56,
+          "endTime": 84,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Đài tưởng niệm & Công thần khai quốc",
+          "textVi": "Hiển Lâm Các mang ý nghĩa ngợi ca công đức tổ tiên và ghi danh các vị khai quốc công thần đã phò tá triều đại. Phía trước gác là hai tòa nhà Tả Vu và Hữu Vu, nơi phụng thờ trang trọng bài vị các bậc đại thần văn võ có công lao hiển hách với giang sơn xã tắc."
+        },
+        {
+          "id": "hien-lam-cac-cue-4",
+          "startTime": 84,
+          "endTime": 110,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Tổng kết kiến trúc tưởng niệm",
+          "textVi": "Sự kết hợp giữa nét thanh tú của Hiển Lâm Các và nét thâm nghiêm của các miếu điện phụng tự xung quanh đã tạo nên một chỉnh thể kiến trúc nghệ thuật vô song của văn hóa Cố đô."
+        }
+      ]
+    },
+    {
+      "id": "audio-hung-to-mieu",
+      "monument_slug": "hung-to-mieu",
+      "site_slug": "hung-to-mieu",
+      "title_vi": "Hưng Tổ Miếu",
+      "site_name_vi": "Hưng Tổ Miếu",
+      "duration_seconds": 95,
+      "duration": 95,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/hung-to-mieu.mp3",
+      "script_text": "Nằm về phía bắc Thế Miếu là Hưng Tổ Miếu, ngôi đền trang nghiêm được vua Gia Long xây dựng vào năm 1804 để phụng thờ thân phụ là Nguyễn Phúc Luân, được truy tôn là Hưng Tổ Khang Hoàng Đế, cùng thân mẫu là Hiếu Khang Hoàng Hậu. Tòa miếu nhỏ nhắn được dựng theo thức nhà rường truyền thống ba gian hai chái, với hàng cột gỗ thếp vàng trang nhã. Không gian nơi đây toát lên sự tĩnh mịch, thanh tịnh của chốn từ đường gia tộc. Dù không trực tiếp lên ngôi vua, công ơn sinh thành của Hưng Tổ Hoàng Đế luôn được con cháu triều Nguyễn đời đời tưởng nhớ. Hưng Miếu là minh chứng cảm động cho chữ hiếu của vua Gia Long giữa lòng Hoàng Thành.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Nằm về phía bắc Thế Miếu là Hưng Tổ Miếu, ngôi đền trang nghiêm được vua Gia Long xây dựng vào năm 1804 để phụng thờ thân phụ là Nguyễn Phúc Luân, được truy tôn là Hưng Tổ Khang Hoàng Đế, cùng thân mẫu là Hiếu Khang Hoàng Hậu."
+        },
+        {
+          "time_sec": 25.0,
+          "text": "Tòa miếu nhỏ nhắn được dựng theo thức nhà rường truyền thống ba gian hai chái, với hàng cột gỗ thếp vàng trang nhã. Không gian nơi đây toát lên sự tĩnh mịch, thanh tịnh của chốn từ đường gia tộc."
+        },
+        {
+          "time_sec": 58.0,
+          "text": "Dù không trực tiếp lên ngôi vua, công ơn sinh thành của Hưng Tổ Hoàng Đế luôn được con cháu triều Nguyễn đời đời tưởng nhớ. Hưng Miếu là minh chứng cảm động cho chữ hiếu của vua Gia Long giữa lòng Hoàng Thành."
+        }
+      ],
+      "summary": "Ngôi miếu cổ kính phụng thờ Thế tử Nguyễn Phúc Luân và phu nhân, thân sinh của vị vua sáng lập triều Nguyễn.",
+      "tags": [
+        "Tổ miếu",
+        "Hiếu đạo"
+      ],
+      "transcript": [
+        {
+          "id": "hung-to-mieu-cue-1",
+          "startTime": 0,
+          "endTime": 25,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Bối cảnh lập miếu",
+          "textVi": "Nằm về phía bắc Thế Miếu là Hưng Tổ Miếu, ngôi đền trang nghiêm được vua Gia Long xây dựng vào năm 1804 để phụng thờ thân phụ là Nguyễn Phúc Luân, được truy tôn là Hưng Tổ Khang Hoàng Đế, cùng thân mẫu là Hiếu Khang Hoàng Hậu."
+        },
+        {
+          "id": "hung-to-mieu-cue-2",
+          "startTime": 25,
+          "endTime": 58,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Kiến trúc nhà rường truyền thống",
+          "textVi": "Tòa miếu nhỏ nhắn được dựng theo thức nhà rường truyền thống ba gian hai chái, với hàng cột gỗ thếp vàng trang nhã. Không gian nơi đây toát lên sự tĩnh mịch, thanh tịnh của chốn từ đường gia tộc."
+        },
+        {
+          "id": "hung-to-mieu-cue-3",
+          "startTime": 58,
+          "endTime": 95,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Ý nghĩa hiếu đạo",
+          "textVi": "Dù không trực tiếp lên ngôi vua, công ơn sinh thành của Hưng Tổ Hoàng Đế luôn được con cháu triều Nguyễn đời đời tưởng nhớ. Hưng Miếu là minh chứng cảm động cho chữ hiếu của vua Gia Long giữa lòng Hoàng Thành."
+        }
+      ]
+    },
+    {
+      "id": "audio-trieu-to-mieu",
+      "monument_slug": "trieu-to-mieu",
+      "site_slug": "trieu-to-mieu",
+      "title_vi": "Triệu Tổ Miếu",
+      "site_name_vi": "Triệu Tổ Miếu",
+      "duration_seconds": 90,
+      "duration": 90,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/trieu-to-mieu.mp3",
+      "script_text": "Tọa lạc tại góc đông nam Hoàng Thành, Triệu Tổ Miếu là ngôi miếu phụng thờ Triệu Tổ Tĩnh Hoàng Đế Nguyễn Kim — vị tiền bối đã mở đường cho các chúa Nguyễn khai phá phương Nam. Xây dựng năm 1804 cùng thời điểm với Hưng Miếu, Triệu Miếu có kiến trúc tương đồng nhưng chiếm vị trí phía đông theo quy hoạch phong thủy tả hữu đối ứng trong kinh thành. Án thờ Triệu Tổ được đặt trang trọng ở gian giữa, quanh năm hương khói nghi ngút. Đây là điểm tựa tâm linh nhắc nhở con cháu về cội nguồn gian khổ thời mở cõi lập nghiệp.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Tọa lạc tại góc đông nam Hoàng Thành, Triệu Tổ Miếu là ngôi miếu phụng thờ Triệu Tổ Tĩnh Hoàng Đế Nguyễn Kim — vị tiền bối đã mở đường cho các chúa Nguyễn khai phá phương Nam."
+        },
+        {
+          "time_sec": 26.0,
+          "text": "Xây dựng năm 1804 cùng thời điểm với Hưng Miếu, Triệu Miếu có kiến trúc tương đồng nhưng chiếm vị trí phía đông theo quy hoạch phong thủy tả hữu đối ứng trong kinh thành."
+        },
+        {
+          "time_sec": 56.0,
+          "text": "Án thờ Triệu Tổ được đặt trang trọng ở gian giữa, quanh năm hương khói nghi ngút. Đây là điểm tựa tâm linh nhắc nhở con cháu về cội nguồn gian khổ thời mở cõi lập nghiệp."
+        }
+      ],
+      "summary": "Ngôi miếu cổ bậc nhất phụng thờ Triệu Tổ Tĩnh Hoàng Đế Nguyễn Kim, người đặt nền móng dựng nghiệp của dòng họ Nguyễn.",
+      "tags": [
+        "Tổ miếu",
+        "Triệu Miếu",
+        "Gốc tích dòng họ"
+      ],
+      "transcript": [
+        {
+          "id": "trieu-to-mieu-cue-1",
+          "startTime": 0,
+          "endTime": 26,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Khởi nguyên vương triều",
+          "textVi": "Tọa lạc tại góc đông nam Hoàng Thành, Triệu Tổ Miếu là ngôi miếu phụng thờ Triệu Tổ Tĩnh Hoàng Đế Nguyễn Kim — vị tiền bối đã mở đường cho các chúa Nguyễn khai phá phương Nam."
+        },
+        {
+          "id": "trieu-to-mieu-cue-2",
+          "startTime": 26,
+          "endTime": 56,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Kiến trúc đối xứng phong thủy",
+          "textVi": "Xây dựng năm 1804 cùng thời điểm với Hưng Miếu, Triệu Miếu có kiến trúc tương đồng nhưng chiếm vị trí phía đông theo quy hoạch phong thủy tả hữu đối ứng trong kinh thành."
+        },
+        {
+          "id": "trieu-to-mieu-cue-3",
+          "startTime": 56,
+          "endTime": 90,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Bài vị & Án thờ thủy tổ",
+          "textVi": "Án thờ Triệu Tổ được đặt trang trọng ở gian giữa, quanh năm hương khói nghi ngút. Đây là điểm tựa tâm linh nhắc nhở con cháu về cội nguồn gian khổ thời mở cõi lập nghiệp."
+        }
+      ]
+    },
+    {
+      "id": "audio-dai-cung-mon",
+      "monument_slug": "dai-cung-mon",
+      "site_slug": "dai-cung-mon",
+      "title_vi": "Đại Cung Môn",
+      "site_name_vi": "Đại Cung Môn",
+      "duration_seconds": 105,
+      "duration": 105,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/dai-cung-mon.mp3",
+      "script_text": "Ngay sau lưng điện Thái Hòa, bạn đang đứng trước vị trí của Đại Cung Môn — cửa chính diện dẫn vào khu vực bảo mật tuyệt đối: Tử Cấm Thành. Được dựng năm Minh Mạng thứ 14, cửa trổ năm gian ba cửa. Cửa giữa chỉ dành riêng cho hoàng đế, hai cửa bên dành cho cung tần và quan viên nội vụ có chỉ truyền. Đội thị vệ túc trực ngày đêm, kiểm soát từng bước chân qua lại cửa cấm bằng thẻ bài nghiêm ngặt. Trải qua chiến sự năm 1947, công trình gỗ đã bị thiêu hủy, chỉ còn lại hệ thống thềm bậc đá thanh chạm rồng và chân cột gạch vồ. Dự án nghiên cứu khảo cổ đang từng bước mở đường phục hồi cánh cổng quyền uy này.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Ngay sau lưng điện Thái Hòa, bạn đang đứng trước vị trí của Đại Cung Môn — cửa chính diện dẫn vào khu vực bảo mật tuyệt đối: Tử Cấm Thành. Được dựng năm Minh Mạng thứ 14, cửa trổ năm gian ba cửa."
+        },
+        {
+          "time_sec": 28.0,
+          "text": "Cửa giữa chỉ dành riêng cho hoàng đế, hai cửa bên dành cho cung tần và quan viên nội vụ có chỉ truyền. Đội thị vệ túc trực ngày đêm, kiểm soát từng bước chân qua lại cửa cấm bằng thẻ bài nghiêm ngặt."
+        },
+        {
+          "time_sec": 62.0,
+          "text": "Trải qua chiến sự năm 1947, công trình gỗ đã bị thiêu hủy, chỉ còn lại hệ thống thềm bậc đá thanh chạm rồng và chân cột gạch vồ. Dự án nghiên cứu khảo cổ đang từng bước mở đường phục hồi cánh cổng quyền uy này."
+        }
+      ],
+      "summary": "Cửa chính diện mặt Nam của Tử Cấm Thành, ranh giới nghiêm ngặt giữa không gian hành chính triều nghi và cấm địa sinh hoạt hoàng gia.",
+      "tags": [
+        "Tử Cấm Thành",
+        "Cổng hoàng cung",
+        "Khảo cổ học"
+      ],
+      "transcript": [
+        {
+          "id": "dai-cung-mon-cue-1",
+          "startTime": 0,
+          "endTime": 28,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Ngưỡng cửa Tử Cấm Thành",
+          "textVi": "Ngay sau lưng điện Thái Hòa, bạn đang đứng trước vị trí của Đại Cung Môn — cửa chính diện dẫn vào khu vực bảo mật tuyệt đối: Tử Cấm Thành. Được dựng năm Minh Mạng thứ 14, cửa trổ năm gian ba cửa."
+        },
+        {
+          "id": "dai-cung-mon-cue-2",
+          "startTime": 28,
+          "endTime": 62,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Quy chế canh gác nghiêm ngặt",
+          "textVi": "Cửa giữa chỉ dành riêng cho hoàng đế, hai cửa bên dành cho cung tần và quan viên nội vụ có chỉ truyền. Đội thị vệ túc trực ngày đêm, kiểm soát từng bước chân qua lại cửa cấm bằng thẻ bài nghiêm ngặt."
+        },
+        {
+          "id": "dai-cung-mon-cue-3",
+          "startTime": 62,
+          "endTime": 105,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Dấu tích lịch sử & Phục hồi khảo cổ",
+          "textVi": "Trải qua chiến sự năm 1947, công trình gỗ đã bị thiêu hủy, chỉ còn lại hệ thống thềm bậc đá thanh chạm rồng và chân cột gạch vồ. Dự án nghiên cứu khảo cổ đang từng bước mở đường phục hồi cánh cổng quyền uy này."
+        }
+      ]
+    },
+    {
+      "id": "audio-dien-can-chanh",
+      "monument_slug": "dien-can-chanh",
+      "site_slug": "dien-can-chanh",
+      "title_vi": "Điện Cần Chánh",
+      "site_name_vi": "Điện Cần Chánh",
+      "duration_seconds": 115,
+      "duration": 115,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/dien-can-chanh.mp3",
+      "script_text": "Điện Cần Chánh là nơi hoàng đế thiết triều thường nhật vào các ngày năm, mười, hai mươi và hai mươi lăm hàng tháng. Khởi dựng năm 1804 thời Gia Long, đây là trung tâm điều hành chính sự thực quyền của triều đình. Tại ngôi điện này, vua trực tiếp phê duyệt châu phê trên các tấu sớ của Lục Bộ, bàn việc quân cơ tối mật cùng Viện Cơ Mật, và tiếp kiến các quan viên đầu ngành tấu trình việc dân quốc. Tòa điện xưa kia có kết cấu gỗ lim năm gian hai chái trùng thiềm điệp ốc, trang trí nội thất hoa mỹ bậc nhất. Đáng tiếc, khói lửa chiến tranh năm 1947 đã biến tòa điện thành phế tích. Hiện nay, nền móng đá thanh cùng hệ thống chân tảng đá tảng lim vẫn được bảo tồn nghiêm ngặt, chuẩn bị cho dự án phục dựng quy mô lớn tái hiện trung tâm quyền lực xưa.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Điện Cần Chánh là nơi hoàng đế thiết triều thường nhật vào các ngày năm, mười, hai mươi và hai mươi lăm hàng tháng. Khởi dựng năm 1804 thời Gia Long, đây là trung tâm điều hành chính sự thực quyền của triều đình."
+        },
+        {
+          "time_sec": 26.0,
+          "text": "Tại ngôi điện này, vua trực tiếp phê duyệt châu phê trên các tấu sớ của Lục Bộ, bàn việc quân cơ tối mật cùng Viện Cơ Mật, và tiếp kiến các quan viên đầu ngành tấu trình việc dân quốc."
+        },
+        {
+          "time_sec": 60.0,
+          "text": "Tòa điện xưa kia có kết cấu gỗ lim năm gian hai chái trùng thiềm điệp ốc, trang trí nội thất hoa mỹ bậc nhất. Đáng tiếc, khói lửa chiến tranh năm 1947 đã biến tòa điện thành phế tích."
+        },
+        {
+          "time_sec": 88.0,
+          "text": "Hiện nay, nền móng đá thanh cùng hệ thống chân tảng đá tảng lim vẫn được bảo tồn nghiêm ngặt, chuẩn bị cho dự án phục dựng quy mô lớn tái hiện trung tâm quyền lực xưa."
+        }
+      ],
+      "summary": "Trung tâm hành chính điều hành đất nước của hoàng đế triều Nguyễn, nơi diễn ra các buổi thường triều và xử lý quốc sự trọng yếu.",
+      "tags": [
+        "Tử Cấm Thành",
+        "Thường triều",
+        "Cơ mật viện",
+        "Nền móng di tích"
+      ],
+      "transcript": [
+        {
+          "id": "dien-can-chanh-cue-1",
+          "startTime": 0,
+          "endTime": 26,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Trụ sở thiết thường triều",
+          "textVi": "Điện Cần Chánh là nơi hoàng đế thiết triều thường nhật vào các ngày năm, mười, hai mươi và hai mươi lăm hàng tháng. Khởi dựng năm 1804 thời Gia Long, đây là trung tâm điều hành chính sự thực quyền của triều đình."
+        },
+        {
+          "id": "dien-can-chanh-cue-2",
+          "startTime": 26,
+          "endTime": 60,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Bộ máy Cơ Mật Viện & Lục Bộ",
+          "textVi": "Tại ngôi điện này, vua trực tiếp phê duyệt châu phê trên các tấu sớ của Lục Bộ, bàn việc quân cơ tối mật cùng Viện Cơ Mật, và tiếp kiến các quan viên đầu ngành tấu trình việc dân quốc."
+        },
+        {
+          "id": "dien-can-chanh-cue-3",
+          "startTime": 60,
+          "endTime": 88,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Kiến trúc gỗ tinh mỹ đã mất",
+          "textVi": "Tòa điện xưa kia có kết cấu gỗ lim năm gian hai chái trùng thiềm điệp ốc, trang trí nội thất hoa mỹ bậc nhất. Đáng tiếc, khói lửa chiến tranh năm 1947 đã biến tòa điện thành phế tích."
+        },
+        {
+          "id": "dien-can-chanh-cue-4",
+          "startTime": 88,
+          "endTime": 115,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Bảo tồn nền móng & Tương lai phục dựng",
+          "textVi": "Hiện nay, nền móng đá thanh cùng hệ thống chân tảng đá tảng lim vẫn được bảo tồn nghiêm ngặt, chuẩn bị cho dự án phục dựng quy mô lớn tái hiện trung tâm quyền lực xưa."
+        }
+      ]
+    },
+    {
+      "id": "audio-dien-kien-trung",
+      "monument_slug": "dien-kien-trung",
+      "site_slug": "dien-kien-trung",
+      "title_vi": "Điện Kiến Trung",
+      "site_name_vi": "Điện Kiến Trung",
+      "duration_seconds": 135,
+      "duration": 135,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/dien-kien-trung.mp3",
+      "script_text": "Tọa lạc tại điểm cực bắc của trục dũng đạo Tử Cấm Thành là Điện Kiến Trung — tòa lâu đài rực rỡ mang phong cách tân cổ điển giao thoa Pháp, Ý và nghệ thuật cung đình Huế. Công trình được vua Khải Định khởi công xây dựng từ năm 1921. Mặt tiền hai tầng của điện Kiến Trung là bữa tiệc thị giác của nghệ thuật khảm sành sứ và thủy tinh màu. Hàng vạn mảnh sứ men màu được người nghệ nhân Huế cắt ghép tinh xảo thành hoa văn rồng mây uốn lượn, hoa lá phương Tây và các bức phù điêu sống động. Sau khi hoàn thành, điện trở thành nơi làm việc và nơi ở của vua Khải Định, sau đó là tổ ấm của gia đình vua Bảo Đại cùng Hoàng hậu Nam Phương và các hoàng tử, công chúa với những tiện nghi hiện đại đầu tiên trong cung cấm. Bị san phẳng vào năm 1947, sau gần 80 năm phế tích, dự án phục hồi kỳ công kéo dài từ năm 2019 đến 2023 đã hồi sinh trọn vẹn tòa điện kiệt tác, trở thành điểm nhấn rực rỡ bậc nhất của Đại Nội hôm nay.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Tọa lạc tại điểm cực bắc của trục dũng đạo Tử Cấm Thành là Điện Kiến Trung — tòa lâu đài rực rỡ mang phong cách tân cổ điển giao thoa Pháp, Ý và nghệ thuật cung đình Huế. Công trình được vua Khải Định khởi công xây dựng từ năm 1921."
+        },
+        {
+          "time_sec": 28.0,
+          "text": "Mặt tiền hai tầng của điện Kiến Trung là bữa tiệc thị giác của nghệ thuật khảm sành sứ và thủy tinh màu. Hàng vạn mảnh sứ men màu được người nghệ nhân Huế cắt ghép tinh xảo thành hoa văn rồng mây uốn lượn, hoa lá phương Tây và các bức phù điêu sống động."
+        },
+        {
+          "time_sec": 62.0,
+          "text": "Sau khi hoàn thành, điện trở thành nơi làm việc và nơi ở của vua Khải Định, sau đó là tổ ấm của gia đình vua Bảo Đại cùng Hoàng hậu Nam Phương và các hoàng tử, công chúa với những tiện nghi hiện đại đầu tiên trong cung cấm."
+        },
+        {
+          "time_sec": 98.0,
+          "text": "Bị san phẳng vào năm 1947, sau gần 80 năm phế tích, dự án phục hồi kỳ công kéo dài từ năm 2019 đến 2023 đã hồi sinh trọn vẹn tòa điện kiệt tác, trở thành điểm nhấn rực rỡ bậc nhất của Đại Nội hôm nay."
+        }
+      ],
+      "summary": "Tuyệt tác giao thoa Á - Âu thời Khải Định và Bảo Đại, phục hồi thành công rực rỡ năm 2023 sau khi bị chiến tranh phá hủy năm 1947.",
+      "tags": [
+        "Tử Cấm Thành",
+        "Kiến trúc Đông Tây",
+        "Khảm sành sứ",
+        "Phục hồi 2023"
+      ],
+      "transcript": [
+        {
+          "id": "dien-kien-trung-cue-1",
+          "startTime": 0,
+          "endTime": 28,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Đỉnh cao kiến trúc giao thoa Đông - Tây",
+          "textVi": "Tọa lạc tại điểm cực bắc của trục dũng đạo Tử Cấm Thành là Điện Kiến Trung — tòa lâu đài rực rỡ mang phong cách tân cổ điển giao thoa Pháp, Ý và nghệ thuật cung đình Huế. Công trình được vua Khải Định khởi công xây dựng từ năm 1921."
+        },
+        {
+          "id": "dien-kien-trung-cue-2",
+          "startTime": 28,
+          "endTime": 62,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Nghệ thuật khảm sành sứ đỉnh cao",
+          "textVi": "Mặt tiền hai tầng của điện Kiến Trung là bữa tiệc thị giác của nghệ thuật khảm sành sứ và thủy tinh màu. Hàng vạn mảnh sứ men màu được người nghệ nhân Huế cắt ghép tinh xảo thành hoa văn rồng mây uốn lượn, hoa lá phương Tây và các bức phù điêu sống động."
+        },
+        {
+          "id": "dien-kien-trung-cue-3",
+          "startTime": 62,
+          "endTime": 98,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Không gian sinh hoạt hoàng gia thời Bảo Đại",
+          "textVi": "Sau khi hoàn thành, điện trở thành nơi làm việc và nơi ở của vua Khải Định, sau đó là tổ ấm của gia đình vua Bảo Đại cùng Hoàng hậu Nam Phương và các hoàng tử, công chúa với những tiện nghi hiện đại đầu tiên trong cung cấm."
+        },
+        {
+          "id": "dien-kien-trung-cue-4",
+          "startTime": 98,
+          "endTime": 135,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Kỳ tích phục hồi bảo tồn",
+          "textVi": "Bị san phẳng vào năm 1947, sau gần 80 năm phế tích, dự án phục hồi kỳ công kéo dài từ năm 2019 đến 2023 đã hồi sinh trọn vẹn tòa điện kiệt tác, trở thành điểm nhấn rực rỡ bậc nhất của Đại Nội hôm nay."
+        }
+      ]
+    },
+    {
+      "id": "audio-duyet-thi-duong",
+      "monument_slug": "duyet-thi-duong",
+      "site_slug": "duyet-thi-duong",
+      "title_vi": "Duyệt Thị Đường",
+      "site_name_vi": "Duyệt Thị Đường",
+      "duration_seconds": 120,
+      "duration": 120,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/duyet-thi-duong.mp3",
+      "script_text": "Duyệt Thị Đường được vua Minh Mạng cho xây dựng vào năm 1826 bên trong Tử Cấm Thành. Đây là nhà hát hoàng gia cổ nhất còn bảo tồn được của đất nước ta, chuyên phục vụ thưởng thức nghệ thuật tuồng và nhã nhạc của vua chúa. Sân khấu diễn xướng hình vuông ở chính giữa, trần nhà vẽ hình trăng sao lấp lánh như vòm trời đêm. Dưới gầm sàn diễn, người xưa chôn các lu sành lớn để tạo hiệu ứng âm vang tự nhiên, giúp tiếng đàn tiếng hát lan tỏa ấm áp khắp khán phòng. Vua ngự trên tầng lầu cao nhìn thẳng xuống sân khấu, hai bên cánh tả hữu là vị trí ngồi của hoàng thân quốc thích và các vị đại thần theo đúng phẩm cấp quy định. Ngày nay, Duyệt Thị Đường là không gian biểu diễn Nhã nhạc Cung đình Huế — Di sản Văn hóa Phi vật thể đại diện của nhân loại, nơi âm sắc cung đình ngân vang sống động giữa lòng di sản.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Duyệt Thị Đường được vua Minh Mạng cho xây dựng vào năm 1826 bên trong Tử Cấm Thành. Đây là nhà hát hoàng gia cổ nhất còn bảo tồn được của đất nước ta, chuyên phục vụ thưởng thức nghệ thuật tuồng và nhã nhạc của vua chúa."
+        },
+        {
+          "time_sec": 26.0,
+          "text": "Sân khấu diễn xướng hình vuông ở chính giữa, trần nhà vẽ hình trăng sao lấp lánh như vòm trời đêm. Dưới gầm sàn diễn, người xưa chôn các lu sành lớn để tạo hiệu ứng âm vang tự nhiên, giúp tiếng đàn tiếng hát lan tỏa ấm áp khắp khán phòng."
+        },
+        {
+          "time_sec": 58.0,
+          "text": "Vua ngự trên tầng lầu cao nhìn thẳng xuống sân khấu, hai bên cánh tả hữu là vị trí ngồi của hoàng thân quốc thích và các vị đại thần theo đúng phẩm cấp quy định."
+        },
+        {
+          "time_sec": 90.0,
+          "text": "Ngày nay, Duyệt Thị Đường là không gian biểu diễn Nhã nhạc Cung đình Huế — Di sản Văn hóa Phi vật thể đại diện của nhân loại, nơi âm sắc cung đình ngân vang sống động giữa lòng di sản."
+        }
+      ],
+      "summary": "Nhà hát hoàng gia cổ nhất Việt Nam xây dựng năm 1826, không gian diễn xướng Nhã nhạc cung đình Huế và Tuồng cung đình mẫu mực.",
+      "tags": [
+        "Tử Cấm Thành",
+        "Nhà hát cổ",
+        "Nhã nhạc cung đình",
+        "UNESCO"
+      ],
+      "transcript": [
+        {
+          "id": "duyet-thi-duong-cue-1",
+          "startTime": 0,
+          "endTime": 26,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Nhà hát cổ nhất Việt Nam",
+          "textVi": "Duyệt Thị Đường được vua Minh Mạng cho xây dựng vào năm 1826 bên trong Tử Cấm Thành. Đây là nhà hát hoàng gia cổ nhất còn bảo tồn được của đất nước ta, chuyên phục vụ thưởng thức nghệ thuật tuồng và nhã nhạc của vua chúa."
+        },
+        {
+          "id": "duyet-thi-duong-cue-2",
+          "startTime": 26,
+          "endTime": 58,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Cấu trúc âm học truyền thống",
+          "textVi": "Sân khấu diễn xướng hình vuông ở chính giữa, trần nhà vẽ hình trăng sao lấp lánh như vòm trời đêm. Dưới gầm sàn diễn, người xưa chôn các lu sành lớn để tạo hiệu ứng âm vang tự nhiên, giúp tiếng đàn tiếng hát lan tỏa ấm áp khắp khán phòng."
+        },
+        {
+          "id": "duyet-thi-duong-cue-3",
+          "startTime": 58,
+          "endTime": 90,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Vị trí ngự tọa & Khán đài phân tầng",
+          "textVi": "Vua ngự trên tầng lầu cao nhìn thẳng xuống sân khấu, hai bên cánh tả hữu là vị trí ngồi của hoàng thân quốc thích và các vị đại thần theo đúng phẩm cấp quy định."
+        },
+        {
+          "id": "duyet-thi-duong-cue-4",
+          "startTime": 90,
+          "endTime": 120,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Bảo tồn Nhã nhạc di sản nhân loại",
+          "textVi": "Ngày nay, Duyệt Thị Đường là không gian biểu diễn Nhã nhạc Cung đình Huế — Di sản Văn hóa Phi vật thể đại diện của nhân loại, nơi âm sắc cung đình ngân vang sống động giữa lòng di sản."
+        }
+      ]
+    },
+    {
+      "id": "audio-thai-binh-lau",
+      "monument_slug": "thai-binh-lau",
+      "site_slug": "thai-binh-lau",
+      "title_vi": "Thái Bình Lâu",
+      "site_name_vi": "Thái Bình Lâu",
+      "duration_seconds": 100,
+      "duration": 100,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/thai-binh-lau.mp3",
+      "script_text": "Thái Bình Lâu là tòa nhà hai tầng bằng gỗ nép mình thanh tịnh ở góc đông bắc Tử Cấm Thành. Được vua Khải Định xây dựng từ năm 1919 trên nền đình đọc sách cũ của vua Thiệu Trị. Ngoại thất Thái Bình Lâu nổi bật với kỹ nghệ khảm sành sứ rực rỡ và bờ nóc đắp các hoa văn pháp lam tuyệt xảo hình rồng chầu mặt nguyệt. Mặt trước là hồ nước nhỏ với hòn non bộ thanh cảnh soi bóng hoa sen. Bên trong lầu từng lưu giữ hàng nghìn tập thư tịch ngự chế quý giá. Đây là chốn nhà vua lui tới sau những giờ thiết triều căng thẳng để đọc sách, ngâm vịnh thơ văn và suy ngẫm kế sách trị nước an dân.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Thái Bình Lâu là tòa nhà hai tầng bằng gỗ nép mình thanh tịnh ở góc đông bắc Tử Cấm Thành. Được vua Khải Định xây dựng từ năm 1919 trên nền đình đọc sách cũ của vua Thiệu Trị."
+        },
+        {
+          "time_sec": 24.0,
+          "text": "Ngoại thất Thái Bình Lâu nổi bật với kỹ nghệ khảm sành sứ rực rỡ và bờ nóc đắp các hoa văn pháp lam tuyệt xảo hình rồng chầu mặt nguyệt. Mặt trước là hồ nước nhỏ với hòn non bộ thanh cảnh soi bóng hoa sen."
+        },
+        {
+          "time_sec": 56.0,
+          "text": "Bên trong lầu từng lưu giữ hàng nghìn tập thư tịch ngự chế quý giá. Đây là chốn nhà vua lui tới sau những giờ thiết triều căng thẳng để đọc sách, ngâm vịnh thơ văn và suy ngẫm kế sách trị nước an dân."
+        }
+      ],
+      "summary": "Thư viện hoàng gia tao nhã bên hồ sen thơm ngát, nơi các hoàng đế triều Nguyễn đọc sách, ngâm vịnh thi phú và tĩnh tâm trị quốc.",
+      "tags": [
+        "Tử Cấm Thành",
+        "Thư viện hoàng gia",
+        "Khảm sành sứ",
+        "Pháp lam"
+      ],
+      "transcript": [
+        {
+          "id": "thai-binh-lau-cue-1",
+          "startTime": 0,
+          "endTime": 24,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Thư phòng tao nhã của hoàng đế",
+          "textVi": "Thái Bình Lâu là tòa nhà hai tầng bằng gỗ nép mình thanh tịnh ở góc đông bắc Tử Cấm Thành. Được vua Khải Định xây dựng từ năm 1919 trên nền đình đọc sách cũ của vua Thiệu Trị."
+        },
+        {
+          "id": "thai-binh-lau-cue-2",
+          "startTime": 24,
+          "endTime": 56,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Trang trí pháp lam & Khảm sứ tinh mỹ",
+          "textVi": "Ngoại thất Thái Bình Lâu nổi bật với kỹ nghệ khảm sành sứ rực rỡ và bờ nóc đắp các hoa văn pháp lam tuyệt xảo hình rồng chầu mặt nguyệt. Mặt trước là hồ nước nhỏ với hòn non bộ thanh cảnh soi bóng hoa sen."
+        },
+        {
+          "id": "thai-binh-lau-cue-3",
+          "startTime": 56,
+          "endTime": 100,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Không gian lưu giữ điển tịch",
+          "textVi": "Bên trong lầu từng lưu giữ hàng nghìn tập thư tịch ngự chế quý giá. Đây là chốn nhà vua lui tới sau những giờ thiết triều căng thẳng để đọc sách, ngâm vịnh thơ văn và suy ngẫm kế sách trị nước an dân."
+        }
+      ]
+    },
+    {
+      "id": "audio-cung-dien-tho",
+      "monument_slug": "cung-dien-tho",
+      "site_slug": "cung-dien-tho",
+      "title_vi": "Cung Diên Thọ",
+      "site_name_vi": "Cung Diên Thọ",
+      "duration_seconds": 120,
+      "duration": 120,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/cung-dien-tho.mp3",
+      "script_text": "Tọa lạc ở phía tây bắc Hoàng Thành, Cung Diên Thọ là quần thể cung điện bề thế và hoàn chỉnh nhất còn lưu lại đến nay. Khởi dựng năm 1804 thời vua Gia Long với tên Trường Thọ Cung, nơi đây là chốn phụng dưỡng các bậc Hoàng Thái Hậu triều Nguyễn. Quần thể gồm hơn mười công trình liên hoàn: chính điện Diên Thọ uy nghiêm bằng gỗ lim, lầu Tịnh Minh tân cổ điển xây năm 1927, và nhà Tạ Trường Du thơ mộng bên hồ sen. Toàn bộ các công trình được kết nối bởi hệ thống trường lang có mái che chống mưa nắng miền Trung. Mỗi tuần một lần, các vị hoàng đế đều đích thân ngự giá sang Cung Diên Thọ để làm lễ vấn an sức khỏe thân mẫu. Chữ Hiếu được coi là nền tảng đạo đức mẫu mực để trị nước yên dân của đấng thiên tử. Khuôn viên Cung Diên Thọ với cây cối xanh tươi và tiếng nước róc rách mang lại vẻ đẹp tĩnh lặng, thanh cao, tách biệt khỏi sự náo nhiệt nơi triều đình.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Tọa lạc ở phía tây bắc Hoàng Thành, Cung Diên Thọ là quần thể cung điện bề thế và hoàn chỉnh nhất còn lưu lại đến nay. Khởi dựng năm 1804 thời vua Gia Long với tên Trường Thọ Cung, nơi đây là chốn phụng dưỡng các bậc Hoàng Thái Hậu triều Nguyễn."
+        },
+        {
+          "time_sec": 26.0,
+          "text": "Quần thể gồm hơn mười công trình liên hoàn: chính điện Diên Thọ uy nghiêm bằng gỗ lim, lầu Tịnh Minh tân cổ điển xây năm 1927, và nhà Tạ Trường Du thơ mộng bên hồ sen. Toàn bộ các công trình được kết nối bởi hệ thống trường lang có mái che chống mưa nắng miền Trung."
+        },
+        {
+          "time_sec": 60.0,
+          "text": "Mỗi tuần một lần, các vị hoàng đế đều đích thân ngự giá sang Cung Diên Thọ để làm lễ vấn an sức khỏe thân mẫu. Chữ Hiếu được coi là nền tảng đạo đức mẫu mực để trị nước yên dân của đấng thiên tử."
+        },
+        {
+          "time_sec": 92.0,
+          "text": "Khuôn viên Cung Diên Thọ với cây cối xanh tươi và tiếng nước róc rách mang lại vẻ đẹp tĩnh lặng, thanh cao, tách biệt khỏi sự náo nhiệt nơi triều đình."
+        }
+      ],
+      "summary": "Quần thể cung điện quy mô và nguyên vẹn nhất Hoàng Thành Huế, nơi ngụ cư phụng dưỡng Hoàng Thái Hậu với chuẩn mực hiếu đạo hoàng gia.",
+      "tags": [
+        "Không gian sinh hoạt",
+        "Hoàng Thái Hậu",
+        "Trường lang",
+        "Hiếu đạo"
+      ],
+      "transcript": [
+        {
+          "id": "cung-dien-tho-cue-1",
+          "startTime": 0,
+          "endTime": 26,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Cung điện của Hoàng Thái Hậu",
+          "textVi": "Tọa lạc ở phía tây bắc Hoàng Thành, Cung Diên Thọ là quần thể cung điện bề thế và hoàn chỉnh nhất còn lưu lại đến nay. Khởi dựng năm 1804 thời vua Gia Long với tên Trường Thọ Cung, nơi đây là chốn phụng dưỡng các bậc Hoàng Thái Hậu triều Nguyễn."
+        },
+        {
+          "id": "cung-dien-tho-cue-2",
+          "startTime": 26,
+          "endTime": 60,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Tổ hợp kiến trúc đa dạng & Trường lang",
+          "textVi": "Quần thể gồm hơn mười công trình liên hoàn: chính điện Diên Thọ uy nghiêm bằng gỗ lim, lầu Tịnh Minh tân cổ điển xây năm 1927, và nhà Tạ Trường Du thơ mộng bên hồ sen. Toàn bộ các công trình được kết nối bởi hệ thống trường lang có mái che chống mưa nắng miền Trung."
+        },
+        {
+          "id": "cung-dien-tho-cue-3",
+          "startTime": 60,
+          "endTime": 92,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Quy chế thỉnh an hiếu đạo",
+          "textVi": "Mỗi tuần một lần, các vị hoàng đế đều đích thân ngự giá sang Cung Diên Thọ để làm lễ vấn an sức khỏe thân mẫu. Chữ Hiếu được coi là nền tảng đạo đức mẫu mực để trị nước yên dân của đấng thiên tử."
+        },
+        {
+          "id": "cung-dien-tho-cue-4",
+          "startTime": 92,
+          "endTime": 120,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Không gian thanh nhã của các bậc mẫu nghi",
+          "textVi": "Khuôn viên Cung Diên Thọ với cây cối xanh tươi và tiếng nước róc rách mang lại vẻ đẹp tĩnh lặng, thanh cao, tách biệt khỏi sự náo nhiệt nơi triều đình."
+        }
+      ]
+    },
+    {
+      "id": "audio-cung-truong-sanh",
+      "monument_slug": "cung-truong-sanh",
+      "site_slug": "cung-truong-sanh",
+      "title_vi": "Cung Trường Sanh",
+      "site_name_vi": "Cung Trường Sanh",
+      "duration_seconds": 105,
+      "duration": 105,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/cung-truong-sanh.mp3",
+      "script_text": "Nằm ở góc tây bắc Hoàng Thành, Cung Trường Sanh được vua Minh Mạng cho xây dựng vào năm 1821 với tên gọi ban đầu là Cung Trường Ninh. Ban đầu đây là khu ngự uyển hoa viên để vua đến du ngoạn ngắm cảnh. Điểm độc đáo nhất của cung là hồ Đào Thái uốn lượn quanh các tòa nhà, kết nối bằng những cây cầu đá nhỏ và hệ thống hòn non bộ điệp trùng. Cảnh quan sinh thái mặt nước tạo nên vi khí hậu mát mẻ quanh năm. Về sau, cung được triều đình chuyển đổi thành nơi ở an nhàn của các bậc Thái Hoàng Thái Hậu. Kiến trúc thanh thoát hòa quyện cùng thiên nhiên đã biến Trường Sanh thành biểu tượng của sự trường thọ và an lành trong hoàng cung.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Nằm ở góc tây bắc Hoàng Thành, Cung Trường Sanh được vua Minh Mạng cho xây dựng vào năm 1821 với tên gọi ban đầu là Cung Trường Ninh. Ban đầu đây là khu ngự uyển hoa viên để vua đến du ngoạn ngắm cảnh."
+        },
+        {
+          "time_sec": 24.0,
+          "text": "Điểm độc đáo nhất của cung là hồ Đào Thái uốn lượn quanh các tòa nhà, kết nối bằng những cây cầu đá nhỏ và hệ thống hòn non bộ điệp trùng. Cảnh quan sinh thái mặt nước tạo nên vi khí hậu mát mẻ quanh năm."
+        },
+        {
+          "time_sec": 58.0,
+          "text": "Về sau, cung được triều đình chuyển đổi thành nơi ở an nhàn của các bậc Thái Hoàng Thái Hậu. Kiến trúc thanh thoát hòa quyện cùng thiên nhiên đã biến Trường Sanh thành biểu tượng của sự trường thọ và an lành trong hoàng cung."
+        }
+      ],
+      "summary": "Ngự uyển và hoa viên thanh bình với hồ Đào Thái uốn lượn, nơi nghỉ dưỡng và sinh hoạt an nhàn của các bậc Thái Hoàng Thái Hậu.",
+      "tags": [
+        "Không gian sinh hoạt",
+        "Ngự uyển",
+        "Hồ Đào Thái",
+        "Cảnh quan non bộ"
+      ],
+      "transcript": [
+        {
+          "id": "cung-truong-sanh-cue-1",
+          "startTime": 0,
+          "endTime": 24,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Hoa viên ngự uyển Cung Trường Sanh",
+          "textVi": "Nằm ở góc tây bắc Hoàng Thành, Cung Trường Sanh được vua Minh Mạng cho xây dựng vào năm 1821 với tên gọi ban đầu là Cung Trường Ninh. Ban đầu đây là khu ngự uyển hoa viên để vua đến du ngoạn ngắm cảnh."
+        },
+        {
+          "id": "cung-truong-sanh-cue-2",
+          "startTime": 24,
+          "endTime": 58,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Hồ Đào Thái & Cảnh quan non bộ",
+          "textVi": "Điểm độc đáo nhất của cung là hồ Đào Thái uốn lượn quanh các tòa nhà, kết nối bằng những cây cầu đá nhỏ và hệ thống hòn non bộ điệp trùng. Cảnh quan sinh thái mặt nước tạo nên vi khí hậu mát mẻ quanh năm."
+        },
+        {
+          "id": "cung-truong-sanh-cue-3",
+          "startTime": 58,
+          "endTime": 105,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Chốn tĩnh dưỡng của Thái Hoàng Thái Hậu",
+          "textVi": "Về sau, cung được triều đình chuyển đổi thành nơi ở an nhàn của các bậc Thái Hoàng Thái Hậu. Kiến trúc thanh thoát hòa quyện cùng thiên nhiên đã biến Trường Sanh thành biểu tượng của sự trường thọ và an lành trong hoàng cung."
+        }
+      ]
+    },
+    {
+      "id": "audio-dien-phung-tien",
+      "monument_slug": "dien-phung-tien",
+      "site_slug": "dien-phung-tien",
+      "title_vi": "Điện Phụng Tiên",
+      "site_name_vi": "Điện Phụng Tiên",
+      "duration_seconds": 110,
+      "duration": 110,
+      "narrator": "Lưu Niên Voice Guide — Giọng Cố Đô",
+      "audio_url": "/assets/imperial/audio/dien-phung-tien.mp3",
+      "script_text": "Nằm ở phía tây Hoàng Thành đối xứng với Thế Miếu, Điện Phụng Tiên được vua Minh Mạng xây dựng vào năm 1829. Đây là ngôi đền phụng thờ liệt thánh hoàng đế dành riêng cho các bậc mẫu nghi và cung phi trong hoàng cung. Theo quy định triều Nguyễn, phụ nữ hoàng tộc không được phép bước chân vào Thế Tổ Miếu. Do đó, triều đình dựng Điện Phụng Tiên để các bà Hoàng Thái Hậu, Hoàng Hậu và cung tần có thể trực tiếp đến dâng hương bày tỏ lòng hiếu kính tổ tiên. Sau chiến tranh năm 1947, tòa chính điện đã bị thiêu rụi hoàn toàn, song cổng Tam Quan gạch vôi rêu phong và bức bình phong đắp nổi hoa văn gốm sứ vẫn đứng vững như chứng nhân thời gian. Các hoạt động khảo cổ học và bảo tồn gần đây đang làm sống lại câu chuyện về vai trò và đời sống tâm linh của người phụ nữ trong hoàng gia triều Nguyễn.",
+      "credit_text": "Trung tâm Bảo tồn Di tích Cố đô Huế & Dự án Lưu Niên Sứ Ký",
+      "timed_transcript": [
+        {
+          "time_sec": 0.0,
+          "text": "Nằm ở phía tây Hoàng Thành đối xứng với Thế Miếu, Điện Phụng Tiên được vua Minh Mạng xây dựng vào năm 1829. Đây là ngôi đền phụng thờ liệt thánh hoàng đế dành riêng cho các bậc mẫu nghi và cung phi trong hoàng cung."
+        },
+        {
+          "time_sec": 25.0,
+          "text": "Theo quy định triều Nguyễn, phụ nữ hoàng tộc không được phép bước chân vào Thế Tổ Miếu. Do đó, triều đình dựng Điện Phụng Tiên để các bà Hoàng Thái Hậu, Hoàng Hậu và cung tần có thể trực tiếp đến dâng hương bày tỏ lòng hiếu kính tổ tiên."
+        },
+        {
+          "time_sec": 58.0,
+          "text": "Sau chiến tranh năm 1947, tòa chính điện đã bị thiêu rụi hoàn toàn, song cổng Tam Quan gạch vôi rêu phong và bức bình phong đắp nổi hoa văn gốm sứ vẫn đứng vững như chứng nhân thời gian."
+        },
+        {
+          "time_sec": 88.0,
+          "text": "Các hoạt động khảo cổ học và bảo tồn gần đây đang làm sống lại câu chuyện về vai trò và đời sống tâm linh của người phụ nữ trong hoàng gia triều Nguyễn."
+        }
+      ],
+      "summary": "Ngôi điện phụng thờ tổ tiên dành riêng cho nữ giới hoàng tộc đến dâng hương lễ bái, phản ánh quy chế điển lễ độc đáo của triều Nguyễn.",
+      "tags": [
+        "Không gian thờ tự",
+        "Nữ giới hoàng tộc",
+        "Cổng Tam Quan",
+        "Phế tích khảo cổ"
+      ],
+      "transcript": [
+        {
+          "id": "dien-phung-tien-cue-1",
+          "startTime": 0,
+          "endTime": 25,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Ngôi điện thờ của nữ giới hoàng tộc",
+          "textVi": "Nằm ở phía tây Hoàng Thành đối xứng với Thế Miếu, Điện Phụng Tiên được vua Minh Mạng xây dựng vào năm 1829. Đây là ngôi đền phụng thờ liệt thánh hoàng đế dành riêng cho các bậc mẫu nghi và cung phi trong hoàng cung."
+        },
+        {
+          "id": "dien-phung-tien-cue-2",
+          "startTime": 25,
+          "endTime": 58,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Quy chế phân biệt nghi lễ khắt khe",
+          "textVi": "Theo quy định triều Nguyễn, phụ nữ hoàng tộc không được phép bước chân vào Thế Tổ Miếu. Do đó, triều đình dựng Điện Phụng Tiên để các bà Hoàng Thái Hậu, Hoàng Hậu và cung tần có thể trực tiếp đến dâng hương bày tỏ lòng hiếu kính tổ tiên."
+        },
+        {
+          "id": "dien-phung-tien-cue-3",
+          "startTime": 58,
+          "endTime": 88,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Dấu tích cổng Tam Quan & Bình phong",
+          "textVi": "Sau chiến tranh năm 1947, tòa chính điện đã bị thiêu rụi hoàn toàn, song cổng Tam Quan gạch vôi rêu phong và bức bình phong đắp nổi hoa văn gốm sứ vẫn đứng vững như chứng nhân thời gian."
+        },
+        {
+          "id": "dien-phung-tien-cue-4",
+          "startTime": 88,
+          "endTime": 110,
+          "speaker": "Thuyết minh viên",
+          "sectionTitle": "Bảo tồn giá trị văn hóa nhân văn",
+          "textVi": "Các hoạt động khảo cổ học và bảo tồn gần đây đang làm sống lại câu chuyện về vai trò và đời sống tâm linh của người phụ nữ trong hoàng gia triều Nguyễn."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,128 @@
+{
+  "content_scope": "STTT_IMPERIAL_CITY",
+  "document_type": "fieldwork_worksheet",
+  "version": "1.0.0",
+  "title_vi": "Phiếu học tập điền dã di sản: Khám phá không gian và đối chiếu sử liệu Đại Nội Huế",
+  "subtitle_vi": "Hồ sơ thực địa dựa trên bản đồ không ảnh trực giao và chính sử triều Nguyễn",
+  "target_audience": "Học sinh THPT (Lớp 10 - Giáo dục địa phương / Lịch sử)",
+  "instructions_vi": "Học sinh điền dã theo nhóm hoặc cá nhân qua 4 trạm quan sát trên bản đồ số hoặc tại thực địa Đại Nội. Hoàn thành đầy đủ 4 cột thông tin: (1) Trạm quan sát, (2) Hiện trạng mắt thấy, (3) Tư liệu đối chiếu, (4) Em kết luận gì. Tuyệt đối tuân thủ quy tắc 'nói có sách, mách có chứng', phân định rành mạch giữa điều biết chắc và điều còn cần kiểm chứng.",
+  "metadata_fields": [
+    { "key": "student_name", "label_vi": "Họ và tên học sinh" },
+    { "key": "class_name", "label_vi": "Lớp" },
+    { "key": "group_number", "label_vi": "Nhóm điền dã" },
+    { "key": "survey_date", "label_vi": "Ngày thực hiện" }
+  ],
+  "columns": [
+    {
+      "column_id": "col_station",
+      "number": 1,
+      "title_vi": "Trạm quan sát",
+      "description_vi": "Tên công trình, phân khu chức năng và vị trí trên trục không gian Đại Nội Huế."
+    },
+    {
+      "column_id": "col_observation",
+      "number": 2,
+      "title_vi": "Hiện trạng mắt thấy",
+      "description_vi": "Những đặc điểm kiến trúc, quy mô, tầng nền, mái ngói, vật liệu quan sát được trực tiếp hoặc qua ảnh độ phân giải cao."
+    },
+    {
+      "column_id": "col_evidence",
+      "number": 3,
+      "title_vi": "Tư liệu đối chiếu",
+      "description_vi": "Văn bản chính sử (Đại Nam Thực Lục, Hội Điển Sự Lệ, Nhất Thống Chí) kèm số quyển, trang hoặc mã lưu trữ xác thực."
+    },
+    {
+      "column_id": "col_conclusion",
+      "number": 4,
+      "title_vi": "Em kết luận gì",
+      "description_vi": "Nhận định lịch sử của học sinh: chỉ rõ ĐIỀU CHẮC CHẮN (đã có chứng cứ xác nhận) vs ĐIỀU CẦN KIỂM CHỨNG THÊM (còn là giả thuyết)."
+    }
+  ],
+  "stations": [
+    {
+      "station_index": 1,
+      "monument_slug": "ngo-mon",
+      "monument_name_vi": "Ngọ Môn (Lầu Ngũ Phụng)",
+      "zone_name_vi": "Trục nghi lễ trung tâm (Central Ceremonial Axis)",
+      "observation_prompt_vi": "Quan sát hệ thống cổng đá chữ U: đếm số lượng cửa ngõ và hướng nhìn của lầu Ngũ Phụng trên tầng đài.",
+      "evidence_prompt_vi": "Tra cứu đoạn chép năm Minh Mạng thứ 14 (1833) trong Đại Nam Thực Lục Chính Biên (Đệ nhị kỷ, Quyển 98) về việc xây dựng Ngọ Môn và quy chế 5 cửa.",
+      "guiding_source": {
+        "source_title": "Đại Nam Thực Lục Chính Biên",
+        "volume": "Đệ nhị kỷ, Quyển 98",
+        "key_quote_vi": "Dựng cổng Ngọ Môn ở đài Nam Sách cũ; dưới trổ 5 cửa: cửa giữa dành cho thiên tử, hai bên dành cho bá quan, hai cửa dực dành cho binh mã cấm vệ."
+      },
+      "conclusion_guide_vi": "Điều em biết chắc: Chức năng phân luồng tuyệt đối thể hiện quyền uy tối thượng của thiên tử. Điều cần kiểm chứng: Màu sắc ngói và sự thay đổi kết cấu gỗ qua các đợt đại trùng tu."
+    },
+    {
+      "station_index": 2,
+      "monument_slug": "dien-thai-hoa",
+      "monument_name_vi": "Điện Thái Hòa & Sân Đại Triều Nghi",
+      "zone_name_vi": "Trục nghi lễ trung tâm (Central Ceremonial Axis)",
+      "observation_prompt_vi": "Quan sát mặt bằng hai tầng sân Đại Triều Nghi, các hàng phẩm sơn (bia phẩm trật) và kiến trúc trùng thiềm điệp ốc của ngôi điện.",
+      "evidence_prompt_vi": "Đối chiếu Khâm Định Đại Nam Hội Điển Sự Lệ (Quyển 65 - Lễ Triều nghi) về vị trí đứng của quan văn và quan võ theo phẩm trật chánh nhất phẩm đến tòng cửu phẩm.",
+      "guiding_source": {
+        "source_title": "Khâm Định Đại Nam Hội Điển Sự Lệ",
+        "volume": "Quyển 65 (Lại bộ - Lễ Triều nghi)",
+        "key_quote_vi": "Văn võ bá quan vào chầu: quan tứ phẩm trở lên đứng tầng sân trên, ngũ phẩm đến cửu phẩm đứng tầng sân dưới, quan văn bên tả, quan võ bên hữu."
+      },
+      "conclusion_guide_vi": "Điều em biết chắc: Kiến trúc hai tầng sân phản ánh trực tiếp hệ thống đẳng cấp quan chế triều Nguyễn. Điều cần kiểm chứng: Các chi tiết trang trí bờ nóc, rồng mây được phục hồi trong đợt hạ giải trùng tu 2021-2024."
+    },
+    {
+      "station_index": 3,
+      "monument_slug": "hien-lam-cac",
+      "monument_name_vi": "Hiển Lâm Các & Thế Miếu",
+      "zone_name_vi": "Không gian thờ tự tổ tiên (Ancestral Worship Space)",
+      "observation_prompt_vi": "Quan sát kiến trúc 3 tầng lầu bằng gỗ của Hiển Lâm Các, chiều cao công trình và mối quan hệ vị trí với sân trước Thế Miếu.",
+      "evidence_prompt_vi": "Tra cứu Đại Nam Thực Lục và quy định triều đình về chiều cao các công trình khác trong Hoàng Thành so với Hiển Lâm Các (công trình tưởng niệm các bậc công thần sáng nghiệp).",
+      "guiding_source": {
+        "source_title": "Đại Nam Nhất Thống Chí",
+        "volume": "Quyển 1 (Kinh sư - Hiển Lâm Các)",
+        "key_quote_vi": "Hiển Lâm Các dựng năm Minh Mạng thứ 3 (1822), ba tầng cao vút, dùng để ghi nhớ công đức các vua và công thần mở cõi."
+      },
+      "conclusion_guide_vi": "Điều em biết chắc: Hiển Lâm Các là kiến trúc gỗ nhiều tầng cao nhất Hoàng Thành, giữ vị trí phong thủy chắn trước Thế Miếu. Điều cần kiểm chứng: Danh tính các bài vị công thần được thờ tự tại Tả Vu và Hữu Vu qua từng thời kỳ."
+    },
+    {
+      "station_index": 4,
+      "monument_slug": "cung-dien-tho",
+      "monument_name_vi": "Cung Diên Thọ (Khu vực sinh hoạt)",
+      "zone_name_vi": "Cung điện sinh hoạt hoàng gia (Royal Living & Gardens)",
+      "observation_prompt_vi": "Quan sát tổ hợp kiến trúc: chính điện Diên Thọ, hành lang có mái che (dương lang), Tịnh Minh Lâu mang phong cách giao thoa Pháp - Việt.",
+      "evidence_prompt_vi": "Tra cứu tư liệu niên đại xây dựng thời Gia Long (1804) với tên ban đầu là Cung Trường Thọ, nơi ở của Hoàng Thái Hậu và sự bổ sung công trình Tịnh Minh Lâu đầu thế kỷ XX.",
+      "guiding_source": {
+        "source_title": "Đại Nam Thực Lục Chính Biên",
+        "volume": "Đệ nhất kỷ, Quyển 23",
+        "key_quote_vi": "Tháng 4 năm Giáp Tý (1804), dựng cung Trường Thọ phía tây bắc Tử Cấm Thành để phụng dưỡng Vương Thái Hậu."
+      },
+      "conclusion_guide_vi": "Điều em biết chắc: Cung Diên Thọ là tổ hợp kiến trúc hoàng gia sinh hoạt tiêu biểu nhất còn giữ được sự nguyên vẹn và thể hiện truyền thống đạo hiếu. Điều cần kiểm chứng: Sự biến chuyển lối sống cung đình từ thời Khải Định đến Bảo Đại qua kiến trúc Tịnh Minh Lâu."
+    }
+  ],
+  "exit_ticket": {
+    "title_vi": "Exit Ticket — Phiếu thu hoạch kết thúc điền dã",
+    "instructions_vi": "Mỗi học sinh trả lời ngắn gọn trong 5 phút trước khi rời địa điểm khảo sát hoặc nộp bài.",
+    "questions": [
+      {
+        "id": "et_q1",
+        "question_vi": "Hãy chọn một cặp công trình có quan hệ không gian trực tiếp (ví dụ: Ngọ Môn - Sân Đại Triều, hoặc Hiển Lâm Các - Thế Miếu) và giải thích mối liên kết công năng giữa chúng.",
+        "space_for_answer_lines": 4
+      },
+      {
+        "id": "et_q2",
+        "question_vi": "Nêu một điều em phát hiện chắc chắn dựa trên tư liệu sử học và một điều em nhận thấy còn cần tiếp tục nghiên cứu, kiểm chứng tại di tích.",
+        "space_for_answer_lines": 4
+      }
+    ]
+  },
+  "rubric_summary": {
+    "dimensions": [
+      { "id": "S1", "name_vi": "Không gian", "target": "Xác định chuẩn xác vị trí trạm trên bản đồ trực giao và quan hệ hướng." },
+      { "id": "S2", "name_vi": "Thời gian", "target": "Nêu đúng mốc khởi dựng và phân biệt được giai đoạn cải tạo/trùng tu." },
+      { "id": "S3", "name_vi": "Sử liệu", "target": "Ghi đúng tên bộ sử, số quyển và trích dẫn nội dung minh chứng." },
+      { "id": "S4", "name_vi": "Lập luận", "target": "Tự rút ra kết luận có căn cứ, chỉ rõ điều chắc chắn vs điều cần kiểm chứng." }
+    ]
+  },
+  "export_helper": {
+    "printable_css_page_setup": "@page { size: A4 landscape; margin: 12mm 15mm 12mm 15mm; }",
+    "target_dpi": 300,
+    "recommended_layout": "bảng ngang 4 cột cho trang 1, phiếu Exit Ticket và rubric cho trang 2"
+  }
+}

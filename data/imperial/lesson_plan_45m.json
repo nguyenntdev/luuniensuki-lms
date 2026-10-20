@@ -1,0 +1,197 @@
+{
+  "content_scope": "STTT_IMPERIAL_CITY",
+  "document_type": "lesson_plan_45m",
+  "version": "1.0.0",
+  "title_vi": "Kế hoạch bài dạy 45 phút: Giải mã tổ chức không gian và giá trị văn hóa Đại Nội Huế qua bản đồ và sử liệu",
+  "target_grade": "Lớp 10 THPT",
+  "subject": "Lịch sử / Giáo dục địa phương tỉnh Thừa Thiên Huế",
+  "duration_minutes": 45,
+  "curriculum_framework": "Chương trình Giáo dục phổ thông 2018 (Thông tư 32/2018/TT-BGDĐT và Công văn 5512/BGDĐT-GDTrH)",
+  "objectives": {
+    "historical_competencies": [
+      {
+        "code": "S1_SPATIAL",
+        "name_vi": "Năng lực định vị và nhận thức không gian lịch sử",
+        "description_vi": "Xác định chính xác vị trí các công trình trên bản đồ trực giao Đại Nội Huế; phân tích mối quan hệ không gian giữa trục thần đạo nghi lễ, không gian thờ tự và hoàng cung sinh hoạt."
+      },
+      {
+        "code": "S2_TEMPORAL",
+        "name_vi": "Năng lực nhận thức tiến trình thời gian và biến đổi di sản",
+        "description_vi": "Phân biệt được niên đại khởi dựng (thời Gia Long, Minh Mạng), quá trình biến đổi kiến trúc và các giai đoạn trùng tu, bảo tồn di tích hiện nay."
+      },
+      {
+        "code": "S3_EVIDENCE",
+        "name_vi": "Năng lực khai thác và xử lý sử liệu chính thức",
+        "description_vi": "Tra cứu, đối chiếu và trích dẫn chuẩn xác các đoạn chép trong chính sử triều Nguyễn (Đại Nam Thực Lục, Khâm Định Đại Nam Hội Điển Sự Lệ, Đại Nam Nhất Thống Chí) với số quyển và nội dung cụ thể."
+      },
+      {
+        "code": "S4_ARGUMENT",
+        "name_vi": "Năng lực lập luận lịch sử và xác định giới hạn bằng chứng",
+        "description_vi": "Đưa ra nhận định dựa trên chứng cứ sử liệu có sẵn; phân biệt rành mạch giữa điều đã được sử liệu xác nhận và điều còn là giả thuyết hoặc cần kiểm chứng thêm."
+      }
+    ],
+    "qualities": [
+      {
+        "name_vi": "Yêu nước và tự hào dân tộc",
+        "description_vi": "Trân trọng di sản văn hóa vật thể của tiền nhân, thấu hiểu giá trị quy hoạch và nghệ thuật kiến trúc cung đình Huế."
+      },
+      {
+        "name_vi": "Trung thực và trách nhiệm học thuật",
+        "description_vi": "Tôn trọng tính chính xác của sử liệu, không suy đoán vô căn cứ, có ý thức bảo vệ và giữ gìn di tích lịch sử."
+      }
+    ]
+  },
+  "teaching_equipment_and_digital_materials": {
+    "teacher_materials": [
+      "Bản đồ không ảnh học tập số Đại Nội Huế (nền ảnh trực giao độ phân giải cao)",
+      "Màn hình tương tác / máy chiếu kết nối hệ thống Lưu Niên — Đại Nội Huế",
+      "Hồ sơ dữ liệu 16 công trình kiến trúc Hoàng Thành và Tử Cấm Thành",
+      "Bộ trích dẫn chính sử: Đại Nam Thực Lục Chính Biên, Hội Điển Sự Lệ"
+    ],
+    "student_materials": [
+      "Thiết bị số (máy tính hoặc máy tính bảng) hoặc bản in màu bản đồ không ảnh Đại Nội",
+      "Phiếu học tập điền dã và khảo cứu di sản 4 cột (bản in hoặc bản số)",
+      "Phiếu Exit Ticket đánh giá cuối giờ học"
+    ]
+  },
+  "activities": [
+    {
+      "activity_number": 1,
+      "name_vi": "Khởi động: Định vị trục chính và phát hiện vấn đề",
+      "duration_minutes": 5,
+      "objective_vi": "Kích hoạt tư duy không gian và sự tò mò lịch sử; định vị Ngọ Môn và Điện Thái Hòa trên bản đồ số; bước đầu nêu 1 câu hỏi cá nhân về quy hoạch hoàng cung.",
+      "teacher_actions": [
+        "Chiếu bản đồ không ảnh Đại Nội Huế trên màn hình chung.",
+        "Nêu tình huống: 'Khi bước qua cổng Ngọ Môn vào Hoàng Thành, vì sao trục chính đạo lại dẫn thẳng qua cầu Trung Đạo tới sân Đại Triều và Điện Thái Hòa?'",
+        "Yêu cầu học sinh mở bản đồ trên thiết bị, phóng to trục trung tâm và ghi nhanh 1 thắc mắc cá nhân."
+      ],
+      "student_actions": [
+        "Quan sát bản đồ không ảnh, dùng công cụ thu phóng tìm vị trí Ngọ Môn, cầu Trung Đạo, Điện Thái Hòa.",
+        "Ghi 1 câu hỏi vào phần Khởi động trên phiếu học tập cá nhân."
+      ],
+      "deliverables_vi": "1 câu hỏi nêu vấn đề cá nhân và vị trí định vị sơ bộ trên bản đồ.",
+      "assessment_criteria_vi": "Học sinh xác định đúng vị trí trục Nam - Bắc và nêu được câu hỏi gắn liền với cấu trúc thực tế."
+    },
+    {
+      "activity_number": 2,
+      "name_vi": "Khám phá không gian trên bản đồ: Đọc không ảnh và phân vùng kiến trúc",
+      "duration_minutes": 15,
+      "objective_vi": "Nắm vững quy tắc đọc bản đồ trực giao và nguyên tắc trích nguồn không suy đoán; 4 nhóm học sinh khám phá 4 cụm không gian chính của Đại Nội.",
+      "teacher_actions": [
+        "Giới thiệu 4 phân khu chức năng: Trục nghi lễ trung tâm, Không gian thờ tự tổ tiên, Tử Cấm Thành, Cung điện sinh hoạt hoàng gia.",
+        "Chia lớp thành 4 nhóm tương ứng với 4 phân khu, mỗi nhóm khảo sát sâu 2 công trình tiêu biểu.",
+        "Hướng dẫn học sinh thao tác bấm vào điểm ghim để xem tư liệu ảnh và thông tin niên đại khởi dựng."
+      ],
+      "student_actions": [
+        "Làm việc theo nhóm: Nhóm 1 (Trục nghi lễ: Ngọ Môn, Điện Thái Hòa); Nhóm 2 (Thờ tự: Thế Miếu, Hiển Lâm Các); Nhóm 3 (Tử Cấm Thành: Cần Chánh, Kiến Trung); Nhóm 4 (Sinh hoạt: Cung Diên Thọ, Duyệt Thị Đường).",
+        "Ghi chép vào Cột 1 (Trạm quan sát) và Cột 2 (Hiện trạng mắt thấy) trên Phiếu học tập 4 cột: bố cục, số tầng nền, hướng nhìn, vật liệu chính."
+      ],
+      "deliverables_vi": "Bảng ghi nhận hiện trạng mắt thấy và tọa độ không gian của 2 công trình theo phân công nhóm.",
+      "assessment_criteria_vi": "Mô tả đúng đặc điểm hiện trạng kiến trúc, không nhầm lẫn giữa công trình còn nguyên vẹn, đang phục hồi hay phế tích."
+    },
+    {
+      "activity_number": 3,
+      "name_vi": "Truy chứng sử liệu theo nhóm: Đối chiếu hiện trạng và thư tịch cổ",
+      "duration_minutes": 15,
+      "objective_vi": "Khai thác tư liệu chính sử để kiểm chứng hiện trạng; phân biệt điều chắc chắn vs điều cần kiểm chứng; thực hiện phản biện chéo giữa các nhóm.",
+      "teacher_actions": [
+        "Yêu cầu các nhóm mở phần Hồ sơ tư liệu (Evidence Ledger) của từng công trình trên hệ thống.",
+        "Gợi ý học sinh đối chiếu văn bản Đại Nam Thực Lục Chính Biên hoặc Hội Điển Sự Lệ với hiện trạng quan sát được ở Hoạt động 2.",
+        "Điều phối phiên phản biện chéo ngắn (5 phút cuối hoạt động): Nhóm 1 và Nhóm 2 phản biện nhau; Nhóm 3 và Nhóm 4 phản biện nhau."
+      ],
+      "student_actions": [
+        "Tra cứu nguồn tư liệu chính sử gắn với công trình, ghi vào Cột 3 (Tư liệu đối chiếu): tên bộ sử, số quyển, nội dung ghi chép.",
+        "Thảo luận nhóm để điền Cột 4 (Em kết luận gì): làm rõ 'Điều em biết chắc chắn dựa trên sử liệu' và 'Điều còn cần xác minh thêm'.",
+        "Trao đổi chéo: đánh dấu nhận định của nhóm bạn là đã đủ bằng chứng hay mới là giả thuyết suy luận."
+      ],
+      "deliverables_vi": "Phiếu học tập hoàn thiện 4 cột với trích dẫn sử liệu chuẩn xác và 2 phản hồi phản biện chéo.",
+      "assessment_criteria_vi": "Trích dẫn đúng tên nguồn và số quyển; phân định rành mạch điều có bằng chứng và điều chưa chắc chắn theo tiêu chí S3 và S4."
+    },
+    {
+      "activity_number": 4,
+      "name_vi": "Tổng kết & Exit Ticket: Kết nối tổng thể và đánh giá năng lực",
+      "duration_minutes": 10,
+      "objective_vi": "Khái quát hóa mối liên hệ hữu cơ giữa 4 phân khu chức năng; hoàn thành phiếu Exit Ticket đánh giá độc lập năng lực lịch sử.",
+      "teacher_actions": [
+        "Tổng kết hóa sơ đồ tư duy: liên kết trục biểu tượng vương quyền (nghi lễ) - trục tưởng niệm tiền nhân (thờ tự) - trục điều hành quốc gia (Tử Cấm Thành) - trục đời sống văn hóa.",
+        "Nhấn mạnh thông điệp bảo tồn di sản: tôn trọng tính chân xác lịch sử của Cố đô Huế.",
+        "Phát lệnh làm bài Exit Ticket cá nhân (5 phút cuối)."
+      ],
+      "student_actions": [
+        "Lắng nghe và bổ sung mối liên hệ tổng thể không gian vào sơ đồ tư duy chung của nhóm.",
+        "Làm việc độc lập: hoàn thành phiếu Exit Ticket với câu hỏi: 'Giải thích vì sao Điện Thái Hòa được đặt ở vị trí trung tâm trục nghi lễ bằng 1 dẫn chứng lịch sử cụ thể'.",
+        "Nộp phiếu học tập và Exit Ticket cho giáo viên."
+      ],
+      "deliverables_vi": "1 sơ đồ liên kết 4 phân khu trên bản đồ số và bài làm Exit Ticket cá nhân của 100% học sinh.",
+      "assessment_criteria_vi": "Bài Exit Ticket đạt chuẩn Rubric S1-S4: xác định đúng vị trí, trích dẫn được nguồn và lập luận chặt chẽ."
+    }
+  ],
+  "rubrics": {
+    "scale_description": "Thang điểm 0 - 3 cho mỗi tiêu chí năng lực (Tổng điểm tối đa: 12 điểm)",
+    "levels": [
+      { "score": 0, "label_vi": "Chưa thể hiện" },
+      { "score": 1, "label_vi": "Nhận biết đơn lẻ" },
+      { "score": 2, "label_vi": "Thực hiện tương đối đúng có dẫn chứng" },
+      { "score": 3, "label_vi": "Thực hiện độc lập, chính xác và giải thích rõ giới hạn" }
+    ],
+    "criteria": [
+      {
+        "id": "S1",
+        "dimension": "Không gian (Spatial Competence)",
+        "name_vi": "Xác định vị trí và quan hệ không gian kiến trúc",
+        "descriptors": {
+          "0": "Không định vị được công trình trên bản đồ trực giao Đại Nội.",
+          "1": "Xác định được vị trí công trình đơn lẻ nhưng chưa chỉ ra được mối liên hệ không gian với trục chính hay các công trình lân cận.",
+          "2": "Xác định đúng vị trí và nêu được công trình nằm trên phân khu chức năng nào (nghi lễ, thờ tự, Tử Cấm Thành, hay sinh hoạt).",
+          "3": "Xác định chính xác vị trí, phân tích sâu sắc vai trò của công trình trong tổng thể trục thần đạo và tổ chức phong thủy hoàng cung Huế."
+        }
+      },
+      {
+        "id": "S2",
+        "dimension": "Thời gian (Temporal Competence)",
+        "name_vi": "Phân biệt hiện trạng với tiến trình lịch sử",
+        "descriptors": {
+          "0": "Nhầm lẫn giữa hiện trạng công trình ngày nay với diện mạo ban đầu trong quá khứ.",
+          "1": "Nêu được năm xây dựng hoặc niên hiệu vua nhưng chưa phân biệt được các lần trùng tu hay biến đổi sau chiến tranh.",
+          "2": "Phân biệt được thời điểm khởi dựng ban đầu và một số mốc trùng tu lớn trong lịch sử.",
+          "3": "Phân biệt rành mạch và chính xác diện mạo ban đầu, biến động lịch sử (chiến sự, hỏa hoạn) và hiện trạng phục hồi bảo tồn đương đại."
+        }
+      },
+      {
+        "id": "S3",
+        "dimension": "Sử liệu (Evidence Competence)",
+        "name_vi": "Khai thác và sử dụng tư liệu chính thức",
+        "descriptors": {
+          "0": "Không dẫn được nguồn tư liệu hoặc dẫn sai nguồn thông tin không được kiểm chứng.",
+          "1": "Nhắc được tên một nguồn tư liệu (ví dụ: Đại Nam Thực Lục) nhưng không chỉ ra được nội dung cụ thể hay số quyển/chương.",
+          "2": "Trích dẫn được đoạn chép cụ thể từ chính sử phù hợp với công trình đang khảo cứu.",
+          "3": "Khai thác và trích dẫn chuẩn xác văn bản gốc kèm số quyển, niên đại văn bản; chỉ ra được mức độ tin cậy của tài liệu lưu trữ."
+        }
+      },
+      {
+        "id": "S4",
+        "dimension": "Lập luận (Argument & Epistemic Boundaries)",
+        "name_vi": "Lập luận lịch sử và xác định giới hạn bằng chứng",
+        "descriptors": {
+          "0": "Đưa ra kết luận cảm tính, thiếu căn cứ hoặc suy đoán chủ quan.",
+          "1": "Đưa ra nhận định có phần đúng nhưng chưa gắn kết chặt chẽ với dữ liệu quan sát và sử liệu.",
+          "2": "Lập luận có căn cứ từ sử liệu; bước đầu phân biệt được điều chắc chắn và điều suy đoán.",
+          "3": "Lập luận chặt chẽ, thuyết phục; phân định rành mạch giữa sự thật lịch sử đã được khẳng định với điều còn cần tiếp tục kiểm chứng."
+        }
+      }
+    ],
+    "overall_bands": [
+      { "min_score": 10, "max_score": 12, "classification_vi": "Xuất sắc (Thành thạo năng lực truy chứng di sản)" },
+      { "min_score": 7, "max_score": 9, "classification_vi": "Khá (Nắm vững phương pháp khảo cứu bản đồ và tư liệu)" },
+      { "min_score": 4, "max_score": 6, "classification_vi": "Đạt (Bước đầu biết tra cứu và định vị di tích)" },
+      { "min_score": 0, "max_score": 3, "classification_vi": "Chưa đạt (Cần hỗ trợ thêm về kỹ năng đọc bản đồ và trích nguồn)" }
+    ]
+  },
+  "appendix": {
+    "exit_ticket_sample": {
+      "prompt_vi": "Dựa vào tư liệu đã học, em hãy giải thích vì sao Điện Thái Hòa lại được xây cất trên hệ thống hai tầng nền bằng đá thanh và đặt trên trục chính đạo?",
+      "expected_evidence_vi": "Học sinh nêu được quy chế phân tầng triều nghi (vua ngự trong điện, đại thần đứng tầng trên sân, bá quan tầng dưới) theo Khâm Định Đại Nam Hội Điển Sự Lệ.",
+      "time_allowed_minutes": 5
+    }
+  }
+}

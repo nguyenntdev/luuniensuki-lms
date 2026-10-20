@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="maskableBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2a231d" />
+      <stop offset="100%" stop-color="#14110e" />
+    </linearGradient>
+    <linearGradient id="imperialGoldM" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffd54f" />
+      <stop offset="40%" stop-color="#C68A2C" />
+      <stop offset="100%" stop-color="#8a5c12" />
+    </linearGradient>
+    <linearGradient id="roofTileM" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#d49a37" />
+      <stop offset="50%" stop-color="#ffe082" />
+      <stop offset="100%" stop-color="#b27918" />
+    </linearGradient>
+  </defs>
+
+  <!-- Full bleed background for safe area maskable icon (safe area is inner 80% circle) -->
+  <rect width="512" height="512" fill="url(#maskableBg)" />
+
+  <!-- Inner safe zone content -->
+  <g transform="translate(0, 15) scale(0.92)" transform-origin="256 256">
+    <circle cx="256" cy="256" r="210" fill="none" stroke="url(#imperialGoldM)" stroke-width="6" opacity="0.8" />
+    
+    <!-- Fortress Stone Base -->
+    <path d="M 130 360 L 382 360 L 382 296 L 334 296 L 334 316 L 178 316 L 178 296 L 130 296 Z" 
+          fill="#4a3c2c" stroke="url(#imperialGoldM)" stroke-width="4" />
+    
+    <!-- Archway Gate Openings -->
+    <path d="M 236 360 L 236 328 Q 256 318 276 328 L 276 360 Z" fill="#14110e" stroke="url(#imperialGoldM)" stroke-width="2" />
+    <path d="M 196 360 L 196 336 Q 207 330 218 336 L 218 360 Z" fill="#14110e" opacity="0.8" />
+    <path d="M 294 360 L 294 336 Q 305 330 316 336 L 316 360 Z" fill="#14110e" opacity="0.8" />
+
+    <!-- Columns -->
+    <line x1="168" y1="296" x2="168" y2="246" stroke="#C68A2C" stroke-width="7" stroke-linecap="round" />
+    <line x1="212" y1="296" x2="212" y2="246" stroke="#C68A2C" stroke-width="7" stroke-linecap="round" />
+    <line x1="256" y1="296" x2="256" y2="246" stroke="#C68A2C" stroke-width="8" stroke-linecap="round" />
+    <line x1="300" y1="296" x2="300" y2="246" stroke="#C68A2C" stroke-width="7" stroke-linecap="round" />
+    <line x1="344" y1="296" x2="344" y2="246" stroke="#C68A2C" stroke-width="7" stroke-linecap="round" />
+
+    <!-- First Roof -->
+    <path d="M 136 250 Q 160 254 256 250 Q 352 254 376 250 L 362 232 Q 256 236 150 232 Z" 
+          fill="url(#roofTileM)" stroke="url(#imperialGoldM)" stroke-width="3" />
+    <path d="M 136 250 Q 124 240 120 226" fill="none" stroke="url(#imperialGoldM)" stroke-width="4" stroke-linecap="round" />
+    <path d="M 376 250 Q 388 240 392 226" fill="none" stroke="url(#imperialGoldM)" stroke-width="4" stroke-linecap="round" />
+
+    <!-- Upper Columns -->
+    <line x1="194" y1="232" x2="194" y2="190" stroke="#C68A2C" stroke-width="6" stroke-linecap="round" />
+    <line x1="256" y1="232" x2="256" y2="190" stroke="#C68A2C" stroke-width="7" stroke-linecap="round" />
+    <line x1="318" y1="232" x2="318" y2="190" stroke="#C68A2C" stroke-width="6" stroke-linecap="round" />
+
+    <!-- Upper Main Roof -->
+    <path d="M 164 192 Q 204 196 256 192 Q 308 196 348 192 L 334 168 Q 256 174 178 168 Z" 
+          fill="url(#roofTileM)" stroke="url(#imperialGoldM)" stroke-width="3" />
+    <path d="M 164 192 Q 152 180 148 165" fill="none" stroke="url(#imperialGoldM)" stroke-width="4" stroke-linecap="round" />
+    <path d="M 348 192 Q 360 180 364 165" fill="none" stroke="url(#imperialGoldM)" stroke-width="4" stroke-linecap="round" />
+
+    <!-- Ridge Ornament -->
+    <path d="M 252 168 L 260 168 L 258 146 Q 266 142 256 130 Q 246 142 254 146 Z" 
+          fill="url(#imperialGoldM)" stroke="#ffd54f" stroke-width="1.5" />
+
+    <!-- Text -->
+    <text x="256" y="420" text-anchor="middle" font-family="'Times New Roman', serif" font-weight="bold" font-size="28" fill="#F7F2E8" letter-spacing="4">
+      ĐẠI NỘI HUẾ
+    </text>
+  </g>
+</svg>

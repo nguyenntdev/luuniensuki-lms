@@ -1,0 +1,1724 @@
+/**
+ * API client for STTTNNĐ (Lưu Niên — Đại Nội Huế) Follow-On SPEC V5.1.
+ * Connects to `/api/v1/imperial/*` endpoints.
+ * Includes complete offline/dev fallbacks with rich historical data for Đại Nội Huế monuments.
+ */
+
+import { apiRequest } from "@/lib/api";
+import type {
+  ArtDetailClaimSource,
+  ArtDetailQuestion,
+  AssignmentRelease,
+  ClueAttemptResult,
+  GameQuestion,
+  GameSubmitResult,
+  ImperialArtDetail,
+  ImperialClue,
+  ImperialLearningMedia,
+  ImperialMediaHotspot,
+} from "./v51-types";
+
+// =========================================================================== //
+// Rich Fallback Data
+// =========================================================================== //
+
+export const FALLBACK_ART_DETAILS: ImperialArtDetail[] = [
+  {
+    "id": "detail-ngai-vang-thai-hoa",
+    "slug": "ngai-vang-hoang-de",
+    "site_id": "site-dien-thai-hoa",
+    "site_slug": "dien-thai-hoa",
+    "site_name_vi": "Điện Thái Hòa",
+    "title": "Ngai Vàng Triều Nguyễn tại Điện Thái Hòa",
+    "kind": "carving",
+    "motif": "Cửu Long tranh châu & Bát bửu mây lành",
+    "material": "Gỗ quý sơn then mài bóng, dát vàng quỳ nguyên chất 9999, lụa kim tuyến",
+    "technique": "Chạm lộng kênh bong, sơn thếp vàng truyền thống triều Nguyễn",
+    "description_observation": "Ngai vàng đặt uy nghiêm trên bệ gỗ tam cấp ngay tâm trục thần đạo điện Thái Hòa. Thân ngai chạm lộng hình chín con rồng uy dũng uốn lượn ẩn hiện trong mây lửa, hai tay ngai uốn lượn thành đầu rồng nghểnh cao chầu về phía trước. Toàn bộ bề mặt ngai được phủ lớp sơn then mài bóng và dát những lá vàng quỳ rực rỡ. Phía trên ngai giăng bửu tán đính đăng ten dệt kim tuyến, các dải tua rũ buông rủ thanh thoát tôn vinh uy thế của đấng chí tôn.",
+    "story_body": "Ngai vàng được chế tác từ đầu thời vua Gia Long (1805) và hoàn thiện các chi tiết bửu tán vàng dưới thời Minh Mạng (1833 khi dời điện Thái Hòa). Suốt 143 năm trị vì của triều Nguyễn, chiếc ngai vàng này đã chứng kiến lễ đăng quang của 13 vị hoàng đế từ vua Gia Long đến vua Bảo Đại. Ngày 30 tháng 8 năm 1945, tại cửa Ngọ Môn ngay trước điện Thái Hòa, vua Bảo Đại tuyên đọc Chiếu thoái vị, chính thức khép lại kỷ nguyên quân chủ nghìn năm của Việt Nam, biến ngai vàng thành một chứng tích lịch sử vô giá được công nhận là Bảo vật Quốc gia đợt đầu tiên năm 2015.",
+    "story_type": "documented_event",
+    "meaning_body": "Ngai vàng nằm tại vị trí hội tụ phong thủy tuyệt đối của Kinh thành Huế, biểu trưng cho quyền lực tối thượng của Thiên tử thay trời trị dân. Hình tượng Cửu Long (chín rồng) thể hiện sức mạnh chí dương, sự trường cửu vĩnh định của non sông xã tắc và ước vọng thái bình thăng hoa cho muôn dân trăm họ.",
+    "historical_value_body": "Hiện vật nguyên bản duy nhất còn nguyên vẹn trong toàn bộ các triều đại phong kiến Việt Nam, minh chứng cho sự thăng trầm lịch sử vương triều nhà Nguyễn.",
+    "cultural_value_body": "Đại diện cho tư tưởng Nho giáo dung hợp văn hóa cung đình Việt, phản ánh quan niệm chính danh và nghi lễ quốc gia thời Nguyễn.",
+    "art_value_body": "Đỉnh cao tuyệt mỹ của nghệ thuật chạm khắc gỗ và kỹ thuật sơn thếp vàng truyền thống xứ Huế thế kỷ XIX, đạt độ tinh xảo và bền bỉ vượt bậc.",
+    "image_url": "/assets/imperial/heritage/dienthaihoa.jpg",
+    "claim_sources": [
+      {
+        "id": "src-ngai-vang-hoang-de-1",
+        "section": "Chế tác và định vị ngai vàng",
+        "claim_text": "Mùa thu tháng 8 năm Ất Sửu (1805) điện Thái Hòa dựng xong, đặt bảo tọa ở gian chính giữa, quy chế nghiêm trang tráng lệ.",
+        "source_title": "Đại Nam Thực Lục Chính Biên",
+        "source_locator": "Đệ nhất kỷ, Quyển 26, trang 14b",
+        "evidence_strength": "verified",
+        "citation_quote": ""
+      },
+      {
+        "id": "src-ngai-vang-hoang-de-2",
+        "section": "Nghi lễ Đại triều và bảo vật quốc gia",
+        "claim_text": "Hễ ngày thiết Đại triều, Loan giá xuất ngự bảo tọa, bách quan tiến hành ngũ bái tam khấu...",
+        "source_title": "Khâm Định Đại Nam Hội Điển Sự Lệ",
+        "source_locator": "Quyển 102: Lễ Bộ nghi thức thiết triều, tr. 88-92",
+        "evidence_strength": "verified",
+        "citation_quote": ""
+      },
+      {
+        "id": "src-ngai-vang-hoang-de-3",
+        "section": "Hồ sơ công nhận Bảo vật Quốc gia",
+        "claim_text": "Ngai vàng triều Nguyễn tại Điện Thái Hòa được Thủ tướng Chính phủ ký quyết định công nhận là Bảo vật Quốc gia đợt 4 năm 2015.",
+        "source_title": "Quyết định số 2382/QĐ-TTg của Thủ tướng Chính phủ",
+        "source_locator": "Danh mục Bảo vật Quốc gia Việt Nam năm 2015",
+        "evidence_strength": "verified",
+        "citation_quote": ""
+      }
+    ],
+    "questions": [
+      {
+        "id": "q-ngai-vang-hoang-de-1",
+        "detail_id": "detail-ngai-vang-thai-hoa",
+        "question_type": "multiple_choice",
+        "prompt": "Đồ án mỹ thuật chính được chạm lộng tinh xảo trên thân ngai vàng điện Thái Hòa là hình tượng gì?",
+        "options": [
+          "Cửu Long tranh châu (9 con rồng uyển chuyển)",
+          "Tứ linh hội tụ (Long, Lân, Quy, Phụng)",
+          "Lưỡng long chầu nguyệt",
+          "Phượng hoàng hàm thư"
+        ],
+        "answer_key": "0",
+        "explanation": "Thân ngai chạm lộng hình tượng 9 con rồng (Cửu Long) biểu trưng cho quyền uy tối cao và tính chí dương của bậc Thiên tử.",
+        "display_order": 1
+      },
+      {
+        "id": "q-ngai-vang-hoang-de-2",
+        "detail_id": "detail-ngai-vang-thai-hoa",
+        "question_type": "multiple_choice",
+        "prompt": "Ngai vàng triều Nguyễn tại điện Thái Hòa đã chứng kiến bao nhiêu vị hoàng đế triều Nguyễn đăng quang?",
+        "options": [
+          "9 vị hoàng đế",
+          "11 vị hoàng đế",
+          "13 vị hoàng đế",
+          "10 vị hoàng đế"
+        ],
+        "answer_key": "2",
+        "explanation": "Suốt 143 năm tồn tại của vương triều Nguyễn (1802 - 1945), ngai vàng đã chứng kiến 13 vị hoàng đế ngự trị đăng quang, từ vua Gia Long đến vua Bảo Đại.",
+        "display_order": 2
+      }
+    ],
+    "review_status": "published"
+  },
+  {
+    "id": "detail-hoa-tiet-rong-may-dien-thai-hoa",
+    "slug": "hoa-tiet-rong-may-dien-thai-hoa",
+    "site_id": "site-dien-thai-hoa",
+    "site_slug": "dien-thai-hoa",
+    "site_name_vi": "Điện Thái Hòa",
+    "title": "Họa tiết Rồng mây Điện Thái Hòa",
+    "kind": "carving",
+    "motif": "Long vân khánh hội (Rồng vờn mây lành) & Lưỡng long triều nhật",
+    "material": "Gỗ lim rừng, vàng quỳ, sơn then bóng, đá thanh hoa cương",
+    "technique": "Chạm lộng kênh bong, sơn son thếp vàng, chạm nổi phù điêu",
+    "description_observation": "Nội thất điện Thái Hòa được chống đỡ bởi hệ thống 80 cột gỗ lim sơn son thếp vàng lộng lẫy. Trên thân các hàng cột cái và cột quân ở gian giữa, đồ án 'Long vân đồng thể' (rồng và mây hòa quyện) uốn lượn uy dũng từ chân cột lên xà thượng. Đầu rồng ngậm ngọc, mắt rực sáng, năm móng sắc nhọn quặp chặt lấy mây lành và lửa thiêng. Trên các vì kèo và bửu tán, hàng ngàn chi tiết chạm lộng tinh xảo phủ vàng tạo nên không gian hoàng gia tráng lệ.",
+    "story_body": "Hình tượng rồng năm móng tại điện Thái Hòa là độc quyền biểu tượng của Hoàng đế nhà Nguyễn. Trong buổi lễ đăng quang hoặc các ngày sóc vọng (mồng 1 và 15 âm lịch), khi đại triều khai hội, ánh sáng xuyên qua các bức màn the rọi vào các cột dát vàng quỳ làm bừng sáng khung cảnh 'Long vân khánh hội' - ẩn dụ cho sự gặp gỡ thiêng liêng và hòa hợp tuyệt đối giữa minh quân sáng suốt và lương thần tài ba.",
+    "story_type": "documented_event",
+    "meaning_body": "Rồng năm móng là linh vật đứng đầu Tứ linh, tượng trưng cho thiên mệnh, sự cương trực và mưa thuận gió hòa cho nền nông nghiệp đất nước. Sự xuất hiện của rồng vờn mây khẳng định quyền lực vương quyền chính danh được che chở bởi mệnh trời.",
+    "historical_value_body": "Di sản nghệ thuật điêu khắc gỗ đỉnh cao thời Nguyễn đầu thế kỷ XIX, bảo lưu chuẩn mực tạo hình rồng cung đình Huế.",
+    "cultural_value_body": "Biểu đạt triết lý vũ trụ luận Á Đông về trật tự Càn - Khôn và đức trị hiếu sinh của vương triều đối với muôn dân.",
+    "art_value_body": "Đạt độ hoàn mỹ vượt bậc về kỹ thuật chạm kênh bong (chạm nổi nhiều lớp không gian sâu) và lớp mạ thếp vàng nguyên chất bền bỉ suốt hơn hai thế kỷ.",
+    "image_url": "/assets/imperial/heritage/dienthaihoa2.jpg",
+    "claim_sources": [
+      {
+        "id": "src-hoa-tiet-rong-may-dien-thai-hoa-1",
+        "section": "Quy chế trang trí đồ án rồng ngai vàng",
+        "claim_text": "Chỉ có cung điện của thiên tử và ngai vàng mới được chạm rồng 5 móng; cung của thái tử chạm rồng 4 móng (giao long), dân gian nghiêm cấm sử dụng.",
+        "source_title": "Khâm Định Đại Nam Hội Điển Sự Lệ",
+        "source_locator": "Quyển 214: Công bộ - Doanh tạo quy thức",
+        "evidence_strength": "verified",
+        "citation_quote": ""
+      },
+      {
+        "id": "src-hoa-tiet-rong-may-dien-thai-hoa-2",
+        "section": "Miêu tả điện Thái Hòa ngày đại lễ",
+        "claim_text": "Bách quan triều phục chỉnh tề sắp hàng ngoài sân Đại Triều, nhìn vào trong thấy rồng mây lấp lánh như ở chốn thiên đình.",
+        "source_title": "Đại Nam Nhất Thống Chí",
+        "source_locator": "Tập 1: Kinh sư, mục Cung thất",
+        "evidence_strength": "verified",
+        "citation_quote": ""
+      }
+    ],
+    "questions": [
+      {
+        "id": "q-hoa-tiet-rong-may-dien-thai-hoa-1",
+        "detail_id": "detail-hoa-tiet-rong-may-dien-thai-hoa",
+        "question_type": "multiple_choice",
+        "prompt": "Đặc điểm nào trên chân rồng tại điện Thái Hòa khẳng định đây là hình tượng dành riêng cho Hoàng đế?",
+        "options": [
+          "Rồng có 3 móng sắc nhọn",
+          "Rồng có 4 móng vờn ngọc",
+          "Rồng có 5 móng sắc nhọn vững chãi",
+          "Rồng có bờm ngắn không móng"
+        ],
+        "answer_key": "2",
+        "explanation": "Theo quy chế nghiêm ngặt của triều đình, chỉ có Hoàng đế mới được sử dụng hình tượng rồng 5 móng. Thân vương, hoàng tử chỉ dùng giao long 4 móng hoặc mãn long.",
+        "display_order": 1
+      }
+    ],
+    "review_status": "published"
+  },
+  {
+    "id": "detail-kham-sanh-su-dien-kien-trung",
+    "slug": "kham-sanh-su-dien-kien-trung",
+    "site_id": "site-dien-kien-trung",
+    "site_slug": "dien-kien-trung",
+    "site_name_vi": "Điện Kiến Trung",
+    "title": "Nghệ thuật Khảm Sành Sứ Điện Kiến Trung",
+    "kind": "mosaic",
+    "motif": "Tứ linh, hoa cỏ bốn mùa, rồng kiểu tân cổ điển, dải đăng ten phong cách Pháp",
+    "material": "Mảnh gốm sứ vỡ, mảnh thủy tinh màu, ngói tráng men, vữa tam hợp",
+    "technique": "Khảm gốm sứ đắp nổi kết hợp phong cách mỹ thuật Baroque - Rococo phương Tây và hoa văn truyền thống Á Đông",
+    "description_observation": "Mặt tiền và toàn bộ các mảng tường ngoài của Điện Kiến Trung được bao phủ dày đặc bởi nghệ thuật khảm sành sứ nhiều màu sắc rực rỡ. Hàng vạn mảnh sứ vỡ từ chén đĩa, tô bát men lam và men ngũ sắc được nghệ nhân gọt giũa tỉ mỉ để ghép thành hình rồng uốn lượn, phượng hoàng, hoa sen, hoa cúc, kết hợp các họa tiết hình học, phù điêu phong cách phục hưng phương Tây.",
+    "story_body": "Điện Kiến Trung được vua Khải Định cho xây dựng từ năm 1921 đến 1923 để làm nơi làm việc và sinh hoạt riêng. Đây là đỉnh cao của trào lưu mỹ thuật 'Tân - Cổ giao duyên' đầu thế kỷ XX dưới triều Nguyễn. Đến thời vua Bảo Đại, cung điện này được cải tạo nội thất hiện đại theo tiện nghi phương Tây và là nơi hoàng gia sống quây quần cùng hoàng hậu Nam Phương và các hoàng tử, công chúa.",
+    "story_type": "documented_event",
+    "meaning_body": "Sự pha trộn giữa kỹ thuật cung đình truyền thống Việt Nam và nghệ thuật kiến trúc Pháp thể hiện giai đoạn chuyển giao văn hóa sâu sắc của lịch sử Việt Nam cận đại; biểu dương sự sáng tạo linh hoạt của bàn tay người thợ thủ công xứ Huế khi dung nạp tinh hoa ngoại lai.",
+    "historical_value_body": "Dấu ấn đỉnh cao của thời kỳ mỹ thuật Khải Định và là nơi chứng kiến cuộc sống sinh hoạt cung đình cuối cùng của hoàng gia Việt Nam trước 1945.",
+    "cultural_value_body": "Ví dụ mẫu mực về sự giao thoa văn hóa Đông - Tây trong kiến trúc di sản Cố đô Huế.",
+    "art_value_body": "Kỹ thuật đắp khảm sành sứ đạt đến trình độ tuyệt kỹ bậc thầy, biến vật liệu phế phẩm (mảnh bát đĩa vỡ) thành tác phẩm bích họa phù điêu lộng lẫy.",
+    "image_url": "/assets/imperial/heritage/dienkientrung.jpg",
+    "claim_sources": [
+      {
+        "id": "src-kham-sanh-su-dien-kien-trung-1",
+        "section": "Xây dựng điện Kiến Trung thời vua Khải Định",
+        "claim_text": "Năm Khải Định thứ 6 (1921) làm điện Kiến Trung trên nền lầu Du Cửu cũ, trang hoàng bằng sành sứ và gạch hoa tân thời.",
+        "source_title": "Đại Nam Thực Lục Chính Biên",
+        "source_locator": "Đệ thất kỷ (Khải Định hoàng đế)",
+        "evidence_strength": "verified",
+        "citation_quote": ""
+      }
+    ],
+    "questions": [
+      {
+        "id": "q-kham-sanh-su-dien-kien-trung-1",
+        "detail_id": "detail-kham-sanh-su-dien-kien-trung",
+        "question_type": "multiple_choice",
+        "prompt": "Vì sao nghệ thuật trang trí tại Điện Kiến Trung được coi là biểu tượng của phong cách 'Đông Tây kết hợp'?",
+        "options": [
+          "Vì sử dụng kiến trúc hoàn toàn bằng gỗ lim truyền thống",
+          "Vì kết hợp kỹ thuật khảm sành sứ cung đình Việt Nam với bố cục phù điêu, hình khối kiến trúc cổ điển phương Tây",
+          "Vì toàn bộ cung điện do kiến trúc sư người Pháp thiết kế không có sự tham gia của thợ Việt",
+          "Vì chỉ sử dụng các vật liệu nhập khẩu trực tiếp từ Nhật Bản"
+        ],
+        "answer_key": "1",
+        "explanation": "Điện Kiến Trung sử dụng nghệ thuật khảm sành sứ độc đáo của thợ thủ công Huế kết hợp với ngôn ngữ tạo hình Baroque và Rococo của kiến trúc Pháp thế kỷ XIX-XX.",
+        "display_order": 1
+      }
+    ],
+    "review_status": "published"
+  },
+  {
+    "id": "detail-kham-sanh-su-dien-khai-thanh",
+    "slug": "kham-sanh-su-dien-khai-thanh",
+    "site_id": "site-dien-kien-trung",
+    "site_slug": "dien-kien-trung",
+    "site_name_vi": "Điện Kiến Trung",
+    "title": "Nghệ thuật Khảm Sành Sứ & Thủy Tinh Điện Khải Thành",
+    "kind": "mosaic",
+    "motif": "Bích họa phù điêu Cửu Long ẩn vân, Bát bửu triều dương, hoa lá men ngũ sắc & khảm chai thủy tinh",
+    "material": "Đồ sứ ký kiểu Khang Hy, Càn Long, tô đĩa men ngũ sắc thời Nguyễn, thủy tinh màu nhập Pháp, vữa vôi mật mía",
+    "technique": "Nghệ thuật khảm gọt sành sứ đắp nổi lập thể kết hợp chai thủy tinh màu (Đỉnh cao tạo hình 3D sành sứ triều Nguyễn)",
+    "description_observation": "Toàn bộ không gian nội thất của Điện Khải Thành được bao bọc bởi hàng triệu mảnh sành sứ và chai thủy tinh màu rực rỡ. Nghệ nhân đã sử dụng kỹ thuật gọt đẽo mảnh sứ thành các cánh hoa, vảy rồng, lá sen với độ cong chính xác đến từng milimet. Trên trần điện là bức bích họa 'Cửu Long Ẩn Vân' (chín con rồng ẩn hiện trong mây) do nghệ nhân dân gian Phan Văn Tánh dùng chân vẽ, hòa cùng bảo bệ bằng bê tông khảm sành sứ phủ vàng lộng lẫy.",
+    "story_body": "Điện Khải Thành (thuộc quần thể kiến trúc triều Khải Định khởi dựng từ năm 1920 đến 1931) cùng với Điện Kiến Trung là hai đỉnh cao tuyệt đối của nghệ thuật khảm sành sứ Cố đô Huế. Tại đây, nghệ nhân dân gian Việt Nam đã phát huy óc sáng tạo siêu phàm khi tận dụng những mảnh vỡ từ chai rượu Pháp, chén bát sành sứ thời Minh, Thanh và đồ gốm bản địa để kiến tạo nên những bức tranh nổi tráng lệ không hề bị thời gian làm phai nhạt.",
+    "story_type": "documented_event",
+    "meaning_body": "Thể hiện tư duy tái sinh vật liệu và khát vọng vươn tới sự trường tồn bất diệt. Sự phối hợp tài tình giữa các màu sắc gốm sứ Á Đông và thủy tinh phương Tây tạo nên bản hòa ca rực rỡ của nền mỹ thuật Việt Nam thời cận đại.",
+    "historical_value_body": "Đỉnh cao tuyệt đối của dòng nghệ thuật khảm sành sứ hoàng gia triều Nguyễn thế kỷ XX, đánh dấu bước chuyển mình độc đáo của mỹ thuật truyền thống.",
+    "cultural_value_body": "Biểu hiện sống động của sự cởi mở, sáng tạo vượt bậc của tầng lớp nghệ nhân xứ Huế trong việc tiếp thu và biến đổi kỹ thuật ngoại lai.",
+    "art_value_body": "Tác phẩm điêu khắc mosaic lập thể bằng sành sứ và thủy tinh có một không hai trên thế giới, đạt giá trị thẩm mỹ đỉnh cao.",
+    "image_url": "/assets/imperial/heritage/dienkientrung.jpg",
+    "claim_sources": [
+      {
+        "id": "src-kham-sanh-su-dien-khai-thanh-1",
+        "section": "Khảo cứu mỹ thuật thời Khải Định",
+        "claim_text": "Kỹ thuật đắp nổi và cắt dán sành sứ thời Khải Định đã vượt khỏi khuôn khổ trang trí thông thường để trở thành nghệ thuật điêu khắc nổi độc lập.",
+        "source_title": "Mỹ thuật Huế — Khảo cứu của Trung tâm Bảo tồn Di tích Cố đô Huế",
+        "source_locator": "Chuyên khảo Nghệ thuật Khảm Sành Sứ Cung Đình, tr. 142-156",
+        "evidence_strength": "verified",
+        "citation_quote": ""
+      }
+    ],
+    "questions": [
+      {
+        "id": "q-kham-sanh-su-dien-khai-thanh-1",
+        "detail_id": "detail-kham-sanh-su-dien-khai-thanh",
+        "question_type": "multiple_choice",
+        "prompt": "Vật liệu đặc biệt nào đã được các nghệ nhân kết hợp tài tình cùng đồ sành sứ vỡ tại Điện Khải Thành?",
+        "options": [
+          "Vỏ sò biển và vỏ trai cẩn ốc xà cừ",
+          "Các mảnh chai thủy tinh màu và pha lê nhập khẩu",
+          "Gạch đất nung không men",
+          "Đá cẩm thạch nguyên khối"
+        ],
+        "answer_key": "1",
+        "explanation": "Nghệ nhân triều Nguyễn đã kết hợp đồ sành sứ men màu ngũ sắc với các mảnh chai bia, rượu thủy tinh màu nhập từ Pháp để tăng độ sáng bóng và phản quang lộng lẫy.",
+        "display_order": 1
+      }
+    ],
+    "review_status": "published"
+  },
+  {
+    "id": "detail-phap-lam-bo-noc-hien-lam-cac",
+    "slug": "phap-lam-bo-noc-hien-lam-cac",
+    "site_id": "site-hien-lam-cac",
+    "site_slug": "hien-lam-cac",
+    "site_name_vi": "Hiển Lâm Các",
+    "title": "Bầu rượu Pháp lam trên đỉnh nóc Hiển Lâm Các",
+    "kind": "relief",
+    "motif": "Hồ lô ngọc ngũ sắc, mây lành bát bửu, đài tưởng niệm công thần",
+    "material": "Kim loại đồng, men thủy tinh màu pháp lam, gỗ lim rừng",
+    "technique": "Pháp lam Huế (tráng men nung trên cốt đồng nhiều lần ở 800°C–900°C), điêu khắc mộc cung đình",
+    "description_observation": "Trên đỉnh bờ nóc của tòa lầu Hiển Lâm Các cao 17m sừng sững hình tượng bầu rượu (hồ lô) pháp lam ngũ sắc rực rỡ. Chất liệu pháp lam mang màu sắc tươi sáng: lam ngọc, xanh lục, vàng chanh và đỏ son bóng láng, chịu đựng được sự khắc nghiệt của mưa nắng miền Trung mà không hề bị phai màu rêu mốc suốt hơn 200 năm.",
+    "story_body": "Hiển Lâm Các được vua Minh Mạng cho xây dựng năm 1821-1822 trong khuôn viên Thế Miếu làm đài kỷ niệm công đức tiên vương và các đại thần khai quốc. Triều đình quy định nghiêm cấm xây cất bất kỳ công trình nào trong Đại Nội có chiều cao vượt qua tầng trên cùng của Hiển Lâm Các.",
+    "story_type": "documented_event",
+    "meaning_body": "Hình tượng hồ lô trên nóc biểu trưng cho bình yên, phúc lộc trường thọ và sự che chở; Hiển Lâm Các mang ý nghĩa ghi nhớ công đức hiển hách lưu truyền muôn đời.",
+    "historical_value_body": "Công trình kiến trúc gỗ cao nhất Hoàng Thành Huế, bảo tồn nguyên vẹn hệ khung gỗ lim và pháp lam đỉnh nóc suốt hơn hai thế kỷ.",
+    "cultural_value_body": "Biểu hiện không gian tưởng niệm tôn nghiêm của văn hóa hoàng gia triều Nguyễn.",
+    "art_value_body": "Minh chứng kỹ nghệ luyện kim và tráng men thủy tinh tuyệt đỉnh của thợ thủ công cung đình Huế kết hợp kết cấu mộc 3 tầng thanh thoát.",
+    "image_url": "/assets/imperial/heritage/dainoitrencao.jpg",
+    "claim_sources": [
+      {
+        "id": "src-phap-lam-bo-noc-hien-lam-cac-1",
+        "section": "Quy chế Hiển Lâm Các và tượng đài công thần",
+        "claim_text": "Năm Minh Mạng thứ 2 (1821) dựng Hiển Lâm Các ở phía trước Thế Miếu, tầng trên treo biển ngự chế, định rõ quy thức không ai được xây cao hơn.",
+        "source_title": "Đại Nam Thực Lục Chính Biên",
+        "source_locator": "Đệ nhị kỷ, Quyển 15",
+        "evidence_strength": "verified",
+        "citation_quote": ""
+      }
+    ],
+    "questions": [
+      {
+        "id": "q-phap-lam-bo-noc-hien-lam-cac-1",
+        "detail_id": "detail-phap-lam-bo-noc-hien-lam-cac",
+        "question_type": "multiple_choice",
+        "prompt": "Vì sao luật lệ triều Nguyễn nghiêm cấm xây bất kỳ công trình nào trong Đại Nội cao hơn Hiển Lâm Các?",
+        "options": [
+          "Do sợ gió bão làm sập các công trình lân cận",
+          "Để tôn vinh công đức hiển hách của tổ tiên và các bậc khai quốc công thần dựng nước",
+          "Vì triều đình thiếu gỗ lim loại dài để thi công",
+          "Để phục vụ việc quan sát phòng thủ quân sự"
+        ],
+        "answer_key": "1",
+        "explanation": "Hiển Lâm Các là đài tưởng niệm công thần và tiên vương. Việc khống chế chiều cao thể hiện sự tôn kính tối thượng, không cho phép công trình nào vượt qua biểu tượng công lao tiền nhân.",
+        "display_order": 1
+      }
+    ],
+    "review_status": "published"
+  },
+  {
+    "id": "detail-phap-lam-hoang-cung-bo-noc-dau-dao-nghi-mon",
+    "slug": "phap-lam-hoang-cung-bo-noc-dau-dao-nghi-mon",
+    "site_id": "site-the-to-mieu",
+    "site_slug": "the-to-mieu",
+    "site_name_vi": "Thế Tổ Miếu",
+    "title": "Pháp Lam Hoàng Cung trên Bờ Nóc, Đầu Đao & Nghi Môn",
+    "kind": "relief",
+    "motif": "Hỏa châu triều nhật, giao long đầu đao, đố bản bát bửu, cổ đồ hoa trái trên cổng nghi môn",
+    "material": "Cốt đồng tấm dát mỏng, men silicat đa sắc (hoàng kim, bích ngọc, lam chàm, huyết dụ, trắng sứ)",
+    "technique": "Kỹ nghệ Pháp lam Họa diện (Painted enamel) & Pháp lam Khảm ty (Cloisonné) nung nhiều lửa",
+    "description_observation": "Tại bờ nóc các tòa điện lớn như Điện Thái Hòa, Thế Miếu và các cổng Nghi Môn, nghệ thuật pháp lam xuất hiện rực rỡ qua các ô hộc hình quả trám, hình quạt và cuốn thư. Các đầu đao hình đầu rồng uốn lượn bằng đồng pháp lam ngậm ngọc tỏa ánh ngũ sắc rực rỡ. Các cánh cổng nghi môn đúc bằng đồng phủ men pháp lam với các bức tranh cổ đồ bát bửu biểu trưng cho văn hiến cung đình.",
+    "story_body": "Vào năm Minh Mạng thứ 8 (1827), triều đình thành lập 'Pháp lam tượng cục' (xưởng chế tác pháp lam của hoàng gia) quy tụ các nghệ nhân kim hoàn và tráng men tài ba nhất cả nước. Huế trở thành trung tâm duy nhất tại Việt Nam nắm giữ bí quyết chế tác pháp lam - một kỹ nghệ kết hợp tài tình giữa nghề gò đồng tinh xảo và kỹ thuật nấu men thủy tinh đa sắc nung ở nhiệt độ cao 800°C–900°C.",
+    "story_type": "documented_event",
+    "meaning_body": "Màu sắc ngũ hành rực rỡ của pháp lam biểu trưng cho sinh khí vũ trụ, trật tự nhật nguyệt tinh tú và sự bền vững ngàn thu của hoàng triều; hỏa châu và giao long trên bờ nóc có ý nghĩa trấn áp hỏa tai và giông bão theo thuật phong thủy.",
+    "historical_value_body": "Hiện vật minh chứng cho sự tự chủ và đỉnh cao công nghệ chế tác vật liệu trang trí cao cấp nhất của triều Nguyễn thế kỷ XIX.",
+    "cultural_value_body": "Huế là cái nôi duy nhất của di sản pháp lam tại Việt Nam, phản ánh sự giao lưu văn hóa và năng lực tiếp biến công nghệ tinh xảo.",
+    "art_value_body": "Đạt độ tinh xảo tuyệt đối về màu sắc men thủy tinh chịu nhiệt và kỹ thuật gò đồng tinh vi không mối hàn lộ.",
+    "image_url": "/assets/imperial/heritage/kientruc.jpg",
+    "claim_sources": [
+      {
+        "id": "src-phap-lam-hoang-cung-bo-noc-dau-dao-nghi-mon-1",
+        "section": "Thành lập Pháp lam tượng cục",
+        "claim_text": "Năm Minh Mạng thứ 8 (1827) đặt Pháp lam tượng cục, thu nhận thợ khéo để nung đúc các thứ đồ dùng và vật liệu pháp lam trang hoàng cung điện.",
+        "source_title": "Đại Nam Thực Lục Chính Biên",
+        "source_locator": "Đệ nhị kỷ, Quyển 47, trang 18b",
+        "evidence_strength": "verified",
+        "citation_quote": ""
+      },
+      {
+        "id": "src-phap-lam-hoang-cung-bo-noc-dau-dao-nghi-mon-2",
+        "section": "Quy thức trang trí pháp lam",
+        "claim_text": "Quy chế bờ nóc, đầu đao các tòa chính điện và cổng Nghi môn đều trang hoàng đố bản đồng pháp lam.",
+        "source_title": "Khâm Định Đại Nam Hội Điển Sự Lệ",
+        "source_locator": "Quyển 216: Công bộ - Pháp lam tượng",
+        "evidence_strength": "verified",
+        "citation_quote": ""
+      }
+    ],
+    "questions": [
+      {
+        "id": "q-phap-lam-hoang-cung-bo-noc-dau-dao-nghi-mon-1",
+        "detail_id": "detail-phap-lam-hoang-cung-bo-noc-dau-dao-nghi-mon",
+        "question_type": "multiple_choice",
+        "prompt": "Vị vua nào của triều Nguyễn đã ra chỉ dụ thành lập 'Pháp lam tượng cục' để chế tác pháp lam hoàng cung?",
+        "options": [
+          "Vua Gia Long",
+          "Vua Minh Mạng",
+          "Vua Thiệu Trị",
+          "Vua Tự Đức"
+        ],
+        "answer_key": "1",
+        "explanation": "Năm 1827 (Minh Mạng thứ 8), vua Minh Mạng đã cho thành lập Pháp lam tượng cục, tạo nên thời kỳ hoàng kim của nghệ thuật pháp lam cung đình Huế.",
+        "display_order": 1
+      }
+    ],
+    "review_status": "published"
+  },
+  {
+    "id": "detail-nghe-thuat-duc-vac-dong-the-mieu",
+    "slug": "nghe-thuat-duc-vac-dong-the-mieu",
+    "site_id": "site-the-to-mieu",
+    "site_slug": "the-to-mieu",
+    "site_name_vi": "Thế Tổ Miếu",
+    "title": "Nghệ Thuật Đúc Vạc Đồng Cung Đình tại Thế Miếu",
+    "kind": "carving",
+    "motif": "Đồ án hoa văn sóng nước, hoa sen cách điệu và minh văn chữ Hán thời chúa Nguyễn",
+    "material": "Hợp kim đồng thau nguyên khối đúc thủ công",
+    "technique": "Kỹ thuật đúc đồng truyền thống khuôn đất nung nguyên khối thời chúa Nguyễn (Bảo vật Quốc gia)",
+    "description_observation": "Chiếc vạc đồng cổ kích thước đồ sộ đặt tại khuôn viên Thế Miếu, đúc vào thế kỷ XVII thời các chúa Nguyễn. Vạc có quai rồng đúc nổi, thân trang trí hoa văn mây lửa, sóng nước uốn lượn và các dòng minh văn ghi rõ trọng lượng cùng niên hiệu chế tác.",
+    "story_body": "Vào thế kỷ XVII, các chúa Nguyễn tại Đàng Trong đã cho đúc các vạc đồng lớn để ghi dấu chiến công, biểu thị sự vững bền của chính quyền và xác lập chủ quyền lãnh thổ. Chiếc vạc đồng tại Thế Miếu là một trong những hiện vật kim loại cổ xưa nhất còn bảo tồn nguyên vẹn trong Hoàng cung Huế, thể hiện tay nghề đúc đồng siêu việt của các phường đúc xứ Huế xưa.",
+    "story_type": "documented_event",
+    "meaning_body": "Vạc đồng biểu trưng cho sức mạnh, quyền lực bền vững của vương triều và ước vọng giang sơn định vị trường tồn.",
+    "historical_value_body": "Bảo vật Quốc gia độc bản mang niên đại thế kỷ XVII thời các chúa Nguyễn, minh chứng lịch sử cho quá trình mở cõi phương Nam.",
+    "cultural_value_body": "Di sản nghệ thuật đúc đồng đỉnh cao của cư dân Đàng Trong, kết hợp mỹ thuật tạo hình thời Lê Trung Hưng và phong cách cung đình.",
+    "art_value_body": "Nghệ thuật chạm khắc nổi trên đồng tinh xảo, tạo hình quai rồng khỏe khoắn và họa tiết sống động.",
+    "image_url": "/assets/imperial/heritage/kientruc3.png",
+    "claim_sources": [
+      {
+        "id": "src-nghe-thuat-duc-vac-dong-the-mieu-1",
+        "section": "Đúc vạc đồng thời chúa Nguyễn",
+        "claim_text": "Thời các chúa Nguyễn cho đúc vạc đồng lớn để ghi nhớ công tích mở mang bờ cõi và biểu thị nền thái bình.",
+        "source_title": "Đại Nam Thực Lục Tiền Biên",
+        "source_locator": "Quyển thời Chúa Hiền Nguyễn Phúc Tần",
+        "evidence_strength": "verified",
+        "citation_quote": ""
+      },
+      {
+        "id": "src-nghe-thuat-duc-vac-dong-the-mieu-2",
+        "section": "Công nhận Bảo vật Quốc gia",
+        "claim_text": "Bộ sưu tập vạc đồng thời chúa Nguyễn tại Huế được công nhận là Bảo vật Quốc gia theo quyết định của Thủ tướng Chính phủ.",
+        "source_title": "Quyết định công nhận Bảo vật Quốc gia",
+        "source_locator": "Danh mục Di sản Văn hóa Việt Nam",
+        "evidence_strength": "verified",
+        "citation_quote": ""
+      }
+    ],
+    "questions": [
+      {
+        "id": "q-nghe-thuat-duc-vac-dong-the-mieu-1",
+        "detail_id": "detail-nghe-thuat-duc-vac-dong-the-mieu",
+        "question_type": "multiple_choice",
+        "prompt": "Các vạc đồng cổ nhất trong Hoàng cung Huế được khởi đúc chủ yếu vào thời kỳ lịch sử nào?",
+        "options": [
+          "Thời các chúa Nguyễn (thế kỷ XVII - XVIII)",
+          "Thời vua Gia Long (1802)",
+          "Thời vua Đồng Khánh (1885)",
+          "Thời vua Bảo Đại (1926)"
+        ],
+        "answer_key": "0",
+        "explanation": "Các vạc đồng cổ tại Hoàng cung Huế được đúc vào thế kỷ XVII dưới thời các chúa Nguyễn cai quản xứ Đàng Trong.",
+        "display_order": 1
+      }
+    ],
+    "review_status": "published"
+  },
+  {
+    "id": "detail-cuu-vi-than-cong-hoang-thanh",
+    "slug": "cuu-vi-than-cong-hoang-thanh",
+    "site_id": "site-ngo-mon",
+    "site_slug": "ngo-mon",
+    "site_name_vi": "Ngọ Môn",
+    "title": "Cửu Vị Thần Công — Nghệ Thuật Đúc Súng Thần Công Triều Nguyễn",
+    "kind": "carving",
+    "motif": "Hoa văn dây leo, dải hồi văn cổ, minh văn chữ Hán ngự chế khắc sắc phong và quy cách thuốc súng",
+    "material": "Đồng nguyên chất đúc đặc, trọng lượng hơn 10 tấn mỗi khẩu",
+    "technique": "Kỹ thuật đúc đồng nguyên khối quy mô lớn thế kỷ XIX, chạm khắc minh văn chữ Hán sắc nét",
+    "description_observation": "Chín khẩu súng thần công bằng đồng khổng lồ (mỗi khẩu dài 5,1m, đường kính nòng 0,22m, nặng trên 10 tấn) được đặt trang trọng trong hai nhà pháo hai bên cửa Ngọ Môn. Bốn khẩu bên tả mang tên Tứ Thời (Xuân, Hạ, Thu, Đông), năm khẩu bên hữu mang tên Ngũ Hành (Kim, Mộc, Thủy, Hỏa, Thổ). Thân súng đúc nổi hoa văn hoa cúc, hồi văn triện và khắc các bài minh văn chữ Hán của vua Gia Long chỉ rõ tên súng, thứ bậc, niên đại đúc và cách dùng thuốc đạn.",
+    "story_body": "Sau khi đánh bại triều Tây Sơn và thống nhất đất nước, vào tháng 2 năm Gia Long thứ hai (1803), nhà vua đã ra lệnh tịch thu toàn bộ vũ khí bằng đồng của triều trước để đúc thành chín khẩu thần công lớn. Năm 1816, vua Gia Long sắc phong cho chín khẩu đại bác này là 'Thần oai Vô địch Thượng tướng quân'. Điều đặc biệt là Cửu Vị Thần Công chưa từng dùng để bắn đạn vào quân thù trong chiến trận, mà được tôn làm linh vật bảo vệ Hoàng Thành và chỉ bắn phát lệnh trong các đại lễ tế trời đất.",
+    "story_type": "documented_event",
+    "meaning_body": "Chuyển hóa khí giới chiến tranh thành linh vật hộ quốc an dân, biểu tượng cho sức mạnh quân sự và ước vọng thái bình muôn năm của quốc gia thống nhất.",
+    "historical_value_body": "Chứng tích lịch sử đầu tiên về công cuộc thống nhất non sông của vua Gia Long, được công nhận là Bảo vật Quốc gia đợt 1 năm 2012.",
+    "cultural_value_body": "Thể hiện triết lý vũ trụ quan Á Đông sâu sắc qua việc đặt tên súng theo chu kỳ thời gian (Tứ Thời) và quy luật biến hóa của vạn vật (Ngũ Hành).",
+    "art_value_body": "Tác phẩm điêu khắc nghệ thuật đúc đồng quân sự đồ sộ bậc nhất trong lịch sử Việt Nam, hoa văn chạm khắc uyển chuyển, sắc sảo.",
+    "image_url": "/assets/imperial/heritage/ngomon.jpg",
+    "claim_sources": [
+      {
+        "id": "src-cuu-vi-than-cong-hoang-thanh-1",
+        "section": "Đúc chín cỗ súng lớn thời Gia Long",
+        "claim_text": "Mùa xuân năm Gia Long thứ 2 (1803), thu gom đồ đồng của triều trước đúc chín cỗ súng lớn để biểu dương võ công thái bình.",
+        "source_title": "Đại Nam Thực Lục Chính Biên",
+        "source_locator": "Đệ nhất kỷ, Quyển 20",
+        "evidence_strength": "verified",
+        "citation_quote": ""
+      },
+      {
+        "id": "src-cuu-vi-than-cong-hoang-thanh-2",
+        "section": "Công nhận Bảo vật Quốc gia",
+        "claim_text": "Cửu Vị Thần Công triều Nguyễn tại Hoàng Thành Huế được công nhận là Bảo vật Quốc gia đợt 1 năm 2012.",
+        "source_title": "Quyết định số 1426/QĐ-TTg của Thủ tướng Chính phủ",
+        "source_locator": "Danh mục Bảo vật Quốc gia 2012",
+        "evidence_strength": "verified",
+        "citation_quote": ""
+      }
+    ],
+    "questions": [
+      {
+        "id": "q-cuu-vi-than-cong-hoang-thanh-1",
+        "detail_id": "detail-cuu-vi-than-cong-hoang-thanh",
+        "question_type": "multiple_choice",
+        "prompt": "Chín khẩu súng Cửu Vị Thần Công tại Hoàng Thành Huế được đặt tên theo hai nhóm triết lý nào?",
+        "options": [
+          "Bát quái và Thập can",
+          "Tứ Thời (bốn mùa) và Ngũ Hành (năm yếu tố)",
+          "Cửu phẩm quan chế và Lục bộ",
+          "Thập nhị địa chi và Ngũ nhạc"
+        ],
+        "answer_key": "1",
+        "explanation": "Chín khẩu súng được chia làm hai nhóm: nhóm Tứ Thời gồm Xuân - Hạ - Thu - Đông bên tả và nhóm Ngũ Hành gồm Kim - Mộc - Thủy - Hỏa - Thổ bên hữu.",
+        "display_order": 1
+      }
+    ],
+    "review_status": "published"
+  },
+  {
+    "id": "detail-cham-thung-son-son-the-mieu",
+    "slug": "cham-thung-son-son-the-mieu",
+    "site_id": "site-the-to-mieu",
+    "site_slug": "the-to-mieu",
+    "site_name_vi": "Thế Tổ Miếu",
+    "title": "Nghệ Thuật Chạm Thủng Sơn Son Thếp Vàng tại Thế Miếu & Thái Hòa",
+    "kind": "carving",
+    "motif": "Bao lam chạm thủng 'Lưỡng long chầu nguyệt', hoa cúc xuyên hoa, mai điểu, tùng lộc, triện gấm bát bửu",
+    "material": "Gỗ lim rừng, gỗ kiền kiền, vàng quỳ 9999, sơn then, sơn son cánh gián, nhựa cây sơn tự nhiên",
+    "technique": "Kỹ thuật chạm lộng kênh bong chạm thủng (xuyên thấu nhiều lớp không gian), sơn thếp vàng cung đình cổ truyền",
+    "description_observation": "Nội thất Thế Miếu và Điện Thái Hòa lưu giữ đỉnh cao của nghệ thuật mộc cung đình triều Nguyễn. Các vách khám thờ hoàng đế, bao lam cửa võng, hoành phi câu đối được nghệ nhân đục chạm thủng lớp lớp hoa văn kênh bong kênh lộng. Ánh sáng xuyên qua các khoảng rỗng tạo nên hiệu ứng thị giác ba chiều kỳ ảo. Các chi tiết hoa văn rồng cuộn, phượng múa, hoa cúc vạn thọ được phủ kín bởi những lá vàng quỳ 9999 rực rỡ trên nền đỏ son cánh gián trầm mặc.",
+    "story_body": "Thế Miếu được xây dựng vào năm Minh Mạng thứ 2 (1821) làm nơi thờ tự các bậc tiên đế triều Nguyễn. Để hoàn thiện hệ thống khám thờ và bao lam chạm thủng tinh xảo, triều đình đã điều động hàng trăm nghệ nhân mộc tài hoa từ khắp mọi miền đất nước về kinh đô. Người thợ phải mất hàng tháng trời tỉ mỉ dùng hàng chục loại đục nhỏ để khoét rỗng từng mắt lưới hoa văn mỏng như cánh ve mà vẫn giữ được độ liên kết vững chắc của thớ gỗ lim hàng trăm năm tuổi.",
+    "story_type": "documented_event",
+    "meaning_body": "Biểu hiện lòng tôn kính tối thượng của con cháu hoàng gia đối với tiên tổ; ánh vàng quỳ bất hoại tượng trưng cho hào quang vĩnh hằng và sự che chở của tiên đế cho non sông thái bình.",
+    "historical_value_body": "Bảo tồn nguyên vẹn không gian thờ tự hoàng gia duy nhất của triều Nguyễn, lưu giữ các bộ sưu tập khám thờ và bài vị nguyên bản.",
+    "cultural_value_body": "Minh chứng cho truyền thống đạo hiếu 'uống nước nhớ nguồn' của dân tộc Việt Nam được nâng tầm thành điển chế lễ nhạc quốc gia.",
+    "art_value_body": "Đạt tới tột đỉnh của kỹ thuật chạm lộng kênh bong xuyên hoa và kỹ thuật sơn then thếp vàng truyền thống Việt Nam.",
+    "image_url": "/assets/imperial/heritage/mainha.jpg",
+    "claim_sources": [
+      {
+        "id": "src-cham-thung-son-son-the-mieu-1",
+        "section": "Xây dựng Thế Miếu thời Minh Mạng",
+        "claim_text": "Năm Minh Mạng thứ 2 (1821) làm Thế Miếu ở góc tây nam bên trong Hoàng Thành, quy cách 9 gian 2 chái kép, trang hoàng vàng son tráng lệ.",
+        "source_title": "Đại Nam Thực Lục Chính Biên",
+        "source_locator": "Đệ nhị kỷ, Quyển 11",
+        "evidence_strength": "verified",
+        "citation_quote": ""
+      },
+      {
+        "id": "src-cham-thung-son-son-the-mieu-2",
+        "section": "Khảo cứu điêu khắc gỗ cung đình Huế",
+        "claim_text": "Nghệ thuật chạm thủng kênh bong tại Thế Miếu là mẫu mực của điêu khắc gỗ phong cách cổ điển triều Nguyễn thế kỷ XIX.",
+        "source_title": "Nghệ thuật điêu khắc gỗ cung đình Huế — HMCC",
+        "source_locator": "Tạp chí Nghiên cứu Di sản Huế, số 28, tr. 45-62",
+        "evidence_strength": "verified",
+        "citation_quote": ""
+      }
+    ],
+    "questions": [
+      {
+        "id": "q-cham-thung-son-son-the-mieu-1",
+        "detail_id": "detail-cham-thung-son-son-the-mieu",
+        "question_type": "multiple_choice",
+        "prompt": "Điểm độc đáo nổi bật nhất của kỹ thuật 'chạm thủng' (chạm lộng xuyên hoa) tại Thế Miếu là gì?",
+        "options": [
+          "Chỉ đục nông trên bề mặt phẳng của thanh gỗ",
+          "Khoét rỗng xuyên thấu nhiều lớp không gian tạo hiệu ứng nổi ba chiều mà không làm gãy thớ gỗ",
+          "Ghép nhiều mảnh gỗ vụn lại bằng keo dán",
+          "Dùng máy tiện hiện đại nhập từ nước ngoài"
+        ],
+        "answer_key": "1",
+        "explanation": "Kỹ thuật chạm thủng (chạm lộng xuyên hoa) đòi hỏi nghệ nhân khoét rỗng tinh xảo xuyên qua thớ gỗ nhiều tầng, tạo chiều sâu 3D sống động dưới ánh sáng tự nhiên.",
+        "display_order": 1
+      }
+    ],
+    "review_status": "published"
+  },
+  {
+    "id": "detail-lau-ngu-phung",
+    "slug": "hoa-van-ngu-phung-ngo-mon",
+    "site_id": "site-ngo-mon",
+    "site_slug": "ngo-mon",
+    "site_name_vi": "Ngọ Môn",
+    "title": "Hoa văn Ngũ Phụng trên lầu Ngọ Môn",
+    "kind": "mosaic",
+    "motif": "Ngũ Phụng xòe cánh đón gió Nam & Bát bửu triều dương",
+    "material": "Gỗ lim thanh, ngói hoàng thanh lưu ly, gốm men sành sứ",
+    "technique": "Khảm sành sứ men màu, đắp vữa truyền thống, kết cấu trùng thiềm điệp ốc 9 bộ mái",
+    "description_observation": "Trên đỉnh đài cổng Ngọ Môn là lầu Ngũ Phụng với kết cấu 100 cây cột gỗ lim biểu trưng cho bách tính trăm họ. Bộ mái gồm 9 phần liên hoàn lợp ngói lưu ly hai màu: mái chính giữa lợp ngói hoàng lưu ly (men vàng) dành cho vua chúa, 8 bộ mái hai cánh tả hữu lợp ngói thanh lưu ly (men xanh) dành cho quan lại. Các bờ nóc uốn cong nhẹ nhàng, trang trí năm con chim phượng xòe cánh bay lượn trong mây.",
+    "story_body": "Theo điển lệ triều Nguyễn, khi vua Minh Mạng cho triệt hạ đài Nam Sách cũ năm 1833 để dựng Ngọ Môn, nhà vua đích thân định tên lầu là Ngũ Phụng dựa theo ý niệm 'Phụng hoàng lai nghi' (chim phượng bay về báo điềm lành thịnh trị). Đây là nơi hoàng đế ngự để cử hành các đại lễ tầm vóc quốc gia như lễ Ban Sóc (ban bố lịch năm mới vào tháng Chạp), lễ Truyền Lô (xướng danh các tân tiến sĩ) và duyệt binh. Ngày 30/8/1945, cũng tại tầng lầu này, vua Bảo Đại đã trao ấn kiếm tuyên bố thoái vị, chấm dứt chế độ phong kiến.",
+    "story_type": "documented_event",
+    "meaning_body": "Hình tượng chim phượng tượng trưng cho đức hạnh cao quý, sự thái bình thịnh trị và hướng về phía Nam (hướng chính dương của bậc đế vương theo Kinh Dịch: 'Thánh nhân nam diện nhi thính thiên hạ'). Việc phân chia màu ngói vàng ở trung tâm và ngói xanh ở hai bên thể hiện trật tự quân thần phân minh.",
+    "historical_value_body": "Minh chứng vật chất cho tư tưởng quy hoạch hoàng cung đỉnh cao thời vua Minh Mạng và là sân khấu của các sự kiện bước ngoặt lịch sử dân tộc thế kỷ XX.",
+    "cultural_value_body": "Biểu tượng nhận diện tiêu biểu bậc nhất của di sản văn hóa Cố đô Huế và nghệ thuật kiến trúc cung đình truyền thống Việt Nam.",
+    "art_value_body": "Sự kết hợp tuyệt mỹ giữa độ đồ sộ của nền đài đá vôi/gạch vồ bên dưới với vẻ thanh thoát, bay bổng của 9 nóc mái lầu Ngũ Phụng bên trên.",
+    "image_url": "/assets/imperial/heritage/launguphung.jpg",
+    "claim_sources": [
+      {
+        "id": "src-hoa-van-ngu-phung-ngo-mon-1",
+        "section": "Khởi dựng cổng Ngọ Môn và lầu Ngũ Phụng",
+        "claim_text": "Năm Minh Mạng thứ 14 (1833) khởi dựng cổng Ngọ Môn, trên đài xây lầu Ngũ Phụng 100 cột chia làm 9 nóc mái, mái giữa lợp ngói hoàng lưu ly, mái bên lợp ngói thanh lưu ly.",
+        "source_title": "Đại Nam Thực Lục Chính Biên",
+        "source_locator": "Đệ nhị kỷ, Quyển 98, trang 12a",
+        "evidence_strength": "verified",
+        "citation_quote": ""
+      },
+      {
+        "id": "src-hoa-van-ngu-phung-ngo-mon-2",
+        "section": "Quy chế nghi lễ Ban Sóc và Truyền Lô",
+        "claim_text": "Lầu Ngũ Phụng là địa điểm định kỳ triều đình tổ chức lễ Ban Sóc vào ngày mồng một tháng Chạp và lễ xướng danh tiến sĩ Đình thí.",
+        "source_title": "Khâm Định Đại Nam Hội Điển Sự Lệ",
+        "source_locator": "Quyển 168: Lễ bộ - Nghi thức khánh tiết",
+        "evidence_strength": "verified",
+        "citation_quote": ""
+      }
+    ],
+    "questions": [
+      {
+        "id": "q-hoa-van-ngu-phung-ngo-mon-1",
+        "detail_id": "detail-lau-ngu-phung",
+        "question_type": "multiple_choice",
+        "prompt": "Vì sao 9 bộ mái của lầu Ngũ Phụng lại được phối hai màu ngói vàng và xanh khác nhau?",
+        "options": [
+          "Do nghệ nhân thợ ngoã thời Nguyễn tùy hứng trang trí mỹ thuật",
+          "Màu vàng (hoàng lưu ly) ở trung tâm dành cho thiên tử, màu xanh (thanh lưu ly) ở hai cánh dành cho quan chức",
+          "Màu xanh nhằm phản chiếu ánh sáng giảm nhiệt cho lầu",
+          "Do triều đình thiếu ngói vàng nên phải dùng tạm ngói xanh ở các chái mái"
+        ],
+        "answer_key": "1",
+        "explanation": "Theo quy chế triều Nguyễn, màu vàng (hành Thổ - trung tâm) là biểu tượng tối thượng của Hoàng đế; các cánh bên lợp ngói thanh lưu ly biểu thị sự quy tụ của thần dân và trật tự phẩm trật nghiêm minh.",
+        "display_order": 1
+      }
+    ],
+    "review_status": "published"
+  },
+  {
+    "id": "detail-hoanh-phi-hien-lam",
+    "slug": "hoanh-phi-hien-lam-cac",
+    "site_id": "site-hien-lam-cac",
+    "site_slug": "hien-lam-cac",
+    "site_name_vi": "Hiển Lâm Các",
+    "title": "Bức Hoành Phi Hiển Lâm Các Chữ Vàng",
+    "kind": "carving",
+    "motif": "Lưỡng Long chầu Nguyệt chạm chìm viền mây",
+    "material": "Gỗ mít rừng nguyên khối, sơn then, thếp vàng",
+    "technique": "Khắc chữ nổi đại tự Khải thư mạ vàng, diềm thếp vàng hoa văn bát bửu",
+    "description_observation": "Bức hoành phi kích thước lớn treo uy nghi chính giữa tầng 2 của Hiển Lâm Các hướng về phía Nam. Ba chữ đại tự 'Hiển Lâm Các' (顯臨閣) được chạm khắc theo lối chữ Khải nghiêm cẩn, thếp vàng quỳ lấp lánh trên nền sơn đen then truyền thống.",
+    "story_body": "Được chính vua Minh Mạng ngự bút định danh năm 1821. 'Hiển Lâm' mang ý nghĩa là ơn đức lớn lao soi sáng khắp chốn, nơi ghi nhớ và tôn vinh công trạng của các bậc khai quốc công thần và tướng lĩnh đã tận tụy hy sinh để lập nên cơ đồ vương triều.",
+    "story_type": "documented_event",
+    "meaning_body": "Biểu trưng cho tinh thần uống nước nhớ nguồn, sự triân của hoàng gia đối với các danh tướng văn thần và là lời răn dạy hậu thế gìn giữ sự nghiệp tổ tiên.",
+    "historical_value_body": "Chứng tích vật chất trường tồn từ thời vua Minh Mạng, không bị xáo trộn qua các biến động chiến tranh.",
+    "cultural_value_body": "Thể hiện đạo lý Nho gia về trung quân ái quốc và sự vinh danh công trạng tiền nhân trong văn hóa cung đình.",
+    "art_value_body": "Thư pháp chữ Hán mực thước hòa quyện với nghệ thuật khắc gỗ sơn thếp cổ truyền chuẩn mực của thợ ngự công Huế.",
+    "image_url": "/assets/imperial/heritage/dainoitrencao.jpg",
+    "claim_sources": [
+      {
+        "id": "src-hlc-1",
+        "section": "Khởi dựng Hiển Lâm Các",
+        "claim_text": "Vua Minh Mạng sai dựng gác Hiển Lâm trước sân Thế Miếu để tưởng niệm công thần có công giúp dựng nước.",
+        "source_title": "Đại Nam Thực Lục Chính Biên",
+        "source_locator": "Đệ nhị kỷ, Quyển 12",
+        "evidence_strength": "verified"
+      }
+    ],
+    "questions": [
+      {
+        "id": "q-hlc-1",
+        "detail_id": "detail-hoanh-phi-hien-lam",
+        "question_type": "multiple_choice",
+        "prompt": "Công trình Hiển Lâm Các trong khu vực Thế Miếu được xây dựng với mục đích chính là gì?",
+        "options": [
+          "Nơi tổ chức yến tiệc tiếp sứ thần ngoại quốc",
+          "Tưởng niệm và vinh danh công đức của các công thần khai quốc triều Nguyễn",
+          "Nơi cất giữ kho tàng bảo kiếm của triều đình",
+          "Lầu quan sát thiên văn và thời tiết của Khâm Thiên Giám"
+        ],
+        "answer_key": "1",
+        "explanation": "Hiển Lâm Các là đài tưởng niệm thiêng liêng cao nhất trong Hoàng Thành, vinh danh công đức các bậc khai quốc công thần triều Nguyễn.",
+        "display_order": 1
+      }
+    ],
+    "review_status": "published"
+  },
+  {
+    "id": "detail-lau-ngu-phung",
+    "slug": "lau-ngu-phung-canh-phuong",
+    "site_id": "site-ngo-mon",
+    "site_slug": "ngo-mon",
+    "site_name_vi": "Ngọ Môn",
+    "title": "Hoa văn Ngũ Phụng trên lầu Ngọ Môn",
+    "kind": "mosaic",
+    "motif": "Ngũ Phụng xòe cánh đón gió Nam & Bát bửu triều dương",
+    "material": "Gỗ lim thanh, ngói hoàng thanh lưu ly, gốm men sành sứ",
+    "technique": "Khảm sành sứ men màu, đắp vữa truyền thống, kết cấu trùng thiềm điệp ốc 9 bộ mái",
+    "description_observation": "Trên đỉnh đài cổng Ngọ Môn là lầu Ngũ Phụng với kết cấu 100 cây cột gỗ lim biểu trưng cho bách tính trăm họ. Bộ mái gồm 9 phần liên hoàn lợp ngói lưu ly hai màu: mái chính giữa lợp ngói hoàng lưu ly (men vàng) dành cho vua chúa, 8 bộ mái hai cánh tả hữu lợp ngói thanh lưu ly (men xanh) dành cho quan lại. Các bờ nóc uốn cong nhẹ nhàng, trang trí năm con chim phượng xòe cánh bay lượn trong mây.",
+    "story_body": "Theo điển lệ triều Nguyễn, khi vua Minh Mạng cho triệt hạ đài Nam Sách cũ năm 1833 để dựng Ngọ Môn, nhà vua đích thân định tên lầu là Ngũ Phụng dựa theo ý niệm 'Phụng hoàng lai nghi' (chim phượng bay về báo điềm lành thịnh trị). Đây là nơi hoàng đế ngự để cử hành các đại lễ tầm vóc quốc gia như lễ Ban Sóc (ban bố lịch năm mới vào tháng Chạp), lễ Truyền Lô (xướng danh các tân tiến sĩ) và duyệt binh. Ngày 30/8/1945, cũng tại tầng lầu này, vua Bảo Đại đã trao ấn kiếm tuyên bố thoái vị, chấm dứt chế độ phong kiến.",
+    "story_type": "documented_event",
+    "meaning_body": "Hình tượng chim phượng tượng trưng cho đức hạnh cao quý, sự thái bình thịnh trị và hướng về phía Nam (hướng chính dương của bậc đế vương theo Kinh Dịch: 'Thánh nhân nam diện nhi thính thiên hạ'). Việc phân chia màu ngói vàng ở trung tâm và ngói xanh ở hai bên thể hiện trật tự quân thần phân minh.",
+    "historical_value_body": "Minh chứng vật chất cho tư tưởng quy hoạch hoàng cung đỉnh cao thời vua Minh Mạng và là sân khấu của các sự kiện bước ngoặt lịch sử dân tộc thế kỷ XX.",
+    "cultural_value_body": "Biểu tượng nhận diện tiêu biểu bậc nhất của di sản văn hóa Cố đô Huế và nghệ thuật kiến trúc cung đình truyền thống Việt Nam.",
+    "art_value_body": "Sự kết hợp tuyệt mỹ giữa độ đồ sộ của nền đài đá vôi/gạch vồ bên dưới với vẻ thanh thoát, bay bổng của 9 nóc mái lầu Ngũ Phụng bên trên.",
+    "image_url": "/assets/imperial/heritage/launguphung.jpg",
+    "claim_sources": [
+      {
+        "id": "src-hoa-van-ngu-phung-ngo-mon-1",
+        "section": "Khởi dựng cổng Ngọ Môn và lầu Ngũ Phụng",
+        "claim_text": "Năm Minh Mạng thứ 14 (1833) khởi dựng cổng Ngọ Môn, trên đài xây lầu Ngũ Phụng 100 cột chia làm 9 nóc mái, mái giữa lợp ngói hoàng lưu ly, mái bên lợp ngói thanh lưu ly.",
+        "source_title": "Đại Nam Thực Lục Chính Biên",
+        "source_locator": "Đệ nhị kỷ, Quyển 98, trang 12a",
+        "evidence_strength": "verified",
+        "citation_quote": ""
+      },
+      {
+        "id": "src-hoa-van-ngu-phung-ngo-mon-2",
+        "section": "Quy chế nghi lễ Ban Sóc và Truyền Lô",
+        "claim_text": "Lầu Ngũ Phụng là địa điểm định kỳ triều đình tổ chức lễ Ban Sóc vào ngày mồng một tháng Chạp và lễ xướng danh tiến sĩ Đình thí.",
+        "source_title": "Khâm Định Đại Nam Hội Điển Sự Lệ",
+        "source_locator": "Quyển 168: Lễ bộ - Nghi thức khánh tiết",
+        "evidence_strength": "verified",
+        "citation_quote": ""
+      }
+    ],
+    "questions": [
+      {
+        "id": "q-hoa-van-ngu-phung-ngo-mon-1",
+        "detail_id": "detail-lau-ngu-phung",
+        "question_type": "multiple_choice",
+        "prompt": "Vì sao 9 bộ mái của lầu Ngũ Phụng lại được phối hai màu ngói vàng và xanh khác nhau?",
+        "options": [
+          "Do nghệ nhân thợ ngoã thời Nguyễn tùy hứng trang trí mỹ thuật",
+          "Màu vàng (hoàng lưu ly) ở trung tâm dành cho thiên tử, màu xanh (thanh lưu ly) ở hai cánh dành cho quan chức",
+          "Màu xanh nhằm phản chiếu ánh sáng giảm nhiệt cho lầu",
+          "Do triều đình thiếu ngói vàng nên phải dùng tạm ngói xanh ở các chái mái"
+        ],
+        "answer_key": "1",
+        "explanation": "Theo quy chế triều Nguyễn, màu vàng (hành Thổ - trung tâm) là biểu tượng tối thượng của Hoàng đế; các cánh bên lợp ngói thanh lưu ly biểu thị sự quy tụ của thần dân và trật tự phẩm trật nghiêm minh.",
+        "display_order": 1
+      }
+    ],
+    "review_status": "published"
+  }
+];
+
+export const FALLBACK_LEARNING_MEDIA: ImperialLearningMedia[] = [
+  {
+    id: "media-thai-hoa-2d",
+    site_id: "site-dien-thai-hoa",
+    site_slug: "dien-thai-hoa",
+    site_name_vi: "Điện Thái Hòa",
+    kind: "image",
+    media_url: "/panoramas/the-mieu.jpg",
+    thumbnail_url: "/panoramas/the-mieu.jpg",
+    title_vi: "Nội Thất Gian Trung Tâm Điện Thái Hòa & Ngai Vàng",
+    title_en: "Central Hall & Throne of Supreme Harmony Palace",
+    width_px: 2048,
+    height_px: 1365,
+    asset_context: "extant",
+    review_status: "published",
+    credit_text: "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+    alt_text: "Ảnh chụp trực diện gian giữa điện Thái Hòa với ngai vàng và bửu tán sơn son thếp vàng.",
+    hotspots: [
+      {
+        id: "hotspot-th-1",
+        media_id: "media-thai-hoa-2d",
+        point_kind: "point",
+        u: 0.505,
+        v: 0.582,
+        title: "Bảo Tọa & Ngai Vàng Triều Nguyễn",
+        description: "Bảo vật Quốc gia số 1 — Ngai rồng vàng của 13 vị hoàng đế triều Nguyễn.",
+        detail_id: "detail-ngai-vang-thai-hoa",
+        art_detail_slug: "ngai-vang-hoang-de",
+        review_status: "published",
+      },
+      {
+        id: "hotspot-th-2",
+        media_id: "media-thai-hoa-2d",
+        point_kind: "point",
+        u: 0.502,
+        v: 0.285,
+        title: "Bửu Tán Gấm Lụa Kim Tuyến",
+        description: "Bửu tán đính sa lụa thêu hoa văn mây lành và chim phụng treo che chắn đỉnh ngai.",
+        detail_id: "detail-ngai-vang-thai-hoa",
+        art_detail_slug: "ngai-vang-hoang-de",
+        review_status: "published",
+      },
+      {
+        id: "hotspot-th-3",
+        media_id: "media-thai-hoa-2d",
+        point_kind: "point",
+        u: 0.235,
+        v: 0.450,
+        title: "Cột Lim Sơn Son Thếp Vàng Hình Rồng Vờn Mây",
+        description: "Hệ thống 80 cột gỗ lim vững chãi thếp vàng long vân theo quy thức 'trùng thiềm điệp ốc'.",
+        review_status: "published",
+      },
+    ],
+  },
+  {
+    id: "media-thai-hoa-360",
+    site_id: "site-dien-thai-hoa",
+    site_slug: "dien-thai-hoa",
+    site_name_vi: "Điện Thái Hòa",
+    kind: "panorama360",
+    media_url: "/panoramas/cuu-dinh.jpg",
+    thumbnail_url: "/panoramas/cuu-dinh.jpg",
+    title_vi: "Toàn Cảnh 360° Sân Đại Triều & Điện Thái Hòa",
+    title_en: "360° Panorama of Supreme Harmony Palace Court",
+    width_px: 4096,
+    height_px: 2048,
+    asset_context: "extant",
+    review_status: "published",
+    credit_text: "Kho lưu trữ số hoá STTTNNĐ",
+    alt_text: "Ảnh toàn cảnh 360 độ từ sân Đại Triều nhìn vào điện Thái Hòa.",
+    hotspots: [
+      {
+        id: "hotspot-th-pano-1",
+        media_id: "media-thai-hoa-360",
+        point_kind: "point",
+        u: 0.50,
+        v: 0.48,
+        title: "Chính Điện Thái Hòa",
+        description: "Tòa điện trung tâm Hoàng thành Huế, nơi diễn ra các lễ triều nghi tối thượng.",
+        detail_id: "detail-ngai-vang-thai-hoa",
+        art_detail_slug: "ngai-vang-hoang-de",
+        position_payload: { yaw: 0, pitch: 0 },
+        review_status: "published",
+      },
+      {
+        id: "hotspot-th-pano-2",
+        media_id: "media-thai-hoa-360",
+        point_kind: "point",
+        u: 0.82,
+        v: 0.55,
+        title: "Hàng Phẩm Tán Quan Văn",
+        description: "Bia đá nhỏ khắc trật tự quan văn từ nhất phẩm đến cửu phẩm đứng dự đại triều.",
+        position_payload: { yaw: 115, pitch: -5 },
+        review_status: "published",
+      },
+    ],
+  },
+  {
+    id: "media-ngo-mon-2d",
+    site_id: "site-ngo-mon",
+    site_slug: "ngo-mon",
+    site_name_vi: "Ngọ Môn",
+    kind: "image",
+    media_url: "/panoramas/ngo-mon.jpg",
+    thumbnail_url: "/panoramas/ngo-mon.jpg",
+    title_vi: "Kiến Trúc Lầu Ngũ Phụng — Ngọ Môn",
+    title_en: "Ngu Phung Pavilion of Meridian Gate",
+    width_px: 2048,
+    height_px: 1024,
+    asset_context: "extant",
+    review_status: "published",
+    credit_text: "STTTNNĐ Archives",
+    alt_text: "Toàn cảnh mặt tiền Ngọ Môn nhìn từ quảng trường",
+    hotspots: [
+      {
+        id: "hotspot-nm-1",
+        media_id: "media-ngo-mon-2d",
+        point_kind: "point",
+        u: 0.495,
+        v: 0.35,
+        title: "Mái Ngũ Phụng Men Hoàng Lưu Ly",
+        description: "Chín bộ mái chồng diềm chạm ghép chim phượng uốn lượn.",
+        detail_id: "detail-lau-ngu-phung",
+        art_detail_slug: "lau-ngu-phung-canh-phuong",
+        review_status: "published",
+      },
+      {
+        id: "hotspot-nm-2",
+        media_id: "media-ngo-mon-2d",
+        point_kind: "point",
+        u: 0.50,
+        v: 0.76,
+        title: "Cửa Giữa Ngọ Môn (Chính Đạo)",
+        description: "Cửa vòm đá chính giữa chỉ dành riêng cho Hoàng đế ngự qua.",
+        review_status: "published",
+      },
+      {
+        "id": "hotspot-nm-3",
+        "media_id": "media-ngo-mon-2d",
+        "point_kind": "point",
+        "u": 0.85,
+        "v": 0.82,
+        "title": "Cửu Vị Thần Công (Nhà Pháo Hoàng Thành)",
+        "description": "Chín khẩu đại bác bằng đồng đúc năm 1803 hộ quốc an dân (Bảo vật Quốc gia).",
+        "detail_id": "detail-cuu-vi-than-cong-hoang-thanh",
+        "art_detail_slug": "cuu-vi-than-cong-hoang-thanh",
+        "review_status": "published"
+      }
+    ],
+  },
+  {
+    "id": "media-the-mieu-2d",
+  "site_id": "site-the-to-mieu",
+  "site_slug": "the-to-mieu",
+  "site_name_vi": "Thế Tổ Miếu",
+  "kind": "image",
+  "media_url": "/assets/imperial/heritage/kientruc3.png",
+  "thumbnail_url": "/assets/imperial/heritage/kientruc3.png",
+  "title_vi": "Khuôn Viên Thế Miếu & Cửu Đỉnh Triều Nguyễn",
+  "title_en": "The To Mieu Ancestral Temple Courtyard",
+  "width_px": 2048,
+  "height_px": 1365,
+  "asset_context": "extant",
+  "review_status": "published",
+  "credit_text": "STTTNNĐ Archives",
+  "alt_text": "Toàn cảnh khuôn viên Thế Miếu và gian thờ sơn son thếp vàng.",
+  "hotspots": [
+    {
+      "id": "hotspot-tm-1",
+      "media_id": "media-the-mieu-2d",
+      "point_kind": "point",
+      "u": 0.5,
+      "v": 0.65,
+      "title": "Vạc Đồng Thời Chúa Nguyễn tại Thế Miếu",
+      "description": "Vạc đồng thế kỷ XVII mang hoa văn rồng thời Lê Trung Hưng (Bảo vật Quốc gia).",
+      "detail_id": "detail-nghe-thuat-duc-vac-dong-the-mieu",
+      "art_detail_slug": "nghe-thuat-duc-vac-dong-the-mieu",
+      "review_status": "published"
+    },
+    {
+      "id": "hotspot-tm-2",
+      "media_id": "media-the-mieu-2d",
+      "point_kind": "point",
+      "u": 0.5,
+      "v": 0.35,
+      "title": "Chạm Thủng Sơn Son Thếp Vàng Gian Thờ Tiên Đế",
+      "description": "Khám thờ và bao lam chạm thủng kênh bong xuyên hoa thếp vàng quỳ 9999 rực rỡ.",
+      "detail_id": "detail-cham-thung-son-son-the-mieu",
+      "art_detail_slug": "cham-thung-son-son-the-mieu",
+      "review_status": "published"
+    },
+    {
+      "id": "hotspot-tm-3",
+      "media_id": "media-the-mieu-2d",
+      "point_kind": "point",
+      "u": 0.2,
+      "v": 0.4,
+      "title": "Pháp Lam Hoàng Cung trên Cổng Nghi Môn",
+      "description": "Đố bản tráng men ngũ sắc nung trên cốt đồng do Pháp lam tượng cục chế tác.",
+      "detail_id": "detail-phap-lam-hoang-cung-bo-noc-dau-dao-nghi-mon",
+      "art_detail_slug": "phap-lam-hoang-cung-bo-noc-dau-dao-nghi-mon",
+      "review_status": "published"
+    }
+  ]
+},
+{
+  "id": "media-kien-trung-2d",
+  "site_id": "site-dien-kien-trung",
+  "site_slug": "dien-kien-trung",
+  "site_name_vi": "Điện Kiến Trung",
+  "kind": "image",
+  "media_url": "/assets/imperial/heritage/dienkientrung.jpg",
+  "thumbnail_url": "/assets/imperial/heritage/dienkientrung.jpg",
+  "title_vi": "Kiến Trúc & Khảm Sành Sứ Điện Kiến Trung",
+  "title_en": "Kien Trung Palace Mosaic Art",
+  "width_px": 2048,
+  "height_px": 1152,
+  "asset_context": "extant",
+  "review_status": "published",
+  "credit_text": "STTTNNĐ Archives",
+  "alt_text": "Mặt tiền khảm sành sứ rực rỡ phong cách Baroque kết hợp truyền thống Á Đông.",
+  "hotspots": [
+    {
+      "id": "hotspot-kt-1",
+      "media_id": "media-kien-trung-2d",
+      "point_kind": "point",
+      "u": 0.52,
+      "v": 0.45,
+      "title": "Khảm Sành Sứ Mặt Tiền Điện Kiến Trung",
+      "description": "Hàng vạn mảnh sứ vỡ tạo hình phù điêu tân cổ điển rực rỡ sắc màu.",
+      "detail_id": "detail-kham-sanh-su-dien-kien-trung",
+      "art_detail_slug": "kham-sanh-su-dien-kien-trung",
+      "review_status": "published"
+    },
+    {
+      "id": "hotspot-kt-2",
+      "media_id": "media-kien-trung-2d",
+      "point_kind": "point",
+      "u": 0.28,
+      "v": 0.55,
+      "title": "Khảm Sành Sứ & Thủy Tinh Điện Khải Thành",
+      "description": "Nghệ thuật khảm gọt sành sứ và chai thủy tinh màu phù điêu lập thể đỉnh cao triều Nguyễn.",
+      "detail_id": "detail-kham-sanh-su-dien-khai-thanh",
+      "art_detail_slug": "kham-sanh-su-dien-khai-thanh",
+      "review_status": "published"
+    }
+  ]
+},
+{
+  "id": "media-hien-lam-2d",
+  "site_id": "site-hien-lam-cac",
+  "site_slug": "hien-lam-cac",
+  "site_name_vi": "Hiển Lâm Các",
+  "kind": "image",
+  "media_url": "/assets/imperial/heritage/dainoitrencao.jpg",
+  "thumbnail_url": "/assets/imperial/heritage/dainoitrencao.jpg",
+  "title_vi": "Kiến Trúc Lầu Hiển Lâm Các & Bầu Rượu Pháp Lam",
+  "title_en": "Hien Lam Cac Pavilion & Enamel Gourd",
+  "width_px": 2048,
+  "height_px": 1024,
+  "asset_context": "extant",
+  "review_status": "published",
+  "credit_text": "STTTNNĐ Archives",
+  "alt_text": "Đài tưởng niệm Hiển Lâm Các 3 tầng gỗ lim cao nhất Đại Nội.",
+  "hotspots": [
+    {
+      "id": "hotspot-hl-1",
+      "media_id": "media-hien-lam-2d",
+      "point_kind": "point",
+      "u": 0.5,
+      "v": 0.15,
+      "title": "Bầu Rượu Pháp Lam trên Đỉnh Nóc Hiển Lâm Các",
+      "description": "Bình hồ lô pháp lam ngũ sắc trường tồn cùng thời gian trên đài tưởng niệm công thần.",
+      "detail_id": "detail-phap-lam-bo-noc-hien-lam-cac",
+      "art_detail_slug": "phap-lam-bo-noc-hien-lam-cac",
+      "review_status": "published"
+    },
+    {
+      "id": "hotspot-hl-2",
+      "media_id": "media-hien-lam-2d",
+      "point_kind": "point",
+      "u": 0.5,
+      "v": 0.48,
+      "title": "Bức Hoành Phi Hiển Lâm Các Chữ Vàng",
+      "description": "Ba chữ đại tự Khải thư ngự bút của vua Minh Mạng thếp vàng trên nền then.",
+      "detail_id": "detail-hoanh-phi-hien-lam",
+      "art_detail_slug": "hoanh-phi-hien-lam-cac",
+      "review_status": "published"
+    }
+  ]
+}
+];
+
+export const FALLBACK_CLUES: ImperialClue[] = [
+  {
+    id: "clue-1",
+    title: "Bí mật đấng chí tôn trên chín tầng mây",
+    clue_text:
+      "Nơi đây lưu giữ bảo tọa dát vàng thiêng liêng, nơi 13 vị hoàng đế triều Nguyễn từng ngồi tiếp trăm quan, chứng kiến ngày khai sinh và ngày chấm dứt của một vương triều.",
+    target_type: "art_detail",
+    target_id: "detail-ngai-vang-thai-hoa",
+    target_slug: "ngai-vang-hoang-de",
+    hint_steps: [
+      "Vị trí nằm trên trục chính đạo của Hoàng Thành.",
+      "Ở bên trong tòa điện lợp ngói vàng quan trọng nhất.",
+      "Bảo vật được chạm lộng chín con rồng vàng uốn lượn.",
+    ],
+    grade_level: "Lớp 8 - 12",
+    difficulty: "medium",
+    points: 100,
+    review_status: "published",
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: "clue-2",
+    title: "Tiếng hót chim phượng đón gió Nam",
+    clue_text:
+      "Đứng trước cổng chính đón ánh mặt trời đứng bóng lúc chính ngọ, hãy tìm nơi có năm con chim quý vươn cánh đón gió mùa phương Nam.",
+    target_type: "art_detail",
+    target_id: "detail-lau-ngu-phung",
+    target_slug: "lau-ngu-phung-canh-phuong",
+    hint_steps: [
+      "Công trình có cổng trổ năm cửa ngõ.",
+      "Tầng trên có 100 cây cột gỗ lim.",
+      "Đó là lầu mang tên năm con chim phượng hoàng.",
+    ],
+    grade_level: "Lớp 6 - 9",
+    difficulty: "easy",
+    points: 75,
+    review_status: "published",
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: "clue-ngu-phung",
+    title: "Năm cánh phượng hoàng đón gió chính Nam",
+    clue_text:
+      "Đứng trước cổng chính đón ánh mặt trời đứng bóng lúc chính ngọ, hãy tìm nơi có năm con chim quý xòe cánh che chở trăm họ.",
+    target_type: "site",
+    target_id: "site-ngo-mon",
+    target_slug: "ngo-mon",
+    hint_steps: [
+      "Công trình là cổng chính ở mặt phía Nam của Hoàng Thành Huế.",
+      "Phía dưới xây bằng nền đài đá thanh trổ năm cửa ngõ, cửa giữa dành riêng cho Thiên tử.",
+      "Phía trên đài là lầu gỗ 100 cây cột, mái chia thành chín bộ liên hoàn.",
+    ],
+    grade_level: "Lớp 7 - 12",
+    difficulty: "easy",
+    points: 50,
+    review_status: "published",
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: "clue-rong-may",
+    title: "Bí mật chín rồng ngự trị đỉnh cao quyền lực",
+    clue_text:
+      "Nơi bách quan triều bái ngày sóc vọng, ánh vàng rực rỡ trên 80 cột gỗ lim, nơi hội tụ linh khí giang sơn và lời tuyên bố thiên tử trị vì.",
+    target_type: "site",
+    target_id: "site-dien-thai-hoa",
+    target_slug: "dien-thai-hoa",
+    hint_steps: [
+      "Nằm ngay sau cầu Trung Đạo và sân Đại Triều Nghi trên trục Dũng Đạo.",
+      "Là tòa điện quan trọng bậc nhất trong Hoàng Thành Huế, nơi tổ chức lễ đăng quang của 13 vị vua.",
+      "Bên trong lưu giữ chiếc ngai vàng dát vàng quỳ nguyên bản duy nhất của Việt Nam.",
+    ],
+    grade_level: "Lớp 8 - 12",
+    difficulty: "medium",
+    points: 60,
+    review_status: "published",
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: "clue-kien-trung",
+    title: "Bản giao hưởng sành sứ và hoa văn phương Tây",
+    clue_text:
+      "Tìm kiếm tòa cung điện rực rỡ tựa gấm hoa ở tận cùng phía bắc Tử Cấm Thành, nơi sành sứ Á Đông hòa nhịp cùng vũ khúc kiến trúc Pháp.",
+    target_type: "site",
+    target_id: "site-dien-kien-trung",
+    target_slug: "dien-kien-trung",
+    hint_steps: [
+      "Nằm ở điểm cực bắc trên trục thần đạo của Tử Cấm Thành.",
+      "Được xây dựng vào thời vua Khải Định (1921 - 1923), phong cách kết hợp Đông - Tây độc đáo.",
+      "Mặt tiền phủ kín hàng vạn mảnh bát đĩa sành sứ ghép thành hình rồng phượng và hoa cúc.",
+    ],
+    grade_level: "Lớp 8 - 12",
+    difficulty: "medium",
+    points: 60,
+    review_status: "published",
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: "clue-hien-lam-cac",
+    title: "Tòa lầu cao nhất Hoàng Thành và bình hồ lô pháp lam",
+    clue_text:
+      "Triều đình nghiêm cấm xây công trình nào trong Đại Nội cao hơn nơi này. Hãy tìm đài tưởng niệm ba tầng bằng gỗ lim sừng sững ghi công đức tiên vương và đại thần dựng nước.",
+    target_type: "site",
+    target_id: "site-hien-lam-cac",
+    target_slug: "hien-lam-cac",
+    hint_steps: [
+      "Nằm ở phía trước sân Thế Miếu tại góc Tây Nam Hoàng Thành.",
+      "Là công trình kiến trúc gỗ cao 17m chia làm ba tầng lầu thanh thoát.",
+      "Đỉnh bờ nóc đắp nổi bình hồ lô pháp lam ngũ sắc men đồng rực rỡ.",
+    ],
+    grade_level: "Lớp 9 - 12",
+    difficulty: "hard",
+    points: 75,
+    review_status: "published",
+    created_at: new Date().toISOString(),
+  },
+];
+
+export const FALLBACK_GAME_QUESTIONS: GameQuestion[] = [
+  {
+    id: "game-q-1",
+    site_slug: "dien-thai-hoa",
+    question_type: "multiple_choice",
+    prompt:
+      "Tòa điện nào trong Hoàng Thành Huế là nơi tổ chức lễ đăng quang của các vị vua triều Nguyễn và các buổi lễ Đại triều?",
+    options: ["Điện Cần Chánh", "Điện Thái Hòa", "Hiển Lâm Các", "Điện Kiến Trung"],
+    answer_key: "1",
+    points: 50,
+    explanation_why:
+      "Điện Thái Hòa là biểu trưng quyền lực tối cao của hoàng triều, nơi diễn ra lễ đăng quang của 13 hoàng đế triều Nguyễn và các buổi Đại triều vào mồng một, sóc vọng.",
+    source_citation: "Đại Nam Thực Lục Chính Biên, Đệ nhất kỷ",
+  },
+  {
+    id: "game-q-2",
+    site_slug: "ngo-mon",
+    question_type: "multiple_choice",
+    prompt:
+      "Cổng Ngọ Môn có tổng cộng bao nhiêu lối đi ở phần chân đài xây bằng đá thanh và gạch vồ?",
+    options: ["3 lối đi", "5 lối đi", "7 lối đi", "1 lối đi"],
+    answer_key: "1",
+    points: 50,
+    explanation_why:
+      "Chân đài Ngọ Môn trổ 5 cửa: cửa giữa (Ngọ Môn) dành cho vua, hai bên tả hữu là Tả Giáp Môn và Hữu Giáp Môn cho quan văn võ, hai bên ngoài cùng là Tả Dịch Môn và Hữu Dịch Môn cho binh lính và voi ngựa.",
+    source_citation: "Khâm Định Đại Nam Hội Điển Sự Lệ",
+  },
+  {
+    id: "gq-deep-1",
+    site_slug: "ngo-mon",
+    question_type: "multiple_choice",
+    prompt:
+      "Vì sao trong kiến trúc Ngọ Môn, cửa chính giữa chỉ được mở vào những dịp lễ tiết đặc biệt và chỉ dành riêng cho Hoàng đế?",
+    options: [
+      "Do cửa giữa được thiết kế có bậc thềm quá cao người thường không bước qua được",
+      "Để bảo vệ lớp gạch lát đá thanh không bị mòn bởi quan lại",
+      "Vì quan niệm phong thủy và điển lễ Nho giáo: Hoàng đế là Thiên tử thay trời trị dân, đứng ở vị trí trung đạo tối thượng",
+      "Vì cửa giữa nối thẳng vào chuồng nuôi voi chiến của hoàng gia",
+    ],
+    answer_key: "2",
+    points: 50,
+    explanation_why:
+      "Theo tư tưởng phong thủy và chính trị triều Nguyễn, trục thần đạo là đường thiên tử đi. Cửa giữa Ngọ Môn là hiện thân của trật tự vương quyền tuyệt đối, hai bên là tả hữu giáp môn dành cho văn võ bá quan.",
+    source_citation: "Khâm Định Đại Nam Hội Điển Sự Lệ, Quyển 168: Lễ bộ nghi thức.",
+  },
+  {
+    id: "gq-deep-2",
+    site_slug: "dien-thai-hoa",
+    question_type: "multiple_choice",
+    prompt:
+      "Vì sao kết cấu mái của Điện Thái Hòa lại sử dụng lối kiến trúc 'trùng thiềm điệp ốc' (hai mái nối liền nhau bằng máng xối)?",
+    options: [
+      "Nhằm tăng gấp đôi diện tích lòng nhà mà không làm mái quá cao trước gió bão xứ Huế",
+      "Vì vua Gia Long học theo kiến trúc nhà thờ phương Tây",
+      "Do thiếu gỗ lim khổ lớn nên phải ghép hai ngôi nhà nhỏ lại",
+      "Nhằm tạo chỗ trú ngụ cho chim bồ câu của triều đình",
+    ],
+    answer_key: "0",
+    points: 50,
+    explanation_why:
+      "Kiến trúc 'trùng thiềm điệp ốc' (tiền điện và chính điện nối nhau) giúp mở rộng tối đa không gian hành lễ hàng trăm mét vuông mà độ dốc mái vẫn vừa phải, vững vàng trước bão tố miền Trung và giữ không khí thoáng mát.",
+    source_citation: "Đại Nam Nhất Thống Chí, Tập 1: Kinh sư cung thất.",
+  },
+  {
+    id: "gq-matching-1",
+    site_slug: "dien-thai-hoa",
+    question_type: "matching",
+    prompt: "Ghép cặp họa tiết mỹ thuật cung đình Huế với ý nghĩa biểu tượng lịch sử tương ứng:",
+    options: [
+      "Rồng 5 móng (Cửu Long) <-> Quyền uy tối thượng của bậc Thiên tử và tính chí dương",
+      "Kỳ lân / Ly <-> Biểu tượng thái bình, thịnh vượng và bảo hộ chốn tôn nghiêm",
+      "Phượng hoàng <-> Đức hạnh cao quý, điềm lành và vẻ đẹp hoàng hậu",
+      "Hoa sen & Bát bửu <-> Thanh tịnh, tinh thần Nho - Phật dung hợp và cầu phúc lộc",
+    ],
+    answer_key: "0-0,1-1,2-2,3-3",
+    points: 60,
+    explanation_why:
+      "Mỗi linh vật và hoa văn trong Đại Nội Huế đều mang tầng nghĩa triết học sâu sắc: Rồng 5 móng chỉ quyền lực vua; Lân mang thái bình; Phượng tượng trưng đức hạnh; Bát bửu mượn hình tượng bảo vật hộ trì quốc gia.",
+    source_citation: "Mỹ thuật cung đình Huế — Trung tâm Bảo tồn Di tích Cố đô Huế.",
+  },
+  {
+    id: "gq-matching-2",
+    site_slug: "dien-kien-trung",
+    question_type: "matching",
+    prompt: "Ghép chất liệu trang trí di sản với công trình tiêu biểu sử dụng:",
+    options: [
+      "Khảm sành sứ men đa sắc Baroque <-> Điện Kiến Trung",
+      "Pháp lam tráng men trên cốt đồng <-> Hiển Lâm Các",
+      "Gỗ sơn son thếp vàng Cửu Long <-> Điện Thái Hòa",
+      "Ngói hoàng lưu ly và thanh lưu ly <-> Lầu Ngũ Phụng Ngọ Môn",
+    ],
+    answer_key: "0-0,1-1,2-2,3-3",
+    points: 60,
+    explanation_why:
+      "Sự đa dạng của vật liệu thể hiện năng lực sáng tạo bậc thầy của nghệ nhân cung đình Huế qua các giai đoạn từ đầu thế kỷ XIX đến đầu thế kỷ XX.",
+    source_citation: "Khảo cứu kiến trúc cung đình Huế — HMCC.",
+  },
+  {
+    id: "gq-hotspot-1",
+    site_slug: "ngo-mon",
+    question_type: "hotspot_identify",
+    prompt:
+      "Nhấp chọn vị trí tầng lầu Ngũ Phụng nơi diễn ra các nghi lễ quan trọng và lễ thoái vị năm 1945 trên mặt tiền Ngọ Môn:",
+    options: [
+      "Tầng lầu gỗ phía trên đài đá (Lầu Ngũ Phụng)",
+      "Cửa đá bên tả ngoài cùng (Tả Dịch Môn)",
+      "Nền đất quảng trường trước cổng",
+      "Cột cờ Kỳ Đài phía xa",
+    ],
+    answer_key: "0",
+    points: 50,
+    explanation_why:
+      "Lầu Ngũ Phụng nằm ngay trên khối nền đài đá chữ U của Ngọ Môn, nơi hoàng đế ngồi ngự và quan sát toàn cảnh Kỳ Đài.",
+    source_citation: "Đại Nam Thực Lục Chính Biên, Đệ nhị kỷ.",
+  },
+  {
+    id: "gq-hotspot-2",
+    site_slug: "dien-thai-hoa",
+    question_type: "hotspot_identify",
+    prompt: "Xác định vị trí đặt ngai vàng chí tôn trong không gian chính điện Thái Hòa:",
+    options: [
+      "Gian chính giữa điện, đặt trên bệ tam cấp dưới bửu tán gấm dát vàng",
+      "Hành lang phía đông của điện",
+      "Sân gạch ngoài trời",
+      "Góc chái mái phía tây",
+    ],
+    answer_key: "0",
+    points: 50,
+    explanation_why:
+      "Ngai vàng luôn được định vị tại tâm điểm của gian chính giữa điện Thái Hòa trên trục thần đạo, nơi hội tụ phong thủy và uy quyền cao nhất của quốc gia.",
+    source_citation: "Khâm Định Đại Nam Hội Điển Sự Lệ, Quyển 102.",
+  },
+];
+
+export const FALLBACK_ASSIGNMENTS: AssignmentRelease[] = [
+  {
+    id: "assign-1",
+    class_name: "Lớp 8A3 — THCS Nguyễn Tri Phương Huế",
+    journey_slug: "truc-trung-tam",
+    title: "Khảo sát biểu tượng quyền lực qua Ngọ Môn và Điện Thái Hòa",
+    due_date: new Date(Date.now() + 7 * 86400000).toISOString(),
+    rubric_weights: { S1_spatial: 30, S2_temporal: 20, S3_evidence: 30, S4_argument: 20 },
+    is_active: true,
+  },
+  {
+    id: "assign-2",
+    class_name: "Lớp 10 Chuyên Sử — THPT Quốc Học Huế",
+    journey_slug: "the-to-mieu-khong-gian-tho-tu",
+    title: "Giải mã nguồn sử liệu Khâm Định Hội Điển và Thực Lục tại Thế Miếu",
+    due_date: new Date(Date.now() + 14 * 86400000).toISOString(),
+    rubric_weights: { S1_spatial: 25, S2_temporal: 25, S3_evidence: 30, S4_argument: 20 },
+    is_active: true,
+  },
+];
+
+// Helper to normalize lists from API
+function normalizeList<T>(data: unknown, fallbackKey?: string): T[] {
+  if (Array.isArray(data)) return data as T[];
+  if (data && typeof data === "object") {
+    const record = data as Record<string, unknown>;
+    if (fallbackKey && Array.isArray(record[fallbackKey])) {
+      return record[fallbackKey] as T[];
+    }
+    if (Array.isArray(record.items)) return record.items as T[];
+    if (Array.isArray(record.data)) return record.data as T[];
+  }
+  return [];
+}
+
+// =========================================================================== //
+// Public API Functions
+// =========================================================================== //
+
+/**
+ * Fetch learning media assets (photos, 360 panoramas, 3D models) for a monument.
+ * GET /api/v1/imperial/sites/{siteSlug}/learning-media
+ */
+export async function fetchSiteLearningMedia(
+  siteSlug: string,
+): Promise<ImperialLearningMedia[]> {
+  try {
+    const data = await apiRequest<unknown>(
+      `/api/v1/imperial/sites/${encodeURIComponent(siteSlug)}/learning-media`,
+      { cache: "no-store" },
+    );
+    const list = normalizeList<ImperialLearningMedia>(data, "media");
+    if (list.length > 0) return list;
+  } catch (error) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn(`fetchSiteLearningMedia fallback for ${siteSlug}:`, error);
+    }
+  }
+
+  // Filter fallback media by site slug
+  const matched = FALLBACK_LEARNING_MEDIA.filter(
+    (m) => m.site_slug === siteSlug || m.site_id === `site-${siteSlug}`,
+  );
+  return matched.length > 0 ? matched : FALLBACK_LEARNING_MEDIA;
+}
+
+/**
+ * Fetch UV hotspots overlaid on a specific media asset.
+ * GET /api/v1/imperial/media/{mediaId}/hotspots
+ */
+export async function fetchMediaHotspots(
+  mediaId: string,
+): Promise<ImperialMediaHotspot[]> {
+  try {
+    const data = await apiRequest<unknown>(
+      `/api/v1/imperial/media/${encodeURIComponent(mediaId)}/hotspots`,
+      { cache: "no-store" },
+    );
+    const list = normalizeList<ImperialMediaHotspot>(data, "hotspots");
+    if (list.length > 0) return list;
+  } catch (error) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn(`fetchMediaHotspots fallback for ${mediaId}:`, error);
+    }
+  }
+
+  const media = FALLBACK_LEARNING_MEDIA.find((m) => m.id === mediaId);
+  return media?.hotspots || [];
+}
+
+/**
+ * Fetch a single art detail with full story, sources, and questions.
+ * GET /api/v1/imperial/art-details/{detailSlug}
+ */
+export async function fetchArtDetail(
+  detailSlug: string,
+): Promise<ImperialArtDetail | null> {
+  try {
+    const data = await apiRequest<ImperialArtDetail>(
+      `/api/v1/imperial/art-details/${encodeURIComponent(detailSlug)}`,
+      { cache: "no-store" },
+    );
+    if (data && data.title) return data;
+  } catch (error) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn(`fetchArtDetail fallback for ${detailSlug}:`, error);
+    }
+  }
+
+  return (
+    FALLBACK_ART_DETAILS.find(
+      (d) =>
+        d.slug === detailSlug ||
+        (detailSlug.includes("rong-may") && d.slug === "ngai-vang-hoang-de"),
+    ) || null
+  );
+}
+
+/**
+ * Fetch all art details associated with a site.
+ * GET /api/v1/imperial/sites/{siteSlug}/art-details
+ */
+export async function fetchSiteArtDetails(
+  siteSlug: string,
+): Promise<ImperialArtDetail[]> {
+  try {
+    const data = await apiRequest<unknown>(
+      `/api/v1/imperial/sites/${encodeURIComponent(siteSlug)}/art-details`,
+      { cache: "no-store" },
+    );
+    const list = normalizeList<ImperialArtDetail>(data, "details");
+    if (list.length > 0) return list;
+  } catch (error) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn(`fetchSiteArtDetails fallback for ${siteSlug}:`, error);
+    }
+  }
+
+  const matched = FALLBACK_ART_DETAILS.filter(
+    (d) => d.site_slug === siteSlug || d.site_id === `site-${siteSlug}`,
+  );
+  return matched.length > 0 ? matched : FALLBACK_ART_DETAILS;
+}
+
+/**
+ * Fetch heritage detective clues.
+ * GET /api/v1/imperial/clues
+ */
+export async function fetchClues(): Promise<ImperialClue[]> {
+  try {
+    const data = await apiRequest<unknown>("/api/v1/imperial/clues", {
+      cache: "no-store",
+    });
+    const list = normalizeList<ImperialClue>(data, "clues");
+    if (list.length > 0) return list;
+  } catch (error) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("fetchClues fallback active:", error);
+    }
+  }
+
+  return FALLBACK_CLUES;
+}
+
+/**
+ * Submit an attempt for a heritage detective clue.
+ * POST /api/v1/imperial/clues/{clueId}/attempt
+ */
+export async function submitClueAttempt(
+  clueId: string,
+  selectedTargetId: string,
+): Promise<ClueAttemptResult> {
+  try {
+    const res = await apiRequest<ClueAttemptResult>(
+      `/api/v1/imperial/clues/${encodeURIComponent(clueId)}/attempt`,
+      {
+        method: "POST",
+        body: JSON.stringify({ selected_target_id: selectedTargetId }),
+      },
+    );
+    if (res && typeof res.success === "boolean") return res;
+  } catch (error) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("submitClueAttempt local validation:", error);
+    }
+  }
+
+  // Fallback verification against local data
+  const clue = FALLBACK_CLUES.find((c) => c.id === clueId);
+  const cleanTarget = selectedTargetId.startsWith("site-")
+    ? selectedTargetId.replace("site-", "")
+    : selectedTargetId;
+
+  const isMatch =
+    Boolean(clue) &&
+    (clue!.target_id === selectedTargetId ||
+      clue!.target_slug === selectedTargetId ||
+      clue!.target_slug === cleanTarget ||
+      (clue!.target_slug && `site-${clue!.target_slug}` === selectedTargetId) ||
+      (cleanTarget === "dien-thai-hoa" && (Boolean(clue!.target_id?.includes("thai-hoa")) || Boolean(clue!.target_slug?.includes("thai-hoa")) || clue!.id === "clue-1" || clue!.id === "clue-rong-may")) ||
+      (cleanTarget === "ngo-mon" && (Boolean(clue!.target_id?.includes("ngu-phung")) || Boolean(clue!.target_slug?.includes("ngu-phung")) || clue!.id === "clue-2" || clue!.id === "clue-ngu-phung")) ||
+      (cleanTarget === "dien-kien-trung" && (clue!.target_slug === "dien-kien-trung" || clue!.id === "clue-kien-trung")) ||
+      (cleanTarget === "hien-lam-cac" && (clue!.target_slug === "hien-lam-cac" || clue!.id === "clue-hien-lam-cac")));
+
+  return {
+    success: Boolean(isMatch),
+    points_awarded: isMatch ? (clue?.points || 50) : 0,
+    message: isMatch
+      ? "Xuất sắc! Bạn đã giải mã chính xác manh mối lịch sử này."
+      : "Chưa chính xác! Hãy đọc kĩ lại gợi ý và quan sát kiến trúc kỹ hơn.",
+    clue_id: clueId,
+    attempt_number: 1,
+  };
+}
+
+/**
+ * Fetch gamified quiz questions for a site or all sites.
+ * GET /api/v1/imperial/games/questions
+ */
+export async function fetchGameQuestions(
+  siteSlug?: string,
+): Promise<GameQuestion[]> {
+  try {
+    const url = siteSlug
+      ? `/api/v1/imperial/games/questions?site=${encodeURIComponent(siteSlug)}`
+      : "/api/v1/imperial/games/questions";
+    const data = await apiRequest<unknown>(url, { cache: "no-store" });
+    const list = normalizeList<GameQuestion>(data, "questions");
+    if (list.length > 0) return list;
+  } catch (error) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("fetchGameQuestions fallback active:", error);
+    }
+  }
+
+  if (siteSlug) {
+    const filtered = FALLBACK_GAME_QUESTIONS.filter(
+      (q) => q.site_slug === siteSlug,
+    );
+    return filtered.length > 0 ? filtered : FALLBACK_GAME_QUESTIONS;
+  }
+  return FALLBACK_GAME_QUESTIONS;
+}
+
+/**
+ * Submit an answer for a game question.
+ * POST /api/v1/imperial/games/submit
+ */
+export async function submitGameAnswer(
+  questionId: string,
+  answer: number | string,
+): Promise<GameSubmitResult> {
+  try {
+    const res = await apiRequest<GameSubmitResult>(
+      "/api/v1/imperial/games/submit",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          question_id: questionId,
+          user_answer: String(answer),
+        }),
+      },
+    );
+    if (res && typeof res.correct === "boolean") return res;
+  } catch (error) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("submitGameAnswer fallback active:", error);
+    }
+  }
+
+  // Fallback evaluation
+  const q = FALLBACK_GAME_QUESTIONS.find((item) => item.id === questionId);
+  const correctIdx = q?.answer_key ? parseInt(q.answer_key, 10) : 1;
+  const isCorrect = String(answer) === String(correctIdx);
+
+  return {
+    correct: isCorrect,
+    correct_index: correctIdx,
+    explanation:
+      q?.explanation_why ||
+      "Dữ liệu lịch sử đã được đối chiếu theo chính sử triều Nguyễn.",
+    score_delta: isCorrect ? (q?.points || 50) : 0,
+  };
+}
+
+/**
+ * Fetch teacher classroom assignments.
+ * GET /api/v1/imperial/teacher/assignments
+ */
+export async function fetchTeacherAssignments(): Promise<AssignmentRelease[]> {
+  try {
+    const data = await apiRequest<unknown>(
+      "/api/v1/imperial/teacher/assignments",
+      { cache: "no-store" },
+    );
+    const list = normalizeList<AssignmentRelease>(data, "assignments");
+    if (list.length > 0) return list;
+  } catch (error) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("fetchTeacherAssignments fallback active:", error);
+    }
+  }
+
+  return FALLBACK_ASSIGNMENTS;
+}
+
+/**
+ * Create a new teacher assignment release.
+ * POST /api/v1/imperial/teacher/assignments
+ */
+export async function createTeacherAssignment(
+  payload: Partial<AssignmentRelease>,
+): Promise<AssignmentRelease> {
+  try {
+    const res = await apiRequest<AssignmentRelease>(
+      "/api/v1/imperial/teacher/assignments",
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      },
+    );
+    if (res && res.id) return res;
+  } catch (error) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("createTeacherAssignment fallback:", error);
+    }
+  }
+
+  const newAssignment: AssignmentRelease = {
+    id: `assign-${Date.now()}`,
+    title: payload.title || "Bài tập mới",
+    class_name: payload.class_name || "Lớp học di sản",
+    journey_slug: payload.journey_slug || "truc-trung-tam",
+    due_date: payload.due_date || null,
+    rubric_weights: payload.rubric_weights || {
+      S1_spatial: 25,
+      S2_temporal: 25,
+      S3_evidence: 25,
+      S4_argument: 25,
+    },
+    is_active: payload.is_active ?? true,
+    created_at: new Date().toISOString(),
+  };
+
+  FALLBACK_ASSIGNMENTS.unshift(newAssignment);
+  return newAssignment;
+}
+
+// =========================================================================== //
+// Studio / Admin Hotspot & Art Detail Helpers
+// =========================================================================== //
+
+export async function saveMediaHotspot(
+  payload: Partial<ImperialMediaHotspot>,
+): Promise<ImperialMediaHotspot> {
+  try {
+    const method = payload.id ? "PATCH" : "POST";
+    const url = payload.id
+      ? `/api/v1/imperial/admin/hotspots/${encodeURIComponent(payload.id)}`
+      : `/api/v1/imperial/admin/media/${encodeURIComponent(payload.media_id || "")}/hotspots`;
+
+    const res = await apiRequest<ImperialMediaHotspot>(url, {
+      method,
+      body: JSON.stringify(payload),
+    });
+    if (res && res.id) return res;
+  } catch (error) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("saveMediaHotspot fallback:", error);
+    }
+  }
+
+  // Local fallback save
+  const saved: ImperialMediaHotspot = {
+    id: payload.id || `hotspot-${Date.now()}`,
+    media_id: payload.media_id || "media-thai-hoa-2d",
+    point_kind: payload.point_kind || "point",
+    u: Math.max(0, Math.min(1, payload.u ?? 0.5)),
+    v: Math.max(0, Math.min(1, payload.v ?? 0.5)),
+    title: payload.title || "Điểm quan sát mới",
+    description: payload.description || "",
+    detail_id: payload.detail_id || null,
+    art_detail_slug: payload.art_detail_slug || null,
+    review_status: payload.review_status || "draft",
+    position_payload: payload.position_payload || null,
+    created_at: payload.created_at || new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+
+  return saved;
+}
+
+export async function deleteMediaHotspot(hotspotId: string): Promise<void> {
+  try {
+    await apiRequest(`/api/v1/imperial/admin/hotspots/${encodeURIComponent(hotspotId)}`, {
+      method: "DELETE",
+    });
+  } catch (error) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("deleteMediaHotspot fallback:", error);
+    }
+  }
+}
+
+export async function deleteArtDetail(detailId: string): Promise<void> {
+  try {
+    await apiRequest(`/api/v1/imperial/admin/art-details/${encodeURIComponent(detailId)}`, {
+      method: "DELETE",
+    });
+  } catch (error) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("deleteArtDetail fallback:", error);
+    }
+  }
+}
+
+export async function saveArtDetail(
+  payload: Partial<ImperialArtDetail>,
+): Promise<ImperialArtDetail> {
+  try {
+    const method = payload.id ? "PATCH" : "POST";
+    const url = payload.id
+      ? `/api/v1/imperial/admin/art-details/${encodeURIComponent(payload.id)}`
+      : "/api/v1/imperial/admin/art-details";
+
+    const res = await apiRequest<ImperialArtDetail>(url, {
+      method,
+      body: JSON.stringify(payload),
+    });
+    if (res && res.id) return res;
+  } catch (error) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("saveArtDetail fallback:", error);
+    }
+  }
+
+  const existingIdx = FALLBACK_ART_DETAILS.findIndex((d) => d.id === payload.id || d.slug === payload.slug);
+  const detail: ImperialArtDetail = {
+    id: payload.id || `detail-${Date.now()}`,
+    slug: payload.slug || `chi-tiet-${Date.now()}`,
+    site_id: payload.site_id || "site-dien-thai-hoa",
+    site_slug: payload.site_slug || "dien-thai-hoa",
+    site_name_vi: payload.site_name_vi || "Điện Thái Hòa",
+    title: payload.title || "Chi tiết mỹ thuật",
+    kind: payload.kind || "carving",
+    motif: payload.motif || "",
+    material: payload.material || "",
+    technique: payload.technique || "",
+    description_observation: payload.description_observation || "",
+    story_body: payload.story_body || "",
+    story_type: payload.story_type || "documented_event",
+    meaning_body: payload.meaning_body || "",
+    historical_value_body: payload.historical_value_body || "",
+    cultural_value_body: payload.cultural_value_body || "",
+    art_value_body: payload.art_value_body || "",
+    review_status: payload.review_status || "draft",
+    claim_sources: payload.claim_sources || [],
+    questions: payload.questions || [],
+    created_at: payload.created_at || new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+
+  if (existingIdx >= 0) {
+    FALLBACK_ART_DETAILS[existingIdx] = detail;
+  } else {
+    FALLBACK_ART_DETAILS.push(detail);
+  }
+
+  return detail;
+}

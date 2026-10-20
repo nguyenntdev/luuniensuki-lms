@@ -4226,3 +4226,33 @@ from .models_rbpc import (  # noqa: E402,F401
     RbpcSupportType,
 )
 
+# --------------------------------------------------------------------------- #
+# Imperial City Domain Models (STTTNNĐ — Đại Nội Huế)
+# --------------------------------------------------------------------------- #
+from .imperial_models import (  # noqa: E402,F401
+    ImperialZone,
+    ImperialSite,
+    ImperialMapAsset,
+    ImperialMapAnnotation,
+    ImperialAnnotationLink,
+    ImperialAnnotationAudit,
+    ImperialLens,
+    ImperialLensSite,
+    ImperialLearningPath,
+    ImperialPathStep,
+    ImperialActivity,
+    ImperialSubmission,
+    ImperialMedia,
+)
+from .imperial_v51_models import (  # noqa: E402,F401
+    ImperialArtDetail,
+    ImperialArtDetailClaimSource,
+    ImperialArtDetailQuestion,
+    ImperialMediaHotspot,
+    ImperialClue,
+    ImperialClueAttempt,
+    ImperialQuestion,
+    ImperialAssignmentRelease,
+    ImperialLearningMedia,
+)
+

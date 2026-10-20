@@ -234,6 +234,7 @@ def create_app() -> FastAPI:
     from .routers import history_collections as history_collections_router
     from .routers import heritage as heritage_router
     from .routers import rbpc as rbpc_router
+    from .routers import imperial as imperial_router
 
     app.include_router(auth_router.router)
     app.include_router(users_router.router)
@@ -252,5 +253,6 @@ def create_app() -> FastAPI:
     app.include_router(history_collections_router.router)
     app.include_router(heritage_router.router)
     app.include_router(rbpc_router.router)
+    app.include_router(imperial_router.router)
 
     return app

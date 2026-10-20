@@ -14,7 +14,7 @@ export default defineConfig({
   },
   test: {
     environment: "node",
-    include: ["**/*.test.{js,ts}"],
+    include: ["**/*.test.{js,ts,jsx,tsx}"],
     exclude: ["**/node_modules/**", "**/.next/**", "**/e2e/**"],
     globals: false,
   },

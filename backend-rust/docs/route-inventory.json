@@ -913,6 +913,174 @@
   },
   {
     "method": "POST",
+    "path": "/activities/{activity_id}/submissions",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "DELETE",
+    "path": "/admin/annotations/{id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "PATCH",
+    "path": "/admin/annotations/{id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/admin/annotations/{id}/audit",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/art-details",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "DELETE",
+    "path": "/admin/art-details/{detail_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "PATCH",
+    "path": "/admin/art-details/{detail_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/clues",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "DELETE",
+    "path": "/admin/clues/{clue_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "PATCH",
+    "path": "/admin/clues/{clue_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "DELETE",
+    "path": "/admin/hotspots/{hotspot_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "PATCH",
+    "path": "/admin/hotspots/{hotspot_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/admin/maps",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/maps",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/admin/maps/{map_id}/annotations",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/maps/{map_id}/annotations",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/admin/maps/{map_id}/export",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/maps/{map_id}/import",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/maps/{map_id}/publish",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/media",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "DELETE",
+    "path": "/admin/media/{media_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "PATCH",
+    "path": "/admin/media/{media_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/media/{media_id}/hotspots",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/questions",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "DELETE",
+    "path": "/admin/questions/{question_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "PATCH",
+    "path": "/admin/questions/{question_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/ai/ask",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/ai/chat",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
     "path": "/api/v1/ai/coach",
     "group": "misc",
     "status": "gateway"
@@ -1910,6 +2078,180 @@
   {
     "method": "POST",
     "path": "/api/v1/weekly-quests/{quest_id}/progress",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/art-details/{detail_id_or_slug}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/assets/{asset_id}/image",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/audio-guides",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/clues",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/clues/{clue_id}/attempt",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/games/questions",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/games/submit",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/learning-paths",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/learning-paths/{slug}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/maps/active",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/maps/{map_id}/annotations",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/media/{media_id}/hotspots",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/paths",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/paths/{slug}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/sites",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/sites/{slug}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/sites/{slug}/activities",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/sites/{slug}/art-details",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/sites/{slug}/audio",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/sites/{slug}/evidence",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/sites/{slug}/learning-media",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/sites/{slug}/timeline",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/submissions/batch-sync",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/teacher/assignments",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/teacher/assignments",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "PATCH",
+    "path": "/teacher/assignments/{assignment_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/teacher/submissions",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/teacher/submissions/{submission_id}/grade",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/zones",
     "group": "misc",
     "status": "gateway"
   },

@@ -31,6 +31,14 @@ export const PUBLIC_PATH_PREFIXES: string[] = [
   "/about",
   "/heritage",
   "/rbpc",
+  "/dai-noi",
+  "/dai-noi/ho-chieu",
+  "/dai-noi/chung-nhan",
+  "/dai-noi/offline",
+  // Đại Nội Huế extensions
+  "/dai-noi/ho-chieu",
+  "/dai-noi/chung-nhan",
+  "/dai-noi/offline",
 ];
 
 export const PUBLIC_FILE_PATHS: string[] = [
