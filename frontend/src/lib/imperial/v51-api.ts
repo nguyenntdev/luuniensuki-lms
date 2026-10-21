@@ -1003,253 +1003,632 @@ export const FALLBACK_LEARNING_MEDIA: ImperialLearningMedia[] = [
 
 export const FALLBACK_CLUES: ImperialClue[] = [
   {
-    id: "clue-1",
-    title: "Bí mật đấng chí tôn trên chín tầng mây",
-    clue_text:
-      "Nơi đây lưu giữ bảo tọa dát vàng thiêng liêng, nơi 13 vị hoàng đế triều Nguyễn từng ngồi tiếp trăm quan, chứng kiến ngày khai sinh và ngày chấm dứt của một vương triều.",
-    target_type: "art_detail",
-    target_id: "detail-ngai-vang-thai-hoa",
-    target_slug: "ngai-vang-hoang-de",
-    hint_steps: [
-      "Vị trí nằm trên trục chính đạo của Hoàng Thành.",
-      "Ở bên trong tòa điện lợp ngói vàng quan trọng nhất.",
-      "Bảo vật được chạm lộng chín con rồng vàng uốn lượn.",
-    ],
-    grade_level: "Lớp 8 - 12",
-    difficulty: "medium",
-    points: 100,
-    review_status: "published",
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: "clue-2",
-    title: "Tiếng hót chim phượng đón gió Nam",
-    clue_text:
-      "Đứng trước cổng chính đón ánh mặt trời đứng bóng lúc chính ngọ, hãy tìm nơi có năm con chim quý vươn cánh đón gió mùa phương Nam.",
-    target_type: "art_detail",
-    target_id: "detail-lau-ngu-phung",
-    target_slug: "lau-ngu-phung-canh-phuong",
-    hint_steps: [
-      "Công trình có cổng trổ năm cửa ngõ.",
-      "Tầng trên có 100 cây cột gỗ lim.",
-      "Đó là lầu mang tên năm con chim phượng hoàng.",
-    ],
-    grade_level: "Lớp 6 - 9",
-    difficulty: "easy",
-    points: 75,
-    review_status: "published",
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: "clue-ngu-phung",
-    title: "Năm cánh phượng hoàng đón gió chính Nam",
-    clue_text:
-      "Đứng trước cổng chính đón ánh mặt trời đứng bóng lúc chính ngọ, hãy tìm nơi có năm con chim quý xòe cánh che chở trăm họ.",
-    target_type: "site",
-    target_id: "site-ngo-mon",
-    target_slug: "ngo-mon",
-    hint_steps: [
+    "id": "clue-ngu-phung",
+    "title": "Năm cửa chín nóc gác vọng Kinh sư",
+    "clue_text": "Hãy tìm cửa ngõ chính diện nguy nga nhất của Hoàng Thành, nơi từng chứng kiến lễ Ban Sóc, Truyền Lô và sự kiện trao trả bảo ấn kiếm năm 1945.",
+    "target_type": "site",
+    "target_slug": "ngo-mon",
+    "hint_steps": [
       "Công trình là cổng chính ở mặt phía Nam của Hoàng Thành Huế.",
       "Phía dưới xây bằng nền đài đá thanh trổ năm cửa ngõ, cửa giữa dành riêng cho Thiên tử.",
-      "Phía trên đài là lầu gỗ 100 cây cột, mái chia thành chín bộ liên hoàn.",
+      "Phía trên đài là lầu gỗ 100 cây cột, mái chia thành chín bộ liên hoàn."
     ],
-    grade_level: "Lớp 7 - 12",
-    difficulty: "easy",
-    points: 50,
-    review_status: "published",
-    created_at: new Date().toISOString(),
+    "difficulty": "easy",
+    "points": 30,
+    "target_id": "site-ngo-mon"
   },
   {
-    id: "clue-rong-may",
-    title: "Bí mật chín rồng ngự trị đỉnh cao quyền lực",
-    clue_text:
-      "Nơi bách quan triều bái ngày sóc vọng, ánh vàng rực rỡ trên 80 cột gỗ lim, nơi hội tụ linh khí giang sơn và lời tuyên bố thiên tử trị vì.",
-    target_type: "site",
-    target_id: "site-dien-thai-hoa",
-    target_slug: "dien-thai-hoa",
-    hint_steps: [
+    "id": "clue-cau-trung-dao",
+    "title": "Nhịp cầu ngọc bắc qua hồ sen Thái Dịch",
+    "clue_text": "Chiếc cầu đá cẩm thạch hai đầu dựng hai cổng đồng quán tráng lệ, nối liền cổng chính và sân đại triều.",
+    "target_type": "site",
+    "target_slug": "cau-trung-dao",
+    "hint_steps": [
+      "Bắc qua hồ Thái Dịch đầy hoa sen ngát hương mùa hạ.",
+      "Nằm chính giữa trục thần đạo kết nối Ngọ Môn và Sân Đại Triều Nghi.",
+      "Hai đầu cầu dựng vọng lâu bằng đồng chạm trổ hoa văn tinh xảo."
+    ],
+    "difficulty": "easy",
+    "points": 30,
+    "target_id": "site-cau-trung-dao"
+  },
+  {
+    "id": "clue-san-dai-trieu",
+    "title": "Bia đá phân phẩm trật dưới bóng cờ triều nghi",
+    "clue_text": "Nơi bách quan văn võ chỉnh tề tùng phục, phân định ngôi thứ từ nhất phẩm đến cửu phẩm dưới ánh bình minh ngày thiết triều.",
+    "target_type": "site",
+    "target_slug": "san-dai-trieu-nghi",
+    "hint_steps": [
+      "Sân gạch Bát Tràng hai tầng rộng lớn ngay phía trước Điện Thái Hòa.",
+      "Hai bên sân có hai hàng bia đá nhỏ khắc chữ Hán chỉ rõ vị trí đứng của quan văn và quan võ.",
+      "Tầng trên dành cho quan từ tứ phẩm trở lên, tầng dưới dành cho quan từ ngũ phẩm đến cửu phẩm."
+    ],
+    "difficulty": "medium",
+    "points": 30,
+    "target_id": "site-san-dai-trieu-nghi"
+  },
+  {
+    "id": "clue-rong-may",
+    "title": "Bí mật chín rồng ngự trị đỉnh cao quyền lực",
+    "clue_text": "Nơi bách quan triều bái ngày sóc vọng, ánh vàng rực rỡ trên 80 cột gỗ lim, nơi hội tụ linh khí giang sơn và lời tuyên bố thiên tử trị vì.",
+    "target_type": "site",
+    "target_slug": "dien-thai-hoa",
+    "hint_steps": [
       "Nằm ngay sau cầu Trung Đạo và sân Đại Triều Nghi trên trục Dũng Đạo.",
       "Là tòa điện quan trọng bậc nhất trong Hoàng Thành Huế, nơi tổ chức lễ đăng quang của 13 vị vua.",
-      "Bên trong lưu giữ chiếc ngai vàng dát vàng quỳ nguyên bản duy nhất của Việt Nam.",
+      "Bên trong lưu giữ chiếc ngai vàng dát vàng quỳ nguyên bản duy nhất của Việt Nam."
     ],
-    grade_level: "Lớp 8 - 12",
-    difficulty: "medium",
-    points: 60,
-    review_status: "published",
-    created_at: new Date().toISOString(),
+    "difficulty": "medium",
+    "points": 30,
+    "target_id": "site-dien-thai-hoa"
   },
   {
-    id: "clue-kien-trung",
-    title: "Bản giao hưởng sành sứ và hoa văn phương Tây",
-    clue_text:
-      "Tìm kiếm tòa cung điện rực rỡ tựa gấm hoa ở tận cùng phía bắc Tử Cấm Thành, nơi sành sứ Á Đông hòa nhịp cùng vũ khúc kiến trúc Pháp.",
-    target_type: "site",
-    target_id: "site-dien-kien-trung",
-    target_slug: "dien-kien-trung",
-    hint_steps: [
+    "id": "clue-dai-cung-mon",
+    "title": "Cửa gấm son then mở lối cấm địa hoàng gia",
+    "clue_text": "Cánh cổng gỗ ba gian tráng lệ sơn son thếp vàng, ranh giới linh thiêng ngăn cách Hoàng Thành trang nghiêm và Tử Cấm Thành riêng tư.",
+    "target_type": "site",
+    "target_slug": "dai-cung-mon",
+    "hint_steps": [
+      "Nằm ngay sau lưng Điện Thái Hòa trên trục thần đạo.",
+      "Là cổng chính diện phía nam để đi vào Tử Cấm Thành.",
+      "Gồm 5 cửa: cửa giữa dành cho vua, hai bên là các cửa dành cho hoàng gia và cung nhân."
+    ],
+    "difficulty": "medium",
+    "points": 30,
+    "target_id": "site-dai-cung-mon"
+  },
+  {
+    "id": "clue-can-chanh",
+    "title": "Tòa điện làm việc thường nhật của đấng minh quân",
+    "clue_text": "Nơi hoàng đế ngự phê tấu chương, họp bàn cơ mật cùng các quan đại thần Viện Cơ Mật mỗi ngày.",
+    "target_type": "site",
+    "target_slug": "dien-can-chanh",
+    "hint_steps": [
+      "Nằm ngay sau Đại Cung Môn trên trục dũng đạo của Tử Cấm Thành.",
+      "Là nơi diễn ra lễ thiết triều thường nhật (Thường triều) của các vua Nguyễn.",
+      "Công trình bằng gỗ lim tuyệt đẹp bị tàn phá năm 1947 và đang được khảo cổ phục dựng."
+    ],
+    "difficulty": "hard",
+    "points": 30,
+    "target_id": "site-dien-can-chanh"
+  },
+  {
+    "id": "clue-kien-trung",
+    "title": "Bản giao hưởng sành sứ và hoa văn phương Tây",
+    "clue_text": "Tìm kiếm tòa cung điện rực rỡ tựa gấm hoa ở tận cùng phía bắc Tử Cấm Thành, nơi sành sứ Á Đông hòa nhịp cùng vũ khúc kiến trúc Pháp.",
+    "target_type": "site",
+    "target_slug": "dien-kien-trung",
+    "hint_steps": [
       "Nằm ở điểm cực bắc trên trục thần đạo của Tử Cấm Thành.",
       "Được xây dựng vào thời vua Khải Định (1921 - 1923), phong cách kết hợp Đông - Tây độc đáo.",
-      "Mặt tiền phủ kín hàng vạn mảnh bát đĩa sành sứ ghép thành hình rồng phượng và hoa cúc.",
+      "Mặt tiền phủ kín hàng vạn mảnh bát đĩa sành sứ ghép thành hình rồng phượng và hoa cúc."
     ],
-    grade_level: "Lớp 8 - 12",
-    difficulty: "medium",
-    points: 60,
-    review_status: "published",
-    created_at: new Date().toISOString(),
+    "difficulty": "medium",
+    "points": 30,
+    "target_id": "site-dien-kien-trung"
   },
   {
-    id: "clue-hien-lam-cac",
-    title: "Tòa lầu cao nhất Hoàng Thành và bình hồ lô pháp lam",
-    clue_text:
-      "Triều đình nghiêm cấm xây công trình nào trong Đại Nội cao hơn nơi này. Hãy tìm đài tưởng niệm ba tầng bằng gỗ lim sừng sững ghi công đức tiên vương và đại thần dựng nước.",
-    target_type: "site",
-    target_id: "site-hien-lam-cac",
-    target_slug: "hien-lam-cac",
-    hint_steps: [
+    "id": "clue-duyet-thi-duong",
+    "title": "Âm vang nhã nhạc trong nhà hát cổ nhất nước non",
+    "clue_text": "Nơi bức rèm nhung buông rủ, tiếng trống thúc quân và điệu múa Lục cúng hoa đăng từng làm say đắm bậc đế vương.",
+    "target_type": "site",
+    "target_slug": "duyet-thi-duong",
+    "hint_steps": [
+      "Nằm ở góc phía Đông của Tử Cấm Thành, khởi dựng năm 1826 thời vua Minh Mạng.",
+      "Là nhà hát tuồng cung đình cổ nhất Việt Nam còn tồn tại.",
+      "Trần nhà sơn màu xanh tượng trưng cho bầu trời đêm với mặt trăng, sao và vòm trời vũ trụ."
+    ],
+    "difficulty": "medium",
+    "points": 30,
+    "target_id": "site-duyet-thi-duong"
+  },
+  {
+    "id": "clue-thai-binh-lau",
+    "title": "Thư viện hoàng gia bên hồ nước tĩnh lặng",
+    "clue_text": "Tòa lầu hai tầng thanh tao hoa mỹ, nơi thiên tử tĩnh tâm đọc sách, ngâm vịnh thi phú giữa vườn hoa thơm.",
+    "target_type": "site",
+    "target_slug": "thai-binh-lau",
+    "hint_steps": [
+      "Nằm ở phía sau điện Kiến Trung và nhà hát Duyệt Thị Đường.",
+      "Được vua Khải Định cho tu sửa lại làm nơi nghỉ ngơi và đọc sách.",
+      "Phía trước có hồ bán nguyệt và hòn non bộ đắp nổi rồng chầu mặt nguyệt bằng sành sứ."
+    ],
+    "difficulty": "hard",
+    "points": 30,
+    "target_id": "site-thai-binh-lau"
+  },
+  {
+    "id": "clue-the-mieu",
+    "title": "Mười gian án thờ thiêng liêng phụng tự vương triều",
+    "clue_text": "Nơi khói trầm nghi ngút thờ phụng các bậc tiên đế, nơi ngự trị của lòng hiếu thảo và tính chính danh vương triều suốt hơn một thế kỷ.",
+    "target_type": "site",
+    "target_slug": "the-to-mieu",
+    "hint_steps": [
+      "Nằm ở góc Tây Nam Hoàng Thành, xây dựng năm 1821 thời vua Minh Mạng.",
+      "Tòa đại điện 9 gian 2 chái bằng gỗ lim uy nghiêm chứa các án thờ của 10 vị hoàng đế triều Nguyễn.",
+      "Trước sân miếu đặt chín đỉnh đồng khổng lồ (Cửu Đỉnh)."
+    ],
+    "difficulty": "easy",
+    "points": 30,
+    "target_id": "site-the-to-mieu"
+  },
+  {
+    "id": "clue-hien-lam-cac",
+    "title": "Tòa lầu cao nhất Hoàng Thành và bình hồ lô pháp lam",
+    "clue_text": "Triều đình nghiêm cấm xây công trình nào trong Đại Nội cao hơn nơi này. Hãy tìm đài tưởng niệm ba tầng bằng gỗ lim sừng sững ghi công đức tiên vương và đại thần dựng nước.",
+    "target_type": "site",
+    "target_slug": "hien-lam-cac",
+    "hint_steps": [
       "Nằm ở phía trước sân Thế Miếu tại góc Tây Nam Hoàng Thành.",
       "Là công trình kiến trúc gỗ cao 17m chia làm ba tầng lầu thanh thoát.",
-      "Đỉnh bờ nóc đắp nổi bình hồ lô pháp lam ngũ sắc men đồng rực rỡ.",
+      "Đỉnh bờ nóc đắp nổi bình hồ lô pháp lam ngũ sắc men đồng rực rỡ."
     ],
-    grade_level: "Lớp 9 - 12",
-    difficulty: "hard",
-    points: 75,
-    review_status: "published",
-    created_at: new Date().toISOString(),
+    "difficulty": "hard",
+    "points": 30,
+    "target_id": "site-hien-lam-cac"
   },
+  {
+    "id": "clue-hung-mieu",
+    "title": "Chốn linh từ thờ đấng thân sinh người mở cõi vương triều",
+    "clue_text": "Ngôi miếu nhỏ trang nhã nép mình sau hàng rào hoa, nơi thờ thân phụ và thân mẫu của vua Gia Long.",
+    "target_type": "site",
+    "target_slug": "hung-to-mieu",
+    "hint_steps": [
+      "Nằm ngay phía sau Thế Tổ Miếu trong cụm thờ tự Tây Nam.",
+      "Thờ Thế tử Nguyễn Phúc Luân (Thoát Tổ Khang Hoàng Đế) và thân mẫu vua Gia Long.",
+      "Kiến trúc gỗ một tòa nhà kép tinh xảo đã từng được trùng tu nguyên bản."
+    ],
+    "difficulty": "hard",
+    "points": 30,
+    "target_id": "site-hung-to-mieu"
+  },
+  {
+    "id": "clue-trieu-mieu",
+    "title": "Thủy tổ miếu thờ nguồn cội dòng họ đế vương",
+    "clue_text": "Nơi thờ vị anh hùng khởi nghiệp mở mang bờ cõi Đàng Trong, vị thủy tổ khai sáng dòng dõi hoàng gia Nguyễn Phúc.",
+    "target_type": "site",
+    "target_slug": "trieu-to-mieu",
+    "hint_steps": [
+      "Nằm ở khu vực Đông Nam Hoàng Thành, đối xứng với Thế Miếu qua trục Dũng Đạo.",
+      "Thờ Triệu Tổ Tĩnh Hoàng Đế Nguyễn Kim và phu nhân.",
+      "Là miếu thờ có niên đại khởi thủy cổ kính xây từ năm 1804 thời Gia Long."
+    ],
+    "difficulty": "hard",
+    "points": 30,
+    "target_id": "site-trieu-to-mieu"
+  },
+  {
+    "id": "clue-phung-tien",
+    "title": "Chốn thờ tự dành riêng cho nữ giới hoàng cung",
+    "clue_text": "Nơi các bà hoàng thái hậu và hoàng hậu tiến hành nghi thức bái mạng tiên vương mà không vi phạm lễ nghi nam nữ cung đình.",
+    "target_type": "site",
+    "target_slug": "dien-phung-tien",
+    "hint_steps": [
+      "Nằm ở phía Tây Tử Cấm Thành, gần cung Diên Thọ.",
+      "Do phụ nữ hoàng gia không được trực tiếp vào dự tế tại Thế Miếu nên điện này được dựng riêng cho nữ cung tế lễ.",
+      "Khuôn viên có hồ nước và non bộ thanh tịnh, hiện còn bảo tồn tường thành và cổng tam quan."
+    ],
+    "difficulty": "hard",
+    "points": 30,
+    "target_id": "site-dien-phung-tien"
+  },
+  {
+    "id": "clue-dien-tho",
+    "title": "Bóng mát tùng bách chốn cung son Từ mẫu",
+    "clue_text": "Khu cung điện bề thế và an tĩnh bậc nhất phía Tây, nơi các vị Hoàng Thái hậu phụng dưỡng tuổi già trong vinh hiển.",
+    "target_type": "site",
+    "target_slug": "cung-dien-tho",
+    "hint_steps": [
+      "Nằm ở phía Tây Bắc Hoàng Thành, xây năm 1804 thời vua Gia Long làm nơi ở cho thân mẫu.",
+      "Bao gồm cụm kiến trúc liên hoàn: chính điện, Tạ Trường Du bên hồ sen, lầu Tịnh Minh.",
+      "Hệ thống thiềm lang (hành lang có mái che) nối thông suốt tránh mưa nắng."
+    ],
+    "difficulty": "easy",
+    "points": 30,
+    "target_id": "site-cung-dien-tho"
+  },
+  {
+    "id": "clue-truong-sanh",
+    "title": "Cung Trường Thọ tao nhã tựa cảnh tiên bồng",
+    "clue_text": "Cung điện hoa lệ bao quanh bởi hồ nước uốn khúc và non bộ, nơi các Thái Hoàng Thái hậu dạo gót thưởng hoa.",
+    "target_type": "site",
+    "target_slug": "cung-truong-sanh",
+    "hint_steps": [
+      "Nằm ở góc Tây Bắc của Hoàng Thành, phía bắc cung Diên Thọ.",
+      "Khởi dựng năm 1822 thời vua Minh Mạng ban đầu mang tên Cung Trường Thọ.",
+      "Hệ thống hoa viên, cầu đá bắc qua hồ bán nguyệt tạo cảnh quan sơn thủy tuyệt mỹ."
+    ],
+    "difficulty": "medium",
+    "points": 30,
+    "target_id": "site-cung-truong-sanh"
+  }
 ];
 
 export const FALLBACK_GAME_QUESTIONS: GameQuestion[] = [
   {
-    id: "game-q-1",
-    site_slug: "dien-thai-hoa",
-    question_type: "multiple_choice",
-    prompt:
-      "Tòa điện nào trong Hoàng Thành Huế là nơi tổ chức lễ đăng quang của các vị vua triều Nguyễn và các buổi lễ Đại triều?",
-    options: ["Điện Cần Chánh", "Điện Thái Hòa", "Hiển Lâm Các", "Điện Kiến Trung"],
-    answer_key: "1",
-    points: 50,
-    explanation_why:
-      "Điện Thái Hòa là biểu trưng quyền lực tối cao của hoàng triều, nơi diễn ra lễ đăng quang của 13 hoàng đế triều Nguyễn và các buổi Đại triều vào mồng một, sóc vọng.",
-    source_citation: "Đại Nam Thực Lục Chính Biên, Đệ nhất kỷ",
-  },
-  {
-    id: "game-q-2",
-    site_slug: "ngo-mon",
-    question_type: "multiple_choice",
-    prompt:
-      "Cổng Ngọ Môn có tổng cộng bao nhiêu lối đi ở phần chân đài xây bằng đá thanh và gạch vồ?",
-    options: ["3 lối đi", "5 lối đi", "7 lối đi", "1 lối đi"],
-    answer_key: "1",
-    points: 50,
-    explanation_why:
-      "Chân đài Ngọ Môn trổ 5 cửa: cửa giữa (Ngọ Môn) dành cho vua, hai bên tả hữu là Tả Giáp Môn và Hữu Giáp Môn cho quan văn võ, hai bên ngoài cùng là Tả Dịch Môn và Hữu Dịch Môn cho binh lính và voi ngựa.",
-    source_citation: "Khâm Định Đại Nam Hội Điển Sự Lệ",
-  },
-  {
-    id: "gq-deep-1",
-    site_slug: "ngo-mon",
-    question_type: "multiple_choice",
-    prompt:
-      "Vì sao trong kiến trúc Ngọ Môn, cửa chính giữa chỉ được mở vào những dịp lễ tiết đặc biệt và chỉ dành riêng cho Hoàng đế?",
-    options: [
+    "id": "gq-deep-1",
+    "site_slug": "ngo-mon",
+    "question_type": "multiple_choice",
+    "prompt": "Vì sao trong kiến trúc Ngọ Môn, cửa chính giữa chỉ được mở vào những dịp lễ tiết đặc biệt và chỉ dành riêng cho Hoàng đế?",
+    "options": [
       "Do cửa giữa được thiết kế có bậc thềm quá cao người thường không bước qua được",
       "Để bảo vệ lớp gạch lát đá thanh không bị mòn bởi quan lại",
       "Vì quan niệm phong thủy và điển lễ Nho giáo: Hoàng đế là Thiên tử thay trời trị dân, đứng ở vị trí trung đạo tối thượng",
-      "Vì cửa giữa nối thẳng vào chuồng nuôi voi chiến của hoàng gia",
+      "Vì cửa giữa nối thẳng vào chuồng nuôi voi chiến của hoàng gia"
     ],
-    answer_key: "2",
-    points: 50,
-    explanation_why:
-      "Theo tư tưởng phong thủy và chính trị triều Nguyễn, trục thần đạo là đường thiên tử đi. Cửa giữa Ngọ Môn là hiện thân của trật tự vương quyền tuyệt đối, hai bên là tả hữu giáp môn dành cho văn võ bá quan.",
-    source_citation: "Khâm Định Đại Nam Hội Điển Sự Lệ, Quyển 168: Lễ bộ nghi thức.",
+    "answer_key": "2",
+    "points": 50,
+    "explanation_why": "Theo tư tưởng phong thủy và chính trị triều Nguyễn, trục thần đạo là đường thiên tử đi. Cửa giữa Ngọ Môn là hiện thân của trật tự vương quyền tuyệt đối, hai bên là tả hữu giáp môn dành cho văn võ bá quan.",
+    "source_citation": "Khâm Định Đại Nam Hội Điển Sự Lệ, Quyển 168: Lễ bộ nghi thức."
   },
   {
-    id: "gq-deep-2",
-    site_slug: "dien-thai-hoa",
-    question_type: "multiple_choice",
-    prompt:
-      "Vì sao kết cấu mái của Điện Thái Hòa lại sử dụng lối kiến trúc 'trùng thiềm điệp ốc' (hai mái nối liền nhau bằng máng xối)?",
-    options: [
+    "id": "gq-deep-2",
+    "site_slug": "dien-thai-hoa",
+    "question_type": "multiple_choice",
+    "prompt": "Vì sao kết cấu mái của Điện Thái Hòa lại sử dụng lối kiến trúc \"trùng thiềm điệp ốc\" (hai mái nối liền nhau bằng máng xối)?",
+    "options": [
       "Nhằm tăng gấp đôi diện tích lòng nhà mà không làm mái quá cao trước gió bão xứ Huế",
       "Vì vua Gia Long học theo kiến trúc nhà thờ phương Tây",
       "Do thiếu gỗ lim khổ lớn nên phải ghép hai ngôi nhà nhỏ lại",
-      "Nhằm tạo chỗ trú ngụ cho chim bồ câu của triều đình",
+      "Nhằm tạo chỗ trú ngụ cho chim bồ câu của triều đình"
     ],
-    answer_key: "0",
-    points: 50,
-    explanation_why:
-      "Kiến trúc 'trùng thiềm điệp ốc' (tiền điện và chính điện nối nhau) giúp mở rộng tối đa không gian hành lễ hàng trăm mét vuông mà độ dốc mái vẫn vừa phải, vững vàng trước bão tố miền Trung và giữ không khí thoáng mát.",
-    source_citation: "Đại Nam Nhất Thống Chí, Tập 1: Kinh sư cung thất.",
+    "answer_key": "0",
+    "points": 50,
+    "explanation_why": "Kiến trúc \"trùng thiềm điệp ốc\" (tiền điện và chính điện nối nhau) giúp mở rộng tối đa không gian hành lễ hàng trăm mét vuông mà độ dốc mái vẫn vừa phải, vững vàng trước bão tố miền Trung và giữ không khí thoáng mát.",
+    "source_citation": "Đại Nam Nhất Thống Chí, Tập 1: Kinh sư cung thất."
   },
   {
-    id: "gq-matching-1",
-    site_slug: "dien-thai-hoa",
-    question_type: "matching",
-    prompt: "Ghép cặp họa tiết mỹ thuật cung đình Huế với ý nghĩa biểu tượng lịch sử tương ứng:",
-    options: [
+    "id": "gq-deep-3",
+    "site_slug": "cau-trung-dao",
+    "question_type": "multiple_choice",
+    "prompt": "Hồ Thái Dịch và cầu Trung Đạo nằm trước sân Điện Thái Hòa có vai trò quan trọng nào trong quy hoạch phong thủy?",
+    "options": [
+      "Làm hồ nuôi cá phục vụ bếp ăn cung đình của vua",
+      "Đóng vai trò \"minh đường tụ thủy\", điều hòa vi khí hậu và tạo khoảng lùi tâm lý trang nghiêm trước khi bách quan bước vào bái mạng",
+      "Làm bến đỗ thuyền rồng cho hoàng gia đi dạo chơi",
+      "Làm hồ chứa nước dự phòng để chữa cháy cho kinh thành"
+    ],
+    "answer_key": "1",
+    "points": 50,
+    "explanation_why": "Hồ Thái Dịch là minh đường tụ thủy tụ khí cát tường phía trước chính điện, phản chiếu bóng mây trời và tạo khoảng cách trang nghiêm chuyển tiếp từ cổng nghi môn vào cung cấm.",
+    "source_citation": "Đại Nam Thực Lục Chính Biên, Đệ nhị kỷ, Quyển 105."
+  },
+  {
+    "id": "gq-deep-4",
+    "site_slug": "san-dai-trieu-nghi",
+    "question_type": "multiple_choice",
+    "prompt": "Trên Sân Đại Triều Nghi, các bia đá nhỏ khắc chữ Hán cắm hai bên sân mang chức năng chính là gì?",
+    "options": [
+      "Ghi lại chiến công đánh trận của các tướng lĩnh",
+      "Chỉ rõ vị trí đứng bái mạng của từng quan viên theo thứ tự phẩm hàm (từ Nhất phẩm đến Cửu phẩm), quan văn bên tả, quan võ bên hữu",
+      "Đánh dấu mốc ranh giới không được bước chân qua",
+      "Bia tưởng niệm những vị quan có công đóng góp tiền bạc"
+    ],
+    "answer_key": "1",
+    "points": 50,
+    "explanation_why": "Các hàng bia phẩm tán (phẩm trật) bằng đá thanh giúp hàng trăm quan viên nhanh chóng tề tựu đúng vị trí phẩm trật mà không hỗn loạn trong giờ phút cử hành đại lễ bái mạng.",
+    "source_citation": "Khâm Định Đại Nam Hội Điển Sự Lệ, Quyển 65: Phẩm trật bách quan."
+  },
+  {
+    "id": "gq-deep-5",
+    "site_slug": "dai-cung-mon",
+    "question_type": "multiple_choice",
+    "prompt": "Cổng Đại Cung Môn giữ vị trí ranh giới then chốt nào trong kiến trúc tổng thể Đại Nội Huế?",
+    "options": [
+      "Cổng đi ra bến đò sông Hương",
+      "Cổng ngăn cách khu vực hành chính Đại Triều của Hoàng Thành với không gian cấm địa sinh hoạt của Tử Cấm Thành",
+      "Cổng nối liền hai miếu thờ tổ tiên hoàng gia",
+      "Cửa ngõ phụ dùng để vận chuyển lương thảo vật tư"
+    ],
+    "answer_key": "1",
+    "points": 50,
+    "explanation_why": "Đại Cung Môn là cửa chính diện duy nhất mở lối vào Tử Cấm Thành từ phía nam. Sau cánh cổng này là thế giới nội bộ của vua và hoàng tộc, quan lại ngoại thần không có chiếu triệu không được bén mảng.",
+    "source_citation": "Đại Nam Thực Lục Chính Biên, Đệ nhất kỷ, Quyển 26."
+  },
+  {
+    "id": "gq-deep-6",
+    "site_slug": "dien-can-chanh",
+    "question_type": "multiple_choice",
+    "prompt": "Điện Cần Chánh trong Tử Cấm Thành mang công năng chủ yếu nào dưới triều Nguyễn?",
+    "options": [
+      "Nơi hoàng đế ngự triều thường nhật (Thường triều) và tiếp kiến nội các, phê duyệt tấu chương mỗi ngày",
+      "Nơi tổ chức yến tiệc âm nhạc giải trí cho hậu cung",
+      "Kho lưu trữ quân lương và súng thần công",
+      "Phòng ngủ riêng của các hoàng tử"
+    ],
+    "answer_key": "0",
+    "points": 50,
+    "explanation_why": "Nếu Điện Thái Hòa là nơi cử hành Đại triều mỗi tháng hai lần (ngày 1 và 15 âm lịch) thì Điện Cần Chánh là nơi hoàng đế cần cù mẫn chính làm việc quốc sự hằng ngày cùng các quan đình thần.",
+    "source_citation": "Đại Nam Nhất Thống Chí, Tập 1: Kinh sư cung thất."
+  },
+  {
+    "id": "gq-deep-7",
+    "site_slug": "dien-kien-trung",
+    "question_type": "multiple_choice",
+    "prompt": "Đặc trưng nghệ thuật đỉnh cao làm nên diện mạo rực rỡ của Điện Kiến Trung vừa được phục hồi năm 2024 là gì?",
+    "options": [
+      "Kiến trúc nhà sàn gỗ lợp lá cọ truyền thống",
+      "Nghệ thuật khảm sành sứ và thủy tinh men màu đắp nổi lập thể 3D kết hợp hình khối cung điện phong cách Phục Hưng Pháp",
+      "Toàn bộ công trình đúc bằng đồng nguyên khối",
+      "Trát vữa đất sét nung kiểu tháp Chăm"
+    ],
+    "answer_key": "1",
+    "points": 50,
+    "explanation_why": "Điện Kiến Trung xây thời Khải Định là kiệt tác giao thoa mỹ thuật Đông - Tây, sử dụng hàng vạn mảnh sành sứ chén đĩa vỡ ghép thành các đồ án rồng phụng, hoa lá sinh động đạt độ bền vĩnh cửu trước khí hậu.",
+    "source_citation": "Hồ sơ phục chế Di tích Điện Kiến Trung — Trung tâm Bảo tồn Di tích Cố đô Huế (2024)."
+  },
+  {
+    "id": "gq-deep-8",
+    "site_slug": "duyet-thi-duong",
+    "question_type": "multiple_choice",
+    "prompt": "Vì sao trần nhà hát Duyệt Thị Đường lại được các nghệ nhân cung đình vẽ hình các vì sao, mặt trăng và tinh tú?",
+    "options": [
+      "Để chiếu sáng sân khấu vào ban đêm",
+      "Tạo cảm giác như đang thưởng thức âm nhạc và nghệ thuật dưới vòm trời bao la của vũ trụ",
+      "Bắt chước trần các rạp xiếc phương Tây",
+      "Do vua Tự Đức thích môn thiên văn học"
+    ],
+    "answer_key": "1",
+    "points": 50,
+    "explanation_why": "Mái trần nhà hát Duyệt Thị Đường được sơn màu xanh thiên thanh vẽ trăng sao lấp lánh, tượng trưng cho thiên cầu vũ trụ, đem lại trải nghiệm thưởng thức Nhã nhạc thần tiên cho hoàng tộc.",
+    "source_citation": "Bulletin des Amis du Vieux Hué (BAVH), Chuyên khảo về Âm nhạc Cung đình Huế."
+  },
+  {
+    "id": "gq-deep-9",
+    "site_slug": "thai-binh-lau",
+    "question_type": "multiple_choice",
+    "prompt": "Thái Bình Lâu phía sau Tử Cấm Thành được xây dựng với mục đích chính là gì?",
+    "options": [
+      "Làm chòi canh gác quân sự mặt bắc kinh thành",
+      "Làm thư viện hoàng gia, nơi các vị vua triều Nguyễn tĩnh tâm đọc sách, ngâm thơ và thư giãn",
+      "Làm nơi bào chế thuốc nam cho thái y viện",
+      "Làm chuồng ngựa ngự giá của hoàng cung"
+    ],
+    "answer_key": "1",
+    "points": 50,
+    "explanation_why": "Thái Bình Lâu là thư phòng ngự dụng thanh tao yên tĩnh, được vua Khải Định tu sửa lộng lẫy với hoa viên và hồ bán nguyệt làm chốn nghỉ ngơi sau những giờ nghị bàn triều chính.",
+    "source_citation": "Đồng Khánh Địa Dư Chí & Khảo cứu Kiến trúc Huế."
+  },
+  {
+    "id": "gq-deep-10",
+    "site_slug": "the-to-mieu",
+    "question_type": "multiple_choice",
+    "prompt": "Trong Thế Tổ Miếu, án thờ của vua Gia Long (Thế Tổ Cao Hoàng Đế) luôn được an vị ở gian nào theo điển chế?",
+    "options": [
+      "Gian đầu tiên phía đông",
+      "Gian chính giữa (Trung tâm tối thượng) của miếu",
+      "Gian góc ngoài cùng phía tây",
+      "Đặt ngoài hiền điện của miếu"
+    ],
+    "answer_key": "1",
+    "points": 50,
+    "explanation_why": "Theo điển lễ triều Nguyễn, vua Gia Long là người sáng lập vương triều nên án thờ luôn chiếm vị trí chính giữa (trung gian). Các vị vua kế nghiệp lần lượt được an vị ở các gian tả (trái) và hữu (phải) theo nguyên tắc chiêu mục.",
+    "source_citation": "Đại Nam Thực Lục Chính Biên, Đệ nhị kỷ, Quyển 12."
+  },
+  {
+    "id": "gq-deep-11",
+    "site_slug": "hien-lam-cac",
+    "question_type": "multiple_choice",
+    "prompt": "Vì sao triều đình Huế nghiêm cấm xây bất kỳ công trình nào trong Hoàng Thành cao hơn tòa Hiển Lâm Các (17m)?",
+    "options": [
+      "Do sợ gió bão làm đổ sập công trình",
+      "Để giữ vị thế tôn nghiêm duy nhất cho đài tưởng niệm các bậc tiền hiền, công thần có công dựng nước và hộ trì xã tắc",
+      "Vì cạn kiệt gỗ lim khổ lớn không thể làm cao hơn",
+      "Quy định của các kiến trúc sư người Pháp thời đó"
+    ],
+    "answer_key": "1",
+    "points": 50,
+    "explanation_why": "Hiển Lâm Các được vua Minh Mạng cho xây làm đài kỷ niệm ghi công các đại thần công thần khai quốc. Quy định chiều cao tối thượng thể hiện sự kính trọng tuyệt đối của hậu thế đối với công lao của các bậc tiền nhân.",
+    "source_citation": "Khâm Định Đại Nam Hội Điển Sự Lệ, Quyển 64."
+  },
+  {
+    "id": "gq-deep-12",
+    "site_slug": "hung-to-mieu",
+    "question_type": "multiple_choice",
+    "prompt": "Hưng Tổ Miếu nằm ở phía sau Thế Miếu là nơi triều Nguyễn dùng để thờ phụng ai?",
+    "options": [
+      "Thờ các tướng lĩnh trận vong thời Tây Sơn",
+      "Thờ thân phụ và thân mẫu của vua Gia Long (Thế tử Nguyễn Phúc Luân và bà Nguyễn Thị Hoàn)",
+      "Thờ các quan đại thần đầu triều",
+      "Thờ tổ nghề đúc đồng và kim hoàn"
+    ],
+    "answer_key": "1",
+    "points": 50,
+    "explanation_why": "Hưng Tổ Miếu khởi dựng năm 1804 thời vua Gia Long để phụng thờ thân sinh là Khang Hoàng Đế Nguyễn Phúc Luân và Ý Tĩnh Khang Hoàng Hậu, thể hiện truyền thống đạo hiếu gia đình.",
+    "source_citation": "Đại Nam Thực Lục Tiền Biên & Chính Biên."
+  },
+  {
+    "id": "gq-deep-13",
+    "site_slug": "trieu-to-mieu",
+    "question_type": "multiple_choice",
+    "prompt": "Triệu Tổ Miếu ở góc Đông Nam Hoàng Thành thờ vị thủy tổ nào của hoàng tộc Nguyễn?",
+    "options": [
+      "Chúa Tiên Nguyễn Hoàng",
+      "Triệu Tổ Tĩnh Hoàng Đế Nguyễn Kim (thân phụ Chúa Tiên Nguyễn Hoàng)",
+      "Chúa Sãi Nguyễn Phúc Nguyên",
+      "Vua Gia Long"
+    ],
+    "answer_key": "1",
+    "points": 50,
+    "explanation_why": "Nguyễn Kim là vị thủy tổ khai sáng nền móng cơ nghiệp dòng họ Nguyễn ở Đàng Trong, được vua Gia Long truy tôn làm Triệu Tổ Tĩnh Hoàng Đế và lập miếu thờ riêng biệt năm 1804.",
+    "source_citation": "Đại Nam Liệt Truyện Tiền Biên, Quyển 1."
+  },
+  {
+    "id": "gq-deep-14",
+    "site_slug": "dien-phung-tien",
+    "question_type": "multiple_choice",
+    "prompt": "Vì sao triều đình lại xây dựng Điện Phụng Tiên độc lập ở phía tây Tử Cấm Thành?",
+    "options": [
+      "Làm nơi tạm trú cho khách sứ thần ngoại quốc",
+      "Vì theo điển lễ phong kiến nữ giới trong hoàng cung không được vào Thế Miếu, nên điện này được lập để Hoàng Thái hậu và phi tần cúng bái tổ tiên",
+      "Dùng làm kho dự trữ lương thực khi có chiến tranh",
+      "Làm trường dạy học cho các hoàng tử nhỏ tuổi"
+    ],
+    "answer_key": "1",
+    "points": 50,
+    "explanation_why": "Lễ chế phong kiến nghiêm ngặt cấm nữ nhân bước chân vào khu vực Thế Tổ Miếu của nam giới, do đó Điện Phụng Tiên được thiết lập để phục vụ nhu cầu tâm linh thờ cúng tổ tiên của phái nữ hoàng gia.",
+    "source_citation": "Khâm Định Đại Nam Hội Điển Sự Lệ, Quyển 172: Nội cung tế tự."
+  },
+  {
+    "id": "gq-deep-15",
+    "site_slug": "cung-dien-tho",
+    "question_type": "multiple_choice",
+    "prompt": "Cung Diên Thọ xây dựng năm 1804 được dành riêng làm nơi ở và sinh hoạt cho đối tượng nào?",
+    "options": [
+      "Các hoàng tử chuẩn bị nối ngôi",
+      "Các bậc Hoàng Thái hậu và Thái Hoàng Thái hậu (mẹ và bà nội của vua)",
+      "Đoàn ngự lâm quân bảo vệ Tử Cấm Thành",
+      "Các quan thị vệ túc trực ban đêm"
+    ],
+    "answer_key": "1",
+    "points": 50,
+    "explanation_why": "Cung Diên Thọ (nghĩa là chúc sống lâu trăm tuổi) là cung thất quy mô nhất được nhà vua cung phụng riêng cho mẹ của mình, thể hiện chữ hiếu đứng đầu muôn đức hạnh của triều đại.",
+    "source_citation": "Đại Nam Thực Lục Chính Biên, Đệ nhất kỷ, Quyển 23."
+  },
+  {
+    "id": "gq-deep-16",
+    "site_slug": "cung-truong-sanh",
+    "question_type": "multiple_choice",
+    "prompt": "Cung Trường Sanh (khởi dựng mang tên Cung Trường Thọ năm 1822) có đặc điểm cảnh quan nào nổi bật nhất?",
+    "options": [
+      "Xung quanh là bãi tập bắn súng của thị vệ",
+      "Hệ thống hoa viên ngự uyển kết hợp hồ bán nguyệt, non bộ và cầu đá uốn lượn phong thủy tao nhã",
+      "Bao bọc bởi rừng tre gai dày đặc",
+      "Xây dựng hoàn toàn trên mặt nước bằng bè gỗ"
+    ],
+    "answer_key": "1",
+    "points": 50,
+    "explanation_why": "Cung Trường Sanh là tuyệt phẩm kiến trúc vườn cảnh cung đình, nơi vua chúa và thái hoàng thái hậu tản bộ ngắm cảnh non nước hữu tình giữa lòng Hoàng thành.",
+    "source_citation": "Khảo cứu Di tích Cung Trường Sanh — HMCC."
+  },
+  {
+    "id": "gq-matching-1",
+    "site_slug": "dien-thai-hoa",
+    "question_type": "matching",
+    "prompt": "Ghép cặp họa tiết mỹ thuật cung đình Huế với ý nghĩa biểu tượng lịch sử tương ứng:",
+    "options": [
       "Rồng 5 móng (Cửu Long) <-> Quyền uy tối thượng của bậc Thiên tử và tính chí dương",
       "Kỳ lân / Ly <-> Biểu tượng thái bình, thịnh vượng và bảo hộ chốn tôn nghiêm",
       "Phượng hoàng <-> Đức hạnh cao quý, điềm lành và vẻ đẹp hoàng hậu",
-      "Hoa sen & Bát bửu <-> Thanh tịnh, tinh thần Nho - Phật dung hợp và cầu phúc lộc",
+      "Hoa sen & Bát bửu <-> Thanh tịnh, tinh thần Nho - Phật dung hợp và cầu phúc lộc"
     ],
-    answer_key: "0-0,1-1,2-2,3-3",
-    points: 60,
-    explanation_why:
-      "Mỗi linh vật và hoa văn trong Đại Nội Huế đều mang tầng nghĩa triết học sâu sắc: Rồng 5 móng chỉ quyền lực vua; Lân mang thái bình; Phượng tượng trưng đức hạnh; Bát bửu mượn hình tượng bảo vật hộ trì quốc gia.",
-    source_citation: "Mỹ thuật cung đình Huế — Trung tâm Bảo tồn Di tích Cố đô Huế.",
+    "answer_key": "0-0,1-1,2-2,3-3",
+    "points": 60,
+    "explanation_why": "Mỗi linh vật và hoa văn trong Đại Nội Huế đều mang tầng nghĩa triết học sâu sắc: Rồng 5 móng chỉ quyền lực vua; Lân mang thái bình; Phượng tượng trưng đức hạnh; Bát bửu mượn hình tượng bảo vật hộ trì quốc gia.",
+    "source_citation": "Mỹ thuật cung đình Huế — Trung tâm Bảo tồn Di tích Cố đô Huế."
   },
   {
-    id: "gq-matching-2",
-    site_slug: "dien-kien-trung",
-    question_type: "matching",
-    prompt: "Ghép chất liệu trang trí di sản với công trình tiêu biểu sử dụng:",
-    options: [
+    "id": "gq-matching-2",
+    "site_slug": "dien-kien-trung",
+    "question_type": "matching",
+    "prompt": "Ghép chất liệu trang trí di sản với công trình tiêu biểu sử dụng:",
+    "options": [
       "Khảm sành sứ men đa sắc Baroque <-> Điện Kiến Trung",
       "Pháp lam tráng men trên cốt đồng <-> Hiển Lâm Các",
       "Gỗ sơn son thếp vàng Cửu Long <-> Điện Thái Hòa",
-      "Ngói hoàng lưu ly và thanh lưu ly <-> Lầu Ngũ Phụng Ngọ Môn",
+      "Ngói hoàng lưu ly và thanh lưu ly <-> Lầu Ngũ Phụng Ngọ Môn"
     ],
-    answer_key: "0-0,1-1,2-2,3-3",
-    points: 60,
-    explanation_why:
-      "Sự đa dạng của vật liệu thể hiện năng lực sáng tạo bậc thầy của nghệ nhân cung đình Huế qua các giai đoạn từ đầu thế kỷ XIX đến đầu thế kỷ XX.",
-    source_citation: "Khảo cứu kiến trúc cung đình Huế — HMCC.",
+    "answer_key": "0-0,1-1,2-2,3-3",
+    "points": 60,
+    "explanation_why": "Sự đa dạng của vật liệu thể hiện năng lực sáng tạo bậc thầy của nghệ nhân cung đình Huế qua các giai đoạn từ đầu thế kỷ XIX đến đầu thế kỷ XX.",
+    "source_citation": "Khảo cứu kiến trúc cung đình Huế — HMCC."
   },
   {
-    id: "gq-hotspot-1",
-    site_slug: "ngo-mon",
-    question_type: "hotspot_identify",
-    prompt:
-      "Nhấp chọn vị trí tầng lầu Ngũ Phụng nơi diễn ra các nghi lễ quan trọng và lễ thoái vị năm 1945 trên mặt tiền Ngọ Môn:",
-    options: [
+    "id": "gq-matching-3",
+    "site_slug": "ngo-mon",
+    "question_type": "matching",
+    "prompt": "Ghép 4 cổng chính của Hoàng Thành Huế với hướng địa lý tương ứng:",
+    "options": [
+      "Ngọ Môn <-> Hướng Nam (Tiền tiêu nhìn ra sông Hương)",
+      "Cửa Hòa Bình <-> Hướng Bắc (Hậu thành nối ra hồ Tịnh Tâm)",
+      "Cửa Hiển Nhơn <-> Hướng Đông (Cửa quan văn và triều thần)",
+      "Cửa Chương Đức <-> Hướng Tây (Cửa dành riêng cho nữ giới hoàng cung)"
+    ],
+    "answer_key": "0-0,1-1,2-2,3-3",
+    "points": 60,
+    "explanation_why": "Bốn cửa chính của Hoàng Thành được bố trí chặt chẽ theo kinh dịch và công năng: Nam là phương dương (vua ngự), Bắc là phương âm, Đông là sinh khí (quan văn), Tây là cung môn kín đáo.",
+    "source_citation": "Đại Nam Nhất Thống Chí: Kinh sư thành thị."
+  },
+  {
+    "id": "gq-matching-4",
+    "site_slug": "the-to-mieu",
+    "question_type": "matching",
+    "prompt": "Ghép các miếu thờ trong Hoàng Thành với đối tượng phụng thờ chính thức:",
+    "options": [
+      "Triệu Tổ Miếu <-> Thờ Triệu Tổ Tĩnh Hoàng Đế Nguyễn Kim",
+      "Hưng Tổ Miếu <-> Thờ Thoát Tổ Khang Hoàng Đế Nguyễn Phúc Luân",
+      "Thế Tổ Miếu <-> Thờ 10 vị Hoàng đế triều Nguyễn (từ vua Gia Long)",
+      "Điện Phụng Tiên <-> Nơi phụ nữ hoàng gia chiêm bái tổ tiên"
+    ],
+    "answer_key": "0-0,1-1,2-2,3-3",
+    "points": 60,
+    "explanation_why": "Hệ thống miếu thờ triều Nguyễn được phân định tôn nghiêm theo phả hệ huyết thống, duy trì tính chính danh và đạo lý uống nước nhớ nguồn.",
+    "source_citation": "Đại Nam Thực Lục Chính Biên & Tiền Biên."
+  },
+  {
+    "id": "gq-hotspot-1",
+    "site_slug": "ngo-mon",
+    "question_type": "hotspot_identify",
+    "prompt": "Nhấp chọn vị trí tầng lầu Ngũ Phụng nơi diễn ra các nghi lễ quan trọng và lễ thoái vị năm 1945 trên mặt tiền Ngọ Môn:",
+    "options": [
       "Tầng lầu gỗ phía trên đài đá (Lầu Ngũ Phụng)",
       "Cửa đá bên tả ngoài cùng (Tả Dịch Môn)",
       "Nền đất quảng trường trước cổng",
-      "Cột cờ Kỳ Đài phía xa",
+      "Cột cờ Kỳ Đài phía xa"
     ],
-    answer_key: "0",
-    points: 50,
-    explanation_why:
-      "Lầu Ngũ Phụng nằm ngay trên khối nền đài đá chữ U của Ngọ Môn, nơi hoàng đế ngồi ngự và quan sát toàn cảnh Kỳ Đài.",
-    source_citation: "Đại Nam Thực Lục Chính Biên, Đệ nhị kỷ.",
+    "answer_key": "0",
+    "points": 50,
+    "explanation_why": "Lầu Ngũ Phụng nằm ngay trên khối nền đài đá chữ U của Ngọ Môn, nơi hoàng đế ngồi ngự và quan sát toàn cảnh Kỳ Đài.",
+    "source_citation": "Đại Nam Thực Lục Chính Biên, Đệ nhị kỷ."
   },
   {
-    id: "gq-hotspot-2",
-    site_slug: "dien-thai-hoa",
-    question_type: "hotspot_identify",
-    prompt: "Xác định vị trí đặt ngai vàng chí tôn trong không gian chính điện Thái Hòa:",
-    options: [
+    "id": "gq-hotspot-2",
+    "site_slug": "dien-thai-hoa",
+    "question_type": "hotspot_identify",
+    "prompt": "Xác định vị trí đặt ngai vàng chí tôn trong không gian chính điện Thái Hòa:",
+    "options": [
       "Gian chính giữa điện, đặt trên bệ tam cấp dưới bửu tán gấm dát vàng",
       "Hành lang phía đông của điện",
       "Sân gạch ngoài trời",
-      "Góc chái mái phía tây",
+      "Góc chái mái phía tây"
     ],
-    answer_key: "0",
-    points: 50,
-    explanation_why:
-      "Ngai vàng luôn được định vị tại tâm điểm của gian chính giữa điện Thái Hòa trên trục thần đạo, nơi hội tụ phong thủy và uy quyền cao nhất của quốc gia.",
-    source_citation: "Khâm Định Đại Nam Hội Điển Sự Lệ, Quyển 102.",
+    "answer_key": "0",
+    "points": 50,
+    "explanation_why": "Ngai vàng luôn được định vị tại tâm điểm của gian chính giữa điện Thái Hòa trên trục thần đạo, nơi hội tụ phong thủy và uy quyền cao nhất của quốc gia.",
+    "source_citation": "Khâm Định Đại Nam Hội Điển Sự Lệ, Quyển 102."
   },
+  {
+    "id": "gq-hotspot-3",
+    "site_slug": "hien-lam-cac",
+    "question_type": "hotspot_identify",
+    "prompt": "Xác định vị trí của chiếc bình hồ lô pháp lam ngũ sắc trên công trình Hiển Lâm Các:",
+    "options": [
+      "Chính giữa đỉnh bờ nóc tầng ba của tòa gác",
+      "Cột cái tầng một của tòa lầu",
+      "Lan can gác gỗ tầng hai",
+      "Chân bậc tam cấp sân gạch"
+    ],
+    "answer_key": "0",
+    "points": 50,
+    "explanation_why": "Chiếc bình hồ lô bằng đồng tráng men pháp lam ngũ sắc nằm sừng sững tại điểm cao nhất trên đỉnh nóc Hiển Lâm Các, mang ý nghĩa trấn yểm trừ hỏa tai và cầu phúc lộc.",
+    "source_citation": "Mỹ thuật Cung đình Huế — Cổ vật Pháp lam."
+  },
+  {
+    "id": "gq-hotspot-4",
+    "site_slug": "duyet-thi-duong",
+    "question_type": "hotspot_identify",
+    "prompt": "Xác định vị trí khu vực sân khấu biểu diễn Nhã nhạc và Tuồng cung đình bên trong Duyệt Thị Đường:",
+    "options": [
+      "Sân khấu vuông hai tầng lót ván gỗ nằm chính giữa lòng nhà hát",
+      "Lầu ngự của hoàng đế ở tầng hai phía sau",
+      "Phòng hóa trang sau cánh gà",
+      "Sân hoa phía ngoài hiên"
+    ],
+    "answer_key": "0",
+    "points": 50,
+    "explanation_why": "Sân khấu hình vuông chiếm trọn gian giữa Duyệt Thị Đường, đối diện trực tiếp với ngự tọa của nhà vua để thuận tiện thưởng thức các vở diễn tuồng cổ.",
+    "source_citation": "Khảo cứu Nhà hát Duyệt Thị Đường — HMCC."
+  }
 ];
 
 export const FALLBACK_ASSIGNMENTS: AssignmentRelease[] = [

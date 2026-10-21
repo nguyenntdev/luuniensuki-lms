@@ -1849,6 +1849,7 @@ def seed_demo_users(session: Session) -> None:
                 name="Lớp Demo",
                 description="Lớp học mẫu cho giáo viên.",
                 teacher_id=teacher.id,
+                class_code="DEMO123",
             )
             session.add(classroom)
             session.flush()
@@ -2304,7 +2305,9 @@ def run_seed(
     if config.seed_path.is_file():
         files_to_process.append(config.seed_path)
     elif config.seed_path.is_dir():
-        files_to_process.extend(sorted(config.seed_path.glob("*.json")))
+        files_to_process.extend(
+            [f for f in sorted(config.seed_path.glob("*.json")) if not f.name.startswith("motif-coordinates-")]
+        )
         files_to_process.extend(sorted(config.seed_path.glob("*.md")))
     else:
         print(f"Warning: Seed path {config.seed_path} not found.")

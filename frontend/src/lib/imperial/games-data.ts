@@ -216,6 +216,112 @@ export const TIMELINE_CHALLENGES: TimelineChallenge[] = [
       },
     ],
   },
+  {
+    id: "timeline-ch-4",
+    title: "Trục Thần Đạo — Trật Tự Nam Bắc Hoàng Cung",
+    subtitle: "Năng lực S1 — Không gian Kiến trúc Hoàng gia",
+    description: "Sắp xếp các công trình trên trục Dũng Đạo từ cổng tiền tiêu ngoài cùng hướng Nam vào sâu nhất chốn cấm địa hướng Bắc.",
+    target_competency: "S2_temporal",
+    points: 70,
+    hints: [
+      "Ngọ Môn là điểm khởi đầu ở mặt phía Nam.",
+      "Cầu Trung Đạo và Sân Đại Triều dẫn lối vào Điện Thái Hòa.",
+      "Điện Kiến Trung nằm ở điểm tận cùng phía Bắc của Tử Cấm Thành."
+    ],
+    explanation: "Trục thần đạo Hoàng thành Huế chạy thẳng tắp từ Nam sang Bắc: Ngọ Môn (cổng tiền tiêu) -> Cầu Trung Đạo (bắc qua hồ Thái Dịch) -> Sân Đại Triều Nghi -> Điện Thái Hòa -> Đại Cung Môn -> Điện Kiến Trung.",
+    source_citation: "Đại Nam Nhất Thống Chí: Cung thất đồ khảo.",
+    events: [
+      {
+        id: "evt-axis-1",
+        year: 1,
+        year_label: "Vị trí 1",
+        title: "Cổng Ngọ Môn & Lầu Ngũ Phụng",
+        description: "Cổng chính diện phía Nam, mặt tiền nghi lễ tối thượng của Hoàng Thành.",
+        site_slug: "ngo-mon"
+      },
+      {
+        id: "evt-axis-2",
+        year: 2,
+        year_label: "Vị trí 2",
+        title: "Cầu Trung Đạo & Hồ Thái Dịch",
+        description: "Nhịp cầu đá thanh bắc qua hồ sen minh đường phong thủy.",
+        site_slug: "cau-trung-dao"
+      },
+      {
+        id: "evt-axis-3",
+        year: 3,
+        year_label: "Vị trí 3",
+        title: "Sân Đại Triều Nghi",
+        description: "Sân bái mạng hai tầng cắm bia phẩm trật văn võ đình thần.",
+        site_slug: "san-dai-trieu-nghi"
+      },
+      {
+        id: "evt-axis-4",
+        year: 4,
+        year_label: "Vị trí 4",
+        title: "Chính Điện Thái Hòa",
+        description: "Tòa đại điện trung tâm vương quyền lưu giữ ngai vàng chí tôn.",
+        site_slug: "dien-thai-hoa"
+      },
+      {
+        id: "evt-axis-5",
+        year: 5,
+        year_label: "Vị trí 5",
+        title: "Điện Kiến Trung",
+        description: "Cung điện lộng lẫy tọa lạc tại điểm cực Bắc của Tử Cấm Thành.",
+        site_slug: "dien-kien-trung"
+      }
+    ]
+  },
+  {
+    id: "timeline-ch-5",
+    title: "Niên Biểu Khởi Dựng Miếu Thờ Hoàng Gia",
+    subtitle: "Năng lực S2 — Thời gian & Lịch sử Phụng tự",
+    description: "Sắp xếp các mốc xây dựng hệ thống miếu thờ tổ tiên triều Nguyễn theo trình tự thời gian.",
+    target_competency: "S2_temporal",
+    points: 75,
+    hints: [
+      "Triệu Tổ Miếu và Hưng Tổ Miếu được xây cất trước tiên năm 1804 thời vua Gia Long.",
+      "Thế Tổ Miếu và Hiển Lâm Các được hoàn thành năm 1821-1822 thời vua Minh Mạng.",
+      "Điện Phụng Tiên dành cho nữ cung được dựng sau cùng năm 1829."
+    ],
+    explanation: "Hệ thống thờ tự tôn nghiêm của triều Nguyễn được kiến tạo bài bản: Năm 1804 vua Gia Long dựng Triệu Miếu và Hưng Miếu; năm 1821 vua Minh Mạng dựng Thế Miếu và Hiển Lâm Các; năm 1829 dựng Điện Phụng Tiên cho nữ giới cúng tế.",
+    source_citation: "Đại Nam Thực Lục Chính Biên & Khâm Định Hội Điển Sự Lệ.",
+    events: [
+      {
+        id: "evt-mieu-1",
+        year: 1804,
+        year_label: "Năm 1804",
+        title: "Dựng Triệu Tổ Miếu & Hưng Tổ Miếu",
+        description: "Vua Gia Long phụng lập miếu thờ thủy tổ Nguyễn Kim và thân phụ Nguyễn Phúc Luân.",
+        site_slug: "trieu-to-mieu"
+      },
+      {
+        id: "evt-mieu-2",
+        year: 1821,
+        year_label: "Năm 1821",
+        title: "Khởi công đại điện Thế Tổ Miếu",
+        description: "Vua Minh Mạng cho xây ngôi miếu lớn nhất để thờ phụng các đời vua triều Nguyễn.",
+        site_slug: "the-to-mieu"
+      },
+      {
+        id: "evt-mieu-3",
+        year: 1822,
+        year_label: "Năm 1822",
+        title: "Khánh thành đài Hiển Lâm Các",
+        description: "Hoàn thành tòa gác gỗ lim 17m ghi công đức công thần tiền bối trước sân miếu.",
+        site_slug: "hien-lam-cac"
+      },
+      {
+        id: "evt-mieu-4",
+        year: 1829,
+        year_label: "Năm 1829",
+        title: "Xây dựng Điện Phụng Tiên",
+        description: "Lập điện thờ riêng biệt để Hoàng Thái hậu và phi tần hoàng cung bái mạng tổ tiên.",
+        site_slug: "dien-phung-tien",
+      },
+    ],
+  },
 ];
 
 // =========================================================================== //
@@ -329,6 +435,57 @@ export const CIPHER_CHALLENGES: CipherChallenge[] = [
       "Mật số chính xác là 23 (9 + 9 + 5). Theo Dịch học cung đình Huế, số 9 là số Cực Dương cao nhất của quẻ Càn (Trời), biểu trưng cho Hoàng đế. Số 5 tượng trưng cho Ngũ hành (Kim, Mộc, Thủy, Hỏa, Thổ) và ngũ phương. Việc kết hợp các số dương khẳng định sự trường tồn vĩnh cửu của quốc gia.",
     source_citation: "Khảo cứu phong thủy Kinh thành Huế — Trung tâm BTDT Cố đô Huế",
     points: 80,
+  },
+  {
+    id: "cipher-ch-4",
+    title: "Mật Mã Tứ Tự Lầu Ngũ Phụng",
+    subtitle: "Năng lực S4 — Khát vọng Thái bình muôn thuở",
+    cipher_type: "royal_anagram",
+    target_competency: "S4_argument",
+    monument_name: "Ngọ Môn",
+    monument_slug: "ngo-mon",
+    background_story:
+      "Từ trên lầu Ngũ Phụng phóng tầm mắt trông ra sông Hương núi Ngự, các bậc minh quân triều Nguyễn luôn đau đáu lời thề ước giữ yên bờ cõi, xã tắc vững bền và đời sống nhân dân ấm no hạnh phúc.",
+    clue_prompt:
+      "Giải mã 4 chữ vàng thể hiện ước vọng tối thượng của vương triều dành cho trăm họ:",
+    encoded_display: "[ ? ] — [ ? ] — [ ? ] — [ ? ]",
+    scrambled_tokens: ["DÂN", "THÁI", "AN", "QUỐC"],
+    solution_tokens: ["QUỐC", "THÁI", "DÂN", "AN"],
+    hint_steps: [
+      "Hai chữ đầu tiên mang ý nghĩa đất nước thái bình, xã tắc vững vàng (QUỐC THÁI).",
+      "Hai chữ sau cùng mang ý nghĩa trăm họ nhân dân yên ổn, hạnh phúc (DÂN AN).",
+      "Đây là khẩu hiệu bốn chữ vàng thường xuất hiện trên các hoành phi cung điện.",
+    ],
+    explanation:
+      "'QUỐC THÁI DÂN AN' (國泰民安) là tâm nguyện tột cùng của mọi bậc đế vương chân chính. Việc xây dựng Kinh thành nguy nga và đắp lũy phòng ngự cũng chỉ nhằm mục đích giữ cho nước thái dân an muôn đời.",
+    source_citation: "Đại Nam Thực Lục Chính Biên (Lời dụ của vua Minh Mạng).",
+    points: 80,
+  },
+  {
+    id: "cipher-ch-5",
+    title: "Mật Mã Cửu Đỉnh Định Quốc",
+    subtitle: "Năng lực S3 — Tuyên ngôn Chủ quyền Biển Đông",
+    cipher_type: "poetic_inscription",
+    target_competency: "S3_evidence",
+    monument_name: "Thế Tổ Miếu",
+    monument_slug: "the-to-mieu",
+    background_story:
+      "Trên đỉnh cao nhất và quan trọng nhất trong Cửu Đỉnh (Cao Đỉnh), vua Minh Mạng cho chạm khắc hình tượng một vùng biển thiêng liêng để muôn đời con cháu khắc cốt ghi tâm chủ quyền lãnh hải dân tộc.",
+    clue_prompt:
+      "Ghép các từ ngữ chính sử miêu tả hải phận thiêng liêng được khắc trên chiếc Cao Đỉnh (1835):",
+    encoded_display: "[ ? ] ➔ [ ? ] ➔ [ ? ] ➔ [ ? ]",
+    scrambled_tokens: ["HẢI", "ĐÔNG", "ĐỈNH", "CAO"],
+    solution_tokens: ["ĐÔNG", "HẢI", "CAO", "ĐỈNH"],
+    hint_steps: [
+      "Hai từ đầu chỉ vùng biển rộng lớn bao bọc bờ cõi phương Đông đất nước (ĐÔNG HẢI).",
+      "Hai từ sau chỉ chiếc đỉnh đồng cao nhất đặt ở trung tâm Cửu Đỉnh (CAO ĐỈNH).",
+      "Chiếc đỉnh này được đặt chính diện trước thềm Thế Tổ Miếu tôn vinh vua Gia Long.",
+    ],
+    explanation:
+      "Hình tượng 'ĐÔNG HẢI' (Biển Đông) được vua Minh Mạng trang trọng khắc nổi trên Cao Đỉnh năm 1835 - đỉnh thờ vua Gia Long đặt ở chính giữa. Đây là văn bản pháp lý và tuyên ngôn bằng đồng khẳng định chủ quyền bất khả xâm phạm của Việt Nam đối với Biển Đông và các hải đảo.",
+    source_citation:
+      "Đại Nam Thực Lục Chính Biên, Đệ nhị kỷ, Quyển 162 & Hồ sơ Di sản Tư liệu Ký ức Thế giới UNESCO Cửu Đỉnh Huế (2024).",
+    points: 85,
   },
 ];
 

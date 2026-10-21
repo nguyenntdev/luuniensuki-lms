@@ -99,8 +99,8 @@ describe("Heritage Games & Educational Quizzes Suite", () => {
   // 3. Sắp xếp niên biểu (Timeline Chronology Game)
   // -------------------------------------------------------------------------
   describe("Sắp xếp niên biểu (Timeline Chronology Game)", () => {
-    it("defines 3 verified chronological challenges with monotonically increasing milestones", () => {
-      expect(TIMELINE_CHALLENGES.length).toBe(3);
+    it("defines verified chronological challenges with monotonically increasing milestones", () => {
+      expect(TIMELINE_CHALLENGES.length).toBeGreaterThanOrEqual(3);
 
       TIMELINE_CHALLENGES.forEach((challenge) => {
         expect(challenge.title).toBeTruthy();
