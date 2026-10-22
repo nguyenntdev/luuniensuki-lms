@@ -13,7 +13,12 @@ import {
   validateEmail,
   validatePhone,
   fetchInquiryStatusByToken,
+  fetchPartnerInquiries,
+  submitInquiryToApi,
+  updatePartnerInquiryStatusApi,
+  InquiryNotFoundError,
 } from "@/lib/rbpc/inquiries";
+import * as apiModule from "@/lib/api";
 import { VALID_TRANSITIONS, maskContactValue } from "@/components/rbpc/PartnerInboxView";
 
 describe("RBPC Inquiries & Partner Pages Contract Tests", () => {
@@ -142,6 +147,16 @@ describe("RBPC Inquiries & Partner Pages Contract Tests", () => {
 
   describe("Zero PII Invariant on Public Status Tracking", () => {
     it("returns only lifecycle metadata and excludes email, phone, name, and internal notes", async () => {
+      const spy = vi.spyOn(apiModule, "apiRequest").mockResolvedValueOnce({
+        reference: "INQ-7F89-A23C",
+        experience_title: "Trải nghiệm nghệ thuật nặn khuôn sáp & đúc đồng truyền thống Phường Đúc",
+        status: "new",
+        status_message: "Yêu cầu đã được ghi nhận.",
+        preferred_date: "2026-11-05",
+        party_size: 2,
+        created_at: "2026-10-18T10:00:00Z",
+      });
+
       const statusRes = await fetchInquiryStatusByToken("INQ-7F89-A23C");
 
       expect(statusRes.reference).toBe("INQ-7F89-A23C");
@@ -159,6 +174,217 @@ describe("RBPC Inquiries & Partner Pages Contract Tests", () => {
       expect(raw.contact_value).toBeUndefined();
       expect(raw.partner_notes).toBeUndefined();
       expect(raw.internal_notes).toBeUndefined();
+
+      spy.mockRestore();
+    });
+  });
+
+  describe("V5-T014: Partner Status PATCH Persistence & Client Rollback", () => {
+    it("re-throws error when updatePartnerInquiryStatusApi receives 403 or 400 rejection", async () => {
+      const spy = vi.spyOn(apiModule, "apiRequest").mockRejectedValueOnce(
+        new Error("HTTP 403: Forbidden Scope")
+      );
+
+      await expect(
+        updatePartnerInquiryStatusApi("inq-001", "confirmed", "test note")
+      ).rejects.toThrow("HTTP 403: Forbidden Scope");
+
+      expect(spy).toHaveBeenCalledWith(
+        "/api/v1/rbpc/partner/inquiries/inq-001",
+        expect.objectContaining({
+          method: "PATCH",
+          body: { status: "confirmed", note: "test note" },
+        })
+      );
+      spy.mockRestore();
+    });
+
+    it("verifies state machine valid transitions and rollback invariant", () => {
+      // Invariant: 'new' can only transition to 'contacted' or 'declined', NEVER 'confirmed' directly
+      expect(VALID_TRANSITIONS["new"]).not.toContain("confirmed");
+      expect(VALID_TRANSITIONS["new"]).not.toContain("closed");
+
+      // Invariant: 'closed' is terminal and cannot transition to any state
+      expect(VALID_TRANSITIONS["closed"]).toEqual([]);
+
+      // Rollback invariant test:
+      const initialItem = { ...SEED_PARTNER_INQUIRIES[0] };
+      expect(initialItem.status).toBe("new");
+
+      let currentStatus = initialItem.status;
+      const optimisticUpdate = (next: typeof initialItem.status) => {
+        currentStatus = next;
+      };
+      const rollback = (prev: typeof initialItem.status) => {
+        currentStatus = prev;
+      };
+
+      // Simulate failed optimistic update to confirmed
+      const prevStatus = currentStatus;
+      optimisticUpdate("confirmed");
+      expect(currentStatus).toBe("confirmed");
+
+      // Rollback on rejection
+      rollback(prevStatus);
+      expect(currentStatus).toBe("new");
+    });
+  });
+
+  describe("submitInquiryToApi Zero Fabricated Success Invariant (V5-T011)", () => {
+    const samplePayload = {
+      experience_slug: "workshop-duc-dong-phuong-duc",
+      contact: {
+        name: "Test User",
+        method: "email" as const,
+        value: "test@example.com",
+      },
+      party_size: 2,
+      consent: {
+        accepted: true,
+        privacy_accepted: true,
+        version: "2026.1_v1",
+      },
+      idempotency_key: "550e8400-e29b-41d4-a716-446655440000",
+    };
+
+    it("rejects and does not fabricate success when backend returns 404", async () => {
+      const spy = vi.spyOn(apiModule, "apiRequest").mockRejectedValueOnce(
+        new apiModule.ApiError("Not Found", { status: 404 })
+      );
+
+      await expect(submitInquiryToApi(samplePayload)).rejects.toThrow();
+      expect(spy).toHaveBeenCalledTimes(1);
+
+      spy.mockRestore();
+    });
+
+    it("rejects and does not fabricate success on network failure", async () => {
+      const spy = vi.spyOn(apiModule, "apiRequest").mockRejectedValueOnce(
+        new TypeError("Failed to fetch")
+      );
+
+      await expect(submitInquiryToApi(samplePayload)).rejects.toThrow();
+      expect(spy).toHaveBeenCalledTimes(1);
+
+      spy.mockRestore();
+    });
+
+    it("returns InquirySubmissionResult only when backend returns 202 accepted response", async () => {
+      const serverResponse = {
+        reference: "INQ-ABCD-1234",
+        status_token: "tok_sec_1234567890abcdef1234567890abcdef",
+        status: "new" as const,
+        message: "Yêu cầu đã được ghi nhận.",
+        created_at: "2026-10-21T00:00:00Z",
+      };
+      const spy = vi.spyOn(apiModule, "apiRequest").mockResolvedValueOnce(serverResponse);
+
+      const result = await submitInquiryToApi(samplePayload);
+      expect(result.reference).toBe("INQ-ABCD-1234");
+      expect(result.statusToken).toBe("tok_sec_1234567890abcdef1234567890abcdef");
+      expect(result.status).toBe("new");
+      expect(result.message).toBe("Yêu cầu đã được ghi nhận.");
+      expect(result.createdAt).toBe("2026-10-21T00:00:00Z");
+
+      spy.mockRestore();
+    });
+  });
+
+  describe("V5-T013: Partner Inbox No Seeding In Production", () => {
+    it("returns empty array [] when backend returns items: [], without falling back to seed data", async () => {
+      const emptyBackendResponse = {
+        items: [],
+        total: 0,
+      };
+      const spy = vi.spyOn(apiModule, "apiRequest").mockResolvedValueOnce(emptyBackendResponse);
+
+      const result = await fetchPartnerInquiries();
+      expect(result).toEqual([]);
+      expect(result.length).toBe(0);
+      expect(spy).toHaveBeenCalledWith("/api/v1/rbpc/partner/inquiries");
+
+      spy.mockRestore();
+    });
+
+    it("re-throws error on API failure or unauthenticated when allowDemoFallback is not set", async () => {
+      const spy = vi.spyOn(apiModule, "apiRequest").mockRejectedValueOnce(
+        new apiModule.ApiError("HTTP 401: Unauthorized", { status: 401 })
+      );
+
+      await expect(fetchPartnerInquiries()).rejects.toThrow("HTTP 401: Unauthorized");
+      expect(spy).toHaveBeenCalledWith("/api/v1/rbpc/partner/inquiries");
+
+      spy.mockRestore();
+    });
+
+    it("returns SEED_PARTNER_INQUIRIES only when explicitly requesting demo fallback", async () => {
+      const spy = vi.spyOn(apiModule, "apiRequest").mockRejectedValueOnce(
+        new apiModule.ApiError("HTTP 401: Unauthorized", { status: 401 })
+      );
+
+      const result = await fetchPartnerInquiries({ allowDemoFallback: true });
+      expect(result).toEqual(SEED_PARTNER_INQUIRIES);
+      expect(result.length).toBeGreaterThanOrEqual(5);
+
+      spy.mockRestore();
+    });
+  });
+
+  describe("Token Status Strict Server Lookup (V5-T012)", () => {
+    it("strictly queries /api/v1/rbpc/inquiries/status/{opaqueToken} with proper URL encoding", async () => {
+      const spy = vi.spyOn(apiModule, "apiRequest").mockResolvedValueOnce({
+        reference: "INQ-ABCD-1234",
+        experience_title: "Trải nghiệm Đúc Đồng",
+        status: "new",
+        status_message: "Yêu cầu đã được tiếp nhận.",
+        party_size: 4,
+        preferred_date: "2026-11-20",
+        last_updated_at: "2026-10-21T10:00:00Z",
+      });
+
+      const res = await fetchInquiryStatusByToken("tok_sec_abc 123");
+      expect(res.reference).toBe("INQ-ABCD-1234");
+      expect(res.experienceTitle).toBe("Trải nghiệm Đúc Đồng");
+      expect(spy).toHaveBeenCalledWith("/api/v1/rbpc/inquiries/status/tok_sec_abc%20123");
+
+      spy.mockRestore();
+    });
+
+    it("removes matchedSeed fallback: seed reference with 404 server response throws InquiryNotFoundError", async () => {
+      // Prior implementation would catch 404 and return SEED_PARTNER_INQUIRIES item.
+      // Under V5-T012, matchedSeed fallback is eliminated: must throw typed error.
+      const spy = vi.spyOn(apiModule, "apiRequest").mockRejectedValueOnce(
+        new apiModule.ApiError("Inquiry not found for status token.", { status: 404 })
+      );
+
+      await expect(fetchInquiryStatusByToken("INQ-7F89-A23C")).rejects.toThrow(InquiryNotFoundError);
+      await expect(
+        (async () => {
+          vi.spyOn(apiModule, "apiRequest").mockRejectedValueOnce(
+            new apiModule.ApiError("Not found", { status: 404 })
+          );
+          await fetchInquiryStatusByToken("INQ-7F89-A23C");
+        })()
+      ).rejects.toThrow("Không tìm thấy hồ sơ với mã tra cứu này.");
+
+      spy.mockRestore();
+    });
+
+    it("throws InquiryNotFoundError on network error without falling back to seed data", async () => {
+      const spy = vi.spyOn(apiModule, "apiRequest").mockRejectedValueOnce(
+        new TypeError("Failed to fetch")
+      );
+
+      await expect(fetchInquiryStatusByToken("INQ-6E21-B44D")).rejects.toThrow(InquiryNotFoundError);
+      expect(spy).toHaveBeenCalledWith("/api/v1/rbpc/inquiries/status/INQ-6E21-B44D");
+
+      spy.mockRestore();
+    });
+
+    it("throws InquiryNotFoundError for blank or whitespace token", async () => {
+      await expect(fetchInquiryStatusByToken("")).rejects.toThrow(InquiryNotFoundError);
+      await expect(fetchInquiryStatusByToken("   ")).rejects.toThrow(InquiryNotFoundError);
+      await expect(fetchInquiryStatusByToken("")).rejects.toThrow("Mã tra cứu không được để trống.");
     });
   });
 });

@@ -41,8 +41,6 @@ import {
   CURATED_EXPERIENCES,
   CuratedExperienceOption,
   generateClientUuid,
-  generatePublicReference,
-  generateOpaqueToken,
   validateEmail,
   validatePhone,
   getStoredInquiries,
@@ -426,6 +424,21 @@ function InquiriesContent() {
               ? "Gửi yêu cầu lịch trải nghiệm trực tiếp đến nghệ nhân và theo dõi trạng thái hồ sơ theo thời gian thực mà không cần thanh toán trước."
               : "Submit availability inquiries directly to craft masters and track request progress in real time with zero upfront transaction pressure."}
           </p>
+        </div>
+
+        {/* Concept Demo Notice & Tenant Boundary Ribbon */}
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-2.5 text-xs text-amber-900 dark:text-amber-200">
+          <div className="flex items-center gap-2">
+            <span className="rounded bg-amber-600 px-1.5 py-0.5 text-[10px] font-black tracking-wider text-white uppercase">
+              DEMO DATA
+            </span>
+            <span>
+              {locale === "vi"
+                ? "Dữ liệu mẫu trải nghiệm văn hóa phục vụ đánh giá RBPC. Mọi giao dịch mô phỏng được cô lập hoàn toàn khỏi hệ thống thương mại thực tế."
+                : "Cultural experience demo fixtures for RBPC evaluation. Simulated inquiries are strictly isolated from live transactional records."}
+            </span>
+          </div>
+          <span className="font-mono text-[10px] opacity-75">ISOLATION: TENANT_DEMO_RBPC</span>
         </div>
 
         {/* Mode Switcher Tabs */}

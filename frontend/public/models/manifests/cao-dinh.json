@@ -6,20 +6,20 @@
     "low": {
       "url": "/assets/models/CAO-DINH-v1-512.glb",
       "fallback_url": "/assets/models/CAO-DINH-v1-512.glb",
-      "sha256": "placeholder-sha256-512",
-      "bytes": 524288
+      "sha256": "51f5baf131e85257186b0e4a89087870ff66e4c787f7775bea797fc2550d8611",
+      "bytes": 5207460
     },
     "medium": {
       "url": "/assets/models/CAO-DINH-v1-1k.glb",
       "fallback_url": "/assets/models/CAO-DINH-v1-1k.glb",
-      "sha256": "placeholder-sha256-1k",
-      "bytes": 1048576
+      "sha256": "6f7e73424c18c5e6504ee25eda103b56958b1e79348937e152e60731a2bcd16a",
+      "bytes": 27417688
     },
     "high": {
       "url": "/assets/models/CAO-DINH-v1-2k.glb",
       "fallback_url": "/assets/models/CAO-DINH-v1-2k.glb",
-      "sha256": "placeholder-sha256-2k",
-      "bytes": 2097152
+      "sha256": "59d7f26f5af647d727b3ce4855a8533ca39c96825e1c9dea672a94cb32e42e74",
+      "bytes": 30353888
     }
   },
   "hotspots": [
@@ -473,5 +473,8 @@
       "coordinate_version": 1,
       "model_version": 1
     }
-  ]
+  ],
+  "mesh_status": "PRESENT",
+  "has_2d_fallback": true,
+  "fallback_2d_url": "/assets/ban-duc-noi/CAO%20DINH/CAO%20%C4%90%E1%BB%88NH.jpg"
 }

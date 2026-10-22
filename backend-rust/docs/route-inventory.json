@@ -1842,6 +1842,12 @@
     "status": "gateway"
   },
   {
+    "method": "POST",
+    "path": "/api/v1/rbpc/inquiries/status/{opaqueToken}/withdraw",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
     "method": "GET",
     "path": "/api/v1/rbpc/partner/inquiries",
     "group": "misc",

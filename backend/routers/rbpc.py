@@ -16,6 +16,7 @@ Content Scope: RBPC_HUE
 """
 from __future__ import annotations
 
+import hmac
 import logging
 import re
 import uuid as uuid_module
@@ -26,6 +27,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, Query, Request, Response, status
 from fastapi.responses import JSONResponse
 from sqlalchemy import func, or_, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, selectinload
 
 from ..apischemas.heritage import HeritageMediaAssetOut
@@ -46,6 +48,7 @@ from ..apischemas.rbpc import (
     RbpcInquiryOut,
     RbpcInquiryStatus,
     RbpcInquiryStatusOut,
+    RbpcInquiryWithdrawOut,
     RbpcObservedMetrics,
     RbpcPartnerInquiryListOut,
     RbpcPartnerInquiryOut,
@@ -56,6 +59,7 @@ from ..apischemas.rbpc import (
     RbpcStoryOut,
     RbpcSupportType,
 )
+from ..config import get_settings
 from ..db import get_db
 from ..deps import get_current_user, get_current_user_optional
 from ..errors import AppError
@@ -77,6 +81,11 @@ from ..services.rbpc_audit import (
     record_creator_consent_change,
     record_inquiry_state_transition,
 )
+from ..services.rbpc_notification import (
+    compute_sla_deadline,
+    queue_inquiry_notification,
+)
+from ..services.rbpc_retention import withdraw_inquiry_consent
 
 logger = logging.getLogger("luuniensuki.rbpc")
 
@@ -354,13 +363,14 @@ def get_rbpc_config():
 
     Zero secrets or internal keys are ever exposed.
     """
+    app_settings = get_settings()
     return RbpcConfigOut(
         enabled=True,
         ai_enabled=True,
         inquiry_enabled=True,
         supported_locales=["vi", "en"],
         default_locale="vi",
-        demo_mode=True,
+        demo_mode=app_settings.demo_mode_effective,
         version="1.0.0",
         privacy_notice_url="/privacy",
         terms_url="/terms",
@@ -582,6 +592,41 @@ def get_rbpc_experience(
     return _experience_to_out(exp)
 
 
+def _evaluate_inquiry_idempotency(
+    existing: RbpcInquiry,
+    exp_id: UUID,
+    sanitized_name: str,
+    sanitized_contact_value: str,
+    party_size: int,
+) -> JSONResponse:
+    """Validate consistency of an existing inquiry matching idempotency key.
+
+    Returns HTTP 202 with original receipt if payload matches.
+    Raises HTTP 409 RBPC_IDEMPOTENCY_CONFLICT if payload differs.
+    """
+    if (
+        existing.experience_id != exp_id
+        or existing.name != sanitized_name
+        or existing.contact_value != sanitized_contact_value
+        or existing.party_size != party_size
+    ):
+        raise AppError(
+            "RBPC_IDEMPOTENCY_CONFLICT",
+            "Idempotency key has already been used with differing parameters.",
+            status.HTTP_409_CONFLICT,
+        )
+    return JSONResponse(
+        status_code=status.HTTP_202_ACCEPTED,
+        content=RbpcInquiryOut(
+            reference=existing.public_ref,
+            status_token=existing.opaque_token,
+            status=existing.state,
+            message="Yêu cầu đã được ghi nhận trước đó. Nhà cung cấp sẽ liên hệ xác nhận lịch trống trong vòng 24 giờ.",
+            created_at=existing.created_at,
+        ).model_dump(mode="json"),
+    )
+
+
 @router.post("/api/v1/rbpc/inquiries", status_code=status.HTTP_202_ACCEPTED, response_model=RbpcInquiryOut)
 def create_rbpc_inquiry(
     payload: RbpcInquiryCreate,
@@ -658,42 +703,31 @@ def create_rbpc_inquiry(
             status.HTTP_400_BAD_REQUEST,
         )
 
+    exp_id = exp.id
+
     # Guardrail 6: Idempotency check
     existing = db.scalar(
         select(RbpcInquiry).where(RbpcInquiry.idempotency_key == validated_key)
     )
     if existing:
-        # Check payload consistency
-        if (
-            existing.experience_id != exp.id
-            or existing.name != sanitized_name
-            or existing.contact_value != sanitized_contact_value
-            or existing.party_size != payload.party_size
-        ):
-            raise AppError(
-                "RBPC_IDEMPOTENCY_CONFLICT",
-                "Idempotency key has already been used with differing parameters.",
-                status.HTTP_409_CONFLICT,
-            )
-        return JSONResponse(
-            status_code=status.HTTP_202_ACCEPTED,
-            content=RbpcInquiryOut(
-                reference=existing.public_ref,
-                status_token=existing.opaque_token,
-                status=existing.state,
-                message="Yêu cầu đã được ghi nhận trước đó. Nhà cung cấp sẽ liên hệ xác nhận lịch trống trong vòng 24 giờ.",
-                created_at=existing.created_at,
-            ).model_dump(mode="json"),
+        return _evaluate_inquiry_idempotency(
+            existing=existing,
+            exp_id=exp_id,
+            sanitized_name=sanitized_name,
+            sanitized_contact_value=sanitized_contact_value,
+            party_size=payload.party_size,
         )
 
     # Non-sequential reference code & high-entropy status bearer token
     hex_ref = uuid_module.uuid4().hex[:8].upper()
     public_ref = f"INQ-{hex_ref[:4]}-{hex_ref[4:]}"
     opaque_token = f"tok_sec_{uuid_module.uuid4().hex}"
+    now = datetime.now(timezone.utc)
+    sla_due_at = compute_sla_deadline(now)
 
     inquiry = RbpcInquiry(
         public_ref=public_ref,
-        experience_id=exp.id,
+        experience_id=exp_id,
         provider_id=exp.provider_id or exp.creator_id,
         name=sanitized_name,
         contact_channel=payload.contact.method.value,
@@ -702,33 +736,60 @@ def create_rbpc_inquiry(
         party_size=payload.party_size,
         message=sanitized_message,
         consent_version=payload.consent.version,
+        consent_time_utc=now,
         privacy_accepted=payload.consent.privacy_accepted,
         state=RbpcInquiryStatus.new.value,
         idempotency_key=validated_key,
         opaque_token=opaque_token,
-        retention_due_at=datetime.now(timezone.utc) + timedelta(days=90),
+        retention_due_at=now + timedelta(days=90),
+        sla_due_at=sla_due_at,
     )
     db.add(inquiry)
-    db.flush()
 
-    # Append immutable audit entry with zero PII
-    record_audit_entry(
-        db,
-        entity_type="inquiry",
-        entity_id=inquiry.id,
-        action="inquiry_created",
-        actor_id=None,
-        diff_payload={
-            "public_ref": inquiry.public_ref,
-            "state": inquiry.state,
-            "party_size": inquiry.party_size,
-            "consent_version": inquiry.consent_version,
-            "experience_id": str(inquiry.experience_id),
-        },
-    )
+    try:
+        db.flush()
 
-    db.commit()
-    db.refresh(inquiry)
+        # Append immutable audit entry with zero PII
+        record_audit_entry(
+            db,
+            entity_type="inquiry",
+            entity_id=inquiry.id,
+            action="inquiry_created",
+            actor_id=None,
+            diff_payload={
+                "public_ref": inquiry.public_ref,
+                "state": inquiry.state,
+                "party_size": inquiry.party_size,
+                "consent_version": inquiry.consent_version,
+                "experience_id": str(inquiry.experience_id),
+                "sla_due_at": inquiry.sla_due_at.isoformat() if inquiry.sla_due_at else None,
+            },
+        )
+
+        # Queue partner notification in outbox with fault-tolerant delivery
+        queue_inquiry_notification(db, inquiry, event_type="inquiry_created")
+
+        db.commit()
+        db.refresh(inquiry)
+    except IntegrityError:
+        db.rollback()
+        # Concurrent race condition: another transaction committed with the same idempotency key
+        existing_raced = db.scalar(
+            select(RbpcInquiry).where(RbpcInquiry.idempotency_key == validated_key)
+        )
+        if existing_raced:
+            logger.info(
+                "Handled concurrent inquiry race condition for idempotency key %s",
+                validated_key,
+            )
+            return _evaluate_inquiry_idempotency(
+                existing=existing_raced,
+                exp_id=exp_id,
+                sanitized_name=sanitized_name,
+                sanitized_contact_value=sanitized_contact_value,
+                party_size=payload.party_size,
+            )
+        raise
 
     return JSONResponse(
         status_code=status.HTTP_202_ACCEPTED,
@@ -752,7 +813,7 @@ def get_inquiry_status_by_token(
     ZERO PII Invariant: Email, phone, name, and partner internal notes are
     never disclosed in this response.
     """
-    cleaned_token = opaqueToken.strip()
+    cleaned_token = (opaqueToken or "").strip()
     if not cleaned_token:
         raise AppError("RBPC_INQUIRY_NOT_FOUND", "Inquiry not found for status token.", status.HTTP_404_NOT_FOUND)
 
@@ -764,14 +825,62 @@ def get_inquiry_status_by_token(
     if not inquiry:
         raise AppError("RBPC_INQUIRY_NOT_FOUND", "Inquiry not found for status token.", status.HTTP_404_NOT_FOUND)
 
+    # Constant-time comparison to prevent timing side-channel attacks on bearer token
+    if not hmac.compare_digest(inquiry.opaque_token, cleaned_token):
+        raise AppError("RBPC_INQUIRY_NOT_FOUND", "Inquiry not found for status token.", status.HTTP_404_NOT_FOUND)
+
+    # TTL / Retention expiration check: Expired inquiries return 404 NOT_FOUND
+    now = datetime.now(timezone.utc)
+    if inquiry.retention_due_at is not None:
+        retention_time = inquiry.retention_due_at
+        if retention_time.tzinfo is None:
+            retention_time = retention_time.replace(tzinfo=timezone.utc)
+        if retention_time <= now:
+            raise AppError("RBPC_INQUIRY_NOT_FOUND", "Inquiry not found or token expired.", status.HTTP_404_NOT_FOUND)
+
     exp_title = inquiry.experience.title_vi if inquiry.experience else "Trải nghiệm văn hóa"
-    status_msg = INQUIRY_STATUS_MESSAGES.get(inquiry.state, "Trạng thái đang được cập nhật.")
+    if not inquiry.privacy_accepted:
+        status_msg = "Yêu cầu đã được rút lại và thông tin liên hệ cá nhân đã được xóa theo chính sách bảo mật."
+    else:
+        status_msg = INQUIRY_STATUS_MESSAGES.get(inquiry.state, "Trạng thái đang được cập nhật.")
 
     return RbpcInquiryStatusOut(
         reference=inquiry.public_ref,
         experience_title=exp_title,
         status=inquiry.state,
         status_message=status_msg,
+        preferred_date=inquiry.desired_date,
+        party_size=inquiry.party_size,
+        last_updated_at=inquiry.updated_at,
+    )
+
+
+@router.post(
+    "/api/v1/rbpc/inquiries/status/{opaqueToken}/withdraw",
+    response_model=RbpcInquiryWithdrawOut,
+)
+def withdraw_inquiry_status_consent(
+    opaqueToken: str,
+    db: Session = Depends(get_db),
+):
+    """Allow visitor to withdraw consent and redact contact details immediately.
+
+    Vietnam Decree 13/2023/ND-CP Article 11 right of withdrawal / right to erasure:
+    - Scrubs name, contact_value, message to remove visitor PII
+    - Marks privacy_accepted = False and state = closed
+    - Appends immutable cryptographic audit entry to rbpc_content_audit
+    """
+    inquiry = withdraw_inquiry_consent(db, opaque_token=opaqueToken)
+    db.commit()
+    db.refresh(inquiry)
+
+    exp_title = inquiry.experience.title_vi if inquiry.experience else "Trải nghiệm văn hóa"
+    return RbpcInquiryWithdrawOut(
+        reference=inquiry.public_ref,
+        experience_title=exp_title,
+        status=inquiry.state,
+        status_message="Đồng thuận đã được rút lại. Toàn bộ thông tin liên hệ đã được ẩn danh/xóa bỏ.",
+        privacy_accepted=inquiry.privacy_accepted,
         preferred_date=inquiry.desired_date,
         party_size=inquiry.party_size,
         last_updated_at=inquiry.updated_at,
@@ -882,6 +991,7 @@ VALID_INQUIRY_TRANSITIONS: dict[str, set[str]] = {
 
 @router.get("/api/v1/rbpc/partner/inquiries", response_model=RbpcPartnerInquiryListOut)
 def list_partner_inquiries(
+    request: Request,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -895,12 +1005,27 @@ def list_partner_inquiries(
     stmt = select(RbpcInquiry).options(selectinload(RbpcInquiry.experience))
     if not is_admin:
         # Provider scoping: strictly provider ownership (provider_id or linked experience.provider_id)
+        # Any client query param (such as ?provider=...) is strictly ignored for non-admin callers.
         stmt = stmt.outerjoin(RbpcInquiry.experience).where(
             or_(
                 RbpcInquiry.provider_id == current_user.id,
                 RbpcExperience.provider_id == current_user.id,
             )
         )
+    else:
+        # Admin callers can view all cross-tenant inquiries or optionally filter by provider
+        provider_param = request.query_params.get("provider")
+        if provider_param:
+            try:
+                target_uuid = UUID(provider_param)
+                stmt = stmt.outerjoin(RbpcInquiry.experience).where(
+                    or_(
+                        RbpcInquiry.provider_id == target_uuid,
+                        RbpcExperience.provider_id == target_uuid,
+                    )
+                )
+            except ValueError:
+                pass
 
     stmt = stmt.order_by(RbpcInquiry.created_at.desc())
     inquiries = list(db.scalars(stmt))
@@ -931,6 +1056,7 @@ def list_partner_inquiries(
 def update_partner_inquiry_status(
     id: UUID,
     payload: RbpcPartnerInquiryUpdate,
+    request: Request,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -939,7 +1065,11 @@ def update_partner_inquiry_status(
     Rejects unauthorized access with 403 FORBIDDEN_SCOPE.
     Enforces valid lifecycle state transitions.
     """
-    inquiry = db.get(RbpcInquiry, id)
+    inquiry = db.scalar(
+        select(RbpcInquiry)
+        .options(selectinload(RbpcInquiry.experience))
+        .where(RbpcInquiry.id == id)
+    )
     if not inquiry:
         raise AppError("RBPC_INQUIRY_NOT_FOUND", f"Inquiry '{id}' not found.", status.HTTP_404_NOT_FOUND)
 
@@ -954,6 +1084,29 @@ def update_partner_inquiry_status(
             raise AppError("FORBIDDEN_SCOPE", "You do not have permission to manage this inquiry.", status.HTTP_403_FORBIDDEN)
 
     target_state = payload.status.value
+    # Idempotent replay: if inquiry is already at target_state, return early without error or duplicate audit
+    if inquiry.state == target_state:
+        if payload.note is not None and payload.note != inquiry.internal_note:
+            inquiry.internal_note = payload.note
+            inquiry.updated_at = datetime.now(timezone.utc)
+            db.commit()
+            db.refresh(inquiry)
+        return RbpcPartnerInquiryOut(
+            id=inquiry.id,
+            reference=inquiry.public_ref,
+            experience_slug=inquiry.experience.slug if inquiry.experience else "unknown",
+            experience_title=inquiry.experience.title_vi if inquiry.experience else "Trải nghiệm",
+            contact_name=inquiry.name,
+            contact_method=inquiry.contact_channel,
+            contact_value=inquiry.contact_value,
+            preferred_date=inquiry.desired_date,
+            party_size=inquiry.party_size,
+            message=inquiry.message,
+            status=inquiry.state,
+            created_at=inquiry.created_at,
+            updated_at=inquiry.updated_at,
+        )
+
     allowed_transitions = VALID_INQUIRY_TRANSITIONS.get(inquiry.state, set())
     if target_state not in allowed_transitions:
         raise AppError(

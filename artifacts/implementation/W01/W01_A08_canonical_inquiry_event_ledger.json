@@ -1,0 +1,112 @@
+{
+  "ticket_id": "V5-T018",
+  "slot": "W01-A08",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "feature": "Canonical Inquiry Event Ledger",
+  "status": "PASS",
+  "timestamp": "2026-10-22T04:30:00Z",
+  "baseline_sha": "54da2beb71f3df70e1f00b215ae0fb1a850eb263",
+  "summary": "Implemented canonical inquiry event ledger with append-only transitions, SHA-256 cryptographic hash chaining, idempotent replay deduplication, and strict zero-PII enforcement across rbpc_content_audit.",
+  "contracts": {
+    "ledger_append_only": {
+      "table": "rbpc_content_audit",
+      "genesis_action": "inquiry_created",
+      "transition_action": "state_transition",
+      "tracked_transitions": [
+        "new -> contacted",
+        "contacted -> confirmed",
+        "contacted -> declined",
+        "contacted -> closed",
+        "confirmed -> closed",
+        "declined -> closed"
+      ],
+      "behavior": "Each lifecycle state mutation writes an append-only row to rbpc_content_audit recording timestamp, actor_id, entity_type='inquiry', entity_id, previous_hash, new_hash, and non-PII diff_payload."
+    },
+    "cryptographic_hash_chain": {
+      "algorithm": "SHA-256",
+      "preimage_format": "prev:{prev_str}|type:{type}|id:{id}|act:{act}|actor:{actor}|diff:{payload}|scope:{scope}|time:{time}",
+      "genesis_rule": "First entry per entity has previous_hash = None",
+      "chain_rule": "Each subsequent entry's previous_hash matches exactly the preceding entry's new_hash",
+      "verification_function": "backend.services.rbpc_audit.verify_audit_chain",
+      "tamper_detection": "Any modification of stored diff_payload or hash breaks chain continuity and is flagged as tampered content"
+    },
+    "replay_deduplication": {
+      "api_layer": "In update_partner_inquiry_status, if inquiry is already at target_state, returns HTTP 200 OK cleanly without writing duplicate audit entry",
+      "service_layer": "In record_inquiry_state_transition, if target state matches current audit head or old_state == new_state, returns existing latest audit record without inserting duplicates",
+      "post_creation_replay": "POST /api/v1/rbpc/inquiries with identical idempotency_key returns original receipt HTTP 202 without writing duplicate inquiry_created audit entry"
+    },
+    "zero_pii_invariant": {
+      "sanitization_engine": "backend.services.rbpc_audit.sanitize_diff_payload",
+      "forbidden_keys_stripped": [
+        "name",
+        "visitor_name",
+        "full_name",
+        "contact_value",
+        "contact_val",
+        "email",
+        "phone",
+        "phone_number",
+        "password",
+        "password_hash",
+        "message",
+        "visitor_message",
+        "token",
+        "secret",
+        "opaque_token"
+      ],
+      "free_text_redaction": "Emails replaced with [EMAIL_REDACTED] and phone numbers replaced with [PHONE_REDACTED] in all audit diff values",
+      "stored_diff_fields": [
+        "public_ref",
+        "state",
+        "party_size",
+        "consent_version",
+        "experience_id",
+        "old_state",
+        "new_state",
+        "note"
+      ]
+    }
+  },
+  "modified_files": [
+    "backend/services/rbpc_audit.py",
+    "backend/routers/rbpc.py"
+  ],
+  "test_artifacts": [
+    "tests/v5/test_v5_t018.py"
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t018.py -v",
+    "test_results": {
+      "total": 7,
+      "passed": 7,
+      "failed": 0,
+      "tests": [
+        "test_inquiry_creation_logs_audit_entry",
+        "test_status_transitions_write_sequential_audit_entries_with_valid_hash_chain",
+        "test_alternative_transition_branch_declined_and_chain",
+        "test_replay_patch_does_not_create_duplicate_audit_events",
+        "test_post_inquiry_replay_no_duplicate_audit",
+        "test_diff_payload_zero_pii_strict_compliance",
+        "test_audit_ledger_tamper_detection"
+      ]
+    },
+    "regression_tests": [
+      "pytest tests/backend/test_rbpc_endpoints.py -v",
+      "pytest tests/backend/test_openapi_snapshot.py -v",
+      "pytest tests/v5/test_v5_t006.py -v"
+    ]
+  },
+  "risks": [
+    {
+      "area": "Audit chain verification performance",
+      "severity": "LOW",
+      "mitigation": "Chain verification is scoped per entity_id (typically 3-5 entries per inquiry lifecycle) with indexed lookups on (entity_type, entity_id)."
+    },
+    {
+      "area": "Replay race conditions",
+      "severity": "LOW",
+      "mitigation": "Idempotent return at API layer plus fallback deduplication at service layer guarantees zero duplicate entries even if concurrent PATCH requests arrive."
+    }
+  ]
+}

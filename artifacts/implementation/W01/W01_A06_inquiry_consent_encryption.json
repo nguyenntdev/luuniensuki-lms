@@ -1,0 +1,99 @@
+{
+  "ticket_id": "V5-T016",
+  "wave": "W01",
+  "slot": "A06",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "timestamp": "2026-10-21T23:55:00Z",
+  "status": "PASS",
+  "goal": "Inquiry consent lifecycle and retention / privacy enforcement",
+  "regulatory_framework": {
+    "decree_13_2023_nd_cp": {
+      "article_11": "Data subject right to withdraw consent unconditionally and right to request data erasure/redaction.",
+      "article_20": "Special data protection measures requiring explicit affirmative consent before collecting personal contact data."
+    },
+    "privacy_by_design": {
+      "zero_pii_audit_trail": "Audit payloads record only opaque reference identifiers, state diffs, and timestamps; personal contact values are never stored in append-only logs.",
+      "default_retention_window_days": 90
+    }
+  },
+  "implementation_details": {
+    "consent_tracking": {
+      "models_file": "backend/models_rbpc.py",
+      "router_file": "backend/routers/rbpc.py",
+      "schema_file": "backend/apischemas/rbpc.py",
+      "fields_verified": [
+        "consent_version",
+        "consent_time_utc",
+        "privacy_accepted",
+        "retention_due_at"
+      ],
+      "validation_rules": "Creation fails closed with HTTP 422 Unprocessable Content if consent.accepted is False or consent.privacy_accepted is False."
+    },
+    "retention_service": {
+      "service_file": "backend/services/rbpc_retention.py",
+      "functions": [
+        {
+          "name": "enforce_inquiry_retention_policy",
+          "signature": "enforce_inquiry_retention_policy(db: Session, reference_time: Optional[datetime] = None) -> dict[str, Any]",
+          "matching_criteria": "retention_due_at <= reference_time OR (state == 'closed' AND retention_due_at <= reference_time)",
+          "redaction_targets": {
+            "name": "[ANONYMIZED]",
+            "contact_value": "[REDACTED]",
+            "message": null,
+            "internal_note": null,
+            "state": "closed"
+          },
+          "preserved_metrics": [
+            "public_ref",
+            "experience_id",
+            "party_size",
+            "desired_date",
+            "created_at"
+          ],
+          "audit_action": "retention_purge"
+        },
+        {
+          "name": "withdraw_inquiry_consent",
+          "signature": "withdraw_inquiry_consent(db: Session, opaque_token: str) -> RbpcInquiry",
+          "behavior": "Instant visitor-initiated scrubbing of name, contact_value, message; privacy_accepted=False; state='closed'.",
+          "audit_action": "consent_withdrawn"
+        }
+      ]
+    },
+    "router_endpoints": {
+      "consent_withdrawal": {
+        "method": "POST",
+        "path": "/api/v1/rbpc/inquiries/status/{opaqueToken}/withdraw",
+        "response_model": "RbpcInquiryWithdrawOut",
+        "status_code": 200,
+        "error_handling": "Returns 404 RBPC_INQUIRY_NOT_FOUND when token is invalid or missing."
+      },
+      "public_status": {
+        "method": "GET",
+        "path": "/api/v1/rbpc/inquiries/status/{opaqueToken}",
+        "behavior": "Returns state='closed' with custom withdrawal message if consent was withdrawn; zero PII leakage."
+      }
+    }
+  },
+  "verification": {
+    "test_file": "tests/v5/test_v5_t016.py",
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t016.py -v",
+    "total_tests": 7,
+    "passed_tests": [
+      "test_inquiry_creation_consent_verification_rejected_when_not_accepted",
+      "test_inquiry_creation_consent_verification_rejected_when_privacy_not_accepted",
+      "test_inquiry_creation_consent_and_retention_persisted",
+      "test_retention_policy_enforcement_anonymizes_expired_inquiries",
+      "test_consent_withdrawal_endpoint_redacts_pii_and_marks_state",
+      "test_consent_withdrawal_non_existent_token_returns_404",
+      "test_partner_inbox_pii_shielded_after_retention_and_withdrawal"
+    ],
+    "associated_suites_passing": [
+      "tests/backend/test_audit_trail.py (7 passed)",
+      "tests/v5/test_v5_t006.py (9 passed)",
+      "tests/v5/test_v5_t015.py (8 passed)",
+      "tests/backend/test_openapi_snapshot.py (1 passed)"
+    ]
+  }
+}

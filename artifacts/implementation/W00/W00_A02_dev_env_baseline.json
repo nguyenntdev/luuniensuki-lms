@@ -1,0 +1,152 @@
+{
+  "ticket_id": "V5-T002",
+  "slot": "W00-A02",
+  "baseline_sha": "54da2beb71f3df70e1f00b215ae0fb1a850eb263",
+  "recorded_at": "2026-10-21T18:00:00Z",
+  "status": "PASS",
+  "summary": "Audited and verified reproducible local development environment: docker-compose services, port mappings (5432, 8000, 8001, 3000), backend Dockerfile hardening, environment variables, idempotent bootstrap script, disposable database targets, and non-destructive secondary seed execution.",
+  "docker_stack_audit": {
+    "compose_file": "docker-compose.yml",
+    "services": {
+      "db": {
+        "image": "postgres:15-alpine",
+        "container_port": 5432,
+        "host_binding": "127.0.0.1:5432:5432",
+        "volume": "postgres_data:/var/lib/postgresql/data",
+        "healthcheck": "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB",
+        "status": "VALIDATED"
+      },
+      "api": {
+        "context": ".",
+        "dockerfile": "backend/Dockerfile",
+        "container_port": 8000,
+        "host_binding": "127.0.0.1:8000:8000",
+        "command": ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers"],
+        "volumes": [".:/app", "uploads:/app/uploads"],
+        "depends_on": "db (service_healthy)",
+        "status": "VALIDATED"
+      },
+      "api_rust": {
+        "context": "./backend-rust",
+        "dockerfile": "Dockerfile",
+        "container_port": 8001,
+        "host_binding": "127.0.0.1:8001:8001",
+        "binary": "luuniensuki-api",
+        "depends_on": "db (service_healthy)",
+        "status": "VALIDATED"
+      },
+      "web": {
+        "context": "./frontend",
+        "dockerfile": "Dockerfile",
+        "container_port": 3000,
+        "host_binding": "127.0.0.1:3000:3000",
+        "command": ["node", "server.js"],
+        "depends_on": "api_rust",
+        "status": "VALIDATED"
+      },
+      "ai_teacher_agent": {
+        "context": ".",
+        "dockerfile": "backend/Dockerfile",
+        "command": ["python", "services/ai_teacher_agent/realtime_worker.py"],
+        "depends_on": "db (service_healthy)",
+        "status": "VALIDATED"
+      },
+      "livekit": {
+        "image": "livekit/livekit-server:v1.8.3",
+        "ports": ["7881:7881/tcp", "443:443/udp", "3478:3478/tcp", "5349:5349/tcp", "50000-50100:50000-50100/udp", "51000-51100:51000-51100/udp", "51000-51100:51000-51100/tcp"],
+        "status": "VALIDATED"
+      },
+      "janus-gateway": {
+        "image": "mwalbeck/janus-gateway:1.4.1",
+        "ports": ["127.0.0.1:8188:8188", "127.0.0.1:8088:8088", "127.0.0.1:7088:7088"],
+        "status": "VALIDATED"
+      },
+      "nginx": {
+        "image": "nginx:alpine",
+        "profile": "with-nginx",
+        "ports": ["80:80", "443:443"],
+        "status": "VALIDATED"
+      }
+    }
+  },
+  "backend_dockerfile_audit": {
+    "dockerfile_path": "backend/Dockerfile",
+    "base_image": "python:3.12-slim",
+    "security_hardening": {
+      "non_root_user": "appuser:appgroup (UID 10001, GID 10001)",
+      "write_access_restricted_to": ["/app/uploads", "/app/data"]
+    },
+    "exposed_ports": [8000],
+    "workdir": "/app",
+    "status": "COMPLIANT"
+  },
+  "environment_configuration_audit": {
+    "env_example_path": ".env.example",
+    "mandatory_keys_present": [
+      "DATABASE_URL",
+      "JWT_SECRET_KEY",
+      "JWT_ALGORITHM",
+      "ACCESS_TOKEN_EXPIRE_MINUTES",
+      "REFRESH_TOKEN_EXPIRE_DAYS",
+      "LIVEKIT_URL",
+      "LOG_LEVEL"
+    ],
+    "production_fail_closed_validation": {
+      "mechanism": "backend.config._validate_production_security",
+      "enforced_checks": [
+        "JWT_SECRET_KEY not in SENTINELS ('', 'CHANGE_ME_IN_PRODUCTION')",
+        "CORS wildcard origins forbidden with allow_credentials=True",
+        "PASSWORD_RESET_RETURN_TOKEN forbidden in production"
+      ]
+    }
+  },
+  "disposable_database_and_idempotency": {
+    "dev_database": "luuniensuki",
+    "test_database": "luuniensuki_test (isolated per test via luuniensuki_t002)",
+    "required_extensions_verified": [
+      "pgcrypto",
+      "unaccent",
+      "pg_trgm"
+    ],
+    "negative_secondary_run_test": {
+      "tested_scenario": "Bootstrap / seed re-execution on populated database",
+      "custom_accounts_preserved": true,
+      "user_mutations_preserved": {
+        "total_xp": "Retained custom progression",
+        "current_streak": "Retained modified streak"
+      },
+      "data_wipe_prevented": true
+    }
+  },
+  "bootstrap_tooling": {
+    "script_path": "scripts/dev/bootstrap.sh",
+    "modes_supported": [
+      "--check-only",
+      "--db-only",
+      "default (full idempotent bootstrap)"
+    ],
+    "idempotent": true
+  },
+  "test_execution": {
+    "test_file": "tests/v5/test_v5_t002.py",
+    "test_command": "pytest tests/v5/test_v5_t002.py -v",
+    "tests_count": 6,
+    "tests_passed": 6,
+    "tests_failed": 0,
+    "duration_seconds": 2.85
+  },
+  "risks": [
+    {
+      "risk_id": "RSK-DEV-001",
+      "description": "Port 5432 conflict if developer has host PostgreSQL already bound on 0.0.0.0:5432.",
+      "severity": "LOW",
+      "mitigation": "docker-compose.yml binds to 127.0.0.1:5432:5432 and bootstrap.sh checks connectivity with helpful fallback instructions."
+    },
+    {
+      "risk_id": "RSK-DEV-002",
+      "description": "Concurrent subagent execution in monorepo running DROP SCHEMA public CASCADE on shared luuniensuki_test DB.",
+      "severity": "MEDIUM",
+      "mitigation": "V5-T002 suite uses isolated test database target (luuniensuki_t002) and non-destructive transactional rollbacks."
+    }
+  ]
+}

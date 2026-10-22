@@ -1,0 +1,465 @@
+{
+  "meta": {
+    "ticket_id": "V5-T010",
+    "slot": "W00-A10",
+    "title": "Observability & Deployment Baseline",
+    "baseline_source_sha": "54da2beb71f3df70e1f00b215ae0fb1a850eb263",
+    "generated_at": "2026-10-21T00:00:00Z",
+    "classification": "PRODUCTION_COMPLETION",
+    "status": "PASS",
+    "auditor_role": "Luu Nien production coding implementer (W00 Slot 10)"
+  },
+  "deployment_manifests": {
+    "docker_compose_prod": {
+      "file_path": "docker-compose.prod.yml",
+      "syntax_valid": true,
+      "services_count": 8,
+      "services": [
+        "db",
+        "api",
+        "api_rust",
+        "web",
+        "ai_teacher_agent",
+        "livekit",
+        "janus-gateway",
+        "nginx"
+      ],
+      "required_production_env_vars": [
+        "POSTGRES_DB",
+        "POSTGRES_USER",
+        "POSTGRES_PASSWORD",
+        "JWT_SECRET_KEY",
+        "LIVEKIT_API_KEY",
+        "LIVEKIT_API_SECRET",
+        "JANUS_ADMIN_SECRET",
+        "JANUS_API_SECRET"
+      ],
+      "fail_closed_validation": "Fails closed if any required production variable is unset or empty (?VARIABLE syntax)",
+      "database_healthcheck": {
+        "command": ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"],
+        "interval_seconds": 5,
+        "timeout_seconds": 5,
+        "retries": 20
+      },
+      "application_container_dependencies": {
+        "api": {
+          "depends_on": "db",
+          "condition": "service_healthy"
+        },
+        "api_rust": {
+          "depends_on": "db",
+          "condition": "service_healthy"
+        },
+        "ai_teacher_agent": {
+          "depends_on": "db",
+          "condition": "service_healthy"
+        },
+        "web": {
+          "depends_on": "api_rust"
+        },
+        "nginx": {
+          "depends_on": [
+            "web",
+            "api",
+            "api_rust",
+            "ai_teacher_agent",
+            "livekit",
+            "janus-gateway"
+          ]
+        }
+      },
+      "restart_policy": "unless-stopped"
+    },
+    "docker_compose_override": {
+      "file_path": "docker-compose.override.yml",
+      "purpose": "Local development port bindings (5432, 8000, 8001, 3000, 8088, 8443) and mount overrides"
+    }
+  },
+  "reverse_proxy_configuration": {
+    "staging_config": {
+      "file_path": "nginx-luunien-staging.conf",
+      "domain": "luunien.histolab.icu",
+      "target_vps_ip": "36.50.27.240",
+      "syntax_valid": true,
+      "cloudflare_real_ip_restoration": {
+        "enabled": true,
+        "real_ip_header": "CF-Connecting-IP",
+        "ipv4_cidr_count": 15,
+        "ipv6_cidr_count": 7
+      },
+      "zero_pii_log_sanitization": {
+        "log_format": "sanitized_combined",
+        "ip_masking": "map $remote_addr $anonymized_remote_addr (IPv4 last octet masked to .0, IPv6 truncated to ::)",
+        "query_param_redaction": "map $query_string $sanitized_query_string (redacts token, secret, opaque_token, contact_value, email, phone)",
+        "request_body_logging": "disabled (zero request body leakage)"
+      },
+      "rate_limiting": {
+        "inquiry_zone": {
+          "zone": "rbpc_inquiry:10m",
+          "rate": "5r/m",
+          "path": "/api/v1/rbpc/inquiries",
+          "burst": 5,
+          "nodelay": true
+        },
+        "ai_zone": {
+          "zone": "rbpc_ai:10m",
+          "rate": "20r/m",
+          "path": "/api/v1/(rbpc/cultural-bridge|history/tutor/ask|ai-tutor)",
+          "burst": 10,
+          "nodelay": true
+        },
+        "error_envelope": {
+          "status_code": 429,
+          "content_type": "application/json",
+          "retry_after_header": "60",
+          "response_body": {
+            "error": {
+              "code": "RATE_LIMIT_EXCEEDED",
+              "message": "Rate limit exceeded. Please wait and retry.",
+              "details": {
+                "retry_after_seconds": 60
+              }
+            }
+          }
+        }
+      },
+      "ssl_tls": {
+        "mode": "Cloudflare Full Strict",
+        "protocols": [
+          "TLSv1.2",
+          "TLSv1.3"
+        ],
+        "session_cache": "shared:SSL:10m",
+        "session_tickets": false,
+        "session_timeout": "1d",
+        "hsts_header": "max-age=63072000; includeSubDomains; preload"
+      },
+      "security_headers": {
+        "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "Permissions-Policy": "camera=(self), microphone=(self), geolocation=()",
+        "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://sketchfab.com https://*.sketchfab.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://store.histolab.icu https://*.sketchfab.com https://images.unsplash.com https://*.wikimedia.org https://tile.openstreetmap.org https://*.tile.openstreetmap.org; frame-src 'self' https://sketchfab.com https://*.sketchfab.com; connect-src 'self' wss://luunien.histolab.icu https://store.histolab.icu https://router.theclaracare.com https://*.sketchfab.com wss: https:; media-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; frame-ancestors 'self';"
+      },
+      "webrtc_architecture": {
+        "signaling_plane": "Reverse-proxied over HTTPS/WSS (LiveKit /livekit -> :7880, Janus /janus -> :8188)",
+        "media_plane_warning": "Cloudflare drops arbitrary UDP packets on proxied domains; media plane UDP 50000-50100 and 20000-20100 must bypass Cloudflare and route directly to VPS IP 36.50.27.240 with DNS-only grey cloud record"
+      },
+      "dynamic_dns_resolver": "127.0.0.11 ipv6=off valid=30s; upstreams use variables ($api_upstream, $web_upstream, $livekit_upstream, $janus_upstream) to avoid startup crash on container reboots"
+    },
+    "production_config": {
+      "file_path": "nginx-lms.conf",
+      "domain": "lms.histolab.icu",
+      "target_vps_ip": "36.50.26.18",
+      "status": "Active production reverse proxy configuration in docker-compose.prod.yml",
+      "audit_findings": [
+        "Uses static upstream literals for LiveKit and Janus without variables, causing DNS lookup on startup",
+        "Uses deprecated 'listen 443 ssl http2;' syntax instead of 'listen 443 ssl; http2 on;'",
+        "Lacks Cloudflare CF-Connecting-IP restoration and rate limiting zones present in staging config",
+        "Lacks CSP header present in staging config"
+      ]
+    }
+  },
+  "health_and_readiness_probes": {
+    "probes": [
+      {
+        "path": "/health",
+        "service": "Rust Gateway (:8001)",
+        "type": "liveness",
+        "handler": "backend-rust/src/routes/health.rs:health",
+        "db_dependent": false,
+        "expected_status": 200,
+        "expected_response": {
+          "status": "ok"
+        },
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "path": "/health",
+        "service": "Python Backend (:8000)",
+        "type": "liveness_and_basic_db",
+        "handler": "backend/routers/misc.py:health_check",
+        "db_dependent": true,
+        "expected_status": 200,
+        "expected_response_healthy": {
+          "status": "ok",
+          "database": "ok",
+          "version": "0.1.0"
+        },
+        "expected_response_degraded": {
+          "status": "degraded",
+          "database": "error",
+          "version": "0.1.0"
+        },
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "path": "/api/v1/internal/db-health",
+        "service": "Rust Gateway (:8001)",
+        "type": "readiness",
+        "handler": "backend-rust/src/routes/health.rs:db_health",
+        "db_dependent": true,
+        "expected_status_healthy": 200,
+        "expected_response_healthy": {
+          "status": "ok",
+          "database": "ok"
+        },
+        "expected_status_unhealthy": 503,
+        "expected_response_unhealthy": {
+          "status": "error",
+          "database": "unavailable"
+        },
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "path": "/ready",
+        "service": "Platform",
+        "type": "readiness",
+        "handler": null,
+        "db_dependent": null,
+        "expected_status": null,
+        "expected_response": null,
+        "verified": false,
+        "status": "UNIMPLEMENTED_NOT_MEASURED",
+        "note": "No /ready route is defined in Axum or FastAPI route inventories. DB readiness is measured exclusively via /api/v1/internal/db-health."
+      },
+      {
+        "path": "container:db:pg_isready",
+        "service": "PostgreSQL Container (:5432)",
+        "type": "container_readiness",
+        "handler": "docker-compose.prod.yml:services.db.healthcheck",
+        "db_dependent": true,
+        "expected_status": 0,
+        "command": "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB",
+        "verified": true,
+        "status": "PASS"
+      }
+    ]
+  },
+  "logging_and_monitoring_telemetry": {
+    "metrics_endpoint": {
+      "path": "/metrics",
+      "service": "Rust Gateway (:8001)",
+      "format": "text/plain; version=0.0.4; charset=utf-8 (Prometheus)",
+      "handler": "backend-rust/src/routes/metrics.rs:metrics",
+      "verified": true,
+      "concrete_counters": [
+        {
+          "name": "http_requests_total",
+          "type": "counter",
+          "description": "Total HTTP requests served across all routes"
+        },
+        {
+          "name": "http_errors_total",
+          "type": "counter",
+          "description": "Total HTTP 5xx responses"
+        },
+        {
+          "name": "http_requests_by_mode_total",
+          "type": "counter",
+          "labels": [
+            "mode=\"native\"",
+            "mode=\"gateway\""
+          ],
+          "description": "Requests segmented by serving mode"
+        },
+        {
+          "name": "http_request_duration_milliseconds_sum",
+          "type": "counter",
+          "description": "Cumulative request latency in ms"
+        },
+        {
+          "name": "streak_repair_total",
+          "type": "counter",
+          "description": "Total streak repairs performed"
+        },
+        {
+          "name": "streak_brb_invocations_total",
+          "type": "counter",
+          "description": "Total Big Red Button invocations"
+        },
+        {
+          "name": "friend_streak_increments_total",
+          "type": "counter",
+          "description": "Total friend-streak increments"
+        },
+        {
+          "name": "phoenix_badges_awarded_total",
+          "type": "counter",
+          "description": "Total Phoenix comeback badges awarded"
+        },
+        {
+          "name": "fsrs_reviews_total",
+          "type": "counter",
+          "description": "Total FSRS reviews performed"
+        }
+      ]
+    },
+    "unmeasured_or_docs_only_claims": [
+      {
+        "claim": "live_ai_active_sessions",
+        "source": "docs/rbpc/STAGING_DEPLOYMENT_SPEC.md:520",
+        "claimed_as": "Prometheus metric",
+        "reality": "Not exposed in /metrics Prometheus text. Logged only in database table live_rate_limit_logs.",
+        "status": "DOCS_ONLY_UNMEASURED",
+        "verdict": "FAIL_CLAIM_WITHOUT_PROBE"
+      },
+      {
+        "claim": "live_ai_audio_minutes_total",
+        "source": "docs/rbpc/STAGING_DEPLOYMENT_SPEC.md:521",
+        "claimed_as": "Prometheus metric",
+        "reality": "Not exposed in /metrics Prometheus text. Aggregated only via database queries.",
+        "status": "DOCS_ONLY_UNMEASURED",
+        "verdict": "FAIL_CLAIM_WITHOUT_PROBE"
+      },
+      {
+        "claim": "live_ai_token_expenditure_total",
+        "source": "docs/rbpc/STAGING_DEPLOYMENT_SPEC.md:522",
+        "claimed_as": "Prometheus metric",
+        "reality": "Not exposed in /metrics Prometheus text. Tracked via AI worker DB logs.",
+        "status": "DOCS_ONLY_UNMEASURED",
+        "verdict": "FAIL_CLAIM_WITHOUT_PROBE"
+      },
+      {
+        "claim": "99.9% uptime SLA",
+        "source": "Pitch / architectural overview docs",
+        "claimed_as": "Guaranteed SLA",
+        "reality": "No active external uptime ping monitor or SLA dashboard is wired into the repository.",
+        "status": "DOCS_ONLY_UNMEASURED",
+        "verdict": "FAIL_CLAIM_WITHOUT_PROBE"
+      },
+      {
+        "claim": "/ready endpoint",
+        "source": "Generic LMS requirements",
+        "claimed_as": "HTTP readiness probe",
+        "reality": "No route exists for /ready. Readiness is checked via /api/v1/internal/db-health.",
+        "status": "DOCS_ONLY_UNMEASURED",
+        "verdict": "FAIL_CLAIM_WITHOUT_PROBE"
+      }
+    ]
+  },
+  "backup_and_disaster_recovery": {
+    "backup_procedure": {
+      "database_dump": "docker compose exec -T db pg_dump -U ${POSTGRES_USER} -d ${POSTGRES_DB} -Fc -f /var/lib/postgresql/data/backup_$(date +%Y%m%d_%H%M%S).dump",
+      "database_restore": "docker compose exec -T db pg_restore -U ${POSTGRES_USER} -d ${POSTGRES_DB} --clean --if-exists /var/lib/postgresql/data/<dump_file>",
+      "media_assets_backup": "tar -czf /backups/ban-duc-noi_$(date +%Y%m%d).tar.gz ./ban-duc-noi"
+    },
+    "additive_migration_safety": {
+      "rule": "ADR 03: Purely additive migrations (CREATE TABLE, CREATE INDEX, ADD COLUMN)",
+      "rollback_impact": "Application code rollback does NOT require database schema downgrade. Older application versions ignore new columns/tables safely."
+    }
+  },
+  "rollback_protocols": {
+    "staging_rollback_script": {
+      "file_path": "scripts/deployment/rollback-staging.sh",
+      "executable": true,
+      "strategy": "Git checkout target commit + docker compose stop app containers + docker compose up -d --build + health check validation",
+      "verified": true
+    },
+    "per_route_hot_revert": {
+      "mechanism": "backend-rust/config/route-modes.toml",
+      "method": "Change route mode from 'native' to 'gateway'",
+      "latency": "Hot-reloaded automatically every 30s or instantly via SIGHUP",
+      "downtime": "0 seconds"
+    },
+    "production_image_rollback": {
+      "mechanism": "scripts/deploy-prod.sh records pre-deploy image IDs in /tmp/lms-pre-deploy-images.txt",
+      "command": "docker compose -f docker-compose.prod.yml up -d --no-deps api_rust web (with previous image tag)"
+    }
+  },
+  "verified_operational_commands": {
+    "staging": [
+      {
+        "name": "check_status",
+        "cmd": "docker compose -f docker-compose.prod.yml ps",
+        "description": "View container status and health"
+      },
+      {
+        "name": "check_liveness",
+        "cmd": "curl -sk https://127.0.0.1:8443/health",
+        "description": "Liveness probe: verifies Nginx & Rust gateway are up"
+      },
+      {
+        "name": "check_readiness",
+        "cmd": "curl -sk https://127.0.0.1:8443/api/v1/internal/db-health",
+        "description": "Readiness probe: verifies PostgreSQL pool is responding"
+      },
+      {
+        "name": "check_metrics",
+        "cmd": "curl -sk https://127.0.0.1:8443/metrics",
+        "description": "Prometheus telemetry: scrapes request and error counters"
+      },
+      {
+        "name": "tail_logs_api",
+        "cmd": "docker compose -f docker-compose.prod.yml logs -f --tail=100 api api_rust",
+        "description": "Stream backend logs"
+      },
+      {
+        "name": "execute_rollback",
+        "cmd": "./scripts/deployment/rollback-staging.sh HEAD~1",
+        "description": "Rollback application to previous commit"
+      }
+    ],
+    "production": [
+      {
+        "name": "deploy_safe",
+        "cmd": "./scripts/deployment/deploy-safe.sh",
+        "description": "Production sequential build and rolling deployment with health gate"
+      },
+      {
+        "name": "deploy_prod",
+        "cmd": "./scripts/deploy-prod.sh --yes",
+        "description": "Direct Git fetch and container update with smoke test suite"
+      },
+      {
+        "name": "quick_update",
+        "cmd": "./scripts/deployment/update-server.sh",
+        "description": "Sync code and rebuild api and web containers"
+      },
+      {
+        "name": "verify_contracts",
+        "cmd": "BASE_URL=https://lms.histolab.icu ./scripts/testing/rust_gateway_contracts.sh",
+        "description": "Smoke and contract testing across API routes"
+      },
+      {
+        "name": "ssl_renewal",
+        "cmd": "./scripts/deployment/get-ssl.sh",
+        "description": "Certbot webroot issuance and renewal"
+      }
+    ]
+  },
+  "risks_and_mitigations": [
+    {
+      "risk_id": "RISK-OBS-01",
+      "severity": "HIGH",
+      "component": "Nginx / WebRTC",
+      "description": "Cloudflare CDN proxies only HTTP/HTTPS and TCP/WebSocket traffic; it drops arbitrary UDP packets. If LiveKit or Janus RTC media is routed through Cloudflare proxied DNS, all peer-to-peer audio/video fails.",
+      "mitigation": "Media plane UDP (50000-50100 for LiveKit, 20000-20100 for Janus) must route directly to VPS IP 36.50.27.240. Cloudflare DNS for rtc-staging.histolab.icu must be configured as DNS-only (grey cloud)."
+    },
+    {
+      "risk_id": "RISK-OBS-02",
+      "severity": "MEDIUM",
+      "component": "Reverse Proxy (nginx-lms.conf)",
+      "description": "Production nginx-lms.conf hardcodes static upstream hostnames without variables, creating startup dependency on upstream container readiness, and uses deprecated listen http2 syntax.",
+      "mitigation": "Align production config with staging pattern using dynamic resolver 127.0.0.11 and variables ($api_upstream, etc.) with 'http2 on;' directive."
+    },
+    {
+      "risk_id": "RISK-OBS-03",
+      "severity": "MEDIUM",
+      "component": "Telemetry / Documentation Drift",
+      "description": "Documentation in STAGING_DEPLOYMENT_SPEC.md claims live_ai_active_sessions, live_ai_audio_minutes_total, and live_ai_token_expenditure_total exist as Prometheus metrics, but they are not implemented in backend-rust/src/routes/metrics.rs.",
+      "mitigation": "Flagged as DOCS_ONLY_UNMEASURED in baseline artifact. Prometheus scraper must not alert on missing AI session metrics until native gauges are added."
+    },
+    {
+      "risk_id": "RISK-OBS-04",
+      "severity": "LOW",
+      "component": "Health Probes",
+      "description": "Generic specs refer to /ready, but no /ready route is exposed in the gateway. Operators or k8s ingresses probing /ready receive 404.",
+      "mitigation": "Documented /api/v1/internal/db-health as the authoritative DB readiness probe in runbooks."
+    }
+  ]
+}

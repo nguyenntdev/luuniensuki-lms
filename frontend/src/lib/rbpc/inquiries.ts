@@ -4,7 +4,7 @@
  * Base Specification: Master Execution Goal V2 (§5.1, §5.2, §5.3, §5.4, §6.1, §6.2) & CREATE_LEARN_SPEC.md
  */
 
-import { apiRequest } from "@/lib/api";
+import { apiRequest, ApiError, type ApiErrorOptions } from "@/lib/api";
 import type {
   InquiryFormValues,
   InquiryStatus,
@@ -333,37 +333,54 @@ export interface CreateInquiryApiPayload {
   idempotency_key: string;
 }
 
+interface BackendInquiryResponse {
+  reference: string;
+  status_token?: string;
+  statusToken?: string;
+  status: InquiryStatus;
+  message: string;
+  created_at?: string;
+  createdAt?: string;
+}
+
 export async function submitInquiryToApi(
   payload: CreateInquiryApiPayload
 ): Promise<InquirySubmissionResult> {
   try {
-    const res = await apiRequest<InquirySubmissionResult>("/api/v1/rbpc/inquiries", {
+    const res = await apiRequest<BackendInquiryResponse>("/api/v1/rbpc/inquiries", {
       method: "POST",
       body: payload,
     });
-    return res;
-  } catch (error) {
-    // If backend is running in mock mode or unrouted in local dev, provide resilient simulated result
-    // to protect user journey while logging the issue.
-    const isNetworkOrNotFound =
-      error instanceof Error &&
-      (error.message.includes("404") ||
-        error.message.includes("Failed to fetch") ||
-        error.message.includes("NetworkError"));
 
-    if (isNetworkOrNotFound) {
-      const fallbackRef = generatePublicReference();
-      const fallbackToken = generateOpaqueToken();
-      return {
-        reference: fallbackRef,
-        statusToken: fallbackToken,
-        status: "new",
-        message:
-          "Yêu cầu đã được ghi nhận. Nhà cung cấp sẽ liên hệ xác nhận lịch trống trong vòng 24 giờ.",
-        createdAt: new Date().toISOString(),
-      };
+    if (!res || !res.reference) {
+      throw new ApiError("Phản hồi từ máy chủ không hợp lệ.");
     }
-    throw error;
+
+    return {
+      reference: res.reference,
+      statusToken: res.statusToken || res.status_token || "",
+      status: res.status,
+      message: res.message,
+      createdAt: res.createdAt || res.created_at || new Date().toISOString(),
+    };
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw error;
+    }
+    if (error instanceof Error) {
+      throw new ApiError(error.message, { data: error });
+    }
+    throw new ApiError("Gửi yêu cầu không thành công do lỗi mạng hoặc máy chủ.");
+  }
+}
+
+export class InquiryNotFoundError extends ApiError {
+  constructor(
+    message: string = "Không tìm thấy hồ sơ với mã tra cứu này.",
+    options: ApiErrorOptions = { status: 404 }
+  ) {
+    super(message, options);
+    this.name = "InquiryNotFoundError";
   }
 }
 
@@ -372,45 +389,95 @@ export async function fetchInquiryStatusByToken(
 ): Promise<InquiryStatusResponse> {
   const token = opaqueToken.trim();
   if (!token) {
-    throw new Error("Mã tra cứu không được để trống.");
+    throw new InquiryNotFoundError("Mã tra cứu không được để trống.", { status: 400 });
   }
 
   try {
-    const res = await apiRequest<InquiryStatusResponse>(
-      `/api/v1/rbpc/inquiries/status/${encodeURIComponent(token)}`
-    );
-    return res;
-  } catch (error) {
-    // Check if token matches our seed data or local fallback
-    const matchedSeed = SEED_PARTNER_INQUIRIES.find(
-      (s) => s.reference.toLowerCase() === token.toLowerCase()
-    );
-
-    if (matchedSeed) {
-      return {
-        reference: matchedSeed.reference,
-        experienceTitle: matchedSeed.experienceTitle,
-        status: matchedSeed.status,
-        statusMessage:
-          matchedSeed.status === "new"
-            ? "Yêu cầu đã được ghi nhận. Nhà cung cấp đang chuẩn bị liên hệ."
-            : matchedSeed.status === "contacted"
-            ? "Nhà cung cấp đã chủ động liên hệ trao đổi chi tiết về khung giờ và chuẩn bị vật liệu."
-            : matchedSeed.status === "confirmed"
-            ? "Lịch trải nghiệm của bạn đã được đối tác xác nhận thành công."
-            : "Hồ sơ trải nghiệm đã được đóng.",
-        preferredDate: matchedSeed.preferredDate,
-        partySize: matchedSeed.partySize,
-        lastUpdatedAt: matchedSeed.updatedAt,
-        createdAt: matchedSeed.createdAt,
-      };
+    interface BackendInquiryStatusResponse {
+      reference: string;
+      experience_title?: string;
+      experienceTitle?: string;
+      status: InquiryStatus;
+      status_message?: string;
+      statusMessage?: string;
+      preferred_date?: string | null;
+      preferredDate?: string | null;
+      party_size?: number | null;
+      partySize?: number | null;
+      last_updated_at?: string;
+      lastUpdatedAt?: string;
+      created_at?: string;
+      createdAt?: string;
     }
 
-    throw error;
+    const res = await apiRequest<BackendInquiryStatusResponse>(
+      `/api/v1/rbpc/inquiries/status/${encodeURIComponent(token)}`
+    );
+
+    if (!res || !res.reference) {
+      throw new InquiryNotFoundError("Không tìm thấy hồ sơ với mã tra cứu này.", { status: 404 });
+    }
+
+    return {
+      reference: res.reference,
+      experienceTitle: res.experienceTitle || res.experience_title || "Trải nghiệm văn hóa",
+      status: res.status,
+      statusMessage: res.statusMessage || res.status_message || "",
+      preferredDate: res.preferredDate ?? res.preferred_date ?? null,
+      partySize: res.partySize ?? res.party_size ?? null,
+      lastUpdatedAt: res.lastUpdatedAt || res.last_updated_at || new Date().toISOString(),
+      createdAt: res.createdAt || res.created_at,
+    };
+  } catch (error) {
+    if (error instanceof InquiryNotFoundError) {
+      throw error;
+    }
+
+    if (error instanceof ApiError) {
+      if (error.status === 404) {
+        throw new InquiryNotFoundError("Không tìm thấy hồ sơ với mã tra cứu này.", {
+          status: 404,
+          data: error.data,
+        });
+      }
+      throw error;
+    }
+
+    const isNetworkError =
+      error instanceof TypeError ||
+      (error instanceof Error &&
+        (error.message.includes("Failed to fetch") ||
+          error.message.includes("NetworkError") ||
+          error.message.includes("fetch failed") ||
+          error.message.includes("Invalid URL")));
+
+    if (isNetworkError) {
+      throw new InquiryNotFoundError("Không tìm thấy hồ sơ với mã tra cứu này.", {
+        status: 404,
+        data: error,
+      });
+    }
+
+    if (error instanceof Error) {
+      throw new InquiryNotFoundError(
+        error.message.includes("404")
+          ? "Không tìm thấy hồ sơ với mã tra cứu này."
+          : error.message,
+        { data: error }
+      );
+    }
+
+    throw new InquiryNotFoundError("Không tìm thấy hồ sơ với mã tra cứu này.");
   }
 }
 
-export async function fetchPartnerInquiries(): Promise<PartnerInboxItemWithAudit[]> {
+export interface FetchPartnerInquiriesOptions {
+  allowDemoFallback?: boolean;
+}
+
+export async function fetchPartnerInquiries(
+  options?: FetchPartnerInquiriesOptions
+): Promise<PartnerInboxItemWithAudit[]> {
   try {
     interface BackendPartnerList {
       items: Array<{
@@ -449,10 +516,12 @@ export async function fetchPartnerInquiries(): Promise<PartnerInboxItemWithAudit
         updatedAt: item.updated_at,
       }));
     }
-    return SEED_PARTNER_INQUIRIES;
-  } catch {
-    // Return seed items for prototype evaluation when unauthenticated or during test runs
-    return SEED_PARTNER_INQUIRIES;
+    return [];
+  } catch (error) {
+    if (options?.allowDemoFallback) {
+      return SEED_PARTNER_INQUIRIES;
+    }
+    throw error;
   }
 }
 
@@ -461,17 +530,11 @@ export async function updatePartnerInquiryStatusApi(
   newStatus: InquiryStatus,
   note?: string
 ): Promise<void> {
-  try {
-    await apiRequest(`/api/v1/rbpc/partner/inquiries/${encodeURIComponent(id)}`, {
-      method: "PATCH",
-      body: {
-        status: newStatus,
-        note: note || undefined,
-      },
-    });
-  } catch (err) {
-    // In demo/test environment where database records might not have current user ownership,
-    // don't completely crash the client UI
-    console.warn("API update rejected or unavailable, updating client state:", err);
-  }
+  await apiRequest(`/api/v1/rbpc/partner/inquiries/${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    body: {
+      status: newStatus,
+      note: note || undefined,
+    },
+  });
 }

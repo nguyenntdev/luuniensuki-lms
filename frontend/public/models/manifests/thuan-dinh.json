@@ -5,21 +5,24 @@
   "lods": {
     "low": {
       "url": "/assets/models/THUAN-DINH-v1-512.glb",
-      "fallback_url": "/assets/models/CAO-DINH-v1-512.glb",
-      "sha256": "placeholder-sha256-512",
-      "bytes": 524288
+      "fallback_url": null,
+      "sha256": null,
+      "bytes": 0,
+      "status": "MISSING"
     },
     "medium": {
       "url": "/assets/models/THUAN-DINH-v1-1k.glb",
-      "fallback_url": "/assets/models/CAO-DINH-v1-1k.glb",
-      "sha256": "placeholder-sha256-1k",
-      "bytes": 1048576
+      "fallback_url": null,
+      "sha256": null,
+      "bytes": 0,
+      "status": "MISSING"
     },
     "high": {
       "url": "/assets/models/THUAN-DINH-v1-2k.glb",
-      "fallback_url": "/assets/models/CAO-DINH-v1-2k.glb",
-      "sha256": "placeholder-sha256-2k",
-      "bytes": 2097152
+      "fallback_url": null,
+      "sha256": null,
+      "bytes": 0,
+      "status": "MISSING"
     }
   },
   "hotspots": [
@@ -473,5 +476,8 @@
       "coordinate_version": 1,
       "model_version": 1
     }
-  ]
+  ],
+  "mesh_status": "MISSING",
+  "has_2d_fallback": true,
+  "fallback_2d_url": "/assets/ban-duc-noi/THUAN%20DINH/THU%E1%BA%A6N%20%C4%90%E1%BB%88NH.jpg"
 }

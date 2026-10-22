@@ -1,0 +1,33 @@
+{
+  "ticket": "V5-T012",
+  "slot": "W01-A02",
+  "title": "Token status strict server lookup",
+  "status": "COMPLETED",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "changes": [
+    {
+      "file": "frontend/src/lib/rbpc/inquiries.ts",
+      "action": "MODIFIED",
+      "details": "Removed matchedSeed fallback in fetchInquiryStatusByToken. Enforces strict server lookup via /api/v1/rbpc/inquiries/status/{opaqueToken} with InquiryNotFoundError thrown on 404/network errors."
+    },
+    {
+      "file": "backend/routers/rbpc.py",
+      "action": "VERIFIED",
+      "details": "Verified endpoint /api/v1/rbpc/inquiries/status/{opaqueToken} returns 404 for nonexistent or invalid tokens, and strictly redacts PII (zero email, phone, personal name, or internal note disclosure)."
+    },
+    {
+      "file": "tests/v5/test_v5_t012.py",
+      "action": "CREATED",
+      "details": "6 unit & integration tests covering 404 for random/expired tokens, redacted response verification, seed reference rejection, and timing-safe lookup."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t012.py -v",
+    "tests_total": 6,
+    "tests_passed": 6,
+    "tests_failed": 0,
+    "zero_pii_audit": "PASSED - contact_value, contact_channel, customer name, internal notes redacted",
+    "seed_rejection_audit": "PASSED - client seed data never accepted as valid token"
+  }
+}

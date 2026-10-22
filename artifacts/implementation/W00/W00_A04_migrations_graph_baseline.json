@@ -1,0 +1,715 @@
+{
+  "ticket_id": "V5-T004",
+  "slot": "W00-A04",
+  "baseline_source_sha": "54da2beb71f3df70e1f00b215ae0fb1a850eb263",
+  "recorded_at": "2026-10-21T10:46:11.596334+00:00",
+  "status": "PASS",
+  "alembic_config": "alembic.ini",
+  "migrations_dir": "migrations/versions",
+  "graph_summary": {
+    "total_revisions": 72,
+    "root_revision": "0001_initial_schema",
+    "current_heads": [
+      "0057_merge_all_heads"
+    ],
+    "is_single_head": true,
+    "unambiguous_head": "0057_merge_all_heads",
+    "merged_heads_count": 15,
+    "merged_heads": [
+      "0012_analytics_taxonomy",
+      "0012_onboarding_fields",
+      "0013_content_tagging",
+      "0013_weekly_quests",
+      "0014",
+      "0014_crash_reports",
+      "0019_app_versions",
+      "0021_classroom_enhancements",
+      "0024",
+      "0024_user_learning_paths",
+      "0031_user_shares",
+      "0032_email_scheduling",
+      "0033_feature_flags_experiments",
+      "0054_rbpc_heritage_schema",
+      "0056_imperial_sources_claims_scope"
+    ]
+  },
+  "branch_points": [
+    {
+      "at_revision": "0011_rag_embeddings",
+      "branches": [
+        "0012_analytics_taxonomy",
+        "0012_onboarding_fields",
+        "0012_content_versioning",
+        "0012_daily_missions"
+      ]
+    },
+    {
+      "at_revision": "0012_daily_missions",
+      "branches": [
+        "0013_weekly_quests",
+        "0013_review_workflow"
+      ]
+    },
+    {
+      "at_revision": "0013_review_workflow",
+      "branches": [
+        "0014",
+        "0014_crash_reports",
+        "0014_streak_rewards"
+      ]
+    },
+    {
+      "at_revision": "0018_lesson_cache",
+      "branches": [
+        "0019",
+        "0019_app_versions"
+      ]
+    },
+    {
+      "at_revision": "0020",
+      "branches": [
+        "0021",
+        "0021_classroom_enhancements"
+      ]
+    },
+    {
+      "at_revision": "0023_hearts_system",
+      "branches": [
+        "0024",
+        "0024_user_learning_paths",
+        "0024_spaced_repetition"
+      ]
+    },
+    {
+      "at_revision": "0030_student_progress_snapshots",
+      "branches": [
+        "0031_social_features",
+        "0031_user_shares"
+      ]
+    },
+    {
+      "at_revision": "0031_social_features",
+      "branches": [
+        "0032",
+        "0032_email_scheduling"
+      ]
+    },
+    {
+      "at_revision": "0033",
+      "branches": [
+        "0033_feature_flags_experiments",
+        "0034"
+      ]
+    },
+    {
+      "at_revision": "0053_user_mission_quest_compound_indexes",
+      "branches": [
+        "0054_imperial_city_core",
+        "0054_rbpc_heritage_schema"
+      ]
+    }
+  ],
+  "safety_audit": {
+    "lint_script": "scripts/ci/lint-migration-safety.sh",
+    "exit_code": 0,
+    "result": "PASS",
+    "dangerous_operations_detected": 0,
+    "disallowed_patterns": [
+      "DROP TABLE",
+      "DROP COLUMN",
+      "ALTER ... TYPE",
+      "ALTER COLUMN ... TYPE",
+      "RENAME TABLE",
+      "RENAME COLUMN",
+      "RENAME TO",
+      "DROP CONSTRAINT",
+      "op.drop_table",
+      "op.drop_column",
+      "op.drop_constraint"
+    ]
+  },
+  "model_alignment": {
+    "model_sources": [
+      "backend/models.py",
+      "backend/models_rbpc.py"
+    ],
+    "total_registered_tables": 124,
+    "unmigrated_tables_count": 0,
+    "tables": [
+      "abuse_reports",
+      "ai_conversations",
+      "ai_jobs",
+      "ai_messages",
+      "analytics_events",
+      "app_versions",
+      "assignment_progress",
+      "audit_logs",
+      "badges",
+      "certificates",
+      "class_members",
+      "classes",
+      "content_flags",
+      "content_provenance",
+      "content_tags",
+      "content_versions",
+      "crash_reports",
+      "daily_missions",
+      "email_templates",
+      "embedding_jobs",
+      "experiment_events",
+      "experiment_metric_events",
+      "experiments",
+      "feature_flags",
+      "friend_requests",
+      "funnels",
+      "guest_previews",
+      "heart_transactions",
+      "heritage_heritage_relations",
+      "heritage_media_assets",
+      "heritage_places",
+      "heritage_source_evidence",
+      "historical_assets",
+      "historical_claim_sources",
+      "historical_claims",
+      "historical_content_audit_log",
+      "historical_entities",
+      "historical_entity_relations",
+      "historical_geographies",
+      "historical_sources",
+      "history_collections",
+      "history_question_types",
+      "history_stories",
+      "imperial_activities",
+      "imperial_annotation_audit",
+      "imperial_annotation_links",
+      "imperial_art_detail_claim_sources",
+      "imperial_art_detail_questions",
+      "imperial_art_details",
+      "imperial_assignment_releases",
+      "imperial_clue_attempts",
+      "imperial_clues",
+      "imperial_learning_media",
+      "imperial_learning_paths",
+      "imperial_lens_sites",
+      "imperial_lenses",
+      "imperial_map_annotations",
+      "imperial_map_assets",
+      "imperial_media",
+      "imperial_media_hotspots",
+      "imperial_path_steps",
+      "imperial_questions",
+      "imperial_sites",
+      "imperial_submissions",
+      "imperial_zones",
+      "lesson_cache",
+      "lesson_content",
+      "lesson_prerequisites",
+      "live_events",
+      "live_participants",
+      "live_rate_limit_logs",
+      "live_sessions",
+      "motifs",
+      "password_reset_tokens",
+      "push_notifications",
+      "quest_assignments",
+      "quest_objectives",
+      "quest_progress",
+      "quest_rewards",
+      "quest_steps",
+      "quests",
+      "quiz_attempts",
+      "quiz_hint_requests",
+      "quiz_questions",
+      "rag_documents",
+      "rag_settings",
+      "rbpc_claim_evidence",
+      "rbpc_content_audit",
+      "rbpc_creators",
+      "rbpc_events",
+      "rbpc_experiences",
+      "rbpc_inquiries",
+      "rbpc_stories",
+      "recommendations",
+      "revoked_refresh_tokens",
+      "scheduled_emails",
+      "session_actions",
+      "session_summaries",
+      "session_transcripts",
+      "spaced_repetition_cards",
+      "streak_rewards",
+      "student_progress_snapshots",
+      "tags",
+      "urn_exam_attempts",
+      "urn_exams",
+      "urns",
+      "user_badges",
+      "user_content_interactions",
+      "user_daily_missions",
+      "user_experiment_assignments",
+      "user_follows",
+      "user_hearts",
+      "user_leaderboard_settings",
+      "user_leagues",
+      "user_learning_paths",
+      "user_milestones",
+      "user_notification_settings",
+      "user_progress",
+      "user_sessions",
+      "user_shares",
+      "user_skill_levels",
+      "user_weekly_quests",
+      "users",
+      "weekly_quests"
+    ]
+  },
+  "revisions": [
+    {
+      "revision": "0001_initial_schema",
+      "down_revision": null,
+      "doc": "",
+      "file": "0001_initial_schema.py"
+    },
+    {
+      "revision": "0002_profile_features",
+      "down_revision": "0001_initial_schema",
+      "doc": "",
+      "file": "0002_profile_features.py"
+    },
+    {
+      "revision": "0003_add_username",
+      "down_revision": "0002_profile_features",
+      "doc": "",
+      "file": "0003_add_username.py"
+    },
+    {
+      "revision": "0004_urn_exams",
+      "down_revision": "0003_add_username",
+      "doc": "",
+      "file": "0004_urn_exams.py"
+    },
+    {
+      "revision": "0005_starting_path_analytics",
+      "down_revision": "0004_urn_exams",
+      "doc": "",
+      "file": "0005_starting_path_analytics.py"
+    },
+    {
+      "revision": "0006_certificates",
+      "down_revision": "0005_starting_path_analytics",
+      "doc": "",
+      "file": "0006_certificates.py"
+    },
+    {
+      "revision": "0007_quests",
+      "down_revision": "0006_certificates",
+      "doc": "",
+      "file": "0007_quests.py"
+    },
+    {
+      "revision": "0008_teacher_classes",
+      "down_revision": "0007_quests",
+      "doc": "",
+      "file": "0008_teacher_classes.py"
+    },
+    {
+      "revision": "0009_ai_recommendations",
+      "down_revision": "0008_teacher_classes",
+      "doc": "",
+      "file": "0009_ai_recommendations.py"
+    },
+    {
+      "revision": "0010_rag_documents",
+      "down_revision": "0009_ai_recommendations",
+      "doc": "",
+      "file": "0010_rag_documents.py"
+    },
+    {
+      "revision": "0011_rag_embeddings",
+      "down_revision": "0010_rag_documents",
+      "doc": "Add embeddings and hybrid settings for RAG.",
+      "file": "0011_rag_embeddings.py"
+    },
+    {
+      "revision": "0012_analytics_taxonomy",
+      "down_revision": "0011_rag_embeddings",
+      "doc": "Add analytics event taxonomy fields.",
+      "file": "0012_analytics_taxonomy.py"
+    },
+    {
+      "revision": "0012_content_versioning",
+      "down_revision": "0011_rag_embeddings",
+      "doc": "Add content versioning metadata.",
+      "file": "0012_content_versioning.py"
+    },
+    {
+      "revision": "0012_daily_missions",
+      "down_revision": "0011_rag_embeddings",
+      "doc": "Add daily missions and user daily mission tracking.",
+      "file": "0012_daily_missions.py"
+    },
+    {
+      "revision": "0012_onboarding_fields",
+      "down_revision": "0011_rag_embeddings",
+      "doc": "Add onboarding fields to users table.",
+      "file": "0012_onboarding_fields.py"
+    },
+    {
+      "revision": "0013_content_tagging",
+      "down_revision": "0012_content_versioning",
+      "doc": "Add content tagging for recommendation and search.",
+      "file": "0013_content_tagging.py"
+    },
+    {
+      "revision": "0013_review_workflow",
+      "down_revision": "0012_daily_missions",
+      "doc": "Add review workflow states.",
+      "file": "0013_review_workflow.py"
+    },
+    {
+      "revision": "0013_weekly_quests",
+      "down_revision": "0012_daily_missions",
+      "doc": "Add weekly quests",
+      "file": "0013_weekly_quests.py"
+    },
+    {
+      "revision": "0014_crash_reports",
+      "down_revision": "0013_review_workflow",
+      "doc": "Add crash reporting for mobile and web clients.",
+      "file": "0014_crash_reports.py"
+    },
+    {
+      "revision": "0014",
+      "down_revision": "0013_review_workflow",
+      "doc": "Add user notification settings and push permission tracking",
+      "file": "0014_notification_settings.py"
+    },
+    {
+      "revision": "0014_streak_rewards",
+      "down_revision": "0013_review_workflow",
+      "doc": "Add streak rewards table for milestone tracking.",
+      "file": "0014_streak_rewards.py"
+    },
+    {
+      "revision": "0015_embedding_jobs",
+      "down_revision": "0014_streak_rewards",
+      "doc": "Add EmbeddingJob model for tracking embedding rebuild progress.",
+      "file": "0015_embedding_jobs.py"
+    },
+    {
+      "revision": "0016_audit_logs",
+      "down_revision": "0015_embedding_jobs",
+      "doc": "Add audit_logs table.",
+      "file": "0016_audit_logs.py"
+    },
+    {
+      "revision": "0017_user_sessions",
+      "down_revision": "0016_audit_logs",
+      "doc": "Add user sessions table for real-time session tracking.",
+      "file": "0017_user_sessions.py"
+    },
+    {
+      "revision": "0018_lesson_cache",
+      "down_revision": "0017_user_sessions",
+      "doc": "Add lesson_cache table for offline caching.",
+      "file": "0018_lesson_cache.py"
+    },
+    {
+      "revision": "0019",
+      "down_revision": "0018_lesson_cache",
+      "doc": "Add abuse_reports table for UGC moderation",
+      "file": "0019_abuse_reports.py"
+    },
+    {
+      "revision": "0019_app_versions",
+      "down_revision": "0018_lesson_cache",
+      "doc": "Add app_versions table for mobile version management.",
+      "file": "0019_app_versions.py"
+    },
+    {
+      "revision": "0020",
+      "down_revision": "0019",
+      "doc": "Add content rating and age verification",
+      "file": "0020_content_rating_age_verification.py"
+    },
+    {
+      "revision": "0021_classroom_enhancements",
+      "down_revision": "0020",
+      "doc": "Add class_code, max_students, is_archived, settings, and updated_at to classrooms",
+      "file": "0021_classroom_enhancements.py"
+    },
+    {
+      "revision": "0021",
+      "down_revision": "0020",
+      "doc": "Add user milestones tracking",
+      "file": "0021_user_milestones.py"
+    },
+    {
+      "revision": "0022",
+      "down_revision": "0021",
+      "doc": "Add guest preview functionality",
+      "file": "0022_guest_preview.py"
+    },
+    {
+      "revision": "0023_hearts_system",
+      "down_revision": "0022",
+      "doc": "add hearts system",
+      "file": "0023_hearts_system.py"
+    },
+    {
+      "revision": "0024_spaced_repetition",
+      "down_revision": "0023_hearts_system",
+      "doc": "add spaced repetition cards",
+      "file": "0024_spaced_repetition.py"
+    },
+    {
+      "revision": "0024",
+      "down_revision": "0023_hearts_system",
+      "doc": "Add user content interactions for recommendations",
+      "file": "0024_user_content_interactions.py"
+    },
+    {
+      "revision": "0024_user_learning_paths",
+      "down_revision": "0023_hearts_system",
+      "doc": "Add user learning paths table",
+      "file": "0024_user_learning_paths.py"
+    },
+    {
+      "revision": "0025_adaptive_quiz",
+      "down_revision": "0024_spaced_repetition",
+      "doc": "add adaptive quiz and user skill levels",
+      "file": "0025_adaptive_quiz.py"
+    },
+    {
+      "revision": "0026_lesson_prerequisites",
+      "down_revision": "0025_adaptive_quiz",
+      "doc": "add lesson prerequisites and sequence fields",
+      "file": "0026_lesson_prerequisites.py"
+    },
+    {
+      "revision": "0027_quiz_hints",
+      "down_revision": "0026_lesson_prerequisites",
+      "doc": "add quiz hints with RAG support",
+      "file": "0027_quiz_hints.py"
+    },
+    {
+      "revision": "0028_ai_conversations",
+      "down_revision": "0027_quiz_hints",
+      "doc": "Add AI conversation and message models",
+      "file": "0028_ai_conversations.py"
+    },
+    {
+      "revision": "0029_quest_assignment_enhancements",
+      "down_revision": "0028_ai_conversations",
+      "doc": "quest_assignment_enhancements",
+      "file": "0029_quest_assignment_enhancements.py"
+    },
+    {
+      "revision": "0030_student_progress_snapshots",
+      "down_revision": "0029_quest_assignment_enhancements",
+      "doc": "student_progress_snapshots",
+      "file": "0030_student_progress_snapshots.py"
+    },
+    {
+      "revision": "0031_social_features",
+      "down_revision": "0030_student_progress_snapshots",
+      "doc": "add social features",
+      "file": "0031_social_features.py"
+    },
+    {
+      "revision": "0031_user_shares",
+      "down_revision": "0030_student_progress_snapshots",
+      "doc": "add user shares table",
+      "file": "0031_user_shares.py"
+    },
+    {
+      "revision": "0032_email_scheduling",
+      "down_revision": "0031_social_features",
+      "doc": "add email scheduling system",
+      "file": "0032_email_scheduling.py"
+    },
+    {
+      "revision": "0032",
+      "down_revision": "0031_social_features",
+      "doc": "Add push notifications table",
+      "file": "0032_push_notifications.py"
+    },
+    {
+      "revision": "0033",
+      "down_revision": "0032",
+      "doc": "Add experiments, feature flags, and experiment events",
+      "file": "0033_experiments_and_feature_flags.py"
+    },
+    {
+      "revision": "0033_feature_flags_experiments",
+      "down_revision": "0033",
+      "doc": "add feature flags and experiments",
+      "file": "0033_feature_flags_experiments.py"
+    },
+    {
+      "revision": "0034",
+      "down_revision": "0033",
+      "doc": "Add experiment_metric_events table for tracking experiment metrics",
+      "file": "0034_experiment_metric_events.py"
+    },
+    {
+      "revision": "0035",
+      "down_revision": "0034",
+      "doc": "Add user_leaderboard_settings table for leaderboard preferences",
+      "file": "0035_user_leaderboard_settings.py"
+    },
+    {
+      "revision": "0036",
+      "down_revision": "0035",
+      "doc": "Add created_by_id and target_audience to experiments",
+      "file": "0036_experiment_enhancements.py"
+    },
+    {
+      "revision": "0037",
+      "down_revision": "0036",
+      "doc": "Update feature_flags table with new fields",
+      "file": "0037_update_feature_flags_fields.py"
+    },
+    {
+      "revision": "0038",
+      "down_revision": "0037",
+      "doc": "Add live session and live participant tables",
+      "file": "0038_live_sessions.py"
+    },
+    {
+      "revision": "0039",
+      "down_revision": "0038",
+      "doc": "Add live_events table and idempotency key for live sessions",
+      "file": "0039_live_events_and_idempotency.py"
+    },
+    {
+      "revision": "0040",
+      "down_revision": "0039",
+      "doc": "Add session transcript, summary, and action tables for live sessions",
+      "file": "0040_live_session_reporting.py"
+    },
+    {
+      "revision": "0041",
+      "down_revision": "0040",
+      "doc": "Add persistent logs for live API rate limiting",
+      "file": "0041_live_rate_limit_logs.py"
+    },
+    {
+      "revision": "0042_streak_repair_economy",
+      "down_revision": "0041",
+      "doc": "streak repair economy",
+      "file": "0042_streak_repair_economy.py"
+    },
+    {
+      "revision": "0043_heritage_time_lapse",
+      "down_revision": "0042_streak_repair_economy",
+      "doc": "heritage time-lapse",
+      "file": "0043_heritage_time_lapse.py"
+    },
+    {
+      "revision": "0044_heritage_trails",
+      "down_revision": "0043_heritage_time_lapse",
+      "doc": "heritage trails",
+      "file": "0044_heritage_trails.py"
+    },
+    {
+      "revision": "0045_fsrs_spaced_repetition",
+      "down_revision": "0044_heritage_trails",
+      "doc": "fsrs spaced repetition",
+      "file": "0045_fsrs_spaced_repetition.py"
+    },
+    {
+      "revision": "0046_live_janus_signaling",
+      "down_revision": "0045_fsrs_spaced_repetition",
+      "doc": "live janus signaling",
+      "file": "0046_live_janus_signaling.py"
+    },
+    {
+      "revision": "0047_revoked_refresh_tokens",
+      "down_revision": "0046_live_janus_signaling",
+      "doc": "revoked refresh tokens",
+      "file": "0047_revoked_refresh_tokens.py"
+    },
+    {
+      "revision": "0048_history_governance",
+      "down_revision": "0047_revoked_refresh_tokens",
+      "doc": "historical governance \u2014 entities, claims, sources, relations, geography, assets, audit",
+      "file": "0048_history_governance.py"
+    },
+    {
+      "revision": "0049_content_validation_status",
+      "down_revision": "0048_history_governance",
+      "doc": "content validation status columns",
+      "file": "0049_content_validation_status.py"
+    },
+    {
+      "revision": "0050_history_questions",
+      "down_revision": "0049_content_validation_status",
+      "doc": "historical learning engine V2 \u2014 question model columns + question type registry",
+      "file": "0050_history_questions.py"
+    },
+    {
+      "revision": "0051_history_stories",
+      "down_revision": "0050_history_questions",
+      "doc": "story engine \u2014 block-based history stories table",
+      "file": "0051_history_stories.py"
+    },
+    {
+      "revision": "0052_history_collections",
+      "down_revision": "0051_history_stories",
+      "doc": "history collections \u2014 teacher/editorial historical collections",
+      "file": "0052_history_collections.py"
+    },
+    {
+      "revision": "0053_user_mission_quest_compound_indexes",
+      "down_revision": "0052_history_collections",
+      "doc": "compound indexes for user daily missions and weekly quests",
+      "file": "0053_user_mission_quest_compound_indexes.py"
+    },
+    {
+      "revision": "0054_imperial_city_core",
+      "down_revision": "0053_user_mission_quest_compound_indexes",
+      "doc": "imperial city core \u2014 zones, sites, aerial map assets, annotations, paths, activities, media",
+      "file": "0054_imperial_city_core.py"
+    },
+    {
+      "revision": "0054_rbpc_heritage_schema",
+      "down_revision": "0053_user_mission_quest_compound_indexes",
+      "doc": "RBPC Heritage Knowledge Catalogue and Commercial Slice Schema",
+      "file": "0054_rbpc_heritage_schema.py"
+    },
+    {
+      "revision": "0055_imperial_v51_extensions",
+      "down_revision": "0054_imperial_city_core",
+      "doc": "imperial v5.1 extensions \u2014 learning media, hotspots, art details, clues, questions, assignments",
+      "file": "0055_imperial_v51_extensions.py"
+    },
+    {
+      "revision": "0056_imperial_sources_claims_scope",
+      "down_revision": "0055_imperial_v51_extensions",
+      "doc": "add content_scope to historical_sources, historical_claims, and historical_entities",
+      "file": "0056_imperial_sources_claims_scope.py"
+    },
+    {
+      "revision": "0057_merge_all_heads",
+      "down_revision": [
+        "0012_analytics_taxonomy",
+        "0012_onboarding_fields",
+        "0013_content_tagging",
+        "0013_weekly_quests",
+        "0014",
+        "0014_crash_reports",
+        "0019_app_versions",
+        "0021_classroom_enhancements",
+        "0024",
+        "0024_user_learning_paths",
+        "0031_user_shares",
+        "0032_email_scheduling",
+        "0033_feature_flags_experiments",
+        "0054_rbpc_heritage_schema",
+        "0056_imperial_sources_claims_scope"
+      ],
+      "doc": "merge all migration heads into single baseline head",
+      "file": "0057_merge_all_heads.py"
+    }
+  ]
+}

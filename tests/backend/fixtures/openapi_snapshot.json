@@ -26153,6 +26153,73 @@
         "title": "RbpcInquiryStatusOut",
         "type": "object"
       },
+      "RbpcInquiryWithdrawOut": {
+        "description": "Visitor response when inquiry consent is withdrawn and contact details redacted.",
+        "properties": {
+          "experience_title": {
+            "default": "Trải nghiệm văn hóa",
+            "description": "Title of the requested experience.",
+            "title": "Experience Title",
+            "type": "string"
+          },
+          "last_updated_at": {
+            "format": "date-time",
+            "title": "Last Updated At",
+            "type": "string"
+          },
+          "party_size": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Party Size"
+          },
+          "preferred_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preferred Date"
+          },
+          "privacy_accepted": {
+            "default": false,
+            "description": "Consent acceptance flag (False following withdrawal).",
+            "title": "Privacy Accepted",
+            "type": "boolean"
+          },
+          "reference": {
+            "description": "Non-sequential reference code.",
+            "title": "Reference",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RbpcInquiryStatus",
+            "default": "closed",
+            "description": "Current inquiry lifecycle state (closed)."
+          },
+          "status_message": {
+            "default": "Đồng thuận đã được rút lại. Toàn bộ thông tin liên hệ đã được ẩn danh/xóa bỏ.",
+            "description": "Human-readable explanation of the withdrawal status.",
+            "title": "Status Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reference",
+          "last_updated_at"
+        ],
+        "title": "RbpcInquiryWithdrawOut",
+        "type": "object"
+      },
       "RbpcObservedMetrics": {
         "description": "Real, verified aggregate statistics observed in the database.",
         "properties": {
@@ -48367,6 +48434,49 @@
           }
         },
         "summary": "Get Inquiry Status By Token",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/inquiries/status/{opaqueToken}/withdraw": {
+      "post": {
+        "description": "Allow visitor to withdraw consent and redact contact details immediately.\n\nVietnam Decree 13/2023/ND-CP Article 11 right of withdrawal / right to erasure:\n- Scrubs name, contact_value, message to remove visitor PII\n- Marks privacy_accepted = False and state = closed\n- Appends immutable cryptographic audit entry to rbpc_content_audit",
+        "operationId": "withdraw_inquiry_status_consent_api_v1_rbpc_inquiries_status__opaqueToken__withdraw_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "opaqueToken",
+            "required": true,
+            "schema": {
+              "title": "Opaquetoken",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcInquiryWithdrawOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Withdraw Inquiry Status Consent",
         "tags": [
           "rbpc"
         ]

@@ -1,0 +1,28 @@
+{
+  "source_sha": "54da2beb71f3df70e1f00b215ae0fb1a850eb263",
+  "branch": "feat/rbpc-cultural-bridge-2026",
+  "recorded_at": "2026-10-21T00:00:00Z",
+  "dependency_lockfile_digests": {
+    "frontend/package-lock.json": "sha256:7fd90fd710ae0e47b2e11873367e0255e9845702f7c6dc6ccb8dd10ccd6c46aa",
+    "backend-rust/Cargo.lock": "sha256:762e98843c36d593a29dbf75c2c20ee911d9df9fba6d2107e820a95b33f0eb39",
+    "requirements.txt": "sha256:ee446e31492035633c2dc1750b22e6a1d9c3713cf732350f2a70e8d2f481ceea",
+    "mobile/pubspec.lock": "sha256:64a693ec095b52be7256694b02e05ed520abcbb0674b24aea5a901847bb8f766"
+  },
+  "tool_versions": {
+    "python": "Python 3.12.3",
+    "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05)",
+    "node": "v20.20.2",
+    "npm": "10.8.2",
+    "flutter": "Flutter 3.29.0 (Dart 3.7.0)",
+    "flutter_bin": "/home/clue/development/flutter/bin/flutter"
+  },
+  "api_contract_version": "v5.1",
+  "environment": "staging-verified",
+  "monorepo_roots": {
+    "backend_python": "backend/",
+    "backend_rust": "backend-rust/",
+    "frontend_next": "frontend/",
+    "mobile_flutter": "mobile/",
+    "specs_v6": "LUU_NIEN_V6_MASTER_AND_MODULAR_SPECS_WITH_MOBILE/"
+  }
+}

@@ -23,6 +23,7 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
+import re
 import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Any, Optional, Union
@@ -97,6 +98,62 @@ def canonical_json(data: Optional[dict[str, Any]]) -> str:
         ensure_ascii=False,
         default=str,
     )
+
+
+# --------------------------------------------------------------------------- #
+# Zero-PII Sanitization Guardrail
+# --------------------------------------------------------------------------- #
+PII_FORBIDDEN_KEYS = frozenset({
+    "name",
+    "contact_value",
+    "contact_val",
+    "email",
+    "phone",
+    "phone_number",
+    "password",
+    "password_hash",
+    "message",
+    "visitor_message",
+    "visitor_name",
+    "full_name",
+    "token",
+    "secret",
+    "access_token",
+    "opaque_token",
+})
+
+EMAIL_REGEX = re.compile(r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+")
+PHONE_REGEX = re.compile(r"(?:\+?84|0)[1-9]\d{8,9}\b")
+
+
+def sanitize_diff_payload(payload: Optional[dict[str, Any]]) -> Optional[dict[str, Any]]:
+    """Sanitize diff payload ensuring zero PII or credentials are stored."""
+    if not payload:
+        return payload
+    cleaned: dict[str, Any] = {}
+    for k, v in payload.items():
+        if k.lower() in PII_FORBIDDEN_KEYS:
+            logger.warning("Stripped forbidden PII key '%s' from audit diff_payload", k)
+            continue
+        if isinstance(v, str):
+            v_clean = EMAIL_REGEX.sub("[EMAIL_REDACTED]", v)
+            v_clean = PHONE_REGEX.sub("[PHONE_REDACTED]", v_clean)
+            cleaned[k] = v_clean
+        elif isinstance(v, dict):
+            cleaned[k] = sanitize_diff_payload(v)
+        elif isinstance(v, list):
+            cleaned[k] = [
+                sanitize_diff_payload(item) if isinstance(item, dict)
+                else (
+                    EMAIL_REGEX.sub("[EMAIL_REDACTED]", item)
+                    if isinstance(item, str)
+                    else item
+                )
+                for item in v
+            ]
+        else:
+            cleaned[k] = v
+    return cleaned
 
 
 # --------------------------------------------------------------------------- #
@@ -221,6 +278,9 @@ def record_audit_entry(
     a_id = _parse_uuid(actor_id)
     entry_time = created_at or datetime.now(timezone.utc)
 
+    # Sanitize diff payload ensuring zero PII or credentials
+    sanitized_diff = sanitize_diff_payload(diff_payload)
+
     # 1. Retrieve the tip of the hash chain for this entity
     last_entry = get_latest_audit_entry(db, entity_type=entity_type, entity_id=e_id)
     previous_hash = last_entry.new_hash if last_entry else None
@@ -232,7 +292,7 @@ def record_audit_entry(
         entity_id=e_id,
         action=action,
         actor_id=a_id,
-        diff_payload=diff_payload,
+        diff_payload=sanitized_diff,
         approved_scope=approved_scope,
         created_at=entry_time,
     )
@@ -246,7 +306,7 @@ def record_audit_entry(
         actor_id=a_id,
         previous_hash=previous_hash,
         new_hash=new_hash,
-        diff_payload=diff_payload,
+        diff_payload=sanitized_diff,
         approved_scope=approved_scope,
         created_at=entry_time,
     )
@@ -293,6 +353,33 @@ def record_inquiry_state_transition(
 
     new_state_str = new_state.value if isinstance(new_state, RbpcInquiryStatus) else str(new_state)
     old_state_str = old_state.value if isinstance(old_state, RbpcInquiryStatus) else (str(old_state) if old_state else None)
+
+    # Deduplication on replay: do not create duplicate audit log entries
+    last_entry = get_latest_audit_entry(db, entity_type=ENTITY_INQUIRY, entity_id=inquiry_id)
+    if last_entry:
+        is_replay = False
+        if old_state_str is not None and old_state_str == new_state_str:
+            is_replay = True
+        elif (
+            last_entry.action == ACTION_STATE_TRANSITION
+            and last_entry.diff_payload
+            and last_entry.diff_payload.get("new_state") == new_state_str
+        ):
+            is_replay = True
+        elif (
+            last_entry.action == ACTION_INQUIRY_CREATED
+            and last_entry.diff_payload
+            and last_entry.diff_payload.get("state") == new_state_str
+        ):
+            is_replay = True
+
+        if is_replay:
+            logger.info(
+                "Deduplicated replay inquiry state transition for %s (already state=%s)",
+                inquiry_id,
+                new_state_str,
+            )
+            return last_entry
 
     public_ref = inquiry_obj.public_ref if inquiry_obj else "unknown"
     exp_id = str(inquiry_obj.experience_id) if inquiry_obj else None

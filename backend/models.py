@@ -4221,6 +4221,7 @@ from .models_rbpc import (  # noqa: E402,F401
     RbpcExperience,
     RbpcInquiry,
     RbpcInquiryStatus,
+    RbpcNotificationOutbox,
     RbpcStory,
     RbpcStoryStatus,
     RbpcSupportType,

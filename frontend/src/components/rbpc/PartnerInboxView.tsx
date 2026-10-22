@@ -205,7 +205,7 @@ export function PartnerInboxView({
 
   // Internal state of inquiries if not controlled
   const [inquiryList, setInquiryList] = useState<PartnerInboxItemWithAudit[]>(
-    controlledInquiries || initialInquiries
+    controlledInquiries !== undefined ? controlledInquiries : initialInquiries
   );
 
   // Active filter states
@@ -240,7 +240,7 @@ export function PartnerInboxView({
 
   // Sync when controlled inquiries change
   React.useEffect(() => {
-    if (controlledInquiries) {
+    if (controlledInquiries !== undefined) {
       setInquiryList(controlledInquiries);
     }
   }, [controlledInquiries]);
@@ -770,16 +770,28 @@ export function PartnerInboxView({
                 <Inbox className="h-6 w-6" aria-hidden="true" />
               </div>
               <h3 className="font-serif text-base font-semibold text-[var(--rbpc-ink)]">
-                {locale === "vi" ? "Không có yêu cầu phù hợp" : "No Matching Inquiries Found"}
+                {isolatedInquiries.length === 0
+                  ? locale === "vi"
+                    ? "Chưa có yêu cầu trải nghiệm nào"
+                    : "No experience inquiries yet"
+                  : locale === "vi"
+                  ? "Không có yêu cầu phù hợp"
+                  : "No Matching Inquiries Found"}
               </h3>
               <p className="text-xs text-[var(--rbpc-muted)] max-w-sm mx-auto">
-                {locale === "vi"
+                {isolatedInquiries.length === 0
+                  ? locale === "vi"
+                    ? "Hộp thư của bạn hiện chưa có yêu cầu trải nghiệm mới nào từ khách tham quan."
+                    : "Your inbox currently has no incoming experience inquiries from visitors."
+                  : locale === "vi"
                   ? "Thử điều chỉnh trạng thái, khoảng ngày hoặc từ khóa tìm kiếm để xem các hồ sơ khác."
                   : "Try adjusting the status tabs, date range, or search query to find inquiries."}
               </p>
-              <RbpcButton variant="secondary" size="sm" onClick={handleResetFilters}>
-                {locale === "vi" ? "Xóa toàn bộ bộ lọc" : "Clear all filters"}
-              </RbpcButton>
+              {isolatedInquiries.length > 0 && (
+                <RbpcButton variant="secondary" size="sm" onClick={handleResetFilters}>
+                  {locale === "vi" ? "Xóa toàn bộ bộ lọc" : "Clear all filters"}
+                </RbpcButton>
+              )}
             </div>
           ) : (
             <div className="space-y-2.5">

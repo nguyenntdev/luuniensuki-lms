@@ -1,0 +1,56 @@
+{
+  "ticket_id": "V5-T017",
+  "slot": "W01-A07",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "goal": "Provider membership scope hardening (multi-tenant negative tests and zero parameter trusting)",
+  "status": "PASS",
+  "timestamp": "2026-10-21T18:45:00Z",
+  "summary": "Hardened provider membership scope enforcement in RBPC partner inbox endpoints (list_partner_inquiries and update_partner_inquiry_status). Caller identity is derived strictly from get_current_user without trusting client query parameters like ?provider=... for horizontal privilege escalation. Implemented comprehensive multi-tenant negative tests verifying Provider A cannot read or tamper with Provider B's inquiries (returning 403 FORBIDDEN_SCOPE), unauthenticated callers receive 401 Unauthorized, and administrators retain authorized cross-tenant visibility and management.",
+  "contracts": {
+    "identity_resolution": {
+      "source": "current_user: User = Depends(get_current_user)",
+      "client_param_trusting": "ZERO. Any client parameter (such as ?provider=...) is strictly disregarded for non-admin callers."
+    },
+    "tenant_scoping": {
+      "list_query_filter": "or_(RbpcInquiry.provider_id == current_user.id, RbpcExperience.provider_id == current_user.id)",
+      "patch_ownership_check": "inquiry.provider_id == current_user.id or (experience is not None and experience.provider_id == current_user.id)",
+      "unauthorized_patch_error": {
+        "status_code": 403,
+        "error_code": "FORBIDDEN_SCOPE",
+        "message": "You do not have permission to manage this inquiry."
+      }
+    },
+    "role_matrix": {
+      "unauthenticated": "401 UNAUTHORIZED",
+      "non_admin_provider": "Strict tenant isolation: read own inquiries, patch own inquiries with valid lifecycle transitions, 403 on cross-tenant patch",
+      "admin": "Cross-tenant inquiry read, optional ?provider=<uuid> filter, and cross-tenant update capability"
+    }
+  },
+  "modified_files": [
+    "backend/routers/rbpc.py",
+    "tests/v5/test_v5_t017.py"
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t017.py -v",
+    "test_results": {
+      "total": 6,
+      "passed": 6,
+      "failed": 0,
+      "tests": [
+        "test_unauthenticated_partner_access_returns_401",
+        "test_provider_a_cannot_see_provider_b_inquiries",
+        "test_parameter_tampering_provider_param_does_not_leak",
+        "test_provider_a_patching_provider_b_returns_403_forbidden_scope",
+        "test_provider_b_can_manage_own_inquiry",
+        "test_admin_can_view_and_manage_cross_tenant_inquiries"
+      ]
+    },
+    "regression_tests": [
+      "pytest tests/backend/test_rbpc_endpoints.py",
+      "pytest tests/backend/test_openapi_snapshot.py",
+      "pytest tests/v5/test_v5_t006.py",
+      "pytest tests/v5/test_v5_t007.py"
+    ]
+  }
+}

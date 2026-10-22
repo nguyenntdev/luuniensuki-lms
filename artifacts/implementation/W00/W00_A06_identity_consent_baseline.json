@@ -1,0 +1,189 @@
+{
+  "ticket_id": "V5-T006",
+  "slot": "W00-A06",
+  "baseline_source_sha": "54da2beb71f3df70e1f00b215ae0fb1a850eb263",
+  "audit_timestamp": "2026-10-21T00:00:00Z",
+  "status": "PASS",
+  "scope": "Identity, Authentication, Cookie Hardening, RBAC Matrix, Tenant Isolation, and Consent Baseline",
+  "authentication_and_identity": {
+    "password_security": {
+      "algorithm": "bcrypt",
+      "rounds": 12,
+      "max_bytes": 72,
+      "enforcement_file": "backend/security.py"
+    },
+    "jwt_tokens": {
+      "algorithm": "HS256",
+      "access_token_expire_minutes": 60,
+      "refresh_token_expire_days": 30,
+      "password_reset_token_expire_minutes": 30,
+      "issuer": "luuniensuki",
+      "audience": "luuniensuki-app",
+      "claims_contract": [
+        "sub",
+        "iat",
+        "exp",
+        "role",
+        "type",
+        "jti",
+        "iss",
+        "aud"
+      ],
+      "cross_backend_parity": "Strict parity enforced across Rust Gateway (backend-rust/) and Python (backend/) via shared claims contract and secret.",
+      "revocation_and_rotation": {
+        "persistence_table": "revoked_refresh_tokens",
+        "identifier": "jti",
+        "rotation_on_refresh": true,
+        "revocation_on_logout": true,
+        "idempotent_revocation": true
+      }
+    },
+    "cookie_hardening": {
+      "access_cookie_name": "luuniensuki_access",
+      "refresh_cookie_name": "luuniensuki_refresh",
+      "httponly": true,
+      "samesite": "lax",
+      "path": "/",
+      "secure_mode": "Auto-resolved to True in production; fails closed if overridden improperly.",
+      "cache_control": "no-store",
+      "enforcement_files": [
+        "backend/domain/auth_session.py",
+        "backend/routers/auth.py",
+        "backend/config.py"
+      ]
+    }
+  },
+  "rbac_matrix": {
+    "hierarchy": {
+      "guest": 0,
+      "learner": 1,
+      "teacher": 2,
+      "admin": 3,
+      "super_admin": 4
+    },
+    "commercial_slice_roles": {
+      "partner": "Authenticated cultural provider scoped to own provider_id / experiences / inquiries.",
+      "staff_editor": "STAFF_ROLES (teacher, admin, super_admin) authorized for editorial content & artisan consent updates."
+    },
+    "role_boundaries": {
+      "guest": {
+        "content_access": "Demo content only (is_demo=true). Blocked from non-demo motif unlock (403) and non-demo lesson completion (403).",
+        "admin_access": "Blocked (403/401).",
+        "leaderboard": "Excluded.",
+        "preview_endpoints": [
+          "/api/v1/preview/lesson",
+          "/api/v1/preview/start",
+          "/api/v1/preview/complete",
+          "/api/v1/preview/convert"
+        ]
+      },
+      "learner": {
+        "content_access": "Full access to published lessons, motifs, quizzes, exams, progress, quests, achievements.",
+        "admin_access": "Blocked from admin settings and staff routes (403).",
+        "profile_control": "Can toggle is_profile_public and ai_personalization_enabled."
+      },
+      "teacher": {
+        "content_access": "Learner capabilities plus create/edit draft lessons and manage classrooms.",
+        "super_admin_access": "Blocked from user role mutation and system audit logs."
+      },
+      "partner": {
+        "inquiry_access": "Strict provider ownership scoping. GET /api/v1/rbpc/partner/inquiries filters by provider_id. PATCH to other provider inquiry yields 403 FORBIDDEN_SCOPE."
+      },
+      "admin": {
+        "content_access": "Full content approval, RAG configuration, analytics, feature flags, cross-provider inquiry oversight."
+      },
+      "super_admin": {
+        "system_access": "Full system governance, audit log access, role alterations."
+      }
+    }
+  },
+  "consent_and_privacy_baseline": {
+    "regulatory_frameworks": [
+      {
+        "framework": "Vietnam Decree 13/2023/ND-CP",
+        "scope": "Personal Data Protection in Vietnam",
+        "articles": [
+          "Article 11: Valid data subject consent (voluntary, informed, affirmative, withdrawable).",
+          "Article 20: Child personal data protection (consent of child and parent/guardian required under 16)."
+        ]
+      },
+      {
+        "framework": "COPPA (15 U.S.C. 6501-6506)",
+        "scope": "Children's Online Privacy Protection",
+        "controls": "Parental consent, age verification, minimal data retention, zero PII disclosure."
+      },
+      {
+        "framework": "Cultural Heritage Dignity Charter",
+        "scope": "Living Masters and Traditional Artisans Consent",
+        "controls": "Written display consent, non-commercial protections, immediate fail-closed upon revocation."
+      }
+    ],
+    "student_privacy_controls": {
+      "profile_visibility": {
+        "field": "is_profile_public",
+        "default": true,
+        "enforcement": "GET /api/v1/users/{id}/public checks 'if not user.is_profile_public and user.id != current_user.id: raise HTTPException(403, detail=\"Profile is private\")'.",
+        "leaderboard": "Private profiles excluded from public discovery."
+      },
+      "ai_personalization": {
+        "field": "ai_personalization_enabled",
+        "default": true,
+        "description": "User consent toggle for generative AI feedback and recommendations."
+      },
+      "age_verification": {
+        "fields": ["birth_year", "age_verified", "age_verified_at"],
+        "purpose": "Tracking age classification for minor/guardian compliance under Decree 13/2023/ND-CP."
+      }
+    },
+    "artisan_consent_controls": {
+      "model": "RbpcCreator",
+      "statuses": ["consented", "verified_written_consent", "pending_review", "revoked"],
+      "fail_closed_behavior": {
+        "public_creator_lookup": "Returns 404 (RBPC_CREATOR_NOT_FOUND) when consent is pending_review or revoked.",
+        "public_experience_lookup": "Returns 404 (RBPC_EXPERIENCE_NOT_FOUND) when creator consent is revoked.",
+        "booking_inquiry_creation": "Returns 400 (RBPC_CREATOR_CONSENT_UNAVAILABLE) when creator consent is revoked."
+      },
+      "audit_trail": {
+        "table": "rbpc_content_audit",
+        "action": "consent_modified",
+        "features": "Cryptographic previous_hash/new_hash chaining, actor attribution, recorded reason/proof_ref."
+      },
+      "seed_preservation": "backend/services/heritage_import.py strictly preserves revoked, pending_review, or verified_written_consent against default seed overwrites."
+    },
+    "zero_pii_invariants": {
+      "public_inquiry_tracking": "GET /api/v1/rbpc/inquiries/status/{opaqueToken} returns public reference, experience title, status, date, and party size; excludes name, phone, email, and partner notes.",
+      "telemetry": "RbpcEvent stores anonymous session IDs with consent_scope='telemetry_anonymous'.",
+      "inquiry_submission_opt_in": "POST /api/v1/rbpc/inquiries requires explicit consent.accepted=True and consent.privacy_accepted=True."
+    }
+  },
+  "verification": {
+    "test_file": "tests/v5/test_v5_t006.py",
+    "test_command": "pytest tests/v5/test_v5_t006.py -v",
+    "passed_tests": [
+      "test_jwt_claims_structure_and_types",
+      "test_auth_cookie_hardening_and_no_store",
+      "test_guest_cannot_access_non_demo_content",
+      "test_unauthorized_roles_blocked_from_admin_and_editor_routes",
+      "test_partner_tenant_isolation_partner_a_get_partner_b_403",
+      "test_inactive_consent_blocks_user_public_profile",
+      "test_artisan_inactive_consent_fails_closed",
+      "test_zero_pii_on_public_inquiry_tracking_endpoint",
+      "test_inquiry_explicit_consent_validation"
+    ],
+    "negative_test_evidence": "Partner A get Partner B -> 403 FORBIDDEN_SCOPE verified. Inactive consent blocks public profile (403) and creator lookup (404) verified."
+  },
+  "risks": [
+    {
+      "id": "RISK-01",
+      "description": "Pre-existing disk space saturation (~98%) on production/dev host may slow batch DDL operations across concurrent processes.",
+      "severity": "MEDIUM",
+      "mitigation": "Slot W00-A06 uses dedicated database (luuniensuki_t006) and non-dropping test fixture to avoid concurrent lock contention and disk churn."
+    },
+    {
+      "id": "RISK-02",
+      "description": "JWT iss/aud claim validation is currently in transition mode (jwt_validate_new_claims=False by default) to permit rolling zero-downtime deployment with Rust gateway.",
+      "severity": "LOW",
+      "mitigation": "Both backends issue the full claim set; once all nodes are deployed, setting JWT_VALIDATE_NEW_CLAIMS=True enables strict signature-level rejection of untrusted issuers."
+    }
+  ]
+}

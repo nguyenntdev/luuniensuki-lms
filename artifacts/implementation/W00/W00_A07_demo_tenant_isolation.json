@@ -1,0 +1,77 @@
+{
+  "ticket_id": "V5-T007",
+  "slot": "W00-A07",
+  "feature": "RBPC demo tenant isolation",
+  "status": "PASS",
+  "timestamp": "2026-10-21T18:00:00Z",
+  "baseline_sha": "54da2beb71f3df70e1f00b215ae0fb1a850eb263",
+  "summary": "Audited and enforced strict multi-tenant isolation and zero fixture bleeding between RBPC competition demo fixtures and production tenant data. Configured dynamic DEMO_MODE resolution with fail-closed production checks, added DEMO DATA warning banners on preview pages, verified 100% negative abuse isolation on empty production tenants, and verified absence of fraudulent or synthetic transactions in production DB.",
+  "contracts": {
+    "demo_mode_flag": {
+      "setting_property": "demo_mode_effective",
+      "default_development": true,
+      "default_production": false,
+      "fail_closed_validation": "RuntimeError raised if demo_mode=True in production environment",
+      "runtime_config_endpoint": "GET /api/v1/rbpc/config -> { demo_mode: boolean }"
+    },
+    "tenant_isolation_rule": "Inquiries strictly scoped via (RbpcInquiry.provider_id == current_user.id OR RbpcExperience.provider_id == current_user.id). Empty production tenants receive 0 inquiries even when other providers have records.",
+    "ui_transparency_badges": {
+      "/rbpc/partner": "Displays 'DEMO DATA' banner in unauthenticated/preview mode; 'LIVE TENANT' badge with strict scoping notice when authenticated",
+      "/rbpc/inquiries": "Displays 'DEMO DATA' ribbon highlighting simulated inquiries isolated from live commercial transactional records"
+    },
+    "commercial_honesty": {
+      "verification_function": "verify_demo_fixtures_integrity(db)",
+      "zero_fixtures_check": "assert_zero_fixtures_in_prod(db)",
+      "anti_fraud_rules": [
+        "Zero synthetic customer bookings in production",
+        "No FAKE- or INQ-TEST- records in production DB",
+        "Zero instant automated charges (inquiry-only workflow)"
+      ]
+    }
+  },
+  "modified_files": [
+    "backend/config.py",
+    "backend/routers/rbpc.py",
+    "backend/services/demo_fixtures.py",
+    "frontend/src/app/rbpc/inquiries/page.tsx",
+    "frontend/src/app/rbpc/partner/page.tsx",
+    "docs/rbpc/DECISIONS.md"
+  ],
+  "test_artifacts": [
+    "tests/v5/test_v5_t007.py"
+  ],
+  "verification": {
+    "test_command": "pytest tests/v5/test_v5_t007.py",
+    "test_results": {
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "tests": [
+        "test_demo_mode_flag_configuration",
+        "test_empty_prod_tenant_isolation_negative_abuse",
+        "test_cross_tenant_isolation",
+        "test_demo_fixtures_services_and_honesty_audit",
+        "test_public_inquiry_status_lookup_isolation"
+      ]
+    },
+    "regression_tests": [
+      "pytest tests/backend/test_demo_fixtures.py",
+      "pytest tests/backend/test_demo_reliability.py",
+      "pytest tests/backend/test_rbpc_endpoints.py",
+      "pytest tests/backend/test_openapi_snapshot.py"
+    ],
+    "type_check": "npm --prefix frontend run type-check"
+  },
+  "risks": [
+    {
+      "area": "Configuration drift",
+      "severity": "LOW",
+      "mitigation": "demo_mode_effective automatically derives false from environment='production', preventing accidental exposure even if DEMO_MODE env var is omitted."
+    },
+    {
+      "area": "Client-side fallback caching",
+      "severity": "LOW",
+      "mitigation": "Public status tracking only falls back to seed items on network errors or local dev mock when unauthenticated, with clear DEMO DATA banner shown."
+    }
+  ]
+}

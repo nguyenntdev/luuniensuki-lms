@@ -1,0 +1,37 @@
+{
+  "ticket": "V5-T014",
+  "slot": "W01-A04",
+  "title": "Partner status PATCH persistence and client rollback on failure",
+  "status": "COMPLETED",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "changes": [
+    {
+      "file": "frontend/src/lib/rbpc/inquiries.ts",
+      "action": "MODIFIED",
+      "details": "updatePartnerInquiryStatusApi awaits apiRequest directly without swallowing exceptions, allowing calling UI to know mutation outcome."
+    },
+    {
+      "file": "frontend/src/app/rbpc/partner/page.tsx",
+      "action": "MODIFIED",
+      "details": "handleStatusChange captures previous state snapshot and executes optimistic mutation with explicit rollback (setInquiries(previousInquiries)) and error banner on failure."
+    },
+    {
+      "file": "backend/routers/rbpc.py",
+      "action": "VERIFIED",
+      "details": "PATCH /api/v1/rbpc/partner/inquiries/{id} validates state transitions (VALID_INQUIRY_TRANSITIONS), rejects unauthorized cross-tenant mutations with 403 FORBIDDEN_SCOPE, and blocks reopening closed inquiries."
+    },
+    {
+      "file": "tests/v5/test_v5_t014.py",
+      "action": "CREATED",
+      "details": "7 integration tests verifying sequential transitions (new->contacted->confirmed->closed), alternative branches (declined), rejection of disallowed transitions (400), cross-tenant protection (403), unauthenticated rejection (401), and frontend rollback contracts."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t014.py -v",
+    "tests_total": 7,
+    "tests_passed": 7,
+    "tests_failed": 0,
+    "rollback_guarantee": "VERIFIED - UI never retains unpersisted status on rejection"
+  }
+}

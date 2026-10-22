@@ -75,6 +75,7 @@ class Settings(BaseSettings):
     environment: str = "development"
     log_level: str = "info"
     debug: bool = False
+    demo_mode: Optional[bool] = None
     app_name: str = "Cửu Đỉnh Ký"
     app_version: str = "0.1.0"
 
@@ -302,6 +303,17 @@ class Settings(BaseSettings):
             return self.cookie_secure
         return self.is_production
 
+    @property
+    def demo_mode_effective(self) -> bool:
+        """Resolve the effective demo mode setting.
+
+        When DEMO_MODE is explicitly configured via env, respect it.
+        Otherwise, default to False in production and True in development/testing.
+        """
+        if self.demo_mode is not None:
+            return self.demo_mode
+        return not self.is_production
+
     # ==========================================================================
     # Validators
     # ==========================================================================
@@ -324,6 +336,9 @@ class Settings(BaseSettings):
 
             if self.password_reset_return_token:
                 problems.append("PASSWORD_RESET_RETURN_TOKEN")
+
+            if self.demo_mode is True:
+                problems.append("DEMO_MODE (cannot be enabled in production)")
 
             if problems:
                 raise RuntimeError(

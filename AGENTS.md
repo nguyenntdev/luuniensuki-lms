@@ -176,3 +176,26 @@ Deploy workflow (`deploy.yml`) uses Python 3.12 and runs `pytest tests/backend` 
   - XP: Discovery (25), Lesson (50), Mastered (75). Quiz pass: >= 80%.
   - Progression: `hidden -> discovered -> learned -> mastered`.
 - **Deployment**: Production at `https://lms.histolab.icu` via `docker-compose.prod.yml`. Deploy: `./scripts/deployment/deploy-safe.sh`. Post-deploy smoke: `./scripts/testing/rust_gateway_contracts.sh`.
+
+## Production Delivery Waves Execution Log
+
+### Wave W00: Baseline / Truth & Contract Inventory (COMPLETED)
+- **Status**: 10/10 slots complete. 78/78 tests passing.
+- **Artifacts**: `artifacts/implementation/W00/` (`W00_A01`–`W00_A10`).
+- **Scope**: Route inventory freeze across FastAPI & Rust Gateway, dev env reproducibility, mock call-site registry, migration graph unification (`0057_merge_all_heads.py`), API contract snapshot, identity/consent baseline, demo tenant isolation, 162 relic inventory, media rights inventory, observability baseline.
+
+### Wave W01: Real Marketplace / Partner Transaction Integrity (COMPLETED)
+- **Status**: 10/10 slots complete. 77/77 tests passing.
+- **Artifacts**: `artifacts/implementation/W01/` (`W01_A01`–`W01_A10`).
+- **Verified Invariants**:
+  - `V5-T011` (W01-A01): Removed fabricated inquiry success in `frontend/src/lib/rbpc/inquiries.ts`. Strictly throws typed errors on network/backend 404/5xx failures.
+  - `V5-T012` (W01-A02): Token status strict server lookup without matchedSeed fallback. Zero PII returned to public status lookup.
+  - `V5-T013` (W01-A03): Partner inbox has zero synthetic seeding in production (`[]` for empty tenants; demo data restricted to preview mode).
+  - `V5-T014` (W01-A04): Partner status PATCH persistence with explicit optimistic UI rollback on backend rejection (400/403/500).
+  - `V5-T015` (W01-A05): Inquiry idempotency and retry safety with DB-level `uq_rbpc_inquiries_idempotency` race condition handling.
+  - `V5-T016` (W01-A06): Inquiry consent lifecycle, retention due date enforcement (90 days), and visitor consent withdrawal endpoint.
+  - `V5-T017` (W01-A07): Provider membership scope enforcement. Non-admin queries strictly filtered by `current_user.id`; cross-tenant mutations return 403.
+  - `V5-T018` (W01-A08): Canonical inquiry event ledger with append-only cryptographic hash chaining and idempotent replay deduplication.
+  - `V5-T019` (W01-A09): Durable notification outbox queue with partner 24h SLA deadline tracking and fault-tolerant inquiry creation.
+  - `V5-T020` (W01-A10): Complete end-to-end integration acceptance test suite across visitor submission, partner inbox, state transitions, and tracking.
+

@@ -1,0 +1,84 @@
+{
+  "ticket_id": "V5-T013",
+  "wave": "W01",
+  "slot": "W01-A03",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "goal": "Partner inbox no seeding in production",
+  "status": "PASS",
+  "timestamp": "2026-10-21T23:55:00Z",
+  "summary": "Eliminated synthetic inquiry fallback and seeding in production partner inboxes across client and API boundaries. In frontend/src/lib/rbpc/inquiries.ts, fetchPartnerInquiries now preserves live empty lists ([]) and re-throws errors rather than falling back to SEED_PARTNER_INQUIRIES unless explicitly in demo mode. In frontend/src/app/rbpc/partner/page.tsx, inquiries state initializes to [] and strictly reflects live tenant records, displaying a clean empty state ('Chưa có yêu cầu trải nghiệm nào') when 0 inquiries exist and presenting an explicit error alert on failure. Seed data is strictly restricted to unauthenticated preview/demo mode labeled with a DEMO DATA banner.",
+  "root_causes_addressed": {
+    "inquiries_service_fallback": "fetchPartnerInquiries previously caught errors or empty responses and returned SEED_PARTNER_INQUIRIES.",
+    "partner_page_state_initialization": "PartnerDashboardContent initialized inquiries state with SEED_PARTNER_INQUIRIES and had ternary fallback items && items.length > 0 ? items : SEED_PARTNER_INQUIRIES.",
+    "silent_error_masking": "API errors previously resulted in silent substitution with synthetic records."
+  },
+  "contracts": {
+    "fetch_partner_inquiries": {
+      "path": "/api/v1/rbpc/partner/inquiries",
+      "method": "GET",
+      "success_empty_response": {
+        "status_code": 200,
+        "payload": {
+          "items": [],
+          "total": 0
+        },
+        "client_return": []
+      },
+      "error_behavior": {
+        "default": "Re-throws ApiError / Error to caller so error UI alerts can be presented",
+        "demo_mode": "Returns SEED_PARTNER_INQUIRIES only when options.allowDemoFallback is true"
+      }
+    },
+    "partner_dashboard_modes": {
+      "production_live_tenant": {
+        "condition": "isAuthenticated && !isDemoParam",
+        "banner": "LIVE TENANT (Chế độ sản xuất: Không gian người thuê được bảo vệ nghiêm ngặt)",
+        "inquiries_source": "Live API GET /api/v1/rbpc/partner/inquiries",
+        "empty_state_text": "Chưa có yêu cầu trải nghiệm nào",
+        "synthetic_seed_leakage": "ZERO"
+      },
+      "preview_demo_mode": {
+        "condition": "!isAuthenticated || isDemoParam",
+        "banner": "DEMO DATA (Chế độ xem trước tính năng)",
+        "inquiries_source": "SEED_PARTNER_INQUIRIES"
+      }
+    }
+  },
+  "modified_files": [
+    "frontend/src/lib/rbpc/inquiries.ts",
+    "frontend/src/app/rbpc/partner/page.tsx",
+    "frontend/src/components/rbpc/PartnerInboxView.tsx",
+    "frontend/src/components/rbpc/inquiriesPages.test.ts",
+    "tests/v5/test_v5_t013.py"
+  ],
+  "verification": {
+    "backend_pytest": {
+      "command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t013.py -v",
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "tests": [
+        "test_unauthenticated_partner_inquiries_rejected",
+        "test_empty_provider_tenant_receives_empty_list_and_zero_total",
+        "test_production_mode_never_injects_synthetic_seed_inquiries",
+        "test_unauthorized_cross_tenant_patch_rejected",
+        "test_provider_inbox_strict_ownership_scoping"
+      ]
+    },
+    "frontend_vitest": {
+      "command": "npm test -- src/components/rbpc/inquiriesPages.test.ts",
+      "total": 21,
+      "passed": 21,
+      "failed": 0
+    },
+    "frontend_type_check": {
+      "command": "npm run type-check",
+      "exit_code": 0
+    },
+    "frontend_lint": {
+      "command": "npm run lint:ci",
+      "exit_code": 0
+    }
+  }
+}

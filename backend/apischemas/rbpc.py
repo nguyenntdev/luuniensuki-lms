@@ -594,6 +594,33 @@ class RbpcInquiryStatusOut(BaseModel):
     last_updated_at: datetime
 
 
+class RbpcInquiryWithdrawOut(BaseModel):
+    """Visitor response when inquiry consent is withdrawn and contact details redacted."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    reference: str = Field(..., description="Non-sequential reference code.")
+    experience_title: str = Field(
+        default="Trải nghiệm văn hóa",
+        description="Title of the requested experience.",
+    )
+    status: RbpcInquiryStatus = Field(
+        default=RbpcInquiryStatus.closed,
+        description="Current inquiry lifecycle state (closed).",
+    )
+    status_message: str = Field(
+        default="Đồng thuận đã được rút lại. Toàn bộ thông tin liên hệ đã được ẩn danh/xóa bỏ.",
+        description="Human-readable explanation of the withdrawal status.",
+    )
+    privacy_accepted: bool = Field(
+        default=False,
+        description="Consent acceptance flag (False following withdrawal).",
+    )
+    preferred_date: Optional[date] = None
+    party_size: Optional[int] = None
+    last_updated_at: datetime
+
+
 # --------------------------------------------------------------------------- #
 # Partner Inbox & Management (Authenticated)
 # --------------------------------------------------------------------------- #

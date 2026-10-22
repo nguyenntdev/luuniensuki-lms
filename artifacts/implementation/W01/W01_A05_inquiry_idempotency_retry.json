@@ -1,0 +1,77 @@
+{
+  "ticket_id": "V5-T015",
+  "slot": "W01-A05",
+  "feature": "RBPC Inquiry Idempotency and Retry Safety",
+  "status": "PASS",
+  "timestamp": "2026-10-21T23:55:00Z",
+  "baseline_sha": "54da2beb71f3df70e1f00b215ae0fb1a850eb263",
+  "summary": "Hardened inquiry idempotency and retry safety in backend/routers/rbpc.py. Enforced identical payload idempotent replays returning original HTTP 202 Accepted with identical public reference and status tokens, conflict detection returning HTTP 409 RBPC_IDEMPOTENCY_CONFLICT on differing parameters (experience, name, contact_value, party_size), and graceful handling of PostgreSQL unique constraint violations (IntegrityError on uq_rbpc_inquiries_idempotency) via rollback and re-fetch recovery.",
+  "contracts": {
+    "idempotent_replay": {
+      "http_status": 202,
+      "behavior": "Submitting identical inquiry with same idempotency_key returns identical public_ref and opaque_token with zero duplicate DB rows.",
+      "receipt_message": "Yêu cầu đã được ghi nhận trước đó. Nhà cung cấp sẽ liên hệ xác nhận lịch trống trong vòng 24 giờ."
+    },
+    "conflict_detection": {
+      "http_status": 409,
+      "error_code": "RBPC_IDEMPOTENCY_CONFLICT",
+      "checked_fields": [
+        "experience_id",
+        "name",
+        "contact_value",
+        "party_size"
+      ],
+      "error_message": "Idempotency key has already been used with differing parameters."
+    },
+    "concurrency_race_safety": {
+      "db_constraint": "uq_rbpc_inquiries_idempotency",
+      "exception_handling": "IntegrityError caught at db.flush() / db.commit(), transaction rolled back, record re-fetched by idempotency_key, and evaluated for match (HTTP 202) or conflict (HTTP 409).",
+      "multi_thread_safety": "Verified via real parallel thread pool against PostgreSQL database engine."
+    }
+  },
+  "modified_files": [
+    "backend/routers/rbpc.py",
+    "tests/v5/conftest.py"
+  ],
+  "test_artifacts": [
+    "tests/v5/test_v5_t015.py"
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t015.py -v",
+    "test_results": {
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "tests": [
+        "test_identical_inquiry_idempotency_replay",
+        "test_differing_inquiry_party_size_conflict",
+        "test_differing_inquiry_contact_name_conflict",
+        "test_differing_inquiry_contact_value_conflict",
+        "test_differing_inquiry_experience_conflict",
+        "test_simulated_race_condition_matching_payload_recovers_202",
+        "test_simulated_race_condition_conflicting_payload_returns_409",
+        "test_multithreaded_concurrent_inquiry_submissions"
+      ]
+    },
+    "regression_tests": [
+      "pytest tests/backend/test_openapi_snapshot.py",
+      "pytest tests/backend/test_rbpc_endpoints.py",
+      "pytest tests/backend/test_inquiry_hardening.py",
+      "pytest tests/backend/test_partner_security.py",
+      "pytest tests/backend/test_demo_reliability.py",
+      "pytest tests/v5/test_v5_t007.py"
+    ]
+  },
+  "risks": [
+    {
+      "area": "Concurrent request race window",
+      "severity": "LOW",
+      "mitigation": "PostgreSQL unique constraint uq_rbpc_inquiries_idempotency acts as the definitive concurrency boundary; IntegrityError rollback-and-fetch ensures zero 500 errors and transparent 202 recovery or 409 rejection."
+    },
+    {
+      "area": "Partial session state corruption on rollback",
+      "severity": "LOW",
+      "mitigation": "exp_id is captured as a scalar UUID prior to flush/commit, avoiding detached instance attribute expiration issues during db.rollback()."
+    }
+  ]
+}

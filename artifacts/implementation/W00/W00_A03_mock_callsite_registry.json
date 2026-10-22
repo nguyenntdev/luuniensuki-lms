@@ -1,0 +1,386 @@
+{
+  "version": "v6.0-w00",
+  "baseline_source_sha": "54da2beb71f3df70e1f00b215ae0fb1a850eb263",
+  "summary": {
+    "total_callsites": 27,
+    "p0_count": 7,
+    "p1_count": 20,
+    "p2_count": 0
+  },
+  "registry": [
+    {
+      "gap_id": "GAP-001",
+      "priority": "P0",
+      "file_path": "frontend/src/lib/rbpc/inquiries.ts",
+      "line_numbers": [
+        347
+      ],
+      "target_term": "provide resilient simulated result",
+      "description": "submitInquiryToApi fallback fabricated success",
+      "target_backend_endpoint": "/api/v1/rbpc/inquiries",
+      "status": "FLAGGED_FOR_ELIMINATION"
+    },
+    {
+      "gap_id": "GAP-003",
+      "priority": "P0",
+      "file_path": "frontend/src/lib/rbpc/inquiries.ts",
+      "line_numbers": [
+        88,
+        392,
+        468
+      ],
+      "target_term": "SEED_PARTNER_INQUIRIES",
+      "description": "SEED_PARTNER_INQUIRIES preloaded dataset",
+      "target_backend_endpoint": "/api/v1/rbpc/inquiries",
+      "status": "FLAGGED_FOR_ELIMINATION"
+    },
+    {
+      "gap_id": "GAP-002",
+      "priority": "P0",
+      "file_path": "frontend/src/lib/rbpc/inquiries.ts",
+      "line_numbers": [
+        392
+      ],
+      "target_term": "matchedSeed = SEED_PARTNER_INQUIRIES.find",
+      "description": "fetchInquiryStatusByToken fallback seed matching",
+      "target_backend_endpoint": "/api/v1/rbpc/inquiries/track/{token}",
+      "status": "FLAGGED_FOR_ELIMINATION"
+    },
+    {
+      "gap_id": "GAP-004",
+      "priority": "P0",
+      "file_path": "frontend/src/lib/rbpc/inquiries.ts",
+      "line_numbers": [
+        474
+      ],
+      "target_term": "updatePartnerInquiryStatusApi",
+      "description": "updatePartnerInquiryStatusApi silent fallback",
+      "target_backend_endpoint": "/api/v1/rbpc/inquiries/{id}/status",
+      "status": "FLAGGED_FOR_ELIMINATION"
+    },
+    {
+      "gap_id": "GAP-005",
+      "priority": "P0",
+      "file_path": "frontend/src/app/rbpc/partner/page.tsx",
+      "line_numbers": [
+        39,
+        126
+      ],
+      "target_term": "SEED_PARTNER_INQUIRIES",
+      "description": "Dashboard preloads SEED_PARTNER_INQUIRIES fallback",
+      "target_backend_endpoint": "/api/v1/rbpc/inquiries",
+      "status": "FLAGGED_FOR_ELIMINATION"
+    },
+    {
+      "gap_id": "GAP-011",
+      "priority": "P1",
+      "file_path": "frontend/src/lib/imperial/map-api.ts",
+      "line_numbers": [
+        11,
+        78,
+        83
+      ],
+      "target_term": "FALLBACK_ACTIVE_MAP_RESPONSE",
+      "description": "Active map fallback returns local object when API unavailable",
+      "target_backend_endpoint": "/api/v1/imperial/map/active",
+      "status": "FLAGGED_FOR_ELIMINATION"
+    },
+    {
+      "gap_id": "GAP-011",
+      "priority": "P1",
+      "file_path": "frontend/src/lib/imperial/map-api.ts",
+      "line_numbers": [
+        15,
+        95,
+        100
+      ],
+      "target_term": "FALLBACK_ZONES",
+      "description": "Fallback zones returns local array on error",
+      "target_backend_endpoint": "/api/v1/imperial/zones",
+      "status": "FLAGGED_FOR_ELIMINATION"
+    },
+    {
+      "gap_id": "GAP-011",
+      "priority": "P1",
+      "file_path": "frontend/src/lib/imperial/map-api.ts",
+      "line_numbers": [
+        14,
+        134,
+        173,
+        195,
+        246,
+        394
+      ],
+      "target_term": "FALLBACK_SITES",
+      "description": "Fallback sites returns local site catalog",
+      "target_backend_endpoint": "/api/v1/imperial/sites",
+      "status": "FLAGGED_FOR_ELIMINATION"
+    },
+    {
+      "gap_id": "GAP-006",
+      "priority": "P0",
+      "file_path": "frontend/src/lib/imperial/map-api.ts",
+      "line_numbers": [
+        12,
+        368,
+        518
+      ],
+      "target_term": "FALLBACK_ANNOTATIONS",
+      "description": "Fallback annotations on error",
+      "target_backend_endpoint": "/api/v1/imperial/annotations",
+      "status": "FLAGGED_FOR_ELIMINATION"
+    },
+    {
+      "gap_id": "GAP-007",
+      "priority": "P0",
+      "file_path": "frontend/src/lib/imperial/submissions-api.ts",
+      "line_numbers": [
+        10,
+        157,
+        162,
+        163,
+        172
+      ],
+      "target_term": "INITIAL_STUDENT_SUBMISSIONS",
+      "description": "Mock student work and grades seeded into localStorage",
+      "target_backend_endpoint": "/api/v1/classrooms/{id}/submissions",
+      "status": "FLAGGED_FOR_ELIMINATION"
+    },
+    {
+      "gap_id": "GAP-013",
+      "priority": "P1",
+      "file_path": "frontend/src/lib/imperial/submissions-api.ts",
+      "line_numbers": [
+        153,
+        160,
+        162,
+        185,
+        231
+      ],
+      "target_term": "SUBMISSIONS_STORAGE_KEY",
+      "description": "Client-side localStorage as grade authority",
+      "target_backend_endpoint": "/api/v1/classrooms/{id}/grades",
+      "status": "FLAGGED_FOR_ELIMINATION"
+    },
+    {
+      "gap_id": "GAP-016",
+      "priority": "P1",
+      "file_path": "frontend/src/lib/imperial/v51-api.ts",
+      "line_numbers": [
+        25,
+        1744,
+        1772,
+        1775,
+        2070,
+        2097,
+        2099
+      ],
+      "target_term": "FALLBACK_ART_DETAILS",
+      "description": "Art details static fallback array",
+      "target_backend_endpoint": "/api/v1/imperial/art-details",
+      "status": "FLAGGED_FOR_ELIMINATION"
+    },
+    {
+      "gap_id": "GAP-016",
+      "priority": "P1",
+      "file_path": "frontend/src/lib/imperial/v51-api.ts",
+      "line_numbers": [
+        711,
+        1694,
+        1697,
+        1720
+      ],
+      "target_term": "FALLBACK_LEARNING_MEDIA",
+      "description": "Learning media static fallback array",
+      "target_backend_endpoint": "/api/v1/imperial/media",
+      "status": "FLAGGED_FOR_ELIMINATION"
+    },
+    {
+      "gap_id": "GAP-010",
+      "priority": "P1",
+      "file_path": "mobile/lib/routing/app_router.dart",
+      "line_numbers": [
+        272,
+        612,
+        613
+      ],
+      "target_term": "QuestsPlaceholder",
+      "description": "Quests placeholder widget on active route",
+      "target_backend_endpoint": "mobile feature: quests",
+      "status": "FLAGGED_FOR_ELIMINATION"
+    },
+    {
+      "gap_id": "GAP-010",
+      "priority": "P1",
+      "file_path": "mobile/lib/routing/app_router.dart",
+      "line_numbers": [
+        279,
+        624,
+        627
+      ],
+      "target_term": "QuestDetailPlaceholder",
+      "description": "Quest detail placeholder widget on active route",
+      "target_backend_endpoint": "mobile feature: quest_detail",
+      "status": "FLAGGED_FOR_ELIMINATION"
+    },
+    {
+      "gap_id": "GAP-010",
+      "priority": "P1",
+      "file_path": "mobile/lib/routing/app_router.dart",
+      "line_numbers": [
+        508,
+        509
+      ],
+      "target_term": "ExplorePlaceholder",
+      "description": "Explore placeholder definition in app_router.dart",
+      "target_backend_endpoint": "mobile feature: explore",
+      "status": "FLAGGED_FOR_ELIMINATION"
+    },
+    {
+      "gap_id": "GAP-010",
+      "priority": "P1",
+      "file_path": "mobile/lib/routing/app_router.dart",
+      "line_numbers": [
+        520,
+        521
+      ],
+      "target_term": "CollectionPlaceholder",
+      "description": "Collection placeholder definition in app_router.dart",
+      "target_backend_endpoint": "mobile feature: collection",
+      "status": "FLAGGED_FOR_ELIMINATION"
+    },
+    {
+      "gap_id": "GAP-010",
+      "priority": "P1",
+      "file_path": "mobile/lib/routing/app_router.dart",
+      "line_numbers": [
+        532,
+        533
+      ],
+      "target_term": "AchievementsPlaceholder",
+      "description": "Achievements placeholder definition",
+      "target_backend_endpoint": "mobile feature: achievements",
+      "status": "FLAGGED_FOR_ELIMINATION"
+    },
+    {
+      "gap_id": "GAP-010",
+      "priority": "P1",
+      "file_path": "mobile/lib/routing/app_router.dart",
+      "line_numbers": [
+        544,
+        545
+      ],
+      "target_term": "ProfilePlaceholder",
+      "description": "Profile placeholder definition",
+      "target_backend_endpoint": "mobile feature: profile",
+      "status": "FLAGGED_FOR_ELIMINATION"
+    },
+    {
+      "gap_id": "GAP-010",
+      "priority": "P1",
+      "file_path": "mobile/lib/routing/app_router.dart",
+      "line_numbers": [
+        556,
+        559
+      ],
+      "target_term": "UrnViewerPlaceholder",
+      "description": "Urn viewer placeholder definition",
+      "target_backend_endpoint": "mobile feature: urn_viewer",
+      "status": "FLAGGED_FOR_ELIMINATION"
+    },
+    {
+      "gap_id": "GAP-010",
+      "priority": "P1",
+      "file_path": "mobile/lib/routing/app_router.dart",
+      "line_numbers": [
+        570,
+        573
+      ],
+      "target_term": "MotifDetailPlaceholder",
+      "description": "Motif detail placeholder definition",
+      "target_backend_endpoint": "mobile feature: motif_detail",
+      "status": "FLAGGED_FOR_ELIMINATION"
+    },
+    {
+      "gap_id": "GAP-010",
+      "priority": "P1",
+      "file_path": "mobile/lib/routing/app_router.dart",
+      "line_numbers": [
+        584,
+        587
+      ],
+      "target_term": "LessonPlaceholder",
+      "description": "Lesson placeholder definition",
+      "target_backend_endpoint": "mobile feature: lesson",
+      "status": "FLAGGED_FOR_ELIMINATION"
+    },
+    {
+      "gap_id": "GAP-010",
+      "priority": "P1",
+      "file_path": "mobile/lib/routing/app_router.dart",
+      "line_numbers": [
+        598,
+        601
+      ],
+      "target_term": "QuizPlaceholder",
+      "description": "Quiz placeholder definition",
+      "target_backend_endpoint": "mobile feature: quiz",
+      "status": "FLAGGED_FOR_ELIMINATION"
+    },
+    {
+      "gap_id": "GAP-010",
+      "priority": "P1",
+      "file_path": "mobile/lib/routing/app_router.dart",
+      "line_numbers": [
+        638,
+        639
+      ],
+      "target_term": "SettingsPlaceholder",
+      "description": "Settings placeholder definition",
+      "target_backend_endpoint": "mobile feature: settings",
+      "status": "FLAGGED_FOR_ELIMINATION"
+    },
+    {
+      "gap_id": "GAP-010",
+      "priority": "P1",
+      "file_path": "mobile/lib/features/practice/presentation/providers/practice_provider.dart",
+      "line_numbers": [
+        149
+      ],
+      "target_term": "MockQuizData.mockQuestions",
+      "description": "Practice provider serves MockQuizData instead of backend review API",
+      "target_backend_endpoint": "/api/v1/review/due",
+      "status": "FLAGGED_FOR_ELIMINATION"
+    },
+    {
+      "gap_id": "GAP-010",
+      "priority": "P1",
+      "file_path": "mobile/lib/features/notifications/presentation/providers/notifications_provider.dart",
+      "line_numbers": [
+        43,
+        64
+      ],
+      "target_term": "MockNotifications.items",
+      "description": "Notifications provider loads hardcoded MockNotifications",
+      "target_backend_endpoint": "/api/v1/notifications",
+      "status": "FLAGGED_FOR_ELIMINATION"
+    },
+    {
+      "gap_id": "GAP-010",
+      "priority": "P1",
+      "file_path": "mobile/lib/features/social/presentation/providers/friends_provider.dart",
+      "line_numbers": [
+        245
+      ],
+      "target_term": "addMockFriends",
+      "description": "Friends notifier exposes addMockFriends injecting synthetic friends",
+      "target_backend_endpoint": "/api/v1/social/friends",
+      "status": "FLAGGED_FOR_ELIMINATION"
+    }
+  ],
+  "policy": {
+    "production_mock_success_allowed": false,
+    "demo_mode_isolation_required": true,
+    "offline_outbox_required_for_mutations": true
+  }
+}

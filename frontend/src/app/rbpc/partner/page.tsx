@@ -67,6 +67,7 @@ const PROVIDER_OPTIONS = [
 function PartnerDashboardContent() {
   const searchParams = useSearchParams();
   const providerParam = searchParams?.get("provider") || "prov-phuong-duc-01";
+  const isDemoParam = searchParams?.get("demo") === "true" || searchParams?.get("demo") === "1";
 
   const [locale, setLocale] = useState<RbpcLocale>("vi");
   const copy = getRbpcCopy(locale);
@@ -78,17 +79,31 @@ function PartnerDashboardContent() {
   const isStaffOrPartner =
     user?.role === "partner" || user?.role === "admin" || user?.role === "staff";
 
+  // In demo mode only if unauthenticated OR explicitly requested via ?demo=true
+  const isDemoMode = !isAuthenticated || isDemoParam;
+
   // Active provider selection (for multi-tenant isolation demonstration)
   const [selectedProviderId, setSelectedProviderId] = useState<string>(
     user?.id ? user.id : providerParam
   );
 
-  // Inquiries State
-  const [inquiries, setInquiries] = useState<PartnerInboxItemWithAudit[]>(
-    SEED_PARTNER_INQUIRIES
-  );
+  // Inquiries State - Initialized as empty array [] (no seed data in production)
+  const [inquiries, setInquiries] = useState<PartnerInboxItemWithAudit[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // Feedback alert banner state
+  const [dashboardAlert, setDashboardAlert] = useState<{
+    type: "success" | "error" | "info";
+    message: string;
+  } | null>(null);
+
+  // Sync selected provider if authenticated user becomes available
+  useEffect(() => {
+    if (isAuthenticated && user?.id) {
+      setSelectedProviderId(user.id);
+    }
+  }, [isAuthenticated, user?.id]);
 
   // Set Page SEO & Title
   useEffect(() => {
@@ -105,22 +120,38 @@ function PartnerDashboardContent() {
     });
   }, [locale]);
 
-  // Load inquiries (from API or seed fallback)
+  // Load inquiries (from API or seed fallback only in demo mode)
   const loadInquiries = async () => {
+    if (isDemoMode) {
+      setInquiries(SEED_PARTNER_INQUIRIES);
+      return;
+    }
+
     setIsRefreshing(true);
     try {
       const items = await fetchPartnerInquiries();
-      setInquiries(items && items.length > 0 ? items : SEED_PARTNER_INQUIRIES);
-    } catch {
-      setInquiries(SEED_PARTNER_INQUIRIES);
+      setInquiries(items);
+    } catch (err) {
+      setInquiries([]);
+      setDashboardAlert({
+        type: "error",
+        message:
+          err instanceof Error
+            ? err.message
+            : locale === "vi"
+            ? "Không thể tải danh sách yêu cầu từ máy chủ. Vui lòng thử lại sau."
+            : "Failed to load inquiries from server. Please try again later.",
+      });
     } finally {
       setIsRefreshing(false);
     }
   };
 
   useEffect(() => {
+    if (authStatus === "checking") return;
     loadInquiries();
-  }, [isAuthenticated, user?.id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authStatus, isAuthenticated, isDemoMode, user?.id]);
 
   // Active provider name
   const currentProvider = useMemo(() => {
@@ -160,48 +191,48 @@ function PartnerDashboardContent() {
     return { total, newCount, contactedCount, confirmedCount, closedCount };
   }, [providerScopedInquiries]);
 
-  // Feedback alert banner state
-  const [dashboardAlert, setDashboardAlert] = useState<{
-    type: "success" | "error" | "info";
-    message: string;
-  } | null>(null);
-
   // Status Change Callback
   const handleStatusChange = async (
     inquiryId: string,
     newStatus: InquiryStatus,
     note?: string
   ) => {
+    // Snapshot previous state for rollback
+    const previousInquiries = inquiries;
+    const targetItem = inquiries.find((i) => i.id === inquiryId);
+    const previousStatus = targetItem?.status;
+
+    // Optimistically update local inquiry list
+    const now = new Date().toISOString();
+    const newAudit: InquiryAuditLogEntry = {
+      id: `audit-${Date.now()}`,
+      inquiryId,
+      timestamp: now,
+      actorName:
+        locale === "vi" ? currentProvider.nameVi : currentProvider.nameEn,
+      previousStatus: previousStatus || "new",
+      newStatus,
+      note,
+    };
+
+    setInquiries((prev) =>
+      prev.map((item) => {
+        if (item.id === inquiryId) {
+          return {
+            ...item,
+            status: newStatus,
+            updatedAt: now,
+            lastContactedAt: newStatus === "contacted" ? now : item.lastContactedAt,
+            auditLog: [newAudit, ...(item.auditLog || [])],
+          };
+        }
+        return item;
+      })
+    );
+
     try {
       // 1. Call backend API endpoint
       await updatePartnerInquiryStatusApi(inquiryId, newStatus, note);
-
-      // 2. Optimistically update local inquiry list
-      const now = new Date().toISOString();
-      setInquiries((prev) =>
-        prev.map((item) => {
-          if (item.id === inquiryId) {
-            const newAudit: InquiryAuditLogEntry = {
-              id: `audit-${Date.now()}`,
-              inquiryId,
-              timestamp: now,
-              actorName:
-                locale === "vi" ? currentProvider.nameVi : currentProvider.nameEn,
-              previousStatus: item.status,
-              newStatus,
-              note,
-            };
-            return {
-              ...item,
-              status: newStatus,
-              updatedAt: now,
-              lastContactedAt: newStatus === "contacted" ? now : item.lastContactedAt,
-              auditLog: [newAudit, ...(item.auditLog || [])],
-            };
-          }
-          return item;
-        })
-      );
 
       const targetLabel =
         newStatus === "contacted"
@@ -222,6 +253,9 @@ function PartnerDashboardContent() {
             : `Operation successful: Inquiry updated to "${targetLabel}".`,
       });
     } catch (err) {
+      // Rollback: revert the local item status back to its previous status
+      setInquiries(previousInquiries);
+
       setDashboardAlert({
         type: "error",
         message:
@@ -231,6 +265,7 @@ function PartnerDashboardContent() {
             ? "Không thể chuyển trạng thái hồ sơ. Vui lòng thử lại sau."
             : "Failed to transition inquiry status. Please try again later.",
       });
+      throw err;
     }
   };
 
@@ -411,22 +446,41 @@ function PartnerDashboardContent() {
           </div>
         )}
 
-        {/* Preview / Offline Mode Alert Banner (If not logged in as partner) */}
-        {!isAuthenticated && (
+        {/* Preview / Offline Mode Alert Banner (If not logged in as partner or in demo mode) */}
+        {isDemoMode ? (
           <div className="flex items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-xs text-amber-900 dark:text-amber-200">
             <HelpCircle className="h-4 w-4 shrink-0 mt-0.5 text-amber-600" aria-hidden="true" />
             <div className="space-y-1">
-              <strong className="block font-semibold">
-                {locale === "vi"
-                  ? "Chế độ xem trước tính năng (Partner Preview Mode):"
-                  : "Partner Preview Mode Active:"}
-              </strong>
+              <div className="flex items-center gap-2">
+                <span className="rounded bg-amber-600 px-1.5 py-0.5 text-[10px] font-black tracking-wider text-white uppercase">
+                  DEMO DATA
+                </span>
+                <strong className="font-semibold">
+                  {locale === "vi"
+                    ? "Chế độ xem trước tính năng (Partner Preview Mode):"
+                    : "Partner Preview Mode Active:"}
+                </strong>
+              </div>
               <p className="leading-relaxed">
                 {locale === "vi"
-                  ? "Bạn đang trải nghiệm giao diện quản trị với dữ liệu mẫu mô phỏng 3 xưởng nghề truyền thống (Phường Đúc, Pháp Lam, Thanh Tiên). Bạn có thể thử nghiệm đổi trạng thái, ghi chú và mở khóa thông tin liên hệ."
-                  : "You are currently viewing interactive sample data simulating 3 traditional workshops. You can test status transitions, audit logs, and contact unmasking."}
+                  ? "Bạn đang trải nghiệm giao diện quản trị với dữ liệu mẫu mô phỏng 3 xưởng nghề truyền thống (Phường Đúc, Pháp Lam, Thanh Tiên). Dữ liệu này được cô lập hoàn toàn và không ảnh hưởng đến cơ sở dữ liệu thật."
+                  : "You are currently viewing interactive sample data simulating 3 traditional workshops. This data is strictly isolated and does not affect live production databases."}
               </p>
             </div>
+          </div>
+        ) : (
+          <div className="flex items-center justify-between rounded-xl border border-slate-500/20 bg-slate-500/5 px-4 py-2.5 text-xs text-[var(--rbpc-ink-subtle)]">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="h-4 w-4 text-emerald-600" />
+              <span>
+                {locale === "vi"
+                  ? "Chế độ sản xuất: Không gian người thuê được bảo vệ nghiêm ngặt (Strict Tenant Isolation Enforced)."
+                  : "Production Mode: Strict Tenant Isolation Enforced."}
+              </span>
+            </div>
+            <span className="rounded border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-800 dark:text-emerald-300 uppercase">
+              LIVE TENANT
+            </span>
           </div>
         )}
 

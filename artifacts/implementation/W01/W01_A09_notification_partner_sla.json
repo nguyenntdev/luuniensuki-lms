@@ -1,0 +1,42 @@
+{
+  "ticket": "V5-T019",
+  "slot": "W01-A09",
+  "title": "Real notification and partner SLA outbox",
+  "status": "COMPLETED",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "changes": [
+    {
+      "file": "backend/services/rbpc_notification.py",
+      "action": "CREATED",
+      "details": "Durable notification outbox queueing service with explicit provider status tracking (queued, sending, sent, failed_retryable, failed), partner SLA deadline computation (24h), and zero PII leakage."
+    },
+    {
+      "file": "backend/models_rbpc.py",
+      "action": "MODIFIED",
+      "details": "Added RbpcNotificationOutbox and RbpcNotificationStatus enum with SLA tracking fields (sla_due_at, first_response_at, last_attempt_at)."
+    },
+    {
+      "file": "migrations/versions/0058_rbpc_notification_outbox_sla.py",
+      "action": "CREATED",
+      "details": "Additive migration creating rbpc_notification_outbox table and indexes."
+    },
+    {
+      "file": "backend/routers/rbpc.py",
+      "action": "MODIFIED",
+      "details": "Wired queue_inquiry_notification into create_rbpc_inquiry; provider failures do not abort inquiry creation."
+    },
+    {
+      "file": "tests/v5/test_v5_t019.py",
+      "action": "CREATED",
+      "details": "10 unit & integration tests covering notification queueing, network failure resilience, SLA deadline computation, overdue detection, and exponential backoff."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t019.py -v",
+    "tests_total": 10,
+    "tests_passed": 10,
+    "tests_failed": 0,
+    "sla_invariants": "VERIFIED - 24h deadline, zero fake sent status on failure"
+  }
+}

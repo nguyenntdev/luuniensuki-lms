@@ -1,0 +1,106 @@
+{
+  "ticket": "V5-T011",
+  "ticket_id": "V5-T011",
+  "wave": "W01",
+  "slot": "W01-A01",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Remove fabricated inquiry success in frontend/src/lib/rbpc/inquiries.ts",
+  "timestamp": "2026-10-22T00:10:00Z",
+  "summary": "Eliminated fabricated inquiry success response and fallback tokens in frontend/src/lib/rbpc/inquiries.ts. In submitInquiryToApi, removed the catch block fallback that generated fake references (generatePublicReference) and fake status tokens (generateOpaqueToken) pretending success on 404 or network errors. Now re-throws typed ApiError so the calling UI can display authentic failure states. Returns InquirySubmissionResult only when the server actually commits and returns a 202 Accepted response. Inspected and verified frontend/src/app/rbpc/inquiries/page.tsx error handling and removed unused mock token generators.",
+  "root_causes_addressed": {
+    "submit_inquiry_catch_fallback": "submitInquiryToApi previously caught network/404 errors and returned synthetic { reference, statusToken, status: 'new', message: 'Yêu cầu đã được ghi nhận...' }.",
+    "fake_success_masking": "User was falsely led to believe their inquiry was accepted by artisans when backend was unreachable or returned 404.",
+    "page_component_imports": "page.tsx had unused imports for generatePublicReference and generateOpaqueToken."
+  },
+  "changes": [
+    {
+      "file": "frontend/src/lib/rbpc/inquiries.ts",
+      "description": "Removed catch block fallback that fabricated fake references and tokens using generatePublicReference() and generateOpaqueToken(). Added typed ApiError handling, mapped backend response fields, and ensured submitInquiryToApi only returns InquirySubmissionResult when the backend successfully commits with 202 Accepted."
+    },
+    {
+      "file": "frontend/src/app/rbpc/inquiries/page.tsx",
+      "description": "Verified that handleSubmit cleanly handles errors in catch block by displaying formErrors.submit alert banner and not assuming success. Cleaned up unused imports of generatePublicReference and generateOpaqueToken."
+    },
+    {
+      "file": "frontend/src/components/rbpc/inquiriesPages.test.ts",
+      "description": "Added comprehensive Vitest contract tests for submitInquiryToApi validating that 404 and network errors reject with errors and never return fabricated references/tokens, and that 202 Accepted returns authentic server data."
+    },
+    {
+      "file": "tests/v5/test_v5_t011.py",
+      "description": "Created Python pytest test suite for V5-T011 verifying source code invariant against fabricated success, UI error handling, Vitest contract test execution, and end-to-end backend integration tests (/api/v1/rbpc/inquiries) including DB commit, idempotency replay, and error rejection (404/422)."
+    }
+  ],
+  "contracts": {
+    "submit_inquiry_to_api": {
+      "path": "/api/v1/rbpc/inquiries",
+      "method": "POST",
+      "expected_status": 202,
+      "success_contract": "Returns InquirySubmissionResult with authentic public reference (INQ-XXXX-XXXX) and status token (tok_sec_...) only when server returns 202 Accepted.",
+      "failure_contract": "Re-throws typed ApiError on 404 or network failure; zero fabricated success."
+    }
+  },
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t011.py -v",
+    "total_tests": 8,
+    "passed_tests": 8,
+    "failed_tests": 0,
+    "test_details": [
+      {
+        "name": "test_inquiries_ts_no_fabricated_success_contract",
+        "result": "PASSED",
+        "assertion": "Asserts submitInquiryToApi in frontend/src/lib/rbpc/inquiries.ts does not call generatePublicReference() or generateOpaqueToken(), lacks fallback comments, and throws typed ApiError."
+      },
+      {
+        "name": "test_inquiries_page_handles_errors_without_assuming_success",
+        "result": "PASSED",
+        "assertion": "Asserts frontend/src/app/rbpc/inquiries/page.tsx handles errors cleanly in handleSubmit, sets form error banner, and does not import unused generator utilities."
+      },
+      {
+        "name": "test_vitest_frontend_contract",
+        "result": "PASSED",
+        "assertion": "Executes Vitest suite src/components/rbpc/inquiriesPages.test.ts asserting that submitInquiryToApi rejects on 404 and network errors, and returns InquirySubmissionResult on 202."
+      },
+      {
+        "name": "test_backend_inquiry_valid_commits_to_db_with_202",
+        "result": "PASSED",
+        "assertion": "Asserts valid inquiry to POST /api/v1/rbpc/inquiries returns 202 Accepted, commits record to PostgreSQL rbpc_inquiries table with non-sequential public_ref and opaque_token, and creates zero-PII audit record."
+      },
+      {
+        "name": "test_backend_inquiry_idempotency_replay_returns_same_tokens",
+        "result": "PASSED",
+        "assertion": "Asserts replaying submission with identical idempotency key returns 202 with identical tokens and does not duplicate DB rows."
+      },
+      {
+        "name": "test_backend_inquiry_rejects_nonexistent_experience_404",
+        "result": "PASSED",
+        "assertion": "Asserts nonexistent experience returns 404 Not Found (RBPC_EXPERIENCE_NOT_FOUND) and inserts zero DB rows."
+      },
+      {
+        "name": "test_backend_inquiry_rejects_missing_consent_422",
+        "result": "PASSED",
+        "assertion": "Asserts unaccepted consent returns 422 Unprocessable Entity and inserts zero DB rows."
+      },
+      {
+        "name": "test_backend_inquiry_rejects_past_date_422",
+        "result": "PASSED",
+        "assertion": "Asserts past preferred date returns 422 Unprocessable Entity and inserts zero DB rows."
+      }
+    ],
+    "vitest_frontend": {
+      "command": "npm test -- src/components/rbpc/inquiriesPages.test.ts",
+      "total": 25,
+      "passed": 25,
+      "failed": 0
+    },
+    "type_check": {
+      "command": "npm run type-check",
+      "exit_code": 0
+    },
+    "lint": {
+      "command": "npm run lint:ci",
+      "exit_code": 0
+    }
+  }
+}

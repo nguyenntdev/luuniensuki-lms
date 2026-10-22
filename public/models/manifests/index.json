@@ -20,21 +20,24 @@
       "lods": {
         "low": {
           "url": "/assets/models/ANH-DINH-v1-512.glb",
-          "fallback_url": "/assets/models/CAO-DINH-v1-512.glb",
-          "sha256": "placeholder-sha256-512",
-          "bytes": 524288
+          "fallback_url": null,
+          "sha256": null,
+          "bytes": 0,
+          "status": "MISSING"
         },
         "medium": {
           "url": "/assets/models/ANH-DINH-v1-1k.glb",
-          "fallback_url": "/assets/models/CAO-DINH-v1-1k.glb",
-          "sha256": "placeholder-sha256-1k",
-          "bytes": 1048576
+          "fallback_url": null,
+          "sha256": null,
+          "bytes": 0,
+          "status": "MISSING"
         },
         "high": {
           "url": "/assets/models/ANH-DINH-v1-2k.glb",
-          "fallback_url": "/assets/models/CAO-DINH-v1-2k.glb",
-          "sha256": "placeholder-sha256-2k",
-          "bytes": 2097152
+          "fallback_url": null,
+          "sha256": null,
+          "bytes": 0,
+          "status": "MISSING"
         }
       },
       "hotspots": [
@@ -488,7 +491,10 @@
           "coordinate_version": 1,
           "model_version": 1
         }
-      ]
+      ],
+      "mesh_status": "MISSING",
+      "has_2d_fallback": true,
+      "fallback_2d_url": "/assets/ban-duc-noi/ANH%20DINH/ANH%20%C4%90%E1%BB%88NH.jpg"
     },
     "cao-dinh": {
       "urn_slug": "cao-dinh",
@@ -498,20 +504,20 @@
         "low": {
           "url": "/assets/models/CAO-DINH-v1-512.glb",
           "fallback_url": "/assets/models/CAO-DINH-v1-512.glb",
-          "sha256": "placeholder-sha256-512",
-          "bytes": 524288
+          "sha256": "51f5baf131e85257186b0e4a89087870ff66e4c787f7775bea797fc2550d8611",
+          "bytes": 5207460
         },
         "medium": {
           "url": "/assets/models/CAO-DINH-v1-1k.glb",
           "fallback_url": "/assets/models/CAO-DINH-v1-1k.glb",
-          "sha256": "placeholder-sha256-1k",
-          "bytes": 1048576
+          "sha256": "6f7e73424c18c5e6504ee25eda103b56958b1e79348937e152e60731a2bcd16a",
+          "bytes": 27417688
         },
         "high": {
           "url": "/assets/models/CAO-DINH-v1-2k.glb",
           "fallback_url": "/assets/models/CAO-DINH-v1-2k.glb",
-          "sha256": "placeholder-sha256-2k",
-          "bytes": 2097152
+          "sha256": "59d7f26f5af647d727b3ce4855a8533ca39c96825e1c9dea672a94cb32e42e74",
+          "bytes": 30353888
         }
       },
       "hotspots": [
@@ -965,7 +971,10 @@
           "coordinate_version": 1,
           "model_version": 1
         }
-      ]
+      ],
+      "mesh_status": "PRESENT",
+      "has_2d_fallback": true,
+      "fallback_2d_url": "/assets/ban-duc-noi/CAO%20DINH/CAO%20%C4%90%E1%BB%88NH.jpg"
     },
     "chuong-dinh": {
       "urn_slug": "chuong-dinh",
@@ -974,21 +983,24 @@
       "lods": {
         "low": {
           "url": "/assets/models/CHUONG-DINH-v1-512.glb",
-          "fallback_url": "/assets/models/CAO-DINH-v1-512.glb",
-          "sha256": "placeholder-sha256-512",
-          "bytes": 524288
+          "fallback_url": null,
+          "sha256": null,
+          "bytes": 0,
+          "status": "MISSING"
         },
         "medium": {
           "url": "/assets/models/CHUONG-DINH-v1-1k.glb",
-          "fallback_url": "/assets/models/CAO-DINH-v1-1k.glb",
-          "sha256": "placeholder-sha256-1k",
-          "bytes": 1048576
+          "fallback_url": null,
+          "sha256": null,
+          "bytes": 0,
+          "status": "MISSING"
         },
         "high": {
           "url": "/assets/models/CHUONG-DINH-v1-2k.glb",
-          "fallback_url": "/assets/models/CAO-DINH-v1-2k.glb",
-          "sha256": "placeholder-sha256-2k",
-          "bytes": 2097152
+          "fallback_url": null,
+          "sha256": null,
+          "bytes": 0,
+          "status": "MISSING"
         }
       },
       "hotspots": [
@@ -1442,7 +1454,10 @@
           "coordinate_version": 1,
           "model_version": 1
         }
-      ]
+      ],
+      "mesh_status": "MISSING",
+      "has_2d_fallback": true,
+      "fallback_2d_url": "/assets/ban-duc-noi/CHUONG%20DINH/CH%C6%AF%C6%A0NG%20%C4%90%E1%BB%88NH.jpg"
     },
     "du-dinh": {
       "urn_slug": "du-dinh",
@@ -1451,21 +1466,24 @@
       "lods": {
         "low": {
           "url": "/assets/models/DU-DINH-v1-512.glb",
-          "fallback_url": "/assets/models/CAO-DINH-v1-512.glb",
-          "sha256": "placeholder-sha256-512",
-          "bytes": 524288
+          "fallback_url": null,
+          "sha256": null,
+          "bytes": 0,
+          "status": "MISSING"
         },
         "medium": {
           "url": "/assets/models/DU-DINH-v1-1k.glb",
-          "fallback_url": "/assets/models/CAO-DINH-v1-1k.glb",
-          "sha256": "placeholder-sha256-1k",
-          "bytes": 1048576
+          "fallback_url": null,
+          "sha256": null,
+          "bytes": 0,
+          "status": "MISSING"
         },
         "high": {
           "url": "/assets/models/DU-DINH-v1-2k.glb",
-          "fallback_url": "/assets/models/CAO-DINH-v1-2k.glb",
-          "sha256": "placeholder-sha256-2k",
-          "bytes": 2097152
+          "fallback_url": null,
+          "sha256": null,
+          "bytes": 0,
+          "status": "MISSING"
         }
       },
       "hotspots": [
@@ -1919,7 +1937,10 @@
           "coordinate_version": 1,
           "model_version": 1
         }
-      ]
+      ],
+      "mesh_status": "MISSING",
+      "has_2d_fallback": true,
+      "fallback_2d_url": "/assets/ban-duc-noi/DU%20DINH/D%E1%BB%A4%20%C4%90%E1%BB%88NH.jpg"
     },
     "huyen-dinh": {
       "urn_slug": "huyen-dinh",
@@ -1928,21 +1949,24 @@
       "lods": {
         "low": {
           "url": "/assets/models/HUYEN-DINH-v1-512.glb",
-          "fallback_url": "/assets/models/CAO-DINH-v1-512.glb",
-          "sha256": "placeholder-sha256-512",
-          "bytes": 524288
+          "fallback_url": null,
+          "sha256": null,
+          "bytes": 0,
+          "status": "MISSING"
         },
         "medium": {
           "url": "/assets/models/HUYEN-DINH-v1-1k.glb",
-          "fallback_url": "/assets/models/CAO-DINH-v1-1k.glb",
-          "sha256": "placeholder-sha256-1k",
-          "bytes": 1048576
+          "fallback_url": null,
+          "sha256": null,
+          "bytes": 0,
+          "status": "MISSING"
         },
         "high": {
           "url": "/assets/models/HUYEN-DINH-v1-2k.glb",
-          "fallback_url": "/assets/models/CAO-DINH-v1-2k.glb",
-          "sha256": "placeholder-sha256-2k",
-          "bytes": 2097152
+          "fallback_url": null,
+          "sha256": null,
+          "bytes": 0,
+          "status": "MISSING"
         }
       },
       "hotspots": [
@@ -2396,7 +2420,10 @@
           "coordinate_version": 1,
           "model_version": 1
         }
-      ]
+      ],
+      "mesh_status": "MISSING",
+      "has_2d_fallback": true,
+      "fallback_2d_url": "/assets/ban-duc-noi/HUYEN%20DINH/HUY%E1%BB%80N%20%C4%90%E1%BB%88NH.jpg"
     },
     "nghi-dinh": {
       "urn_slug": "nghi-dinh",
@@ -2405,21 +2432,24 @@
       "lods": {
         "low": {
           "url": "/assets/models/NGHI-DINH-v1-512.glb",
-          "fallback_url": "/assets/models/CAO-DINH-v1-512.glb",
-          "sha256": "placeholder-sha256-512",
-          "bytes": 524288
+          "fallback_url": null,
+          "sha256": null,
+          "bytes": 0,
+          "status": "MISSING"
         },
         "medium": {
           "url": "/assets/models/NGHI-DINH-v1-1k.glb",
-          "fallback_url": "/assets/models/CAO-DINH-v1-1k.glb",
-          "sha256": "placeholder-sha256-1k",
-          "bytes": 1048576
+          "fallback_url": null,
+          "sha256": null,
+          "bytes": 0,
+          "status": "MISSING"
         },
         "high": {
           "url": "/assets/models/NGHI-DINH-v1-2k.glb",
-          "fallback_url": "/assets/models/CAO-DINH-v1-2k.glb",
-          "sha256": "placeholder-sha256-2k",
-          "bytes": 2097152
+          "fallback_url": null,
+          "sha256": null,
+          "bytes": 0,
+          "status": "MISSING"
         }
       },
       "hotspots": [
@@ -2873,7 +2903,10 @@
           "coordinate_version": 1,
           "model_version": 1
         }
-      ]
+      ],
+      "mesh_status": "MISSING",
+      "has_2d_fallback": true,
+      "fallback_2d_url": "/assets/ban-duc-noi/NGHI%20DINH/NGHI%20DINH.jpg"
     },
     "nhan-dinh": {
       "urn_slug": "nhan-dinh",
@@ -2882,21 +2915,24 @@
       "lods": {
         "low": {
           "url": "/assets/models/NHAN-DINH-v1-512.glb",
-          "fallback_url": "/assets/models/CAO-DINH-v1-512.glb",
-          "sha256": "placeholder-sha256-512",
-          "bytes": 524288
+          "fallback_url": null,
+          "sha256": null,
+          "bytes": 0,
+          "status": "MISSING"
         },
         "medium": {
           "url": "/assets/models/NHAN-DINH-v1-1k.glb",
-          "fallback_url": "/assets/models/CAO-DINH-v1-1k.glb",
-          "sha256": "placeholder-sha256-1k",
-          "bytes": 1048576
+          "fallback_url": null,
+          "sha256": null,
+          "bytes": 0,
+          "status": "MISSING"
         },
         "high": {
           "url": "/assets/models/NHAN-DINH-v1-2k.glb",
-          "fallback_url": "/assets/models/CAO-DINH-v1-2k.glb",
-          "sha256": "placeholder-sha256-2k",
-          "bytes": 2097152
+          "fallback_url": null,
+          "sha256": null,
+          "bytes": 0,
+          "status": "MISSING"
         }
       },
       "hotspots": [
@@ -3350,7 +3386,10 @@
           "coordinate_version": 1,
           "model_version": 1
         }
-      ]
+      ],
+      "mesh_status": "MISSING",
+      "has_2d_fallback": true,
+      "fallback_2d_url": "/assets/ban-duc-noi/NHAN%20DINH/NH%C3%82N%20%C4%90%E1%BB%88NH.jpg"
     },
     "thuan-dinh": {
       "urn_slug": "thuan-dinh",
@@ -3359,21 +3398,24 @@
       "lods": {
         "low": {
           "url": "/assets/models/THUAN-DINH-v1-512.glb",
-          "fallback_url": "/assets/models/CAO-DINH-v1-512.glb",
-          "sha256": "placeholder-sha256-512",
-          "bytes": 524288
+          "fallback_url": null,
+          "sha256": null,
+          "bytes": 0,
+          "status": "MISSING"
         },
         "medium": {
           "url": "/assets/models/THUAN-DINH-v1-1k.glb",
-          "fallback_url": "/assets/models/CAO-DINH-v1-1k.glb",
-          "sha256": "placeholder-sha256-1k",
-          "bytes": 1048576
+          "fallback_url": null,
+          "sha256": null,
+          "bytes": 0,
+          "status": "MISSING"
         },
         "high": {
           "url": "/assets/models/THUAN-DINH-v1-2k.glb",
-          "fallback_url": "/assets/models/CAO-DINH-v1-2k.glb",
-          "sha256": "placeholder-sha256-2k",
-          "bytes": 2097152
+          "fallback_url": null,
+          "sha256": null,
+          "bytes": 0,
+          "status": "MISSING"
         }
       },
       "hotspots": [
@@ -3827,7 +3869,10 @@
           "coordinate_version": 1,
           "model_version": 1
         }
-      ]
+      ],
+      "mesh_status": "MISSING",
+      "has_2d_fallback": true,
+      "fallback_2d_url": "/assets/ban-duc-noi/THUAN%20DINH/THU%E1%BA%A6N%20%C4%90%E1%BB%88NH.jpg"
     },
     "tuyen-dinh": {
       "urn_slug": "tuyen-dinh",
@@ -3836,21 +3881,24 @@
       "lods": {
         "low": {
           "url": "/assets/models/TUYEN-DINH-v1-512.glb",
-          "fallback_url": "/assets/models/CAO-DINH-v1-512.glb",
-          "sha256": "placeholder-sha256-512",
-          "bytes": 524288
+          "fallback_url": null,
+          "sha256": null,
+          "bytes": 0,
+          "status": "MISSING"
         },
         "medium": {
           "url": "/assets/models/TUYEN-DINH-v1-1k.glb",
-          "fallback_url": "/assets/models/CAO-DINH-v1-1k.glb",
-          "sha256": "placeholder-sha256-1k",
-          "bytes": 1048576
+          "fallback_url": null,
+          "sha256": null,
+          "bytes": 0,
+          "status": "MISSING"
         },
         "high": {
           "url": "/assets/models/TUYEN-DINH-v1-2k.glb",
-          "fallback_url": "/assets/models/CAO-DINH-v1-2k.glb",
-          "sha256": "placeholder-sha256-2k",
-          "bytes": 2097152
+          "fallback_url": null,
+          "sha256": null,
+          "bytes": 0,
+          "status": "MISSING"
         }
       },
       "hotspots": [
@@ -4304,7 +4352,10 @@
           "coordinate_version": 1,
           "model_version": 1
         }
-      ]
+      ],
+      "mesh_status": "MISSING",
+      "has_2d_fallback": true,
+      "fallback_2d_url": "/assets/ban-duc-noi/TUYEN%20DINH/TUYEN%20DINH.jpg"
     }
   }
 }

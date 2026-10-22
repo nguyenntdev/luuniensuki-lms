@@ -54,3 +54,13 @@
 
 ## ADR 07: Preservation of STTTNNĐ Assets
 - **Decision:** The separate STTTNNĐ aerial-map and heritage annotation project (`/dai-noi`) is strictly quarantined. No RBPC migration or rebranding shall touch, delete, or redirect `/dai-noi` routes or its underlying annotation datasets.
+
+---
+
+## ADR 08: RBPC Demo Tenant Isolation & Zero Fixture In Production
+- **Decision:** Implement strict isolation between competition demonstration fixtures and production tenant data.
+- **Rules:**
+  1. **Demo Banners:** When in demo or preview mode, UI surfaces (`/rbpc/inquiries`, `/rbpc/partner`) must display prominent `DEMO DATA` indicators to guarantee commercial transparency and eliminate confusion.
+  2. **Multi-Tenant Provider Scoping:** Partner inquiries are strictly scoped to the authenticated provider account (`RbpcInquiry.provider_id == current_user.id OR RbpcExperience.provider_id == current_user.id`). Empty production tenants return 0 inquiries, with zero leakage from demo fixtures or test records.
+  3. Zero Synthetic Inquiries in Production: Production environments must never load or contain synthetic test inquiries (`assert_zero_fixtures_in_prod`).
+  4. Dynamic Configuration: The `DEMO_MODE` flag is managed via application configuration (`demo_mode_effective`) and fails closed in production.

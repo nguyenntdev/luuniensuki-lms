@@ -1,0 +1,76 @@
+# V2 original archival technical chapter — A3
+
+> Extracted without rewriting from V2 snapshot documentation, **not verified current code**.
+
+## A3. Public/frontend route tree từ App Router
+
+- `/achievements` → `frontend/src/app/achievements/page.jsx`
+- `/admin/analytics/render` → `frontend/src/app/admin/analytics/render/page.jsx`
+- `/admin/dai-noi/annotate` → `frontend/src/app/admin/dai-noi/annotate/page.tsx`
+- `/admin/dai-noi/chi-tiet-my-thuat` → `frontend/src/app/admin/dai-noi/chi-tiet-my-thuat/page.tsx`
+- `/admin` → `frontend/src/app/admin/page.jsx`
+- `/admin/rag` → `frontend/src/app/admin/rag/page.jsx`
+- `/ai` → `frontend/src/app/ai/page.jsx`
+- `/atlas/[urnSlug]/[reliefSlug]` → `frontend/src/app/atlas/[urnSlug]/[reliefSlug]/page.jsx`
+- `/atlas` → `frontend/src/app/atlas/page.jsx`
+- `/badges` → `frontend/src/app/badges/page.jsx`
+- `/certificates/[code]` → `frontend/src/app/certificates/[code]/page.jsx`
+- `/certificates/verify/[hash]` → `frontend/src/app/certificates/verify/[hash]/page.jsx`
+- `/collection` → `frontend/src/app/collection/page.jsx`
+- `/compare` → `frontend/src/app/compare/page.jsx`
+- `/cuu-dinh/[urnSlug]` → `frontend/src/app/cuu-dinh/[urnSlug]/page.jsx`
+- `/cuu-dinh` → `frontend/src/app/cuu-dinh/page.jsx`
+- `/dai-noi/ai` → `frontend/src/app/dai-noi/ai/page.tsx`
+- `/dai-noi/chung-nhan` → `frontend/src/app/dai-noi/chung-nhan/page.tsx`
+- `/dai-noi/cong-trinh/[slug]` → `frontend/src/app/dai-noi/cong-trinh/[slug]/page.tsx`
+- `/dai-noi/giao-vien` → `frontend/src/app/dai-noi/giao-vien/page.tsx`
+- `/dai-noi/hanh-trinh/[slug]` → `frontend/src/app/dai-noi/hanh-trinh/[slug]/page.tsx`
+- `/dai-noi/ho-chieu` → `frontend/src/app/dai-noi/ho-chieu/page.tsx`
+- `/dai-noi/hoc-tap` → `frontend/src/app/dai-noi/hoc-tap/page.tsx`
+- `/dai-noi/map` → `frontend/src/app/dai-noi/map/page.tsx`
+- `/dai-noi/my-thuat/[detailSlug]` → `frontend/src/app/dai-noi/my-thuat/[detailSlug]/page.tsx`
+- `/dai-noi/my-thuat` → `frontend/src/app/dai-noi/my-thuat/page.tsx`
+- `/dai-noi/nguon` → `frontend/src/app/dai-noi/nguon/page.tsx`
+- `/dai-noi/offline` → `frontend/src/app/dai-noi/offline/page.tsx`
+- `/dai-noi` → `frontend/src/app/dai-noi/page.tsx`
+- `/dai-noi/thu-vien-anh` → `frontend/src/app/dai-noi/thu-vien-anh/page.tsx`
+- `/dai-noi/tro-choi` → `frontend/src/app/dai-noi/tro-choi/page.tsx`
+- `/dai-noi/tuyen-duong/[slug]` → `frontend/src/app/dai-noi/tuyen-duong/[slug]/page.tsx`
+- `/dai-noi/tuyen-duong` → `frontend/src/app/dai-noi/tuyen-duong/page.tsx`
+- `/dashboard` → `frontend/src/app/dashboard/page.jsx`
+- `/explore/connections` → `frontend/src/app/explore/connections/page.jsx`
+- `/explore` → `frontend/src/app/explore/page.jsx`
+- `/friends` → `frontend/src/app/friends/page.jsx`
+- `/heritage/[slug]` → `frontend/src/app/heritage/[slug]/page.tsx`
+- `/leaderboard` → `frontend/src/app/leaderboard/page.jsx`
+- `/learn` → `frontend/src/app/learn/page.tsx`
+- `/live/[sessionId]/dashboard` → `frontend/src/app/live/[sessionId]/dashboard/page.jsx`
+- `/live/[sessionId]` → `frontend/src/app/live/[sessionId]/page.jsx`
+- `/login` → `frontend/src/app/login/page.jsx`
+- `/map` → `frontend/src/app/map/page.tsx`
+- `/motif/[motifId]` → `frontend/src/app/motif/[motifId]/page.jsx`
+- `/motif/[motifId]/quiz` → `frontend/src/app/motif/[motifId]/quiz/page.jsx`
+- `/` → `frontend/src/app/page.jsx`
+- `/practice` → `frontend/src/app/practice/page.jsx`
+- `/practice/results` → `frontend/src/app/practice/results/page.jsx`
+- `/practice/smart` → `frontend/src/app/practice/smart/page.jsx`
+- `/profile` → `frontend/src/app/profile/page.jsx`
+- `/quests/[questSlug]` → `frontend/src/app/quests/[questSlug]/page.jsx`
+- `/quests` → `frontend/src/app/quests/page.jsx`
+- `/rbpc/inquiries` → `frontend/src/app/rbpc/inquiries/page.tsx`
+- `/rbpc/partner` → `frontend/src/app/rbpc/partner/page.tsx`
+- `/share/[shareId]` → `frontend/src/app/share/[shareId]/page.jsx`
+- `/sources/[sourceId]` → `frontend/src/app/sources/[sourceId]/page.jsx`
+- `/sources` → `frontend/src/app/sources/page.jsx`
+- `/stories/[slug]` → `frontend/src/app/stories/[slug]/page.jsx`
+- `/stories` → `frontend/src/app/stories/page.jsx`
+- `/timeline` → `frontend/src/app/timeline/page.jsx`
+- `/tools/annotate` → `frontend/src/app/tools/annotate/page.jsx`
+- `/trails/[slug]` → `frontend/src/app/trails/[slug]/page.jsx`
+- `/trails` → `frontend/src/app/trails/page.jsx`
+- `/u/[userId]` → `frontend/src/app/u/[userId]/page.jsx`
+- `/urns/[urnSlug]/exam` → `frontend/src/app/urns/[urnSlug]/exam/page.jsx`
+- `/urns/[urnSlug]/exam/result` → `frontend/src/app/urns/[urnSlug]/exam/result/page.jsx`
+- `/urns/[urnSlug]` → `frontend/src/app/urns/[urnSlug]/page.jsx`
+- `/vr360` → `frontend/src/app/vr360/page.jsx`
+

@@ -222,6 +222,7 @@ class ImportStats:
     stories_preserved_editorial: int = 0
     claims_inserted: int = 0
     claims_updated: int = 0
+    claims_preserved_review: int = 0
     errors: list[str] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
 
@@ -249,6 +250,7 @@ class ImportStats:
             "stories_preserved_editorial": self.stories_preserved_editorial,
             "claims_inserted": self.claims_inserted,
             "claims_updated": self.claims_updated,
+            "claims_preserved_review": self.claims_preserved_review,
             "errors": self.errors,
             "warnings": self.warnings,
         }
@@ -1688,6 +1690,19 @@ def import_heritage_data(
 
             existing_claim = existing_claims_by_stmt.get(statement)
             if existing_claim:
+                # Preservation guardrail: Re-importing existing items must preserve existing human
+                # approval status and never overwrite an existing human review decision back to default.
+                is_human_reviewed = (
+                    existing_claim.review_status in ("verified", "published_human_approved")
+                    or existing_claim.reviewed_by is not None
+                )
+                if is_human_reviewed:
+                    stats.claims_preserved_review += 1
+                    logger.debug(
+                        "Preserved human approval status '%s' for claim on story '%s'",
+                        existing_claim.review_status,
+                        slug,
+                    )
                 existing_claim.source_title = source_title
                 existing_claim.source_url = source_url
                 existing_claim.support_type = support_type
@@ -1697,6 +1712,14 @@ def import_heritage_data(
                     existing_claim.evidence_excerpt_private = excerpt_en
                 stats.claims_updated += 1
             else:
+                # Novel evidence or seed claims must NOT be automatically marked verified upon import.
+                # New unreviewed claims must be assigned draft_pending_review (or candidate/needs_review) status.
+                raw_review_status = claim_dict.get("review_status")
+                if raw_review_status and raw_review_status not in ("verified", "published_human_approved"):
+                    initial_status = raw_review_status
+                else:
+                    initial_status = "draft_pending_review"
+
                 new_claim = RbpcClaimEvidence(
                     id=uuid.uuid4(),
                     story_id=target_story.id,
@@ -1708,7 +1731,7 @@ def import_heritage_data(
                     support_type=support_type,
                     citation_label=citation,
                     evidence_excerpt_private=excerpt_en,
-                    review_status="verified",
+                    review_status=initial_status,
                 )
                 db.add(new_claim)
                 existing_claims_by_stmt[statement] = new_claim
@@ -1736,7 +1759,7 @@ def import_heritage_data(
         "%d inquiries preserved, %d audit logs preserved; "
         "%d experiences inserted, %d updated; "
         "%d stories inserted, %d updated, %d preserved; "
-        "%d claims inserted, %d updated.",
+        "%d claims inserted, %d updated, %d preserved.",
         stats.places_inserted,
         stats.places_updated,
         stats.places_preserved_editorial,
@@ -1755,6 +1778,7 @@ def import_heritage_data(
         stats.stories_preserved_editorial,
         stats.claims_inserted,
         stats.claims_updated,
+        stats.claims_preserved_review,
     )
     return report, stats
 

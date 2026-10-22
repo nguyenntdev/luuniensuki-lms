@@ -1,0 +1,29 @@
+{
+  "ticket": "V5-T020",
+  "slot": "W01-A10",
+  "title": "Inquiry end-to-end acceptance",
+  "status": "COMPLETED",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "changes": [
+    {
+      "file": "tests/v5/test_v5_t020.py",
+      "action": "CREATED",
+      "details": "End-to-end acceptance integration suite covering complete lifecycle (visitor submit -> partner receive -> contacted -> confirmed -> visitor tracking), strict multi-tenant isolation across partner accounts, zero PII disclosure, and negative abuse guardrails."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t020.py -v",
+    "tests_total": 3,
+    "tests_passed": 3,
+    "tests_failed": 0,
+    "acceptance_criteria": [
+      "Real visitor submits -> partner receives -> contacted -> confirmed -> status updated: VERIFIED",
+      "Multi-tenant isolation: Partner B sees zero inquiries from Partner A: VERIFIED",
+      "Cross-tenant mutation attempt rejected with 403 FORBIDDEN_SCOPE: VERIFIED",
+      "Fake token returns 404 NOT_FOUND: VERIFIED",
+      "Invalid transition jumps return 400 RBPC_INVALID_TRANSITION: VERIFIED",
+      "Zero synthetic booking, fake partner or mock payment in any production path: VERIFIED"
+    ]
+  }
+}

@@ -163,6 +163,14 @@ class RbpcEpistemicCertainty(str, Enum):
     insufficient_sources = "insufficient_sources"
 
 
+class RbpcNotificationStatus(str, Enum):
+    queued = "queued"
+    sending = "sending"
+    sent = "sent"
+    failed_retryable = "failed_retryable"
+    failed = "failed"
+
+
 def _validate_enum(enum_cls: type[Enum], key: str, val: Any) -> str:
     """Validate that val matches an enum member or string value."""
     if isinstance(val, enum_cls):
@@ -841,6 +849,7 @@ class RbpcInquiry(Base):
         Index("idx_rbpc_inquiries_state", "state"),
         Index("idx_rbpc_inquiries_provider", "provider_id"),
         Index("idx_rbpc_inquiries_retention", "retention_due_at"),
+        Index("idx_rbpc_inquiries_sla", "sla_due_at"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -873,6 +882,9 @@ class RbpcInquiry(Base):
     retention_due_at: Mapped[Optional[datetime]] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
+    sla_due_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
@@ -895,6 +907,11 @@ class RbpcInquiry(Base):
 
     # Relationships
     experience: Mapped[RbpcExperience] = relationship("RbpcExperience", back_populates="inquiries")
+    notifications: Mapped[list[RbpcNotificationOutbox]] = relationship(
+        "RbpcNotificationOutbox",
+        back_populates="inquiry",
+        cascade="all, delete-orphan",
+    )
 
     @validates("contact_channel")
     def validate_contact_channel(self, key: str, value: Any) -> str:
@@ -985,3 +1002,64 @@ class RbpcContentAudit(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
+
+
+# --------------------------------------------------------------------------- #
+# Table 12: RBPC Notification Outbox (Partner Outbox Queue & SLA Tracking)
+# --------------------------------------------------------------------------- #
+class RbpcNotificationOutbox(Base):
+    """Durable notification outbox queue for partner alerts with zero fake confirmations."""
+
+    __tablename__ = "rbpc_notification_outbox"
+    __table_args__ = (
+        CheckConstraint(
+            "status IN ('queued','sending','sent','failed_retryable','failed')",
+            name="ck_rbpc_notification_outbox_status",
+        ),
+        Index("idx_rbpc_notif_outbox_inquiry", "inquiry_id"),
+        Index("idx_rbpc_notif_outbox_status", "status"),
+        Index("idx_rbpc_notif_outbox_created", "created_at"),
+        Index("idx_rbpc_notif_outbox_retry", "status", "next_retry_at"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    inquiry_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("rbpc_inquiries.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    event_type: Mapped[str] = mapped_column(Text, nullable=False, default="inquiry_created")
+    channel: Mapped[str] = mapped_column(Text, nullable=False, default="email")
+    recipient: Mapped[str] = mapped_column(Text, nullable=False)
+    recipient_masked: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    template_code: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    subject: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    payload_clean: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    status: Mapped[str] = mapped_column(
+        Text, nullable=False, default=RbpcNotificationStatus.queued.value
+    )
+    attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    max_attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=5)
+    last_error: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    next_retry_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    sent_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
+    )
+
+    # Relationships
+    inquiry: Mapped[RbpcInquiry] = relationship("RbpcInquiry", back_populates="notifications")
+
+    @validates("status")
+    def validate_status(self, key: str, value: Any) -> str:
+        return _validate_enum(RbpcNotificationStatus, key, value)
+

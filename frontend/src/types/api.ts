@@ -3720,6 +3720,942 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/imperial/activities/{activity_id}/submissions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Submit Activity
+         * @description Save student answer, evidence references, and timestamp for an inquiry task (requires learner role).
+         */
+        post: operations["submit_activity_api_v1_imperial_activities__activity_id__submissions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/admin/annotations/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete Annotation
+         * @description Soft-delete / archive annotation with audit log.
+         */
+        delete: operations["delete_annotation_api_v1_imperial_admin_annotations__id__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Update Annotation
+         * @description Update annotation coordinates or metadata with optimistic locking check.
+         */
+        patch: operations["update_annotation_api_v1_imperial_admin_annotations__id__patch"];
+        trace?: never;
+    };
+    "/api/v1/imperial/admin/annotations/{id}/audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Annotation Audit
+         * @description Get full append-only audit trail for an annotation.
+         */
+        get: operations["get_annotation_audit_api_v1_imperial_admin_annotations__id__audit_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/admin/art-details": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Admin Create Art Detail
+         * @description Admin create art detail entry.
+         */
+        post: operations["admin_create_art_detail_api_v1_imperial_admin_art_details_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/admin/art-details/{detail_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Admin Delete Art Detail
+         * @description Admin delete art detail entry.
+         */
+        delete: operations["admin_delete_art_detail_api_v1_imperial_admin_art_details__detail_id__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Admin Update Art Detail
+         * @description Admin update art detail entry with optimistic locking.
+         */
+        patch: operations["admin_update_art_detail_api_v1_imperial_admin_art_details__detail_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/imperial/admin/clues": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Admin Create Clue
+         * @description Admin create heritage detective clue.
+         */
+        post: operations["admin_create_clue_api_v1_imperial_admin_clues_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/admin/clues/{clue_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Admin Delete Clue
+         * @description Admin delete heritage detective clue.
+         */
+        delete: operations["admin_delete_clue_api_v1_imperial_admin_clues__clue_id__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Admin Update Clue
+         * @description Admin update heritage detective clue with optimistic locking.
+         */
+        patch: operations["admin_update_clue_api_v1_imperial_admin_clues__clue_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/imperial/admin/hotspots/{hotspot_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Admin Delete Media Hotspot
+         * @description Admin delete media hotspot marker.
+         */
+        delete: operations["admin_delete_media_hotspot_api_v1_imperial_admin_hotspots__hotspot_id__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Admin Update Media Hotspot
+         * @description Admin update media hotspot marker with optimistic locking.
+         */
+        patch: operations["admin_update_media_hotspot_api_v1_imperial_admin_hotspots__hotspot_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/imperial/admin/maps": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Maps
+         * @description List all aerial map asset versions for admin curation.
+         */
+        get: operations["list_maps_api_v1_imperial_admin_maps_get"];
+        put?: never;
+        /**
+         * Create Map
+         * @description Create metadata for an aerial map asset.
+         */
+        post: operations["create_map_api_v1_imperial_admin_maps_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/admin/maps/{map_id}/annotations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Map Annotations
+         * @description List annotations including drafts for curatorial editor.
+         */
+        get: operations["get_admin_map_annotations_api_v1_imperial_admin_maps__map_id__annotations_get"];
+        put?: never;
+        /**
+         * Create Annotation
+         * @description Create a draft annotation marker with UV bounds validation and audit entry.
+         */
+        post: operations["create_annotation_api_v1_imperial_admin_maps__map_id__annotations_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/admin/maps/{map_id}/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export Annotations
+         * @description Export canonical annotations dataset with schema_version and SHA-256 hash.
+         */
+        get: operations["export_annotations_api_v1_imperial_admin_maps__map_id__export_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/admin/maps/{map_id}/import": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Import Annotations
+         * @description Import annotations dataset with schema validation, site check, UV bounds, and atomic commit.
+         */
+        post: operations["import_annotations_api_v1_imperial_admin_maps__map_id__import_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/admin/maps/{map_id}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Publish Map
+         * @description Atomically publish approved aerial map and its annotations.
+         */
+        post: operations["publish_map_api_v1_imperial_admin_maps__map_id__publish_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/admin/media": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Admin Create Media
+         * @description Admin create learning media asset.
+         */
+        post: operations["admin_create_media_api_v1_imperial_admin_media_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/admin/media/{media_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Admin Delete Media
+         * @description Admin delete learning media asset.
+         */
+        delete: operations["admin_delete_media_api_v1_imperial_admin_media__media_id__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Admin Update Media
+         * @description Admin update learning media asset with optimistic locking.
+         */
+        patch: operations["admin_update_media_api_v1_imperial_admin_media__media_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/imperial/admin/media/{media_id}/hotspots": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Admin Create Media Hotspot
+         * @description Admin create media hotspot marker.
+         */
+        post: operations["admin_create_media_hotspot_api_v1_imperial_admin_media__media_id__hotspots_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/admin/questions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Admin Create Question
+         * @description Admin create gamified quiz question.
+         */
+        post: operations["admin_create_question_api_v1_imperial_admin_questions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/admin/questions/{question_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Admin Delete Question
+         * @description Admin delete gamified quiz question.
+         */
+        delete: operations["admin_delete_question_api_v1_imperial_admin_questions__question_id__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Admin Update Question
+         * @description Admin update gamified quiz question with optimistic locking.
+         */
+        patch: operations["admin_update_question_api_v1_imperial_admin_questions__question_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/imperial/ai/ask": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Ask Imperial Tutor
+         * @description Query scope-locked AI tutor for Đại Nội Huế with 3-part evidence-grounded response.
+         */
+        post: operations["ask_imperial_tutor_api_v1_imperial_ai_ask_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/art-details/{detail_id_or_slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Art Detail
+         * @description Retrieve detailed art detail dossier with story, values, primary claim sources, and inquiry questions.
+         */
+        get: operations["get_art_detail_api_v1_imperial_art_details__detail_id_or_slug__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/assets/{asset_id}/image": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Map Asset Image
+         * @description Serve map asset image with caching headers.
+         */
+        get: operations["get_map_asset_image_api_v1_imperial_assets__asset_id__image_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/audio-guides": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List All Audio Guides
+         * @description Retrieve all available audio guide tracks for Đại Nội monuments with aggregate duration.
+         */
+        get: operations["list_all_audio_guides_api_v1_imperial_audio_guides_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/clues": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Clues
+         * @description List published heritage detective clues and riddles.
+         */
+        get: operations["get_clues_api_v1_imperial_clues_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/clues/{clue_id}/attempt": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Attempt Clue
+         * @description Submit a guess for a heritage detective clue and receive progressive hints.
+         */
+        post: operations["attempt_clue_api_v1_imperial_clues__clue_id__attempt_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/games/questions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Game Questions
+         * @description List published gamified questions (answer_key is hidden).
+         */
+        get: operations["get_game_questions_api_v1_imperial_games_questions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/games/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Submit Game Answer
+         * @description Submit an answer to an interactive quiz question and receive the explanation and citation.
+         */
+        post: operations["submit_game_answer_api_v1_imperial_games_submit_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/maps/active": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Active Map
+         * @description Retrieve the current active published aerial map asset with all published annotations.
+         */
+        get: operations["get_active_map_api_v1_imperial_maps_active_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/maps/{map_id}/annotations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Map Annotations
+         * @description List published annotations for a published map asset.
+         */
+        get: operations["get_map_annotations_api_v1_imperial_maps__map_id__annotations_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/media/{media_id}/hotspots": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Media Hotspots
+         * @description Retrieve published interactive hotspots placed on a learning media asset.
+         */
+        get: operations["get_media_hotspots_api_v1_imperial_media__media_id__hotspots_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/paths": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Learning Paths
+         * @description List curated trails with steps and associated monument sites.
+         */
+        get: operations["get_learning_paths_api_v1_imperial_paths_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/paths/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Learning Path By Slug
+         * @description Retrieve detailed learning path trail with step sequence and site metadata.
+         */
+        get: operations["get_learning_path_by_slug_api_v1_imperial_paths__slug__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/sites": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Sites
+         * @description List architectural sites in Đại Nội Huế with pedagogical filters.
+         */
+        get: operations["get_sites_api_v1_imperial_sites_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/sites/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Site By Slug
+         * @description Retrieve detailed site dossier with condition, learning level, and architecture.
+         */
+        get: operations["get_site_by_slug_api_v1_imperial_sites__slug__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/sites/{slug}/activities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Site Activities
+         * @description List pedagogical inquiry activities and reflection tasks for an architectural site.
+         */
+        get: operations["get_site_activities_api_v1_imperial_sites__slug__activities_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/sites/{slug}/art-details": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Site Art Details
+         * @description Retrieve list of art details (carvings, patterns, reliefs) belonging to a site.
+         */
+        get: operations["get_site_art_details_api_v1_imperial_sites__slug__art_details_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/sites/{slug}/audio": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Audio Guide By Slug
+         * @description Retrieve audio guide track narration, duration, and timed transcript for a specific monument.
+         */
+        get: operations["get_audio_guide_by_slug_api_v1_imperial_sites__slug__audio_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/sites/{slug}/evidence": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Site Evidence
+         * @description Retrieve historical claims and primary source references for a site.
+         */
+        get: operations["get_site_evidence_api_v1_imperial_sites__slug__evidence_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/sites/{slug}/learning-media": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Site Learning Media
+         * @description Retrieve learning media assets (photos, 360s, 3D models) with published hotspots.
+         */
+        get: operations["get_site_learning_media_api_v1_imperial_sites__slug__learning_media_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/sites/{slug}/timeline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Site Timeline
+         * @description Retrieve chronological events (construction, alterations, conservation) for a site.
+         */
+        get: operations["get_site_timeline_api_v1_imperial_sites__slug__timeline_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/submissions/batch-sync": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Batch Sync Submissions
+         * @description Batch synchronize offline queued student activity submissions (requires learner role or higher).
+         */
+        post: operations["batch_sync_submissions_api_v1_imperial_submissions_batch_sync_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/teacher/assignments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Teacher Assignments
+         * @description Retrieve teacher's assigned classroom journeys.
+         */
+        get: operations["get_teacher_assignments_api_v1_imperial_teacher_assignments_get"];
+        put?: never;
+        /**
+         * Create Teacher Assignment
+         * @description Create a new classroom assignment release for a journey.
+         */
+        post: operations["create_teacher_assignment_api_v1_imperial_teacher_assignments_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/teacher/assignments/{assignment_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update Teacher Assignment
+         * @description Update teacher assignment release with optimistic locking.
+         */
+        patch: operations["update_teacher_assignment_api_v1_imperial_teacher_assignments__assignment_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/imperial/teacher/submissions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Submissions For Teacher
+         * @description List student submissions for teacher evaluation with optional activity filtering (requires staff/teacher role).
+         */
+        get: operations["get_submissions_for_teacher_api_v1_imperial_teacher_submissions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/teacher/submissions/{submission_id}/grade": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Grade Submission
+         * @description Record rubric scores S1-S4 (0-3 scale each), total score, and teacher feedback (requires staff/teacher role).
+         */
+        post: operations["grade_submission_api_v1_imperial_teacher_submissions__submission_id__grade_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/zones": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Zones
+         * @description List 4 spatial zones with site counts.
+         */
+        get: operations["get_zones_api_v1_imperial_zones_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/leaderboard": {
         parameters: {
             query?: never;
@@ -5165,6 +6101,31 @@ export interface paths {
         get: operations["get_inquiry_status_by_token_api_v1_rbpc_inquiries_status__opaqueToken__get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/inquiries/status/{opaqueToken}/withdraw": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Withdraw Inquiry Status Consent
+         * @description Allow visitor to withdraw consent and redact contact details immediately.
+         *
+         *     Vietnam Decree 13/2023/ND-CP Article 11 right of withdrawal / right to erasure:
+         *     - Scrubs name, contact_value, message to remove visitor PII
+         *     - Marks privacy_accepted = False and state = closed
+         *     - Appends immutable cryptographic audit entry to rbpc_content_audit
+         */
+        post: operations["withdraw_inquiry_status_consent_api_v1_rbpc_inquiries_status__opaqueToken__withdraw_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -11824,6 +12785,2215 @@ export interface components {
             /** Type */
             type: string;
         };
+        /** ImperialAIAskRequest */
+        ImperialAIAskRequest: {
+            /**
+             * Context
+             * @description Optional student/classroom context
+             */
+            context?: string | null;
+            /**
+             * Query
+             * @description Historical inquiry question about Dai Noi
+             */
+            query: string;
+            /**
+             * Site Slug
+             * @description Optional slug of site in focus (e.g. 'ngo-mon', 'dien-thai-hoa')
+             */
+            site_slug?: string | null;
+        };
+        /** ImperialAIAskResponse */
+        ImperialAIAskResponse: {
+            /** @description (3) Điều chắc chắn vs Điều cần kiểm chứng thêm */
+            certainty_vs_uncertainty?: components["schemas"]["ImperialAICertaintyUncertainty"];
+            /**
+             * Content Scope
+             * @default STTT_IMPERIAL_CITY
+             * @constant
+             */
+            content_scope: "STTT_IMPERIAL_CITY";
+            /**
+             * Inquiry Answer
+             * @description (1) Trả lời gợi mở tư duy
+             * @default
+             */
+            inquiry_answer: string;
+            /**
+             * Insufficient Evidence
+             * @description True if question is outside Dai Noi or forbidden
+             * @default false
+             */
+            insufficient_evidence: boolean;
+            /**
+             * Message
+             * @description Direct answer or polite refusal message
+             */
+            message?: string | null;
+            /** Site Slug */
+            site_slug?: string | null;
+            /**
+             * Sources Cited
+             * @description (2) Nguồn sử liệu đối chiếu
+             */
+            sources_cited?: components["schemas"]["ImperialAISourceRef"][];
+        };
+        /** ImperialAICertaintyUncertainty */
+        ImperialAICertaintyUncertainty: {
+            /**
+             * Certainty
+             * @description Điều chắc chắn (Certainty verified by primary sources)
+             * @default
+             */
+            certainty: string;
+            /**
+             * Uncertainty
+             * @description Điều cần kiểm chứng thêm (Epistemic uncertainty)
+             * @default
+             */
+            uncertainty: string;
+        };
+        /** ImperialAISourceRef */
+        ImperialAISourceRef: {
+            /** Archival Unit */
+            archival_unit?: string | null;
+            /** Citation */
+            citation?: string | null;
+            /**
+             * Reliability Level
+             * @default verified_primary_source
+             */
+            reliability_level: string | null;
+            /** Source Title */
+            source_title: string;
+            /** Volume Or Chapter */
+            volume_or_chapter?: string | null;
+        };
+        /** ImperialActivityOut */
+        ImperialActivityOut: {
+            /**
+             * Activity Type
+             * @default evidence_reflection
+             */
+            activity_type: string;
+            /**
+             * Content Scope
+             * @default STTT_IMPERIAL_CITY
+             */
+            content_scope: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Instructions */
+            instructions: string;
+            /**
+             * Is Active
+             * @default true
+             */
+            is_active: boolean;
+            /**
+             * Max Points
+             * @default 100
+             */
+            max_points: number;
+            /** Path Id */
+            path_id?: string | null;
+            /**
+             * Row Version
+             * @default 1
+             */
+            row_version: number;
+            /** Rubric Json */
+            rubric_json?: unknown | null;
+            /** Site Id */
+            site_id?: string | null;
+            /** Title */
+            title: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** ImperialAnnotationAuditOut */
+        ImperialAnnotationAuditOut: {
+            /** Action */
+            action: string;
+            /** Actor Id */
+            actor_id?: string | null;
+            /** After Json */
+            after_json?: unknown | null;
+            /**
+             * Annotation Id
+             * Format: uuid
+             */
+            annotation_id: string;
+            /** Before Json */
+            before_json?: unknown | null;
+            /**
+             * Content Scope
+             * @default STTT_IMPERIAL_CITY
+             */
+            content_scope: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+        };
+        /** ImperialAnnotationCreateRequest */
+        ImperialAnnotationCreateRequest: {
+            /** Editorial Notes */
+            editorial_notes?: string | null;
+            /**
+             * Is Visible
+             * @default true
+             */
+            is_visible: boolean;
+            /** Label */
+            label?: string | null;
+            /** Map Asset Id */
+            map_asset_id?: string | null;
+            /**
+             * Marker Style
+             * @default monument
+             */
+            marker_style: string;
+            /**
+             * Polygon Uv
+             * @description Polygon vertices as list of [u, v] pairs, each coordinate between 0.0 and 1.0
+             */
+            polygon_uv?: number[][] | null;
+            /**
+             * Position Confidence
+             * @default approximate
+             * @enum {string}
+             */
+            position_confidence: "verified" | "approximate" | "uncertain";
+            /** Position Source Ref */
+            position_source_ref?: string | null;
+            /**
+             * Shape Type
+             * @default point
+             * @enum {string}
+             */
+            shape_type: "point" | "polygon" | "bbox";
+            /**
+             * Site Id
+             * Format: uuid
+             */
+            site_id: string;
+            /**
+             * U
+             * @description Normalized horizontal coordinate on aerial map [0.0, 1.0]
+             */
+            u: number;
+            /**
+             * V
+             * @description Normalized vertical coordinate on aerial map [0.0, 1.0]
+             */
+            v: number;
+            /**
+             * Z Index
+             * @default 0
+             */
+            z_index: number;
+        };
+        /** ImperialAnnotationLinkOut */
+        ImperialAnnotationLinkOut: {
+            /**
+             * Annotation Id
+             * Format: uuid
+             */
+            annotation_id: string;
+            /**
+             * Content Scope
+             * @default STTT_IMPERIAL_CITY
+             */
+            content_scope: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Sort Order */
+            sort_order: number;
+            /**
+             * Target Id
+             * Format: uuid
+             */
+            target_id: string;
+            /** Target Type */
+            target_type: string;
+        };
+        /** ImperialAnnotationOut */
+        ImperialAnnotationOut: {
+            /** Approved By */
+            approved_by?: string | null;
+            /**
+             * Content Scope
+             * @default STTT_IMPERIAL_CITY
+             */
+            content_scope: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Created By
+             * Format: uuid
+             */
+            created_by: string;
+            /** Editorial Notes */
+            editorial_notes?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Is Visible
+             * @default true
+             */
+            is_visible: boolean;
+            /** Label */
+            label?: string | null;
+            /** Links */
+            links?: components["schemas"]["ImperialAnnotationLinkOut"][];
+            /**
+             * Map Asset Id
+             * Format: uuid
+             */
+            map_asset_id: string;
+            /**
+             * Marker Style
+             * @default monument
+             */
+            marker_style: string;
+            /**
+             * Polygon Uv
+             * @description Polygon vertices as list of [u, v] pairs, each coordinate between 0.0 and 1.0
+             */
+            polygon_uv?: number[][] | null;
+            /**
+             * Position Confidence
+             * @default approximate
+             * @enum {string}
+             */
+            position_confidence: "verified" | "approximate" | "uncertain";
+            /** Position Source Ref */
+            position_source_ref?: string | null;
+            /** Published At */
+            published_at?: string | null;
+            /** Review Status */
+            review_status: string;
+            /**
+             * Row Version
+             * @default 1
+             */
+            row_version: number;
+            /**
+             * Shape Type
+             * @default point
+             * @enum {string}
+             */
+            shape_type: "point" | "polygon" | "bbox";
+            site?: components["schemas"]["ImperialSiteSummary"] | null;
+            /**
+             * Site Id
+             * Format: uuid
+             */
+            site_id: string;
+            /**
+             * U
+             * @description Normalized horizontal coordinate on aerial map [0.0, 1.0]
+             */
+            u: number;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /**
+             * Updated By
+             * Format: uuid
+             */
+            updated_by: string;
+            /**
+             * V
+             * @description Normalized vertical coordinate on aerial map [0.0, 1.0]
+             */
+            v: number;
+            /**
+             * Z Index
+             * @default 0
+             */
+            z_index: number;
+        };
+        /** ImperialAnnotationUpdate */
+        ImperialAnnotationUpdate: {
+            /** Editorial Notes */
+            editorial_notes?: string | null;
+            /** Is Visible */
+            is_visible?: boolean | null;
+            /** Label */
+            label?: string | null;
+            /** Marker Style */
+            marker_style?: string | null;
+            /** Polygon Uv */
+            polygon_uv?: number[][] | null;
+            /** Position Confidence */
+            position_confidence?: ("verified" | "approximate" | "uncertain") | null;
+            /** Position Source Ref */
+            position_source_ref?: string | null;
+            /** Review Status */
+            review_status?: ("draft" | "in_review" | "approved" | "published" | "archived") | null;
+            /**
+             * Row Version
+             * @description Required current row_version for optimistic concurrency check
+             */
+            row_version: number;
+            /** Shape Type */
+            shape_type?: ("point" | "polygon" | "bbox") | null;
+            /** U */
+            u?: number | null;
+            /** V */
+            v?: number | null;
+            /** Z Index */
+            z_index?: number | null;
+        };
+        /** ImperialArtDetailClaimSourceBase */
+        ImperialArtDetailClaimSourceBase: {
+            /** Claim Text */
+            claim_text: string;
+            /**
+             * Evidence Strength
+             * @default verified
+             * @enum {string}
+             */
+            evidence_strength: "verified" | "probable" | "traditional";
+            /** Section */
+            section: string;
+            /** Source Locator */
+            source_locator?: string | null;
+            /** Source Title */
+            source_title: string;
+        };
+        /** ImperialArtDetailClaimSourceOut */
+        ImperialArtDetailClaimSourceOut: {
+            /** Claim Text */
+            claim_text: string;
+            /**
+             * Content Scope
+             * @default STTT_IMPERIAL_CITY
+             */
+            content_scope: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Detail Id
+             * Format: uuid
+             */
+            detail_id: string;
+            /**
+             * Evidence Strength
+             * @default verified
+             * @enum {string}
+             */
+            evidence_strength: "verified" | "probable" | "traditional";
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Section */
+            section: string;
+            /** Source Locator */
+            source_locator?: string | null;
+            /** Source Title */
+            source_title: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** ImperialArtDetailCreate */
+        ImperialArtDetailCreate: {
+            /** Art Value Body */
+            art_value_body?: string | null;
+            /**
+             * Claim Sources
+             * @default []
+             */
+            claim_sources: components["schemas"]["ImperialArtDetailClaimSourceBase"][];
+            /**
+             * Content Revision
+             * @default 1
+             */
+            content_revision: number;
+            /** Cultural Value Body */
+            cultural_value_body?: string | null;
+            /** Description Observation */
+            description_observation?: string | null;
+            /** Historical Value Body */
+            historical_value_body?: string | null;
+            /**
+             * Kind
+             * @default carving
+             * @enum {string}
+             */
+            kind: "carving" | "pattern" | "painting" | "mosaic" | "relief";
+            /** Material */
+            material?: string | null;
+            /** Meaning Body */
+            meaning_body?: string | null;
+            /** Motif */
+            motif?: string | null;
+            /**
+             * Questions
+             * @default []
+             */
+            questions: components["schemas"]["ImperialArtDetailQuestionBase"][];
+            /**
+             * Review Status
+             * @default draft
+             * @enum {string}
+             */
+            review_status: "draft" | "in_review" | "approved" | "published" | "archived";
+            /**
+             * Site Id
+             * Format: uuid
+             */
+            site_id: string;
+            /** Slug */
+            slug: string;
+            /** Story Body */
+            story_body?: string | null;
+            /**
+             * Story Type
+             * @default documented_event
+             * @enum {string}
+             */
+            story_type: "documented_event" | "legend" | "oral_account" | "interpretation";
+            /** Technique */
+            technique?: string | null;
+            /** Title */
+            title: string;
+        };
+        /** ImperialArtDetailDetail */
+        ImperialArtDetailDetail: {
+            /** Art Value Body */
+            art_value_body?: string | null;
+            /**
+             * Claim Sources
+             * @default []
+             */
+            claim_sources: components["schemas"]["ImperialArtDetailClaimSourceOut"][];
+            /**
+             * Content Revision
+             * @default 1
+             */
+            content_revision: number;
+            /**
+             * Content Scope
+             * @default STTT_IMPERIAL_CITY
+             */
+            content_scope: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Cultural Value Body */
+            cultural_value_body?: string | null;
+            /** Description Observation */
+            description_observation?: string | null;
+            /** Historical Value Body */
+            historical_value_body?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Kind
+             * @default carving
+             * @enum {string}
+             */
+            kind: "carving" | "pattern" | "painting" | "mosaic" | "relief";
+            /** Material */
+            material?: string | null;
+            /** Meaning Body */
+            meaning_body?: string | null;
+            /** Motif */
+            motif?: string | null;
+            /**
+             * Questions
+             * @default []
+             */
+            questions: components["schemas"]["ImperialArtDetailQuestionOut"][];
+            /**
+             * Review Status
+             * @default draft
+             * @enum {string}
+             */
+            review_status: "draft" | "in_review" | "approved" | "published" | "archived";
+            /**
+             * Row Version
+             * @default 1
+             */
+            row_version: number;
+            /**
+             * Site Id
+             * Format: uuid
+             */
+            site_id: string;
+            /** Slug */
+            slug: string;
+            /** Story Body */
+            story_body?: string | null;
+            /**
+             * Story Type
+             * @default documented_event
+             * @enum {string}
+             */
+            story_type: "documented_event" | "legend" | "oral_account" | "interpretation";
+            /** Technique */
+            technique?: string | null;
+            /** Title */
+            title: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** ImperialArtDetailQuestionBase */
+        ImperialArtDetailQuestionBase: {
+            /** Answer Key */
+            answer_key: string;
+            /**
+             * Display Order
+             * @default 0
+             */
+            display_order: number;
+            /** Explanation */
+            explanation?: string | null;
+            /**
+             * Options
+             * @default []
+             */
+            options: unknown[];
+            /** Prompt */
+            prompt: string;
+            /**
+             * Question Type
+             * @default multiple_choice
+             */
+            question_type: string;
+        };
+        /** ImperialArtDetailQuestionOut */
+        ImperialArtDetailQuestionOut: {
+            /**
+             * Content Scope
+             * @default STTT_IMPERIAL_CITY
+             */
+            content_scope: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Detail Id
+             * Format: uuid
+             */
+            detail_id: string;
+            /** Display Order */
+            display_order: number;
+            /** Explanation */
+            explanation?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Options */
+            options: unknown[];
+            /** Prompt */
+            prompt: string;
+            /** Question Type */
+            question_type: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** ImperialArtDetailSummary */
+        ImperialArtDetailSummary: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Kind */
+            kind: string;
+            /** Motif */
+            motif?: string | null;
+            /** Review Status */
+            review_status: string;
+            /**
+             * Site Id
+             * Format: uuid
+             */
+            site_id: string;
+            /** Slug */
+            slug: string;
+            /** Story Type */
+            story_type: string;
+            /** Title */
+            title: string;
+        };
+        /** ImperialArtDetailUpdate */
+        ImperialArtDetailUpdate: {
+            /** Art Value Body */
+            art_value_body?: string | null;
+            /** Content Revision */
+            content_revision?: number | null;
+            /** Cultural Value Body */
+            cultural_value_body?: string | null;
+            /** Description Observation */
+            description_observation?: string | null;
+            /** Historical Value Body */
+            historical_value_body?: string | null;
+            /** Kind */
+            kind?: ("carving" | "pattern" | "painting" | "mosaic" | "relief") | null;
+            /** Material */
+            material?: string | null;
+            /** Meaning Body */
+            meaning_body?: string | null;
+            /** Motif */
+            motif?: string | null;
+            /** Review Status */
+            review_status?: ("draft" | "in_review" | "approved" | "published" | "archived") | null;
+            /** Row Version */
+            row_version?: number | null;
+            /** Slug */
+            slug?: string | null;
+            /** Story Body */
+            story_body?: string | null;
+            /** Story Type */
+            story_type?: ("documented_event" | "legend" | "oral_account" | "interpretation") | null;
+            /** Technique */
+            technique?: string | null;
+            /** Title */
+            title?: string | null;
+        };
+        /** ImperialAssignmentReleaseCreate */
+        ImperialAssignmentReleaseCreate: {
+            /** Class Name */
+            class_name: string;
+            /** Due Date */
+            due_date?: string | null;
+            /**
+             * Is Active
+             * @default true
+             */
+            is_active: boolean;
+            /** Journey Slug */
+            journey_slug: string;
+            /** Rubric Weights */
+            rubric_weights?: {
+                [key: string]: unknown;
+            } | null;
+            /** Title */
+            title: string;
+        };
+        /** ImperialAssignmentReleaseOut */
+        ImperialAssignmentReleaseOut: {
+            /** Class Name */
+            class_name: string;
+            /**
+             * Content Scope
+             * @default STTT_IMPERIAL_CITY
+             */
+            content_scope: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Due Date */
+            due_date?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Is Active */
+            is_active: boolean;
+            /** Journey Slug */
+            journey_slug: string;
+            /**
+             * Row Version
+             * @default 1
+             */
+            row_version: number;
+            /** Rubric Weights */
+            rubric_weights: {
+                [key: string]: unknown;
+            };
+            /**
+             * Teacher Id
+             * Format: uuid
+             */
+            teacher_id: string;
+            /** Title */
+            title: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** ImperialAssignmentReleaseUpdate */
+        ImperialAssignmentReleaseUpdate: {
+            /** Class Name */
+            class_name?: string | null;
+            /** Due Date */
+            due_date?: string | null;
+            /** Is Active */
+            is_active?: boolean | null;
+            /** Journey Slug */
+            journey_slug?: string | null;
+            /** Row Version */
+            row_version?: number | null;
+            /** Rubric Weights */
+            rubric_weights?: {
+                [key: string]: unknown;
+            } | null;
+            /** Title */
+            title?: string | null;
+        };
+        /** ImperialAudioCatalogOut */
+        ImperialAudioCatalogOut: {
+            /**
+             * Content Scope
+             * @default STTT_IMPERIAL_CITY_AUDIO_GUIDES
+             */
+            content_scope: string;
+            /**
+             * Total Duration Seconds
+             * @description Total listening duration across all tracks
+             */
+            total_duration_seconds: number;
+            /**
+             * Total Guides
+             * @description Total number of audio guide tracks
+             */
+            total_guides: number;
+            /**
+             * Tracks
+             * @description All audio guide tracks
+             */
+            tracks?: components["schemas"]["ImperialAudioGuideOut"][];
+            /**
+             * Version
+             * @default 1.0.0
+             */
+            version: string;
+        };
+        /** ImperialAudioGuideOut */
+        ImperialAudioGuideOut: {
+            /**
+             * Audio Url
+             * @description Relative URL to the audio file asset
+             */
+            audio_url: string;
+            /**
+             * Credit Text
+             * @description Source credit and archival attribution
+             */
+            credit_text?: string | null;
+            /**
+             * Duration Seconds
+             * @description Total audio track duration in seconds (90 - 150s target)
+             */
+            duration_seconds: number;
+            /**
+             * Monument Slug
+             * @description Unique monument slug identifier
+             */
+            monument_slug: string;
+            /**
+             * Narrator
+             * @description Narrator description or attribution
+             * @default Lưu Niên Voice Guide — Giọng Cố Đô
+             */
+            narrator: string;
+            /**
+             * Script Text
+             * @description Full narration script text in Vietnamese
+             */
+            script_text: string;
+            /**
+             * Summary
+             * @description Brief synopsis of the narration
+             */
+            summary?: string | null;
+            /**
+             * Tags
+             * @description Curated discovery tags
+             */
+            tags?: string[];
+            /**
+             * Timed Transcript
+             * @description Array of time-coded narration cues
+             */
+            timed_transcript?: components["schemas"]["TimedTranscriptCue"][];
+            /**
+             * Title Vi
+             * @description Vietnamese monument name
+             */
+            title_vi: string;
+        };
+        /**
+         * ImperialBatchSyncRequest
+         * @description Batch payload sent when client regains connectivity.
+         */
+        ImperialBatchSyncRequest: {
+            /**
+             * Items
+             * @description List of offline submissions to synchronize
+             */
+            items?: components["schemas"]["ImperialOfflineSubmissionItem"][];
+        };
+        /**
+         * ImperialBatchSyncResponse
+         * @description Aggregate response returned after batch synchronization.
+         */
+        ImperialBatchSyncResponse: {
+            /**
+             * Failed Count
+             * @description Count of rejected or failed submission items
+             * @default 0
+             */
+            failed_count: number;
+            /**
+             * Results
+             * @description Per-item synchronization results with server IDs and status
+             */
+            results?: components["schemas"]["ImperialSyncItemResult"][];
+            /**
+             * Synced Count
+             * @description Count of successfully synced, acknowledged, or updated submissions
+             * @default 0
+             */
+            synced_count: number;
+        };
+        /** ImperialClueAttemptRequest */
+        ImperialClueAttemptRequest: {
+            /**
+             * Attempt Number
+             * @default 1
+             */
+            attempt_number: number;
+            /**
+             * Selected Target Id
+             * Format: uuid
+             */
+            selected_target_id: string;
+        };
+        /** ImperialClueAttemptResponse */
+        ImperialClueAttemptResponse: {
+            /** Attempt Number */
+            attempt_number: number;
+            /**
+             * Clue Id
+             * Format: uuid
+             */
+            clue_id: string;
+            /**
+             * Hint Steps
+             * @default []
+             */
+            hint_steps: unknown[];
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Is Correct */
+            is_correct: boolean;
+            /** Message */
+            message: string;
+        };
+        /** ImperialClueCreate */
+        ImperialClueCreate: {
+            /** Clue Text */
+            clue_text: string;
+            /** Difficulty */
+            difficulty?: string | null;
+            /** Grade Level */
+            grade_level?: string | null;
+            /**
+             * Hint Steps
+             * @default []
+             */
+            hint_steps: unknown[];
+            /**
+             * Review Status
+             * @default draft
+             * @enum {string}
+             */
+            review_status: "draft" | "in_review" | "approved" | "published" | "archived";
+            /**
+             * Target Id
+             * Format: uuid
+             */
+            target_id: string;
+            /**
+             * Target Type
+             * @enum {string}
+             */
+            target_type: "site" | "art_detail";
+            /** Title */
+            title: string;
+        };
+        /** ImperialClueOut */
+        ImperialClueOut: {
+            /** Clue Text */
+            clue_text: string;
+            /**
+             * Content Scope
+             * @default STTT_IMPERIAL_CITY
+             */
+            content_scope: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Difficulty */
+            difficulty?: string | null;
+            /** Grade Level */
+            grade_level?: string | null;
+            /**
+             * Hint Steps
+             * @default []
+             */
+            hint_steps: unknown[];
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Review Status
+             * @default draft
+             * @enum {string}
+             */
+            review_status: "draft" | "in_review" | "approved" | "published" | "archived";
+            /**
+             * Row Version
+             * @default 1
+             */
+            row_version: number;
+            /**
+             * Target Id
+             * Format: uuid
+             */
+            target_id: string;
+            /**
+             * Target Type
+             * @enum {string}
+             */
+            target_type: "site" | "art_detail";
+            /** Title */
+            title: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** ImperialClueUpdate */
+        ImperialClueUpdate: {
+            /** Clue Text */
+            clue_text?: string | null;
+            /** Difficulty */
+            difficulty?: string | null;
+            /** Grade Level */
+            grade_level?: string | null;
+            /** Hint Steps */
+            hint_steps?: unknown[] | null;
+            /** Review Status */
+            review_status?: ("draft" | "in_review" | "approved" | "published" | "archived") | null;
+            /** Row Version */
+            row_version?: number | null;
+            /** Target Id */
+            target_id?: string | null;
+            /** Target Type */
+            target_type?: ("site" | "art_detail") | null;
+            /** Title */
+            title?: string | null;
+        };
+        /** ImperialGameSubmitRequest */
+        ImperialGameSubmitRequest: {
+            /**
+             * Question Id
+             * Format: uuid
+             */
+            question_id: string;
+            /** User Answer */
+            user_answer: string;
+        };
+        /** ImperialGameSubmitResponse */
+        ImperialGameSubmitResponse: {
+            /** Correct Answer */
+            correct_answer: string;
+            /** Explanation Why */
+            explanation_why?: string | null;
+            /** Is Correct */
+            is_correct: boolean;
+            /**
+             * Question Id
+             * Format: uuid
+             */
+            question_id: string;
+            /** Source Citation */
+            source_citation?: string | null;
+            /** User Answer */
+            user_answer: string;
+        };
+        /** ImperialLearningMediaCreate */
+        ImperialLearningMediaCreate: {
+            /** Alt Text */
+            alt_text?: string | null;
+            /**
+             * Asset Context
+             * @default extant
+             * @enum {string}
+             */
+            asset_context: "extant" | "historical_photo" | "restoration_drawing";
+            /**
+             * Asset Revision
+             * @default 1
+             */
+            asset_revision: number;
+            /** Credit Text */
+            credit_text?: string | null;
+            /** Height Px */
+            height_px?: number | null;
+            /**
+             * Kind
+             * @default image
+             * @enum {string}
+             */
+            kind: "image" | "panorama360" | "model3d";
+            /**
+             * License Status
+             * @default pending
+             * @enum {string}
+             */
+            license_status: "pending" | "approved" | "rejected";
+            /** Media Url */
+            media_url: string;
+            /**
+             * Review Status
+             * @default draft
+             * @enum {string}
+             */
+            review_status: "draft" | "in_review" | "approved" | "published" | "archived";
+            /**
+             * Site Id
+             * Format: uuid
+             */
+            site_id: string;
+            /** Thumbnail Url */
+            thumbnail_url?: string | null;
+            /** Width Px */
+            width_px?: number | null;
+        };
+        /** ImperialLearningMediaOut */
+        ImperialLearningMediaOut: {
+            /** Alt Text */
+            alt_text?: string | null;
+            /**
+             * Asset Context
+             * @default extant
+             * @enum {string}
+             */
+            asset_context: "extant" | "historical_photo" | "restoration_drawing";
+            /**
+             * Asset Revision
+             * @default 1
+             */
+            asset_revision: number;
+            /**
+             * Content Scope
+             * @default STTT_IMPERIAL_CITY
+             */
+            content_scope: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Credit Text */
+            credit_text?: string | null;
+            /** Height Px */
+            height_px?: number | null;
+            /**
+             * Hotspots
+             * @default []
+             */
+            hotspots: components["schemas"]["ImperialMediaHotspotOut"][];
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Kind
+             * @default image
+             * @enum {string}
+             */
+            kind: "image" | "panorama360" | "model3d";
+            /**
+             * License Status
+             * @default pending
+             * @enum {string}
+             */
+            license_status: "pending" | "approved" | "rejected";
+            /** Media Url */
+            media_url: string;
+            /**
+             * Review Status
+             * @default draft
+             * @enum {string}
+             */
+            review_status: "draft" | "in_review" | "approved" | "published" | "archived";
+            /**
+             * Row Version
+             * @default 1
+             */
+            row_version: number;
+            /**
+             * Site Id
+             * Format: uuid
+             */
+            site_id: string;
+            /** Thumbnail Url */
+            thumbnail_url?: string | null;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Width Px */
+            width_px?: number | null;
+        };
+        /** ImperialLearningMediaUpdate */
+        ImperialLearningMediaUpdate: {
+            /** Alt Text */
+            alt_text?: string | null;
+            /** Asset Context */
+            asset_context?: ("extant" | "historical_photo" | "restoration_drawing") | null;
+            /** Asset Revision */
+            asset_revision?: number | null;
+            /** Credit Text */
+            credit_text?: string | null;
+            /** Height Px */
+            height_px?: number | null;
+            /** Kind */
+            kind?: ("image" | "panorama360" | "model3d") | null;
+            /** License Status */
+            license_status?: ("pending" | "approved" | "rejected") | null;
+            /** Media Url */
+            media_url?: string | null;
+            /** Review Status */
+            review_status?: ("draft" | "in_review" | "approved" | "published" | "archived") | null;
+            /** Row Version */
+            row_version?: number | null;
+            /** Thumbnail Url */
+            thumbnail_url?: string | null;
+            /** Width Px */
+            width_px?: number | null;
+        };
+        /** ImperialLearningPathDetail */
+        ImperialLearningPathDetail: {
+            /**
+             * Age Group
+             * @default all
+             */
+            age_group: string;
+            /**
+             * Content Scope
+             * @default STTT_IMPERIAL_CITY
+             */
+            content_scope: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Created By */
+            created_by?: string | null;
+            /** Description */
+            description?: string | null;
+            /**
+             * Display Order
+             * @default 0
+             */
+            display_order: number;
+            /**
+             * Duration Min
+             * @default 45
+             */
+            duration_min: number;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Is Published
+             * @default false
+             */
+            is_published: boolean;
+            /**
+             * Kind
+             * @default standard
+             */
+            kind: string;
+            /** Learning Objectives */
+            learning_objectives?: string[];
+            /** Prerequisites */
+            prerequisites?: string | null;
+            /**
+             * Review Status
+             * @default draft
+             * @enum {string}
+             */
+            review_status: "draft" | "published" | "archived";
+            /**
+             * Row Version
+             * @default 1
+             */
+            row_version: number;
+            /** Slug */
+            slug: string;
+            /** Steps */
+            steps?: components["schemas"]["ImperialPathStepOut"][];
+            /** Title */
+            title: string;
+            /** Title En */
+            title_en?: string | null;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** ImperialMapAssetDetail */
+        ImperialMapAssetDetail: {
+            /** Approved By */
+            approved_by?: string | null;
+            /**
+             * Content Scope
+             * @default STTT_IMPERIAL_CITY
+             */
+            content_scope: string;
+            /** Copyright Holder */
+            copyright_holder?: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Created By
+             * Format: uuid
+             */
+            created_by: string;
+            /** Credit Text */
+            credit_text: string;
+            /** Height Px */
+            height_px: number;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Image Sha256 */
+            image_sha256: string;
+            /** Image Storage Key */
+            image_storage_key: string;
+            /** Is Active */
+            is_active: boolean;
+            /** License Evidence Key */
+            license_evidence_key?: string | null;
+            /** License Kind */
+            license_kind: string;
+            /** License Status */
+            license_status: string;
+            /** Mime Type */
+            mime_type: string;
+            /** Preview Storage Key */
+            preview_storage_key?: string | null;
+            /** Published At */
+            published_at?: string | null;
+            /** Review Status */
+            review_status: string;
+            /**
+             * Row Version
+             * @default 1
+             */
+            row_version: number;
+            /** Slug */
+            slug: string;
+            /** Source Locator */
+            source_locator?: string | null;
+            /** Source Title */
+            source_title: string;
+            /** Title En */
+            title_en?: string | null;
+            /** Title Vi */
+            title_vi: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /**
+             * Version
+             * @default 1
+             */
+            version: number;
+            /** Width Px */
+            width_px: number;
+        };
+        /** ImperialMapAssetSummary */
+        ImperialMapAssetSummary: {
+            /**
+             * Content Scope
+             * @default STTT_IMPERIAL_CITY
+             */
+            content_scope: string;
+            /** Height Px */
+            height_px: number;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Is Active */
+            is_active: boolean;
+            /** License Kind */
+            license_kind: string;
+            /** License Status */
+            license_status: string;
+            /** Review Status */
+            review_status: string;
+            /** Slug */
+            slug: string;
+            /** Title En */
+            title_en?: string | null;
+            /** Title Vi */
+            title_vi: string;
+            /** Version */
+            version: number;
+            /** Width Px */
+            width_px: number;
+        };
+        /** ImperialMapAssetUpload */
+        ImperialMapAssetUpload: {
+            /** Copyright Holder */
+            copyright_holder?: string | null;
+            /** Credit Text */
+            credit_text: string;
+            /** Height Px */
+            height_px: number;
+            /** Image Sha256 */
+            image_sha256: string;
+            /** Image Storage Key */
+            image_storage_key: string;
+            /** License Evidence Key */
+            license_evidence_key?: string | null;
+            /** License Kind */
+            license_kind: string;
+            /**
+             * Mime Type
+             * @enum {string}
+             */
+            mime_type: "image/jpeg" | "image/png" | "image/webp";
+            /** Preview Storage Key */
+            preview_storage_key?: string | null;
+            /** Slug */
+            slug: string;
+            /** Source Locator */
+            source_locator?: string | null;
+            /** Source Title */
+            source_title: string;
+            /** Title En */
+            title_en?: string | null;
+            /** Title Vi */
+            title_vi: string;
+            /**
+             * Version
+             * @default 1
+             */
+            version: number;
+            /** Width Px */
+            width_px: number;
+        };
+        /** ImperialMediaHotspotCreate */
+        ImperialMediaHotspotCreate: {
+            /** Description */
+            description?: string | null;
+            /** Detail Id */
+            detail_id?: string | null;
+            /** Media Id */
+            media_id?: string | null;
+            /**
+             * Point Kind
+             * @default point
+             * @enum {string}
+             */
+            point_kind: "point" | "rect" | "polygon";
+            /** Position Payload */
+            position_payload?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Review Status
+             * @default draft
+             * @enum {string}
+             */
+            review_status: "draft" | "in_review" | "approved" | "published" | "archived";
+            /** Title */
+            title: string;
+            /** U */
+            u: number;
+            /** V */
+            v: number;
+        };
+        /** ImperialMediaHotspotOut */
+        ImperialMediaHotspotOut: {
+            art_detail?: components["schemas"]["ImperialArtDetailSummary"] | null;
+            /**
+             * Content Scope
+             * @default STTT_IMPERIAL_CITY
+             */
+            content_scope: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Description */
+            description?: string | null;
+            /** Detail Id */
+            detail_id?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Media Id
+             * Format: uuid
+             */
+            media_id: string;
+            /**
+             * Point Kind
+             * @default point
+             * @enum {string}
+             */
+            point_kind: "point" | "rect" | "polygon";
+            /** Position Payload */
+            position_payload?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Review Status
+             * @default draft
+             * @enum {string}
+             */
+            review_status: "draft" | "in_review" | "approved" | "published" | "archived";
+            /**
+             * Row Version
+             * @default 1
+             */
+            row_version: number;
+            /** Title */
+            title: string;
+            /** U */
+            u: number;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** V */
+            v: number;
+        };
+        /** ImperialMediaHotspotUpdate */
+        ImperialMediaHotspotUpdate: {
+            /** Description */
+            description?: string | null;
+            /** Detail Id */
+            detail_id?: string | null;
+            /** Point Kind */
+            point_kind?: ("point" | "rect" | "polygon") | null;
+            /** Position Payload */
+            position_payload?: {
+                [key: string]: unknown;
+            } | null;
+            /** Review Status */
+            review_status?: ("draft" | "in_review" | "approved" | "published" | "archived") | null;
+            /** Row Version */
+            row_version?: number | null;
+            /** Title */
+            title?: string | null;
+            /** U */
+            u?: number | null;
+            /** V */
+            v?: number | null;
+        };
+        /** ImperialMediaOut */
+        ImperialMediaOut: {
+            /** Alt Text */
+            alt_text?: string | null;
+            /**
+             * Content Scope
+             * @default STTT_IMPERIAL_CITY
+             */
+            content_scope: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Credit */
+            credit: string;
+            /** Description */
+            description?: string | null;
+            /**
+             * Display Order
+             * @default 0
+             */
+            display_order: number;
+            /** Historical Year */
+            historical_year?: number | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Is Published
+             * @default false
+             */
+            is_published: boolean;
+            /** License */
+            license: string;
+            /**
+             * Media Kind
+             * @default photo
+             */
+            media_kind: string;
+            /** Owner */
+            owner?: string | null;
+            /**
+             * Row Version
+             * @default 1
+             */
+            row_version: number;
+            /**
+             * Site Id
+             * Format: uuid
+             */
+            site_id: string;
+            /** Thumbnail Url */
+            thumbnail_url?: string | null;
+            /** Title */
+            title?: string | null;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Url */
+            url: string;
+        };
+        /**
+         * ImperialOfflineSubmissionItem
+         * @description Queued submission item stored in client IndexedDB while offline.
+         */
+        ImperialOfflineSubmissionItem: {
+            /**
+             * Activity Id
+             * Format: uuid
+             * @description Imperial inquiry activity UUID
+             */
+            activity_id: string;
+            /**
+             * Answer Text
+             * @description Student's answer text or reflection
+             */
+            answer_text: string;
+            /**
+             * Classroom Id
+             * @description Optional classroom identifier if student is participating in an assignment
+             */
+            classroom_id?: string | null;
+            /**
+             * Client Timestamp
+             * Format: date-time
+             * @description ISO 8601 timestamp when student recorded the submission offline
+             */
+            client_timestamp: string;
+            /**
+             * Evidence Refs
+             * @description List of primary source or media citations / evidence items
+             */
+            evidence_refs?: unknown[];
+            /**
+             * Id
+             * @description Client-side queued submission identifier (UUID or local string)
+             */
+            id: string;
+        };
+        /** ImperialPathStepOut */
+        ImperialPathStepOut: {
+            /**
+             * Content Scope
+             * @default STTT_IMPERIAL_CITY
+             */
+            content_scope: string;
+            /**
+             * Estimated Minutes
+             * @default 10
+             */
+            estimated_minutes: number;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Path Id
+             * Format: uuid
+             */
+            path_id: string;
+            /** Prompt */
+            prompt: string;
+            /** Rubrics */
+            rubrics?: unknown | null;
+            site?: components["schemas"]["ImperialSiteSummary"] | null;
+            /**
+             * Site Id
+             * Format: uuid
+             */
+            site_id: string;
+            /** Source Requirement */
+            source_requirement?: string | null;
+            /**
+             * Step Order
+             * @default 0
+             */
+            step_order: number;
+            /** Title */
+            title?: string | null;
+        };
+        /**
+         * ImperialQuestionAdminOut
+         * @description Admin representation including answer key and explanations.
+         */
+        ImperialQuestionAdminOut: {
+            /** Answer Key */
+            answer_key: string;
+            /**
+             * Content Scope
+             * @default STTT_IMPERIAL_CITY
+             */
+            content_scope: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Detail Id */
+            detail_id?: string | null;
+            /** Explanation Why */
+            explanation_why?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Options
+             * @default []
+             */
+            options: unknown[];
+            /** Prompt */
+            prompt: string;
+            /**
+             * Question Type
+             * @default multiple_choice
+             * @enum {string}
+             */
+            question_type: "multiple_choice" | "matching" | "hotspot_identify";
+            /**
+             * Review Status
+             * @default draft
+             * @enum {string}
+             */
+            review_status: "draft" | "in_review" | "approved" | "published" | "archived";
+            /**
+             * Row Version
+             * @default 1
+             */
+            row_version: number;
+            /** Site Id */
+            site_id?: string | null;
+            /** Source Citation */
+            source_citation?: string | null;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** ImperialQuestionCreate */
+        ImperialQuestionCreate: {
+            /** Answer Key */
+            answer_key: string;
+            /** Detail Id */
+            detail_id?: string | null;
+            /** Explanation Why */
+            explanation_why?: string | null;
+            /**
+             * Options
+             * @default []
+             */
+            options: unknown[];
+            /** Prompt */
+            prompt: string;
+            /**
+             * Question Type
+             * @default multiple_choice
+             * @enum {string}
+             */
+            question_type: "multiple_choice" | "matching" | "hotspot_identify";
+            /**
+             * Review Status
+             * @default draft
+             * @enum {string}
+             */
+            review_status: "draft" | "in_review" | "approved" | "published" | "archived";
+            /** Site Id */
+            site_id?: string | null;
+            /** Source Citation */
+            source_citation?: string | null;
+        };
+        /**
+         * ImperialQuestionOut
+         * @description Public inquiry question response.
+         *
+         *     Note: answer_key and explanation_why are strictly hidden before submission.
+         */
+        ImperialQuestionOut: {
+            /**
+             * Content Scope
+             * @default STTT_IMPERIAL_CITY
+             */
+            content_scope: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Detail Id */
+            detail_id?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Options
+             * @default []
+             */
+            options: unknown[];
+            /** Prompt */
+            prompt: string;
+            /** Question Type */
+            question_type: string;
+            /** Review Status */
+            review_status: string;
+            /** Site Id */
+            site_id?: string | null;
+            /** Source Citation */
+            source_citation?: string | null;
+        };
+        /** ImperialQuestionUpdate */
+        ImperialQuestionUpdate: {
+            /** Answer Key */
+            answer_key?: string | null;
+            /** Detail Id */
+            detail_id?: string | null;
+            /** Explanation Why */
+            explanation_why?: string | null;
+            /** Options */
+            options?: unknown[] | null;
+            /** Prompt */
+            prompt?: string | null;
+            /** Question Type */
+            question_type?: ("multiple_choice" | "matching" | "hotspot_identify") | null;
+            /** Review Status */
+            review_status?: ("draft" | "in_review" | "approved" | "published" | "archived") | null;
+            /** Row Version */
+            row_version?: number | null;
+            /** Site Id */
+            site_id?: string | null;
+            /** Source Citation */
+            source_citation?: string | null;
+        };
+        /** ImperialSiteDetail */
+        ImperialSiteDetail: {
+            /** Alternative Names */
+            alternative_names?: string[];
+            /** Architectural Features */
+            architectural_features?: string | null;
+            /**
+             * Condition
+             * @default extant
+             */
+            condition: string;
+            /** Construction Year */
+            construction_year?: number | null;
+            /**
+             * Content Scope
+             * @default STTT_IMPERIAL_CITY
+             */
+            content_scope: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Display Order
+             * @default 0
+             */
+            display_order: number;
+            /** Historical Context */
+            historical_context?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Is Published
+             * @default false
+             */
+            is_published: boolean;
+            /** Latitude */
+            latitude?: number | null;
+            /**
+             * Learning Level
+             * @default L1_DOCUMENTED
+             */
+            learning_level: string;
+            /** Longitude */
+            longitude?: number | null;
+            /** Media */
+            media?: components["schemas"]["ImperialMediaOut"][];
+            /** Name En */
+            name_en?: string | null;
+            /** Name Han Nom */
+            name_han_nom?: string | null;
+            /** Name Vi */
+            name_vi: string;
+            /** Published At */
+            published_at?: string | null;
+            /**
+             * Row Version
+             * @default 1
+             */
+            row_version: number;
+            /**
+             * Site Type
+             * @default palace
+             */
+            site_type: string;
+            /** Slug */
+            slug: string;
+            /** Summary En */
+            summary_en?: string | null;
+            /** Summary Vi */
+            summary_vi?: string | null;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            zone?: components["schemas"]["ImperialZoneSummary"] | null;
+            /**
+             * Zone Id
+             * Format: uuid
+             */
+            zone_id: string;
+        };
+        /** ImperialSiteEvidence */
+        ImperialSiteEvidence: {
+            /** Evidence */
+            evidence?: components["schemas"]["ImperialSiteEvidenceItem"][];
+            /** Site Name Vi */
+            site_name_vi: string;
+            /** Site Slug */
+            site_slug: string;
+        };
+        /** ImperialSiteEvidenceItem */
+        ImperialSiteEvidenceItem: {
+            /** Assertion Vi */
+            assertion_vi: string;
+            /** Claim Id */
+            claim_id?: string | null;
+            /** Claim Type */
+            claim_type: string;
+            /** Confidence Level */
+            confidence_level: string;
+            /** Source Citation */
+            source_citation?: string | null;
+            /** Source Title */
+            source_title: string;
+            /** Verification Status */
+            verification_status: string;
+        };
+        /** ImperialSiteSummary */
+        ImperialSiteSummary: {
+            /** Condition */
+            condition: string;
+            /** Display Order */
+            display_order: number;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Is Published */
+            is_published: boolean;
+            /** Learning Level */
+            learning_level: string;
+            /** Name En */
+            name_en?: string | null;
+            /** Name Vi */
+            name_vi: string;
+            /** Site Type */
+            site_type: string;
+            /** Slug */
+            slug: string;
+            /**
+             * Zone Id
+             * Format: uuid
+             */
+            zone_id: string;
+        };
+        /** ImperialSiteTimeline */
+        ImperialSiteTimeline: {
+            /** Site Name Vi */
+            site_name_vi: string;
+            /** Site Slug */
+            site_slug: string;
+            /** Timeline */
+            timeline?: components["schemas"]["ImperialSiteTimelineItem"][];
+        };
+        /** ImperialSiteTimelineItem */
+        ImperialSiteTimelineItem: {
+            /** Description */
+            description?: string | null;
+            /** Event Title */
+            event_title: string;
+            /**
+             * Is Verified
+             * @default true
+             */
+            is_verified: boolean;
+            /** Period Label */
+            period_label?: string | null;
+            /** Source Ref */
+            source_ref?: string | null;
+            /** Year */
+            year?: number | null;
+        };
+        /** ImperialSubmissionCreate */
+        ImperialSubmissionCreate: {
+            /** Activity Id */
+            activity_id?: string | null;
+            /** Answer Text */
+            answer_text: string;
+            /** Classroom Id */
+            classroom_id?: string | null;
+            /** Evidence Refs */
+            evidence_refs?: unknown[];
+        };
+        /** ImperialSubmissionGrade */
+        ImperialSubmissionGrade: {
+            /** Feedback */
+            feedback?: string | null;
+            /**
+             * Rubric Scores
+             * @description Rubric scores S1-S4 (0-3 scale each: S1_spatial, S2_temporal, S3_evidence, S4_argument)
+             */
+            rubric_scores?: {
+                [key: string]: number;
+            } | null;
+            /** Score */
+            score?: number | null;
+            /**
+             * Status
+             * @default graded
+             * @enum {string}
+             */
+            status: "graded" | "resubmit_requested";
+        };
+        /** ImperialSubmissionOut */
+        ImperialSubmissionOut: {
+            /**
+             * Activity Id
+             * Format: uuid
+             */
+            activity_id: string;
+            /** Answer Text */
+            answer_text: string;
+            /** Classroom Id */
+            classroom_id?: string | null;
+            /**
+             * Content Scope
+             * @default STTT_IMPERIAL_CITY
+             */
+            content_scope: string;
+            /** Evidence Refs */
+            evidence_refs?: unknown[];
+            /** Feedback */
+            feedback?: string | null;
+            /** Graded At */
+            graded_at?: string | null;
+            /** Graded By */
+            graded_by?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Row Version
+             * @default 1
+             */
+            row_version: number;
+            /** Rubric Scores */
+            rubric_scores?: {
+                [key: string]: unknown;
+            } | null;
+            /** Score */
+            score?: number | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "submitted" | "graded" | "resubmit_requested";
+            /**
+             * Student Id
+             * Format: uuid
+             */
+            student_id: string;
+            /**
+             * Submitted At
+             * Format: date-time
+             */
+            submitted_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /**
+         * ImperialSyncItemResult
+         * @description Per-item synchronization status report.
+         */
+        ImperialSyncItemResult: {
+            /**
+             * Activity Id
+             * @description Activity UUID associated with this submission item
+             */
+            activity_id?: string | null;
+            /**
+             * Client Id
+             * @description Matching client-side queued item ID
+             */
+            client_id: string;
+            /**
+             * Error
+             * @description Failure details or validation error if status == 'failed'
+             */
+            error?: string | null;
+            /**
+             * Server Id
+             * @description Server UUID of the persisted or acknowledged ImperialSubmission
+             */
+            server_id?: string | null;
+            /**
+             * Status
+             * @description Item sync status: 'synced' (new), 'acknowledged' (idempotent duplicate), 'updated' (content changed), or 'failed' (invalid)
+             */
+            status: string;
+        };
+        /** ImperialZoneSummary */
+        ImperialZoneSummary: {
+            /** Display Order */
+            display_order: number;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Site Count
+             * @default 0
+             */
+            site_count: number | null;
+            /** Slug */
+            slug: string;
+            /** Title En */
+            title_en?: string | null;
+            /** Title Vi */
+            title_vi: string;
+        };
         /**
          * LeaderboardEntryOut
          * @description Single entry in the class leaderboard.
@@ -14713,6 +17883,49 @@ export interface components {
             status_message: string;
         };
         /**
+         * RbpcInquiryWithdrawOut
+         * @description Visitor response when inquiry consent is withdrawn and contact details redacted.
+         */
+        RbpcInquiryWithdrawOut: {
+            /**
+             * Experience Title
+             * @description Title of the requested experience.
+             * @default Trải nghiệm văn hóa
+             */
+            experience_title: string;
+            /**
+             * Last Updated At
+             * Format: date-time
+             */
+            last_updated_at: string;
+            /** Party Size */
+            party_size?: number | null;
+            /** Preferred Date */
+            preferred_date?: string | null;
+            /**
+             * Privacy Accepted
+             * @description Consent acceptance flag (False following withdrawal).
+             * @default false
+             */
+            privacy_accepted: boolean;
+            /**
+             * Reference
+             * @description Non-sequential reference code.
+             */
+            reference: string;
+            /**
+             * @description Current inquiry lifecycle state (closed).
+             * @default closed
+             */
+            status: components["schemas"]["RbpcInquiryStatus"];
+            /**
+             * Status Message
+             * @description Human-readable explanation of the withdrawal status.
+             * @default Đồng thuận đã được rút lại. Toàn bộ thông tin liên hệ đã được ẩn danh/xóa bỏ.
+             */
+            status_message: string;
+        };
+        /**
          * RbpcObservedMetrics
          * @description Real, verified aggregate statistics observed in the database.
          */
@@ -16371,6 +19584,35 @@ export interface components {
             y: number;
             /** Z */
             z: number;
+        };
+        /** TimedTranscriptCue */
+        TimedTranscriptCue: {
+            /**
+             * End Time Sec
+             * @description Optional cue end time in seconds
+             */
+            end_time_sec?: number | null;
+            /**
+             * Section Title
+             * @description Subtitle or thematic section title
+             */
+            section_title?: string | null;
+            /**
+             * Speaker
+             * @description Speaker identity
+             * @default Lưu Niên Voice Guide
+             */
+            speaker: string | null;
+            /**
+             * Text
+             * @description Narration sentence or segment text
+             */
+            text: string;
+            /**
+             * Time Sec
+             * @description Start time cue in seconds
+             */
+            time_sec: number;
         };
         /**
          * UpdateMissionProgressRequest
@@ -23757,6 +26999,1718 @@ export interface operations {
             };
         };
     };
+    submit_activity_api_v1_imperial_activities__activity_id__submissions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                activity_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ImperialSubmissionCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialSubmissionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_annotation_api_v1_imperial_admin_annotations__id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_annotation_api_v1_imperial_admin_annotations__id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ImperialAnnotationUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialAnnotationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_annotation_audit_api_v1_imperial_admin_annotations__id__audit_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialAnnotationAuditOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    admin_create_art_detail_api_v1_imperial_admin_art_details_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ImperialArtDetailCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialArtDetailDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    admin_delete_art_detail_api_v1_imperial_admin_art_details__detail_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                detail_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    admin_update_art_detail_api_v1_imperial_admin_art_details__detail_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                detail_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ImperialArtDetailUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialArtDetailDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    admin_create_clue_api_v1_imperial_admin_clues_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ImperialClueCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialClueOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    admin_delete_clue_api_v1_imperial_admin_clues__clue_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                clue_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    admin_update_clue_api_v1_imperial_admin_clues__clue_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                clue_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ImperialClueUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialClueOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    admin_delete_media_hotspot_api_v1_imperial_admin_hotspots__hotspot_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                hotspot_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    admin_update_media_hotspot_api_v1_imperial_admin_hotspots__hotspot_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                hotspot_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ImperialMediaHotspotUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialMediaHotspotOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_maps_api_v1_imperial_admin_maps_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialMapAssetSummary"][];
+                };
+            };
+        };
+    };
+    create_map_api_v1_imperial_admin_maps_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ImperialMapAssetUpload"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialMapAssetDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_map_annotations_api_v1_imperial_admin_maps__map_id__annotations_get: {
+        parameters: {
+            query?: {
+                zone?: string | null;
+                lens?: string | null;
+            };
+            header?: never;
+            path: {
+                map_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialAnnotationOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_annotation_api_v1_imperial_admin_maps__map_id__annotations_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                map_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ImperialAnnotationCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialAnnotationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    export_annotations_api_v1_imperial_admin_maps__map_id__export_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                map_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    import_annotations_api_v1_imperial_admin_maps__map_id__import_post: {
+        parameters: {
+            query?: {
+                dry_run?: boolean;
+            };
+            header?: never;
+            path: {
+                map_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    [key: string]: unknown;
+                };
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    publish_map_api_v1_imperial_admin_maps__map_id__publish_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                map_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialMapAssetDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    admin_create_media_api_v1_imperial_admin_media_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ImperialLearningMediaCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialLearningMediaOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    admin_delete_media_api_v1_imperial_admin_media__media_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                media_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    admin_update_media_api_v1_imperial_admin_media__media_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                media_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ImperialLearningMediaUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialLearningMediaOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    admin_create_media_hotspot_api_v1_imperial_admin_media__media_id__hotspots_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                media_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ImperialMediaHotspotCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialMediaHotspotOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    admin_create_question_api_v1_imperial_admin_questions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ImperialQuestionCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialQuestionAdminOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    admin_delete_question_api_v1_imperial_admin_questions__question_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                question_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    admin_update_question_api_v1_imperial_admin_questions__question_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                question_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ImperialQuestionUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialQuestionAdminOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    ask_imperial_tutor_api_v1_imperial_ai_ask_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ImperialAIAskRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialAIAskResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_art_detail_api_v1_imperial_art_details__detail_id_or_slug__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                detail_id_or_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialArtDetailDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_map_asset_image_api_v1_imperial_assets__asset_id__image_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                asset_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_all_audio_guides_api_v1_imperial_audio_guides_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialAudioCatalogOut"];
+                };
+            };
+        };
+    };
+    get_clues_api_v1_imperial_clues_get: {
+        parameters: {
+            query?: {
+                /** @description Filter by target type: site or art_detail */
+                target_type?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialClueOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    attempt_clue_api_v1_imperial_clues__clue_id__attempt_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                clue_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ImperialClueAttemptRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialClueAttemptResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_game_questions_api_v1_imperial_games_questions_get: {
+        parameters: {
+            query?: {
+                /** @description Filter by site slug */
+                site?: string | null;
+                /** @description Filter by question type */
+                question_type?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialQuestionOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    submit_game_answer_api_v1_imperial_games_submit_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ImperialGameSubmitRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialGameSubmitResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_active_map_api_v1_imperial_maps_active_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    get_map_annotations_api_v1_imperial_maps__map_id__annotations_get: {
+        parameters: {
+            query?: {
+                /** @description Filter by zone slug or UUID */
+                zone?: string | null;
+                /** @description Filter by lens UUID */
+                lens?: string | null;
+            };
+            header?: never;
+            path: {
+                map_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialAnnotationOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_media_hotspots_api_v1_imperial_media__media_id__hotspots_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                media_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialMediaHotspotOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_learning_paths_api_v1_imperial_paths_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialLearningPathDetail"][];
+                };
+            };
+        };
+    };
+    get_learning_path_by_slug_api_v1_imperial_paths__slug__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialLearningPathDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_sites_api_v1_imperial_sites_get: {
+        parameters: {
+            query?: {
+                /** @description Filter by zone slug or UUID */
+                zone?: string | null;
+                /** @description Filter by condition (extant, ruined, lost, reconstructed) */
+                condition?: string | null;
+                /** @description Full-text search by monument name or slug */
+                search?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialSiteSummary"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_site_by_slug_api_v1_imperial_sites__slug__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialSiteDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_site_activities_api_v1_imperial_sites__slug__activities_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialActivityOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_site_art_details_api_v1_imperial_sites__slug__art_details_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialArtDetailSummary"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_audio_guide_by_slug_api_v1_imperial_sites__slug__audio_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialAudioGuideOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_site_evidence_api_v1_imperial_sites__slug__evidence_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialSiteEvidence"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_site_learning_media_api_v1_imperial_sites__slug__learning_media_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialLearningMediaOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_site_timeline_api_v1_imperial_sites__slug__timeline_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialSiteTimeline"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    batch_sync_submissions_api_v1_imperial_submissions_batch_sync_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ImperialBatchSyncRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialBatchSyncResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_teacher_assignments_api_v1_imperial_teacher_assignments_get: {
+        parameters: {
+            query?: {
+                /** @description Filter by class name */
+                class_name?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialAssignmentReleaseOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_teacher_assignment_api_v1_imperial_teacher_assignments_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ImperialAssignmentReleaseCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialAssignmentReleaseOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_teacher_assignment_api_v1_imperial_teacher_assignments__assignment_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assignment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ImperialAssignmentReleaseUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialAssignmentReleaseOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_submissions_for_teacher_api_v1_imperial_teacher_submissions_get: {
+        parameters: {
+            query?: {
+                /** @description Filter by activity UUID */
+                activity_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialSubmissionOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    grade_submission_api_v1_imperial_teacher_submissions__submission_id__grade_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                submission_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ImperialSubmissionGrade"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialSubmissionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_zones_api_v1_imperial_zones_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialZoneSummary"][];
+                };
+            };
+        };
+    };
     get_leaderboard_api_v1_leaderboard_get: {
         parameters: {
             query?: {
@@ -25948,6 +30902,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RbpcInquiryStatusOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    withdraw_inquiry_status_consent_api_v1_rbpc_inquiries_status__opaqueToken__withdraw_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                opaqueToken: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcInquiryWithdrawOut"];
                 };
             };
             /** @description Validation Error */
