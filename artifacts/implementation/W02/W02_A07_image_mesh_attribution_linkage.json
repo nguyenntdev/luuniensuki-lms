@@ -1,0 +1,175 @@
+{
+  "ticket": "V5-T027",
+  "ticket_id": "V5-T027",
+  "wave": "W02",
+  "slot": "W02-A07",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Image and 3D mesh attribution linkage with license and rights enforcement.",
+  "timestamp": "2026-10-22T12:00:00Z",
+  "summary": "Implemented and verified complete image and 3D mesh attribution linkage, viewer fallback architecture, and rights enforcement across all 9 Urns and 162 Motifs (171 relics total). Enriched all 3D manifests (public/models/manifests/*.json and frontend/public/models/manifests/*.json) with 3D model paths, spatial coordinates, 2D rubbing image fallbacks (ban-duc-noi/), creator attribution, institutional rights owner (HMCC), and CC-BY 4.0 / Educational Fair Use licensing. Implemented deterministic asset fallback resolving cleanly to 2D rubbing photographs when 3D meshes are unavailable, WebGL is unsupported, or client device operates under low-power mode. Built fail-closed CDN distribution gates blocking access on revoked rights, missing licenses, or checksum mismatches, and integrated manifest synchronization with the persistent HistoricalAsset table via HeritageImportService.",
+  "invariants_enforced": [
+    "ATTRIBUTION_LINKAGE_171_RELICS: All 9 Urns and 162 relief Motifs link to 3D GLB model paths, spatial coordinates, 2D rubbing photographs in ban-duc-noi/, and verified rights metadata (CC BY 4.0 / Educational Fair Use, HMCC).",
+    "VIEWER_FALLBACK_ARCHITECTURE: Automatic, seamless fallback from 3D WebGL to 2D archival rubbings when 3D meshes are absent, WebGL is unsupported, or low-power mode is enabled (UrnAccessibleFallback).",
+    "NEGATIVE_ABUSE_RIGHTS_TAKEDOWN_GATE: Revoked, withdrawn, or restricted rights status, proprietary licenses, or disallowed distribution strictly fail closed with typed exceptions (AssetRightsRevokedError, AssetDistributionBlockedError).",
+    "CHECKSUM_AND_MAGIC_BYTE_INTEGRITY: 100% of physical asset files on disk (3D GLBs and 2D rubbing images) match declared SHA-256 digests and binary magic headers (glTF and JPEG/PNG).",
+    "PERSISTENT_DATABASE_SYNC: Manifests synchronize to the persistent HistoricalAsset table with verified license and rights clearance enforcement.",
+    "NO_PHANTOM_3D_SUBSTITUTION: 8 non-Cao-Đỉnh urns are strictly marked mesh_status='MISSING' with null fallback_url, preventing illegitimate substitution of Cao Đỉnh 3D geometry."
+  ],
+  "audit_findings_171_relics": {
+    "total_urns_audited": 9,
+    "total_motifs_audited": 162,
+    "total_relics_audited": 171,
+    "all_urns_cleared": true,
+    "all_motifs_cleared": true,
+    "all_relics_cleared": true,
+    "3d_present_urns": 1,
+    "3d_missing_urns": 8,
+    "motifs_on_present_mesh": 18,
+    "motifs_with_2d_fallback": 162,
+    "fallback_2d_coverage_pct": 100.0,
+    "disk_files_verified_count": 162,
+    "checksum_mismatches_count": 0,
+    "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+    "license": "CC BY 4.0 / Educational Fair Use"
+  },
+  "changes": [
+    {
+      "file": "backend/services/asset_rights.py",
+      "description": "Implemented complete asset rights governance, attribution validation, 2D rubbing fallback resolution (resolve_asset_fallback), 162-motif registry (get_motif_registry_162, get_motif_fallback), takedown gate (revoke_manifest_rights), CDN distribution enforcement (enforce_cdn_distribution_policy), HistoricalAsset synchronization, and 171-relic audit (audit_all_relic_assets)."
+    },
+    {
+      "file": "backend/history_models.py",
+      "description": "Re-exported asset rights exceptions, registries, fallback resolvers, and audit validators from backend.services.asset_rights for direct domain integration."
+    },
+    {
+      "file": "backend/services/heritage_import.py",
+      "description": "Added sync_cuu_dinh_manifests_to_db and HeritageImportService.sync_cuu_dinh_manifests to synchronize Cửu Đỉnh 3D manifests and motif linkages to persistent HistoricalAsset rows."
+    },
+    {
+      "file": "public/models/manifests/*.json",
+      "description": "Enriched all 9 urn manifests (and index.json) with 162 relief hotspot linkages including model_url, fallback_2d (disk_path, thumbnail_url, bytes, sha256, format), creator, rights_owner, license, rights_status, and distribution clearance flags."
+    },
+    {
+      "file": "frontend/public/models/manifests/*.json",
+      "description": "Synchronized all frontend 3D manifests (and index.json) with backend manifests ensuring identical attribution, 2D fallback, and licensing metadata."
+    },
+    {
+      "file": "scripts/history/generate_3d_manifests.py",
+      "description": "Updated 3D manifest generation script to automatically bind 2D rubbing fallbacks, rights owners, licenses, and checksums to both urns and relief hotspots."
+    },
+    {
+      "file": "tests/v5/test_v5_t027.py",
+      "description": "Created comprehensive 20-test suite covering 9 Urns attribution, 162 Motifs linkage, 3D & 2D checksum integrity on disk, Cao Đỉnh LOD GLB verification, missing mesh phantom prevention, CDN clearance, negative abuse tests (revoked rights, restricted statuses, missing licenses, disallowed distribution, tampered hashes), database HistoricalAsset sync, and 2D fallback resolution matrix."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t027.py -v",
+    "total_tests": 20,
+    "passed_tests": 20,
+    "failed_tests": 0,
+    "test_details": [
+      {
+        "name": "test_all_9_urn_manifests_have_valid_attribution_and_fallbacks",
+        "result": "PASSED",
+        "assertion": "Verifies that all 9 urn manifests have valid creator, license, rights owner, checksum, and 2D fallback."
+      },
+      {
+        "name": "test_manifest_attribution_validation_service",
+        "result": "PASSED",
+        "assertion": "Verifies validate_manifest_attribution service on all 9 urn manifests."
+      },
+      {
+        "name": "test_3d_and_2d_checksum_integrity_on_disk",
+        "result": "PASSED",
+        "assertion": "Verifies physical presence and SHA-256 hash match of 2D rubbing files on disk for all 9 urns."
+      },
+      {
+        "name": "test_cao_dinh_3d_mesh_lod_checksum_integrity",
+        "result": "PASSED",
+        "assertion": "Verifies Cao Đỉnh 3D GLB mesh LOD variants have authentic binary headers (glTF) and exact SHA-256 hashes."
+      },
+      {
+        "name": "test_missing_urn_models_suppress_phantom_substitution",
+        "result": "PASSED",
+        "assertion": "Verifies that the 8 non-Cao-Đỉnh urns are marked MISSING and have null fallback_url."
+      },
+      {
+        "name": "test_positive_cdn_distribution_clearance_all_9_urns",
+        "result": "PASSED",
+        "assertion": "Verifies that all 9 valid manifests pass CDN distribution clearance with proper cache controls."
+      },
+      {
+        "name": "test_audit_all_urn_manifests_service",
+        "result": "PASSED",
+        "assertion": "Verifies audit_all_urn_manifests service passes for all 9 urns."
+      },
+      {
+        "name": "test_negative_revoked_rights_blocks_cdn_distribution",
+        "result": "PASSED",
+        "assertion": "Negative Abuse Test: When rights are revoked, CDN distribution is blocked."
+      },
+      {
+        "name": "test_negative_restricted_statuses_block_cdn",
+        "result": "PASSED",
+        "assertion": "Negative Abuse Test: Various restricted rights statuses are blocked."
+      },
+      {
+        "name": "test_negative_missing_or_proprietary_license_blocks_cdn",
+        "result": "PASSED",
+        "assertion": "Negative Abuse Test: Missing license or proprietary license blocks CDN distribution."
+      },
+      {
+        "name": "test_negative_disallowed_public_distribution_blocks_cdn",
+        "result": "PASSED",
+        "assertion": "Negative Abuse Test: public_distribution_allowed=False blocks CDN distribution."
+      },
+      {
+        "name": "test_negative_checksum_tampering_fails_integrity",
+        "result": "PASSED",
+        "assertion": "Negative Abuse Test: Modified or mismatched checksum fails integrity verification."
+      },
+      {
+        "name": "test_negative_missing_fallback_2d_fails_validation",
+        "result": "PASSED",
+        "assertion": "Negative Abuse Test: Missing 2D viewer fallback fails validation."
+      },
+      {
+        "name": "test_database_historical_asset_sync_and_rights_enforcement",
+        "result": "PASSED",
+        "assertion": "Verifies syncing manifests to HistoricalAsset model and database-level rights validation."
+      },
+      {
+        "name": "test_all_162_motifs_hotspots_link_coordinates_rubbing_and_rights",
+        "result": "PASSED",
+        "assertion": "Verifies that all 162 relief motifs link coordinates, 3D GLB path, 2D rubbing, and license metadata."
+      },
+      {
+        "name": "test_resolve_asset_fallback_urn_matrix",
+        "result": "PASSED",
+        "assertion": "Verifies clean 2D fallback resolution for Urns across device capabilities and mesh presence."
+      },
+      {
+        "name": "test_resolve_asset_fallback_motif_matrix",
+        "result": "PASSED",
+        "assertion": "Verifies clean 2D fallback resolution for individual Motifs."
+      },
+      {
+        "name": "test_negative_motif_rights_restriction_fails_closed",
+        "result": "PASSED",
+        "assertion": "Negative Abuse Test: Revoked or restricted motif rights fail closed and block distribution."
+      },
+      {
+        "name": "test_audit_all_relic_assets_171_relics_coverage",
+        "result": "PASSED",
+        "assertion": "Verifies comprehensive audit of 171 relics (9 urns + 162 motifs) with 100% verification."
+      },
+      {
+        "name": "test_heritage_import_service_cuu_dinh_sync",
+        "result": "PASSED",
+        "assertion": "Verifies HeritageImportService synchronizes Cửu Đỉnh manifests into HistoricalAsset table."
+      }
+    ]
+  }
+}

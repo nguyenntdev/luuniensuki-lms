@@ -18,6 +18,7 @@ Core Guarantees:
 """
 from __future__ import annotations
 
+import json
 import logging
 import re
 import uuid
@@ -56,6 +57,29 @@ from .rbpc_audit import (
     record_creator_consent_change,
     record_experience_update,
     verify_all_audit_chains,
+)
+from ..domain.canonical_urn_mapping import (
+    AmbiguousAliasError,
+    CANONICAL_RELIEFS,
+    CANONICAL_RELIEF_SLUGS,
+    CANONICAL_URNS,
+    CANONICAL_URN_SLUGS,
+    CanonicalReliefInfo,
+    CanonicalUrnInfo,
+    CrossUrnMisassignmentError,
+    InvalidMotifCountError,
+    MOTIFS_PER_URN,
+    STABLE_MOTIF_IDS,
+    TOTAL_MOTIFS,
+    TOTAL_URNS,
+    extract_urn_slug,
+    resolve_canonical_motif_id,
+    resolve_canonical_relief_slug,
+    resolve_canonical_urn_slug,
+    resolve_legacy_identifier,
+    validate_dataset_uniqueness,
+    validate_no_cross_urn_misassignment,
+    validate_urn_motif_count,
 )
 
 logger = logging.getLogger("luuniensuki.heritage_import")
@@ -149,6 +173,74 @@ ACCURACY_GRADE_MAP: dict[str, str] = {
     "rejected_accuracy": HeritageAccuracyGrade.rejected_accuracy.value,
     "rejected_inaccurate": HeritageAccuracyGrade.rejected_accuracy.value,
 }
+
+# Disqualified placeholder/dummy markers that invalidate a bibliographic citation
+DISQUALIFIED_CITATION_MARKERS: set[str] = {
+    "unknown",
+    "none",
+    "n/a",
+    "na",
+    "null",
+    "undefined",
+    "citation needed",
+    "tbd",
+    "todo",
+    "placeholder",
+    "fake",
+    "fabricated",
+    "unverified",
+    "test",
+    "dummy",
+}
+
+
+def is_valid_bibliographic_citation(
+    source_title: Optional[str],
+    citation_label: Optional[str],
+) -> bool:
+    """Validate that bibliographic citation is substantive, present, and not placeholder/fabricated."""
+    if not source_title or not citation_label:
+        return False
+    st = source_title.strip().lower()
+    cl = citation_label.strip().lower()
+    if len(st) < 3 or len(cl) < 2:
+        return False
+    if st in DISQUALIFIED_CITATION_MARKERS or cl in DISQUALIFIED_CITATION_MARKERS:
+        return False
+    # Check individual tokens against disqualified placeholder markers
+    st_words = re.findall(r"\b[a-z0-9_-]+\b", st)
+    cl_words = re.findall(r"\b[a-z0-9_-]+\b", cl)
+    if any(w in DISQUALIFIED_CITATION_MARKERS for w in st_words) or any(
+        w in DISQUALIFIED_CITATION_MARKERS for w in cl_words
+    ):
+        return False
+    if cl in {"?", "-", "--", "..."}:
+        return False
+    return True
+
+
+def resolve_claim_human_reviewer(
+    claim_dict: dict[str, Any],
+    db: Optional[Session] = None,
+) -> Optional[uuid.UUID]:
+    """Resolve human expert reviewer UUID if present, valid, and registered in users table."""
+    raw_reviewer = claim_dict.get("reviewed_by") or claim_dict.get("verified_by")
+    if not raw_reviewer:
+        return None
+    reviewer_uuid: Optional[uuid.UUID] = None
+    if isinstance(raw_reviewer, uuid.UUID):
+        reviewer_uuid = raw_reviewer
+    elif isinstance(raw_reviewer, str):
+        try:
+            reviewer_uuid = uuid.UUID(raw_reviewer.strip())
+        except (ValueError, AttributeError):
+            return None
+    if reviewer_uuid and db is not None:
+        user_exists = db.scalar(select(User.id).where(User.id == reviewer_uuid))
+        if user_exists:
+            return reviewer_uuid
+        return None
+    return reviewer_uuid
 
 
 # --------------------------------------------------------------------------- #
@@ -888,6 +980,14 @@ def validate_stories_data(
                 if sup_type not in valid_support_types:
                     errors.append(
                         f"Story '{slug or idx}' claim #{c_idx} invalid support_type '{sup_type}'. Allowed: {sorted(valid_support_types)}"
+                    )
+
+                # Flag unverified claims asserting verified status in seed data without human reviewer
+                raw_c_status = claim.get("review_status")
+                raw_c_rev = claim.get("reviewed_by") or claim.get("verified_by")
+                if raw_c_status in ("verified", "expert_verified", "published_human_approved") and not raw_c_rev:
+                    warnings.append(
+                        f"Story '{slug or idx}' claim #{c_idx} asserts verified status '{raw_c_status}' without human expert reviewer; will be ingested as unreviewed."
                     )
 
     return ValidationReport(
@@ -1686,39 +1786,101 @@ def import_heritage_data(
             source_url = claim_dict.get("source_url")
             support_type = claim_dict.get("support_type", RbpcSupportType.direct.value)
             claim_category = claim_dict.get("claim_category", "historical_fact")
-            excerpt_en = claim_dict.get("statement_en")
+            raw_notes = (
+                claim_dict.get("evidence_excerpt_private")
+                or claim_dict.get("notes")
+                or claim_dict.get("review_notes")
+                or claim_dict.get("evidence_notes")
+                or claim_dict.get("statement_en")
+            )
 
             existing_claim = existing_claims_by_stmt.get(statement)
             if existing_claim:
                 # Preservation guardrail: Re-importing existing items must preserve existing human
-                # approval status and never overwrite an existing human review decision back to default.
+                # approval status and notes. Never overwrite an existing human review decision back to default.
                 is_human_reviewed = (
-                    existing_claim.review_status in ("verified", "published_human_approved")
+                    existing_claim.review_status in (
+                        "verified",
+                        "expert_verified",
+                        "editor_reviewed",
+                        "published_human_approved",
+                    )
                     or existing_claim.reviewed_by is not None
                 )
                 if is_human_reviewed:
                     stats.claims_preserved_review += 1
                     logger.debug(
-                        "Preserved human approval status '%s' for claim on story '%s'",
+                        "Preserved human approval status '%s' and notes for claim on story '%s'",
                         existing_claim.review_status,
                         slug,
                     )
+                    # Preserve existing human review notes/excerpt if already recorded
+                    if raw_notes and not existing_claim.evidence_excerpt_private:
+                        existing_claim.evidence_excerpt_private = raw_notes
+                else:
+                    # If not yet human reviewed, update status only if explicitly transitioned
+                    raw_review_status = claim_dict.get("review_status")
+                    human_reviewer = resolve_claim_human_reviewer(claim_dict, db=db)
+                    has_verified_citation = is_valid_bibliographic_citation(source_title, citation)
+                    if (
+                        raw_review_status in ("verified", "expert_verified", "editor_reviewed", "published_human_approved")
+                        and human_reviewer is not None
+                        and has_verified_citation
+                    ):
+                        existing_claim.review_status = raw_review_status
+                        existing_claim.reviewed_by = human_reviewer
+                    elif raw_review_status in ("needs_source", "internal_review", "draft_pending_review", "unreviewed"):
+                        existing_claim.review_status = raw_review_status
+                    elif not has_verified_citation:
+                        existing_claim.review_status = "needs_source"
+
+                    if raw_notes:
+                        existing_claim.evidence_excerpt_private = raw_notes
+
                 existing_claim.source_title = source_title
                 existing_claim.source_url = source_url
                 existing_claim.support_type = support_type
                 existing_claim.citation_label = citation
                 existing_claim.claim_category = claim_category
-                if excerpt_en:
-                    existing_claim.evidence_excerpt_private = excerpt_en
                 stats.claims_updated += 1
             else:
-                # Novel evidence or seed claims must NOT be automatically marked verified upon import.
-                # New unreviewed claims must be assigned draft_pending_review (or candidate/needs_review) status.
+                # Novel evidence or seed claims must NOT be automatically marked verified upon import!
+                # Novel unverified evidence or imported claims must default to unreviewed, needs_source,
+                # or internal_review unless explicitly verified by a human expert with a verified bibliographic citation.
                 raw_review_status = claim_dict.get("review_status")
-                if raw_review_status and raw_review_status not in ("verified", "published_human_approved"):
+                human_reviewer = resolve_claim_human_reviewer(claim_dict, db=db)
+                has_verified_citation = is_valid_bibliographic_citation(source_title, citation)
+
+                # Explicit verified provenance record:
+                # Requires valid bibliographic citation AND authenticated human reviewer
+                has_verified_provenance = (
+                    has_verified_citation
+                    and human_reviewer is not None
+                    and (
+                        claim_dict.get("provenance_verified") is True
+                        or claim_dict.get("has_verified_provenance") is True
+                        or raw_review_status in ("verified", "expert_verified", "editor_reviewed", "published_human_approved")
+                    )
+                )
+
+                if has_verified_provenance:
+                    initial_status = (
+                        raw_review_status
+                        if raw_review_status in ("verified", "expert_verified", "editor_reviewed", "published_human_approved")
+                        else "expert_verified"
+                    )
+                    assigned_reviewer = human_reviewer
+                elif raw_review_status in ("internal_review", "draft_pending_review", "needs_source", "unreviewed"):
                     initial_status = raw_review_status
+                    assigned_reviewer = human_reviewer
+                elif not has_verified_citation:
+                    # Fabricated or missing bibliographic citation must default to needs_source
+                    initial_status = "needs_source"
+                    assigned_reviewer = None
                 else:
-                    initial_status = "draft_pending_review"
+                    # Default novel unverified claims to unreviewed (or internal_review)
+                    initial_status = "unreviewed"
+                    assigned_reviewer = None
 
                 new_claim = RbpcClaimEvidence(
                     id=uuid.uuid4(),
@@ -1730,8 +1892,9 @@ def import_heritage_data(
                     source_url=source_url,
                     support_type=support_type,
                     citation_label=citation,
-                    evidence_excerpt_private=excerpt_en,
+                    evidence_excerpt_private=raw_notes,
                     review_status=initial_status,
+                    reviewed_by=assigned_reviewer,
                 )
                 db.add(new_claim)
                 existing_claims_by_stmt[statement] = new_claim
@@ -1856,3 +2019,147 @@ class HeritageImportService:
             experiences_path=self.experiences_path,
             dry_run=dry_run,
         )
+
+    def sync_cuu_dinh_manifests(
+        self,
+        manifests_dir: Optional[Path] = None,
+        repo_root: Optional[Path] = None,
+    ) -> dict[str, int]:
+        """Synchronize Cửu Đỉnh 3D manifests & 162 motif linkages to HistoricalAsset rows."""
+        if self.db is None:
+            raise ValueError("A valid database Session is required to sync Cửu Đỉnh manifests.")
+        return sync_cuu_dinh_manifests_to_db(
+            db=self.db,
+            manifests_dir=manifests_dir,
+            repo_root=repo_root,
+        )
+
+    def validate_han_nom(
+        self,
+        reviews_or_data_dir: Optional[list[dict[str, Any]] | Path | str] = None,
+    ) -> dict[str, Any]:
+        """Validate Hán-Nôm review records and ensure epigraphic review guardrails (V5-T026)."""
+        target = reviews_or_data_dir or (REPO_ROOT / "data")
+        return validate_han_nom_reviews(target)
+
+
+def sync_cuu_dinh_manifests_to_db(
+    db: Session,
+    manifests_dir: Optional[Path] = None,
+    repo_root: Optional[Path] = None,
+) -> dict[str, int]:
+    """Synchronize Cửu Đỉnh 3D manifests (9 Urns and 162 Motifs) to persistent HistoricalAsset rows."""
+    from .asset_rights import audit_all_relic_assets, sync_manifest_to_historical_asset
+
+    if repo_root is None:
+        repo_root = Path(__file__).resolve().parents[2]
+    if manifests_dir is None:
+        manifests_dir = repo_root / "public" / "models" / "manifests"
+
+    audit_result = audit_all_relic_assets(manifests_dir=manifests_dir, repo_root=repo_root)
+    assert audit_result["all_relics_cleared"], "Cannot sync unverified relic assets to database"
+
+    urn_slugs = [
+        "cao-dinh", "nhan-dinh", "chuong-dinh", "anh-dinh",
+        "nghi-dinh", "thuan-dinh", "tuyen-dinh", "du-dinh", "huyen-dinh"
+    ]
+    synced_urns = 0
+    for slug in urn_slugs:
+        mf_path = manifests_dir / f"{slug}.json"
+        if mf_path.exists():
+            with open(mf_path, "r", encoding="utf-8") as f:
+                manifest = json.load(f)
+            sync_manifest_to_historical_asset(db, manifest)
+            synced_urns += 1
+
+    db.commit()
+    return {
+        "synced_urns": synced_urns,
+        "total_motifs_audited": audit_result["total_motifs_audited"],
+        "total_relics": audit_result["total_relics_audited"],
+    }
+
+
+def validate_han_nom_reviews(
+    reviews_or_data_dir: list[dict[str, Any]] | Path | str,
+) -> dict[str, Any]:
+    """Validate structured Hán-Nôm review records against epigraphic invariants (V5-T026).
+
+    Guarantees:
+    1. Motifs with verified Hán-Nôm readings have valid readings and translations.
+    2. The 4 unconfirmed motifs (urn_nghi_dinh_03, urn_thuan_dinh_13, urn_tuyen_dinh_11, urn_huyen_dinh_12)
+       are strictly preserved as is_uncertain: True and review_status: unreviewed / missing.
+    3. Negative abuse guardrail: No unverified or guessed glyph can be marked verified
+       without expert human review (epigrapher signoff) AND a valid source citation.
+    4. Guessing glyph without valid source citation is blocked or flagged.
+    """
+    from ..domain.han_nom_review import (
+        KNOWN_MISSING_HAN_NOM_MOTIF_IDS,
+        HanNomReviewError,
+        HanNomReviewStatus,
+        HanNomTranslationReview,
+        UnverifiedPromotionForbiddenError,
+        audit_162_han_nom_dataset,
+        is_valid_source_citation,
+    )
+
+    if isinstance(reviews_or_data_dir, (str, Path)):
+        audit_res = audit_162_han_nom_dataset(reviews_or_data_dir)
+        records = [
+            {
+                "motif_id": r.motif_id,
+                "urn_slug": r.urn_slug,
+                "han_nom_text": r.han_nom_text,
+                "reading_quoc_ngu": r.reading_quoc_ngu,
+                "translation_vi": r.translation_vi,
+                "translation_en": r.translation_en,
+                "review_status": r.review_status,
+                "origin": r.origin,
+                "is_uncertain": r.is_uncertain,
+                "is_ai_guessed": r.is_ai_guessed,
+                "source_citation": r.source_citation,
+                "epigrapher_signoff": r.epigrapher_signoff,
+                "reference_image_url": r.reference_image_url,
+            }
+            for r in audit_res["records"]
+        ]
+    else:
+        records = reviews_or_data_dir
+
+    total = len(records)
+    verified_count = 0
+    unreviewed_count = 0
+    uncertain_count = 0
+    errors: list[str] = []
+
+    for idx, raw in enumerate(records):
+        motif_id = raw.get("motif_id", f"record_{idx}")
+        try:
+            review = HanNomTranslationReview.model_validate(raw)
+            if review.review_status in (HanNomReviewStatus.verified, HanNomReviewStatus.human_verified):
+                verified_count += 1
+            else:
+                unreviewed_count += 1
+            if review.is_uncertain:
+                uncertain_count += 1
+
+            # Invariant check: The 4 known incomplete motifs must never be falsely verified
+            if motif_id in KNOWN_MISSING_HAN_NOM_MOTIF_IDS:
+                if review.review_status in (HanNomReviewStatus.verified, HanNomReviewStatus.human_verified):
+                    errors.append(f"Motif '{motif_id}' is a known unconfirmed motif and cannot be marked verified.")
+                if not review.is_uncertain and review.han_nom_text is None:
+                    errors.append(f"Motif '{motif_id}' missing glyphs must be marked is_uncertain=True.")
+
+        except (HanNomReviewError, UnverifiedPromotionForbiddenError, ValueError) as err:
+            errors.append(f"Motif '{motif_id}': {err}")
+
+    return {
+        "is_valid": len(errors) == 0,
+        "total": total,
+        "verified_count": verified_count,
+        "unreviewed_count": unreviewed_count,
+        "uncertain_count": uncertain_count,
+        "errors": errors,
+    }
+
+

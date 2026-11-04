@@ -19,6 +19,13 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from ..apischemas.history_learning import (
+    CurriculumFallback2DOut,
+    CurriculumModuleListOut,
+    CurriculumModuleOut,
+    CurriculumPublishValidationIn,
+    CurriculumPublishValidationOut,
+    HistoryLessonPublishIn,
+    HistoryLessonPublishOut,
     HistoryQuestionCreate,
     HistoryQuestionGradeIn,
     HistoryQuestionGradeOut,
@@ -34,6 +41,7 @@ from ..models import (
     HistoricalClaim,
     HistoricalEntity,
     HistoryQuestionType,
+    LessonContent,
     QuizQuestion,
     User,
 )
@@ -184,11 +192,14 @@ def create_history_question(
     question = QuizQuestion(**data)
     # Content-validity invariant (Spec 32.2): a question whose backing claims
     # are not verified/editor-reviewed is blocked for authoritative learning.
+    is_valid = hl.content_validity_check(db, question)
     question.content_validation_status = (
         "valid"
-        if hl.content_validity_check(db, question)
+        if is_valid
         else "blocked_for_authoritative_learning"
     )
+    if not is_valid:
+        question.is_published = False
     db.add(question)
     db.flush()
     _ensure_registry_row(db, payload.question_type)
@@ -229,4 +240,127 @@ def get_history_skills(
         user_id=user_id,
         dimensions=[MasteryDimensionOut(**d) for d in dimensions],
         overall=overall,
+    )
+
+
+# --------------------------------------------------------------------------- #
+# Curriculum Mapping & Publishing Gate Endpoints (V5-T029)
+# --------------------------------------------------------------------------- #
+@router.get(
+    "/api/v1/history/curriculum/modules",
+    response_model=CurriculumModuleListOut,
+)
+def list_curriculum_modules(db: Session = Depends(get_db)):
+    """List curriculum learning modules mapped to verified entities, claims, and 2D fallbacks."""
+    modules = hl.get_curriculum_modules(db=db)
+    return CurriculumModuleListOut(
+        items=[CurriculumModuleOut(**m) for m in modules],
+        total=len(modules),
+    )
+
+
+@router.get(
+    "/api/v1/history/curriculum/modules/{slug}",
+    response_model=CurriculumModuleOut,
+)
+def get_curriculum_module(slug: str, db: Session = Depends(get_db)):
+    """Get single curriculum module with verified claim linkage and 2D rubbing fallback."""
+    mod = hl.get_curriculum_module(slug, db=db)
+    if not mod:
+        raise AppError("CURRICULUM_MODULE_NOT_FOUND", f"Curriculum module '{slug}' not found", 404)
+    return CurriculumModuleOut(**mod)
+
+
+@router.get(
+    "/api/v1/history/curriculum/fallbacks/{target}",
+    response_model=CurriculumFallback2DOut,
+)
+def get_curriculum_2d_fallback(target: str):
+    """Resolve 2D rubbing asset fallback for low-bandwidth educational environments."""
+    fallback = hl.resolve_2d_rubbing_fallback(target)
+    return CurriculumFallback2DOut(**fallback)
+
+
+@router.post(
+    "/api/v1/history/curriculum/validate-publish",
+    response_model=CurriculumPublishValidationOut,
+)
+def validate_curriculum_publication(
+    payload: CurriculumPublishValidationIn,
+    db: Session = Depends(get_db),
+):
+    """Validate whether a learning module or lesson satisfies the historical claim publishing gate."""
+    lesson = None
+    if payload.lesson_id:
+        lesson = db.get(LessonContent, payload.lesson_id)
+        if not lesson:
+            raise AppError("LESSON_NOT_FOUND", "Lesson not found", 404)
+    else:
+        # Dry-run validation dummy object if no lesson_id passed
+        lesson = LessonContent(
+            id=UUID("00000000-0000-0000-0000-000000000000"),
+            motif_id=UUID("00000000-0000-0000-0000-000000000000"),
+            description="Dry run validation",
+        )
+
+    is_valid, issues = hl.validate_lesson_for_publication(
+        db,
+        lesson,
+        required_claim_ids=payload.claim_ids,
+        module_slug=payload.module_slug,
+    )
+
+    verified_count = 0
+    ineligible_count = 0
+    if payload.claim_ids:
+        for cid in payload.claim_ids:
+            c = db.get(HistoricalClaim, cid)
+            if c and c.verification_status in hl.ELIGIBLE_CLAIM_STATUSES:
+                verified_count += 1
+            else:
+                ineligible_count += 1
+
+    return CurriculumPublishValidationOut(
+        can_publish=is_valid,
+        validation_status="valid" if is_valid else "blocked_for_authoritative_learning",
+        issues=issues,
+        verified_claims_count=verified_count,
+        ineligible_claims_count=ineligible_count,
+    )
+
+
+@router.post(
+    "/api/v1/history/lessons/{lesson_id}/publish",
+    response_model=HistoryLessonPublishOut,
+    dependencies=[Depends(get_staff_user)],
+)
+def publish_history_lesson(
+    lesson_id: UUID,
+    payload: Optional[HistoryLessonPublishIn] = None,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Publish a lesson enforcing the historical claim verification gate (staff/admin only)."""
+    claim_ids = payload.claim_ids if payload else None
+    module_slug = payload.module_slug if payload else None
+    notes = payload.review_notes if payload else None
+
+    lesson = hl.publish_lesson_with_gate(
+        db=db,
+        lesson_id=lesson_id,
+        current_user_id=current_user.id,
+        required_claim_ids=claim_ids,
+        module_slug=module_slug,
+        review_notes=notes,
+    )
+
+    verified_claims = [str(c) for c in (claim_ids or [])]
+    return HistoryLessonPublishOut(
+        id=lesson.id,
+        motif_id=lesson.motif_id,
+        is_published=lesson.is_published,
+        status=lesson.status.value if hasattr(lesson.status, "value") else str(lesson.status),
+        content_validation_status=lesson.content_validation_status,
+        published_at=lesson.published_at,
+        verified_claim_ids=verified_claims,
     )

@@ -24,6 +24,7 @@ import {
   Award,
   FileText,
   X,
+  Image as ImageIcon,
 } from "lucide-react";
 import type {
   LearnPathwayModule,
@@ -679,7 +680,36 @@ function LearnPageContent() {
               </div>
 
               {/* Objectives List */}
-              {selectedModule.learningObjectives && selectedModule.learningObjectives.length > 0 && (
+              {selectedModule.curriculumObjectives && selectedModule.curriculumObjectives.length > 0 ? (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="block text-xs font-semibold uppercase tracking-wider text-[var(--rbpc-muted)]">
+                      {locale === "vi" ? "Mục tiêu năng lực Lịch sử (GDPT 2018):" : "Curriculum Competency Objectives:"}
+                    </span>
+                    <span className="text-[11px] font-mono text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                      {locale === "vi" ? "Chứng cứ đã kiểm chứng" : "Source-Verified"}
+                    </span>
+                  </div>
+                  <ul className="space-y-2 text-xs sm:text-sm text-[var(--rbpc-ink)]">
+                    {selectedModule.curriculumObjectives.map((obj, idx) => (
+                      <li key={idx} className="flex items-start gap-2 p-2 rounded-lg bg-[var(--rbpc-surface-muted)] border border-[var(--rbpc-divider-subtle)]">
+                        <CheckCircle2 className="h-4 w-4 text-[var(--rbpc-primary)] shrink-0 mt-0.5" aria-hidden="true" />
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="font-mono text-[10px] font-bold px-1.5 py-0.2 rounded bg-[var(--rbpc-primary-subtle)] text-[var(--rbpc-primary)]">
+                              {obj.competency}
+                            </span>
+                            <span className="font-mono text-[10px] text-[var(--rbpc-muted)]">
+                              {obj.code}
+                            </span>
+                          </div>
+                          <p>{obj.text[locale] || obj.text.vi}</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : selectedModule.learningObjectives && selectedModule.learningObjectives.length > 0 ? (
                 <div className="space-y-2">
                   <span className="block text-xs font-semibold uppercase tracking-wider text-[var(--rbpc-muted)]">
                     {locale === "vi" ? "Mục tiêu bài học:" : "Learning Objectives:"}
@@ -692,6 +722,27 @@ function LearnPageContent() {
                       </li>
                     ))}
                   </ul>
+                </div>
+              ) : null}
+
+              {/* 2D Rubbing Asset Fallback for Low-Bandwidth Environments */}
+              {selectedModule.fallback2dRubbingUrl && (
+                <div className="rounded-xl border border-amber-600/30 bg-amber-500/5 p-3 space-y-2">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-amber-800 dark:text-amber-300">
+                    <ImageIcon className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0" aria-hidden="true" />
+                    <span>
+                      {locale === "vi"
+                        ? "Hỗ trợ môi trường băng thông thấp (2D Rubbing Fallback)"
+                        : "Low-Bandwidth Educational Environment Fallback"}
+                    </span>
+                  </div>
+                  <p className="text-xs text-[var(--rbpc-ink-subtle)] leading-relaxed">
+                    {selectedModule.fallback2dDescription?.[locale] ||
+                      selectedModule.fallback2dDescription?.vi ||
+                      (locale === "vi"
+                        ? "Học sinh có thể xem bản dập 2D độ phân giải cao thay thế mô hình 3D trên thiết bị không hỗ trợ WebGL."
+                        : "High-resolution 2D rubbing archival assets available for low-bandwidth classrooms and devices without WebGL.")}
+                  </p>
                 </div>
               )}
 
@@ -707,38 +758,56 @@ function LearnPageContent() {
                   <span>{locale === "vi" ? "Đóng cửa sổ" : "Close"}</span>
                 </RbpcButton>
 
-                {selectedModule.linked3DArtefactSlug && (
-                  <RbpcButton asChild variant="primary" size="md" className="w-full sm:w-auto">
-                    <Link href={`/cuu-dinh/${selectedModule.linked3DArtefactSlug}`}>
-                      <Box className="h-4 w-4 mr-1.5" aria-hidden="true" />
-                      <span>
-                        {locale === "vi" ? "Mở mô hình 3D tương tác" : "Launch 3D Viewer"}
-                      </span>
-                    </Link>
-                  </RbpcButton>
-                )}
+                <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
+                  {selectedModule.fallback2dRubbingUrl && (
+                    <RbpcButton asChild variant="secondary" size="md" className="w-full sm:w-auto">
+                      <a
+                        href={selectedModule.fallback2dRubbingUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5"
+                      >
+                        <ImageIcon className="h-4 w-4" aria-hidden="true" />
+                        <span>
+                          {locale === "vi" ? "Bản dập 2D (Mạng thấp)" : "2D Rubbing (2D Fallback)"}
+                        </span>
+                      </a>
+                    </RbpcButton>
+                  )}
 
-                {selectedModule.roadmapPhase === "P3_MAKER_MASTERCLASS" && (
-                  <RbpcButton asChild variant="primary" size="md" className="w-full sm:w-auto">
-                    <Link href="/rbpc/inquiries?experience=workshop-duc-dong-phuong-duc">
-                      <Calendar className="h-4 w-4 mr-1.5" aria-hidden="true" />
-                      <span>
-                        {locale === "vi" ? "Đăng ký yêu cầu xưởng nghề" : "Request Workshop"}
-                      </span>
-                    </Link>
-                  </RbpcButton>
-                )}
+                  {selectedModule.linked3DArtefactSlug && (
+                    <RbpcButton asChild variant="primary" size="md" className="w-full sm:w-auto">
+                      <Link href={`/cuu-dinh/${selectedModule.linked3DArtefactSlug}`}>
+                        <Box className="h-4 w-4 mr-1.5" aria-hidden="true" />
+                        <span>
+                          {locale === "vi" ? "Mở mô hình 3D tương tác" : "Launch 3D Viewer"}
+                        </span>
+                      </Link>
+                    </RbpcButton>
+                  )}
 
-                {selectedModule.roadmapPhase === "P1_HERITAGE_BASELINE" && (
-                  <RbpcButton asChild variant="primary" size="md" className="w-full sm:w-auto">
-                    <Link href="/sources">
-                      <Library className="h-4 w-4 mr-1.5" aria-hidden="true" />
-                      <span>
-                        {locale === "vi" ? "Tra cứu thư tịch gốc" : "View Sources"}
-                      </span>
-                    </Link>
-                  </RbpcButton>
-                )}
+                  {selectedModule.roadmapPhase === "P3_MAKER_MASTERCLASS" && (
+                    <RbpcButton asChild variant="primary" size="md" className="w-full sm:w-auto">
+                      <Link href="/rbpc/inquiries?experience=workshop-duc-dong-phuong-duc">
+                        <Calendar className="h-4 w-4 mr-1.5" aria-hidden="true" />
+                        <span>
+                          {locale === "vi" ? "Đăng ký yêu cầu xưởng nghề" : "Request Workshop"}
+                        </span>
+                      </Link>
+                    </RbpcButton>
+                  )}
+
+                  {selectedModule.roadmapPhase === "P1_HERITAGE_BASELINE" && (
+                    <RbpcButton asChild variant="primary" size="md" className="w-full sm:w-auto">
+                      <Link href="/sources">
+                        <Library className="h-4 w-4 mr-1.5" aria-hidden="true" />
+                        <span>
+                          {locale === "vi" ? "Tra cứu thư tịch gốc" : "View Sources"}
+                        </span>
+                      </Link>
+                    </RbpcButton>
+                  )}
+                </div>
               </div>
             </div>
           </div>

@@ -40,6 +40,14 @@ import SourceEvidenceRail from "@/components/explore/SourceEvidenceRail";
 import LivingBridgeCard from "@/components/explore/LivingBridgeCard";
 import { CulturalBridgePanel } from "@/components/rbpc/CulturalBridgePanel";
 import Skeleton from "@/components/Skeleton";
+import {
+  StoryPassageEpistemicBadge,
+  EmptyEvidenceWarning,
+  ClaimFootnoteTag,
+  StoryEvidenceFootnotes,
+} from "@/components/history/StoryCitationRenderer";
+import { CitationDrawer } from "@/components/rbpc/CitationDrawer";
+import { parseStoryFootnotes } from "@/lib/history";
 
 // Category display metadata
 const CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -60,6 +68,7 @@ export default function HeritagePlaceDetailPage() {
 
   const [loading, setLoading] = useState(true);
   const [place, setPlace] = useState<HeritagePlace | null>(null);
+  const [isCitationDrawerOpen, setIsCitationDrawerOpen] = useState(false);
 
   // Default synthetic fallback sources grounded in official records
   const defaultSources: HeritageSourceEvidence[] = useMemo(
@@ -97,6 +106,54 @@ export default function HeritagePlaceDetailPage() {
     ],
     [place?.id]
   );
+
+  // Convert defaultSources to CitationSourceItem format for CitationDrawer
+  const drawerSources = useMemo(() => {
+    return defaultSources.map((s) => ({
+      id: s.id,
+      title: s.source_title,
+      source_title: s.source_title,
+      author: s.source_author,
+      source_author: s.source_author,
+      publication_year: s.publication_year,
+      year: s.publication_year,
+      locator: s.cited_section ? `${s.cited_section}, ${s.cited_page || ""}` : s.cited_page,
+      cited_section: s.cited_section,
+      cited_page: s.cited_page,
+      url: s.source_url,
+      source_url: s.source_url,
+      statement: s.statement,
+      evidence_status: s.evidence_status,
+      reuse_rights: s.reuse_rights,
+    }));
+  }, [defaultSources]);
+
+  // Parse prose footnotes if available
+  const parsedSummaryVi = useMemo(() => {
+    const dummyCitations = defaultSources.map((s) => ({
+      id: s.id,
+      source_title: s.source_title,
+      source_id: s.id,
+      author: s.source_author,
+      locator: s.cited_section,
+      has_source: true,
+      footnote_key: s.id,
+    }));
+    return parseStoryFootnotes(place?.visitor_summary_vi, dummyCitations);
+  }, [place?.visitor_summary_vi, defaultSources]);
+
+  const parsedSummaryEn = useMemo(() => {
+    const dummyCitations = defaultSources.map((s) => ({
+      id: s.id,
+      source_title: s.source_title,
+      source_id: s.id,
+      author: s.source_author,
+      locator: s.cited_section,
+      has_source: true,
+      footnote_key: s.id,
+    }));
+    return parseStoryFootnotes(place?.visitor_summary_en, dummyCitations);
+  }, [place?.visitor_summary_en, defaultSources]);
 
   // Synthetic media assets including 3D model if place has 3D
   const mediaAssets: HeritageMediaAsset[] = useMemo(() => {
@@ -363,20 +420,91 @@ export default function HeritagePlaceDetailPage() {
 
           {/* B. Historical Narrative / Verified Synthesis */}
           <section className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs sm:p-8">
-            <div className="flex items-center gap-2 text-xs font-semibold tracking-wider text-primary uppercase">
-              <BookOpen className="h-4 w-4" />
-              <span>Khảo chứng Lịch sử</span>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2 text-xs font-semibold tracking-wider text-primary uppercase">
+                <BookOpen className="h-4 w-4" />
+                <span>Khảo chứng Lịch sử</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <StoryPassageEpistemicBadge
+                  certainty={defaultSources.length > 0 ? "su_lieu_xac_thuc" : "dang_khao_cuu"}
+                  hasSource={defaultSources.length > 0}
+                  verificationStatus={defaultSources.length > 0 ? "expert_verified" : "unreviewed"}
+                />
+                {defaultSources.length === 0 && (
+                  <span className="text-[11px] font-semibold text-amber-700 dark:text-amber-400">
+                    (Chưa có nguồn)
+                  </span>
+                )}
+              </div>
             </div>
             <h2 className="mt-2 font-display text-xl font-bold text-foreground sm:text-2xl">
               Giá trị Văn hóa & Bối cảnh Khảo cứu
             </h2>
             <p className="mt-4 text-sm leading-relaxed text-foreground/90 sm:text-base">
-              {place.visitor_summary_vi}
+              {parsedSummaryVi.segments.length > 0 ? (
+                parsedSummaryVi.segments.map((seg, sIdx) => {
+                  if (seg.footnote) {
+                    const fn = seg.footnote;
+                    return (
+                      <ClaimFootnoteTag
+                        key={sIdx}
+                        index={fn.index}
+                        citationId={fn.citationId}
+                        sourceTitle={fn.citation?.source_title}
+                        hasSource={true}
+                        onOpenDrawer={() => setIsCitationDrawerOpen(true)}
+                      />
+                    );
+                  }
+                  return <span key={sIdx}>{seg.text}</span>;
+                })
+              ) : (
+                <>
+                  {place.visitor_summary_vi}
+                  {defaultSources.map((s, idx) => (
+                    <ClaimFootnoteTag
+                      key={s.id}
+                      index={idx + 1}
+                      citationId={s.id}
+                      sourceTitle={s.source_title}
+                      hasSource={true}
+                      onOpenDrawer={() => setIsCitationDrawerOpen(true)}
+                    />
+                  ))}
+                </>
+              )}
             </p>
             {place.visitor_summary_en && (
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground italic sm:text-base border-t border-border/60 pt-4">
-                &ldquo;{place.visitor_summary_en}&rdquo;
+                &ldquo;
+                {parsedSummaryEn.segments.length > 0 ? (
+                  parsedSummaryEn.segments.map((seg, sIdx) => {
+                    if (seg.footnote) {
+                      const fn = seg.footnote;
+                      return (
+                        <ClaimFootnoteTag
+                          key={sIdx}
+                          index={fn.index}
+                          citationId={fn.citationId}
+                          sourceTitle={fn.citation?.source_title}
+                          hasSource={true}
+                          onOpenDrawer={() => setIsCitationDrawerOpen(true)}
+                        />
+                      );
+                    }
+                    return <span key={sIdx}>{seg.text}</span>;
+                  })
+                ) : (
+                  place.visitor_summary_en
+                )}
+                &rdquo;
               </p>
+            )}
+            {defaultSources.length === 0 && (
+              <div className="mt-4">
+                <EmptyEvidenceWarning message="Tường thuật này chưa gắn nguồn đối chiếu thư tịch — không thể coi là sử liệu xác thực." />
+              </div>
             )}
           </section>
 
@@ -388,6 +516,7 @@ export default function HeritagePlaceDetailPage() {
               placeNameEn={place.name_en || undefined}
               layout="bottom"
               locale="vi"
+              onOpenCitationDrawer={() => setIsCitationDrawerOpen(true)}
             />
           </section>
         </div>
@@ -444,6 +573,16 @@ export default function HeritagePlaceDetailPage() {
           </section>
         </aside>
       </div>
+
+      {/* Slide-out Source Drawer */}
+      <CitationDrawer
+        isOpen={isCitationDrawerOpen}
+        onClose={() => setIsCitationDrawerOpen(false)}
+        sources={drawerSources}
+        entityName={place.name_vi}
+        title="Thư tịch & Khảo chứng Di sản"
+        locale="vi"
+      />
     </main>
   );
 }

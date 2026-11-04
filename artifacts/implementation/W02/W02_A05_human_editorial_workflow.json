@@ -1,0 +1,94 @@
+{
+  "ticket": "V5-T025",
+  "ticket_id": "V5-T025",
+  "wave": "W02",
+  "slot": "W02-A05",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Human editorial workflow and verification governance in backend/services/history_governance.py and backend/routers/history.py (editorial lifecycle transitions draft -> internal_review -> verified -> published, role-based permissions admin/staff/teacher, immutable audit logging, negative abuse protection blocking unauthorized users from publishing)",
+  "timestamp": "2026-10-22T11:30:00Z",
+  "summary": "Implemented human editorial workflow and verification governance for historical claims and entities across backend/services/history_governance.py and backend/routers/history.py. Enforced strict editorial lifecycle progression (draft -> internal_review -> verified -> published) with rejection of illegal state skips (jumping directly from draft to published, draft to verified, or internal_review to published returns 422 Unprocessable Entity / ValueError). Enforced role-based permissions granting editorial authority strictly to admin, super_admin, and teacher users, while rejecting non-editorial users (learners, guests, unauthenticated) with HTTP 403 Forbidden (API) and PermissionError (service layer). Implemented anti-AI self-approval guardrails prohibiting automated AI agent bots from verifying or publishing claims and entities without human review. Enforced mandatory review notes/reasons for advancing to verified or published states. Enforced verification invariants requiring eligible source bindings ('supports' or 'primary_evidence_for') and blocking contradicted/disputed claims from verification or publication. Attaching a contradicting source automatically demotes verified or published claims to 'disputed'. Extended editorial lifecycle and disputed-claim protection to HistoricalEntity, ensuring entities with disputed claims cannot be published. Recorded append-only, tamper-evident audit logs in historical_content_audit_log for all transitions with exact actor attribution, before/after diffs, and review notes.",
+  "invariants_enforced": {
+    "editorial_lifecycle_progression": "Claims and entities must follow strict sequential progression: draft -> internal_review -> verified -> published. Skipping steps (e.g. draft -> published, draft -> verified, internal_review -> published) is rejected with 422 HISTORY_CLAIM_INVALID_TRANSITION / ValueError.",
+    "role_based_editorial_permissions": "Editorial actions (review, verify, publish, dispute, archive, reject) are restricted to authorized editorial roles (admin, super_admin, teacher/staff). Non-editorial users (learner, guest, unauthenticated) attempting to transition claims or entities receive HTTP 403 Forbidden (API) and PermissionError (service layer).",
+    "anti_ai_self_approval_guardrail": "Automated AI agent accounts (is_ai_agent=True or ai bot emails/roles) are strictly blocked from self-approving, verifying, or publishing claims and entities, guaranteeing human editorial sign-off.",
+    "mandatory_review_notes": "Advancing claims or entities to 'verified' or 'published' requires authenticated human reviewer attribution (actor_id) and a non-empty review note/reason.",
+    "claim_source_verification_precondition": "Factual, chronology, geographic, and identification claims cannot reach verified or published without at least one eligible source binding ('supports' or 'primary_evidence_for').",
+    "contradiction_safeguards": "Contradicted claims cannot be verified or published. Attaching a source with support_type='contradicts' immediately demotes verified, published, or expert-verified claims to 'disputed' and appends an audit log.",
+    "entity_disputed_claims_guardrail": "An entity cannot be transitioned to 'published' if any of its associated claims are in 'disputed' status or bound to contradicting sources.",
+    "immutable_audit_logging": "Every lifecycle transition records an append-only entry in historical_content_audit_log capturing actor_id, action (submit_for_review, verify, publish, reject, dispute, archive), resource_type, resource_id, before/after JSON diffs, and reason notes."
+  },
+  "changes": [
+    {
+      "file": "backend/services/history_governance.py",
+      "description": "Implemented editorial governance definitions (EDITORIAL_ROLES, EDITORIAL_ROLE_STRINGS, is_editorial_user, is_ai_agent_user, EDITORIAL_CLAIM_TRANSITIONS, EDITORIAL_ENTITY_TRANSITIONS, ENTITY_ACTION_MAP). Added transition_entity_status with role checks, lifecycle validation, disputed claim checks, and audit logging. Updated update_entity to route publication_status updates through transition_entity_status. Updated transition_claim_status with early actor validation, role authorization, anti-AI guardrails, and confidence reset on return to draft. Updated update_claim to route verification_status updates through transition_claim_status. Updated attach_source_to_claim to demote verified and published claims to disputed on contradicting source binding."
+    },
+    {
+      "file": "backend/routers/history.py",
+      "description": "Updated update_history_entity and update_history_claim to catch PermissionError (returning 403 Forbidden) and ValueError (returning 422). Handled all editorial transition action mappings (submit_for_review, verify, publish, archive) in transition_claim_status with PermissionError catching. Updated list_history_audit order_by to sort by created_at.desc(), id.desc() for deterministic provenance queries."
+    },
+    {
+      "file": "tests/v5/test_v5_t025.py",
+      "description": "Created comprehensive 10-test suite verifying the complete editorial lifecycle flow (draft -> internal_review -> verified -> published), strict progression enforcement blocking skips, negative abuse tests against unauthorized users (learner 403, guest 403, unauthenticated 401), negative abuse tests against AI self-approval, review note and source requirements, teacher/admin permissions, rejection/demotion lifecycle, entity governance, and immutable audit logging via admin API."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t025.py -v",
+    "total_tests": 10,
+    "passed_tests": 10,
+    "failed_tests": 0,
+    "test_details": [
+      {
+        "name": "test_editorial_lifecycle_complete_transition_flow",
+        "result": "PASSED",
+        "assertion": "Verifies valid progression draft -> internal_review -> verified -> published with teacher review and admin publication, asserting reviewed_by and verified_by attribution and sequential audit log entries."
+      },
+      {
+        "name": "test_editorial_lifecycle_strict_ordering_blocks_skipping_steps",
+        "result": "PASSED",
+        "assertion": "Negative abuse test: Asserts direct jumps (draft -> published, draft -> verified, internal_review -> published) are rejected with HTTP 422 HISTORY_CLAIM_INVALID_TRANSITION and service-level ValueError."
+      },
+      {
+        "name": "test_negative_abuse_unauthorized_user_cannot_publish_receives_403",
+        "result": "PASSED",
+        "assertion": "Negative abuse test: Asserts user with learner role attempting to publish or verify receives HTTP 403 Forbidden on API and raises PermissionError in service layer for both claims and entities."
+      },
+      {
+        "name": "test_negative_abuse_guest_and_unauthenticated_blocked",
+        "result": "PASSED",
+        "assertion": "Negative abuse test: Asserts unauthenticated requests receive 401 Unauthorized and guest users receive 403 Forbidden."
+      },
+      {
+        "name": "test_negative_abuse_ai_agent_cannot_self_approve_or_publish",
+        "result": "PASSED",
+        "assertion": "Negative abuse test: Asserts automated AI agent accounts cannot self-approve, verify, or publish claims or entities without human editorial review."
+      },
+      {
+        "name": "test_negative_abuse_publish_requires_review_note_and_eligible_source",
+        "result": "PASSED",
+        "assertion": "Negative abuse test: Asserts verifying or publishing without a review note, without an eligible source on factual claims, or on a contradicted claim is rejected with HTTP 422."
+      },
+      {
+        "name": "test_teacher_and_admin_editorial_permissions",
+        "result": "PASSED",
+        "assertion": "Verifies teachers, admins, and super_admins have valid editorial authority to review, verify, and publish claims."
+      },
+      {
+        "name": "test_rejection_and_demotion_editorial_lifecycle",
+        "result": "PASSED",
+        "assertion": "Verifies rejection and demotion lifecycles: internal_review -> rejected -> draft, verified -> disputed, published -> archived -> draft."
+      },
+      {
+        "name": "test_entity_editorial_lifecycle_and_governance",
+        "result": "PASSED",
+        "assertion": "Verifies entity editorial lifecycle (draft -> internal_review -> verified -> published), version incrementation, and blocking publication of entities containing disputed or contradicted claims."
+      },
+      {
+        "name": "test_immutable_audit_logging_and_query_api",
+        "result": "PASSED",
+        "assertion": "Verifies that audit logs capture full lifecycle provenance (actor_id, action, before/after diffs, reason) and are queryable via GET /api/v1/admin/history/audit."
+      }
+    ]
+  }
+}

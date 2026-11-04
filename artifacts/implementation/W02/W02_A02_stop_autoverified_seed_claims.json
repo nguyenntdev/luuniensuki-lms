@@ -1,0 +1,61 @@
+{
+  "ticket": "V5-T022",
+  "ticket_id": "V5-T022",
+  "wave": "W02",
+  "slot": "W02-A02",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Stop auto-verified seed claims in backend/services/heritage_import.py.",
+  "timestamp": "2026-10-22T11:00:00Z",
+  "summary": "Enforced strict epistemic integrity on claims and heritage evidence imported through backend/services/heritage_import.py. Novel imported claims are strictly prohibited from defaulting to 'verified' or 'expert_verified'. Default verification status is set to 'unreviewed' (or 'needs_source' if bibliographic citation is missing or contains placeholder/fabricated tokens). Ingestion with 'verified' or 'expert_verified' status strictly requires an explicit verified provenance record containing a valid, substantive bibliographic citation and an authenticated human expert reviewer registered in the database users table. Re-importing is fully idempotent and preserves human review decisions and reviewer notes without downgrading or overwriting existing records.",
+  "invariants_enforced": [
+    "NO_AUTOVERIFIED_NOVEL_CLAIMS: Novel unverified seed claims must never default to 'verified' or 'expert_verified'.",
+    "FAIL_CLOSED_DEFAULT_STATUS: Default verification status is 'unreviewed' for claims with substantive citations, and 'needs_source' for claims with missing, blank, or placeholder citations.",
+    "AUTHENTICATED_PROVENANCE_GUARDRAIL: Claims can only enter the catalogue as 'verified' or 'expert_verified' if an explicit verified provenance record exists, backed by an authenticated human expert reviewer in the users table and valid bibliographic citations.",
+    "NEGATIVE_ABUSE_REJECTION: Fabricated, raw, or placeholder citation markers (e.g. unknown, none, n/a, tbd, placeholder, dummy, fabricated) are strictly disqualified and demoted to 'needs_source', preventing fake claims from entering as verified.",
+    "HUMAN_REVIEW_PRESERVATION: Re-importing must NEVER overwrite or downgrade human-reviewed claims; if a claim has been 'editor_reviewed', 'expert_verified', 'verified', or 'published_human_approved', its review status, reviewed_by reference, and reviewer notes (evidence_excerpt_private) are preserved intact."
+  ],
+  "changes": [
+    {
+      "file": "backend/models_rbpc.py",
+      "description": "Ensured RbpcClaimEvidence defaults review_status to 'unreviewed' at database level, and added .notes property and setter mapping to evidence_excerpt_private for transparent reviewer note access."
+    },
+    {
+      "file": "backend/services/heritage_import.py",
+      "description": "Enhanced is_valid_bibliographic_citation to check tokenized words against disqualified markers. In import_heritage_data claim processing, prohibited novel claims from defaulting to verified/expert_verified, required authentic human reviewer and valid citation for verified status, mapped placeholder citations to needs_source, and guaranteed that re-importing preserves review status, reviewer ID, and reviewer notes on human-reviewed records."
+    },
+    {
+      "file": "tests/v5/test_v5_t022.py",
+      "description": "Comprehensive test suite covering: (1) novel claims default to unreviewed/needs_source rather than verified; (2) negative abuse testing with fabricated/placeholder citations and fake reviewer IDs remaining needs_source/unreviewed; (3) idempotent re-import preserving both expert_verified and editor_reviewed statuses and reviewer notes; (4) explicit verified provenance allowing verified claim ingestion only when authenticated human reviewer and valid citation exist."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t022.py -v",
+    "total_tests": 4,
+    "passed_tests": 4,
+    "failed_tests": 0,
+    "test_details": [
+      {
+        "name": "test_newly_imported_seed_claims_default_to_unreviewed_not_verified",
+        "result": "PASSED",
+        "assertion": "Asserts newly imported seed claims default to unreviewed and are not auto-verified, even when review_status: verified is asserted in seed YAML without human reviewer."
+      },
+      {
+        "name": "test_negative_abuse_fabricated_citation_remains_needs_source_or_unreviewed",
+        "result": "PASSED",
+        "assertion": "Asserts fabricated/placeholder citations and invalid reviewer UUIDs cannot elevate claims to verified; strictly defaults to needs_source/unreviewed."
+      },
+      {
+        "name": "test_reimport_preserves_human_editorial_approvals",
+        "result": "PASSED",
+        "assertion": "Asserts re-importing existing items preserves expert_verified and editor_reviewed statuses and human reviewer notes, ignoring seed attempt to downgrade or overwrite."
+      },
+      {
+        "name": "test_explicit_verified_provenance_allows_verified_import",
+        "result": "PASSED",
+        "assertion": "Asserts an explicit verified provenance record with a registered expert reviewer and substantive bibliographic citation is successfully ingested as expert_verified."
+      }
+    ]
+  }
+}

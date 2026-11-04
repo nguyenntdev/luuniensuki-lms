@@ -43,6 +43,8 @@ def engine():
                 "CREATE EXTENSION IF NOT EXISTS unaccent; "
                 "CREATE EXTENSION IF NOT EXISTS pg_trgm; "
                 "ALTER TABLE IF EXISTS rbpc_inquiries ADD COLUMN IF NOT EXISTS sla_due_at TIMESTAMPTZ;"
+                "ALTER TABLE IF EXISTS historical_sources ADD COLUMN IF NOT EXISTS checksum TEXT;"
+                "ALTER TABLE IF EXISTS historical_sources ADD COLUMN IF NOT EXISTS excerpt TEXT;"
             )
         )
         conn.commit()

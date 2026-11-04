@@ -300,6 +300,12 @@
     "status": "gateway"
   },
   {
+    "method": "GET",
+    "path": "/api/v1/admin/history/sources/{source_id}",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
     "method": "PATCH",
     "path": "/api/v1/admin/history/sources/{source_id}",
     "group": "admin",
@@ -1441,6 +1447,30 @@
   },
   {
     "method": "GET",
+    "path": "/api/v1/history/curriculum/fallbacks/{target}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/curriculum/modules",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/curriculum/modules/{slug}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/history/curriculum/validate-publish",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
     "path": "/api/v1/history/entities",
     "group": "misc",
     "status": "gateway"
@@ -1484,6 +1514,12 @@
   {
     "method": "GET",
     "path": "/api/v1/history/events",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/history/lessons/{lesson_id}/publish",
     "group": "misc",
     "status": "gateway"
   },
@@ -1538,6 +1574,12 @@
   {
     "method": "GET",
     "path": "/api/v1/history/sources",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/sources/check-duplicate",
     "group": "misc",
     "status": "gateway"
   },

@@ -37,13 +37,15 @@ from ..apischemas.history import (
     HistoricalRelationOut,
     HistoricalSearchItem,
     HistoricalSearchOut,
+    HistoricalSourceAdminOut,
     HistoricalSourceCreate,
+    HistoricalSourceDuplicateCheckOut,
     HistoricalSourceListOut,
     HistoricalSourceOut,
     HistoricalSourceUpdate,
 )
 from ..db import get_db
-from ..deps import get_admin_user, get_current_user, get_staff_user
+from ..deps import get_admin_user, get_current_user, get_current_user_optional, get_staff_user
 from ..errors import AppError
 from ..models import (
     HistoricalEntity,
@@ -51,6 +53,7 @@ from ..models import (
     HistoricalGeography,
     User,
 )
+from ..rbac import STAFF_ROLES
 from ..services import history_governance as gov
 
 router = APIRouter(tags=["history"])
@@ -141,11 +144,23 @@ def get_history_claim(claim_id: UUID, db: Session = Depends(get_db)):
     "/api/v1/history/claims/{claim_id}/sources",
     response_model=list[HistoricalClaimSourceOut],
 )
-def list_claim_sources(claim_id: UUID, db: Session = Depends(get_db)):
+def list_claim_sources(
+    claim_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user_optional),
+):
     if not gov.get_claim(db, claim_id):
         raise AppError("HISTORY_CLAIM_NOT_FOUND", "Historical claim not found", 404)
     bindings = gov.list_claim_sources(db, claim_id=claim_id)
-    return [HistoricalClaimSourceOut.model_validate(b) for b in bindings]
+    is_privileged = bool(current_user and current_user.role in STAFF_ROLES)
+    out_items = []
+    for b in bindings:
+        out = HistoricalClaimSourceOut.model_validate(b)
+        if not is_privileged and gov.is_source_rights_restricted(b.source):
+            if out.quotation_excerpt:
+                out.quotation_excerpt = gov.REDACTED_EXCERPT_TEXT
+        out_items.append(out)
+    return out_items
 
 
 @router.get("/api/v1/history/sources", response_model=HistoricalSourceListOut)
@@ -155,24 +170,72 @@ def list_history_sources(
     offset: int = Query(default=0, ge=0),
     limit: int = Query(default=50, ge=1, le=200),
     db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user_optional),
 ):
     items, total = gov.list_sources(
         db, source_type=source_type, search=search, offset=offset, limit=limit
     )
+    is_privileged = bool(current_user and current_user.role in STAFF_ROLES)
+    out_items = []
+    for s in items:
+        out = HistoricalSourceOut.model_validate(s)
+        if not is_privileged and gov.is_source_rights_restricted(s):
+            if out.excerpt:
+                out.excerpt = gov.REDACTED_EXCERPT_TEXT
+        out_items.append(out)
     return HistoricalSourceListOut(
-        items=[HistoricalSourceOut.model_validate(s) for s in items],
+        items=out_items,
         total=total,
         offset=offset,
         limit=limit,
     )
 
 
+@router.get("/api/v1/history/sources/check-duplicate", response_model=HistoricalSourceDuplicateCheckOut)
+def check_duplicate_source(
+    isbn: Optional[str] = Query(default=None),
+    doi: Optional[str] = Query(default=None),
+    title: Optional[str] = Query(default=None),
+    author_text: Optional[str] = Query(default=None),
+    publication_year: Optional[int] = Query(default=None),
+    db: Session = Depends(get_db),
+):
+    dup, matched_by = gov.find_duplicate_source(
+        db,
+        isbn=isbn,
+        doi=doi,
+        title=title,
+        author_text=author_text,
+        publication_year=publication_year,
+    )
+    if dup:
+        return HistoricalSourceDuplicateCheckOut(
+            is_duplicate=True,
+            duplicate_source=HistoricalSourceOut.model_validate(dup),
+            matched_by=matched_by,
+        )
+    return HistoricalSourceDuplicateCheckOut(
+        is_duplicate=False,
+        duplicate_source=None,
+        matched_by=None,
+    )
+
+
 @router.get("/api/v1/history/sources/{source_id}", response_model=HistoricalSourceOut)
-def get_history_source(source_id: UUID, db: Session = Depends(get_db)):
+def get_history_source(
+    source_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user_optional),
+):
     source = gov.get_source(db, source_id)
     if not source:
         raise AppError("HISTORY_SOURCE_NOT_FOUND", "Historical source not found", 404)
-    return HistoricalSourceOut.model_validate(source)
+    out = HistoricalSourceOut.model_validate(source)
+    is_privileged = bool(current_user and current_user.role in STAFF_ROLES)
+    if not is_privileged and gov.is_source_rights_restricted(source):
+        if out.excerpt:
+            out.excerpt = gov.REDACTED_EXCERPT_TEXT
+    return out
 
 
 @router.get(
@@ -517,7 +580,12 @@ def update_history_entity(
         existing = gov.get_entity_by_slug(db, data["slug"])
         if existing and existing.id != entity.id:
             raise AppError("HISTORY_SLUG_EXISTS", "Slug already in use", 409)
-    entity = gov.update_entity(db, entity=entity, data=data, actor_id=current_user.id)
+    try:
+        entity = gov.update_entity(db, entity=entity, data=data, actor_id=current_user.id)
+    except PermissionError as exc:
+        raise HTTPException(status_code=403, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise AppError("HISTORY_ENTITY_INVALID", str(exc), 422) from exc
     db.commit()
     return _entity_to_out(entity)
 
@@ -529,12 +597,36 @@ def update_history_entity(
 )
 def create_history_source(
     payload: HistoricalSourceCreate,
+    check_duplicate: bool = Query(default=True),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    source = gov.create_source(db, data=payload.model_dump(), actor_id=current_user.id)
+    source = gov.create_source(
+        db,
+        data=payload.model_dump(),
+        actor_id=current_user.id,
+        check_duplicate=check_duplicate,
+    )
     db.commit()
     return HistoricalSourceOut.model_validate(source)
+
+
+@router.get(
+    "/api/v1/admin/history/sources/{source_id}",
+    response_model=HistoricalSourceAdminOut,
+    dependencies=[Depends(get_staff_user)],
+)
+def get_admin_history_source(
+    source_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    source = gov.get_source(db, source_id)
+    if not source:
+        raise AppError("HISTORY_SOURCE_NOT_FOUND", "Historical source not found", 404)
+    admin_out = HistoricalSourceAdminOut.model_validate(source)
+    admin_out.raw_excerpt = source.excerpt
+    return admin_out
 
 
 @router.patch(
@@ -545,6 +637,7 @@ def create_history_source(
 def update_history_source(
     source_id: UUID,
     payload: HistoricalSourceUpdate,
+    check_duplicate: bool = Query(default=True),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -552,7 +645,11 @@ def update_history_source(
     if not source:
         raise AppError("HISTORY_SOURCE_NOT_FOUND", "Historical source not found", 404)
     source = gov.update_source(
-        db, source=source, data=payload.model_dump(exclude_unset=True), actor_id=current_user.id
+        db,
+        source=source,
+        data=payload.model_dump(exclude_unset=True),
+        actor_id=current_user.id,
+        check_duplicate=check_duplicate,
     )
     db.commit()
     return HistoricalSourceOut.model_validate(source)
@@ -570,7 +667,10 @@ def create_history_claim(
 ):
     if not gov.get_entity(db, payload.entity_id):
         raise AppError("HISTORY_ENTITY_NOT_FOUND", "Historical entity not found", 404)
-    claim = gov.create_claim(db, data=payload.model_dump(), actor_id=current_user.id)
+    try:
+        claim = gov.create_claim(db, data=payload.model_dump(), actor_id=current_user.id)
+    except ValueError as exc:
+        raise AppError("HISTORY_CLAIM_INVALID", str(exc), 422) from exc
     db.commit()
     return HistoricalClaimOut.model_validate(claim)
 
@@ -589,9 +689,14 @@ def update_history_claim(
     claim = gov.get_claim(db, claim_id)
     if not claim:
         raise AppError("HISTORY_CLAIM_NOT_FOUND", "Historical claim not found", 404)
-    claim = gov.update_claim(
-        db, claim=claim, data=payload.model_dump(exclude_unset=True), actor_id=current_user.id
-    )
+    try:
+        claim = gov.update_claim(
+            db, claim=claim, data=payload.model_dump(exclude_unset=True), actor_id=current_user.id
+        )
+    except PermissionError as exc:
+        raise HTTPException(status_code=403, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise AppError("HISTORY_CLAIM_INVALID", str(exc), 422) from exc
     db.commit()
     return HistoricalClaimOut.model_validate(claim)
 
@@ -636,12 +741,17 @@ def transition_claim_status(
     if not claim:
         raise AppError("HISTORY_CLAIM_NOT_FOUND", "Historical claim not found", 404)
     action_map = {
+        "draft": "draft",
+        "internal_review": "submit_for_review",
         "editor_reviewed": "editor_approve",
         "expert_verified": "expert_verify",
+        "verified": "verify",
+        "published": "publish",
         "rejected": "reject",
         "disputed": "dispute",
         "needs_source": "request_source",
         "superseded": "supersede",
+        "archived": "archive",
     }
     try:
         claim = gov.transition_claim_status(
@@ -652,6 +762,8 @@ def transition_claim_status(
             reason=reason,
             action=action_map.get(target, "update"),
         )
+    except PermissionError as exc:
+        raise HTTPException(status_code=403, detail=str(exc)) from exc
     except ValueError as exc:
         raise AppError("HISTORY_CLAIM_INVALID_TRANSITION", str(exc), 422) from exc
     db.commit()
@@ -769,7 +881,8 @@ def list_history_audit(
     from ..models import HistoricalContentAuditLog
 
     q = select(HistoricalContentAuditLog).order_by(
-        HistoricalContentAuditLog.created_at.desc()
+        HistoricalContentAuditLog.created_at.desc(),
+        HistoricalContentAuditLog.id.desc(),
     )
     if resource_type:
         q = q.where(HistoricalContentAuditLog.resource_type == resource_type)

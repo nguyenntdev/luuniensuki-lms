@@ -27,6 +27,276 @@
   },
   "hotspots": [
     {
+      "hotspot_id": "tuyen-dinh-tan-cat-lieu",
+      "urn_slug": "tuyen-dinh",
+      "relief_slug": "tan-cat-lieu",
+      "relief_name": "Tần Cát Liễu",
+      "mesh_name": "Tần Cát Liễu",
+      "pos": [
+        0.2976,
+        0.7598,
+        1.1108
+      ],
+      "camera_position": [
+        0.6859,
+        0.9598,
+        2.5597
+      ],
+      "camera_target": [
+        0.2976,
+        0.7598,
+        1.1108
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_tuyen_dinh_02_v1",
+      "motif_id": "urn_tuyen_dinh_02",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/T%E1%BA%A6N%20C%C3%81T%20LI%E1%BB%84U.jpg",
+        "disk_path": "ban-duc-noi/TUYEN DINH/TẦN CÁT LIỄU.jpg",
+        "exists": true,
+        "bytes": 11577,
+        "sha256": "575128b994b6c661c90a2d784f8d38f164c5945d32f73e0fc661f2f5f5639c80",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
+    },
+    {
+      "hotspot_id": "tuyen-dinh-van",
+      "urn_slug": "tuyen-dinh",
+      "relief_slug": "van",
+      "relief_name": "Vân",
+      "mesh_name": "Vân",
+      "pos": [
+        1.1108,
+        0.7598,
+        0.2976
+      ],
+      "camera_position": [
+        2.5597,
+        0.9598,
+        0.6859
+      ],
+      "camera_target": [
+        1.1108,
+        0.7598,
+        0.2976
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_tuyen_dinh_10_v1",
+      "motif_id": "urn_tuyen_dinh_10",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/V%C3%82N.jpg",
+        "disk_path": "ban-duc-noi/TUYEN DINH/VÂN.jpg",
+        "exists": true,
+        "bytes": 8388,
+        "sha256": "2dba1ad3ba3381685e2122d257059deb307d6ef4306d6a64beefc358f896f2f1",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
+    },
+    {
+      "hotspot_id": "tuyen-dinh-no",
+      "urn_slug": "tuyen-dinh",
+      "relief_slug": "no",
+      "relief_name": "Nỗ",
+      "mesh_name": "Nỗ",
+      "pos": [
+        0.8132,
+        0.7598,
+        -0.8132
+      ],
+      "camera_position": [
+        1.8738,
+        0.9598,
+        -1.8738
+      ],
+      "camera_target": [
+        0.8132,
+        0.7598,
+        -0.8132
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_tuyen_dinh_15_v1",
+      "motif_id": "urn_tuyen_dinh_15",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/N%E1%BB%96.jpg",
+        "disk_path": "ban-duc-noi/TUYEN DINH/NỖ.jpg",
+        "exists": true,
+        "bytes": 6684,
+        "sha256": "fe71218c0a9ad2c0da8298c3afc8ea7dd63d116af65460fb66348ba90ff12e0b",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
+    },
+    {
+      "hotspot_id": "tuyen-dinh-le-thuyen",
+      "urn_slug": "tuyen-dinh",
+      "relief_slug": "le-thuyen",
+      "relief_name": "Lê Thuyền",
+      "mesh_name": "Lê Thuyền",
+      "pos": [
+        -0.2976,
+        0.7598,
+        -1.1108
+      ],
+      "camera_position": [
+        -0.6859,
+        0.9598,
+        -2.5597
+      ],
+      "camera_target": [
+        -0.2976,
+        0.7598,
+        -1.1108
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_tuyen_dinh_16_v1",
+      "motif_id": "urn_tuyen_dinh_16",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/L%C3%8A%20THUY%E1%BB%80N.jpg",
+        "disk_path": "ban-duc-noi/TUYEN DINH/LÊ THUYỀN.jpg",
+        "exists": true,
+        "bytes": 8812,
+        "sha256": "9fedba6bcbfadaccf2ec1ead98841086eea02126c5abf2ecc79769fc05700b9a",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
+    },
+    {
+      "hotspot_id": "tuyen-dinh-thi",
+      "urn_slug": "tuyen-dinh",
+      "relief_slug": "thi",
+      "relief_name": "Thỉ",
+      "mesh_name": "Thỉ",
+      "pos": [
+        -1.1108,
+        0.7598,
+        -0.2976
+      ],
+      "camera_position": [
+        -2.5597,
+        0.9598,
+        -0.6859
+      ],
+      "camera_target": [
+        -1.1108,
+        0.7598,
+        -0.2976
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_tuyen_dinh_17_v1",
+      "motif_id": "urn_tuyen_dinh_17",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/TH%E1%BB%88.jpg",
+        "disk_path": "ban-duc-noi/TUYEN DINH/THỈ.jpg",
+        "exists": true,
+        "bytes": 10498,
+        "sha256": "a1cff862b4d64faa7968fced45c758b19b3e2150dee7b69fcbe384f19d1ac942",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
+    },
+    {
+      "hotspot_id": "tuyen-dinh-ngoan",
+      "urn_slug": "tuyen-dinh",
+      "relief_slug": "ngoan",
+      "relief_name": "Ngoan",
+      "mesh_name": "Ngoan",
+      "pos": [
+        -0.8132,
+        0.7598,
+        0.8132
+      ],
+      "camera_position": [
+        -1.8738,
+        0.9598,
+        1.8738
+      ],
+      "camera_target": [
+        -0.8132,
+        0.7598,
+        0.8132
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_tuyen_dinh_18_v1",
+      "motif_id": "urn_tuyen_dinh_18",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/NGOAN.jpg",
+        "disk_path": "ban-duc-noi/TUYEN DINH/NGOAN.jpg",
+        "exists": true,
+        "bytes": 11460,
+        "sha256": "f26c7b6485e7b958e4af977a02fd5356e1ae46e77f2ae275d1b9efca622461f2",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
+    },
+    {
       "hotspot_id": "tuyen-dinh-tuyen-dinh",
       "urn_slug": "tuyen-dinh",
       "relief_slug": "tuyen-dinh",
@@ -49,64 +319,34 @@
       ],
       "bounding_radius": 0.08,
       "coordinate_version": 1,
-      "model_version": 1
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_tuyen_dinh_01_v1",
+      "motif_id": "urn_tuyen_dinh_01",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/TUYEN%20DINH.jpg",
+        "disk_path": "ban-duc-noi/TUYEN DINH/TUYEN DINH.jpg",
+        "exists": true,
+        "bytes": 11441,
+        "sha256": "faa8ab1610139914808e9b9da4ff6becc7a0c9b22a63aa67f0ee6f15322588fa",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
     },
     {
-      "hotspot_id": "tuyen-dinh-tan-cat-lieu",
+      "hotspot_id": "tuyen-dinh-due-son",
       "urn_slug": "tuyen-dinh",
-      "relief_slug": "tan-cat-lieu",
-      "relief_name": "Tần Cát Liễu",
-      "mesh_name": "Tần Cát Liễu",
-      "pos": [
-        0.3933,
-        0.7598,
-        1.0806
-      ],
-      "camera_position": [
-        0.9064,
-        0.9598,
-        2.4902
-      ],
-      "camera_target": [
-        0.3933,
-        0.7598,
-        1.0806
-      ],
-      "bounding_radius": 0.08,
-      "coordinate_version": 1,
-      "model_version": 1
-    },
-    {
-      "hotspot_id": "tuyen-dinh-yen-oa",
-      "urn_slug": "tuyen-dinh",
-      "relief_slug": "yen-oa",
-      "relief_name": "Yến Oa",
-      "mesh_name": "Yến Oa",
-      "pos": [
-        0.7392,
-        0.7598,
-        0.881
-      ],
-      "camera_position": [
-        1.7034,
-        0.9598,
-        2.03
-      ],
-      "camera_target": [
-        0.7392,
-        0.7598,
-        0.881
-      ],
-      "bounding_radius": 0.08,
-      "coordinate_version": 1,
-      "model_version": 1
-    },
-    {
-      "hotspot_id": "tuyen-dinh-long-nhan",
-      "urn_slug": "tuyen-dinh",
-      "relief_slug": "long-nhan",
-      "relief_name": "Long Nhãn",
-      "mesh_name": "Long Nhãn",
+      "relief_slug": "due-son",
+      "relief_name": "Duệ Sơn",
+      "mesh_name": "Duệ Sơn",
       "pos": [
         0.9959,
         0.5,
@@ -124,64 +364,34 @@
       ],
       "bounding_radius": 0.08,
       "coordinate_version": 1,
-      "model_version": 1
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_tuyen_dinh_08_v1",
+      "motif_id": "urn_tuyen_dinh_08",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/DU%E1%BB%86%20S%C6%A0N.png",
+        "disk_path": "ban-duc-noi/TUYEN DINH/DUỆ SƠN.png",
+        "exists": true,
+        "bytes": 79235,
+        "sha256": "5d60d5aa48ed16c8fd5559d386809213063f0b571319f4cf9d68e658d2797a47",
+        "format": "image/png",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
     },
     {
-      "hotspot_id": "tuyen-dinh-tran-chau-hoa",
+      "hotspot_id": "tuyen-dinh-nhi-ha",
       "urn_slug": "tuyen-dinh",
-      "relief_slug": "tran-chau-hoa",
-      "relief_name": "Trân Châu Hoa",
-      "mesh_name": "Trân Châu Hoa",
-      "pos": [
-        1.1325,
-        0.2402,
-        0.1997
-      ],
-      "camera_position": [
-        2.6097,
-        0.4402,
-        0.4602
-      ],
-      "camera_target": [
-        1.1325,
-        0.2402,
-        0.1997
-      ],
-      "bounding_radius": 0.08,
-      "coordinate_version": 1,
-      "model_version": 1
-    },
-    {
-      "hotspot_id": "tuyen-dinh-dia-dau",
-      "urn_slug": "tuyen-dinh",
-      "relief_slug": "dia-dau",
-      "relief_name": "Địa Đậu",
-      "mesh_name": "Địa Đậu",
-      "pos": [
-        1.1325,
-        0.2402,
-        -0.1997
-      ],
-      "camera_position": [
-        2.6097,
-        0.4402,
-        -0.4602
-      ],
-      "camera_target": [
-        1.1325,
-        0.2402,
-        -0.1997
-      ],
-      "bounding_radius": 0.08,
-      "coordinate_version": 1,
-      "model_version": 1
-    },
-    {
-      "hotspot_id": "tuyen-dinh-ba",
-      "urn_slug": "tuyen-dinh",
-      "relief_slug": "ba",
-      "relief_name": "Bá",
-      "mesh_name": "Bá",
+      "relief_slug": "nhi-ha",
+      "relief_name": "Nhĩ Hà",
+      "mesh_name": "Nhĩ Hà",
       "pos": [
         0.9959,
         0.5,
@@ -199,64 +409,34 @@
       ],
       "bounding_radius": 0.08,
       "coordinate_version": 1,
-      "model_version": 1
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_tuyen_dinh_09_v1",
+      "motif_id": "urn_tuyen_dinh_09",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/NH%C4%A8%20H%C3%80.jpg",
+        "disk_path": "ban-duc-noi/TUYEN DINH/NHĨ HÀ.jpg",
+        "exists": true,
+        "bytes": 7878,
+        "sha256": "143affdcabf6eeb0badeede0674f4541f44afb87de4fdc0c5b91b55e5f536c4e",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
     },
     {
-      "hotspot_id": "tuyen-dinh-due-son",
+      "hotspot_id": "tuyen-dinh-dai-lanh",
       "urn_slug": "tuyen-dinh",
-      "relief_slug": "due-son",
-      "relief_name": "Duệ Sơn",
-      "mesh_name": "Duệ Sơn",
-      "pos": [
-        0.7392,
-        0.7598,
-        -0.881
-      ],
-      "camera_position": [
-        1.7034,
-        0.9598,
-        -2.03
-      ],
-      "camera_target": [
-        0.7392,
-        0.7598,
-        -0.881
-      ],
-      "bounding_radius": 0.08,
-      "coordinate_version": 1,
-      "model_version": 1
-    },
-    {
-      "hotspot_id": "tuyen-dinh-nhi-ha",
-      "urn_slug": "tuyen-dinh",
-      "relief_slug": "nhi-ha",
-      "relief_name": "Nhĩ Hà",
-      "mesh_name": "Nhĩ Hà",
-      "pos": [
-        0.3933,
-        0.7598,
-        -1.0806
-      ],
-      "camera_position": [
-        0.9064,
-        0.9598,
-        -2.4902
-      ],
-      "camera_target": [
-        0.3933,
-        0.7598,
-        -1.0806
-      ],
-      "bounding_radius": 0.08,
-      "coordinate_version": 1,
-      "model_version": 1
-    },
-    {
-      "hotspot_id": "tuyen-dinh-van",
-      "urn_slug": "tuyen-dinh",
-      "relief_slug": "van",
-      "relief_name": "Vân",
-      "mesh_name": "Vân",
+      "relief_slug": "dai-lanh",
+      "relief_name": "Đại Lãnh",
+      "mesh_name": "Đại Lãnh",
       "pos": [
         0.0,
         0.5,
@@ -274,32 +454,27 @@
       ],
       "bounding_radius": 0.08,
       "coordinate_version": 1,
-      "model_version": 1
-    },
-    {
-      "hotspot_id": "tuyen-dinh-dai-lanh",
-      "urn_slug": "tuyen-dinh",
-      "relief_slug": "dai-lanh",
-      "relief_name": "Đại Lãnh",
-      "mesh_name": "Đại Lãnh",
-      "pos": [
-        -0.3933,
-        0.2402,
-        -1.0806
-      ],
-      "camera_position": [
-        -0.9064,
-        0.4402,
-        -2.4902
-      ],
-      "camera_target": [
-        -0.3933,
-        0.2402,
-        -1.0806
-      ],
-      "bounding_radius": 0.08,
-      "coordinate_version": 1,
-      "model_version": 1
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_tuyen_dinh_11_v1",
+      "motif_id": "urn_tuyen_dinh_11",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/%C4%90%E1%BA%A0I%20L%C3%83NH.jpg",
+        "disk_path": "ban-duc-noi/TUYEN DINH/ĐẠI LÃNH.jpg",
+        "exists": true,
+        "bytes": 10644,
+        "sha256": "ceb13d39ada970081135612f5cb44221fea34f57563480ede5b7af8df08ec83b",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
     },
     {
       "hotspot_id": "tuyen-dinh-lam-giang",
@@ -307,31 +482,6 @@
       "relief_slug": "lam-giang",
       "relief_name": "Lam Giang",
       "mesh_name": "Lam Giang",
-      "pos": [
-        -0.7392,
-        0.2402,
-        -0.881
-      ],
-      "camera_position": [
-        -1.7034,
-        0.4402,
-        -2.03
-      ],
-      "camera_target": [
-        -0.7392,
-        0.2402,
-        -0.881
-      ],
-      "bounding_radius": 0.08,
-      "coordinate_version": 1,
-      "model_version": 1
-    },
-    {
-      "hotspot_id": "tuyen-dinh-hau-ngu",
-      "urn_slug": "tuyen-dinh",
-      "relief_slug": "hau-ngu",
-      "relief_name": "Hậu Ngư",
-      "mesh_name": "Hậu Ngư",
       "pos": [
         -0.9959,
         0.5,
@@ -349,7 +499,27 @@
       ],
       "bounding_radius": 0.08,
       "coordinate_version": 1,
-      "model_version": 1
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_tuyen_dinh_12_v1",
+      "motif_id": "urn_tuyen_dinh_12",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/LAM%20GIANG.jpg",
+        "disk_path": "ban-duc-noi/TUYEN DINH/LAM GIANG.jpg",
+        "exists": true,
+        "bytes": 9205,
+        "sha256": "5ada55a64b7c4b8faa8800bce993b58fe3bff87f950c4fb51284c5402bdb46d9",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
     },
     {
       "hotspot_id": "tuyen-dinh-khuong",
@@ -357,56 +527,6 @@
       "relief_slug": "khuong",
       "relief_name": "Khương",
       "mesh_name": "Khương",
-      "pos": [
-        -1.1325,
-        0.7598,
-        -0.1997
-      ],
-      "camera_position": [
-        -2.6097,
-        0.9598,
-        -0.4602
-      ],
-      "camera_target": [
-        -1.1325,
-        0.7598,
-        -0.1997
-      ],
-      "bounding_radius": 0.08,
-      "coordinate_version": 1,
-      "model_version": 1
-    },
-    {
-      "hotspot_id": "tuyen-dinh-no",
-      "urn_slug": "tuyen-dinh",
-      "relief_slug": "no",
-      "relief_name": "Nỗ",
-      "mesh_name": "Nỗ",
-      "pos": [
-        -1.1325,
-        0.7598,
-        0.1997
-      ],
-      "camera_position": [
-        -2.6097,
-        0.9598,
-        0.4602
-      ],
-      "camera_target": [
-        -1.1325,
-        0.7598,
-        0.1997
-      ],
-      "bounding_radius": 0.08,
-      "coordinate_version": 1,
-      "model_version": 1
-    },
-    {
-      "hotspot_id": "tuyen-dinh-le-thuyen",
-      "urn_slug": "tuyen-dinh",
-      "relief_slug": "le-thuyen",
-      "relief_name": "Lê Thuyền",
-      "mesh_name": "Lê Thuyền",
       "pos": [
         -0.9959,
         0.5,
@@ -424,60 +544,328 @@
       ],
       "bounding_radius": 0.08,
       "coordinate_version": 1,
-      "model_version": 1
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_tuyen_dinh_14_v1",
+      "motif_id": "urn_tuyen_dinh_14",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/KH%C6%AF%C6%A0NG.jpg",
+        "disk_path": "ban-duc-noi/TUYEN DINH/KHƯƠNG.jpg",
+        "exists": true,
+        "bytes": 8096,
+        "sha256": "0e7c6cfa6d18d2a94ce658bfb69b3315a6ad0c46ca5097a0548cc14be64084f9",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
     },
     {
-      "hotspot_id": "tuyen-dinh-thi",
+      "hotspot_id": "tuyen-dinh-yen-oa",
       "urn_slug": "tuyen-dinh",
-      "relief_slug": "thi",
-      "relief_name": "Thỉ",
-      "mesh_name": "Thỉ",
+      "relief_slug": "yen-oa",
+      "relief_name": "Yến Oa",
+      "mesh_name": "Yến Oa",
       "pos": [
-        -0.7392,
+        -0.2976,
         0.2402,
-        0.881
+        1.1108
       ],
       "camera_position": [
-        -1.7034,
+        -0.6859,
         0.4402,
-        2.03
+        2.5597
       ],
       "camera_target": [
-        -0.7392,
+        -0.2976,
         0.2402,
-        0.881
+        1.1108
       ],
       "bounding_radius": 0.08,
       "coordinate_version": 1,
-      "model_version": 1
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_tuyen_dinh_03_v1",
+      "motif_id": "urn_tuyen_dinh_03",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/Y%E1%BA%BEN%20OA.jpg",
+        "disk_path": "ban-duc-noi/TUYEN DINH/YẾN OA.jpg",
+        "exists": true,
+        "bytes": 7316,
+        "sha256": "2acff4f6e50ebdb9efdf4a70a1f013427d623d23a6e0a1db42831715dc0a0bef",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
     },
     {
-      "hotspot_id": "tuyen-dinh-ngoan",
+      "hotspot_id": "tuyen-dinh-long-nhan",
       "urn_slug": "tuyen-dinh",
-      "relief_slug": "ngoan",
-      "relief_name": "Ngoan",
-      "mesh_name": "Ngoan",
+      "relief_slug": "long-nhan",
+      "relief_name": "Long Nhãn",
+      "mesh_name": "Long Nhãn",
       "pos": [
-        -0.3933,
+        0.8132,
         0.2402,
-        1.0806
+        0.8132
       ],
       "camera_position": [
-        -0.9064,
+        1.8738,
         0.4402,
-        2.4902
+        1.8738
       ],
       "camera_target": [
-        -0.3933,
+        0.8132,
         0.2402,
-        1.0806
+        0.8132
       ],
       "bounding_radius": 0.08,
       "coordinate_version": 1,
-      "model_version": 1
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_tuyen_dinh_04_v1",
+      "motif_id": "urn_tuyen_dinh_04",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/LONG%20NH%C3%83N.jpg",
+        "disk_path": "ban-duc-noi/TUYEN DINH/LONG NHÃN.jpg",
+        "exists": true,
+        "bytes": 8088,
+        "sha256": "fdab1677b4ffca3ba42700e2cda2473866982a32ed626c0d4889af862bf346d5",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
+    },
+    {
+      "hotspot_id": "tuyen-dinh-tran-chau-hoa",
+      "urn_slug": "tuyen-dinh",
+      "relief_slug": "tran-chau-hoa",
+      "relief_name": "Trân Châu Hoa",
+      "mesh_name": "Trân Châu Hoa",
+      "pos": [
+        1.1108,
+        0.2402,
+        -0.2976
+      ],
+      "camera_position": [
+        2.5597,
+        0.4402,
+        -0.6859
+      ],
+      "camera_target": [
+        1.1108,
+        0.2402,
+        -0.2976
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_tuyen_dinh_05_v1",
+      "motif_id": "urn_tuyen_dinh_05",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/TR%C3%82N%20CH%C3%82U%20HOA.jpg",
+        "disk_path": "ban-duc-noi/TUYEN DINH/TRÂN CHÂU HOA.jpg",
+        "exists": true,
+        "bytes": 11752,
+        "sha256": "b82449d56f880b78a0ac94eabe2ad0c154f26b14509b6bfd851d6a63e9792041",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
+    },
+    {
+      "hotspot_id": "tuyen-dinh-dia-dau",
+      "urn_slug": "tuyen-dinh",
+      "relief_slug": "dia-dau",
+      "relief_name": "Địa Đậu",
+      "mesh_name": "Địa Đậu",
+      "pos": [
+        0.2976,
+        0.2402,
+        -1.1108
+      ],
+      "camera_position": [
+        0.6859,
+        0.4402,
+        -2.5597
+      ],
+      "camera_target": [
+        0.2976,
+        0.2402,
+        -1.1108
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_tuyen_dinh_06_v1",
+      "motif_id": "urn_tuyen_dinh_06",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/%C4%90%E1%BB%8AA%20%C4%90%E1%BA%ACU.jpg",
+        "disk_path": "ban-duc-noi/TUYEN DINH/ĐỊA ĐẬU.jpg",
+        "exists": true,
+        "bytes": 9888,
+        "sha256": "e24e2d65833aebc161d97bc36bfdada7ab52c6d66b69eeee31777f297fa60335",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
+    },
+    {
+      "hotspot_id": "tuyen-dinh-ba",
+      "urn_slug": "tuyen-dinh",
+      "relief_slug": "ba",
+      "relief_name": "Bá",
+      "mesh_name": "Bá",
+      "pos": [
+        -0.8132,
+        0.2402,
+        -0.8132
+      ],
+      "camera_position": [
+        -1.8738,
+        0.4402,
+        -1.8738
+      ],
+      "camera_target": [
+        -0.8132,
+        0.2402,
+        -0.8132
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_tuyen_dinh_07_v1",
+      "motif_id": "urn_tuyen_dinh_07",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/B%C3%81.jpg",
+        "disk_path": "ban-duc-noi/TUYEN DINH/BÁ.jpg",
+        "exists": true,
+        "bytes": 8818,
+        "sha256": "41194e6ccaf4148bd8968f07c6619e32faf3cedd960f38c87a05d9c75b68f068",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
+    },
+    {
+      "hotspot_id": "tuyen-dinh-hau-ngu",
+      "urn_slug": "tuyen-dinh",
+      "relief_slug": "hau-ngu",
+      "relief_name": "Hậu Ngư",
+      "mesh_name": "Hậu Ngư",
+      "pos": [
+        -1.1108,
+        0.2402,
+        0.2976
+      ],
+      "camera_position": [
+        -2.5597,
+        0.4402,
+        0.6859
+      ],
+      "camera_target": [
+        -1.1108,
+        0.2402,
+        0.2976
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_tuyen_dinh_13_v1",
+      "motif_id": "urn_tuyen_dinh_13",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/TUYEN%20DINH/H%E1%BA%ACU%20NG%C6%AF.jpg",
+        "disk_path": "ban-duc-noi/TUYEN DINH/HẬU NGƯ.jpg",
+        "exists": true,
+        "bytes": 9488,
+        "sha256": "ebe249eefcf20f56d95352eb97327e47b5c5d8e31ecd9347447bf6cf5f56a051",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
     }
   ],
   "mesh_status": "MISSING",
   "has_2d_fallback": true,
-  "fallback_2d_url": "/assets/ban-duc-noi/TUYEN%20DINH/TUYEN%20DINH.jpg"
+  "fallback_2d_url": "/assets/ban-duc-noi/TUYEN%20DINH/TUYEN%20DINH.jpg",
+  "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+  "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+  "license": "CC BY 4.0 / Educational Fair Use",
+  "rights_status": "cleared",
+  "public_distribution_allowed": true,
+  "public_display_allowed": true,
+  "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+  "checksum": "faa8ab1610139914808e9b9da4ff6becc7a0c9b22a63aa67f0ee6f15322588fa",
+  "viewer_fallback": {
+    "type": "2d_rubbing",
+    "component": "UrnAccessibleFallback",
+    "asset_url": "/assets/ban-duc-noi/TUYEN%20DINH/TUYEN%20DINH.jpg",
+    "disk_path": "ban-duc-noi/TUYEN DINH/TUYEN DINH.jpg",
+    "format": "image/jpeg",
+    "bytes": 11441,
+    "sha256": "faa8ab1610139914808e9b9da4ff6becc7a0c9b22a63aa67f0ee6f15322588fa",
+    "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+    "legal_basis": "Public Domain (1835-1837 Imperial relic) / Academic Educational Fair Use"
+  },
+  "fallback_2d": {
+    "asset_url": "/assets/ban-duc-noi/TUYEN%20DINH/TUYEN%20DINH.jpg",
+    "disk_path": "ban-duc-noi/TUYEN DINH/TUYEN DINH.jpg",
+    "format": "image/jpeg",
+    "bytes": 11441,
+    "sha256": "faa8ab1610139914808e9b9da4ff6becc7a0c9b22a63aa67f0ee6f15322588fa",
+    "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+    "legal_basis": "Public Domain (1835-1837 Imperial relic) / Academic Educational Fair Use"
+  }
 }

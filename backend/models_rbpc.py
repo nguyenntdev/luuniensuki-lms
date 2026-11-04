@@ -804,7 +804,7 @@ class RbpcClaimEvidence(Base):
     )
     citation_label: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     evidence_excerpt_private: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    review_status: Mapped[str] = mapped_column(Text, nullable=False, default="verified")
+    review_status: Mapped[str] = mapped_column(Text, nullable=False, default="unreviewed")
     reviewed_by: Mapped[Optional[uuid.UUID]] = mapped_column(
         PG_UUID(as_uuid=True),
         ForeignKey("users.id", ondelete="SET NULL"),
@@ -816,6 +816,15 @@ class RbpcClaimEvidence(Base):
 
     # Relationships
     story: Mapped[RbpcStory] = relationship("RbpcStory", back_populates="claims")
+
+    @property
+    def notes(self) -> Optional[str]:
+        """Alias for evidence_excerpt_private (reviewer/editorial notes)."""
+        return self.evidence_excerpt_private
+
+    @notes.setter
+    def notes(self, value: Optional[str]) -> None:
+        self.evidence_excerpt_private = value
 
     @validates("support_type")
     def validate_support_type(self, key: str, value: Any) -> str:

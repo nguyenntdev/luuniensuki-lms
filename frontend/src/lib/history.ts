@@ -154,6 +154,113 @@ export function asSourceList(payload: unknown): HistorySource[] {
   return [];
 }
 
+export interface StoryCitation {
+  id: string;
+  source_id?: string | null;
+  source_title: string;
+  author?: string | null;
+  publication_year?: number | string | null;
+  locator?: string | null;
+  citation_text?: string | null;
+  url?: string | null;
+  claim_id?: string | null;
+  claim_statement?: string | null;
+  epistemic_certainty?: EpistemicCertainty | string | null;
+  verification_status?: string | null;
+  support_type?: string | null;
+  has_source?: boolean;
+  warning?: string | null;
+  footnote_key?: string | null;
+  publisher?: string | null;
+  rights_status?: string | null;
+  license?: string | null;
+  [key: string]: unknown;
+}
+
+export interface StoryFootnoteRef {
+  raw: string;
+  key: string;
+  citationId?: string;
+  citation?: StoryCitation | null;
+  index: number;
+}
+
+export const STORY_FOOTNOTE_REGEX = /\[\^([a-zA-Z0-9_\-]+)\]/g;
+
+/**
+ * Extracts and maps inline markdown footnotes ([^1], [^src_01]) to structured story citations.
+ */
+export function parseStoryFootnotes(
+  text: string | null | undefined,
+  citations?: StoryCitation[] | null
+): {
+  segments: Array<{ text: string; footnote?: StoryFootnoteRef }>;
+  referencedCitations: StoryCitation[];
+} {
+  if (!text) {
+    return { segments: [], referencedCitations: [] };
+  }
+
+  const citationList = Array.isArray(citations) ? citations : [];
+  const citationMap = new Map<string, StoryCitation>();
+
+  // Index citations by explicit footnote_key, id, source_id, and 1-based index
+  citationList.forEach((c, idx) => {
+    if (c.footnote_key) citationMap.set(String(c.footnote_key), c);
+    if (c.id) {
+      citationMap.set(String(c.id), c);
+      citationMap.set(`cite-${c.id}`, c);
+    }
+    if (c.source_id) citationMap.set(String(c.source_id), c);
+    citationMap.set(String(idx + 1), c);
+  });
+
+  const segments: Array<{ text: string; footnote?: StoryFootnoteRef }> = [];
+  const referencedCitations: StoryCitation[] = [];
+  const referencedKeys = new Set<string>();
+
+  let lastIndex = 0;
+  const regex = new RegExp(STORY_FOOTNOTE_REGEX.source, "g");
+  let match: RegExpExecArray | null;
+
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      segments.push({ text: text.slice(lastIndex, match.index) });
+    }
+
+    const raw = match[0];
+    const key = match[1];
+    const matchedCite = citationMap.get(key) || null;
+    const indexNum = matchedCite
+      ? (citationList.indexOf(matchedCite) !== -1 ? citationList.indexOf(matchedCite) + 1 : (Number(key) || 1))
+      : (Number(key) || 1);
+
+    if (matchedCite && !referencedKeys.has(matchedCite.id || key)) {
+      referencedKeys.add(matchedCite.id || key);
+      referencedCitations.push(matchedCite);
+    }
+
+    segments.push({
+      text: raw,
+      footnote: {
+        raw,
+        key,
+        citationId: matchedCite?.id,
+        citation: matchedCite,
+        index: indexNum,
+      },
+    });
+
+    lastIndex = regex.lastIndex;
+  }
+
+  if (lastIndex < text.length) {
+    segments.push({ text: text.slice(lastIndex) });
+  }
+
+  return { segments, referencedCitations };
+}
+
 export interface HistoryStory {
   id?: string | number;
   slug?: string | null;
@@ -167,6 +274,7 @@ export interface HistoryStory {
   publication_status?: string | null;
   featured?: boolean | null;
   published_at?: string | null;
+  citations?: StoryCitation[] | null;
   [key: string]: unknown;
 }
 
@@ -413,6 +521,97 @@ export type EpistemicTone =
 export interface EpistemicInfo {
   label: string;
   tone: EpistemicTone;
+}
+
+export type EpistemicCertainty =
+  | "su_lieu_xac_thuc"
+  | "truyen_thuyet_dan_gian"
+  | "dang_khao_cuu";
+
+export interface EpistemicCertaintyBadgeInfo {
+  code: EpistemicCertainty;
+  label: "Sử liệu xác thực" | "Truyền thuyết dân gian" | "Đang khảo cứu";
+  tone: "documented" | "traditional" | "uncertain";
+  description: string;
+}
+
+export function getStoryPassageEpistemic(
+  rawStatusOrCertainty?: string | null,
+  options?: {
+    hasSource?: boolean;
+    verificationStatus?: string | null;
+    isDisputed?: boolean;
+  }
+): EpistemicCertaintyBadgeInfo {
+  const norm = String(rawStatusOrCertainty || "").trim().toLowerCase();
+  const hasSource = options?.hasSource !== false && options?.hasSource != null ? options.hasSource : true;
+  const isDisputed =
+    options?.isDisputed === true ||
+    norm === "disputed" ||
+    norm === "rejected" ||
+    options?.verificationStatus === "disputed" ||
+    options?.verificationStatus === "rejected";
+
+  // Disputed or rejected claims must NEVER be presented as verified facts
+  if (isDisputed) {
+    return {
+      code: "dang_khao_cuu",
+      label: "Đang khảo cứu",
+      tone: "uncertain",
+      description: "Nội dung còn tranh luận học thuật hoặc đang được khảo cứu làm rõ.",
+    };
+  }
+
+  // If a claim has no attached source, it must show an unverified flag, never pretend to be source-backed
+  if (!hasSource) {
+    return {
+      code: "dang_khao_cuu",
+      label: "Đang khảo cứu",
+      tone: "uncertain",
+      description: "Chưa gắn nguồn thư tịch — khẳng định chưa được chứng thực thư tịch.",
+    };
+  }
+
+  if (
+    norm === "su_lieu_xac_thuc" ||
+    norm === "sử liệu xác thực" ||
+    norm === "verified" ||
+    norm === "expert_verified" ||
+    norm === "editor_reviewed" ||
+    norm === "documented" ||
+    options?.verificationStatus === "expert_verified" ||
+    options?.verificationStatus === "editor_reviewed"
+  ) {
+    return {
+      code: "su_lieu_xac_thuc",
+      label: "Sử liệu xác thực",
+      tone: "documented",
+      description: "Khẳng định được chứng thực bởi nguồn thư tịch / sử liệu sơ cấp đã đối chiếu.",
+    };
+  }
+
+  if (
+    norm === "truyen_thuyet_dan_gian" ||
+    norm === "truyền thuyết dân gian" ||
+    norm === "traditional" ||
+    norm === "traditional_account" ||
+    norm === "legend" ||
+    norm === "folk_legend"
+  ) {
+    return {
+      code: "truyen_thuyet_dan_gian",
+      label: "Truyền thuyết dân gian",
+      tone: "traditional",
+      description: "Ghi chép theo truyền thuyết dân gian, dã sử hoặc truyền khẩu văn hóa.",
+    };
+  }
+
+  return {
+    code: "dang_khao_cuu",
+    label: "Đang khảo cứu",
+    tone: "uncertain",
+    description: "Tư liệu đang trong quá trình khảo cứu và thẩm định lịch sử.",
+  };
 }
 
 const EPISTEMIC_BY_CLASS: Record<string, EpistemicInfo> = {

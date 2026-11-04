@@ -1,0 +1,149 @@
+{
+  "ticket": "V5-T026",
+  "ticket_id": "V5-T026",
+  "wave": "W02",
+  "slot": "W02-A06",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Hán–Nôm script, reading, romanization, and translation review.",
+  "timestamp": "2026-10-22T11:00:00Z",
+  "summary": "Implemented and verified the Hán–Nôm script, reading, romanization, and translation review domain layer for Cửu Đỉnh heritage epigraphy. Established explicit separation of script glyphs (Hán–Nôm Unicode CJK ideographs), Sino-Vietnamese readings (phiên âm Hán-Việt), modern Vietnamese meanings, and English translations. Enforced negative abuse protections preventing AI-guessed, machine OCR candidates, or unreviewed seed glyphs from being promoted to verified without human epigrapher sign-off. Built audit and tracking for the 4 known incomplete motifs (urn_nghi_dinh_03, urn_thuan_dinh_13, urn_tuyen_dinh_11, urn_huyen_dinh_12) ensuring they remain strictly tracked as missing / pending epigrapher review, and integrated governance guards into the historical claims state machine for translation and etymology claim transitions.",
+  "invariants_enforced": [
+    "SEPARATION_OF_EPIGRAPHIC_ATTRIBUTES: Script glyphs, Sino-Vietnamese readings, modern Vietnamese meanings, and English translations are tracked as separate, typed fields with controlled review statuses.",
+    "NEGATIVE_ABUSE_AI_GUESS_PROMOTION_BLOCKED: AI-generated, AI OCR candidate, or unverified seed glyphs MUST NEVER be marked verified without a qualified human epigrapher sign-off (raises UnverifiedPromotionForbiddenError).",
+    "EMPTY_GLYPH_VERIFICATION_REJECTED: Empty or missing glyphs cannot be promoted to verified (raises HanNomReviewError).",
+    "MISSING_GLYPH_TRACKING_PARITY: The 4 known incomplete motifs from W00 baseline (urn_nghi_dinh_03, urn_thuan_dinh_13, urn_tuyen_dinh_11, urn_huyen_dinh_12) are explicitly identified and tracked as missing/pending review across all 9 Urn data files.",
+    "UNCERTAIN_READING_PRESERVATION: Ambiguous, homophonic, or damaged inscription readings are strictly preserved with uncertainty flags and provisional status, preventing false epigraphic certainty.",
+    "HISTORICAL_CLAIM_TRANSLATION_GATE: Historical governance claim state machine blocks transitioning AI-generated translation/etymology claims to expert_verified unless verified by human epigraphers."
+  ],
+  "audit_findings_162_motifs": {
+    "total_motifs": 162,
+    "motifs_with_raw_glyphs": 158,
+    "motifs_missing_glyphs": 4,
+    "missing_motif_ids": [
+      "urn_huyen_dinh_12",
+      "urn_nghi_dinh_03",
+      "urn_thuan_dinh_13",
+      "urn_tuyen_dinh_11"
+    ],
+    "missing_motifs_details": [
+      {
+        "id": "urn_nghi_dinh_03",
+        "name_vi": "Đàn Mộc",
+        "urn": "Nghị Đỉnh",
+        "review_status": "missing"
+      },
+      {
+        "id": "urn_thuan_dinh_13",
+        "name_vi": "Đăng Sơn Ngư",
+        "urn": "Thuần Đỉnh",
+        "review_status": "missing"
+      },
+      {
+        "id": "urn_tuyen_dinh_11",
+        "name_vi": "Đại Lãnh",
+        "urn": "Tuyên Đỉnh",
+        "review_status": "missing"
+      },
+      {
+        "id": "urn_huyen_dinh_12",
+        "name_vi": "Thao Hà",
+        "urn": "Huyền Đỉnh",
+        "review_status": "missing"
+      }
+    ],
+    "seed_glyphs_classification": "All 158 raw seed glyphs are classified as provisional / AI draft; zero are auto-promoted to verified."
+  },
+  "changes": [
+    {
+      "file": "backend/domain/han_nom_review.py",
+      "description": "Created domain module implementing HanNomReviewStatus, HanNomProvenanceOrigin, HanNomMotifReviewRecord, HanNomReviewInput, KNOWN_MISSING_HAN_NOM_MOTIF_IDS, validate_han_nom_promotion, and audit_162_han_nom_dataset."
+    },
+    {
+      "file": "backend/history_models.py",
+      "description": "Re-exported Hán–Nôm review domain symbols, models, exceptions, and validators for seamless use across backend models and services."
+    },
+    {
+      "file": "backend/services/history_governance.py",
+      "description": "Added guardrail in transition_claim_status to reject promoting translation and etymology claims to expert_verified if origin is AI-generated without human epigrapher review or if confidence is uncertain/disputed."
+    },
+    {
+      "file": "tests/v5/test_v5_t026.py",
+      "description": "Created 8 comprehensive pytest tests covering epigraphic attribute separation, negative abuse rejection of AI guesses and missing glyphs, 4 known incomplete motifs tracking, preservation of uncertain readings, valid epigrapher promotion with provenance, governance translation claim transition blocking, and audit of all 158 seed motifs."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t026.py -v",
+    "total_tests": 13,
+    "passed_tests": 13,
+    "failed_tests": 0,
+    "test_details": [
+      {
+        "name": "test_han_nom_data_structure_and_epigraphic_attributes",
+        "result": "PASSED",
+        "assertion": "Asserts Hán-Nôm review records correctly separate glyphs, readings, glosses, translations, and epigrapher signoff."
+      },
+      {
+        "name": "test_negative_abuse_guessed_glyph_cannot_be_verified",
+        "result": "PASSED",
+        "assertion": "Asserts validate_han_nom_promotion and HanNomReviewInput reject promoting AI-guessed or machine-generated glyphs to human_verified without epigrapher signoff."
+      },
+      {
+        "name": "test_negative_abuse_empty_or_missing_glyph_cannot_be_verified",
+        "result": "PASSED",
+        "assertion": "Asserts promoting None or blank whitespace glyphs to human_verified raises HanNomReviewError."
+      },
+      {
+        "name": "test_four_known_incomplete_motifs_tracked_as_missing_and_pending_review",
+        "result": "PASSED",
+        "assertion": "Asserts audit_162_han_nom_dataset identifies exactly 4 missing motifs matching KNOWN_MISSING_HAN_NOM_MOTIF_IDS and tracks them as missing."
+      },
+      {
+        "name": "test_uncertain_and_provisional_readings_flagged_and_preserved",
+        "result": "PASSED",
+        "assertion": "Asserts provisional candidates and uncertain readings retain uncertainty flags and notes without false promotion."
+      },
+      {
+        "name": "test_valid_epigrapher_promotion_passes_with_provenance",
+        "result": "PASSED",
+        "assertion": "Asserts valid epigrapher signoff with provenance successfully passes validation."
+      },
+      {
+        "name": "test_historical_claim_translation_epigraphic_guardrail",
+        "result": "PASSED",
+        "assertion": "Asserts admin claim transition endpoint rejects promoting AI translation claims to expert_verified with HTTP 422."
+      },
+      {
+        "name": "test_all_158_seed_motifs_treated_as_provisional_ai_draft",
+        "result": "PASSED",
+        "assertion": "Asserts all 158 raw seed motifs with glyphs are classified as provisional and AI-guessed, with zero auto-promoted to human_verified."
+      },
+      {
+        "name": "test_structured_han_nom_review_schema_and_fields",
+        "result": "PASSED",
+        "assertion": "Asserts structured Hán-Nôm review schema implements required fields, properties, aliases, and controlled statuses."
+      },
+      {
+        "name": "test_verified_motifs_require_valid_readings_and_translations",
+        "result": "PASSED",
+        "assertion": "Asserts motifs marked verified must have valid glyphs, readings, and translations, and cannot be uncertain."
+      },
+      {
+        "name": "test_negative_abuse_guessing_glyph_without_source_citation_blocked",
+        "result": "PASSED",
+        "assertion": "Asserts guessing glyph without source citation or with dummy citations is blocked or flagged."
+      },
+      {
+        "name": "test_four_unconfirmed_motifs_marked_uncertain_or_unreviewed",
+        "result": "PASSED",
+        "assertion": "Asserts the 4 unconfirmed motifs are correctly marked is_uncertain: True and review_status: unreviewed/missing."
+      },
+      {
+        "name": "test_heritage_import_validate_han_nom_reviews_integration",
+        "result": "PASSED",
+        "assertion": "Asserts integration between heritage_import service and Hán-Nôm review validation."
+      }
+    ]
+  }
+}

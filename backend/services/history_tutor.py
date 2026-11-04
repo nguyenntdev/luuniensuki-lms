@@ -22,6 +22,14 @@ from uuid import UUID
 from sqlalchemy import String, Text, case, cast, func, or_, select
 from sqlalchemy.orm import Session, selectinload
 
+from ..domain.atomic_claims import (
+    can_verify_atomic_claim,
+    claim_has_contradicting_source,
+    decompose_into_atomic_claims,
+    reject_compound_claim_with_disputed_facts,
+    synthesize_atomic_explanations,
+    validate_atomic_claim,
+)
 from ..models import (
     HistoricalClaim,
     HistoricalClaimSource,
@@ -33,7 +41,7 @@ from ..models import (
 # Constants
 # --------------------------------------------------------------------------- #
 ELIGIBLE_SUPPORT_TYPES = {"supports", "primary_evidence_for"}
-VERIFIED_TIERS = ("expert_verified", "editor_reviewed")
+VERIFIED_TIERS = ("expert_verified", "editor_reviewed", "verified", "published")
 
 # Delimiters wrapping each retrieved claim block. Source text is DATA, never
 # instructions (Spec 40.1); the router hands this to the LLM verbatim so an
@@ -626,7 +634,9 @@ def build_deterministic_answer(
     uncertainties: list[str] = []
     for claim in usable:
         label = _epistemic_label(claim)
-        lines.append(f"- **{label}**: {claim.statement_vi}")
+        lines.append(
+            f"- **{label}** [Khẳng định: `{claim.id}` | Trạng thái: {claim.verification_status}]: {claim.statement_vi}"
+        )
         used_claim_ids.append(str(claim.id))
         for sm in retrieved_context.sources_by_claim.get(str(claim.id), []):
             citations.append(
@@ -634,6 +644,8 @@ def build_deterministic_answer(
                     "source_id": sm["source_id"],
                     "claim_ids": [str(claim.id)],
                     "locator": sm["locator"] or "không xác định",
+                    "verification_status": claim.verification_status,
+                    "support_type": sm.get("support_type", "supports"),
                 }
             )
     uncertainties.extend(_uncertainties_from_claims(usable))
@@ -648,7 +660,9 @@ def build_deterministic_answer(
         lines.append("\n**Nội dung chưa được thẩm định (chỉ để tham khảo, không phải sự kiện đã xác minh):**")
         for claim in unverified:
             label = _epistemic_label(claim)
-            lines.append(f"- *[{label}]*: {claim.statement_vi}")
+            lines.append(
+                f"- *[{label}]* [Khẳng định: `{claim.id}` | Trạng thái: {claim.verification_status}]: {claim.statement_vi}"
+            )
             uncertainties.append(
                 f"Khẳng định “{claim.statement_vi}” chưa được thẩm định và không được "
                 "coi là nguồn tham khảo chính thống."

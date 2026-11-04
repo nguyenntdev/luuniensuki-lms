@@ -116,6 +116,8 @@ class HistoricalSourceCreate(BaseModel):
     public_display_allowed: Optional[bool] = None
     derivative_allowed: Optional[bool] = None
     verification_status: str = "unreviewed"
+    checksum: Optional[str] = None
+    excerpt: Optional[str] = None
 
 
 class HistoricalSourceUpdate(BaseModel):
@@ -145,6 +147,8 @@ class HistoricalSourceUpdate(BaseModel):
     public_display_allowed: Optional[bool] = None
     derivative_allowed: Optional[bool] = None
     verification_status: Optional[str] = None
+    checksum: Optional[str] = None
+    excerpt: Optional[str] = None
 
 
 class HistoricalSourceOut(BaseModel):
@@ -177,8 +181,22 @@ class HistoricalSourceOut(BaseModel):
     public_display_allowed: Optional[bool] = None
     derivative_allowed: Optional[bool] = None
     verification_status: str
+    checksum: Optional[str] = None
+    excerpt: Optional[str] = None
     created_at: datetime
     updated_at: datetime
+
+
+class HistoricalSourceAdminOut(HistoricalSourceOut):
+    created_by: Optional[UUID] = None
+    content_scope: Optional[str] = None
+    raw_excerpt: Optional[str] = None
+
+
+class HistoricalSourceDuplicateCheckOut(BaseModel):
+    is_duplicate: bool
+    duplicate_source: Optional[HistoricalSourceOut] = None
+    matched_by: Optional[str] = None
 
 
 class HistoricalSourceListOut(BaseModel):

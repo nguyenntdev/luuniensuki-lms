@@ -935,7 +935,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** Get Admin History Source */
+        get: operations["get_admin_history_source_api_v1_admin_history_sources__source_id__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3276,6 +3277,86 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/history/curriculum/fallbacks/{target}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Curriculum 2D Fallback
+         * @description Resolve 2D rubbing asset fallback for low-bandwidth educational environments.
+         */
+        get: operations["get_curriculum_2d_fallback_api_v1_history_curriculum_fallbacks__target__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/curriculum/modules": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Curriculum Modules
+         * @description List curriculum learning modules mapped to verified entities, claims, and 2D fallbacks.
+         */
+        get: operations["list_curriculum_modules_api_v1_history_curriculum_modules_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/curriculum/modules/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Curriculum Module
+         * @description Get single curriculum module with verified claim linkage and 2D rubbing fallback.
+         */
+        get: operations["get_curriculum_module_api_v1_history_curriculum_modules__slug__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/curriculum/validate-publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Validate Curriculum Publication
+         * @description Validate whether a learning module or lesson satisfies the historical claim publishing gate.
+         */
+        post: operations["validate_curriculum_publication_api_v1_history_curriculum_validate_publish_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/history/entities": {
         parameters: {
             query?: never;
@@ -3427,6 +3508,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/history/lessons/{lesson_id}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Publish History Lesson
+         * @description Publish a lesson enforcing the historical claim verification gate (staff/admin only).
+         */
+        post: operations["publish_history_lesson_api_v1_history_lessons__lesson_id__publish_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/history/map": {
         parameters: {
             query?: never;
@@ -3571,6 +3672,23 @@ export interface paths {
         };
         /** List History Sources */
         get: operations["list_history_sources_api_v1_history_sources_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/sources/check-duplicate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Check Duplicate Source */
+        get: operations["check_duplicate_source_api_v1_history_sources_check_duplicate_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -9682,6 +9800,119 @@ export interface components {
             /** Unresolved Reports */
             unresolved_reports: number;
         };
+        /** CurriculumFallback2DOut */
+        CurriculumFallback2DOut: {
+            /**
+             * Asset Type
+             * @default 2d_rubbing
+             */
+            asset_type: string;
+            /**
+             * Available
+             * @default true
+             */
+            available: boolean;
+            /** Byte Size */
+            byte_size?: number | null;
+            /** Description */
+            description?: string | null;
+            /** Local File Path */
+            local_file_path?: string | null;
+            /** Url */
+            url: string;
+        };
+        /** CurriculumModuleListOut */
+        CurriculumModuleListOut: {
+            /** Items */
+            items: components["schemas"]["CurriculumModuleOut"][];
+            /** Total */
+            total: number;
+        };
+        /** CurriculumModuleOut */
+        CurriculumModuleOut: {
+            /** Core Claim Keys */
+            core_claim_keys?: string[];
+            /** Curriculum Framework */
+            curriculum_framework: string;
+            /** Description En */
+            description_en?: string | null;
+            /** Description Vi */
+            description_vi: string;
+            /** Entity Slugs */
+            entity_slugs?: string[];
+            /** Era */
+            era: string;
+            /** Historical Competencies */
+            historical_competencies?: string[];
+            /** Id */
+            id: string;
+            /** Learning Objectives */
+            learning_objectives?: components["schemas"]["CurriculumObjectiveOut"][];
+            media_fallback_2d?: components["schemas"]["CurriculumFallback2DOut"] | null;
+            /**
+             * Publication Gate Ready
+             * @default true
+             */
+            publication_gate_ready: boolean;
+            /** Roadmap Phase */
+            roadmap_phase: string;
+            /** Slug */
+            slug: string;
+            /** Title En */
+            title_en?: string | null;
+            /** Title Vi */
+            title_vi: string;
+            /** Topic */
+            topic: string;
+        };
+        /** CurriculumObjectiveOut */
+        CurriculumObjectiveOut: {
+            /**
+             * Claims Verified
+             * @default true
+             */
+            claims_verified: boolean;
+            /** Code */
+            code: string;
+            /** Competency */
+            competency: string;
+            /** Target Claim Keys */
+            target_claim_keys?: string[];
+            /** Target Entity Slug */
+            target_entity_slug?: string | null;
+            /** Text En */
+            text_en?: string | null;
+            /** Text Vi */
+            text_vi: string;
+        };
+        /** CurriculumPublishValidationIn */
+        CurriculumPublishValidationIn: {
+            /** Claim Ids */
+            claim_ids?: string[] | null;
+            /** Lesson Id */
+            lesson_id?: string | null;
+            /** Module Slug */
+            module_slug?: string | null;
+        };
+        /** CurriculumPublishValidationOut */
+        CurriculumPublishValidationOut: {
+            /** Can Publish */
+            can_publish: boolean;
+            /**
+             * Ineligible Claims Count
+             * @default 0
+             */
+            ineligible_claims_count: number;
+            /** Issues */
+            issues?: string[];
+            /** Validation Status */
+            validation_status: string;
+            /**
+             * Verified Claims Count
+             * @default 0
+             */
+            verified_claims_count: number;
+        };
         /**
          * DailyGoalSettingsOut
          * @description User daily-goal settings.
@@ -12154,6 +12385,86 @@ export interface components {
             /** Total */
             total: number;
         };
+        /** HistoricalSourceAdminOut */
+        HistoricalSourceAdminOut: {
+            /** Archive Url */
+            archive_url?: string | null;
+            /** Attribution Text */
+            attribution_text?: string | null;
+            /** Author Text */
+            author_text?: string | null;
+            /** Checksum */
+            checksum?: string | null;
+            /** Citation Text */
+            citation_text?: string | null;
+            /** Content Scope */
+            content_scope?: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Created By */
+            created_by?: string | null;
+            /** Derivative Allowed */
+            derivative_allowed?: boolean | null;
+            /** Doi */
+            doi?: string | null;
+            /** Edition */
+            edition?: string | null;
+            /** Editor Text */
+            editor_text?: string | null;
+            /** Excerpt */
+            excerpt?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Isbn */
+            isbn?: string | null;
+            /** Issn */
+            issn?: string | null;
+            /** Issue */
+            issue?: string | null;
+            /** Language */
+            language?: string | null;
+            /** License */
+            license?: string | null;
+            /** Pages */
+            pages?: string | null;
+            /** Public Display Allowed */
+            public_display_allowed?: boolean | null;
+            /** Publication Date */
+            publication_date?: string | null;
+            /** Publication Year */
+            publication_year?: number | null;
+            /** Publisher */
+            publisher?: string | null;
+            /** Raw Excerpt */
+            raw_excerpt?: string | null;
+            /** Repository Identifier */
+            repository_identifier?: string | null;
+            /** Rights Status */
+            rights_status?: string | null;
+            /** Source Type */
+            source_type: string;
+            /** Subtitle */
+            subtitle?: string | null;
+            /** Title */
+            title: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Url */
+            url?: string | null;
+            /** Verification Status */
+            verification_status: string;
+            /** Volume */
+            volume?: string | null;
+        };
         /** HistoricalSourceCreate */
         HistoricalSourceCreate: {
             /** Archive Url */
@@ -12162,6 +12473,8 @@ export interface components {
             attribution_text?: string | null;
             /** Author Text */
             author_text?: string | null;
+            /** Checksum */
+            checksum?: string | null;
             /** Citation Text */
             citation_text?: string | null;
             /** Derivative Allowed */
@@ -12172,6 +12485,8 @@ export interface components {
             edition?: string | null;
             /** Editor Text */
             editor_text?: string | null;
+            /** Excerpt */
+            excerpt?: string | null;
             /** Isbn */
             isbn?: string | null;
             /** Issn */
@@ -12212,6 +12527,14 @@ export interface components {
             /** Volume */
             volume?: string | null;
         };
+        /** HistoricalSourceDuplicateCheckOut */
+        HistoricalSourceDuplicateCheckOut: {
+            duplicate_source?: components["schemas"]["HistoricalSourceOut"] | null;
+            /** Is Duplicate */
+            is_duplicate: boolean;
+            /** Matched By */
+            matched_by?: string | null;
+        };
         /** HistoricalSourceListOut */
         HistoricalSourceListOut: {
             /** Items */
@@ -12231,6 +12554,8 @@ export interface components {
             attribution_text?: string | null;
             /** Author Text */
             author_text?: string | null;
+            /** Checksum */
+            checksum?: string | null;
             /** Citation Text */
             citation_text?: string | null;
             /**
@@ -12246,6 +12571,8 @@ export interface components {
             edition?: string | null;
             /** Editor Text */
             editor_text?: string | null;
+            /** Excerpt */
+            excerpt?: string | null;
             /**
              * Id
              * Format: uuid
@@ -12301,6 +12628,8 @@ export interface components {
             attribution_text?: string | null;
             /** Author Text */
             author_text?: string | null;
+            /** Checksum */
+            checksum?: string | null;
             /** Citation Text */
             citation_text?: string | null;
             /** Derivative Allowed */
@@ -12311,6 +12640,8 @@ export interface components {
             edition?: string | null;
             /** Editor Text */
             editor_text?: string | null;
+            /** Excerpt */
+            excerpt?: string | null;
             /** Isbn */
             isbn?: string | null;
             /** Issn */
@@ -12448,6 +12779,38 @@ export interface components {
             title_vi?: string | null;
             /** Visibility */
             visibility?: string | null;
+        };
+        /** HistoryLessonPublishIn */
+        HistoryLessonPublishIn: {
+            /** Claim Ids */
+            claim_ids?: string[] | null;
+            /** Module Slug */
+            module_slug?: string | null;
+            /** Review Notes */
+            review_notes?: string | null;
+        };
+        /** HistoryLessonPublishOut */
+        HistoryLessonPublishOut: {
+            /** Content Validation Status */
+            content_validation_status: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Is Published */
+            is_published: boolean;
+            /**
+             * Motif Id
+             * Format: uuid
+             */
+            motif_id: string;
+            /** Published At */
+            published_at?: string | null;
+            /** Status */
+            status: string;
+            /** Verified Claim Ids */
+            verified_claim_ids?: string[];
         };
         /** HistoryQuestionCreate */
         HistoryQuestionCreate: {
@@ -12596,6 +12959,10 @@ export interface components {
             blocks?: {
                 [key: string]: unknown;
             }[];
+            /** Citations */
+            citations?: {
+                [key: string]: unknown;
+            }[];
             /**
              * Featured
              * @default false
@@ -12645,6 +13012,10 @@ export interface components {
         HistoryStoryOut: {
             /** Blocks */
             blocks?: unknown[];
+            /** Citations */
+            citations?: {
+                [key: string]: unknown;
+            }[];
             /**
              * Created At
              * Format: date-time
@@ -12687,6 +13058,10 @@ export interface components {
         HistoryStoryUpdate: {
             /** Blocks */
             blocks?: {
+                [key: string]: unknown;
+            }[] | null;
+            /** Citations */
+            citations?: {
                 [key: string]: unknown;
             }[] | null;
             /** Featured */
@@ -22061,7 +22436,9 @@ export interface operations {
     };
     create_history_source_api_v1_admin_history_sources_post: {
         parameters: {
-            query?: never;
+            query?: {
+                check_duplicate?: boolean;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -22092,9 +22469,42 @@ export interface operations {
             };
         };
     };
-    update_history_source_api_v1_admin_history_sources__source_id__patch: {
+    get_admin_history_source_api_v1_admin_history_sources__source_id__get: {
         parameters: {
             query?: never;
+            header?: never;
+            path: {
+                source_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoricalSourceAdminOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_history_source_api_v1_admin_history_sources__source_id__patch: {
+        parameters: {
+            query?: {
+                check_duplicate?: boolean;
+            };
             header?: never;
             path: {
                 source_id: string;
@@ -26174,6 +26584,121 @@ export interface operations {
             };
         };
     };
+    get_curriculum_2d_fallback_api_v1_history_curriculum_fallbacks__target__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                target: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CurriculumFallback2DOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_curriculum_modules_api_v1_history_curriculum_modules_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CurriculumModuleListOut"];
+                };
+            };
+        };
+    };
+    get_curriculum_module_api_v1_history_curriculum_modules__slug__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CurriculumModuleOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    validate_curriculum_publication_api_v1_history_curriculum_validate_publish_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CurriculumPublishValidationIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CurriculumPublishValidationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_history_entities_api_v1_history_entities_get: {
         parameters: {
             query?: {
@@ -26421,6 +26946,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+        };
+    };
+    publish_history_lesson_api_v1_history_lessons__lesson_id__publish_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                lesson_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["HistoryLessonPublishIn"] | null;
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoryLessonPublishOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -26707,6 +27267,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HistoricalSourceListOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    check_duplicate_source_api_v1_history_sources_check_duplicate_get: {
+        parameters: {
+            query?: {
+                isbn?: string | null;
+                doi?: string | null;
+                title?: string | null;
+                author_text?: string | null;
+                publication_year?: number | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoricalSourceDuplicateCheckOut"];
                 };
             };
             /** @description Validation Error */

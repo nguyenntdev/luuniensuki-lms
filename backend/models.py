@@ -4174,6 +4174,7 @@ from .history_models import (  # noqa: E402,F401
     HistoricalClaimSource,
     HistoricalClaimType,
     HistoricalConfidence,
+    HistoricalEpistemicCertainty,
     HistoricalContentAuditLog,
     HistoricalEntity,
     HistoricalEntityRelation,

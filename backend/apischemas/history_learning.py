@@ -89,3 +89,79 @@ class HistorySkillsOut(BaseModel):
     user_id: UUID
     dimensions: list[MasteryDimensionOut]
     overall: Optional[float] = None
+
+
+# --------------------------------------------------------------------------- #
+# Curriculum Mapping & Publishing Gate Schemas (V5-T029)
+# --------------------------------------------------------------------------- #
+class CurriculumObjectiveOut(BaseModel):
+    code: str
+    text_vi: str
+    text_en: Optional[str] = None
+    competency: str
+    target_entity_slug: Optional[str] = None
+    target_claim_keys: list[str] = Field(default_factory=list)
+    claims_verified: bool = True
+
+
+class CurriculumFallback2DOut(BaseModel):
+    available: bool = True
+    asset_type: str = "2d_rubbing"
+    url: str
+    local_file_path: Optional[str] = None
+    byte_size: Optional[int] = None
+    description: Optional[str] = None
+
+
+class CurriculumModuleOut(BaseModel):
+    id: str
+    slug: str
+    title_vi: str
+    title_en: Optional[str] = None
+    description_vi: str
+    description_en: Optional[str] = None
+    era: str
+    topic: str
+    curriculum_framework: str
+    roadmap_phase: str
+    historical_competencies: list[str] = Field(default_factory=list)
+    learning_objectives: list[CurriculumObjectiveOut] = Field(default_factory=list)
+    media_fallback_2d: Optional[CurriculumFallback2DOut] = None
+    entity_slugs: list[str] = Field(default_factory=list)
+    core_claim_keys: list[str] = Field(default_factory=list)
+    publication_gate_ready: bool = True
+
+
+class CurriculumModuleListOut(BaseModel):
+    items: list[CurriculumModuleOut]
+    total: int
+
+
+class CurriculumPublishValidationIn(BaseModel):
+    lesson_id: Optional[UUID] = None
+    module_slug: Optional[str] = None
+    claim_ids: Optional[list[UUID]] = None
+
+
+class CurriculumPublishValidationOut(BaseModel):
+    can_publish: bool
+    validation_status: str
+    issues: list[str] = Field(default_factory=list)
+    verified_claims_count: int = 0
+    ineligible_claims_count: int = 0
+
+
+class HistoryLessonPublishIn(BaseModel):
+    claim_ids: Optional[list[UUID]] = None
+    module_slug: Optional[str] = None
+    review_notes: Optional[str] = None
+
+
+class HistoryLessonPublishOut(BaseModel):
+    id: UUID
+    motif_id: UUID
+    is_published: bool
+    status: str
+    content_validation_status: str
+    published_at: Optional[datetime] = None
+    verified_claim_ids: list[str] = Field(default_factory=list)

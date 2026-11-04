@@ -2419,9 +2419,24 @@ def approve_lesson(
             detail=f"Can only approve lessons in review or draft status. Current status: {current_status.value}",
         )
 
+    # Validate historical claims publishing gate (Spec 32.2 / V5-T029)
+    from ..services import history_learning as hl
+    is_valid, issues = hl.validate_lesson_for_publication(db, lesson)
+    if not is_valid:
+        lesson.content_validation_status = "blocked_for_authoritative_learning"
+        lesson.is_published = False
+        db.commit()
+        raise AppError(
+            "LESSON_UNVERIFIED_CLAIMS",
+            f"Cannot publish lesson: {'; '.join(issues)}",
+            422,
+            details={"issues": issues, "lesson_id": str(lesson_id)},
+        )
+
     # Update status to published
     lesson.status = ContentStatus.published
     lesson.is_published = True
+    lesson.content_validation_status = "valid"
     lesson.reviewed_by_id = current_user.id
     lesson.reviewed_at = datetime.utcnow()
     lesson.published_at = datetime.utcnow()
@@ -2589,9 +2604,24 @@ def approve_quiz_question(
             detail=f"Can only approve questions in review or draft status. Current status: {current_status.value}",
         )
 
+    # Validate historical claims publishing gate (Spec 32.2 / V5-T029)
+    from ..services import history_learning as hl
+    is_valid, issues = hl.validate_question_for_publication(db, question)
+    if not is_valid:
+        question.content_validation_status = "blocked_for_authoritative_learning"
+        question.is_published = False
+        db.commit()
+        raise AppError(
+            "QUIZ_QUESTION_UNVERIFIED_CLAIMS",
+            f"Cannot publish quiz question: {'; '.join(issues)}",
+            422,
+            details={"issues": issues, "question_id": str(question_id)},
+        )
+
     # Update status to published
     question.status = ContentStatus.published
     question.is_published = True
+    question.content_validation_status = "valid"
     question.reviewed_by_id = current_user.id
     question.reviewed_at = datetime.utcnow()
     question.review_notes = payload.review_notes

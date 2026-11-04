@@ -516,6 +516,15 @@ export type LearnModuleStatus =
   | "prototype"
   | "roadmap_phase_2";
 
+export interface CurriculumObjectiveMapping {
+  code: string;
+  text: LocalizedField;
+  competency: "S1_SPATIAL" | "S2_TEMPORAL" | "S3_EVIDENCE" | "S4_ARGUMENT" | string;
+  entitySlug?: string;
+  claimKeys?: string[];
+  verified?: boolean;
+}
+
 export interface LearnPathwayModule {
   id: string;
   slug: string;
@@ -526,11 +535,14 @@ export interface LearnPathwayModule {
   linked3DArtefactSlug?: string; // e.g. "cao-dinh", "thuan-dinh"
   linkedCreatorSlug?: string;
   learningObjectives: LocalizedField[];
+  curriculumObjectives?: CurriculumObjectiveMapping[];
   roadmapPhase: LearnRoadmapPhase;
   status: LearnModuleStatus;
   historicalPeriod: string;
   sourceCitationsCount: number;
   estimatedMinutes: number;
+  fallback2dRubbingUrl?: string;
+  fallback2dDescription?: LocalizedField;
 }
 
 // ============================================================================

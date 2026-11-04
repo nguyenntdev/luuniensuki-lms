@@ -24,6 +24,7 @@ class HistoryStoryCreate(BaseModel):
     summary_en: Optional[str] = None
     hero_image_url: Optional[str] = None
     blocks: list[dict[str, Any]] = Field(default_factory=list)
+    citations: list[dict[str, Any]] = Field(default_factory=list)
     status: str = "draft"
     publication_status: str = "unreviewed"
     featured: bool = False
@@ -37,6 +38,7 @@ class HistoryStoryUpdate(BaseModel):
     summary_en: Optional[str] = None
     hero_image_url: Optional[str] = None
     blocks: Optional[list[dict[str, Any]]] = None
+    citations: Optional[list[dict[str, Any]]] = None
     status: Optional[str] = None
     publication_status: Optional[str] = None
     featured: Optional[bool] = None
@@ -60,6 +62,7 @@ class HistoryStoryOut(BaseModel):
     created_at: datetime
     updated_at: datetime
     published_at: Optional[datetime] = None
+    citations: list[dict[str, Any]] = Field(default_factory=list)
 
 
 class HistoryStoryListOut(BaseModel):

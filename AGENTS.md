@@ -199,3 +199,19 @@ Deploy workflow (`deploy.yml`) uses Python 3.12 and runs `pytest tests/backend` 
   - `V5-T019` (W01-A09): Durable notification outbox queue with partner 24h SLA deadline tracking and fault-tolerant inquiry creation.
   - `V5-T020` (W01-A10): Complete end-to-end integration acceptance test suite across visitor submission, partner inbox, state transitions, and tracking.
 
+### Wave W02: Evidence Library / 162 Real Heritage Records (COMPLETED)
+- **Status**: 10/10 slots complete. 106/106 tests passing.
+- **Artifacts**: `artifacts/implementation/W02/` (`W02_A01`–`W02_A10`).
+- **Verified Invariants**:
+  - `V5-T021` (W02-A01): Canonical urn/motif mapping verifying 9 Urns and 162 motifs (9x18) with stable IDs, legacy aliases, and cross-urn misassignment rejection.
+  - `V5-T022` (W02-A02): Stop auto-verified seed claims. Novel seed claims strictly default to `unreviewed`/`needs_source`; human approvals preserved across re-imports.
+  - `V5-T023` (W02-A03): Bibliographic source registry with rights protection, restricted excerpt redaction, and deduplication engine.
+  - `V5-T024` (W02-A04): Atomic historical claims linking support/refute sources and granular epistemic status.
+  - `V5-T025` (W02-A05): Human editorial workflow enforcing role permissions (`admin`/`staff`/`teacher`), state machines, and immutable audit logs.
+  - `V5-T026` (W02-A06): Hán–Nôm review tracking 4 known unconfirmed motifs (`urn_nghi_dinh_03`, `urn_thuan_dinh_13`, `urn_tuyen_dinh_11`, `urn_huyen_dinh_12`) and rejecting unverified AI glyph promotion.
+  - `V5-T027` (W02-A07): Image & 3D mesh attribution linkage across 171 relics with 2D rubbing fallback and rights distribution gates.
+  - `V5-T028` (W02-A08): Story renderer with bilingual footnote parsing `[^1]`, interactive citation drawer, and epistemic uncertainty indicators.
+  - `V5-T029` (W02-A09): Source-guided curriculum mapping enforcing publication gates against unreviewed or disputed claims.
+  - `V5-T030` (W02-A10): Reproducible 162 publication audit CLI (`scripts/dev/audit_162_publication.py`) checking 5 mandatory quality gates per relic.
+
+

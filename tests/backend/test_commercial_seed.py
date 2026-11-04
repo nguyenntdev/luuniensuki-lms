@@ -441,7 +441,7 @@ def test_commit_mode_commercial_upsert_and_relationships(db_session):
         assert c.story_id in {story_bronze.id, story_enamel.id, story_paper.id}
         assert c.locale == "vi"
         assert c.support_type == "direct"
-        assert c.review_status == "verified"
+        assert c.review_status == "unreviewed"
         assert c.citation_label is not None
         assert len(c.statement) > 20
         assert c.source_title is not None
@@ -579,6 +579,8 @@ def test_api_rbpc_endpoints_with_seeded_data(client, db_session):
     assert stories_json["total"] == 3
 
     # 6. GET /api/v1/rbpc/stories/{slug} (Deep Story Detail)
+    # Claims are newly imported and therefore unreviewed, so public endpoint returns 0 claims
+    # until verified by an expert (fail-closed integrity).
     res_story_detail = client.get("/api/v1/rbpc/stories/tieng-chuong-khiem-cung")
     assert res_story_detail.status_code == 200
     story_data = res_story_detail.json()
@@ -588,8 +590,31 @@ def test_api_rbpc_endpoints_with_seeded_data(client, db_session):
     assert story_data["creator"]["slug"] == "nghe-nhan-nguyen-van-sinh"
     assert story_data["experience"] is not None
     assert story_data["experience"]["slug"] == "workshop-duc-dong-phuong-duc"
-    assert len(story_data["evidence_claims"]) == 2
-    assert story_data["evidence_claims"][0]["support_type"] == "direct"
+    assert len(story_data["evidence_claims"]) == 0
+
+    # Simulate expert review and citation verification on the claims
+    curator = User(
+        email="expert_reviewer@histolab.icu",
+        password_hash="test-hash",
+        display_name="Expert Heritage Historian",
+        role=UserRole.admin,
+    )
+    db_session.add(curator)
+    db_session.flush()
+
+    tieng_chuong_story = db_session.execute(
+        select(RbpcStory).where(RbpcStory.slug == "tieng-chuong-khiem-cung")
+    ).scalar_one()
+    for clm in tieng_chuong_story.claims:
+        clm.review_status = "verified"
+        clm.reviewed_by = curator.id
+    db_session.commit()
+
+    res_story_verified = client.get("/api/v1/rbpc/stories/tieng-chuong-khiem-cung")
+    assert res_story_verified.status_code == 200
+    verified_data = res_story_verified.json()
+    assert len(verified_data["evidence_claims"]) == 2
+    assert verified_data["evidence_claims"][0]["support_type"] == "direct"
 
 
 # --------------------------------------------------------------------------- #

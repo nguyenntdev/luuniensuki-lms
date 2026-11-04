@@ -1,0 +1,219 @@
+{
+  "ticket": "V5-T021",
+  "ticket_id": "V5-T021",
+  "wave": "W02",
+  "slot": "W02-A01",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Canonical urn/motif mapping (stable IDs, 9x18 import mapping, legacy redirect aliases, duplicate validators).",
+  "timestamp": "2026-10-22T10:45:00Z",
+  "summary": "Implemented and verified canonical urn and motif mapping domain logic across all 9 Urns and 162 Motifs (9x18 = 162). Established CANONICAL_URN_SLUGS, CANONICAL_RELIEF_SLUGS, and STABLE_MOTIF_IDS. Introduced CrossUrnMisassignmentError and validate_no_cross_urn_misassignment to strictly block cross-urn entity and motif misassignments. Built robust legacy redirect alias resolution supporting Vietnamese names, Hán-Nôm glyphs, English titles, underscored prefixes, mesh identifiers, and local indices with urn context. Consolidated all 162 3D coordinate points into data/cuu_dinh_coordinate_points.json, and implemented validate_dataset_uniqueness ensuring zero duplicate IDs, slugs, or missing coordinates.",
+  "invariants_enforced": [
+    "CANONICAL_URNS_COUNT: Exactly 9 canonical Urns (cao-dinh, nhan-dinh, chuong-dinh, anh-dinh, nghi-dinh, thuan-dinh, tuyen-dinh, du-dinh, huyen-dinh)",
+    "CANONICAL_RELIEFS_COUNT: Exactly 162 canonical relief entity slugs (cao-dinh-01..18 through huyen-dinh-01..18)",
+    "STABLE_MOTIF_IDS_COUNT: Exactly 162 stable motif identifiers (urn_cao_dinh_01..18 through urn_huyen_dinh_01..18)",
+    "ZERO_CROSS_URN_MISASSIGNMENT: Any attempt to associate, query, or resolve a motif from one urn under another urn strictly raises CrossUrnMisassignmentError",
+    "AMBIGUOUS_ALIAS_GUARD: Shared motif names across urns (e.g. 'Giới') strictly require urn_context or raise AmbiguousAliasError",
+    "COORDINATE_POINTS_PARITY: 100% 3D coordinate coverage (162/162 points) mapped to stable motif IDs in data/cuu_dinh_coordinate_points.json",
+    "DATASET_UNIQUENESS: All 162 records in data/*Data*Dinh.json have verified uniqueness with zero duplicate IDs, slugs, or missing fields"
+  ],
+  "changes": [
+    {
+      "file": "backend/domain/canonical_urn_mapping.py",
+      "description": "Created comprehensive domain helper implementing CanonicalUrnInfo, CanonicalReliefInfo, CANONICAL_URNS, CANONICAL_RELIEFS, STABLE_MOTIF_IDS, CrossUrnMisassignmentError, AmbiguousAliasError, InvalidMotifCountError, validate_no_cross_urn_misassignment, validate_urn_motif_count, resolve_canonical_urn_slug, resolve_canonical_relief_slug, resolve_canonical_motif_id, resolve_legacy_identifier, and validate_dataset_uniqueness."
+    },
+    {
+      "file": "backend/history_models.py",
+      "description": "Re-exported canonical urn and motif domain mapping symbols, validators (including validate_urn_motif_count), and exceptions from backend.domain.canonical_urn_mapping for direct consumption across historical domain services."
+    },
+    {
+      "file": "backend/services/heritage_import.py",
+      "description": "Integrated and re-exported canonical urn and motif domain mapping validators, counts, and resolvers into the heritage ingestion service."
+    },
+    {
+      "file": "data/cuu_dinh_coordinate_points.json",
+      "description": "Generated consolidated 162-point 3D coordinates manifest mapping stable motif IDs (urn_cao_dinh_01..18, etc.) to canonical relief slugs, mesh names, and 3D spatial coordinates."
+    },
+    {
+      "file": "tests/v5/test_v5_t021.py",
+      "description": "Created thorough pytest test suite covering canonical counts, 162-motif mapping, negative cross-urn abuse rejection, invalid motif count rejection, legacy alias resolution (Vietnamese, Hán-Nôm, English, mesh IDs), ambiguous alias handling, resolve_legacy_identifier metadata contract, and dataset uniqueness validation."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t021.py -v",
+    "total_tests": 12,
+    "passed_tests": 12,
+    "failed_tests": 0,
+    "test_details": [
+      {
+        "name": "test_canonical_urns_and_reliefs_count_and_mapping",
+        "result": "PASSED",
+        "assertion": "Asserts exactly 9 canonical urns, 162 canonical reliefs, 162 stable IDs, and sequential order 1..18 per urn."
+      },
+      {
+        "name": "test_all_162_motifs_map_without_cross_urn_misassignment",
+        "result": "PASSED",
+        "assertion": "Asserts all 162 motifs pass validate_no_cross_urn_misassignment for stable ID, slug, mesh name, and name_vi."
+      },
+      {
+        "name": "test_negative_abuse_cross_urn_misassignment_rejected",
+        "result": "PASSED",
+        "assertion": "Asserts cross-urn pairings across all 9 urns raise CrossUrnMisassignmentError, and unknown/out-of-bounds names/indices raise ValueError."
+      },
+      {
+        "name": "test_legacy_urn_alias_resolution",
+        "result": "PASSED",
+        "assertion": "Asserts all legacy formats, variants, English titles, order numbers, and 9 Hán-Nôm glyphs map cleanly to canonical urn slugs."
+      },
+      {
+        "name": "test_legacy_relief_alias_resolution",
+        "result": "PASSED",
+        "assertion": "Asserts stable IDs, non-padded IDs, mesh names, underscored slugs, and local names/indices in urn context resolve correctly and reject cross-urn misassignment."
+      },
+      {
+        "name": "test_ambiguous_alias_handling",
+        "result": "PASSED",
+        "assertion": "Asserts ambiguous names (e.g. 'Giới') raise AmbiguousAliasError without context, resolve with context, and reject invalid urn context."
+      },
+      {
+        "name": "test_resolve_legacy_identifier_contract",
+        "result": "PASSED",
+        "assertion": "Asserts structured metadata dictionary contract for Urn and Relief entities with 3D coordinate payload."
+      },
+      {
+        "name": "test_dataset_uniqueness_and_duplicate_validators",
+        "result": "PASSED",
+        "assertion": "Asserts validate_dataset_uniqueness validates 9 urns, 162 motifs, 162 unique IDs, and 162 coordinates."
+      },
+      {
+        "name": "test_cuu_dinh_coordinate_points_file_integrity",
+        "result": "PASSED",
+        "assertion": "Asserts data/cuu_dinh_coordinate_points.json contains 162 points with complete numeric coordinates and valid urn slugs."
+      },
+      {
+        "name": "test_negative_abuse_invalid_motif_count_rejected",
+        "result": "PASSED",
+        "assertion": "Asserts validate_urn_motif_count rejects counts < 18 or > 18 with InvalidMotifCountError across canonical, history_models, and heritage_import modules."
+      },
+      {
+        "name": "test_dataset_uniqueness_negative_invalid_motif_count",
+        "result": "PASSED",
+        "assertion": "Asserts validate_dataset_uniqueness rejects an urn dataset missing motifs (< 18 items)."
+      },
+      {
+        "name": "test_canonical_slug_underscore_properties",
+        "result": "PASSED",
+        "assertion": "Asserts slug_underscore property matches legacy underscored prefix for all 9 urns and 162 reliefs."
+      }
+    ]
+  },
+  "canonical_inventory": {
+    "total_urns": 9,
+    "total_motifs": 162,
+    "unique_motif_ids": 162,
+    "unique_relief_slugs": 162,
+    "coordinates_count": 162,
+    "urns": [
+      {
+        "order": 1,
+        "slug": "cao-dinh",
+        "legacy_prefix": "cao_dinh",
+        "name_vi": "Cao Đỉnh",
+        "name_en": "The Urn of Height",
+        "name_han_nom": "高鼎",
+        "motif_count": 18,
+        "data_file": "05_Data_CaoDinh.json",
+        "coord_file": "motif-coordinates-cao-dinh.json"
+      },
+      {
+        "order": 2,
+        "slug": "nhan-dinh",
+        "legacy_prefix": "nhan_dinh",
+        "name_vi": "Nhân Đỉnh",
+        "name_en": "The Urn of Benevolence",
+        "name_han_nom": "仁鼎",
+        "motif_count": 18,
+        "data_file": "06_Data_NhanDinh.json",
+        "coord_file": "motif-coordinates-nhan-dinh.json"
+      },
+      {
+        "order": 3,
+        "slug": "chuong-dinh",
+        "legacy_prefix": "chuong_dinh",
+        "name_vi": "Chương Đỉnh",
+        "name_en": "The Urn of Clarity",
+        "name_han_nom": "章鼎",
+        "motif_count": 18,
+        "data_file": "07_Data_ChuongDinh.json",
+        "coord_file": "motif-coordinates-chuong-dinh.json"
+      },
+      {
+        "order": 4,
+        "slug": "anh-dinh",
+        "legacy_prefix": "anh_dinh",
+        "name_vi": "Anh Đỉnh",
+        "name_en": "The Urn of Heroism",
+        "name_han_nom": "英鼎",
+        "motif_count": 18,
+        "data_file": "08_Data_AnhDinh.json",
+        "coord_file": "motif-coordinates-anh-dinh.json"
+      },
+      {
+        "order": 5,
+        "slug": "nghi-dinh",
+        "legacy_prefix": "nghi_dinh",
+        "name_vi": "Nghị Đỉnh",
+        "name_en": "The Urn of Resolution",
+        "name_han_nom": "毅鼎",
+        "motif_count": 18,
+        "data_file": "09_Data_NghiDinh.json",
+        "coord_file": "motif-coordinates-nghi-dinh.json"
+      },
+      {
+        "order": 6,
+        "slug": "thuan-dinh",
+        "legacy_prefix": "thuan_dinh",
+        "name_vi": "Thuần Đỉnh",
+        "name_en": "The Urn of Purity",
+        "name_han_nom": "純鼎",
+        "motif_count": 18,
+        "data_file": "10_Data_ThuanDinh.json",
+        "coord_file": "motif-coordinates-thuan-dinh.json"
+      },
+      {
+        "order": 7,
+        "slug": "tuyen-dinh",
+        "legacy_prefix": "tuyen_dinh",
+        "name_vi": "Tuyên Đỉnh",
+        "name_en": "The Urn of Proclamation",
+        "name_han_nom": "宣鼎",
+        "motif_count": 18,
+        "data_file": "11_Data_TuyenDinh.json",
+        "coord_file": "motif-coordinates-tuyen-dinh.json"
+      },
+      {
+        "order": 8,
+        "slug": "du-dinh",
+        "legacy_prefix": "du_dinh",
+        "name_vi": "Dụ Đỉnh",
+        "name_en": "The Urn of Abundance",
+        "name_han_nom": "裕鼎",
+        "motif_count": 18,
+        "data_file": "12_Data_DuDinh.json",
+        "coord_file": "motif-coordinates-du-dinh.json"
+      },
+      {
+        "order": 9,
+        "slug": "huyen-dinh",
+        "legacy_prefix": "huyen_dinh",
+        "name_vi": "Huyền Đỉnh",
+        "name_en": "The Urn of Profundity",
+        "name_han_nom": "玄鼎",
+        "motif_count": 18,
+        "data_file": "13_Data_HuyenDinh.json",
+        "coord_file": "motif-coordinates-huyen-dinh.json"
+      }
+    ]
+  }
+}

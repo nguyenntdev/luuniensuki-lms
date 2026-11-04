@@ -1,0 +1,51 @@
+{
+  "ticket": "V5-T028",
+  "ticket_id": "V5-T028",
+  "wave": "W02",
+  "slot": "W02-A08",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Story renderer with verified citations and uncertainty indicators.",
+  "timestamp": "2026-11-04T17:00:00Z",
+  "summary": "Implemented, verified, and audited bilingual story rendering with inline markdown-style footnotes [^1], [^2], [^key] mapped to authoritative primary bibliographic sources, epistemic uncertainty badges, empty evidence warnings, and interactive slide-out citation drawers. Enforced strict negative abuse guardrails in FootnoteMapper and API router endpoints preventing unmapped or fake citation IDs, blocking unsupported assertions from masquerading as verified facts ('Sử liệu xác thực'), and demoting disputed historical claims to 'Đang khảo cứu'.",
+  "invariants_enforced": [
+    "BILINGUAL_STORY_PROSE_FOOTNOTES: Vietnamese and English prose parse inline markdown footnote tags ([^1], [^dntl-01]) mapped to canonical bibliographic citations.",
+    "VERIFIED_BIBLIOGRAPHIC_SOURCES_LINKAGE: Footnote markers resolve directly to persistent HistoricalSource records with author, title, publication year, locator, citation text, and archive URL.",
+    "EPISTEMIC_UNCERTAINTY_INDICATORS: Dynamic epistemic badges and tones: 'su_lieu_xac_thuc' (Sử liệu xác thực - documented), 'dang_khao_cuu' (Đang khảo cứu - uncertain), and 'truyen_thuyet_dan_gian' (Truyền thuyết dân gian - traditional).",
+    "EMPTY_EVIDENCE_WARNINGS: Visually alerts users when an assertion lacks backing evidence or primary source bindings, preventing false impressions of verified authority.",
+    "CITATION_DRAWER_INTEGRATION: Footnote tags and bibliographic evidence lists integrate seamlessly with CitationDrawer (accessible slide-out drawer) displaying comprehensive metadata and copyable citations.",
+    "NEGATIVE_ABUSE_GUARDRAILS: Footnotes referencing non-existent source IDs fail validation with 422 HTTP errors; unverified or disputed claims are strictly blocked from claiming verified status."
+  ],
+  "verification": {
+    "test_file": "tests/v5/test_v5_t028.py",
+    "tests_passed": 11,
+    "tests_total": 11,
+    "backend_history_stories_tests": 15,
+    "frontend_type_check": "PASSED (tsc --noEmit)",
+    "frontend_lint_ci": "PASSED (eslint . --max-warnings=0)",
+    "openapi_snapshot_match": "PASSED"
+  },
+  "changes": [
+    {
+      "file": "frontend/src/lib/history.ts",
+      "description": "Added STORY_FOOTNOTE_REGEX, StoryFootnoteRef interface, extended StoryCitation with bibliographic and rights metadata (footnote_key, publisher, rights_status, license), and implemented parseStoryFootnotes to extract and index inline footnotes."
+    },
+    {
+      "file": "frontend/src/components/history/StoryCitationRenderer.tsx",
+      "description": "Enhanced ClaimFootnoteTag with onOpenDrawer support, updated StoryEvidenceFootnotes with trigger buttons to open slide-out CitationDrawer, and created StoryBilingualPassage component for bilingual prose rendering with verified footnotes."
+    },
+    {
+      "file": "frontend/src/app/stories/[slug]/page.jsx",
+      "description": "Connected StoryDetailPage to CitationDrawer, integrated parseStoryFootnotes into TextBlock, QuoteBlock, and CalloutBlock, supporting bilingual prose (body/body_vi and body_en) with inline footnotes and deep drawer inspection."
+    },
+    {
+      "file": "frontend/src/app/heritage/[slug]/page.tsx",
+      "description": "Integrated CitationDrawer and parsedSummaryVi/parsedSummaryEn for heritage place detail narrative, wiring ClaimFootnoteTag and SourceEvidenceRail directly into the bibliographic source drawer."
+    },
+    {
+      "file": "tests/v5/test_v5_t028.py",
+      "description": "Created comprehensive 11-test suite covering bilingual footnote extraction, source linkage, epistemic uncertainty resolution, negative abuse rejection (unmapped footnotes, fake sources, disputed claims), and API endpoint contract enforcement."
+    }
+  ]
+}

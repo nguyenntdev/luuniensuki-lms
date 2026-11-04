@@ -35,6 +35,35 @@ export const LEARN_PATHWAY_MODULES: LearnPathwayModule[] = [
     historicalPeriod: "Triều Minh Mạng (1835–1837)",
     sourceCitationsCount: 8,
     estimatedMinutes: 35,
+    fallback2dRubbingUrl: "/assets/ban-duc-noi/CAO%20DINH/CAO%20%C4%90%E1%BB%89nh.jpg",
+    fallback2dDescription: {
+      vi: "Bản dập 2D độ phân giải cao đối chiếu thư tịch triều Nguyễn",
+      en: "High-resolution 2D rubbing archival comparison for low-bandwidth environments",
+    },
+    curriculumObjectives: [
+      {
+        code: "OBJ-HOI-DIEN-EVIDENCE",
+        text: {
+          vi: "Trích dẫn chuẩn xác quyển và số tờ trong Hội Điển Sự Lệ quy định việc đúc 9 đỉnh đồng",
+          en: "Cite precise volumes and folios in the imperial statutes regulating the casting of the Nine Urns",
+        },
+        competency: "S3_EVIDENCE",
+        entitySlug: "kham-dinh-dai-nam-hoi-dien-su-le",
+        claimKeys: ["claim-kham-dinh-01"],
+        verified: true,
+      },
+      {
+        code: "OBJ-HOI-DIEN-ARGUMENT",
+        text: {
+          vi: "Đánh giá tính xác thực của quy trình huy động thợ đúc và cung cấp nguyên liệu đồng từ các mỏ nội địa",
+          en: "Evaluate historical authenticity of artisan mobilization and domestic mineral supply",
+        },
+        competency: "S4_ARGUMENT",
+        entitySlug: "kham-dinh-dai-nam-hoi-dien-su-le",
+        claimKeys: ["claim-kham-dinh-02"],
+        verified: true,
+      },
+    ],
   },
   {
     id: "mod-p1-02",
@@ -101,6 +130,57 @@ export const LEARN_PATHWAY_MODULES: LearnPathwayModule[] = [
     historicalPeriod: "1835–1837",
     sourceCitationsCount: 12,
     estimatedMinutes: 40,
+    fallback2dRubbingUrl: "/assets/ban-duc-noi/CAO%20DINH/CAO%20%C4%90%E1%BB%89nh.jpg",
+    fallback2dDescription: {
+      vi: "Bản dập 2D độ phân giải cao Cao Đỉnh hỗ trợ học tập trong môi trường băng thông thấp hoặc thiết bị không hỗ trợ WebGL",
+      en: "High-resolution 2D rubbing fallback for Cao Đỉnh supporting low-bandwidth environments",
+    },
+    curriculumObjectives: [
+      {
+        code: "OBJ-CAO-DINH-SPATIAL",
+        text: {
+          vi: "Xác định vị trí Cao Đỉnh tại vị trí trung tâm trong cụm 9 đỉnh trước Thế Miếu và nhận diện các mảng hoa văn nổi trên thân đỉnh qua mô hình 3D hoặc bản dập 2D",
+          en: "Locate Cao Đỉnh at the central position in front of Thế Miếu and identify relief motifs via 3D model or 2D rubbing",
+        },
+        competency: "S1_SPATIAL",
+        entitySlug: "cao-dinh",
+        claimKeys: ["claim-cao-dinh-01"],
+        verified: true,
+      },
+      {
+        code: "OBJ-CAO-DINH-TEMPORAL",
+        text: {
+          vi: "Phân tích tiến trình thời gian khởi đúc năm 1835 và hoàn thành năm 1837 dưới triều vua Minh Mạng",
+          en: "Analyze the chronology of casting from 1835 to 1837 under Emperor Minh Mạng",
+        },
+        competency: "S2_TEMPORAL",
+        entitySlug: "cao-dinh",
+        claimKeys: ["claim-cao-dinh-02"],
+        verified: true,
+      },
+      {
+        code: "OBJ-CAO-DINH-EVIDENCE",
+        text: {
+          vi: "Đối chiếu hình khắc 18 bản đúc với chính sử Đại Nam Thực Lục Chính Biên và Khâm Định Đại Nam Hội Điển Sự Lệ",
+          en: "Cross-reference the 18 relief inscriptions with primary imperial annals",
+        },
+        competency: "S3_EVIDENCE",
+        entitySlug: "cao-dinh",
+        claimKeys: ["claim-cao-dinh-03"],
+        verified: true,
+      },
+      {
+        code: "OBJ-CAO-DINH-ARGUMENT",
+        text: {
+          vi: "Lập luận về thông điệp biểu tượng vũ trụ quan thống nhất non sông thể hiện qua các hình tượng núi, sông, sản vật và vũ khí",
+          en: "Formulate historical arguments on cosmological sovereignty and territorial unity symbolized across the urn",
+        },
+        competency: "S4_ARGUMENT",
+        entitySlug: "cao-dinh",
+        claimKeys: ["claim-cao-dinh-01", "claim-cao-dinh-03"],
+        verified: true,
+      },
+    ],
   },
   {
     id: "mod-p2-02",
@@ -130,6 +210,35 @@ export const LEARN_PATHWAY_MODULES: LearnPathwayModule[] = [
     historicalPeriod: "Triều Minh Mạng",
     sourceCitationsCount: 7,
     estimatedMinutes: 30,
+    fallback2dRubbingUrl: "/assets/ban-duc-noi/THUAN%20DINH/THU%E1%BA%A6N%20%C4%90%E1%BB%88NH.jpg",
+    fallback2dDescription: {
+      vi: "Bản dập 2D Thuần Đỉnh phục vụ trường học ngoại thành và vùng sâu vùng xa",
+      en: "2D rubbing fallback of Thuần Đỉnh motifs for low-bandwidth classrooms",
+    },
+    curriculumObjectives: [
+      {
+        code: "OBJ-THUAN-DINH-SPATIAL",
+        text: {
+          vi: "Định vị Thuần Đỉnh trong hàng đỉnh và khảo sát cấu trúc quai, chân đỉnh qua bản dập 2D và mô hình 3D",
+          en: "Locate Thuần Đỉnh and examine handle/leg geometry via 2D rubbing and 3D model",
+        },
+        competency: "S1_SPATIAL",
+        entitySlug: "thuan-dinh",
+        claimKeys: ["claim-thuan-dinh-01"],
+        verified: true,
+      },
+      {
+        code: "OBJ-THUAN-DINH-EVIDENCE",
+        text: {
+          vi: "Đối chiếu thành phần hợp kim đồng - chì - kẽm theo chỉ dụ triều đình ghi trong Hội Điển Sự Lệ",
+          en: "Cross-reference bronze alloy composition decrees in imperial statutes",
+        },
+        competency: "S3_EVIDENCE",
+        entitySlug: "thuan-dinh",
+        claimKeys: ["claim-thuan-dinh-02"],
+        verified: true,
+      },
+    ],
   },
 
   // =========================================================================

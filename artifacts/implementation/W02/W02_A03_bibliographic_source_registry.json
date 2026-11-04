@@ -1,0 +1,109 @@
+{
+  "ticket": "V5-T023",
+  "ticket_id": "V5-T023",
+  "wave": "W02",
+  "slot": "W02-A03",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Bibliographic source registry in backend/history_models.py and backend/routers/history.py (source edition, license, locator/pages, checksum, public vs private field separation, rights restriction enforcement with excerpt redaction, and deduplication by ISBN/DOI/title+author)",
+  "timestamp": "2026-10-22T11:00:00Z",
+  "summary": "Implemented the full bibliographic source registry in the historical governance system. Extended HistoricalSource model with checksum and excerpt columns via an additive Alembic migration (0059_historical_sources_registry). Enforced strict public vs private field separation (omitting created_by and content_scope from public endpoints while providing them to privileged admin routes). Implemented robust rights restriction enforcement: when a source indicates unlicensed or copyrighted excerpts (rights_status in ('unlicensed', 'copyrighted', 'all_rights_reserved', etc.), verification_status='rights_restricted', or public_display_allowed=False), public and anonymous API responses strictly redact raw excerpt text to '[REDACTED: RIGHTS_RESTRICTED]' across source lookups, source lists, and claim-source bindings, while preserving complete metadata citations (title, author, publisher, pages, locators, and licenses). Privileged staff users retain authenticated access to raw excerpts for fact-checking. Built comprehensive bibliographic deduplication normalizing ISBNs, DOIs (URL resolver prefixes vs bare IDs), and Title+Author text (Unicode NFKD and Vietnamese diacritic unaccenting), with pre-flight duplicate checking (GET /api/v1/history/sources/check-duplicate), HTTP 409 Conflict rejection on duplicates, and staff override support (?check_duplicate=false).",
+  "invariants_enforced": {
+    "source_registry_fields": "HistoricalSource and HistoricalClaimSource support complete bibliographic provenance fields: edition, license, locator/pages (locator_type, page_start, page_end, chapter, section, etc.), checksum/hash, excerpt, rights_status, and citation_text.",
+    "public_vs_private_separation": "Public API responses (HistoricalSourceOut) omit internal provenance/tenant fields (created_by, content_scope), while administrative endpoints (GET /api/v1/admin/history/sources/{id}) expose HistoricalSourceAdminOut with complete audit metadata.",
+    "rights_restriction_redaction": "Whenever a source is unlicensed, copyrighted, or marked rights_restricted, public and anonymous API callers receive redacted excerpt text ('[REDACTED: RIGHTS_RESTRICTED]') across /api/v1/history/sources, /api/v1/history/sources/{id}, and /api/v1/history/claims/{id}/sources. Zero raw excerpt text leaks into public responses. Metadata citation is strictly preserved.",
+    "privileged_access_preservation": "Authenticated staff and admin users (STAFF_ROLES) retain access to raw excerpts across claim-source bindings and admin source queries for rigorous historical fact-checking.",
+    "open_access_transparency": "Public domain and CC0 sources with public_display_allowed=True serve raw excerpts openly to anonymous learners without redaction.",
+    "bibliographic_deduplication": "Normalizes ISBNs (stripping hyphens and whitespace), DOIs (stripping https://doi.org/ resolvers and lowercasing), and Title+Author text (Unicode NFKD with Vietnamese 'đ/Đ' -> 'd' unaccenting and whitespace collapsing). Duplicate creation triggers HTTP 409 Conflict with code HISTORICAL_SOURCE_DUPLICATE and details identifying the duplicate record and matching criterion.",
+    "deterministic_checksum": "Canonical SHA-256 metadata hash is deterministically calculated over normalized bibliographic fields (source_type, title, author, year, edition, isbn, doi) ensuring tamper-evident integrity."
+  },
+  "changes": [
+    {
+      "file": "migrations/versions/0059_historical_sources_registry.py",
+      "description": "Additive Alembic migration adding checksum and excerpt columns to historical_sources table."
+    },
+    {
+      "file": "backend/history_models.py",
+      "description": "Added checksum and excerpt columns to HistoricalSource model."
+    },
+    {
+      "file": "backend/apischemas/history.py",
+      "description": "Added checksum and excerpt to HistoricalSourceCreate, HistoricalSourceUpdate, and HistoricalSourceOut. Added HistoricalSourceAdminOut (including created_by, content_scope, raw_excerpt) and HistoricalSourceDuplicateCheckOut."
+    },
+    {
+      "file": "backend/services/history_governance.py",
+      "description": "Added is_source_rights_restricted, redact_excerpt_for_public, normalize_isbn, normalize_doi, normalize_bibliographic_text (with Vietnamese unaccenting), compute_source_checksum, and find_duplicate_source. Updated create_source and update_source to support check_duplicate with 409 Conflict."
+    },
+    {
+      "file": "backend/routers/history.py",
+      "description": "Updated list_history_sources, get_history_source, and list_claim_sources to redact restricted excerpts for non-staff/anonymous users. Added GET /api/v1/history/sources/check-duplicate for pre-flight duplicate checks. Added GET /api/v1/admin/history/sources/{source_id} for privileged staff lookup. Updated create_history_source and update_history_source with check_duplicate parameter."
+    },
+    {
+      "file": "tests/v5/conftest.py",
+      "description": "Ensured test DB schema initialization adds checksum and excerpt columns to historical_sources if not present."
+    },
+    {
+      "file": "tests/v5/test_v5_t023.py",
+      "description": "Comprehensive test suite for V5-T023 verifying registry fields, public vs private field separation, negative abuse tests against restricted excerpts, open access excerpt visibility, ISBN deduplication, DOI deduplication, Title+Author deduplication, bypass flag, and deterministic checksum computation."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t023.py -v",
+    "total_tests": 10,
+    "passed_tests": 10,
+    "failed_tests": 0,
+    "test_details": [
+      {
+        "name": "test_source_registry_fields_and_persistence",
+        "result": "PASSED",
+        "assertion": "Verifies all source registry fields (edition, license, pages, checksum, excerpt, citation_text, isbn, doi) are accepted by admin API, stored in PostgreSQL, and returned in schema."
+      },
+      {
+        "name": "test_public_vs_private_field_separation",
+        "result": "PASSED",
+        "assertion": "Asserts public endpoints (GET /sources, GET /sources/{id}) omit created_by and content_scope, while admin endpoint (GET /admin/sources/{id}) provides full audit/provenance metadata."
+      },
+      {
+        "name": "test_negative_abuse_unlicensed_restricted_excerpt_inaccessible_to_public",
+        "result": "PASSED",
+        "assertion": "Negative abuse test: Asserts copyrighted/unlicensed excerpt text is completely redacted ([REDACTED: RIGHTS_RESTRICTED]) from public source lookup, list, and claim-sources endpoints with zero text leakage, while preserving metadata citation. Confirms privileged staff users retain unredacted access."
+      },
+      {
+        "name": "test_public_open_licensed_excerpt_accessible_to_public",
+        "result": "PASSED",
+        "assertion": "Positive test: Asserts open/public domain sources (CC0-1.0, public_display_allowed=True) allow public callers to access raw excerpt text."
+      },
+      {
+        "name": "test_deduplication_by_isbn",
+        "result": "PASSED",
+        "assertion": "Asserts duplicate check identifies matching source via normalized ISBN (hyphenated vs unhyphenated), and duplicate registration returns HTTP 409 Conflict (HISTORICAL_SOURCE_DUPLICATE)."
+      },
+      {
+        "name": "test_deduplication_by_doi",
+        "result": "PASSED",
+        "assertion": "Asserts duplicate check identifies matching source via normalized DOI (https://doi.org/ resolver vs bare DOI), and duplicate registration returns HTTP 409 Conflict."
+      },
+      {
+        "name": "test_deduplication_by_title_and_author",
+        "result": "PASSED",
+        "assertion": "Asserts duplicate check identifies matching source via normalized Title + Author text (case/accent normalization including Vietnamese 'đ/Đ' -> 'd'), and duplicate registration returns HTTP 409 Conflict."
+      },
+      {
+        "name": "test_deduplication_by_checksum",
+        "result": "PASSED",
+        "assertion": "Asserts duplicate check identifies matching source via explicit checksum and duplicate registration returns HTTP 409 Conflict."
+      },
+      {
+        "name": "test_deduplication_bypass_flag",
+        "result": "PASSED",
+        "assertion": "Asserts staff callers can bypass duplicate check when explicitly desired by passing ?check_duplicate=false, returning HTTP 200."
+      },
+      {
+        "name": "test_deterministic_checksum_computation",
+        "result": "PASSED",
+        "assertion": "Asserts compute_source_checksum is deterministic across whitespace/casing/hyphen variations and is automatically populated as a 64-character SHA-256 hex string when no custom checksum is provided."
+      }
+    ]
+  }
+}

@@ -28,7 +28,9 @@ from ..services import history_stories as svc
 router = APIRouter(tags=["history-stories"])
 
 
-def _story_to_out(story) -> HistoryStoryOut:
+def _story_to_out(story, db: Optional[Session] = None) -> HistoryStoryOut:
+    if db is not None:
+        return svc.build_story_out(db, story)
     return HistoryStoryOut.model_validate(story)
 
 
@@ -44,7 +46,7 @@ def list_history_stories(
         db, status="published", featured_only=featured_only
     )
     return HistoryStoryListOut(
-        items=[_story_to_out(s) for s in stories],
+        items=[_story_to_out(s, db=db) for s in stories],
         total=len(stories),
         offset=0,
         limit=len(stories),
@@ -56,7 +58,7 @@ def get_history_story(slug: str, db: Session = Depends(get_db)):
     story = svc.get_story(db, slug)
     if not story or story.status != "published":
         raise AppError("HISTORY_STORY_NOT_FOUND", "History story not found", 404)
-    return _story_to_out(story)
+    return _story_to_out(story, db=db)
 
 
 # --------------------------------------------------------------------------- #
@@ -81,7 +83,7 @@ def create_history_story(
     except ValueError as exc:
         raise AppError("HISTORY_STORY_INVALID_BLOCKS", str(exc), 422) from exc
     db.commit()
-    return _story_to_out(story)
+    return _story_to_out(story, db=db)
 
 
 @router.patch(
@@ -110,7 +112,7 @@ def update_history_story(
     except ValueError as exc:
         raise AppError("HISTORY_STORY_INVALID_BLOCKS", str(exc), 422) from exc
     db.commit()
-    return _story_to_out(story)
+    return _story_to_out(story, db=db)
 
 
 @router.post(
@@ -128,4 +130,4 @@ def publish_history_story(
         raise AppError("HISTORY_STORY_NOT_FOUND", "History story not found", 404)
     story = svc.publish_story(db, story=story, actor_id=current_user.id)
     db.commit()
-    return _story_to_out(story)
+    return _story_to_out(story, db=db)

@@ -101,6 +101,11 @@ class HistoricalVerificationStatus(str, Enum):
     rejected = "rejected"
     disputed = "disputed"
     superseded = "superseded"
+    draft = "draft"
+    internal_review = "internal_review"
+    verified = "verified"
+    published = "published"
+    archived = "archived"
 
 
 class HistoricalConfidence(str, Enum):
@@ -109,6 +114,15 @@ class HistoricalConfidence(str, Enum):
     low = "low"
     unknown = "unknown"
     disputed = "disputed"
+    contested = "contested"
+    insufficient_sources = "insufficient_sources"
+
+
+class HistoricalEpistemicCertainty(str, Enum):
+    high = "high"
+    medium = "medium"
+    contested = "contested"
+    insufficient_sources = "insufficient_sources"
 
 
 class HistoricalClaimOrigin(str, Enum):
@@ -311,6 +325,8 @@ class HistoricalSource(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())
     content_scope: Mapped[Optional[str]] = mapped_column(Text, nullable=True, default=None)
+    checksum: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    excerpt: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
 
 class HistoricalClaim(Base):
@@ -350,6 +366,29 @@ class HistoricalClaim(Base):
     )
     is_current: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     content_scope: Mapped[Optional[str]] = mapped_column(Text, nullable=True, default=None)
+
+    @property
+    def epistemic_certainty(self) -> str:
+        if self.confidence in ("contested", "disputed") or self.verification_status == "disputed":
+            return HistoricalEpistemicCertainty.contested.value
+        if self.confidence == "insufficient_sources" or self.verification_status in ("needs_source", "unreviewed"):
+            return HistoricalEpistemicCertainty.insufficient_sources.value
+        if self.confidence == "high" and self.verification_status in ("expert_verified", "editor_reviewed"):
+            return HistoricalEpistemicCertainty.high.value
+        if self.confidence in ("high", "medium") or self.verification_status in ("editor_reviewed", "source_attached"):
+            return HistoricalEpistemicCertainty.medium.value
+        return HistoricalEpistemicCertainty.insufficient_sources.value
+
+    @epistemic_certainty.setter
+    def epistemic_certainty(self, val: str) -> None:
+        if val in ("contested", "disputed"):
+            self.confidence = HistoricalConfidence.contested.value
+        elif val == "insufficient_sources":
+            self.confidence = HistoricalConfidence.insufficient_sources.value
+        elif val in ("high", "medium"):
+            self.confidence = val
+        else:
+            self.confidence = str(val)
 
     entity: Mapped["HistoricalEntity"] = relationship("HistoricalEntity", back_populates="claims")
     source_bindings: Mapped[list["HistoricalClaimSource"]] = relationship(
@@ -521,6 +560,10 @@ class HistoryStory(Base):
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())
     published_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
 
+    @property
+    def citations(self) -> list[dict]:
+        return getattr(self, "_cached_citations", [])
+
 
 class HistoryCollection(Base):
     """Teacher/editorial historical collection (Spec section 47).
@@ -551,3 +594,91 @@ class HistoryCollection(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())
     published_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+# --------------------------------------------------------------------------- #
+# Canonical Urn & Motif Domain Mapping (Cửu Đỉnh 9x18 = 162)
+# --------------------------------------------------------------------------- #
+from .domain.canonical_urn_mapping import (  # noqa: E402
+    AmbiguousAliasError,
+    CANONICAL_RELIEFS,
+    CANONICAL_RELIEF_SLUGS,
+    CANONICAL_URNS,
+    CANONICAL_URN_SLUGS,
+    CanonicalReliefInfo,
+    CanonicalUrnInfo,
+    CrossUrnMisassignmentError,
+    InvalidMotifCountError,
+    MOTIFS_PER_URN,
+    STABLE_MOTIF_IDS,
+    TOTAL_MOTIFS,
+    TOTAL_URNS,
+    URN_ALIAS_INDEX,
+    URN_ORDER,
+    extract_urn_slug,
+    resolve_canonical_motif_id,
+    resolve_canonical_relief_slug,
+    resolve_canonical_urn_slug,
+    resolve_legacy_identifier,
+    validate_dataset_uniqueness,
+    validate_no_cross_urn_misassignment,
+    validate_urn_motif_count,
+)
+
+# --------------------------------------------------------------------------- #
+# Hán–Nôm Script, Reading, & Translation Review Domain (V5-T026)
+# --------------------------------------------------------------------------- #
+from .domain.han_nom_review import (  # noqa: E402
+    KNOWN_MISSING_HAN_NOM_MOTIF_IDS,
+    UNREVIEWED_REVIEW_STATUSES,
+    VERIFIED_REVIEW_STATUSES,
+    HanNomMotifReviewRecord,
+    HanNomProvenanceOrigin,
+    HanNomReviewError,
+    HanNomReviewInput,
+    HanNomReviewStatus,
+    HanNomTranslationReview,
+    UnverifiedPromotionForbiddenError,
+    audit_162_han_nom_dataset,
+    is_valid_source_citation,
+    validate_han_nom_promotion,
+)
+
+# --------------------------------------------------------------------------- #
+# Image & 3D Mesh Attribution Linkage with Rights Enforcement (V5-T027 / W02-A07)
+# --------------------------------------------------------------------------- #
+from .services.asset_rights import (  # noqa: E402
+    APPROVED_LICENSES,
+    APPROVED_RIGHTS_STATUSES,
+    DEFAULT_CREATOR,
+    DEFAULT_LEGAL_BASIS,
+    DEFAULT_LICENSE,
+    DEFAULT_RIGHTS_OWNER,
+    EXPECTED_CAO_DINH_CHECKSUMS,
+    GLB_MAGIC,
+    JPEG_MAGIC,
+    PNG_MAGIC,
+    RESTRICTED_RIGHTS_STATUSES,
+    URN_FALLBACK_2D_REGISTRY,
+    URN_SLUGS,
+    AssetDistributionBlockedError,
+    AssetIntegrityError,
+    AssetRightsError,
+    AssetRightsMissingLicenseError,
+    AssetRightsRevokedError,
+    audit_all_relic_assets,
+    audit_all_urn_manifests,
+    can_distribute_on_cdn,
+    enforce_cdn_distribution_policy,
+    get_motif_fallback,
+    get_motif_registry_162,
+    get_viewer_fallback,
+    resolve_asset_fallback,
+    revoke_manifest_rights,
+    sha256_of_file,
+    sync_manifest_to_historical_asset,
+    validate_historical_asset_distribution,
+    validate_manifest_attribution,
+    validate_manifest_checksum_integrity,
+)
+

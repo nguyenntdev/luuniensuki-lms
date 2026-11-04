@@ -1,0 +1,85 @@
+{
+  "ticket": "V5-T029",
+  "ticket_id": "V5-T029",
+  "wave": "W02",
+  "slot": "W02-A09",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Source-guided curriculum mapping in backend/routers/history_learning.py and frontend learning pages",
+  "timestamp": "2026-10-22T14:00:00Z",
+  "summary": "Implemented source-guided curriculum mapping connecting educational competencies (S1_SPATIAL, S2_TEMPORAL, S3_EVIDENCE, S4_ARGUMENT) directly to verified historical entities, primary sources, and source-backed claims. Enforced strict publication validation gate: a learning module or lesson CANNOT be published if its core required historical claims are unreviewed, disputed, or rejected (raises HTTP 422 LESSON_UNVERIFIED_CLAIMS, flags content_validation_status='blocked_for_authoritative_learning'). Incorporated 2D rubbing asset fallbacks from ban-duc-noi/ for low-bandwidth classrooms without WebGL support.",
+  "invariants_enforced": {
+    "curriculum_objective_historical_grounding": "All curriculum learning objectives must directly link to canonical historical entities (HistoricalEntity) and specific claim keys (HistoricalClaim) supported by primary sources (Khâm Định Đại Nam Hội Điển Sự Lệ, Đại Nam Thực Lục Chính Biên).",
+    "lesson_publication_validation_gate": "Publication gate enforces that no lesson or learning module can be published if any required claim has verification_status in ('unreviewed', 'needs_source', 'rejected', 'disputed', 'superseded'). Attempts fail with HTTP 422 and code LESSON_UNVERIFIED_CLAIMS.",
+    "low_bandwidth_2d_rubbing_fallback": "Every curriculum module featuring a 3D digital twin or relief motif has a guaranteed 2D rubbing equivalent verified on disk in ban-duc-noi/, ensuring accessibility in low-bandwidth educational environments.",
+    "frontend_curriculum_transparency": "The /learn pathway and learnModules.ts expose clear competency badges (S1-S4), verified source citations, and direct 2D rubbing fallback controls."
+  },
+  "changes": [
+    {
+      "file": "backend/services/history_learning.py",
+      "description": "Defined CURRICULUM_MODULES registry with structured competency objectives (S1-S4), entity slugs, claim keys, and 2D rubbing fallbacks. Added resolve_2d_rubbing_fallback, get_curriculum_modules, get_curriculum_module, validate_curriculum_objective_claims, validate_lesson_for_publication, and publish_lesson_with_gate."
+    },
+    {
+      "file": "backend/routers/history_learning.py",
+      "description": "Added endpoints: GET /api/v1/history/curriculum/modules, GET /api/v1/history/curriculum/modules/{slug}, GET /api/v1/history/curriculum/fallbacks/{target}, POST /api/v1/history/curriculum/validate-publish, and POST /api/v1/history/lessons/{lesson_id}/publish."
+    },
+    {
+      "file": "backend/apischemas/history_learning.py",
+      "description": "Added Pydantic schemas: CurriculumObjectiveOut, CurriculumFallback2DOut, CurriculumModuleOut, CurriculumModuleListOut, CurriculumPublishValidationIn, CurriculumPublishValidationOut, HistoryLessonPublishIn, and HistoryLessonPublishOut."
+    },
+    {
+      "file": "backend/routers/admin.py",
+      "description": "Enforced validate_lesson_for_publication inside approve_lesson to prevent admin approval of lessons with unreviewed or disputed claims."
+    },
+    {
+      "file": "frontend/src/types/rbpc.ts",
+      "description": "Added CurriculumObjectiveMapping interface, fallback2dRubbingUrl, fallback2dDescription, and curriculumObjectives to LearnPathwayModule."
+    },
+    {
+      "file": "frontend/src/lib/rbpc/learnModules.ts",
+      "description": "Enriched modules with fallback2dRubbingUrl and curriculumObjectives mapped to competencies (S1_SPATIAL, S2_TEMPORAL, S3_EVIDENCE, S4_ARGUMENT) and claim keys."
+    },
+    {
+      "file": "frontend/src/app/learn/page.tsx",
+      "description": "Added 2D rubbing fallback view button and low-bandwidth educational environment notification; added curriculum competency badge rendering in module detail view."
+    },
+    {
+      "file": "tests/v5/test_v5_t029.py",
+      "description": "Comprehensive integration test suite covering curriculum objectives mapping, negative abuse publication gate tests against unreviewed/disputed/rejected claims, positive verified publication, 2D fallback availability, and frontend contract verification."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t029.py -v",
+    "total_tests": 5,
+    "passed_tests": 5,
+    "failed_tests": 0,
+    "test_details": [
+      {
+        "name": "test_curriculum_objectives_link_to_verified_historical_claims",
+        "result": "PASSED",
+        "assertion": "Verifies curriculum learning modules define structured learning objectives linked to canonical entity slugs, competencies (S1_SPATIAL, S2_TEMPORAL, S3_EVIDENCE, S4_ARGUMENT), and verified historical claims."
+      },
+      {
+        "name": "test_negative_abuse_lesson_unreviewed_or_disputed_claims_fails_publication_gate",
+        "result": "PASSED",
+        "assertion": "Negative abuse test: A lesson with unreviewed, disputed, rejected, or missing claims is strictly rejected by the publishing gate (HTTP 422 LESSON_UNVERIFIED_CLAIMS, flagged blocked_for_authoritative_learning)."
+      },
+      {
+        "name": "test_publishing_gate_allows_publication_when_claims_are_verified",
+        "result": "PASSED",
+        "assertion": "Positive test: When all backing claims are verified (expert_verified or editor_reviewed), the lesson successfully publishes (content_validation_status='valid', is_published=True, status='published')."
+      },
+      {
+        "name": "test_2d_rubbing_asset_fallback_availability_and_disk_integrity",
+        "result": "PASSED",
+        "assertion": "Verifies 2D rubbing asset fallbacks exist on disk in ban-duc-noi/ (>5KB) for all 3D urn modules to serve low-bandwidth educational environments."
+      },
+      {
+        "name": "test_frontend_curriculum_mapping_and_rubbing_fallback_contract",
+        "result": "PASSED",
+        "assertion": "Verifies frontend modules and learn page contract for 2D rubbing fallbacks, curriculum competencies, and source verification indicators."
+      }
+    ]
+  }
+}

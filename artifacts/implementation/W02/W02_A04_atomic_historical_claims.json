@@ -1,0 +1,90 @@
+{
+  "ticket": "V5-T024",
+  "ticket_id": "V5-T024",
+  "wave": "W02",
+  "slot": "W02-A04",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Atomic historical claims (granular claim assertion with support/refute/uncertain source relation, explicit epistemic status)",
+  "timestamp": "2026-10-22T10:45:00Z",
+  "summary": "Implemented atomic historical claim granularity, decomposition, compound claim rejection, source relation links (supports vs contradicts), epistemic certainty tracking, and AI tutor atomic citation synthesis. Multi-sentence monolithic paragraphs cannot hide false or disputed statements behind a single citation. A contradicted or disputed claim cannot be masked as verified (negative abuse tested). Attaching a contradicting source immediately demotes an expert-verified claim to 'disputed'. AI Tutor synthesizes explanations with explicit atomic claim IDs and verification statuses.",
+  "invariants_enforced": {
+    "atomic_statement_granularity": "Claims must be discrete assertions, not multi-sentence or multi-paragraph statements. decompose_into_atomic_claims decomposes prose into discrete propositions, and validate_atomic_claim enforces single-proposition constraints.",
+    "compound_claim_rejection": "reject_compound_claim_with_disputed_facts checks and rejects any compound statement that blends a verified claim with a disputed or contradicted assertion, preventing false statements from hiding behind an approved citation.",
+    "explicit_support_types": "HistoricalSupportType controlled vocabulary enforced: supports, partially_supports, contextualizes, contradicts, mentions, primary_evidence_for, secondary_interpretation_of. Only 'supports' and 'primary_evidence_for' satisfy the factual verification invariant.",
+    "explicit_epistemic_certainty": "HistoricalConfidence levels enforced: high, medium, low, disputed. Disputed claims are strictly rejected from transitioning to editor_reviewed or expert_verified.",
+    "contradiction_safeguards": "claim_has_contradicting_source detects active contradiction bindings. Contradicted claims cannot be verified. Attaching a source with support_type='contradicts' immediately demotes expert_verified/editor_reviewed claims to 'disputed' and logs audit action 'contradict_demote'.",
+    "ai_tutor_atomic_citation": "build_deterministic_answer synthesizes explanations explicitly citing each atomic claim ID and its verification status (e.g., [Khẳng định: <id> | Trạng thái: expert_verified]). Citations carry atomic claim_ids, verification_status, and support_type."
+  },
+  "changes": [
+    {
+      "file": "backend/domain/atomic_claims.py",
+      "description": "Created domain module for atomic claim validation: decompose_into_atomic_claims, validate_atomic_claim, reject_compound_claim_with_disputed_facts, claim_has_contradicting_source, can_verify_atomic_claim, and synthesize_atomic_explanations."
+    },
+    {
+      "file": "backend/services/history_governance.py",
+      "description": "Enforced atomic claim validation on create_claim and update_claim. Added contradiction check in _can_be_editor_reviewed and _can_be_expert_verified. In transition_claim_status, blocked transitioning contradicted or disputed claims to editor_reviewed / expert_verified. In attach_source_to_claim, added immediate demotion to 'disputed' when a contradicting source is attached to a verified claim."
+    },
+    {
+      "file": "backend/services/history_tutor.py",
+      "description": "Imported atomic claims domain validators. Updated build_deterministic_answer to synthesize explanations explicitly citing atomic claim IDs and verification statuses, and carry verification_status and support_type in citations."
+    },
+    {
+      "file": "backend/routers/history.py",
+      "description": "Wrapped create_claim and update_claim calls in try-except ValueError returning HTTP 422 HISTORY_CLAIM_INVALID for compound claim rejection."
+    },
+    {
+      "file": "tests/v5/test_v5_t024.py",
+      "description": "Comprehensive test suite verifying atomic claim decomposition, compound monolith rejection, hidden disputed fact rejection, negative abuse tests against contradicted/disputed claims, contradiction demotion, support type relations, and AI tutor atomic citation synthesis."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t024.py -v",
+    "total_tests": 8,
+    "passed_tests": 8,
+    "failed_tests": 0,
+    "test_details": [
+      {
+        "name": "test_atomic_claim_decomposition",
+        "result": "PASSED",
+        "assertion": "Verifies monolithic paragraph is decomposed into 3 discrete atomic assertions that each pass atomic validation."
+      },
+      {
+        "name": "test_atomic_claim_validation_rejects_compound_monolith",
+        "result": "PASSED",
+        "assertion": "Asserts multi-sentence and newline-separated compound statements are rejected by validate_atomic_claim and return HTTP 422 on admin API."
+      },
+      {
+        "name": "test_reject_compound_claim_hiding_disputed_facts",
+        "result": "PASSED",
+        "assertion": "Negative abuse test: Asserts compound statement blending a verified fact with a disputed assertion is rejected by reject_compound_claim_with_disputed_facts."
+      },
+      {
+        "name": "test_negative_abuse_cannot_mask_contradicted_claim_as_verified",
+        "result": "PASSED",
+        "assertion": "Negative abuse test: A claim with a contradicting source cannot be verified as editor_reviewed or expert_verified (service raises ValueError, API returns 422)."
+      },
+      {
+        "name": "test_negative_abuse_cannot_mask_disputed_confidence_as_verified",
+        "result": "PASSED",
+        "assertion": "Negative abuse test: A claim with confidence='disputed' cannot be approved or verified (service raises ValueError, API returns 422)."
+      },
+      {
+        "name": "test_attaching_contradicting_source_demotes_verified_claim",
+        "result": "PASSED",
+        "assertion": "Asserts attaching a source with support_type='contradicts' immediately demotes an expert_verified claim to 'disputed' and writes an audit log."
+      },
+      {
+        "name": "test_source_relation_links_supports_vs_contradicts",
+        "result": "PASSED",
+        "assertion": "Verifies HistoricalSupportType enum, ensures only 'supports' and 'primary_evidence_for' satisfy the factual verification invariant, while 'contextualizes' or 'mentions' does not."
+      },
+      {
+        "name": "test_ai_tutor_cites_atomic_claim_ids_and_verification_status",
+        "result": "PASSED",
+        "assertion": "Asserts AI tutor answers cite specific atomic claim IDs and their verification status in answer_markdown and citations payload with active grounding metrics."
+      }
+    ]
+  }
+}
