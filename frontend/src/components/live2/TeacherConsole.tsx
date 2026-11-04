@@ -280,11 +280,25 @@ export default function TeacherConsole({
   const aiReplies = useMemo(() => {
     const list = (events || [])
       .filter((ev) => ev?.event_type === "ai_teacher_reply")
-      .map((ev) => ({
-        id: ev.id,
-        answer: (ev?.payload?.answer as string) || "",
-        created_at: ev.created_at,
-      }))
+      .map((ev) => {
+        const payload = (ev?.payload || {}) as Record<string, unknown>;
+        const isFallback = Boolean(
+          payload.is_fallback ||
+          payload.used_mock ||
+          payload.provider === "fallback_policy" ||
+          payload.provider === "guardrail"
+        );
+        const provMode = String(
+          payload.provider_mode || (isFallback ? "fallback" : "live")
+        );
+        return {
+          id: ev.id,
+          answer: (payload.answer as string) || "",
+          provider_mode: provMode,
+          is_fallback: isFallback,
+          created_at: ev.created_at,
+        };
+      })
       .filter((r) => r.answer);
     return list.slice(-3).reverse();
   }, [events]);
@@ -531,6 +545,22 @@ export default function TeacherConsole({
                     key={r.id}
                     className="rounded-lg bg-zinc-800/40 px-3 py-2 text-xs text-zinc-300 ring-1 ring-white/5"
                   >
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <span className="text-[10px] text-zinc-500 font-medium">Nguồn:</span>
+                      {r.is_fallback || r.provider_mode === "fallback" ? (
+                        <span className="rounded bg-amber-500/20 px-1.5 py-0.2 text-[10px] font-medium text-amber-300 ring-1 ring-amber-500/30">
+                          Dự phòng
+                        </span>
+                      ) : r.provider_mode === "guardrail" ? (
+                        <span className="rounded bg-rose-500/20 px-1.5 py-0.2 text-[10px] font-medium text-rose-300 ring-1 ring-rose-500/30">
+                          Kiểm duyệt
+                        </span>
+                      ) : (
+                        <span className="rounded bg-emerald-500/20 px-1.5 py-0.2 text-[10px] font-medium text-emerald-300 ring-1 ring-emerald-500/30">
+                          AI Live
+                        </span>
+                      )}
+                    </div>
                     <div className="line-clamp-3">{r.answer}</div>
                     <div className="mt-1 text-[10px] text-zinc-600">{formatTime(r.created_at)}</div>
                   </li>

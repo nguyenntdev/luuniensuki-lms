@@ -337,6 +337,12 @@ class User(Base):
     age_verified_at: Mapped[Optional[datetime]] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
+    guardian_consent: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("false")
+    )
+    guardian_email: Mapped[Optional[str]] = mapped_column(
+        String(255), nullable=True
+    )
 
     # Push notification permission tracking
     push_permission_prompted: Mapped[bool] = mapped_column(
@@ -2273,6 +2279,15 @@ class AIJob(Base):
     retry_count: Mapped[int] = mapped_column(
         Integer, nullable=False, server_default=text("0")
     )
+    is_minor: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("false")
+    )
+    training_allowed: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("false")
+    )
+    pii_redacted: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("false")
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
@@ -3402,6 +3417,15 @@ class AIConversation(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
     )
+    retention_due_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    is_minor: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("false")
+    )
+    guardian_consent_granted: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("false")
+    )
 
     # Relationships
     user: Mapped["User"] = relationship("User", foreign_keys=[user_id])
@@ -3441,6 +3465,12 @@ class AIMessage(Base):
     # Token tracking for cost management
     tokens_used: Mapped[Optional[int]] = mapped_column(
         Integer, nullable=True
+    )
+    training_allowed: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("false")
+    )
+    pii_redacted: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("false")
     )
 
     # Timestamp
@@ -4396,5 +4426,7 @@ from .media_cms_models import (  # noqa: E402,F401
     MediaCmsAssetType,
     MediaCmsFileFormat,
 )
-
-
+from .ai_observability_models import (  # noqa: E402,F401
+    AITelemetryLog,
+    AIBudgetCap,
+)

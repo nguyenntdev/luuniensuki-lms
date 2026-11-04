@@ -1,0 +1,60 @@
+{
+  "ticket": "V5-T064",
+  "ticket_id": "V5-T064",
+  "wave": "W06",
+  "slot": "W06-A04",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "AI provider policy & fallback in backend/config.py and backend/services/rbpc_ai.py.",
+  "timestamp": "2026-11-05T03:15:00Z",
+  "summary": "Implemented comprehensive AI provider policy, multi-tier fallback architecture, model discovery catalog, rate-limiting, daily quota management, and stateful circuit breaking in backend/config.py and backend/services/rbpc_ai.py. Established formal provider routing with primary provider ('clara') and safe fail-closed fallback ('deterministic'). Created AI model discovery catalog and policy enforcement checking against authorized models (gemini-3.8-flash-tiered, gemini-2.5-flash, deepseek-v4-flash, deepseek-v3.1, deterministic-fallback). Implemented thread-safe sliding-window AIRateLimiter (60 rpm default), AIQuotaManager tracking token budgets and cost ceilings ($5.00 daily breaker), and stateful AICircuitBreaker (CLOSED -> OPEN -> HALF_OPEN -> CLOSED recovery). Enforced strict negative abuse guardrails ensuring external provider 429 (rate-limited), 500 (internal error), 408 (timeout), and circuit breaker open events NEVER produce generic or hallucinated assertions, but instead return clearly labeled, typed fallback responses grounded strictly in verified bibliographic claims, accompanied by structured retry policies and retry-after guidance. Created comprehensive pytest suite in tests/v5/test_v5_t064.py verifying all 11 test cases with 100% pass rate.",
+  "invariants_enforced": {
+    "provider_policy_and_model_discovery": "System resolves primary provider ('clara'), fallback provider ('deterministic'), and authorized model catalog via backend/config.py and discover_ai_models(). Unauthorized models are strictly blocked with ValueError prior to inference execution.",
+    "sliding_window_rate_limiting": "Thread-safe AIRateLimiter tracks requests within a 60-second sliding window, enforcing ai_rate_limit_per_minute ceilings and returning accurate retry_after_seconds when throttled.",
+    "token_budget_and_cost_quota": "Thread-safe AIQuotaManager monitors cumulative prompt and completion tokens against daily budget ceilings (500,000 tokens / 10,000 requests) and automatically trips when the daily USD circuit breaker threshold ($5.00) is reached.",
+    "stateful_circuit_breaker": "AICircuitBreaker transitions from CLOSED to OPEN after consecutive provider failures (threshold=3), immediately fast-failing outbound queries to deterministic fallback without hanging. After recovery seconds (60s), probes with HALF_OPEN and safely resets to CLOSED upon success.",
+    "negative_abuse_provider_429_labeled_fallback": "HTTP 429 from AI providers triggers exponential backoff up to max retries; upon exhaustion, immediately fails over to safe deterministic evidence-only synthesis labeled with fallback_reason='provider_rate_limited', provider_status_code=429, review_status='provider_fallback_429', and structured retry_policy (retryable=True, strategy='exponential_backoff'). Zero generic hallucination is produced.",
+    "negative_abuse_provider_500_labeled_fallback": "HTTP 500/502/503/504 provider failures trigger retry backoff and degrade to safe deterministic claims synthesis labeled with fallback_reason='provider_error', provider_status_code=500, review_status='provider_fallback_500', and structured retry_policy (retryable=True, strategy='fixed_delay'). Zero ungrounded speculation.",
+    "negative_abuse_zero_evidence_refusal": "Queries with zero verified evidence matching the scope return unambiguous evidence gap refusals ('khoảng trống bằng chứng' / 'evidence gap'), strictly prohibiting unverified speculative generation."
+  },
+  "changes": [
+    {
+      "file": "backend/config.py",
+      "description": "Added configuration settings for AI provider policy: ai_provider_primary, ai_provider_fallback, ai_allowed_models, ai_allowed_models_list, ai_provider_timeout_seconds, ai_provider_connect_timeout_seconds, ai_provider_max_retries, ai_provider_backoff_factor, ai_rate_limit_per_minute, ai_daily_request_quota, ai_circuit_breaker_enabled, ai_circuit_breaker_failure_threshold, ai_circuit_breaker_recovery_seconds, ai_deterministic_fallback_enabled, and ai_enforce_no_hallucination_on_error."
+    },
+    {
+      "file": "backend/services/rbpc_ai.py",
+      "description": "Added AIProviderError, AIRateLimitError, AITimeoutError, AIQuotaExceededError, and AICircuitBreakerOpenError exception hierarchy. Added AI_MODEL_CATALOG, is_model_allowed(), and discover_ai_models(). Implemented thread-safe AIRateLimiter, AIQuotaManager, and AICircuitBreaker singletons. Implemented build_ai_retry_policy(). Enhanced call_clara_gemini_chat with model discovery enforcement, circuit breaker gating, rate limit verification, quota management, and Retry-After header parsing. Enhanced ask_cultural_bridge, build_rbpc_deterministic_answer, build_rbpc_fallback_response, and answer_cultural_question with labeled typed fallback fields (fallback_reason, provider_status_code, retry_policy, review_status) preventing generic hallucinations."
+    },
+    {
+      "file": "tests/v5/test_v5_t064.py",
+      "description": "Created comprehensive 11-test suite covering AI provider configuration, model discovery & catalog, sliding window rate limiting, quota tracking & token budgeting, circuit breaker state machine, negative abuse provider 429 fallback, negative abuse provider 500 fallback, negative abuse circuit breaker fast-fail, negative abuse timeout fallback, end-to-end answer_cultural_question with retry policy, and negative abuse zero-evidence gap refusal."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t064.py -v",
+    "tests_total": 11,
+    "tests_passed": 11,
+    "tests_failed": 0,
+    "test_cases": [
+      "test_ai_provider_configuration_and_policy",
+      "test_ai_model_discovery_and_catalog",
+      "test_ai_rate_limiter_sliding_window",
+      "test_ai_quota_manager_and_usage_tracking",
+      "test_ai_circuit_breaker_lifecycle",
+      "test_negative_abuse_provider_429_returns_labeled_typed_fallback",
+      "test_negative_abuse_provider_500_returns_labeled_typed_fallback",
+      "test_negative_abuse_circuit_breaker_open_fast_fails_to_fallback",
+      "test_negative_abuse_timeout_returns_labeled_typed_fallback",
+      "test_answer_cultural_question_e2e_with_provider_rate_limit",
+      "test_negative_abuse_zero_evidence_returns_evidence_gap_refusal"
+    ],
+    "regression_tests": {
+      "unit_test_command": "pytest tests/unit/test_rbpc_ai.py -v",
+      "unit_tests_passed": 6,
+      "openapi_test_command": "pytest tests/backend/test_openapi_snapshot.py",
+      "openapi_tests_passed": 1
+    }
+  }
+}

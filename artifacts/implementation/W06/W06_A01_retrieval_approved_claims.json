@@ -1,0 +1,86 @@
+{
+  "ticket": "V5-T061",
+  "wave": "W06",
+  "slot": "A01",
+  "role": "W06-A01",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "goal": "Retrieval only approved claims in backend/services/history_tutor.py and backend/history_models.py",
+  "implementation_summary": {
+    "modules_updated": [
+      "backend/history_models.py",
+      "backend/services/history_tutor.py",
+      "backend/routers/history_tutor.py",
+      "backend/services/rbpc_ai.py"
+    ],
+    "test_suite": "tests/v5/test_v5_t061.py",
+    "features_delivered": [
+      "Strict approved claims retrieval gate: retrieve_verified_claims enforces approved verification statuses (expert_verified, published, editor_reviewed, verified) and strictly excludes all draft (draft, internal_review), unreviewed (unreviewed, needs_source, source_attached), and disputed (disputed, rejected, superseded, archived) claims",
+      "Model invariants on HistoricalClaim: added is_approved, is_published, is_draft, is_unreviewed, and is_disputed property helpers; added is_approved property on HistoricalSource",
+      "Source verification enforcement: retrieve_sources retrieves strictly approved sources (metadata_verified, accessible) with eligible bindings (supports, primary_evidence_for) and filters out unreviewed, draft, or rejected sources",
+      "Contradiction blocking: _has_contradicting_source blocks any claim with active 'contradicts' bindings from being retrieved or treated as approved authority",
+      "Negative abuse defense: Asking about a draft-only, unreviewed-only, or disputed fact returns explicit abstention ('Không đủ sử liệu xác thực' / abstention) with confidence='low', citations=[], and zero draft fact or hallucinated leakage"
+    ]
+  },
+  "verification": {
+    "command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t061.py -v",
+    "result": "PASSED (10/10 tests)",
+    "test_details": [
+      {
+        "name": "test_retrieve_verified_claims_strictly_returns_approved_tiers",
+        "result": "PASSED",
+        "assertion": "Verifies that retrieve_verified_claims retrieves expert_verified, published, editor_reviewed, and verified claims while blocking draft, internal_review, unreviewed, disputed, and rejected claims."
+      },
+      {
+        "name": "test_zero_draft_claim_leakage",
+        "result": "PASSED",
+        "assertion": "Verifies that draft and internal_review claims are never returned, even when include_unverified is explicitly True."
+      },
+      {
+        "name": "test_zero_disputed_or_contested_claim_leakage",
+        "result": "PASSED",
+        "assertion": "Verifies that claims with status disputed, confidence disputed/contested, or claim_type disputed are strictly blocked from retrieval."
+      },
+      {
+        "name": "test_contradicted_claims_strictly_excluded",
+        "result": "PASSED",
+        "assertion": "Verifies that claims having source bindings with support_type='contradicts' are strictly excluded from approved claims."
+      },
+      {
+        "name": "test_source_approval_gates_in_retrieve_sources",
+        "result": "PASSED",
+        "assertion": "Verifies that retrieve_sources retrieves metadata_verified sources and drops unreviewed and rejected sources."
+      },
+      {
+        "name": "test_historical_claim_and_source_model_invariants",
+        "result": "PASSED",
+        "assertion": "Verifies HistoricalClaim.is_approved, is_published, is_draft, is_unreviewed, is_disputed and HistoricalSource.is_approved model properties."
+      },
+      {
+        "name": "test_negative_abuse_draft_only_fact_returns_explicit_abstention",
+        "result": "PASSED",
+        "assertion": "Negative abuse test: Asking about a draft-only fact returns explicit abstention ('Không đủ sử liệu xác thực'), confidence='low', citations=[], and zero draft fact leakage."
+      },
+      {
+        "name": "test_negative_abuse_unreviewed_fact_returns_explicit_abstention",
+        "result": "PASSED",
+        "assertion": "Negative abuse test: Asking about an unreviewed fact without flag returns explicit abstention with zero leaked unreviewed claims."
+      },
+      {
+        "name": "test_negative_abuse_disputed_fact_returns_explicit_abstention",
+        "result": "PASSED",
+        "assertion": "Negative abuse test: Asking about a disputed fact returns explicit abstention and zero citation leakage."
+      },
+      {
+        "name": "test_end_to_end_verified_vs_draft_segregation",
+        "result": "PASSED",
+        "assertion": "End-to-end segregation test: verified claim query succeeds with citations and high confidence, while draft-only query abstains with zero draft leakage on the same entity."
+      }
+    ],
+    "regression_tests": [
+      "tests/backend/test_history_tutor.py (8 passed)",
+      "tests/backend/test_history_tutor_scope.py (8 passed)"
+    ]
+  },
+  "status": "COMPLETED"
+}

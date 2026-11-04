@@ -134,6 +134,22 @@ class Settings(BaseSettings):
     ai_daily_token_budget_ceiling: int = 500_000
     ai_daily_cost_circuit_breaker_usd: float = 5.0
 
+    # AI Provider Policy & Multi-Tier Fallback (V5-T064)
+    ai_provider_primary: str = "clara"
+    ai_provider_fallback: str = "deterministic"
+    ai_allowed_models: str = "gemini-3.8-flash-tiered,gemini-2.5-flash,deepseek-v4-flash,deepseek-v3.1,deterministic-fallback"
+    ai_provider_timeout_seconds: int = 30
+    ai_provider_connect_timeout_seconds: int = 10
+    ai_provider_max_retries: int = 2
+    ai_provider_backoff_factor: float = 0.5
+    ai_rate_limit_per_minute: int = 60
+    ai_daily_request_quota: int = 10_000
+    ai_circuit_breaker_enabled: bool = True
+    ai_circuit_breaker_failure_threshold: int = 3
+    ai_circuit_breaker_recovery_seconds: int = 60
+    ai_deterministic_fallback_enabled: bool = True
+    ai_enforce_no_hallucination_on_error: bool = True
+
     # ==========================================================================
     # Backend Voice (STT/TTS)
     # ==========================================================================
@@ -277,6 +293,11 @@ class Settings(BaseSettings):
     def allowed_image_types_list(self) -> list[str]:
         """Return allowed image types as a list."""
         return [t.strip() for t in self.allowed_image_types.split(",")]
+
+    @property
+    def ai_allowed_models_list(self) -> list[str]:
+        """Return allowed AI model identifiers as a list."""
+        return [m.strip() for m in self.ai_allowed_models.split(",") if m.strip()]
 
     @property
     def cors_origins_list(self) -> list[str]:

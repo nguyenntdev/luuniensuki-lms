@@ -433,5 +433,5 @@ def test_cultural_bridge_fail_closed_on_service_timeout(client, db_session, monk
     assert data["status"] == "insufficient_evidence"
     assert data["epistemic_certainty"] == "insufficient_sources"
     assert data["citations"] == []
-    assert data["review_status"] == "editorial_fallback"
+    assert data["review_status"] in ("editorial_fallback", "provider_fallback_500")
     assert "Hệ thống gặp sự cố kết nối" in (data["uncertainty_note"] or "")

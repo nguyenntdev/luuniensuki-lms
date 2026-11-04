@@ -516,6 +516,23 @@ from ..domain.helpers import (  # noqa: F401
     _resolve_demo_live_base_url,
     _resolve_livekit_client_url,
 )
+from ..domain.live_provenance import (
+    FALLBACK_INDICATOR_GUARDRAIL,
+    FALLBACK_INDICATOR_HERITAGE,
+    FALLBACK_INDICATOR_MOCK,
+    FALLBACK_INDICATOR_STT,
+    FALLBACK_INDICATOR_TTS,
+    GUARDRAIL_STATUS_BLOCKED,
+    GUARDRAIL_STATUS_PASSED,
+    PROVIDER_MODE_DEMO,
+    PROVIDER_MODE_FALLBACK,
+    PROVIDER_MODE_GUARDRAIL,
+    PROVIDER_MODE_LIVE,
+    LiveAIProvenanceRecord,
+    ensure_visible_fallback_indicator,
+    resolve_live_ai_provenance,
+    validate_live_provenance,
+)
 
 logger = logging.getLogger("luuniensuki.api")
 
@@ -1360,9 +1377,56 @@ async def live_ai_teacher_stt(
             event_source="ai_teacher_api",
             participant_identity=live_session_service.participant_identity_for_user(current_user),
             participant_user_id=current_user.id,
-            payload={"categories": safety.get("categories", [])},
+            payload={
+                "categories": safety.get("categories", []),
+                "provider_mode": PROVIDER_MODE_GUARDRAIL,
+                "guardrail_status": GUARDRAIL_STATUS_BLOCKED,
+                "is_fallback": True,
+                "is_synthetic": True,
+                "fallback_indicator": FALLBACK_INDICATOR_GUARDRAIL,
+            },
+        )
+        live_observability_service.record_point(
+            session_id=str(live_session.id),
+            operation="stt",
+            provider=provider,
+            latency_ms=0.0,
+            ok=False,
+            drop=True,
+            provider_mode=PROVIDER_MODE_GUARDRAIL,
+            guardrail_status=GUARDRAIL_STATUS_BLOCKED,
+            is_fallback=True,
+            is_synthetic=True,
         )
         raise HTTPException(status_code=400, detail="Transcript blocked by content safety guardrails.")
+
+    is_fallback = provider in ("mock", "fallback", "demo")
+    is_synthetic = is_fallback
+    provider_mode = PROVIDER_MODE_FALLBACK if is_fallback else PROVIDER_MODE_LIVE
+    guardrail_status = GUARDRAIL_STATUS_PASSED
+    fallback_indicator = FALLBACK_INDICATOR_STT if is_fallback else None
+
+    validate_live_provenance(
+        provider_mode=provider_mode,
+        provider=provider,
+        is_fallback=is_fallback,
+        is_synthetic=is_synthetic,
+        used_mock=is_fallback,
+        text=transcript if is_fallback else None,
+        fallback_indicator=fallback_indicator,
+    )
+
+    provenance_record = LiveAIProvenanceRecord(
+        provider_mode=provider_mode,
+        provider=provider,
+        model=model_used,
+        guardrail_status=guardrail_status,
+        guardrail_categories=[],
+        is_fallback=is_fallback,
+        is_synthetic=is_synthetic,
+        used_mock=is_fallback,
+        fallback_indicator=fallback_indicator,
+    )
 
     live_reporting_service.record_ai_cost(
         db,
@@ -1375,6 +1439,8 @@ async def live_ai_teacher_stt(
             "audio_seconds_estimate": round(estimated_seconds, 2),
             "audio_persisted": False,
             "audio_retention_days": int(settings.live_audio_retention_days or 7),
+            "provider_mode": provider_mode,
+            "is_fallback": is_fallback,
         },
     )
     db.commit()
@@ -1383,6 +1449,13 @@ async def live_ai_teacher_stt(
         transcript=transcript,
         provider=provider,
         model=model_used,
+        provider_mode=provider_mode,
+        guardrail_status=guardrail_status,
+        guardrail_categories=[],
+        is_fallback=is_fallback,
+        is_synthetic=is_synthetic,
+        fallback_indicator=fallback_indicator,
+        provenance=provenance_record.model_dump(),
     )
 
 
@@ -1395,6 +1468,7 @@ def live_ai_teacher_tts(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> StreamingResponse:
+    from ..services import live_observability as live_observability_service
     from ..services import live_session_reporting as live_reporting_service
     from ..services import live_sessions as live_session_service
     from ..services import live_voice as live_voice_service
@@ -1460,10 +1534,32 @@ def live_ai_teacher_tts(
     )
     db.commit()
 
+    is_fallback = provider in ("edge-tts", "gtts", "mock", "fallback", "demo")
+    provider_mode = PROVIDER_MODE_FALLBACK if is_fallback else PROVIDER_MODE_LIVE
+    fallback_indicator_header = "[Offline TTS Fallback]" if is_fallback else ""
+
+    live_observability_service.record_point(
+        session_id=str(live_session.id),
+        operation="tts",
+        provider=provider,
+        latency_ms=0.0,
+        ok=True,
+        drop=False,
+        provider_mode=provider_mode,
+        guardrail_status=GUARDRAIL_STATUS_PASSED,
+        is_fallback=is_fallback,
+        is_synthetic=True,
+    )
+
     headers = {
         "Cache-Control": "no-store",
         "X-AI-Provider": provider,
         "X-AI-Model": model_used,
+        "X-AI-Provider-Mode": provider_mode,
+        "X-AI-Guardrail-Status": GUARDRAIL_STATUS_PASSED,
+        "X-AI-Is-Fallback": "true" if is_fallback else "false",
+        "X-AI-Is-Synthetic": "true",
+        "X-AI-Fallback-Indicator": fallback_indicator_header,
     }
     return StreamingResponse(
         iter([audio_bytes]),
@@ -1556,8 +1652,18 @@ def live_ai_teacher_reply(
         and bool(settings.live_ai_block_unsafe_content)
         and not safety.get("is_safe", True)
     ):
-        guardrail_answer = live_ai_teacher_service.safety_response(
+        raw_guardrail_answer = live_ai_teacher_service.safety_response(
             categories=list(safety.get("categories") or [])
+        )
+        prov_record, guardrail_answer = resolve_live_ai_provenance(
+            provider="guardrail",
+            model="live-safety-v1",
+            requested_mode="hint-first",
+            guardrail_safe=False,
+            guardrail_categories=list(safety.get("categories") or []),
+            is_live_call_successful=False,
+            forced_mock=True,
+            text=raw_guardrail_answer,
         )
         rubric = live_ai_teacher_service.build_rubric_feedback(
             question=message_text,
@@ -1579,6 +1685,12 @@ def live_ai_teacher_reply(
             payload={
                 "categories": safety.get("categories", []),
                 "message_redacted": message_text[:120],
+                "provider_mode": prov_record.provider_mode,
+                "guardrail_status": prov_record.guardrail_status,
+                "is_fallback": prov_record.is_fallback,
+                "is_synthetic": prov_record.is_synthetic,
+                "fallback_indicator": prov_record.fallback_indicator,
+                "provenance": prov_record.model_dump(),
             },
         )
         live_reporting_service.create_session_action(
@@ -1590,7 +1702,21 @@ def live_ai_teacher_reply(
                 current_user
             ),
             actor_user_id=current_user.id,
-            payload={"categories": safety.get("categories", [])},
+            payload={"categories": safety.get("categories", []), "provenance": prov_record.model_dump()},
+        )
+        live_observability_service.record_point(
+            session_id=str(live_session.id),
+            operation="llm_reply",
+            provider="guardrail",
+            latency_ms=0.0,
+            ok=True,
+            drop=False,
+            tokens_in=0,
+            tokens_out=len(guardrail_answer),
+            provider_mode=prov_record.provider_mode,
+            guardrail_status=prov_record.guardrail_status,
+            is_fallback=prov_record.is_fallback,
+            is_synthetic=prov_record.is_synthetic,
         )
         db.commit()
         return schemas.LiveAITeacherReplyOut(
@@ -1598,7 +1724,13 @@ def live_ai_teacher_reply(
             answer=guardrail_answer,
             provider="guardrail",
             model="live-safety-v1",
-            used_mock=True,
+            provider_mode=prov_record.provider_mode,
+            guardrail_status=prov_record.guardrail_status,
+            guardrail_categories=prov_record.guardrail_categories,
+            is_fallback=prov_record.is_fallback,
+            is_synthetic=prov_record.is_synthetic,
+            used_mock=prov_record.used_mock,
+            fallback_indicator=prov_record.fallback_indicator,
             forced_hint_first=True,
             references=[],
             citations=[],
@@ -1610,6 +1742,7 @@ def live_ai_teacher_reply(
             ),
             persona=persona_grade,
             checkpoint=None,
+            provenance=prov_record.model_dump(),
         )
 
     cluster = live_ai_teacher_service.infer_heritage_cluster(
@@ -1689,6 +1822,7 @@ def live_ai_teacher_reply(
     provider = "fallback_policy"
     model_name = "heritage-guidance-v1"
     used_mock = True
+    is_live_ok = False
     llm_started = time.perf_counter()
 
     if settings.deepseek_api_key:
@@ -1699,164 +1833,27 @@ def live_ai_teacher_reply(
             provider = "deepseek"
             model_name = settings.deepseek_model
             used_mock = False
-            live_observability_service.record_point(
-                session_id=str(live_session.id),
-                operation="llm_reply",
-                provider="deepseek",
-                latency_ms=(time.perf_counter() - llm_started) * 1000.0,
-                ok=True,
-                tokens_in=prompt_tokens,
-                tokens_out=live_reporting_service.estimate_tokens(answer),
-            )
+            is_live_ok = True
         except Exception as exc:
             # Catch broadly (RuntimeError, TimeoutError, network errors, etc.)
             # so a flaky upstream LLM never turns into a 500 for the learner —
             # we degrade to the curated heritage fallback response instead.
             live_circuit_service.record_failure("deepseek", str(exc))
             logger.warning("AI teacher reply fell back to canned response: %s", exc)
-            live_observability_service.record_point(
-                session_id=str(live_session.id),
-                operation="llm_reply",
-                provider="deepseek",
-                latency_ms=(time.perf_counter() - llm_started) * 1000.0,
-                ok=False,
-                drop=False,
-                tokens_in=prompt_tokens,
-                tokens_out=0,
-            )
+            provider = "fallback_policy"
+            model_name = "heritage-guidance-v1"
+            used_mock = True
+            is_live_ok = False
             answer = live_ai_teacher_service.fallback_response(
                 mode=mode,
                 question=payload.message,
             )
-        if checkpoint_prompt:
-            answer = (
-                f"{answer.strip()}\n\n"
-                f"Checkpoint nhanh: {checkpoint_prompt}"
-            )
-            live_session_service.record_live_event(
-                db,
-                live_session_id=live_session.id,
-                event_type=live_ai_teacher_service.CHECKPOINT_EVENT_TYPE,
-                event_source="ai_teacher_api",
-                participant_identity=ai_participant.participant_identity,
-                participant_user_id=None,
-                payload={
-                    "mode": mode,
-                    "cluster": cluster,
-                    "prompt": checkpoint_prompt,
-                },
-            )
-        answer, citation_items = live_ai_teacher_service.apply_citation_tags(
-            answer,
-            references,
-        )
-        rubric = live_ai_teacher_service.build_rubric_feedback(
-            question=message_text,
-            answer=answer,
-            cluster=cluster,
-        )
-        if provider == "deepseek":
-            cost_usd = live_reporting_service.estimate_deepseek_cost_usd(
-                input_tokens=prompt_tokens,
-                output_tokens=live_reporting_service.estimate_tokens(answer),
-            )
-            live_reporting_service.record_ai_cost(
-                db,
-                live_session=live_session,
-                component="llm",
-                cost_usd=cost_usd,
-                token_in=prompt_tokens,
-                token_out=live_reporting_service.estimate_tokens(answer),
-                metadata={
-                    "provider": provider,
-                    "model": model_name,
-                },
-            )
-        live_reporting_service.create_session_action(
-            db,
-            live_session_id=live_session.id,
-            action_type="rubric_feedback",
-            status="done",
-            actor_identity=ai_participant.participant_identity,
-            payload=rubric,
-        )
-        live_session_service.record_live_event(
-            db,
-            live_session_id=live_session.id,
-            event_type="ai_teacher_reply",
-            event_source="ai_teacher_api",
-            participant_identity=ai_participant.participant_identity,
-            participant_user_id=None,
-            payload={
-                "requested_mode": requested_mode,
-                "mode": mode,
-                "provider": provider,
-                "model": model_name,
-                "answer": answer,
-                "used_mock": used_mock,
-                "forced_hint_first": forced_hint_first,
-                "cluster": cluster,
-                "references": references,
-                "citations": citation_items,
-                "rubric": rubric,
-                "persona": persona_grade,
-                "suggested_actions": suggested_actions,
-                "checkpoint_prompt": checkpoint_prompt,
-            },
-        )
-        db.commit()
-        return schemas.LiveAITeacherReplyOut(
+    else:
+        answer = live_ai_teacher_service.fallback_response(
             mode=mode,
-            answer=answer,
-            provider=provider,
-            model=model_name,
-            used_mock=used_mock,
-            forced_hint_first=forced_hint_first,
-            references=[
-                schemas.LiveAITeacherReferenceOut(
-                    source_type=str(item.get("source_type") or "context"),
-                    source_id=item.get("source_id"),
-                    title=str(item.get("title") or "Nguon noi bo"),
-                    snippet=item.get("snippet"),
-                )
-                for item in references
-            ],
-            citations=[
-                schemas.LiveAITeacherCitationOut(
-                    tag=str(item.get("tag") or ""),
-                    title=str(item.get("title") or "Nguon noi bo"),
-                    source_type=str(item.get("source_type") or "context"),
-                    source_id=(str(item.get("source_id")) if item.get("source_id") else None),
-                    snippet=item.get("snippet"),
-                )
-                for item in citation_items
-                if item.get("tag")
-            ],
-            suggested_actions=[
-                schemas.LiveAITeacherActionOut(
-                    label=str(item.get("label") or "Hoc tiep"),
-                    prompt=str(item.get("prompt") or ""),
-                )
-                for item in suggested_actions
-                if item.get("prompt")
-            ],
-            rubric=schemas.LiveAITeacherRubricOut(
-                understanding_level=str(rubric.get("understanding_level") or "developing"),
-                knowledge_gaps=[str(item) for item in (rubric.get("knowledge_gaps") or [])],
-                next_steps=[str(item) for item in (rubric.get("next_steps") or [])],
-            ),
-            persona=persona_grade,
-            checkpoint=(
-                schemas.LiveAITeacherCheckpointOut(prompt=checkpoint_prompt)
-                if checkpoint_prompt
-                else None
-            ),
+            question=payload.message,
         )
 
-    answer = live_ai_teacher_service.fallback_response(
-        mode=mode,
-        question=payload.message,
-    )
     if checkpoint_prompt:
         answer = (
             f"{answer.strip()}\n\n"
@@ -1875,12 +1872,65 @@ def live_ai_teacher_reply(
                 "prompt": checkpoint_prompt,
             },
         )
-    answer, citation_items = live_ai_teacher_service.apply_citation_tags(answer, references)
+
+    answer, citation_items = live_ai_teacher_service.apply_citation_tags(
+        answer,
+        references,
+    )
+
+    prov_record, answer = resolve_live_ai_provenance(
+        provider=provider,
+        model=model_name,
+        requested_mode=mode,
+        guardrail_safe=True,
+        guardrail_categories=[],
+        is_live_call_successful=is_live_ok,
+        forced_mock=used_mock,
+        text=answer,
+    )
+
     rubric = live_ai_teacher_service.build_rubric_feedback(
         question=message_text,
         answer=answer,
         cluster=cluster,
     )
+
+    tokens_out = live_reporting_service.estimate_tokens(answer)
+    live_observability_service.record_point(
+        session_id=str(live_session.id),
+        operation="llm_reply",
+        provider=prov_record.provider,
+        latency_ms=(time.perf_counter() - llm_started) * 1000.0,
+        ok=True,
+        drop=False,
+        tokens_in=prompt_tokens,
+        tokens_out=tokens_out,
+        provider_mode=prov_record.provider_mode,
+        guardrail_status=prov_record.guardrail_status,
+        is_fallback=prov_record.is_fallback,
+        is_synthetic=prov_record.is_synthetic,
+    )
+
+    if prov_record.provider == "deepseek":
+        cost_usd = live_reporting_service.estimate_deepseek_cost_usd(
+            input_tokens=prompt_tokens,
+            output_tokens=tokens_out,
+        )
+        live_reporting_service.record_ai_cost(
+            db,
+            live_session=live_session,
+            component="llm",
+            cost_usd=cost_usd,
+            token_in=prompt_tokens,
+            token_out=tokens_out,
+            metadata={
+                "provider": prov_record.provider,
+                "model": prov_record.model,
+                "provider_mode": prov_record.provider_mode,
+                "is_fallback": prov_record.is_fallback,
+            },
+        )
+
     live_reporting_service.create_session_action(
         db,
         live_session_id=live_session.id,
@@ -1899,10 +1949,16 @@ def live_ai_teacher_reply(
         payload={
             "requested_mode": requested_mode,
             "mode": mode,
-            "provider": "fallback_policy",
-            "model": "heritage-guidance-v1",
+            "provider": prov_record.provider,
+            "model": prov_record.model,
+            "provider_mode": prov_record.provider_mode,
+            "guardrail_status": prov_record.guardrail_status,
+            "guardrail_categories": prov_record.guardrail_categories,
+            "is_fallback": prov_record.is_fallback,
+            "is_synthetic": prov_record.is_synthetic,
+            "used_mock": prov_record.used_mock,
+            "fallback_indicator": prov_record.fallback_indicator,
             "answer": answer,
-            "used_mock": True,
             "forced_hint_first": forced_hint_first,
             "cluster": cluster,
             "references": references,
@@ -1911,15 +1967,23 @@ def live_ai_teacher_reply(
             "persona": persona_grade,
             "suggested_actions": suggested_actions,
             "checkpoint_prompt": checkpoint_prompt,
+            "provenance": prov_record.model_dump(),
         },
     )
     db.commit()
+
     return schemas.LiveAITeacherReplyOut(
         mode=mode,
         answer=answer,
-        provider="fallback_policy",
-        model="heritage-guidance-v1",
-        used_mock=True,
+        provider=prov_record.provider,
+        model=prov_record.model,
+        provider_mode=prov_record.provider_mode,
+        guardrail_status=prov_record.guardrail_status,
+        guardrail_categories=prov_record.guardrail_categories,
+        is_fallback=prov_record.is_fallback,
+        is_synthetic=prov_record.is_synthetic,
+        used_mock=prov_record.used_mock,
+        fallback_indicator=prov_record.fallback_indicator,
         forced_hint_first=forced_hint_first,
         references=[
             schemas.LiveAITeacherReferenceOut(
@@ -1960,6 +2024,7 @@ def live_ai_teacher_reply(
             if checkpoint_prompt
             else None
         ),
+        provenance=prov_record.model_dump(),
     )
 
 
@@ -2076,12 +2141,29 @@ def live_ai_teacher_reply_stream(
         provider = "deepseek"
         model_name = settings.deepseek_model
         answer = ""
+        stream_ok = False
         if blocked:
-            answer = live_ai_teacher_service.safety_response(
+            raw_answer = live_ai_teacher_service.safety_response(
                 categories=list(safety.get("categories") or [])
             )
-            provider, model_name = "guardrail", "live-safety-v1"
-            yield _sse({"delta": answer})
+            prov_record, answer = resolve_live_ai_provenance(
+                provider="guardrail",
+                model="live-safety-v1",
+                requested_mode=mode,
+                guardrail_safe=False,
+                guardrail_categories=list(safety.get("categories") or []),
+                is_live_call_successful=False,
+                forced_mock=True,
+                text=raw_answer,
+            )
+            yield _sse({
+                "delta": answer,
+                "provider_mode": prov_record.provider_mode,
+                "guardrail_status": prov_record.guardrail_status,
+                "is_fallback": prov_record.is_fallback,
+                "is_synthetic": prov_record.is_synthetic,
+                "fallback_indicator": prov_record.fallback_indicator,
+            })
         else:
             try:
                 live_circuit_service.assert_provider_available("deepseek")
@@ -2090,36 +2172,90 @@ def live_ai_teacher_reply_stream(
                         continue
                     answer += delta
                     yield _sse({"delta": delta})
-                live_circuit_service.record_success("deepseek")
+                if answer.strip():
+                    live_circuit_service.record_success("deepseek")
+                    stream_ok = True
             except Exception as exc:  # noqa: BLE001 — degrade gracefully
                 live_circuit_service.record_failure("deepseek", str(exc))
                 logger.warning("AI teacher stream fell back: %s", exc)
+                stream_ok = False
                 if not answer.strip():
                     try:
                         answer = _call_deepseek_chat(messages, temperature=0.3)
-                        yield _sse({"delta": answer})
+                        if answer.strip():
+                            stream_ok = True
+                            yield _sse({"delta": answer})
                     except Exception:  # noqa: BLE001
-                        answer = live_ai_teacher_service.fallback_response(mode=mode, question=message_text)
-                        provider, model_name = "fallback_policy", "heritage-guidance-v1"
-                        yield _sse({"delta": answer})
+                        stream_ok = False
+
+            if not stream_ok or not answer.strip():
+                answer = live_ai_teacher_service.fallback_response(mode=mode, question=message_text)
+                provider = "fallback_policy"
+                model_name = "heritage-guidance-v1"
+                used_mock = True
+                is_live_call = False
+            else:
+                provider = "deepseek"
+                model_name = settings.deepseek_model
+                used_mock = False
+                is_live_call = True
+
+            prov_record, answer = resolve_live_ai_provenance(
+                provider=provider,
+                model=model_name,
+                requested_mode=mode,
+                guardrail_safe=True,
+                guardrail_categories=[],
+                is_live_call_successful=is_live_call,
+                forced_mock=used_mock,
+                text=answer,
+            )
+            if not stream_ok:
+                yield _sse({
+                    "delta": answer,
+                    "provider_mode": prov_record.provider_mode,
+                    "is_fallback": prov_record.is_fallback,
+                    "is_synthetic": prov_record.is_synthetic,
+                    "fallback_indicator": prov_record.fallback_indicator,
+                })
 
         answer, citation_items = live_ai_teacher_service.apply_citation_tags(answer, references)
         rubric = live_ai_teacher_service.build_rubric_feedback(
             question=message_text, answer=answer, cluster=cluster
         )
         try:
-            if provider == "deepseek":
+            tokens_out = live_reporting_service.estimate_tokens(answer)
+            live_observability_service.record_point(
+                session_id=str(live_session.id),
+                operation="llm_reply",
+                provider=prov_record.provider,
+                latency_ms=0.0,
+                ok=True,
+                drop=False,
+                tokens_in=prompt_tokens,
+                tokens_out=tokens_out,
+                provider_mode=prov_record.provider_mode,
+                guardrail_status=prov_record.guardrail_status,
+                is_fallback=prov_record.is_fallback,
+                is_synthetic=prov_record.is_synthetic,
+            )
+            if prov_record.provider == "deepseek":
                 live_reporting_service.record_ai_cost(
                     db,
                     live_session=live_session,
                     component="llm",
                     cost_usd=live_reporting_service.estimate_deepseek_cost_usd(
                         input_tokens=prompt_tokens,
-                        output_tokens=live_reporting_service.estimate_tokens(answer),
+                        output_tokens=tokens_out,
                     ),
                     token_in=prompt_tokens,
-                    token_out=live_reporting_service.estimate_tokens(answer),
-                    metadata={"provider": provider, "model": model_name},
+                    token_out=tokens_out,
+                    metadata={
+                        "provider": prov_record.provider,
+                        "model": prov_record.model,
+                        "provider_mode": prov_record.provider_mode,
+                        "is_fallback": prov_record.is_fallback,
+                    },
                 )
             live_session_service.record_live_event(
                 db,
@@ -2130,14 +2266,22 @@ def live_ai_teacher_reply_stream(
                 participant_user_id=None,
                 payload={
                     "mode": mode,
-                    "provider": provider,
-                    "model": model_name,
+                    "provider": prov_record.provider,
+                    "model": prov_record.model,
+                    "provider_mode": prov_record.provider_mode,
+                    "guardrail_status": prov_record.guardrail_status,
+                    "guardrail_categories": prov_record.guardrail_categories,
+                    "is_fallback": prov_record.is_fallback,
+                    "is_synthetic": prov_record.is_synthetic,
+                    "used_mock": prov_record.used_mock,
+                    "fallback_indicator": prov_record.fallback_indicator,
                     "answer": answer,
                     "cluster": cluster,
                     "references": references,
                     "citations": citation_items,
                     "rubric": rubric,
                     "persona": persona_grade,
+                    "provenance": prov_record.model_dump(),
                 },
             )
             db.commit()
@@ -2149,12 +2293,20 @@ def live_ai_teacher_reply_stream(
             "done": True,
             "answer": answer,
             "mode": mode,
-            "provider": provider,
-            "model": model_name,
+            "provider": prov_record.provider,
+            "model": prov_record.model,
+            "provider_mode": prov_record.provider_mode,
+            "guardrail_status": prov_record.guardrail_status,
+            "guardrail_categories": prov_record.guardrail_categories,
+            "is_fallback": prov_record.is_fallback,
+            "is_synthetic": prov_record.is_synthetic,
+            "used_mock": prov_record.used_mock,
+            "fallback_indicator": prov_record.fallback_indicator,
             "forced_hint_first": forced_hint_first,
             "persona": persona_grade,
             "citations": [c for c in citation_items if c.get("tag")],
             "rubric": rubric,
+            "provenance": prov_record.model_dump(),
         })
 
     return StreamingResponse(

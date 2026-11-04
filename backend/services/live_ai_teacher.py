@@ -8,6 +8,7 @@ import json
 import logging
 import math
 import re
+import unicodedata
 from datetime import datetime, timedelta, timezone
 from typing import Any, Iterable
 from urllib.error import HTTPError, URLError
@@ -240,7 +241,9 @@ def _ensure_utc(value: datetime | None) -> datetime:
 
 
 def _normalize_text(value: str) -> str:
-    return re.sub(r"[^a-z0-9\\s]", " ", value.lower())
+    raw = unicodedata.normalize("NFKD", str(value or "").lower())
+    without_accents = "".join(ch for ch in raw if not unicodedata.combining(ch)).replace("đ", "d")
+    return re.sub(r"[^a-z0-9\s]", " ", without_accents)
 
 
 def infer_heritage_cluster(*, message: str, session_title: str | None = None) -> str:

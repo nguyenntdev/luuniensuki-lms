@@ -19,6 +19,11 @@ export interface CaptionItem {
   text: string;
   /** When true, the line is still streaming in (renders a blinking cursor). */
   streaming?: boolean;
+  provider_mode?: "live" | "fallback" | "guardrail" | "mock" | "demo" | string;
+  guardrail_status?: string;
+  is_fallback?: boolean;
+  is_synthetic?: boolean;
+  fallback_indicator?: string | null;
 }
 
 interface CaptionsFeedProps {
@@ -30,6 +35,48 @@ function speakerMeta(speaker: CaptionItem["speaker"]): { name: string; cls: stri
   if (speaker === "assistant") return { name: "Cô giáo AI", cls: "text-sky-300" };
   if (speaker === "system") return { name: "Hệ thống", cls: "text-zinc-400" };
   return { name: "Bạn", cls: "text-emerald-300" };
+}
+
+function renderProvenanceBadge(item: CaptionItem) {
+  if (item.speaker !== "assistant") return null;
+
+  if (item.is_fallback || item.provider_mode === "fallback" || item.provider_mode === "mock" || item.provider_mode === "demo") {
+    return (
+      <span
+        className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-500/20 text-amber-300 ring-1 ring-amber-500/30"
+        title={item.fallback_indicator || "Phản hồi dự phòng ngoại tuyến"}
+        aria-label="Phản hồi dự phòng ngoại tuyến"
+      >
+        Dự phòng
+      </span>
+    );
+  }
+
+  if (item.provider_mode === "guardrail" || item.guardrail_status === "blocked") {
+    return (
+      <span
+        className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-rose-500/20 text-rose-300 ring-1 ring-rose-500/30"
+        title="Nội dung được lọc bởi bộ kiểm duyệt an toàn"
+        aria-label="Nội dung lọc bởi kiểm duyệt an toàn"
+      >
+        Kiểm duyệt
+      </span>
+    );
+  }
+
+  if (item.provider_mode === "live") {
+    return (
+      <span
+        className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-500/20 text-emerald-300 ring-1 ring-emerald-500/30"
+        title="AI trực tiếp phản hồi"
+        aria-label="AI trực tiếp"
+      >
+        AI Live
+      </span>
+    );
+  }
+
+  return null;
 }
 
 export default function CaptionsFeed({
@@ -73,7 +120,8 @@ export default function CaptionsFeed({
             className={`text-sm leading-relaxed ${item.streaming ? "opacity-80" : ""}`}
           >
             <span className={`mr-2 font-semibold ${m.cls} contrast-more:underline`}>{name}:</span>
-            <span className="text-zinc-100 contrast-more:text-white font-normal">{item.text}</span>
+            {renderProvenanceBadge(item)}
+            <span className="text-zinc-100 contrast-more:text-white font-normal ml-1">{item.text}</span>
             {item.streaming ? (
               <span
                 className="ml-1 inline-block h-3 w-1.5 translate-y-0.5 animate-pulse rounded-sm bg-zinc-300 align-middle"

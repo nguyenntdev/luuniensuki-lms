@@ -1,0 +1,95 @@
+{
+  "ticket_id": "V5-T069",
+  "wave": "W06",
+  "slot": "W06-A09",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "goal": "AI observability and budgeting in backend/services/ and backend/routers/",
+  "status": "PASS",
+  "timestamp": "2026-11-05T02:40:00Z",
+  "summary": "Implemented comprehensive AI observability, token tracking, cost modeling, zero-PII telemetry logging, and user/classroom budget caps with capacity limit 429 responses and deterministic fallbacks across backend/services/ and backend/routers/. Fully verified with 7/7 passing tests in tests/v5/test_v5_t069.py and confirmed OpenAPI snapshot parity.",
+  "invariants_verified": {
+    "zero_pii_telemetry": "Strict invariant enforced: telemetry logs and database records never store raw prompts, user names, emails, phone numbers, CCCD/CMND numbers, credit cards, or API keys. Telemetry records strictly store cryptographic SHA-256 prompt digests, character counts, and token estimates.",
+    "token_usage_and_latency": "Accurate calculation and tracking of prompt tokens, completion tokens, total tokens, and execution latency in milliseconds for every AI operation.",
+    "model_cost_estimation": "Dynamic cost estimation model supporting Clara Gemini (gemini-3.8-flash-tiered: $0.10/1M prompt, $0.40/1M completion) and DeepSeek (deepseek-v4-flash: $0.14/1M prompt, $0.28/1M completion) recorded in USD.",
+    "citation_validity_telemetry": "Records valid vs dropped/hallucinated citation counts and calculates real-time citation validity rate per request and aggregate window.",
+    "budget_caps_user_and_classroom": "Enforces daily token and cost ceilings at both user and classroom levels, resolving custom overrides from ai_budget_caps and defaulting to system guardrails (ai_daily_token_budget_ceiling=500,000, ai_daily_cost_circuit_breaker_usd=$5.00).",
+    "negative_abuse_capacity_response": "When daily token or cost budget is exhausted, strict requests receive HTTP 429 Too Many Requests with standard error envelope (code='AI_BUDGET_EXHAUSTED'), explicit Retry-After header, and reset_at/retry_after_seconds details.",
+    "deterministic_fallback_support": "When fallback is allowed, exhausted budgets degrade gracefully to deterministic evidence-only answer synthesis without LLM calls, attaching an epistemic disclaimer notice.",
+    "observability_dashboard_api": "Staff/Admin endpoints provide system-wide aggregate metrics (total requests, p95 latency, total cost, breakdown by model and operation) and budget cap management."
+  },
+  "endpoints": {
+    "observability_metrics": {
+      "method": "GET",
+      "path": "/api/v1/ai/observability/metrics",
+      "rbac": "STAFF_ROLES (admin, super_admin, teacher)",
+      "response_model": "AIObservabilityMetricsOut"
+    },
+    "budget_status": {
+      "method": "GET",
+      "path": "/api/v1/ai/observability/budget",
+      "rbac": "Learner (own), STAFF_ROLES (any user via user_id)",
+      "response_model": "AIBudgetStatusOut"
+    },
+    "budget_caps": {
+      "method": "POST",
+      "path": "/api/v1/ai/observability/budget/caps",
+      "rbac": "STAFF_ROLES (admin, super_admin, teacher)",
+      "response_model": "AIBudgetCapOut"
+    },
+    "ai_tutor": {
+      "method": "POST",
+      "path": "/api/v1/ai/tutor",
+      "guardrail": "enforce_budget_guardrail before inference, record_ai_telemetry on completion"
+    },
+    "ai_qa": {
+      "method": "POST",
+      "path": "/api/v1/ai/qa",
+      "guardrail": "enforce_budget_guardrail before inference, record_ai_telemetry on completion"
+    },
+    "history_tutor_ask": {
+      "method": "POST",
+      "path": "/api/v1/history/tutor/ask",
+      "guardrail": "enforce_budget_guardrail with strict_budget flag and deterministic fallback on budget exhaustion"
+    }
+  },
+  "schema_diff": {
+    "migration_id": "0068_ai_observability_budgeting",
+    "revises": "0067_hotspot_claim_entity_binding",
+    "tables_created": [
+      "ai_telemetry_logs",
+      "ai_budget_caps"
+    ],
+    "indexes_created": [
+      "idx_ai_telemetry_user_created",
+      "idx_ai_telemetry_classroom_created",
+      "idx_ai_telemetry_operation",
+      "idx_ai_telemetry_created_at",
+      "idx_ai_telemetry_status",
+      "idx_ai_telemetry_model",
+      "idx_ai_budget_caps_entity",
+      "uq_ai_budget_caps_entity"
+    ]
+  },
+  "created_files": [
+    "backend/ai_observability_models.py",
+    "backend/apischemas/ai_observability.py",
+    "backend/services/ai_observability.py",
+    "migrations/versions/0068_ai_observability_budgeting.py",
+    "tests/v5/test_v5_t069.py",
+    "artifacts/implementation/W06/W06_A09_ai_observability_budgeting.json"
+  ],
+  "modified_files": [
+    "backend/models.py",
+    "backend/routers/ai.py",
+    "backend/routers/history_tutor.py",
+    "backend/services/ai_tutor.py",
+    "backend-rust/docs/route-inventory.json",
+    "tests/backend/fixtures/openapi_snapshot.json"
+  ],
+  "test_execution": {
+    "command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t069.py -v",
+    "results": "7 passed, 6 warnings in 8.53s",
+    "status": "PASS"
+  }
+}

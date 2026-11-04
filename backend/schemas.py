@@ -2880,6 +2880,13 @@ class LiveAITeacherSTTOut(BaseModel):
     transcript: str
     provider: str
     model: Optional[str] = None
+    provider_mode: str = "live"
+    guardrail_status: str = "passed"
+    guardrail_categories: list[str] = Field(default_factory=list)
+    is_fallback: bool = False
+    is_synthetic: bool = False
+    fallback_indicator: Optional[str] = None
+    provenance: Optional[dict[str, Any]] = None
 
 
 class LiveAITeacherTTSIn(BaseModel):
@@ -2896,7 +2903,13 @@ class LiveAITeacherReplyOut(BaseModel):
     answer: str
     provider: str
     model: Optional[str] = None
+    provider_mode: str = "live"
+    guardrail_status: str = "passed"
+    guardrail_categories: list[str] = Field(default_factory=list)
+    is_fallback: bool = False
+    is_synthetic: bool = False
     used_mock: bool = False
+    fallback_indicator: Optional[str] = None
     forced_hint_first: bool = False
     references: list["LiveAITeacherReferenceOut"] = Field(default_factory=list)
     citations: list["LiveAITeacherCitationOut"] = Field(default_factory=list)
@@ -2904,6 +2917,7 @@ class LiveAITeacherReplyOut(BaseModel):
     rubric: Optional["LiveAITeacherRubricOut"] = None
     persona: Optional[str] = None
     checkpoint: Optional["LiveAITeacherCheckpointOut"] = None
+    provenance: Optional[dict[str, Any]] = None
 
 
 class LiveAITeacherReferenceOut(BaseModel):
@@ -3001,6 +3015,10 @@ class SessionObservabilityOut(BaseModel):
     token_usage: dict[str, int] = Field(default_factory=dict)
     by_operation: dict[str, Any] = Field(default_factory=dict)
     by_provider: dict[str, Any] = Field(default_factory=dict)
+    by_provider_mode: dict[str, Any] = Field(default_factory=dict)
+    guardrail_stats: dict[str, Any] = Field(default_factory=dict)
+    fallback_count: int = 0
+    synthetic_count: int = 0
     generated_at: str
 
 

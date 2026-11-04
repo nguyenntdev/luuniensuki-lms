@@ -29,6 +29,14 @@ from ..models import (
     RagSettings,
     User,
 )
+from .ai_privacy import (
+    calculate_retention_due_at,
+    has_guardian_consent,
+    is_minor_user,
+    is_training_allowed_for_user,
+    sanitize_prompt_pii,
+    validate_minor_prompt_safety,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -108,11 +116,18 @@ def create_conversation(
     Returns:
         Created conversation
     """
+    is_minor = is_minor_user(user)
+    retention_due = calculate_retention_due_at(user)
+    guardian_consent_granted = has_guardian_consent(db, user)
+
     conversation = AIConversation(
         user_id=user.id,
         title=title,
         context_type=context_type,
         context_id=context_id,
+        is_minor=is_minor,
+        retention_due_at=retention_due,
+        guardian_consent_granted=guardian_consent_granted,
     )
     db.add(conversation)
     db.commit()
@@ -200,15 +215,49 @@ def send_message(
     Returns:
         Tuple of (user_message, ai_response)
     """
-    # Create user message
+    # 1. Age-appropriate content safety check for minors
+    is_safe, safety_feedback = validate_minor_prompt_safety(message_content, user)
+
+    # 2. PII Sanitization for student personal data (phone, email, school address)
+    sanitized_content, pii_counts = sanitize_prompt_pii(message_content)
+    has_pii = any(c > 0 for c in pii_counts.values())
+
+    # 3. Training eligibility determination
+    training_allowed = is_training_allowed_for_user(db, user)
+
+    # Create user message with sanitized content
     user_message = AIMessage(
         conversation_id=conversation.id,
         role="user",
-        content=message_content,
+        content=sanitized_content,
+        training_allowed=training_allowed,
+        pii_redacted=has_pii,
     )
     db.add(user_message)
 
-    # Get context sources for RAG
+    # If minor prompt was unsafe, block external AI call and return educational guidance
+    if not is_safe:
+        ai_response_content = safety_feedback or _SAFETY_FALLBACK_MESSAGE
+        ai_message = AIMessage(
+            conversation_id=conversation.id,
+            role="assistant",
+            content=ai_response_content,
+            training_allowed=False,
+            pii_redacted=False,
+        )
+        db.add(ai_message)
+
+        conversation.message_count += 2
+        conversation.updated_at = datetime.now(timezone.utc)
+        if not conversation.title and conversation.message_count == 2:
+            conversation.title = _generate_title_from_message(sanitized_content)
+
+        db.commit()
+        db.refresh(user_message)
+        db.refresh(ai_message)
+        return user_message, ai_message
+
+    # Get context sources for RAG using sanitized content
     sources = []
     if conversation.context_type and conversation.context_id:
         if conversation.context_type == "motif":
@@ -216,14 +265,14 @@ def send_message(
                 db,
                 motif_id=conversation.context_id,
                 limit=6,
-                query=message_content,
+                query=sanitized_content,
             )
         # Add other context types as needed
     else:
         sources = collect_sources_func(
             db,
             limit=6,
-            query=message_content,
+            query=sanitized_content,
         )
 
     # Build conversation history (last 10 messages)
@@ -245,15 +294,15 @@ def send_message(
         if msg.role in ["user", "assistant"]:
             chat_messages.append({"role": msg.role, "content": msg.content})
 
-    # Add current message
-    chat_messages.append({"role": "user", "content": message_content})
+    # Add current message (sanitized)
+    chat_messages.append({"role": "user", "content": sanitized_content})
 
     # Get RAG settings
     rag_settings = get_rag_settings_func(db)
     temperature = float(rag_settings.temperature or 0.7)
     model_override = rag_settings.model_override
 
-    # Call AI
+    # Call AI with sanitized prompt
     try:
         ai_response_content = deepseek_chat_func(
             chat_messages,
@@ -268,11 +317,20 @@ def send_message(
 
     ai_response_content = apply_content_safety_filter(ai_response_content, user)
 
+    from . import ai_observability
+    prompt_tokens = ai_observability.estimate_tokens(message_content)
+    completion_tokens = ai_observability.estimate_tokens(ai_response_content)
+
+    user_message.tokens_used = prompt_tokens
+
     # Create AI message
     ai_message = AIMessage(
         conversation_id=conversation.id,
         role="assistant",
         content=ai_response_content,
+        tokens_used=prompt_tokens + completion_tokens,
+        training_allowed=training_allowed,
+        pii_redacted=False,
     )
     db.add(ai_message)
 
@@ -282,7 +340,22 @@ def send_message(
 
     # Auto-generate title from first message if not set
     if not conversation.title and conversation.message_count == 2:
-        conversation.title = _generate_title_from_message(message_content)
+        conversation.title = _generate_title_from_message(sanitized_content)
+
+    ai_observability.record_ai_telemetry(
+        db,
+        user_id=user.id,
+        operation="conversation_message",
+        model=model_override or "deepseek",
+        provider="deepseek",
+        prompt_tokens=prompt_tokens,
+        completion_tokens=completion_tokens,
+        latency_ms=0.0,
+        citation_valid_count=len(sources),
+        citation_invalid_count=0,
+        status="success",
+        prompt_text=message_content,
+    )
 
     db.commit()
     db.refresh(user_message)

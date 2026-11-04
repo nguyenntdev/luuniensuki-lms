@@ -1,0 +1,132 @@
+{
+  "ticket_id": "V5-T070",
+  "wave": "W06",
+  "slot": "W06-A10",
+  "role": "W06-A10",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "goal": "AI tutor end-to-end integration contract across all modalities.",
+  "status": "COMPLETED",
+  "timestamp": "2026-11-05T02:45:00Z",
+  "summary": "Completed comprehensive end-to-end integration contract test suite for AI tutoring across all modalities (History Tutor, RBPC Cultural Bridge, and Live AI Teacher). Fully verified the entire pipeline: verified query -> citation grounding (5-point validation) -> hint-first Socratic feedback -> budget tracking -> prompt injection defense. Validated negative abuse protections preventing undocumented historical assertions, draft claim leakage, secret exfiltration, and cultural conflations.",
+  "modalities_verified": [
+    {
+      "modality": "History Tutor",
+      "endpoints": [
+        "POST /api/v1/history/tutor/ask",
+        "GET /api/v1/history/tutor/entities",
+        "GET /api/v1/history/tutor/citations/{source_id}/provenance",
+        "GET /api/v1/history/tutor/provenance/{source_id}"
+      ],
+      "capabilities": [
+        "Approved claims retrieval gate",
+        "5-point citation validation",
+        "Hint-first Socratic feedback and observation prompts",
+        "Cryptographic provenance chain verification",
+        "Prompt injection defense and secret scrubbing",
+        "Strict budget cap enforcement and telemetry logging"
+      ]
+    },
+    {
+      "modality": "RBPC Cultural Bridge",
+      "endpoints": [
+        "POST /api/v1/rbpc/cultural-bridge"
+      ],
+      "capabilities": [
+        "Living heritage contextual inquiry",
+        "Artisan dignity enforcement (separating 1835 royal relics from contemporary crafts)",
+        "Delimiter-isolated reference data",
+        "Clara Gemini router integration with retry policy",
+        "Fail-closed structured fallback on provider timeout/failure"
+      ]
+    },
+    {
+      "modality": "Live AI Teacher",
+      "services": [
+        "backend/services/live_ai_teacher.py"
+      ],
+      "capabilities": [
+        "Persona and grade-level adaptation",
+        "Socratic hint-first pedagogy prompt construction",
+        "Multilingual content safety evaluation (self-harm, violence, abuse, hate)",
+        "Citation tag binding and source reference context formatting",
+        "Deterministic fallback generation on streaming disconnection"
+      ]
+    }
+  ],
+  "invariants_verified": {
+    "citation_grounding": "5-point verification contract strictly enforced: (1) valid UUID, (2) database existence, (3) retrieval context membership, (4) valid claim-source binding, and (5) non-empty bibliographic locator. Grounding metrics (claims_retrieved, claims_used, sources_used) accurately reported.",
+    "negative_abuse_undocumented_sources": "AI never confidently provides undocumented historical sources or claims. Fabricated UUIDs, non-retrieved sources, and out-of-bounds locators are dropped by validator and flagged in uncertainties.",
+    "draft_isolation_ab_approved_facts": "Unreviewed and draft claims strictly return evidence gap notice ('khoảng trống bằng chứng'), confidence != high, and zero citations without explicit authority assertion. Setting include_unverified=True surfaces content only with explicit unverified labeling.",
+    "hint_first_socratic_mode": "Progressive inquiry mode guides learners with motif observation prompts and primary source directions without immediate answer dumping. Subsequent reveal request synthesizes observations and displays verified answer with citations.",
+    "cryptographic_provenance_chain": "Primary source records carry SHA-256 provenance hashes. Tampered hashes return HTTP 422 PROVENANCE_HASH_MISMATCH, and non-existent sources return HTTP 404 SOURCE_NOT_FOUND.",
+    "zero_pii_ai_observability": "Telemetry logging tracks tokens, cost USD, latency, model, and citation validity while strictly guaranteeing Zero-PII: user prompt text is replaced by SHA-256 digest in ai_telemetry_logs.",
+    "budget_exhaustion_capacity_limit": "When daily token or cost ceiling is reached, strict budget requests receive HTTP 429 Too Many Requests with standard error envelope (code='AI_BUDGET_EXHAUSTED'), Retry-After header, and reset timestamp.",
+    "prompt_injection_defense": "Untrusted student questions and source texts have delimiter boundary tags safely escaped ([SAFE_DATA_DELIMITER:CLAIM_START]), instruction overrides neutralized, secret exfiltration blocked, code execution prevented, and sensitive keys scrubbed from output.",
+    "artisan_dignity_rule": "Strict prohibition against conflating 1835 imperial relics (such as the Nine Dynastic Urns cast under Emperor Minh Mạng) with contemporary craft products or souvenirs. Living artisans are respected as independent cultural creators.",
+    "rights_revocation_resilience": "Revoked or non-public sources (public_display_allowed=False, rights_status='revoked') are excluded from approved retrieval and rejected by citation validator with 'rights_revoked'. External provider failures degrade gracefully to deterministic evidence-grounded answers."
+  },
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t070.py -v",
+    "tests_total": 11,
+    "tests_passed": 11,
+    "tests_failed": 0,
+    "test_cases": [
+      {
+        "name": "test_verified_query_citation_grounding",
+        "result": "PASSED",
+        "description": "Verified query retrieves approved claim and source with 5-point citation validation and grounding metrics."
+      },
+      {
+        "name": "test_negative_abuse_hallucinated_citations_and_locators_dropped",
+        "result": "PASSED",
+        "description": "Negative abuse test: fabricated source UUIDs and out-of-bounds locators are stripped from citations and flagged in uncertainties."
+      },
+      {
+        "name": "test_unreviewed_claims_abstain_no_authority",
+        "result": "PASSED",
+        "description": "Draft/unreviewed claims return evidence gap notice and zero authority; include_unverified flag marks content clearly as unreviewed."
+      },
+      {
+        "name": "test_hint_first_socratic_mode_and_resolution",
+        "result": "PASSED",
+        "description": "Socratic hint-first inquiry guides visual relief observation and source consultation, resolving cleanly upon reveal request."
+      },
+      {
+        "name": "test_citation_provenance_cryptographic_chain",
+        "result": "PASSED",
+        "description": "Primary source provenance SHA-256 chain verified; tampered hash returns 422, nonexistent source returns 404."
+      },
+      {
+        "name": "test_ai_observability_budget_tracking_and_zero_pii",
+        "result": "PASSED",
+        "description": "AI operations logged to telemetry with tokens, cost, latency, and model; zero PII guaranteed with prompt SHA-256."
+      },
+      {
+        "name": "test_budget_exhaustion_capacity_limit",
+        "result": "PASSED",
+        "description": "Negative abuse test: daily token/cost budget exhaustion returns HTTP 429 Too Many Requests with Retry-After header."
+      },
+      {
+        "name": "test_prompt_injection_defense_and_secret_redaction",
+        "result": "PASSED",
+        "description": "Prompt injection directives rejected, context delimiters safely escaped, tool allowlist enforced, and secrets redacted."
+      },
+      {
+        "name": "test_artisan_dignity_and_cultural_conflicts",
+        "result": "PASSED",
+        "description": "Artisan Dignity rule separates 1835 royal relics from contemporary craft souvenirs, honoring living artisans as independent creators."
+      },
+      {
+        "name": "test_rights_revocation_and_provider_failure_resilience",
+        "result": "PASSED",
+        "description": "Revoked sources excluded and rejected with 'rights_revoked'; system degrades gracefully on provider failure."
+      },
+      {
+        "name": "test_multimodal_live_ai_teacher_contract",
+        "result": "PASSED",
+        "description": "Live AI Teacher contracts verified across system prompt generation, multilingual content safety, fallback responses, and citation tags."
+      }
+    ]
+  }
+}

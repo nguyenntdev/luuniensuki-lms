@@ -74,6 +74,11 @@ interface Caption {
   text: string;
   at?: string;
   streaming?: boolean;
+  provider_mode?: string;
+  guardrail_status?: string;
+  is_fallback?: boolean;
+  is_synthetic?: boolean;
+  fallback_indicator?: string | null;
 }
 
 type Phase = "prejoin" | "joining" | "joined" | "left";
@@ -153,7 +158,36 @@ export default function LiveClassroom({ sessionId }: { sessionId: string }) {
         if (text) items.push({ id: ev.id, speaker: "user", name: nameFor(ev), text, at: ev.created_at });
       } else if (ev.event_type === "ai_teacher_reply" || ev.event_type === "ai_voice_ready") {
         const text = String(p.answer || p.text || "").trim();
-        if (text) items.push({ id: ev.id, speaker: "assistant", name: "Cô giáo AI", text, at: ev.created_at });
+        const isFallback = Boolean(p.is_fallback || p.used_mock || p.provider === "fallback_policy");
+        const provMode = String(p.provider_mode || (isFallback ? "fallback" : "live"));
+        const fallbackInd = (p.fallback_indicator as string) || (isFallback ? "[Phản hồi dự phòng]" : null);
+        if (text) {
+          items.push({
+            id: ev.id,
+            speaker: "assistant",
+            name: isFallback ? "Cô giáo AI (Dự phòng)" : "Cô giáo AI",
+            text,
+            at: ev.created_at,
+            provider_mode: provMode,
+            guardrail_status: p.guardrail_status as string,
+            is_fallback: isFallback,
+            is_synthetic: Boolean(p.is_synthetic),
+            fallback_indicator: fallbackInd,
+          });
+        }
+      } else if (ev.event_type === "ai_guardrail_blocked" || ev.event_type === "voice_guardrail_blocked") {
+        items.push({
+          id: ev.id,
+          speaker: "assistant",
+          name: "Cô giáo AI (Kiểm duyệt)",
+          text: "[Nội dung được lọc bởi bộ kiểm duyệt an toàn / Safety Guardrail]",
+          at: ev.created_at,
+          provider_mode: "guardrail",
+          guardrail_status: "blocked",
+          is_fallback: true,
+          is_synthetic: true,
+          fallback_indicator: "[Bộ lọc an toàn]",
+        });
       }
     }
     const merged = [...items, ...systemCaptions];
@@ -374,6 +408,13 @@ export default function LiveClassroom({ sessionId }: { sessionId: string }) {
         <div className="flex items-center gap-2 text-sm text-zinc-300">
           <span className="h-2.5 w-2.5 rounded-full bg-red-500" />
           <span className="font-medium">Đang trực tiếp</span>
+          <span
+            className="ml-3 inline-flex items-center gap-1.5 rounded-full bg-zinc-800/90 px-2.5 py-0.5 text-xs text-zinc-300 ring-1 ring-white/10"
+            title="Độ minh bạch nguồn gốc AI (Provenance Visibility)"
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            <span className="text-[11px]">AI Provenance: Minh bạch</span>
+          </span>
         </div>
         <div className="flex items-center gap-2">
           {voice.error ? (

@@ -1,0 +1,35 @@
+{
+  "ticket": "V5-T062",
+  "wave": "W06",
+  "slot": "A02",
+  "role": "W06-A02",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "goal": "Citation faithfulness validator in backend/services/rbpc_ai.py and backend/services/history_tutor.py",
+  "implementation_summary": {
+    "modules_updated": [
+      "backend/services/history_tutor.py",
+      "backend/services/rbpc_ai.py",
+      "backend/ai_observability_models.py",
+      "migrations/versions/0068_ai_observability_budgeting.py"
+    ],
+    "test_suite": "tests/v5/test_v5_t062.py",
+    "features_delivered": [
+      "Quotation faithfulness validator (validate_quotation_faithfulness / validate_rbpc_quotation_faithfulness) measuring token containment and character n-gram overlap between generated quotes and retrieved source passages",
+      "Precise locator formatting binding volume, chapter, page_start, page_end, folio, section, and year from authentic archival bindings",
+      "Enhanced 5-point citation validator rejecting invalid UUIDs, nonexistent DB records, unretrieved sources, unbound claim-source pairs, missing locators, and out-of-bounds / invented page numbers",
+      "Negative abuse defense ensuring fabricated citations and nonexistent page numbers are rejected or flagged with specific rejection codes ('source_id_invalid', 'source_not_found', 'source_not_retrieved', 'no_claim_source_binding', 'missing_locator', 'locator_out_of_bounds', 'invented_locator', 'quotation_unfaithful')"
+    ]
+  },
+  "verification": {
+    "command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t062.py -v",
+    "result": "PASSED (5/5 tests)",
+    "regression_tests": [
+      "tests/backend/test_history_tutor.py (8 passed)",
+      "tests/backend/test_history_tutor_scope.py (8 passed)",
+      "tests/unit/test_rbpc_ai.py (6 passed)",
+      "tests/v5/test_v5_t067.py (9 passed)"
+    ]
+  },
+  "status": "COMPLETED"
+}

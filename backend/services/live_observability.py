@@ -22,6 +22,10 @@ class _Point:
     drop: bool
     tokens_in: int
     tokens_out: int
+    provider_mode: str = "live"
+    guardrail_status: str = "passed"
+    is_fallback: bool = False
+    is_synthetic: bool = False
 
 
 _LOCK = Lock()
@@ -42,20 +46,37 @@ def record_point(
     drop: bool = False,
     tokens_in: int = 0,
     tokens_out: int = 0,
+    provider_mode: str = "live",
+    guardrail_status: str = "passed",
+    is_fallback: bool = False,
+    is_synthetic: bool = False,
 ) -> None:
     if not bool(settings.live_ai_enable_observability):
         return
+
+    prov = str(provider or "unknown").strip() or "unknown"
+    resolved_mode = str(provider_mode or "live").strip() or "live"
+    if (
+        is_fallback
+        or is_synthetic
+        or prov in ("fallback_policy", "guardrail", "mock", "demo")
+    ) and resolved_mode == "live":
+        resolved_mode = "guardrail" if prov == "guardrail" else "fallback"
 
     point = _Point(
         ts=_utcnow(),
         session_id=(str(session_id).strip() or None) if session_id else None,
         operation=str(operation or "unknown").strip() or "unknown",
-        provider=str(provider or "unknown").strip() or "unknown",
+        provider=prov,
         latency_ms=max(0.0, float(latency_ms or 0.0)),
         ok=bool(ok),
         drop=bool(drop),
         tokens_in=max(0, int(tokens_in or 0)),
         tokens_out=max(0, int(tokens_out or 0)),
+        provider_mode=resolved_mode,
+        guardrail_status=str(guardrail_status or "passed").strip() or "passed",
+        is_fallback=bool(is_fallback),
+        is_synthetic=bool(is_synthetic),
     )
 
     with _LOCK:
@@ -82,6 +103,10 @@ def snapshot(*, session_id: str | None = None) -> dict[str, Any]:
             "token_usage": {"input": 0, "output": 0, "total": 0},
             "by_operation": {},
             "by_provider": {},
+            "by_provider_mode": {},
+            "guardrail_stats": {"passed": 0, "blocked": 0, "bypassed": 0, "not_evaluated": 0},
+            "fallback_count": 0,
+            "synthetic_count": 0,
             "generated_at": _utcnow().isoformat(),
         }
 
@@ -96,6 +121,12 @@ def snapshot(*, session_id: str | None = None) -> dict[str, Any]:
     provider_stats: dict[str, dict[str, int]] = defaultdict(
         lambda: {"count": 0, "ok": 0, "drop": 0}
     )
+    mode_stats: dict[str, dict[str, int]] = defaultdict(
+        lambda: {"count": 0, "ok": 0, "drop": 0}
+    )
+    guardrail_counts = {"passed": 0, "blocked": 0, "bypassed": 0, "not_evaluated": 0}
+    fallback_total = 0
+    synthetic_total = 0
 
     token_in = 0
     token_out = 0
@@ -110,6 +141,19 @@ def snapshot(*, session_id: str | None = None) -> dict[str, Any]:
         prov["count"] += 1
         prov["ok"] += 1 if item.ok else 0
         prov["drop"] += 1 if item.drop else 0
+
+        mode_entry = mode_stats[item.provider_mode]
+        mode_entry["count"] += 1
+        mode_entry["ok"] += 1 if item.ok else 0
+        mode_entry["drop"] += 1 if item.drop else 0
+
+        g_status = item.guardrail_status or "passed"
+        guardrail_counts[g_status] = guardrail_counts.get(g_status, 0) + 1
+
+        if item.is_fallback:
+            fallback_total += 1
+        if item.is_synthetic:
+            synthetic_total += 1
 
         token_in += item.tokens_in
         token_out += item.tokens_out
@@ -136,5 +180,9 @@ def snapshot(*, session_id: str | None = None) -> dict[str, Any]:
         },
         "by_operation": dict(op_stats),
         "by_provider": dict(provider_stats),
+        "by_provider_mode": dict(mode_stats),
+        "guardrail_stats": guardrail_counts,
+        "fallback_count": fallback_total,
+        "synthetic_count": synthetic_total,
         "generated_at": _utcnow().isoformat(),
     }

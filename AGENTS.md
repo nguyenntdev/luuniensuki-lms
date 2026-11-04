@@ -259,6 +259,22 @@ Deploy workflow (`deploy.yml`) uses Python 3.12 and runs `pytest tests/backend` 
   - `V5-T059` (W05-A09): Push notification consent with opt-in/opt-out master switch, teacher/partner alert routing, and strict zero student PII enforcement.
   - `V5-T060` (W05-A10): Flutter QA and release pipeline with Flutter SDK 3.29.0 toolchain verification, zero static analysis errors, unit tests, cold start safety, and CI workflow.
 
+### Wave W06: Historical AI Tutor / Grounded Answers (COMPLETED)
+- **Status**: 10/10 slots complete. 121/121 tests passing.
+- **Artifacts**: `artifacts/implementation/W06/` (`W06_A01`–`W06_A10`).
+- **Verified Invariants**:
+  - `V5-T061` (W06-A01): RAG retrieval restricted to approved claims and sources; draft, unreviewed, or disputed claims return explicit abstention.
+  - `V5-T062` (W06-A02): 5-point citation faithfulness validator binding generated answer spans to real retrieved source passages with precise archival locators.
+  - `V5-T063` (W06-A03): Hint-first Socratic learning mode guiding students to observe motifs and cite evidence before revealing answers, with provenance inspection.
+  - `V5-T064` (W06-A04): AI provider policy, model discovery, sliding-window rate limiting, and safe deterministic fallback labeled with retry policies.
+  - `V5-T065` (W06-A05): Live AI provenance visibility exposing provider mode, guardrail status, and fallback indicators across WebRTC/audio and captions.
+  - `V5-T066` (W06-A06): Prompt injection defenses neutralizing instruction overrides, roleplay jailbreaks, tool abuse, and credential exfiltration.
+  - `V5-T067` (W06-A07): Multilingual evaluation gold-set benchmark (30 cases) penalizing plausible unsupported assertions and preserving artisan dignity.
+  - `V5-T068` (W06-A08): AI child privacy and protection filters with PII sanitization in conversation logs and zero training on minor student messages without guardian consent.
+  - `V5-T069` (W06-A09): AI observability and token budgeting tracking usage with zero-PII hashes and enforcing capacity limits on exhausted budgets.
+  - `V5-T070` (W06-A10): Comprehensive end-to-end integration contract across History Tutor, RBPC Cultural Bridge, and Multimodal Live AI Teacher.
+
+
 
 
 

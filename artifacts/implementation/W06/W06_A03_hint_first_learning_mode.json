@@ -1,0 +1,80 @@
+{
+  "ticket": "V5-T063",
+  "wave": "W06",
+  "slot": "A03",
+  "role": "W06-A03",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "goal": "Hint-first learning mode in backend/routers/history_tutor.py and frontend/src/app/dai-noi/ai/page.tsx",
+  "implementation_summary": {
+    "modules_updated": [
+      "backend/apischemas/history_tutor.py",
+      "backend/services/history_tutor.py",
+      "backend/routers/history_tutor.py",
+      "frontend/src/app/dai-noi/ai/page.tsx",
+      "frontend/src/lib/imperial/ai-assistant.ts"
+    ],
+    "test_suite": "tests/v5/test_v5_t063.py",
+    "features_delivered": [
+      "Hint-first learning mode: In backend/routers/history_tutor.py and backend/services/history_tutor.py, added build_socratic_hint_answer which provides progressive Socratic hints and guided observation steps without prematurely revealing the direct factual resolution unless explicitly requested (reveal_answer=True)",
+      "Pedagogical observation & primary source guidance: Socratic questions instruct students to observe relief carvings, layers, inscriptions, and symbols on relics (Cửu Đỉnh motifs) or architectural elements (Đại Nội monuments), guiding them to consult official court chronicles (Đại Nam Thực Lục, Khâm Định Đại Nam Hội Điển Sự Lệ) before concluding",
+      "Citation provenance inspection: Added GET /api/v1/history/tutor/citations/{source_id}/provenance and GET /api/v1/history/tutor/provenance/{source_id} endpoints returning exact primary source references (Title, Author, Volume, Chapter, Page, Folio, Locator, Archive URL, Rights Status, Verification Status) along with canonical SHA-256 provenance hashes",
+      "Negative abuse defense: Inspecting non-existent or fabricated source IDs raises HTTP 404 (SOURCE_NOT_FOUND); submitting forged or tampered provenance hashes raises HTTP 422 (PROVENANCE_HASH_MISMATCH); disputed claims cannot claim settled authority (su_lieu_xac_thuc) and are strictly flagged as dang_khao_cuu",
+      "Frontend UI integration: In frontend/src/app/dai-noi/ai/page.tsx, added interactive learning mode toggle ('Gợi mở (Hint-first)' vs 'Trực tiếp'), Socratic observation cards (Step 1: Observation, Step 2: Source lookup, Step 3: Socratic question), 'Mở đáp án chi tiết' reveal control, and interactive Provenance Inspection modal dialog displaying verified source metadata and SHA-256 integrity signatures"
+    ]
+  },
+  "verification": {
+    "command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t063.py -v",
+    "result": "PASSED (8/8 tests)",
+    "test_details": [
+      {
+        "name": "test_hint_first_mode_provides_socratic_hints_without_direct_answer",
+        "result": "PASSED",
+        "assertion": "Verifies that in hint-first mode, revealed_direct_answer is False, progressive socratic_hints and motif/source guidance are returned, and answer_markdown uses Socratic dialogue framing."
+      },
+      {
+        "name": "test_hint_first_mode_reveals_direct_answer_when_requested",
+        "result": "PASSED",
+        "assertion": "Verifies that when reveal_answer=True, revealed_direct_answer becomes True and full verified factual resolution with citations is unlocked."
+      },
+      {
+        "name": "test_motif_observation_guidance_for_relief_motifs",
+        "result": "PASSED",
+        "assertion": "Verifies that relief motif entities trigger specialized motif observation prompts focusing on relief carvings, layers, and visual symbols."
+      },
+      {
+        "name": "test_inspect_exact_primary_source_reference",
+        "result": "PASSED",
+        "assertion": "Verifies that students can inspect exact primary source references via GET /api/v1/history/tutor/citations/{source_id}/provenance with title, author, locator, rights, and SHA-256 provenance hash."
+      },
+      {
+        "name": "test_negative_abuse_query_fabricated_source_rejected",
+        "result": "PASSED",
+        "assertion": "Negative abuse test: Querying provenance for non-existent or fabricated source ID strictly returns HTTP 404 with error code SOURCE_NOT_FOUND."
+      },
+      {
+        "name": "test_negative_abuse_tampered_provenance_hash_rejected",
+        "result": "PASSED",
+        "assertion": "Negative abuse test: Submitting forged or tampered expected_hash strictly returns HTTP 422 with error code PROVENANCE_HASH_MISMATCH."
+      },
+      {
+        "name": "test_negative_abuse_disputed_claim_provenance_flagged_cannot_claim_settled_authority",
+        "result": "PASSED",
+        "assertion": "Negative abuse test: Disputed claim provenance cannot claim settled factual authority (su_lieu_xac_thuc) and is strictly flagged as dang_khao_cuu with is_disputed=True."
+      },
+      {
+        "name": "test_ask_endpoint_provenance_integration",
+        "result": "PASSED",
+        "assertion": "Verifies that POST /api/v1/history/tutor/ask with inspect_provenance=True enriches citations and populates full provenance_records."
+      }
+    ],
+    "regression_tests": [
+      "tests/backend/test_openapi_snapshot.py (PASSED)",
+      "tests/backend/test_history_tutor.py (PASSED)",
+      "tests/backend/test_history_tutor_scope.py (PASSED)",
+      "frontend type-check: tsc --noEmit (PASSED)",
+      "frontend lint:ci: eslint . (PASSED)",
+      "frontend unit test suite: vitest run (39 files, 567 tests PASSED)"
+    ]
+  }
+}

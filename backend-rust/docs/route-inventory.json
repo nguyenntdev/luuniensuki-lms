@@ -1230,6 +1230,24 @@
     "status": "gateway"
   },
   {
+    "method": "GET",
+    "path": "/api/v1/ai/observability/budget",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/ai/observability/budget/caps",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/ai/observability/metrics",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
     "method": "POST",
     "path": "/api/v1/ai/qa",
     "group": "misc",
@@ -1867,7 +1885,19 @@
   },
   {
     "method": "GET",
+    "path": "/api/v1/history/tutor/citations/{source_id}/provenance",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
     "path": "/api/v1/history/tutor/entities",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/tutor/provenance/{source_id}",
     "group": "misc",
     "status": "gateway"
   },

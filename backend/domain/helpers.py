@@ -2290,13 +2290,44 @@ def _fallback_explain_text(text: str) -> str:
     return f"Tóm tắt nhanh: {trimmed}"
 
 
-def _start_ai_job(session: Session, *, user: User, job_type: str, prompt: str) -> AIJob:
+def _start_ai_job(
+    session: Session,
+    *,
+    user: User,
+    job_type: str,
+    prompt: str,
+    is_minor: Optional[bool] = None,
+    training_allowed: Optional[bool] = None,
+    pii_redacted: Optional[bool] = None,
+) -> AIJob:
+    from ..services.ai_privacy import (
+        is_minor_user,
+        is_training_allowed_for_user,
+        sanitize_prompt_pii,
+    )
+
+    sanitized_prompt, pii_counts = sanitize_prompt_pii(prompt)
+    minor_flag = is_minor if is_minor is not None else is_minor_user(user)
+    training_flag = (
+        training_allowed
+        if training_allowed is not None
+        else is_training_allowed_for_user(session, user)
+    )
+    has_pii = (
+        pii_redacted
+        if pii_redacted is not None
+        else any(c > 0 for c in pii_counts.values())
+    )
+
     job = AIJob(
         user_id=user.id,
         job_type=job_type,
         status="pending",
         provider="deepseek",
-        prompt=prompt,
+        prompt=sanitized_prompt,
+        is_minor=minor_flag,
+        training_allowed=training_flag,
+        pii_redacted=has_pii,
     )
     session.add(job)
     session.commit()

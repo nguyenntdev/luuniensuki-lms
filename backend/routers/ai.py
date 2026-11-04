@@ -88,6 +88,12 @@ from ..domain.auth_session import (
     _revoke_refresh_jti,
     _set_auth_cookies,
 )
+from ..apischemas.ai_observability import (
+    AIBudgetCapOut,
+    AIBudgetCapSetIn,
+    AIBudgetStatusOut,
+    AIObservabilityMetricsOut,
+)
 from ..apischemas.auth import (
     AuthLoginRequest,
     AuthMeResponse,
@@ -646,10 +652,47 @@ def ai_tutor(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> AIAnswerOut:
+    from ..services import ai_observability
+    from ..services.ai_privacy import (
+        is_minor_user,
+        is_training_allowed_for_user,
+        sanitize_prompt_pii,
+        validate_minor_prompt_safety,
+    )
     from ..services.ai_tutor import apply_content_safety_filter
 
     if not settings.deepseek_api_key:
         raise HTTPException(status_code=503, detail="AI not configured")
+
+    # 1. Child protection: check minor prompt safety
+    is_safe, safety_feedback = validate_minor_prompt_safety(payload.message, current_user)
+    if not is_safe:
+        job = _start_ai_job(
+            db,
+            user=current_user,
+            job_type="tutor",
+            prompt=payload.message,
+            is_minor=True,
+            training_allowed=False,
+        )
+        safe_ans = safety_feedback or "Nội dung này không phù hợp với lứa tuổi học sinh."
+        _finish_ai_job(db, job, response=safe_ans)
+        return AIAnswerOut(answer=safe_ans, citations=[], job_id=job.id)
+
+    # 2. PII Sanitization: redact student personal data before external AI invocation
+    sanitized_message, pii_counts = sanitize_prompt_pii(payload.message)
+    has_pii = any(c > 0 for c in pii_counts.values())
+
+    start_time = time.time()
+    est_prompt_tokens = ai_observability.estimate_tokens(sanitized_message)
+    ai_observability.enforce_budget_guardrail(
+        db,
+        user=current_user,
+        estimated_prompt_tokens=est_prompt_tokens,
+        allow_fallback=False,
+        operation="tutor",
+        prompt_text=sanitized_message,
+    )
 
     context = payload.context or AIContextIn()
     sources = _collect_ai_sources(
@@ -657,18 +700,19 @@ def ai_tutor(
         urn_slug=context.urn_slug,
         motif_id=context.motif_id,
         limit=6,
-        query=payload.message,
+        query=sanitized_message,
     )
     sources_prompt = _format_sources_for_prompt(sources)
     user_prompt = _build_tutor_user_prompt(
-        message=payload.message,
+        message=sanitized_message,
         sources_prompt=sources_prompt,
     )
+    sanitized_user_prompt, _ = sanitize_prompt_pii(user_prompt)
     system_prompt = _build_tutor_system_prompt(level=payload.level)
-    system_prompt, user_prompt, model_override, temperature = _apply_ai_settings(
+    system_prompt, sanitized_user_prompt, model_override, temperature = _apply_ai_settings(
         db,
         system_prompt=system_prompt,
-        user_prompt=user_prompt,
+        user_prompt=sanitized_user_prompt,
         temperature=0.3,
     )
 
@@ -679,10 +723,23 @@ def ai_tutor(
         }
     ]
     for msg in payload.history[-6:]:
-        messages.append({"role": msg.role, "content": msg.content})
-    messages.append({"role": "user", "content": user_prompt})
+        sanitized_hist, _ = sanitize_prompt_pii(msg.content)
+        messages.append({"role": msg.role, "content": sanitized_hist})
+    messages.append({"role": "user", "content": sanitized_user_prompt})
 
-    job = _start_ai_job(db, user=current_user, job_type="tutor", prompt=user_prompt)
+    is_minor = is_minor_user(current_user)
+    training_allowed = is_training_allowed_for_user(db, current_user)
+
+    job = _start_ai_job(
+        db,
+        user=current_user,
+        job_type="tutor",
+        prompt=sanitized_user_prompt,
+        is_minor=is_minor,
+        training_allowed=training_allowed,
+        pii_redacted=has_pii,
+    )
+    is_fallback = False
     try:
         answer = _call_deepseek_chat(
             messages, temperature=temperature, model=model_override
@@ -690,7 +747,8 @@ def ai_tutor(
         answer = apply_content_safety_filter(answer, current_user)
         _finish_ai_job(db, job, response=answer)
     except Exception as exc:
-        answer = _fallback_answer_from_sources(payload.message, sources)
+        is_fallback = True
+        answer = _fallback_answer_from_sources(sanitized_message, sources)
         answer = apply_content_safety_filter(answer, current_user)
         _finish_ai_job_fallback(db, job, response=answer, error=str(exc))
 
@@ -698,6 +756,26 @@ def ai_tutor(
     citations = _build_ai_citations(sources, cited_indexes)
     if not citations:
         citations = _build_ai_citations(sources, [])
+
+    # Record AI telemetry with strict ZERO PII
+    latency_ms = (time.time() - start_time) * 1000
+    comp_tokens = ai_observability.estimate_tokens(answer)
+    ai_observability.record_ai_telemetry(
+        db,
+        user_id=current_user.id,
+        operation="tutor",
+        model=model_override or settings.deepseek_model,
+        provider="deepseek",
+        prompt_tokens=est_prompt_tokens,
+        completion_tokens=comp_tokens,
+        latency_ms=latency_ms,
+        citation_valid_count=len(citations),
+        citation_invalid_count=0,
+        status="fallback_used" if is_fallback else "success",
+        error_code="PROVIDER_FALLBACK" if is_fallback else None,
+        prompt_text=payload.message,
+    )
+
     return AIAnswerOut(answer=answer, citations=citations, job_id=job.id)
 
 
@@ -714,7 +792,35 @@ async def ai_tutor_stream(
     if not settings.deepseek_api_key:
         raise HTTPException(status_code=503, detail="AI not configured")
 
+    from ..services.ai_privacy import (
+        is_minor_user,
+        is_training_allowed_for_user,
+        sanitize_prompt_pii,
+        validate_minor_prompt_safety,
+    )
     from ..services.ai_tutor import apply_content_safety_filter
+
+    # 1. Child protection: check minor prompt safety
+    is_safe, safety_feedback = validate_minor_prompt_safety(payload.message, current_user)
+    if not is_safe:
+        async def safe_event_generator():
+            safe_msg = safety_feedback or "Nội dung này không phù hợp với lứa tuổi học sinh."
+            yield f"data: {json.dumps({'type': 'chunk', 'content': safe_msg}, ensure_ascii=False)}\n\n"
+            yield f"data: {json.dumps({'type': 'done', 'job_id': None, 'full_response': safe_msg, 'citations': []}, ensure_ascii=False)}\n\n"
+
+        return StreamingResponse(
+            safe_event_generator(),
+            media_type="text/event-stream",
+            headers={
+                "Cache-Control": "no-cache",
+                "X-Accel-Buffering": "no",
+                "Connection": "keep-alive",
+            },
+        )
+
+    # 2. PII Sanitization
+    sanitized_message, pii_counts = sanitize_prompt_pii(payload.message)
+    has_pii = any(c > 0 for c in pii_counts.values())
 
     context = payload.context or AIContextIn()
     sources = _collect_ai_sources(
@@ -722,18 +828,19 @@ async def ai_tutor_stream(
         urn_slug=context.urn_slug,
         motif_id=context.motif_id,
         limit=6,
-        query=payload.message,
+        query=sanitized_message,
     )
     sources_prompt = _format_sources_for_prompt(sources)
     user_prompt = _build_tutor_user_prompt(
-        message=payload.message,
+        message=sanitized_message,
         sources_prompt=sources_prompt,
     )
+    sanitized_user_prompt, _ = sanitize_prompt_pii(user_prompt)
     system_prompt = _build_tutor_system_prompt(level=payload.level)
-    system_prompt, user_prompt, model_override, temperature = _apply_ai_settings(
+    system_prompt, sanitized_user_prompt, model_override, temperature = _apply_ai_settings(
         db,
         system_prompt=system_prompt,
-        user_prompt=user_prompt,
+        user_prompt=sanitized_user_prompt,
         temperature=0.3,
     )
 
@@ -744,11 +851,21 @@ async def ai_tutor_stream(
         }
     ]
     for msg in payload.history[-6:]:
-        messages.append({"role": msg.role, "content": msg.content})
-    messages.append({"role": "user", "content": user_prompt})
+        sanitized_hist, _ = sanitize_prompt_pii(msg.content)
+        messages.append({"role": msg.role, "content": sanitized_hist})
+    messages.append({"role": "user", "content": sanitized_user_prompt})
+
+    is_minor = is_minor_user(current_user)
+    training_allowed = is_training_allowed_for_user(db, current_user)
 
     job = _start_ai_job(
-        db, user=current_user, job_type="tutor_stream", prompt=user_prompt
+        db,
+        user=current_user,
+        job_type="tutor_stream",
+        prompt=sanitized_user_prompt,
+        is_minor=is_minor,
+        training_allowed=training_allowed,
+        pii_redacted=has_pii,
     )
 
     async def event_generator():
@@ -787,7 +904,7 @@ async def ai_tutor_stream(
             yield f"data: {json.dumps({'type': 'done', 'job_id': str(job.id), 'full_response': safe_answer, 'citations': [c.dict() for c in final_citations]})}\n\n"
 
         except Exception as exc:
-            fallback = _fallback_answer_from_sources(payload.message, sources)
+            fallback = _fallback_answer_from_sources(sanitized_message, sources)
             fallback = apply_content_safety_filter(fallback, current_user)
             _finish_ai_job_fallback(db, job, response=fallback, error=str(exc))
             yield f"data: {json.dumps({'type': 'error', 'error': fallback, 'message': fallback})}\n\n"
@@ -809,8 +926,47 @@ def ai_qa(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> AIAnswerOut:
+    from ..services import ai_observability
+    from ..services.ai_privacy import (
+        is_minor_user,
+        is_training_allowed_for_user,
+        sanitize_prompt_pii,
+        validate_minor_prompt_safety,
+    )
+    from ..services.ai_tutor import apply_content_safety_filter
+
     if not settings.deepseek_api_key:
         raise HTTPException(status_code=503, detail="AI not configured")
+
+    # 1. Child protection: check minor prompt safety
+    is_safe, safety_feedback = validate_minor_prompt_safety(payload.question, current_user)
+    if not is_safe:
+        job = _start_ai_job(
+            db,
+            user=current_user,
+            job_type="qa",
+            prompt=payload.question,
+            is_minor=True,
+            training_allowed=False,
+        )
+        safe_ans = safety_feedback or "Nội dung này không phù hợp với lứa tuổi học sinh."
+        _finish_ai_job(db, job, response=safe_ans)
+        return AIAnswerOut(answer=safe_ans, citations=[], job_id=job.id)
+
+    # 2. PII Sanitization
+    sanitized_question, pii_counts = sanitize_prompt_pii(payload.question)
+    has_pii = any(c > 0 for c in pii_counts.values())
+
+    start_time = time.time()
+    est_prompt_tokens = ai_observability.estimate_tokens(sanitized_question)
+    ai_observability.enforce_budget_guardrail(
+        db,
+        user=current_user,
+        estimated_prompt_tokens=est_prompt_tokens,
+        allow_fallback=False,
+        operation="qa",
+        prompt_text=sanitized_question,
+    )
 
     context = payload.context or AIContextIn()
     sources = _collect_ai_sources(
@@ -818,18 +974,19 @@ def ai_qa(
         urn_slug=context.urn_slug,
         motif_id=context.motif_id,
         limit=payload.limit,
-        query=payload.question,
+        query=sanitized_question,
     )
     sources_prompt = _format_sources_for_prompt(sources)
     user_prompt = _build_qa_user_prompt(
-        question=payload.question,
+        question=sanitized_question,
         sources_prompt=sources_prompt,
     )
+    sanitized_user_prompt, _ = sanitize_prompt_pii(user_prompt)
     system_prompt = _build_qa_system_prompt()
-    system_prompt, user_prompt, model_override, temperature = _apply_ai_settings(
+    system_prompt, sanitized_user_prompt, model_override, temperature = _apply_ai_settings(
         db,
         system_prompt=system_prompt,
-        user_prompt=user_prompt,
+        user_prompt=sanitized_user_prompt,
         temperature=0.2,
     )
     messages = [
@@ -837,23 +994,58 @@ def ai_qa(
             "role": "system",
             "content": system_prompt,
         },
-        {"role": "user", "content": user_prompt},
+        {"role": "user", "content": sanitized_user_prompt},
     ]
 
-    job = _start_ai_job(db, user=current_user, job_type="qa", prompt=user_prompt)
+    is_minor = is_minor_user(current_user)
+    training_allowed = is_training_allowed_for_user(db, current_user)
+
+    job = _start_ai_job(
+        db,
+        user=current_user,
+        job_type="qa",
+        prompt=sanitized_user_prompt,
+        is_minor=is_minor,
+        training_allowed=training_allowed,
+        pii_redacted=has_pii,
+    )
+    is_fallback = False
     try:
         answer = _call_deepseek_chat(
             messages, temperature=temperature, model=model_override
         )
+        answer = apply_content_safety_filter(answer, current_user)
         _finish_ai_job(db, job, response=answer)
     except Exception as exc:
-        answer = _fallback_answer_from_sources(payload.question, sources)
+        is_fallback = True
+        answer = _fallback_answer_from_sources(sanitized_question, sources)
+        answer = apply_content_safety_filter(answer, current_user)
         _finish_ai_job_fallback(db, job, response=answer, error=str(exc))
 
     cited_indexes = _extract_citations(answer)
     citations = _build_ai_citations(sources, cited_indexes)
     if not citations:
         citations = _build_ai_citations(sources, [])
+
+    # Record AI telemetry with strict ZERO PII
+    latency_ms = (time.time() - start_time) * 1000
+    comp_tokens = ai_observability.estimate_tokens(answer)
+    ai_observability.record_ai_telemetry(
+        db,
+        user_id=current_user.id,
+        operation="qa",
+        model=model_override or settings.deepseek_model,
+        provider="deepseek",
+        prompt_tokens=est_prompt_tokens,
+        completion_tokens=comp_tokens,
+        latency_ms=latency_ms,
+        citation_valid_count=len(citations),
+        citation_invalid_count=0,
+        status="fallback_used" if is_fallback else "success",
+        error_code="PROVIDER_FALLBACK" if is_fallback else None,
+        prompt_text=sanitized_question,
+    )
+
     return AIAnswerOut(answer=answer, citations=citations, job_id=job.id)
 
 
@@ -867,50 +1059,99 @@ async def ai_qa_stream(
     if not settings.deepseek_api_key:
         raise HTTPException(status_code=503, detail="AI not configured")
 
+    from ..services.ai_privacy import (
+        is_minor_user,
+        is_training_allowed_for_user,
+        sanitize_prompt_pii,
+        validate_minor_prompt_safety,
+    )
+    from ..services.ai_tutor import apply_content_safety_filter
+
+    # 1. Child protection: check minor prompt safety
+    is_safe, safety_feedback = validate_minor_prompt_safety(payload.question, current_user)
+    if not is_safe:
+        async def safe_event_generator():
+            safe_msg = safety_feedback or "Nội dung này không phù hợp với lứa tuổi học sinh."
+            yield f"data: {json.dumps({'type': 'chunk', 'content': safe_msg}, ensure_ascii=False)}\n\n"
+            yield f"data: {json.dumps({'type': 'done', 'job_id': None, 'full_response': safe_msg, 'citations': []}, ensure_ascii=False)}\n\n"
+
+        return StreamingResponse(
+            safe_event_generator(),
+            media_type="text/event-stream",
+            headers={
+                "Cache-Control": "no-cache",
+                "X-Accel-Buffering": "no",
+                "Connection": "keep-alive",
+            },
+        )
+
+    # 2. PII Sanitization
+    sanitized_question, pii_counts = sanitize_prompt_pii(payload.question)
+    has_pii = any(c > 0 for c in pii_counts.values())
+
     context = payload.context or AIContextIn()
     sources = _collect_ai_sources(
         db,
         urn_slug=context.urn_slug,
         motif_id=context.motif_id,
         limit=payload.limit,
-        query=payload.question,
+        query=sanitized_question,
     )
     sources_prompt = _format_sources_for_prompt(sources)
     user_prompt = _build_qa_user_prompt(
-        question=payload.question,
+        question=sanitized_question,
         sources_prompt=sources_prompt,
     )
+    sanitized_user_prompt, _ = sanitize_prompt_pii(user_prompt)
     system_prompt = _build_qa_system_prompt()
-    system_prompt, user_prompt, model_override, temperature = _apply_ai_settings(
+    system_prompt, sanitized_user_prompt, model_override, temperature = _apply_ai_settings(
         db,
         system_prompt=system_prompt,
-        user_prompt=user_prompt,
+        user_prompt=sanitized_user_prompt,
         temperature=0.2,
     )
     messages = [
         {"role": "system", "content": system_prompt},
-        {"role": "user", "content": user_prompt},
+        {"role": "user", "content": sanitized_user_prompt},
     ]
 
-    job = _start_ai_job(db, user=current_user, job_type="qa_stream", prompt=user_prompt)
+    is_minor = is_minor_user(current_user)
+    training_allowed = is_training_allowed_for_user(db, current_user)
+
+    job = _start_ai_job(
+        db,
+        user=current_user,
+        job_type="qa_stream",
+        prompt=sanitized_user_prompt,
+        is_minor=is_minor,
+        training_allowed=training_allowed,
+        pii_redacted=has_pii,
+    )
 
     async def event_generator():
         accumulated_text = ""
+        stream_chunks = bool(getattr(current_user, "age_verified", False))
         try:
             for chunk in _call_deepseek_chat_stream(
                 messages, temperature=temperature, model=model_override
             ):
                 accumulated_text += chunk
-                yield f"data: {json.dumps({'type': 'chunk', 'content': chunk})}\n\n"
+                if stream_chunks:
+                    yield f"data: {json.dumps({'type': 'chunk', 'content': chunk})}\n\n"
 
-            _finish_ai_job(db, job, response=accumulated_text)
-            cited_indexes = _extract_citations(accumulated_text)
-            citations = _build_ai_citations(sources, cited_indexes)
-            if not citations:
-                citations = _build_ai_citations(sources, [])
-            yield f"data: {json.dumps({'type': 'done', 'job_id': str(job.id), 'full_response': accumulated_text, 'citations': [c.dict() for c in citations]})}\n\n"
+            safe_answer = apply_content_safety_filter(accumulated_text, current_user)
+            if not stream_chunks:
+                yield f"data: {json.dumps({'type': 'chunk', 'content': safe_answer})}\n\n"
+
+            _finish_ai_job(db, job, response=safe_answer)
+            cited_indexes = _extract_citations(safe_answer)
+            final_citations = _build_ai_citations(sources, cited_indexes)
+            if not final_citations:
+                final_citations = _build_ai_citations(sources, [])
+            yield f"data: {json.dumps({'type': 'done', 'job_id': str(job.id), 'full_response': safe_answer, 'citations': [c.dict() for c in final_citations]})}\n\n"
         except Exception as exc:
-            fallback = _fallback_answer_from_sources(payload.question, sources)
+            fallback = _fallback_answer_from_sources(sanitized_question, sources)
+            fallback = apply_content_safety_filter(fallback, current_user)
             _finish_ai_job_fallback(db, job, response=fallback, error=str(exc))
             yield f"data: {json.dumps({'type': 'error', 'error': fallback, 'message': fallback})}\n\n"
 
@@ -1953,3 +2194,78 @@ def delete_ai_conversation(
         raise HTTPException(status_code=404, detail="Conversation not found")
 
     return Response(status_code=204)
+
+
+# --------------------------------------------------------------------------- #
+# AI Observability & Budgeting Endpoints (V5-T069 / Wave W06)
+# --------------------------------------------------------------------------- #
+@router.get("/api/v1/ai/observability/metrics", response_model=AIObservabilityMetricsOut)
+def get_observability_metrics(
+    hours: int = Query(24, ge=1, le=720, description="Lookback window in hours"),
+    operation: Optional[str] = Query(None, description="Optional operation filter"),
+    model: Optional[str] = Query(None, description="Optional model filter"),
+    current_user: User = Depends(get_staff_user),
+    db: Session = Depends(get_db),
+) -> AIObservabilityMetricsOut:
+    """Retrieve system-wide AI observability metrics, token counts, cost, and latency percentiles (Staff only)."""
+    from ..services import ai_observability
+
+    metrics = ai_observability.get_ai_observability_metrics(
+        db, hours=hours, operation=operation, model=model
+    )
+    return AIObservabilityMetricsOut(**metrics)
+
+
+@router.get("/api/v1/ai/observability/budget", response_model=AIBudgetStatusOut)
+def get_budget_status(
+    classroom_id: Optional[UUID] = Query(None, description="Optional classroom context"),
+    user_id: Optional[UUID] = Query(None, description="Target user (admin/staff/teacher only)"),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> AIBudgetStatusOut:
+    """Check current user's AI token and cost budget allowance and remaining headroom."""
+    from ..services import ai_observability
+
+    target_user = current_user
+    if user_id and user_id != current_user.id:
+        if current_user.role not in STAFF_ROLES:
+            raise HTTPException(status_code=403, detail="Forbidden")
+        fetched = db.get(User, user_id)
+        if not fetched:
+            raise HTTPException(status_code=404, detail="User not found")
+        target_user = fetched
+
+    status_data = ai_observability.get_user_budget_status(
+        db, user=target_user, classroom_id=classroom_id
+    )
+    return AIBudgetStatusOut(**status_data)
+
+
+@router.post("/api/v1/ai/observability/budget/caps", response_model=AIBudgetCapOut)
+def set_budget_cap(
+    payload: AIBudgetCapSetIn,
+    current_user: User = Depends(get_staff_user),
+    db: Session = Depends(get_db),
+) -> AIBudgetCapOut:
+    """Set custom daily token and cost budget ceilings for a user or classroom (Staff/Admin only)."""
+    from ..services import ai_observability
+
+    cap = ai_observability.set_entity_budget_cap(
+        db,
+        entity_type=payload.entity_type,
+        entity_id=payload.entity_id,
+        daily_token_limit=payload.daily_token_limit,
+        daily_cost_limit_usd=payload.daily_cost_limit_usd,
+        max_tokens_per_request=payload.max_tokens_per_request or 4096,
+    )
+    return AIBudgetCapOut(
+        id=str(cap.id),
+        entity_type=cap.entity_type,
+        entity_id=str(cap.entity_id),
+        daily_token_limit=cap.daily_token_limit,
+        daily_cost_limit_usd=cap.daily_cost_limit_usd,
+        max_tokens_per_request=cap.max_tokens_per_request,
+        is_active=cap.is_active,
+        created_at=cap.created_at,
+        updated_at=cap.updated_at,
+    )

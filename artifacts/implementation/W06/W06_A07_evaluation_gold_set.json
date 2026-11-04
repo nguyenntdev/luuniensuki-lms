@@ -1,0 +1,65 @@
+{
+  "ticket": "V5-T067",
+  "ticket_id": "V5-T067",
+  "wave": "W06",
+  "slot": "W06-A07",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Evaluation gold-set & human rubric in docs/rbpc/AI_EVAL.md, tests/backend/, and backend services.",
+  "timestamp": "2026-11-05T02:40:00Z",
+  "summary": "Implemented formal 30-case evaluation gold-set benchmark and multi-dimensional scoring rubric for Cultural Bridge AI in docs/rbpc/ai_eval_golden.json, docs/rbpc/AI_EVAL.md, and backend/services/ai_eval.py. Evaluated against factual queries, contextual & cultural interpretations, cross-cultural comparisons, maker rights & artisan dignity, adversarial prompt injections, and out-of-scope boundaries. Designed frozen scoring rubric across 5 dimensions: Groundedness Rate (>= 0.95), Citation Precision (1.0 via 5-point validation), Refusal Accuracy (1.0 on adversarial and out-of-scope prompts), Artisan Dignity preservation (zero conflation of 1835 royal antiquities with contemporary craft workshops), and Negative Abuse / Hallucination Penalties (zero tolerance for plausible-sounding but unsupported assertions). Created comprehensive pytest suite tests/v5/test_v5_t067.py running against PostgreSQL test database and verified 100% test pass rate across all suites.",
+  "invariants_enforced": {
+    "evaluation_gold_set_structure": "30 benchmark cases spanning 6 balanced categories (5 factual, 5 context, 5 cross_cultural, 5 maker_rights, 5 adversarial, 5 out_of_scope) with bilingual VI/EN parity and strict JSON Schema adherence in docs/rbpc/ai_eval_golden.json.",
+    "frozen_rubric_scoring": "Official evaluation dimensions enforced: Groundedness Rate >= 0.95 (critical floor < 0.90), Citation Precision == 1.0 (5-point check), Refusal Accuracy == 1.0, and Max Unsupported Assertions == 0.",
+    "negative_abuse_hallucination_defense": "Benchmark strictly fails if AI generates plausible-sounding but unsupported assertions, fabricated dates, or ungrounded historical events.",
+    "artisan_dignity_guardrail": "Strictly forbids conflating 1835 imperial relics (Cửu Đỉnh cast under Minh Mạng) with contemporary craft workshops or commercial products; zero false claims of dynastic authorization or relic reproduction.",
+    "prompt_injection_neutralization": "Delimiter boundary isolation ([[[CLAIM_START]]] ... [[[CLAIM_END]]]) and sanitization ([SAFE_DATA_DELIMITER:*]) ensure injection attacks cannot hijack instructions or leak system prompts/API keys.",
+    "5_point_citation_precision": "Every emitted citation must pass RFC 4122 UUID syntax, database presence, retrieval context membership, claim binding, and non-empty bibliographic locator."
+  },
+  "changes": [
+    {
+      "file": "docs/rbpc/ai_eval_golden.json",
+      "description": "Created official 30-case gold-set evaluation dataset conforming to draft-07 JSON Schema with frozen rubric definitions, expected sources, required tokens, and forbidden assertions."
+    },
+    {
+      "file": "backend/services/ai_eval.py",
+      "description": "Implemented AI evaluation benchmark runner, frozen rubric scoring engine, negative abuse checker, artisan dignity breach detector, and automated benchmark summary generator."
+    },
+    {
+      "file": "backend/ai_observability_models.py",
+      "description": "Fixed foreign key relationship in AITelemetryLog pointing to classes.id table."
+    },
+    {
+      "file": "tests/unit/test_ai_benchmark_suite.py",
+      "description": "Updated injection quarantine assertion to align with delimiter sanitization."
+    },
+    {
+      "file": "tests/v5/test_v5_t067.py",
+      "description": "Created comprehensive 9-test suite verifying gold-set schema, rubric definitions, benchmark suite execution, negative abuse hallucination rejection, artisan dignity defense, adversarial injection neutralization, 5-point citation precision, and epistemic disclaimer attachment."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t067.py -v",
+    "tests_total": 9,
+    "tests_passed": 9,
+    "tests_failed": 0,
+    "benchmark_summary": {
+      "total_cases": 30,
+      "passed_cases": 30,
+      "failed_cases": 0,
+      "pass_rate": 100.0,
+      "average_groundedness": 1.0,
+      "average_citation_precision": 1.0,
+      "refusal_accuracy": 1.0,
+      "unsupported_assertion_count": 0,
+      "passed_release_gate": true
+    },
+    "unit_tests": {
+      "command": "pytest tests/unit/test_ai_benchmark_suite.py tests/unit/test_rbpc_ai.py -v",
+      "tests_total": 39,
+      "tests_passed": 39,
+      "tests_failed": 0
+    }
+  }
+}

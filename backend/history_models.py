@@ -329,6 +329,12 @@ class HistoricalSource(Base):
     checksum: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     excerpt: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
+    @property
+    def is_approved(self) -> bool:
+        """Indicate whether this source is verified and cleared for retrieval."""
+        return self.verification_status in ("metadata_verified", "accessible")
+
+
 
 class HistoricalClaim(Base):
     __tablename__ = "historical_claims"
@@ -390,6 +396,43 @@ class HistoricalClaim(Base):
             self.confidence = val
         else:
             self.confidence = str(val)
+
+    @property
+    def is_approved(self) -> bool:
+        """Indicate whether this claim is officially approved/verified and current."""
+        if not getattr(self, "is_current", True):
+            return False
+        if self.verification_status not in ("expert_verified", "editor_reviewed", "verified", "published"):
+            return False
+        if self.confidence in ("disputed", "contested", "unknown"):
+            return False
+        if self.claim_type == "disputed":
+            return False
+        return True
+
+    @property
+    def is_published(self) -> bool:
+        """Indicate whether this claim is officially in published status."""
+        return self.is_approved and self.verification_status == "published"
+
+    @property
+    def is_draft(self) -> bool:
+        """Indicate whether this claim is in draft or internal review status."""
+        return self.verification_status in ("draft", "internal_review")
+
+    @property
+    def is_unreviewed(self) -> bool:
+        """Indicate whether this claim is unreviewed or pending sources."""
+        return self.verification_status in ("unreviewed", "needs_source", "source_attached")
+
+    @property
+    def is_disputed(self) -> bool:
+        """Indicate whether this claim is disputed, rejected, or contested."""
+        return (
+            self.verification_status in ("disputed", "rejected", "superseded", "archived")
+            or self.confidence in ("disputed", "contested")
+            or self.claim_type == "disputed"
+        )
 
     entity: Mapped["HistoricalEntity"] = relationship("HistoricalEntity", back_populates="claims")
     source_bindings: Mapped[list["HistoricalClaimSource"]] = relationship(

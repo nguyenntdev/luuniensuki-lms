@@ -1,0 +1,86 @@
+{
+  "ticket": "V5-T065",
+  "ticket_id": "V5-T065",
+  "wave": "W06",
+  "slot": "W06-A05",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Live AI provenance visibility in backend/routers/live.py and frontend/src/components/live2/.",
+  "timestamp": "2026-11-05T03:30:00Z",
+  "summary": "Implemented end-to-end Live AI Provenance Visibility and Fallback Transparency across backend/routers/live.py, backend/domain/live_provenance.py, backend/schemas.py, backend/services/live_observability.py, and frontend/src/components/live2/ (CaptionsFeed, LiveClassroom, TeacherConsole). Exposed provider_mode ('live', 'fallback', 'guardrail', 'mock', 'demo'), guardrail_status ('passed', 'blocked', 'bypassed', 'not_evaluated'), is_fallback, is_synthetic, used_mock, fallback_indicator, and full provenance records across LiveAITeacherReplyOut, LiveAITeacherSTTOut, and SessionObservabilityOut. Added HTTP provenance headers (X-AI-Provider, X-AI-Model, X-AI-Provider-Mode, X-AI-Guardrail-Status, X-AI-Is-Fallback, X-AI-Is-Synthetic, X-AI-Fallback-Indicator) on TTS streaming responses. Enforced strict negative abuse invariants: NEVER mislabel demo, mock, or fallback as live AI (raises ValueError), and synthetic or fallback responses ALWAYS contain visible fallback indicators (raises ValueError if absent). Enhanced CaptionsFeed.tsx with accessible provenance badges ('AI Live', 'Dự phòng', 'Kiểm duyệt'), LiveClassroom.tsx with header provenance status pill and accurate fallback derivation from live events, and TeacherConsole.tsx with AI reply provenance attribution. Created comprehensive 13-test suite in tests/v5/test_v5_t065.py with 100% pass rate.",
+  "invariants_enforced": {
+    "negative_abuse_never_mislabel_fallback_as_live": "Rejects any attempt to claim provider_mode='live' when is_fallback=True, used_mock=True, is_synthetic=True, or provider in KNOWN_FALLBACK_PROVIDERS.",
+    "negative_abuse_synthetic_fallback_visible_indicator": "Synthetic or fallback responses must contain a visible fallback indicator (e.g. '[Phản hồi dự phòng ngoại tuyến / Offline Heritage Guidance]', '[Nội dung được lọc bởi bộ kiểm duyệt an toàn / Safety Guardrail]', '[Nội dung mô phỏng / Synthetic Demo]') in both text and metadata.",
+    "observability_telemetry_provenance_tracking": "live_observability records and aggregates by_provider_mode, guardrail_stats, fallback_count, and synthetic_count in SessionObservabilityOut.",
+    "tts_stt_provenance_transparency": "STT returns structured LiveAITeacherSTTOut provenance and TTS streams emit X-AI-Provider-Mode, X-AI-Is-Fallback, X-AI-Is-Synthetic, and X-AI-Fallback-Indicator headers.",
+    "frontend_accessible_provenance_badges": "CaptionsFeed renders accessible badges with aria-labels distinguishing Live AI from offline fallback and safety moderation.",
+    "teacher_console_provenance_visibility": "Host TeacherConsole surfaces provenance attribution badges for all AI replies."
+  },
+  "changes": [
+    {
+      "file": "backend/domain/live_provenance.py",
+      "description": "Created domain module with canonical provider modes, guardrail statuses, standardized fallback indicators, LiveAIProvenanceRecord Pydantic model, validate_live_provenance invariant assertion, ensure_visible_fallback_indicator, and resolve_live_ai_provenance."
+    },
+    {
+      "file": "backend/schemas.py",
+      "description": "Extended LiveAITeacherReplyOut, LiveAITeacherSTTOut, and SessionObservabilityOut to expose provider_mode, guardrail_status, guardrail_categories, is_fallback, is_synthetic, fallback_indicator, and provenance."
+    },
+    {
+      "file": "backend/services/live_observability.py",
+      "description": "Updated _Point and record_point to accept provider_mode, guardrail_status, is_fallback, and is_synthetic. Updated snapshot to aggregate by_provider_mode, guardrail_stats, fallback_count, and synthetic_count."
+    },
+    {
+      "file": "backend/services/live_ai_teacher.py",
+      "description": "Imported unicodedata required by _normalize_text."
+    },
+    {
+      "file": "backend/routers/live.py",
+      "description": "Integrated resolve_live_ai_provenance across live_ai_teacher_reply, live_ai_teacher_reply_stream, live_ai_teacher_stt, and live_ai_teacher_tts. Added provenance headers to TTS responses and recorded provenance in LiveEvent payloads and observability telemetry."
+    },
+    {
+      "file": "frontend/src/components/live2/CaptionsFeed.tsx",
+      "description": "Added provider_mode, guardrail_status, is_fallback, is_synthetic, and fallback_indicator to CaptionItem interface and implemented renderProvenanceBadge displaying 'AI Live', 'Dự phòng', and 'Kiểm duyệt' badges."
+    },
+    {
+      "file": "frontend/src/components/live2/LiveClassroom.tsx",
+      "description": "Updated Caption interface with provenance fields, derived fallback and guardrail statuses from polled live events, and added header provenance status pill."
+    },
+    {
+      "file": "frontend/src/components/live2/TeacherConsole.tsx",
+      "description": "Extracted provenance from AI replies in live events and rendered provenance source attribution badges for teacher inspection."
+    },
+    {
+      "file": "tests/v5/test_v5_t065.py",
+      "description": "Created comprehensive 13-test suite covering domain invariants, negative abuse mislabeling protection, negative abuse visible indicator enforcement, observability aggregation, API fallback/live/guardrail endpoints, TTS/STT headers, and frontend component contracts."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t065.py -v",
+    "tests_total": 13,
+    "tests_passed": 13,
+    "tests_failed": 0,
+    "test_cases": [
+      "test_provenance_record_invariants_live",
+      "test_negative_abuse_never_mislabel_fallback_as_live",
+      "test_negative_abuse_synthetic_fallback_must_contain_visible_indicator",
+      "test_resolve_live_ai_provenance_attaches_indicator",
+      "test_live_observability_provenance_aggregation",
+      "test_live_ai_teacher_reply_endpoint_fallback_provenance",
+      "test_live_ai_teacher_reply_endpoint_live_provenance",
+      "test_live_ai_teacher_reply_endpoint_guardrail_blocking",
+      "test_live_ai_teacher_tts_provenance_headers",
+      "test_live_ai_teacher_stt_provenance",
+      "test_frontend_captions_feed_provenance_badge",
+      "test_frontend_live_classroom_provenance_wiring",
+      "test_frontend_teacher_console_provenance_attribution"
+    ],
+    "regression_tests": {
+      "live_services_test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/unit/test_live_ai_teacher_services.py -v",
+      "live_services_passed": 19,
+      "frontend_type_check": "PASSED (tsc --noEmit)",
+      "frontend_lint": "PASSED (eslint --max-warnings=0)",
+      "git_diff_check": "PASSED (0 errors)"
+    }
+  }
+}

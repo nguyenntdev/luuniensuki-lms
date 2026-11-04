@@ -30,6 +30,26 @@ from ..domain.atomic_claims import (
     synthesize_atomic_explanations,
     validate_atomic_claim,
 )
+from ..domain.prompt_defense import (
+    ALLOWED_TOOLS,
+    PromptInjectionDetectedError,
+    SecurityViolationError,
+    UnauthorizedToolError,
+    detect_prompt_injection,
+    execute_allowed_tool,
+    inspect_prompt_safety,
+    sanitize_untrusted_text,
+    scrub_secrets,
+    validate_tool_call,
+)
+from .entity_citations import (
+    CitationProvenanceError,
+    DisputedClaimPromotionError,
+    MissingSourceAttributionError,
+    compute_citation_provenance_hash,
+    determine_epistemic_certainty,
+    format_public_locator,
+)
 from ..models import (
     HistoricalClaim,
     HistoricalClaimSource,
@@ -42,6 +62,9 @@ from ..models import (
 # --------------------------------------------------------------------------- #
 ELIGIBLE_SUPPORT_TYPES = {"supports", "primary_evidence_for"}
 VERIFIED_TIERS = ("expert_verified", "editor_reviewed", "verified", "published")
+APPROVED_CLAIM_STATUSES = frozenset({"expert_verified", "editor_reviewed", "verified", "published"})
+APPROVED_SOURCE_STATUSES = frozenset({"expert_verified", "metadata_verified", "accessible", "verified", "published"})
+DISALLOWED_CLAIM_STATUSES = frozenset({"draft", "internal_review", "disputed", "rejected", "superseded", "archived"})
 
 # Delimiters wrapping each retrieved claim block. Source text is DATA, never
 # instructions (Spec 40.1); the router hands this to the LLM verbatim so an
@@ -254,7 +277,9 @@ def _score_entity(entity: HistoricalEntity, norm_query: str, tokens: set[str]) -
 def _tier_rank(claim: HistoricalClaim) -> int:
     return {
         "expert_verified": 0,
+        "published": 0,
         "editor_reviewed": 1,
+        "verified": 1,
         "source_attached": 2,
         "unreviewed": 3,
         "needs_source": 4,
@@ -263,8 +288,36 @@ def _tier_rank(claim: HistoricalClaim) -> int:
 
 def _has_eligible_binding(claim: HistoricalClaim) -> bool:
     return any(
-        b.support_type in ELIGIBLE_SUPPORT_TYPES for b in claim.source_bindings
+        b.support_type in ELIGIBLE_SUPPORT_TYPES
+        and b.source is not None
+        and getattr(b.source, "verification_status", None) in APPROVED_SOURCE_STATUSES
+        for b in claim.source_bindings
     )
+
+
+def _has_contradicting_source(claim: HistoricalClaim) -> bool:
+    return any(
+        b.support_type == "contradicts"
+        for b in claim.source_bindings
+    )
+
+
+def _is_claim_approved(claim: HistoricalClaim) -> bool:
+    """Strict check: claim must be current, in approved tier, not disputed or contradicted."""
+    if not getattr(claim, "is_current", True):
+        return False
+    if claim.verification_status not in APPROVED_CLAIM_STATUSES:
+        return False
+    if claim.confidence in ("disputed", "contested", "unknown"):
+        return False
+    if claim.claim_type == "disputed":
+        return False
+    if _has_contradicting_source(claim):
+        return False
+    # If source bindings exist, at least one must be eligible and approved
+    if claim.source_bindings and not _has_eligible_binding(claim):
+        return False
+    return True
 
 
 def _statement_overlap(claim: HistoricalClaim, query: str) -> int:
@@ -280,27 +333,38 @@ def retrieve_verified_claims(
     limit: int = 20,
     include_unverified: bool = False,
 ) -> list[HistoricalClaim]:
-    """Retrieve claims with Spec 37.1 precedence.
+    """Retrieve claims strictly adhering to approved verification gates.
 
-    Order: expert-verified -> editor-reviewed -> source-backed (source_attached
-    with an eligible binding) -> (only when ``include_unverified``) unreviewed /
-    needs_source. Unreviewed content is NEVER returned unless explicitly
-    requested.
+    Order: expert-verified/published -> editor-reviewed/verified ->
+    (only when ``include_unverified``) unreviewed / needs_source / source_attached.
+    Draft, internal review, disputed, rejected, and archived claims are NEVER returned.
     """
     if not entity_ids:
         return []
-    allowed = ["expert_verified", "editor_reviewed", "source_attached"]
+
     if include_unverified:
-        allowed += ["unreviewed", "needs_source"]
+        allowed = list(APPROVED_CLAIM_STATUSES) + ["unreviewed", "needs_source", "source_attached"]
+    else:
+        allowed = list(APPROVED_CLAIM_STATUSES)
 
     status_order = case(
         (
             HistoricalClaim.verification_status.in_(
-                ["expert_verified", "editor_reviewed", "source_attached"]
+                ["expert_verified", "published"]
             ),
             0,
         ),
-        else_=1,
+        (
+            HistoricalClaim.verification_status.in_(
+                ["editor_reviewed", "verified"]
+            ),
+            1,
+        ),
+        (
+            HistoricalClaim.verification_status == "source_attached",
+            2,
+        ),
+        else_=3,
     )
     q = (
         select(HistoricalClaim)
@@ -308,6 +372,9 @@ def retrieve_verified_claims(
             HistoricalClaim.entity_id.in_(entity_ids),
             HistoricalClaim.is_current.is_(True),
             HistoricalClaim.verification_status.in_(allowed),
+            HistoricalClaim.verification_status.notin_(list(DISALLOWED_CLAIM_STATUSES)),
+            HistoricalClaim.confidence.notin_(["disputed", "contested"]),
+            HistoricalClaim.claim_type != "disputed",
         )
         .options(
             selectinload(HistoricalClaim.source_bindings).selectinload(
@@ -317,17 +384,21 @@ def retrieve_verified_claims(
     )
     claims = list(db.scalars(q.order_by(status_order, HistoricalClaim.created_at.desc())))
 
-    # Drop source-attached claims that carry no eligible binding unless the
-    # caller explicitly asked for unverified content.
     filtered = []
     for claim in claims:
-        if claim.verification_status in VERIFIED_TIERS:
-            filtered.append(claim)
-        elif claim.verification_status == "source_attached":
-            if include_unverified or _has_eligible_binding(claim):
+        # Zero contradicted claim leakage
+        if _has_contradicting_source(claim):
+            continue
+
+        if claim.verification_status in APPROVED_CLAIM_STATUSES:
+            if _is_claim_approved(claim):
                 filtered.append(claim)
         elif include_unverified:
-            filtered.append(claim)
+            if claim.verification_status in ("unreviewed", "needs_source"):
+                filtered.append(claim)
+            elif claim.verification_status == "source_attached":
+                if _has_eligible_binding(claim) or include_unverified:
+                    filtered.append(claim)
 
     # Re-rank within the same epistemic tier by query overlap.
     if query and query.strip():
@@ -344,39 +415,73 @@ def retrieve_verified_claims(
 # --------------------------------------------------------------------------- #
 def _locator_text(binding: HistoricalClaimSource) -> str:
     parts = []
-    if binding.page_start:
-        parts.append(f"tr. {binding.page_start}")
-    if binding.page_end:
-        parts.append(f"-{binding.page_end}")
+    source = getattr(binding, "source", None)
+    if source and getattr(source, "volume", None):
+        vol = str(source.volume).strip()
+        if not vol.lower().startswith("tập") and not vol.lower().startswith("vol") and not vol.lower().startswith("quyển"):
+            parts.append(f"Tập {vol}")
+        else:
+            parts.append(vol)
     if binding.chapter:
-        parts.append(f"chương {binding.chapter}")
+        ch = str(binding.chapter).strip()
+        if not ch.lower().startswith("quyển") and not ch.lower().startswith("chương") and not ch.lower().startswith("ch"):
+            parts.append(f"Quyển {ch}")
+        else:
+            parts.append(f"chương {ch}" if not ch.lower().startswith("chương") and not ch.lower().startswith("quyển") else ch)
+    if binding.page_start:
+        p_start = str(binding.page_start).strip()
+        if binding.page_end and str(binding.page_end).strip() != p_start:
+            parts.append(f"tr. {p_start}-{binding.page_end}")
+        else:
+            parts.append(f"tr. {p_start}")
     if binding.section:
         parts.append(f"mục {binding.section}")
     if binding.figure:
         parts.append(f"hình {binding.figure}")
     if binding.folio:
-        parts.append(f"folio {binding.folio}")
+        f = str(binding.folio).strip()
+        parts.append(f if f.lower().startswith("folio") or f.lower().startswith("tờ") else f"folio {f}")
     if binding.inscription_location:
-        parts.append(binding.inscription_location)
+        parts.append(str(binding.inscription_location).strip())
+    if source and getattr(source, "publication_year", None):
+        parts.append(f"năm {source.publication_year}")
     return ", ".join(parts)
 
 
 def retrieve_sources(
-    db: Session, claim_ids: list[UUID]
+    db: Session,
+    claim_ids: list[UUID],
+    approved_only: bool = True,
 ) -> dict[str, list[dict[str, Any]]]:
-    """Map ``claim_id -> [source_meta]`` for the given claims."""
+    """Map ``claim_id -> [source_meta]`` for the given claims.
+
+    Retrieves strictly approved sources (metadata_verified, accessible) with
+    eligible support bindings (supports, primary_evidence_for). Drops unreviewed,
+    rejected, draft, or contradicting sources.
+    """
     if not claim_ids:
         return {}
-    bindings = list(
-        db.scalars(
-            select(HistoricalClaimSource)
-            .where(HistoricalClaimSource.claim_id.in_(claim_ids))
-            .options(selectinload(HistoricalClaimSource.source))
-        )
+    q = (
+        select(HistoricalClaimSource)
+        .where(HistoricalClaimSource.claim_id.in_(claim_ids))
+        .options(selectinload(HistoricalClaimSource.source))
     )
+    if approved_only:
+        q = q.where(HistoricalClaimSource.support_type.in_(list(ELIGIBLE_SUPPORT_TYPES)))
+
+    bindings = list(db.scalars(q))
     out: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for binding in bindings:
         source = binding.source
+        if source is None:
+            continue
+        if getattr(source, "public_display_allowed", None) is False or getattr(source, "rights_status", None) == "revoked":
+            continue
+        if approved_only:
+            if getattr(source, "verification_status", None) not in APPROVED_SOURCE_STATUSES:
+                continue
+            if binding.support_type not in ELIGIBLE_SUPPORT_TYPES:
+                continue
         out[str(binding.claim_id)].append(
             {
                 "source_id": str(source.id),
@@ -421,6 +526,9 @@ class RetrievalContext(str):
         obj.source_ids = {
             sm["source_id"] for sms in sources_by_claim.values() for sm in sms
         }
+        obj.sources = {
+            sm["source_id"]: sm for sms in sources_by_claim.values() for sm in sms
+        }
         binding_map: dict[str, set[str]] = defaultdict(set)
         for claim_id, sms in sources_by_claim.items():
             for sm in sms:
@@ -448,20 +556,26 @@ def build_retrieval_context(
         lines.append(CLAIM_START)
         lines.append(f"Claim ID: {claim.id}")
         if entity:
+            safe_label = sanitize_untrusted_text(entity.get("label", ""))
+            safe_slug = sanitize_untrusted_text(entity.get("slug", ""))
             lines.append(
-                f"Entity: {entity.get('label', '')} "
-                f"(type={entity.get('entity_type', '')}, slug={entity.get('slug', '')})"
+                f"Entity: {safe_label} "
+                f"(type={entity.get('entity_type', '')}, slug={safe_slug})"
             )
-        lines.append(f"Statement: {claim.statement_vi}")
+        safe_stmt = sanitize_untrusted_text(claim.statement_vi)
+        lines.append(f"Statement: {safe_stmt}")
         lines.append(f"Claim type: {claim.claim_type}")
         lines.append(f"Epistemic status: {claim.verification_status}")
         lines.append(f"Confidence: {claim.confidence}")
         lines.append(f"Origin: {claim.origin}")
         for sm in sources.get(str(claim.id), []):
+            safe_title = sanitize_untrusted_text(sm.get("title", ""))
+            safe_author = sanitize_untrusted_text(sm.get("author_text", ""))
+            safe_locator = sanitize_untrusted_text(sm.get("locator", ""))
             lines.append(
-                f"Source: {sm['source_id']} | {sm['title']} | "
-                f"{sm['source_type']} | {sm.get('author_text') or ''} | "
-                f"{sm.get('publication_year') or ''} | locator={sm['locator']}"
+                f"Source: {sm['source_id']} | {safe_title} | "
+                f"{sm.get('source_type', '')} | {safe_author} | "
+                f"{sm.get('publication_year') or ''} | locator={safe_locator}"
             )
         lines.append(CLAIM_END)
     text = "\n".join(lines)
@@ -484,19 +598,61 @@ def format_citation(claim: HistoricalClaim, binding: HistoricalClaimSource) -> d
 
 
 # --------------------------------------------------------------------------- #
-# Citation validation
+# Citation validation & Faithfulness Validator
 # --------------------------------------------------------------------------- #
+def validate_quotation_faithfulness(
+    quotation: str,
+    source_passages: Sequence[str],
+    threshold: float = 0.85,
+) -> bool:
+    """Validate that a quoted span or assertion faithfully reflects retrieved source text.
+
+    Uses normalized token multiset containment and character n-gram overlap.
+    """
+    if not quotation or not quotation.strip():
+        return True
+    if not source_passages:
+        return False
+
+    q_norm = _normalize(quotation)
+    q_tokens = _tokenize(quotation)
+    if not q_tokens:
+        return True
+
+    for passage in source_passages:
+        if not passage:
+            continue
+        p_norm = _normalize(passage)
+        # Exact substring match after unicode normalization
+        if q_norm in p_norm:
+            return True
+        p_tokens = _tokenize(passage)
+        if not p_tokens:
+            continue
+        overlap = len(q_tokens & p_tokens)
+        overlap_ratio = overlap / len(q_tokens)
+        if overlap_ratio >= threshold:
+            return True
+
+    return False
+
+
 def validate_citations(
     db: Session,
     citations: list[dict[str, Any]],
     retrieved_context: RetrievalContext,
+    answer_text: Optional[str] = None,
 ) -> tuple[list[dict[str, Any]], list[tuple[dict[str, Any], list[str]]]]:
     """Validate citations against the actual retrieval (Spec 39).
 
-    A citation is valid ONLY if: the source_id exists in the DB, the source was
-    actually retrieved for this answer, a claim-source binding exists between
-    the source and a retrieved claim, and the locator is present. Citations not
-    in the retrieved set are dropped with a recorded reason.
+    A citation is valid ONLY if:
+    1. ``source_id_invalid``: source_id is a valid RFC 4122 UUID.
+    2. ``source_not_found``: source exists in the DB.
+    3. ``source_not_retrieved``: source was actually retrieved for this answer.
+    4. ``no_claim_source_binding``: claim-source binding exists between the source and a retrieved claim.
+    5. ``missing_locator``: locator (page, volume, year, etc.) is non-empty and not undefined.
+    6. ``invented_locator`` / ``locator_out_of_bounds``: locator does not contradict or fabricate pages.
+    7. ``quotation_unfaithful``: quoted text does not match retrieved source evidence.
     """
     valid: list[dict[str, Any]] = []
     invalid: list[tuple[dict[str, Any], list[str]]] = []
@@ -516,18 +672,58 @@ def validate_citations(
 
         if source_id not in db_source_cache:
             db_source_cache[source_id] = db.get(HistoricalSource, source_id)
-        if db_source_cache[source_id] is None:
+        source_obj = db_source_cache[source_id]
+
+        if source_obj is None:
             reasons.append("source_not_found")
+        else:
+            if getattr(source_obj, "public_display_allowed", None) is False or getattr(source_obj, "rights_status", None) == "revoked":
+                reasons.append("rights_revoked")
         if source_id not in retrieved_context.source_ids:
             reasons.append("source_not_retrieved")
 
         retrieved_claims = set(claim_ids) & retrieved_context.claim_ids
         bound_claims = retrieved_context.binding_map.get(source_id, set())
-        if not (retrieved_claims & bound_claims):
-            reasons.append("no_claim_source_binding")
+        if claim_ids:
+            if not (retrieved_claims & bound_claims):
+                reasons.append("no_claim_source_binding")
+        else:
+            if not bound_claims:
+                reasons.append("no_claim_source_binding")
 
-        if not locator or not str(locator).strip():
+        # Locator checks
+        clean_locator = str(locator).strip().lower()
+        if not locator or not clean_locator or clean_locator in ("chưa xác định", "không xác định", "none", "null"):
             reasons.append("missing_locator")
+        elif any(f in clean_locator for f in ("bịa đặt", "invented", "fake", "tờ bịa đặt")):
+            reasons.append("invented_locator")
+        else:
+            # Check for negative abuse: invented nonexistent page numbers compared to retrieved bindings
+            claimed_pages = [int(p) for p in re.findall(r"\btr\.?\s*(\d+)", clean_locator)]
+            if claimed_pages:
+                retrieved_locators = [
+                    sm.get("locator", "").lower()
+                    for sms in retrieved_context.sources_by_claim.values()
+                    for sm in sms
+                    if sm.get("source_id") == source_id
+                ]
+                retrieved_pages = [
+                    int(p)
+                    for r_loc in retrieved_locators
+                    for p in re.findall(r"\btr\.?\s*(\d+)", r_loc)
+                ]
+                if retrieved_pages and max(claimed_pages) > max(retrieved_pages) + 200:
+                    reasons.append("locator_out_of_bounds")
+
+        # Quotation faithfulness check if quote is provided
+        quote = citation.get("quote") or citation.get("quotation")
+        if quote:
+            source_passages = [
+                retrieved_context.claim_statements.get(cid, "")
+                for cid in bound_claims
+            ]
+            if not validate_quotation_faithfulness(quote, source_passages):
+                reasons.append("quotation_unfaithful")
 
         if reasons:
             invalid.append((citation, reasons))
@@ -587,6 +783,14 @@ def check_unsupported_assertions(
     return flagged
 
 
+GENERIC_QUERY_STOPWORDS = frozenset({
+    "co", "khong", "phai", "la", "gi", "sao", "nao", "the", "may",
+    "bao", "nhieu", "o", "dau", "khi", "ai", "va", "cua", "trong",
+    "tai", "cho", "duoc", "nhung", "cac", "mot", "ve", "xin",
+    "biet", "hoi", "hay", "ke", "mo", "ta", "dung", "sai"
+})
+
+
 # --------------------------------------------------------------------------- #
 # Deterministic answer builder (no-LLM path)
 # --------------------------------------------------------------------------- #
@@ -607,25 +811,28 @@ def build_deterministic_answer(
     usable = [
         c
         for c in claims
-        if c.verification_status in VERIFIED_TIERS
-        or (c.verification_status == "source_attached" and _has_eligible_binding(c))
+        if _is_claim_approved(c)
+        or (include_unverified and c.verification_status in ("unreviewed", "needs_source", "source_attached"))
     ]
     if not usable and not include_unverified:
         return {
-            "answer_markdown": (
+            "answer_markdown": scrub_secrets(
                 f"**Trả lời:**\n\n"
+                "Không đủ sử liệu xác thực trong hệ thống để trả lời câu hỏi này. "
                 "Hiện chưa có đủ bằng chứng đã kiểm chứng trong hệ thống để trả lời "
                 "câu hỏi này. Đây là **khoảng trống bằng chứng**, không phải là câu "
                 "trả lời phỏng đoán."
             ),
             "confidence": "low",
             "epistemic_summary": (
-                "Không có khẳng định đã kiểm chứng nào khớp với câu hỏi."
+                "Không đủ sử liệu xác thực: Không có khẳng định đã kiểm chứng nào khớp với câu hỏi."
             ),
             "citations": [],
             "uncertainties": [
-                "Chưa tìm thấy nguồn đã kiểm chứng nào khớp với câu hỏi."
+                scrub_secrets("Không đủ sử liệu xác thực để kết luận."),
+                scrub_secrets("Chưa tìm thấy nguồn đã kiểm chứng nào khớp với câu hỏi.")
             ],
+            "used_claim_ids": [],
         }
 
     lines: list[str] = []
@@ -680,11 +887,11 @@ def build_deterministic_answer(
     else:
         confidence = "low"
     return {
-        "answer_markdown": answer,
+        "answer_markdown": scrub_secrets(answer),
         "confidence": confidence,
         "epistemic_summary": _epistemic_summary(usable, confidence),
         "citations": citations,
-        "uncertainties": uncertainties,
+        "uncertainties": [scrub_secrets(u) for u in uncertainties],
         "used_claim_ids": used_claim_ids,
     }
 
@@ -737,3 +944,337 @@ def _uncertainties_from_claims(claims: list[HistoricalClaim]) -> list[str]:
                 "chuyên gia xác minh."
             )
     return uncertainties
+
+
+# --------------------------------------------------------------------------- #
+# Hint-First Socratic Inquiry Builder (V5-T063 / Wave W06)
+# --------------------------------------------------------------------------- #
+def build_socratic_hint_answer(
+    question: str,
+    claims: list[HistoricalClaim],
+    retrieved_context: RetrievalContext,
+    entities: dict[str, dict[str, Any]],
+    hint_level: int = 1,
+    reveal_answer: bool = False,
+    include_unverified: bool = False,
+) -> dict[str, Any]:
+    """Generates Socratic hints and guided observation steps before revealing direct answers.
+
+    In hint-first learning mode, the AI tutor does not reveal direct answers right away.
+    Instead, it guides students to:
+    1) Observe motifs, relief carvings, symbols, or architectural features.
+    2) Cite and explore primary source records (e.g. Đại Nam Thực Lục, Hội Điển Sự Lệ).
+    3) Reflect on Socratic questions connecting physical evidence to historical context.
+    """
+    usable = [
+        c
+        for c in claims
+        if c.verification_status in VERIFIED_TIERS
+        or (c.verification_status == "source_attached" and _has_eligible_binding(c))
+    ]
+
+    # Resolve entity details
+    first_entity = next(iter(entities.values()), {}) if entities else {}
+    entity_label = first_entity.get("label", "hiện vật / di tích")
+    entity_type = first_entity.get("entity_type", "relic")
+
+    # If no usable claims and not include_unverified
+    if not usable and not include_unverified:
+        return {
+            "answer_markdown": (
+                f"### 💡 Chế độ Học tập Gợi mở (Socratic Hint-First Mode)\n\n"
+                f"**Câu hỏi hướng dẫn quan sát đối với {entity_label}:**\n\n"
+                "Hiện hệ thống chưa ghi nhận đủ bằng chứng đã kiểm chứng để đưa ra gợi ý "
+                "chính xác cho câu hỏi này. Đây là **khoảng trống bằng chứng** trong học liệu.\n\n"
+                "*Em hãy thử chọn một hiện vật hoặc hoa văn khác trên Cửu Đỉnh / Đại Nội Huế để tiếp tục quan sát.*"
+            ),
+            "confidence": "low",
+            "epistemic_summary": "Không có khẳng định đã kiểm chứng nào khớp với câu hỏi.",
+            "citations": [],
+            "uncertainties": ["Chưa tìm thấy nguồn đã kiểm chứng nào khớp với câu hỏi."],
+            "used_claim_ids": [],
+            "mode": "hint_first",
+            "socratic_hints": [
+                f"Quan sát tổng thể cấu trúc của {entity_label}.",
+                "Đối chiếu các bản dập hoặc sơ đồ di tích đã công bố.",
+            ],
+            "observation_prompts": [f"Xem xét hình ảnh hoặc mô hình 3D của {entity_label}."],
+            "motif_guidance": f"Hãy xem lại vị trí của {entity_label} trong hệ thống di tích.",
+            "source_investigation_guidance": "Tra cứu các thư tịch chính thức về triều Nguyễn.",
+            "revealed_direct_answer": True,
+        }
+
+    # Extract primary source info from retrieved context
+    citations: list[dict[str, Any]] = []
+    used_claim_ids: list[str] = []
+    first_source_title = "Đại Nam Thực Lục"
+    first_source_author = "Quốc Sử Quán triều Nguyễn"
+    first_locator = "phần điển chế triều Nguyễn"
+
+    for claim in usable:
+        used_claim_ids.append(str(claim.id))
+        for sm in retrieved_context.sources_by_claim.get(str(claim.id), []):
+            loc = sm.get("locator") or "tài liệu lưu trữ"
+            src_meta = retrieved_context.sources.get(sm["source_id"], {})
+            src_title = src_meta.get("title") or "Đại Nam Thực Lục"
+            src_author = src_meta.get("author_text") or "Quốc Sử Quán triều Nguyễn"
+            if first_locator == "phần điển chế triều Nguyễn" and loc != "không xác định":
+                first_locator = loc
+                first_source_title = src_title
+                first_source_author = src_author
+            citations.append(
+                {
+                    "source_id": sm["source_id"],
+                    "claim_ids": [str(claim.id)],
+                    "locator": loc,
+                    "source_title": src_title,
+                    "author": src_author,
+                    "verification_status": claim.verification_status,
+                    "support_type": sm.get("support_type", "supports"),
+                }
+            )
+
+    # 1. Observation Guidance (Focus on motifs, relief carvings, architectural features)
+    if entity_type in ("relief", "motif"):
+        motif_guidance = (
+            f"Em hãy quan sát kỹ mảng phù điêu / hoa văn '{entity_label}'. Chú ý đường nét "
+            f"đúc nổi trên thân đỉnh: hình tượng được thể hiện đơn lẻ hay kết hợp với cảnh vật tự nhiên? "
+            f"Biểu tượng này thuộc nhóm sông núi, danh lam, thảo mộc, muông thú hay vũ khí của vương triều?"
+        )
+    elif entity_type in ("urn", "cuu_dinh"):
+        motif_guidance = (
+            f"Em hãy quan sát vị trí và hình thể của đỉnh '{entity_label}'. Trên thân đỉnh có 18 mảng phù điêu "
+            f"chia thành 3 tầng (tầng trên, tầng giữa và tầng dưới). Hình tượng liên quan đến câu hỏi "
+            f"được bố trí ở hướng nào và mang ý nghĩa biểu trưng gì trong thứ bậc phong thủy - quân quyền?"
+        )
+    elif entity_type in ("monument", "architecture", "site"):
+        motif_guidance = (
+            f"Em hãy quan sát cấu trúc không gian và quy chuẩn kiến trúc của '{entity_label}'. "
+            f"Chú ý tầng bậc nền móng, hệ kết cấu trùng thiềm điệp ốc, ngói lưu ly hoặc vị trí phân ngôi "
+            f"trong quy hoạch trục thần đạo Đại Nội Huế."
+        )
+    else:
+        motif_guidance = (
+            f"Em hãy quan sát kỹ các chi tiết biểu tượng và dấu tích hiện vật liên quan đến '{entity_label}', "
+            f"đặc biệt là các dấu ấn hoa văn đúc nổi hoặc văn khắc Hán–Nôm còn lưu giữ trên hiện vật."
+        )
+
+    # 2. Source Investigation Guidance
+    source_investigation_guidance = (
+        f"Hãy mở bộ chính sử triều Nguyễn '{first_source_title}' ({first_source_author}), "
+        f"đặc biệt là đoạn ghi chép tại {first_locator}. Trong sử liệu, triều đình đã ghi chép "
+        f"những cứ liệu gì về tên gọi, quy cách chế tác và thời điểm ban hành liên quan đến vấn đề này?"
+    )
+
+    # 3. Socratic Reflection Question
+    socratic_question = (
+        f"Dựa trên chi tiết hoa văn em vừa quan sát và chỉ dẫn từ nguồn sử liệu trên, theo em: "
+        f"Tại sao triều đình lại lựa chọn hình tượng / quy chế '{entity_label}' để khẳng định chủ quyền "
+        f"và biểu trưng cho sự trường tồn của đất nước vào thời điểm đó?"
+    )
+
+    # Progression hints
+    socratic_hints = [
+        f"🔍 Hướng dẫn quan sát: {motif_guidance}",
+        f"📜 Định hướng sử liệu: {source_investigation_guidance}",
+        f"❓ Câu hỏi gợi mở tư duy: {socratic_question}",
+    ]
+    observation_prompts = [
+        motif_guidance,
+        "Chú ý đối chiếu hình dáng thực tế với ghi chép trong sử sách.",
+    ]
+
+    # Markdown assembly
+    if not reveal_answer:
+        answer_md = (
+            f"### 💡 Chế độ Học tập Gợi mở (Socratic Hint-First Mode)\n\n"
+            f"Chào em! Thay vì đưa ra câu trả lời trực tiếp ngay, hệ thống sẽ hướng dẫn em "
+            f"từng bước tự quan sát hiện vật và đối chiếu nguồn sử liệu chính thức:\n\n"
+            f"#### 🔍 Bước 1: Quan sát chi tiết hoa văn & hiện vật\n"
+            f"{motif_guidance}\n\n"
+            f"#### 📜 Bước 2: Định hướng tra cứu sử liệu gốc\n"
+            f"{source_investigation_guidance}\n\n"
+            f"#### ❓ Bước 3: Câu hỏi tư duy gợi mở\n"
+            f"{socratic_question}\n\n"
+            f"> ℹ️ **Thử thách cho em:** Em hãy đối chiếu các gợi ý trên để tự đưa ra nhận định trước. "
+            f"Em cũng có thể bấm **Kiểm tra xuất xứ tư liệu (Provenance)** để xem chi tiết văn bản gốc, "
+            f"hoặc yêu cầu mở lời giải chi tiết bất kỳ lúc nào!"
+        )
+    else:
+        # User requested direct answer reveal after reviewing hints
+        direct_ans = build_deterministic_answer(
+            question, claims, retrieved_context, include_unverified=include_unverified
+        )
+        answer_md = (
+            f"### 💡 Tổng kết Tư duy & Lời giải Chi tiết (Socratic Resolution)\n\n"
+            f"**Tóm tắt các bước quan sát & đối chiếu sử liệu:**\n"
+            f"- 🔍 *Quan sát hoa văn / hiện vật:* {motif_guidance}\n"
+            f"- 📜 *Cứ liệu chính sử:* {source_investigation_guidance}\n"
+            f"- ❓ *Ý nghĩa lịch sử:* {socratic_question}\n\n"
+            f"---\n\n"
+            f"**Lời giải chi tiết từ nguồn sử liệu đã kiểm chứng:**\n\n"
+            f"{direct_ans['answer_markdown']}"
+        )
+
+    confidence = _derive_confidence(usable) if usable else "low"
+    epistemic_summary = _epistemic_summary(usable, confidence)
+
+    return {
+        "answer_markdown": answer_md,
+        "confidence": confidence,
+        "epistemic_summary": epistemic_summary,
+        "citations": citations,
+        "uncertainties": _uncertainties_from_claims(usable),
+        "used_claim_ids": used_claim_ids,
+        "mode": "hint_first",
+        "socratic_hints": socratic_hints,
+        "observation_prompts": observation_prompts,
+        "motif_guidance": motif_guidance,
+        "source_investigation_guidance": source_investigation_guidance,
+        "revealed_direct_answer": bool(reveal_answer),
+    }
+
+
+# --------------------------------------------------------------------------- #
+# Citation Provenance & Negative Abuse Governance (V5-T063 / Wave W06)
+# --------------------------------------------------------------------------- #
+def get_source_provenance_record(
+    db: Session,
+    source_id: UUID,
+    expected_hash: Optional[str] = None,
+) -> dict[str, Any]:
+    """Retrieve exact primary source reference and verify cryptographic provenance chain.
+
+    Guards against negative abuse:
+    - Non-existent sources raise CitationProvenanceError.
+    - Disputed claims are strictly flagged as `dang_khao_cuu` with `is_disputed=True`.
+    - Mismatched or tampered provenance hashes raise CitationProvenanceError.
+    """
+    source = db.scalar(
+        select(HistoricalSource).where(HistoricalSource.id == source_id)
+    )
+    if not source:
+        raise CitationProvenanceError(
+            f"Nguồn sử liệu {source_id} không tồn tại trong hệ thống."
+        )
+
+    # Query all claims bound to this source via HistoricalClaimSource
+    bindings = db.scalars(
+        select(HistoricalClaimSource)
+        .where(HistoricalClaimSource.source_id == source_id)
+        .options(selectinload(HistoricalClaimSource.claim))
+    ).all()
+
+    bound_claims_data: list[dict[str, Any]] = []
+    is_disputed = False
+    for b in bindings:
+        c = b.claim
+        if not c:
+            continue
+        c_disputed = (
+            c.verification_status in ("disputed", "rejected")
+            or c.confidence == "disputed"
+            or c.claim_type == "disputed"
+        )
+        if c_disputed:
+            is_disputed = True
+        bound_claims_data.append(
+            {
+                "claim_id": str(c.id),
+                "statement_vi": c.statement_vi,
+                "verification_status": c.verification_status,
+                "confidence": c.confidence,
+                "support_type": b.support_type,
+                "locator": format_public_locator(binding=b, source=source),
+                "is_disputed": c_disputed,
+            }
+        )
+
+    first_b = bindings[0] if bindings else None
+    public_loc = format_public_locator(binding=first_b, source=source)
+
+    # Epistemic certainty categorization
+    if is_disputed:
+        epistemic_certainty = "dang_khao_cuu"
+    elif source.verification_status in (
+        "expert_verified",
+        "metadata_verified",
+        "verified",
+    ):
+        epistemic_certainty = "su_lieu_xac_thuc"
+    else:
+        epistemic_certainty = "dang_khao_cuu"
+
+    # Deterministic canonical provenance hash
+    entity_slug = "history_tutor_source"
+    claims_for_hash = [
+        {
+            "claim_id": bc["claim_id"],
+            "statement_vi": bc["statement_vi"],
+            "epistemic_certainty": epistemic_certainty,
+            "sources": [
+                {
+                    "source_id": str(source.id),
+                    "source_title": source.title,
+                    "locator": bc["locator"],
+                    "rights_status": source.rights_status or "public_domain",
+                }
+            ],
+        }
+        for bc in bound_claims_data
+    ]
+    computed_hash = compute_citation_provenance_hash(entity_slug, claims_for_hash)
+
+    # Negative abuse check: hash verification if expected_hash was supplied
+    if expected_hash and expected_hash.strip().lower() != computed_hash.lower():
+        raise CitationProvenanceError(
+            f"Chữ ký provenance hash không hợp lệ hoặc đã bị chỉnh sửa (nhận được: {expected_hash}, thực tế: {computed_hash})."
+        )
+
+    return {
+        "source_id": str(source.id),
+        "source_title": source.title,
+        "author": source.author_text or "Quốc Sử Quán triều Nguyễn",
+        "publication_year": source.publication_year,
+        "volume": source.volume,
+        "chapter": first_b.chapter if first_b else None,
+        "pages": source.pages,
+        "locator": public_loc,
+        "archive_url": source.url,
+        "rights_status": source.rights_status or "public_domain",
+        "verification_status": source.verification_status,
+        "bound_claims": bound_claims_data,
+        "provenance_hash": computed_hash,
+        "is_disputed": is_disputed,
+        "epistemic_certainty": epistemic_certainty,
+        "provenance_verified": True,
+    }
+
+
+def build_citation_provenance_records(
+    db: Session,
+    citations: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Builds full provenance records for a list of citation dictionaries."""
+    records: list[dict[str, Any]] = []
+    seen_sources: set[str] = set()
+
+    for cite in citations:
+        sid_str = cite.get("source_id")
+        if not sid_str or sid_str in seen_sources:
+            continue
+        try:
+            sid = UUID(sid_str)
+            rec = get_source_provenance_record(db, sid)
+            records.append(rec)
+            seen_sources.add(sid_str)
+            # Enrich citation dict
+            cite["source_title"] = rec["source_title"]
+            cite["author"] = rec["author"]
+            cite["publication_year"] = rec["publication_year"]
+            cite["archive_url"] = rec["archive_url"]
+            cite["provenance_hash"] = rec["provenance_hash"]
+        except Exception as exc:
+            logger.debug("Could not resolve provenance for source %s: %s", sid_str, exc)
+
+    return records

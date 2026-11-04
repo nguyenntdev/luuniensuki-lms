@@ -17,12 +17,20 @@ import {
   FileText,
   RotateCcw,
   Info,
+  Lightbulb,
+  Eye,
+  ShieldCheck,
+  Check,
+  Search,
+  ExternalLink,
+  X,
 } from "lucide-react";
 import ImperialHeader from "@/components/imperial/shell/ImperialHeader";
 import { Button } from "@/components/ui/button";
 import {
   askImperialAiTutor,
   type ImperialAiMessage,
+  type ProvenanceInspectionRecord,
   SUGGESTED_INQUIRY_PROMPTS,
 } from "@/lib/imperial/ai-assistant";
 import { FALLBACK_SITES } from "@/lib/imperial/fallback-data";
@@ -32,12 +40,14 @@ export default function ImperialAiInquiryPage() {
   const [selectedSiteSlug, setSelectedSiteSlug] = useState<string>("");
   const [inputQuery, setInputQuery] = useState("");
   const [loading, setLoading] = useState(false);
+  const [learningMode, setLearningMode] = useState<"hint_first" | "direct">("hint_first");
+  const [selectedProvenance, setSelectedProvenance] = useState<ProvenanceInspectionRecord | null>(null);
   const [messages, setMessages] = useState<ImperialAiMessage[]>([
     {
       id: "init_system",
       role: "assistant",
       content:
-        "Chào mừng bạn đến với **Không gian Truy vấn Lịch sử AI — Đại Nội Huế**.\n\nHệ thống được khóa phạm vi chuyên sâu theo đề tài: chỉ phản hồi các vấn đề về quy hoạch kiến trúc, đời sống triều đình và các tư liệu chính sử triều Nguyễn đã kiểm chứng. Mọi câu hỏi ngoài phạm vi sẽ được từ chối sư phạm rõ ràng.",
+        "Chào mừng bạn đến với **Không gian Truy vấn Lịch sử AI — Đại Nội Huế**.\n\nHệ thống được khóa phạm vi chuyên sâu theo đề tài: chỉ phản hồi các vấn đề về quy hoạch kiến trúc, đời sống triều đình và các tư liệu chính sử triều Nguyễn đã kiểm chứng. Ở **Chế độ Gợi mở (Hint-first)**, trợ lý sẽ hướng dẫn bạn tự quan sát hoa văn, chi tiết kiến trúc và định vị sử liệu trước khi công bố đáp án.",
       timestamp: Date.now(),
       suggestedQuestions: SUGGESTED_INQUIRY_PROMPTS,
     },
@@ -50,7 +60,7 @@ export default function ImperialAiInquiryPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
-  const handleSendMessage = async (textToSend?: string) => {
+  const handleSendMessage = async (textToSend?: string, overrideRevealAnswer?: boolean) => {
     const query = (textToSend || inputQuery).trim();
     if (!query || loading) return;
 
@@ -69,6 +79,8 @@ export default function ImperialAiInquiryPage() {
       const assistantMessage = await askImperialAiTutor({
         query,
         context_monument_slug: selectedSiteSlug || undefined,
+        learning_mode: learningMode,
+        reveal_answer: overrideRevealAnswer ?? (learningMode === "direct"),
       });
       setMessages((prev) => [...prev, assistantMessage]);
     } catch {
@@ -81,6 +93,38 @@ export default function ImperialAiInquiryPage() {
           timestamp: Date.now(),
         },
       ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRevealAnswer = async (msg: ImperialAiMessage) => {
+    if (loading) return;
+    setLoading(true);
+
+    // Find original question from conversation
+    const msgIdx = messages.findIndex((m) => m.id === msg.id);
+    let originalQuestion = "Điện Thái Hòa";
+    for (let i = msgIdx - 1; i >= 0; i--) {
+      if (messages[i].role === "user") {
+        originalQuestion = messages[i].content;
+        break;
+      }
+    }
+
+    try {
+      const revealed = await askImperialAiTutor({
+        query: originalQuestion,
+        context_monument_slug: selectedSiteSlug || undefined,
+        learning_mode: "hint_first",
+        reveal_answer: true,
+      });
+
+      setMessages((prev) =>
+        prev.map((m) => (m.id === msg.id ? { ...revealed, id: msg.id } : m)),
+      );
+    } catch {
+      // keep current message on failure
     } finally {
       setLoading(false);
     }
@@ -133,6 +177,38 @@ export default function ImperialAiInquiryPage() {
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Learning Mode Toggle (Hint-first vs Direct) */}
+            <div className="flex items-center bg-secondary/50 rounded-lg p-0.5 border border-border/70 text-xs">
+              <button
+                type="button"
+                onClick={() => setLearningMode("hint_first")}
+                className={cn(
+                  "px-2.5 py-1 rounded-md font-medium transition-all flex items-center gap-1.5",
+                  learningMode === "hint_first"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+                title="AI đưa gợi ý quan sát hoa văn & sử liệu trước khi hiện đáp án"
+              >
+                <Lightbulb className="size-3" />
+                <span>Gợi mở (Hint-first)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setLearningMode("direct")}
+                className={cn(
+                  "px-2.5 py-1 rounded-md font-medium transition-all flex items-center gap-1.5",
+                  learningMode === "direct"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+                title="Trả lời trực tiếp kết hợp dẫn nguồn"
+              >
+                <BookOpen className="size-3" />
+                <span>Trực tiếp</span>
+              </button>
+            </div>
+
             <Button
               variant="outline"
               size="sm"
@@ -147,28 +223,35 @@ export default function ImperialAiInquiryPage() {
         </div>
 
         {/* Monument Context Selector */}
-        <div className="py-3 flex flex-wrap items-center gap-2.5 bg-secondary/30 px-3.5 rounded-xl mt-3 border border-border/60">
-          <span className="text-xs font-semibold text-muted-foreground shrink-0">
-            Khung ngữ cảnh di tích:
-          </span>
-          <select
-            value={selectedSiteSlug}
-            onChange={(e) => setSelectedSiteSlug(e.target.value)}
-            className="bg-card border border-border/80 rounded-lg px-2.5 py-1 text-xs font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-          >
-            <option value="">-- Toàn bộ Đại Nội (16 công trình) --</option>
-            {FALLBACK_SITES.map((site) => (
-              <option key={site.slug} value={site.slug}>
-                {site.name_vi} ({site.zone_slug})
-              </option>
-            ))}
-          </select>
-
-          {selectedSite && (
-            <span className="text-[11px] text-primary font-medium">
-              Niên đại: {selectedSite.construction_year || "thế kỷ XIX"} ({selectedSite.reign || "Triều Nguyễn"})
+        <div className="py-3 flex flex-wrap items-center justify-between gap-2.5 bg-secondary/30 px-3.5 rounded-xl mt-3 border border-border/60">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-xs font-semibold text-muted-foreground shrink-0">
+              Khung ngữ cảnh di tích:
             </span>
-          )}
+            <select
+              value={selectedSiteSlug}
+              onChange={(e) => setSelectedSiteSlug(e.target.value)}
+              className="bg-card border border-border/80 rounded-lg px-2.5 py-1 text-xs font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+            >
+              <option value="">-- Toàn bộ Đại Nội (16 công trình) --</option>
+              {FALLBACK_SITES.map((site) => (
+                <option key={site.slug} value={site.slug}>
+                  {site.name_vi} ({site.zone_slug})
+                </option>
+              ))}
+            </select>
+
+            {selectedSite && (
+              <span className="text-[11px] text-primary font-medium">
+                Niên đại: {selectedSite.construction_year || "thế kỷ XIX"} ({selectedSite.reign || "Triều Nguyễn"})
+              </span>
+            )}
+          </div>
+
+          <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+            <ShieldCheck className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+            <span>Chống ngụy tạo trích dẫn & khóa phạm vi tư liệu</span>
+          </div>
         </div>
 
         {/* Chat Feed */}
@@ -206,25 +289,126 @@ export default function ImperialAiInquiryPage() {
                       )}
                     </div>
                   ) : (
-                    /* Grounded Pedagogical Structured Response */
+                    /* Pedagogical Structured Response */
                     <div className="space-y-3">
-                      {/* 1. Inquiry Explanation */}
-                      <div className="p-4 rounded-2xl rounded-tl-sm bg-card border border-border/80 shadow-sm space-y-2 text-sm leading-relaxed">
-                        <div className="flex items-center gap-1.5 font-serif font-bold text-xs text-primary">
-                          <BookOpen className="size-4" />
-                          <span>1. Lời giải thích gợi mở tư duy</span>
+                      {/* Hint-First Socratic Inquiry Box */}
+                      {msg.structuredResponse?.learning_mode === "hint_first" &&
+                        !msg.structuredResponse.revealed_direct_answer && (
+                          <div className="p-4 rounded-2xl border border-primary/30 bg-primary/5 space-y-3 shadow-sm">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-1.5 font-serif font-bold text-xs text-primary">
+                                <Lightbulb className="size-4 text-amber-500" />
+                                <span>Chế độ Gợi mở (Socratic Hint-First)</span>
+                              </div>
+                              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-primary/10 text-primary font-semibold">
+                                Chưa mở đáp án trực tiếp
+                              </span>
+                            </div>
+
+                            {/* Step 1: Observation Guidance */}
+                            {msg.structuredResponse.motif_guidance && (
+                              <div className="p-3 rounded-xl bg-card border border-border/80 text-xs space-y-1">
+                                <div className="font-semibold text-foreground flex items-center gap-1.5 text-xs text-emerald-700 dark:text-emerald-400">
+                                  <Eye className="size-3.5" />
+                                  <span>Bước 1: Hướng dẫn quan sát hoa văn & kiến trúc</span>
+                                </div>
+                                <p className="text-muted-foreground leading-relaxed">
+                                  {msg.structuredResponse.motif_guidance}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Step 2: Source Guidance */}
+                            {msg.structuredResponse.source_guidance && (
+                              <div className="p-3 rounded-xl bg-card border border-border/80 text-xs space-y-1">
+                                <div className="font-semibold text-foreground flex items-center gap-1.5 text-xs text-amber-700 dark:text-amber-400">
+                                  <BookOpen className="size-3.5" />
+                                  <span>Bước 2: Định hướng tra cứu sử liệu gốc</span>
+                                </div>
+                                <p className="text-muted-foreground leading-relaxed">
+                                  {msg.structuredResponse.source_guidance}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Step 3: Socratic Question */}
+                            {msg.structuredResponse.socratic_question && (
+                              <div className="p-3 rounded-xl bg-card border border-border/80 text-xs space-y-1">
+                                <div className="font-semibold text-foreground flex items-center gap-1.5 text-xs text-sky-700 dark:text-sky-400">
+                                  <HelpCircle className="size-3.5" />
+                                  <span>Bước 3: Câu hỏi tư duy gợi mở</span>
+                                </div>
+                                <p className="text-muted-foreground leading-relaxed font-medium">
+                                  {msg.structuredResponse.socratic_question}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Hint-First Action Controls */}
+                            <div className="pt-1 flex items-center gap-2 flex-wrap">
+                              <Button
+                                type="button"
+                                size="sm"
+                                onClick={() => handleRevealAnswer(msg)}
+                                className="h-8 text-xs font-semibold gap-1.5 bg-primary text-primary-foreground"
+                              >
+                                <span>🔓 Mở đáp án chi tiết</span>
+                              </Button>
+
+                              {msg.structuredResponse.provenance_record && (
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => setSelectedProvenance(msg.structuredResponse!.provenance_record!)}
+                                  className="h-8 text-xs font-medium gap-1.5 border-border/80"
+                                >
+                                  <ShieldCheck className="size-3.5 text-emerald-600" />
+                                  <span>Tra cứu xuất xứ tư liệu (Provenance)</span>
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        )}
+
+                      {/* Direct / Revealed Inquiry Explanation */}
+                      {(msg.structuredResponse?.revealed_direct_answer ||
+                        msg.structuredResponse?.learning_mode === "direct" ||
+                        !msg.structuredResponse?.learning_mode) && (
+                        <div className="p-4 rounded-2xl rounded-tl-sm bg-card border border-border/80 shadow-sm space-y-2 text-sm leading-relaxed">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-1.5 font-serif font-bold text-xs text-primary">
+                              <BookOpen className="size-4" />
+                              <span>Lời giải thích lịch sử</span>
+                            </div>
+                            {msg.structuredResponse?.provenance_record && (
+                              <button
+                                type="button"
+                                onClick={() => setSelectedProvenance(msg.structuredResponse!.provenance_record!)}
+                                className="text-[11px] font-medium text-primary hover:underline flex items-center gap-1"
+                              >
+                                <ShieldCheck className="size-3" />
+                                <span>Xuất xứ trích dẫn</span>
+                              </button>
+                            )}
+                          </div>
+                          <p className="text-foreground/90 whitespace-pre-wrap">
+                            {msg.structuredResponse?.explanation || msg.content}
+                          </p>
                         </div>
-                        <p className="text-foreground/90 whitespace-pre-wrap">
-                          {msg.structuredResponse?.explanation || msg.content}
-                        </p>
-                      </div>
+                      )}
 
                       {/* 2. Official Citations with Volume/Page */}
                       {msg.structuredResponse?.citations && msg.structuredResponse.citations.length > 0 && (
                         <div className="p-4 rounded-2xl border border-amber-500/30 bg-amber-500/5 space-y-2 text-xs">
-                          <div className="flex items-center gap-2 font-bold text-amber-700 dark:text-amber-400">
-                            <CheckCircle2 className="size-4" />
-                            <span>2. Trích dẫn sử liệu chính thức</span>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2 font-bold text-amber-700 dark:text-amber-400">
+                              <CheckCircle2 className="size-4" />
+                              <span>2. Trích dẫn sử liệu chính thức</span>
+                            </div>
+                            <span className="text-[10px] text-muted-foreground">
+                              Đã đối chiếu Quốc Sử Quán triều Nguyễn
+                            </span>
                           </div>
                           <div className="space-y-2 divide-y divide-border/50">
                             {msg.structuredResponse.citations.map((cite, cIdx) => (
@@ -238,11 +422,14 @@ export default function ImperialAiInquiryPage() {
                                 <blockquote className="mt-1 pl-3 border-l-2 border-amber-500/50 text-xs italic text-muted-foreground">
                                   &ldquo;{cite.citation}&rdquo;
                                 </blockquote>
-                                {cite.archival_unit && (
-                                  <p className="mt-1 text-[10px] text-muted-foreground">
-                                    Đơn vị lưu trữ: {cite.archival_unit}
-                                  </p>
-                                )}
+                                <div className="mt-1 flex items-center justify-between text-[10px] text-muted-foreground">
+                                  <span>Đơn vị lưu trữ: {cite.archival_unit || "Quốc Sử Quán triều Nguyễn"}</span>
+                                  {cite.provenance_hash && (
+                                    <span className="font-mono text-muted-foreground/80">
+                                      {cite.provenance_hash.slice(0, 16)}...
+                                    </span>
+                                  )}
+                                </div>
                               </div>
                             ))}
                           </div>
@@ -311,6 +498,95 @@ export default function ImperialAiInquiryPage() {
 
           <div ref={messagesEndRef} />
         </div>
+
+        {/* Provenance Inspection Modal Dialog */}
+        {selectedProvenance && (
+          <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-xs">
+            <div className="bg-card border border-border rounded-2xl max-w-lg w-full p-5 space-y-4 shadow-2xl animate-in fade-in zoom-in-95">
+              <div className="flex items-center justify-between pb-3 border-b border-border/70">
+                <div className="flex items-center gap-2 text-foreground font-serif font-bold text-sm">
+                  <ShieldCheck className="size-5 text-emerald-600" />
+                  <span>Hồ sơ Xuất xứ Tư liệu (Citation Provenance)</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSelectedProvenance(null)}
+                  className="p-1 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground"
+                >
+                  <X className="size-4" />
+                </button>
+              </div>
+
+              <div className="space-y-3 text-xs">
+                <div>
+                  <span className="text-muted-foreground font-medium">Tác phẩm chính sử:</span>
+                  <p className="font-semibold text-foreground text-sm mt-0.5">
+                    {selectedProvenance.source_title}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <span className="text-muted-foreground">Tác giả / Cơ quan biên soạn:</span>
+                    <p className="font-medium text-foreground">{selectedProvenance.author}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Niên đại ấn hành:</span>
+                    <p className="font-medium text-foreground">
+                      {selectedProvenance.publication_year || "Triều Nguyễn"}
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <span className="text-muted-foreground">Định vị lưu trữ (Locator):</span>
+                  <p className="font-mono text-foreground font-medium bg-secondary/50 p-1.5 rounded-md mt-0.5">
+                    {selectedProvenance.locator}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <span className="text-muted-foreground">Mức độ thẩm định:</span>
+                    <p className="font-semibold text-emerald-600 dark:text-emerald-400">
+                      {selectedProvenance.verification_status}
+                    </p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Quyền phân phối:</span>
+                    <p className="font-medium text-foreground">{selectedProvenance.rights_status}</p>
+                  </div>
+                </div>
+
+                <div>
+                  <span className="text-muted-foreground">Chữ ký số toàn vẹn (SHA-256 Provenance Hash):</span>
+                  <p className="font-mono text-[10px] text-muted-foreground bg-muted/60 p-2 rounded-md break-all mt-0.5 border border-border/60">
+                    {selectedProvenance.provenance_hash}
+                  </p>
+                </div>
+
+                <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-[11px] text-emerald-900 dark:text-emerald-300 flex items-start gap-2">
+                  <Check className="size-4 shrink-0 mt-0.5 text-emerald-600" />
+                  <span>
+                    Nguồn tư liệu đã được khóa kiểm định; mọi cố gắng ngụy tạo xuất xứ hoặc gỡ bỏ nguồn dẫn chứng đều bị hệ thống tự động từ chối.
+                  </span>
+                </div>
+              </div>
+
+              <div className="pt-2 flex justify-end">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSelectedProvenance(null)}
+                  className="text-xs"
+                >
+                  Đóng
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Input Bar */}
         <div className="pt-2 border-t border-border/70 space-y-2">

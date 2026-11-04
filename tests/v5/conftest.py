@@ -53,6 +53,16 @@ def engine():
                 "ALTER TABLE IF EXISTS historical_assets ADD COLUMN IF NOT EXISTS revoked_at TIMESTAMPTZ;"
                 "ALTER TABLE IF EXISTS historical_assets ADD COLUMN IF NOT EXISTS revocation_reason TEXT;"
                 "ALTER TABLE IF EXISTS historical_assets ADD COLUMN IF NOT EXISTS media_cms_item_id UUID;"
+                "ALTER TABLE IF EXISTS users ADD COLUMN IF NOT EXISTS guardian_consent BOOLEAN DEFAULT FALSE;"
+                "ALTER TABLE IF EXISTS users ADD COLUMN IF NOT EXISTS guardian_email VARCHAR(255);"
+                "ALTER TABLE IF EXISTS ai_conversations ADD COLUMN IF NOT EXISTS retention_due_at TIMESTAMPTZ;"
+                "ALTER TABLE IF EXISTS ai_conversations ADD COLUMN IF NOT EXISTS is_minor BOOLEAN DEFAULT FALSE;"
+                "ALTER TABLE IF EXISTS ai_conversations ADD COLUMN IF NOT EXISTS guardian_consent_granted BOOLEAN DEFAULT FALSE;"
+                "ALTER TABLE IF EXISTS ai_messages ADD COLUMN IF NOT EXISTS training_allowed BOOLEAN DEFAULT FALSE;"
+                "ALTER TABLE IF EXISTS ai_messages ADD COLUMN IF NOT EXISTS pii_redacted BOOLEAN DEFAULT FALSE;"
+                "ALTER TABLE IF EXISTS ai_jobs ADD COLUMN IF NOT EXISTS is_minor BOOLEAN DEFAULT FALSE;"
+                "ALTER TABLE IF EXISTS ai_jobs ADD COLUMN IF NOT EXISTS training_allowed BOOLEAN DEFAULT FALSE;"
+                "ALTER TABLE IF EXISTS ai_jobs ADD COLUMN IF NOT EXISTS pii_redacted BOOLEAN DEFAULT FALSE;"
             )
         )
         conn.commit()

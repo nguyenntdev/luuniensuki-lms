@@ -1,0 +1,95 @@
+{
+  "ticket": "V5-T068",
+  "wave": "W06",
+  "slot": "A08",
+  "role": "W06-A08",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "goal": "AI privacy and child protections in backend/routers/ai.py and backend/services/.",
+  "implementation_summary": {
+    "modules_created": [
+      "backend/services/ai_privacy.py",
+      "migrations/versions/0069_ai_privacy_child_protections.py"
+    ],
+    "modules_updated": [
+      "backend/routers/ai.py",
+      "backend/services/ai_tutor.py",
+      "backend/domain/helpers.py",
+      "backend/models.py",
+      "tests/v5/conftest.py"
+    ],
+    "test_suite": "tests/v5/test_v5_t068.py",
+    "features_delivered": [
+      "PII Sanitization before External AI Invocation: Pre-invocation regex scrubbing redacting student phone numbers ([REDACTED_PHONE]), email addresses ([REDACTED_EMAIL]), and school/street addresses ([REDACTED_ADDRESS]) before prompts reach LLM APIs.",
+      "Negative Abuse Guardrails: Intercepts combined student PII in raw prompts across /api/v1/ai/tutor, /api/v1/ai/qa, and streaming endpoints, ensuring external models never receive plaintext student identity or location.",
+      "PII Sanitization in Database Logs: Stored AIMessage.content and AIJob.prompt rows have personal data scrubbed, conversation title auto-generation is sanitized, and pii_redacted flag is recorded.",
+      "Age-Appropriate Content Filters: Inbound minor student prompts asking about self-harm, weapons/bombs, illicit drugs, or adult/sexual topics are blocked without invoking external LLMs, returning age-appropriate educational guidance.",
+      "Outbound Response Safety Sanitizer: AI answers are passed through apply_content_safety_filter() for minors, replacing unsafe keywords with age-appropriate alternatives.",
+      "Zero Training on Minor Student Messages: Messages from minor students (<18 or unverified) are flagged training_allowed=False unless verified guardian consent is present (via User.guardian_consent or ClassMember.guardian_consent).",
+      "Training Dataset Export Gating: export_conversations_for_training() strictly excludes 100% of messages from minors lacking guardian consent.",
+      "Minimal Conversation Retention: Automated enforce_ai_conversation_retention() purges conversations of minor students older than 30 days and cascades to AIMessage and AIJob records.",
+      "Right to Erasure: Supports DELETE /api/v1/ai/conversations/{id} and complete history purge via purge_user_ai_history()."
+    ]
+  },
+  "verification": {
+    "command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t068.py -v",
+    "result": "PASSED (11/11 tests)",
+    "test_details": [
+      {
+        "name": "test_detect_and_sanitize_student_pii",
+        "result": "PASSED",
+        "assertion": "Verifies regex detection and redaction of phone numbers, emails, and school addresses."
+      },
+      {
+        "name": "test_negative_abuse_pii_redacted_before_external_ai_invocation",
+        "result": "PASSED",
+        "assertion": "Verifies negative abuse protection: student prompt containing phone, email, and school address has all PII redacted before calling external LLM."
+      },
+      {
+        "name": "test_pii_sanitization_in_conversation_logs",
+        "result": "PASSED",
+        "assertion": "Verifies that messages in AI conversations store sanitized text in DB with pii_redacted=True."
+      },
+      {
+        "name": "test_minor_student_unsafe_prompt_blocked",
+        "result": "PASSED",
+        "assertion": "Verifies minor students sending self-harm, weapons, or adult queries are blocked and receive safe guidance without invoking external AI."
+      },
+      {
+        "name": "test_qa_pii_redacted_and_minor_safety",
+        "result": "PASSED",
+        "assertion": "Verifies AI QA endpoint enforces PII sanitization and minor prompt safety blocks."
+      },
+      {
+        "name": "test_streaming_endpoints_pii_and_safety",
+        "result": "PASSED",
+        "assertion": "Verifies tutor and QA stream endpoints enforce minor safety and PII redaction."
+      },
+      {
+        "name": "test_minor_student_output_sanitizer",
+        "result": "PASSED",
+        "assertion": "Verifies AI responses containing inappropriate terms are sanitized for minors."
+      },
+      {
+        "name": "test_verified_adult_user_not_blocked",
+        "result": "PASSED",
+        "assertion": "Verifies verified adults (18+) are not restricted by child safety filters for academic queries."
+      },
+      {
+        "name": "test_zero_training_minor_without_guardian_consent",
+        "result": "PASSED",
+        "assertion": "Verifies minor messages without guardian consent have training_allowed=False and are strictly excluded from dataset export."
+      },
+      {
+        "name": "test_minimal_conversation_retention_purge",
+        "result": "PASSED",
+        "assertion": "Verifies conversations of minor students older than 30 days are automatically purged."
+      },
+      {
+        "name": "test_right_to_erasure_user_purge",
+        "result": "PASSED",
+        "assertion": "Verifies user can delete specific conversations and purge complete AI history."
+      }
+    ]
+  }
+}
