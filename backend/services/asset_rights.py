@@ -472,11 +472,12 @@ def enforce_cdn_distribution_policy(
     # 3. Checksum integrity verification
     validate_manifest_checksum_integrity(manifest, repo_root=repo_root)
 
-    # Return distribution clearance stamp
+    # Return distribution clearance stamp with immutable cache headers for hashed assets
     return {
         "urn_slug": urn_slug,
         "cdn_distribution_status": "ALLOWED",
-        "cache_control": "public, max-age=86400, stale-while-revalidate=3600",
+        "cache_control": "public, max-age=31536000, immutable",
+        "offline_licensing_allowed": manifest.get("offline_licensing_allowed", True),
         "rights_attribution": manifest.get("rights_attribution"),
         "license": manifest.get("license"),
         "rights_owner": manifest.get("rights_owner"),
@@ -494,7 +495,19 @@ def revoke_manifest_rights(
     revoked["rights_status"] = "revoked"
     revoked["public_distribution_allowed"] = False
     revoked["public_display_allowed"] = False
+    revoked["offline_licensing_allowed"] = False
+    revoked["cache_control"] = "no-cache, no-store, must-revalidate, max-age=0, s-maxage=0"
     revoked["revocation_reason"] = reason
+
+    # Register in revocation engine
+    try:
+        from .offline_licensing import register_asset_revocation
+        urn_slug = manifest.get("urn_slug")
+        if urn_slug:
+            register_asset_revocation(urn_slug, reason=reason)
+    except Exception:
+        pass
+
     return revoked
 
 
@@ -518,6 +531,9 @@ def sync_manifest_to_historical_asset(
         existing.attribution = manifest.get("rights_attribution", DEFAULT_CREATOR)
         existing.source_origin = manifest.get("rights_owner", DEFAULT_RIGHTS_OWNER)
         existing.public_display_allowed = manifest.get("public_display_allowed", True)
+        existing.offline_licensing_allowed = manifest.get("offline_licensing_allowed", True)
+        existing.cache_control_policy = "public, max-age=31536000, immutable"
+        existing.is_private = False
         existing.sha256 = checksum
         existing.thumbnail_url = fallback_url
         if entity_id:
@@ -536,6 +552,9 @@ def sync_manifest_to_historical_asset(
         attribution=manifest.get("rights_attribution", DEFAULT_CREATOR),
         source_origin=manifest.get("rights_owner", DEFAULT_RIGHTS_OWNER),
         public_display_allowed=manifest.get("public_display_allowed", True),
+        offline_licensing_allowed=manifest.get("offline_licensing_allowed", True),
+        cache_control_policy="public, max-age=31536000, immutable",
+        is_private=False,
         derivative_allowed=True,
         entity_id=entity_id,
     )
@@ -546,6 +565,8 @@ def sync_manifest_to_historical_asset(
 
 def validate_historical_asset_distribution(asset: Any) -> tuple[bool, Optional[str]]:
     """Verify that a HistoricalAsset row satisfies CDN distribution policy."""
+    if getattr(asset, "is_private", False):
+        return False, "Asset is marked private and requires signed token/authorization"
     if asset.public_display_allowed is False:
         return False, "public_display_allowed is False"
     if not asset.rights_status or asset.rights_status.lower() in RESTRICTED_RIGHTS_STATUSES:

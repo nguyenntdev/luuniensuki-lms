@@ -1,0 +1,158 @@
+{
+  "ticket": "V5-T048",
+  "ticket_id": "V5-T048",
+  "wave": "W04",
+  "slot": "W04-A08",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Offline licensing and cache headers in Nginx configuration, public/models/, and backend asset endpoints.",
+  "timestamp": "2026-11-05T01:00:00Z",
+  "summary": "Implemented offline licensing and caching headers across Nginx reverse proxy configurations, public/models/ 3D manifests, backend asset endpoints, and frontend offline asset cache manager. Guarantees that private assets require HMAC-SHA256 signed tokens or Authorization headers and are served with strict no-store headers ('private, no-cache, no-store, must-revalidate, max-age=0'); public assets with verified content hashes (SHA-256) receive immutable caching ('public, max-age=31536000, immutable') and matching ETags; offline caching is restricted strictly to assets with approved educational/public domain licenses; and revoked assets immediately emit cache invalidation headers ('no-cache, no-store, must-revalidate, max-age=0, s-maxage=0', 'Pragma: no-cache', 'Expires: 0') preventing stale CDN or client serving.",
+  "invariants_enforced": {
+    "offline_licensing_gate": "Only assets with verified, non-revoked, approved licenses (CC BY 4.0, Educational Fair Use, Public Domain) and offline_licensing_allowed=true can be stored in offline caches / local storage. Proprietary, all-rights-reserved, or unlicensed assets are blocked from offline storage.",
+    "private_assets_signed_tokens": "Private or unpublished assets require valid HMAC-SHA256 signed tokens (with timestamp, expiration, client ID, and asset ID) or Authorization headers (admin/staff/teacher). Tampered, expired, or mismatched tokens fail closed with HTTP 403 / InvalidSignedTokenError.",
+    "private_assets_no_store": "Private assets are strictly served with 'Cache-Control: private, no-cache, no-store, must-revalidate, max-age=0' and 'Pragma: no-cache', ensuring they are never cached by shared CDNs or public proxies.",
+    "public_assets_immutable_hash": "Public assets with cryptographic content hashes (SHA-256) receive 'Cache-Control: public, max-age=31536000, immutable' and strong ETags matching their content hash. Conditional requests with matching If-None-Match receive HTTP 304 Not Modified.",
+    "negative_abuse_revoked_asset_cdn_invalidation": "When an asset is revoked, its rights status transitions to 'revoked' and it is registered in the revocation registry. Conditional requests (If-None-Match with cached ETag) strictly reject with HTTP 403 and emit 'Cache-Control: no-cache, no-store, must-revalidate, max-age=0, s-maxage=0', 'Pragma: no-cache', and 'Expires: 0' to immediately bust and purge intermediate CDN and browser caches. Revoked assets are never served from stale cache beyond policy.",
+    "nginx_edge_policy_enforcement": "Nginx configurations (nginx-site.conf, nginx-lms.conf, nginx-lms-histolab.conf, nginx-luunien-staging.conf) configure 3D models with immutable cache headers and establish dedicated /assets/private/ ingress guards requiring authentication token checks."
+  },
+  "changes": [
+    {
+      "file": "backend/services/offline_licensing.py",
+      "description": "Created comprehensive offline licensing, signed token verification (HMAC-SHA256), cache header policy engine, and cache revocation/anti-stale CDN protection registry."
+    },
+    {
+      "file": "backend/services/asset_rights.py",
+      "description": "Updated enforce_cdn_distribution_policy and revoke_manifest_rights to integrate immutable cache headers, offline licensing flags, and automatic revocation registration."
+    },
+    {
+      "file": "backend/routers/imperial.py",
+      "description": "Enhanced GET /api/v1/imperial/assets/{asset_id}/image with strict offline licensing validation, signed token verification for private assets, immutable cache headers for public hashed assets, conditional request (304) support, and anti-stale CDN headers on revocation. Added POST /assets/{asset_id}/signed-token, POST /assets/{asset_id}/revoke, and GET /assets/{asset_id}/license-check."
+    },
+    {
+      "file": "backend/apischemas/imperial.py",
+      "description": "Added AssetSignedTokenRequest, AssetSignedTokenResponse, AssetRevokeRequest, AssetRevokeResponse, and AssetLicenseCheckResponse schemas."
+    },
+    {
+      "file": "backend/history_models.py",
+      "description": "Added offline_licensing_allowed, cache_control_policy, is_private, revoked_at, and revocation_reason columns to HistoricalAsset. Created AssetCacheRevocation table model."
+    },
+    {
+      "file": "backend/models.py",
+      "description": "Exported AssetCacheRevocation model."
+    },
+    {
+      "file": "migrations/versions/0064_offline_licensing_cache_headers.py",
+      "description": "Created purely additive Alembic migration adding offline licensing and cache policy columns to historical_assets and creating asset_cache_revocations table."
+    },
+    {
+      "file": "nginx-site.conf",
+      "description": "Configured immutable cache headers (max-age=31536000) for /assets/models/ and created protected /assets/private/ location guard requiring token or Authorization header."
+    },
+    {
+      "file": "nginx-lms.conf",
+      "description": "Configured immutable cache headers (max-age=31536000) for /assets/models/ and created protected /assets/private/ location guard requiring token or Authorization header."
+    },
+    {
+      "file": "nginx-lms-histolab.conf",
+      "description": "Configured immutable cache headers (max-age=31536000) for /assets/models/ and created protected /assets/private/ location guard requiring token or Authorization header."
+    },
+    {
+      "file": "nginx-luunien-staging.conf",
+      "description": "Configured immutable cache headers (max-age=31536000) for /assets/models/ and created protected /assets/private/ location guard requiring token or Authorization header."
+    },
+    {
+      "file": "public/models/manifests/*.json",
+      "description": "Updated all 9 3D urn manifests and index.json with offline_licensing_allowed=true, offline_license_type, and cache_policy specifying immutable cache control."
+    },
+    {
+      "file": "frontend/public/models/manifests/*.json",
+      "description": "Mirrored offline licensing and cache_policy across frontend 3D manifests."
+    },
+    {
+      "file": "frontend/src/lib/imperial/offline-asset-cache.ts",
+      "description": "Implemented TypeScript client-side offline asset caching manager enforcing offline licensing, immediate eviction on revocation, private asset protection, and signed request building."
+    },
+    {
+      "file": "frontend/src/lib/imperial/offline-asset-cache.test.ts",
+      "description": "Created comprehensive Vitest unit test suite covering offline licensing validation, signed token request construction, and negative abuse cache purging upon revocation."
+    },
+    {
+      "file": "tests/v5/test_v5_t048.py",
+      "description": "Created complete integration test suite with 12 test cases covering manifest offline licensing, signed token lifecycles, private no-store headers, public immutable hashes, negative abuse stale CDN protection, FastAPI endpoints, Nginx config rules, and database persistence."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t048.py -v",
+    "total_tests": 12,
+    "passed_tests": 12,
+    "failed_tests": 0,
+    "frontend_test_command": "npm --prefix frontend test src/lib/imperial/offline-asset-cache.test.ts",
+    "frontend_total_tests": 9,
+    "frontend_passed_tests": 9,
+    "frontend_failed_tests": 0,
+    "test_details": [
+      {
+        "name": "test_all_9_urn_manifests_declare_offline_licensing_and_cache_policy",
+        "description": "Verifies all 9 urn manifests on disk declare offline_licensing_allowed and immutable cache_policy.",
+        "status": "PASSED"
+      },
+      {
+        "name": "test_offline_licensing_blocks_disallowed_or_unlicensed_assets",
+        "description": "Verifies offline licensing fails closed on offline_licensing_allowed=False, missing licenses, or proprietary licenses.",
+        "status": "PASSED"
+      },
+      {
+        "name": "test_signed_token_lifecycle_and_tampering_protection",
+        "description": "Verifies HMAC-SHA256 signed asset token verifies correctly and rejects tampered, expired, or wrong-asset tokens.",
+        "status": "PASSED"
+      },
+      {
+        "name": "test_private_asset_cache_headers_are_strictly_no_store",
+        "description": "Verifies private asset cache headers are strictly 'private, no-cache, no-store, must-revalidate, max-age=0'.",
+        "status": "PASSED"
+      },
+      {
+        "name": "test_public_hashed_asset_cache_headers",
+        "description": "Verifies public assets with verified content hashes receive 'public, max-age=31536000, immutable' and strong ETags.",
+        "status": "PASSED"
+      },
+      {
+        "name": "test_negative_abuse_revoked_asset_not_served_from_stale_cdn_cache",
+        "description": "Verifies revoked asset is NOT served from stale CDN cache beyond policy; conditional request is rejected with 403 and anti-stale headers.",
+        "status": "PASSED"
+      },
+      {
+        "name": "test_api_public_map_asset_serves_immutable_cache_and_supports_conditional_get",
+        "description": "Verifies GET /api/v1/imperial/assets/{asset_id}/image serves immutable cache headers and supports 304 Not Modified.",
+        "status": "PASSED"
+      },
+      {
+        "name": "test_api_private_map_asset_requires_signed_token",
+        "description": "Verifies unpublished private map asset requires signed token and serves with private, no-store headers.",
+        "status": "PASSED"
+      },
+      {
+        "name": "test_api_revoked_asset_returns_403_with_anti_stale_cache_headers",
+        "description": "Verifies revoked asset returns 403 Forbidden with strict no-store / anti-stale purge headers.",
+        "status": "PASSED"
+      },
+      {
+        "name": "test_api_license_check_endpoint",
+        "description": "Verifies GET /api/v1/imperial/assets/{asset_id}/license-check returns accurate offline licensing and caching controls.",
+        "status": "PASSED"
+      },
+      {
+        "name": "test_nginx_configurations_enforce_cache_headers_and_private_guards",
+        "description": "Verifies all production and staging Nginx configuration files enforce immutable caching for models and private guards.",
+        "status": "PASSED"
+      },
+      {
+        "name": "test_database_historical_asset_offline_licensing_and_revocation",
+        "description": "Verifies HistoricalAsset table persists offline licensing and cache policy fields, and AssetCacheRevocation ledger records revocations.",
+        "status": "PASSED"
+      }
+    ]
+  }
+}

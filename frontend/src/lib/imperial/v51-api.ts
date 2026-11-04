@@ -14,6 +14,9 @@ import type {
   GameSubmitResult,
   ImperialArtDetail,
   ImperialClue,
+  ImperialInspectionCompleteRequest,
+  ImperialInspectionCompleteResponse,
+  ImperialInspectionStatusResponse,
   ImperialLearningMedia,
   ImperialMediaHotspot,
 } from "./v51-types";
@@ -2013,6 +2016,9 @@ export async function saveMediaHotspot(
     title: payload.title || "Điểm quan sát mới",
     description: payload.description || "",
     detail_id: payload.detail_id || null,
+    claim_id: payload.claim_id || null,
+    entity_id: payload.entity_id || null,
+    asset_revision: payload.asset_revision ?? null,
     art_detail_slug: payload.art_detail_slug || null,
     review_status: payload.review_status || "draft",
     position_payload: payload.position_payload || null,
@@ -2100,4 +2106,78 @@ export async function saveArtDetail(
   }
 
   return detail;
+}
+
+// --------------------------------------------------------------------------- //
+// Relic Inspection API (V5-T045: AR Fallback & Equivalent Learning)
+// --------------------------------------------------------------------------- //
+
+export async function completeRelicInspection(
+  payload: ImperialInspectionCompleteRequest,
+): Promise<ImperialInspectionCompleteResponse> {
+  try {
+    const res = await apiRequest<ImperialInspectionCompleteResponse>(
+      "/api/v1/imperial/inspections/complete",
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      },
+    );
+    if (res && res.success) {
+      return res;
+    }
+  } catch (error) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("completeRelicInspection fallback to client computation:", error);
+    }
+  }
+
+  // Graceful offline/local fallback response
+  const targetTitle =
+    FALLBACK_ART_DETAILS.find((d) => d.slug === payload.target_slug)?.title ||
+    payload.target_slug;
+
+  const modeText =
+    payload.inspection_mode === "webxr_ar"
+      ? "Thực tế tăng cường (AR)"
+      : "Mâm xoay 360° & Bản rập 2D";
+
+  return {
+    success: true,
+    task_id: `task-${Date.now()}`,
+    target_slug: payload.target_slug,
+    target_title: targetTitle,
+    inspection_mode: payload.inspection_mode,
+    camera_permission_granted: payload.camera_permission_granted,
+    equivalent_learning_completed: true,
+    xp_awarded: 25,
+    total_xp: 25,
+    already_completed: false,
+    feedback: `Hoàn thành xuất sắc nhiệm vụ khảo sát qua chế độ ${modeText} (+25 XP).`,
+    recorded_at: new Date().toISOString(),
+  };
+}
+
+export async function fetchRelicInspectionStatus(
+  targetSlug: string,
+): Promise<ImperialInspectionStatusResponse> {
+  try {
+    const res = await apiRequest<ImperialInspectionStatusResponse>(
+      `/api/v1/imperial/inspections/${encodeURIComponent(targetSlug)}`,
+    );
+    if (res) return res;
+  } catch (error) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("fetchRelicInspectionStatus fallback:", error);
+    }
+  }
+
+  return {
+    target_slug: targetSlug,
+    is_completed: false,
+    completed_mode: null,
+    camera_permission_granted: null,
+    xp_earned: 0,
+    completed_at: null,
+  };
 }

@@ -65,6 +65,9 @@ class ImperialMediaHotspotBase(ImperialV51BaseSchema):
     title: str = Field(..., min_length=1, max_length=255)
     description: Optional[str] = None
     detail_id: Optional[UUID] = None
+    claim_id: Optional[UUID] = None
+    entity_id: Optional[UUID] = None
+    asset_revision: Optional[int] = Field(default=None, ge=1)
     review_status: Literal["draft", "in_review", "approved", "published", "archived"] = "draft"
 
 
@@ -80,6 +83,9 @@ class ImperialMediaHotspotUpdate(ImperialV51BaseSchema):
     title: Optional[str] = Field(default=None, min_length=1, max_length=255)
     description: Optional[str] = None
     detail_id: Optional[UUID] = None
+    claim_id: Optional[UUID] = None
+    entity_id: Optional[UUID] = None
+    asset_revision: Optional[int] = Field(default=None, ge=1)
     review_status: Optional[Literal["draft", "in_review", "approved", "published", "archived"]] = None
     row_version: Optional[int] = Field(default=None, ge=1)
 

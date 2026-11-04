@@ -1,0 +1,121 @@
+{
+  "ticket": "V5-T045",
+  "ticket_id": "V5-T045",
+  "wave": "W04",
+  "slot": "W04-A05",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "AR fallback and device capability checks in frontend/src/components/ and frontend/src/lib/imperial/.",
+  "timestamp": "2026-11-05T01:00:00Z",
+  "summary": "Implemented WebXR AR capabilities detection, graceful user camera consent handling, mobile performance budget analysis, and interactive 2D turntable/rubbing fallback in frontend/src/lib/imperial/ar-capabilities.ts and frontend/src/components/imperial/ar/ (ARCapabilityGate, RelicTurntableInspector). Added backend relic inspection persistence service and endpoints (POST /api/v1/imperial/inspections/complete and GET /api/v1/imperial/inspections/{target_slug}) backed by additive migration 0065_imperial_relic_inspections. Strictly enforced the crucial Negative Abuse Invariant: denying camera permission or using 2D turntable fallback NEVER penalizes the learner; it completes the 100% equivalent learning task with identical server-verified completion status, full XP (+25 XP), and motif progression advancement. Verified with 10 passing integration tests in tests/v5/test_v5_t045.py, 17 Vitest tests in frontend, clean TypeScript type-check, ESLint, and OpenAPI snapshot / route inventory parity.",
+  "invariants_enforced": {
+    "equivalent_learning_task_invariant": "Denying camera permission or using 2D turntable fallback MUST allow the learner to complete the 100% equivalent learning/inspection task. Learners are never blocked, penalized, or degraded, and receive the identical 25 XP reward and progression credit as an AR user.",
+    "graceful_camera_consent_lifecycle": "Camera permissions are queried respectfully. If permissions are prompt, a non-intrusive modal explains the educational purpose with an explicit privacy pledge and clear dual-choice options (AR vs Turntable 360°/2D).",
+    "mobile_performance_budget_guard": "Devices with < 3GB RAM, saveData enabled, slow connections (2G/3G), or low GPU capability are automatically routed to lightweight 2D turntable/rubbing inspection without crashing or excessive battery drain.",
+    "anti_replay_and_idempotency": "Submitting duplicate inspection sessions on the same relic or with an existing idempotency key returns already_completed=True with 0 duplicate XP, preventing progression inflation.",
+    "quality_gate_scrutiny": "Superficial clicks are rejected by the server: inspection duration < 3 seconds returns HTTP 400 (INSUFFICIENT_INSUFFICIENT_INSPECTION_TIME), and zero angles/hotspots viewed returns HTTP 400 (INCOMPLETE_INSPECTION_TASK).",
+    "guest_access_guard": "Guest users can only inspect demo relics; inspecting non-demo relics is rejected with HTTP 403 (FORBIDDEN_GUEST_ACCESS).",
+    "motif_progression_sync": "Completing a relic inspection task on a relief motif automatically advances user progress from hidden to discovered in the user_progress table."
+  },
+  "changes": [
+    {
+      "file": "frontend/src/lib/imperial/ar-capabilities.ts",
+      "description": "Created AR capability detection, camera consent requesting, mobile performance budgeting, and equivalent learning session management engine."
+    },
+    {
+      "file": "frontend/src/lib/imperial/ar-capabilities.test.ts",
+      "description": "Added 17 Vitest unit tests covering WebXR detection, camera permission flows, mobile budgets, mode resolution, and the negative abuse equivalence invariant."
+    },
+    {
+      "file": "frontend/src/lib/imperial/v51-types.ts",
+      "description": "Added ImperialInspectionCompleteRequest, ImperialInspectionCompleteResponse, and ImperialInspectionStatusResponse interfaces."
+    },
+    {
+      "file": "frontend/src/lib/imperial/v51-api.ts",
+      "description": "Implemented completeRelicInspection and fetchRelicInspectionStatus client functions with offline/dev resilience."
+    },
+    {
+      "file": "frontend/src/components/imperial/ar/ARCapabilityGate.tsx",
+      "description": "Created graceful AR capability gate and permission modal offering seamless dual-path choice and non-punishing camera denial banner."
+    },
+    {
+      "file": "frontend/src/components/imperial/ar/RelicTurntableInspector.tsx",
+      "description": "Created interactive 360° turntable and 2D rubbing inspection component with drag/touch rotation, angle presets, zoom, hotspot overlay, and task completion submission."
+    },
+    {
+      "file": "frontend/src/components/imperial/ar/index.ts",
+      "description": "Barrel export for AR components."
+    },
+    {
+      "file": "frontend/src/components/ar/index.ts",
+      "description": "Component alias export for frontend/src/components/ar/."
+    },
+    {
+      "file": "backend/apischemas/relic_inspection.py",
+      "description": "Created Pydantic request and response schemas for relic inspection task completion."
+    },
+    {
+      "file": "backend/imperial_v51_models.py",
+      "description": "Added ImperialRelicInspection SQLAlchemy model for persistent inspection records."
+    },
+    {
+      "file": "backend/models.py",
+      "description": "Imported and registered ImperialRelicInspection with Base.metadata."
+    },
+    {
+      "file": "migrations/versions/0065_imperial_relic_inspections.py",
+      "description": "Added additive Alembic migration creating imperial_relic_inspections table with unique and performance indices."
+    },
+    {
+      "file": "backend/services/relic_inspection.py",
+      "description": "Implemented server domain service handling target resolution, anti-abuse duration/interaction quality gates, anti-replay idempotency, and equivalent learning completion."
+    },
+    {
+      "file": "backend/routers/imperial.py",
+      "description": "Mounted POST /api/v1/imperial/inspections/complete and GET /api/v1/imperial/inspections/{target_slug} endpoints."
+    },
+    {
+      "file": "tests/v5/test_v5_t045.py",
+      "description": "Created comprehensive 10-test integration test suite covering happy path, negative camera denial equivalence, anti-replay, quality gates, RBAC, and motif progression synchronization."
+    }
+  ],
+  "verification": {
+    "backend_pytest": {
+      "command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t045.py -v",
+      "total_tests": 10,
+      "passed_tests": 10,
+      "failed_tests": 0,
+      "status": "PASSED"
+    },
+    "frontend_vitest": {
+      "command": "npm test -- src/lib/imperial/ar-capabilities.test.ts",
+      "total_tests": 17,
+      "passed_tests": 17,
+      "failed_tests": 0,
+      "status": "PASSED"
+    },
+    "frontend_type_check": {
+      "command": "npm run type-check",
+      "exit_code": 0,
+      "status": "PASSED"
+    },
+    "frontend_lint": {
+      "command": "npm run lint:ci",
+      "exit_code": 0,
+      "status": "PASSED"
+    },
+    "migration_safety": {
+      "command": "./scripts/ci/lint-migration-safety.sh",
+      "status": "PASSED"
+    },
+    "openapi_snapshot": {
+      "command": "pytest tests/backend/test_openapi_snapshot.py",
+      "status": "PASSED"
+    },
+    "route_inventory": {
+      "command": "./scripts/ci/lint-inventory-drift.sh",
+      "status": "PASSED"
+    }
+  }
+}

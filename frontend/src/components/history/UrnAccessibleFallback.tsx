@@ -91,8 +91,15 @@ export default function UrnAccessibleFallback({
   className = "",
 }: UrnAccessibleFallbackProps) {
   const [selectedUrn, setSelectedUrn] = useState<string>(urnSlug);
+  const [announcement, setAnnouncement] = useState<string>("");
   const urnName = urnNameFromSlug(selectedUrn) || "Cao Đỉnh";
   const details = URN_DETAILS[selectedUrn] || URN_DETAILS["cao-dinh"];
+
+  const handleUrnChange = (newSlug: string) => {
+    setSelectedUrn(newSlug);
+    const newName = urnNameFromSlug(newSlug) || newSlug;
+    setAnnouncement(`Đã chuyển sang xem hồ sơ văn bản và 18 phù điêu của ${newName}`);
+  };
 
   // Generate 18 relief representations for the active urn (01 = Inscription/Urn Name, 02..18 = Pictorial motifs)
   const reliefs = Array.from({ length: 18 }, (_, index) => {
@@ -120,8 +127,13 @@ export default function UrnAccessibleFallback({
     <section
       role="region"
       aria-label={`Mô tả văn bản thay thế 3D cho ${urnName}`}
-      className={`rounded-2xl border border-border bg-card p-6 md:p-8 text-foreground ${className}`}
+      className={`rounded-2xl border border-border bg-card p-6 md:p-8 text-foreground contrast-more:border-2 contrast-more:border-foreground ${className}`}
     >
+      {/* Screen Reader Live Region */}
+      <div role="status" aria-live="polite" className="sr-only">
+        {announcement}
+      </div>
+
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-6">
         <div>
           <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
@@ -155,8 +167,8 @@ export default function UrnAccessibleFallback({
         <select
           id="urn-select"
           value={selectedUrn}
-          onChange={(e) => setSelectedUrn(e.target.value)}
-          className="w-full max-w-xs rounded-lg border border-border bg-secondary/40 px-3 py-2 text-sm font-medium text-foreground focus:ring-2 focus:ring-primary"
+          onChange={(e) => handleUrnChange(e.target.value)}
+          className="w-full max-w-xs rounded-lg border border-border bg-secondary/40 px-3 py-2 text-sm font-medium text-foreground focus:ring-2 focus:ring-primary contrast-more:border-2 contrast-more:border-foreground"
         >
           {KNOWN_URNS.map((u) => (
             <option key={u.slug} value={u.slug}>

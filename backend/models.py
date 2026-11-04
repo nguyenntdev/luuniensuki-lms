@@ -4280,6 +4280,7 @@ class HistoryQuestionType(Base):
 # includes the historical_* tables for conftest create_all and Alembic.
 # --------------------------------------------------------------------------- #
 from .history_models import (  # noqa: E402,F401
+    AssetCacheRevocation,
     HistoricalAsset,
     HistoricalClaim,
     HistoricalClaimOrigin,
@@ -4376,6 +4377,7 @@ from .imperial_v51_models import (  # noqa: E402,F401
     ImperialQuestion,
     ImperialAssignmentRelease,
     ImperialLearningMedia,
+    ImperialRelicInspection,
 )
 from .history_inquiry_models import (  # noqa: E402,F401
     HistoricalInquiryActivity,
@@ -4385,6 +4387,12 @@ from .history_inquiry_models import (  # noqa: E402,F401
     InquiryMemberRole,
     InquiryPrivacyMode,
     InquirySubmissionStatus,
+)
+from .media_cms_models import (  # noqa: E402,F401
+    MediaCmsItem,
+    MediaCmsStatus,
+    MediaCmsAssetType,
+    MediaCmsFileFormat,
 )
 
 

@@ -165,7 +165,7 @@ export function MediaHotspotViewer({
   return (
     <div
       ref={containerRef}
-      className={`flex flex-col bg-card rounded-xl border border-border/70 overflow-hidden shadow-sm ${className}`}
+      className={`flex flex-col bg-card rounded-xl border border-border/70 overflow-hidden shadow-sm contrast-more:border-2 contrast-more:border-foreground ${className}`}
     >
       {/* Top Media Bar */}
       <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 border-b border-border/60 bg-muted/40">
@@ -203,8 +203,10 @@ export function MediaHotspotViewer({
                 variant={viewMode === "360" ? "default" : "ghost"}
                 className="h-7 text-xs px-2"
                 onClick={() => setViewMode("360")}
+                aria-label="Xem chế độ toàn cảnh 360 độ"
+                aria-pressed={viewMode === "360"}
               >
-                <Compass className="w-3.5 h-3.5 mr-1" />
+                <Compass className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
                 360°
               </Button>
               <Button
@@ -212,6 +214,8 @@ export function MediaHotspotViewer({
                 variant={viewMode === "2d" ? "default" : "ghost"}
                 className="h-7 text-xs px-2"
                 onClick={() => setViewMode("2d")}
+                aria-label="Xem chế độ hình ảnh trải phẳng 2D"
+                aria-pressed={viewMode === "2d"}
               >
                 Trải phẳng
               </Button>

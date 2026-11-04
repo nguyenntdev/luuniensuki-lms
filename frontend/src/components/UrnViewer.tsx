@@ -160,6 +160,7 @@ interface UrnViewerProps {
     focusMotifId?: string | number | null;
     viewMode?: string;
     className?: string;
+    lodPreference?: "auto" | "low" | "medium" | "high";
 }
 
 // WebGL Error Boundary
@@ -856,6 +857,7 @@ export default function UrnViewer({
     focusMotifId = null,
     viewMode = "standard",
     className = "h-full w-full",
+    lodPreference = "auto",
 }: UrnViewerProps) {
     const ensureMotifsLoaded = useMotifStore((s) => s.ensureMotifsLoaded);
     const motifsByMesh = useMotifStore((s) => s.motifsByMesh);
@@ -863,19 +865,13 @@ export default function UrnViewer({
     const progressByMotifId = useMotifStore((s) => s.progressByMotifId);
     const motifStatusById = useMotifStore(selectMotifStatusById, shallow);
     const motifList = useMotifStore(selectMotifListSorted, shallow);
-    const urnModelUrl = useMotifStore((s) => s.urnModelUrl);
+    const rawUrnModelUrl = useMotifStore((s) => s.urnModelUrl);
     const setSelectedMotifId = useMotifStore((s) => s.setSelectedMotifId);
     const selectedMotifId = useMotifStore((s) => s.selectedMotifId);
     const unlockFromClick = useMotifStore((s) => s.unlockFromClick);
     const selectedProgress = selectedMotifId
         ? progressByMotifId[selectedMotifId]
         : null;
-
-    // Render performance instrumentation (Gap 4 — paper claim "+46% speedup").
-    // Fires one analytics event per model load. Fire-and-forget; never blocks render.
-    const { markFirstFrame, markFirstInteraction } = useRenderPerf({
-        modelUrl: urnModelUrl,
-    });
 
     const controlsRef = useRef<OrbitControlsImpl>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -915,6 +911,30 @@ export default function UrnViewer({
             }
         };
     }, []);
+
+    // Progressive LOD Resolution:
+    // When low-power hardware is detected or preference is explicitly 'low'/'medium',
+    // map default model URLs (e.g. CAO-DINH-v1.glb) to optimized LOD representations (512 or 1k)
+    const urnModelUrl = useMemo(() => {
+        if (!rawUrnModelUrl) return null;
+        if (lodPreference === "low" || (lodPreference === "auto" && isLowPowerDevice)) {
+            // Map to lowest LOD variant (512 texture) if available
+            return rawUrnModelUrl.replace(/-v1\.glb$/i, "-v1-512.glb");
+        }
+        if (lodPreference === "medium") {
+            return rawUrnModelUrl.replace(/-v1\.glb$/i, "-v1-1k.glb");
+        }
+        if (lodPreference === "high") {
+            return rawUrnModelUrl.replace(/-v1\.glb$/i, "-v1-2k.glb");
+        }
+        return rawUrnModelUrl;
+    }, [rawUrnModelUrl, lodPreference, isLowPowerDevice]);
+
+    // Render performance instrumentation (Gap 4 — paper claim "+46% speedup").
+    // Fires one analytics event per model load. Fire-and-forget; never blocks render.
+    const { markFirstFrame, markFirstInteraction } = useRenderPerf({
+        modelUrl: urnModelUrl,
+    });
 
     const hotspotScale = useMemo(
         () => (isMobileViewport ? 1.5 : 1),
@@ -1161,8 +1181,10 @@ export default function UrnViewer({
     );
 
     const [webglFailed, setWebglFailed] = useState(false);
+    const [modelLoadError, setModelLoadError] = useState(false);
+    const [showAccessibleView, setShowAccessibleView] = useState(false);
 
-    // Listen for WebGL context creation errors (thrown as unhandled promise rejections)
+    // Listen for WebGL context creation errors and context loss/restoration
     useEffect(() => {
         const handleError = (event: PromiseRejectionEvent) => {
             if (
@@ -1174,16 +1196,36 @@ export default function UrnViewer({
             }
         };
 
+        const handleContextLoss = (event: Event) => {
+            event.preventDefault();
+            setWebglFailed(true);
+        };
+
+        const handleContextRestored = () => {
+            setWebglFailed(false);
+        };
+
         window.addEventListener("unhandledrejection", handleError);
-        return () =>
+        window.addEventListener("webglcontextlost", handleContextLoss);
+        window.addEventListener("webglcontextrestored", handleContextRestored);
+        return () => {
             window.removeEventListener("unhandledrejection", handleError);
+            window.removeEventListener("webglcontextlost", handleContextLoss);
+            window.removeEventListener("webglcontextrestored", handleContextRestored);
+        };
     }, []);
 
-    // Fallback UI when WebGL fails
-    if (webglFailed) {
+    // Fallback UI when WebGL fails or user switches to accessible 2D archive
+    if (webglFailed || showAccessibleView) {
         return (
             <div className={`relative h-full w-full overflow-y-auto p-4 md:p-8 bg-background ${className}`}>
-                <UrnAccessibleFallback urnSlug={urnSlug} />
+                <UrnAccessibleFallback
+                    urnSlug={urnSlug}
+                    onReturnTo3D={() => {
+                        setWebglFailed(false);
+                        setShowAccessibleView(false);
+                    }}
+                />
             </div>
         );
     }
@@ -1226,7 +1268,20 @@ export default function UrnViewer({
                               >["onPointerMove"])
                     }
                     onCreated={(state) => {
-                        if (!state.gl) setWebglFailed(true);
+                        if (!state.gl) {
+                            setWebglFailed(true);
+                            return;
+                        }
+                        const canvas = state.gl.domElement;
+                        if (canvas) {
+                            canvas.addEventListener("webglcontextlost", (e) => {
+                                e.preventDefault();
+                                setWebglFailed(true);
+                            });
+                            canvas.addEventListener("webglcontextrestored", () => {
+                                setWebglFailed(false);
+                            });
+                        }
                         // Render perf: WebGL context ready ≈ ready for user
                         // interaction (OrbitControls attached on next frame).
                         markFirstInteraction();
@@ -1256,6 +1311,7 @@ export default function UrnViewer({
                         <ModelErrorBoundary
                             key={urnModelUrl || urnSlug}
                             fallback={fallback}
+                            onError={() => setModelLoadError(true)}
                         >
                             {urnModelUrl ? (
                                 <UrnModel
@@ -1316,6 +1372,33 @@ export default function UrnViewer({
                         controlsRef={controlsRef}
                     />
                 </Canvas>
+
+                {(!urnModelUrl || modelLoadError) && (
+                    <div
+                        data-testid="missing-mesh-fallback-banner"
+                        role="status"
+                        aria-live="polite"
+                        className="absolute top-4 left-4 z-20 flex max-w-sm flex-col gap-2 rounded-xl border border-amber-500/30 bg-background/90 p-3.5 shadow-lg backdrop-blur-md text-foreground"
+                    >
+                        <div className="flex items-center gap-2 text-xs font-semibold text-amber-600 dark:text-amber-400">
+                            <span className="inline-block h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
+                            <span>Mô hình 3D đang phục chế · Bản dập 2D thay thế</span>
+                        </div>
+                        <p className="text-[11px] text-muted-foreground leading-relaxed">
+                            Đang hiển thị mô phỏng vị trí và cung cấp hồ sơ bản dập 2D lưu trữ đầy đủ từ Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC).
+                        </p>
+                        <div className="flex items-center gap-2 pt-1">
+                            <button
+                                type="button"
+                                onClick={() => setShowAccessibleView(true)}
+                                className="inline-flex items-center gap-1.5 rounded-lg bg-primary/10 border border-primary/20 px-2.5 py-1 text-xs font-medium text-primary hover:bg-primary/20 transition-colors"
+                            >
+                                Xem Hồ Sơ Bản Dập 2D (WCAG)
+                            </button>
+                        </div>
+                    </div>
+                )}
+
                 <LessonSidebar />
             </div>
         </WebGLErrorBoundary>

@@ -47,6 +47,12 @@ def engine():
                 "ALTER TABLE IF EXISTS rbpc_inquiries ADD COLUMN IF NOT EXISTS sla_due_at TIMESTAMPTZ;"
                 "ALTER TABLE IF EXISTS historical_sources ADD COLUMN IF NOT EXISTS checksum TEXT;"
                 "ALTER TABLE IF EXISTS historical_sources ADD COLUMN IF NOT EXISTS excerpt TEXT;"
+                "ALTER TABLE IF EXISTS historical_assets ADD COLUMN IF NOT EXISTS offline_licensing_allowed BOOLEAN DEFAULT TRUE;"
+                "ALTER TABLE IF EXISTS historical_assets ADD COLUMN IF NOT EXISTS cache_control_policy VARCHAR(255) DEFAULT 'public, max-age=31536000, immutable';"
+                "ALTER TABLE IF EXISTS historical_assets ADD COLUMN IF NOT EXISTS is_private BOOLEAN NOT NULL DEFAULT FALSE;"
+                "ALTER TABLE IF EXISTS historical_assets ADD COLUMN IF NOT EXISTS revoked_at TIMESTAMPTZ;"
+                "ALTER TABLE IF EXISTS historical_assets ADD COLUMN IF NOT EXISTS revocation_reason TEXT;"
+                "ALTER TABLE IF EXISTS historical_assets ADD COLUMN IF NOT EXISTS media_cms_item_id UUID;"
             )
         )
         conn.commit()

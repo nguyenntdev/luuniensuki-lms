@@ -237,6 +237,7 @@ def create_app() -> FastAPI:
     from .routers import imperial as imperial_router
     from .routers import progress as progress_router
     from .routers import history_inquiry as history_inquiry_router
+    from .routers import media_cms as media_cms_router
 
     app.include_router(auth_router.router)
     app.include_router(users_router.router)
@@ -258,5 +259,6 @@ def create_app() -> FastAPI:
     app.include_router(imperial_router.router)
     app.include_router(progress_router.router)
     app.include_router(history_inquiry_router.router)
+    app.include_router(media_cms_router.router)
 
     return app

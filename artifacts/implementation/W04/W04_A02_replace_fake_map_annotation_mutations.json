@@ -1,0 +1,148 @@
+{
+  "ticket": "V5-T042",
+  "ticket_id": "V5-T042",
+  "wave": "W04",
+  "slot": "W04-A02",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Replace fake map annotation mutations in frontend/src/lib/imperial/map-api.ts and backend routers.",
+  "timestamp": "2026-11-05T00:50:00Z",
+  "summary": "Eliminated fabricated create, update, delete, publish, and import success fallbacks in frontend/src/lib/imperial/map-api.ts. Replaced synthetic fallback identifiers ('anno-draft-*') and optimistic state spoofing with genuine server persistence, strict error propagation, and clear separation of in-memory local drafts from committed records. Updated backend routers and services (backend/routers/imperial.py, backend/services/imperial_map.py) with optimistic concurrency checks against If-Match headers, standardized deletion and import response envelopes, and comprehensive audit trails. Enforced negative abuse invariants guaranteeing that network 500 errors or server rejections never show published changes on the client.",
+  "invariants_enforced": [
+    "ZERO_FABRICATED_MUTATION_SUCCESS: createAnnotation, updateAnnotation, deleteAnnotation, publishMap, exportAnnotations, and importAnnotations never swallow errors or synthesize fallback IDs ('anno-draft-*'), bumped row_versions, fake delete confirmations, or fake published map states.",
+    "SEPARATION_OF_LOCAL_DRAFTS: AnnotationStudioClient cleanly separates unsaved in-memory drafts (prefixed with 'draft-') from server-persisted annotations. Failed mutation attempts preserve draft changes in React state, alert the editor with explicit error feedback, and never claim success.",
+    "NEGATIVE_ABUSE_RESISTANCE: Network 500 errors, 400 license gates, 404 missing resource errors, 409 concurrency conflicts, and 422 coordinate bounds rejections immediately propagate to the client without showing published changes or modifying persistent state.",
+    "OPTIMISTIC_CONCURRENCY_CONTROL: PATCH updates require exact row_version match in payload and honor the If-Match header ('row-version-N'), rejecting stale updates with HTTP 409 (IMPERIAL_CONCURRENCY_CONFLICT).",
+    "ATOMIC_PUBLICATION_TRANSACTION: POST /api/v1/imperial/admin/maps/{map_id}/publish gates on license approval (HTTP 400), atomically deactivates previous active maps, marks the selected map asset active and published, transitions draft/approved annotations to published status, and updates the public GET /api/v1/imperial/maps/active payload.",
+    "ANTI_CSRF_AND_RBAC_GUARD: Administrative endpoints reject unauthenticated requests (HTTP 401) and unauthorized learner/guest roles (HTTP 403), and require custom anti-CSRF headers (X-Requested-With) for cookie mutations."
+  ],
+  "changes": [
+    {
+      "file": "frontend/src/lib/imperial/map-api.ts",
+      "description": "Removed catch block fallbacks that fabricated fake IDs ('anno-draft-*'), bumped row_versions, fake delete confirmations, and fake published map objects. All mutation methods now strictly delegate to apiRequest and propagate errors to the calling UI."
+    },
+    {
+      "file": "frontend/src/lib/imperial/map-api.test.ts",
+      "description": "Updated Vitest suite with authentic apiRequest mocking and added comprehensive negative invariant test cases asserting that network 500 errors, 409 concurrency conflicts, and 422 validation failures reject and never return synthetic data."
+    },
+    {
+      "file": "frontend/src/app/admin/dai-noi/annotate/AnnotationStudioClient.tsx",
+      "description": "Enhanced handleDeleteAnnotation and handleSaveDrafts with explicit error banners upon server failure, ensuring drafts are preserved and errors surfaced to curators."
+    },
+    {
+      "file": "backend/routers/imperial.py",
+      "description": "Added If-Match header validation matching row_version in update_annotation, and enriched delete_annotation response with success and id fields for contract parity."
+    },
+    {
+      "file": "backend/services/imperial_map.py",
+      "description": "Normalized import_annotations result envelope for both dry-run and atomic final execution to include valid, created_count, updated_count, skipped_count, total_count, image_hash_matched, and issues fields."
+    },
+    {
+      "file": "tests/v5/test_v5_t042.py",
+      "description": "Created comprehensive 10-test suite verifying frontend source invariants, client contract executions, backend RBAC, DB persistence with audit logging, optimistic concurrency, soft deletion, atomic publication gates, and negative abuse resistance."
+    }
+  ],
+  "contracts": {
+    "create_annotation": {
+      "path": "/api/v1/imperial/admin/maps/{map_id}/annotations",
+      "method": "POST",
+      "expected_status": 201,
+      "success_contract": "Persists annotation with review_status='draft', row_version=1, and creates audit log entry.",
+      "failure_contract": "Re-throws typed error on 422 UV bounds violation, 404 missing site, or 409 duplicate annotation."
+    },
+    "update_annotation": {
+      "path": "/api/v1/imperial/admin/annotations/{id}",
+      "method": "PATCH",
+      "expected_status": 200,
+      "success_contract": "Bumps row_version and updates coordinates/metadata with audit record.",
+      "failure_contract": "Rejects stale row_version or If-Match mismatch with HTTP 409 IMPERIAL_CONCURRENCY_CONFLICT."
+    },
+    "delete_annotation": {
+      "path": "/api/v1/imperial/admin/annotations/{id}",
+      "method": "DELETE",
+      "expected_status": 200,
+      "success_contract": "Soft-deletes / archives annotation, sets is_visible=False, and records archive audit log.",
+      "failure_contract": "Re-throws error on failure; never reports fake success."
+    },
+    "publish_map": {
+      "path": "/api/v1/imperial/admin/maps/{map_id}/publish",
+      "method": "POST",
+      "expected_status": 200,
+      "success_contract": "Atomically activates map asset, sets review_status='published', transitions draft/approved annotations to published, and refreshes GET /api/v1/imperial/maps/active.",
+      "failure_contract": "Rejects with HTTP 400 IMPERIAL_LICENSE_NOT_APPROVED if license_status is not approved."
+    }
+  },
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t042.py -v",
+    "total_tests": 10,
+    "passed_tests": 10,
+    "failed_tests": 0,
+    "test_details": [
+      {
+        "name": "test_frontend_map_api_no_fabricated_mutation_success",
+        "result": "PASSED",
+        "assertion": "Verifies that frontend/src/lib/imperial/map-api.ts does not contain synthetic fallback IDs, bumped row_versions, or fake success objects in catch blocks."
+      },
+      {
+        "name": "test_studio_client_handles_errors_and_separates_drafts",
+        "result": "PASSED",
+        "assertion": "Verifies that AnnotationStudioClient separates local drafts with draft- prefix and displays error notices without discarding drafts on server failure."
+      },
+      {
+        "name": "test_vitest_frontend_contract",
+        "result": "PASSED",
+        "assertion": "Executes 16 Vitest tests in src/lib/imperial/map-api.test.ts verifying authentic server persistence and error propagation on 500/409/422 failures."
+      },
+      {
+        "name": "test_unauthenticated_or_learner_cannot_mutate_annotations",
+        "result": "PASSED",
+        "assertion": "Verifies that anonymous requests receive 401 and learner role receives 403 on admin annotation mutations."
+      },
+      {
+        "name": "test_backend_create_annotation_real_persistence_and_audit",
+        "result": "PASSED",
+        "assertion": "Verifies POST /api/v1/imperial/admin/maps/{map_id}/annotations persists database record with row_version=1 and creates audit log entry."
+      },
+      {
+        "name": "test_backend_create_annotation_validations_and_conflict",
+        "result": "PASSED",
+        "assertion": "Verifies that out-of-bounds UV coordinates return 422, nonexistent site returns 404, and duplicate site annotation on same map returns 409."
+      },
+      {
+        "name": "test_backend_update_annotation_optimistic_concurrency_and_audit",
+        "result": "PASSED",
+        "assertion": "Verifies that PATCH updates require matching row_version and If-Match header, bumping row_version to 2 and rejecting stale version 1 with 409."
+      },
+      {
+        "name": "test_backend_delete_annotation_soft_deletes_and_archives",
+        "result": "PASSED",
+        "assertion": "Verifies that DELETE archives annotation with is_visible=False and records archive audit log entry."
+      },
+      {
+        "name": "test_backend_atomic_publish_gates_and_transitions",
+        "result": "PASSED",
+        "assertion": "Verifies that unapproved licenses are rejected with 400, approved maps publish atomically, and annotations become published on GET /api/v1/imperial/maps/active."
+      },
+      {
+        "name": "test_negative_abuse_server_failure_does_not_mutate_state",
+        "result": "PASSED",
+        "assertion": "Verifies that server 404/422 failures leave persistent state unmodified and never show published changes."
+      }
+    ],
+    "vitest_frontend": {
+      "command": "npm run test -- src/lib/imperial/map-api.test.ts",
+      "total": 16,
+      "passed": 16,
+      "failed": 0
+    },
+    "type_check": {
+      "command": "npm run type-check",
+      "exit_code": 0
+    },
+    "lint": {
+      "command": "npm run lint:ci",
+      "exit_code": 0
+    }
+  }
+}

@@ -19,7 +19,7 @@ export default function AnnotateAdminLayout({
 
   const isStaffOrAdmin =
     Boolean(user) &&
-    ["admin", "super_admin", "staff", "editor", "reviewer"].includes(
+    ["admin", "super_admin", "staff", "editor", "reviewer", "teacher"].includes(
       user?.role || "",
     );
 
@@ -72,7 +72,7 @@ export default function AnnotateAdminLayout({
             Từ chối quyền truy cập (403)
           </h2>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Tài khoản hiện tại ({user.email}) chưa được phân quyền biên tập bản đồ. Cần có vai trò Staff hoặc Admin để truy cập công cụ này.
+            Tài khoản hiện tại ({user.email}) chưa được phân quyền biên tập bản đồ. Cần có vai trò Giáo viên (Teacher), Cán bộ (Staff) hoặc Quản trị viên (Admin) để truy cập công cụ này.
           </p>
           <div className="pt-2">
             <Button asChild variant="outline" className="w-full text-xs font-semibold">

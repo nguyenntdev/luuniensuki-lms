@@ -55,6 +55,9 @@ export interface ImperialMediaHotspot {
   title: string;
   description?: string | null;
   detail_id?: string | null;
+  claim_id?: string | null;
+  entity_id?: string | null;
+  asset_revision?: number | null;
   art_detail_slug?: string | null;
   art_detail?: ImperialArtDetail | null;
   review_status?: "draft" | "in_review" | "approved" | "published" | "archived";
@@ -252,3 +255,42 @@ export const EVIDENCE_STRENGTH_METADATA: Record<
     badgeColor: "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30",
   },
 };
+
+// --------------------------------------------------------------------------- //
+// Relic Inspection Types (V5-T045: AR Fallback & Equivalent Learning)
+// --------------------------------------------------------------------------- //
+
+export interface ImperialInspectionCompleteRequest {
+  target_slug: string;
+  inspection_mode: "webxr_ar" | "quicklook_ar" | "turntable_3d" | "turntable_2d" | "image_fallback";
+  camera_permission_granted: boolean;
+  device_tier?: "low_end_mobile" | "mid_range_mobile" | "high_end_mobile" | "desktop";
+  time_spent_seconds: number;
+  angles_inspected?: string[];
+  hotspots_examined?: string[];
+  idempotency_key?: string;
+}
+
+export interface ImperialInspectionCompleteResponse {
+  success: boolean;
+  task_id: string;
+  target_slug: string;
+  target_title: string;
+  inspection_mode: string;
+  camera_permission_granted: boolean;
+  equivalent_learning_completed: boolean;
+  xp_awarded: number;
+  total_xp: number;
+  already_completed: boolean;
+  feedback: string;
+  recorded_at: string;
+}
+
+export interface ImperialInspectionStatusResponse {
+  target_slug: string;
+  is_completed: boolean;
+  completed_mode?: string | null;
+  camera_permission_granted?: boolean | null;
+  xp_earned: number;
+  completed_at?: string | null;
+}

@@ -229,5 +229,21 @@ Deploy workflow (`deploy.yml`) uses Python 3.12 and runs `pytest tests/backend` 
   - `V5-T039` (W03-A09): Learning outcome measurement scaffold enforcing dual-assessor scoring and blocking causal labels derived from subjective surveys.
   - `V5-T040` (W03-A10): Complete classroom end-to-end acceptance suite across multi-school setups, assignments, submissions, grading, and exports.
 
+### Wave W04: 3D/AR / Map / Visual Asset Integrity (COMPLETED)
+- **Status**: 10/10 slots complete. 115/115 tests passing.
+- **Artifacts**: `artifacts/implementation/W04/` (`W04_A01`–`W04_A10`).
+- **Verified Invariants**:
+  - `V5-T041` (W04-A01): 3D asset manifest validation enforcing size, checksum, license, mesh ID joins, WebGL health, and 2D rubbing fallbacks.
+  - `V5-T042` (W04-A02): Replace fake map annotation mutations with real server persistence, separate local drafts, and optimistic concurrency.
+  - `V5-T043` (W04-A03): Admin map access control enforcing server-side RBAC (`STAFF_ROLES`), editor ownership, and CSRF/Bearer defense.
+  - `V5-T044` (W04-A04): Hotspot and claim binding ensuring 3D coordinates link to approved source-based claims and rejecting unreviewed/disputed claims.
+  - `V5-T045` (W04-A05): AR fallback and device capability checks with turntable fallback, ensuring denied camera permission still allows equivalent learning completion.
+  - `V5-T046` (W04-A06): 3D rendering QA under load with progressive LOD resolution, WebGL context loss recovery, and zero VRAM leaks.
+  - `V5-T047` (W04-A07): 360 virtual museum source links connecting viewpoints to verified monuments, with alt text and reduced-motion support.
+  - `V5-T048` (W04-A08): Offline licensing and cache headers enforcing immutable cache on hashed assets and blocking stale CDN serving of revoked assets.
+  - `V5-T049` (W04-A09): Accessibility audits across media enforcing keyboard navigation, screen reader ARIA roles, captions, and 2D text equivalence.
+  - `V5-T050` (W04-A10): Museum operator media CMS with secure file magic byte validation, licensing metadata, and staged publication approval.
+
+
 
 

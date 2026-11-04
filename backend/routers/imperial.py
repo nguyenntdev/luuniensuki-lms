@@ -14,11 +14,16 @@ import io
 from typing import Any, Optional, Union
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Query, Response, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request, Response, status
 from fastapi.responses import FileResponse, Response
 from sqlalchemy.orm import Session
 
 from ..apischemas.imperial import (
+    AssetLicenseCheckResponse,
+    AssetRevokeRequest,
+    AssetRevokeResponse,
+    AssetSignedTokenRequest,
+    AssetSignedTokenResponse,
     ImperialActivityOut,
     ImperialAIAskRequest,
     ImperialAIAskResponse,
@@ -41,6 +46,7 @@ from ..apischemas.imperial import (
     ImperialSubmissionOut,
     ImperialZoneSummary,
 )
+from ..config import settings
 from ..db import get_db
 from ..deps import (
     get_admin_user,
@@ -50,6 +56,7 @@ from ..deps import (
 )
 from ..errors import AppError
 from ..models import User, UserRole
+from ..rbac import ADMIN_ROLES, STAFF_ROLES
 from ..services import (
     imperial_ai,
     imperial_audio,
@@ -58,6 +65,12 @@ from ..services import (
     imperial_site,
     imperial_sync,
     imperial_v51,
+    relic_inspection,
+)
+from ..apischemas.relic_inspection import (
+    RelicInspectionCompleteRequest,
+    RelicInspectionCompleteResponse,
+    RelicInspectionStatusResponse,
 )
 from ..apischemas.imperial_audio import (
     ImperialAudioCatalogOut,
@@ -195,25 +208,237 @@ def get_audio_guide_by_slug(slug: str):
 
 
 @router.get("/assets/{asset_id}/image")
-def get_map_asset_image(asset_id: UUID, db: Session = Depends(get_db)):
-    """Serve map asset image with caching headers."""
+def get_map_asset_image(
+    asset_id: UUID,
+    request: Request,
+    token: Optional[str] = Query(default=None, description="Signed asset token for private/restricted access"),
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user_optional),
+):
+    """Serve map asset image with strict cache headers and offline licensing validation."""
     from ..imperial_models import ImperialMapAsset
+    from ..services.offline_licensing import (
+        is_asset_revoked,
+        verify_signed_asset_token,
+        REVOKED_ASSET_CACHE,
+        PRIVATE_ASSET_CACHE,
+        PUBLIC_IMMUTABLE_CACHE,
+    )
 
     map_asset = db.get(ImperialMapAsset, asset_id)
     if not map_asset:
         raise AppError("IMPERIAL_MAP_NOT_FOUND", f"Map asset '{asset_id}' not found", 404)
 
+    # 1. Revocation & negative abuse protection:
+    # If asset license is rejected or revoked in registry, immediately refuse to serve
+    # with no-store/purge headers to prevent stale CDN serving.
+    if map_asset.license_status == "rejected" or is_asset_revoked(str(asset_id), db):
+        revocation_headers = {
+            "Cache-Control": REVOKED_ASSET_CACHE,
+            "Pragma": "no-cache",
+            "Expires": "0",
+            "X-Asset-Rights-Status": "REVOKED",
+            "X-Cache-Invalidation": "PURGE_CDN_IMMEDIATE",
+        }
+        raise AppError(
+            "ASSET_REVOKED",
+            f"Asset '{asset_id}' has been revoked; cached distribution disallowed",
+            status_code=403,
+            details={"cache_headers": revocation_headers},
+        )
+
+    # 2. Private asset verification:
+    # Unpublished or inactive map assets are private.
+    is_private = (map_asset.review_status != "published") or (not map_asset.is_active)
+    if is_private:
+        token_valid = False
+        if token:
+            try:
+                verify_signed_asset_token(token, str(asset_id))
+                token_valid = True
+            except Exception:
+                token_valid = False
+
+        if not token_valid and current_user and current_user.role in (UserRole.ADMIN, UserRole.STAFF, UserRole.TEACHER):
+            token_valid = True
+
+        if not token_valid:
+            raise AppError(
+                "UNAUTHORIZED_PRIVATE_ASSET",
+                "Private asset requires valid signed token or Authorization header",
+                status_code=403,
+            )
+
+        headers = {
+            "Cache-Control": PRIVATE_ASSET_CACHE,
+            "Pragma": "no-cache",
+            "Expires": "0",
+            "ETag": f'"{map_asset.image_sha256}"',
+            "Content-Type": map_asset.mime_type or "image/webp",
+            "X-Asset-Access": "PRIVATE_SIGNED",
+        }
+        return Response(content=_PLACEHOLDER_WEBP, status_code=200, headers=headers)
+
+    # 3. Public asset with content hash (immutable CDN cache)
+    etag = f'"{map_asset.image_sha256}"'
+    if_none_match = request.headers.get("if-none-match")
+    if if_none_match and if_none_match.strip('"') == map_asset.image_sha256:
+        return Response(
+            status_code=304,
+            headers={
+                "ETag": etag,
+                "Cache-Control": PUBLIC_IMMUTABLE_CACHE,
+            },
+        )
+
     headers = {
-        "Cache-Control": "public, max-age=86400, immutable",
-        "ETag": f'"{map_asset.image_sha256}"',
+        "Cache-Control": PUBLIC_IMMUTABLE_CACHE,
+        "ETag": etag,
         "Content-Type": map_asset.mime_type or "image/webp",
+        "X-Asset-Access": "PUBLIC_IMMUTABLE",
+        "X-Offline-Licensing": "ALLOWED",
     }
     return Response(content=_PLACEHOLDER_WEBP, status_code=200, headers=headers)
+
+
+@router.post("/assets/{asset_id}/signed-token", response_model=AssetSignedTokenResponse)
+def create_asset_signed_token(
+    asset_id: UUID,
+    payload: AssetSignedTokenRequest,
+    current_user: User = Depends(get_staff_user),
+):
+    """Generate tamper-proof HMAC-SHA256 signed token for private asset access."""
+    import time
+    from ..services.offline_licensing import generate_signed_asset_token, PRIVATE_ASSET_CACHE
+
+    token = generate_signed_asset_token(
+        asset_id=str(asset_id),
+        access_level=payload.access_level,
+        client_id=payload.client_id or str(current_user.id),
+        expires_in_seconds=payload.expires_in_seconds,
+    )
+    return AssetSignedTokenResponse(
+        asset_id=asset_id,
+        token=token,
+        expires_at=int(time.time()) + payload.expires_in_seconds,
+        cache_control=PRIVATE_ASSET_CACHE,
+    )
+
+
+@router.post("/assets/{asset_id}/revoke", response_model=AssetRevokeResponse)
+def revoke_asset_endpoint(
+    asset_id: UUID,
+    payload: AssetRevokeRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_admin_user),
+):
+    """Revoke an asset and emit immediate CDN cache invalidation."""
+    from ..imperial_models import ImperialMapAsset
+    from ..services.offline_licensing import register_asset_revocation, REVOKED_ASSET_CACHE
+
+    map_asset = db.get(ImperialMapAsset, asset_id)
+    if map_asset:
+        map_asset.license_status = "rejected"
+        map_asset.is_active = False
+        db.commit()
+
+    register_asset_revocation(
+        asset_id=str(asset_id),
+        reason=payload.reason,
+        revoked_by=str(current_user.id),
+        db=db,
+    )
+
+    return AssetRevokeResponse(
+        asset_id=asset_id,
+        status="REVOKED",
+        revocation_reason=payload.reason,
+        cdn_purged=True,
+        cache_control=REVOKED_ASSET_CACHE,
+    )
+
+
+@router.get("/assets/{asset_id}/license-check", response_model=AssetLicenseCheckResponse)
+def check_asset_license_endpoint(
+    asset_id: UUID,
+    db: Session = Depends(get_db),
+):
+    """Check offline licensing status and caching policy for an asset."""
+    from ..imperial_models import ImperialMapAsset
+    from ..services.offline_licensing import (
+        is_asset_revoked,
+        PUBLIC_IMMUTABLE_CACHE,
+        PRIVATE_ASSET_CACHE,
+        REVOKED_ASSET_CACHE,
+    )
+
+    map_asset = db.get(ImperialMapAsset, asset_id)
+    if not map_asset:
+        raise AppError("IMPERIAL_MAP_NOT_FOUND", f"Map asset '{asset_id}' not found", 404)
+
+    is_revoked = map_asset.license_status == "rejected" or is_asset_revoked(str(asset_id), db)
+    is_private = (map_asset.review_status != "published") or (not map_asset.is_active)
+
+    if is_revoked:
+        cache_ctrl = REVOKED_ASSET_CACHE
+        offline_allowed = False
+    elif is_private:
+        cache_ctrl = PRIVATE_ASSET_CACHE
+        offline_allowed = False
+    else:
+        cache_ctrl = PUBLIC_IMMUTABLE_CACHE
+        offline_allowed = True
+
+    return AssetLicenseCheckResponse(
+        asset_id=asset_id,
+        offline_licensing_allowed=offline_allowed,
+        license_kind=map_asset.license_kind,
+        license_status=map_asset.license_status,
+        review_status=map_asset.review_status,
+        cache_control=cache_ctrl,
+        is_private=is_private,
+        is_revoked=is_revoked,
+    )
 
 
 # =========================================================================== #
 # Admin Endpoints (RBAC Protected)
 # =========================================================================== #
+def verify_map_admin_csrf(request: Request) -> None:
+    """Enforce CSRF and Bearer token defense for administrative map mutations.
+
+    Invariants:
+    1. Requests with Authorization: Bearer <token> header are immune to ambient cookie CSRF attacks.
+    2. Requests authenticated via session cookies (access_cookie_name) MUST contain a custom
+       anti-CSRF header (X-Requested-With or X-CSRF-Token) and MUST NOT have Sec-Fetch-Site: cross-site.
+    """
+    if request.method in ("GET", "HEAD", "OPTIONS"):
+        return
+
+    auth_header = request.headers.get("authorization", "")
+    if auth_header.strip().startswith("Bearer "):
+        return
+
+    cookie_token = request.cookies.get(settings.access_cookie_name)
+    if cookie_token:
+        sec_fetch_site = request.headers.get("sec-fetch-site")
+        if sec_fetch_site == "cross-site":
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="CSRF validation failed: cross-site cookie mutation rejected",
+            )
+        has_csrf_header = bool(
+            request.headers.get("x-requested-with")
+            or request.headers.get("x-csrf-token")
+            or request.headers.get("x-xsrf-token")
+        )
+        if not has_csrf_header:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="CSRF validation failed: missing custom anti-CSRF header on cookie mutation",
+            )
+
+
 @router.get("/admin/maps", response_model=list[ImperialMapAssetSummary])
 def list_maps(
     db: Session = Depends(get_db),
@@ -226,10 +451,12 @@ def list_maps(
 @router.post("/admin/maps", response_model=ImperialMapAssetDetail, status_code=status.HTTP_201_CREATED)
 def create_map(
     payload: ImperialMapAssetUpload,
+    request: Request,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_staff_user),
 ):
     """Create metadata for an aerial map asset."""
+    verify_map_admin_csrf(request)
     return imperial_map.create_map_asset(db, payload, actor_id=current_user.id)
 
 
@@ -251,10 +478,12 @@ def get_admin_map_annotations(
 def create_annotation(
     map_id: UUID,
     payload: ImperialAnnotationCreateRequest,
+    request: Request,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_staff_user),
 ):
     """Create a draft annotation marker with UV bounds validation and audit entry."""
+    verify_map_admin_csrf(request)
     create_dto = ImperialAnnotationCreate(
         map_asset_id=map_id,
         site_id=payload.site_id,
@@ -277,31 +506,49 @@ def create_annotation(
 def update_annotation(
     id: UUID,
     payload: ImperialAnnotationUpdate,
+    request: Request,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_staff_user),
 ):
-    """Update annotation coordinates or metadata with optimistic locking check."""
-    return imperial_map.update_annotation(db, annotation_id=id, payload=payload, actor_id=current_user.id)
+    """Update annotation coordinates or metadata with optimistic locking and editor ownership checks."""
+    verify_map_admin_csrf(request)
+    if_match = request.headers.get("if-match")
+    is_admin = current_user.role in ADMIN_ROLES
+    return imperial_map.update_annotation(
+        db,
+        annotation_id=id,
+        payload=payload,
+        actor_id=current_user.id,
+        is_admin=is_admin,
+        if_match=if_match,
+    )
 
 
 @router.delete("/admin/annotations/{id}")
 def delete_annotation(
     id: UUID,
+    request: Request,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_staff_user),
 ):
-    """Soft-delete / archive annotation with audit log."""
-    imperial_map.delete_annotation(db, annotation_id=id, actor_id=current_user.id)
-    return {"ok": True, "message": "Annotation archived"}
+    """Soft-delete / archive annotation with audit log and editor ownership check."""
+    verify_map_admin_csrf(request)
+    is_admin = current_user.role in ADMIN_ROLES
+    imperial_map.delete_annotation(
+        db, annotation_id=id, actor_id=current_user.id, is_admin=is_admin
+    )
+    return {"ok": True, "success": True, "id": str(id), "message": "Annotation archived"}
 
 
 @router.post("/admin/maps/{map_id}/publish", response_model=ImperialMapAssetDetail)
 def publish_map(
     map_id: UUID,
+    request: Request,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_admin_user),
 ):
     """Atomically publish approved aerial map and its annotations."""
+    verify_map_admin_csrf(request)
     return imperial_map.publish_map(db, map_id=map_id, actor_id=current_user.id)
 
 
@@ -319,11 +566,13 @@ def export_annotations(
 def import_annotations(
     map_id: UUID,
     payload: dict[str, Any],
+    request: Request,
     dry_run: bool = Query(default=True),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_staff_user),
 ):
     """Import annotations dataset with schema validation, site check, UV bounds, and atomic commit."""
+    verify_map_admin_csrf(request)
     return imperial_map.import_annotations(
         db, map_id=map_id, payload=payload, actor_id=current_user.id, dry_run=dry_run
     )
@@ -490,6 +739,38 @@ def get_site_learning_media(slug: str, db: Session = Depends(get_db)):
 def get_media_hotspots(media_id: UUID, db: Session = Depends(get_db)):
     """Retrieve published interactive hotspots placed on a learning media asset."""
     return imperial_v51.get_media_hotspots(db, media_id=media_id, include_drafts=False)
+
+
+@router.post(
+    "/inspections/complete",
+    response_model=RelicInspectionCompleteResponse,
+    status_code=status.HTTP_200_OK,
+)
+def complete_relic_inspection(
+    payload: RelicInspectionCompleteRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> RelicInspectionCompleteResponse:
+    """Record a verified relic inspection task with camera/WebXR or 2D turntable fallback.
+
+    Enforces the V5-T045 invariant:
+    Denied camera permission grants the exact same learning completion, same XP,
+    and same progression as an AR session.
+    """
+    return relic_inspection.record_relic_inspection(db, user=current_user, payload=payload)
+
+
+@router.get(
+    "/inspections/{target_slug}",
+    response_model=RelicInspectionStatusResponse,
+)
+def get_relic_inspection_status(
+    target_slug: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> RelicInspectionStatusResponse:
+    """Check whether a user has already completed inspection on a heritage target."""
+    return relic_inspection.get_relic_inspection_status(db, user=current_user, target_slug=target_slug)
 
 
 @router.get("/sites/{slug}/art-details", response_model=list[ImperialArtDetailSummary])

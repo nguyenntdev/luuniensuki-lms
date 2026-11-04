@@ -1058,6 +1058,214 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/media-cms/items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Media Items
+         * @description List museum media assets with filter and search criteria.
+         */
+        get: operations["list_media_items_api_v1_admin_media_cms_items_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/media-cms/items/{item_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Media Item
+         * @description Retrieve details of a single media item.
+         */
+        get: operations["get_media_item_api_v1_admin_media_cms_items__item_id__get"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete Media
+         * @description Delete a draft or rejected media asset.
+         */
+        delete: operations["delete_media_api_v1_admin_media_cms_items__item_id__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Update Media Item
+         * @description Update metadata and licensing properties of a media asset.
+         */
+        patch: operations["update_media_item_api_v1_admin_media_cms_items__item_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/admin/media-cms/items/{item_id}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Approve Media
+         * @description Approve a media asset in review status (admin/curator only).
+         */
+        post: operations["approve_media_api_v1_admin_media_cms_items__item_id__approve_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/media-cms/items/{item_id}/archive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Archive Media
+         * @description Archive a media asset (admin only).
+         */
+        post: operations["archive_media_api_v1_admin_media_cms_items__item_id__archive_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/media-cms/items/{item_id}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Publish Media
+         * @description Publish an approved media asset and sync to historical assets catalog.
+         */
+        post: operations["publish_media_api_v1_admin_media_cms_items__item_id__publish_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/media-cms/items/{item_id}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Reject Media
+         * @description Reject a media asset with mandatory review explanation.
+         */
+        post: operations["reject_media_api_v1_admin_media_cms_items__item_id__reject_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/media-cms/items/{item_id}/submit-review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Submit Media Review
+         * @description Submit a draft or rejected media asset for editorial review.
+         */
+        post: operations["submit_media_review_api_v1_admin_media_cms_items__item_id__submit_review_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/media-cms/items/{item_id}/version": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload Media Version
+         * @description Upload a new binary version for an existing media asset.
+         */
+        post: operations["upload_media_version_api_v1_admin_media_cms_items__item_id__version_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/media-cms/preview/{item_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Preview Media
+         * @description Get staged preview configuration and rights summary for operator preview.
+         */
+        get: operations["preview_media_api_v1_admin_media_cms_preview__item_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/media-cms/upload": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload Media Asset
+         * @description Securely upload a museum media asset in draft status.
+         */
+        post: operations["upload_media_asset_api_v1_admin_media_cms_upload_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/push-notifications": {
         parameters: {
             query?: never;
@@ -4437,14 +4645,14 @@ export interface paths {
         post?: never;
         /**
          * Delete Annotation
-         * @description Soft-delete / archive annotation with audit log.
+         * @description Soft-delete / archive annotation with audit log and editor ownership check.
          */
         delete: operations["delete_annotation_api_v1_imperial_admin_annotations__id__delete"];
         options?: never;
         head?: never;
         /**
          * Update Annotation
-         * @description Update annotation coordinates or metadata with optimistic locking check.
+         * @description Update annotation coordinates or metadata with optimistic locking and editor ownership checks.
          */
         patch: operations["update_annotation_api_v1_imperial_admin_annotations__id__patch"];
         trace?: never;
@@ -4846,11 +5054,71 @@ export interface paths {
         };
         /**
          * Get Map Asset Image
-         * @description Serve map asset image with caching headers.
+         * @description Serve map asset image with strict cache headers and offline licensing validation.
          */
         get: operations["get_map_asset_image_api_v1_imperial_assets__asset_id__image_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/assets/{asset_id}/license-check": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Check Asset License Endpoint
+         * @description Check offline licensing status and caching policy for an asset.
+         */
+        get: operations["check_asset_license_endpoint_api_v1_imperial_assets__asset_id__license_check_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/assets/{asset_id}/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Revoke Asset Endpoint
+         * @description Revoke an asset and emit immediate CDN cache invalidation.
+         */
+        post: operations["revoke_asset_endpoint_api_v1_imperial_assets__asset_id__revoke_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/assets/{asset_id}/signed-token": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Asset Signed Token
+         * @description Generate tamper-proof HMAC-SHA256 signed token for private asset access.
+         */
+        post: operations["create_asset_signed_token_api_v1_imperial_assets__asset_id__signed_token_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4951,6 +5219,50 @@ export interface paths {
          * @description Submit an answer to an interactive quiz question and receive the explanation and citation.
          */
         post: operations["submit_game_answer_api_v1_imperial_games_submit_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/inspections/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Complete Relic Inspection
+         * @description Record a verified relic inspection task with camera/WebXR or 2D turntable fallback.
+         *
+         *     Enforces the V5-T045 invariant:
+         *     Denied camera permission grants the exact same learning completion, same XP,
+         *     and same progression as an AR session.
+         */
+        post: operations["complete_relic_inspection_api_v1_imperial_inspections_complete_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/inspections/{target_slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Relic Inspection Status
+         * @description Check whether a user has already completed inspection on a heritage target.
+         */
+        get: operations["get_relic_inspection_status_api_v1_imperial_inspections__target_slug__get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -9472,6 +9784,93 @@ export interface components {
             /** Review Notes */
             review_notes?: string | null;
         };
+        /** AssetLicenseCheckResponse */
+        AssetLicenseCheckResponse: {
+            /**
+             * Asset Id
+             * Format: uuid
+             */
+            asset_id: string;
+            /** Cache Control */
+            cache_control: string;
+            /** Is Private */
+            is_private: boolean;
+            /** Is Revoked */
+            is_revoked: boolean;
+            /** License Kind */
+            license_kind: string;
+            /** License Status */
+            license_status: string;
+            /** Offline Licensing Allowed */
+            offline_licensing_allowed: boolean;
+            /** Review Status */
+            review_status: string;
+        };
+        /** AssetRevokeRequest */
+        AssetRevokeRequest: {
+            /**
+             * Reason
+             * @default Rights withdrawn by owner or rights holder
+             */
+            reason: string;
+        };
+        /** AssetRevokeResponse */
+        AssetRevokeResponse: {
+            /**
+             * Asset Id
+             * Format: uuid
+             */
+            asset_id: string;
+            /**
+             * Cache Control
+             * @default no-cache, no-store, must-revalidate, max-age=0, s-maxage=0
+             */
+            cache_control: string;
+            /**
+             * Cdn Purged
+             * @default true
+             */
+            cdn_purged: boolean;
+            /** Revocation Reason */
+            revocation_reason: string;
+            /**
+             * Status
+             * @default REVOKED
+             */
+            status: string;
+        };
+        /** AssetSignedTokenRequest */
+        AssetSignedTokenRequest: {
+            /**
+             * Access Level
+             * @default read
+             */
+            access_level: string;
+            /** Client Id */
+            client_id?: string | null;
+            /**
+             * Expires In Seconds
+             * @default 3600
+             */
+            expires_in_seconds: number;
+        };
+        /** AssetSignedTokenResponse */
+        AssetSignedTokenResponse: {
+            /**
+             * Asset Id
+             * Format: uuid
+             */
+            asset_id: string;
+            /**
+             * Cache Control
+             * @default private, no-cache, no-store, must-revalidate, max-age=0
+             */
+            cache_control: string;
+            /** Expires At */
+            expires_at: number;
+            /** Token */
+            token: string;
+        };
         /** AssignmentCreateRequest */
         AssignmentCreateRequest: {
             /** Due At */
@@ -9625,6 +10024,45 @@ export interface components {
         };
         /** Body_upload_avatar_api_v1_users_me_avatar_post */
         Body_upload_avatar_api_v1_users_me_avatar_post: {
+            /** File */
+            file: string;
+        };
+        /** Body_upload_media_asset_api_v1_admin_media_cms_upload_post */
+        Body_upload_media_asset_api_v1_admin_media_cms_upload_post: {
+            /**
+             * Asset Type
+             * @default image
+             */
+            asset_type: string;
+            /** Attribution */
+            attribution: string;
+            /**
+             * Derivative Allowed
+             * @default true
+             */
+            derivative_allowed: boolean;
+            /** Description */
+            description?: string | null;
+            /** File */
+            file: string;
+            /** Historical Entity Id */
+            historical_entity_id?: string | null;
+            /** License Type */
+            license_type: string;
+            /**
+             * Public Display Allowed
+             * @default true
+             */
+            public_display_allowed: boolean;
+            /** Relic Slug */
+            relic_slug?: string | null;
+            /** Rights Owner */
+            rights_owner: string;
+            /** Title */
+            title: string;
+        };
+        /** Body_upload_media_version_api_v1_admin_media_cms_items__item_id__version_post */
+        Body_upload_media_version_api_v1_admin_media_cms_items__item_id__version_post: {
             /** File */
             file: string;
         };
@@ -16288,10 +16726,16 @@ export interface components {
         };
         /** ImperialMediaHotspotCreate */
         ImperialMediaHotspotCreate: {
+            /** Asset Revision */
+            asset_revision?: number | null;
+            /** Claim Id */
+            claim_id?: string | null;
             /** Description */
             description?: string | null;
             /** Detail Id */
             detail_id?: string | null;
+            /** Entity Id */
+            entity_id?: string | null;
             /** Media Id */
             media_id?: string | null;
             /**
@@ -16320,6 +16764,10 @@ export interface components {
         /** ImperialMediaHotspotOut */
         ImperialMediaHotspotOut: {
             art_detail?: components["schemas"]["ImperialArtDetailSummary"] | null;
+            /** Asset Revision */
+            asset_revision?: number | null;
+            /** Claim Id */
+            claim_id?: string | null;
             /**
              * Content Scope
              * @default STTT_IMPERIAL_CITY
@@ -16334,6 +16782,8 @@ export interface components {
             description?: string | null;
             /** Detail Id */
             detail_id?: string | null;
+            /** Entity Id */
+            entity_id?: string | null;
             /**
              * Id
              * Format: uuid
@@ -16379,10 +16829,16 @@ export interface components {
         };
         /** ImperialMediaHotspotUpdate */
         ImperialMediaHotspotUpdate: {
+            /** Asset Revision */
+            asset_revision?: number | null;
+            /** Claim Id */
+            claim_id?: string | null;
             /** Description */
             description?: string | null;
             /** Detail Id */
             detail_id?: string | null;
+            /** Entity Id */
+            entity_id?: string | null;
             /** Point Kind */
             point_kind?: ("point" | "rect" | "polygon") | null;
             /** Position Payload */
@@ -18141,6 +18597,127 @@ export interface components {
             total_questions: number;
             /** Value */
             value?: number | null;
+        };
+        /** MediaCmsItemListOut */
+        MediaCmsItemListOut: {
+            /** Items */
+            items: components["schemas"]["MediaCmsItemOut"][];
+            /** Limit */
+            limit: number;
+            /** Offset */
+            offset: number;
+            /** Total */
+            total: number;
+        };
+        /** MediaCmsItemOut */
+        MediaCmsItemOut: {
+            /** Asset Type */
+            asset_type: string;
+            /** Attribution */
+            attribution: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Derivative Allowed */
+            derivative_allowed: boolean;
+            /** Description */
+            description?: string | null;
+            /** File Format */
+            file_format: string;
+            /** File Size Bytes */
+            file_size_bytes: number;
+            /** Historical Entity Id */
+            historical_entity_id?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** License Type */
+            license_type: string;
+            /** Mime Type */
+            mime_type: string;
+            /** Public Display Allowed */
+            public_display_allowed: boolean;
+            /** Publication Status */
+            publication_status: string;
+            /** Relic Slug */
+            relic_slug?: string | null;
+            /** Review Notes */
+            review_notes?: string | null;
+            /** Reviewed At */
+            reviewed_at?: string | null;
+            /** Reviewed By Id */
+            reviewed_by_id?: string | null;
+            /** Rights Owner */
+            rights_owner: string;
+            /** Sha256 */
+            sha256: string;
+            /** Storage Url */
+            storage_url: string;
+            /** Thumbnail Url */
+            thumbnail_url?: string | null;
+            /** Title */
+            title: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Uploaded By Id */
+            uploaded_by_id?: string | null;
+            /** Version */
+            version: number;
+        };
+        /** MediaCmsItemUpdate */
+        MediaCmsItemUpdate: {
+            /** Asset Type */
+            asset_type?: string | null;
+            /** Attribution */
+            attribution?: string | null;
+            /** Derivative Allowed */
+            derivative_allowed?: boolean | null;
+            /** Description */
+            description?: string | null;
+            /** Historical Entity Id */
+            historical_entity_id?: string | null;
+            /** License Type */
+            license_type?: string | null;
+            /** Public Display Allowed */
+            public_display_allowed?: boolean | null;
+            /** Relic Slug */
+            relic_slug?: string | null;
+            /** Rights Owner */
+            rights_owner?: string | null;
+            /** Title */
+            title?: string | null;
+        };
+        /** MediaCmsPreviewOut */
+        MediaCmsPreviewOut: {
+            item: components["schemas"]["MediaCmsItemOut"];
+            /** Rights Summary */
+            rights_summary: {
+                [key: string]: unknown;
+            };
+            /** Staged Review Summary */
+            staged_review_summary: {
+                [key: string]: unknown;
+            };
+            /** Viewer Config */
+            viewer_config: {
+                [key: string]: unknown;
+            };
+            /** Viewer Type */
+            viewer_type: string;
+        };
+        /** MediaCmsReviewAction */
+        MediaCmsReviewAction: {
+            /** Notes */
+            notes?: string | null;
+            /** Reason */
+            reason?: string | null;
         };
         /**
          * MetricComparisonOut
@@ -20815,6 +21392,119 @@ export interface components {
              * @description Required rejection reason
              */
             review_notes: string;
+        };
+        /**
+         * RelicInspectionCompleteRequest
+         * @description Payload submitted when a student completes an inspection of a heritage relic.
+         */
+        RelicInspectionCompleteRequest: {
+            /**
+             * Angles Inspected
+             * @description List of angles or viewports inspected (e.g. front, left, back, right)
+             */
+            angles_inspected?: string[];
+            /**
+             * Camera Permission Granted
+             * @description Whether camera permission was granted by user (False for denied/unsupported fallback)
+             */
+            camera_permission_granted: boolean;
+            /**
+             * Device Tier
+             * @description Client device capability tier classification
+             * @default desktop
+             */
+            device_tier: string | null;
+            /**
+             * Hotspots Examined
+             * @description IDs of visual hotspots or relief details scrutinized
+             */
+            hotspots_examined?: string[];
+            /**
+             * Idempotency Key
+             * @description Client-provided unique key to prevent duplicate awards
+             */
+            idempotency_key?: string | null;
+            /**
+             * Inspection Mode
+             * @description Active inspection mode used by the client
+             */
+            inspection_mode: string;
+            /**
+             * Target Slug
+             * @description Slug of the relic, urn, motif, or imperial art detail
+             */
+            target_slug: string;
+            /**
+             * Time Spent Seconds
+             * @description Total duration spent actively examining the relic in seconds
+             */
+            time_spent_seconds: number;
+        };
+        /**
+         * RelicInspectionCompleteResponse
+         * @description Server-authoritative response verifying completion of the inspection task.
+         */
+        RelicInspectionCompleteResponse: {
+            /**
+             * Already Completed
+             * @default false
+             */
+            already_completed: boolean;
+            /** Camera Permission Granted */
+            camera_permission_granted: boolean;
+            /**
+             * Equivalent Learning Completed
+             * @default true
+             */
+            equivalent_learning_completed: boolean;
+            /** Feedback */
+            feedback: string;
+            /** Inspection Mode */
+            inspection_mode: string;
+            /**
+             * Recorded At
+             * Format: date-time
+             */
+            recorded_at: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+            /** Target Slug */
+            target_slug: string;
+            /** Target Title */
+            target_title: string;
+            /**
+             * Task Id
+             * Format: uuid
+             */
+            task_id: string;
+            /** Total Xp */
+            total_xp: number;
+            /** Xp Awarded */
+            xp_awarded: number;
+        };
+        /**
+         * RelicInspectionStatusResponse
+         * @description Status check query for whether a student has completed relic inspection.
+         */
+        RelicInspectionStatusResponse: {
+            /** Camera Permission Granted */
+            camera_permission_granted?: boolean | null;
+            /** Completed At */
+            completed_at?: string | null;
+            /** Completed Mode */
+            completed_mode?: string | null;
+            /** Is Completed */
+            is_completed: boolean;
+            /** Target Slug */
+            target_slug: string;
+            /**
+             * Xp Earned
+             * @default 0
+             */
+            xp_earned: number;
         };
         /** ResetPasswordRequest */
         ResetPasswordRequest: {
@@ -25151,6 +25841,403 @@ export interface operations {
                     "application/json": {
                         [key: string]: unknown;
                     };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_media_items_api_v1_admin_media_cms_items_get: {
+        parameters: {
+            query?: {
+                status?: string | null;
+                asset_type?: string | null;
+                relic_slug?: string | null;
+                search?: string | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MediaCmsItemListOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_media_item_api_v1_admin_media_cms_items__item_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                item_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MediaCmsItemOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_media_api_v1_admin_media_cms_items__item_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                item_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_media_item_api_v1_admin_media_cms_items__item_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                item_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MediaCmsItemUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MediaCmsItemOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    approve_media_api_v1_admin_media_cms_items__item_id__approve_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                item_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["MediaCmsReviewAction"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MediaCmsItemOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    archive_media_api_v1_admin_media_cms_items__item_id__archive_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                item_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MediaCmsItemOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    publish_media_api_v1_admin_media_cms_items__item_id__publish_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                item_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MediaCmsItemOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reject_media_api_v1_admin_media_cms_items__item_id__reject_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                item_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MediaCmsReviewAction"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MediaCmsItemOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    submit_media_review_api_v1_admin_media_cms_items__item_id__submit_review_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                item_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MediaCmsItemOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    upload_media_version_api_v1_admin_media_cms_items__item_id__version_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                item_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_media_version_api_v1_admin_media_cms_items__item_id__version_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MediaCmsItemOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    preview_media_api_v1_admin_media_cms_preview__item_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                item_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MediaCmsPreviewOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    upload_media_asset_api_v1_admin_media_cms_upload_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_media_asset_api_v1_admin_media_cms_upload_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MediaCmsItemOut"];
                 };
             };
             /** @description Validation Error */
@@ -32002,7 +33089,10 @@ export interface operations {
     };
     get_map_asset_image_api_v1_imperial_assets__asset_id__image_get: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Signed asset token for private/restricted access */
+                token?: string | null;
+            };
             header?: never;
             path: {
                 asset_id: string;
@@ -32018,6 +33108,107 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    check_asset_license_endpoint_api_v1_imperial_assets__asset_id__license_check_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                asset_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssetLicenseCheckResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    revoke_asset_endpoint_api_v1_imperial_assets__asset_id__revoke_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                asset_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssetRevokeRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssetRevokeResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_asset_signed_token_api_v1_imperial_assets__asset_id__signed_token_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                asset_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssetSignedTokenRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssetSignedTokenResponse"];
                 };
             };
             /** @description Validation Error */
@@ -32172,6 +33363,70 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ImperialGameSubmitResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    complete_relic_inspection_api_v1_imperial_inspections_complete_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RelicInspectionCompleteRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RelicInspectionCompleteResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_relic_inspection_status_api_v1_imperial_inspections__target_slug__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                target_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RelicInspectionStatusResponse"];
                 };
             };
             /** @description Validation Error */

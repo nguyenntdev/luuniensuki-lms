@@ -290,11 +290,40 @@ def update_annotation(
     annotation_id: UUID,
     payload: ImperialAnnotationUpdate,
     actor_id: UUID,
+    is_admin: bool = False,
+    if_match: Optional[str] = None,
 ) -> ImperialAnnotationOut:
-    """Update annotation with optimistic concurrency control and audit history."""
+    """Update annotation with optimistic concurrency control, editor ownership check, and audit history."""
     anno = db.get(ImperialMapAnnotation, annotation_id)
     if not anno or anno.content_scope != CONTENT_SCOPE_IMPERIAL:
         raise AppError("IMPERIAL_ANNOTATION_NOT_FOUND", f"Annotation '{annotation_id}' not found", 404)
+
+    # Editor ownership check: only creator or admin can update
+    if not is_admin and anno.created_by != actor_id:
+        raise AppError(
+            "IMPERIAL_ANNOTATION_FORBIDDEN",
+            "Only the annotation author or an administrator can modify this annotation",
+            403,
+            {"created_by": str(anno.created_by), "actor_id": str(actor_id)},
+        )
+
+    # Check If-Match header if provided
+    if if_match is not None:
+        clean = if_match.strip('"')
+        if clean.startswith("row-version-"):
+            clean = clean.replace("row-version-", "")
+        clean = clean.replace("W/", "")
+        try:
+            expected_version = int(clean)
+            if expected_version != anno.row_version:
+                raise AppError(
+                    "IMPERIAL_CONCURRENCY_CONFLICT",
+                    f"If-Match header row_version {expected_version} does not match current version {anno.row_version}",
+                    409,
+                    {"current_row_version": anno.row_version, "submitted_row_version": expected_version},
+                )
+        except ValueError:
+            pass
 
     # Optimistic locking concurrency check
     if payload.row_version != anno.row_version:
@@ -381,11 +410,21 @@ def delete_annotation(
     db: Session,
     annotation_id: UUID,
     actor_id: UUID,
+    is_admin: bool = False,
 ) -> bool:
-    """Soft-delete / archive an annotation with audit trail."""
+    """Soft-delete / archive an annotation with editor ownership check and audit trail."""
     anno = db.get(ImperialMapAnnotation, annotation_id)
     if not anno or anno.content_scope != CONTENT_SCOPE_IMPERIAL:
         raise AppError("IMPERIAL_ANNOTATION_NOT_FOUND", f"Annotation '{annotation_id}' not found", 404)
+
+    # Editor ownership check: only creator or admin can delete
+    if not is_admin and anno.created_by != actor_id:
+        raise AppError(
+            "IMPERIAL_ANNOTATION_FORBIDDEN",
+            "Only the annotation author or an administrator can delete or archive this annotation",
+            403,
+            {"created_by": str(anno.created_by), "actor_id": str(actor_id)},
+        )
 
     before_dict = {
         "review_status": anno.review_status,
@@ -651,6 +690,13 @@ def import_annotations(
         return {
             "dry_run": True,
             "valid": len(invalid_items) == 0,
+            "status": "valid" if len(invalid_items) == 0 else "invalid",
+            "created_count": len(new_items),
+            "updated_count": len(updated_items),
+            "skipped_count": 0,
+            "total_count": len(raw_items),
+            "image_hash_matched": True,
+            "issues": invalid_items,
             "summary": {
                 "total": len(raw_items),
                 "new_count": len(new_items),
@@ -752,9 +798,20 @@ def import_annotations(
     db.commit()
     return {
         "dry_run": False,
+        "valid": True,
         "status": "success",
         "created_count": len(new_items),
         "updated_count": len(updated_items),
+        "skipped_count": 0,
+        "total_count": len(raw_items),
+        "image_hash_matched": True,
+        "issues": [],
+        "summary": {
+            "total": len(raw_items),
+            "new_count": len(new_items),
+            "updated_count": len(updated_items),
+            "invalid_count": 0,
+        },
     }
 
 

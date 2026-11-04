@@ -1065,6 +1065,13 @@ export default function AdminPage() {
                   AI Studio
                   <ArrowRight className="h-4 w-4" />
                 </button>
+                <Link
+                  href="/admin/media"
+                  className="flex items-center justify-between rounded-lg border border-border bg-background/60 px-4 py-3 text-sm font-semibold text-foreground hover:bg-muted"
+                >
+                  Museum Operator Media CMS
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
               </div>
             </div>
           </div>

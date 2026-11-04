@@ -4,8 +4,10 @@ import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from 
 import * as THREE from "three";
 import {
   AlertCircle,
+  BookOpen,
   Compass,
   Eye,
+  Layers,
   Maximize2,
   Minimize2,
   Minus,
@@ -20,6 +22,7 @@ import {
   MapPin,
   HelpCircle,
   ExternalLink,
+  X,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -44,6 +47,19 @@ import {
   sphericalToUV,
   type ScreenPosition,
 } from "@/lib/imperial/panorama-math";
+import {
+  type HistoricalMonumentLink,
+  type HistoricalSourceCitation,
+  getVerifiedMonumentOrFallback,
+  isBrokenPanoramaUri,
+  generateAccessible2DDescription,
+  resolvePanorama2DFallback,
+} from "@/lib/imperial/panorama-sources";
+
+export type {
+  HistoricalMonumentLink,
+  HistoricalSourceCitation,
+};
 
 export interface PanoramaHotspot {
   id: string;
@@ -55,6 +71,13 @@ export interface PanoramaHotspot {
   detail_id?: string | null;
   art_detail?: ImperialArtDetail | null;
   category?: "art_detail" | "architecture" | "monument" | "observation" | string;
+  monument_id?: string | null;
+  monument_name?: string | null;
+  source_citation?: string | null;
+  source_url?: string | null;
+  verification_status?: "verified" | "probable" | "traditional" | string | null;
+  alt_text?: string | null;
+  aria_label?: string | null;
   [key: string]: unknown;
 }
 
@@ -62,6 +85,10 @@ export interface PanoramaViewerProps {
   src: string;
   title?: string;
   subtitle?: string;
+  altText?: string;
+  ariaLabel?: string;
+  monument?: HistoricalMonumentLink;
+  monumentKey?: string;
   hotspots?: (PanoramaHotspot | ImperialMediaHotspot)[];
   initialYaw?: number; // default: 0
   initialPitch?: number; // default: 0
@@ -71,11 +98,14 @@ export interface PanoramaViewerProps {
   className?: string;
   onHotspotClick?: (hotspot: PanoramaHotspot) => void;
   onYawPitchChange?: (yaw: number, pitch: number) => void;
+  onSourceClick?: (source: HistoricalSourceCitation) => void;
   showControls?: boolean; // default: true
   showCompass?: boolean; // default: true
   autoRotate?: boolean; // default: false
   autoRotateSpeed?: number; // default: 0.1 deg/frame
   fallbackImageUrl?: string;
+  fallbackDescription?: string;
+  reducedMotion?: boolean;
 }
 
 /**
@@ -86,10 +116,18 @@ function normalizeHotspotItem(
   item: PanoramaHotspot | ImperialMediaHotspot
 ): PanoramaHotspot {
   if ("yaw" in item && typeof item.yaw === "number") {
+    const raw = item as PanoramaHotspot;
     return {
-      ...(item as PanoramaHotspot),
-      yaw: normalizeAngle(item.yaw),
-      pitch: clampPitch(item.pitch ?? 0, -90, 90),
+      ...raw,
+      yaw: normalizeAngle(raw.yaw),
+      pitch: clampPitch(raw.pitch ?? 0, -90, 90),
+      monument_id: raw.monument_id ?? null,
+      monument_name: raw.monument_name ?? null,
+      source_citation: raw.source_citation ?? null,
+      source_url: raw.source_url ?? null,
+      verification_status: raw.verification_status ?? "verified",
+      alt_text: raw.alt_text ?? null,
+      aria_label: raw.aria_label ?? `Điểm quan sát: ${raw.title}`,
     };
   }
 
@@ -104,6 +142,11 @@ function normalizeHotspotItem(
       ? payload.pitch
       : 90 - (mediaHotspot.v ?? 0.5) * 180;
 
+  const firstClaim = mediaHotspot.art_detail?.claim_sources?.[0];
+  const sourceCitation = firstClaim
+    ? `${firstClaim.source_title}${firstClaim.source_locator ? ` (${firstClaim.source_locator})` : ""}`
+    : null;
+
   return {
     id: mediaHotspot.id,
     title: mediaHotspot.title,
@@ -114,6 +157,13 @@ function normalizeHotspotItem(
     detail_id: mediaHotspot.detail_id,
     art_detail: mediaHotspot.art_detail,
     category: "art_detail",
+    monument_id: mediaHotspot.art_detail?.site_id ?? null,
+    monument_name: mediaHotspot.art_detail?.site_name_vi ?? null,
+    source_citation: sourceCitation,
+    source_url: null,
+    verification_status: firstClaim?.evidence_strength ?? "verified",
+    alt_text: mediaHotspot.art_detail?.title ?? mediaHotspot.title,
+    aria_label: `Điểm khảo sát: ${mediaHotspot.title}`,
   };
 }
 
@@ -158,6 +208,10 @@ export function PanoramaViewer({
   src,
   title,
   subtitle,
+  altText,
+  ariaLabel,
+  monument: propMonument,
+  monumentKey,
   hotspots: rawHotspots = [],
   initialYaw = 0,
   initialPitch = 0,
@@ -167,15 +221,24 @@ export function PanoramaViewer({
   className = "",
   onHotspotClick,
   onYawPitchChange,
+  onSourceClick,
   showControls = true,
   showCompass = true,
   autoRotate = false,
   autoRotateSpeed = 0.1,
   fallbackImageUrl,
+  fallbackDescription,
+  reducedMotion = false,
 }: PanoramaViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hotspotElementsRef = useRef<Map<string, HTMLDivElement>>(new Map());
+
+  // 1. Resolve Monument & Provenance
+  const monument: HistoricalMonumentLink = useMemo(() => {
+    if (propMonument) return propMonument;
+    return getVerifiedMonumentOrFallback(monumentKey || title, title);
+  }, [propMonument, monumentKey, title]);
 
   // Normalized hotspots memo
   const hotspots: PanoramaHotspot[] = useMemo(() => {
@@ -187,6 +250,41 @@ export function PanoramaViewer({
   const [hasWebGLError, setHasWebGLError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Reduced Motion Detection & Accessibility
+  const [systemReducedMotion, setSystemReducedMotion] = useState(false);
+  const [userForceStatic2D, setUserForceStatic2D] = useState(false);
+  const [isSourceModalOpen, setIsSourceModalOpen] = useState(false);
+  const [fallbackImageFailed, setFallbackImageFailed] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setSystemReducedMotion(mql.matches);
+    const handler = (e: MediaQueryListEvent) => setSystemReducedMotion(e.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, []);
+
+  const isReducedMotion = reducedMotion || systemReducedMotion;
+  const isBrokenSrc = isBrokenPanoramaUri(src);
+
+  // Fallback 2D Still & Description Resolution
+  const resolved2D = useMemo(() => {
+    return resolvePanorama2DFallback(src, fallbackImageUrl, monument.slug);
+  }, [src, fallbackImageUrl, monument.slug]);
+
+  const effectiveAlt =
+    altText ||
+    `Toàn cảnh di tích 360 độ: ${monument.name} - ${title || monument.historicalPeriod}`;
+
+  const effectiveAriaLabel =
+    ariaLabel ||
+    `Toàn cảnh tương tác 360 độ di tích ${monument.name}. Sử dụng chuột hoặc phím điều hướng để xoay góc nhìn.`;
+
+  const accessibleFullDescription =
+    fallbackDescription ||
+    generateAccessible2DDescription(monument, hotspots);
 
   // Fullscreen state
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -454,21 +552,21 @@ export function PanoramaViewer({
 
         const state = stateRef.current;
 
-        // Auto-rotation when not dragging
-        if (state.autoRotate && !state.isDragging && Math.abs(state.yawVelocity) < 0.01) {
+        // Auto-rotation when not dragging AND reduced motion is OFF
+        if (state.autoRotate && !isReducedMotion && !state.isDragging && Math.abs(state.yawVelocity) < 0.01) {
           state.targetYaw += autoRotateSpeed;
         }
 
-        // Inertial glide decay when not dragging
+        // Inertial glide decay when not dragging AND reduced motion is OFF
         if (!state.isDragging) {
-          if (Math.abs(state.yawVelocity) > 0.0005) {
+          if (!isReducedMotion && Math.abs(state.yawVelocity) > 0.0005) {
             state.targetYaw += state.yawVelocity;
             state.yawVelocity *= 0.92;
           } else {
             state.yawVelocity = 0;
           }
 
-          if (Math.abs(state.pitchVelocity) > 0.0005) {
+          if (!isReducedMotion && Math.abs(state.pitchVelocity) > 0.0005) {
             state.targetPitch = clampPitch(state.targetPitch + state.pitchVelocity);
             state.pitchVelocity *= 0.92;
           } else {
@@ -706,51 +804,72 @@ export function PanoramaViewer({
     maxFov,
     autoRotate,
     autoRotateSpeed,
+    isReducedMotion,
     hotspots,
     onYawPitchChange,
   ]);
 
-  // Graceful Fallback Mode: When WebGL is unavailable or fails
-  if (!webGLSupported || hasWebGLError) {
-    const staticImage = fallbackImageUrl || src;
+  // Graceful Fallback Mode: When WebGL is unavailable, failed, broken URI, or user requested 2D
+  if (!webGLSupported || hasWebGLError || isBrokenSrc || userForceStatic2D) {
+    const staticImage =
+      fallbackImageUrl ||
+      (isBrokenSrc ? resolved2D.fallbackImageUrl : src) ||
+      resolved2D.fallbackImageUrl;
 
     return (
       <div
         className={`flex flex-col bg-card rounded-2xl border border-border shadow-md overflow-hidden ${className}`}
         role="region"
-        aria-roledescription="toàn cảnh 360 độ"
-        aria-label={title || "Toàn cảnh 360 độ"}
+        aria-roledescription="toàn cảnh 2D tiếp cận"
+        aria-label={effectiveAriaLabel}
       >
         {/* Fallback Notice Banner */}
-        <div className="flex items-center justify-between gap-3 px-4 py-3 bg-amber-500/10 border-b border-amber-500/30 text-amber-900 dark:text-amber-200 text-xs">
+        <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 bg-amber-500/10 border-b border-amber-500/30 text-amber-900 dark:text-amber-200 text-xs">
           <div className="flex items-center gap-2">
             <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
             <span>
-              <strong>Chế độ toàn cảnh trải phẳng:</strong> WebGL 3D không khả dụng. Hiển thị hình ảnh toàn cảnh tĩnh với đầy đủ điểm khảo sát và nội dung tư liệu.
+              <strong>Chế độ toàn cảnh 2D tiếp cận:</strong> {isBrokenSrc ? "Tệp toàn cảnh 360° không thể truy cập." : userForceStatic2D ? "Chế độ tĩnh thân thiện chuyển động." : "WebGL 3D không khả dụng."} Cung cấp hình ảnh toàn cảnh tĩnh kèm hồ sơ sử liệu xác thực.
             </span>
           </div>
-          <Button
-            size="sm"
-            variant="outline"
-            className="h-7 text-xs border-amber-500/40 hover:bg-amber-500/20"
-            onClick={() => {
-              setHasWebGLError(false);
-              setWebGLSupported(true);
-            }}
-          >
-            <RefreshCw className="w-3 h-3 mr-1" />
-            Thử lại 3D
-          </Button>
+          {!isBrokenSrc && (
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-7 text-xs border-amber-500/40 hover:bg-amber-500/20"
+              onClick={() => {
+                setHasWebGLError(false);
+                setWebGLSupported(true);
+                setUserForceStatic2D(false);
+              }}
+              aria-label="Thử lại chế độ 3D"
+            >
+              <RefreshCw className="w-3 h-3 mr-1" />
+              Thử lại 3D
+            </Button>
+          )}
         </div>
 
         {/* Static High-Res Panoramic Strip with Interactive Hotspots */}
         <div className="relative w-full overflow-x-auto overflow-y-hidden bg-black py-2 scrollbar-thin">
           <div className="relative min-w-[900px] w-full aspect-[2/1] max-h-[480px]">
-            <img
-              src={staticImage}
-              alt={title || "Toàn cảnh di sản Huế"}
-              className="w-full h-full object-cover"
-            />
+            {!fallbackImageFailed ? (
+              <img
+                src={staticImage}
+                alt={effectiveAlt}
+                className="w-full h-full object-cover"
+                onError={() => setFallbackImageFailed(true)}
+              />
+            ) : (
+              <div className="w-full h-full flex flex-col items-center justify-center p-6 bg-zinc-900 border border-zinc-800 text-center">
+                <Layers className="w-12 h-12 text-amber-400/80 mb-2" />
+                <h4 className="font-serif font-bold text-amber-200 text-base">
+                  Bản vẽ kiến trúc & tư liệu khảo sát di tích
+                </h4>
+                <p className="text-xs text-zinc-400 max-w-md mt-1">
+                  {monument.name} — {monument.historicalPeriod}
+                </p>
+              </div>
+            )}
 
             {/* Hotspot Pins at Static UV coordinates */}
             {hotspots.map((hp, idx) => {
@@ -768,7 +887,7 @@ export function PanoramaViewer({
                     type="button"
                     onClick={() => handleHotspotClick(hp)}
                     className="relative flex items-center justify-center w-7 h-7 rounded-full bg-amber-500 text-slate-950 font-bold shadow-lg border-2 border-white ring-2 ring-black/50 hover:scale-125 transition-transform"
-                    aria-label={`Điểm ${idx + 1}: ${hp.title}`}
+                    aria-label={hp.aria_label || `Điểm ${idx + 1}: ${hp.title}`}
                   >
                     <span className="text-[11px]">{idx + 1}</span>
                   </button>
@@ -777,6 +896,82 @@ export function PanoramaViewer({
               );
             })}
           </div>
+        </div>
+
+        {/* Verified Monument Dossier & Primary Sources */}
+        <div className="p-4 sm:p-6 space-y-4 bg-card border-b border-border/60">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="font-serif font-bold text-base sm:text-lg text-foreground">
+                  {monument.name}
+                </h3>
+                <Badge variant="outline" className="text-[11px] border-amber-500/40 text-amber-600 dark:text-amber-400">
+                  {monument.verificationStatus === "canonical" ? "Di sản Chính thống" : "Đã chứng thực"}
+                </Badge>
+                {monument.nationalTreasure && (
+                  <Badge variant="secondary" className="text-[10px]">
+                    {monument.nationalTreasure}
+                  </Badge>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Niên đại: <span className="font-medium text-foreground">{monument.historicalPeriod}</span>
+                {monument.coordinatesSummary && ` · ${monument.coordinatesSummary}`}
+              </p>
+            </div>
+
+            {monument.monumentUrl && (
+              <a
+                href={monument.monumentUrl}
+                className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-medium"
+              >
+                Hồ sơ di sản <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            )}
+          </div>
+
+          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+            {monument.provenance}
+          </p>
+
+          {/* Primary Source Citations */}
+          {monument.sourceCitations && monument.sourceCitations.length > 0 && (
+            <div className="pt-2 border-t border-border/50 space-y-2">
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-primary">
+                <BookOpen className="w-3.5 h-3.5" />
+                Sử liệu & Thư mục nguồn gốc:
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {monument.sourceCitations.map((cite, idx) => (
+                  <div
+                    key={cite.id || idx}
+                    className="p-2.5 rounded-lg bg-muted/40 border border-border/70 text-xs space-y-1"
+                  >
+                    <div className="font-semibold text-foreground flex items-center justify-between">
+                      <span>{cite.title}</span>
+                      <span className="text-[10px] text-emerald-600 dark:text-emerald-400 uppercase font-semibold">
+                        {cite.evidenceStrength || "xác thực"}
+                      </span>
+                    </div>
+                    {cite.locator && (
+                      <div className="text-[11px] text-muted-foreground">{cite.locator}</div>
+                    )}
+                    {cite.citationQuote && (
+                      <blockquote className="italic text-[11px] text-muted-foreground border-l-2 border-amber-500/40 pl-2">
+                        &ldquo;{cite.citationQuote}&rdquo;
+                      </blockquote>
+                    )}
+                    {cite.author && (
+                      <div className="text-[10px] text-muted-foreground/80">
+                        {cite.author} ({cite.year || "Triều Nguyễn"})
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Accessible List of Hotspots and Historical Descriptions */}
@@ -818,6 +1013,12 @@ export function PanoramaViewer({
                         {hp.description}
                       </p>
                     )}
+                    {hp.source_citation && (
+                      <div className="text-[11px] text-amber-600 dark:text-amber-400 flex items-center gap-1 pt-1">
+                        <BookOpen className="w-3 h-3" />
+                        <span>Sử liệu: {hp.source_citation}</span>
+                      </div>
+                    )}
                   </div>
 
                   <div className="mt-3 pt-2 border-t border-border/50 flex items-center justify-between text-xs">
@@ -829,6 +1030,7 @@ export function PanoramaViewer({
                       variant="ghost"
                       className="h-7 text-xs text-primary hover:text-primary hover:bg-primary/10 px-2"
                       onClick={() => handleHotspotClick(hp)}
+                      aria-label={`Xem chi tiết ${hp.title}`}
                     >
                       <Eye className="w-3.5 h-3.5 mr-1" />
                       Xem chi tiết
@@ -864,14 +1066,14 @@ export function PanoramaViewer({
       }}
       role="region"
       aria-roledescription="toàn cảnh 360 độ tương tác"
-      aria-label={title || "Toàn cảnh tương tác 360 độ"}
+      aria-label={effectiveAriaLabel}
     >
       {/* Three.js Rendering Canvas */}
       <canvas
         ref={canvasRef}
         className="w-full h-full block cursor-grab active:cursor-grabbing outline-none"
         tabIndex={0}
-        aria-label="Khung hình toàn cảnh 360 độ. Dùng chuột hoặc chạm để xoay góc nhìn."
+        aria-label={effectiveAriaLabel}
       />
 
       {/* Loading Overlay */}
@@ -893,6 +1095,7 @@ export function PanoramaViewer({
             size="sm"
             variant="secondary"
             onClick={() => setHasWebGLError(true)}
+            aria-label="Chuyển sang chế độ trải phẳng"
           >
             Chuyển sang chế độ trải phẳng
           </Button>
@@ -924,10 +1127,12 @@ export function PanoramaViewer({
                       handleHotspotClick(hp);
                     }}
                     className="relative flex items-center justify-center w-8 h-8 rounded-full bg-amber-500 text-slate-950 font-bold shadow-xl border-2 border-white ring-2 ring-black/40 hover:scale-125 transition-transform focus:outline-none focus:ring-4 focus:ring-amber-400"
-                    aria-label={`Điểm quan sát: ${hp.title}`}
+                    aria-label={hp.aria_label || `Điểm quan sát: ${hp.title}`}
                   >
-                    {/* Pulsing beacon ring */}
-                    <span className="absolute -inset-2 rounded-full bg-amber-400/35 animate-ping duration-1000 pointer-events-none" />
+                    {/* Pulsing beacon ring (suppressed under reduced-motion) */}
+                    {!isReducedMotion && (
+                      <span className="absolute -inset-2 rounded-full bg-amber-400/35 animate-ping duration-1000 pointer-events-none" />
+                    )}
                     <Sparkles className="w-4 h-4 text-slate-950" />
                   </button>
                 </TooltipTrigger>
@@ -945,7 +1150,12 @@ export function PanoramaViewer({
                       {hp.description}
                     </p>
                   )}
-                  <div className="text-[10px] text-amber-600 dark:text-amber-400 font-medium pt-0.5">
+                  {hp.source_citation && (
+                    <div className="text-[10px] text-amber-600 dark:text-amber-400 font-medium">
+                      Sử liệu: {hp.source_citation}
+                    </div>
+                  )}
+                  <div className="text-[10px] text-muted-foreground pt-0.5">
                     Nhấn để xem câu chuyện & chi tiết mỹ thuật →
                   </div>
                 </TooltipContent>
@@ -955,19 +1165,32 @@ export function PanoramaViewer({
         ))}
       </div>
 
-      {/* Top Banner: Title & Compass Heading */}
+      {/* Top Banner: Title, Provenance Button & Compass Heading */}
       <div className="panorama-control-overlay absolute top-3 left-3 right-3 flex items-center justify-between gap-2 pointer-events-none z-20">
-        {/* Title or Branding badge */}
-        <div className="flex items-center gap-2 rounded-full bg-black/60 backdrop-blur-md px-3.5 py-1.5 text-xs font-medium text-white border border-white/15 pointer-events-auto">
-          <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-          <span className="font-semibold truncate max-w-[200px] sm:max-w-xs">
-            {title || "Toàn cảnh 360° Đại Nội Huế"}
-          </span>
-          {subtitle && (
-            <span className="hidden sm:inline text-white/60 text-[11px] border-l border-white/20 pl-2">
-              {subtitle}
+        {/* Title & Provenance button */}
+        <div className="flex flex-wrap items-center gap-2 pointer-events-auto">
+          <div className="flex items-center gap-2 rounded-full bg-black/60 backdrop-blur-md px-3.5 py-1.5 text-xs font-medium text-white border border-white/15">
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+            <span className="font-semibold truncate max-w-[200px] sm:max-w-xs">
+              {title || monument.name}
             </span>
-          )}
+            {subtitle && (
+              <span className="hidden sm:inline text-white/60 text-[11px] border-l border-white/20 pl-2">
+                {subtitle}
+              </span>
+            )}
+          </div>
+
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setIsSourceModalOpen(true)}
+            className="h-7 text-xs bg-black/65 border-amber-500/40 text-amber-200 hover:bg-amber-950/60 hover:text-amber-100 rounded-full px-2.5 backdrop-blur"
+            aria-label="Xem sử liệu và chứng thực lịch sử di tích"
+          >
+            <BookOpen className="w-3.5 h-3.5 mr-1 text-amber-400" />
+            Sử liệu & Chứng thực
+          </Button>
         </div>
 
         {/* Compass & Heading */}
@@ -987,7 +1210,7 @@ export function PanoramaViewer({
         )}
       </div>
 
-      {/* Floating Interactive Controls (Left/Right/Up/Down, Zoom, Reset, Fullscreen) */}
+      {/* Floating Interactive Controls (Left/Right/Up/Down, Zoom, Reset, 2D Switch, Fullscreen) */}
       {showControls && (
         <div className="panorama-control-overlay absolute bottom-4 right-4 flex items-center gap-1.5 bg-black/70 backdrop-blur-md p-1.5 rounded-xl border border-white/15 text-white z-20 shadow-2xl">
           {/* Directional Navigation */}
@@ -1072,12 +1295,24 @@ export function PanoramaViewer({
             <Minus className="w-4 h-4" />
           </Button>
 
+          {/* Static 2D Mode Switch */}
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={() => setUserForceStatic2D(true)}
+            className="w-7 h-7 text-amber-300 hover:bg-white/20 border-l border-white/15 pl-0.5"
+            title="Chuyển sang chế độ toàn cảnh tĩnh 2D"
+            aria-label="Chuyển sang chế độ toàn cảnh tĩnh 2D"
+          >
+            <Layers className="w-3.5 h-3.5" />
+          </Button>
+
           {/* Fullscreen Toggle */}
           <Button
             size="icon"
             variant="ghost"
             onClick={toggleFullscreen}
-            className="w-7 h-7 text-white hover:bg-white/20 ml-0.5 border-l border-white/15 pl-1"
+            className="w-7 h-7 text-white hover:bg-white/20 border-l border-white/15 pl-0.5"
             title={isFullscreen ? "Thoát toàn màn hình" : "Toàn màn hình"}
             aria-label={isFullscreen ? "Thoát toàn màn hình" : "Toàn màn hình"}
           >
@@ -1094,6 +1329,84 @@ export function PanoramaViewer({
       <div className="panorama-control-overlay pointer-events-none absolute bottom-4 left-4 rounded-full bg-black/50 backdrop-blur px-3 py-1 text-[11px] text-zinc-300 border border-white/10 hidden sm:block">
         Kéo để xoay góc nhìn 360° · Cuộn chuột hoặc chụm ngón tay để thu phóng
       </div>
+
+      {/* Slide-out / Modal for Historical Sources & Provenance */}
+      {isSourceModalOpen && (
+        <div
+          className="absolute inset-0 z-40 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="viewer-sources-dialog-title"
+        >
+          <div className="bg-card border border-border rounded-2xl max-w-lg w-full max-h-[90%] overflow-y-auto p-5 text-foreground shadow-2xl space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-border">
+              <div className="flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-amber-500" />
+                <h3 id="viewer-sources-dialog-title" className="font-serif font-bold text-base text-foreground">
+                  Chứng thực Lịch sử & Thư mục Nguồn gốc
+                </h3>
+              </div>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="w-7 h-7 text-muted-foreground hover:text-foreground"
+                onClick={() => setIsSourceModalOpen(false)}
+                aria-label="Đóng"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+
+            <div className="space-y-2 text-xs">
+              <div className="font-medium text-primary text-sm">{monument.name}</div>
+              <div className="text-muted-foreground">{monument.provenance}</div>
+            </div>
+
+            {monument.sourceCitations && monument.sourceCitations.length > 0 && (
+              <div className="space-y-2">
+                <h4 className="text-xs font-semibold text-primary uppercase tracking-wider">
+                  Thư mục nguồn sơ cấp & Sử liệu:
+                </h4>
+                <div className="space-y-2">
+                  {monument.sourceCitations.map((c, i) => (
+                    <div
+                      key={c.id || i}
+                      className="p-3 rounded-lg bg-muted/40 border border-border/80 text-xs space-y-1"
+                    >
+                      <div className="font-semibold text-foreground flex items-center justify-between">
+                        <span>{c.title} {c.locator ? `— ${c.locator}` : ""}</span>
+                        <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold uppercase">
+                          {c.evidenceStrength || "xác thực"}
+                        </span>
+                      </div>
+                      {c.citationQuote && (
+                        <blockquote className="italic text-muted-foreground border-l-2 border-amber-500/50 pl-2">
+                          &ldquo;{c.citationQuote}&rdquo;
+                        </blockquote>
+                      )}
+                      <div className="text-[11px] text-muted-foreground/80">
+                        {c.author} ({c.year})
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="pt-3 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
+              <span>{monument.rightsOwner} ({monument.license})</span>
+              {monument.monumentUrl && (
+                <a
+                  href={monument.monumentUrl}
+                  className="text-primary hover:underline flex items-center gap-1 font-medium"
+                >
+                  Khám phá thêm <ExternalLink className="w-3 h-3" />
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Art Detail Modal */}
       <ArtDetailModal

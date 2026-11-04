@@ -296,6 +296,9 @@ export function ArtDetailStudioClient({
         ...selectedHotspot,
         media_id: activeMedia.id,
         detail_id: savedDetailId,
+        claim_id: selectedHotspot.claim_id || null,
+        entity_id: selectedHotspot.entity_id || null,
+        asset_revision: selectedHotspot.asset_revision ?? activeMedia.asset_revision ?? 1,
         art_detail_slug: savedDetailSlug,
         review_status: "published",
       });
@@ -731,6 +734,66 @@ export function ArtDetailStudioClient({
                       <Palette className="w-3.5 h-3.5" />
                       Chỉnh sửa nội dung hồ sơ mỹ thuật →
                     </Button>
+                  </div>
+
+                  {/* Historical Claim & Entity Linkage */}
+                  <div className="pt-2 border-t border-border/60 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-semibold text-foreground block">
+                        Ràng buộc Luận cứ Sử liệu (Claim Binding)
+                      </label>
+                      <Badge variant="outline" className="text-[10px] bg-primary/5 text-primary border-primary/20">
+                        V5-T044
+                      </Badge>
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[11px] text-muted-foreground block">
+                        Mã UUID Luận cứ Lịch sử (Claim ID):
+                      </label>
+                      <Input
+                        value={selectedHotspot.claim_id || ""}
+                        onChange={(e) =>
+                          updateSelectedHotspot({ claim_id: e.target.value.trim() || null })
+                        }
+                        placeholder="e.g. 550e8400-e29b-41d4-a716-446655440000"
+                        className="h-7 text-xs"
+                      />
+                      <p className="text-[10px] text-muted-foreground">
+                        Yêu cầu luận cứ đã được phê duyệt (expert_verified / editor_reviewed / verified / published).
+                      </p>
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[11px] text-muted-foreground block">
+                        Mã UUID Thực thể Lịch sử (Entity ID):
+                      </label>
+                      <Input
+                        value={selectedHotspot.entity_id || ""}
+                        onChange={(e) =>
+                          updateSelectedHotspot({ entity_id: e.target.value.trim() || null })
+                        }
+                        placeholder="e.g. 123e4567-e89b-12d3-a456-426614174000"
+                        className="h-7 text-xs"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[11px] text-muted-foreground block">
+                        Phiên bản tài sản 3D (Asset Revision):
+                      </label>
+                      <Input
+                        type="number"
+                        min="1"
+                        value={selectedHotspot.asset_revision ?? activeMedia.asset_revision ?? 1}
+                        onChange={(e) =>
+                          updateSelectedHotspot({
+                            asset_revision: parseInt(e.target.value, 10) || 1,
+                          })
+                        }
+                        className="h-7 text-xs"
+                      />
+                    </div>
                   </div>
                 </div>
               ) : activeDetail ? (

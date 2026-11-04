@@ -28,6 +28,7 @@ from sqlalchemy import (
     Text,
     UniqueConstraint,
     func,
+    text,
 )
 from sqlalchemy.dialects.postgresql import BIGINT, JSONB
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
@@ -483,6 +484,8 @@ class HistoricalAsset(Base):
     __table_args__ = (
         Index("idx_historical_assets_entity", "entity_id"),
         Index("idx_historical_assets_type", "asset_type"),
+        Index("idx_historical_assets_private", "is_private"),
+        Index("idx_historical_assets_offline", "offline_licensing_allowed"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -501,10 +504,38 @@ class HistoricalAsset(Base):
     source_origin: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     public_display_allowed: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)
     derivative_allowed: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)
+    offline_licensing_allowed: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True, server_default=text("true"))
+    cache_control_policy: Mapped[Optional[str]] = mapped_column(
+        String(255), nullable=True, server_default=text("'public, max-age=31536000, immutable'")
+    )
+    is_private: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("false"))
+    revoked_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    revocation_reason: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     entity_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         PG_UUID(as_uuid=True), ForeignKey("historical_entities.id", ondelete="SET NULL"), nullable=True
     )
+    media_cms_item_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("media_cms_items.id", ondelete="SET NULL"), nullable=True
+    )
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+
+
+class AssetCacheRevocation(Base):
+    __tablename__ = "asset_cache_revocations"
+    __table_args__ = (
+        Index("idx_asset_revocations_asset", "asset_id"),
+        Index("idx_asset_revocations_revoked_at", "revoked_at"),
+        Index("idx_asset_revocations_cdn_purged", "cdn_purged"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    asset_id: Mapped[str] = mapped_column(String(255), nullable=False)
+    asset_url: Mapped[Optional[str]] = mapped_column(String(1000), nullable=True)
+    revocation_reason: Mapped[str] = mapped_column(Text, nullable=False)
+    revoked_by: Mapped[str] = mapped_column(String(255), nullable=False, server_default=text("'system'"))
+    revoked_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    cdn_purged: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("false"))
+    purge_timestamp: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
 class HistoricalContentAuditLog(Base):
@@ -1035,5 +1066,26 @@ from .domain.learning_outcome import (  # noqa: E402
     verify_causal_learning_eligibility,
 )
 
-
+# --------------------------------------------------------------------------- #
+# 3D Asset Manifest Validation Domain (V5-T041 / Wave W04 / Slot A01)
+# --------------------------------------------------------------------------- #
+from .services.manifest_validation import (  # noqa: E402
+    ManifestChecksumError,
+    ManifestLicenseError,
+    ManifestMeshJoinError,
+    ManifestMissingFallbackError,
+    ManifestPhantomModelError,
+    ManifestSizeError,
+    ManifestValidationError,
+    ManifestVersionError,
+    WebGLHealthError,
+    audit_all_3d_manifests,
+    load_manifest,
+    validate_2d_fallback_for_missing_meshes,
+    validate_3d_asset_checksum_and_size,
+    validate_3d_asset_license,
+    validate_3d_asset_version,
+    validate_3d_mesh_id_joins,
+    validate_webgl_health_contract,
+)
 

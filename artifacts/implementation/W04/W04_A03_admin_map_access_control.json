@@ -1,0 +1,88 @@
+{
+  "ticket": "V5-T043",
+  "ticket_id": "V5-T043",
+  "wave": "W04",
+  "slot": "W04-A03",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Admin map access control in backend routers and frontend/src/app/admin/dai-noi/annotate/",
+  "timestamp": "2026-11-05T01:00:00Z",
+  "summary": "Implemented comprehensive server-side RBAC, editor ownership, row_version optimistic concurrency control, CSRF / Bearer protection, and audit trail logging for administrative aerial map annotations. Negative abuse protection guarantees that non-privileged users (learners, guests) receive HTTP 403 Forbidden on all raw admin map endpoints, and unauthenticated callers receive HTTP 401 Unauthorized. Editor ownership enforces that non-admin editors can only mutate or archive their own annotations, while administrators retain override capabilities. Implemented defense-in-depth CSRF verification for cookie-authenticated requests with Bearer token exemption, validated If-Match concurrency headers, and updated frontend studio layout RBAC to recognize teacher roles.",
+  "invariants_enforced": {
+    "server_side_rbac": "All administrative map endpoints (/api/v1/imperial/admin/maps, /annotations, /audit) enforce STAFF_ROLES (teacher, admin, super_admin); map publication (/publish) is strictly restricted to ADMIN_ROLES. Learners and guests receive HTTP 403 Forbidden; unauthenticated callers receive HTTP 401 Unauthorized.",
+    "editor_ownership": "Mutating endpoints (PATCH /admin/annotations/{id}, DELETE /admin/annotations/{id}) enforce that non-admin editors (teachers) can only modify or archive annotations where anno.created_by == actor_id. Cross-editor mutations return HTTP 403 Forbidden (IMPERIAL_ANNOTATION_FORBIDDEN). Admins have universal override authority.",
+    "row_version_optimistic_concurrency": "Annotations track an integer row_version that increments on every update. Stale updates and mismatched If-Match headers (e.g. 'row-version-X') return HTTP 409 Conflict (IMPERIAL_CONCURRENCY_CONFLICT) with current and submitted row versions in details.",
+    "csrf_and_bearer_protection": "Mutating operations (POST, PATCH, DELETE) authenticated via ambient session cookies require an anti-CSRF custom header (X-Requested-With or X-CSRF-Token) and strictly reject Sec-Fetch-Site: cross-site requests with HTTP 403 Forbidden. Direct API calls with Authorization: Bearer <token> are exempt from cookie CSRF checks.",
+    "tamper_evident_audit_trail": "Every creation, modification, and archive/soft-deletion operation records an immutable entry in imperial_annotation_audits with actor attribution, action ('create', 'update', 'archive'), timestamps, and before/after state diffs."
+  },
+  "changes": [
+    {
+      "file": "backend/services/imperial_map.py",
+      "description": "Added editor ownership enforcement (anno.created_by == actor_id or is_admin) to update_annotation and delete_annotation; added If-Match header version validation alongside payload.row_version check in update_annotation."
+    },
+    {
+      "file": "backend/routers/imperial.py",
+      "description": "Added verify_map_admin_csrf to enforce CSRF / Bearer defense on mutating administrative endpoints; wired is_admin permissions and If-Match header checks into update_annotation and delete_annotation."
+    },
+    {
+      "file": "backend/history_models.py",
+      "description": "Imported text from sqlalchemy to support SQL text defaults in AssetCacheRevocation and HistoricalAsset."
+    },
+    {
+      "file": "frontend/src/app/admin/dai-noi/annotate/layout.tsx",
+      "description": "Updated isStaffOrAdmin role guard to include 'teacher' role alongside admin and staff, providing seamless access for authenticated pedagogical staff."
+    },
+    {
+      "file": "tests/backend/test_imperial_api.py",
+      "description": "Aligned test seed annotation author to staff user fixture to ensure consistent editor ownership in baseline test suite."
+    },
+    {
+      "file": "tests/v5/test_v5_t043.py",
+      "description": "Created comprehensive 7-test suite verifying RBAC denial for learners/guests (403), unauthenticated rejection (401), teacher publication restriction (403), cross-editor mutation denial (403), admin override, row_version optimistic concurrency (409), If-Match validation, CSRF/Bearer token defense, and audit trail integrity."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t043.py -v",
+    "total_tests": 7,
+    "passed_tests": 7,
+    "failed_tests": 0,
+    "test_details": [
+      {
+        "name": "test_unauthenticated_requests_receive_401",
+        "result": "PASSED",
+        "assertion": "Verifies that anonymous requests to all administrative map and annotation endpoints return HTTP 401 Unauthorized."
+      },
+      {
+        "name": "test_negative_abuse_learner_and_guest_receive_403",
+        "result": "PASSED",
+        "assertion": "Negative abuse: Users with learner or guest roles are strictly forbidden (HTTP 403) from accessing admin map APIs."
+      },
+      {
+        "name": "test_teacher_role_boundary_cannot_publish_map",
+        "result": "PASSED",
+        "assertion": "Verifies that teachers have staff curation access but receive HTTP 403 Forbidden when attempting map publication."
+      },
+      {
+        "name": "test_editor_ownership_lifecycle_and_cross_editor_denial",
+        "result": "PASSED",
+        "assertion": "Verifies that an editor can update and delete their own annotations, another teacher receives HTTP 403 on cross-editor mutations, and administrators can override."
+      },
+      {
+        "name": "test_optimistic_concurrency_and_if_match_validation",
+        "result": "PASSED",
+        "assertion": "Verifies that out-of-date row_version updates and mismatched If-Match headers are rejected with HTTP 409 Conflict."
+      },
+      {
+        "name": "test_csrf_cookie_protection_and_bearer_exemption",
+        "result": "PASSED",
+        "assertion": "Verifies that cookie-authenticated mutations without custom anti-CSRF headers or with cross-site origins are rejected (HTTP 403), while requests with X-Requested-With or Bearer tokens succeed."
+      },
+      {
+        "name": "test_annotation_audit_logging_integrity",
+        "result": "PASSED",
+        "assertion": "Verifies append-only audit logging across create, update, and archive lifecycle steps with accurate before/after state diffs."
+      }
+    ]
+  }
+}

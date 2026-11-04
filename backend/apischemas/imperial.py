@@ -290,6 +290,42 @@ class ImperialMapAssetPublish(ImperialBaseSchema):
     row_version: int = Field(..., ge=1, description="Current row_version for optimistic lock check")
 
 
+class AssetSignedTokenRequest(ImperialBaseSchema):
+    expires_in_seconds: int = 3600
+    access_level: str = "read"
+    client_id: Optional[str] = None
+
+
+class AssetSignedTokenResponse(ImperialBaseSchema):
+    asset_id: UUID
+    token: str
+    expires_at: int
+    cache_control: str = "private, no-cache, no-store, must-revalidate, max-age=0"
+
+
+class AssetRevokeRequest(ImperialBaseSchema):
+    reason: str = "Rights withdrawn by owner or rights holder"
+
+
+class AssetRevokeResponse(ImperialBaseSchema):
+    asset_id: UUID
+    status: str = "REVOKED"
+    revocation_reason: str
+    cdn_purged: bool = True
+    cache_control: str = "no-cache, no-store, must-revalidate, max-age=0, s-maxage=0"
+
+
+class AssetLicenseCheckResponse(ImperialBaseSchema):
+    asset_id: UUID
+    offline_licensing_allowed: bool
+    license_kind: str
+    license_status: str
+    review_status: str
+    cache_control: str
+    is_private: bool
+    is_revoked: bool
+
+
 # --------------------------------------------------------------------------- #
 # Map Annotations & Links
 # --------------------------------------------------------------------------- #

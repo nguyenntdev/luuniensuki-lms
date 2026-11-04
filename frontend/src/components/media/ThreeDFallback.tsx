@@ -43,6 +43,7 @@ export interface ThreeDFallbackProps extends React.HTMLAttributes<HTMLDivElement
   licenseTier?: LicenseBadgeTier;
   noai?: boolean;
   onRetryWebGL?: () => void;
+  onReturnTo3D?: () => void;
   className?: string;
 }
 
@@ -216,6 +217,7 @@ export function ThreeDFallback({
   licenseTier,
   noai,
   onRetryWebGL,
+  onReturnTo3D,
   className,
   ...props
 }: ThreeDFallbackProps) {
@@ -262,7 +264,7 @@ export function ThreeDFallback({
       role="region"
       aria-label={`Bản chụp tư liệu 2D thay thế: ${modelTitle || siteName || "Di tích Huế"}`}
       className={cn(
-        "group relative flex flex-col w-full rounded-2xl border border-border/70 bg-card overflow-hidden shadow-sm transition-all",
+        "group relative flex flex-col w-full rounded-2xl border border-border/70 bg-card overflow-hidden shadow-sm transition-all contrast-more:border-2 contrast-more:border-foreground",
         className
       )}
       {...props}
@@ -379,7 +381,19 @@ export function ThreeDFallback({
             </a>
           )}
 
-          <div className="flex items-center gap-2 ml-auto">
+          <div className="flex items-center gap-2 ml-auto flex-wrap">
+            {/* Return to 3D button if interactive mode was manually toggled off */}
+            {onReturnTo3D && (
+              <button
+                type="button"
+                onClick={onReturnTo3D}
+                aria-label={`Quay lại xem mô hình 3D tương tác ${modelTitle || siteName || ""}`}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary shadow-sm transition-all"
+              >
+                <span>Xem mô hình 3D</span>
+              </button>
+            )}
+
             {/* Retry WebGL button if failed context */}
             {effectiveReason === "webgl_unsupported" && onRetryWebGL && (
               <button

@@ -244,6 +244,8 @@ export function AnnotationStudioClient({
       setNotice("Đã xóa điểm ghim thành công.");
     } catch (err) {
       console.error("Delete error:", err);
+      const errMsg = err instanceof Error ? err.message : "Đã có lỗi xảy ra.";
+      setNotice("Lỗi khi xóa điểm ghim trên máy chủ: " + errMsg);
     }
   };
 
@@ -283,7 +285,9 @@ export function AnnotationStudioClient({
       await reloadData();
     } catch (err: unknown) {
       console.error("Save drafts error:", err);
-      alert("Lỗi khi lưu dữ liệu: " + (err instanceof Error ? err.message : ""));
+      const errMsg = err instanceof Error ? err.message : "Đã có lỗi xảy ra.";
+      setNotice("Lỗi khi lưu dữ liệu lên máy chủ: " + errMsg);
+      alert("Lỗi khi lưu dữ liệu: " + errMsg);
     } finally {
       setIsSaving(false);
     }

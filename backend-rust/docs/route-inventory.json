@@ -2353,6 +2353,24 @@
   },
   {
     "method": "GET",
+    "path": "/assets/{asset_id}/license-check",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/assets/{asset_id}/revoke",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/assets/{asset_id}/signed-token",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
     "path": "/audio-guides",
     "group": "misc",
     "status": "gateway"
@@ -2430,6 +2448,78 @@
     "status": "gateway"
   },
   {
+    "method": "POST",
+    "path": "/inspections/complete",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/inspections/{target_slug}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/items",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "DELETE",
+    "path": "/items/{item_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/items/{item_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "PATCH",
+    "path": "/items/{item_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/items/{item_id}/approve",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/items/{item_id}/archive",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/items/{item_id}/publish",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/items/{item_id}/reject",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/items/{item_id}/submit-review",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/items/{item_id}/version",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
     "method": "GET",
     "path": "/learning-paths",
     "group": "misc",
@@ -2468,6 +2558,12 @@
   {
     "method": "GET",
     "path": "/paths/{slug}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/preview/{item_id}",
     "group": "misc",
     "status": "gateway"
   },
@@ -2582,6 +2678,12 @@
   {
     "method": "POST",
     "path": "/teacher/submissions/{submission_id}/grade",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/upload",
     "group": "misc",
     "status": "gateway"
   },

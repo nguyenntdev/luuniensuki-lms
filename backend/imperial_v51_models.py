@@ -284,6 +284,8 @@ class ImperialMediaHotspot(Base):
         ),
         Index("idx_imperial_media_hotspots_media", "media_id"),
         Index("idx_imperial_media_hotspots_detail", "detail_id"),
+        Index("idx_imperial_media_hotspots_claim", "claim_id"),
+        Index("idx_imperial_media_hotspots_entity", "entity_id"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -310,6 +312,19 @@ class ImperialMediaHotspot(Base):
         ForeignKey("imperial_art_details.id", ondelete="SET NULL"),
         nullable=True,
     )
+    claim_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("historical_claims.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    entity_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("historical_entities.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    asset_revision: Mapped[Optional[int]] = mapped_column(
+        Integer, nullable=True, default=None
+    )
     review_status: Mapped[str] = mapped_column(
         String(50), nullable=False, server_default=text("'draft'")
     )
@@ -329,6 +344,12 @@ class ImperialMediaHotspot(Base):
     )
     art_detail: Mapped[Optional["ImperialArtDetail"]] = relationship(
         "ImperialArtDetail", back_populates="hotspots"
+    )
+    claim: Mapped[Optional["HistoricalClaim"]] = relationship(
+        "HistoricalClaim", foreign_keys=[claim_id]
+    )
+    entity: Mapped[Optional["HistoricalEntity"]] = relationship(
+        "HistoricalEntity", foreign_keys=[entity_id]
     )
 
 
@@ -647,3 +668,69 @@ class ImperialAssignmentRelease(Base):
 
     # Relationships
     teacher: Mapped[Any] = relationship("User")
+
+
+# --------------------------------------------------------------------------- #
+# 10. ImperialRelicInspection
+# --------------------------------------------------------------------------- #
+class ImperialRelicInspection(Base):
+    """Server-audited inspection session for 3D/AR or 2D turntable heritage relics (V5-T045)."""
+
+    __tablename__ = "imperial_relic_inspections"
+    __table_args__ = (
+        CheckConstraint(
+            "content_scope = 'STTT_IMPERIAL_CITY'",
+            name="ck_imperial_relic_inspections_scope",
+        ),
+        UniqueConstraint("user_id", "target_slug", name="uq_imperial_relic_user_target"),
+        Index("idx_relic_inspections_user", "user_id"),
+        Index("idx_relic_inspections_target", "target_slug"),
+        Index("idx_relic_inspections_mode", "inspection_mode"),
+        Index("idx_relic_inspections_idempotency", "idempotency_key"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    content_scope: Mapped[str] = mapped_column(
+        String(50), nullable=False, server_default=text(f"'{CONTENT_SCOPE_IMPERIAL}'")
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    target_slug: Mapped[str] = mapped_column(String(120), nullable=False)
+    inspection_mode: Mapped[str] = mapped_column(
+        String(50), nullable=False, server_default=text("'turntable_2d'")
+    )
+    camera_permission_granted: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("false")
+    )
+    device_tier: Mapped[str] = mapped_column(
+        String(50), nullable=False, server_default=text("'desktop'")
+    )
+    time_spent_seconds: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default=text("0")
+    )
+    angles_inspected: Mapped[list[Any]] = mapped_column(
+        JSONB, nullable=False, server_default=text("'[]'::jsonb")
+    )
+    hotspots_examined: Mapped[list[Any]] = mapped_column(
+        JSONB, nullable=False, server_default=text("'[]'::jsonb")
+    )
+    xp_awarded: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default=text("25")
+    )
+    idempotency_key: Mapped[Optional[str]] = mapped_column(
+        String(100), nullable=True, unique=True
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
+    )
+
+    # Relationships
+    user: Mapped[Any] = relationship("User")

@@ -1,0 +1,196 @@
+{
+  "ticket": "V5-T041",
+  "ticket_id": "V5-T041",
+  "wave": "W04",
+  "slot": "W04-A01",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "3D asset manifest validation in public/models/ and frontend/src/components/UrnViewer.tsx.",
+  "timestamp": "2026-11-05T00:00:00Z",
+  "summary": "Implemented and verified complete 3D asset manifest validation across public/models/manifests/ and frontend/public/models/manifests/, together with WebGL health and 2D fallback degradation in frontend/src/components/UrnViewer.tsx. Built a dedicated validation engine (backend/services/manifest_validation.py) verifying 3D asset versions, cryptographic SHA-256 digests, physical byte sizes on disk, glTF magic bytes, approved licenses (CC BY 4.0 / Educational Fair Use), rights status ('cleared'), institutional ownership (HMCC), and exact 162-hotspot mesh ID joins across 9 urns (18 per urn) with zero cross-urn leakage. Enforced strict negative abuse rules ensuring missing meshes never show blank canvases or claim complete digital twins without fallback, and integrated WebGL context loss handling, recovery, and accessible 2D rubbing toggles into UrnViewer.tsx.",
+  "invariants_enforced": [
+    "ASSET_VERSION_INTEGRITY: Root manifests declare model_version and hotspot_version >= 1, and all 162 hotspots declare coordinate_version and model_version >= 1. Non-positive or missing versions fail closed with ManifestVersionError.",
+    "CHECKSUM_AND_SIZE_INTEGRITY: Cao Đỉnh LOD meshes (low, medium, high) match physical disk bytes (5,207,460 / 27,417,688 / 30,353,888) and SHA-256 digests with glTF magic bytes. All 8 missing urns declare status='MISSING', sha256=null, bytes=0, and fallback_url=null, preventing fabricated hashes.",
+    "LICENSE_AND_RIGHTS_CLEARANCE: All 9 urns and 162 hotspots require approved licenses (CC BY 4.0 / Educational Fair Use) and cleared rights status under HMCC institutional ownership. Restricted, proprietary, or unapproved licenses fail closed with ManifestLicenseError.",
+    "MESH_ID_JOINS_162_RELICS: Exactly 18 hotspots per urn across 9 urns (162 total). Globally unique 3d_mesh_ids (mesh_urn_{slug}_{idx}_v1), motif_ids (urn_{slug}_{idx}), and hotspot_ids with 0 collisions and verified 3D spatial coordinates.",
+    "FALLBACK_2D_FOR_MISSING_MESHES: 100% of urns and hotspots provide verified 2D rubbing fallbacks in ban-duc-noi/ and UrnAccessibleFallback with verified SHA-256 digests and image magic bytes. Missing meshes without 2D fallback fail closed with ManifestMissingFallbackError.",
+    "NEGATIVE_ABUSE_ZERO_BLANK_CANVAS: Missing 3D meshes or failed model loads render interactive FallbackScene and display an archival reconstruction banner with a direct toggle to UrnAccessibleFallback, preventing blank canvases or false claims of complete 3D models.",
+    "WEBGL_HEALTH_CONTRACT: UrnViewer.tsx listens for webglcontextlost, webglcontextrestored, and context creation failures, automatically degrading to UrnAccessibleFallback with an onReturnTo3D recovery mechanism."
+  ],
+  "audit_findings_9_urns_162_hotspots": {
+    "total_urns_audited": 9,
+    "total_hotspots_audited": 162,
+    "mesh_present_urns": 1,
+    "mesh_missing_urns": 8,
+    "unique_3d_mesh_ids": 162,
+    "unique_motif_ids": 162,
+    "unique_hotspot_ids": 162,
+    "fallback_2d_coverage_pct": 100.0,
+    "checksum_mismatches": 0,
+    "license_violations": 0,
+    "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+    "default_license": "CC BY 4.0 / Educational Fair Use",
+    "audit_passed": true
+  },
+  "changes": [
+    {
+      "file": "backend/services/manifest_validation.py",
+      "description": "Created comprehensive 3D asset manifest validation engine: validate_3d_asset_version, validate_3d_asset_checksum_and_size, validate_3d_asset_license, validate_3d_mesh_id_joins, validate_2d_fallback_for_missing_meshes, validate_webgl_health_contract, and audit_all_3d_manifests with typed domain exceptions."
+    },
+    {
+      "file": "backend/history_models.py",
+      "description": "Exported ManifestValidationError domain exceptions and validation service functions for central domain consumption."
+    },
+    {
+      "file": "frontend/src/components/UrnViewer.tsx",
+      "description": "Added WebGL context loss and restoration listeners on window and canvas, modelLoadError tracking in ModelErrorBoundary, missing-mesh-fallback-banner announcing archival reconstruction with 2D rubbing replacement, and accessible view toggle to UrnAccessibleFallback with onReturnTo3D recovery."
+    },
+    {
+      "file": "frontend/src/components/media/SketchfabExhibit.tsx",
+      "description": "Fixed React Hook order of execution by hoisting keyboard accessibility effect and dismiss callback before conditional return guards."
+    },
+    {
+      "file": "tests/v5/test_v5_t041.py",
+      "description": "Created comprehensive 26-test suite verifying 3D version validity, checksum and byte size integrity, license clearance, mesh ID joins, 2D rubbing fallback coverage, WebGL health contract, negative abuse edge cases, and holistic disk audit."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t041.py -v",
+    "total_tests": 26,
+    "passed_tests": 26,
+    "failed_tests": 0,
+    "test_details": [
+      {
+        "name": "test_all_9_urn_manifests_version_validity",
+        "result": "PASSED",
+        "assertion": "Verifies that all 9 urn manifests have valid model_version and hotspot_version >= 1."
+      },
+      {
+        "name": "test_negative_invalid_or_missing_version_fails",
+        "result": "PASSED",
+        "assertion": "Verifies that non-positive, zero, or missing versions fail closed with ManifestVersionError."
+      },
+      {
+        "name": "test_negative_hotspot_version_missing_fails",
+        "result": "PASSED",
+        "assertion": "Verifies that hotspots with missing coordinate_version or model_version fail closed."
+      },
+      {
+        "name": "test_cao_dinh_mesh_present_checksum_and_size_integrity",
+        "result": "PASSED",
+        "assertion": "Verifies Cao Đỉnh PRESENT mesh checksums, byte sizes, physical disk files, and glTF magic bytes."
+      },
+      {
+        "name": "test_missing_mesh_urns_declare_zero_bytes_and_null_hash",
+        "result": "PASSED",
+        "assertion": "Verifies that missing mesh urns declare status MISSING, bytes=0, and null sha256."
+      },
+      {
+        "name": "test_negative_checksum_tampering_rejected",
+        "result": "PASSED",
+        "assertion": "Verifies that tampered root checksums or LOD sha256 digests fail closed with ManifestChecksumError."
+      },
+      {
+        "name": "test_negative_size_tampering_rejected",
+        "result": "PASSED",
+        "assertion": "Verifies that byte size mismatches or non-zero missing mesh bytes fail closed with ManifestSizeError."
+      },
+      {
+        "name": "test_all_9_urns_and_162_hotspots_have_approved_licenses",
+        "result": "PASSED",
+        "assertion": "Verifies that all 9 urns and 162 hotspots declare approved licenses and cleared rights under HMCC."
+      },
+      {
+        "name": "test_negative_unapproved_or_missing_license_fails_closed",
+        "result": "PASSED",
+        "assertion": "Verifies that missing or proprietary licenses fail closed with ManifestLicenseError."
+      },
+      {
+        "name": "test_negative_restricted_or_revoked_rights_fails_closed",
+        "result": "PASSED",
+        "assertion": "Verifies that revoked, withdrawn, or restricted rights status fails closed with ManifestLicenseError."
+      },
+      {
+        "name": "test_negative_disallowed_distribution_fails_closed",
+        "result": "PASSED",
+        "assertion": "Verifies that disallowed public distribution or display fails closed with ManifestLicenseError."
+      },
+      {
+        "name": "test_exact_162_hotspots_across_9_urns",
+        "result": "PASSED",
+        "assertion": "Verifies that each of the 9 urn manifests contains exactly 18 hotspots (162 total)."
+      },
+      {
+        "name": "test_global_uniqueness_of_mesh_ids_and_motif_ids",
+        "result": "PASSED",
+        "assertion": "Verifies that all 162 3d_mesh_ids, motif_ids, and hotspot_ids are globally unique with 0 collisions."
+      },
+      {
+        "name": "test_mesh_id_joins_to_motif_id",
+        "result": "PASSED",
+        "assertion": "Verifies that every 3d_mesh_id cleanly maps to its corresponding motif_id."
+      },
+      {
+        "name": "test_hotspot_3d_coordinates_validity",
+        "result": "PASSED",
+        "assertion": "Verifies that all 162 hotspots declare valid 3D floats for pos, camera_position, and camera_target."
+      },
+      {
+        "name": "test_negative_mesh_id_cross_urn_mismatch_rejected",
+        "result": "PASSED",
+        "assertion": "Verifies that cross-urn mesh ID infiltration is detected and rejected with ManifestMeshJoinError."
+      },
+      {
+        "name": "test_negative_duplicate_hotspot_or_missing_mesh_id_rejected",
+        "result": "PASSED",
+        "assertion": "Verifies that duplicate hotspot IDs or missing 3d_mesh_ids fail closed."
+      },
+      {
+        "name": "test_all_9_urns_have_verified_2d_rubbing_fallback",
+        "result": "PASSED",
+        "assertion": "Verifies that all 9 urns declare 100% verified 2D rubbing fallback in ban-duc-noi/ and UrnAccessibleFallback."
+      },
+      {
+        "name": "test_negative_missing_mesh_without_2d_fallback_fails_closed",
+        "result": "PASSED",
+        "assertion": "Verifies that missing mesh urns without declared 2D fallback fail closed with ManifestMissingFallbackError."
+      },
+      {
+        "name": "test_negative_missing_mesh_cannot_claim_phantom_model",
+        "result": "PASSED",
+        "assertion": "Verifies that missing mesh urns cannot provide fallback_url substituting another urn's 3D model."
+      },
+      {
+        "name": "test_negative_present_mesh_without_disk_file_fails_phantom_check",
+        "result": "PASSED",
+        "assertion": "Verifies that claiming PRESENT mesh when GLB files are absent fails with ManifestPhantomModelError."
+      },
+      {
+        "name": "test_webgl_health_contract_graceful_degradation",
+        "result": "PASSED",
+        "assertion": "Verifies that WebGL health contract enforces fallback degradation and prevents blank canvases."
+      },
+      {
+        "name": "test_negative_webgl_failure_without_fallback_rejected",
+        "result": "PASSED",
+        "assertion": "Verifies that WebGL failure without active fallback component fails closed with WebGLHealthError."
+      },
+      {
+        "name": "test_negative_missing_mesh_without_banner_rejected",
+        "result": "PASSED",
+        "assertion": "Verifies that missing mesh without missing_mesh_fallback_banner fails WebGL health contract."
+      },
+      {
+        "name": "test_urn_viewer_source_code_verifies_webgl_health_and_fallback",
+        "result": "PASSED",
+        "assertion": "Verifies that UrnViewer.tsx handles WebGL loss, renders fallback banner, and provides accessible view toggle."
+      },
+      {
+        "name": "test_audit_all_3d_manifests_public_and_frontend",
+        "result": "PASSED",
+        "assertion": "Verifies full audit passes across both public/models/manifests and frontend/public/models/manifests."
+      }
+    ]
+  }
+}

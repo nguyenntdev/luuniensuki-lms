@@ -59,9 +59,12 @@ export function AudioTranscriptDrawer({ className }: AudioTranscriptDrawerProps)
   return (
     <Sheet open={isDrawerOpen} onOpenChange={setDrawerOpen}>
       <SheetContent
+        id="audio-transcript-drawer"
+        role="dialog"
         side="right"
+        aria-label="Toàn văn lời thoại âm thanh thuyết minh đồng bộ"
         className={cn(
-          "w-full sm:max-w-md md:max-w-lg bg-card/95 backdrop-blur-2xl border-l border-border/80 p-0 flex flex-col shadow-2xl z-[60]",
+          "w-full sm:max-w-md md:max-w-lg bg-card/95 backdrop-blur-2xl border-l border-border/80 p-0 flex flex-col shadow-2xl z-[60] contrast-more:border-2 contrast-more:border-foreground",
           className,
         )}
       >

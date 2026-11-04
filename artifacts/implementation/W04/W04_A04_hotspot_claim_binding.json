@@ -1,0 +1,92 @@
+{
+  "ticket": "V5-T044",
+  "ticket_id": "V5-T044",
+  "wave": "W04",
+  "slot": "W04-A04",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Hotspot and claim binding in frontend ArtDetailStudioClient.tsx and backend routers",
+  "timestamp": "2026-11-05T16:20:00Z",
+  "summary": "Implemented 3D hotspot coordinates linking to approved source-based historical claims, historical entities/objects, and asset revisions. Enforced strict validation preventing unpublished, unreviewed, needs_source, or disputed claims from being bound to hotspots. Updated the frontend ArtDetailStudioClient and backend DTOs/services.",
+  "invariants_enforced": {
+    "claim_and_entity_persistence": "ImperialMediaHotspot model and database schema updated with claim_id, entity_id, and asset_revision columns, foreign key references, and indexes.",
+    "hotspot_claim_publication_gate": "Hotspots can only bind historical claims whose verification_status is in eligible set ('expert_verified', 'editor_reviewed', 'verified', 'published'). Unpublished, draft, unreviewed, needs_source, or rejected claims fail with HTTP 422 HOTSPOT_CLAIM_UNPUBLISHED_OR_INVALID.",
+    "hotspot_claim_dispute_gate": "Historical claims with confidence='disputed' or 'contested' cannot be bound to hotspots (fails with HTTP 422 HOTSPOT_CLAIM_DISPUTED).",
+    "hotspot_claim_entity_alignment": "If both entity_id and claim_id are provided, the claim's entity_id must match the provided entity_id (fails with HTTP 422 HOTSPOT_CLAIM_ENTITY_MISMATCH).",
+    "asset_revision_consistency": "Hotspots track asset_revision matching or inheriting the parent learning media asset revision.",
+    "frontend_studio_binding_ui": "ArtDetailStudioClient.tsx provides input controls for claim_id, entity_id, and asset_revision, persisting them via saveMediaHotspot."
+  },
+  "changes": [
+    {
+      "file": "migrations/versions/0067_hotspot_claim_entity_binding.py",
+      "description": "Additive Alembic migration adding claim_id, entity_id, asset_revision columns and indexes to imperial_media_hotspots."
+    },
+    {
+      "file": "backend/imperial_v51_models.py",
+      "description": "Added claim_id, entity_id, asset_revision mapped columns and relationships (claim, entity) to ImperialMediaHotspot."
+    },
+    {
+      "file": "backend/apischemas/imperial_v51.py",
+      "description": "Added claim_id, entity_id, and asset_revision to ImperialMediaHotspotBase, ImperialMediaHotspotCreate, and ImperialMediaHotspotUpdate schemas."
+    },
+    {
+      "file": "backend/services/imperial_v51.py",
+      "description": "Added _validate_hotspot_claim_and_entity check in create_media_hotspot and update_media_hotspot, enforcing valid claim verification statuses, dispute rejection, and entity alignment."
+    },
+    {
+      "file": "frontend/src/lib/imperial/v51-types.ts",
+      "description": "Added claim_id, entity_id, and asset_revision fields to ImperialMediaHotspot interface."
+    },
+    {
+      "file": "frontend/src/lib/imperial/v51-api.ts",
+      "description": "Included claim_id, entity_id, and asset_revision in saveMediaHotspot payload handling and fallback."
+    },
+    {
+      "file": "frontend/src/app/admin/dai-noi/chi-tiet-my-thuat/ArtDetailStudioClient.tsx",
+      "description": "Added claim_id, entity_id, and asset_revision binding inputs to the Hotspot Inspector and passed them in handleSave."
+    },
+    {
+      "file": "tests/v5/test_v5_t044.py",
+      "description": "Created comprehensive test suite verifying 3D hotspot coordinates persistence, claim and entity linkage, asset revision tracking, and negative abuse prevention."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t044.py -v",
+    "total_tests": 6,
+    "passed_tests": 6,
+    "failed_tests": 0,
+    "test_details": [
+      {
+        "name": "test_positive_persist_3d_hotspot_linked_to_approved_claim_and_entity",
+        "result": "PASSED",
+        "assertion": "Verifies 3D hotspot coordinates persist cleanly when bound to an approved claim, entity, and asset revision."
+      },
+      {
+        "name": "test_negative_abuse_hotspot_cannot_bind_unpublished_or_unreviewed_claim",
+        "result": "PASSED",
+        "assertion": "Negative abuse: Hotspot cannot bind unreviewed, needs_source, or draft historical claim."
+      },
+      {
+        "name": "test_negative_abuse_hotspot_cannot_bind_disputed_claim",
+        "result": "PASSED",
+        "assertion": "Negative abuse: Hotspot cannot bind disputed or contested claim."
+      },
+      {
+        "name": "test_negative_abuse_hotspot_claim_entity_mismatch_rejected",
+        "result": "PASSED",
+        "assertion": "Negative abuse: Hotspot specifying mismatched entity_id and claim is rejected."
+      },
+      {
+        "name": "test_hotspot_patch_binding_update_and_validation",
+        "result": "PASSED",
+        "assertion": "Verifies patching an existing hotspot to bind claim and entity enforces the same strict validation gates."
+      },
+      {
+        "name": "test_hotspot_binding_nonexistent_ids_return_404",
+        "result": "PASSED",
+        "assertion": "Non-existent claim or entity IDs return 404 errors."
+      }
+    ]
+  }
+}

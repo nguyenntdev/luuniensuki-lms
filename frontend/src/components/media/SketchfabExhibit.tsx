@@ -3,6 +3,7 @@
 import * as React from "react";
 import {
   Box,
+  Camera,
   ExternalLink,
   Square,
   ShieldCheck,
@@ -210,6 +211,26 @@ export function SketchfabExhibit({
 }: SketchfabExhibitProps) {
   const [isActive, setIsActive] = React.useState(false);
   const [webglError, setWebglError] = React.useState(false);
+  const [viewMode, setViewMode] = React.useState<"3d" | "2d">("3d");
+  const [announcement, setAnnouncement] = React.useState<string>("");
+
+  // Handle Dismiss / Stop Click: Unmounts iframe immediately to free GPU memory
+  const handleDismiss3D = React.useCallback(() => {
+    setIsActive(false);
+    setAnnouncement("Đã đóng trình xem 3D và giải phóng bộ nhớ GPU");
+    if (onDismiss) onDismiss();
+  }, [onDismiss]);
+
+  // Keyboard accessibility: ESC key to stop 3D iframe
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isActive) {
+        handleDismiss3D();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isActive, handleDismiss3D]);
 
   // Match curated record if modelId is known
   const curated = modelId ? CURATED_MODELS[modelId] : undefined;
@@ -315,10 +336,39 @@ export function SketchfabExhibit({
         onRetryWebGL={() => {
           setWebglError(false);
           setIsActive(false);
+          setAnnouncement("Đang khởi động lại WebGL...");
         }}
         sketchfabUrl={resolvedModelUrl}
         className={className}
       />
+    );
+  }
+
+  // =========================================================================
+  // 2D EQUIVALENCE MODE: ACCESSIBLE ALTERNATIVE VIEW
+  // =========================================================================
+  if (viewMode === "2d") {
+    return (
+      <div className="relative w-full">
+        <div role="status" aria-live="polite" className="sr-only">
+          {announcement || "Đang hiển thị bản chụp tư liệu 2D thay thế."}
+        </div>
+        <ThreeDFallback
+          modelId={resolvedModelId}
+          modelTitle={resolvedTitle}
+          siteName={resolvedSiteName}
+          reason="custom"
+          reasonDetails="Chế độ tiếp cận 2D: Hiển thị bản chụp tư liệu độ phân giải cao và hồ sơ lưu trữ khảo sát thay thế mô hình 3D."
+          sketchfabUrl={resolvedModelUrl}
+          licenseText={resolvedLicense}
+          licenseTier="approved_cc_by"
+          onReturnTo3D={() => {
+            setViewMode("3d");
+            setAnnouncement("Đã chuyển về trình xem mô hình 3D tương tác.");
+          }}
+          className={className}
+        />
+      </div>
     );
   }
 
@@ -329,13 +379,8 @@ export function SketchfabExhibit({
       return;
     }
     setIsActive(true);
+    setAnnouncement(`Đang tải mô hình 3D tương tác ${resolvedTitle}`);
     if (onActivate) onActivate();
-  };
-
-  // Handle Dismiss / Stop Click: Unmounts iframe immediately to free GPU memory
-  const handleDismiss3D = () => {
-    setIsActive(false);
-    if (onDismiss) onDismiss();
   };
 
   // Safe Sandboxed Embed Endpoint Construction
@@ -346,11 +391,16 @@ export function SketchfabExhibit({
       role="region"
       aria-label={`Trình xem mô hình 3D tương tác: ${resolvedTitle}`}
       className={cn(
-        "group relative flex flex-col w-full rounded-2xl border border-border/80 bg-card overflow-hidden shadow-sm transition-all",
+        "group relative flex flex-col w-full rounded-2xl border border-border/80 bg-card overflow-hidden shadow-sm transition-all contrast-more:border-2 contrast-more:border-foreground",
         className
       )}
       {...props}
     >
+      {/* Screen Reader Live Region */}
+      <div role="status" aria-live="polite" className="sr-only">
+        {announcement}
+      </div>
+
       {/* 16:9 Aspect Ratio Display Stage */}
       <div className="relative w-full aspect-video bg-neutral-950 overflow-hidden">
         {isActive ? (
@@ -367,7 +417,22 @@ export function SketchfabExhibit({
             />
 
             {/* Floating Top Control Bar with GPU Release / Dismiss Button */}
-            <div className="absolute top-3 right-3 flex items-center gap-2 z-20 pointer-events-auto">
+            <div className="absolute top-3 right-3 flex items-center gap-2 z-20 pointer-events-auto flex-wrap">
+              {/* Switch to 2D view button */}
+              <button
+                type="button"
+                onClick={() => {
+                  setIsActive(false);
+                  setViewMode("2d");
+                  setAnnouncement("Đã chuyển sang bản chụp tư liệu 2D.");
+                }}
+                aria-label="Chuyển sang bản chụp tư liệu 2D và hồ sơ khảo sát"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-black/75 hover:bg-black/90 text-white/90 border border-white/20 backdrop-blur-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              >
+                <Camera className="size-3.5 text-amber-400" aria-hidden="true" />
+                <span className="hidden sm:inline">Xem bản 2D</span>
+              </button>
+
               {resolvedModelUrl && (
                 <a
                   href={resolvedModelUrl}
@@ -386,7 +451,7 @@ export function SketchfabExhibit({
                 type="button"
                 onClick={handleDismiss3D}
                 aria-label="Đóng trình xem 3D và giải phóng bộ nhớ GPU"
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-rose-600/90 hover:bg-rose-700 text-white border border-rose-400/40 shadow-lg backdrop-blur-md transition-all active:scale-95"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-rose-600/90 hover:bg-rose-700 text-white border border-rose-400/40 shadow-lg backdrop-blur-md transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400"
               >
                 <Square className="size-3 fill-current" aria-hidden="true" />
                 <span>Dừng mô hình (Giải phóng GPU)</span>
@@ -433,8 +498,8 @@ export function SketchfabExhibit({
               )}
             </div>
 
-            {/* Center Action: "Xem mô hình 3D tương tác" Button */}
-            <div className="relative z-10 flex flex-col items-center justify-center p-4 text-center max-w-md mx-auto">
+            {/* Center Action: "Xem mô hình 3D tương tác" & 2D Alternative Buttons */}
+            <div className="relative z-10 flex flex-col items-center justify-center p-4 text-center max-w-md mx-auto gap-2.5">
               <button
                 type="button"
                 onClick={handleLaunch3D}
@@ -445,8 +510,21 @@ export function SketchfabExhibit({
                 <span>Xem mô hình 3D tương tác</span>
               </button>
 
-              <p className="text-[11px] text-white/80 mt-2.5 tracking-wide">
-                Khởi tạo WebGL khi nhấn • Tiết kiệm bộ nhớ GPU & pin thiết bị
+              <button
+                type="button"
+                onClick={() => {
+                  setViewMode("2d");
+                  setAnnouncement("Đã chuyển sang bản chụp tư liệu 2D và hồ sơ khảo sát.");
+                }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium bg-black/60 hover:bg-black/80 text-white/95 border border-white/20 backdrop-blur-md transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary hover:border-white/40"
+                aria-label={`Xem bản chụp tư liệu 2D thay thế cho ${resolvedTitle}`}
+              >
+                <Camera className="size-3.5 text-amber-400" aria-hidden="true" />
+                <span>Xem bản chụp 2D & Tư liệu thay thế (WCAG 2.2)</span>
+              </button>
+
+              <p className="text-[11px] text-white/80 mt-1 tracking-wide">
+                Khởi tạo WebGL khi nhấn • Hỗ trợ đầy đủ bản chụp 2D và văn bản thay thế
               </p>
             </div>
           </div>

@@ -61,11 +61,44 @@ export function FloatingAudioPlayer({ className }: FloatingAudioPlayerProps) {
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [showSpeedSelector, setShowSpeedSelector] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [announcement, setAnnouncement] = useState("");
   const isDraggingSeekbar = useRef(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  // Screen reader announcement on track change
+  useEffect(() => {
+    if (currentTrack) {
+      setAnnouncement(`Đang nghe thuyết minh: ${currentTrack.titleVi}`);
+    }
+  }, [currentTrack]);
+
+  // Keyboard navigation shortcuts
+  useEffect(() => {
+    if (!currentTrack) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't intercept if user is typing in input/textarea/select
+      const activeTag = document.activeElement?.tagName?.toLowerCase();
+      if (activeTag === "input" || activeTag === "textarea" || activeTag === "select") {
+        return;
+      }
+      if (e.code === "Space" && e.target === document.body) {
+        e.preventDefault();
+        togglePlayPause();
+        setAnnouncement(!isPlaying ? "Đang phát âm thanh" : "Đã tạm dừng âm thanh");
+      } else if ((e.key === "m" || e.key === "M") && !e.ctrlKey && !e.metaKey) {
+        toggleMute();
+        setAnnouncement(!isMuted ? "Đã tắt tiếng" : "Đã bật tiếng");
+      } else if ((e.key === "t" || e.key === "T") && !e.ctrlKey && !e.metaKey) {
+        toggleDrawer();
+        setAnnouncement(!isDrawerOpen ? "Đã mở bản lời thoại đồng bộ" : "Đã đóng bản lời thoại");
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [currentTrack, isPlaying, isMuted, isDrawerOpen, togglePlayPause, toggleMute, toggleDrawer]);
 
   // Sync with global HTMLAudioElement lifecycle & fallback playback simulation
   useEffect(() => {
@@ -187,7 +220,16 @@ export function FloatingAudioPlayer({ className }: FloatingAudioPlayerProps) {
           </div>
         ) : (
           /* Full Floating Player Card */
-          <div className="rounded-2xl border border-border/80 bg-card/95 p-4 shadow-2xl backdrop-blur-2xl ring-1 ring-primary/20 flex flex-col gap-3 animate-in fade-in slide-in-from-bottom-3">
+          <div
+            role="region"
+            aria-label={`Trình phát âm thanh di sản: ${currentTrack.titleVi}`}
+            className="rounded-2xl border border-border/80 bg-card/95 p-4 shadow-2xl backdrop-blur-2xl ring-1 ring-primary/20 flex flex-col gap-3 animate-in fade-in slide-in-from-bottom-3 contrast-more:border-2 contrast-more:border-foreground"
+          >
+            {/* Screen Reader Live Region */}
+            <div role="status" aria-live="polite" className="sr-only">
+              {announcement}
+            </div>
+
             {/* Top Bar: Title, Site, Actions */}
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-2.5 min-w-0">
@@ -365,9 +407,14 @@ export function FloatingAudioPlayer({ className }: FloatingAudioPlayerProps) {
                   <Button
                     size="icon"
                     variant="ghost"
-                    onClick={toggleMute}
+                    onClick={() => {
+                      toggleMute();
+                      setAnnouncement(!isMuted ? "Đã tắt tiếng" : "Đã bật tiếng");
+                    }}
                     className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                    title={isMuted ? "Bật âm" : "Tắt tiếng"}
+                    title={isMuted ? "Bật âm (M)" : "Tắt tiếng (M)"}
+                    aria-label={isMuted ? "Bật âm thanh (Phím tắt: M)" : "Tắt tiếng (Phím tắt: M)"}
+                    aria-keyshortcuts="m"
                   >
                     {isMuted || volume === 0 ? (
                       <VolumeX className="h-4 w-4 text-destructive" />
@@ -443,9 +490,13 @@ export function FloatingAudioPlayer({ className }: FloatingAudioPlayerProps) {
 
                 <Button
                   size="icon"
-                  onClick={togglePlayPause}
-                  className="h-10 w-10 rounded-full bg-gradient-to-r from-primary to-amber-600 text-primary-foreground shadow-lg hover:brightness-110 active:scale-95 transition-transform"
-                  aria-label={isPlaying ? "Tạm dừng" : "Phát"}
+                  onClick={() => {
+                    togglePlayPause();
+                    setAnnouncement(!isPlaying ? "Đang phát âm thanh" : "Đã tạm dừng âm thanh");
+                  }}
+                  className="h-10 w-10 rounded-full bg-gradient-to-r from-primary to-amber-600 text-primary-foreground shadow-lg hover:brightness-110 active:scale-95 transition-transform focus-visible:ring-2 focus-visible:ring-primary"
+                  aria-label={isPlaying ? "Tạm dừng (Phím cách)" : "Phát (Phím cách)"}
+                  aria-keyshortcuts="Space"
                 >
                   {isPlaying ? (
                     <Pause className="h-5 w-5 fill-current" />
@@ -472,11 +523,19 @@ export function FloatingAudioPlayer({ className }: FloatingAudioPlayerProps) {
 
               {/* Right group: Open Transcript Drawer Button */}
               <Button
+                id="audio-transcript-toggle-btn"
                 size="sm"
                 variant={isDrawerOpen ? "secondary" : "outline"}
-                onClick={toggleDrawer}
+                onClick={() => {
+                  toggleDrawer();
+                  setAnnouncement(!isDrawerOpen ? "Đã mở toàn văn lời thoại đồng bộ" : "Đã đóng toàn văn lời thoại");
+                }}
+                aria-expanded={isDrawerOpen}
+                aria-controls="audio-transcript-drawer"
+                aria-label={isDrawerOpen ? "Đóng bản lời thoại đồng bộ (T)" : "Mở bản lời thoại đồng bộ (T)"}
+                aria-keyshortcuts="t"
                 className={cn(
-                  "h-8 px-2.5 text-xs font-medium flex items-center gap-1.5 transition-colors border-border/70",
+                  "h-8 px-2.5 text-xs font-medium flex items-center gap-1.5 transition-colors border-border/70 focus-visible:ring-2 focus-visible:ring-primary",
                   isDrawerOpen && "bg-primary/20 text-primary border-primary/40",
                 )}
               >

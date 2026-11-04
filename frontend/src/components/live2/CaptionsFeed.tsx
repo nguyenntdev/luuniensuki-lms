@@ -44,14 +44,26 @@ export default function CaptionsFeed({
 
   if (!items.length) {
     return (
-      <div className="flex h-full items-center justify-center px-6 text-center text-sm text-zinc-500">
+      <div
+        role="status"
+        aria-live="polite"
+        className="flex h-full items-center justify-center px-6 text-center text-sm text-zinc-400 contrast-more:text-zinc-200"
+      >
         {emptyHint}
       </div>
     );
   }
 
   return (
-    <div className="flex h-full flex-col gap-2 overflow-y-auto px-4 py-3">
+    <div
+      role="log"
+      aria-live="polite"
+      aria-atomic="false"
+      aria-relevant="additions text"
+      aria-label="Phụ đề đối thoại trực tiếp"
+      tabIndex={0}
+      className="flex h-full flex-col gap-2 overflow-y-auto px-4 py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 rounded-lg contrast-more:border contrast-more:border-border"
+    >
       {items.map((item) => {
         const m = speakerMeta(item.speaker);
         const name = item.name || m.name;
@@ -60,8 +72,8 @@ export default function CaptionsFeed({
             key={item.id}
             className={`text-sm leading-relaxed ${item.streaming ? "opacity-80" : ""}`}
           >
-            <span className={`mr-2 font-semibold ${m.cls}`}>{name}:</span>
-            <span className="text-zinc-100">{item.text}</span>
+            <span className={`mr-2 font-semibold ${m.cls} contrast-more:underline`}>{name}:</span>
+            <span className="text-zinc-100 contrast-more:text-white font-normal">{item.text}</span>
             {item.streaming ? (
               <span
                 className="ml-1 inline-block h-3 w-1.5 translate-y-0.5 animate-pulse rounded-sm bg-zinc-300 align-middle"

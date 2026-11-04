@@ -26,6 +26,7 @@ class EventCategory:
     STREAK = "streak"
     DISCOVERY = "discovery"
     ENGAGEMENT = "engagement"
+    PERFORMANCE = "performance"
 
 
 class EventType:
@@ -68,6 +69,9 @@ class EventType:
     DAILY_MISSION_COMPLETED = "daily_mission_completed"
     BADGE_EARNED = "badge_earned"
 
+    # PERFORMANCE events
+    RENDER_PERFORMANCE = "render_performance"
+
 
 # Mapping of event types to their categories
 EVENT_CATEGORY_MAP: Dict[str, str] = {
@@ -107,6 +111,9 @@ EVENT_CATEGORY_MAP: Dict[str, str] = {
     EventType.SESSION_ENDED: EventCategory.ENGAGEMENT,
     EventType.DAILY_MISSION_COMPLETED: EventCategory.ENGAGEMENT,
     EventType.BADGE_EARNED: EventCategory.ENGAGEMENT,
+
+    # Performance
+    EventType.RENDER_PERFORMANCE: EventCategory.PERFORMANCE,
 }
 
 
@@ -174,6 +181,21 @@ class EngagementEventPayload(BaseEventPayload):
     xp_awarded: Optional[int] = None
 
 
+class PerformanceEventPayload(BaseEventPayload):
+    """Payload for render and client performance events."""
+    model_url: Optional[str] = None
+    lod_label: Optional[str] = None
+    file_size_bytes: Optional[int] = None
+    ttf_ms: Optional[float] = None
+    ttfi_ms: Optional[float] = None
+    avg_fps: Optional[float] = None
+    gpu_renderer: Optional[str] = None
+    device_pixel_ratio: Optional[float] = None
+    viewport_width: Optional[int] = None
+    viewport_height: Optional[int] = None
+    iteration: Optional[int] = None
+
+
 class DeviceInfo(BaseModel):
     """Device metadata for analytics."""
     platform: Optional[str] = Field(None, description="Platform (ios, android, web)")
@@ -231,6 +253,8 @@ def validate_event_payload(event_name: str, payload: Dict[str, Any]) -> Dict[str
         schema = DiscoveryEventPayload
     elif category == EventCategory.ENGAGEMENT:
         schema = EngagementEventPayload
+    elif category == EventCategory.PERFORMANCE:
+        schema = PerformanceEventPayload
     else:
         # For unknown event types, use base payload
         schema = BaseEventPayload

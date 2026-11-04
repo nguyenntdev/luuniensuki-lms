@@ -2890,4 +2890,151 @@ export function searchHeritagePlaces(
   return apiRequest<HeritageSearchResponse>(`/api/v1/heritage/search?${q.toString()}`);
 }
 
+// --------------------------------------------------------------------------- //
+// Museum Operator Media CMS API (V5-T050 / W04-A10)
+// --------------------------------------------------------------------------- //
+
+export interface MediaCmsItem {
+  id: string;
+  title: string;
+  description?: string | null;
+  asset_type: string;
+  file_format: string;
+  mime_type: string;
+  storage_url: string;
+  thumbnail_url?: string | null;
+  file_size_bytes: number;
+  sha256: string;
+  rights_owner: string;
+  license_type: string;
+  attribution: string;
+  public_display_allowed: boolean;
+  derivative_allowed: boolean;
+  historical_entity_id?: string | null;
+  relic_slug?: string | null;
+  publication_status: "draft" | "in_review" | "approved" | "published" | "rejected" | "archived";
+  version: number;
+  review_notes?: string | null;
+  uploaded_by_id?: string | null;
+  reviewed_by_id?: string | null;
+  reviewed_at?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface MediaCmsItemList {
+  items: MediaCmsItem[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export interface MediaCmsPreview {
+  item: MediaCmsItem;
+  viewer_type: "mesh_3d" | "image_2d";
+  viewer_config: Record<string, unknown>;
+  rights_summary: Record<string, unknown>;
+  staged_review_summary: Record<string, unknown>;
+}
+
+export async function uploadMediaCmsAsset(formData: FormData): Promise<MediaCmsItem> {
+  return apiRequestFormData<MediaCmsItem>("/api/v1/admin/media-cms/upload", {
+    method: "POST",
+    body: formData,
+  });
+}
+
+export async function listMediaCmsItems(
+  params: {
+    status?: string;
+    asset_type?: string;
+    relic_slug?: string;
+    search?: string;
+    limit?: number;
+    offset?: number;
+  } = {}
+): Promise<MediaCmsItemList> {
+  const q = new URLSearchParams();
+  if (params.status) q.set("status", params.status);
+  if (params.asset_type) q.set("asset_type", params.asset_type);
+  if (params.relic_slug) q.set("relic_slug", params.relic_slug);
+  if (params.search) q.set("search", params.search);
+  if (params.limit != null) q.set("limit", String(params.limit));
+  if (params.offset != null) q.set("offset", String(params.offset));
+  const qs = q.toString();
+  return apiRequest<MediaCmsItemList>(`/api/v1/admin/media-cms/items${qs ? `?${qs}` : ""}`);
+}
+
+export async function getMediaCmsItem(id: string): Promise<MediaCmsItem> {
+  return apiRequest<MediaCmsItem>(`/api/v1/admin/media-cms/items/${id}`);
+}
+
+export async function updateMediaCmsItem(
+  id: string,
+  data: Partial<MediaCmsItem>
+): Promise<MediaCmsItem> {
+  return apiRequest<MediaCmsItem>(`/api/v1/admin/media-cms/items/${id}`, {
+    method: "PATCH",
+    body: data,
+  });
+}
+
+export async function uploadMediaCmsVersion(
+  id: string,
+  formData: FormData
+): Promise<MediaCmsItem> {
+  return apiRequestFormData<MediaCmsItem>(`/api/v1/admin/media-cms/items/${id}/version`, {
+    method: "POST",
+    body: formData,
+  });
+}
+
+export async function submitMediaCmsReview(id: string): Promise<MediaCmsItem> {
+  return apiRequest<MediaCmsItem>(`/api/v1/admin/media-cms/items/${id}/submit-review`, {
+    method: "POST",
+  });
+}
+
+export async function approveMediaCmsItem(
+  id: string,
+  notes?: string
+): Promise<MediaCmsItem> {
+  return apiRequest<MediaCmsItem>(`/api/v1/admin/media-cms/items/${id}/approve`, {
+    method: "POST",
+    body: { notes },
+  });
+}
+
+export async function rejectMediaCmsItem(
+  id: string,
+  reason: string
+): Promise<MediaCmsItem> {
+  return apiRequest<MediaCmsItem>(`/api/v1/admin/media-cms/items/${id}/reject`, {
+    method: "POST",
+    body: { reason },
+  });
+}
+
+export async function publishMediaCmsItem(id: string): Promise<MediaCmsItem> {
+  return apiRequest<MediaCmsItem>(`/api/v1/admin/media-cms/items/${id}/publish`, {
+    method: "POST",
+  });
+}
+
+export async function archiveMediaCmsItem(id: string): Promise<MediaCmsItem> {
+  return apiRequest<MediaCmsItem>(`/api/v1/admin/media-cms/items/${id}/archive`, {
+    method: "POST",
+  });
+}
+
+export async function getMediaCmsPreview(id: string): Promise<MediaCmsPreview> {
+  return apiRequest<MediaCmsPreview>(`/api/v1/admin/media-cms/preview/${id}`);
+}
+
+export async function deleteMediaCmsItem(id: string): Promise<{ deleted: boolean; id: string }> {
+  return apiRequest<{ deleted: boolean; id: string }>(`/api/v1/admin/media-cms/items/${id}`, {
+    method: "DELETE",
+  });
+}
+
 

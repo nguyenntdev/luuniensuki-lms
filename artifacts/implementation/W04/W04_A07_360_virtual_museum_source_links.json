@@ -1,0 +1,130 @@
+{
+  "ticket": "V5-T047",
+  "ticket_id": "V5-T047",
+  "wave": "W04",
+  "slot": "W04-A07",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "360 virtual museum source links in frontend/src/components/vr360/Panorama360.tsx and frontend/src/components/imperial/media/PanoramaViewer.tsx.",
+  "timestamp": "2026-11-05T00:50:00Z",
+  "summary": "Implemented verified historical monument linkage, primary bibliographic source citations, accessibility features (aria-labels, alt texts, semantic HTML), reduced-motion support, and resilient 2D still fallbacks across 360 panorama components (Panorama360.tsx, PanoramaViewer.tsx, and SelfHostedTour.tsx). Linked panorama viewpoints to real verified monuments (Cửu Đỉnh, Thế Miếu, Ngọ Môn, Điện Thái Hòa, Kinh thành Huế, Hiển Lâm Các) with primary citations from authoritative imperial annals (Đại Nam Thực Lục Chính Biên, Khâm Định Đại Nam Hội Điển Sự Lệ) and HMCC archives under CC BY 4.0 licensing. Established fail-closed negative abuse defenses: broken or inaccessible panorama URIs automatically fall back to accessible 2D rubbings/photographs with structured historical dossiers and SVG architectural schematics.",
+  "invariants_enforced": [
+    "CANONICAL_MONUMENT_AND_PRIMARY_SOURCE_LINKAGE: All virtual museum panoramas link to real verified historical monuments and primary imperial citations (Đại Nam Thực Lục, Khâm Định Hội Điển, HMCC) with CC BY 4.0 / Educational Fair Use licensing.",
+    "VIEWPOINT_HISTORICAL_OBJECT_ATTRIBUTION: Every interactive viewpoint hotspot contains verified historical metadata, primary source citations, verification status, descriptive alt text, and aria labels.",
+    "ACCESSIBILITY_AND_SEMANTIC_ROLES: Panoramas use role='region', aria-roledescription='toàn cảnh 360 độ' (or 2D tiếp cận), descriptive aria-labels, and headings, enabling complete screen-reader compatibility.",
+    "REDUCED_MOTION_COMPLIANCE: Auto-detects prefers-reduced-motion media query, suppresses Three.js auto-rotation, eliminates inertial drift/velocity glide, disables pulsing CSS animations, and provides a direct 2D static toggle button.",
+    "NEGATIVE_ABUSE_RESILIENT_2D_FALLBACK: Broken, missing, or malformed panorama URIs never crash or leave a blank canvas; they seamlessly render an authentic 2D still rubbing/photograph, structured historical dossier, and SVG architectural schematics if images fail.",
+    "FAIL_CLOSED_ACCESSIBILITY_AUDIT: Panorama assets with missing or generic alt text (< 10 chars, 'image.jpg') or missing credit_text fail closed with typed exceptions."
+  ],
+  "changes": [
+    {
+      "file": "frontend/src/lib/imperial/panorama-sources.ts",
+      "description": "Created comprehensive virtual museum registry for verified historical monuments (Cửu Đỉnh, Thế Miếu, Ngọ Môn, Điện Thái Hòa, Kinh thành Huế, Hiển Lâm Các) with primary source citations, UNESCO/National Treasure metadata, URI accessibility detectors, accessible description generators, and 2D fallback resolvers."
+    },
+    {
+      "file": "frontend/src/lib/imperial/panorama-sources.test.ts",
+      "description": "Created Vitest unit test suite verifying monument registry completeness, slug resolution, broken URI detection, accessible description generation, and 2D fallback defaults."
+    },
+    {
+      "file": "frontend/src/components/vr360/Panorama360.tsx",
+      "description": "Enhanced 360 equirectangular viewer with verified monument source links, accessible 2D still fallback with architectural SVG backup, prefers-reduced-motion detection, damping suppression, 'Chế độ 2D' toggle, and slide-out primary sources & citations modal."
+    },
+    {
+      "file": "frontend/src/components/imperial/media/PanoramaViewer.tsx",
+      "description": "Enriched imperial panorama viewer with hotspot provenance fields (monument_id, monument_name, source_citation, verification_status, aria_label), prefers-reduced-motion handling (autoRotate & inertial drift suppression), 2D static mode toggle, accessible 2D still fallback with blueprint SVG recovery, and primary citations modal."
+    },
+    {
+      "file": "frontend/src/components/vr360/SelfHostedTour.tsx",
+      "description": "Updated tour scenes to bind directly to verified monument records (cuu-dinh, the-mieu, ngo-mon, kinh-thanh) with authentic 2D rubbing fallbacks from ban-duc-noi/ and descriptive alt texts."
+    },
+    {
+      "file": "backend/services/virtual_museum_panorama.py",
+      "description": "Implemented backend domain services for verified panorama monuments, URI validation, 2D fallback resolution, accessibility audit policy enforcement, and database audit of ImperialLearningMedia and hotspots."
+    },
+    {
+      "file": "tests/v5/test_v5_t047.py",
+      "description": "Created comprehensive 14-test suite covering monument registry, slug lookup, broken URI detection, 2D fallback resolution, negative abuse tests (missing fallbacks, generic alt text, missing credit text), database integration, and frontend component contracts."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t047.py -v",
+    "total_tests": 14,
+    "passed_tests": 14,
+    "failed_tests": 0,
+    "test_details": [
+      {
+        "name": "test_verified_monuments_registry_completeness",
+        "result": "PASSED",
+        "assertion": "Verifies all 6 canonical monuments are registered with primary sources, citations, and licenses."
+      },
+      {
+        "name": "test_get_verified_monument_by_slug_and_prefix",
+        "result": "PASSED",
+        "assertion": "Verifies slug lookup handles clean slugs, monument- prefixes, and unknown queries."
+      },
+      {
+        "name": "test_panorama_uri_inaccessibility_detection",
+        "result": "PASSED",
+        "assertion": "Verifies accurate detection of broken, missing, or malformed panorama URIs."
+      },
+      {
+        "name": "test_resolve_panorama_2d_fallback_for_broken_uri",
+        "result": "PASSED",
+        "assertion": "Verifies broken panorama URIs resolve seamlessly to authentic 2D still images and descriptions."
+      },
+      {
+        "name": "test_resolve_panorama_2d_fallback_with_custom_fallback",
+        "result": "PASSED",
+        "assertion": "Verifies custom fallback image is respected if valid, or recovered if broken."
+      },
+      {
+        "name": "test_negative_broken_uri_without_fallback_fails_closed",
+        "result": "PASSED",
+        "assertion": "Negative Abuse Test: Broken panorama URI without an accessible fallback fails closed."
+      },
+      {
+        "name": "test_negative_missing_or_generic_alt_text_fails_closed",
+        "result": "PASSED",
+        "assertion": "Negative Abuse Test: Missing, too short, or generic alt_text fails closed."
+      },
+      {
+        "name": "test_negative_missing_credit_text_fails_closed",
+        "result": "PASSED",
+        "assertion": "Negative Abuse Test: Missing credit_text rights owner attribution fails closed."
+      },
+      {
+        "name": "test_positive_panorama_accessibility_validation",
+        "result": "PASSED",
+        "assertion": "Verifies that valid panorama asset with descriptive alt and rights passes validation."
+      },
+      {
+        "name": "test_database_virtual_museum_panorama_and_hotspot_linkage",
+        "result": "PASSED",
+        "assertion": "Verifies that panorama360 learning media persists and links to site, hotspots, and primary claim sources."
+      },
+      {
+        "name": "test_frontend_panorama360_component_contract",
+        "result": "PASSED",
+        "assertion": "Audit frontend/src/components/vr360/Panorama360.tsx for accessibility, 2D fallback, and source links."
+      },
+      {
+        "name": "test_frontend_panorama_viewer_component_contract",
+        "result": "PASSED",
+        "assertion": "Audit frontend/src/components/imperial/media/PanoramaViewer.tsx for hotspot sources and reduced-motion."
+      },
+      {
+        "name": "test_frontend_self_hosted_tour_scenes_link_verified_monuments",
+        "result": "PASSED",
+        "assertion": "Audit SelfHostedTour.tsx for scene linkages to verified monuments and 2D rubbings."
+      },
+      {
+        "name": "test_frontend_panorama_sources_registry_contract",
+        "result": "PASSED",
+        "assertion": "Audit panorama-sources.ts for type exports, monument records, and resolvers."
+      }
+    ],
+    "frontend_vitest_command": "npx vitest run src/lib/imperial/panorama-sources.test.ts",
+    "frontend_vitest_passed": 6
+  }
+}

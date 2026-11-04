@@ -7,19 +7,22 @@
       "url": "/assets/models/CAO-DINH-v1-512.glb",
       "fallback_url": "/assets/models/CAO-DINH-v1-512.glb",
       "sha256": "51f5baf131e85257186b0e4a89087870ff66e4c787f7775bea797fc2550d8611",
-      "bytes": 5207460
+      "bytes": 5207460,
+      "cache_control": "public, max-age=31536000, immutable"
     },
     "medium": {
       "url": "/assets/models/CAO-DINH-v1-1k.glb",
       "fallback_url": "/assets/models/CAO-DINH-v1-1k.glb",
       "sha256": "6f7e73424c18c5e6504ee25eda103b56958b1e79348937e152e60731a2bcd16a",
-      "bytes": 27417688
+      "bytes": 27417688,
+      "cache_control": "public, max-age=31536000, immutable"
     },
     "high": {
       "url": "/assets/models/CAO-DINH-v1-2k.glb",
       "fallback_url": "/assets/models/CAO-DINH-v1-2k.glb",
       "sha256": "59d7f26f5af647d727b3ce4855a8533ca39c96825e1c9dea672a94cb32e42e74",
-      "bytes": 30353888
+      "bytes": 30353888,
+      "cache_control": "public, max-age=31536000, immutable"
     }
   },
   "hotspots": [
@@ -864,5 +867,14 @@
     "sha256": "3187abe1940c680a5145eac960e50230f45cf7382a6e647a61988b2124f82a28",
     "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
     "legal_basis": "Public Domain (1835-1837 Imperial relic) / Academic Educational Fair Use"
+  },
+  "offline_licensing_allowed": true,
+  "offline_license_type": "CC BY 4.0 / Educational Fair Use",
+  "cache_policy": {
+    "cache_control": "public, max-age=31536000, immutable",
+    "content_hash_type": "sha256",
+    "offline_licensing_allowed": true,
+    "offline_cache_ttl_days": 30,
+    "stale_while_revalidate_seconds": 86400
   }
 }

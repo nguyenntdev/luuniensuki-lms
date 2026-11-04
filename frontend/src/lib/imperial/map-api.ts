@@ -370,7 +370,8 @@ export async function fetchAdminAnnotations(
 
 /**
  * POST /api/v1/imperial/admin/maps/{mapId}/annotations
- * Creates a new monument marker draft attached to a site.
+ * Creates a new monument marker attached to a site.
+ * Persists directly to the backend database; re-throws on network or server error.
  */
 export async function createAnnotation(
   mapId: string,
@@ -380,52 +381,35 @@ export async function createAnnotation(
     v: number;
   },
 ): Promise<ImperialMapAnnotation> {
-  try {
-    return await apiRequest<ImperialMapAnnotation>(
-      `/api/v1/imperial/admin/maps/${encodeURIComponent(mapId)}/annotations`,
-      {
-        method: "POST",
-        body: payload,
-      },
-    );
-  } catch (error) {
-    // Optimistic fallback for studio offline editing
-    const id = `anno-draft-${Date.now()}`;
-    const site = FALLBACK_SITES.find((s) => s.id === payload.site_id);
-    return {
-      id,
-      map_asset_id: mapId,
-      site_id: payload.site_id,
-      shape_type: payload.shape_type || "point",
-      u: payload.u,
-      v: payload.v,
-      label: payload.label || site?.name_vi || "Điểm ghim mới",
-      marker_style: payload.marker_style || "monument",
-      review_status: payload.review_status || "draft",
-      position_confidence: payload.position_confidence || "approximate",
-      row_version: 1,
-      editorial_notes: payload.editorial_notes,
-      site: site
-        ? {
-            id: site.id,
-            slug: site.slug,
-            name_vi: site.name_vi,
-            name_han_nom: site.name_han_nom,
-            chinese_name: site.chinese_name,
-            summary_vi: site.description_vi,
-            zone_slug: site.zone_slug || undefined,
-            learning_level: site.learning_level,
-            condition: site.condition,
-          }
-        : undefined,
-    };
-  }
+  const body: Record<string, unknown> = {
+    site_id: payload.site_id,
+    u: payload.u,
+    v: payload.v,
+    shape_type: payload.shape_type || "point",
+    label: payload.label ?? null,
+    marker_style: payload.marker_style || "monument",
+    position_confidence: payload.position_confidence || "approximate",
+  };
+  if (payload.polygon_uv) body.polygon_uv = payload.polygon_uv;
+  if (payload.z_index !== undefined) body.z_index = payload.z_index;
+  if (payload.is_visible !== undefined) body.is_visible = payload.is_visible;
+  if (payload.position_source_ref !== undefined) body.position_source_ref = payload.position_source_ref;
+  if (payload.editorial_notes !== undefined) body.editorial_notes = payload.editorial_notes;
+
+  return await apiRequest<ImperialMapAnnotation>(
+    `/api/v1/imperial/admin/maps/${encodeURIComponent(mapId)}/annotations`,
+    {
+      method: "POST",
+      body,
+    },
+  );
 }
 
 /**
  * PATCH /api/v1/imperial/admin/annotations/{id}
  * Updates marker coordinates or metadata. Sends If-Match header with row_version
  * to prevent concurrent edit overwrites (Spec §6.4).
+ * Persists directly to the backend database; re-throws on concurrency conflict or server error.
  */
 export async function updateAnnotation(
   annotationId: string,
@@ -435,172 +419,124 @@ export async function updateAnnotation(
     "If-Match": `"row-version-${payload.row_version}"`,
   };
 
-  try {
-    return await apiRequest<ImperialMapAnnotation>(
-      `/api/v1/imperial/admin/annotations/${encodeURIComponent(annotationId)}`,
-      {
-        method: "PATCH",
-        body: payload,
-        headers,
-      },
-    );
-  } catch (error) {
-    // Return updated payload optimistically with bumped row_version
-    return {
-      ...(payload as ImperialMapAnnotation),
-      id: annotationId,
-      row_version: payload.row_version + 1,
-      updated_at: new Date().toISOString(),
-    };
-  }
+  const body: Record<string, unknown> = {
+    row_version: payload.row_version,
+  };
+  if (payload.u !== undefined) body.u = payload.u;
+  if (payload.v !== undefined) body.v = payload.v;
+  if (payload.shape_type !== undefined) body.shape_type = payload.shape_type;
+  if (payload.polygon_uv !== undefined) body.polygon_uv = payload.polygon_uv;
+  if (payload.label !== undefined) body.label = payload.label;
+  if (payload.marker_style !== undefined) body.marker_style = payload.marker_style;
+  if (payload.z_index !== undefined) body.z_index = payload.z_index;
+  if (payload.is_visible !== undefined) body.is_visible = payload.is_visible;
+  if (payload.review_status !== undefined) body.review_status = payload.review_status;
+  if (payload.position_confidence !== undefined) body.position_confidence = payload.position_confidence;
+  if (payload.position_source_ref !== undefined) body.position_source_ref = payload.position_source_ref;
+  if (payload.editorial_notes !== undefined) body.editorial_notes = payload.editorial_notes;
+
+  return await apiRequest<ImperialMapAnnotation>(
+    `/api/v1/imperial/admin/annotations/${encodeURIComponent(annotationId)}`,
+    {
+      method: "PATCH",
+      body,
+      headers,
+    },
+  );
 }
 
 /**
  * DELETE /api/v1/imperial/admin/annotations/{id}
- * Soft deletes / archives an annotation from the map asset.
+ * Soft deletes / archives an annotation on the server.
+ * Re-throws on failure and never fabricates deletion success.
  */
 export async function deleteAnnotation(
   annotationId: string,
 ): Promise<{ success: boolean; id: string }> {
-  try {
-    return await apiRequest<{ success: boolean; id: string }>(
-      `/api/v1/imperial/admin/annotations/${encodeURIComponent(annotationId)}`,
-      {
-        method: "DELETE",
-      },
-    );
-  } catch (error) {
-    return { success: true, id: annotationId };
-  }
+  const res = await apiRequest<{ ok?: boolean; success?: boolean; id?: string }>(
+    `/api/v1/imperial/admin/annotations/${encodeURIComponent(annotationId)}`,
+    {
+      method: "DELETE",
+    },
+  );
+  return {
+    success: res.success ?? res.ok ?? true,
+    id: res.id ?? annotationId,
+  };
 }
 
 /**
  * POST /api/v1/imperial/admin/maps/{mapId}/publish
  * Atomically publishes the map asset and its approved annotations snapshot.
+ * Re-throws on failure (e.g. unapproved license, 500 error) and never fabricates published state.
  */
 export async function publishMap(
   mapId: string,
 ): Promise<{ success: boolean; map: ImperialMapAsset }> {
-  try {
-    return await apiRequest<{ success: boolean; map: ImperialMapAsset }>(
-      `/api/v1/imperial/admin/maps/${encodeURIComponent(mapId)}/publish`,
-      {
-        method: "POST",
-      },
-    );
-  } catch (error) {
-    return {
-      success: true,
-      map: {
-        ...FALLBACK_MAP_ASSET,
-        id: mapId,
-        review_status: "published",
-        is_active: true,
-        revision: (FALLBACK_MAP_ASSET.revision ?? 1) + 1,
-      },
-    };
+  const data = await apiRequest<ImperialMapAsset | { success: boolean; map: ImperialMapAsset }>(
+    `/api/v1/imperial/admin/maps/${encodeURIComponent(mapId)}/publish`,
+    {
+      method: "POST",
+    },
+  );
+  if (data && "map" in data && data.map) {
+    return { success: data.success ?? true, map: data.map };
   }
+  return { success: true, map: data as ImperialMapAsset };
 }
 
 /**
  * GET /api/v1/imperial/admin/maps/{mapId}/export
  * Exports complete JSON backup with schema_version and hash.
+ * Fetches authoritative dataset from the server.
  */
 export async function exportAnnotations(
   mapId: string,
 ): Promise<AnnotationExportPayload> {
-  try {
-    return await apiRequest<AnnotationExportPayload>(
-      `/api/v1/imperial/admin/maps/${encodeURIComponent(mapId)}/export`,
-    );
-  } catch (error) {
-    // Generate valid export payload from fallback annotations
-    const items = FALLBACK_ANNOTATIONS.map((anno) => ({
-      site_slug: anno.site?.slug || "unknown",
-      u: anno.u,
-      v: anno.v,
-      shape_type: anno.shape_type,
-      label: anno.label || undefined,
-      marker_style: anno.marker_style,
-      position_confidence: anno.position_confidence,
-    }));
-
-    return {
-      schema_version: "imperial-annotations/1.0",
-      scope: "STTT_IMPERIAL_CITY",
-      map: {
-        slug: FALLBACK_MAP_ASSET.slug,
-        version: FALLBACK_MAP_ASSET.version,
-        image_sha256: FALLBACK_MAP_ASSET.image_sha256,
-      },
-      annotations: items,
-      exported_at: new Date().toISOString(),
-      export_sha256: "client-export-hash",
-    };
-  }
+  return await apiRequest<AnnotationExportPayload>(
+    `/api/v1/imperial/admin/maps/${encodeURIComponent(mapId)}/export`,
+  );
 }
 
 /**
  * POST /api/v1/imperial/admin/maps/{mapId}/import?dry_run=true|false
- * Imports annotations with atomic validation and diff preview.
+ * Imports annotations with atomic validation and diff preview on the server.
+ * Re-throws on failure and never fabricates valid import results.
  */
 export async function importAnnotations(
   mapId: string,
   payload: AnnotationExportPayload,
   dryRun: boolean = true,
 ): Promise<ImportDryRunResult> {
-  try {
-    return await apiRequest<ImportDryRunResult>(
-      `/api/v1/imperial/admin/maps/${encodeURIComponent(mapId)}/import?dry_run=${dryRun}`,
-      {
-        method: "POST",
-        body: payload,
-      },
-    );
-  } catch (error) {
-    // Client-side validation fallback
-    const issues = [];
-    let valid = true;
-
-    if (payload.schema_version !== "imperial-annotations/1.0") {
-      issues.push({
-        type: "error" as const,
-        code: "INVALID_SCHEMA",
-        message: "Phiên bản sơ đồ không tương thích: " + payload.schema_version,
-      });
-      valid = false;
-    }
-
-    if (!Array.isArray(payload.annotations)) {
-      issues.push({
-        type: "error" as const,
-        code: "NO_ANNOTATIONS",
-        message: "Tệp nhập không chứa mảng annotations",
-      });
-      valid = false;
-    } else {
-      payload.annotations.forEach((item, idx) => {
-        if (item.u < 0 || item.u > 1 || item.v < 0 || item.v > 1) {
-          issues.push({
-            type: "warning" as const,
-            code: "UV_OUT_OF_BOUNDS",
-            message: `Tọa độ UV [${item.u}, ${item.v}] vượt ngưỡng [0..1]`,
-            annotation_index: idx,
-            site_slug: item.site_slug,
-          });
-        }
-      });
-    }
-
-    return {
-      valid,
-      created_count: payload.annotations?.length ?? 0,
-      updated_count: 0,
-      skipped_count: 0,
-      total_count: payload.annotations?.length ?? 0,
-      image_hash_matched:
-        payload.map?.image_sha256 === FALLBACK_MAP_ASSET.image_sha256,
-      issues,
+  const res = await apiRequest<{
+    valid?: boolean;
+    status?: string;
+    created_count?: number;
+    updated_count?: number;
+    skipped_count?: number;
+    total_count?: number;
+    image_hash_matched?: boolean;
+    issues?: any[];
+    summary?: {
+      total?: number;
+      new_count?: number;
+      updated_count?: number;
+      invalid_count?: number;
     };
-  }
+  }>(
+    `/api/v1/imperial/admin/maps/${encodeURIComponent(mapId)}/import?dry_run=${dryRun}`,
+    {
+      method: "POST",
+      body: payload,
+    },
+  );
+  return {
+    valid: res.valid ?? (res.status === "success"),
+    created_count: res.created_count ?? res.summary?.new_count ?? 0,
+    updated_count: res.updated_count ?? res.summary?.updated_count ?? 0,
+    skipped_count: res.skipped_count ?? 0,
+    total_count: res.total_count ?? res.summary?.total ?? 0,
+    image_hash_matched: res.image_hash_matched ?? true,
+    issues: res.issues ?? [],
+  };
 }

@@ -1,0 +1,161 @@
+{
+  "ticket": "V5-T050",
+  "ticket_id": "V5-T050",
+  "wave": "W04",
+  "slot": "W04-A10",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Museum operator media CMS in frontend/src/app/admin/ and backend/routers/media_cms.py or history.",
+  "timestamp": "2026-11-05T01:00:00Z",
+  "summary": "Implemented full Museum Operator Media CMS backend and frontend for secure museum operator asset management. Features: (1) Strict file format and magic byte validation for 3D meshes (.glb) and images (.png, .jpg/.jpeg, .webp) with binary signature inspection; (2) Negative abuse security rejecting executable files (.exe, .sh), script payloads (.php, .html, .js), and disguised polyglot payloads; (3) Licensing metadata verification requiring verified rights owner (e.g. HMCC), approved license types (CC BY 4.0 / Educational Fair Use, CC0, Public Domain), and creator attribution; (4) Staged publication approval state machine (draft -> in_review -> approved -> published) blocking direct unapproved leaps; (5) Role-scoped authorization (teachers/staff can draft/submit, admins approve/publish/archive, learners/guests receive HTTP 403); (6) Automated synchronization to HistoricalAsset database catalog on publication with cryptographic SHA-256 integrity and immutable audit logging; (7) Frontend client interface at frontend/src/app/admin/media/ with upload, review, approval, rejection, and preview modals.",
+  "invariants_enforced": {
+    "file_format_and_magic_byte_validation": "Only GLB 3D meshes (magic header 'glTF', max 50MB) and PNG, JPEG, WEBP images (max 10MB) are accepted. File headers are verified against canonical magic bytes regardless of client-supplied headers.",
+    "negative_abuse_strict_rejection": "Executable binaries (.exe with MZ header, ELF, shebang scripts) and script injections (.sh, .php, .html, .js, .py, etc.) as well as disguised polyglot files (.png containing <?php or <html>) are strictly rejected with HTTP 400 Bad Request.",
+    "licensing_metadata_governance": "Mandatory rights owner, creator attribution, and approved license (CC BY 4.0, CC BY 4.0 / Educational Fair Use, CC BY-SA 4.0, CC0 1.0, Public Domain, Educational Fair Use, Museum Partner License). Unlicensed, pirated, or unauthorized entries fail immediately with HTTP 422.",
+    "staged_publication_approval_lifecycle": "Enforces draft -> in_review -> approved -> published lifecycle. Direct leaps from draft or in_review to published without staged approval fail with HTTP 400 STAGED_APPROVAL_REQUIRED. Uploading replacement files increments version and resets approval status.",
+    "role_scoped_authorization": "Only authorized staff/editors (STAFF_ROLES) can upload, edit metadata, and submit items for review. Approvals, rejections, publications, and archiving strictly require administrative privileges (admin/super_admin). Learners and guests receive HTTP 403 Forbidden.",
+    "historical_asset_sync_and_audit": "Publication atomically generates/updates a cleared HistoricalAsset row linked via media_cms_item_id with verified SHA-256 and rights metadata, and records all transitions in historical_content_audit_log."
+  },
+  "schema_diff": {
+    "tables_created": [
+      {
+        "table": "media_cms_items",
+        "description": "Stores museum operator media uploads, licensing metadata, staged approval states, versioning, and curator review notes.",
+        "columns": [
+          "id UUID PRIMARY KEY DEFAULT gen_random_uuid()",
+          "title VARCHAR(255) NOT NULL",
+          "description TEXT",
+          "asset_type VARCHAR(50) NOT NULL DEFAULT 'image'",
+          "file_format VARCHAR(20) NOT NULL",
+          "mime_type VARCHAR(100) NOT NULL",
+          "storage_url TEXT NOT NULL",
+          "thumbnail_url TEXT",
+          "file_size_bytes BIGINT NOT NULL",
+          "sha256 VARCHAR(64) NOT NULL",
+          "rights_owner VARCHAR(255) NOT NULL",
+          "license_type VARCHAR(100) NOT NULL",
+          "attribution TEXT NOT NULL",
+          "public_display_allowed BOOLEAN NOT NULL DEFAULT TRUE",
+          "derivative_allowed BOOLEAN NOT NULL DEFAULT TRUE",
+          "historical_entity_id UUID REFERENCES historical_entities(id)",
+          "relic_slug VARCHAR(100)",
+          "publication_status VARCHAR(50) NOT NULL DEFAULT 'draft'",
+          "version INTEGER NOT NULL DEFAULT 1",
+          "review_notes TEXT",
+          "uploaded_by_id UUID REFERENCES users(id)",
+          "reviewed_by_id UUID REFERENCES users(id)",
+          "reviewed_at TIMESTAMPTZ",
+          "created_at TIMESTAMPTZ NOT NULL DEFAULT now()",
+          "updated_at TIMESTAMPTZ NOT NULL DEFAULT now()"
+        ],
+        "indices": [
+          "idx_media_cms_status ON media_cms_items (publication_status)",
+          "idx_media_cms_relic ON media_cms_items (relic_slug)",
+          "idx_media_cms_entity ON media_cms_items (historical_entity_id)",
+          "idx_media_cms_type ON media_cms_items (asset_type)",
+          "idx_media_cms_created ON media_cms_items (created_at DESC)"
+        ]
+      }
+    ],
+    "columns_added": [
+      {
+        "table": "historical_assets",
+        "column": "media_cms_item_id",
+        "type": "UUID REFERENCES media_cms_items(id) ON DELETE SET NULL"
+      }
+    ]
+  },
+  "changes": [
+    {
+      "file": "backend/media_cms_models.py",
+      "description": "Created MediaCmsItem model with publication_status check constraint, file_format check constraint, licensing metadata columns, and indices."
+    },
+    {
+      "file": "migrations/versions/0066_museum_media_cms.py",
+      "description": "Created Alembic migration 0066_museum_media_cms adding media_cms_items table and historical_assets.media_cms_item_id column."
+    },
+    {
+      "file": "backend/models.py",
+      "description": "Re-exported MediaCmsItem, MediaCmsStatus, MediaCmsAssetType, and MediaCmsFileFormat."
+    },
+    {
+      "file": "backend/history_models.py",
+      "description": "Added media_cms_item_id mapped column to HistoricalAsset."
+    },
+    {
+      "file": "backend/apischemas/media_cms.py",
+      "description": "Defined Pydantic schemas MediaCmsItemCreate, MediaCmsItemUpdate, MediaCmsItemOut, MediaCmsItemListOut, MediaCmsReviewAction, MediaCmsPreviewOut."
+    },
+    {
+      "file": "backend/services/media_cms.py",
+      "description": "Implemented core media CMS service: magic byte validation, anti-abuse security, licensing metadata validation, staged approval state machine, versioning, and HistoricalAsset synchronization."
+    },
+    {
+      "file": "backend/routers/media_cms.py",
+      "description": "Created FastAPI router with upload, items list, detail, update, version, submit-review, approve, reject, publish, archive, preview, and delete endpoints."
+    },
+    {
+      "file": "backend/app.py",
+      "description": "Registered media_cms.router into create_app factory."
+    },
+    {
+      "file": "frontend/src/lib/api.ts",
+      "description": "Added client API helpers for media CMS: uploadMediaCmsAsset, listMediaCmsItems, getMediaCmsItem, updateMediaCmsItem, uploadMediaCmsVersion, submitMediaCmsReview, approveMediaCmsItem, rejectMediaCmsItem, publishMediaCmsItem, archiveMediaCmsItem, getMediaCmsPreview, deleteMediaCmsItem."
+    },
+    {
+      "file": "frontend/src/app/admin/media/page.tsx",
+      "description": "Created Next.js page for Museum Operator Media CMS."
+    },
+    {
+      "file": "frontend/src/app/admin/media/MediaCmsClient.tsx",
+      "description": "Created interactive client UI with media catalogue, filters, upload modal with client validation, review action triggers, rejection explanation modal, and 3D/2D preview."
+    },
+    {
+      "file": "frontend/src/app/admin/page.jsx",
+      "description": "Added Quick Action link to Museum Operator Media CMS."
+    },
+    {
+      "file": "tests/v5/test_v5_t050.py",
+      "description": "Implemented 6 comprehensive test suites covering RBAC, file formats, negative abuse, licensing governance, staged approval lifecycle, versioning, preview, and audit trail."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t050.py -v",
+    "total_tests": 6,
+    "passed_tests": 6,
+    "failed_tests": 0,
+    "test_details": [
+      {
+        "name": "test_media_cms_role_based_permissions",
+        "result": "PASSED",
+        "assertion": "Verifies that unauthenticated, learner, and guest users are blocked (401/403), teachers/staff can upload and submit drafts, and only admins can approve and publish."
+      },
+      {
+        "name": "test_media_cms_file_format_and_magic_byte_validation",
+        "result": "PASSED",
+        "assertion": "Verifies valid uploads for GLB meshes, PNG, JPEG, and WEBP images with correct magic byte validation, mime detection, and SHA-256 checksums."
+      },
+      {
+        "name": "test_media_cms_negative_abuse_rejected",
+        "result": "PASSED",
+        "assertion": "Verifies strict rejection of executables (.exe), scripts (.sh, .php, .html), disguised/spoofed polyglot files, corrupted GLBs, and empty files with HTTP 400."
+      },
+      {
+        "name": "test_media_cms_licensing_metadata_validation",
+        "result": "PASSED",
+        "assertion": "Verifies that missing rights owner, missing license, unapproved/pirated licenses, and missing attribution fail with HTTP 422, while approved licenses succeed."
+      },
+      {
+        "name": "test_media_cms_staged_publication_approval_lifecycle",
+        "result": "PASSED",
+        "assertion": "Verifies draft -> in_review -> approved -> published progression, blocking direct publication skips, synchronizing to HistoricalAsset, and logging audit entries."
+      },
+      {
+        "name": "test_media_cms_rejection_and_versioning",
+        "result": "PASSED",
+        "assertion": "Verifies mandatory rejection explanation, version bumping resetting approval status, operator preview configuration, and archiving restricting public display."
+      }
+    ]
+  }
+}

@@ -170,6 +170,7 @@ def api_client(db_session: Session, test_users: dict[str, models.User]) -> Gener
 def seeded_dataset(db_session: Session, test_users: dict[str, models.User]):
     """Seed baseline spatial zones, sites, map asset, and annotations."""
     admin = test_users["admin"]
+    staff = test_users["staff"]
 
     # 1. Spatial Zones
     zone1 = ImperialZone(
@@ -292,8 +293,8 @@ def seeded_dataset(db_session: Session, test_users: dict[str, models.User]):
         review_status="published",
         is_visible=True,
         position_confidence="verified",
-        created_by=admin.id,
-        updated_by=admin.id,
+        created_by=staff.id,
+        updated_by=staff.id,
         approved_by=admin.id,
         row_version=1,
     )

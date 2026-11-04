@@ -2748,6 +2748,156 @@
         "title": "ApproveContentIn",
         "type": "object"
       },
+      "AssetLicenseCheckResponse": {
+        "properties": {
+          "asset_id": {
+            "format": "uuid",
+            "title": "Asset Id",
+            "type": "string"
+          },
+          "cache_control": {
+            "title": "Cache Control",
+            "type": "string"
+          },
+          "is_private": {
+            "title": "Is Private",
+            "type": "boolean"
+          },
+          "is_revoked": {
+            "title": "Is Revoked",
+            "type": "boolean"
+          },
+          "license_kind": {
+            "title": "License Kind",
+            "type": "string"
+          },
+          "license_status": {
+            "title": "License Status",
+            "type": "string"
+          },
+          "offline_licensing_allowed": {
+            "title": "Offline Licensing Allowed",
+            "type": "boolean"
+          },
+          "review_status": {
+            "title": "Review Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "asset_id",
+          "offline_licensing_allowed",
+          "license_kind",
+          "license_status",
+          "review_status",
+          "cache_control",
+          "is_private",
+          "is_revoked"
+        ],
+        "title": "AssetLicenseCheckResponse",
+        "type": "object"
+      },
+      "AssetRevokeRequest": {
+        "properties": {
+          "reason": {
+            "default": "Rights withdrawn by owner or rights holder",
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "title": "AssetRevokeRequest",
+        "type": "object"
+      },
+      "AssetRevokeResponse": {
+        "properties": {
+          "asset_id": {
+            "format": "uuid",
+            "title": "Asset Id",
+            "type": "string"
+          },
+          "cache_control": {
+            "default": "no-cache, no-store, must-revalidate, max-age=0, s-maxage=0",
+            "title": "Cache Control",
+            "type": "string"
+          },
+          "cdn_purged": {
+            "default": true,
+            "title": "Cdn Purged",
+            "type": "boolean"
+          },
+          "revocation_reason": {
+            "title": "Revocation Reason",
+            "type": "string"
+          },
+          "status": {
+            "default": "REVOKED",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "asset_id",
+          "revocation_reason"
+        ],
+        "title": "AssetRevokeResponse",
+        "type": "object"
+      },
+      "AssetSignedTokenRequest": {
+        "properties": {
+          "access_level": {
+            "default": "read",
+            "title": "Access Level",
+            "type": "string"
+          },
+          "client_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Id"
+          },
+          "expires_in_seconds": {
+            "default": 3600,
+            "title": "Expires In Seconds",
+            "type": "integer"
+          }
+        },
+        "title": "AssetSignedTokenRequest",
+        "type": "object"
+      },
+      "AssetSignedTokenResponse": {
+        "properties": {
+          "asset_id": {
+            "format": "uuid",
+            "title": "Asset Id",
+            "type": "string"
+          },
+          "cache_control": {
+            "default": "private, no-cache, no-store, must-revalidate, max-age=0",
+            "title": "Cache Control",
+            "type": "string"
+          },
+          "expires_at": {
+            "title": "Expires At",
+            "type": "integer"
+          },
+          "token": {
+            "title": "Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "asset_id",
+          "token",
+          "expires_at"
+        ],
+        "title": "AssetSignedTokenResponse",
+        "type": "object"
+      },
       "AssignmentCreateRequest": {
         "properties": {
           "due_at": {
@@ -3117,6 +3267,103 @@
           "file"
         ],
         "title": "Body_upload_avatar_api_v1_users_me_avatar_post",
+        "type": "object"
+      },
+      "Body_upload_media_asset_api_v1_admin_media_cms_upload_post": {
+        "properties": {
+          "asset_type": {
+            "default": "image",
+            "title": "Asset Type",
+            "type": "string"
+          },
+          "attribution": {
+            "title": "Attribution",
+            "type": "string"
+          },
+          "derivative_allowed": {
+            "default": true,
+            "title": "Derivative Allowed",
+            "type": "boolean"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "file": {
+            "contentMediaType": "application/octet-stream",
+            "title": "File",
+            "type": "string"
+          },
+          "historical_entity_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Historical Entity Id"
+          },
+          "license_type": {
+            "title": "License Type",
+            "type": "string"
+          },
+          "public_display_allowed": {
+            "default": true,
+            "title": "Public Display Allowed",
+            "type": "boolean"
+          },
+          "relic_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Relic Slug"
+          },
+          "rights_owner": {
+            "title": "Rights Owner",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file",
+          "title",
+          "rights_owner",
+          "license_type",
+          "attribution"
+        ],
+        "title": "Body_upload_media_asset_api_v1_admin_media_cms_upload_post",
+        "type": "object"
+      },
+      "Body_upload_media_version_api_v1_admin_media_cms_items__item_id__version_post": {
+        "properties": {
+          "file": {
+            "contentMediaType": "application/octet-stream",
+            "title": "File",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_media_version_api_v1_admin_media_cms_items__item_id__version_post",
         "type": "object"
       },
       "Body_upload_rag_document_api_v1_admin_rag_documents_upload_post": {
@@ -20764,6 +21011,30 @@
       },
       "ImperialMediaHotspotCreate": {
         "properties": {
+          "asset_revision": {
+            "anyOf": [
+              {
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asset Revision"
+          },
+          "claim_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Claim Id"
+          },
           "description": {
             "anyOf": [
               {
@@ -20786,6 +21057,18 @@
               }
             ],
             "title": "Detail Id"
+          },
+          "entity_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entity Id"
           },
           "media_id": {
             "anyOf": [
@@ -20872,6 +21155,30 @@
               }
             ]
           },
+          "asset_revision": {
+            "anyOf": [
+              {
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asset Revision"
+          },
+          "claim_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Claim Id"
+          },
           "content_scope": {
             "default": "STTT_IMPERIAL_CITY",
             "title": "Content Scope",
@@ -20904,6 +21211,18 @@
               }
             ],
             "title": "Detail Id"
+          },
+          "entity_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entity Id"
           },
           "id": {
             "format": "uuid",
@@ -20992,6 +21311,30 @@
       },
       "ImperialMediaHotspotUpdate": {
         "properties": {
+          "asset_revision": {
+            "anyOf": [
+              {
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asset Revision"
+          },
+          "claim_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Claim Id"
+          },
           "description": {
             "anyOf": [
               {
@@ -21014,6 +21357,18 @@
               }
             ],
             "title": "Detail Id"
+          },
+          "entity_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entity Id"
           },
           "point_kind": {
             "anyOf": [
@@ -25191,6 +25546,412 @@
           "dimension"
         ],
         "title": "MasteryDimensionOut",
+        "type": "object"
+      },
+      "MediaCmsItemListOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/MediaCmsItemOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "limit",
+          "offset"
+        ],
+        "title": "MediaCmsItemListOut",
+        "type": "object"
+      },
+      "MediaCmsItemOut": {
+        "properties": {
+          "asset_type": {
+            "title": "Asset Type",
+            "type": "string"
+          },
+          "attribution": {
+            "title": "Attribution",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "derivative_allowed": {
+            "title": "Derivative Allowed",
+            "type": "boolean"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "file_format": {
+            "title": "File Format",
+            "type": "string"
+          },
+          "file_size_bytes": {
+            "title": "File Size Bytes",
+            "type": "integer"
+          },
+          "historical_entity_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Historical Entity Id"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "license_type": {
+            "title": "License Type",
+            "type": "string"
+          },
+          "mime_type": {
+            "title": "Mime Type",
+            "type": "string"
+          },
+          "public_display_allowed": {
+            "title": "Public Display Allowed",
+            "type": "boolean"
+          },
+          "publication_status": {
+            "title": "Publication Status",
+            "type": "string"
+          },
+          "relic_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Relic Slug"
+          },
+          "review_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Review Notes"
+          },
+          "reviewed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed At"
+          },
+          "reviewed_by_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed By Id"
+          },
+          "rights_owner": {
+            "title": "Rights Owner",
+            "type": "string"
+          },
+          "sha256": {
+            "title": "Sha256",
+            "type": "string"
+          },
+          "storage_url": {
+            "title": "Storage Url",
+            "type": "string"
+          },
+          "thumbnail_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Thumbnail Url"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "uploaded_by_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Uploaded By Id"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "asset_type",
+          "file_format",
+          "mime_type",
+          "storage_url",
+          "file_size_bytes",
+          "sha256",
+          "rights_owner",
+          "license_type",
+          "attribution",
+          "public_display_allowed",
+          "derivative_allowed",
+          "publication_status",
+          "version",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "MediaCmsItemOut",
+        "type": "object"
+      },
+      "MediaCmsItemUpdate": {
+        "properties": {
+          "asset_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asset Type"
+          },
+          "attribution": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Attribution"
+          },
+          "derivative_allowed": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Derivative Allowed"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "historical_entity_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Historical Entity Id"
+          },
+          "license_type": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "License Type"
+          },
+          "public_display_allowed": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Public Display Allowed"
+          },
+          "relic_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Relic Slug"
+          },
+          "rights_owner": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rights Owner"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "title": "MediaCmsItemUpdate",
+        "type": "object"
+      },
+      "MediaCmsPreviewOut": {
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/MediaCmsItemOut"
+          },
+          "rights_summary": {
+            "additionalProperties": true,
+            "title": "Rights Summary",
+            "type": "object"
+          },
+          "staged_review_summary": {
+            "additionalProperties": true,
+            "title": "Staged Review Summary",
+            "type": "object"
+          },
+          "viewer_config": {
+            "additionalProperties": true,
+            "title": "Viewer Config",
+            "type": "object"
+          },
+          "viewer_type": {
+            "title": "Viewer Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "item",
+          "viewer_type",
+          "viewer_config",
+          "rights_summary",
+          "staged_review_summary"
+        ],
+        "title": "MediaCmsPreviewOut",
+        "type": "object"
+      },
+      "MediaCmsReviewAction": {
+        "properties": {
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "title": "MediaCmsReviewAction",
         "type": "object"
       },
       "MetricComparisonOut": {
@@ -31199,6 +31960,215 @@
           "review_notes"
         ],
         "title": "RejectContentIn",
+        "type": "object"
+      },
+      "RelicInspectionCompleteRequest": {
+        "description": "Payload submitted when a student completes an inspection of a heritage relic.",
+        "properties": {
+          "angles_inspected": {
+            "description": "List of angles or viewports inspected (e.g. front, left, back, right)",
+            "items": {
+              "type": "string"
+            },
+            "title": "Angles Inspected",
+            "type": "array"
+          },
+          "camera_permission_granted": {
+            "description": "Whether camera permission was granted by user (False for denied/unsupported fallback)",
+            "title": "Camera Permission Granted",
+            "type": "boolean"
+          },
+          "device_tier": {
+            "anyOf": [
+              {
+                "pattern": "^(low_end_mobile|mid_range_mobile|high_end_mobile|desktop)$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "desktop",
+            "description": "Client device capability tier classification",
+            "title": "Device Tier"
+          },
+          "hotspots_examined": {
+            "description": "IDs of visual hotspots or relief details scrutinized",
+            "items": {
+              "type": "string"
+            },
+            "title": "Hotspots Examined",
+            "type": "array"
+          },
+          "idempotency_key": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Client-provided unique key to prevent duplicate awards",
+            "title": "Idempotency Key"
+          },
+          "inspection_mode": {
+            "description": "Active inspection mode used by the client",
+            "pattern": "^(webxr_ar|quicklook_ar|turntable_3d|turntable_2d|image_fallback)$",
+            "title": "Inspection Mode",
+            "type": "string"
+          },
+          "target_slug": {
+            "description": "Slug of the relic, urn, motif, or imperial art detail",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Target Slug",
+            "type": "string"
+          },
+          "time_spent_seconds": {
+            "description": "Total duration spent actively examining the relic in seconds",
+            "minimum": 0.0,
+            "title": "Time Spent Seconds",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "target_slug",
+          "inspection_mode",
+          "camera_permission_granted",
+          "time_spent_seconds"
+        ],
+        "title": "RelicInspectionCompleteRequest",
+        "type": "object"
+      },
+      "RelicInspectionCompleteResponse": {
+        "description": "Server-authoritative response verifying completion of the inspection task.",
+        "properties": {
+          "already_completed": {
+            "default": false,
+            "title": "Already Completed",
+            "type": "boolean"
+          },
+          "camera_permission_granted": {
+            "title": "Camera Permission Granted",
+            "type": "boolean"
+          },
+          "equivalent_learning_completed": {
+            "default": true,
+            "title": "Equivalent Learning Completed",
+            "type": "boolean"
+          },
+          "feedback": {
+            "title": "Feedback",
+            "type": "string"
+          },
+          "inspection_mode": {
+            "title": "Inspection Mode",
+            "type": "string"
+          },
+          "recorded_at": {
+            "format": "date-time",
+            "title": "Recorded At",
+            "type": "string"
+          },
+          "success": {
+            "default": true,
+            "title": "Success",
+            "type": "boolean"
+          },
+          "target_slug": {
+            "title": "Target Slug",
+            "type": "string"
+          },
+          "target_title": {
+            "title": "Target Title",
+            "type": "string"
+          },
+          "task_id": {
+            "format": "uuid",
+            "title": "Task Id",
+            "type": "string"
+          },
+          "total_xp": {
+            "title": "Total Xp",
+            "type": "integer"
+          },
+          "xp_awarded": {
+            "title": "Xp Awarded",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "task_id",
+          "target_slug",
+          "target_title",
+          "inspection_mode",
+          "camera_permission_granted",
+          "xp_awarded",
+          "total_xp",
+          "feedback",
+          "recorded_at"
+        ],
+        "title": "RelicInspectionCompleteResponse",
+        "type": "object"
+      },
+      "RelicInspectionStatusResponse": {
+        "description": "Status check query for whether a student has completed relic inspection.",
+        "properties": {
+          "camera_permission_granted": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Camera Permission Granted"
+          },
+          "completed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed At"
+          },
+          "completed_mode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed Mode"
+          },
+          "is_completed": {
+            "title": "Is Completed",
+            "type": "boolean"
+          },
+          "target_slug": {
+            "title": "Target Slug",
+            "type": "string"
+          },
+          "xp_earned": {
+            "default": 0,
+            "title": "Xp Earned",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "target_slug",
+          "is_completed"
+        ],
+        "title": "RelicInspectionStatusResponse",
         "type": "object"
       },
       "ResetPasswordRequest": {
@@ -39871,6 +40841,706 @@
           }
         ],
         "summary": "Admin Live Sessions Cleanup"
+      }
+    },
+    "/api/v1/admin/media-cms/items": {
+      "get": {
+        "description": "List museum media assets with filter and search criteria.",
+        "operationId": "list_media_items_api_v1_admin_media_cms_items_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "asset_type",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Asset Type"
+            }
+          },
+          {
+            "in": "query",
+            "name": "relic_slug",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Relic Slug"
+            }
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Search"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MediaCmsItemListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "List Media Items",
+        "tags": [
+          "admin-media-cms"
+        ]
+      }
+    },
+    "/api/v1/admin/media-cms/items/{item_id}": {
+      "delete": {
+        "description": "Delete a draft or rejected media asset.",
+        "operationId": "delete_media_api_v1_admin_media_cms_items__item_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Delete Media Api V1 Admin Media Cms Items  Item Id  Delete",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Delete Media",
+        "tags": [
+          "admin-media-cms"
+        ]
+      },
+      "get": {
+        "description": "Retrieve details of a single media item.",
+        "operationId": "get_media_item_api_v1_admin_media_cms_items__item_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MediaCmsItemOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Media Item",
+        "tags": [
+          "admin-media-cms"
+        ]
+      },
+      "patch": {
+        "description": "Update metadata and licensing properties of a media asset.",
+        "operationId": "update_media_item_api_v1_admin_media_cms_items__item_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MediaCmsItemUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MediaCmsItemOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Update Media Item",
+        "tags": [
+          "admin-media-cms"
+        ]
+      }
+    },
+    "/api/v1/admin/media-cms/items/{item_id}/approve": {
+      "post": {
+        "description": "Approve a media asset in review status (admin/curator only).",
+        "operationId": "approve_media_api_v1_admin_media_cms_items__item_id__approve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MediaCmsReviewAction"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MediaCmsItemOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Approve Media",
+        "tags": [
+          "admin-media-cms"
+        ]
+      }
+    },
+    "/api/v1/admin/media-cms/items/{item_id}/archive": {
+      "post": {
+        "description": "Archive a media asset (admin only).",
+        "operationId": "archive_media_api_v1_admin_media_cms_items__item_id__archive_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MediaCmsItemOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Archive Media",
+        "tags": [
+          "admin-media-cms"
+        ]
+      }
+    },
+    "/api/v1/admin/media-cms/items/{item_id}/publish": {
+      "post": {
+        "description": "Publish an approved media asset and sync to historical assets catalog.",
+        "operationId": "publish_media_api_v1_admin_media_cms_items__item_id__publish_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MediaCmsItemOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Publish Media",
+        "tags": [
+          "admin-media-cms"
+        ]
+      }
+    },
+    "/api/v1/admin/media-cms/items/{item_id}/reject": {
+      "post": {
+        "description": "Reject a media asset with mandatory review explanation.",
+        "operationId": "reject_media_api_v1_admin_media_cms_items__item_id__reject_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MediaCmsReviewAction"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MediaCmsItemOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Reject Media",
+        "tags": [
+          "admin-media-cms"
+        ]
+      }
+    },
+    "/api/v1/admin/media-cms/items/{item_id}/submit-review": {
+      "post": {
+        "description": "Submit a draft or rejected media asset for editorial review.",
+        "operationId": "submit_media_review_api_v1_admin_media_cms_items__item_id__submit_review_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MediaCmsItemOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Submit Media Review",
+        "tags": [
+          "admin-media-cms"
+        ]
+      }
+    },
+    "/api/v1/admin/media-cms/items/{item_id}/version": {
+      "post": {
+        "description": "Upload a new binary version for an existing media asset.",
+        "operationId": "upload_media_version_api_v1_admin_media_cms_items__item_id__version_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_media_version_api_v1_admin_media_cms_items__item_id__version_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MediaCmsItemOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Upload Media Version",
+        "tags": [
+          "admin-media-cms"
+        ]
+      }
+    },
+    "/api/v1/admin/media-cms/preview/{item_id}": {
+      "get": {
+        "description": "Get staged preview configuration and rights summary for operator preview.",
+        "operationId": "preview_media_api_v1_admin_media_cms_preview__item_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MediaCmsPreviewOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Preview Media",
+        "tags": [
+          "admin-media-cms"
+        ]
+      }
+    },
+    "/api/v1/admin/media-cms/upload": {
+      "post": {
+        "description": "Securely upload a museum media asset in draft status.",
+        "operationId": "upload_media_asset_api_v1_admin_media_cms_upload_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_media_asset_api_v1_admin_media_cms_upload_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MediaCmsItemOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Upload Media Asset",
+        "tags": [
+          "admin-media-cms"
+        ]
       }
     },
     "/api/v1/admin/push-notifications": {
@@ -49441,7 +51111,7 @@
     },
     "/api/v1/imperial/admin/annotations/{id}": {
       "delete": {
-        "description": "Soft-delete / archive annotation with audit log.",
+        "description": "Soft-delete / archive annotation with audit log and editor ownership check.",
         "operationId": "delete_annotation_api_v1_imperial_admin_annotations__id__delete",
         "parameters": [
           {
@@ -49486,7 +51156,7 @@
         ]
       },
       "patch": {
-        "description": "Update annotation coordinates or metadata with optimistic locking check.",
+        "description": "Update annotation coordinates or metadata with optimistic locking and editor ownership checks.",
         "operationId": "update_annotation_api_v1_imperial_admin_annotations__id__patch",
         "parameters": [
           {
@@ -50834,7 +52504,7 @@
     },
     "/api/v1/imperial/assets/{asset_id}/image": {
       "get": {
-        "description": "Serve map asset image with caching headers.",
+        "description": "Serve map asset image with strict cache headers and offline licensing validation.",
         "operationId": "get_map_asset_image_api_v1_imperial_assets__asset_id__image_get",
         "parameters": [
           {
@@ -50845,6 +52515,24 @@
               "format": "uuid",
               "title": "Asset Id",
               "type": "string"
+            }
+          },
+          {
+            "description": "Signed asset token for private/restricted access",
+            "in": "query",
+            "name": "token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Signed asset token for private/restricted access",
+              "title": "Token"
             }
           }
         ],
@@ -50868,7 +52556,174 @@
             "description": "Validation Error"
           }
         },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
         "summary": "Get Map Asset Image",
+        "tags": [
+          "imperial"
+        ]
+      }
+    },
+    "/api/v1/imperial/assets/{asset_id}/license-check": {
+      "get": {
+        "description": "Check offline licensing status and caching policy for an asset.",
+        "operationId": "check_asset_license_endpoint_api_v1_imperial_assets__asset_id__license_check_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "asset_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Asset Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetLicenseCheckResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Check Asset License Endpoint",
+        "tags": [
+          "imperial"
+        ]
+      }
+    },
+    "/api/v1/imperial/assets/{asset_id}/revoke": {
+      "post": {
+        "description": "Revoke an asset and emit immediate CDN cache invalidation.",
+        "operationId": "revoke_asset_endpoint_api_v1_imperial_assets__asset_id__revoke_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "asset_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Asset Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssetRevokeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetRevokeResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Revoke Asset Endpoint",
+        "tags": [
+          "imperial"
+        ]
+      }
+    },
+    "/api/v1/imperial/assets/{asset_id}/signed-token": {
+      "post": {
+        "description": "Generate tamper-proof HMAC-SHA256 signed token for private asset access.",
+        "operationId": "create_asset_signed_token_api_v1_imperial_assets__asset_id__signed_token_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "asset_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Asset Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssetSignedTokenRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetSignedTokenResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Create Asset Signed Token",
         "tags": [
           "imperial"
         ]
@@ -51122,6 +52977,101 @@
           }
         },
         "summary": "Submit Game Answer",
+        "tags": [
+          "imperial"
+        ]
+      }
+    },
+    "/api/v1/imperial/inspections/complete": {
+      "post": {
+        "description": "Record a verified relic inspection task with camera/WebXR or 2D turntable fallback.\n\nEnforces the V5-T045 invariant:\nDenied camera permission grants the exact same learning completion, same XP,\nand same progression as an AR session.",
+        "operationId": "complete_relic_inspection_api_v1_imperial_inspections_complete_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RelicInspectionCompleteRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RelicInspectionCompleteResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Complete Relic Inspection",
+        "tags": [
+          "imperial"
+        ]
+      }
+    },
+    "/api/v1/imperial/inspections/{target_slug}": {
+      "get": {
+        "description": "Check whether a user has already completed inspection on a heritage target.",
+        "operationId": "get_relic_inspection_status_api_v1_imperial_inspections__target_slug__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "target_slug",
+            "required": true,
+            "schema": {
+              "title": "Target Slug",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RelicInspectionStatusResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Relic Inspection Status",
         "tags": [
           "imperial"
         ]

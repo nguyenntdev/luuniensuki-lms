@@ -32,6 +32,7 @@ from ..apischemas.imperial_v51 import (
     ImperialQuestionUpdate,
 )
 from ..errors import AppError
+from ..history_models import HistoricalClaim, HistoricalEntity
 from ..imperial_models import CONTENT_SCOPE_IMPERIAL, ImperialSite
 from ..imperial_v51_models import (
     ImperialArtDetail,
@@ -425,6 +426,63 @@ def delete_learning_media(db: Session, media_id: UUID) -> None:
     db.commit()
 
 
+ELIGIBLE_CLAIM_VERIFICATION_STATUSES: set[str] = {
+    "editor_reviewed",
+    "expert_verified",
+    "verified",
+    "published",
+}
+
+
+def _validate_hotspot_claim_and_entity(
+    db: Session,
+    claim_id: Optional[UUID],
+    entity_id: Optional[UUID],
+    media: Optional[ImperialLearningMedia] = None,
+    asset_revision: Optional[int] = None,
+) -> None:
+    """Validate that claim and entity bound to a hotspot exist, are approved/verified,
+
+    and do not violate negative abuse invariants.
+    """
+    if entity_id is not None:
+        entity = db.get(HistoricalEntity, entity_id)
+        if not entity:
+            raise AppError("HISTORICAL_ENTITY_NOT_FOUND", f"Historical entity '{entity_id}' not found", 404)
+
+    if claim_id is not None:
+        claim = db.get(HistoricalClaim, claim_id)
+        if not claim:
+            raise AppError("HISTORICAL_CLAIM_NOT_FOUND", f"Historical claim '{claim_id}' not found", 404)
+
+        # Invariant: Must not be unpublished, unreviewed, needs_source, or disputed
+        if claim.verification_status not in ELIGIBLE_CLAIM_VERIFICATION_STATUSES:
+            raise AppError(
+                "HOTSPOT_CLAIM_UNPUBLISHED_OR_INVALID",
+                f"Cannot bind hotspot to claim '{claim_id}' with status '{claim.verification_status}'. "
+                f"Must be one of: {sorted(ELIGIBLE_CLAIM_VERIFICATION_STATUSES)}",
+                422,
+                {"claim_id": str(claim_id), "verification_status": claim.verification_status},
+            )
+
+        if getattr(claim, "confidence", None) in ("disputed", "contested"):
+            raise AppError(
+                "HOTSPOT_CLAIM_DISPUTED",
+                f"Cannot bind hotspot to disputed historical claim '{claim_id}'.",
+                422,
+                {"claim_id": str(claim_id), "confidence": claim.confidence},
+            )
+
+        # If entity_id is also supplied, verify claim belongs to entity
+        if entity_id is not None and claim.entity_id != entity_id:
+            raise AppError(
+                "HOTSPOT_CLAIM_ENTITY_MISMATCH",
+                f"Claim '{claim_id}' belongs to entity '{claim.entity_id}', not '{entity_id}'.",
+                422,
+                {"claim_id": str(claim_id), "claim_entity_id": str(claim.entity_id), "target_entity_id": str(entity_id)},
+            )
+
+
 def create_media_hotspot(
     db: Session, media_id: UUID, payload: ImperialMediaHotspotCreate
 ) -> ImperialMediaHotspot:
@@ -436,6 +494,18 @@ def create_media_hotspot(
     if not (0.0 <= payload.u <= 1.0 and 0.0 <= payload.v <= 1.0):
         raise AppError("IMPERIAL_UV_OUT_OF_BOUNDS", "UV coordinates must be between 0.0 and 1.0", 422)
 
+    # Validate claim, entity and asset revision bindings
+    _validate_hotspot_claim_and_entity(
+        db,
+        claim_id=payload.claim_id,
+        entity_id=payload.entity_id,
+        media=media,
+        asset_revision=payload.asset_revision,
+    )
+
+    # Default asset_revision from media if not provided
+    eff_asset_revision = payload.asset_revision if payload.asset_revision is not None else media.asset_revision
+
     hotspot = ImperialMediaHotspot(
         content_scope=CONTENT_SCOPE_IMPERIAL,
         media_id=media_id,
@@ -446,6 +516,9 @@ def create_media_hotspot(
         title=payload.title,
         description=payload.description,
         detail_id=payload.detail_id,
+        claim_id=payload.claim_id,
+        entity_id=payload.entity_id,
+        asset_revision=eff_asset_revision,
         review_status=payload.review_status,
         row_version=1,
     )
@@ -475,6 +548,20 @@ def update_media_hotspot(
     new_v = payload.v if payload.v is not None else float(hotspot.v)
     if not (0.0 <= new_u <= 1.0 and 0.0 <= new_v <= 1.0):
         raise AppError("IMPERIAL_UV_OUT_OF_BOUNDS", "UV coordinates must be between 0.0 and 1.0", 422)
+
+    # Validate claim, entity and asset revision bindings
+    target_claim_id = payload.claim_id if payload.claim_id is not None else hotspot.claim_id
+    target_entity_id = payload.entity_id if payload.entity_id is not None else hotspot.entity_id
+    target_revision = payload.asset_revision if payload.asset_revision is not None else hotspot.asset_revision
+
+    if payload.claim_id is not None or payload.entity_id is not None or payload.asset_revision is not None:
+        _validate_hotspot_claim_and_entity(
+            db,
+            claim_id=target_claim_id,
+            entity_id=target_entity_id,
+            media=hotspot.media,
+            asset_revision=target_revision,
+        )
 
     for field, val in payload.model_dump(exclude_unset=True, exclude={"row_version"}).items():
         if val is not None:
