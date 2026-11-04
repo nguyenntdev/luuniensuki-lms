@@ -33,7 +33,7 @@ void main() {
       final item = ReviewItem.initial(motifId: 'test_motif_2');
       final updated = service.processReview(item, 4);
 
-      expect(updated.easeFactor, lessThan(2.5)); // Quality 4 decreases from 2.5
+      expect(updated.easeFactor, equals(2.5)); // Quality 4 preserves EF at 2.5
       expect(updated.interval, equals(1));
       expect(updated.repetitions, equals(1));
     });
@@ -139,7 +139,7 @@ void main() {
       final stats = service.getStatistics(items);
 
       expect(stats['totalItems'], equals(4));
-      expect(stats['dueItems'], equals(2)); // Items 1 and 2
+      expect(stats['dueItems'], equals(3)); // Items 1, 2 and 4 (initial is due)
       expect(stats['overdueItems'], equals(1)); // Item 1
       expect(stats['newItems'], equals(4)); // All are new
       expect(stats['averageEaseFactor'], equals(2.5)); // Default

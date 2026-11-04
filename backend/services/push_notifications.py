@@ -13,8 +13,9 @@ This service handles:
 from __future__ import annotations
 
 import logging
+import re
 from datetime import datetime, timezone
-from typing import Optional, Any
+from typing import Optional, Any, Callable
 from uuid import UUID
 import uuid as uuid_module
 
@@ -28,13 +29,189 @@ from ..models import (
     NotificationType,
     NotificationStatus,
 )
-from ..config import settings
+from ..config import settings as app_settings
 
 logger = logging.getLogger(__name__)
 
 # Firebase Admin SDK (lazy loaded)
 _firebase_app = None
 _firebase_initialized = False
+
+# Pluggable Push Sender Registry (for tests and alternate push providers)
+_custom_push_sender: Optional[Callable[[str, str, str, Optional[dict[str, Any]]], tuple[bool, Optional[str]]]] = None
+
+
+def register_push_sender(
+    sender_fn: Callable[[str, str, str, Optional[dict[str, Any]]], tuple[bool, Optional[str]]]
+) -> None:
+    """Register custom push sender: fn(token, title, body, data) -> tuple[bool, Optional[str]]."""
+    global _custom_push_sender
+    _custom_push_sender = sender_fn
+
+
+def reset_push_senders() -> None:
+    """Reset to default FCM sender."""
+    global _custom_push_sender
+    _custom_push_sender = None
+
+
+# =============================================================================
+# Zero Student PII Protection & Policy Enforcement
+# =============================================================================
+
+
+class StudentPIIDetectedError(ValueError):
+    """Raised when student personally identifiable information is detected in a push notification payload."""
+    pass
+
+
+STUDENT_PII_KEYS = {
+    "student_email",
+    "student_phone",
+    "student_name",
+    "student_real_name",
+    "real_name",
+    "phone",
+    "phone_number",
+    "email",
+    "birth_year",
+    "date_of_birth",
+    "dob",
+    "national_id",
+    "citizen_id",
+    "address",
+}
+
+EMAIL_REGEX = re.compile(r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+")
+PHONE_REGEX = re.compile(r"(?:\+84|0)[35789]\d{8}\b")
+
+
+def detect_student_pii(
+    title: str,
+    body: str,
+    data_payload: Optional[dict[str, Any]] = None,
+) -> list[str]:
+    """Scan notification title, body, and payload for student PII patterns."""
+    violations: list[str] = []
+    text_content = f"{title} {body}"
+
+    if EMAIL_REGEX.search(text_content):
+        violations.append("Email pattern detected in notification text")
+
+    if PHONE_REGEX.search(text_content):
+        violations.append("Phone number pattern detected in notification text")
+
+    if data_payload and isinstance(data_payload, dict):
+        for k, v in data_payload.items():
+            k_lower = str(k).lower()
+            if k_lower in STUDENT_PII_KEYS:
+                violations.append(f"Prohibited PII key '{k}' found in data payload")
+            elif isinstance(v, str):
+                if EMAIL_REGEX.search(v):
+                    violations.append(f"Email pattern detected in payload key '{k}'")
+                elif PHONE_REGEX.search(v):
+                    violations.append(f"Phone pattern detected in payload key '{k}'")
+
+    return violations
+
+
+def assert_zero_student_pii(
+    title: str,
+    body: str,
+    data_payload: Optional[dict[str, Any]] = None,
+) -> None:
+    """Strictly assert that no student PII is present in push notification text or data payload."""
+    violations = detect_student_pii(title, body, data_payload)
+    if violations:
+        raise StudentPIIDetectedError(
+            f"Zero Student PII policy violation: {'; '.join(violations)}"
+        )
+
+
+def is_token_revoked_error(err: Optional[str]) -> bool:
+    """Check if an error string indicates an invalidated/revoked device token."""
+    if not err:
+        return False
+    msg = str(err).lower()
+    return any(
+        sub in msg
+        for sub in [
+            "notregistered",
+            "invalidregistration",
+            "unregistered",
+            "token revoked",
+            "token expired",
+            "invalid_argument",
+            "bad_device_token",
+        ]
+    )
+
+
+# =============================================================================
+# Push Notification Consent & Device Token Lifecycle
+# =============================================================================
+
+
+def record_push_consent(
+    db: Session,
+    user_id: UUID,
+    granted: bool,
+    token: Optional[str] = None,
+    platform: Optional[str] = None,
+) -> UserNotificationSettings:
+    """Explicitly record user opt-in or opt-out consent for push notifications.
+
+    If granted is True:
+        - push_enabled is set to True
+        - push_token and push_platform updated if provided
+        - user.push_permission_prompted set to True
+    If granted is False (opt-out):
+        - push_enabled is set to False
+        - push_token is immediately revoked / cleared to None
+        - push_platform is cleared to None
+        - Delivery promptly stops for any alerts directed to this user
+    """
+    user = db.execute(select(User).where(User.id == user_id)).scalar_one_or_none()
+    if not user:
+        raise ValueError(f"User {user_id} not found")
+
+    settings = db.execute(
+        select(UserNotificationSettings).where(
+            UserNotificationSettings.user_id == user_id
+        )
+    ).scalar_one_or_none()
+
+    if settings is None:
+        settings = UserNotificationSettings(
+            id=uuid_module.uuid4(),
+            user_id=user_id,
+        )
+        db.add(settings)
+
+    if granted:
+        settings.push_enabled = True
+        if token:
+            settings.push_token = token
+        if platform:
+            settings.push_platform = platform.lower()
+        user.push_permission_prompted = True
+    else:
+        # Prompt opt-out revocation: clear token and turn off push
+        settings.push_enabled = False
+        settings.push_token = None
+        settings.push_platform = None
+
+    db.commit()
+    db.refresh(settings)
+    return settings
+
+
+def revoke_push_token(
+    db: Session,
+    user_id: UUID,
+) -> UserNotificationSettings:
+    """Revoke user's push token and disable push delivery promptly."""
+    return record_push_consent(db, user_id, granted=False)
 
 
 def _init_firebase() -> bool:
@@ -46,7 +223,7 @@ def _init_firebase() -> bool:
 
     _firebase_initialized = True
 
-    if not settings.fcm_credentials_path:
+    if not app_settings.fcm_credentials_path:
         logger.warning("FCM credentials path not configured. Push notifications will be disabled.")
         return False
 
@@ -54,7 +231,7 @@ def _init_firebase() -> bool:
         import firebase_admin
         from firebase_admin import credentials
 
-        cred = credentials.Certificate(settings.fcm_credentials_path)
+        cred = credentials.Certificate(app_settings.fcm_credentials_path)
         _firebase_app = firebase_admin.initialize_app(cred)
         logger.info("Firebase Admin SDK initialized successfully")
         return True
@@ -274,14 +451,26 @@ def send_notification(
         db.commit()
         return False
 
-    # Send via FCM (iOS and Android both use FCM in this implementation)
-    import asyncio
-    success, error = asyncio.run(send_notification_fcm(
-        token=settings.push_token,
-        title=notification.title,
-        body=notification.body,
-        data=notification.data_payload,
-    ))
+    # Send via registered custom sender or default FCM
+    if _custom_push_sender is not None:
+        try:
+            success, error = _custom_push_sender(
+                settings.push_token,
+                notification.title,
+                notification.body,
+                notification.data_payload,
+            )
+        except Exception as e:
+            success, error = False, str(e)
+    else:
+        # Send via FCM (iOS and Android both use FCM in this implementation)
+        import asyncio
+        success, error = asyncio.run(send_notification_fcm(
+            token=settings.push_token,
+            title=notification.title,
+            body=notification.body,
+            data=notification.data_payload,
+        ))
 
     if success:
         notification.status = NotificationStatus.sent
@@ -290,8 +479,23 @@ def send_notification(
         db.commit()
         return True
     else:
+        # Promptly revoke invalid/unregistered tokens so they cannot receive future alerts
+        if is_token_revoked_error(error):
+            logger.warning(
+                "Push token for user %s was invalidated by provider: %s. Auto-revoking token.",
+                user.id,
+                error,
+            )
+            settings.push_token = None
+            settings.push_enabled = False
+            notification.status = NotificationStatus.failed
+            notification.error_message = f"Push token revoked by provider: {error}"
+            db.commit()
+            return False
+
         # Retry logic
-        if retry_count < settings.push_notification_max_retries:
+        max_retries = getattr(app_settings, "push_notification_max_retries", 3)
+        if retry_count < max_retries:
             logger.info(f"Retrying notification {notification.id} (attempt {retry_count + 1})")
             return send_notification(db, notification, retry_count + 1)
         else:
@@ -539,4 +743,93 @@ def send_system_notification(
         notification_type=NotificationType.system,
         data_payload=data or {},
     )
+
+
+def route_teacher_alert(
+    db: Session,
+    teacher_id: UUID,
+    classroom_id: UUID,
+    assignment_id: UUID,
+    assignment_title: str,
+    student_ref: Optional[str] = None,
+    data_override: Optional[dict[str, Any]] = None,
+) -> PushNotification:
+    """Route an alert to a teacher regarding classroom activity with STRICT ZERO STUDENT PII.
+
+    CRITICAL INVARIANT: ZERO student PII (email, phone, real name, birth year) is permitted
+    in the push notification title, body, or payload. Any detected PII immediately halts
+    execution with StudentPIIDetectedError before creating the notification.
+    """
+    title = "Bài tập mới đã nộp"
+    body = f"Có bài nộp mới cho bài tập: {assignment_title}."
+
+    payload: dict[str, Any] = {
+        "type": "teacher_alert",
+        "screen": "classroom_grading",
+        "classroom_id": str(classroom_id),
+        "assignment_id": str(assignment_id),
+    }
+    if student_ref:
+        payload["student_ref"] = str(student_ref)
+    if data_override:
+        payload.update(data_override)
+
+    # Enforce Zero Student PII Policy
+    assert_zero_student_pii(title, body, payload)
+
+    notification = create_notification(
+        db=db,
+        user_id=teacher_id,
+        title=title,
+        body=body,
+        notification_type=NotificationType.teacher_alert,
+        data_payload=payload,
+    )
+
+    # Attempt delivery (respecting teacher's opt-in/opt-out consent & token state)
+    send_notification(db, notification)
+    return notification
+
+
+def route_partner_alert(
+    db: Session,
+    partner_id: UUID,
+    inquiry_id: UUID,
+    experience_title: str,
+    booking_date: Optional[str] = None,
+    data_override: Optional[dict[str, Any]] = None,
+) -> PushNotification:
+    """Route an alert to a partner/artisan regarding a new inquiry or booking with zero visitor contact PII.
+
+    CRITICAL INVARIANT: ZERO visitor PII (phone, email, real contact info) is routed via push.
+    Push notification contains only generic operational reference tokens.
+    """
+    title = "Yêu cầu trải nghiệm mới"
+    body = f"Bạn nhận được yêu cầu đặt chỗ mới cho trải nghiệm: {experience_title}."
+
+    payload: dict[str, Any] = {
+        "type": "partner_alert",
+        "screen": "partner_inbox",
+        "inquiry_id": str(inquiry_id),
+    }
+    if booking_date:
+        payload["booking_date"] = str(booking_date)
+    if data_override:
+        payload.update(data_override)
+
+    # Enforce Zero PII
+    assert_zero_student_pii(title, body, payload)
+
+    notification = create_notification(
+        db=db,
+        user_id=partner_id,
+        title=title,
+        body=body,
+        notification_type=NotificationType.partner_alert,
+        data_payload=payload,
+    )
+
+    # Attempt delivery (respecting partner's opt-in/opt-out consent & token state)
+    send_notification(db, notification)
+    return notification
 

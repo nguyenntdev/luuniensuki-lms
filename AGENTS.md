@@ -244,6 +244,22 @@ Deploy workflow (`deploy.yml`) uses Python 3.12 and runs `pytest tests/backend` 
   - `V5-T049` (W04-A09): Accessibility audits across media enforcing keyboard navigation, screen reader ARIA roles, captions, and 2D text equivalence.
   - `V5-T050` (W04-A10): Museum operator media CMS with secure file magic byte validation, licensing metadata, and staged publication approval.
 
+### Wave W05: Flutter Mobile / Offline / Coherent Auth (COMPLETED)
+- **Status**: 10/10 slots complete. 120/120 tests passing.
+- **Artifacts**: `artifacts/implementation/W05/` (`W05_A01`–`W05_A10`).
+- **Verified Invariants**:
+  - `V5-T051` (W05-A01): Route audit and live screen replacement in `mobile/lib/routing/app_router.dart`. Zero placeholder screens or "Coming Soon" dummy text in production routes.
+  - `V5-T052` (W05-A02): Mobile authentication and session lifecycle with Bearer header refresh flow, logging interceptor token masking, and secure storage purge on expiry.
+  - `V5-T053` (W05-A03): Mobile catalog & metadata parity across 9 Urns and 162 Motifs with HTTP ETag caching and 304 conditional responses.
+  - `V5-T054` (W05-A04): 3D mobile viewer real manifests with thermal/memory budgeting and 100% authentic 2D rubbing fallback rejecting fictional 3D shapes.
+  - `V5-T055` (W05-A05): Mobile source citation UI with draggable sheet, bilingual translations, epistemic uncertainty indicators, and redaction of restricted snippets.
+  - `V5-T056` (W05-A06): Offline action queue with client idempotency keys, server ACK deduplication, conflict resolution, and anti-replay zero duplicate XP awards.
+  - `V5-T057` (W05-A07): Mobile lesson quiz sync against backend assessment tasks. Replaced mock questions in `practice_provider.dart` with authoritative server grading.
+  - `V5-T058` (W05-A08): Mobile quests and achievements wired to `/api/v1/quests` with prerequisite locking, objective tracking, and atomic reward claiming.
+  - `V5-T059` (W05-A09): Push notification consent with opt-in/opt-out master switch, teacher/partner alert routing, and strict zero student PII enforcement.
+  - `V5-T060` (W05-A10): Flutter QA and release pipeline with Flutter SDK 3.29.0 toolchain verification, zero static analysis errors, unit tests, cold start safety, and CI workflow.
+
+
 
 
 

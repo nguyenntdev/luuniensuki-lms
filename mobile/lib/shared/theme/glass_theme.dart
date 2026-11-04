@@ -12,6 +12,9 @@ class GlassTheme {
   /// Background color for glass containers
   static const Color glassBackground = Color(0x20FFFFFF);
 
+  /// Dark background color
+  static const Color backgroundDark = Color(0xFF0A0E14);
+
   /// Stronger background for emphasized glass containers
   static const Color glassBackgroundStrong = Color(0x2BFFFFFF);
 

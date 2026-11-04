@@ -18,14 +18,19 @@ import logging
 import re
 import unicodedata
 from datetime import datetime, timezone
+import hashlib
 from typing import Any, Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Query, Request, status
+from fastapi import APIRouter, Depends, Query, Request, Response, status
 from sqlalchemy import and_, func, or_, select
 from sqlalchemy.orm import Session, selectinload
 
 from ..apischemas.heritage import (
+    HeritageCatalogMotifOut,
+    HeritageCatalogOut,
+    HeritageCatalogRevisionUpdateIn,
+    HeritageCatalogUrnOut,
     HeritageEngagementOut,
     HeritageEntityType,
     HeritageMediaAssetOut,
@@ -39,7 +44,7 @@ from ..apischemas.heritage import (
     HeritageSourceEvidenceOut,
 )
 from ..db import get_db
-from ..deps import get_current_user_optional
+from ..deps import get_current_user_optional, get_staff_user
 from ..errors import AppError
 from ..models import User
 from ..models_rbpc import (
@@ -51,6 +56,7 @@ from ..models_rbpc import (
     RbpcStory,
 )
 from ..rbac import STAFF_ROLES
+from ..services import heritage_catalog
 
 logger = logging.getLogger("luuniensuki.heritage")
 
@@ -622,3 +628,118 @@ def get_heritage_place_3d_models(
     models.sort(key=lambda m: _ACCURACY_PRIORITY.get(m.accuracy_grade, 99))
 
     return [HeritageMediaAssetOut.model_validate(m) for m in models]
+
+
+# --------------------------------------------------------------------------- #
+# Canonical Heritage Catalog Endpoints (Wave W05 / Slot A03 / V5-T053)
+# --------------------------------------------------------------------------- #
+@router.get("/api/v1/heritage/catalog")
+def get_heritage_catalog(
+    request: Request,
+    urn_slug: Optional[str] = Query(default=None, description="Optional filter by canonical urn slug."),
+    include_motifs: bool = Query(default=True, description="Whether to include 162 motif items."),
+) -> Response:
+    """Retrieve canonical heritage catalog (9 Urns & 162 Motifs) with ETag caching.
+
+    Supports conditional GET requests via If-None-Match header:
+    - Returns HTTP 304 Not Modified if client cache ETag matches server catalog ETag.
+    - Returns HTTP 200 OK with full metadata and ETag header on initial request or when catalog is updated.
+    """
+    catalog = heritage_catalog.get_canonical_catalog(
+        urn_slug=urn_slug,
+        include_motifs=include_motifs,
+    )
+
+    etag = catalog.etag
+    client_etag = request.headers.get("if-none-match")
+
+    cache_headers = {
+        "ETag": etag,
+        "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",
+    }
+
+    if client_etag and client_etag.strip('"') == etag.strip('"'):
+        return Response(status_code=status.HTTP_304_NOT_MODIFIED, headers=cache_headers)
+
+    return Response(
+        content=catalog.model_dump_json(),
+        media_type="application/json",
+        headers=cache_headers,
+    )
+
+
+@router.get("/api/v1/heritage/catalog/{urn_slug}")
+def get_heritage_catalog_urn(
+    urn_slug: str,
+    request: Request,
+    include_motifs: bool = Query(default=True, description="Whether to include 18 canonical motifs."),
+) -> Response:
+    """Retrieve canonical catalog details for a single Urn with ETag caching."""
+    urn = heritage_catalog.get_canonical_urn(urn_slug=urn_slug, include_motifs=include_motifs)
+    etag = f'"{hashlib.sha256((urn.slug + str(urn.revision) + str(urn.evidence_status)).encode("utf-8")).hexdigest()[:32]}"'
+
+    client_etag = request.headers.get("if-none-match")
+    cache_headers = {
+        "ETag": etag,
+        "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",
+    }
+
+    if client_etag and client_etag.strip('"') == etag.strip('"'):
+        return Response(status_code=status.HTTP_304_NOT_MODIFIED, headers=cache_headers)
+
+    return Response(
+        content=urn.model_dump_json(),
+        media_type="application/json",
+        headers=cache_headers,
+    )
+
+
+@router.get("/api/v1/heritage/catalog/motifs/{motif_id}")
+def get_heritage_catalog_motif(
+    motif_id: str,
+    request: Request,
+) -> Response:
+    """Retrieve canonical catalog details for a single Motif by stable ID or slug with ETag caching."""
+    motif = heritage_catalog.get_canonical_motif(identifier=motif_id)
+    etag = f'"{hashlib.sha256((motif.id + str(motif.revision) + str(motif.evidence_status)).encode("utf-8")).hexdigest()[:32]}"'
+
+    client_etag = request.headers.get("if-none-match")
+    cache_headers = {
+        "ETag": etag,
+        "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",
+    }
+
+    if client_etag and client_etag.strip('"') == etag.strip('"'):
+        return Response(status_code=status.HTTP_304_NOT_MODIFIED, headers=cache_headers)
+
+    return Response(
+        content=motif.model_dump_json(),
+        media_type="application/json",
+        headers=cache_headers,
+    )
+
+
+@router.post("/api/v1/heritage/catalog/revision")
+def update_heritage_catalog_revision(
+    payload: HeritageCatalogRevisionUpdateIn,
+    current_user: User = Depends(get_staff_user),
+) -> dict[str, Any]:
+    """Staff editorial endpoint to update an approved revision of an urn or motif.
+
+    Updates revision number and evidence status, strictly invalidating older client ETags.
+    """
+    updated = heritage_catalog.update_catalog_revision(
+        payload.identifier,
+        revision=payload.revision,
+        evidence_status=payload.evidence_status.value if payload.evidence_status else None,
+        name_vi=payload.name_vi,
+        name_en=payload.name_en,
+        name_han_nom=payload.name_han_nom,
+        notes=payload.reviewer_notes,
+    )
+    return {
+        "status": "success",
+        "identifier": payload.identifier,
+        "updated": updated,
+        "global_revision": heritage_catalog.get_global_revision(),
+    }

@@ -117,6 +117,8 @@ def register(
     )
 
     _set_auth_cookies(response, access_token=access_token, refresh_token=refresh_token)
+    response.headers["X-Access-Token"] = access_token
+    response.headers["X-Refresh-Token"] = refresh_token
     response.headers["Cache-Control"] = "no-store"
     return _build_auth_me_response(user)
 
@@ -155,6 +157,8 @@ def login(
     )
 
     _set_auth_cookies(response, access_token=access_token, refresh_token=refresh_token)
+    response.headers["X-Access-Token"] = access_token
+    response.headers["X-Refresh-Token"] = refresh_token
     response.headers["Cache-Control"] = "no-store"
     return _build_auth_me_response(user)
 
@@ -175,6 +179,12 @@ def refresh_session(
     )
 
     raw_token = request.cookies.get(settings.refresh_cookie_name)
+    if not raw_token:
+        auth_header = request.headers.get("authorization") or request.headers.get("Authorization")
+        if auth_header and auth_header.lower().startswith("bearer "):
+            raw_token = auth_header[7:].strip()
+    if not raw_token:
+        raw_token = request.headers.get("x-refresh-token") or request.headers.get("X-Refresh-Token")
     if not raw_token:
         raise credentials_exception
 
@@ -230,6 +240,8 @@ def refresh_session(
     )
 
     _set_auth_cookies(response, access_token=access_token, refresh_token=refresh_token)
+    response.headers["X-Access-Token"] = access_token
+    response.headers["X-Refresh-Token"] = refresh_token
     response.headers["Cache-Control"] = "no-store"
     return _build_auth_me_response(user)
 
@@ -242,6 +254,12 @@ def logout(
     # after logout (Req 17.2). Decode tolerantly — a failure must never break
     # logout, which still clears the cookies below.
     raw_token = request.cookies.get(settings.refresh_cookie_name)
+    if not raw_token:
+        auth_header = request.headers.get("authorization") or request.headers.get("Authorization")
+        if auth_header and auth_header.lower().startswith("bearer "):
+            raw_token = auth_header[7:].strip()
+    if not raw_token:
+        raw_token = request.headers.get("x-refresh-token") or request.headers.get("X-Refresh-Token")
     if raw_token:
         payload = _decode_refresh_token_best_effort(raw_token)
         if payload is not None:

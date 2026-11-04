@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/glass/animated_background.dart';
-import '../../../../shared/widgets/glass/glass_container.dart';
 import '../providers/notifications_provider.dart';
 import '../widgets/notification_item_widget.dart';
 import '../widgets/notification_preferences_widget.dart';

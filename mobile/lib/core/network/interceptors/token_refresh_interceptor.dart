@@ -16,6 +16,7 @@ import '../../storage/secure_storage.dart';
 class TokenRefreshInterceptor extends Interceptor {
   final Dio _dio;
   final SecureStorage _secureStorage;
+  final Future<void> Function()? _onSessionExpired;
 
   // Track ongoing refresh to prevent multiple simultaneous refreshes
   Completer<bool>? _refreshCompleter;
@@ -28,7 +29,11 @@ class TokenRefreshInterceptor extends Interceptor {
     ApiConstants.refreshToken,
   ];
 
-  TokenRefreshInterceptor(this._dio, this._secureStorage);
+  TokenRefreshInterceptor(
+    this._dio,
+    this._secureStorage, {
+    Future<void> Function()? onSessionExpired,
+  }) : _onSessionExpired = onSessionExpired;
 
   @override
   Future<void> onError(
@@ -127,9 +132,11 @@ class TokenRefreshInterceptor extends Interceptor {
           newAccessToken = data['access_token'] as String?;
           newRefreshToken = data['refresh_token'] as String?;
         }
+        newAccessToken ??= response.headers.value('x-access-token');
+        newRefreshToken ??= response.headers.value('x-refresh-token');
 
         // If tokens are in cookies, they'll be handled automatically
-        // If in response body, save them
+        // If in response body or headers, save them
         if (newAccessToken != null) {
           await _secureStorage.saveAccessToken(newAccessToken);
         }
@@ -142,11 +149,18 @@ class TokenRefreshInterceptor extends Interceptor {
       }
 
       _completeRefresh(false);
+      await _secureStorage.clearTokens();
+      if (_onSessionExpired != null) {
+        await _onSessionExpired();
+      }
       return false;
     } catch (e) {
       _completeRefresh(false);
-      // Clear tokens on refresh failure
+      // Clear tokens and session on refresh failure
       await _secureStorage.clearTokens();
+      if (_onSessionExpired != null) {
+        await _onSessionExpired();
+      }
       return false;
     }
   }

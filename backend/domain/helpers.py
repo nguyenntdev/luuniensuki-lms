@@ -597,6 +597,69 @@ def _objective_current_value(
     params = objective.params if isinstance(objective.params, dict) else {}
     objective_type = str(objective.objective_type or "").strip()
 
+    if objective_type == "discover_any":
+        return session.execute(
+            select(func.count(UserProgress.id)).where(
+                UserProgress.user_id == user.id,
+                UserProgress.status != UnlockStatus.hidden,
+            )
+        ).scalar_one()
+
+    if objective_type == "complete_lesson":
+        return session.execute(
+            select(func.count(UserProgress.id)).where(
+                UserProgress.user_id == user.id,
+                UserProgress.status.in_([UnlockStatus.learned, UnlockStatus.mastered]),
+            )
+        ).scalar_one()
+
+    if objective_type == "complete_lesson_category":
+        category = _normalize_category(params.get("category"))
+        query = (
+            select(func.count(UserProgress.id))
+            .join(Motif, UserProgress.motif_id == Motif.id)
+            .where(
+                UserProgress.user_id == user.id,
+                UserProgress.status.in_([UnlockStatus.learned, UnlockStatus.mastered]),
+            )
+        )
+        if category is not None:
+            query = query.where(Motif.category == category)
+        return session.execute(query).scalar_one()
+
+    if objective_type in ("source_evidence_task", "evidence_inquiry_task", "claim_evidence_task", "evidence_task"):
+        try:
+            from ..history_inquiry_models import (
+                HistoricalInquirySubmission,
+                HistoricalInquiryGroupMember,
+                InquirySubmissionStatus,
+            )
+            from sqlalchemy import or_
+
+            status_filter = [
+                InquirySubmissionStatus.submitted.value,
+                InquirySubmissionStatus.approved.value,
+            ]
+            if params.get("min_status") == "approved":
+                status_filter = [InquirySubmissionStatus.approved.value]
+
+            return session.execute(
+                select(func.count(func.distinct(HistoricalInquirySubmission.id)))
+                .outerjoin(
+                    HistoricalInquiryGroupMember,
+                    HistoricalInquirySubmission.group_id == HistoricalInquiryGroupMember.group_id,
+                )
+                .where(
+                    HistoricalInquirySubmission.status.in_(status_filter),
+                    or_(
+                        HistoricalInquirySubmission.submitted_by_id == user.id,
+                        HistoricalInquiryGroupMember.user_id == user.id,
+                    ),
+                )
+            ).scalar_one()
+        except Exception:
+            return 0
+
     if objective_type == "discover_category":
         category = _normalize_category(params.get("category"))
         if category is None:

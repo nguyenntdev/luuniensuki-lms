@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../../lib/features/history/domain/history_api.dart';
+import 'package:luuniensuki_lms/features/history/domain/history_api.dart';
 
 void main() {
   group('HistoryEntity.fromJson', () {

@@ -3305,6 +3305,92 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/heritage/catalog": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Heritage Catalog
+         * @description Retrieve canonical heritage catalog (9 Urns & 162 Motifs) with ETag caching.
+         *
+         *     Supports conditional GET requests via If-None-Match header:
+         *     - Returns HTTP 304 Not Modified if client cache ETag matches server catalog ETag.
+         *     - Returns HTTP 200 OK with full metadata and ETag header on initial request or when catalog is updated.
+         */
+        get: operations["get_heritage_catalog_api_v1_heritage_catalog_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/heritage/catalog/motifs/{motif_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Heritage Catalog Motif
+         * @description Retrieve canonical catalog details for a single Motif by stable ID or slug with ETag caching.
+         */
+        get: operations["get_heritage_catalog_motif_api_v1_heritage_catalog_motifs__motif_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/heritage/catalog/revision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Update Heritage Catalog Revision
+         * @description Staff editorial endpoint to update an approved revision of an urn or motif.
+         *
+         *     Updates revision number and evidence status, strictly invalidating older client ETags.
+         */
+        post: operations["update_heritage_catalog_revision_api_v1_heritage_catalog_revision_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/heritage/catalog/{urn_slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Heritage Catalog Urn
+         * @description Retrieve canonical catalog details for a single Urn with ETag caching.
+         */
+        get: operations["get_heritage_catalog_urn_api_v1_heritage_catalog__urn_slug__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/heritage/places": {
         parameters: {
             query?: never;
@@ -3605,6 +3691,29 @@ export interface paths {
          * @description Submit student work against a source-locked assignment with validation and idempotency.
          */
         post: operations["submit_history_assignment_endpoint_api_v1_history_assignments__assignment_id__submit_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/citations/{slug_or_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Entity Citations
+         * @description Retrieve full bibliographic citations, public locators, translations, and epistemic uncertainty.
+         *
+         *     Adheres strictly to rights distribution policies: restricted excerpts are redacted
+         *     to [REDACTED: RIGHTS_RESTRICTED] for unprivileged users.
+         */
+        get: operations["get_entity_citations_api_v1_history_citations__slug_or_id__get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -3913,6 +4022,29 @@ export interface paths {
         };
         /** List Entity Relations */
         get: operations["list_entity_relations_api_v1_history_entities__entity_id__relations_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/entities/{slug_or_id}/citations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Entity Citations
+         * @description Retrieve full bibliographic citations, public locators, translations, and epistemic uncertainty.
+         *
+         *     Adheres strictly to rights distribution policies: restricted excerpts are redacted
+         *     to [REDACTED: RIGHTS_RESTRICTED] for unprivileged users.
+         */
+        get: operations["get_entity_citations_api_v1_history_entities__slug_or_id__citations_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4303,6 +4435,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/history/lessons/{lesson_id}/quiz-sync": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Sync Lesson Quiz
+         * @description Sync real published quiz questions for a specific historical lesson.
+         */
+        get: operations["sync_lesson_quiz_api_v1_history_lessons__lesson_id__quiz_sync_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/history/map": {
         parameters: {
             query?: never;
@@ -4321,6 +4473,80 @@ export interface paths {
         get: operations["history_map_api_v1_history_map_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/practice/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Submit Mobile Practice
+         * @description Submit mobile practice assessment answers with server-authoritative grading.
+         *
+         *     Negative abuse guardrails:
+         *     - Scoring is derived server-side from active question records.
+         *     - Badges are only awarded if server-calculated score >= 80% pass threshold.
+         *     - Any client-claimed badges or scores submitted without server verification
+         *       are rejected.
+         */
+        post: operations["submit_mobile_practice_api_v1_history_practice_submit_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/practice/sync": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Sync Mobile Practice
+         * @description Sync real published quiz questions for mobile practice modes.
+         *
+         *     Parity with backend server assessment tasks:
+         *     - Never leaks correct answers or answer contracts to the client.
+         *     - Questions must be published and content-validated.
+         */
+        get: operations["sync_mobile_practice_api_v1_history_practice_sync_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/practice/verify-badge": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Verify Badge Claim
+         * @description Verify that a completion badge was awarded via legitimate server evaluation.
+         *
+         *     Negative abuse guardrail:
+         *     Returns HTTP 400 if user attempts to claim a graded completion badge locally
+         *     without a verified server response.
+         */
+        post: operations["verify_badge_claim_api_v1_history_practice_verify_badge_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6547,6 +6773,32 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/notifications/consent": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Push Consent
+         * @description Get the current user's push notification consent status.
+         */
+        get: operations["get_push_consent_api_v1_notifications_consent_get"];
+        put?: never;
+        /**
+         * Update Push Consent
+         * @description Explicitly grant or revoke push notification consent.
+         *
+         *     Opt-out immediately halts notification delivery and clears stored device tokens.
+         */
+        post: operations["update_push_consent_api_v1_notifications_consent_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/notifications/history": {
         parameters: {
             query?: never;
@@ -6578,7 +6830,7 @@ export interface paths {
         put?: never;
         /**
          * Register Push Token
-         * @description Register or update push notification token.
+         * @description Register or update push notification token with explicit user opt-in consent.
          */
         post: operations["register_push_token_api_v1_notifications_register_push_post"];
         delete?: never;
@@ -6646,9 +6898,54 @@ export interface paths {
         post?: never;
         /**
          * Unregister Push Token
-         * @description Unregister push notification token.
+         * @description Unregister push notification token and promptly stop delivery.
          */
         delete: operations["unregister_push_token_api_v1_notifications_unregister_push_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/offline/batch-sync": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Batch synchronize multiple offline operations
+         * @description Batch synchronize multiple queued offline operations.
+         */
+        post: operations["batch_sync_offline_operations_api_v1_offline_batch_sync_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/offline/sync": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Synchronize offline write operations idempotently
+         * @description Synchronize queued offline actions (inspections, submissions, progression).
+         *
+         *     Guarantees:
+         *     - Reconnection retries never duplicate submissions or award multiple XP.
+         *     - Idempotency key deduplication returns server-authoritative acknowledgment.
+         *     - Conflict resolution preserves teacher-graded assessments.
+         */
+        post: operations["sync_offline_operations_api_v1_offline_sync_post"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -6956,6 +7253,28 @@ export interface paths {
         get: operations["get_quest_detail_api_v1_quests__quest_slug__get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/quests/{quest_slug}/claim": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Claim Quest Reward
+         * @description Explicitly claim rewards for a completed quest with server-side verification.
+         *
+         *     Negative abuse defense: Stale clients or unverified claims are strictly rejected.
+         */
+        post: operations["claim_quest_reward_api_v1_quests__quest_slug__claim_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -9951,6 +10270,25 @@ export interface components {
             /** Password */
             password: string;
         };
+        /** AwardedBadgeDetail */
+        AwardedBadgeDetail: {
+            /** Icon Url */
+            icon_url: string;
+            /** Name */
+            name: string;
+            /** Slug */
+            slug: string;
+            /**
+             * Tier
+             * @default bronze
+             */
+            tier: string;
+            /**
+             * Xp Bonus
+             * @default 0
+             */
+            xp_bonus: number;
+        };
         /** BadgeListItemOut */
         BadgeListItemOut: {
             /** Category */
@@ -10016,6 +10354,26 @@ export interface components {
              * @default 0
              */
             xp_bonus: number;
+        };
+        /** BadgeVerificationIn */
+        BadgeVerificationIn: {
+            /** Badge Slug */
+            badge_slug: string;
+            /** Motif Id */
+            motif_id?: string | null;
+            /** Session Id */
+            session_id?: string | null;
+        };
+        /** BadgeVerificationOut */
+        BadgeVerificationOut: {
+            /** Badge Slug */
+            badge_slug: string;
+            /** Earned At */
+            earned_at?: string | null;
+            /** Is Verified */
+            is_verified: boolean;
+            /** Message */
+            message: string;
         };
         /** Body_live_ai_teacher_stt_api_v1_live_sessions__live_session_id__ai_teacher_stt_post */
         Body_live_ai_teacher_stt_api_v1_live_sessions__live_session_id__ai_teacher_stt_post: {
@@ -11768,6 +12126,44 @@ export interface components {
             /** User Rank */
             user_rank?: number | null;
         };
+        /** EntityCitationBundleOut */
+        EntityCitationBundleOut: {
+            /** Bundle Provenance Hash */
+            bundle_provenance_hash: string;
+            /** Claims */
+            claims?: components["schemas"]["HistoricalClaimCitationOut"][];
+            /**
+             * Entity Id
+             * Format: uuid
+             */
+            entity_id: string;
+            /** Entity Type */
+            entity_type: string;
+            /**
+             * Has Restricted Sources
+             * @default false
+             */
+            has_restricted_sources: boolean;
+            /** Name En */
+            name_en?: string | null;
+            /** Name Han Nom */
+            name_han_nom?: string | null;
+            /** Name Vi */
+            name_vi: string;
+            /** Reading Han Nom */
+            reading_han_nom?: string | null;
+            /** Slug */
+            slug: string;
+            /** Summary En */
+            summary_en?: string | null;
+            /** Summary Vi */
+            summary_vi?: string | null;
+            /**
+             * Total Sources Count
+             * @default 0
+             */
+            total_sources_count: number;
+        };
         /** EthicsProtocolCreate */
         EthicsProtocolCreate: {
             /** Approved By */
@@ -12832,6 +13228,32 @@ export interface components {
          */
         HeritageAccuracyGrade: "survey_grade" | "measured_photogrammetry" | "historian_reviewed" | "illustrative_only" | "unreviewed" | "rejected_accuracy";
         /**
+         * HeritageCatalogRevisionUpdateIn
+         * @description Payload to update an approved catalog revision (editorial/review governance).
+         */
+        HeritageCatalogRevisionUpdateIn: {
+            /** @description Updated evidence status label. */
+            evidence_status?: components["schemas"]["HeritageEvidenceStatus"] | null;
+            /**
+             * Identifier
+             * @description Target urn slug or motif ID/slug.
+             */
+            identifier: string;
+            /** Name En */
+            name_en?: string | null;
+            /** Name Han Nom */
+            name_han_nom?: string | null;
+            /** Name Vi */
+            name_vi?: string | null;
+            /** Reviewer Notes */
+            reviewer_notes?: string | null;
+            /**
+             * Revision
+             * @description Explicit new revision number.
+             */
+            revision?: number | null;
+        };
+        /**
          * HeritageCommercialUseStatus
          * @enum {string}
          */
@@ -13457,6 +13879,46 @@ export interface components {
             thumbnail_url?: string | null;
             /** Width */
             width?: number | null;
+        };
+        /** HistoricalClaimCitationOut */
+        HistoricalClaimCitationOut: {
+            /**
+             * Claim Id
+             * Format: uuid
+             */
+            claim_id: string;
+            /** Claim Type */
+            claim_type: string;
+            /** Epistemic Certainty */
+            epistemic_certainty: string;
+            /** Epistemic Label En */
+            epistemic_label_en: string;
+            /** Epistemic Label Vi */
+            epistemic_label_vi: string;
+            /**
+             * Has Source
+             * @default true
+             */
+            has_source: boolean;
+            /**
+             * Is Disputed
+             * @default false
+             */
+            is_disputed: boolean;
+            /** Name Han Nom */
+            name_han_nom?: string | null;
+            /** Provenance Signature */
+            provenance_signature?: string | null;
+            /** Reading Han Nom */
+            reading_han_nom?: string | null;
+            /** Sources */
+            sources?: components["schemas"]["SourceCitationOut"][];
+            /** Statement En */
+            statement_en?: string | null;
+            /** Statement Vi */
+            statement_vi: string;
+            /** Verification Status */
+            verification_status: string;
         };
         /** HistoricalClaimCreate */
         HistoricalClaimCreate: {
@@ -18783,6 +19245,140 @@ export interface components {
              */
             user_id: string;
         };
+        /** MobilePracticeSubmitIn */
+        MobilePracticeSubmitIn: {
+            /** Answers */
+            answers?: {
+                [key: string]: string;
+            };
+            /** Client Claimed Badges */
+            client_claimed_badges?: string[] | null;
+            /** Client Claimed Score */
+            client_claimed_score?: number | null;
+            /** Lesson Id */
+            lesson_id?: string | null;
+            /** Motif Id */
+            motif_id?: string | null;
+            /** Session Id */
+            session_id?: string | null;
+            /** Time Taken Seconds */
+            time_taken_seconds?: number | null;
+        };
+        /** MobilePracticeSubmitOut */
+        MobilePracticeSubmitOut: {
+            /** Awarded Badges */
+            awarded_badges?: components["schemas"]["AwardedBadgeDetail"][];
+            /** Denied Badges */
+            denied_badges?: string[];
+            /** Details */
+            details?: components["schemas"]["MobileQuestionResultDetail"][];
+            /** Max Score */
+            max_score: number;
+            /** New Status */
+            new_status?: string | null;
+            /** Passed */
+            passed: boolean;
+            /** Percentage */
+            percentage: number;
+            /** Previous Status */
+            previous_status?: string | null;
+            /** Score */
+            score: number;
+            /**
+             * Server Verified
+             * @default true
+             */
+            server_verified: boolean;
+            /** Session Id */
+            session_id?: string | null;
+            /** Success */
+            success: boolean;
+            /** Total Xp */
+            total_xp: number;
+            /** Xp Awarded */
+            xp_awarded: number;
+        };
+        /** MobilePracticeSyncOut */
+        MobilePracticeSyncOut: {
+            /** Assessment Mode */
+            assessment_mode: string;
+            /** Items */
+            items: components["schemas"]["MobileQuizQuestionOut"][];
+            /**
+             * Server Timestamp
+             * Format: date-time
+             */
+            server_timestamp: string;
+            /**
+             * Session Id
+             * Format: uuid
+             */
+            session_id: string;
+            /** Total Questions */
+            total_questions: number;
+        };
+        /** MobileQuestionResultDetail */
+        MobileQuestionResultDetail: {
+            /** Correct */
+            correct: boolean;
+            /** Explanation */
+            explanation?: string | null;
+            /**
+             * Question Id
+             * Format: uuid
+             */
+            question_id: string;
+            /** User Answer */
+            user_answer: string;
+        };
+        /** MobileQuizQuestionOut */
+        MobileQuizQuestionOut: {
+            /**
+             * Content Validation Status
+             * @default valid
+             */
+            content_validation_status: string;
+            /**
+             * Difficulty
+             * @default 1
+             */
+            difficulty: number;
+            /** Hint */
+            hint?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Image Url */
+            image_url?: string | null;
+            /**
+             * Is Verified Content
+             * @default true
+             */
+            is_verified_content: boolean;
+            /** Lesson Id */
+            lesson_id?: string | null;
+            /** Motif Id */
+            motif_id?: string | null;
+            /** Options */
+            options?: unknown[] | null;
+            /**
+             * Points
+             * @default 10
+             */
+            points: number;
+            /** Question Text */
+            question_text: string;
+            /** Question Type */
+            question_type: string;
+            /** Skill Dimensions */
+            skill_dimensions?: string[] | null;
+            /** Skill Type */
+            skill_type?: string | null;
+            /** Target Mesh Name */
+            target_mesh_name?: string | null;
+        };
         /** MotifDetailOut */
         MotifDetailOut: {
             /** Category */
@@ -19104,6 +19700,167 @@ export interface components {
             /** Weekly Digest */
             weekly_digest?: boolean | null;
         };
+        /**
+         * OfflineOperationItem
+         * @description Single queued operation item from mobile or frontend offline queue.
+         */
+        OfflineOperationItem: {
+            /**
+             * Created At
+             * @description Timestamp recorded when action was queued offline
+             */
+            created_at?: string | null;
+            /**
+             * Idempotency Key
+             * @description Client idempotency key for deduplication
+             */
+            idempotency_key?: string | null;
+            /**
+             * Operation Id
+             * @description Unique client-generated operation ID
+             */
+            operation_id: string;
+            /**
+             * Payload
+             * @description Action payload data
+             */
+            payload?: {
+                [key: string]: unknown;
+            };
+            /**
+             * Resource
+             * @description Resource or action type: 'inspection', 'submission', 'progression', 'quiz_submit', 'complete_lesson', 'discover'
+             */
+            resource: string;
+        };
+        /**
+         * OfflineOperationResult
+         * @description Server-authoritative acknowledgment report for an offline operation.
+         */
+        OfflineOperationResult: {
+            /**
+             * Conflict Resolution
+             * @description Explanation of conflict resolution strategy if applicable
+             */
+            conflict_resolution?: string | null;
+            /**
+             * Error
+             * @description Error message if status is 'failed'
+             */
+            error?: string | null;
+            /**
+             * Idempotency Key
+             * @description Echoed idempotency key
+             */
+            idempotency_key?: string | null;
+            /**
+             * Operation Id
+             * @description Matching client operation ID
+             */
+            operation_id: string;
+            /**
+             * Resource
+             * @description Handled resource type
+             */
+            resource: string;
+            /**
+             * Server Ack
+             * @description Detailed server response payload
+             */
+            server_ack?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Status
+             * @description Sync status: 'synced' (created), 'acknowledged' (idempotent duplicate), 'updated' (pending submission updated), 'conflict' (graded or state conflict resolved), 'failed' (validation/error)
+             */
+            status: string;
+            /**
+             * Xp Awarded
+             * @description XP awarded for this action (0 on duplicate retries)
+             * @default 0
+             */
+            xp_awarded: number;
+        };
+        /**
+         * OfflineSyncRequest
+         * @description Offline sync request accepting either a single operation or a batch.
+         */
+        OfflineSyncRequest: {
+            /** Created At */
+            created_at?: string | null;
+            /** Idempotency Key */
+            idempotency_key?: string | null;
+            /** Operation Id */
+            operation_id?: string | null;
+            /** Operations */
+            operations?: components["schemas"]["OfflineOperationItem"][] | null;
+            /** Payload */
+            payload?: {
+                [key: string]: unknown;
+            } | null;
+            /** Resource */
+            resource?: string | null;
+        };
+        /**
+         * OfflineSyncResponse
+         * @description Aggregate response returned after synchronizing offline operations.
+         */
+        OfflineSyncResponse: {
+            /**
+             * Acknowledged Count
+             * @default 0
+             */
+            acknowledged_count: number;
+            /**
+             * Conflict Count
+             * @default 0
+             */
+            conflict_count: number;
+            /** Conflict Resolution */
+            conflict_resolution?: string | null;
+            /** Error */
+            error?: string | null;
+            /**
+             * Failed Count
+             * @default 0
+             */
+            failed_count: number;
+            /** Idempotency Key */
+            idempotency_key?: string | null;
+            /** Operation Id */
+            operation_id?: string | null;
+            /** Resource */
+            resource?: string | null;
+            /** Results */
+            results?: components["schemas"]["OfflineOperationResult"][];
+            /** Server Ack */
+            server_ack?: {
+                [key: string]: unknown;
+            } | null;
+            /** Status */
+            status?: string | null;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+            /**
+             * Synced Count
+             * @default 0
+             */
+            synced_count: number;
+            /**
+             * Total Xp Awarded
+             * @default 0
+             */
+            total_xp_awarded: number;
+            /**
+             * Xp Awarded
+             * @default 0
+             */
+            xp_awarded: number;
+        };
         /** OnboardingCompleteResponse */
         OnboardingCompleteResponse: {
             /** Message */
@@ -19421,6 +20178,47 @@ export interface components {
             urn_slug: string;
         };
         /**
+         * PushConsentIn
+         * @description Push notification consent request schema.
+         */
+        PushConsentIn: {
+            /**
+             * Consent Version
+             * @description Consent policy version
+             * @default v1.0
+             */
+            consent_version: string | null;
+            /**
+             * Granted
+             * @description True to opt-in, False to opt-out
+             */
+            granted: boolean;
+            /**
+             * Platform
+             * @description Platform: ios, android, or web
+             */
+            platform?: string | null;
+            /**
+             * Token
+             * @description Device token if opting in
+             */
+            token?: string | null;
+        };
+        /**
+         * PushConsentOut
+         * @description Push notification consent response schema.
+         */
+        PushConsentOut: {
+            /** Message */
+            message: string;
+            /** Push Enabled */
+            push_enabled: boolean;
+            /** Success */
+            success: boolean;
+            /** Token Registered */
+            token_registered: boolean;
+        };
+        /**
          * PushNotificationListOut
          * @description List of push notifications with pagination.
          */
@@ -19639,6 +20437,32 @@ export interface components {
             issued_at: string;
             /** Issuer Name */
             issuer_name: string;
+        };
+        /** QuestClaimRewardOut */
+        QuestClaimRewardOut: {
+            /** Badges Awarded */
+            badges_awarded: string[];
+            certificate?: components["schemas"]["QuestCertificateOut"] | null;
+            /** Message */
+            message: string;
+            /**
+             * Quest Id
+             * Format: uuid
+             */
+            quest_id: string;
+            /** Quest Name */
+            quest_name: string;
+            /** Quest Slug */
+            quest_slug: string;
+            /** Status */
+            status: string;
+            /**
+             * Streak Freezes Awarded
+             * @default 0
+             */
+            streak_freezes_awarded: number;
+            /** Xp Awarded */
+            xp_awarded: number;
         };
         /** QuestDetailOut */
         QuestDetailOut: {
@@ -22549,6 +23373,58 @@ export interface components {
             total: number;
             /** Users */
             users: components["schemas"]["SocialUserOut"][];
+        };
+        /** SourceCitationOut */
+        SourceCitationOut: {
+            /** Archive Url */
+            archive_url?: string | null;
+            /** Author */
+            author?: string | null;
+            /** Citation Text */
+            citation_text?: string | null;
+            /**
+             * Epistemic Certainty
+             * @default su_lieu_xac_thuc
+             */
+            epistemic_certainty: string;
+            /**
+             * Is Excerpt Redacted
+             * @default false
+             */
+            is_excerpt_redacted: boolean;
+            /** License */
+            license?: string | null;
+            /** Locator */
+            locator: string;
+            /** Provenance Hash */
+            provenance_hash?: string | null;
+            /**
+             * Public Display Allowed
+             * @default true
+             */
+            public_display_allowed: boolean;
+            /** Publication Year */
+            publication_year?: number | null;
+            /** Publisher */
+            publisher?: string | null;
+            /** Quotation Excerpt */
+            quotation_excerpt?: string | null;
+            /** Rights Status */
+            rights_status: string;
+            /**
+             * Source Id
+             * Format: uuid
+             */
+            source_id: string;
+            /** Source Title */
+            source_title: string;
+            /**
+             * Support Type
+             * @default supports
+             */
+            support_type: string;
+            /** Url */
+            url?: string | null;
         };
         /**
          * SpacedRepetitionCardOut
@@ -29746,6 +30622,140 @@ export interface operations {
             };
         };
     };
+    get_heritage_catalog_api_v1_heritage_catalog_get: {
+        parameters: {
+            query?: {
+                /** @description Optional filter by canonical urn slug. */
+                urn_slug?: string | null;
+                /** @description Whether to include 162 motif items. */
+                include_motifs?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_heritage_catalog_motif_api_v1_heritage_catalog_motifs__motif_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                motif_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_heritage_catalog_revision_api_v1_heritage_catalog_revision_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HeritageCatalogRevisionUpdateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_heritage_catalog_urn_api_v1_heritage_catalog__urn_slug__get: {
+        parameters: {
+            query?: {
+                /** @description Whether to include 18 canonical motifs. */
+                include_motifs?: boolean;
+            };
+            header?: never;
+            path: {
+                urn_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_heritage_places_api_v1_heritage_places_get: {
         parameters: {
             query?: {
@@ -30234,6 +31244,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HistoryAssignmentSubmissionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_entity_citations_api_v1_history_citations__slug_or_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug_or_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EntityCitationBundleOut"];
                 };
             };
             /** @description Validation Error */
@@ -30803,6 +31844,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HistoricalRelationOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_entity_citations_api_v1_history_entities__slug_or_id__citations_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug_or_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EntityCitationBundleOut"];
                 };
             };
             /** @description Validation Error */
@@ -31562,6 +32634,40 @@ export interface operations {
             };
         };
     };
+    sync_lesson_quiz_api_v1_history_lessons__lesson_id__quiz_sync_get: {
+        parameters: {
+            query?: {
+                difficulty?: number | null;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                lesson_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MobilePracticeSyncOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     history_map_api_v1_history_map_get: {
         parameters: {
             query?: {
@@ -31581,6 +32687,108 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    submit_mobile_practice_api_v1_history_practice_submit_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MobilePracticeSubmitIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MobilePracticeSubmitOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    sync_mobile_practice_api_v1_history_practice_sync_get: {
+        parameters: {
+            query?: {
+                lesson_id?: string | null;
+                motif_id?: string | null;
+                category?: string | null;
+                difficulty?: number | null;
+                limit?: number;
+                mode?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MobilePracticeSyncOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    verify_badge_claim_api_v1_history_practice_verify_badge_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BadgeVerificationIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadgeVerificationOut"];
                 };
             };
             /** @description Validation Error */
@@ -35499,6 +36707,59 @@ export interface operations {
             };
         };
     };
+    get_push_consent_api_v1_notifications_consent_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PushConsentOut"];
+                };
+            };
+        };
+    };
+    update_push_consent_api_v1_notifications_consent_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PushConsentIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PushConsentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_notification_history_api_v1_notifications_history_get: {
         parameters: {
             query?: {
@@ -35653,6 +36914,78 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PushTokenRegisterOut"];
+                };
+            };
+        };
+    };
+    batch_sync_offline_operations_api_v1_offline_batch_sync_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Idempotency-Key"?: string | null;
+                "Idempotency-Key"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OfflineSyncRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OfflineSyncResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    sync_offline_operations_api_v1_offline_sync_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Idempotency-Key"?: string | null;
+                "Idempotency-Key"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OfflineSyncRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OfflineSyncResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -36070,6 +37403,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["QuestDetailOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    claim_quest_reward_api_v1_quests__quest_slug__claim_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quest_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuestClaimRewardOut"];
                 };
             };
             /** @description Validation Error */

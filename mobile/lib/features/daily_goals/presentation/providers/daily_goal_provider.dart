@@ -3,7 +3,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/storage/hive_storage.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
-import '../../../auth/presentation/providers/auth_state.dart';
 import '../../../gems/presentation/providers/gems_provider.dart';
 import '../../../gems/domain/entities/gem_transaction.dart';
 import '../../domain/entities/daily_goal.dart';

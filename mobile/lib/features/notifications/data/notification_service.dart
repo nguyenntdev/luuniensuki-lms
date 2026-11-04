@@ -65,7 +65,7 @@ class NotificationService {
 
       // Listen for token refresh
       _firebaseMessaging.onTokenRefresh.listen((token) {
-        debugPrint('NotificationService: FCM Token refreshed: $token');
+        debugPrint('NotificationService: FCM Token refreshed: ***MASKED***');
         _fcmToken = token;
         _tokenStreamController.add(token);
       });

@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:luuniensuki_lms/core/services/model_preloader.dart';
 import 'package:luuniensuki_lms/features/urn_viewer/presentation/providers/model_download_provider.dart';
-import 'package:dio/dio.dart';
 
 void main() {
   group('ModelPreloader', () {
@@ -19,16 +18,16 @@ void main() {
 
     test('should generate consistent cache keys', () {
       final url = 'https://example.com/model.glb';
-      final key1 = preloader._getCacheKey(url);
-      final key2 = preloader._getCacheKey(url);
+      final key1 = preloader.getCacheKey(url);
+      final key2 = preloader.getCacheKey(url);
       expect(key1, equals(key2));
     });
 
     test('should format bytes correctly', () {
-      expect(preloader._formatBytes(500), equals('500 B'));
-      expect(preloader._formatBytes(1024), equals('1.0 KB'));
-      expect(preloader._formatBytes(1024 * 1024), equals('1.0 MB'));
-      expect(preloader._formatBytes(1024 * 1024 * 1024), equals('1.0 GB'));
+      expect(preloader.formatBytes(500), equals('500 B'));
+      expect(preloader.formatBytes(1024), equals('1.0 KB'));
+      expect(preloader.formatBytes(1024 * 1024), equals('1.0 MB'));
+      expect(preloader.formatBytes(1024 * 1024 * 1024), equals('1.0 GB'));
     });
   });
 

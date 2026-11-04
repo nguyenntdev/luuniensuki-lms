@@ -1,8 +1,10 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/network/api_client.dart';
+import '../../../../core/storage/hive_storage.dart';
 import '../../domain/entities/urn.dart';
 
 part 'explore_provider.g.dart';
@@ -14,6 +16,9 @@ class ExploreState {
   final String? errorMessage;
   final bool isRefreshing;
   final CollectionStats? collectionStats;
+  final String? etag;
+  final String? catalogVersion;
+  final int? globalRevision;
 
   const ExploreState({
     this.urns = const [],
@@ -21,6 +26,9 @@ class ExploreState {
     this.errorMessage,
     this.isRefreshing = false,
     this.collectionStats,
+    this.etag,
+    this.catalogVersion,
+    this.globalRevision,
   });
 
   ExploreState copyWith({
@@ -29,6 +37,9 @@ class ExploreState {
     String? errorMessage,
     bool? isRefreshing,
     CollectionStats? collectionStats,
+    String? etag,
+    String? catalogVersion,
+    int? globalRevision,
   }) {
     return ExploreState(
       urns: urns ?? this.urns,
@@ -36,6 +47,9 @@ class ExploreState {
       errorMessage: errorMessage,
       isRefreshing: isRefreshing ?? this.isRefreshing,
       collectionStats: collectionStats ?? this.collectionStats,
+      etag: etag ?? this.etag,
+      catalogVersion: catalogVersion ?? this.catalogVersion,
+      globalRevision: globalRevision ?? this.globalRevision,
     );
   }
 
@@ -86,7 +100,7 @@ class ExploreNotifier extends _$ExploreNotifier {
     }
   }
 
-  /// Load all urns from API
+  /// Load all urns from API with canonical catalog metadata and ETag caching
   Future<void> loadUrns() async {
     if (state.isLoading && state.hasData) return;
 
@@ -94,16 +108,87 @@ class ExploreNotifier extends _$ExploreNotifier {
 
     try {
       debugPrint('[EXPLORE] Loading urns from API...');
+      List<Urn> urns = [];
+      String? etag = state.etag;
+      String? catalogVersion = state.catalogVersion;
+      int? globalRevision = state.globalRevision;
 
-      final response = await _apiClient.get<List<dynamic>>(
-        ApiConstants.urns,
-      );
+      // 1. Fetch canonical catalog with metadata parity and ETag
+      try {
+        final catalogRes = await _apiClient.getWithHeaders<Map<String, dynamic>>(
+          ApiConstants.heritageCatalog,
+          options: Options(
+            headers: etag != null ? {'If-None-Match': etag} : null,
+          ),
+        );
 
-      debugPrint('[EXPLORE] Got ${response.length} urns');
+        if (catalogRes.statusCode == 200 && catalogRes.data != null) {
+          final data = catalogRes.data!;
+          catalogVersion = data['catalog_version'] as String?;
+          globalRevision = (data['global_revision'] as num?)?.toInt();
+          etag = catalogRes.headers.value('etag') ?? (data['etag'] as String?);
 
-      final urns = response
-          .map((json) => Urn.fromJson(json as Map<String, dynamic>))
-          .toList();
+          final rawUrns = data['urns'];
+          if (rawUrns is List) {
+            urns = rawUrns
+                .whereType<Map<String, dynamic>>()
+                .map(Urn.fromJson)
+                .toList();
+          }
+        } else if (catalogRes.statusCode == 304) {
+          // Unchanged on server, keep existing urns
+          urns = List.from(state.urns);
+        }
+      } catch (e) {
+        debugPrint('[EXPLORE] Heritage catalog fetch error: $e. Falling back to content API.');
+      }
+
+      // 2. Fetch user progress from /api/v1/urns to overlay learning progress
+      try {
+        final progressResponse = await _apiClient.get<List<dynamic>>(
+          ApiConstants.urns,
+        );
+        final progressMap = <String, Map<String, dynamic>>{};
+        for (final item in progressResponse) {
+          if (item is Map<String, dynamic>) {
+            final slug = item['slug'] as String?;
+            if (slug != null) progressMap[slug] = item;
+          }
+        }
+
+        if (urns.isEmpty) {
+          urns = progressResponse
+              .map((json) => Urn.fromJson(json as Map<String, dynamic>))
+              .toList();
+        } else {
+          // Merge progression into canonical urns
+          urns = urns.map((u) {
+            final p = progressMap[u.slug];
+            if (p != null) {
+              return u.copyWith(
+                discoveredCount: (p['discovered_count'] as num?)?.toInt() ?? u.discoveredCount,
+                learnedCount: (p['learned_count'] as num?)?.toInt() ?? u.learnedCount,
+                masteredCount: (p['mastered_count'] as num?)?.toInt() ?? u.masteredCount,
+                isDemo: (p['is_demo'] as bool?) ?? u.isDemo,
+              );
+            }
+            return u;
+          }).toList();
+        }
+      } catch (e) {
+        debugPrint('[EXPLORE] Urn progress overlay error: $e');
+      }
+
+      // Cache catalog if fetched
+      if (urns.isNotEmpty) {
+        HiveStorage().cacheUrns(urns.map((u) => u.toJson()).toList());
+      } else {
+        // Fall back to cached urns if network returned empty
+        final cached = HiveStorage().getCachedUrns();
+        if (cached != null && cached.isNotEmpty) {
+          urns = cached.map((c) => Urn.fromJson(c)).toList();
+        }
+      }
 
       // Sort by display order
       urns.sort((a, b) => a.displayOrder.compareTo(b.displayOrder));
@@ -132,35 +217,104 @@ class ExploreNotifier extends _$ExploreNotifier {
         isLoading: false,
         isRefreshing: false,
         collectionStats: collectionStats,
+        etag: etag,
+        catalogVersion: catalogVersion,
+        globalRevision: globalRevision,
       );
 
-      debugPrint('[EXPLORE] Urns loaded successfully');
+      debugPrint('[EXPLORE] Urns loaded successfully (etag=$etag, revision=$globalRevision)');
     } catch (e, stackTrace) {
       debugPrint('[EXPLORE] Error loading urns: $e');
       debugPrint('[EXPLORE] StackTrace: $stackTrace');
 
+      List<Urn> fallbackUrns = [];
+      try {
+        final cached = HiveStorage().getCachedUrns();
+        if (cached != null && cached.isNotEmpty) {
+          fallbackUrns = cached.map((c) => Urn.fromJson(c)).toList();
+          fallbackUrns.sort((a, b) => a.displayOrder.compareTo(b.displayOrder));
+        }
+      } catch (cacheErr) {
+        debugPrint('[EXPLORE] Cache retrieval error: $cacheErr');
+      }
+
       state = state.copyWith(
+        urns: fallbackUrns.isNotEmpty ? fallbackUrns : state.urns,
         isLoading: false,
         isRefreshing: false,
-        errorMessage: _getErrorMessage(e),
+        errorMessage: fallbackUrns.isNotEmpty ? null : _getErrorMessage(e),
       );
     }
   }
 
-  /// Refresh urns (pull-to-refresh)
+  /// Refresh urns (pull-to-refresh) with ETag validation & anti-drift protection
   Future<void> refreshUrns() async {
     if (state.isRefreshing) return;
 
     state = state.copyWith(isRefreshing: true, errorMessage: null);
 
     try {
-      final response = await _apiClient.get<List<dynamic>>(
-        ApiConstants.urns,
-      );
+      List<Urn> urns = state.urns;
+      String? etag = state.etag;
+      String? catalogVersion = state.catalogVersion;
+      int? globalRevision = state.globalRevision;
 
-      final urns = response
-          .map((json) => Urn.fromJson(json as Map<String, dynamic>))
-          .toList();
+      try {
+        final catalogRes = await _apiClient.getWithHeaders<Map<String, dynamic>>(
+          ApiConstants.heritageCatalog,
+          options: Options(
+            headers: etag != null ? {'If-None-Match': etag} : null,
+          ),
+        );
+
+        if (catalogRes.statusCode == 200 && catalogRes.data != null) {
+          // Server revision updated! Strictly replace local state with fresh server data (Anti-drift)
+          final data = catalogRes.data!;
+          catalogVersion = data['catalog_version'] as String?;
+          globalRevision = (data['global_revision'] as num?)?.toInt();
+          etag = catalogRes.headers.value('etag') ?? (data['etag'] as String?);
+
+          final rawUrns = data['urns'];
+          if (rawUrns is List) {
+            urns = rawUrns
+                .whereType<Map<String, dynamic>>()
+                .map(Urn.fromJson)
+                .toList();
+          }
+        }
+        // If 304: server approved data is unchanged, keep current urns
+      } catch (e) {
+        debugPrint('[EXPLORE] Refresh catalog error: $e');
+      }
+
+      // Refresh progress from /api/v1/urns
+      try {
+        final progressResponse = await _apiClient.get<List<dynamic>>(
+          ApiConstants.urns,
+        );
+        final progressMap = <String, Map<String, dynamic>>{};
+        for (final item in progressResponse) {
+          if (item is Map<String, dynamic>) {
+            final slug = item['slug'] as String?;
+            if (slug != null) progressMap[slug] = item;
+          }
+        }
+
+        urns = urns.map((u) {
+          final p = progressMap[u.slug];
+          if (p != null) {
+            return u.copyWith(
+              discoveredCount: (p['discovered_count'] as num?)?.toInt() ?? u.discoveredCount,
+              learnedCount: (p['learned_count'] as num?)?.toInt() ?? u.learnedCount,
+              masteredCount: (p['mastered_count'] as num?)?.toInt() ?? u.masteredCount,
+              isDemo: (p['is_demo'] as bool?) ?? u.isDemo,
+            );
+          }
+          return u;
+        }).toList();
+      } catch (e) {
+        debugPrint('[EXPLORE] Refresh progress error: $e');
+      }
 
       urns.sort((a, b) => a.displayOrder.compareTo(b.displayOrder));
 
@@ -186,6 +340,9 @@ class ExploreNotifier extends _$ExploreNotifier {
         urns: urns,
         isRefreshing: false,
         collectionStats: collectionStats,
+        etag: etag,
+        catalogVersion: catalogVersion,
+        globalRevision: globalRevision,
       );
     } catch (e) {
       state = state.copyWith(

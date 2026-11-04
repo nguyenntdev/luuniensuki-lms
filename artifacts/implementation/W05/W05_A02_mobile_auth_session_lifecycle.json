@@ -1,0 +1,83 @@
+{
+  "ticket": "V5-T052",
+  "ticket_id": "V5-T052",
+  "wave": "W05",
+  "slot": "W05-A02",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Mobile authentication + session lifecycle in mobile/lib/ and backend/routers/auth.py.",
+  "timestamp": "2026-11-05T01:30:00Z",
+  "summary": "Implemented hardened mobile authentication and token lifecycle support across FastAPI backend and Flutter mobile client. Added Bearer authorization header and custom header (X-Refresh-Token) support to backend/routers/auth.py refresh and logout endpoints, exposing X-Access-Token and X-Refresh-Token headers alongside httpOnly cookies for mobile clients. Configured hardware-backed FlutterSecureStorage (encryptedSharedPreferences on Android and Keychain accessibility on iOS). Fixed TokenRefreshInterceptor registration in DioProvider so 401 Unauthorized automatically triggers token rotation and request retry. Masked sensitive credentials, tokens, cookies, and auth headers across LoggingInterceptor and NotificationService ensuring zero secret leaks in logs. Implemented full wipe of student session data (tokens, cached user, cookies, learning progress, user badges, quests, and quiz progress) in HiveStorage and AuthLocalDataSource upon logout, token expiration, or refresh failure, eliminating prior student session data leakage. Enforced role-aware navigation in GoRouter with RouterNotifier listening to AuthNotifier, gating guest users from learner-restricted features.",
+  "invariants_enforced": [
+    "MOBILE_BEARER_REFRESH_PARITY: /api/v1/auth/refresh accepts refresh tokens passed via Authorization Bearer header, X-Refresh-Token header, or cookies, returning authoritative user and stats data.",
+    "MOBILE_TOKEN_HEADER_EXPOSURE: POST /api/v1/auth/login, POST /api/v1/auth/register, and POST /api/v1/auth/refresh return X-Access-Token and X-Refresh-Token headers for mobile storage in addition to httpOnly cookies.",
+    "TOKEN_ROTATION_AND_REVOCATION: Presenting a valid refresh token on /api/v1/auth/refresh automatically rotates tokens and revokes the prior token jti. Replaying rotated or logged-out refresh tokens is strictly rejected with HTTP 401.",
+    "ZERO_SECRET_OR_TOKEN_LOGS: LoggingInterceptor and NotificationService strictly mask authorization headers, cookies, set-cookies, x-access-token, x-refresh-token, passwords, tokens, and secrets with '***MASKED***', preventing credential leaks in logs.",
+    "NEGATIVE_ABUSE_ZERO_STUDENT_SESSION_LEAKAGE: Expired tokens, 401 rejections, or refresh failures invoke AuthLocalDataSource.clearAll(), purging secure storage tokens, cached user profile, session cookies, and Hive student data (learning progress, badges, quests, and in-progress quiz answers) so prior student session data cannot leak to subsequent users.",
+    "ROLE_AWARE_NAVIGATION_AND_REACTIVE_REDIRECT: GoRouter connects to Riverpod AuthNotifier via RouterNotifier (refreshListenable). Gated routes prevent guest users (role == 'guest') from accessing learner-only features (collection, practice, learning path, shop, friends, edit profile), redirecting unauthenticated or restricted attempts to login with returnUrl."
+  ],
+  "changes": [
+    {
+      "file": "backend/routers/auth.py",
+      "description": "Added Bearer token and X-Refresh-Token header extraction in refresh_session and logout endpoints. Added X-Access-Token and X-Refresh-Token response headers in register, login, and refresh_session for mobile clients."
+    },
+    {
+      "file": "mobile/lib/core/network/interceptors/logging_interceptor.dart",
+      "description": "Implemented recursive payload and header sanitization replacing sensitive keys (passwords, tokens, cookies, auth headers, secrets) with '***MASKED***' to ensure zero secret leaks in logs."
+    },
+    {
+      "file": "mobile/lib/features/notifications/data/notification_service.dart",
+      "description": "Masked raw FCM token logging upon token refresh."
+    },
+    {
+      "file": "mobile/lib/core/storage/hive_storage.dart",
+      "description": "Enhanced clearUserData() to clear quizProgressBox alongside progress, user profile, user badges, and quests."
+    },
+    {
+      "file": "mobile/lib/features/auth/data/datasources/auth_local_datasource.dart",
+      "description": "Updated clearAll() to await _hiveStorage.clearUserData() in addition to clearTokens(), clearCachedUser(), and clearCookies()."
+    },
+    {
+      "file": "mobile/lib/features/auth/data/datasources/auth_remote_datasource.dart",
+      "description": "Extracted access and refresh tokens from response headers (X-Access-Token, X-Refresh-Token) in login, register, and refreshToken."
+    },
+    {
+      "file": "mobile/lib/features/auth/data/repositories/auth_repository_impl.dart",
+      "description": "Ensured that refresh failure and 401 session expiration invoke _localDataSource.clearAll() to prevent student session data leakage."
+    },
+    {
+      "file": "mobile/lib/core/network/interceptors/token_refresh_interceptor.dart",
+      "description": "Updated TokenRefreshInterceptor to accept onSessionExpired callback, parse tokens from response headers, and clear tokens and session on 401 refresh failure."
+    },
+    {
+      "file": "mobile/lib/core/network/dio_provider.dart",
+      "description": "Wired TokenRefreshInterceptor into dio.interceptors before ErrorInterceptor to enable automated 401 token refresh and request retry."
+    },
+    {
+      "file": "mobile/lib/routing/app_router.dart",
+      "description": "Added RouterNotifier listening to authNotifierProvider for GoRouter refreshListenable, added _isLearnerOnlyRoute guard, and enforced guest user and admin/teacher role-aware redirects."
+    },
+    {
+      "file": "tests/v5/test_v5_t052.py",
+      "description": "Created comprehensive 10-test suite verifying mobile Bearer refresh flow, custom header refresh, token rotation and revocation, role claim integrity, negative abuse on expired/tampered tokens, logging interceptor masking, secure storage options, student data leakage prevention, and role-aware navigation guards."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t052.py -v",
+    "tests_passed": 10,
+    "tests_total": 10,
+    "test_names": [
+      "test_mobile_auth_bearer_refresh_flow",
+      "test_mobile_auth_custom_header_refresh_flow",
+      "test_mobile_auth_token_rotation_and_revocation",
+      "test_mobile_auth_role_claim_integrity",
+      "test_negative_abuse_expired_token_rejection",
+      "test_negative_abuse_tampered_token_rejection",
+      "test_mobile_logging_interceptor_masks_secrets_and_tokens",
+      "test_mobile_secure_storage_and_dio_wiring",
+      "test_mobile_session_lifecycle_prevents_prior_student_data_leakage",
+      "test_mobile_role_aware_router_guards"
+    ]
+  }
+}

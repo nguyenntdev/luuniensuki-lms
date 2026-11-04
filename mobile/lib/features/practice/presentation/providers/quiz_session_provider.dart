@@ -8,6 +8,9 @@ class QuizSessionState {
   final int totalScore;
   final List<String> answeredQuestions;
   final Map<String, bool> answerResults; // questionId -> isCorrect
+  final bool isServerVerified;
+  final String? sessionId;
+  final List<String> serverAwardedBadges;
 
   QuizSessionState({
     required this.questions,
@@ -15,6 +18,9 @@ class QuizSessionState {
     this.totalScore = 0,
     this.answeredQuestions = const [],
     this.answerResults = const {},
+    this.isServerVerified = false,
+    this.sessionId,
+    this.serverAwardedBadges = const [],
   });
 
   QuizSessionState copyWith({
@@ -23,6 +29,9 @@ class QuizSessionState {
     int? totalScore,
     List<String>? answeredQuestions,
     Map<String, bool>? answerResults,
+    bool? isServerVerified,
+    String? sessionId,
+    List<String>? serverAwardedBadges,
   }) {
     return QuizSessionState(
       questions: questions ?? this.questions,
@@ -30,6 +39,9 @@ class QuizSessionState {
       totalScore: totalScore ?? this.totalScore,
       answeredQuestions: answeredQuestions ?? this.answeredQuestions,
       answerResults: answerResults ?? this.answerResults,
+      isServerVerified: isServerVerified ?? this.isServerVerified,
+      sessionId: sessionId ?? this.sessionId,
+      serverAwardedBadges: serverAwardedBadges ?? this.serverAwardedBadges,
     );
   }
 
@@ -50,22 +62,26 @@ class QuizSessionState {
 class QuizSessionNotifier extends StateNotifier<QuizSessionState> {
   QuizSessionNotifier() : super(QuizSessionState(questions: []));
 
-  // Start a new quiz session
-  void startQuiz(List<QuizQuestion> questions) {
-    state = QuizSessionState(questions: questions);
+  // Start a new quiz session with server-verified questions
+  void startQuiz(List<QuizQuestion> questions, {bool isServerVerified = false, String? sessionId}) {
+    state = QuizSessionState(
+      questions: questions,
+      isServerVerified: isServerVerified,
+      sessionId: sessionId,
+    );
   }
 
-  // Start quiz with specific type
+  // Start quiz with specific type (offline fallback; unverified for graded badges)
   void startQuizByType(QuizType type) {
     final questions = MockQuizData.getQuestionsByType(type);
-    startQuiz(questions);
+    startQuiz(questions, isServerVerified: false);
   }
 
-  // Start quiz with all types mixed
+  // Start quiz with all types mixed (offline fallback; unverified for graded badges)
   void startMixedQuiz() {
     final questions = List<QuizQuestion>.from(MockQuizData.mockQuestions)
       ..shuffle();
-    startQuiz(questions);
+    startQuiz(questions, isServerVerified: false);
   }
 
   // Answer current question
@@ -102,6 +118,18 @@ class QuizSessionNotifier extends StateNotifier<QuizSessionState> {
         currentQuestionIndex: state.currentQuestionIndex + 1,
       );
     }
+  }
+
+  // Update state with server-verified grading results and awarded badges
+  void applyServerResults({
+    required int score,
+    required List<String> awardedBadges,
+  }) {
+    state = state.copyWith(
+      totalScore: score,
+      isServerVerified: true,
+      serverAwardedBadges: awardedBadges,
+    );
   }
 
   // Move to previous question

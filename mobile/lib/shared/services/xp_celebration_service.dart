@@ -14,9 +14,7 @@ enum CelebrationLevel {
 
 /// Service for managing XP gain celebrations
 class XpCelebrationService {
-  final Ref? _ref;
-
-  XpCelebrationService._([this._ref]);
+  XpCelebrationService._();
 
   static final instance = XpCelebrationService._();
 
@@ -113,6 +111,22 @@ extension XpCelebrationContext on BuildContext {
   }) {
     XpCelebrationService.instance.showCelebration(
       context: this,
+      xpGained: xpGained,
+      oldTotalXp: oldTotalXp,
+      newTotalXp: newTotalXp,
+      badges: badges,
+      onComplete: onComplete,
+    );
+  }
+
+  void celebrateXpGain({
+    required int xpGained,
+    required int oldTotalXp,
+    required int newTotalXp,
+    List<String>? badges,
+    VoidCallback? onComplete,
+  }) {
+    showXpCelebration(
       xpGained: xpGained,
       oldTotalXp: oldTotalXp,
       newTotalXp: newTotalXp,

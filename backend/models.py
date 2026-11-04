@@ -142,6 +142,8 @@ class NotificationType(str, Enum):
     achievement = "achievement"
     social = "social"
     system = "system"
+    teacher_alert = "teacher_alert"
+    partner_alert = "partner_alert"
 
 
 class NotificationStatus(str, Enum):

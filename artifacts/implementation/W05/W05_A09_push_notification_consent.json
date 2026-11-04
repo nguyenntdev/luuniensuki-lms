@@ -1,0 +1,127 @@
+{
+  "ticket": "V5-T059",
+  "ticket_id": "V5-T059",
+  "wave": "W05",
+  "slot": "W05-A09",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Push notification consent in mobile/lib/features/notifications/ and backend/services/.",
+  "timestamp": "2026-11-05T02:00:00Z",
+  "summary": "Implemented full push notification consent lifecycle across mobile and backend. Delivered explicit opt-in / opt-out consent flow, token registration endpoints, partner and teacher alert routing, and strict zero student PII enforcement in push notification payloads. Enforced negative abuse protections guaranteeing that user opt-out promptly stops notification delivery, revoked tokens cannot receive alerts, and provider invalidations automatically revoke device tokens.",
+  "invariants_enforced": [
+    "EXPLICIT_CONSENT_OPT_IN_OUT: Users can explicitly grant or revoke push notification consent. When consent is revoked, push_enabled is set to False, the token is cleared, and push delivery promptly stops.",
+    "STRICT_ZERO_STUDENT_PII: Push notification title, body, and custom payloads are scanned for email, phone number, and student personal identifier patterns (StudentPIIDetectedError raised if detected).",
+    "TEACHER_ALERT_ROUTING: Classroom assignment events route alerts to teachers using sanitized curriculum descriptors and anonymous student references (zero raw names/emails/phones).",
+    "PARTNER_ALERT_ROUTING: Experience inquiry events route alerts to artisans/partners using experience metadata and opaque inquiry tokens without exposing visitor contact details.",
+    "REVOKED_TOKEN_DEFENSE: Revoked or unassigned tokens cannot receive alerts. Provider-level token invalidations (e.g. UNREGISTERED / NotRegistered) automatically trigger backend token revocation."
+  ],
+  "changes": [
+    {
+      "file": "backend/models.py",
+      "description": "Added teacher_alert and partner_alert to NotificationType enum."
+    },
+    {
+      "file": "backend/schemas.py",
+      "description": "Added PushConsentIn, PushConsentOut schemas; added alias support and platform normalization to PushTokenRegisterIn; updated valid_types in SendPushNotificationIn and BroadcastPushNotificationIn."
+    },
+    {
+      "file": "backend/services/push_notifications.py",
+      "description": "Implemented record_push_consent, revoke_push_token, assert_zero_student_pii, detect_student_pii, route_teacher_alert, route_partner_alert, register_push_sender/reset_push_senders, and auto-revocation on provider invalidation errors."
+    },
+    {
+      "file": "backend/routers/users.py",
+      "description": "Integrated record_push_consent into register_push_token and revoke_push_token into unregister_push_token; added POST /api/v1/notifications/consent and GET /api/v1/notifications/consent endpoints."
+    },
+    {
+      "file": "mobile/lib/features/notifications/data/notification_repository.dart",
+      "description": "Updated endpoint paths to /api/v1/notifications/register-push, unregister-push, consent, settings, and history with platform normalization and typed responses."
+    },
+    {
+      "file": "mobile/lib/features/notifications/presentation/providers/notification_preferences_provider.dart",
+      "description": "Added pushConsentGranted, pushEnabled, teacherAlerts, partnerAlerts to model and implemented togglePushConsent with backend synchronization and unregistration on opt-out."
+    },
+    {
+      "file": "mobile/lib/features/notifications/presentation/widgets/notification_preferences_widget.dart",
+      "description": "Added Master Push Notification Consent Card with explicit opt-in/opt-out switch, privacy assurance badge guaranteeing zero student PII, and toggles for teacher and partner alerts."
+    },
+    {
+      "file": "mobile/lib/features/notifications/presentation/providers/fcm_integration_provider.dart",
+      "description": "Added consent check before registering device token; skips registration if user has opted out."
+    },
+    {
+      "file": "mobile/lib/features/notifications/data/models/notification_type_enum.dart",
+      "description": "Added teacherAlert and partnerAlert to PushNotificationType enum with corresponding icons, colors, and priorities."
+    },
+    {
+      "file": "mobile/lib/features/notifications/domain/entities/notification_item.dart",
+      "description": "Added teacherAlert and partnerAlert to NotificationType enum with corresponding icons and colors."
+    },
+    {
+      "file": "tests/backend/fixtures/openapi_snapshot.json",
+      "description": "Regenerated snapshot reflecting /api/v1/notifications/consent endpoints and PushConsentIn/PushConsentOut schemas."
+    },
+    {
+      "file": "tests/v5/test_v5_t059.py",
+      "description": "Comprehensive test suite covering opt-in/out consent flow, token registration, teacher/partner alert routing, zero student PII enforcement, and negative abuse guardrails."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t059.py -v",
+    "tests_total": 10,
+    "tests_passed": 10,
+    "tests_failed": 0,
+    "test_cases": [
+      {
+        "name": "test_push_consent_opt_in_and_opt_out_lifecycle",
+        "result": "PASSED",
+        "assertion": "Verifies explicit opt-in, query, and opt-out lifecycle with backend token revocation."
+      },
+      {
+        "name": "test_token_registration_and_unregistration_endpoints",
+        "result": "PASSED",
+        "assertion": "Verifies POST register-push and DELETE unregister-push with platform normalization and fcm_token alias."
+      },
+      {
+        "name": "test_teacher_alert_routing_positive",
+        "result": "PASSED",
+        "assertion": "Verifies teacher alert dispatch for assignment submissions with zero student PII."
+      },
+      {
+        "name": "test_teacher_alert_blocks_student_pii_leakage",
+        "result": "PASSED",
+        "assertion": "Negative Abuse: Rejects teacher alert dispatch if student email, phone, or name is passed."
+      },
+      {
+        "name": "test_partner_alert_routing_positive",
+        "result": "PASSED",
+        "assertion": "Verifies partner alert dispatch for visitor inquiries with zero visitor contact details."
+      },
+      {
+        "name": "test_partner_alert_blocks_visitor_contact_leakage",
+        "result": "PASSED",
+        "assertion": "Negative Abuse: Rejects partner alert if visitor phone or email is injected into payload."
+      },
+      {
+        "name": "test_negative_abuse_user_opt_out_promptly_stops_delivery",
+        "result": "PASSED",
+        "assertion": "Negative Abuse: User opt-out promptly stops notification delivery with zero alerts dispatched."
+      },
+      {
+        "name": "test_negative_abuse_revoked_token_cannot_receive_alerts",
+        "result": "PASSED",
+        "assertion": "Negative Abuse: Revoked or missing tokens cannot receive notifications."
+      },
+      {
+        "name": "test_negative_abuse_provider_invalidation_auto_revokes_token",
+        "result": "PASSED",
+        "assertion": "Negative Abuse: Provider token invalidation auto-revokes stored device tokens in DB."
+      },
+      {
+        "name": "test_detect_student_pii_comprehensive",
+        "result": "PASSED",
+        "assertion": "Verifies regex and key scanning across student email, phone number, and metadata."
+      }
+    ]
+  }
+}

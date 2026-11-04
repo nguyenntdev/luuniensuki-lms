@@ -12,6 +12,9 @@ class ApiConstants {
   static const String assetsUrl = '$baseUrl/assets';
   static const String motifsAssetsUrl = '$assetsUrl/motifs';
   static const String modelsAssetsUrl = '$assetsUrl/models';
+  static const String manifestsAssetsUrl = '$modelsAssetsUrl/manifests';
+  static String urnManifest(String slug) => '$manifestsAssetsUrl/$slug.json';
+  static const String urnManifestIndex = '$manifestsAssetsUrl/index.json';
 
   // Timeouts
   static const Duration connectTimeout = Duration(seconds: 30);
@@ -33,6 +36,12 @@ class ApiConstants {
   static String motifQuiz(String id) => '$apiPath/motifs/$id/quiz';
   static String motifQuizSubmit(String id) => '$apiPath/motifs/$id/quiz/submit';
 
+  // Practice & Assessment Endpoints (V5-T057)
+  static const String practiceSync = '$apiPath/history/practice/sync';
+  static const String practiceSubmit = '$apiPath/history/practice/submit';
+  static const String practiceVerifyBadge = '$apiPath/history/practice/verify-badge';
+  static String lessonQuizSync(String lessonId) => '$apiPath/history/lessons/$lessonId/quiz-sync';
+
   // Progress Endpoints
   static const String progressUnlock = '$apiPath/progress/unlock';
   static const String progressCompleteLesson =
@@ -42,6 +51,10 @@ class ApiConstants {
   static const String badges = '$apiPath/badges';
   static const String leaderboard = '$apiPath/leaderboard';
   static const String quests = '$apiPath/quests';
+  static String questDetail(String slug) => '$apiPath/quests/$slug';
+  static String questStart(String slug) => '$apiPath/quests/$slug/start';
+  static String questClaim(String slug) => '$apiPath/quests/$slug/claim';
+  static const String questSummary = '$apiPath/users/me/quest-summary';
   static const String userBadges = '$apiPath/users/me/badges';
   static const String userQuests = '$apiPath/users/me/quests';
 
@@ -73,12 +86,18 @@ class ApiConstants {
   // Health Check
   static const String health = '/health';
 
+  // Heritage Knowledge Catalogue Endpoints (V5-T053)
+  static const String heritageCatalog = '$apiPath/heritage/catalog';
+  static String heritageCatalogUrn(String slug) => '$apiPath/heritage/catalog/$slug';
+  static String heritageCatalogMotif(String id) => '$apiPath/heritage/catalog/motifs/$id';
+
   // Public endpoints that don't require authentication
   static const List<String> publicEndpoints = [
     login,
     register,
     refreshToken,
     health,
+    heritageCatalog,
   ];
 
   /// Check if a path is a public endpoint that doesn't require auth

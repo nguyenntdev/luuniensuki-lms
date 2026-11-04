@@ -1,14 +1,12 @@
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
-import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../constants/api_constants.dart';
 import '../errors/exceptions.dart';
 import '../storage/secure_storage.dart';
 import 'interceptors/auth_interceptor.dart';
-import 'interceptors/error_interceptor.dart';
 import 'interceptors/logging_interceptor.dart';
 
 part 'api_client.g.dart';
@@ -41,6 +39,38 @@ class ApiClient {
         cancelToken: cancelToken,
       );
       return _handleResponse<T>(response, parser);
+    } on DioException catch (e) {
+      throw _extractException(e);
+    }
+  }
+
+  /// GET request returning both data, headers, and status code (for ETag conditional caching)
+  Future<({T? data, Headers headers, int? statusCode})> getWithHeaders<T>(
+    String path, {
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    T Function(dynamic json)? parser,
+  }) async {
+    try {
+      final requestOptions = (options ?? Options()).copyWith(
+        validateStatus: (status) =>
+            status != null && ((status >= 200 && status < 300) || status == 304),
+      );
+      final response = await _dio.get<dynamic>(
+        path,
+        queryParameters: queryParameters,
+        options: requestOptions,
+        cancelToken: cancelToken,
+      );
+      final parsedData = response.statusCode == 304
+          ? null
+          : _handleResponse<T>(response, parser);
+      return (
+        data: parsedData,
+        headers: response.headers,
+        statusCode: response.statusCode,
+      );
     } on DioException catch (e) {
       throw _extractException(e);
     }

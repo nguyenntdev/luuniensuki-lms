@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/glass/animated_background.dart';
-import '../../../../shared/widgets/glass/glass_container.dart';
 import '../providers/friends_provider.dart';
 import '../widgets/friend_card.dart';
 import '../widgets/friend_request_card.dart';

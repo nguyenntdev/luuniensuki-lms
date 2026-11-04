@@ -47,21 +47,32 @@ class Urn extends Equatable {
   /// Check if any motifs have been discovered
   bool get hasProgress => discoveredCount > 0 || learnedCount > 0 || masteredCount > 0;
 
-  /// Get the effective model URL - uses remote URL for reliable loading
+  /// Check if this urn has an official published 3D mesh (Cao Đỉnh only)
+  bool get has3dMesh => slug == 'cao-dinh';
+
+  /// Get the effective model URL - only available for urns with verified 3D meshes.
+  /// Missing meshes return empty string so the viewer degrades cleanly to 2D rubbing.
   String get effectiveModelUrl {
-    // Use remote URL since local assets have path issues with model_viewer_plus
-    // The remote server has all 9 urn models available
-    return remoteModelUrl;
+    return remoteModelUrl ?? '';
   }
 
-  /// Get the remote model URL as fallback
-  String get remoteModelUrl {
+  /// Get the remote model URL if 3D mesh is present.
+  /// Anti-abuse: Missing meshes strictly return null to prevent phantom 3D requests.
+  String? get remoteModelUrl {
+    if (!has3dMesh) {
+      return null;
+    }
     final normalized = UrlUtils.toFullUrl(modelUrl);
     if (normalized != null && normalized.isNotEmpty) {
       return normalized;
     }
-    // Fallback to constructed URL
-    return '${ApiConstants.modelsAssetsUrl}/${slug.toUpperCase()}-v1.glb';
+    return '${ApiConstants.modelsAssetsUrl}/CAO-DINH-v1.glb';
+  }
+
+  /// Get 2D rubbing fallback URL from verified ban-duc-noi archival archive
+  String get fallbackRubbingUrl {
+    final folderName = slug.toUpperCase().replaceAll('-', ' ');
+    return '${ApiConstants.assetsUrl}/ban-duc-noi/$folderName/$name.jpg';
   }
 
   Urn copyWith({
@@ -283,6 +294,8 @@ enum MotifCategory {
   final String nameVi;
   final String nameEn;
 
+  String get name => toString().split('.').last;
+
   const MotifCategory(this.value, this.nameVi, this.nameEn);
 
   static MotifCategory fromString(String value) {
@@ -305,6 +318,8 @@ enum MotifRarity {
   final String nameVi;
   final String nameEn;
 
+  String get name => toString().split('.').last;
+
   const MotifRarity(this.value, this.nameVi, this.nameEn);
 
   static MotifRarity fromString(String value) {
@@ -323,6 +338,8 @@ enum MotifStatus {
   mastered('mastered');
 
   final String value;
+
+  String get name => toString().split('.').last;
 
   const MotifStatus(this.value);
 

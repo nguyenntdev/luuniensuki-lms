@@ -1,0 +1,880 @@
+{
+  "urn_slug": "chuong-dinh",
+  "model_version": 1,
+  "hotspot_version": 1,
+  "lods": {
+    "low": {
+      "url": "/assets/models/CHUONG-DINH-v1-512.glb",
+      "fallback_url": null,
+      "sha256": null,
+      "bytes": 0,
+      "status": "MISSING"
+    },
+    "medium": {
+      "url": "/assets/models/CHUONG-DINH-v1-1k.glb",
+      "fallback_url": null,
+      "sha256": null,
+      "bytes": 0,
+      "status": "MISSING"
+    },
+    "high": {
+      "url": "/assets/models/CHUONG-DINH-v1-2k.glb",
+      "fallback_url": null,
+      "sha256": null,
+      "bytes": 0,
+      "status": "MISSING"
+    }
+  },
+  "hotspots": [
+    {
+      "hotspot_id": "chuong-dinh-ngu-tinh",
+      "urn_slug": "chuong-dinh",
+      "relief_slug": "ngu-tinh",
+      "relief_name": "Ngũ Tinh",
+      "mesh_name": "Ngũ Tinh",
+      "pos": [
+        0.2976,
+        0.7598,
+        1.1108
+      ],
+      "camera_position": [
+        0.6859,
+        0.9598,
+        2.5597
+      ],
+      "camera_target": [
+        0.2976,
+        0.7598,
+        1.1108
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_chuong_dinh_10_v1",
+      "motif_id": "urn_chuong_dinh_10",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/CHUONG%20DINH/M%E1%BB%98C%20TINH%20-%20HO%E1%BA%A2%20TINH%20-%20TH%E1%BB%94%20TINH%20-%20KIM%20TINH%20-%20THU%E1%BB%B6%20TINH.jpg",
+        "disk_path": "ban-duc-noi/CHUONG DINH/MỘC TINH - HOẢ TINH - THỔ TINH - KIM TINH - THUỶ TINH.jpg",
+        "exists": true,
+        "bytes": 9120,
+        "sha256": "80b239c89d1c4c88cb7f19ada28e6d6cbccde32d7160d85952b734fb2acdaa6b",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
+    },
+    {
+      "hotspot_id": "chuong-dinh-ngac-ngu",
+      "urn_slug": "chuong-dinh",
+      "relief_slug": "ngac-ngu",
+      "relief_name": "Ngạc Ngư",
+      "mesh_name": "Ngạc Ngư",
+      "pos": [
+        1.1108,
+        0.7598,
+        0.2976
+      ],
+      "camera_position": [
+        2.5597,
+        0.9598,
+        0.6859
+      ],
+      "camera_target": [
+        1.1108,
+        0.7598,
+        0.2976
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_chuong_dinh_14_v1",
+      "motif_id": "urn_chuong_dinh_14",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/CHUONG%20DINH/NG%E1%BA%A0C%20NG%C6%AF.jpg",
+        "disk_path": "ban-duc-noi/CHUONG DINH/NGẠC NGƯ.jpg",
+        "exists": true,
+        "bytes": 11514,
+        "sha256": "d1ff6173189ce76046e1c6a583788867d1473abf30b19f3e022c2d31f9c2f589",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
+    },
+    {
+      "hotspot_id": "chuong-dinh-mong-dong-thuyen",
+      "urn_slug": "chuong-dinh",
+      "relief_slug": "mong-dong-thuyen",
+      "relief_name": "Mông Đồng Thuyền",
+      "mesh_name": "Mông Đồng Thuyền",
+      "pos": [
+        0.8132,
+        0.7598,
+        -0.8132
+      ],
+      "camera_position": [
+        1.8738,
+        0.9598,
+        -1.8738
+      ],
+      "camera_target": [
+        0.8132,
+        0.7598,
+        -0.8132
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_chuong_dinh_15_v1",
+      "motif_id": "urn_chuong_dinh_15",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/CHUONG%20DINH/M%C3%94NG%20%C4%90%E1%BB%92NG%20THUY%E1%BB%80N.jpg",
+        "disk_path": "ban-duc-noi/CHUONG DINH/MÔNG ĐỒNG THUYỀN.jpg",
+        "exists": true,
+        "bytes": 12061,
+        "sha256": "5c4743c77d63497467d2989c3cb435662de4fbbd45b2f0486e136e29d1b6b768",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
+    },
+    {
+      "hotspot_id": "chuong-dinh-dieu-thuong",
+      "urn_slug": "chuong-dinh",
+      "relief_slug": "dieu-thuong",
+      "relief_name": "Điểu Thương",
+      "mesh_name": "Điểu Thương",
+      "pos": [
+        -0.2976,
+        0.7598,
+        -1.1108
+      ],
+      "camera_position": [
+        -0.6859,
+        0.9598,
+        -2.5597
+      ],
+      "camera_target": [
+        -0.2976,
+        0.7598,
+        -1.1108
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_chuong_dinh_16_v1",
+      "motif_id": "urn_chuong_dinh_16",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/CHUONG%20DINH/%C4%90I%E1%BB%82U%20TH%C6%AF%C6%A0NG.jpg",
+        "disk_path": "ban-duc-noi/CHUONG DINH/ĐIỂU THƯƠNG.jpg",
+        "exists": true,
+        "bytes": 8051,
+        "sha256": "5fa26215dd95eadbf69233e11d5289376dc46a7a6598e397cb603ff7f2d33dca",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
+    },
+    {
+      "hotspot_id": "chuong-dinh-te",
+      "urn_slug": "chuong-dinh",
+      "relief_slug": "te",
+      "relief_name": "Tê",
+      "mesh_name": "Tê",
+      "pos": [
+        -1.1108,
+        0.7598,
+        -0.2976
+      ],
+      "camera_position": [
+        -2.5597,
+        0.9598,
+        -0.6859
+      ],
+      "camera_target": [
+        -1.1108,
+        0.7598,
+        -0.2976
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_chuong_dinh_17_v1",
+      "motif_id": "urn_chuong_dinh_17",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/CHUONG%20DINH/T%C3%8A.jpg",
+        "disk_path": "ban-duc-noi/CHUONG DINH/TÊ.jpg",
+        "exists": true,
+        "bytes": 9973,
+        "sha256": "784d878c65390ae569f341b7f6e969b8f217aea7115a6daeb03a1de6cd82fec6",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
+    },
+    {
+      "hotspot_id": "chuong-dinh-linh-quy",
+      "urn_slug": "chuong-dinh",
+      "relief_slug": "linh-quy",
+      "relief_name": "Linh Quy",
+      "mesh_name": "Linh Quy",
+      "pos": [
+        -0.8132,
+        0.7598,
+        0.8132
+      ],
+      "camera_position": [
+        -1.8738,
+        0.9598,
+        1.8738
+      ],
+      "camera_target": [
+        -0.8132,
+        0.7598,
+        0.8132
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_chuong_dinh_18_v1",
+      "motif_id": "urn_chuong_dinh_18",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/CHUONG%20DINH/LINH%20QUY.jpg",
+        "disk_path": "ban-duc-noi/CHUONG DINH/LINH QUY.jpg",
+        "exists": true,
+        "bytes": 11768,
+        "sha256": "dfca9c51d400ce934969b06bb7b5405a9619e39347ad8ecfe55359ed59666b76",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
+    },
+    {
+      "hotspot_id": "chuong-dinh-chuong-dinh",
+      "urn_slug": "chuong-dinh",
+      "relief_slug": "chuong-dinh",
+      "relief_name": "Chương Đỉnh",
+      "mesh_name": "Chương Đỉnh",
+      "pos": [
+        0.0,
+        0.5,
+        1.15
+      ],
+      "camera_position": [
+        0.0,
+        0.7,
+        2.65
+      ],
+      "camera_target": [
+        0.0,
+        0.5,
+        1.15
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_chuong_dinh_01_v1",
+      "motif_id": "urn_chuong_dinh_01",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/CHUONG%20DINH/CH%C6%AF%C6%A0NG%20%C4%90%E1%BB%88NH.jpg",
+        "disk_path": "ban-duc-noi/CHUONG DINH/CHƯƠNG ĐỈNH.jpg",
+        "exists": true,
+        "bytes": 8706,
+        "sha256": "50b47cce23604aa2af4f22274d702997f3101a43f5ac09c6e144f16b412c50f7",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
+    },
+    {
+      "hotspot_id": "chuong-dinh-thuong-son",
+      "urn_slug": "chuong-dinh",
+      "relief_slug": "thuong-son",
+      "relief_name": "Thượng Sơn",
+      "mesh_name": "Thượng Sơn",
+      "pos": [
+        0.9959,
+        0.5,
+        0.575
+      ],
+      "camera_position": [
+        2.295,
+        0.7,
+        1.325
+      ],
+      "camera_target": [
+        0.9959,
+        0.5,
+        0.575
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_chuong_dinh_08_v1",
+      "motif_id": "urn_chuong_dinh_08",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/CHUONG%20DINH/TH%C6%AF%E1%BB%A2NG%20S%C6%A0N.jpg",
+        "disk_path": "ban-duc-noi/CHUONG DINH/THƯỢNG SƠN.jpg",
+        "exists": true,
+        "bytes": 6828,
+        "sha256": "c596231990991e9c52b1926cb8173af039aafeb6bbdb0aab7bd5b884b811b695",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
+    },
+    {
+      "hotspot_id": "chuong-dinh-loi-nong-ha",
+      "urn_slug": "chuong-dinh",
+      "relief_slug": "loi-nong-ha",
+      "relief_name": "Lợi Nông Hà",
+      "mesh_name": "Lợi Nông Hà",
+      "pos": [
+        0.9959,
+        0.5,
+        -0.575
+      ],
+      "camera_position": [
+        2.295,
+        0.7,
+        -1.325
+      ],
+      "camera_target": [
+        0.9959,
+        0.5,
+        -0.575
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_chuong_dinh_09_v1",
+      "motif_id": "urn_chuong_dinh_09",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/CHUONG%20DINH/L%E1%BB%A2I%20N%C3%94NG%20H%C3%80.jpg",
+        "disk_path": "ban-duc-noi/CHUONG DINH/LỢI NÔNG HÀ.jpg",
+        "exists": true,
+        "bytes": 7403,
+        "sha256": "0b41ab3b30a6c63c7e825271eb35fdf88dff8538c9ead4e0d2cb5ba79462e505",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
+    },
+    {
+      "hotspot_id": "chuong-dinh-linh-giang",
+      "urn_slug": "chuong-dinh",
+      "relief_slug": "linh-giang",
+      "relief_name": "Linh Giang",
+      "mesh_name": "Linh Giang",
+      "pos": [
+        0.0,
+        0.5,
+        -1.15
+      ],
+      "camera_position": [
+        0.0,
+        0.7,
+        -2.65
+      ],
+      "camera_target": [
+        0.0,
+        0.5,
+        -1.15
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_chuong_dinh_11_v1",
+      "motif_id": "urn_chuong_dinh_11",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/CHUONG%20DINH/LINH%20GIANG.jpg",
+        "disk_path": "ban-duc-noi/CHUONG DINH/LINH GIANG.jpg",
+        "exists": true,
+        "bytes": 10132,
+        "sha256": "cc51da9a526c2f2da693db731774091fd6d29d2d22f62947ccad7304369cce0c",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
+    },
+    {
+      "hotspot_id": "chuong-dinh-tay-hai",
+      "urn_slug": "chuong-dinh",
+      "relief_slug": "tay-hai",
+      "relief_name": "Tây Hải",
+      "mesh_name": "Tây Hải",
+      "pos": [
+        -0.9959,
+        0.5,
+        -0.575
+      ],
+      "camera_position": [
+        -2.295,
+        0.7,
+        -1.325
+      ],
+      "camera_target": [
+        -0.9959,
+        0.5,
+        -0.575
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_chuong_dinh_12_v1",
+      "motif_id": "urn_chuong_dinh_12",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/CHUONG%20DINH/T%C3%82Y%20H%E1%BA%A2I.jpg",
+        "disk_path": "ban-duc-noi/CHUONG DINH/TÂY HẢI.jpg",
+        "exists": true,
+        "bytes": 7788,
+        "sha256": "4183b3956e589458ac564fec807d05a86fe161322a2d1fcf36d94bd8ff165b0e",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
+    },
+    {
+      "hotspot_id": "chuong-dinh-thuan-moc",
+      "urn_slug": "chuong-dinh",
+      "relief_slug": "thuan-moc",
+      "relief_name": "Thuận Mộc",
+      "mesh_name": "Thuận Mộc",
+      "pos": [
+        -0.9959,
+        0.5,
+        0.575
+      ],
+      "camera_position": [
+        -2.295,
+        0.7,
+        1.325
+      ],
+      "camera_target": [
+        -0.9959,
+        0.5,
+        0.575
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_chuong_dinh_13_v1",
+      "motif_id": "urn_chuong_dinh_13",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/CHUONG%20DINH/THU%E1%BA%ACN%20M%E1%BB%98C.jpg",
+        "disk_path": "ban-duc-noi/CHUONG DINH/THUẬN MỘC.jpg",
+        "exists": true,
+        "bytes": 11095,
+        "sha256": "7220fe80fc4dcccb53781fff5ae3977fb3ff1a9ba5b346709bbaf86ae3e4c5e5",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
+    },
+    {
+      "hotspot_id": "chuong-dinh-mat-li",
+      "urn_slug": "chuong-dinh",
+      "relief_slug": "mat-li",
+      "relief_name": "Mạt Lị",
+      "mesh_name": "Mạt Lị",
+      "pos": [
+        -0.2976,
+        0.2402,
+        1.1108
+      ],
+      "camera_position": [
+        -0.6859,
+        0.4402,
+        2.5597
+      ],
+      "camera_target": [
+        -0.2976,
+        0.2402,
+        1.1108
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_chuong_dinh_02_v1",
+      "motif_id": "urn_chuong_dinh_02",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/CHUONG%20DINH/M%E1%BA%A0T%20LI.jpg",
+        "disk_path": "ban-duc-noi/CHUONG DINH/MẠT LI.jpg",
+        "exists": true,
+        "bytes": 8802,
+        "sha256": "461669b9bbeff3969a593abbcdafc22c0f2779fba0321b46875953e3050f0563",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
+    },
+    {
+      "hotspot_id": "chuong-dinh-am-la",
+      "urn_slug": "chuong-dinh",
+      "relief_slug": "am-la",
+      "relief_name": "Am La",
+      "mesh_name": "Am La",
+      "pos": [
+        0.8132,
+        0.2402,
+        0.8132
+      ],
+      "camera_position": [
+        1.8738,
+        0.4402,
+        1.8738
+      ],
+      "camera_target": [
+        0.8132,
+        0.2402,
+        0.8132
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_chuong_dinh_03_v1",
+      "motif_id": "urn_chuong_dinh_03",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/CHUONG%20DINH/AM%20LA.jpg",
+        "disk_path": "ban-duc-noi/CHUONG DINH/AM LA.jpg",
+        "exists": true,
+        "bytes": 5972,
+        "sha256": "c06cfaed9134bc3dcb0bcb752bbdddfcd745354ef6b232a54f9a9c23db34d4d2",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
+    },
+    {
+      "hotspot_id": "chuong-dinh-dau-khau",
+      "urn_slug": "chuong-dinh",
+      "relief_slug": "dau-khau",
+      "relief_name": "Đậu Khấu",
+      "mesh_name": "Đậu Khấu",
+      "pos": [
+        1.1108,
+        0.2402,
+        -0.2976
+      ],
+      "camera_position": [
+        2.5597,
+        0.4402,
+        -0.6859
+      ],
+      "camera_target": [
+        1.1108,
+        0.2402,
+        -0.2976
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_chuong_dinh_04_v1",
+      "motif_id": "urn_chuong_dinh_04",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/CHUONG%20DINH/%C4%90%E1%BA%ACU%20KH%E1%BA%A4U.jpg",
+        "disk_path": "ban-duc-noi/CHUONG DINH/ĐẬU KHẤU.jpg",
+        "exists": true,
+        "bytes": 7530,
+        "sha256": "bc5216950cf62b5b9eb2b01e658045485fb511c931f4098237d18882dd0e5e42",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
+    },
+    {
+      "hotspot_id": "chuong-dinh-luc-dau",
+      "urn_slug": "chuong-dinh",
+      "relief_slug": "luc-dau",
+      "relief_name": "Lục Đậu",
+      "mesh_name": "Lục Đậu",
+      "pos": [
+        0.2976,
+        0.2402,
+        -1.1108
+      ],
+      "camera_position": [
+        0.6859,
+        0.4402,
+        -2.5597
+      ],
+      "camera_target": [
+        0.2976,
+        0.2402,
+        -1.1108
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_chuong_dinh_05_v1",
+      "motif_id": "urn_chuong_dinh_05",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/CHUONG%20DINH/L%E1%BB%A4C%20%C4%90%E1%BA%ACU.jpg",
+        "disk_path": "ban-duc-noi/CHUONG DINH/LỤC ĐẬU.jpg",
+        "exists": true,
+        "bytes": 7452,
+        "sha256": "2bcbb17163267cfc895fd19119865738b659dcf93fadc6d9e6adfc28595319df",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
+    },
+    {
+      "hotspot_id": "chuong-dinh-gioi",
+      "urn_slug": "chuong-dinh",
+      "relief_slug": "gioi",
+      "relief_name": "Giới",
+      "mesh_name": "Giới",
+      "pos": [
+        -0.8132,
+        0.2402,
+        -0.8132
+      ],
+      "camera_position": [
+        -1.8738,
+        0.4402,
+        -1.8738
+      ],
+      "camera_target": [
+        -0.8132,
+        0.2402,
+        -0.8132
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_chuong_dinh_06_v1",
+      "motif_id": "urn_chuong_dinh_06",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/CHUONG%20DINH/GI%E1%BB%9AI.jpg",
+        "disk_path": "ban-duc-noi/CHUONG DINH/GIỚI.jpg",
+        "exists": true,
+        "bytes": 8618,
+        "sha256": "36061f1d151d75d00aeb162b1c69a131bfe1d643da9df1587b3a2540ecde723e",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
+    },
+    {
+      "hotspot_id": "chuong-dinh-ke",
+      "urn_slug": "chuong-dinh",
+      "relief_slug": "ke",
+      "relief_name": "Kê",
+      "mesh_name": "Kê",
+      "pos": [
+        -1.1108,
+        0.2402,
+        0.2976
+      ],
+      "camera_position": [
+        -2.5597,
+        0.4402,
+        0.6859
+      ],
+      "camera_target": [
+        -1.1108,
+        0.2402,
+        0.2976
+      ],
+      "bounding_radius": 0.08,
+      "coordinate_version": 1,
+      "model_version": 1,
+      "model_url": null,
+      "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+      "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      "license": "CC BY 4.0 / Educational Fair Use",
+      "rights_status": "cleared",
+      "public_distribution_allowed": true,
+      "public_display_allowed": true,
+      "3d_mesh_id": "mesh_urn_chuong_dinh_07_v1",
+      "motif_id": "urn_chuong_dinh_07",
+      "fallback_2d": {
+        "thumbnail_url": "/assets/ban-duc-noi/CHUONG%20DINH/K%C3%8A.jpg",
+        "disk_path": "ban-duc-noi/CHUONG DINH/KÊ.jpg",
+        "exists": true,
+        "bytes": 8135,
+        "sha256": "87f65ca6108ac3c3a3bdcca32df2cc969c3a83a1534293ad4fcef88615613d95",
+        "format": "image/jpeg",
+        "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+        "legal_basis": "Public Domain (1835-1837 Imperial bronze relief) / Educational Fair Use"
+      }
+    }
+  ],
+  "mesh_status": "MISSING",
+  "has_2d_fallback": true,
+  "fallback_2d_url": "/assets/ban-duc-noi/CHUONG%20DINH/CH%C6%AF%C6%A0NG%20%C4%90%E1%BB%88NH.jpg",
+  "creator": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+  "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+  "license": "CC BY 4.0 / Educational Fair Use",
+  "rights_status": "cleared",
+  "public_distribution_allowed": true,
+  "public_display_allowed": true,
+  "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Histolab",
+  "checksum": "50b47cce23604aa2af4f22274d702997f3101a43f5ac09c6e144f16b412c50f7",
+  "viewer_fallback": {
+    "type": "2d_rubbing",
+    "component": "UrnAccessibleFallback",
+    "asset_url": "/assets/ban-duc-noi/CHUONG%20DINH/CH%C6%AF%C6%A0NG%20%C4%90%E1%BB%88NH.jpg",
+    "disk_path": "ban-duc-noi/CHUONG DINH/CHƯƠNG ĐỈNH.jpg",
+    "format": "image/jpeg",
+    "bytes": 8706,
+    "sha256": "50b47cce23604aa2af4f22274d702997f3101a43f5ac09c6e144f16b412c50f7",
+    "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+    "legal_basis": "Public Domain (1835-1837 Imperial relic) / Academic Educational Fair Use"
+  },
+  "fallback_2d": {
+    "asset_url": "/assets/ban-duc-noi/CHUONG%20DINH/CH%C6%AF%C6%A0NG%20%C4%90%E1%BB%88NH.jpg",
+    "disk_path": "ban-duc-noi/CHUONG DINH/CHƯƠNG ĐỈNH.jpg",
+    "format": "image/jpeg",
+    "bytes": 8706,
+    "sha256": "50b47cce23604aa2af4f22274d702997f3101a43f5ac09c6e144f16b412c50f7",
+    "rights_attribution": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+    "legal_basis": "Public Domain (1835-1837 Imperial relic) / Academic Educational Fair Use"
+  },
+  "offline_licensing_allowed": true,
+  "offline_license_type": "CC BY 4.0 / Educational Fair Use",
+  "cache_policy": {
+    "cache_control": "public, max-age=31536000, immutable",
+    "content_hash_type": "sha256",
+    "offline_licensing_allowed": true,
+    "offline_cache_ttl_days": 30,
+    "stale_while_revalidate_seconds": 86400
+  }
+}

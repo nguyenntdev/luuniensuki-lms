@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/images/resilient_cached_network_image.dart';
 import '../../domain/entities/urn.dart';
+import 'source_citation_sheet.dart';
 
 /// Sidebar widget that displays motif details and actions.
 class MotifSidebar extends ConsumerWidget {
@@ -110,6 +111,29 @@ class MotifSidebar extends ConsumerWidget {
                           style: theme.textTheme.bodyMedium,
                         ),
                       ],
+
+                      const SizedBox(height: 20),
+
+                      // Historical Source Citations & Evidence Button
+                      OutlinedButton.icon(
+                        onPressed: () {
+                          SourceCitationSheet.show(
+                            context,
+                            slugOrId: motif.meshName.isNotEmpty ? motif.meshName : motif.id,
+                            title: motif.name,
+                          );
+                        },
+                        icon: const Icon(Icons.menu_book_rounded, size: 18),
+                        label: const Text('Tra cứu nguồn sử liệu gốc'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColors.primary,
+                          side: BorderSide(color: AppColors.primary.withOpacity(0.5)),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),

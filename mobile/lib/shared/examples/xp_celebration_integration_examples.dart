@@ -4,8 +4,60 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../shared/services/xp_celebration_service.dart';
-import '../../../auth/presentation/providers/auth_provider.dart';
+import '../services/xp_celebration_service.dart';
+import '../../features/auth/presentation/providers/auth_provider.dart';
+
+class BadgeItem {
+  final String slug;
+  const BadgeItem(this.slug);
+}
+
+class QuizResultDto {
+  final bool passed;
+  final int xpEarned;
+  final int totalXp;
+  final int percentage;
+  final List<BadgeItem> newBadges;
+  const QuizResultDto({
+    this.passed = true,
+    this.xpEarned = 50,
+    this.totalXp = 200,
+    this.percentage = 90,
+    this.newBadges = const [],
+  });
+}
+
+class ActionResult {
+  final int xpEarned;
+  final int totalXp;
+  final List<String> badges;
+  final List<String> badgesEarned;
+  const ActionResult({
+    this.xpEarned = 25,
+    this.totalXp = 225,
+    this.badges = const [],
+    this.badgesEarned = const [],
+  });
+}
+
+class _QuizSubmissionNotifier {
+  Future<QuizResultDto?> submitQuiz({
+    required String motifId,
+    required Map<String, String> answers,
+    required int timeTakenSeconds,
+  }) async => const QuizResultDto();
+}
+
+final quizSubmissionNotifierProvider =
+    Provider<_QuizSubmissionNotifier>((ref) => _QuizSubmissionNotifier());
+
+class _DiscoveryNotifier {
+  Future<ActionResult?> completeLesson(String motifId) async =>
+      const ActionResult();
+}
+
+final discoveryNotifierProvider =
+    Provider<_DiscoveryNotifier>((ref) => _DiscoveryNotifier());
 
 /// Example of integrating XP celebration into quiz result screen
 class QuizResultScreenWithCelebration extends ConsumerStatefulWidget {
@@ -82,7 +134,7 @@ class _QuizScreenExampleState extends ConsumerState<QuizScreenExample> {
     
     // 2. Submit quiz
     final result = await ref
-        .read(quizSubmissionNotifierProvider.notifier)
+        .read(quizSubmissionNotifierProvider)
         .submitQuiz(
           motifId: 'motif-id',
           answers: answers,
@@ -134,7 +186,7 @@ class AlternativeExample extends ConsumerWidget {
         // Simulate some action that earns XP
         final result = await _performAction();
         
-        if (result != null) {
+        if (result != null && context.mounted) {
           // Use the helper extension
           context.celebrateXpGain(
             xpGained: result.xpEarned,
@@ -173,7 +225,7 @@ class LessonCompletionExample extends ConsumerWidget {
         
         // Complete lesson
         final result = await ref
-            .read(discoveryNotifierProvider.notifier)
+            .read(discoveryNotifierProvider)
             .completeLesson(motifId);
         
         if (result != null && context.mounted) {
@@ -190,4 +242,3 @@ class LessonCompletionExample extends ConsumerWidget {
     );
   }
 }
-

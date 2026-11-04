@@ -236,8 +236,8 @@ class AuthRepositoryImpl implements AuthRepository {
 
       return const Right(true);
     } on AuthException catch (e) {
-      // Clear tokens on refresh failure
-      await _localDataSource.clearTokens();
+      // Clear all auth and student session data on refresh failure
+      await _localDataSource.clearAll();
       return Left(AuthFailure(e.message, code: e.code));
     } on ServerException catch (e) {
       if (e.statusCode == 401) {

@@ -34,6 +34,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   final Map<String, bool> _incorrectAnswers = {}; // Track incorrect answers
   final Map<String, bool> _hintsUsed = {}; // Track hints used per question
   final Map<String, Set<String>> _hiddenOptions = {}; // Track hidden options per question
+  // ignore: unused_field
   int _totalGemsSpentOnHints = 0; // Track total gems spent on hints
   DateTime? _startTime;
   bool _isSubmitting = false;

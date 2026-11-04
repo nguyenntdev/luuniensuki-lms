@@ -99,10 +99,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final stats = StatsDto.fromJson(data['stats'] as Map<String, dynamic>);
       debugPrint('[AUTH_REMOTE] Stats parsed, totalXp: ${stats.totalXp}');
 
-      // Build LoginResponseDto - cookies are handled by CookieManager
+      // Build LoginResponseDto - extract tokens from headers or body
+      final tokenFromHeader = response.headers.value('x-access-token');
+      final refreshTokenFromHeader = response.headers.value('x-refresh-token');
+      final accessToken = tokenFromHeader ?? (data['access_token'] as String?);
+      final refreshToken = refreshTokenFromHeader ?? (data['refresh_token'] as String?);
+
       final result = LoginResponseDto(
-        accessToken: null, // Handled by cookies
-        refreshToken: null, // Handled by cookies
+        accessToken: accessToken,
+        refreshToken: refreshToken,
         user: user,
         stats: stats,
       );
@@ -171,11 +176,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       // The backend returns {"user": {...}, "stats": {...}}
       final data = response.data as Map<String, dynamic>;
+      final tokenFromHeader = response.headers.value('x-access-token');
+      final refreshTokenFromHeader = response.headers.value('x-refresh-token');
+      final accessToken = tokenFromHeader ?? (data['access_token'] as String?);
+      final refreshToken = refreshTokenFromHeader ?? (data['refresh_token'] as String?);
 
-      // Build LoginResponseDto - cookies are handled by CookieManager
+      // Build LoginResponseDto
       return LoginResponseDto(
-        accessToken: null, // Handled by cookies
-        refreshToken: null, // Handled by cookies
+        accessToken: accessToken,
+        refreshToken: refreshToken,
         user: UserDto.fromJson(data['user'] as Map<String, dynamic>),
         stats: StatsDto.fromJson(data['stats'] as Map<String, dynamic>),
       );
@@ -236,8 +245,16 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<RefreshTokenResponseDto> refreshToken() async {
     try {
       final response = await _dio.post(ApiConstants.refreshToken);
-      return RefreshTokenResponseDto.fromJson(
-        response.data as Map<String, dynamic>,
+      final data = response.data is Map<String, dynamic> ? response.data as Map<String, dynamic> : <String, dynamic>{};
+      final tokenFromHeader = response.headers.value('x-access-token');
+      final refreshTokenFromHeader = response.headers.value('x-refresh-token');
+      final accessToken = tokenFromHeader ?? (data['access_token'] as String?);
+      final refreshToken = refreshTokenFromHeader ?? (data['refresh_token'] as String?);
+
+      return RefreshTokenResponseDto(
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+        tokenType: (data['token_type'] as String?) ?? 'bearer',
       );
     } on DioException catch (e) {
       throw _handleDioError(e);

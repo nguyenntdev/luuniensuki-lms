@@ -781,30 +781,16 @@ def register_push_token(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> schemas.PushTokenRegisterOut:
-    """Register or update push notification token."""
-    settings = db.execute(
-        select(UserNotificationSettings).where(
-            UserNotificationSettings.user_id == current_user.id
-        )
-    ).scalar_one_or_none()
+    """Register or update push notification token with explicit user opt-in consent."""
+    from ..services import push_notifications
 
-    # Create if doesn't exist
-    if settings is None:
-        settings = UserNotificationSettings(
-            id=uuid_module.uuid4(),
-            user_id=current_user.id,
-        )
-        db.add(settings)
-
-    # Update push token and platform
-    settings.push_token = payload.token
-    settings.push_platform = payload.platform
-    settings.push_enabled = True
-
-    # Mark that we've prompted the user for permission
-    current_user.push_permission_prompted = True
-
-    db.commit()
+    push_notifications.record_push_consent(
+        db=db,
+        user_id=current_user.id,
+        granted=True,
+        token=payload.token,
+        platform=payload.platform,
+    )
 
     return schemas.PushTokenRegisterOut(
         success=True, message="Push notification token registered successfully"
@@ -818,21 +804,73 @@ def unregister_push_token(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> schemas.PushTokenRegisterOut:
-    """Unregister push notification token."""
+    """Unregister push notification token and promptly stop delivery."""
+    from ..services import push_notifications
+
+    push_notifications.revoke_push_token(db=db, user_id=current_user.id)
+
+    return schemas.PushTokenRegisterOut(
+        success=True, message="Push notification token unregistered successfully"
+    )
+
+
+@router.post(
+    "/api/v1/notifications/consent", response_model=schemas.PushConsentOut
+)
+def update_push_consent(
+    payload: schemas.PushConsentIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.PushConsentOut:
+    """Explicitly grant or revoke push notification consent.
+
+    Opt-out immediately halts notification delivery and clears stored device tokens.
+    """
+    from ..services import push_notifications
+
+    settings = push_notifications.record_push_consent(
+        db=db,
+        user_id=current_user.id,
+        granted=payload.granted,
+        token=payload.token,
+        platform=payload.platform,
+    )
+
+    msg = (
+        "Push notification consent granted"
+        if payload.granted
+        else "Push notification consent revoked and token cleared"
+    )
+    return schemas.PushConsentOut(
+        success=True,
+        push_enabled=settings.push_enabled,
+        message=msg,
+        token_registered=bool(settings.push_token),
+    )
+
+
+@router.get(
+    "/api/v1/notifications/consent", response_model=schemas.PushConsentOut
+)
+def get_push_consent(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> schemas.PushConsentOut:
+    """Get the current user's push notification consent status."""
     settings = db.execute(
         select(UserNotificationSettings).where(
             UserNotificationSettings.user_id == current_user.id
         )
     ).scalar_one_or_none()
 
-    if settings is not None:
-        settings.push_token = None
-        settings.push_platform = None
-        settings.push_enabled = False
-        db.commit()
+    push_enabled = bool(settings and settings.push_enabled)
+    token_registered = bool(settings and settings.push_token)
 
-    return schemas.PushTokenRegisterOut(
-        success=True, message="Push notification token unregistered successfully"
+    return schemas.PushConsentOut(
+        success=True,
+        push_enabled=push_enabled,
+        message="Consent status retrieved",
+        token_registered=token_registered,
     )
 
 

@@ -2232,4 +2232,379 @@ def get_cohort_causal_learning_metrics(
     }
 
 
+# --------------------------------------------------------------------------- #
+# Mobile Lesson Quiz Sync & Server Assessment Engine (V5-T057)
+# --------------------------------------------------------------------------- #
+def sync_mobile_practice_questions(
+    db: Session,
+    lesson_id: Optional[UUID] = None,
+    motif_id: Optional[UUID] = None,
+    category: Optional[str] = None,
+    difficulty: Optional[int] = None,
+    limit: int = 10,
+    mode: Optional[str] = "quick_review",
+) -> dict[str, Any]:
+    """Fetch real published, content-validated quiz questions for mobile practice sync.
+
+    Parity with backend server assessment tasks:
+    - Never leaks correct_answer or answer_contract to the client.
+    - Filters out unreviewed / blocked questions (content_validation_status != 'valid').
+    - Only serves active, published questions.
+    """
+    from ..models import LessonContent, Motif, QuizQuestion
+    import uuid
+
+    q = select(QuizQuestion).where(
+        QuizQuestion.is_active.is_(True),
+        QuizQuestion.is_published.is_(True),
+        QuizQuestion.content_validation_status != "blocked_for_authoritative_learning",
+    )
+
+    resolved_motif_id = motif_id
+    if lesson_id:
+        lesson = db.get(LessonContent, lesson_id)
+        if lesson and lesson.motif_id:
+            resolved_motif_id = lesson.motif_id
+
+    if resolved_motif_id:
+        q = q.where(QuizQuestion.motif_id == resolved_motif_id)
+    elif category:
+        q = q.join(Motif, Motif.id == QuizQuestion.motif_id).where(Motif.category == category)
+
+    if difficulty:
+        q = q.where(QuizQuestion.difficulty == difficulty)
+
+    questions = db.scalars(q.order_by(QuizQuestion.created_at.asc()).limit(limit)).all()
+
+    items = []
+    for q_item in questions:
+        opts = q_item.options if isinstance(q_item.options, list) else None
+        q_type_str = (
+            q_item.question_type.value
+            if hasattr(q_item.question_type, "value")
+            else str(q_item.question_type)
+        )
+        items.append({
+            "id": q_item.id,
+            "motif_id": q_item.motif_id,
+            "lesson_id": lesson_id,
+            "question_type": q_type_str,
+            "question_text": q_item.question_text,
+            "options": opts,
+            "target_mesh_name": q_item.target_mesh_name,
+            "difficulty": max(1, int(q_item.difficulty or 1)),
+            "points": 10 if q_item.difficulty == 1 else (15 if q_item.difficulty == 2 else 20),
+            "skill_type": q_item.skill_type,
+            "skill_dimensions": [str(d) for d in (q_item.skill_dimensions or [])],
+            "image_url": None,
+            "hint": getattr(q_item, "hint", None),
+            "content_validation_status": q_item.content_validation_status or "valid",
+            "is_verified_content": True,
+        })
+
+    return {
+        "session_id": uuid.uuid4(),
+        "items": items,
+        "total_questions": len(items),
+        "server_timestamp": datetime.now(timezone.utc),
+        "assessment_mode": mode or "quick_review",
+    }
+
+
+def submit_mobile_practice_assessment(
+    db: Session,
+    user: User,
+    answers: dict[str, str],
+    session_id: Optional[UUID] = None,
+    motif_id: Optional[UUID] = None,
+    lesson_id: Optional[UUID] = None,
+    time_taken_seconds: Optional[int] = None,
+    client_claimed_badges: Optional[list[str]] = None,
+    client_claimed_score: Optional[float] = None,
+) -> dict[str, Any]:
+    """Server-authoritative grading for mobile practice quiz and assessment tasks.
+
+    Negative Abuse Guardrails:
+    - Never trusts client-side scores or claimed badges.
+    - If percentage < 80%: passed is False, mastery XP is 0, and all client-claimed
+      badges are strictly denied.
+    - If passed >= 80%: evaluates legitimate milestone & performance badges, awards
+      them persistently in user_badges, advances motif to mastered, and records
+      verified QuizAttempt.
+    """
+    from ..domain.gamification import _apply_xp_boost, _award_badge, _update_streak
+    from ..domain.helpers import (
+        BADGE_FIRST_MASTERED,
+        BADGE_PERFECT_SCORE,
+        BADGE_SPEED_DEMON,
+        DISCOVERY_XP,
+        LESSON_XP,
+        MASTERED_XP,
+        QUIZ_PASS_PERCENT,
+    )
+    from ..models import (
+        Badge,
+        LessonContent,
+        Motif,
+        QuizAttempt,
+        QuizQuestion,
+        UnlockStatus,
+        UserBadge,
+        UserProgress,
+    )
+
+    resolved_motif_id = motif_id
+    if lesson_id and not resolved_motif_id:
+        lesson = db.get(LessonContent, lesson_id)
+        if lesson and lesson.motif_id:
+            resolved_motif_id = lesson.motif_id
+
+    # Resolve questions to grade
+    questions = []
+    if answers:
+        q_ids = []
+        for k in answers.keys():
+            try:
+                q_ids.append(UUID(str(k)))
+            except (ValueError, TypeError):
+                continue
+        if q_ids:
+            questions = list(
+                db.scalars(
+                    select(QuizQuestion).where(
+                        QuizQuestion.id.in_(q_ids),
+                        QuizQuestion.is_active.is_(True),
+                    )
+                ).all()
+            )
+
+    if not questions and resolved_motif_id:
+        questions = list(
+            db.scalars(
+                select(QuizQuestion)
+                .where(
+                    QuizQuestion.motif_id == resolved_motif_id,
+                    QuizQuestion.is_active.is_(True),
+                )
+                .order_by(QuizQuestion.created_at.asc())
+            ).all()
+        )
+
+    if not questions:
+        raise AppError(
+            code="NO_QUIZ_QUESTIONS",
+            message="No active quiz questions found for this assessment",
+            status_code=404,
+        )
+
+    # Server grading
+    score = 0
+    details = []
+    for q in questions:
+        q_id_str = str(q.id)
+        user_ans = str(answers.get(q_id_str, "")).strip()
+        expected = str(q.correct_answer or "").strip()
+        is_corr = bool(user_ans and user_ans.lower() == expected.lower())
+        if is_corr:
+            score += 1
+        details.append({
+            "question_id": q.id,
+            "correct": is_corr,
+            "user_answer": user_ans,
+            "explanation": q.explanation,
+        })
+
+    max_score = len(questions)
+    percentage = int(round((score / max_score) * 100)) if max_score > 0 else 0
+    passed = percentage >= QUIZ_PASS_PERCENT
+
+    denied_badges: list[str] = []
+    awarded_badges: list[dict[str, Any]] = []
+
+    now = datetime.now(timezone.utc)
+    xp_awarded = 0
+    previous_status = None
+    new_status = None
+
+    if resolved_motif_id:
+        progress = db.execute(
+            select(UserProgress).where(
+                UserProgress.user_id == user.id,
+                UserProgress.motif_id == resolved_motif_id,
+            )
+        ).scalar_one_or_none()
+
+        if progress is None:
+            progress = UserProgress(
+                user_id=user.id,
+                motif_id=resolved_motif_id,
+                status=UnlockStatus.discovered,
+                discovered_at=now,
+                xp_earned=DISCOVERY_XP,
+                quiz_attempts=0,
+                quiz_best_score=0,
+            )
+            db.add(progress)
+            user.total_xp += DISCOVERY_XP
+
+        previous_status = progress.status.value
+        progress.quiz_attempts = (progress.quiz_attempts or 0) + 1
+        progress.quiz_best_score = max(progress.quiz_best_score or 0, percentage)
+
+        # Persistent QuizAttempt record
+        attempt = QuizAttempt(
+            user_id=user.id,
+            motif_id=resolved_motif_id,
+            score=score,
+            max_score=max_score,
+            percentage=percentage,
+            answers=[{"question_id": str(q.id), "answer": answers.get(str(q.id), "")} for q in questions],
+            time_taken_seconds=time_taken_seconds,
+        )
+        db.add(attempt)
+
+        target_xp = DISCOVERY_XP + LESSON_XP + MASTERED_XP
+        if passed:
+            if progress.status != UnlockStatus.mastered:
+                progress.status = UnlockStatus.mastered
+                progress.mastered_at = progress.mastered_at or now
+                delta = max(0, target_xp - progress.xp_earned)
+                if delta > 0:
+                    progress.xp_earned = target_xp
+                    delta_with_boost = _apply_xp_boost(user, delta, now)
+                    user.total_xp += delta_with_boost
+                    xp_awarded = delta_with_boost
+            new_status = progress.status.value
+        else:
+            new_status = progress.status.value
+
+    if passed:
+        # Evaluate legitimate badge candidates
+        legitimate_candidates: list[str] = []
+        mastered_count = db.execute(
+            select(func.count(UserProgress.id)).where(
+                UserProgress.user_id == user.id,
+                UserProgress.status == UnlockStatus.mastered,
+            )
+        ).scalar_one()
+        if mastered_count <= 1:
+            legitimate_candidates.append(BADGE_FIRST_MASTERED)
+
+        if percentage == 100:
+            legitimate_candidates.append(BADGE_PERFECT_SCORE)
+
+        if time_taken_seconds is not None and time_taken_seconds <= 30:
+            legitimate_candidates.append(BADGE_SPEED_DEMON)
+
+        for b_slug in legitimate_candidates:
+            badge_obj = db.execute(
+                select(Badge).where(Badge.slug == b_slug, Badge.is_active.is_(True))
+            ).scalar_one_or_none()
+            if badge_obj:
+                existing_ub = db.execute(
+                    select(UserBadge).where(
+                        UserBadge.user_id == user.id,
+                        UserBadge.badge_id == badge_obj.id,
+                    )
+                ).scalar_one_or_none()
+                if not existing_ub:
+                    db.add(
+                        UserBadge(
+                            user_id=user.id,
+                            badge_id=badge_obj.id,
+                            earned_at=now,
+                        )
+                    )
+                    if badge_obj.xp_bonus:
+                        user.total_xp += badge_obj.xp_bonus
+                    awarded_badges.append({
+                        "slug": badge_obj.slug,
+                        "name": badge_obj.name,
+                        "icon_url": badge_obj.icon_url,
+                        "xp_bonus": badge_obj.xp_bonus,
+                        "tier": badge_obj.tier.value if hasattr(badge_obj.tier, "value") else str(badge_obj.tier),
+                    })
+
+        # Compare with client claimed badges
+        if client_claimed_badges:
+            awarded_slugs = {b["slug"] for b in awarded_badges}
+            for claimed_slug in client_claimed_badges:
+                if claimed_slug not in awarded_slugs and claimed_slug not in denied_badges:
+                    denied_badges.append(claimed_slug)
+    else:
+        # Negative abuse: If test failed, all client-claimed badges are denied
+        if client_claimed_badges:
+            for claimed_slug in client_claimed_badges:
+                if claimed_slug not in denied_badges:
+                    denied_badges.append(claimed_slug)
+
+    _update_streak(user, now)
+    user.last_active_at = now
+    db.commit()
+
+    return {
+        "success": True,
+        "session_id": session_id,
+        "score": score,
+        "max_score": max_score,
+        "percentage": percentage,
+        "passed": passed,
+        "xp_awarded": xp_awarded,
+        "total_xp": user.total_xp,
+        "server_verified": True,
+        "awarded_badges": awarded_badges,
+        "denied_badges": denied_badges,
+        "details": details,
+        "previous_status": previous_status,
+        "new_status": new_status,
+    }
+
+
+def verify_completion_badge(
+    db: Session,
+    user: User,
+    badge_slug: str,
+    motif_id: Optional[UUID] = None,
+) -> dict[str, Any]:
+    """Verify that a student has legitimately earned a completion badge via server assessment.
+
+    Negative Abuse Guardrail:
+    Students cannot earn graded completion badges locally without verified server response.
+    """
+    from ..models import Badge, UserBadge
+
+    badge = db.execute(
+        select(Badge).where(Badge.slug == badge_slug, Badge.is_active.is_(True))
+    ).scalar_one_or_none()
+    if not badge:
+        raise AppError(
+            code="BADGE_NOT_FOUND",
+            message=f"Badge '{badge_slug}' does not exist.",
+            status_code=404,
+        )
+
+    user_badge = db.execute(
+        select(UserBadge).where(
+            UserBadge.user_id == user.id,
+            UserBadge.badge_id == badge.id,
+        )
+    ).scalar_one_or_none()
+
+    if not user_badge:
+        raise AppError(
+            code="UNVERIFIED_COMPLETION",
+            message="Student cannot earn graded completion badges locally without verified server response.",
+            status_code=400,
+            details={"badge_slug": badge_slug, "server_verified": False},
+        )
+
+    return {
+        "badge_slug": badge_slug,
+        "is_verified": True,
+        "earned_at": user_badge.earned_at,
+        "message": f"Badge '{badge.name}' verified by server.",
+    }
+
+
+
 

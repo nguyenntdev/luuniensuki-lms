@@ -6,7 +6,7 @@ part of 'practice_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$practiceSessionHash() => r'46a461d9dee70bfb544bc5f303e0d6624a97d5b0';
+String _$practiceSessionHash() => r'85384e7be5ec169dd3c630133177b53e970de30b';
 
 /// Practice session notifier
 ///
@@ -25,7 +25,7 @@ final practiceSessionProvider =
 
 typedef _$PracticeSession = AutoDisposeNotifier<PracticeSessionState>;
 String _$dailyPracticeStatsHash() =>
-    r'5b36ea024a2cb2ebedb26de4fdea4f0d2e337d0d';
+    r'99f1826768bc8b65091d992bd80adf32afb87e64';
 
 /// Provider for daily practice stats
 ///

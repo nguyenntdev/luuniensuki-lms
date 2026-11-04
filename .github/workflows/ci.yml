@@ -57,3 +57,30 @@ jobs:
         env:
           CI: true
           PLAYWRIGHT_GREP: '@smoke'
+
+  mobile:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./mobile
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.0'
+          channel: 'stable'
+          cache: true
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Verify static analysis
+        run: flutter analyze --no-fatal-infos
+      - name: Run unit and widget tests
+        run: flutter test
+      - name: Build APK debug (Readiness Check)
+        run: flutter build apk --debug

@@ -6,6 +6,7 @@ import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../data/notification_repository.dart';
 import '../../data/notification_service.dart';
 import 'notifications_provider.dart';
+import 'notification_preferences_provider.dart';
 
 /// Provider to manage FCM integration
 class FCMIntegrationNotifier extends StateNotifier<AsyncValue<void>> {
@@ -46,21 +47,26 @@ class FCMIntegrationNotifier extends StateNotifier<AsyncValue<void>> {
     }
   }
 
-  /// Register FCM token with backend
+  /// Register FCM token with backend only if user has granted consent
   Future<void> _registerToken(String token) async {
-    final authState = _ref.read(authProvider);
-    
-    authState.whenData((user) async {
-      if (user != null) {
-        debugPrint('FCMIntegrationNotifier: Registering token for user ${user.id}');
-        final success = await _repository.registerToken(token, user.id);
-        if (success) {
-          debugPrint('FCMIntegrationNotifier: Token registered successfully');
-        } else {
-          debugPrint('FCMIntegrationNotifier: Failed to register token');
-        }
+    final prefs = _ref.read(notificationPreferencesProvider);
+    if (!prefs.pushEnabled) {
+      debugPrint(
+        'FCMIntegrationNotifier: User has opted out / not consented to push notifications. Skipping token registration.',
+      );
+      return;
+    }
+
+    final user = _ref.read(currentUserProvider);
+    if (user != null) {
+      debugPrint('FCMIntegrationNotifier: Registering token for user ${user.id}');
+      final success = await _repository.registerToken(token, user.id);
+      if (success) {
+        debugPrint('FCMIntegrationNotifier: Token registered successfully');
+      } else {
+        debugPrint('FCMIntegrationNotifier: Failed to register token');
       }
-    });
+    }
   }
 
   /// Handle incoming push notification

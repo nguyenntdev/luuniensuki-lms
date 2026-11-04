@@ -1967,12 +1967,41 @@ class PushTokenRegisterIn(BaseModel):
     token: str = Field(..., min_length=1, description="FCM or APNS device token")
     platform: str = Field(..., description="Platform: ios, android, or web")
 
+    @model_validator(mode="before")
+    @classmethod
+    def handle_token_alias(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            if "token" not in data and "fcm_token" in data:
+                data["token"] = data["fcm_token"]
+            if "platform" in data and isinstance(data["platform"], str):
+                data["platform"] = data["platform"].lower()
+        return data
+
     @field_validator("platform")
     @classmethod
     def validate_platform(cls, v: str) -> str:
-        if v not in ["ios", "android", "web"]:
+        val = v.lower()
+        if val not in ["ios", "android", "web"]:
             raise ValueError("Platform must be one of: ios, android, web")
-        return v
+        return val
+
+
+class PushConsentIn(BaseModel):
+    """Push notification consent request schema."""
+
+    granted: bool = Field(..., description="True to opt-in, False to opt-out")
+    token: Optional[str] = Field(None, description="Device token if opting in")
+    platform: Optional[str] = Field(None, description="Platform: ios, android, or web")
+    consent_version: Optional[str] = Field("v1.0", description="Consent policy version")
+
+
+class PushConsentOut(BaseModel):
+    """Push notification consent response schema."""
+
+    success: bool
+    push_enabled: bool
+    message: str
+    token_registered: bool
 
 
 class PushTokenRegisterOut(BaseModel):
@@ -2024,7 +2053,15 @@ class SendPushNotificationIn(BaseModel):
     @field_validator("notification_type")
     @classmethod
     def validate_notification_type(cls, v: str) -> str:
-        valid_types = ["streak_reminder", "daily_mission", "achievement", "social", "system"]
+        valid_types = [
+            "streak_reminder",
+            "daily_mission",
+            "achievement",
+            "social",
+            "system",
+            "teacher_alert",
+            "partner_alert",
+        ]
         if v not in valid_types:
             raise ValueError(f"notification_type must be one of: {', '.join(valid_types)}")
         return v
@@ -2042,7 +2079,15 @@ class BroadcastPushNotificationIn(BaseModel):
     @field_validator("notification_type")
     @classmethod
     def validate_notification_type(cls, v: str) -> str:
-        valid_types = ["streak_reminder", "daily_mission", "achievement", "social", "system"]
+        valid_types = [
+            "streak_reminder",
+            "daily_mission",
+            "achievement",
+            "social",
+            "system",
+            "teacher_alert",
+            "partner_alert",
+        ]
         if v not in valid_types:
             raise ValueError(f"notification_type must be one of: {', '.join(valid_types)}")
         return v

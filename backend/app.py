@@ -238,10 +238,13 @@ def create_app() -> FastAPI:
     from .routers import progress as progress_router
     from .routers import history_inquiry as history_inquiry_router
     from .routers import media_cms as media_cms_router
+    from .routers import offline as offline_router
+    from .routers import quests as quests_router
 
     app.include_router(auth_router.router)
     app.include_router(users_router.router)
     app.include_router(content_router.router)
+    app.include_router(quests_router.router)
     app.include_router(gamification_router.router)
     app.include_router(classrooms_router.router)
     app.include_router(live_router.router)
@@ -260,5 +263,6 @@ def create_app() -> FastAPI:
     app.include_router(progress_router.router)
     app.include_router(history_inquiry_router.router)
     app.include_router(media_cms_router.router)
+    app.include_router(offline_router.router)
 
     return app

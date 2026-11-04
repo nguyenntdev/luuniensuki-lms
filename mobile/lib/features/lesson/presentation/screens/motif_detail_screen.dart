@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
-import '../../../../routing/route_names.dart';
 import '../../../../shared/widgets/images/resilient_cached_network_image.dart';
 import '../../../urn_viewer/data/models/urn_dtos.dart';
 import '../providers/motif_detail_provider.dart';

@@ -11,7 +11,9 @@ enum PushNotificationType {
   badgeEarned('badge_earned'),
   levelUp('level_up'),
   friendActivity('friend_activity'),
-  systemAnnouncement('system_announcement');
+  systemAnnouncement('system_announcement'),
+  teacherAlert('teacher_alert'),
+  partnerAlert('partner_alert');
 
   const PushNotificationType(this.value);
   final String value;
@@ -46,6 +48,10 @@ enum PushNotificationType {
         return Icons.people;
       case PushNotificationType.systemAnnouncement:
         return Icons.campaign;
+      case PushNotificationType.teacherAlert:
+        return Icons.school;
+      case PushNotificationType.partnerAlert:
+        return Icons.storefront;
     }
   }
 
@@ -72,6 +78,10 @@ enum PushNotificationType {
         return const Color(0xFF06B6D4); // Cyan
       case PushNotificationType.systemAnnouncement:
         return const Color(0xFF6366F1); // Indigo
+      case PushNotificationType.teacherAlert:
+        return const Color(0xFF3B82F6); // Blue
+      case PushNotificationType.partnerAlert:
+        return const Color(0xFF10B981); // Emerald
     }
   }
 
@@ -98,6 +108,10 @@ enum PushNotificationType {
         return 2;
       case PushNotificationType.systemAnnouncement:
         return 3;
+      case PushNotificationType.teacherAlert:
+        return 4;
+      case PushNotificationType.partnerAlert:
+        return 4;
     }
   }
 }

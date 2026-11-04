@@ -398,3 +398,86 @@ class HeritageSearchOut(BaseModel):
     total: int
     query: str
     scope: str = "RBPC_HUE"
+
+
+# --------------------------------------------------------------------------- #
+# Canonical Heritage Catalog (Cửu Đỉnh 9 Urns & 162 Motifs — Mobile/Web Parity)
+# --------------------------------------------------------------------------- #
+class HeritageCatalogMotifOut(BaseModel):
+    """Canonical motif record adhering to the 162-relic catalog specification."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str = Field(..., description="Stable motif identifier (e.g. urn_cao_dinh_01).")
+    slug: str = Field(..., description="Canonical relief slug (e.g. cao-dinh-01).")
+    urn_slug: str = Field(..., description="Canonical owner Urn slug.")
+    order: int = Field(..., ge=1, le=18, description="Ordinal position on urn (1..18).")
+    name_vi: str = Field(..., description="Canonical Vietnamese name.")
+    name_en: Optional[str] = Field(default=None, description="English translation gloss.")
+    name_han_nom: Optional[str] = Field(default=None, description="Hán–Nôm epigraphic glyph.")
+    category: Optional[str] = Field(default=None, description="Cosmological / natural category.")
+    rarity: Optional[str] = Field(default=None, description="Collectible rarity tier.")
+    mesh_name: Optional[str] = Field(default=None, description="3D mesh node identifier.")
+    pos_x: Optional[float] = Field(default=None, description="3D position X coordinate.")
+    pos_y: Optional[float] = Field(default=None, description="3D position Y coordinate.")
+    pos_z: Optional[float] = Field(default=None, description="3D position Z coordinate.")
+    bounding_radius: Optional[float] = Field(default=0.08, description="Hotspot interaction radius.")
+    evidence_status: HeritageEvidenceStatus = Field(
+        default=HeritageEvidenceStatus.verified,
+        description="Epistemic evidence status label (verified, needs_review, disputed, rejected).",
+    )
+    revision: int = Field(default=1, description="Approved content revision number.")
+    thumbnail_url: Optional[str] = None
+
+
+class HeritageCatalogUrnOut(BaseModel):
+    """Canonical Urn record (1 of 9 Cửu Đỉnh) for mobile catalog parity."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str = Field(..., description="Stable urn identifier or slug.")
+    slug: str = Field(..., description="Canonical urn slug (e.g. cao-dinh).")
+    order: int = Field(..., ge=1, le=9, description="Spatial display order (1..9).")
+    name_vi: str = Field(..., description="Vietnamese name (e.g. Cao Đỉnh).")
+    name_en: Optional[str] = Field(default=None, description="English name.")
+    name_han_nom: Optional[str] = Field(default=None, description="Hán–Nôm glyph (e.g. 高鼎).")
+    reign_title: Optional[str] = Field(default=None, description="Associated sovereign reign title.")
+    temple_name: Optional[str] = Field(default=None, description="Associated temple veneration name.")
+    motif_count: int = Field(default=18, description="Canonical motif count (strictly 18).")
+    model_3d: Optional[str] = Field(default=None, description="3D model asset name/path.")
+    evidence_status: HeritageEvidenceStatus = Field(
+        default=HeritageEvidenceStatus.verified,
+        description="Evidence status of urn heritage record.",
+    )
+    revision: int = Field(default=1, description="Approved content revision number.")
+    thumbnail_url: Optional[str] = None
+    motifs: list[HeritageCatalogMotifOut] = Field(
+        default_factory=list,
+        description="18 canonical motifs situated on this urn.",
+    )
+
+
+class HeritageCatalogOut(BaseModel):
+    """Complete canonical catalog payload with versioning and ETag caching."""
+
+    catalog_version: str = Field(default="v1.0", description="Canonical catalog version string.")
+    total_urns: int = Field(default=9, description="Total canonical urns (strictly 9).")
+    total_motifs: int = Field(default=162, description="Total canonical motifs (strictly 162).")
+    global_revision: int = Field(default=1, description="Monotonically increasing global revision.")
+    etag: str = Field(..., description="Cryptographic content hash for conditional HTTP caching.")
+    urns: list[HeritageCatalogUrnOut] = Field(default_factory=list)
+
+
+class HeritageCatalogRevisionUpdateIn(BaseModel):
+    """Payload to update an approved catalog revision (editorial/review governance)."""
+
+    identifier: str = Field(..., description="Target urn slug or motif ID/slug.")
+    revision: Optional[int] = Field(default=None, description="Explicit new revision number.")
+    evidence_status: Optional[HeritageEvidenceStatus] = Field(
+        default=None,
+        description="Updated evidence status label.",
+    )
+    name_vi: Optional[str] = None
+    name_en: Optional[str] = None
+    name_han_nom: Optional[str] = None
+    reviewer_notes: Optional[str] = None

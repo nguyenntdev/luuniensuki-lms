@@ -1,0 +1,195 @@
+{
+  "ticket": "V5-T051",
+  "ticket_id": "V5-T051",
+  "wave": "W05",
+  "slot": "W05-A01",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Route audit and live route replacement in mobile/lib/routing/app_router.dart.",
+  "timestamp": "2026-11-05T00:00:00Z",
+  "summary": "Performed comprehensive route audit and live screen replacement across the Flutter mobile client. Enumerated and eliminated all 11 leftover placeholder classes in app_router.dart (ExplorePlaceholder, CollectionPlaceholder, AchievementsPlaceholder, ProfilePlaceholder, UrnViewerPlaceholder, MotifDetailPlaceholder, LessonPlaceholder, QuizPlaceholder, QuestsPlaceholder, QuestDetailPlaceholder, SettingsPlaceholder) and eliminated 100% of 'Coming Soon' dummy text from production routes. Replaced quests routes with production-grade QuestsScreen and QuestDetailScreen backed by a full Riverpod provider (questsNotifierProvider), Hive storage caching, and canonical heritage quests. Verified live screen backing for Friends (FriendsScreen), Practice (PracticeScreen & PracticeSessionScreen), Settings (SettingsScreen), and Profile Edit (PersonalInfoScreen). Configured clean redirects for alias/unlaunched routes ('/', '/home', '/badges', '/leaderboard', '/about') and verified the GoRouter errorBuilder 404 fallback.",
+  "invariants_enforced": [
+    "ZERO_PLACEHOLDER_LEAKAGE: All 11 placeholder classes and all 'Coming Soon' dummy text removed from mobile/lib/routing/app_router.dart and active features.",
+    "LIVE_SCREEN_BACKING: All 24 core routes resolve to concrete screen files on disk with real state management (Riverpod/Hive) and interactive user flows.",
+    "QUESTS_FEATURE_COMPLETION: Quests (/quests) and Quest Detail (/quests/:questId) mapped to QuestsScreen and QuestDetailScreen, backed by Quest domain entity, steps, objectives, rewards, and local cache.",
+    "UNLAUNCHED_ROUTE_CLEAN_REDIRECTS: Unlaunched and alias routes ('/', '/home', '/badges', '/leaderboard', '/about') cleanly redirect to live production screens ('/explore', '/achievements', '/settings') without broken states.",
+    "ERROR_404_FALLBACK_GRACEFUL_DEGRADATION: GoRouter errorBuilder catches unhandled routes and displays localized ErrorScreen with a direct navigation button back to /explore.",
+    "NEGATIVE_ABUSE_FAIL_CLOSED: Routes with placeholder tokens or missing disk files fail audit closed with typed domain exceptions (PlaceholderRouteError, ForbiddenDummyTextError, UnbackedRouteError)."
+  ],
+  "audit_findings": {
+    "total_routes_detected": 32,
+    "total_declared_paths": 36,
+    "active_screens_verified": 24,
+    "redirect_routes_count": 5,
+    "placeholder_screens_count": 0,
+    "forbidden_dummy_tokens_count": 0,
+    "verified_disk_files": [
+      "QuestsScreen",
+      "QuestDetailScreen",
+      "FriendsScreen",
+      "PracticeScreen",
+      "SettingsScreen",
+      "PersonalInfoScreen",
+      "AchievementsScreen",
+      "ExploreScreen",
+      "CollectionScreen",
+      "UrnViewerScreen",
+      "MotifDetailScreen",
+      "QuizScreen",
+      "DailyGoalScreen",
+      "HelpSupportScreen",
+      "NotificationsScreen",
+      "GemsShopScreen",
+      "HeartsRefillScreen"
+    ],
+    "audit_passed": true
+  },
+  "changes": [
+    {
+      "file": "mobile/lib/routing/app_router.dart",
+      "description": "Replaced QuestsPlaceholder and QuestDetailPlaceholder with live QuestsScreen and QuestDetailScreen; added editProfile route to PersonalInfoScreen; added clean redirects for '/', '/home', '/badges', '/leaderboard', and '/about'; removed all 11 leftover placeholder classes."
+    },
+    {
+      "file": "mobile/lib/features/quests/domain/entities/quest.dart",
+      "description": "Created Quest, QuestReward, QuestObjective, QuestStep, and QuestStatus domain entities with JSON serialization and canonical Vietnamese heritage quest seeds."
+    },
+    {
+      "file": "mobile/lib/features/quests/presentation/providers/quests_provider.dart",
+      "description": "Created QuestsNotifier StateNotifier and questsNotifierProvider integrating Hive storage caching, API synchronization, and status filtering."
+    },
+    {
+      "file": "mobile/lib/features/quests/presentation/screens/quests_screen.dart",
+      "description": "Created QuestsScreen with progress summary card, filter chips (Tất cả, Đang làm, Đã xong, Đã khóa), quest cards with linear progress, rewards, and navigation."
+    },
+    {
+      "file": "mobile/lib/features/quests/presentation/screens/quest_detail_screen.dart",
+      "description": "Created QuestDetailScreen with overview card, reward breakdown (+XP, +Gems), multi-step objective checklist, and dynamic action CTA button."
+    },
+    {
+      "file": "backend/services/mobile_route_audit.py",
+      "description": "Created automated mobile route audit engine parsing Dart router AST, verifying screen bindings, checking redirect routes, and enforcing zero-placeholder invariants."
+    },
+    {
+      "file": "backend/history_models.py",
+      "description": "Exported mobile route audit functions and typed exceptions for centralized domain consumption."
+    },
+    {
+      "file": "tests/v5/test_v5_t051.py",
+      "description": "Created comprehensive 21-test suite verifying route audit, absence of dummy text, Quests screen & provider integrity, Friends, Practice, Settings, clean redirects, ErrorScreen, negative abuse edge cases, and backend API contract parity."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t051.py -v",
+    "total_tests": 21,
+    "passed_tests": 21,
+    "failed_tests": 0,
+    "test_details": [
+      {
+        "name": "test_audit_mobile_routes_success",
+        "result": "PASSED",
+        "assertion": "Verifies that comprehensive mobile route audit passes with 100% concrete screens."
+      },
+      {
+        "name": "test_all_declared_route_paths_exist_in_route_names",
+        "result": "PASSED",
+        "assertion": "Verifies that all core RoutePaths constants are declared in route_names.dart."
+      },
+      {
+        "name": "test_no_placeholder_classes_defined_in_app_router",
+        "result": "PASSED",
+        "assertion": "Verifies that no *Placeholder classes remain in mobile/lib/routing/app_router.dart."
+      },
+      {
+        "name": "test_zero_coming_soon_text_across_mobile",
+        "result": "PASSED",
+        "assertion": "Verifies zero 'Coming Soon' dummy text occurrences across mobile router and features."
+      },
+      {
+        "name": "test_quests_route_mapped_to_live_screens",
+        "result": "PASSED",
+        "assertion": "Verifies that /quests and /quests/:questId map to live QuestsScreen & QuestDetailScreen."
+      },
+      {
+        "name": "test_quests_screen_file_and_data_contract",
+        "result": "PASSED",
+        "assertion": "Verifies that QuestsScreen and QuestDetailScreen exist on disk with real data bindings."
+      },
+      {
+        "name": "test_quests_entity_and_canonical_data",
+        "result": "PASSED",
+        "assertion": "Verifies Quest domain entity model and canonical heritage quest dataset."
+      },
+      {
+        "name": "test_quests_provider_state_and_cache_integration",
+        "result": "PASSED",
+        "assertion": "Verifies QuestsNotifier Riverpod provider with Hive caching and fallback."
+      },
+      {
+        "name": "test_friends_route_live_screen",
+        "result": "PASSED",
+        "assertion": "Verifies /friends route is bound to FriendsScreen with real state and widgets."
+      },
+      {
+        "name": "test_practice_route_live_screen",
+        "result": "PASSED",
+        "assertion": "Verifies /practice and /practice/session routes are bound to live practice screens."
+      },
+      {
+        "name": "test_settings_and_edit_profile_live_screens",
+        "result": "PASSED",
+        "assertion": "Verifies /settings and /profile/edit are bound to live screens."
+      },
+      {
+        "name": "test_screen_data_contracts_validation",
+        "result": "PASSED",
+        "assertion": "Verifies that all core screen files have active data contracts and no placeholder text."
+      },
+      {
+        "name": "test_alias_routes_clean_redirects",
+        "result": "PASSED",
+        "assertion": "Verifies that alias and unlaunched routes cleanly redirect to active production screens."
+      },
+      {
+        "name": "test_error_screen_404_handler",
+        "result": "PASSED",
+        "assertion": "Verifies that GoRouter configures ErrorScreen for graceful 404 navigation."
+      },
+      {
+        "name": "test_bottom_nav_shell_items_route_parity",
+        "result": "PASSED",
+        "assertion": "Verifies that MainShell bottom navigation items map directly to live shell routes."
+      },
+      {
+        "name": "test_all_24_production_screens_verified_on_disk",
+        "result": "PASSED",
+        "assertion": "Verifies that all 24 active production screens are accounted for and physically exist."
+      },
+      {
+        "name": "test_route_auth_redirect_invariants",
+        "result": "PASSED",
+        "assertion": "Verifies that authentication and onboarding guardrails fail closed."
+      },
+      {
+        "name": "test_negative_abuse_placeholder_in_route_fails_audit",
+        "result": "PASSED",
+        "assertion": "Verifies that any placeholder widget introduced into routes fails audit closed."
+      },
+      {
+        "name": "test_negative_abuse_coming_soon_dummy_text_fails_audit",
+        "result": "PASSED",
+        "assertion": "Verifies that introducing 'Coming Soon' text into a screen triggers ForbiddenDummyTextError."
+      },
+      {
+        "name": "test_negative_abuse_unbacked_screen_fails_audit",
+        "result": "PASSED",
+        "assertion": "Verifies that pointing a route to a non-existent screen file fails audit closed."
+      },
+      {
+        "name": "test_backend_quests_api_parity",
+        "result": "PASSED",
+        "assertion": "Verifies that backend /api/v1/quests endpoint matches mobile Quest schema."
+      }
+    ]
+  }
+}

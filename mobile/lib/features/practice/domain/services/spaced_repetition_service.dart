@@ -109,7 +109,6 @@ class SpacedRepetitionService {
   /// [items] - List of all review items
   /// Returns list of items where nextReviewDate <= now
   List<ReviewItem> getDueItems(List<ReviewItem> items) {
-    final now = DateTime.now();
     return items.where((item) => item.isDue).toList();
   }
 

@@ -21,11 +21,15 @@ import '../features/urn_viewer/presentation/screens/urn_viewer_screen.dart';
 import '../features/lesson/presentation/screens/motif_detail_screen.dart';
 import '../features/quiz/presentation/screens/quiz_screen.dart';
 import '../features/help/presentation/screens/help_support_screen.dart';
-import '../features/history/presentation/history_atlas_screen.dart';import '../features/notifications/presentation/screens/notifications_screen.dart';
+import '../features/history/presentation/history_atlas_screen.dart';
+import '../features/notifications/presentation/screens/notifications_screen.dart';
 import '../features/daily_goals/presentation/screens/daily_goal_screen.dart';
 import '../features/gems/presentation/screens/gems_shop_screen.dart';
 import '../features/hearts/presentation/screens/hearts_refill_screen.dart';
 import '../features/social/presentation/screens/friends_screen.dart';
+import '../features/quests/presentation/screens/quests_screen.dart';
+import '../features/quests/presentation/screens/quest_detail_screen.dart';
+import '../features/profile/presentation/screens/personal_info_screen.dart';
 import '../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../features/streak/services/streak_event_service.dart';
 import 'route_names.dart';
@@ -34,31 +38,68 @@ import '../shared/widgets/glass/glass_nav_metrics.dart';
 
 part 'app_router.g.dart';
 
+/// Notifier that bridges Riverpod AuthNotifier changes with GoRouter refresh.
+class RouterNotifier extends ChangeNotifier {
+  final Ref _ref;
+
+  RouterNotifier(this._ref) {
+    _ref.listen(authNotifierProvider, (_, __) => notifyListeners());
+  }
+}
+
+/// Helper to check if a route requires standard learner or higher privileges.
+bool _isLearnerOnlyRoute(String location) {
+  const learnerOnlyPrefixes = [
+    RoutePaths.collection,
+    RoutePaths.learnPractice,
+    RoutePaths.learningPath,
+    RoutePaths.practice,
+    RoutePaths.aiHub,
+    RoutePaths.achievements,
+    RoutePaths.dailyGoal,
+    RoutePaths.gemsShop,
+    RoutePaths.heartsRefill,
+    RoutePaths.friends,
+    RoutePaths.editProfile,
+    RoutePaths.changePassword,
+    RoutePaths.notifications,
+  ];
+  return learnerOnlyPrefixes.any(
+    (prefix) => location == prefix || location.startsWith('$prefix/'),
+  );
+}
+
 /// Provides the GoRouter instance configured with all app routes.
 /// Handles authentication-based redirects and navigation.
 /// Using keepAlive to maintain router instance and prevent unnecessary rebuilds
 @Riverpod(keepAlive: true)
 GoRouter appRouter(Ref ref) {
   final storage = ref.read(hiveStorageProvider);
+  final routerNotifier = RouterNotifier(ref);
 
   return GoRouter(
     initialLocation: RoutePaths.explore,
     debugLogDiagnostics: true,
+    refreshListenable: routerNotifier,
 
-    // Redirect logic based on auth state and onboarding
+    // Redirect logic based on auth state, roles, and onboarding
     redirect: (_, state) {
-      // Use ref.read here - only called during navigation, not on every auth change
+      // Use ref.read here - refreshListenable triggers re-evaluation on auth changes
       final authState = ref.read(authNotifierProvider);
 
       final isLoggedIn = authState.maybeMap(
         authenticated: (_) => true,
         orElse: () => false,
       );
+      final currentUser = authState.user;
 
       final isOnboarding = state.matchedLocation == RoutePaths.onboarding;
       final isLoggingIn = state.matchedLocation == RoutePaths.login;
       final isRegistering = state.matchedLocation == RoutePaths.register;
       final isAuthRoute = isLoggingIn || isRegistering;
+      final isPublicRoute = state.matchedLocation == RoutePaths.historyAtlas ||
+          state.matchedLocation == RoutePaths.help ||
+          state.matchedLocation == RoutePaths.about;
 
       // Still checking auth status - allow navigation to proceed
       final isInitial = authState.maybeMap(
@@ -83,13 +124,13 @@ GoRouter appRouter(Ref ref) {
         return RoutePaths.explore;
       }
 
-      // Not logged in and not on auth route -> redirect to login
-      if (!isLoggedIn && !isAuthRoute && !isOnboarding) {
+      // Not logged in and not on auth route / onboarding / public route -> redirect to login
+      if (!isLoggedIn && !isAuthRoute && !isOnboarding && !isPublicRoute) {
         final returnUrl = Uri.encodeComponent(state.matchedLocation);
         return '${RoutePaths.login}?returnUrl=$returnUrl';
       }
 
-      // Logged in and on auth route -> redirect to explore
+      // Logged in and on auth route -> redirect to explore or returnUrl
       if (isLoggedIn && isAuthRoute) {
         final returnUrl = state.uri.queryParameters['returnUrl'];
         if (returnUrl != null && returnUrl.isNotEmpty) {
@@ -98,11 +139,53 @@ GoRouter appRouter(Ref ref) {
         return RoutePaths.explore;
       }
 
-      // Allow navigation if logged in
+      // Role-aware guard: Guest users have restricted access
+      if (isLoggedIn && (currentUser?.isGuest ?? false)) {
+        if (_isLearnerOnlyRoute(state.matchedLocation)) {
+          final returnUrl = Uri.encodeComponent(state.matchedLocation);
+          return '${RoutePaths.login}?returnUrl=$returnUrl';
+        }
+      }
+
+      // Role-aware guard: Administrative and Teacher routes
+      final isAdminRoute = state.matchedLocation.startsWith('/admin');
+      final isTeacherRoute = state.matchedLocation.startsWith('/teacher');
+      if (isAdminRoute && !(currentUser?.isAdmin ?? false)) {
+        return RoutePaths.explore;
+      }
+      if (isTeacherRoute && !(currentUser?.hasElevatedPrivileges ?? false)) {
+        return RoutePaths.explore;
+      }
+
+      // Allow navigation
       return null;
     },
 
     routes: [
+      // =======================================================================
+      // ALIAS & REDIRECT ROUTES (Safe fallback to live production screens)
+      // =======================================================================
+      GoRoute(
+        path: RoutePaths.splash,
+        redirect: (_, __) => RoutePaths.explore,
+      ),
+      GoRoute(
+        path: RoutePaths.home,
+        redirect: (_, __) => RoutePaths.explore,
+      ),
+      GoRoute(
+        path: RoutePaths.badges,
+        redirect: (_, __) => RoutePaths.achievements,
+      ),
+      GoRoute(
+        path: RoutePaths.leaderboard,
+        redirect: (_, __) => RoutePaths.achievements,
+      ),
+      GoRoute(
+        path: RoutePaths.about,
+        redirect: (_, __) => RoutePaths.settings,
+      ),
+
       // =======================================================================
       // ONBOARDING
       // =======================================================================
@@ -264,19 +347,19 @@ GoRouter appRouter(Ref ref) {
       ),
 
       // =======================================================================
-      // QUEST ROUTES
+      // QUEST ROUTES (Live production screens)
       // =======================================================================
       GoRoute(
         path: RoutePaths.quests,
-        name: 'quests',
-        builder: (_, __) => const QuestsPlaceholder(),
+        name: RouteNames.quests,
+        builder: (_, __) => const QuestsScreen(),
       ),
       GoRoute(
         path: '${RoutePaths.quests}/:questId',
-        name: 'quest',
+        name: RouteNames.questDetail,
         builder: (_, state) {
           final questId = state.pathParameters['questId'] ?? '';
-          return QuestDetailPlaceholder(questId: questId);
+          return QuestDetailScreen(questId: questId);
         },
       ),
 
@@ -287,6 +370,11 @@ GoRouter appRouter(Ref ref) {
         path: RoutePaths.settings,
         name: 'settings',
         builder: (_, __) => const SettingsScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.editProfile,
+        name: RouteNames.editProfile,
+        builder: (_, __) => const PersonalInfoScreen(),
       ),
 
       // =======================================================================
@@ -502,150 +590,8 @@ class _MainShellState extends ConsumerState<MainShell> {
 }
 
 // =============================================================================
-// PLACEHOLDER SCREENS (To be replaced with actual implementations)
+// ERROR SCREEN
 // =============================================================================
-
-class ExplorePlaceholder extends StatelessWidget {
-  const ExplorePlaceholder({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Khám Phá')),
-      body: const Center(child: Text('Explore Screen - Coming Soon')),
-    );
-  }
-}
-
-class CollectionPlaceholder extends StatelessWidget {
-  const CollectionPlaceholder({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Bộ Sưu Tập')),
-      body: const Center(child: Text('Collection Screen - Coming Soon')),
-    );
-  }
-}
-
-class AchievementsPlaceholder extends StatelessWidget {
-  const AchievementsPlaceholder({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Thành Tích')),
-      body: const Center(child: Text('Achievements Screen - Coming Soon')),
-    );
-  }
-}
-
-class ProfilePlaceholder extends StatelessWidget {
-  const ProfilePlaceholder({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Hồ Sơ')),
-      body: const Center(child: Text('Profile Screen - Coming Soon')),
-    );
-  }
-}
-
-class UrnViewerPlaceholder extends StatelessWidget {
-  final String urnSlug;
-
-  const UrnViewerPlaceholder({super.key, required this.urnSlug});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Urn: $urnSlug')),
-      body: Center(child: Text('3D Urn Viewer for $urnSlug - Coming Soon')),
-    );
-  }
-}
-
-class MotifDetailPlaceholder extends StatelessWidget {
-  final String motifId;
-
-  const MotifDetailPlaceholder({super.key, required this.motifId});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Motif: $motifId')),
-      body: Center(child: Text('Motif Detail for $motifId - Coming Soon')),
-    );
-  }
-}
-
-class LessonPlaceholder extends StatelessWidget {
-  final String motifId;
-
-  const LessonPlaceholder({super.key, required this.motifId});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Bài Học: $motifId')),
-      body: Center(child: Text('Lesson for $motifId - Coming Soon')),
-    );
-  }
-}
-
-class QuizPlaceholder extends StatelessWidget {
-  final String motifId;
-
-  const QuizPlaceholder({super.key, required this.motifId});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Trắc Nghiệm: $motifId')),
-      body: Center(child: Text('Quiz for $motifId - Coming Soon')),
-    );
-  }
-}
-
-class QuestsPlaceholder extends StatelessWidget {
-  const QuestsPlaceholder({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Nhiệm Vụ')),
-      body: const Center(child: Text('Quests Screen - Coming Soon')),
-    );
-  }
-}
-
-class QuestDetailPlaceholder extends StatelessWidget {
-  final String questId;
-
-  const QuestDetailPlaceholder({super.key, required this.questId});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Quest: $questId')),
-      body: Center(child: Text('Quest Detail for $questId - Coming Soon')),
-    );
-  }
-}
-
-class SettingsPlaceholder extends StatelessWidget {
-  const SettingsPlaceholder({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Cài Đặt')),
-      body: const Center(child: Text('Settings Screen - Coming Soon')),
-    );
-  }
-}
 
 class ErrorScreen extends StatelessWidget {
   final Exception? error;

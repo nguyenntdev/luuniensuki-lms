@@ -3079,6 +3079,39 @@
         "title": "AuthRegisterRequest",
         "type": "object"
       },
+      "AwardedBadgeDetail": {
+        "properties": {
+          "icon_url": {
+            "title": "Icon Url",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "tier": {
+            "default": "bronze",
+            "title": "Tier",
+            "type": "string"
+          },
+          "xp_bonus": {
+            "default": 0,
+            "title": "Xp Bonus",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "slug",
+          "name",
+          "icon_url"
+        ],
+        "title": "AwardedBadgeDetail",
+        "type": "object"
+      },
       "BadgeListItemOut": {
         "properties": {
           "category": {
@@ -3239,6 +3272,78 @@
           "name"
         ],
         "title": "BadgeResponseDto",
+        "type": "object"
+      },
+      "BadgeVerificationIn": {
+        "properties": {
+          "badge_slug": {
+            "title": "Badge Slug",
+            "type": "string"
+          },
+          "motif_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Motif Id"
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Session Id"
+          }
+        },
+        "required": [
+          "badge_slug"
+        ],
+        "title": "BadgeVerificationIn",
+        "type": "object"
+      },
+      "BadgeVerificationOut": {
+        "properties": {
+          "badge_slug": {
+            "title": "Badge Slug",
+            "type": "string"
+          },
+          "earned_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Earned At"
+          },
+          "is_verified": {
+            "title": "Is Verified",
+            "type": "boolean"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "badge_slug",
+          "is_verified",
+          "message"
+        ],
+        "title": "BadgeVerificationOut",
         "type": "object"
       },
       "Body_live_ai_teacher_stt_api_v1_live_sessions__live_session_id__ai_teacher_stt_post": {
@@ -7387,6 +7492,112 @@
         "title": "EnhancedLeaderboardOut",
         "type": "object"
       },
+      "EntityCitationBundleOut": {
+        "properties": {
+          "bundle_provenance_hash": {
+            "title": "Bundle Provenance Hash",
+            "type": "string"
+          },
+          "claims": {
+            "items": {
+              "$ref": "#/components/schemas/HistoricalClaimCitationOut"
+            },
+            "title": "Claims",
+            "type": "array"
+          },
+          "entity_id": {
+            "format": "uuid",
+            "title": "Entity Id",
+            "type": "string"
+          },
+          "entity_type": {
+            "title": "Entity Type",
+            "type": "string"
+          },
+          "has_restricted_sources": {
+            "default": false,
+            "title": "Has Restricted Sources",
+            "type": "boolean"
+          },
+          "name_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name En"
+          },
+          "name_han_nom": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name Han Nom"
+          },
+          "name_vi": {
+            "title": "Name Vi",
+            "type": "string"
+          },
+          "reading_han_nom": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reading Han Nom"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "summary_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary En"
+          },
+          "summary_vi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary Vi"
+          },
+          "total_sources_count": {
+            "default": 0,
+            "title": "Total Sources Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "entity_id",
+          "slug",
+          "name_vi",
+          "entity_type",
+          "bundle_provenance_hash"
+        ],
+        "title": "EntityCitationBundleOut",
+        "type": "object"
+      },
       "EthicsProtocolCreate": {
         "properties": {
           "approved_by": {
@@ -9755,6 +9966,88 @@
         "title": "HeritageAccuracyGrade",
         "type": "string"
       },
+      "HeritageCatalogRevisionUpdateIn": {
+        "description": "Payload to update an approved catalog revision (editorial/review governance).",
+        "properties": {
+          "evidence_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HeritageEvidenceStatus"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Updated evidence status label."
+          },
+          "identifier": {
+            "description": "Target urn slug or motif ID/slug.",
+            "title": "Identifier",
+            "type": "string"
+          },
+          "name_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name En"
+          },
+          "name_han_nom": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name Han Nom"
+          },
+          "name_vi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name Vi"
+          },
+          "reviewer_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewer Notes"
+          },
+          "revision": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Explicit new revision number.",
+            "title": "Revision"
+          }
+        },
+        "required": [
+          "identifier"
+        ],
+        "title": "HeritageCatalogRevisionUpdateIn",
+        "type": "object"
+      },
       "HeritageCommercialUseStatus": {
         "enum": [
           "permitted",
@@ -11408,6 +11701,111 @@
           "created_at"
         ],
         "title": "HistoricalAssetOut",
+        "type": "object"
+      },
+      "HistoricalClaimCitationOut": {
+        "properties": {
+          "claim_id": {
+            "format": "uuid",
+            "title": "Claim Id",
+            "type": "string"
+          },
+          "claim_type": {
+            "title": "Claim Type",
+            "type": "string"
+          },
+          "epistemic_certainty": {
+            "title": "Epistemic Certainty",
+            "type": "string"
+          },
+          "epistemic_label_en": {
+            "title": "Epistemic Label En",
+            "type": "string"
+          },
+          "epistemic_label_vi": {
+            "title": "Epistemic Label Vi",
+            "type": "string"
+          },
+          "has_source": {
+            "default": true,
+            "title": "Has Source",
+            "type": "boolean"
+          },
+          "is_disputed": {
+            "default": false,
+            "title": "Is Disputed",
+            "type": "boolean"
+          },
+          "name_han_nom": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name Han Nom"
+          },
+          "provenance_signature": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provenance Signature"
+          },
+          "reading_han_nom": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reading Han Nom"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/SourceCitationOut"
+            },
+            "title": "Sources",
+            "type": "array"
+          },
+          "statement_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Statement En"
+          },
+          "statement_vi": {
+            "title": "Statement Vi",
+            "type": "string"
+          },
+          "verification_status": {
+            "title": "Verification Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "claim_id",
+          "claim_type",
+          "statement_vi",
+          "epistemic_certainty",
+          "epistemic_label_vi",
+          "epistemic_label_en",
+          "verification_status"
+        ],
+        "title": "HistoricalClaimCitationOut",
         "type": "object"
       },
       "HistoricalClaimCreate": {
@@ -26086,6 +26484,405 @@
         "title": "MilestoneOut",
         "type": "object"
       },
+      "MobilePracticeSubmitIn": {
+        "properties": {
+          "answers": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Answers",
+            "type": "object"
+          },
+          "client_claimed_badges": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Claimed Badges"
+          },
+          "client_claimed_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Claimed Score"
+          },
+          "lesson_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lesson Id"
+          },
+          "motif_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Motif Id"
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Session Id"
+          },
+          "time_taken_seconds": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Time Taken Seconds"
+          }
+        },
+        "title": "MobilePracticeSubmitIn",
+        "type": "object"
+      },
+      "MobilePracticeSubmitOut": {
+        "properties": {
+          "awarded_badges": {
+            "items": {
+              "$ref": "#/components/schemas/AwardedBadgeDetail"
+            },
+            "title": "Awarded Badges",
+            "type": "array"
+          },
+          "denied_badges": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Denied Badges",
+            "type": "array"
+          },
+          "details": {
+            "items": {
+              "$ref": "#/components/schemas/MobileQuestionResultDetail"
+            },
+            "title": "Details",
+            "type": "array"
+          },
+          "max_score": {
+            "title": "Max Score",
+            "type": "integer"
+          },
+          "new_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "New Status"
+          },
+          "passed": {
+            "title": "Passed",
+            "type": "boolean"
+          },
+          "percentage": {
+            "title": "Percentage",
+            "type": "integer"
+          },
+          "previous_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous Status"
+          },
+          "score": {
+            "title": "Score",
+            "type": "integer"
+          },
+          "server_verified": {
+            "default": true,
+            "title": "Server Verified",
+            "type": "boolean"
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Session Id"
+          },
+          "success": {
+            "title": "Success",
+            "type": "boolean"
+          },
+          "total_xp": {
+            "title": "Total Xp",
+            "type": "integer"
+          },
+          "xp_awarded": {
+            "title": "Xp Awarded",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "success",
+          "score",
+          "max_score",
+          "percentage",
+          "passed",
+          "xp_awarded",
+          "total_xp"
+        ],
+        "title": "MobilePracticeSubmitOut",
+        "type": "object"
+      },
+      "MobilePracticeSyncOut": {
+        "properties": {
+          "assessment_mode": {
+            "title": "Assessment Mode",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/MobileQuizQuestionOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "server_timestamp": {
+            "format": "date-time",
+            "title": "Server Timestamp",
+            "type": "string"
+          },
+          "session_id": {
+            "format": "uuid",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "total_questions": {
+            "title": "Total Questions",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "session_id",
+          "items",
+          "total_questions",
+          "server_timestamp",
+          "assessment_mode"
+        ],
+        "title": "MobilePracticeSyncOut",
+        "type": "object"
+      },
+      "MobileQuestionResultDetail": {
+        "properties": {
+          "correct": {
+            "title": "Correct",
+            "type": "boolean"
+          },
+          "explanation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Explanation"
+          },
+          "question_id": {
+            "format": "uuid",
+            "title": "Question Id",
+            "type": "string"
+          },
+          "user_answer": {
+            "title": "User Answer",
+            "type": "string"
+          }
+        },
+        "required": [
+          "question_id",
+          "correct",
+          "user_answer"
+        ],
+        "title": "MobileQuestionResultDetail",
+        "type": "object"
+      },
+      "MobileQuizQuestionOut": {
+        "properties": {
+          "content_validation_status": {
+            "default": "valid",
+            "title": "Content Validation Status",
+            "type": "string"
+          },
+          "difficulty": {
+            "default": 1,
+            "title": "Difficulty",
+            "type": "integer"
+          },
+          "hint": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hint"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Url"
+          },
+          "is_verified_content": {
+            "default": true,
+            "title": "Is Verified Content",
+            "type": "boolean"
+          },
+          "lesson_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lesson Id"
+          },
+          "motif_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Motif Id"
+          },
+          "options": {
+            "anyOf": [
+              {
+                "items": {},
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Options"
+          },
+          "points": {
+            "default": 10,
+            "title": "Points",
+            "type": "integer"
+          },
+          "question_text": {
+            "title": "Question Text",
+            "type": "string"
+          },
+          "question_type": {
+            "title": "Question Type",
+            "type": "string"
+          },
+          "skill_dimensions": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Skill Dimensions"
+          },
+          "skill_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Skill Type"
+          },
+          "target_mesh_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Mesh Name"
+          }
+        },
+        "required": [
+          "id",
+          "question_type",
+          "question_text"
+        ],
+        "title": "MobileQuizQuestionOut",
+        "type": "object"
+      },
       "MotifDetailOut": {
         "properties": {
           "category": {
@@ -26995,6 +27792,346 @@
         "title": "NotificationSettingsUpdateIn",
         "type": "object"
       },
+      "OfflineOperationItem": {
+        "description": "Single queued operation item from mobile or frontend offline queue.",
+        "properties": {
+          "created_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Timestamp recorded when action was queued offline",
+            "title": "Created At"
+          },
+          "idempotency_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Client idempotency key for deduplication",
+            "title": "Idempotency Key"
+          },
+          "operation_id": {
+            "description": "Unique client-generated operation ID",
+            "title": "Operation Id",
+            "type": "string"
+          },
+          "payload": {
+            "additionalProperties": true,
+            "description": "Action payload data",
+            "title": "Payload",
+            "type": "object"
+          },
+          "resource": {
+            "description": "Resource or action type: 'inspection', 'submission', 'progression', 'quiz_submit', 'complete_lesson', 'discover'",
+            "title": "Resource",
+            "type": "string"
+          }
+        },
+        "required": [
+          "operation_id",
+          "resource"
+        ],
+        "title": "OfflineOperationItem",
+        "type": "object"
+      },
+      "OfflineOperationResult": {
+        "description": "Server-authoritative acknowledgment report for an offline operation.",
+        "properties": {
+          "conflict_resolution": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Explanation of conflict resolution strategy if applicable",
+            "title": "Conflict Resolution"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Error message if status is 'failed'",
+            "title": "Error"
+          },
+          "idempotency_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Echoed idempotency key",
+            "title": "Idempotency Key"
+          },
+          "operation_id": {
+            "description": "Matching client operation ID",
+            "title": "Operation Id",
+            "type": "string"
+          },
+          "resource": {
+            "description": "Handled resource type",
+            "title": "Resource",
+            "type": "string"
+          },
+          "server_ack": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Detailed server response payload",
+            "title": "Server Ack"
+          },
+          "status": {
+            "description": "Sync status: 'synced' (created), 'acknowledged' (idempotent duplicate), 'updated' (pending submission updated), 'conflict' (graded or state conflict resolved), 'failed' (validation/error)",
+            "title": "Status",
+            "type": "string"
+          },
+          "xp_awarded": {
+            "default": 0,
+            "description": "XP awarded for this action (0 on duplicate retries)",
+            "minimum": 0.0,
+            "title": "Xp Awarded",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "operation_id",
+          "resource",
+          "status"
+        ],
+        "title": "OfflineOperationResult",
+        "type": "object"
+      },
+      "OfflineSyncRequest": {
+        "description": "Offline sync request accepting either a single operation or a batch.",
+        "properties": {
+          "created_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "idempotency_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Idempotency Key"
+          },
+          "operation_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Operation Id"
+          },
+          "operations": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/OfflineOperationItem"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Operations"
+          },
+          "payload": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payload"
+          },
+          "resource": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resource"
+          }
+        },
+        "title": "OfflineSyncRequest",
+        "type": "object"
+      },
+      "OfflineSyncResponse": {
+        "description": "Aggregate response returned after synchronizing offline operations.",
+        "properties": {
+          "acknowledged_count": {
+            "default": 0,
+            "title": "Acknowledged Count",
+            "type": "integer"
+          },
+          "conflict_count": {
+            "default": 0,
+            "title": "Conflict Count",
+            "type": "integer"
+          },
+          "conflict_resolution": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Conflict Resolution"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "failed_count": {
+            "default": 0,
+            "title": "Failed Count",
+            "type": "integer"
+          },
+          "idempotency_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Idempotency Key"
+          },
+          "operation_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Operation Id"
+          },
+          "resource": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resource"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/OfflineOperationResult"
+            },
+            "title": "Results",
+            "type": "array"
+          },
+          "server_ack": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Server Ack"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "success": {
+            "default": true,
+            "title": "Success",
+            "type": "boolean"
+          },
+          "synced_count": {
+            "default": 0,
+            "title": "Synced Count",
+            "type": "integer"
+          },
+          "total_xp_awarded": {
+            "default": 0,
+            "title": "Total Xp Awarded",
+            "type": "integer"
+          },
+          "xp_awarded": {
+            "default": 0,
+            "title": "Xp Awarded",
+            "type": "integer"
+          }
+        },
+        "title": "OfflineSyncResponse",
+        "type": "object"
+      },
       "OnboardingCompleteResponse": {
         "properties": {
           "message": {
@@ -27780,6 +28917,87 @@
         "title": "PublicMotifOut",
         "type": "object"
       },
+      "PushConsentIn": {
+        "description": "Push notification consent request schema.",
+        "properties": {
+          "consent_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "v1.0",
+            "description": "Consent policy version",
+            "title": "Consent Version"
+          },
+          "granted": {
+            "description": "True to opt-in, False to opt-out",
+            "title": "Granted",
+            "type": "boolean"
+          },
+          "platform": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Platform: ios, android, or web",
+            "title": "Platform"
+          },
+          "token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Device token if opting in",
+            "title": "Token"
+          }
+        },
+        "required": [
+          "granted"
+        ],
+        "title": "PushConsentIn",
+        "type": "object"
+      },
+      "PushConsentOut": {
+        "description": "Push notification consent response schema.",
+        "properties": {
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "push_enabled": {
+            "title": "Push Enabled",
+            "type": "boolean"
+          },
+          "success": {
+            "title": "Success",
+            "type": "boolean"
+          },
+          "token_registered": {
+            "title": "Token Registered",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success",
+          "push_enabled",
+          "message",
+          "token_registered"
+        ],
+        "title": "PushConsentOut",
+        "type": "object"
+      },
       "PushNotificationListOut": {
         "description": "List of push notifications with pagination.",
         "properties": {
@@ -28244,6 +29462,68 @@
           "issuer_name"
         ],
         "title": "QuestCertificateOut",
+        "type": "object"
+      },
+      "QuestClaimRewardOut": {
+        "properties": {
+          "badges_awarded": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Badges Awarded",
+            "type": "array"
+          },
+          "certificate": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/QuestCertificateOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "quest_id": {
+            "format": "uuid",
+            "title": "Quest Id",
+            "type": "string"
+          },
+          "quest_name": {
+            "title": "Quest Name",
+            "type": "string"
+          },
+          "quest_slug": {
+            "title": "Quest Slug",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "streak_freezes_awarded": {
+            "default": 0,
+            "title": "Streak Freezes Awarded",
+            "type": "integer"
+          },
+          "xp_awarded": {
+            "title": "Xp Awarded",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "quest_id",
+          "quest_slug",
+          "quest_name",
+          "status",
+          "xp_awarded",
+          "badges_awarded",
+          "message"
+        ],
+        "title": "QuestClaimRewardOut",
         "type": "object"
       },
       "QuestDetailOut": {
@@ -34397,6 +35677,154 @@
           "total"
         ],
         "title": "SocialUserSearchOut",
+        "type": "object"
+      },
+      "SourceCitationOut": {
+        "properties": {
+          "archive_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Archive Url"
+          },
+          "author": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Author"
+          },
+          "citation_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Citation Text"
+          },
+          "epistemic_certainty": {
+            "default": "su_lieu_xac_thuc",
+            "title": "Epistemic Certainty",
+            "type": "string"
+          },
+          "is_excerpt_redacted": {
+            "default": false,
+            "title": "Is Excerpt Redacted",
+            "type": "boolean"
+          },
+          "license": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "License"
+          },
+          "locator": {
+            "title": "Locator",
+            "type": "string"
+          },
+          "provenance_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provenance Hash"
+          },
+          "public_display_allowed": {
+            "default": true,
+            "title": "Public Display Allowed",
+            "type": "boolean"
+          },
+          "publication_year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Publication Year"
+          },
+          "publisher": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Publisher"
+          },
+          "quotation_excerpt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quotation Excerpt"
+          },
+          "rights_status": {
+            "title": "Rights Status",
+            "type": "string"
+          },
+          "source_id": {
+            "format": "uuid",
+            "title": "Source Id",
+            "type": "string"
+          },
+          "source_title": {
+            "title": "Source Title",
+            "type": "string"
+          },
+          "support_type": {
+            "default": "supports",
+            "title": "Support Type",
+            "type": "string"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url"
+          }
+        },
+        "required": [
+          "source_id",
+          "source_title",
+          "locator",
+          "rights_status"
+        ],
+        "title": "SourceCitationOut",
         "type": "object"
       },
       "SpacedRepetitionCardOut": {
@@ -46862,6 +48290,211 @@
         "summary": "Use Streak Freeze For Hearts Endpoint"
       }
     },
+    "/api/v1/heritage/catalog": {
+      "get": {
+        "description": "Retrieve canonical heritage catalog (9 Urns & 162 Motifs) with ETag caching.\n\nSupports conditional GET requests via If-None-Match header:\n- Returns HTTP 304 Not Modified if client cache ETag matches server catalog ETag.\n- Returns HTTP 200 OK with full metadata and ETag header on initial request or when catalog is updated.",
+        "operationId": "get_heritage_catalog_api_v1_heritage_catalog_get",
+        "parameters": [
+          {
+            "description": "Optional filter by canonical urn slug.",
+            "in": "query",
+            "name": "urn_slug",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Optional filter by canonical urn slug.",
+              "title": "Urn Slug"
+            }
+          },
+          {
+            "description": "Whether to include 162 motif items.",
+            "in": "query",
+            "name": "include_motifs",
+            "required": false,
+            "schema": {
+              "default": true,
+              "description": "Whether to include 162 motif items.",
+              "title": "Include Motifs",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Heritage Catalog",
+        "tags": [
+          "heritage"
+        ]
+      }
+    },
+    "/api/v1/heritage/catalog/motifs/{motif_id}": {
+      "get": {
+        "description": "Retrieve canonical catalog details for a single Motif by stable ID or slug with ETag caching.",
+        "operationId": "get_heritage_catalog_motif_api_v1_heritage_catalog_motifs__motif_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "motif_id",
+            "required": true,
+            "schema": {
+              "title": "Motif Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Heritage Catalog Motif",
+        "tags": [
+          "heritage"
+        ]
+      }
+    },
+    "/api/v1/heritage/catalog/revision": {
+      "post": {
+        "description": "Staff editorial endpoint to update an approved revision of an urn or motif.\n\nUpdates revision number and evidence status, strictly invalidating older client ETags.",
+        "operationId": "update_heritage_catalog_revision_api_v1_heritage_catalog_revision_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HeritageCatalogRevisionUpdateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Update Heritage Catalog Revision Api V1 Heritage Catalog Revision Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Update Heritage Catalog Revision",
+        "tags": [
+          "heritage"
+        ]
+      }
+    },
+    "/api/v1/heritage/catalog/{urn_slug}": {
+      "get": {
+        "description": "Retrieve canonical catalog details for a single Urn with ETag caching.",
+        "operationId": "get_heritage_catalog_urn_api_v1_heritage_catalog__urn_slug__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "urn_slug",
+            "required": true,
+            "schema": {
+              "title": "Urn Slug",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Whether to include 18 canonical motifs.",
+            "in": "query",
+            "name": "include_motifs",
+            "required": false,
+            "schema": {
+              "default": true,
+              "description": "Whether to include 18 canonical motifs.",
+              "title": "Include Motifs",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Heritage Catalog Urn",
+        "tags": [
+          "heritage"
+        ]
+      }
+    },
     "/api/v1/heritage/places": {
       "get": {
         "description": "Browse and filter heritage places with cursor pagination.\n\nPublic visitors receive only ``published`` records. Staff may filter by any\neditorial status or inspect all statuses.",
@@ -47852,6 +49485,54 @@
         ]
       }
     },
+    "/api/v1/history/citations/{slug_or_id}": {
+      "get": {
+        "description": "Retrieve full bibliographic citations, public locators, translations, and epistemic uncertainty.\n\nAdheres strictly to rights distribution policies: restricted excerpts are redacted\nto [REDACTED: RIGHTS_RESTRICTED] for unprivileged users.",
+        "operationId": "get_entity_citations_api_v1_history_citations__slug_or_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slug_or_id",
+            "required": true,
+            "schema": {
+              "title": "Slug Or Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityCitationBundleOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Entity Citations",
+        "tags": [
+          "history"
+        ]
+      }
+    },
     "/api/v1/history/claims/{claim_id}": {
       "get": {
         "operationId": "get_history_claim_api_v1_history_claims__claim_id__get",
@@ -48797,6 +50478,54 @@
           }
         },
         "summary": "List Entity Relations",
+        "tags": [
+          "history"
+        ]
+      }
+    },
+    "/api/v1/history/entities/{slug_or_id}/citations": {
+      "get": {
+        "description": "Retrieve full bibliographic citations, public locators, translations, and epistemic uncertainty.\n\nAdheres strictly to rights distribution policies: restricted excerpts are redacted\nto [REDACTED: RIGHTS_RESTRICTED] for unprivileged users.",
+        "operationId": "get_entity_citations_api_v1_history_entities__slug_or_id__citations_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slug_or_id",
+            "required": true,
+            "schema": {
+              "title": "Slug Or Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityCitationBundleOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Entity Citations",
         "tags": [
           "history"
         ]
@@ -49965,6 +51694,80 @@
         ]
       }
     },
+    "/api/v1/history/lessons/{lesson_id}/quiz-sync": {
+      "get": {
+        "description": "Sync real published quiz questions for a specific historical lesson.",
+        "operationId": "sync_lesson_quiz_api_v1_history_lessons__lesson_id__quiz_sync_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lesson_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Lesson Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "difficulty",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 5,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Difficulty"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "maximum": 50,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MobilePracticeSyncOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Sync Lesson Quiz",
+        "tags": [
+          "history-learning"
+        ]
+      }
+    },
     "/api/v1/history/map": {
       "get": {
         "description": "Heritage map data contract (Spec section 24.3).\n\nReturns only entities that have a geographic signal (lat/lng or a\nhistorical_geographies row), with precision/mapping-status metadata so the\nUI can render uncertainty honestly (24.4). Never fabricates coordinates.",
@@ -50026,6 +51829,231 @@
         "summary": "History Map",
         "tags": [
           "history"
+        ]
+      }
+    },
+    "/api/v1/history/practice/submit": {
+      "post": {
+        "description": "Submit mobile practice assessment answers with server-authoritative grading.\n\nNegative abuse guardrails:\n- Scoring is derived server-side from active question records.\n- Badges are only awarded if server-calculated score >= 80% pass threshold.\n- Any client-claimed badges or scores submitted without server verification\n  are rejected.",
+        "operationId": "submit_mobile_practice_api_v1_history_practice_submit_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MobilePracticeSubmitIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MobilePracticeSubmitOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Submit Mobile Practice",
+        "tags": [
+          "history-learning"
+        ]
+      }
+    },
+    "/api/v1/history/practice/sync": {
+      "get": {
+        "description": "Sync real published quiz questions for mobile practice modes.\n\nParity with backend server assessment tasks:\n- Never leaks correct answers or answer contracts to the client.\n- Questions must be published and content-validated.",
+        "operationId": "sync_mobile_practice_api_v1_history_practice_sync_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "lesson_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Lesson Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "motif_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Motif Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "category",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          },
+          {
+            "in": "query",
+            "name": "difficulty",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 5,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Difficulty"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "maximum": 50,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "mode",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "quick_review",
+              "title": "Mode"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MobilePracticeSyncOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Sync Mobile Practice",
+        "tags": [
+          "history-learning"
+        ]
+      }
+    },
+    "/api/v1/history/practice/verify-badge": {
+      "post": {
+        "description": "Verify that a completion badge was awarded via legitimate server evaluation.\n\nNegative abuse guardrail:\nReturns HTTP 400 if user attempts to claim a graded completion badge locally\nwithout a verified server response.",
+        "operationId": "verify_badge_claim_api_v1_history_practice_verify_badge_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BadgeVerificationIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadgeVerificationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Verify Badge Claim",
+        "tags": [
+          "history-learning"
         ]
       }
     },
@@ -56289,6 +58317,72 @@
         "summary": "Get Motif Quiz"
       }
     },
+    "/api/v1/notifications/consent": {
+      "get": {
+        "description": "Get the current user's push notification consent status.",
+        "operationId": "get_push_consent_api_v1_notifications_consent_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PushConsentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Push Consent"
+      },
+      "post": {
+        "description": "Explicitly grant or revoke push notification consent.\n\nOpt-out immediately halts notification delivery and clears stored device tokens.",
+        "operationId": "update_push_consent_api_v1_notifications_consent_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PushConsentIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PushConsentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Update Push Consent"
+      }
+    },
     "/api/v1/notifications/history": {
       "get": {
         "description": "Get the current user's notification history.",
@@ -56350,7 +58444,7 @@
     },
     "/api/v1/notifications/register-push": {
       "post": {
-        "description": "Register or update push notification token.",
+        "description": "Register or update push notification token with explicit user opt-in consent.",
         "operationId": "register_push_token_api_v1_notifications_register_push_post",
         "requestBody": {
           "content": {
@@ -56484,7 +58578,7 @@
     },
     "/api/v1/notifications/unregister-push": {
       "delete": {
-        "description": "Unregister push notification token.",
+        "description": "Unregister push notification token and promptly stop delivery.",
         "operationId": "unregister_push_token_api_v1_notifications_unregister_push_delete",
         "responses": {
           "200": {
@@ -56504,6 +58598,168 @@
           }
         ],
         "summary": "Unregister Push Token"
+      }
+    },
+    "/api/v1/offline/batch-sync": {
+      "post": {
+        "description": "Batch synchronize multiple queued offline operations.",
+        "operationId": "batch_sync_offline_operations_api_v1_offline_batch_sync_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Idempotency-Key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Idempotency-Key"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfflineSyncRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfflineSyncResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Batch synchronize multiple offline operations",
+        "tags": [
+          "offline"
+        ]
+      }
+    },
+    "/api/v1/offline/sync": {
+      "post": {
+        "description": "Synchronize queued offline actions (inspections, submissions, progression).\n\nGuarantees:\n- Reconnection retries never duplicate submissions or award multiple XP.\n- Idempotency key deduplication returns server-authoritative acknowledgment.\n- Conflict resolution preserves teacher-graded assessments.",
+        "operationId": "sync_offline_operations_api_v1_offline_sync_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Idempotency-Key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Idempotency-Key"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfflineSyncRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfflineSyncResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Synchronize offline write operations idempotently",
+        "tags": [
+          "offline"
+        ]
       }
     },
     "/api/v1/onboarding/complete": {
@@ -57070,6 +59326,51 @@
           }
         ],
         "summary": "Get Quest Detail"
+      }
+    },
+    "/api/v1/quests/{quest_slug}/claim": {
+      "post": {
+        "description": "Explicitly claim rewards for a completed quest with server-side verification.\n\nNegative abuse defense: Stale clients or unverified claims are strictly rejected.",
+        "operationId": "claim_quest_reward_api_v1_quests__quest_slug__claim_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quest_slug",
+            "required": true,
+            "schema": {
+              "title": "Quest Slug",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestClaimRewardOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Claim Quest Reward"
       }
     },
     "/api/v1/quests/{quest_slug}/start": {

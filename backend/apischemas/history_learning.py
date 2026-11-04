@@ -440,3 +440,91 @@ class CohortCausalLearningMetricsOut(BaseModel):
     competency_averages: dict[str, float]
     ethics_protocol_code: str
 
+
+# --------------------------------------------------------------------------- #
+# Mobile Lesson Quiz Sync & Server Assessment Schemas (V5-T057)
+# --------------------------------------------------------------------------- #
+class MobileQuizQuestionOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    motif_id: Optional[UUID] = None
+    lesson_id: Optional[UUID] = None
+    question_type: str
+    question_text: str
+    options: Optional[list[Any]] = None
+    target_mesh_name: Optional[str] = None
+    difficulty: int = 1
+    points: int = 10
+    skill_type: Optional[str] = None
+    skill_dimensions: Optional[list[str]] = None
+    image_url: Optional[str] = None
+    hint: Optional[str] = None
+    content_validation_status: str = "valid"
+    is_verified_content: bool = True
+
+
+class MobilePracticeSyncOut(BaseModel):
+    session_id: UUID
+    items: list[MobileQuizQuestionOut]
+    total_questions: int
+    server_timestamp: datetime
+    assessment_mode: str
+
+
+class MobilePracticeSubmitIn(BaseModel):
+    session_id: Optional[UUID] = None
+    motif_id: Optional[UUID] = None
+    lesson_id: Optional[UUID] = None
+    answers: dict[str, str] = Field(default_factory=dict)
+    time_taken_seconds: Optional[int] = None
+    # Client-claimed values to test and enforce server-authoritative grading / anti-abuse
+    client_claimed_badges: Optional[list[str]] = None
+    client_claimed_score: Optional[float] = None
+
+
+class AwardedBadgeDetail(BaseModel):
+    slug: str
+    name: str
+    icon_url: str
+    xp_bonus: int = 0
+    tier: str = "bronze"
+
+
+class MobileQuestionResultDetail(BaseModel):
+    question_id: UUID
+    correct: bool
+    user_answer: str
+    explanation: Optional[str] = None
+
+
+class MobilePracticeSubmitOut(BaseModel):
+    success: bool
+    session_id: Optional[UUID] = None
+    score: int
+    max_score: int
+    percentage: int
+    passed: bool
+    xp_awarded: int
+    total_xp: int
+    server_verified: bool = True
+    awarded_badges: list[AwardedBadgeDetail] = Field(default_factory=list)
+    denied_badges: list[str] = Field(default_factory=list)
+    details: list[MobileQuestionResultDetail] = Field(default_factory=list)
+    previous_status: Optional[str] = None
+    new_status: Optional[str] = None
+
+
+class BadgeVerificationIn(BaseModel):
+    badge_slug: str
+    session_id: Optional[UUID] = None
+    motif_id: Optional[UUID] = None
+
+
+class BadgeVerificationOut(BaseModel):
+    badge_slug: str
+    is_verified: bool
+    earned_at: Optional[datetime] = None
+    message: str
+
+

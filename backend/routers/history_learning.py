@@ -56,6 +56,12 @@ from ..apischemas.history_learning import (
     CausalLearningMetricComputeIn,
     CausalLearningMetricOut,
     CohortCausalLearningMetricsOut,
+    BadgeVerificationIn,
+    BadgeVerificationOut,
+    MobilePracticeSubmitIn,
+    MobilePracticeSubmitOut,
+    MobilePracticeSyncOut,
+    MobileQuizQuestionOut,
 )
 from ..db import get_db
 from ..deps import get_current_user, get_staff_user
@@ -893,5 +899,112 @@ def get_cohort_causal_metrics_endpoint(
 ):
     """Get aggregated cohort causal learning metrics (mean gain, Cohen's d, inter-rater reliability)."""
     return hl.get_cohort_causal_learning_metrics(db, ethics_protocol_id)
+
+
+# --------------------------------------------------------------------------- #
+# Mobile Lesson Quiz Sync & Server Assessment Endpoints (V5-T057)
+# --------------------------------------------------------------------------- #
+@router.get(
+    "/api/v1/history/practice/sync",
+    response_model=MobilePracticeSyncOut,
+)
+def sync_mobile_practice(
+    lesson_id: Optional[UUID] = Query(default=None),
+    motif_id: Optional[UUID] = Query(default=None),
+    category: Optional[str] = Query(default=None),
+    difficulty: Optional[int] = Query(default=None, ge=1, le=5),
+    limit: int = Query(default=10, ge=1, le=50),
+    mode: Optional[str] = Query(default="quick_review"),
+    db: Session = Depends(get_db),
+):
+    """Sync real published quiz questions for mobile practice modes.
+
+    Parity with backend server assessment tasks:
+    - Never leaks correct answers or answer contracts to the client.
+    - Questions must be published and content-validated.
+    """
+    return hl.sync_mobile_practice_questions(
+        db=db,
+        lesson_id=lesson_id,
+        motif_id=motif_id,
+        category=category,
+        difficulty=difficulty,
+        limit=limit,
+        mode=mode,
+    )
+
+
+@router.get(
+    "/api/v1/history/lessons/{lesson_id}/quiz-sync",
+    response_model=MobilePracticeSyncOut,
+)
+def sync_lesson_quiz(
+    lesson_id: UUID,
+    difficulty: Optional[int] = Query(default=None, ge=1, le=5),
+    limit: int = Query(default=10, ge=1, le=50),
+    db: Session = Depends(get_db),
+):
+    """Sync real published quiz questions for a specific historical lesson."""
+    return hl.sync_mobile_practice_questions(
+        db=db,
+        lesson_id=lesson_id,
+        difficulty=difficulty,
+        limit=limit,
+        mode="lesson_quiz",
+    )
+
+
+@router.post(
+    "/api/v1/history/practice/submit",
+    response_model=MobilePracticeSubmitOut,
+)
+def submit_mobile_practice(
+    payload: MobilePracticeSubmitIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Submit mobile practice assessment answers with server-authoritative grading.
+
+    Negative abuse guardrails:
+    - Scoring is derived server-side from active question records.
+    - Badges are only awarded if server-calculated score >= 80% pass threshold.
+    - Any client-claimed badges or scores submitted without server verification
+      are rejected.
+    """
+    return hl.submit_mobile_practice_assessment(
+        db=db,
+        user=current_user,
+        answers=payload.answers,
+        session_id=payload.session_id,
+        motif_id=payload.motif_id,
+        lesson_id=payload.lesson_id,
+        time_taken_seconds=payload.time_taken_seconds,
+        client_claimed_badges=payload.client_claimed_badges,
+        client_claimed_score=payload.client_claimed_score,
+    )
+
+
+@router.post(
+    "/api/v1/history/practice/verify-badge",
+    response_model=BadgeVerificationOut,
+)
+def verify_badge_claim(
+    payload: BadgeVerificationIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Verify that a completion badge was awarded via legitimate server evaluation.
+
+    Negative abuse guardrail:
+    Returns HTTP 400 if user attempts to claim a graded completion badge locally
+    without a verified server response.
+    """
+    return hl.verify_completion_badge(
+        db=db,
+        user=current_user,
+        badge_slug=payload.badge_slug,
+        motif_id=payload.motif_id,
+    )
+
 
 

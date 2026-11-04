@@ -195,6 +195,10 @@ abstract class RoutePaths {
 
   // History Atlas (public)
   static const String historyAtlas = '/history-atlas';
+  static const String sources = '/history-atlas/sources';
+  static const String modelPackages = '/history-atlas/model-packages';
+  static String atlasRelief(String urnSlug, [String? reliefSlug]) =>
+      reliefSlug != null ? '/history-atlas/$urnSlug/$reliefSlug' : '/history-atlas/$urnSlug';
 
   // Onboarding
   static const String onboarding = '/onboarding';

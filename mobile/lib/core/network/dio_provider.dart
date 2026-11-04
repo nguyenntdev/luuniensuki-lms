@@ -7,6 +7,7 @@ import '../storage/secure_storage.dart';
 import 'interceptors/auth_interceptor.dart';
 import 'interceptors/error_interceptor.dart';
 import 'interceptors/logging_interceptor.dart';
+import 'interceptors/token_refresh_interceptor.dart';
 
 part 'dio_provider.g.dart';
 
@@ -43,7 +44,10 @@ Dio dio(DioRef ref) {
   // 1. Auth interceptor - adds bearer token
   dio.interceptors.add(AuthInterceptor(secureStorage));
 
-  // 2. Error interceptor - converts Dio errors to custom exceptions
+  // 2. Token refresh interceptor - handles 401 and token rotation
+  dio.interceptors.add(TokenRefreshInterceptor(dio, secureStorage));
+
+  // 3. Error interceptor - converts Dio errors to custom exceptions
   dio.interceptors.add(ErrorInterceptor());
 
   // 3. Logging interceptor - only in debug mode

@@ -6,6 +6,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/glass/animated_background.dart';
 import '../../../streak/presentation/widgets/compact_streak_widget.dart';
 import '../widgets/daily_lessons_widget.dart';
+import '../widgets/quest_path_card.dart';
 import '../widgets/urn_path_card.dart';
 
 /// Learning Path screen - Shows structured learning progression
@@ -51,6 +52,11 @@ class LearningPathScreen extends ConsumerWidget {
             // Daily Lessons Horizontal List
             const SliverToBoxAdapter(
               child: DailyLessonsWidget(),
+            ),
+
+            // Heritage Quest Card
+            const SliverToBoxAdapter(
+              child: QuestPathCard(),
             ),
 
             // Urn Path Section Header

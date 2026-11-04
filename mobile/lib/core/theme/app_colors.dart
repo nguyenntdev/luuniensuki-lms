@@ -11,6 +11,7 @@ class AppColors {
 
   /// Primary gold color - Warmer, more luminous gold
   static const Color primary = Color(0xFFE8B44C);
+  static const Color gold = primary;
 
   /// Darker gold for emphasis - Rich deep gold
   static const Color primaryDark = Color(0xFFD49B38);
@@ -27,9 +28,11 @@ class AppColors {
 
   /// Main background - Deep midnight blue with subtle purple
   static const Color background = Color(0xFF0A0F1C);
+  static const Color darkBackground = background;
 
   /// Card/surface background - Rich navy with warmth
   static const Color surface = Color(0xFF0F1729);
+  static const Color darkSurface = surface;
 
   /// Elevated surface - Deep navy lift
   static const Color surfaceElevated = Color(0xFF111C2E);

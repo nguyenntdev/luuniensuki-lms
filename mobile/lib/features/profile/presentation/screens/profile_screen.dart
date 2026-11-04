@@ -769,6 +769,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     );
   }
 
+  // ignore: unused_element
   Widget _buildStreakCard(User user) {
     final currentStreak = user.currentStreak;
     final longestStreak = user.longestStreak;

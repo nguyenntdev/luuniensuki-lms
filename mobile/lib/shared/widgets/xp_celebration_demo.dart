@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../shared/services/xp_celebration_service.dart';
-import '../../../shared/widgets/xp_gain_handler.dart';
 
 /// Example screen demonstrating XP celebration system
 class XpCelebrationDemo extends ConsumerStatefulWidget {

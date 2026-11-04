@@ -581,7 +581,6 @@ class _PeakTrail extends StatelessWidget {
           children: List.generate(total, (index) {
             final isCompleted = index < completed;
             final isCurrent = index == completed && completed < total;
-            final isLocked = index > completed;
 
             return _PeakNode(
               size: size,

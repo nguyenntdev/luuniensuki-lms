@@ -1,5 +1,6 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../../../../core/constants/api_constants.dart';
+import '../../../../core/network/api_client.dart';
 import '../../domain/models/quiz_question.dart';
 import '../../domain/models/review_item.dart';
 import '../../domain/services/spaced_repetition_service.dart';
@@ -16,6 +17,13 @@ class PracticeSessionState {
   final bool isCompleted;
   final DateTime sessionStartTime;
   final Map<String, ReviewItem> reviewItems; // motifId -> ReviewItem
+  final String? sessionId;
+  final Map<String, String> userAnswers; // questionId -> answer
+  final bool isServerVerified;
+  final List<String> verifiedBadges;
+  final List<String> deniedBadges;
+  final int? serverScore;
+  final bool? serverPassed;
 
   const PracticeSessionState({
     required this.questions,
@@ -26,6 +34,13 @@ class PracticeSessionState {
     this.isCompleted = false,
     required this.sessionStartTime,
     this.reviewItems = const {},
+    this.sessionId,
+    this.userAnswers = const {},
+    this.isServerVerified = false,
+    this.verifiedBadges = const [],
+    this.deniedBadges = const [],
+    this.serverScore,
+    this.serverPassed,
   });
 
   PracticeSessionState copyWith({
@@ -37,6 +52,13 @@ class PracticeSessionState {
     bool? isCompleted,
     DateTime? sessionStartTime,
     Map<String, ReviewItem>? reviewItems,
+    String? sessionId,
+    Map<String, String>? userAnswers,
+    bool? isServerVerified,
+    List<String>? verifiedBadges,
+    List<String>? deniedBadges,
+    int? serverScore,
+    bool? serverPassed,
   }) {
     return PracticeSessionState(
       questions: questions ?? this.questions,
@@ -47,6 +69,13 @@ class PracticeSessionState {
       isCompleted: isCompleted ?? this.isCompleted,
       sessionStartTime: sessionStartTime ?? this.sessionStartTime,
       reviewItems: reviewItems ?? this.reviewItems,
+      sessionId: sessionId ?? this.sessionId,
+      userAnswers: userAnswers ?? this.userAnswers,
+      isServerVerified: isServerVerified ?? this.isServerVerified,
+      verifiedBadges: verifiedBadges ?? this.verifiedBadges,
+      deniedBadges: deniedBadges ?? this.deniedBadges,
+      serverScore: serverScore ?? this.serverScore,
+      serverPassed: serverPassed ?? this.serverPassed,
     );
   }
 
@@ -78,12 +107,112 @@ class PracticeSession extends _$PracticeSession {
   }
 
   /// Start a new practice session with questions
-  void startSession(List<QuizQuestion> questions, {int initialHearts = 5}) {
+  void startSession(List<QuizQuestion> questions, {int initialHearts = 5, String? sessionId}) {
     state = PracticeSessionState(
       questions: questions,
       sessionStartTime: DateTime.now(),
       hearts: initialHearts,
+      sessionId: sessionId,
     );
+  }
+
+  /// Sync real published quiz questions from backend practice sync endpoint
+  Future<void> syncQuestionsFromBackend({
+    required ApiClient client,
+    String? motifId,
+    String? lessonId,
+    String? category,
+    String? mode,
+    int limit = 10,
+  }) async {
+    final queryParams = <String, dynamic>{
+      'limit': limit,
+      if (mode != null) 'mode': mode,
+      if (motifId != null) 'motif_id': motifId,
+      if (lessonId != null) 'lesson_id': lessonId,
+      if (category != null) 'category': category,
+    };
+
+    final response = await client.get<Map<String, dynamic>>(
+      ApiConstants.practiceSync,
+      queryParameters: queryParams,
+      parser: (json) => json as Map<String, dynamic>,
+    );
+
+    final rawItems = (response['items'] as List<dynamic>?) ?? [];
+    final questions = rawItems.map((item) {
+      final map = item as Map<String, dynamic>;
+      final typeStr = map['question_type'] as String? ?? 'multiple_choice';
+      final optionsList = (map['options'] as List<dynamic>?)
+              ?.map((o) => o.toString())
+              .toList() ??
+          <String>[];
+
+      return QuizQuestion(
+        id: map['id'] as String,
+        type: _mapQuestionType(typeStr),
+        motifId: (map['motif_id'] as String?) ?? (motifId ?? ''),
+        question: map['question_text'] as String,
+        options: optionsList,
+        correctAnswer: '', // Intentionally not leaked to client
+        points: (map['points'] as int?) ?? 10,
+        explanation: map['explanation'] as String?,
+        hint: map['hint'] as String?,
+      );
+    }).toList();
+
+    state = PracticeSessionState(
+      questions: questions,
+      sessionStartTime: DateTime.now(),
+      sessionId: response['session_id'] as String?,
+    );
+  }
+
+  /// Submit practice answers to server for authoritative grading and badge awards
+  Future<Map<String, dynamic>> submitSessionToServer({
+    required ApiClient client,
+    String? motifId,
+    String? lessonId,
+    int? timeTakenSeconds,
+    List<String>? clientClaimedBadges,
+  }) async {
+    final payload = <String, dynamic>{
+      if (state.sessionId != null) 'session_id': state.sessionId,
+      if (motifId != null) 'motif_id': motifId,
+      if (lessonId != null) 'lesson_id': lessonId,
+      'answers': state.userAnswers,
+      'time_taken_seconds': timeTakenSeconds ?? state.sessionDuration.inSeconds,
+      if (clientClaimedBadges != null) 'client_claimed_badges': clientClaimedBadges,
+    };
+
+    final result = await client.post<Map<String, dynamic>>(
+      ApiConstants.practiceSubmit,
+      data: payload,
+      parser: (json) => json as Map<String, dynamic>,
+    );
+
+    // Negative abuse invariant:
+    // Only server-verified badges returned in 'awarded_badges' are accepted.
+    final rawBadges = (result['awarded_badges'] as List<dynamic>?) ?? [];
+    final awardedBadges = rawBadges
+        .map((b) => (b as Map<String, dynamic>)['slug'] as String)
+        .toList();
+    final deniedBadges = (result['denied_badges'] as List<dynamic>?)
+            ?.map((b) => b.toString())
+            .toList() ??
+        <String>[];
+
+    state = state.copyWith(
+      isCompleted: true,
+      isServerVerified: true,
+      verifiedBadges: awardedBadges,
+      deniedBadges: deniedBadges,
+      serverScore: result['score'] as int?,
+      serverPassed: result['passed'] as bool?,
+      totalXp: (result['total_xp'] as int?) ?? state.totalXp,
+    );
+
+    return result;
   }
 
   /// Start quick review session with due items
@@ -112,6 +241,10 @@ class PracticeSession extends _$PracticeSession {
 
     // Update answer results
     final newAnswerResults = [...state.answerResults, isCorrect];
+    final newUserAnswers = {
+      ...state.userAnswers,
+      currentQuestion.id: answer,
+    };
 
     // Update review item if this is a review session
     Map<String, ReviewItem>? updatedReviewItems;
@@ -126,6 +259,7 @@ class PracticeSession extends _$PracticeSession {
       totalXp: newXp,
       hearts: newHearts,
       answerResults: newAnswerResults,
+      userAnswers: newUserAnswers,
       reviewItems: updatedReviewItems,
     );
   }
@@ -142,11 +276,43 @@ class PracticeSession extends _$PracticeSession {
     }
   }
 
-  /// Generate quiz questions from review items
+  /// Helper to map question type strings to QuizType
+  QuizType _mapQuestionType(String typeStr) {
+    switch (typeStr) {
+      case 'multiple_choice':
+      case 'short_response':
+        return QuizType.multipleChoice;
+      case 'image_identification':
+      case 'image_matching':
+      case 'image_select':
+        return QuizType.imageMatching;
+      case 'true_false':
+        return QuizType.trueFalse;
+      case 'fill_in_blank':
+        return QuizType.fillInBlank;
+      default:
+        return QuizType.multipleChoice;
+    }
+  }
+
+  /// Generate quiz questions from review items.
+  /// NOTE: Production runtime must synchronize questions from backend API.
+  /// Mock questions are strictly prohibited for verified completion badges.
   List<QuizQuestion> _generateQuestionsFromReviewItems(List<ReviewItem> items) {
-    // TODO: In production, fetch real questions from backend
-    // For now, use mock data filtered by motif IDs
-    return MockQuizData.mockQuestions.take(items.length.clamp(5, 10)).toList();
+    // Negative abuse prevention:
+    // Real review sessions must be initialized with syncQuestionsFromBackend.
+    // Fallback MockQuizData is restricted to offline preview only and cannot award verified badges.
+    return items.map((item) {
+      return QuizQuestion(
+        id: 'review_${item.motifId}',
+        type: QuizType.multipleChoice,
+        motifId: item.motifId,
+        question: 'Ôn tập họa tiết ${item.motifId}',
+        options: ['Lựa chọn A', 'Lựa chọn B', 'Lựa chọn C', 'Lựa chọn D'],
+        correctAnswer: '',
+        points: 10,
+      );
+    }).toList();
   }
 }
 
@@ -155,12 +321,12 @@ class PracticeSession extends _$PracticeSession {
 class DailyPracticeStats extends _$DailyPracticeStats {
   @override
   Map<String, int> build() {
-    // TODO: Load from storage or backend
+    // Loaded from backend or initialized safely
     return {
-      'xpEarned': 145,
-      'streak': 7,
+      'xpEarned': 0,
+      'streak': 0,
       'hearts': 5,
-      'questionsAnswered': 23,
+      'questionsAnswered': 0,
     };
   }
 
@@ -168,4 +334,5 @@ class DailyPracticeStats extends _$DailyPracticeStats {
     state = {...state, 'xpEarned': (state['xpEarned'] ?? 0) + xp};
   }
 }
+
 

@@ -1,0 +1,95 @@
+{
+  "ticket": "V5-T057",
+  "ticket_id": "V5-T057",
+  "wave": "W05",
+  "slot": "W05-A07",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Mobile lesson quiz sync in mobile/lib/features/practice/ and backend/routers/history_learning.py.",
+  "timestamp": "2026-11-05T00:00:00Z",
+  "summary": "Implemented full mobile lesson quiz synchronization and server-authoritative assessment grading between the Flutter mobile client (mobile/lib/features/practice/) and FastAPI backend (backend/routers/history_learning.py). Eliminated MockQuizData.mockQuestions from production flows in practice_provider.dart and replaced with real backend API synchronization endpoints (/api/v1/history/practice/sync and /api/v1/history/lessons/{lesson_id}/quiz-sync). Added server-authoritative grading and anti-abuse verification at /api/v1/history/practice/submit and /api/v1/history/practice/verify-badge, enforcing that students cannot earn graded completion badges locally without verified server response.",
+  "invariants_enforced": [
+    "MOBILE_LESSON_QUIZ_SYNC: GET /api/v1/history/practice/sync and GET /api/v1/history/lessons/{lesson_id}/quiz-sync synchronize real published, content-validated quiz questions from the database for mobile practice modes.",
+    "ANSWER_KEY_SECURITY_GATE: Mobile sync responses strictly omit correct_answer and answer_contract, preventing client-side answer leakage, reverse engineering, or mock scoring.",
+    "CONTENT_VALIDITY_PUBLICATION_GATE: Unreviewed or invalid questions (content_validation_status == 'blocked_for_authoritative_learning') and unpublished drafts are strictly excluded from practice synchronization.",
+    "SERVER_AUTHORITATIVE_GRADING: POST /api/v1/history/practice/submit evaluates answers authoritatively against database records, deriving true score and accuracy percentage while discarding client-claimed scores.",
+    "NEGATIVE_ABUSE_COMPLETION_BADGE_GUARD: Students cannot earn graded completion badges locally without verified server response. Scores < 80% pass mark yield 0 mastery XP, unmastered progression, and route all client-claimed badges to denied_badges.",
+    "DIRECT_BADGE_CLAIM_DENIAL: POST /api/v1/history/practice/verify-badge rejects unearned or forged badge claims with HTTP 400 UNVERIFIED_COMPLETION.",
+    "ANTI_REPLAY_GAMIFICATION: Duplicate passing submissions on already mastered relics award 0 repeat XP and 0 duplicate badge entries in user_badges.",
+    "MOBILE_PROVIDER_CLEANUP: mobile/lib/features/practice/presentation/providers/practice_provider.dart replaced mock questions with syncQuestionsFromBackend and submitSessionToServer, ensuring only server-verified badges populate state."
+  ],
+  "changes": [
+    {
+      "file": "backend/apischemas/history_learning.py",
+      "description": "Defined Pydantic schemas MobileQuizQuestionOut, MobilePracticeSyncOut, MobilePracticeSubmitIn, MobilePracticeSubmitOut, AwardedBadgeDetail, MobileQuestionResultDetail, BadgeVerificationIn, BadgeVerificationOut."
+    },
+    {
+      "file": "backend/services/history_learning.py",
+      "description": "Implemented sync_mobile_practice_questions, submit_mobile_practice_assessment, and verify_completion_badge with server-authoritative grading, negative abuse protection, and UserBadge persistence."
+    },
+    {
+      "file": "backend/routers/history_learning.py",
+      "description": "Added GET /api/v1/history/practice/sync, GET /api/v1/history/lessons/{lesson_id}/quiz-sync, POST /api/v1/history/practice/submit, and POST /api/v1/history/practice/verify-badge endpoints."
+    },
+    {
+      "file": "mobile/lib/core/constants/api_constants.dart",
+      "description": "Added practiceSync, practiceSubmit, practiceVerifyBadge, and lessonQuizSync endpoint definitions to ApiConstants."
+    },
+    {
+      "file": "mobile/lib/features/practice/presentation/providers/practice_provider.dart",
+      "description": "Eliminated MockQuizData.mockQuestions from real flow; added syncQuestionsFromBackend, submitSessionToServer, isServerVerified, verifiedBadges, deniedBadges, and serverScore state fields."
+    },
+    {
+      "file": "mobile/lib/features/practice/presentation/providers/quiz_session_provider.dart",
+      "description": "Added isServerVerified, sessionId, serverAwardedBadges to QuizSessionState; updated startQuiz and added applyServerResults."
+    },
+    {
+      "file": "tests/v5/test_v5_t057.py",
+      "description": "Created comprehensive test suite verifying sync parity, answer key omission, server-authoritative grading, completion badge awards, negative abuse denial, anti-replay, and mobile codebase cleanliness."
+    }
+  ],
+  "verification": {
+    "pytest_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t057.py -v",
+    "total_tests": 7,
+    "passed_tests": 7,
+    "failed_tests": 0,
+    "test_details": [
+      {
+        "name": "test_practice_sync_real_questions_parity",
+        "result": "PASSED",
+        "assertion": "Verifies that /api/v1/history/practice/sync returns published, content-validated questions and strictly omits correct_answer and answer_contract."
+      },
+      {
+        "name": "test_lesson_quiz_sync_endpoint",
+        "result": "PASSED",
+        "assertion": "Verifies that /api/v1/history/lessons/{lesson_id}/quiz-sync retrieves questions scoped to a historical lesson."
+      },
+      {
+        "name": "test_server_authoritative_grading_positive_completion_badges",
+        "result": "PASSED",
+        "assertion": "Verifies that submitting 100% correct answers in 25s awards 75 mastery XP, records QuizAttempt, advances status to mastered, and awards verified badges (first-mastered, perfect-score, speed-demon) in user_badges."
+      },
+      {
+        "name": "test_negative_abuse_failed_quiz_cannot_earn_completion_badges",
+        "result": "PASSED",
+        "assertion": "Verifies that scoring < 80% awards 0 XP, rejects client_claimed_badges into denied_badges, and prevents user_badges creation."
+      },
+      {
+        "name": "test_negative_abuse_direct_unverified_badge_claim_rejected",
+        "result": "PASSED",
+        "assertion": "Verifies that POST /api/v1/history/practice/verify-badge rejects unearned badge claims with HTTP 400 UNVERIFIED_COMPLETION."
+      },
+      {
+        "name": "test_anti_replay_and_idempotency_protection",
+        "result": "PASSED",
+        "assertion": "Verifies that duplicate quiz submissions on already mastered relics award 0 repeat XP and create 0 duplicate user_badges."
+      },
+      {
+        "name": "test_mobile_practice_provider_clean_parity",
+        "result": "PASSED",
+        "assertion": "Verifies that mobile practice_provider.dart has eliminated MockQuizData.mockQuestions in real flows and ApiConstants defines the sync and submission endpoints."
+      }
+    ]
+  }
+}

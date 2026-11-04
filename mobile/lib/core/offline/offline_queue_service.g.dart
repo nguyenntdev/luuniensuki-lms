@@ -7,9 +7,9 @@ part of 'offline_queue_service.dart';
 // **************************************************************************
 
 String _$offlineQueueServiceHash() =>
-    r'a7b3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6b5';
+    r'467615f962070f83c4e8589b7eb87f94cd8f602f';
 
-/// Riverpod provider for OfflineQueueService
+/// See also [offlineQueueService].
 @ProviderFor(offlineQueueService)
 final offlineQueueServiceProvider = Provider<OfflineQueueService>.internal(
   offlineQueueService,

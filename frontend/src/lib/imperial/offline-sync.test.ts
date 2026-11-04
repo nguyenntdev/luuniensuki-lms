@@ -7,6 +7,13 @@ import {
   subscribeOfflineSync,
   syncOfflineQueue,
   initOfflineSyncListener,
+  enqueueOfflineAction,
+  enqueueOfflineInspection,
+  enqueueOfflineProgression,
+  getPendingActions,
+  clearPendingAction,
+  clearAllPendingActions,
+  syncOfflineActionQueue,
 } from "./offline-sync";
 
 describe("Offline Sync & IndexedDB Engine (offline-sync.ts)", () => {
@@ -162,5 +169,110 @@ describe("Offline Sync & IndexedDB Engine (offline-sync.ts)", () => {
     const stillPending = pending.find((p) => p.id === item.id);
     expect(stillPending).toBeDefined();
     expect(stillPending?.retry_count).toBeGreaterThan(0);
+  });
+
+  it("enqueues inspection and progression actions with client idempotency keys", async () => {
+    await clearAllPendingActions();
+
+    const inspection = await enqueueOfflineInspection(
+      "cao-dinh",
+      {
+        inspection_mode: "webxr_ar",
+        camera_permission_granted: true,
+        angles_inspected: ["front", "back"],
+      },
+      "custom-idemp-key-101",
+    );
+
+    expect(inspection.idempotency_key).toBe("custom-idemp-key-101");
+    expect(inspection.action_type).toBe("inspection");
+    expect(inspection.payload.target_slug).toBe("cao-dinh");
+
+    const progression = await enqueueOfflineProgression(
+      "discover",
+      "motif-sun-1",
+      { time_spent_seconds: 15 },
+    );
+
+    expect(progression.action_type).toBe("progression");
+    expect(progression.idempotency_key).toMatch(/^idemp_progression_/);
+    expect(progression.payload.motif_id).toBe("motif-sun-1");
+
+    const pending = await getPendingActions();
+    expect(pending.length).toBe(2);
+  });
+
+  it("syncOfflineActionQueue synchronizes pending actions, verifies server ACK, and removes completed", async () => {
+    await clearAllPendingActions();
+
+    const inspection = await enqueueOfflineInspection("dien-thai-hoa", {
+      inspection_mode: "turntable_3d",
+      time_spent_seconds: 25,
+    });
+
+    const mockResponse = {
+      success: true,
+      status: "synced",
+      resource: "inspection",
+      xp_awarded: 25,
+      server_ack: {
+        task_id: "task-uuid-123",
+        already_completed: false,
+      },
+    };
+
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => mockResponse,
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await syncOfflineActionQueue("/api/v1/offline/sync");
+    expect(result.syncedCount).toBe(1);
+    expect(result.errorsCount).toBe(0);
+    expect(result.totalXpAwarded).toBe(25);
+    expect(result.results[0].status).toBe("synced");
+
+    // Verified: header X-Idempotency-Key was sent
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/v1/offline/sync",
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          "X-Idempotency-Key": inspection.idempotency_key,
+        }),
+      }),
+    );
+
+    const pending = await getPendingActions();
+    expect(pending.length).toBe(0);
+  });
+
+  it("handles conflict resolution (409) gracefully without infinite retry", async () => {
+    await clearAllPendingActions();
+
+    await enqueueOfflineAction("submission", "submission", {
+      activity_id: "act-123",
+      claim: "Bài sửa offline",
+    });
+
+    // Mock 409 conflict (e.g. already graded by teacher)
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 409,
+        json: async () => ({
+          error: "Bài làm đã được chấm điểm. Bản sửa đổi ngoại tuyến không thể ghi đè kết quả.",
+        }),
+      }),
+    );
+
+    const result = await syncOfflineActionQueue("/api/v1/offline/sync");
+    expect(result.syncedCount).toBe(1); // Resolved conflict removed from queue
+    expect(result.results[0].status).toBe("conflict");
+
+    const pending = await getPendingActions();
+    expect(pending.length).toBe(0); // Conflict resolved, not stuck in queue
   });
 });

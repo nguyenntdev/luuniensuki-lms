@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/theme/app_theme.dart';
@@ -25,10 +26,15 @@ class LuuniensukiApp extends ConsumerWidget {
       routerConfig: router,
 
       // Localization (Vietnamese primary)
-      locale: const Locale('vi', 'VN'),
-      supportedLocales: const [
+      locale: Locale('vi', 'VN'),
+      supportedLocales: [
         Locale('vi', 'VN'),
         Locale('en', 'US'),
+      ],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
       ],
 
       // Builder for global overlays and error handling

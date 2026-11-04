@@ -71,6 +71,8 @@ enum QuestionType {
 
   final String value;
 
+  String get name => toString().split('.').last;
+
   const QuestionType(this.value);
 
   static QuestionType fromString(String value) {

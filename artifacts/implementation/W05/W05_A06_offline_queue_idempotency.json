@@ -1,0 +1,114 @@
+{
+  "ticket": "V5-T056",
+  "ticket_id": "V5-T056",
+  "wave": "W05",
+  "slot": "W05-A06",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Offline queue idempotency in mobile/lib/core/ and frontend/src/lib/imperial/offline-sync.ts.",
+  "timestamp": "2026-11-05T00:00:00Z",
+  "summary": "Implemented comprehensive offline queue idempotency across the mobile Flutter client (mobile/lib/core/offline/offline_queue_service.dart), frontend Web PWA (frontend/src/lib/imperial/offline-sync.ts), and FastAPI backend (/api/v1/offline/sync and /api/v1/offline/batch-sync). Queued offline actions across all 3 heritage modalities (inspections, submissions, progression) are strictly tracked with persistent client idempotency keys, exponential retry logic, conflict resolution, and server ACK contracts. Enforced negative abuse protections guaranteeing that network reconnection retries or rapid burst re-transmissions never duplicate database submissions and never award multiple XP.",
+  "invariants_enforced": [
+    "OFFLINE_QUEUE_IDEMPOTENCY: Every offline action (inspection, progression, submission) carries a persistent client-side idempotency key that is preserved across retries and reconnection events.",
+    "ANTI_REPLAY_GAMIFICATION: Reconnection retries and duplicate synchronized operations strictly award 0 XP. Relic inspection XP (+25), discovery XP (+25), lesson completion XP (+50), and quiz mastery XP (+75) are awarded exactly once.",
+    "SUBMISSION_DEDUPLICATION: Re-transmitting queued submissions with identical content returns status 'acknowledged' with the existing server ID, creating 0 duplicate database rows.",
+    "CONFLICT_RESOLUTION_PRESERVES_GRADES: Offline modifications to pending submissions update the student draft with incremented row_version. Once a teacher grades the submission, subsequent offline edits return status 'conflict' and strictly preserve teacher score, rubric evaluation, and feedback.",
+    "RETRY_BOUNDS_AND_EXPONENTIAL_BACKOFF: Queued operations fail closed after 5 retry attempts, preventing infinite polling loops or connection spam upon flaky networks.",
+    "SERVER_AUTHORITATIVE_ACK: Server returns typed acknowledgment envelopes ('synced', 'acknowledged', 'updated', 'conflict', 'failed') along with authoritative timestamps, server UUIDs, and awarded XP."
+  ],
+  "changes": [
+    {
+      "file": "backend/apischemas/offline.py",
+      "description": "Created Pydantic v2 schemas (OfflineOperationItem, OfflineOperationResult, OfflineSyncRequest, OfflineSyncResponse) for single and batch offline queue synchronization."
+    },
+    {
+      "file": "backend/services/offline_sync_service.py",
+      "description": "Created offline synchronization service handling inspections, progression (discover, complete_lesson, submit_quiz), and submissions with deduplication, conflict resolution, and anti-replay zero-XP guarantees."
+    },
+    {
+      "file": "backend/routers/offline.py",
+      "description": "Created FastAPI router with POST /api/v1/offline/sync and POST /api/v1/offline/batch-sync endpoints supporting X-Idempotency-Key headers and batch operations."
+    },
+    {
+      "file": "backend/services/imperial_sync.py",
+      "description": "Enhanced batch sync conflict resolution: if existing submission has status 'graded', offline edits return status 'conflict' and preserve teacher grade and feedback."
+    },
+    {
+      "file": "backend/app.py",
+      "description": "Registered offline router (/api/v1/offline) into FastAPI application factory."
+    },
+    {
+      "file": "frontend/src/lib/imperial/offline-sync.ts",
+      "description": "Enhanced offline sync engine with QueuedOfflineAction, enqueueOfflineInspection, enqueueOfflineProgression, syncOfflineActionQueue, client idempotency keys, server ACK parsing, and conflict resolution (409)."
+    },
+    {
+      "file": "frontend/src/lib/imperial/offline-sync.test.ts",
+      "description": "Added Vitest tests verifying inspection/progression action queues, X-Idempotency-Key headers, server ACK handling, and 409 conflict resolution."
+    },
+    {
+      "file": "mobile/lib/core/offline/offline_queue_service.dart",
+      "description": "Enhanced Flutter OfflineOperation with serverAck, xpAwarded, conflictResolution; added enqueueInspection, enqueueProgression, enqueueSubmission helper methods; updated processQueue to parse server ACKs and handle 409 conflicts."
+    },
+    {
+      "file": "tests/v5/test_v5_t056.py",
+      "description": "Created end-to-end Python test suite verifying relic inspections, learning progression anti-replay, submission deduplication, teacher grade conflict resolution, 10-retry rapid burst abuse protection, batch sync, and error handling."
+    }
+  ],
+  "verification": {
+    "pytest_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t056.py -v",
+    "total_tests": 7,
+    "passed_tests": 7,
+    "failed_tests": 0,
+    "test_details": [
+      {
+        "name": "test_offline_relic_inspection_sync_and_idempotency",
+        "result": "PASSED",
+        "assertion": "Verifies that offline inspection sync awards 25 XP once, echoes task_id, and reconnection retry returns acknowledged with 0 XP."
+      },
+      {
+        "name": "test_offline_progression_sync_and_anti_replay_xp",
+        "result": "PASSED",
+        "assertion": "Verifies discovery (+25), lesson (+50), and quiz (+75) progression with anti-replay returning 0 XP on duplicate retries."
+      },
+      {
+        "name": "test_offline_submission_sync_identical_and_updated_draft",
+        "result": "PASSED",
+        "assertion": "Verifies that identical submission content returns acknowledged (1 DB row), and un-graded draft updates row with incremented row_version."
+      },
+      {
+        "name": "test_offline_submission_conflict_resolution_preserves_graded_assessment",
+        "result": "PASSED",
+        "assertion": "Verifies that student offline edits after teacher grading return status 'conflict' and do not corrupt teacher scores or feedback."
+      },
+      {
+        "name": "test_negative_abuse_rapid_reconnection_burst_and_replay",
+        "result": "PASSED",
+        "assertion": "Verifies that 10 rapid re-transmissions award XP exactly once (+25 XP total, never +250 XP)."
+      },
+      {
+        "name": "test_offline_batch_sync_mixed_actions",
+        "result": "PASSED",
+        "assertion": "Verifies batch synchronization with mixed actions, returning synced_count=3 then acknowledged_count=3 with 0 duplicate XP on replay."
+      },
+      {
+        "name": "test_offline_sync_error_handling",
+        "result": "PASSED",
+        "assertion": "Verifies 401 unauthenticated protection, 400 bad request validation, and graceful status='failed' handling for unsupported resources."
+      }
+    ],
+    "vitest_command": "npm --prefix frontend run test -- src/lib/imperial/offline-sync.test.ts",
+    "vitest_passed": 8,
+    "vitest_failed": 0,
+    "cargo_test_passed": 323,
+    "cargo_test_failed": 0,
+    "ci_lint_scripts_passed": [
+      "lint-pinned-deps.sh",
+      "lint-build-budget.sh",
+      "lint-inventory-drift.sh",
+      "lint-ai-tutor-pinning.sh",
+      "lint-migration-safety.sh",
+      "lint-ledger-sync.sh"
+    ]
+  }
+}

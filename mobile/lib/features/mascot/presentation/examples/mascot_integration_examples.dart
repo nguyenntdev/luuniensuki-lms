@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../mascot.dart';
+import '../../mascot.dart';
 
 /// Example integrations for the mascot feature
 /// Copy these patterns to integrate mascot in your screens

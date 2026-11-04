@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lms/core/theme/app_colors.dart';
-import 'package:lms/features/practice/domain/models/quiz_question.dart';
-import 'package:lms/features/practice/presentation/widgets/quiz_types/multiple_choice_quiz.dart';
-import 'package:lms/features/practice/presentation/widgets/quiz_types/image_matching_quiz.dart';
-import 'package:lms/features/practice/presentation/widgets/quiz_types/true_false_quiz.dart';
-import 'package:lms/features/practice/presentation/providers/quiz_session_provider.dart';
+import 'package:luuniensuki_lms/core/theme/app_colors.dart';
+import 'package:luuniensuki_lms/features/practice/domain/models/quiz_question.dart';
+import 'package:luuniensuki_lms/features/practice/presentation/widgets/quiz_types/multiple_choice_quiz.dart';
+import 'package:luuniensuki_lms/features/practice/presentation/widgets/quiz_types/image_matching_quiz.dart';
+import 'package:luuniensuki_lms/features/practice/presentation/widgets/quiz_types/true_false_quiz.dart';
+import 'package:luuniensuki_lms/features/practice/presentation/providers/quiz_session_provider.dart';
 
 class QuizDemoScreen extends ConsumerStatefulWidget {
   const QuizDemoScreen({super.key});

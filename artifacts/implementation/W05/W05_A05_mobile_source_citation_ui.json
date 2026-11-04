@@ -1,0 +1,129 @@
+{
+  "ticket": "V5-T055",
+  "ticket_id": "V5-T055",
+  "wave": "W05",
+  "slot": "W05-A05",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Mobile source citation UI in mobile/lib/features/urn_viewer/ and mobile/lib/features/explore/.",
+  "timestamp": "2026-11-05T00:00:00Z",
+  "summary": "Implemented authoritative mobile source citation UI and offline provenance preservation across mobile/lib/features/urn_viewer/ and mobile/lib/features/explore/. Developed domain entities in source_citation.dart (EpistemicCertainty, SourceRightsStatus, SourceCitation, HistoricalClaimCitation, EntityCitationBundle), accessible EpistemicBadge widget with color coding and screen reader semantics, and interactive draggable SourceCitationSheet presenting public locators (volume, chapter, page_start, page_end, section, folio), bibliographic citations (author, title, publisher, year, license, rights status), Hán-Nôm script glyphs with Sino-Vietnamese reading, and bilingual translations. Enforced strict avoidance of unauthorized restricted snippets by redacting copyrighted/unlicensed text to '[REDACTED: RIGHTS_RESTRICTED]' for public users while preserving citation metadata. Integrated SourceCitationSheet into MotifSidebar, UrnViewerScreen, and Explore UrnCard. Extended HiveStorage with a dedicated citationsBox. Built entity_citations.py backend service with SHA-256 provenance hash chaining and added GET /api/v1/history/citations/{slug_or_id} and GET /api/v1/history/entities/{slug_or_id}/citations endpoints. Verified strict negative abuse guardrails ensuring offline content preserves original citation provenance and rejects stripped sources, promoted disputed claims, or forged provenance hashes.",
+  "invariants_enforced": [
+    "PUBLIC_LOCATORS_DISPLAY: Public locators (volume, chapter, page_start, page_end, section, folio, inscription location) formatted with scholarly precision and displayed across mobile citation sheets.",
+    "BIBLIOGRAPHIC_CITATIONS_LINKAGE: Authoritative primary source metadata (title, author, publisher, publication_year, license, rights_status, archive_url) bound to claims and relics.",
+    "BILINGUAL_AND_HAN_NOM_TRANSLATIONS: Hán-Nôm script characters, Sino-Vietnamese reading (phiên âm), and modern Vietnamese/English translations rendered prominently with elegant typography.",
+    "EPISTEMIC_UNCERTAINTY_INDICATORS: Dynamic epistemic badges (documented / Sử liệu xác thực, traditional / Truyền thuyết dân gian, uncertain / Đang khảo cứu, disputed / Có tranh luận) prevent unverified or folkloric claims from claiming settled factual authority.",
+    "AVOID_UNAUTHORIZED_RESTRICTED_SNIPPETS: Rights-restricted and unlicensed excerpts are strictly redacted to '[REDACTED: RIGHTS_RESTRICTED]' for public/anonymous users, preventing copyright infringement while preserving citation metadata. Privileged staff users retain access for academic audit.",
+    "NEGATIVE_ABUSE_OFFLINE_PROVENANCE_PRESERVATION: Offline content preserves original citation provenance; cannot strip source attribution. Attempting to mark claims verified while dropping sources, stripping locators, promoting disputed claims, or tampering with SHA-256 provenance hashes is strictly rejected with typed exceptions.",
+    "MOBILE_INTERACTIVE_CITATION_SHEET: Draggable modal bottom sheet (SourceCitationSheet) wired into MotifSidebar, UrnViewerScreen, and UrnCard with complete loading, error, empty, and loaded states.",
+    "HIVE_AUTHENTICATED_OFFLINE_CACHE: HiveStorage citationsBox caches and retrieves verified bundles with provenance integrity checks on read and write."
+  ],
+  "verification": {
+    "test_file": "tests/v5/test_v5_t055.py",
+    "tests_passed": 9,
+    "tests_total": 9,
+    "regression_suite_tests": 30,
+    "openapi_snapshot_match": "PASSED",
+    "route_inventory_fresh": "PASSED (500 routes)",
+    "frontend_type_check": "PASSED (tsc --noEmit)",
+    "git_diff_check": "PASSED (0 trailing whitespace or EOF errors)",
+    "test_cases": [
+      {
+        "name": "test_public_locator_formatting",
+        "result": "PASSED",
+        "assertion": "Verifies scholarly public locator string assembly across various archival units (volume, chapter, folio, pages, inscription location)."
+      },
+      {
+        "name": "test_epistemic_uncertainty_classifier",
+        "result": "PASSED",
+        "assertion": "Verifies dynamic epistemic certainty assignment for documented, traditional, uncertain, and disputed assertions."
+      },
+      {
+        "name": "test_unauthorized_restricted_snippets_avoidance",
+        "result": "PASSED",
+        "assertion": "Verifies that copyrighted/restricted excerpts are strictly redacted to [REDACTED: RIGHTS_RESTRICTED] for public queries while preserving bibliographic metadata, and accessible to privileged staff."
+      },
+      {
+        "name": "test_open_public_domain_excerpt_permitted",
+        "result": "PASSED",
+        "assertion": "Verifies that public domain and CC0 sources allow unredacted excerpt display."
+      },
+      {
+        "name": "test_negative_abuse_offline_content_stripping_sources_rejected",
+        "result": "PASSED",
+        "assertion": "Verifies that offline cache bundles attempting to mark claims as verified while stripping source attribution are strictly rejected with MissingSourceAttributionError."
+      },
+      {
+        "name": "test_negative_abuse_disputed_claim_cannot_be_promoted_in_offline_bundle",
+        "result": "PASSED",
+        "assertion": "Verifies that disputed claims cannot be forged as verified in offline cache, failing with DisputedClaimPromotionError."
+      },
+      {
+        "name": "test_negative_abuse_tampered_provenance_hash_rejected",
+        "result": "PASSED",
+        "assertion": "Verifies that altering statement text or sources without a valid SHA-256 provenance signature fails with CitationProvenanceError."
+      },
+      {
+        "name": "test_mobile_source_citation_architectural_analysis",
+        "result": "PASSED",
+        "assertion": "Audits Flutter mobile client code verifying source_citation.dart, source_citation_sheet.dart, epistemic_badge.dart, motif_sidebar.dart, urn_card.dart, and hive_storage.dart."
+      },
+      {
+        "name": "test_api_citation_endpoint_e2e",
+        "result": "PASSED",
+        "assertion": "Verifies GET /api/v1/history/citations/{slug_or_id} returns full structured citations with real database rows."
+      }
+    ]
+  },
+  "changes": [
+    {
+      "file": "mobile/lib/features/urn_viewer/domain/entities/source_citation.dart",
+      "description": "Created domain entities for mobile source citations: EpistemicCertainty, SourceRightsStatus, SourceCitation, HistoricalClaimCitation, EntityCitationBundle, CitationProvenanceError, and MissingSourceAttributionError with provenance integrity verification."
+    },
+    {
+      "file": "mobile/lib/features/urn_viewer/presentation/widgets/epistemic_badge.dart",
+      "description": "Created accessible EpistemicBadge widget supporting documented, traditional, uncertain, and disputed states with screen reader semantics and color-coded indicators."
+    },
+    {
+      "file": "mobile/lib/features/urn_viewer/presentation/widgets/source_citation_sheet.dart",
+      "description": "Implemented DraggableScrollableSheet displaying verified bibliographic citations, public locators, Hán-Nôm script glyphs, Sino-Vietnamese readings, translations, and secure [REDACTED: RIGHTS_RESTRICTED] snippet handling."
+    },
+    {
+      "file": "mobile/lib/features/urn_viewer/presentation/providers/source_citation_provider.dart",
+      "description": "Created entityCitationsProvider loading remote API citations and falling back to authenticated Hive cache with strict offline provenance integrity checks."
+    },
+    {
+      "file": "mobile/lib/features/urn_viewer/presentation/widgets/motif_sidebar.dart",
+      "description": "Wired 'Tra cứu nguồn sử liệu gốc' button opening SourceCitationSheet for selected motif/relief."
+    },
+    {
+      "file": "mobile/lib/features/urn_viewer/presentation/screens/urn_viewer_screen.dart",
+      "description": "Wired 'Tra cứu nguồn thư tịch & sử liệu gốc' button into Urn info bottom sheet opening SourceCitationSheet."
+    },
+    {
+      "file": "mobile/lib/features/explore/presentation/widgets/urn_card.dart",
+      "description": "Added 'Nguồn sử liệu' action button on Urn cards opening SourceCitationSheet for the urn."
+    },
+    {
+      "file": "mobile/lib/core/storage/hive_storage.dart",
+      "description": "Added citationsBox support with cacheEntityCitations and getCachedEntityCitations methods."
+    },
+    {
+      "file": "backend/services/entity_citations.py",
+      "description": "Implemented backend citation resolution service supporting public locator formatting, epistemic uncertainty classification, excerpt redaction for restricted sources, SHA-256 provenance hash generation, and offline provenance validation."
+    },
+    {
+      "file": "backend/apischemas/history.py",
+      "description": "Added SourceCitationOut, HistoricalClaimCitationOut, and EntityCitationBundleOut Pydantic schemas."
+    },
+    {
+      "file": "backend/routers/history.py",
+      "description": "Exposed GET /api/v1/history/citations/{slug_or_id} and GET /api/v1/history/entities/{slug_or_id}/citations endpoints."
+    },
+    {
+      "file": "tests/v5/test_v5_t055.py",
+      "description": "Created comprehensive 9-test suite validating public locators, bibliographic citations, translations, epistemic indicators, unauthorized restricted snippets avoidance, negative abuse offline provenance preservation, architectural audit, and E2E API integration."
+    }
+  ]
+}

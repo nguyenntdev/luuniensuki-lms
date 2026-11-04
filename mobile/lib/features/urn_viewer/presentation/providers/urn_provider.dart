@@ -12,6 +12,9 @@ import '../../data/models/urn_dtos.dart';
 import '../../data/models/urn_mappers.dart';
 import '../../domain/entities/urn.dart';
 
+export '../../data/repositories/urn_manifest_repository.dart'
+    show urnManifestProvider, urnManifestRepositoryProvider;
+
 part 'urn_provider.g.dart';
 
 /// Provider for fetching list of all urns
@@ -35,7 +38,7 @@ Future<List<Urn>> urns(Ref ref) async {
       ApiConstants.urns,
     );
 
-    final urns = (response as List)
+    final urns = response
         .map((json) => UrnListItemDto.fromJson(json as Map<String, dynamic>))
         .map((dto) => dto.toEntity())
         .toList();
@@ -72,7 +75,7 @@ Future<UrnDetail> urnDetail(Ref ref, String slug) async {
       ApiConstants.userProgress,
     );
     progressByMotifId = {
-      for (final p in (progressResponse as List))
+      for (final p in progressResponse)
         (p as Map<String, dynamic>)['motif_id'] as String:
             UserProgressDto.fromJson(p)
     };

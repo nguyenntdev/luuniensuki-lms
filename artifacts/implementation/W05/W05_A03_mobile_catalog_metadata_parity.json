@@ -1,0 +1,73 @@
+{
+  "ticket": "V5-T053",
+  "ticket_id": "V5-T053",
+  "wave": "W05",
+  "slot": "W05-A03",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Mobile catalog + metadata parity in mobile/lib/features/explore/ and backend/routers/heritage.py.",
+  "timestamp": "2026-11-05T01:45:00Z",
+  "summary": "Implemented full mobile catalog and metadata parity between the Flutter mobile client and the FastAPI backend. Created the Canonical Heritage Catalog service (backend/services/heritage_catalog.py) and API endpoints (/api/v1/heritage/catalog, /api/v1/heritage/catalog/{urn_slug}, /api/v1/heritage/catalog/motifs/{motif_id}, and /api/v1/heritage/catalog/revision) supporting the 9 canonical Cửu Đỉnh Urns and 162 Motifs with stable IDs, canonical slugs, Hán–Nôm glyphs, reign titles, temple names, 3D meshes, spatial coordinates, and evidence status labels aligned with the web platform. Added strong ETag cryptographic hashing and HTTP conditional caching (If-None-Match returning 304 Not Modified). Implemented negative abuse protection ensuring that updated approved revisions on the server strictly invalidate previous client ETags and appear immediately on client refresh without stale mock drift. Updated mobile ApiConstants, Urn and ExploreMotif domain entities, ApiClient with getWithHeaders, and ExploreNotifier to consume the canonical catalog with ETag caching and anti-drift synchronization.",
+  "invariants_enforced": [
+    "CANONICAL_URNS_COUNT: Exactly 9 canonical Urns (cao-dinh .. huyen-dinh) in spatial display order (1..9) with canonical slugs, Vietnamese names, English translations, Hán-Nôm glyphs, reign titles, and temple names.",
+    "CANONICAL_MOTIFS_COUNT: Exactly 162 canonical Motifs (strictly 18 per urn) with stable IDs (urn_cao_dinh_01..18 .. urn_huyen_dinh_01..18), canonical relief slugs (cao-dinh-01..18 .. huyen-dinh-01..18), 3D mesh names, and spatial coordinates.",
+    "EVIDENCE_STATUS_PARITY: Uses controlled evidence status vocabulary matching the web platform (verified, needs_review, disputed, rejected). The 4 known unconfirmed motifs from W02-A06 (urn_nghi_dinh_03, urn_thuan_dinh_13, urn_tuyen_dinh_11, urn_huyen_dinh_12) strictly default to 'needs_review', while confirmed motifs default to 'verified'.",
+    "ETAG_HTTP_CONDITIONAL_CACHING: GET /api/v1/heritage/catalog, /catalog/{urn_slug}, and /catalog/motifs/{id} calculate deterministic strong ETags and return HTTP 304 Not Modified with empty payload when client sends a matching If-None-Match header.",
+    "NEGATIVE_ABUSE_ZERO_STALE_MOCK_DRIFT: When an approved revision is updated on the server (e.g. promoting an unreviewed motif to verified or updating content), the catalog ETag is recalculated. Client refresh with previous cached ETag strictly returns HTTP 200 OK with the new revision and new ETag, guaranteeing zero stale mock drift.",
+    "ROLE_BASED_REVISION_ACCESS_CONTROL: Revision updates on /api/v1/heritage/catalog/revision require staff/admin privileges (STAFF_ROLES). Learners and anonymous users are blocked with HTTP 403 Forbidden / 401 Unauthorized, and invalid evidence statuses are rejected with HTTP 400 Bad Request."
+  ],
+  "changes": [
+    {
+      "file": "backend/services/heritage_catalog.py",
+      "description": "Created canonical heritage catalog service providing 9 Urns and 162 Motifs data construction, revision overlays, ETag computation, approved revision updates, and legacy alias resolution."
+    },
+    {
+      "file": "backend/apischemas/heritage.py",
+      "description": "Added HeritageCatalogMotifOut, HeritageCatalogUrnOut, HeritageCatalogOut, and HeritageCatalogRevisionUpdateIn Pydantic schemas."
+    },
+    {
+      "file": "backend/routers/heritage.py",
+      "description": "Exposed GET /api/v1/heritage/catalog, GET /api/v1/heritage/catalog/{urn_slug}, GET /api/v1/heritage/catalog/motifs/{motif_id}, and POST /api/v1/heritage/catalog/revision with ETag caching, 304 Not Modified handling, and staff access control."
+    },
+    {
+      "file": "mobile/lib/core/constants/api_constants.dart",
+      "description": "Added heritageCatalog, heritageCatalogUrn, and heritageCatalogMotif API endpoints to mobile constants and publicEndpoints list."
+    },
+    {
+      "file": "mobile/lib/core/network/api_client.dart",
+      "description": "Added getWithHeaders<T> method to ApiClient enabling conditional GET requests with validateStatus permitting 304 Not Modified and returning response headers for ETag inspection."
+    },
+    {
+      "file": "mobile/lib/features/explore/domain/entities/urn.dart",
+      "description": "Expanded Urn entity with canonicalUrnSlugs list, nameHanNom, reignTitle, templeName, evidenceStatus, revision, isCanonical, and added the ExploreMotif entity representing the 162 canonical motifs."
+    },
+    {
+      "file": "mobile/lib/features/explore/presentation/providers/explore_provider.dart",
+      "description": "Updated ExploreState and ExploreNotifier to consume /api/v1/heritage/catalog with ETag caching, If-None-Match headers, and anti-drift refresh logic that replaces stale state on server revision updates."
+    },
+    {
+      "file": "tests/v5/test_v5_t053.py",
+      "description": "Implemented comprehensive 12-test suite verifying 9 urns & 162 motifs parity, evidence status labels, ETag caching & 304 responses, negative abuse server revision update on client refresh, RBAC protection, and mobile contract schema compatibility."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t053.py -v",
+    "tests_passed": 12,
+    "tests_total": 12,
+    "test_names": [
+      "test_canonical_catalog_parity_9_urns_and_162_motifs",
+      "test_canonical_catalog_filter_by_urn_slug",
+      "test_evidence_status_labels_and_unreviewed_motif_tracking",
+      "test_catalog_etag_caching_and_304_not_modified",
+      "test_single_urn_and_motif_endpoints_with_etag",
+      "test_negative_abuse_updated_approved_revision_appears_on_refresh_without_stale_drift",
+      "test_unknown_urn_and_motif_return_404",
+      "test_revision_update_rbac_forbidden_for_learners",
+      "test_revision_update_invalid_status_rejected_400",
+      "test_legacy_aliases_resolve_cleanly_in_catalog_endpoints",
+      "test_urn_revision_update_invalidates_catalog_etag",
+      "test_mobile_catalog_contract_schema_compatibility"
+    ]
+  }
+}

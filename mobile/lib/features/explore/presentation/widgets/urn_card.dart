@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/images/resilient_cached_network_image.dart';
+import '../../../urn_viewer/presentation/widgets/source_citation_sheet.dart';
 import '../../domain/entities/urn.dart';
 
 /// A liquid-glass inspired card displaying an urn with progress indicator.
@@ -142,22 +143,49 @@ class _UrnCardState extends State<UrnCard> with SingleTickerProviderStateMixin {
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      widget.urn.name,
-                                      style: TextStyle(
-                                        color: AppColors.textPrimary,
-                                        fontSize: nameSize,
-                                        fontWeight: FontWeight.bold,
-                                        letterSpacing: 0.2,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              widget.urn.name,
+                                              style: TextStyle(
+                                                color: AppColors.textPrimary,
+                                                fontSize: nameSize,
+                                                fontWeight: FontWeight.bold,
+                                                letterSpacing: 0.2,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              SourceCitationSheet.show(
+                                                context,
+                                                slugOrId: widget.urn.slug,
+                                                title: widget.urn.name,
+                                              );
+                                            },
+                                            child: Container(
+                                              padding: const EdgeInsets.all(4),
+                                              decoration: BoxDecoration(
+                                                color: AppColors.primary.withOpacity(0.12),
+                                                borderRadius: BorderRadius.circular(6),
+                                              ),
+                                              child: const Icon(
+                                                Icons.menu_book_rounded,
+                                                size: 14,
+                                                color: AppColors.primary,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
                                     if (widget.urn.nameEn != null &&
                                         widget.urn.nameEn!.isNotEmpty) ...[
                                       AppSpacing.verticalSpaceXS,

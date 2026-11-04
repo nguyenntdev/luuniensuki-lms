@@ -13,10 +13,14 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/url_utils.dart';
 import '../../../../routing/route_names.dart';
 import '../../domain/entities/urn.dart';
+import '../../domain/entities/urn_manifest.dart';
+import '../../data/repositories/urn_manifest_repository.dart';
 import '../providers/urn_provider.dart';
 import '../widgets/custom_model_viewer.dart';
 import '../widgets/discovery_animation.dart';
 import '../widgets/motif_sidebar.dart';
+import '../widgets/rubbing_fallback_view.dart';
+import '../widgets/source_citation_sheet.dart';
 
 enum ModelQuality {
   low,
@@ -57,6 +61,10 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
   Motif? _selectedMotif;
   UnlockResult? _pendingDiscovery;
   bool _showDiscoveryAnimation = false;
+
+  bool _use2dRubbingFallback = false;
+  bool _isMemoryConstraint = false;
+  bool _manifestConfigured = false;
 
   String? _resolvedModelUrl;
   ModelQuality? _modelQuality;
@@ -137,10 +145,47 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
       return;
     }
     try {
+      // 1. First attempt: Load published manifest for this specific urn
+      try {
+        final manifest =
+            await ref.read(urnManifestProvider(widget.urnSlug).future);
+        if (manifest.hotspots.isNotEmpty) {
+          for (final hs in manifest.hotspots) {
+            final coord = _MotifCoordinate(
+              motifName: hs.reliefName,
+              meshName: hs.meshName,
+              posX: hs.posX,
+              posY: hs.posY,
+              posZ: hs.posZ,
+              boundingRadius: hs.boundingRadius,
+            );
+            if (hs.reliefName.isNotEmpty) {
+              _motifCoordinates[_normalizeMotifKey(hs.reliefName)] = coord;
+            }
+            if (hs.meshName.isNotEmpty) {
+              _motifCoordinates[_normalizeMotifKey(hs.meshName)] = coord;
+            }
+            if (hs.motifId.isNotEmpty) {
+              _motifCoordinates[_normalizeMotifKey(hs.motifId)] = coord;
+            }
+          }
+          _motifCoordinatesLoaded = true;
+          if (mounted) {
+            setState(() {});
+          }
+          debugPrint(
+              '[URN_VIEWER] ✅ Loaded ${manifest.hotspots.length} coordinates from published manifest for ${widget.urnSlug}');
+          return;
+        }
+      } catch (manifestErr) {
+        debugPrint('[URN_VIEWER] Note: Manifest provider fetch deferred: $manifestErr');
+      }
+
+      // 2. Fallback attempt: bundled legacy coordinate asset
       final raw = await rootBundle.loadString(_motifCoordinateAsset);
       final decoded = jsonDecode(raw);
       if (decoded is! List) {
-        throw const FormatException('Expected list of motif coordinates');
+        throw FormatException('Expected list of motif coordinates');
       }
       for (final entry in decoded) {
         if (entry is! Map) {
@@ -187,14 +232,38 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
     return value.trim().toLowerCase();
   }
 
-  List<Motif> _applyMotifCoordinates(UrnDetail urnDetail) {
-    if (urnDetail.urn.slug != 'cao-dinh' || _motifCoordinates.isEmpty) {
+  List<Motif> _applyMotifCoordinates(UrnDetail urnDetail, [UrnManifest? manifest]) {
+    // 1. Prefer published manifest coordinates for all 9 urns (18 hotspots each)
+    if (manifest != null && manifest.hotspots.isNotEmpty) {
+      return urnDetail.motifs.map((motif) {
+        final hs = manifest.findHotspot(
+          motifId: motif.id,
+          name: motif.name,
+          meshName: motif.meshName,
+        );
+        if (hs != null) {
+          return motif.copyWith(
+            posX: hs.posX,
+            posY: hs.posY,
+            posZ: hs.posZ,
+            boundingRadius: hs.boundingRadius,
+          );
+        }
+        return motif;
+      }).toList();
+    }
+
+    // 2. Fallback to loaded map if available
+    if (_motifCoordinates.isEmpty) {
       return urnDetail.motifs;
     }
     return urnDetail.motifs.map((motif) {
       final nameKey = _normalizeMotifKey(motif.name);
       final meshKey = _normalizeMotifKey(motif.meshName);
-      final coordinate = _motifCoordinates[nameKey] ?? _motifCoordinates[meshKey];
+      final idKey = _normalizeMotifKey(motif.id);
+      final coordinate = _motifCoordinates[idKey] ??
+          _motifCoordinates[nameKey] ??
+          _motifCoordinates[meshKey];
       if (coordinate == null) {
         return motif;
       }
@@ -224,13 +293,26 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
     super.dispose();
   }
 
-  Future<void> _resolveModelUrl(UrnDetail urnDetail) async {
+  Future<void> _resolveModelUrl(UrnDetail urnDetail, [UrnManifest? manifest]) async {
     if (_isResolvingModel || _resolvedModelUrl != null) {
       return;
     }
 
+    // If manifest declares mesh status is MISSING, degrade immediately to 2D rubbing
+    final hasMesh = manifest?.hasPresentMesh ?? (urnDetail.urn.slug == 'cao-dinh');
+    if (!hasMesh) {
+      debugPrint('[URN_VIEWER] Manifest confirms mesh is MISSING for ${urnDetail.urn.slug} -> activating 2D rubbing fallback');
+      if (mounted) {
+        setState(() {
+          _use2dRubbingFallback = true;
+          _isLoading = false;
+        });
+      }
+      return;
+    }
+
     _isResolvingModel = true;
-    final selection = await _selectModelUrl(urnDetail);
+    final selection = await _selectModelUrl(urnDetail, manifest);
     if (!mounted) {
       return;
     }
@@ -244,11 +326,74 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
     });
   }
 
-  Future<_ModelSelection> _selectModelUrl(UrnDetail urnDetail) async {
+  Future<_ModelSelection> _selectModelUrl(UrnDetail urnDetail, [UrnManifest? manifest]) async {
+    final hasMesh = manifest?.hasPresentMesh ?? (urnDetail.urn.slug == 'cao-dinh');
+    if (!hasMesh) {
+      if (mounted) {
+        setState(() {
+          _use2dRubbingFallback = true;
+          _isLoading = false;
+        });
+      }
+      return const _ModelSelection(
+        url: '',
+        quality: ModelQuality.low,
+        isLocal: false,
+        fallbackUrls: [],
+      );
+    }
+
     final baseUrl = urnDetail.urn.remoteModelUrl;
+    if (baseUrl == null || baseUrl.isEmpty) {
+      if (mounted) {
+        setState(() {
+          _use2dRubbingFallback = true;
+          _isLoading = false;
+        });
+      }
+      return const _ModelSelection(
+        url: '',
+        quality: ModelQuality.low,
+        isLocal: false,
+        fallbackUrls: [],
+      );
+    }
+
     final deviceInfo = DeviceInfoPlugin();
     bool isLowRamDevice = false;
     int? totalMemMb;
+
+    if (Platform.isAndroid) {
+      final androidInfo = await deviceInfo.androidInfo;
+      isLowRamDevice = androidInfo.isLowRamDevice;
+      totalMemMb = await _readAndroidTotalMemoryMb();
+
+      debugPrint('[URN_VIEWER] Device: ${androidInfo.manufacturer} ${androidInfo.model}');
+      debugPrint('[URN_VIEWER] SDK: ${androidInfo.version.sdkInt}');
+      debugPrint('[URN_VIEWER] Low RAM: $isLowRamDevice');
+      if (totalMemMb != null) {
+        debugPrint('[URN_VIEWER] Total RAM: ${totalMemMb}MB');
+      }
+    }
+
+    // Thermal / Memory Constraint Check:
+    // If device has critical low RAM (<= 1024MB), degrade to 2D rubbing to prevent crash
+    if (totalMemMb != null && totalMemMb <= 1024) {
+      debugPrint('[URN_VIEWER] ⚠️ Critical low RAM ($totalMemMb MB) - degrading to 2D rubbing fallback');
+      if (mounted) {
+        setState(() {
+          _isMemoryConstraint = true;
+          _use2dRubbingFallback = true;
+          _isLoading = false;
+        });
+      }
+      return const _ModelSelection(
+        url: '',
+        quality: ModelQuality.low,
+        isLocal: false,
+        fallbackUrls: [],
+      );
+    }
 
     if (Platform.isAndroid) {
       final androidInfo = await deviceInfo.androidInfo;
@@ -467,6 +612,16 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
   @override
   Widget build(BuildContext context) {
     final urnAsync = ref.watch(urnDetailProvider(widget.urnSlug));
+    final manifestAsync = ref.watch(urnManifestProvider(widget.urnSlug));
+    final manifest = manifestAsync.valueOrNull;
+
+    if (manifest != null && !_manifestConfigured) {
+      _manifestConfigured = true;
+      if (!manifest.hasPresentMesh) {
+        _use2dRubbingFallback = true;
+        _isLoading = false;
+      }
+    }
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -474,7 +629,7 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
       body: urnAsync.when(
         loading: () => _buildLoadingState(),
         error: (error, stack) => _buildErrorState(error.toString()),
-        data: (urnDetail) => _buildViewerContent(urnDetail),
+        data: (urnDetail) => _buildViewerContent(urnDetail, manifest),
       ),
     );
   }
@@ -530,10 +685,94 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
     );
   }
 
-  Widget _buildViewerContent(UrnDetail urnDetail) {
+  Widget _buildViewerContent(UrnDetail urnDetail, [UrnManifest? manifest]) {
     final screenSize = MediaQuery.of(context).size;
     final sidebarWidth = screenSize.width * 0.85;
-    final motifs = _applyMotifCoordinates(urnDetail);
+    final motifs = _applyMotifCoordinates(urnDetail, manifest);
+
+    // If 2D rubbing fallback view is active
+    if (_use2dRubbingFallback && manifest != null) {
+      return Stack(
+        children: [
+          Positioned.fill(
+            child: RubbingFallbackView(
+              urnDetail: urnDetail,
+              manifest: manifest,
+              motifs: motifs,
+              selectedMotif: _selectedMotif,
+              isMemoryOrThermalConstraint: _isMemoryConstraint,
+              onMotifTap: (m) => _handleHotspotTap(m),
+              onReturnTo3D: manifest.hasPresentMesh
+                  ? () {
+                      setState(() {
+                        _use2dRubbingFallback = false;
+                        _modelLoadError = false;
+                        _errorMessage = null;
+                        _isLoading = true;
+                        _resolvedModelUrl = null;
+                      });
+                      _resolveModelUrl(urnDetail, manifest);
+                    }
+                  : null,
+            ),
+          ),
+
+          // Top controls
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: _buildTopBar(urnDetail, manifest),
+          ),
+
+          // Bottom stats bar
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: _buildBottomBar(urnDetail),
+          ),
+
+          // Motif sidebar
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            right: _selectedMotif != null ? 0 : -sidebarWidth,
+            top: 0,
+            bottom: 0,
+            width: sidebarWidth,
+            child: _selectedMotif != null
+                ? MotifSidebar(
+                    motif: _selectedMotif!,
+                    onClose: _closeSidebar,
+                    onStartLesson: () => _navigateToLesson(_selectedMotif!),
+                    onStartQuiz: () => _navigateToQuiz(_selectedMotif!),
+                  )
+                : const SizedBox.shrink(),
+          ),
+
+          // Sidebar backdrop
+          if (_selectedMotif != null)
+            Positioned.fill(
+              child: GestureDetector(
+                onTap: _closeSidebar,
+                child: Container(color: Colors.black.withOpacity(0.3)),
+              ),
+            ),
+
+          // Discovery animation
+          if (_showDiscoveryAnimation && _pendingDiscovery != null)
+            Positioned.fill(
+              child: DiscoveryAnimation(
+                motif: _pendingDiscovery!.motif,
+                xpEarned: _pendingDiscovery!.xpEarned,
+                badgesEarned: _pendingDiscovery!.badgesEarned,
+                onComplete: _onDiscoveryAnimationComplete,
+              ),
+            ),
+        ],
+      );
+    }
 
     // Log urn details on first build
     debugPrint('[URN_VIEWER] ───────────────────────────────────────');
@@ -555,7 +794,7 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
       children: [
         // 3D Model Viewer - Full screen
         Positioned.fill(
-          child: _build3DViewer(urnDetail, motifs),
+          child: _build3DViewer(urnDetail, motifs, manifest),
         ),
 
         // Loading overlay
@@ -569,7 +808,7 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
           top: 0,
           left: 0,
           right: 0,
-          child: _buildTopBar(urnDetail),
+          child: _buildTopBar(urnDetail, manifest),
         ),
 
         // Hotspots are rendered inside the 3D viewer to avoid overlay issues.
@@ -623,9 +862,9 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
     );
   }
 
-  Widget _build3DViewer(UrnDetail urnDetail, List<Motif> motifs) {
+  Widget _build3DViewer(UrnDetail urnDetail, List<Motif> motifs, [UrnManifest? manifest]) {
     if (_resolvedModelUrl == null) {
-      _resolveModelUrl(urnDetail);
+      _resolveModelUrl(urnDetail, manifest);
       return Container(
         color: const Color(0xFF1A1A2E),
         child: const Center(
@@ -656,7 +895,7 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
       alt: urnDetail.urn.name,
       hotspots: _showHotspots ? motifs : const [],
       backgroundColor: const Color(0xFF1A1A2E),
-      autoRotate: false,
+      autoRotate: allowAutoRotate,
       cameraControls: true,
       disableZoom: false,
       onModelLoaded: () {
@@ -671,6 +910,21 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
       },
       onModelError: (error) {
         debugPrint('[URN_VIEWER] ❌ Model load error: $error');
+        final isWebGlError = error.toLowerCase().contains('webgl');
+        if (isWebGlError) {
+          debugPrint(
+              '[URN_VIEWER] ⚠️ WebGL context lost (webgl_lost) -> degrading directly to 2D rubbing fallback');
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+              _modelLoadError = true;
+              _use2dRubbingFallback = true;
+              _errorMessage = error;
+            });
+          }
+          return;
+        }
+
         if (_modelFallbackIndex < _modelFallbackUrls.length) {
           final fallbackUrl = _modelFallbackUrls[_modelFallbackIndex];
           _modelFallbackIndex += 1;
@@ -683,10 +937,13 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
           });
           return;
         }
+        // Gracefully degrade to 2D rubbing fallback rather than crashing
+        debugPrint('[URN_VIEWER] ⚠️ Model fallbacks exhausted -> degrading to 2D rubbing');
         if (mounted) {
           setState(() {
             _isLoading = false;
             _modelLoadError = true;
+            _use2dRubbingFallback = true;
             _errorMessage = error;
           });
         }
@@ -768,7 +1025,7 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
     return buffer.toString();
   }
 
-  Widget _buildTopBar(UrnDetail urnDetail) {
+  Widget _buildTopBar(UrnDetail urnDetail, [UrnManifest? manifest]) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isCompact = screenWidth < 360;
     final titleStyle = AppTypography.textTheme.titleMedium?.copyWith(
@@ -776,6 +1033,8 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
       fontSize: isCompact ? 14 : 16,
       fontWeight: FontWeight.bold,
     );
+    final has3dMesh =
+        manifest?.hasPresentMesh ?? (urnDetail.urn.slug == 'cao-dinh');
 
     return SafeArea(
       child: Padding(
@@ -821,9 +1080,30 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
+                      if (has3dMesh)
+                        _buildGlassIconButton(
+                          _use2dRubbingFallback
+                              ? Icons.view_in_ar
+                              : Icons.image_outlined,
+                          () => _toggleViewMode(urnDetail, manifest),
+                          tooltip: _use2dRubbingFallback
+                              ? 'Chuyển sang 3D'
+                              : 'Xem bản dập 2D',
+                          badge: _use2dRubbingFallback ? '3D' : '2D',
+                          iconSize: 20,
+                        )
+                      else
+                        _buildGlassIconButton(
+                          Icons.image,
+                          () => _showArchivalNoticeDialog(
+                              context, urnDetail, manifest),
+                          tooltip: 'Bản dập 2D lưu trữ HMCC',
+                          badge: '2D',
+                          iconSize: 20,
+                        ),
                       _buildGlassIconButton(
                         Icons.view_in_ar,
-                        () => _launchAR(urnDetail),
+                        () => _launchAR(urnDetail, manifest),
                         tooltip: 'Xem AR',
                         badge: 'AR',
                         iconSize: 20,
@@ -831,7 +1111,8 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
                       _buildGlassIconButton(
                         _showHotspots ? Icons.visibility : Icons.visibility_off,
                         () => setState(() => _showHotspots = !_showHotspots),
-                        tooltip: _showHotspots ? 'Ẩn điểm nóng' : 'Hiện điểm nóng',
+                        tooltip:
+                            _showHotspots ? 'Ẩn điểm nóng' : 'Hiện điểm nóng',
                         iconSize: 20,
                       ),
                       _buildGlassIconButton(
@@ -881,10 +1162,33 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
 
                   const SizedBox(width: 8),
 
+                  // 2D/3D Mode toggle or 2D badge
+                  if (has3dMesh)
+                    _buildGlassIconButton(
+                      _use2dRubbingFallback
+                          ? Icons.view_in_ar
+                          : Icons.image_outlined,
+                      () => _toggleViewMode(urnDetail, manifest),
+                      tooltip: _use2dRubbingFallback
+                          ? 'Chuyển sang 3D'
+                          : 'Xem bản dập 2D',
+                      badge: _use2dRubbingFallback ? '3D' : '2D',
+                    )
+                  else
+                    _buildGlassIconButton(
+                      Icons.image,
+                      () => _showArchivalNoticeDialog(
+                          context, urnDetail, manifest),
+                      tooltip: 'Bản dập 2D lưu trữ HMCC',
+                      badge: '2D',
+                    ),
+
+                  const SizedBox(width: 4),
+
                   // AR button
                   _buildGlassIconButton(
                     Icons.view_in_ar,
-                    () => _launchAR(urnDetail),
+                    () => _launchAR(urnDetail, manifest),
                     tooltip: 'Xem AR',
                     badge: 'AR',
                   ),
@@ -912,53 +1216,166 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
     IconData icon,
     VoidCallback onPressed, {
     String? tooltip,
+    double iconSize = 24,
     String? badge,
-    double iconSize = 22,
+    bool isToggled = false,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.2),
-          width: 1,
-        ),
-      ),
-      child: Stack(
-        children: [
-          IconButton(
-            icon: Icon(icon, color: Colors.white, size: iconSize),
-            onPressed: onPressed,
-            tooltip: tooltip,
+    Widget button = InkWell(
+      onTap: onPressed,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: isToggled ? Colors.white.withOpacity(0.25) : Colors.white.withOpacity(0.12),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isToggled ? Colors.amberAccent : Colors.white.withOpacity(0.2),
+            width: 1,
           ),
-          if (badge != null)
-            Positioned(
-              right: 4,
-              top: 4,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  badge,
-                  style: const TextStyle(
-                    color: AppColors.onPrimary,
-                    fontSize: 8,
-                    fontWeight: FontWeight.bold,
+        ),
+        child: badge != null
+            ? Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(icon, size: iconSize, color: Colors.white),
+                  const SizedBox(width: 4),
+                  Text(
+                    badge,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
+                ],
+              )
+            : Icon(icon, size: iconSize, color: Colors.white),
+      ),
+    );
+
+    if (tooltip != null) {
+      button = Tooltip(message: tooltip, child: button);
+    }
+    return button;
+  }
+
+  void _toggleViewMode(UrnDetail urnDetail, [UrnManifest? manifest]) {
+    setState(() {
+      _use2dRubbingFallback = !_use2dRubbingFallback;
+      if (!_use2dRubbingFallback) {
+        _modelLoadError = false;
+        _errorMessage = null;
+        _isLoading = true;
+        _resolvedModelUrl = null;
+      }
+    });
+    if (!_use2dRubbingFallback) {
+      _resolveModelUrl(urnDetail, manifest);
+    }
+  }
+
+  void _showArchivalNoticeDialog(
+    BuildContext context,
+    UrnDetail urnDetail,
+    UrnManifest? manifest,
+  ) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1E1E2E),
+        title: Row(
+          children: [
+            const Icon(Icons.info_outline, color: Colors.amber),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                'Hồ sơ bảo tồn ${urnDetail.urn.name}',
+                style: const TextStyle(color: Colors.white, fontSize: 16),
               ),
             ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Tình trạng mô hình 3D:',
+              style: TextStyle(
+                color: Colors.amber,
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+              ),
+            ),
+            const SizedBox(height: 4),
+            const Text(
+              'Mô hình 3D đang được Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) số hóa và phục chế theo quy chuẩn bảo tồn di sản.',
+              style: TextStyle(color: Colors.white70, fontSize: 12),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'Bản dập 2D thay thế:',
+              style: TextStyle(
+                color: Colors.amber,
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+              ),
+            ),
+            const SizedBox(height: 4),
+            const Text(
+              'Hiện ứng dụng cung cấp bản dập 2D lưu trữ đầy đủ với 18 họa tiết. Toàn bộ tiến trình khám phá, học bài và làm bài kiểm tra đều được công nhận 100%.',
+              style: TextStyle(color: Colors.white70, fontSize: 12),
+            ),
+            if (manifest != null) ...[
+              const SizedBox(height: 12),
+              Text(
+                'Giấy phép: ${manifest.license}',
+                style: const TextStyle(color: Colors.white54, fontSize: 11),
+              ),
+              Text(
+                'Đơn vị sở hữu: ${manifest.rightsOwner}',
+                style: const TextStyle(color: Colors.white54, fontSize: 11),
+              ),
+            ],
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child:
+                const Text('Đã hiểu', style: TextStyle(color: AppColors.primary)),
+          ),
         ],
       ),
     );
   }
 
-  void _launchAR(UrnDetail urnDetail) {
-    // AR is already enabled in ModelViewer with ar: true
-    // The model-viewer web component will handle AR launch
+  void _launchAR(UrnDetail urnDetail, [UrnManifest? manifest]) {
+    final has3dMesh =
+        manifest?.hasPresentMesh ?? (urnDetail.urn.slug == 'cao-dinh');
+    if (!has3dMesh) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.info_outline, color: Colors.amber),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Mô hình 3D của ${urnDetail.urn.name} đang phục chế. Chế độ AR chỉ hỗ trợ khi có mô hình 3D hoàn chỉnh.',
+                  style: const TextStyle(fontSize: 12),
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: AppColors.surface,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
@@ -1307,6 +1724,33 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
                   const SizedBox(height: 8),
                 ],
 
+                // Direct 2D rubbing fallback button
+                ElevatedButton.icon(
+                  onPressed: () {
+                    debugPrint('[URN_VIEWER] 🖼️ User activated 2D rubbing fallback view');
+                    setState(() {
+                      _use2dRubbingFallback = true;
+                      _modelLoadError = false;
+                      _isLoading = false;
+                    });
+                  },
+                  icon: const Icon(Icons.image_outlined),
+                  label: const Text('Xem Bản Dập 2D Lưu Trữ (HMCC)'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.amber[800],
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 14,
+                    ),
+                    textStyle: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+
                 // Retry button
                 ElevatedButton.icon(
                   onPressed: () {
@@ -1498,7 +1942,31 @@ class _UrnViewerScreenState extends ConsumerState<UrnViewerScreen>
             ],
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
+
+          // Primary Source Citations & Bibliographic Evidence Button
+          ElevatedButton.icon(
+            onPressed: () {
+              Navigator.of(context).pop();
+              SourceCitationSheet.show(
+                context,
+                slugOrId: urnDetail.urn.slug,
+                title: urnDetail.urn.name,
+              );
+            },
+            icon: const Icon(Icons.menu_book_rounded),
+            label: const Text('Tra cứu nguồn thư tịch & sử liệu gốc'),
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size.fromHeight(48),
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 12),
         ],
       ),
     );

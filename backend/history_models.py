@@ -1089,3 +1089,21 @@ from .services.manifest_validation import (  # noqa: E402
     validate_webgl_health_contract,
 )
 
+# --------------------------------------------------------------------------- #
+# Mobile Route Audit & Replacement Domain (V5-T051 / Wave W05 / Slot A01)
+# --------------------------------------------------------------------------- #
+from .services.mobile_route_audit import (  # noqa: E402
+    ForbiddenDummyTextError,
+    PlaceholderRouteError,
+    RouteAuditError,
+    UnbackedRouteError,
+    audit_mobile_routes,
+    get_all_declared_route_paths,
+    parse_app_router_routes,
+    scan_for_forbidden_dummy_tokens,
+    validate_no_placeholder_leakage,
+    validate_route_auth_redirects,
+    verify_screen_data_contracts,
+)
+
+

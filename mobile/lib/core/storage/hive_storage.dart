@@ -20,6 +20,7 @@ class HiveStorage {
   static const String _settingsBox = 'settings';
   static const String _cacheMetaBox = 'cache_meta';
   static const String _quizProgressBox = 'quiz_progress';
+  static const String _citationsBox = 'citations';
   static const Duration _openBoxTimeout = Duration(seconds: 6);
   static const List<String> _allBoxes = [
     _urnsBox,
@@ -32,6 +33,7 @@ class HiveStorage {
     _settingsBox,
     _cacheMetaBox,
     _quizProgressBox,
+    _citationsBox,
   ];
 
   /// Initialize Hive and open all boxes
@@ -125,29 +127,61 @@ class HiveStorage {
   /// Get a box by name
   static Box _getBox(String name) => Hive.box(name);
 
+  /// Safely get an opened box or null if not yet initialized
+  static Box? _getBoxOrNull(String name) {
+    try {
+      if (Hive.isBoxOpen(name)) return Hive.box(name);
+    } catch (_) {}
+    return null;
+  }
+
   // === Urns ===
 
   Box get urnsBox => _getBox(_urnsBox);
 
   Future<void> cacheUrns(List<Map<String, dynamic>> urns) async {
-    await urnsBox.put('all', urns);
-    await _setCacheTime(_urnsBox);
+    try {
+      final box = _getBoxOrNull(_urnsBox);
+      if (box == null) return;
+      await box.put('all', urns);
+      await _setCacheTime(_urnsBox);
+    } catch (e) {
+      debugPrint('[HIVE] cacheUrns failed: $e');
+    }
   }
 
   List<Map<String, dynamic>>? getCachedUrns() {
-    final data = urnsBox.get('all');
-    if (data == null) return null;
-    return List<Map<String, dynamic>>.from(data);
+    try {
+      final box = _getBoxOrNull(_urnsBox);
+      if (box == null) return null;
+      final data = box.get('all');
+      if (data == null) return null;
+      return (data as List).map((e) => Map<String, dynamic>.from(e as Map)).toList();
+    } catch (_) {
+      return null;
+    }
   }
 
   Future<void> cacheUrn(String slug, Map<String, dynamic> urn) async {
-    await urnsBox.put(slug, urn);
+    try {
+      final box = _getBoxOrNull(_urnsBox);
+      if (box == null) return;
+      await box.put(slug, urn);
+    } catch (e) {
+      debugPrint('[HIVE] cacheUrn failed: $e');
+    }
   }
 
   Map<String, dynamic>? getCachedUrn(String slug) {
-    final data = urnsBox.get(slug);
-    if (data == null) return null;
-    return Map<String, dynamic>.from(data);
+    try {
+      final box = _getBoxOrNull(_urnsBox);
+      if (box == null) return null;
+      final data = box.get(slug);
+      if (data == null) return null;
+      return Map<String, dynamic>.from(data as Map);
+    } catch (_) {
+      return null;
+    }
   }
 
   // === Motifs ===
@@ -173,6 +207,28 @@ class HiveStorage {
     final data = motifsBox.get('lesson_$motifId');
     if (data == null) return null;
     return Map<String, dynamic>.from(data);
+  }
+
+  // === Citations & Historical Evidence ===
+
+  Box get citationsBox => _getBox(_citationsBox);
+
+  Future<void> cacheEntityCitations(
+      String slugOrId, Map<String, dynamic> citationsData) async {
+    await citationsBox.put(slugOrId, citationsData);
+    await _setCacheTime(_citationsBox);
+  }
+
+  Map<String, dynamic>? getCachedEntityCitations(String slugOrId) {
+    try {
+      final box = _getBoxOrNull(_citationsBox);
+      if (box == null) return null;
+      final data = box.get(slugOrId);
+      if (data == null) return null;
+      return Map<String, dynamic>.from(data as Map);
+    } catch (_) {
+      return null;
+    }
   }
 
   // === Progress ===
@@ -289,27 +345,54 @@ class HiveStorage {
   Box get settingsBox => _getBox(_settingsBox);
 
   Future<void> setSetting(String key, dynamic value) async {
-    await settingsBox.put(key, value);
+    final box = _getBoxOrNull(_settingsBox);
+    if (box != null) {
+      await box.put(key, value);
+    }
   }
 
   T? getSetting<T>(String key, {T? defaultValue}) {
-    return settingsBox.get(key, defaultValue: defaultValue) as T?;
+    try {
+      final box = _getBoxOrNull(_settingsBox);
+      if (box == null) return defaultValue;
+      return box.get(key, defaultValue: defaultValue) as T?;
+    } catch (_) {
+      return defaultValue;
+    }
   }
 
   bool hasSeenOnboarding() {
-    return settingsBox.get('hasSeenOnboarding', defaultValue: false) as bool;
+    try {
+      final box = _getBoxOrNull(_settingsBox);
+      if (box == null) return false;
+      return box.get('hasSeenOnboarding', defaultValue: false) as bool;
+    } catch (_) {
+      return false;
+    }
   }
 
   Future<void> setHasSeenOnboarding(bool value) async {
-    await settingsBox.put('hasSeenOnboarding', value);
+    final box = _getBoxOrNull(_settingsBox);
+    if (box != null) {
+      await box.put('hasSeenOnboarding', value);
+    }
   }
 
   bool hasSeenViewerTips() {
-    return settingsBox.get('hasSeenViewerTips', defaultValue: false) as bool;
+    try {
+      final box = _getBoxOrNull(_settingsBox);
+      if (box == null) return false;
+      return box.get('hasSeenViewerTips', defaultValue: false) as bool;
+    } catch (_) {
+      return false;
+    }
   }
 
   Future<void> setHasSeenViewerTips(bool value) async {
-    await settingsBox.put('hasSeenViewerTips', value);
+    final box = _getBoxOrNull(_settingsBox);
+    if (box != null) {
+      await box.put('hasSeenViewerTips', value);
+    }
   }
 
   String getSelectedLanguage() {
@@ -383,6 +466,7 @@ class HiveStorage {
   Future<void> clearAllCache() async {
     await urnsBox.clear();
     await motifsBox.clear();
+    await citationsBox.clear();
     await progressBox.clear();
     await badgesBox.clear();
     await questsBox.clear();
@@ -396,11 +480,13 @@ class HiveStorage {
     await userBox.clear();
     await badgesBox.delete('user');
     await questsBox.clear();
+    await quizProgressBox.clear();
   }
 
   Future<void> clearContentCache() async {
     await urnsBox.clear();
     await motifsBox.clear();
+    await citationsBox.clear();
     await leaderboardBox.clear();
   }
 
@@ -408,6 +494,7 @@ class HiveStorage {
   Future<void> compact() async {
     await urnsBox.compact();
     await motifsBox.compact();
+    await citationsBox.compact();
     await progressBox.compact();
     await badgesBox.compact();
     await questsBox.compact();

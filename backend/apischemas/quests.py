@@ -119,3 +119,15 @@ class QuestSummaryOut(BaseModel):
     progress_percent: float
     next_step_title: Optional[str] = None
     next_objective: Optional[QuestSummaryObjectiveOut] = None
+
+
+class QuestClaimRewardOut(BaseModel):
+    quest_id: UUID
+    quest_slug: str
+    quest_name: str
+    status: str
+    xp_awarded: int
+    badges_awarded: list[str]
+    streak_freezes_awarded: int = 0
+    certificate: Optional[QuestCertificateOut] = None
+    message: str

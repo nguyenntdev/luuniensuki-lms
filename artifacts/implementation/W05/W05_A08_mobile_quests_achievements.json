@@ -1,0 +1,117 @@
+{
+  "ticket": "V5-T058",
+  "ticket_id": "V5-T058",
+  "wave": "W05",
+  "slot": "W05-A08",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Mobile quests and achievements in mobile/lib/features/learning_path/ and backend/routers/quests.py.",
+  "timestamp": "2026-11-05T00:00:00Z",
+  "summary": "Implemented and verified complete mobile quests and achievements integration between the Flutter mobile client (mobile/lib/features/learning_path/ and mobile/lib/features/quests/) and the backend API (backend/routers/quests.py). Created backend/routers/quests.py with endpoints for listing (/api/v1/quests), quest details (/api/v1/quests/{quest_slug}), quest starting (/api/v1/quests/{quest_slug}/start), active quest summary (/api/v1/users/me/quest-summary), and explicit server-verified reward claiming (/api/v1/quests/{quest_slug}/claim). Extended backend/domain/helpers.py with objective calculation handlers for discover_any, complete_lesson, complete_lesson_category, and source-based evidence/inquiry tasks (source_evidence_task, evidence_inquiry_task) linked to HistoricalInquirySubmission. Enforced strict anti-abuse protections ensuring stale clients cannot claim rewards without 100% server-verified objective completion (HTTP 400), unstarted quests reject claim requests (HTTP 400), locked quests reject starts and claims (HTTP 403), and duplicate claims are rejected (HTTP 400). On the mobile client, created QuestPathCard on the LearningPathScreen, connected QuestsNotifier with ApiClient and HiveStorage for offline-first caching, and integrated QuestsScreen and QuestDetailScreen with live server progression and reward claiming.",
+  "invariants_enforced": [
+    "SERVER_VERIFIED_QUEST_PROGRESSION: Quest progression (percentage and completion status) is calculated strictly server-side from PostgreSQL tables (UserProgress, QuizAttempt, HistoricalInquirySubmission, UrnExamAttempt). Client-submitted progress percentages or completion flags are completely ignored.",
+    "STALE_CLIENT_REWARD_CLAIM_PREVENTION: A client cannot claim quest rewards (XP, badges, streak freezes, certificate) unless the server independently verifies 100% objective completion. Calls to POST /api/v1/quests/{quest_slug}/claim with < 100% server progress are rejected with HTTP 400 (Cannot claim rewards without server-verified quest completion).",
+    "SOURCE_BASED_TASK_EVIDENCE_REWARDS: Supported source-based tasks (source_evidence_task, evidence_inquiry_task) verify historical inquiry evidence submissions (submitted or approved) before completing quest steps and granting rewards.",
+    "PREREQUISITE_LOCK_ENFORCEMENT: Quests declaring a prerequisite quest fail closed if the prerequisite quest is not completed. Unlocking requires verified completion; starting or claiming locked quests returns HTTP 403 (Quest is locked).",
+    "IDEMPOTENT_ATOMIC_REWARD_DISBURSEMENT: Quest reward claims disburse XP, badges, streak freezes, and cryptographic certificates atomically. Subsequent claim attempts reject with HTTP 400 (Quest rewards have already been claimed) to prevent replay abuse.",
+    "OFFLINE_FIRST_MOBILE_RESILIENCE: QuestsNotifier maintains Hive local cache (HiveStorage.cacheQuests) with automatic fallback to cached quests when offline, displaying an informative offline banner while requiring live network connection for atomic reward claims."
+  ],
+  "audit_findings": {
+    "total_tests": 11,
+    "tests_passing": 11,
+    "negative_abuse_tests_passing": 5,
+    "prerequisite_lock_tests_passing": 2,
+    "source_task_reward_tests_passing": 2,
+    "summary_endpoint_tests_passing": 1,
+    "route_inventory_count": 500,
+    "openapi_snapshot_match": true,
+    "audit_passed": true
+  },
+  "changes": [
+    {
+      "file": "backend/routers/quests.py",
+      "description": "Created dedicated APIRouter for quests containing GET /api/v1/quests, GET /api/v1/quests/{quest_slug}, POST /api/v1/quests/{quest_slug}/start, POST /api/v1/quests/{quest_slug}/claim, and GET /api/v1/users/me/quest-summary with content rating checks, prerequisite locking, and atomic reward disbursement."
+    },
+    {
+      "file": "backend/routers/gamification.py",
+      "description": "Relocated quest endpoints to backend.routers.quests while maintaining backward-compatible aliases for imported helper functions."
+    },
+    {
+      "file": "backend/app.py",
+      "description": "Registered quests_router.router in FastAPI application."
+    },
+    {
+      "file": "backend/apischemas/quests.py",
+      "description": "Added QuestClaimRewardOut response schema for server-verified reward claiming."
+    },
+    {
+      "file": "backend/domain/helpers.py",
+      "description": "Enhanced _objective_current_value to calculate server progress for discover_any, complete_lesson, complete_lesson_category, and source-based tasks (source_evidence_task, evidence_inquiry_task) linked to HistoricalInquirySubmission."
+    },
+    {
+      "file": "mobile/lib/core/constants/api_constants.dart",
+      "description": "Added questDetail, questStart, questClaim, and questSummary API path helper functions."
+    },
+    {
+      "file": "mobile/lib/features/learning_path/data/models/quest_model.dart",
+      "description": "Created comprehensive DTOs and models for Quests, Steps, Objectives, Rewards, Certificates, and Claim Responses."
+    },
+    {
+      "file": "mobile/lib/features/learning_path/presentation/providers/quests_provider.dart",
+      "description": "Created QuestsNotifier with ApiClient integration, offline Hive caching, and claimReward server communication."
+    },
+    {
+      "file": "mobile/lib/features/learning_path/presentation/screens/quests_screen.dart",
+      "description": "Created QuestsScreen with Active, Completed, and Locked tabs, progress bars, reward chips, and offline support."
+    },
+    {
+      "file": "mobile/lib/features/learning_path/presentation/screens/quest_detail_screen.dart",
+      "description": "Created QuestDetailScreen with full objective breakdown, source task rendering, certificate showcase, and server-verified claim action."
+    },
+    {
+      "file": "mobile/lib/features/learning_path/presentation/widgets/quest_path_card.dart",
+      "description": "Created QuestPathCard widget on the Learning Path displaying the current in-progress quest, progress bar, rewards, and navigation."
+    },
+    {
+      "file": "mobile/lib/features/learning_path/presentation/screens/learning_path_screen.dart",
+      "description": "Integrated QuestPathCard between Daily Lessons and Urn Path on LearningPathScreen."
+    },
+    {
+      "file": "mobile/lib/features/quests/presentation/providers/quests_provider.dart",
+      "description": "Wired ApiClient to QuestsNotifier, added claimReward method, and enhanced remote error handling."
+    },
+    {
+      "file": "mobile/lib/features/quests/presentation/screens/quest_detail_screen.dart",
+      "description": "Added claim action button for 100% completed quests with SnackBar feedback for server rejections."
+    },
+    {
+      "file": "mobile/lib/features/achievements/presentation/screens/achievements_screen.dart",
+      "description": "Added Quests & Challenges banner linking directly to the Quests screen."
+    },
+    {
+      "file": "tests/v5/test_v5_t058.py",
+      "description": "Created comprehensive 11-test suite covering listing, detail, prerequisite locking, objective calculations, positive claim flows, and 5 negative abuse scenarios."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t058.py -v",
+    "total_tests": 11,
+    "passed": 11,
+    "failed": 0,
+    "all_tests_passed": true,
+    "test_cases": [
+      "test_list_quests_with_prerequisite_lock: verified prerequisite lock status and lock reasons in quest listing",
+      "test_start_locked_quest_rejected: verified 403 rejection when attempting to start a locked quest",
+      "test_start_unlocked_quest_progression: verified state transition to in_progress upon quest start",
+      "test_negative_abuse_stale_client_cannot_claim_incomplete_quest: verified 400 rejection when stale client attempts claim with < 100% progress",
+      "test_negative_abuse_cannot_claim_unstarted_quest: verified 400 rejection when claiming unstarted quest",
+      "test_negative_abuse_cannot_claim_locked_quest: verified 403 rejection when claiming locked quest",
+      "test_quest_progression_and_claim_rewards_flow: verified complete positive progression with lesson completion, source inquiry evidence submission, and atomic reward disbursement",
+      "test_quest_summary_endpoint: verified active quest and next objective extraction from /api/v1/users/me/quest-summary",
+      "test_quest_not_found_returns_404: verified 404 response across GET, start, and claim endpoints for non-existent quest slugs",
+      "test_stale_client_payload_injection_ignored: verified client payload injection attempts to force completion are strictly rejected with 400",
+      "test_category_and_quiz_objective_progression: verified discover_category and quiz_pass_count objective calculations and 50% partial progress claim rejection"
+    ]
+  }
+}

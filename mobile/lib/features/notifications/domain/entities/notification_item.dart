@@ -8,6 +8,8 @@ enum NotificationType {
   lesson,
   social,
   system,
+  teacherAlert,
+  partnerAlert,
 }
 
 /// A notification item entity
@@ -45,6 +47,10 @@ class NotificationItem {
         return Icons.people;
       case NotificationType.system:
         return Icons.info_outline;
+      case NotificationType.teacherAlert:
+        return Icons.school;
+      case NotificationType.partnerAlert:
+        return Icons.storefront;
     }
   }
 
@@ -61,6 +67,10 @@ class NotificationItem {
         return const Color(0xFF34D399); // Green
       case NotificationType.system:
         return const Color(0xFFE8B44C); // Gold
+      case NotificationType.teacherAlert:
+        return const Color(0xFF3B82F6); // Blue
+      case NotificationType.partnerAlert:
+        return const Color(0xFF10B981); // Emerald
     }
   }
 

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lms/core/theme/app_colors.dart';
-import 'package:lms/features/practice/domain/models/quiz_question.dart';
-import 'package:lms/features/practice/presentation/widgets/quiz_types/quiz_types.dart';
+import 'package:luuniensuki_lms/core/theme/app_colors.dart';
+import 'package:luuniensuki_lms/features/practice/domain/models/quiz_question.dart';
+import 'package:luuniensuki_lms/features/practice/presentation/widgets/quiz_types/quiz_types.dart';
 
 /// Quiz Components Showcase
 /// 

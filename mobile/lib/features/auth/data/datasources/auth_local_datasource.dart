@@ -157,6 +157,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
         clearTokens(),
         clearCachedUser(),
         clearCookies(),
+        _hiveStorage.clearUserData(),
       ]);
     } catch (e) {
       throw CacheException('Failed to clear all auth data', originalError: e);

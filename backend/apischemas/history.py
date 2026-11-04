@@ -440,3 +440,59 @@ class HistoricalSearchOut(BaseModel):
     query: str
     items: list[HistoricalSearchItem]
     total: int
+
+
+# --------------------------------------------------------------------------- #
+# Source Citations & Provenance Bundle (V5-T055)
+# --------------------------------------------------------------------------- #
+class SourceCitationOut(BaseModel):
+    source_id: UUID
+    source_title: str
+    author: Optional[str] = None
+    publisher: Optional[str] = None
+    publication_year: Optional[int] = None
+    locator: str
+    quotation_excerpt: Optional[str] = None
+    is_excerpt_redacted: bool = False
+    citation_text: Optional[str] = None
+    rights_status: str
+    license: Optional[str] = None
+    public_display_allowed: bool = True
+    url: Optional[str] = None
+    archive_url: Optional[str] = None
+    support_type: str = "supports"
+    epistemic_certainty: str = "su_lieu_xac_thuc"
+    provenance_hash: Optional[str] = None
+
+
+class HistoricalClaimCitationOut(BaseModel):
+    claim_id: UUID
+    claim_type: str
+    statement_vi: str
+    statement_en: Optional[str] = None
+    name_han_nom: Optional[str] = None
+    reading_han_nom: Optional[str] = None
+    epistemic_certainty: str
+    epistemic_label_vi: str
+    epistemic_label_en: str
+    verification_status: str
+    is_disputed: bool = False
+    has_source: bool = True
+    sources: list[SourceCitationOut] = Field(default_factory=list)
+    provenance_signature: Optional[str] = None
+
+
+class EntityCitationBundleOut(BaseModel):
+    entity_id: UUID
+    slug: str
+    name_vi: str
+    name_en: Optional[str] = None
+    name_han_nom: Optional[str] = None
+    reading_han_nom: Optional[str] = None
+    entity_type: str
+    summary_vi: Optional[str] = None
+    summary_en: Optional[str] = None
+    claims: list[HistoricalClaimCitationOut] = Field(default_factory=list)
+    bundle_provenance_hash: str
+    total_sources_count: int = 0
+    has_restricted_sources: bool = False

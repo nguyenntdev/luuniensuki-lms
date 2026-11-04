@@ -49,6 +49,7 @@ class ModelPreloader {
   }
 
   /// Generate a cache key from URL
+  String getCacheKey(String url) => _getCacheKey(url);
   String _getCacheKey(String url) {
     final bytes = utf8.encode(url);
     final digest = sha256.convert(bytes);
@@ -68,6 +69,29 @@ class ModelPreloader {
   Future<bool> isCached(String modelUrl) async {
     final file = await _getCachedFile(modelUrl);
     return await file.exists();
+  }
+
+  /// Alias for isCached
+  Future<bool> isModelCached(String modelUrl) => isCached(modelUrl);
+
+  /// Get cached model path if available
+  Future<String?> getCachedModelPath(String modelUrl) async {
+    final cachedFile = await _getCachedFile(modelUrl);
+    if (await cachedFile.exists()) {
+      return cachedFile.path;
+    }
+    return null;
+  }
+
+  /// Download and preload model with progress callback
+  Future<String?> preloadModel(
+    String modelUrl, {
+    void Function(int received, int total)? onProgress,
+  }) async {
+    return getModelPath(
+      modelUrl,
+      onProgress: onProgress != null ? (p) => onProgress((p * 100).toInt(), 100) : null,
+    );
   }
 
   /// Get the model path, downloading if necessary
@@ -184,6 +208,7 @@ class ModelPreloader {
   }
 
   /// Format bytes to human-readable string
+  String formatBytes(int bytes) => _formatBytes(bytes);
   String _formatBytes(int bytes) {
     if (bytes < 1024) return '$bytes B';
     if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';

@@ -152,25 +152,38 @@ def sync_offline_submissions(
                     )
                 else:
                     # Student modified their submission offline or re-submitted
-                    existing.answer_text = answer_text
-                    existing.evidence_refs = evidence_refs
-                    if classroom_id is not None:
-                        existing.classroom_id = classroom_id
-                    existing.submitted_at = submitted_at
-                    existing.updated_at = now_utc
-                    existing.row_version = (existing.row_version or 1) + 1
-                    db.flush()
-
-                    synced_count += 1
-                    results.append(
-                        ImperialSyncItemResult(
-                            client_id=client_id_str,
-                            server_id=existing.id,
-                            status="updated",
-                            activity_id=activity_uuid,
-                            error=None,
+                    if existing.status == "graded":
+                        # Conflict resolution: submission already evaluated by teacher; preserve server state
+                        synced_count += 1
+                        results.append(
+                            ImperialSyncItemResult(
+                                client_id=client_id_str,
+                                server_id=existing.id,
+                                status="conflict",
+                                activity_id=activity_uuid,
+                                error="Bài làm đã được giáo viên chấm điểm. Bản sửa đổi ngoại tuyến không thể ghi đè kết quả đã đánh giá.",
+                            )
                         )
-                    )
+                    else:
+                        existing.answer_text = answer_text
+                        existing.evidence_refs = evidence_refs
+                        if classroom_id is not None:
+                            existing.classroom_id = classroom_id
+                        existing.submitted_at = submitted_at
+                        existing.updated_at = now_utc
+                        existing.row_version = (existing.row_version or 1) + 1
+                        db.flush()
+
+                        synced_count += 1
+                        results.append(
+                            ImperialSyncItemResult(
+                                client_id=client_id_str,
+                                server_id=existing.id,
+                                status="updated",
+                                activity_id=activity_uuid,
+                                error=None,
+                            )
+                        )
             else:
                 # 3. Create fresh submission
                 new_sub = ImperialSubmission(

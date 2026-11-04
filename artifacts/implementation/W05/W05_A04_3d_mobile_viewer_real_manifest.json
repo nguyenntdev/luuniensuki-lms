@@ -1,0 +1,219 @@
+{
+  "ticket": "V5-T054",
+  "ticket_id": "V5-T054",
+  "wave": "W05",
+  "slot": "W05-A04",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "3D mobile viewer real manifest in mobile/lib/features/urn_viewer/ and public/models/.",
+  "timestamp": "2026-11-05T00:00:00Z",
+  "summary": "Implemented full published 3D/2D manifest integration across the Flutter mobile client (mobile/lib/features/urn_viewer/) and static delivery endpoints. Synchronized canonical manifests for all 9 urns (162 hotspots, 18 per urn) from public/models/manifests/ to mobile/assets/data/manifests/ and backend/assets/models/manifests/. Created UrnManifest domain entity, UrnManifestParser, UrnManifestRepository (supporting local asset bundle and remote HTTP fallback), and RubbingFallbackView with InteractiveViewer zoom/pan, archival notice banner ('Mô hình 3D đang phục chế · Bản dập 2D thay thế'), and 18-motif exploration. Enhanced UrnViewerScreen to evaluate device memory and thermal budgets (selecting low LOD -512 on <=3GB RAM, and degrading to 2D rubbing on <=1GB RAM), detect missing meshes (8 of 9 urns), degrade cleanly on WebGL context loss or load error, and offer an instant 2D/3D mode switch. Enforced strict negative abuse guardrails ensuring missing GLBs fall back to licensed HMCC 2D rubbings, never fictional 3D shapes or phantom assets.",
+  "invariants_enforced": [
+    "REAL_MANIFEST_CONSUMPTION: Mobile urn viewer consumes canonical published manifests with 18 spatial coordinates per urn across all 9 urns (162 total), replacing hardcoded Cao Đỉnh assumptions.",
+    "DEVICE_THERMAL_AND_MEMORY_CONSTRAINTS: Mobile viewer checks device RAM (DeviceInfoPlugin / meminfo) and thermal constraints. High RAM (>4GB) selects 2k LOD, medium RAM (3-4GB) selects 1k LOD, low RAM (<=3GB) selects 512 LOD (~5.2MB), and severe constraints (<=1GB) cleanly degrade to 2D rubbing view.",
+    "FAIL_SAFE_2D_RUBBING_DEGRADATION: Urns with missing meshes (8 of 9 urns), model load errors, or WebGL context loss events automatically degrade to licensed 2D rubbing fallback view without dead screens or unhandled exceptions.",
+    "NEGATIVE_ABUSE_ZERO_PHANTOM_ASSETS: Missing GLBs or missing meshes strictly reject phantom 3D URLs and fictional 3D shapes (no dummy cubes, spheres, or cross-urn substitution). Must display genuine licensed HMCC 2D rubbings.",
+    "EQUAL_LEARNING_OUTCOMES: All 18 motifs in 2D rubbing mode remain fully interactive for discovery (+25 XP), lessons, and quizzes, ensuring zero pedagogical degradation for students on constrained devices.",
+    "MULTI_PLATFORM_MANIFEST_PARITY: Manifests in public/models/manifests/, frontend/public/models/manifests/, mobile/assets/data/manifests/, and backend/assets/models/manifests/ maintain byte-for-byte structural consistency."
+  ],
+  "audit_findings_9_urns_162_hotspots": {
+    "total_urns_audited": 9,
+    "total_hotspots_audited": 162,
+    "mesh_present_urns": 1,
+    "mesh_missing_urns": 8,
+    "cao_dinh_lods_verified": [
+      {
+        "lod": "low",
+        "suffix": "-512.glb",
+        "bytes": 5207460,
+        "sha256": "51f5baf131e85257186b0e4a89087870ff66e4c787f7775bea797fc2550d8611"
+      },
+      {
+        "lod": "medium",
+        "suffix": "-1k.glb",
+        "bytes": 27417688,
+        "sha256": "6f7e73424c18c5e6504ee25eda103b56958b1e79348937e152e60731a2bcd16a"
+      },
+      {
+        "lod": "high",
+        "suffix": "-2k.glb",
+        "bytes": 30353888,
+        "sha256": "59d7f26f5af647d727b3ce4855a8533ca39c96825e1c9dea672a94cb32e42e74"
+      }
+    ],
+    "fallback_2d_coverage_pct": 100.0,
+    "rights_owner": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+    "default_license": "CC BY 4.0 / Educational Fair Use",
+    "mobile_manifest_bundle_verified": true,
+    "backend_static_manifest_endpoint_verified": true,
+    "audit_passed": true
+  },
+  "changes": [
+    {
+      "file": "mobile/lib/features/urn_viewer/domain/entities/urn_manifest.dart",
+      "description": "Created domain entities for 3D/2D manifests: UrnMeshStatus, UrnLod, UrnViewerFallback, UrnManifestHotspot, and UrnManifest with spatial lookup methods."
+    },
+    {
+      "file": "mobile/lib/features/urn_viewer/data/models/urn_manifest_parser.dart",
+      "description": "Implemented UrnManifestParser deserializing raw manifest JSON into typed domain entities with full coordinate and fallback parsing."
+    },
+    {
+      "file": "mobile/lib/features/urn_viewer/data/repositories/urn_manifest_repository.dart",
+      "description": "Implemented UrnManifestRepository loading bundled assets from assets/data/manifests/ and falling back to remote endpoint with in-memory caching."
+    },
+    {
+      "file": "mobile/lib/features/urn_viewer/presentation/widgets/rubbing_fallback_view.dart",
+      "description": "Created RubbingFallbackView with InteractiveViewer pan/zoom on authentic HMCC rubbings, archival reconstruction banner, 18-motif exploration drawer, and 3D toggle."
+    },
+    {
+      "file": "mobile/lib/features/urn_viewer/presentation/screens/urn_viewer_screen.dart",
+      "description": "Integrated UrnManifest, memory/thermal budgeting, 2D rubbing fallback view, WebGL context loss recovery, top bar 2D/3D mode toggles, and genuine 18-hotspot coordinates for all 9 urns."
+    },
+    {
+      "file": "mobile/lib/features/urn_viewer/domain/entities/urn.dart",
+      "description": "Added has3dMesh (true only for Cao Đỉnh) and prevented constructing phantom remoteModelUrl for missing urns."
+    },
+    {
+      "file": "mobile/lib/features/explore/domain/entities/urn.dart",
+      "description": "Added has3dMesh and eliminated phantom 3D GLB fallback URL for missing urns."
+    },
+    {
+      "file": "mobile/lib/features/urn_viewer/presentation/providers/urn_provider.dart",
+      "description": "Exported urnManifestProvider and urnManifestRepositoryProvider for clean Riverpod consumption."
+    },
+    {
+      "file": "mobile/pubspec.yaml",
+      "description": "Registered - assets/data/manifests/ under assets for offline bundled manifest access."
+    },
+    {
+      "file": "mobile/lib/core/constants/api_constants.dart",
+      "description": "Added manifestsAssetsUrl and urnManifest endpoint helpers."
+    },
+    {
+      "file": "backend/assets/models/manifests/",
+      "description": "Synchronized all 9 urn manifests and index.json into backend assets directory for FastAPI static serving."
+    },
+    {
+      "file": "mobile/assets/data/manifests/",
+      "description": "Synchronized all 9 urn manifests and index.json into mobile assets directory for offline Flutter client bundling."
+    },
+    {
+      "file": "tests/v5/test_v5_t054.py",
+      "description": "Created comprehensive 21-test suite verifying manifest synchronization, 162-hotspot coordinates, mesh status, LODs, 2D fallback coverage, memory budgeting, negative abuse guardrails, mobile code contracts, and static HTTP serving."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t054.py -v",
+    "total_tests": 21,
+    "passed_tests": 21,
+    "failed_tests": 0,
+    "test_details": [
+      {
+        "name": "test_manifest_directories_exist_and_synchronized",
+        "result": "PASSED",
+        "assertion": "Verifies that manifests exist and are byte-synchronized across public, frontend, mobile, and backend directories."
+      },
+      {
+        "name": "test_index_manifest_contains_9_urns_and_162_hotspots",
+        "result": "PASSED",
+        "assertion": "Verifies index.json reflects exactly 9 urns and 162 total hotspots."
+      },
+      {
+        "name": "test_spatial_coordinates_and_mesh_joins_across_all_9_urns",
+        "result": "PASSED",
+        "assertion": "Verifies all 162 hotspots define valid 3D coordinates, camera vectors, and unique non-colliding IDs."
+      },
+      {
+        "name": "test_cao_dinh_mesh_present_with_verified_lods",
+        "result": "PASSED",
+        "assertion": "Verifies Cao Đỉnh is PRESENT with 3 LOD variants matching physical disk files and glTF magic bytes."
+      },
+      {
+        "name": "test_remaining_8_urns_declare_missing_mesh_without_phantom_urls",
+        "result": "PASSED",
+        "assertion": "Verifies the 8 missing urns declare status MISSING with null hashes and zero bytes."
+      },
+      {
+        "name": "test_all_9_urns_have_100_pct_verified_2d_rubbing_fallback",
+        "result": "PASSED",
+        "assertion": "Verifies 100% 2D rubbing fallback coverage for all 9 urns with JPEG/PNG headers and SHA-256 integrity."
+      },
+      {
+        "name": "test_all_162_hotspots_have_verified_2d_rubbing_fallback",
+        "result": "PASSED",
+        "assertion": "Verifies all 162 hotspots provide valid fallback_2d rubbing metadata and cleared rights."
+      },
+      {
+        "name": "test_thermal_and_memory_budgeting_cao_dinh",
+        "result": "PASSED",
+        "assertion": "Verifies that Cao Đỉnh adapts LODs across RAM tiers and degrades cleanly under severe memory constraints (<=1024MB)."
+      },
+      {
+        "name": "test_missing_urns_always_select_2d_rubbing_regardless_of_ram",
+        "result": "PASSED",
+        "assertion": "Verifies that the 8 missing urns always select 2D rubbing regardless of device RAM."
+      },
+      {
+        "name": "test_negative_missing_urn_cannot_claim_phantom_fallback_url",
+        "result": "PASSED",
+        "assertion": "Verifies that missing urn manifests cannot set fallback_url to substitute another model."
+      },
+      {
+        "name": "test_negative_claiming_present_when_glb_missing_on_disk_fails_closed",
+        "result": "PASSED",
+        "assertion": "Verifies that declaring PRESENT mesh when GLB is physically missing on disk fails closed."
+      },
+      {
+        "name": "test_negative_tampered_checksum_or_size_fails_closed",
+        "result": "PASSED",
+        "assertion": "Verifies that tampering with manifest checksum or size fails closed."
+      },
+      {
+        "name": "test_negative_unapproved_license_fails_closed",
+        "result": "PASSED",
+        "assertion": "Verifies that proprietary or unapproved licenses fail closed."
+      },
+      {
+        "name": "test_negative_missing_2d_rubbing_fallback_fails_closed",
+        "result": "PASSED",
+        "assertion": "Verifies that missing mesh declaring has_2d_fallback=False fails closed."
+      },
+      {
+        "name": "test_mobile_domain_entities_and_parser_contract",
+        "result": "PASSED",
+        "assertion": "Verifies mobile domain entity and parser files declare UrnMeshStatus, UrnLod, UrnViewerFallback, UrnManifestHotspot, and UrnManifest."
+      },
+      {
+        "name": "test_mobile_repository_contract",
+        "result": "PASSED",
+        "assertion": "Verifies UrnManifestRepository implements local asset and remote network loading."
+      },
+      {
+        "name": "test_mobile_rubbing_fallback_view_contract",
+        "result": "PASSED",
+        "assertion": "Verifies RubbingFallbackView implements InteractiveViewer zoom/pan, archival notice banner, and 18-motif exploration."
+      },
+      {
+        "name": "test_mobile_urn_viewer_screen_contract",
+        "result": "PASSED",
+        "assertion": "Verifies UrnViewerScreen evaluates device constraints, consumes published manifests, degrades to 2D rubbing, and handles WebGL context loss."
+      },
+      {
+        "name": "test_mobile_pubspec_assets_declaration",
+        "result": "PASSED",
+        "assertion": "Verifies mobile/pubspec.yaml declares assets/data/manifests/ for bundle inclusion."
+      },
+      {
+        "name": "test_mobile_urn_entities_prevent_phantom_models",
+        "result": "PASSED",
+        "assertion": "Verifies mobile Urn entities strictly prevent phantom GLB assertions for missing urns."
+      },
+      {
+        "name": "test_static_manifest_serving_endpoint",
+        "result": "PASSED",
+        "assertion": "Verifies FastAPI serves static manifests for Cao Đỉnh, Anh Đỉnh, and index over HTTP."
+      }
+    ]
+  }
+}

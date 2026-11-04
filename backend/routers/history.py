@@ -19,6 +19,7 @@ from sqlalchemy import func, or_, select, text
 from sqlalchemy.orm import Session
 
 from ..apischemas.history import (
+    EntityCitationBundleOut,
     HistoricalAssetCreate,
     HistoricalAssetOut,
     HistoricalClaimCreate,
@@ -102,6 +103,32 @@ def get_history_entity(entity_id: UUID, db: Session = Depends(get_db)):
     if not entity:
         raise AppError("HISTORY_ENTITY_NOT_FOUND", "Historical entity not found", 404)
     return _entity_to_out(entity)
+
+
+@router.get(
+    "/api/v1/history/entities/{slug_or_id}/citations",
+    response_model=EntityCitationBundleOut,
+)
+@router.get(
+    "/api/v1/history/citations/{slug_or_id}",
+    response_model=EntityCitationBundleOut,
+)
+def get_entity_citations(
+    slug_or_id: str,
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user_optional),
+):
+    """Retrieve full bibliographic citations, public locators, translations, and epistemic uncertainty.
+
+    Adheres strictly to rights distribution policies: restricted excerpts are redacted
+    to [REDACTED: RIGHTS_RESTRICTED] for unprivileged users.
+    """
+    from ..services.entity_citations import resolve_entity_citations_bundle
+
+    is_privileged = bool(current_user and current_user.role in STAFF_ROLES)
+    bundle = resolve_entity_citations_bundle(db, slug_or_id, is_privileged=is_privileged)
+    return bundle
+
 
 
 @router.get(

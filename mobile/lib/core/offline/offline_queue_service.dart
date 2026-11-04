@@ -12,13 +12,16 @@ part 'offline_queue_service.g.dart';
 /// Represents an offline queued operation for progress/quiz writes with idempotency key.
 class OfflineOperation {
   final String operationId;
-  final String resource; // e.g., 'quiz_submit', 'progress_write', 'bookmark'
+  final String resource; // e.g., 'inspection', 'submission', 'progression', 'quiz_submit'
   final Map<String, dynamic> payload;
   final DateTime createdAt;
   final int retryCount;
   final String idempotencyKey;
   final String status; // 'pending', 'syncing', 'completed', 'failed'
   final String? lastError;
+  final Map<String, dynamic>? serverAck;
+  final int xpAwarded;
+  final String? conflictResolution;
 
   OfflineOperation({
     required this.operationId,
@@ -29,6 +32,9 @@ class OfflineOperation {
     required this.idempotencyKey,
     this.status = 'pending',
     this.lastError,
+    this.serverAck,
+    this.xpAwarded = 0,
+    this.conflictResolution,
   });
 
   Map<String, dynamic> toJson() => {
@@ -40,6 +46,9 @@ class OfflineOperation {
         'idempotency_key': idempotencyKey,
         'status': status,
         'last_error': lastError,
+        'server_ack': serverAck,
+        'xp_awarded': xpAwarded,
+        'conflict_resolution': conflictResolution,
       };
 
   factory OfflineOperation.fromJson(Map<String, dynamic> json) =>
@@ -54,12 +63,18 @@ class OfflineOperation {
         idempotencyKey: json['idempotency_key'] as String? ?? '',
         status: json['status'] as String? ?? 'pending',
         lastError: json['last_error'] as String?,
+        serverAck: json['server_ack'] as Map<String, dynamic>?,
+        xpAwarded: json['xp_awarded'] as int? ?? 0,
+        conflictResolution: json['conflict_resolution'] as String?,
       );
 
   OfflineOperation copyWith({
     int? retryCount,
     String? status,
     String? lastError,
+    Map<String, dynamic>? serverAck,
+    int? xpAwarded,
+    String? conflictResolution,
   }) {
     return OfflineOperation(
       operationId: operationId,
@@ -70,6 +85,9 @@ class OfflineOperation {
       idempotencyKey: idempotencyKey,
       status: status ?? this.status,
       lastError: lastError ?? this.lastError,
+      serverAck: serverAck ?? this.serverAck,
+      xpAwarded: xpAwarded ?? this.xpAwarded,
+      conflictResolution: conflictResolution ?? this.conflictResolution,
     );
   }
 }
@@ -147,9 +165,67 @@ class OfflineQueueService extends ChangeNotifier {
     return op;
   }
 
+  /// Enqueue an inspection task (AR or turntable) with idempotency key.
+  Future<OfflineOperation> enqueueInspection({
+    required String targetSlug,
+    String inspectionMode = 'turntable_3d',
+    bool cameraPermissionGranted = false,
+    int timeSpentSeconds = 10,
+    List<String>? anglesInspected,
+    List<String>? hotspotsExamined,
+    String? idempotencyKey,
+  }) async {
+    return enqueue(
+      resource: 'inspection',
+      payload: {
+        'target_slug': targetSlug,
+        'inspection_mode': inspectionMode,
+        'camera_permission_granted': cameraPermissionGranted,
+        'time_spent_seconds': timeSpentSeconds,
+        'angles_inspected': anglesInspected ?? ['front'],
+        'hotspots_examined': hotspotsExamined ?? [],
+      },
+      idempotencyKey: idempotencyKey,
+    );
+  }
+
+  /// Enqueue a student learning progression action (discover, complete_lesson, submit_quiz).
+  Future<OfflineOperation> enqueueProgression({
+    required String action,
+    required String motifId,
+    int timeSpentSeconds = 10,
+    Map<String, dynamic>? answers,
+    String? idempotencyKey,
+  }) async {
+    return enqueue(
+      resource: 'progression',
+      payload: {
+        'action': action,
+        'motif_id': motifId,
+        'time_spent_seconds': timeSpentSeconds,
+        if (answers != null) 'answers': answers,
+      },
+      idempotencyKey: idempotencyKey,
+    );
+  }
+
+  /// Enqueue a student activity or assignment submission with idempotency key.
+  Future<OfflineOperation> enqueueSubmission({
+    required String resource,
+    required Map<String, dynamic> submissionData,
+    String? idempotencyKey,
+  }) async {
+    return enqueue(
+      resource: resource,
+      payload: submissionData,
+      idempotencyKey: idempotencyKey,
+    );
+  }
+
   /// Attempt to synchronize all pending operations idempotently with backend.
   Future<void> processQueue() async {
-    if (_apiClient == null) return;
+    final client = _apiClient;
+    if (client == null) return;
 
     final pendingIndices = <int>[];
     for (int i = 0; i < _queue.length; i++) {
@@ -173,27 +249,61 @@ class OfflineQueueService extends ChangeNotifier {
       notifyListeners();
 
       try {
-        await _apiClient!.post<Map<String, dynamic>>(
+        final response = await client.post<Map<String, dynamic>>(
           '/api/v1/offline/sync',
           data: {
             'operation_id': op.operationId,
             'resource': op.resource,
             'payload': op.payload,
             'created_at': op.createdAt.toIso8601String(),
+            'idempotency_key': op.idempotencyKey,
           },
           options: Options(
             headers: {'X-Idempotency-Key': op.idempotencyKey},
           ),
         );
 
-        _queue[i] = op.copyWith(status: 'completed');
+        final resData = response;
+        final serverStatus = resData['status'] as String? ?? 'completed';
+        final xp = resData['xp_awarded'] as int? ?? 0;
+        final conflictRes = resData['conflict_resolution'] as String?;
+        final serverAck = resData['server_ack'] is Map
+            ? Map<String, dynamic>.from(resData['server_ack'] as Map)
+            : resData;
+
+        if (serverStatus == 'failed') {
+          _queue[i] = op.copyWith(
+            status: 'failed',
+            lastError: resData['error'] as String? ?? 'Sync rejected by server',
+            serverAck: serverAck,
+          );
+        } else {
+          _queue[i] = op.copyWith(
+            status: 'completed',
+            serverAck: serverAck,
+            xpAwarded: xp,
+            conflictResolution: conflictRes,
+          );
+        }
       } catch (e) {
-        debugPrint('[OfflineQueue] Sync error for ${op.operationId}: $e');
-        _queue[i] = op.copyWith(
-          status: 'pending',
-          retryCount: op.retryCount + 1,
-          lastError: e.toString(),
-        );
+        if (e is DioException && e.response?.statusCode == 409) {
+          final resData = (e.response?.data is Map)
+              ? Map<String, dynamic>.from(e.response!.data as Map)
+              : <String, dynamic>{};
+          _queue[i] = op.copyWith(
+            status: 'completed',
+            conflictResolution: 'server_state_preserved',
+            serverAck: resData,
+            lastError: 'Conflict: ${resData['message'] ?? 'Resource conflict'}',
+          );
+        } else {
+          debugPrint('[OfflineQueue] Sync error for ${op.operationId}: $e');
+          _queue[i] = op.copyWith(
+            status: 'pending',
+            retryCount: op.retryCount + 1,
+            lastError: e.toString(),
+          );
+        }
       }
     }
 

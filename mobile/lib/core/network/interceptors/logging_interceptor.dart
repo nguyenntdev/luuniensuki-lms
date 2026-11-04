@@ -22,6 +22,71 @@ class LoggingInterceptor extends Interceptor {
 
   static const String _tag = 'API';
 
+  static const _sensitiveHeaderKeys = {
+    'authorization',
+    'cookie',
+    'set-cookie',
+    'x-access-token',
+    'x-refresh-token',
+    'api-key',
+    'apikey',
+    'x-api-key',
+  };
+
+  static const _sensitiveBodyKeys = {
+    'password',
+    'current_password',
+    'new_password',
+    'confirm_password',
+    'token',
+    'access_token',
+    'refresh_token',
+    'reset_token',
+    'secret',
+    'client_secret',
+    'credentials',
+  };
+
+  static String _maskHeader(String key, dynamic value) {
+    if (_sensitiveHeaderKeys.contains(key.toLowerCase())) {
+      return '***MASKED***';
+    }
+    return value.toString();
+  }
+
+  static dynamic _sanitizeData(dynamic data) {
+    if (data == null) return null;
+    if (data is Map) {
+      final sanitized = <String, dynamic>{};
+      data.forEach((key, value) {
+        final keyStr = key.toString();
+        if (_sensitiveBodyKeys.contains(keyStr.toLowerCase())) {
+          sanitized[keyStr] = '***MASKED***';
+        } else {
+          sanitized[keyStr] = _sanitizeData(value);
+        }
+      });
+      return sanitized;
+    }
+    if (data is List) {
+      return data.map(_sanitizeData).toList();
+    }
+    if (data is FormData) {
+      final buffer = StringBuffer('FormData:');
+      for (final field in data.fields) {
+        final val = _sensitiveBodyKeys.contains(field.key.toLowerCase())
+            ? '***MASKED***'
+            : field.value;
+        buffer.write(' ${field.key}=$val');
+      }
+      for (final file in data.files) {
+        buffer.write(' ${file.key}=[FILE: ${file.value.filename}]');
+      }
+      return buffer.toString();
+    }
+    return data;
+  }
+
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     if (kDebugMode) {
@@ -34,18 +99,14 @@ class LoggingInterceptor extends Interceptor {
       if (logRequestHeaders && options.headers.isNotEmpty) {
         buffer.writeln('│ Headers:');
         options.headers.forEach((key, value) {
-          // Mask authorization header for security
-          if (key.toLowerCase() == 'authorization') {
-            buffer.writeln('│   $key: Bearer ***');
-          } else {
-            buffer.writeln('│   $key: $value');
-          }
+          buffer.writeln('│   $key: ${_maskHeader(key, value)}');
         });
       }
 
       if (logRequestBody && options.data != null) {
         buffer.writeln('│ Body:');
-        final body = _formatBody(options.data);
+        final sanitized = _sanitizeData(options.data);
+        final body = _formatBody(sanitized);
         for (final line in body.split('\n')) {
           buffer.writeln('│   $line');
         }
@@ -72,13 +133,17 @@ class LoggingInterceptor extends Interceptor {
       if (logResponseHeaders && response.headers.map.isNotEmpty) {
         buffer.writeln('│ Headers:');
         response.headers.forEach((name, values) {
-          buffer.writeln('│   $name: ${values.join(', ')}');
+          final maskedVal = _sensitiveHeaderKeys.contains(name.toLowerCase())
+              ? '***MASKED***'
+              : values.join(', ');
+          buffer.writeln('│   $name: $maskedVal');
         });
       }
 
       if (logResponseBody && response.data != null) {
         buffer.writeln('│ Body:');
-        final body = _formatBody(response.data);
+        final sanitized = _sanitizeData(response.data);
+        final body = _formatBody(sanitized);
         // Truncate very long responses
         final truncatedBody = body.length > 2000 ? '${body.substring(0, 2000)}... [truncated]' : body;
         for (final line in truncatedBody.split('\n')) {
@@ -109,7 +174,8 @@ class LoggingInterceptor extends Interceptor {
 
         if (err.response?.data != null) {
           buffer.writeln('│ Response Body:');
-          final body = _formatBody(err.response?.data);
+          final sanitized = _sanitizeData(err.response?.data);
+          final body = _formatBody(sanitized);
           for (final line in body.split('\n')) {
             buffer.writeln('│   $line');
           }

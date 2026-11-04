@@ -187,7 +187,7 @@ final exploreProgressProvider = AutoDisposeProvider<ExploreProgress>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ExploreProgressRef = AutoDisposeProviderRef<ExploreProgress>;
-String _$exploreNotifierHash() => r'b0137f6aaa9439f910f888bc082cafee6f510dbd';
+String _$exploreNotifierHash() => r'279e52f01d16ac50ed08873ce2b47c7aa62eb827';
 
 /// Provider for explore screen state and actions
 ///
