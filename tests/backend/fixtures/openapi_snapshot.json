@@ -1425,6 +1425,26 @@
         "title": "AddCardIn",
         "type": "object"
       },
+      "AddGroupMemberIn": {
+        "properties": {
+          "role": {
+            "default": "contributor",
+            "pattern": "^(leader|contributor)$",
+            "title": "Role",
+            "type": "string"
+          },
+          "user_id": {
+            "format": "uuid",
+            "title": "User Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "user_id"
+        ],
+        "title": "AddGroupMemberIn",
+        "type": "object"
+      },
       "AdminLessonCreateRequest": {
         "properties": {
           "additional_images": {
@@ -3310,6 +3330,180 @@
         "title": "CacheManifestOut",
         "type": "object"
       },
+      "CausalLearningMetricComputeIn": {
+        "properties": {
+          "delayed_submission_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delayed Submission Id"
+          },
+          "ethics_protocol_id": {
+            "format": "uuid",
+            "title": "Ethics Protocol Id",
+            "type": "string"
+          },
+          "is_survey_data": {
+            "default": false,
+            "title": "Is Survey Data",
+            "type": "boolean"
+          },
+          "post_submission_id": {
+            "format": "uuid",
+            "title": "Post Submission Id",
+            "type": "string"
+          },
+          "pre_submission_id": {
+            "format": "uuid",
+            "title": "Pre Submission Id",
+            "type": "string"
+          },
+          "student_id": {
+            "format": "uuid",
+            "title": "Student Id",
+            "type": "string"
+          },
+          "survey_response_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Survey Response Id"
+          }
+        },
+        "required": [
+          "student_id",
+          "ethics_protocol_id",
+          "pre_submission_id",
+          "post_submission_id"
+        ],
+        "title": "CausalLearningMetricComputeIn",
+        "type": "object"
+      },
+      "CausalLearningMetricOut": {
+        "properties": {
+          "absolute_gain": {
+            "title": "Absolute Gain",
+            "type": "number"
+          },
+          "competency_gains": {
+            "additionalProperties": true,
+            "title": "Competency Gains",
+            "type": "object"
+          },
+          "computed_at": {
+            "format": "date-time",
+            "title": "Computed At",
+            "type": "string"
+          },
+          "delayed_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delayed Score"
+          },
+          "delayed_submission_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delayed Submission Id"
+          },
+          "ethics_protocol_id": {
+            "format": "uuid",
+            "title": "Ethics Protocol Id",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "instrument_type": {
+            "title": "Instrument Type",
+            "type": "string"
+          },
+          "inter_rater_agreement": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inter Rater Agreement"
+          },
+          "is_valid_causal_claim": {
+            "title": "Is Valid Causal Claim",
+            "type": "boolean"
+          },
+          "normalized_gain": {
+            "title": "Normalized Gain",
+            "type": "number"
+          },
+          "post_score": {
+            "title": "Post Score",
+            "type": "number"
+          },
+          "post_submission_id": {
+            "format": "uuid",
+            "title": "Post Submission Id",
+            "type": "string"
+          },
+          "pre_score": {
+            "title": "Pre Score",
+            "type": "number"
+          },
+          "pre_submission_id": {
+            "format": "uuid",
+            "title": "Pre Submission Id",
+            "type": "string"
+          },
+          "student_id": {
+            "format": "uuid",
+            "title": "Student Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "student_id",
+          "ethics_protocol_id",
+          "pre_submission_id",
+          "post_submission_id",
+          "pre_score",
+          "post_score",
+          "normalized_gain",
+          "absolute_gain",
+          "instrument_type",
+          "is_valid_causal_claim",
+          "computed_at"
+        ],
+        "title": "CausalLearningMetricOut",
+        "type": "object"
+      },
       "CertificateOut": {
         "description": "Output schema for certificate details.",
         "properties": {
@@ -3605,6 +3799,28 @@
             "title": "Email",
             "type": "string"
           },
+          "guardian_consent": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Guardian Consent"
+          },
+          "guardian_email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Guardian Email"
+          },
           "id": {
             "format": "uuid",
             "title": "Id",
@@ -3834,6 +4050,18 @@
             "title": "Name",
             "type": "string"
           },
+          "school_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "School Id"
+          },
           "settings": {
             "anyOf": [
               {
@@ -3845,6 +4073,18 @@
               }
             ],
             "title": "Settings"
+          },
+          "term": {
+            "anyOf": [
+              {
+                "maxLength": 50,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Term"
           }
         },
         "required": [
@@ -3915,6 +4155,29 @@
             "title": "Name",
             "type": "string"
           },
+          "school_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "School Id"
+          },
+          "school_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "School Name"
+          },
           "settings": {
             "anyOf": [
               {
@@ -3935,6 +4198,17 @@
           "teacher_name": {
             "title": "Teacher Name",
             "type": "string"
+          },
+          "term": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Term"
           },
           "updated_at": {
             "format": "date-time",
@@ -3958,15 +4232,80 @@
         "title": "ClassroomDetailOut",
         "type": "object"
       },
+      "ClassroomGradebookOut": {
+        "description": "Full gradebook output schema for teacher review and grading.",
+        "properties": {
+          "classroom_id": {
+            "format": "uuid",
+            "title": "Classroom Id",
+            "type": "string"
+          },
+          "classroom_name": {
+            "title": "Classroom Name",
+            "type": "string"
+          },
+          "metrics": {
+            "$ref": "#/components/schemas/GradebookMetricsOut"
+          },
+          "roster": {
+            "items": {
+              "$ref": "#/components/schemas/StudentGradebookEntryOut"
+            },
+            "title": "Roster",
+            "type": "array"
+          },
+          "teacher_id": {
+            "format": "uuid",
+            "title": "Teacher Id",
+            "type": "string"
+          },
+          "total_students": {
+            "title": "Total Students",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "classroom_id",
+          "classroom_name",
+          "teacher_id",
+          "total_students",
+          "metrics",
+          "roster"
+        ],
+        "title": "ClassroomGradebookOut",
+        "type": "object"
+      },
       "ClassroomJoinIn": {
         "description": "Input schema for joining a classroom by code.",
         "properties": {
           "class_code": {
             "maxLength": 10,
             "minLength": 6,
-            "pattern": "^[A-Z0-9]+$",
+            "pattern": "^[a-zA-Z0-9]+$",
             "title": "Class Code",
             "type": "string"
+          },
+          "guardian_consent": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Guardian Consent"
+          },
+          "guardian_email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Guardian Email"
           }
         },
         "required": [
@@ -3991,6 +4330,159 @@
           "message"
         ],
         "title": "ClassroomJoinOut",
+        "type": "object"
+      },
+      "ClassroomRosterOut": {
+        "description": "Output schema for classroom student roster.",
+        "properties": {
+          "class_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Class Code"
+          },
+          "classroom_id": {
+            "format": "uuid",
+            "title": "Classroom Id",
+            "type": "string"
+          },
+          "classroom_name": {
+            "title": "Classroom Name",
+            "type": "string"
+          },
+          "school_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "School Id"
+          },
+          "school_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "School Name"
+          },
+          "student_count": {
+            "title": "Student Count",
+            "type": "integer"
+          },
+          "students": {
+            "items": {
+              "$ref": "#/components/schemas/ClassroomRosterStudentOut"
+            },
+            "title": "Students",
+            "type": "array"
+          },
+          "teacher_name": {
+            "title": "Teacher Name",
+            "type": "string"
+          },
+          "term": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Term"
+          }
+        },
+        "required": [
+          "classroom_id",
+          "classroom_name",
+          "teacher_name",
+          "student_count",
+          "students"
+        ],
+        "title": "ClassroomRosterOut",
+        "type": "object"
+      },
+      "ClassroomRosterStudentOut": {
+        "description": "Output schema for a student entry in classroom roster.",
+        "properties": {
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "guardian_consent": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Guardian Consent"
+          },
+          "guardian_email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Guardian Email"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "joined_at": {
+            "format": "date-time",
+            "title": "Joined At",
+            "type": "string"
+          },
+          "role": {
+            "title": "Role",
+            "type": "string"
+          },
+          "user_id": {
+            "format": "uuid",
+            "title": "User Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "user_id",
+          "display_name",
+          "role",
+          "joined_at"
+        ],
+        "title": "ClassroomRosterStudentOut",
         "type": "object"
       },
       "ClassroomSummaryOut": {
@@ -4048,10 +4540,33 @@
             "title": "Name",
             "type": "string"
           },
+          "school_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "School Id"
+          },
           "teacher_id": {
             "format": "uuid",
             "title": "Teacher Id",
             "type": "string"
+          },
+          "term": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Term"
           },
           "updated_at": {
             "format": "date-time",
@@ -4113,6 +4628,18 @@
             ],
             "title": "Name"
           },
+          "school_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "School Id"
+          },
           "settings": {
             "anyOf": [
               {
@@ -4124,6 +4651,18 @@
               }
             ],
             "title": "Settings"
+          },
+          "term": {
+            "anyOf": [
+              {
+                "maxLength": 50,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Term"
           }
         },
         "title": "ClassroomUpdateIn",
@@ -4204,6 +4743,57 @@
           "message"
         ],
         "title": "CoachGenerateOut",
+        "type": "object"
+      },
+      "CohortCausalLearningMetricsOut": {
+        "properties": {
+          "competency_averages": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "title": "Competency Averages",
+            "type": "object"
+          },
+          "effect_size_cohens_d": {
+            "title": "Effect Size Cohens D",
+            "type": "number"
+          },
+          "ethics_protocol_code": {
+            "title": "Ethics Protocol Code",
+            "type": "string"
+          },
+          "mean_inter_rater_agreement": {
+            "title": "Mean Inter Rater Agreement",
+            "type": "number"
+          },
+          "mean_normalized_gain": {
+            "title": "Mean Normalized Gain",
+            "type": "number"
+          },
+          "mean_post_score": {
+            "title": "Mean Post Score",
+            "type": "number"
+          },
+          "mean_pre_score": {
+            "title": "Mean Pre Score",
+            "type": "number"
+          },
+          "total_students": {
+            "title": "Total Students",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total_students",
+          "mean_pre_score",
+          "mean_post_score",
+          "mean_normalized_gain",
+          "effect_size_cohens_d",
+          "mean_inter_rater_agreement",
+          "competency_averages",
+          "ethics_protocol_code"
+        ],
+        "title": "CohortCausalLearningMetricsOut",
         "type": "object"
       },
       "CohortRetentionItemOut": {
@@ -6550,6 +7140,166 @@
         "title": "EnhancedLeaderboardOut",
         "type": "object"
       },
+      "EthicsProtocolCreate": {
+        "properties": {
+          "approved_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved By"
+          },
+          "data_retention_days": {
+            "default": 365,
+            "minimum": 30.0,
+            "title": "Data Retention Days",
+            "type": "integer"
+          },
+          "irb_institution": {
+            "maxLength": 255,
+            "minLength": 3,
+            "title": "Irb Institution",
+            "type": "string"
+          },
+          "participant_consent_required": {
+            "default": true,
+            "title": "Participant Consent Required",
+            "type": "boolean"
+          },
+          "protocol_code": {
+            "maxLength": 100,
+            "minLength": 3,
+            "title": "Protocol Code",
+            "type": "string"
+          },
+          "status": {
+            "default": "approved",
+            "description": "draft, submitted, approved, revoked, expired",
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 255,
+            "minLength": 3,
+            "title": "Title",
+            "type": "string"
+          },
+          "valid_until": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid Until"
+          }
+        },
+        "required": [
+          "protocol_code",
+          "title",
+          "irb_institution"
+        ],
+        "title": "EthicsProtocolCreate",
+        "type": "object"
+      },
+      "EthicsProtocolOut": {
+        "properties": {
+          "approved_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved At"
+          },
+          "approved_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved By"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "data_retention_days": {
+            "title": "Data Retention Days",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "irb_institution": {
+            "title": "Irb Institution",
+            "type": "string"
+          },
+          "participant_consent_required": {
+            "title": "Participant Consent Required",
+            "type": "boolean"
+          },
+          "protocol_code": {
+            "title": "Protocol Code",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "valid_until": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid Until"
+          }
+        },
+        "required": [
+          "id",
+          "protocol_code",
+          "title",
+          "irb_institution",
+          "status",
+          "data_retention_days",
+          "participant_consent_required",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "EthicsProtocolOut",
+        "type": "object"
+      },
       "ExperimentCreateIn": {
         "description": "Input schema for creating an experiment.",
         "properties": {
@@ -8233,6 +8983,43 @@
           "conversion_from_previous"
         ],
         "title": "FunnelStageOut",
+        "type": "object"
+      },
+      "GradebookMetricsOut": {
+        "description": "Aggregated metrics for a classroom gradebook.",
+        "properties": {
+          "average_completion_percent": {
+            "default": 0.0,
+            "title": "Average Completion Percent",
+            "type": "number"
+          },
+          "average_score": {
+            "default": 0.0,
+            "title": "Average Score",
+            "type": "number"
+          },
+          "completed_count": {
+            "default": 0,
+            "title": "Completed Count",
+            "type": "integer"
+          },
+          "missing_count": {
+            "default": 0,
+            "title": "Missing Count",
+            "type": "integer"
+          },
+          "pending_count": {
+            "default": 0,
+            "title": "Pending Count",
+            "type": "integer"
+          },
+          "total_students": {
+            "default": 0,
+            "title": "Total Students",
+            "type": "integer"
+          }
+        },
+        "title": "GradebookMetricsOut",
         "type": "object"
       },
       "GuestPreviewCompleteIn": {
@@ -11931,6 +12718,675 @@
         "title": "HistoricalGeographyUpsert",
         "type": "object"
       },
+      "HistoricalInquiryActivityCreate": {
+        "properties": {
+          "classroom_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Classroom Id"
+          },
+          "description": {
+            "minLength": 10,
+            "title": "Description",
+            "type": "string"
+          },
+          "due_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due At"
+          },
+          "guiding_questions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Guiding Questions",
+            "type": "array"
+          },
+          "is_active": {
+            "default": true,
+            "title": "Is Active",
+            "type": "boolean"
+          },
+          "rubric_criteria": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rubric Criteria"
+          },
+          "suggested_claim_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Suggested Claim Ids",
+            "type": "array"
+          },
+          "suggested_source_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Suggested Source Ids",
+            "type": "array"
+          },
+          "title": {
+            "maxLength": 255,
+            "minLength": 3,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "description"
+        ],
+        "title": "HistoricalInquiryActivityCreate",
+        "type": "object"
+      },
+      "HistoricalInquiryActivityOut": {
+        "properties": {
+          "classroom_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Classroom Id"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_id": {
+            "format": "uuid",
+            "title": "Created By Id",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "due_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due At"
+          },
+          "groups_count": {
+            "default": 0,
+            "title": "Groups Count",
+            "type": "integer"
+          },
+          "guiding_questions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Guiding Questions",
+            "type": "array"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "is_active": {
+            "title": "Is Active",
+            "type": "boolean"
+          },
+          "rubric_criteria": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rubric Criteria"
+          },
+          "suggested_claim_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Suggested Claim Ids",
+            "type": "array"
+          },
+          "suggested_source_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Suggested Source Ids",
+            "type": "array"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "description",
+          "created_by_id",
+          "is_active",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "HistoricalInquiryActivityOut",
+        "type": "object"
+      },
+      "HistoricalInquiryGroupCreate": {
+        "properties": {
+          "member_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Member Ids"
+          },
+          "name": {
+            "maxLength": 255,
+            "minLength": 2,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "HistoricalInquiryGroupCreate",
+        "type": "object"
+      },
+      "HistoricalInquiryGroupMemberOut": {
+        "properties": {
+          "display_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Display Name"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "joined_at": {
+            "format": "date-time",
+            "title": "Joined At",
+            "type": "string"
+          },
+          "role": {
+            "title": "Role",
+            "type": "string"
+          },
+          "user_id": {
+            "format": "uuid",
+            "title": "User Id",
+            "type": "string"
+          },
+          "username": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Username"
+          }
+        },
+        "required": [
+          "id",
+          "user_id",
+          "role",
+          "joined_at"
+        ],
+        "title": "HistoricalInquiryGroupMemberOut",
+        "type": "object"
+      },
+      "HistoricalInquiryGroupOut": {
+        "properties": {
+          "activity_id": {
+            "format": "uuid",
+            "title": "Activity Id",
+            "type": "string"
+          },
+          "classroom_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Classroom Id"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_id": {
+            "format": "uuid",
+            "title": "Created By Id",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "members": {
+            "items": {
+              "$ref": "#/components/schemas/HistoricalInquiryGroupMemberOut"
+            },
+            "title": "Members",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "submission_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Submission Status"
+          }
+        },
+        "required": [
+          "id",
+          "activity_id",
+          "name",
+          "created_by_id",
+          "created_at"
+        ],
+        "title": "HistoricalInquiryGroupOut",
+        "type": "object"
+      },
+      "HistoricalInquirySubmissionOut": {
+        "properties": {
+          "activity_id": {
+            "format": "uuid",
+            "title": "Activity Id",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "epistemic_rating": {
+            "title": "Epistemic Rating",
+            "type": "string"
+          },
+          "evidence_items": {
+            "items": {
+              "$ref": "#/components/schemas/InquiryEvidenceItemOut"
+            },
+            "title": "Evidence Items",
+            "type": "array"
+          },
+          "group_id": {
+            "format": "uuid",
+            "title": "Group Id",
+            "type": "string"
+          },
+          "hypothesis": {
+            "title": "Hypothesis",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "moderated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Moderated At"
+          },
+          "moderated_by_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Moderated By Id"
+          },
+          "privacy_mode": {
+            "title": "Privacy Mode",
+            "type": "string"
+          },
+          "rubric_evaluation": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rubric Evaluation"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "submitted_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Submitted At"
+          },
+          "submitted_by_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Submitted By Id"
+          },
+          "synthesis_argument": {
+            "title": "Synthesis Argument",
+            "type": "string"
+          },
+          "teacher_feedback": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Teacher Feedback"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "group_id",
+          "activity_id",
+          "hypothesis",
+          "synthesis_argument",
+          "epistemic_rating",
+          "status",
+          "privacy_mode",
+          "version",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "HistoricalInquirySubmissionOut",
+        "type": "object"
+      },
+      "HistoricalInquirySubmissionUpdate": {
+        "properties": {
+          "epistemic_rating": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Epistemic Rating"
+          },
+          "hypothesis": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hypothesis"
+          },
+          "privacy_mode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Privacy Mode"
+          },
+          "synthesis_argument": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Synthesis Argument"
+          }
+        },
+        "title": "HistoricalInquirySubmissionUpdate",
+        "type": "object"
+      },
+      "HistoricalInquiryTeacherModerationIn": {
+        "properties": {
+          "rubric_evaluation": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rubric Evaluation"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "status": {
+            "pattern": "^(approved|revision_requested)$",
+            "title": "Status",
+            "type": "string"
+          },
+          "teacher_feedback": {
+            "minLength": 1,
+            "title": "Teacher Feedback",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "teacher_feedback"
+        ],
+        "title": "HistoricalInquiryTeacherModerationIn",
+        "type": "object"
+      },
+      "HistoricalInquiryTeacherModerationOut": {
+        "properties": {
+          "moderated_at": {
+            "format": "date-time",
+            "title": "Moderated At",
+            "type": "string"
+          },
+          "moderated_by_id": {
+            "format": "uuid",
+            "title": "Moderated By Id",
+            "type": "string"
+          },
+          "rubric_evaluation": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rubric Evaluation"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "submission_id": {
+            "format": "uuid",
+            "title": "Submission Id",
+            "type": "string"
+          },
+          "teacher_feedback": {
+            "title": "Teacher Feedback",
+            "type": "string"
+          }
+        },
+        "required": [
+          "submission_id",
+          "status",
+          "score",
+          "teacher_feedback",
+          "moderated_at",
+          "moderated_by_id"
+        ],
+        "title": "HistoricalInquiryTeacherModerationOut",
+        "type": "object"
+      },
       "HistoricalRelationCreate": {
         "properties": {
           "claim_id": {
@@ -13557,6 +15013,282 @@
         "title": "HistoricalSourceUpdate",
         "type": "object"
       },
+      "HistoryAssignmentAssessmentBasisOut": {
+        "properties": {
+          "assignment_id": {
+            "format": "uuid",
+            "title": "Assignment Id",
+            "type": "string"
+          },
+          "classroom_id": {
+            "format": "uuid",
+            "title": "Classroom Id",
+            "type": "string"
+          },
+          "lesson_id": {
+            "format": "uuid",
+            "title": "Lesson Id",
+            "type": "string"
+          },
+          "lesson_snapshot": {
+            "additionalProperties": true,
+            "title": "Lesson Snapshot",
+            "type": "object"
+          },
+          "pinned_claim_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Pinned Claim Ids",
+            "type": "array"
+          },
+          "pinned_source_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Pinned Source Ids",
+            "type": "array"
+          },
+          "pinned_sources": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Pinned Sources",
+            "type": "array"
+          },
+          "pinned_version": {
+            "title": "Pinned Version",
+            "type": "integer"
+          },
+          "published_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Published At"
+          },
+          "rubric": {
+            "additionalProperties": true,
+            "title": "Rubric",
+            "type": "object"
+          }
+        },
+        "required": [
+          "assignment_id",
+          "classroom_id",
+          "lesson_id",
+          "pinned_version"
+        ],
+        "title": "HistoryAssignmentAssessmentBasisOut",
+        "type": "object"
+      },
+      "HistoryAssignmentGradeIn": {
+        "properties": {
+          "rubric_evaluation": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rubric Evaluation"
+          },
+          "score": {
+            "minimum": 0.0,
+            "title": "Score",
+            "type": "number"
+          },
+          "teacher_feedback": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Teacher Feedback"
+          }
+        },
+        "required": [
+          "score"
+        ],
+        "title": "HistoryAssignmentGradeIn",
+        "type": "object"
+      },
+      "HistoryAssignmentSubmissionListOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/HistoryAssignmentSubmissionOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total"
+        ],
+        "title": "HistoryAssignmentSubmissionListOut",
+        "type": "object"
+      },
+      "HistoryAssignmentSubmissionOut": {
+        "properties": {
+          "assessment_basis_snapshot": {
+            "additionalProperties": true,
+            "title": "Assessment Basis Snapshot",
+            "type": "object"
+          },
+          "assignment_id": {
+            "format": "uuid",
+            "title": "Assignment Id",
+            "type": "string"
+          },
+          "graded_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Graded At"
+          },
+          "graded_by_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Graded By Id"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "idempotency_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Idempotency Key"
+          },
+          "rubric_evaluation": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rubric Evaluation"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "student_id": {
+            "format": "uuid",
+            "title": "Student Id",
+            "type": "string"
+          },
+          "submission_content": {
+            "additionalProperties": true,
+            "title": "Submission Content",
+            "type": "object"
+          },
+          "submitted_at": {
+            "format": "date-time",
+            "title": "Submitted At",
+            "type": "string"
+          },
+          "teacher_feedback": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Teacher Feedback"
+          }
+        },
+        "required": [
+          "id",
+          "assignment_id",
+          "student_id",
+          "status",
+          "submitted_at"
+        ],
+        "title": "HistoryAssignmentSubmissionOut",
+        "type": "object"
+      },
+      "HistoryAssignmentSubmitIn": {
+        "properties": {
+          "idempotency_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Client idempotency key for network retry deduplication",
+            "title": "Idempotency Key"
+          },
+          "submission_content": {
+            "additionalProperties": true,
+            "description": "Student response content, evidence citations, etc.",
+            "title": "Submission Content",
+            "type": "object"
+          }
+        },
+        "required": [
+          "submission_content"
+        ],
+        "title": "HistoryAssignmentSubmitIn",
+        "type": "object"
+      },
       "HistoryCollectionCreate": {
         "properties": {
           "description_vi": {
@@ -13874,6 +15606,324 @@
           }
         },
         "title": "HistoryCollectionUpdate",
+        "type": "object"
+      },
+      "HistoryLessonAssignmentCreateIn": {
+        "properties": {
+          "claim_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Claim Ids"
+          },
+          "classroom_id": {
+            "format": "uuid",
+            "title": "Classroom Id",
+            "type": "string"
+          },
+          "due_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due At"
+          },
+          "instructions": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instructions"
+          },
+          "lesson_id": {
+            "format": "uuid",
+            "title": "Lesson Id",
+            "type": "string"
+          },
+          "points": {
+            "default": 100,
+            "maximum": 1000.0,
+            "minimum": 1.0,
+            "title": "Points",
+            "type": "integer"
+          },
+          "rubric": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rubric"
+          },
+          "source_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Ids"
+          },
+          "status": {
+            "default": "draft",
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "classroom_id",
+          "lesson_id",
+          "title"
+        ],
+        "title": "HistoryLessonAssignmentCreateIn",
+        "type": "object"
+      },
+      "HistoryLessonAssignmentListOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/HistoryLessonAssignmentOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total"
+        ],
+        "title": "HistoryLessonAssignmentListOut",
+        "type": "object"
+      },
+      "HistoryLessonAssignmentOut": {
+        "properties": {
+          "assigned_by_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assigned By Id"
+          },
+          "classroom_id": {
+            "format": "uuid",
+            "title": "Classroom Id",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "due_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due At"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "instructions": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instructions"
+          },
+          "lesson_id": {
+            "format": "uuid",
+            "title": "Lesson Id",
+            "type": "string"
+          },
+          "pinned_claim_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Pinned Claim Ids",
+            "type": "array"
+          },
+          "pinned_lesson_snapshot": {
+            "additionalProperties": true,
+            "title": "Pinned Lesson Snapshot",
+            "type": "object"
+          },
+          "pinned_source_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Pinned Source Ids",
+            "type": "array"
+          },
+          "pinned_sources_snapshot": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Pinned Sources Snapshot",
+            "type": "array"
+          },
+          "pinned_version": {
+            "title": "Pinned Version",
+            "type": "integer"
+          },
+          "points": {
+            "title": "Points",
+            "type": "integer"
+          },
+          "published_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Published At"
+          },
+          "rubric": {
+            "additionalProperties": true,
+            "title": "Rubric",
+            "type": "object"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "classroom_id",
+          "lesson_id",
+          "title",
+          "status",
+          "points",
+          "pinned_version",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "HistoryLessonAssignmentOut",
+        "type": "object"
+      },
+      "HistoryLessonAssignmentPublishOut": {
+        "properties": {
+          "classroom_id": {
+            "format": "uuid",
+            "title": "Classroom Id",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "lesson_id": {
+            "format": "uuid",
+            "title": "Lesson Id",
+            "type": "string"
+          },
+          "pinned_source_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Pinned Source Ids",
+            "type": "array"
+          },
+          "pinned_version": {
+            "title": "Pinned Version",
+            "type": "integer"
+          },
+          "published_at": {
+            "format": "date-time",
+            "title": "Published At",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "verified_claim_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Verified Claim Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "classroom_id",
+          "lesson_id",
+          "status",
+          "pinned_version",
+          "published_at"
+        ],
+        "title": "HistoryLessonAssignmentPublishOut",
         "type": "object"
       },
       "HistoryLessonPublishIn": {
@@ -20253,6 +22303,108 @@
         "title": "ImperialSiteTimelineItem",
         "type": "object"
       },
+      "ImperialSubmissionAuditOut": {
+        "properties": {
+          "action": {
+            "title": "Action",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "new_value": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "New Value"
+          },
+          "old_value": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Old Value"
+          },
+          "resource_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resource Id"
+          },
+          "resource_type": {
+            "default": "imperial_submission",
+            "title": "Resource Type",
+            "type": "string"
+          },
+          "reviewer_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewer Id"
+          },
+          "submission_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Submission Id"
+          },
+          "user_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "User Id"
+          }
+        },
+        "required": [
+          "id",
+          "action",
+          "created_at"
+        ],
+        "title": "ImperialSubmissionAuditOut",
+        "type": "object"
+      },
       "ImperialSubmissionCreate": {
         "properties": {
           "activity_id": {
@@ -20598,6 +22750,149 @@
         "title": "ImperialZoneSummary",
         "type": "object"
       },
+      "InquiryEvidenceItemIn": {
+        "properties": {
+          "claim_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Claim Id"
+          },
+          "excerpt": {
+            "maxLength": 5000,
+            "minLength": 1,
+            "title": "Excerpt",
+            "type": "string"
+          },
+          "interpretation_note": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Interpretation Note",
+            "type": "string"
+          },
+          "locator": {
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Locator",
+            "type": "string"
+          },
+          "source_id": {
+            "format": "uuid",
+            "title": "Source Id",
+            "type": "string"
+          },
+          "support_type": {
+            "default": "supports",
+            "title": "Support Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source_id",
+          "locator",
+          "excerpt",
+          "interpretation_note"
+        ],
+        "title": "InquiryEvidenceItemIn",
+        "type": "object"
+      },
+      "InquiryEvidenceItemOut": {
+        "properties": {
+          "author": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Author"
+          },
+          "claim_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Claim Id"
+          },
+          "claim_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Claim Title"
+          },
+          "contributed_at": {
+            "title": "Contributed At",
+            "type": "string"
+          },
+          "contributed_by_name": {
+            "title": "Contributed By Name",
+            "type": "string"
+          },
+          "contributed_by_user_id": {
+            "title": "Contributed By User Id",
+            "type": "string"
+          },
+          "excerpt": {
+            "title": "Excerpt",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "interpretation_note": {
+            "title": "Interpretation Note",
+            "type": "string"
+          },
+          "locator": {
+            "title": "Locator",
+            "type": "string"
+          },
+          "source_id": {
+            "title": "Source Id",
+            "type": "string"
+          },
+          "source_title": {
+            "title": "Source Title",
+            "type": "string"
+          },
+          "support_type": {
+            "title": "Support Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "source_id",
+          "source_title",
+          "locator",
+          "excerpt",
+          "support_type",
+          "interpretation_note",
+          "contributed_by_user_id",
+          "contributed_by_name",
+          "contributed_at"
+        ],
+        "title": "InquiryEvidenceItemOut",
+        "type": "object"
+      },
       "LeaderboardEntryOut": {
         "description": "Single entry in the class leaderboard.",
         "properties": {
@@ -20762,6 +23057,290 @@
           }
         },
         "title": "LeaderboardSettingsUpdateIn",
+        "type": "object"
+      },
+      "LearningOutcomeAssessmentCreate": {
+        "properties": {
+          "assessment_phase": {
+            "default": "pre_test",
+            "description": "pre_test, post_test, delayed_test",
+            "title": "Assessment Phase",
+            "type": "string"
+          },
+          "claim_keys": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Claim Keys",
+            "type": "array"
+          },
+          "ethics_protocol_id": {
+            "format": "uuid",
+            "title": "Ethics Protocol Id",
+            "type": "string"
+          },
+          "is_published": {
+            "default": true,
+            "title": "Is Published",
+            "type": "boolean"
+          },
+          "max_score": {
+            "default": 100.0,
+            "minimum": 1.0,
+            "title": "Max Score",
+            "type": "number"
+          },
+          "prompt_markdown": {
+            "minLength": 10,
+            "title": "Prompt Markdown",
+            "type": "string"
+          },
+          "rubric_schema": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rubric Schema"
+          },
+          "slug": {
+            "maxLength": 100,
+            "minLength": 3,
+            "title": "Slug",
+            "type": "string"
+          },
+          "source_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Source Ids",
+            "type": "array"
+          },
+          "target_motif_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Motif Slug"
+          },
+          "target_urn_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Urn Slug"
+          },
+          "title": {
+            "maxLength": 255,
+            "minLength": 3,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ethics_protocol_id",
+          "title",
+          "slug",
+          "prompt_markdown"
+        ],
+        "title": "LearningOutcomeAssessmentCreate",
+        "type": "object"
+      },
+      "LearningOutcomeAssessmentOut": {
+        "properties": {
+          "assessment_phase": {
+            "title": "Assessment Phase",
+            "type": "string"
+          },
+          "claim_keys": {
+            "items": {},
+            "title": "Claim Keys",
+            "type": "array"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "ethics_protocol_id": {
+            "format": "uuid",
+            "title": "Ethics Protocol Id",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "instrument_type": {
+            "title": "Instrument Type",
+            "type": "string"
+          },
+          "is_published": {
+            "title": "Is Published",
+            "type": "boolean"
+          },
+          "max_score": {
+            "title": "Max Score",
+            "type": "number"
+          },
+          "prompt_markdown": {
+            "title": "Prompt Markdown",
+            "type": "string"
+          },
+          "rubric_schema": {
+            "additionalProperties": true,
+            "title": "Rubric Schema",
+            "type": "object"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "source_ids": {
+            "items": {},
+            "title": "Source Ids",
+            "type": "array"
+          },
+          "target_motif_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Motif Slug"
+          },
+          "target_urn_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Urn Slug"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "ethics_protocol_id",
+          "title",
+          "slug",
+          "assessment_phase",
+          "instrument_type",
+          "prompt_markdown",
+          "max_score",
+          "is_published",
+          "created_at"
+        ],
+        "title": "LearningOutcomeAssessmentOut",
+        "type": "object"
+      },
+      "LearningOutcomeSubmissionCreate": {
+        "properties": {
+          "citations_provided": {
+            "description": "Primary source citations utilized",
+            "items": {
+              "type": "string"
+            },
+            "title": "Citations Provided",
+            "type": "array"
+          },
+          "responses": {
+            "additionalProperties": true,
+            "description": "Student inquiry answers, essay, source analysis",
+            "title": "Responses",
+            "type": "object"
+          }
+        },
+        "required": [
+          "responses"
+        ],
+        "title": "LearningOutcomeSubmissionCreate",
+        "type": "object"
+      },
+      "LearningOutcomeSubmissionOut": {
+        "properties": {
+          "assessment_id": {
+            "format": "uuid",
+            "title": "Assessment Id",
+            "type": "string"
+          },
+          "assessment_phase": {
+            "title": "Assessment Phase",
+            "type": "string"
+          },
+          "citations_provided": {
+            "items": {},
+            "title": "Citations Provided",
+            "type": "array"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "instrument_type": {
+            "title": "Instrument Type",
+            "type": "string"
+          },
+          "responses": {
+            "additionalProperties": true,
+            "title": "Responses",
+            "type": "object"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "student_id": {
+            "format": "uuid",
+            "title": "Student Id",
+            "type": "string"
+          },
+          "submitted_at": {
+            "format": "date-time",
+            "title": "Submitted At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "assessment_id",
+          "student_id",
+          "assessment_phase",
+          "instrument_type",
+          "status",
+          "submitted_at",
+          "created_at"
+        ],
+        "title": "LearningOutcomeSubmissionOut",
         "type": "object"
       },
       "LearningPathGenerateIn": {
@@ -23078,6 +25657,136 @@
         "title": "MotifProgressOut",
         "type": "object"
       },
+      "MotifProgressionItem": {
+        "properties": {
+          "can_take_quiz": {
+            "default": true,
+            "title": "Can Take Quiz",
+            "type": "boolean"
+          },
+          "can_view_lesson": {
+            "default": true,
+            "title": "Can View Lesson",
+            "type": "boolean"
+          },
+          "discovered_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Discovered At"
+          },
+          "is_demo": {
+            "default": false,
+            "title": "Is Demo",
+            "type": "boolean"
+          },
+          "is_mastered": {
+            "default": false,
+            "title": "Is Mastered",
+            "type": "boolean"
+          },
+          "learned_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Learned At"
+          },
+          "lesson_viewed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lesson Viewed At"
+          },
+          "mastered_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mastered At"
+          },
+          "motif_id": {
+            "format": "uuid",
+            "title": "Motif Id",
+            "type": "string"
+          },
+          "motif_title": {
+            "title": "Motif Title",
+            "type": "string"
+          },
+          "quiz_attempts": {
+            "default": 0,
+            "title": "Quiz Attempts",
+            "type": "integer"
+          },
+          "quiz_best_score": {
+            "default": 0,
+            "title": "Quiz Best Score",
+            "type": "integer"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "urn_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Urn Id"
+          },
+          "urn_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Urn Slug"
+          },
+          "xp_earned": {
+            "default": 0,
+            "title": "Xp Earned",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "motif_id",
+          "motif_title",
+          "status"
+        ],
+        "title": "MotifProgressionItem",
+        "type": "object"
+      },
       "MotifQuizQuestionOut": {
         "properties": {
           "difficulty": {
@@ -24064,6 +26773,160 @@
           "total_xp"
         ],
         "title": "ProgressUnlockResponse",
+        "type": "object"
+      },
+      "ProgressionActionRequest": {
+        "properties": {
+          "action": {
+            "pattern": "^(discover|complete_lesson|submit_quiz)$",
+            "title": "Action",
+            "type": "string"
+          },
+          "answers": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Answers"
+          },
+          "client_claimed_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Claimed Status"
+          },
+          "idempotency_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Idempotency Key"
+          },
+          "motif_id": {
+            "format": "uuid",
+            "title": "Motif Id",
+            "type": "string"
+          },
+          "time_spent_seconds": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": 0,
+            "title": "Time Spent Seconds"
+          }
+        },
+        "required": [
+          "action",
+          "motif_id"
+        ],
+        "title": "ProgressionActionRequest",
+        "type": "object"
+      },
+      "ProgressionActionResponse": {
+        "properties": {
+          "already_learned": {
+            "default": false,
+            "title": "Already Learned",
+            "type": "boolean"
+          },
+          "already_mastered": {
+            "default": false,
+            "title": "Already Mastered",
+            "type": "boolean"
+          },
+          "already_unlocked": {
+            "default": false,
+            "title": "Already Unlocked",
+            "type": "boolean"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "motif_id": {
+            "format": "uuid",
+            "title": "Motif Id",
+            "type": "string"
+          },
+          "new_status": {
+            "title": "New Status",
+            "type": "string"
+          },
+          "previous_status": {
+            "title": "Previous Status",
+            "type": "string"
+          },
+          "quiz_passed": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quiz Passed"
+          },
+          "quiz_score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quiz Score"
+          },
+          "status_changed": {
+            "title": "Status Changed",
+            "type": "boolean"
+          },
+          "success": {
+            "title": "Success",
+            "type": "boolean"
+          },
+          "total_xp": {
+            "title": "Total Xp",
+            "type": "integer"
+          },
+          "xp_awarded": {
+            "title": "Xp Awarded",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "success",
+          "motif_id",
+          "previous_status",
+          "new_status",
+          "status_changed",
+          "xp_awarded",
+          "total_xp",
+          "message"
+        ],
+        "title": "ProgressionActionResponse",
         "type": "object"
       },
       "PublicBadgeOut": {
@@ -28659,6 +31522,115 @@
         "title": "ReviewSubmitIn",
         "type": "object"
       },
+      "RubricEvaluationCreate": {
+        "properties": {
+          "evidence_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence Notes"
+          },
+          "feedback_markdown": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Feedback Markdown"
+          },
+          "rubric_scores": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "description": "Criteria scores, e.g. S1_SPATIAL: 25.0",
+            "title": "Rubric Scores",
+            "type": "object"
+          }
+        },
+        "required": [
+          "rubric_scores"
+        ],
+        "title": "RubricEvaluationCreate",
+        "type": "object"
+      },
+      "RubricEvaluationOut": {
+        "properties": {
+          "assessor_id": {
+            "format": "uuid",
+            "title": "Assessor Id",
+            "type": "string"
+          },
+          "evaluated_at": {
+            "format": "date-time",
+            "title": "Evaluated At",
+            "type": "string"
+          },
+          "evidence_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence Notes"
+          },
+          "feedback_markdown": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Feedback Markdown"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "is_independent": {
+            "title": "Is Independent",
+            "type": "boolean"
+          },
+          "rubric_scores": {
+            "additionalProperties": true,
+            "title": "Rubric Scores",
+            "type": "object"
+          },
+          "submission_id": {
+            "format": "uuid",
+            "title": "Submission Id",
+            "type": "string"
+          },
+          "total_score": {
+            "title": "Total Score",
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "submission_id",
+          "assessor_id",
+          "is_independent",
+          "rubric_scores",
+          "total_score",
+          "evaluated_at"
+        ],
+        "title": "RubricEvaluationOut",
+        "type": "object"
+      },
       "ScheduledEmailListOut": {
         "description": "Schema for list of scheduled emails.",
         "properties": {
@@ -28787,6 +31759,327 @@
           "created_at"
         ],
         "title": "ScheduledEmailOut",
+        "type": "object"
+      },
+      "SchoolCreateIn": {
+        "description": "Input schema for creating a school.",
+        "properties": {
+          "address": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address"
+          },
+          "city": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "City"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "maxLength": 50,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code"
+          },
+          "name": {
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "region": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Region"
+          },
+          "settings": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Settings"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "SchoolCreateIn",
+        "type": "object"
+      },
+      "SchoolMemberAddIn": {
+        "description": "Input schema for adding a member to a school.",
+        "properties": {
+          "role": {
+            "default": "teacher",
+            "pattern": "^(teacher|student|staff|principal|admin)$",
+            "title": "Role",
+            "type": "string"
+          },
+          "user_id": {
+            "format": "uuid",
+            "title": "User Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "user_id"
+        ],
+        "title": "SchoolMemberAddIn",
+        "type": "object"
+      },
+      "SchoolMemberOut": {
+        "description": "Output schema for a school member.",
+        "properties": {
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "email": {
+            "title": "Email",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "joined_at": {
+            "format": "date-time",
+            "title": "Joined At",
+            "type": "string"
+          },
+          "role": {
+            "title": "Role",
+            "type": "string"
+          },
+          "school_id": {
+            "format": "uuid",
+            "title": "School Id",
+            "type": "string"
+          },
+          "user_id": {
+            "format": "uuid",
+            "title": "User Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "school_id",
+          "user_id",
+          "display_name",
+          "email",
+          "role",
+          "joined_at"
+        ],
+        "title": "SchoolMemberOut",
+        "type": "object"
+      },
+      "SchoolOut": {
+        "description": "Output schema for a school.",
+        "properties": {
+          "address": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address"
+          },
+          "city": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "City"
+          },
+          "classroom_count": {
+            "default": 0,
+            "title": "Classroom Count",
+            "type": "integer"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "is_active": {
+            "title": "Is Active",
+            "type": "boolean"
+          },
+          "member_count": {
+            "default": 0,
+            "title": "Member Count",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "region": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Region"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "is_active",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "SchoolOut",
+        "type": "object"
+      },
+      "SchoolUpdateIn": {
+        "description": "Input schema for updating a school.",
+        "properties": {
+          "address": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address"
+          },
+          "city": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "City"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "maxLength": 50,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code"
+          },
+          "is_active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Active"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "region": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Region"
+          },
+          "settings": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Settings"
+          }
+        },
+        "title": "SchoolUpdateIn",
         "type": "object"
       },
       "SearchResponse": {
@@ -30551,6 +33844,170 @@
         "title": "StudentAssignmentOut",
         "type": "object"
       },
+      "StudentAssignmentProgressOut": {
+        "description": "Progress on a specific quest/trail assignment for a student.",
+        "properties": {
+          "assignment_id": {
+            "format": "uuid",
+            "title": "Assignment Id",
+            "type": "string"
+          },
+          "completed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed At"
+          },
+          "due_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due At"
+          },
+          "is_missing": {
+            "default": false,
+            "title": "Is Missing",
+            "type": "boolean"
+          },
+          "is_pending": {
+            "default": false,
+            "title": "Is Pending",
+            "type": "boolean"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "assignment_id",
+          "title",
+          "status"
+        ],
+        "title": "StudentAssignmentProgressOut",
+        "type": "object"
+      },
+      "StudentGradebookEntryOut": {
+        "description": "Single student's gradebook record with roster details, scores, and status.",
+        "properties": {
+          "assignments": {
+            "items": {
+              "$ref": "#/components/schemas/StudentAssignmentProgressOut"
+            },
+            "title": "Assignments",
+            "type": "array"
+          },
+          "avatar_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avatar Url"
+          },
+          "avg_quiz_score": {
+            "default": 0.0,
+            "title": "Avg Quiz Score",
+            "type": "number"
+          },
+          "completed_count": {
+            "default": 0,
+            "title": "Completed Count",
+            "type": "integer"
+          },
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "email": {
+            "title": "Email",
+            "type": "string"
+          },
+          "joined_at": {
+            "format": "date-time",
+            "title": "Joined At",
+            "type": "string"
+          },
+          "missing_count": {
+            "default": 0,
+            "title": "Missing Count",
+            "type": "integer"
+          },
+          "overall_completion_percent": {
+            "default": 0.0,
+            "title": "Overall Completion Percent",
+            "type": "number"
+          },
+          "pending_count": {
+            "default": 0,
+            "title": "Pending Count",
+            "type": "integer"
+          },
+          "quizzes_passed": {
+            "default": 0,
+            "title": "Quizzes Passed",
+            "type": "integer"
+          },
+          "role": {
+            "default": "learner",
+            "title": "Role",
+            "type": "string"
+          },
+          "status": {
+            "default": "completed",
+            "title": "Status",
+            "type": "string"
+          },
+          "student_id": {
+            "format": "uuid",
+            "title": "Student Id",
+            "type": "string"
+          },
+          "total_xp": {
+            "default": 0,
+            "title": "Total Xp",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "student_id",
+          "display_name",
+          "email",
+          "joined_at"
+        ],
+        "title": "StudentGradebookEntryOut",
+        "type": "object"
+      },
       "StudentProgressOut": {
         "description": "Detailed progress for a student in a classroom.",
         "properties": {
@@ -30593,6 +34050,259 @@
           "engagement"
         ],
         "title": "StudentProgressOut",
+        "type": "object"
+      },
+      "StudentProgressionRules": {
+        "properties": {
+          "discovery_xp": {
+            "default": 25,
+            "title": "Discovery Xp",
+            "type": "integer"
+          },
+          "lesson_xp": {
+            "default": 50,
+            "title": "Lesson Xp",
+            "type": "integer"
+          },
+          "mastery_xp": {
+            "default": 75,
+            "title": "Mastery Xp",
+            "type": "integer"
+          },
+          "max_possible_xp_per_motif": {
+            "default": 150,
+            "title": "Max Possible Xp Per Motif",
+            "type": "integer"
+          },
+          "quiz_pass_threshold": {
+            "default": 80,
+            "title": "Quiz Pass Threshold",
+            "type": "integer"
+          }
+        },
+        "title": "StudentProgressionRules",
+        "type": "object"
+      },
+      "StudentProgressionSummaryOut": {
+        "properties": {
+          "completion_percentage": {
+            "title": "Completion Percentage",
+            "type": "number"
+          },
+          "current_streak": {
+            "title": "Current Streak",
+            "type": "integer"
+          },
+          "discovered_count": {
+            "title": "Discovered Count",
+            "type": "integer"
+          },
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "hidden_count": {
+            "title": "Hidden Count",
+            "type": "integer"
+          },
+          "learned_count": {
+            "title": "Learned Count",
+            "type": "integer"
+          },
+          "mastered_count": {
+            "title": "Mastered Count",
+            "type": "integer"
+          },
+          "mastery_percentage": {
+            "title": "Mastery Percentage",
+            "type": "number"
+          },
+          "motifs": {
+            "items": {
+              "$ref": "#/components/schemas/MotifProgressionItem"
+            },
+            "title": "Motifs",
+            "type": "array"
+          },
+          "rank": {
+            "title": "Rank",
+            "type": "string"
+          },
+          "rules": {
+            "$ref": "#/components/schemas/StudentProgressionRules"
+          },
+          "total_motifs": {
+            "title": "Total Motifs",
+            "type": "integer"
+          },
+          "total_xp": {
+            "title": "Total Xp",
+            "type": "integer"
+          },
+          "user_id": {
+            "format": "uuid",
+            "title": "User Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "user_id",
+          "display_name",
+          "total_xp",
+          "current_streak",
+          "rank",
+          "total_motifs",
+          "hidden_count",
+          "discovered_count",
+          "learned_count",
+          "mastered_count",
+          "completion_percentage",
+          "mastery_percentage",
+          "motifs",
+          "rules"
+        ],
+        "title": "StudentProgressionSummaryOut",
+        "type": "object"
+      },
+      "SubjectiveSurveyCreate": {
+        "properties": {
+          "feedback_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Feedback Text"
+          },
+          "likert_responses": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "description": "Likert 1-5 ratings for enjoyment, perceived confidence, etc.",
+            "title": "Likert Responses",
+            "type": "object"
+          },
+          "perceived_learning_score": {
+            "anyOf": [
+              {
+                "maximum": 5.0,
+                "minimum": 1.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Perceived Learning Score"
+          },
+          "satisfaction_score": {
+            "anyOf": [
+              {
+                "maximum": 5.0,
+                "minimum": 1.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Satisfaction Score"
+          },
+          "survey_name": {
+            "maxLength": 100,
+            "minLength": 2,
+            "title": "Survey Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "survey_name",
+          "likert_responses"
+        ],
+        "title": "SubjectiveSurveyCreate",
+        "type": "object"
+      },
+      "SubjectiveSurveyOut": {
+        "properties": {
+          "feedback_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Feedback Text"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "instrument_type": {
+            "title": "Instrument Type",
+            "type": "string"
+          },
+          "is_subjective_self_report": {
+            "title": "Is Subjective Self Report",
+            "type": "boolean"
+          },
+          "likert_responses": {
+            "additionalProperties": true,
+            "title": "Likert Responses",
+            "type": "object"
+          },
+          "perceived_learning_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Perceived Learning Score"
+          },
+          "satisfaction_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Satisfaction Score"
+          },
+          "student_id": {
+            "format": "uuid",
+            "title": "Student Id",
+            "type": "string"
+          },
+          "submitted_at": {
+            "format": "date-time",
+            "title": "Submitted At",
+            "type": "string"
+          },
+          "survey_name": {
+            "title": "Survey Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "student_id",
+          "survey_name",
+          "instrument_type",
+          "is_subjective_self_report",
+          "likert_responses",
+          "submitted_at"
+        ],
+        "title": "SubjectiveSurveyOut",
         "type": "object"
       },
       "SubmitForReviewIn": {
@@ -39468,6 +43178,25 @@
               "title": "Include Archived",
               "type": "boolean"
             }
+          },
+          {
+            "description": "Filter by school ID",
+            "in": "query",
+            "name": "school_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by school ID",
+              "title": "School Id"
+            }
           }
         ],
         "responses": {
@@ -39657,7 +43386,7 @@
         "summary": "Delete Classroom"
       },
       "get": {
-        "description": "Get detailed classroom information including members and assignments.",
+        "description": "Get detailed classroom information including members and assignments.\nOnly authorized for classroom teacher, admins, or enrolled students.",
         "operationId": "get_classroom_api_v1_classrooms__classroom_id__get",
         "parameters": [
           {
@@ -40032,6 +43761,54 @@
               "title": "Classroom Id",
               "type": "string"
             }
+          },
+          {
+            "description": "Filter by: all, missing, pending, completed",
+            "in": "query",
+            "name": "status_filter",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by: all, missing, pending, completed",
+              "title": "Status Filter"
+            }
+          },
+          {
+            "description": "Search by student name or email",
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Search by student name or email",
+              "title": "Search"
+            }
+          },
+          {
+            "description": "Anonymize student names and emails",
+            "in": "query",
+            "name": "anonymize",
+            "required": false,
+            "schema": {
+              "default": false,
+              "description": "Anonymize student names and emails",
+              "title": "Anonymize",
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -40060,6 +43837,180 @@
           }
         ],
         "summary": "Export Class Progress"
+      }
+    },
+    "/api/v1/classrooms/{classroom_id}/gradebook": {
+      "get": {
+        "description": "Get classroom gradebook with real student roster, scores, missing/pending statuses.\nOnly accessible to assigned teachers and admins (blocks horizontal privilege escalation with 403).",
+        "operationId": "get_classroom_gradebook_api_v1_classrooms__classroom_id__gradebook_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "classroom_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Classroom Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by: all, missing, pending, completed",
+            "in": "query",
+            "name": "status_filter",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by: all, missing, pending, completed",
+              "title": "Status Filter"
+            }
+          },
+          {
+            "description": "Search by student display name or email",
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Search by student display name or email",
+              "title": "Search"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClassroomGradebookOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Classroom Gradebook"
+      }
+    },
+    "/api/v1/classrooms/{classroom_id}/gradebook/export": {
+      "get": {
+        "description": "Export classroom gradebook to CSV with UTF-8 BOM encoding for Excel.\nOnly accessible to assigned teachers and admins (blocks horizontal privilege escalation with 403).",
+        "operationId": "export_classroom_gradebook_csv_api_v1_classrooms__classroom_id__gradebook_export_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "classroom_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Classroom Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by: all, missing, pending, completed",
+            "in": "query",
+            "name": "status_filter",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by: all, missing, pending, completed",
+              "title": "Status Filter"
+            }
+          },
+          {
+            "description": "Search by student display name or email",
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Search by student display name or email",
+              "title": "Search"
+            }
+          },
+          {
+            "description": "Anonymize student names and emails with HS-ANON prefix",
+            "in": "query",
+            "name": "anonymize",
+            "required": false,
+            "schema": {
+              "default": false,
+              "description": "Anonymize student names and emails with HS-ANON prefix",
+              "title": "Anonymize",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Export Classroom Gradebook Csv"
       }
     },
     "/api/v1/classrooms/{classroom_id}/leaderboard": {
@@ -40354,6 +44305,52 @@
           }
         ],
         "summary": "Get Class Progress Summary"
+      }
+    },
+    "/api/v1/classrooms/{classroom_id}/roster": {
+      "get": {
+        "description": "Get student roster for a classroom.\nAuthorized for classroom teacher, admins, and enrolled learners.\nExternal students/teachers without authorization receive 403 Forbidden.",
+        "operationId": "get_classroom_roster_api_v1_classrooms__classroom_id__roster_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "classroom_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Classroom Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClassroomRosterOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Classroom Roster"
       }
     },
     "/api/v1/classrooms/{classroom_id}/students/{student_id}/progress": {
@@ -41645,6 +45642,546 @@
         ]
       }
     },
+    "/api/v1/history/assignments": {
+      "get": {
+        "description": "List historical lesson assignments.",
+        "operationId": "list_history_assignments_api_v1_history_assignments_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "classroom_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Classroom Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lesson_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Lesson Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryLessonAssignmentListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "List History Assignments",
+        "tags": [
+          "history-learning"
+        ]
+      },
+      "post": {
+        "description": "Create a classroom lesson assignment with source-locked lesson snapshot and rubric.",
+        "operationId": "create_history_assignment_api_v1_history_assignments_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HistoryLessonAssignmentCreateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryLessonAssignmentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Create History Assignment",
+        "tags": [
+          "history-learning"
+        ]
+      }
+    },
+    "/api/v1/history/assignments/{assignment_id}": {
+      "get": {
+        "description": "Get single history lesson assignment.",
+        "operationId": "get_history_assignment_api_v1_history_assignments__assignment_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryLessonAssignmentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get History Assignment",
+        "tags": [
+          "history-learning"
+        ]
+      }
+    },
+    "/api/v1/history/assignments/{assignment_id}/assessment-basis": {
+      "get": {
+        "description": "Retrieve the immutable assessment basis for an assignment (Spec V5-T033).",
+        "operationId": "get_history_assignment_assessment_basis_api_v1_history_assignments__assignment_id__assessment_basis_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryAssignmentAssessmentBasisOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get History Assignment Assessment Basis",
+        "tags": [
+          "history-learning"
+        ]
+      }
+    },
+    "/api/v1/history/assignments/{assignment_id}/publish": {
+      "post": {
+        "description": "Publish an assignment enforcing the negative abuse claim verification gate.",
+        "operationId": "publish_history_assignment_endpoint_api_v1_history_assignments__assignment_id__publish_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryLessonAssignmentPublishOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Publish History Assignment Endpoint",
+        "tags": [
+          "history-learning"
+        ]
+      }
+    },
+    "/api/v1/history/assignments/{assignment_id}/submissions": {
+      "get": {
+        "description": "List submissions for an assignment (teacher or admin).",
+        "operationId": "list_history_assignment_submissions_api_v1_history_assignments__assignment_id__submissions_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryAssignmentSubmissionListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "List History Assignment Submissions",
+        "tags": [
+          "history-learning"
+        ]
+      }
+    },
+    "/api/v1/history/assignments/{assignment_id}/submissions/{submission_id}": {
+      "get": {
+        "description": "Get a single submission (by student owner or teacher/admin).",
+        "operationId": "get_history_assignment_submission_api_v1_history_assignments__assignment_id__submissions__submission_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "submission_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Submission Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryAssignmentSubmissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get History Assignment Submission",
+        "tags": [
+          "history-learning"
+        ]
+      }
+    },
+    "/api/v1/history/assignments/{assignment_id}/submissions/{submission_id}/grade": {
+      "post": {
+        "description": "Grade a submission using rubric criteria (teacher or admin).",
+        "operationId": "grade_history_assignment_submission_endpoint_api_v1_history_assignments__assignment_id__submissions__submission_id__grade_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "submission_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Submission Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HistoryAssignmentGradeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryAssignmentSubmissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Grade History Assignment Submission Endpoint",
+        "tags": [
+          "history-learning"
+        ]
+      }
+    },
+    "/api/v1/history/assignments/{assignment_id}/submit": {
+      "post": {
+        "description": "Submit student work against a source-locked assignment with validation and idempotency.",
+        "operationId": "submit_history_assignment_endpoint_api_v1_history_assignments__assignment_id__submit_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HistoryAssignmentSubmitIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryAssignmentSubmissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Submit History Assignment Endpoint",
+        "tags": [
+          "history-learning"
+        ]
+      }
+    },
     "/api/v1/history/claims/{claim_id}": {
       "get": {
         "operationId": "get_history_claim_api_v1_history_claims__claim_id__get",
@@ -42612,6 +47149,1083 @@
         "summary": "List History Events",
         "tags": [
           "history"
+        ]
+      }
+    },
+    "/api/v1/history/inquiry/activities": {
+      "get": {
+        "operationId": "list_activities_api_v1_history_inquiry_activities_get",
+        "parameters": [
+          {
+            "description": "Filter activities by classroom ID",
+            "in": "query",
+            "name": "classroom_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter activities by classroom ID",
+              "title": "Classroom Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/HistoricalInquiryActivityOut"
+                  },
+                  "title": "Response List Activities Api V1 History Inquiry Activities Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Activities",
+        "tags": [
+          "history-inquiry"
+        ]
+      },
+      "post": {
+        "operationId": "create_activity_api_v1_history_inquiry_activities_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HistoricalInquiryActivityCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoricalInquiryActivityOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Create Activity",
+        "tags": [
+          "history-inquiry"
+        ]
+      }
+    },
+    "/api/v1/history/inquiry/activities/{activity_id}": {
+      "get": {
+        "operationId": "get_activity_api_v1_history_inquiry_activities__activity_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "activity_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Activity Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoricalInquiryActivityOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Activity",
+        "tags": [
+          "history-inquiry"
+        ]
+      }
+    },
+    "/api/v1/history/inquiry/activities/{activity_id}/groups": {
+      "get": {
+        "operationId": "list_groups_api_v1_history_inquiry_activities__activity_id__groups_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "activity_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Activity Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/HistoricalInquiryGroupOut"
+                  },
+                  "title": "Response List Groups Api V1 History Inquiry Activities  Activity Id  Groups Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "List Groups",
+        "tags": [
+          "history-inquiry"
+        ]
+      },
+      "post": {
+        "operationId": "create_group_api_v1_history_inquiry_activities__activity_id__groups_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "activity_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Activity Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HistoricalInquiryGroupCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoricalInquiryGroupOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Create Group",
+        "tags": [
+          "history-inquiry"
+        ]
+      }
+    },
+    "/api/v1/history/inquiry/groups/{group_id}/evidence": {
+      "post": {
+        "operationId": "add_evidence_api_v1_history_inquiry_groups__group_id__evidence_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "group_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Group Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InquiryEvidenceItemIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InquiryEvidenceItemOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Add Evidence",
+        "tags": [
+          "history-inquiry"
+        ]
+      }
+    },
+    "/api/v1/history/inquiry/groups/{group_id}/evidence/{evidence_id}": {
+      "delete": {
+        "operationId": "remove_evidence_api_v1_history_inquiry_groups__group_id__evidence__evidence_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "group_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Group Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "evidence_id",
+            "required": true,
+            "schema": {
+              "title": "Evidence Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoricalInquirySubmissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Remove Evidence",
+        "tags": [
+          "history-inquiry"
+        ]
+      }
+    },
+    "/api/v1/history/inquiry/groups/{group_id}/members": {
+      "post": {
+        "operationId": "add_member_api_v1_history_inquiry_groups__group_id__members_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "group_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Group Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddGroupMemberIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoricalInquiryGroupMemberOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Add Member",
+        "tags": [
+          "history-inquiry"
+        ]
+      }
+    },
+    "/api/v1/history/inquiry/groups/{group_id}/submission": {
+      "get": {
+        "operationId": "get_submission_api_v1_history_inquiry_groups__group_id__submission_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "group_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Group Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoricalInquirySubmissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Submission",
+        "tags": [
+          "history-inquiry"
+        ]
+      },
+      "put": {
+        "operationId": "update_submission_api_v1_history_inquiry_groups__group_id__submission_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "group_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Group Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HistoricalInquirySubmissionUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoricalInquirySubmissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Update Submission",
+        "tags": [
+          "history-inquiry"
+        ]
+      }
+    },
+    "/api/v1/history/inquiry/groups/{group_id}/submit": {
+      "post": {
+        "operationId": "submit_inquiry_api_v1_history_inquiry_groups__group_id__submit_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "group_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Group Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoricalInquirySubmissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Submit Inquiry",
+        "tags": [
+          "history-inquiry"
+        ]
+      }
+    },
+    "/api/v1/history/inquiry/submissions/{submission_id}/moderate": {
+      "post": {
+        "operationId": "moderate_submission_api_v1_history_inquiry_submissions__submission_id__moderate_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "submission_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Submission Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HistoricalInquiryTeacherModerationIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoricalInquiryTeacherModerationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Moderate Submission",
+        "tags": [
+          "history-inquiry"
+        ]
+      }
+    },
+    "/api/v1/history/learning-outcomes/assessments": {
+      "post": {
+        "description": "Create a source-based inquiry assessment task (pre/post/delayed) linked to an approved ethics protocol.",
+        "operationId": "create_learning_outcome_assessment_endpoint_api_v1_history_learning_outcomes_assessments_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LearningOutcomeAssessmentCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LearningOutcomeAssessmentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Create Learning Outcome Assessment Endpoint",
+        "tags": [
+          "history-learning"
+        ]
+      }
+    },
+    "/api/v1/history/learning-outcomes/assessments/{assessment_id}": {
+      "get": {
+        "description": "Retrieve an assessment task with prompt and rubric.",
+        "operationId": "get_learning_outcome_assessment_endpoint_api_v1_history_learning_outcomes_assessments__assessment_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assessment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assessment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LearningOutcomeAssessmentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Learning Outcome Assessment Endpoint",
+        "tags": [
+          "history-learning"
+        ]
+      }
+    },
+    "/api/v1/history/learning-outcomes/assessments/{assessment_id}/submit": {
+      "post": {
+        "description": "Student submits answers to an objective source inquiry assessment.",
+        "operationId": "submit_learning_outcome_assessment_endpoint_api_v1_history_learning_outcomes_assessments__assessment_id__submit_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assessment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assessment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LearningOutcomeSubmissionCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LearningOutcomeSubmissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Submit Learning Outcome Assessment Endpoint",
+        "tags": [
+          "history-learning"
+        ]
+      }
+    },
+    "/api/v1/history/learning-outcomes/causal-metrics": {
+      "post": {
+        "description": "Compute causal learning gain between pre/post objective inquiry assessments.\n\nNegative abuse check: Rejects survey responses (feelings/satisfaction).",
+        "operationId": "compute_causal_learning_outcome_endpoint_api_v1_history_learning_outcomes_causal_metrics_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CausalLearningMetricComputeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CausalLearningMetricOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Compute Causal Learning Outcome Endpoint",
+        "tags": [
+          "history-learning"
+        ]
+      }
+    },
+    "/api/v1/history/learning-outcomes/cohort-metrics/{ethics_protocol_id}": {
+      "get": {
+        "description": "Get aggregated cohort causal learning metrics (mean gain, Cohen's d, inter-rater reliability).",
+        "operationId": "get_cohort_causal_metrics_endpoint_api_v1_history_learning_outcomes_cohort_metrics__ethics_protocol_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ethics_protocol_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Ethics Protocol Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CohortCausalLearningMetricsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Cohort Causal Metrics Endpoint",
+        "tags": [
+          "history-learning"
+        ]
+      }
+    },
+    "/api/v1/history/learning-outcomes/ethics-protocols": {
+      "post": {
+        "description": "Register an ethics / IRB protocol for learning outcome measurement research (staff/admin).",
+        "operationId": "create_ethics_protocol_endpoint_api_v1_history_learning_outcomes_ethics_protocols_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EthicsProtocolCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EthicsProtocolOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Create Ethics Protocol Endpoint",
+        "tags": [
+          "history-learning"
+        ]
+      }
+    },
+    "/api/v1/history/learning-outcomes/ethics-protocols/{protocol_id}": {
+      "get": {
+        "description": "Get ethics protocol details.",
+        "operationId": "get_ethics_protocol_endpoint_api_v1_history_learning_outcomes_ethics_protocols__protocol_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "protocol_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Protocol Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EthicsProtocolOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Ethics Protocol Endpoint",
+        "tags": [
+          "history-learning"
+        ]
+      }
+    },
+    "/api/v1/history/learning-outcomes/submissions/{submission_id}/evaluate": {
+      "post": {
+        "description": "Independent assessor evaluates a student submission against objective rubric criteria.",
+        "operationId": "evaluate_learning_outcome_submission_endpoint_api_v1_history_learning_outcomes_submissions__submission_id__evaluate_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "submission_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Submission Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RubricEvaluationCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RubricEvaluationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Evaluate Learning Outcome Submission Endpoint",
+        "tags": [
+          "history-learning"
+        ]
+      }
+    },
+    "/api/v1/history/learning-outcomes/surveys": {
+      "post": {
+        "description": "Submit a subjective self-report survey (isolated from causal mastery metrics).",
+        "operationId": "submit_subjective_survey_endpoint_api_v1_history_learning_outcomes_surveys_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubjectiveSurveyCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubjectiveSurveyOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Submit Subjective Survey Endpoint",
+        "tags": [
+          "history-learning"
         ]
       }
     },
@@ -46414,6 +52028,108 @@
         ]
       }
     },
+    "/api/v1/imperial/teacher/submissions/{submission_id}": {
+      "get": {
+        "description": "Get single student submission detail for evaluation (requires staff/teacher role).",
+        "operationId": "get_submission_detail_api_v1_imperial_teacher_submissions__submission_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "submission_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Submission Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImperialSubmissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Submission Detail",
+        "tags": [
+          "imperial"
+        ]
+      }
+    },
+    "/api/v1/imperial/teacher/submissions/{submission_id}/audit": {
+      "get": {
+        "description": "Retrieve audit history and grading revisions for a submission (requires staff/teacher role).",
+        "operationId": "get_submission_audit_api_v1_imperial_teacher_submissions__submission_id__audit_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "submission_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Submission Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ImperialSubmissionAuditOut"
+                  },
+                  "title": "Response Get Submission Audit Api V1 Imperial Teacher Submissions  Submission Id  Audit Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Submission Audit",
+        "tags": [
+          "imperial"
+        ]
+      }
+    },
     "/api/v1/imperial/teacher/submissions/{submission_id}/grade": {
       "post": {
         "description": "Record rubric scores S1-S4 (0-3 scale each), total score, and teacher feedback (requires staff/teacher role).",
@@ -49071,6 +54787,270 @@
         "summary": "Start Preview Session"
       }
     },
+    "/api/v1/progress/action": {
+      "post": {
+        "description": "Process a server-verified progression action (discover, complete_lesson, submit_quiz).",
+        "operationId": "handle_progression_action_api_v1_progress_action_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgressionActionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgressionActionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Handle Progression Action",
+        "tags": [
+          "progress"
+        ]
+      }
+    },
+    "/api/v1/progress/complete-lesson": {
+      "post": {
+        "description": "Record verified lesson completion.",
+        "operationId": "complete_lesson_action_api_v1_progress_complete_lesson_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgressionActionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgressionActionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Complete Lesson Action",
+        "tags": [
+          "progress"
+        ]
+      }
+    },
+    "/api/v1/progress/discover": {
+      "post": {
+        "description": "Record genuine discovery (hotspot / 3D exploration).",
+        "operationId": "discover_motif_api_v1_progress_discover_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgressionActionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgressionActionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Discover Motif",
+        "tags": [
+          "progress"
+        ]
+      }
+    },
+    "/api/v1/progress/motifs/{motif_id}": {
+      "get": {
+        "description": "Retrieve individual motif progression.",
+        "operationId": "get_motif_progress_api_v1_progress_motifs__motif_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "motif_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Motif Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MotifProgressionItem"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Motif Progress",
+        "tags": [
+          "progress"
+        ]
+      }
+    },
+    "/api/v1/progress/submit-quiz": {
+      "post": {
+        "description": "Record quiz submission and evaluate mastery.",
+        "operationId": "submit_quiz_action_api_v1_progress_submit_quiz_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgressionActionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgressionActionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Submit Quiz Action",
+        "tags": [
+          "progress"
+        ]
+      }
+    },
+    "/api/v1/progress/summary": {
+      "get": {
+        "description": "Retrieve full student learning progression summary.",
+        "operationId": "get_progression_summary_api_v1_progress_summary_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentProgressionSummaryOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Progression Summary",
+        "tags": [
+          "progress"
+        ]
+      }
+    },
     "/api/v1/quests": {
       "get": {
         "operationId": "list_quests_api_v1_quests_get",
@@ -50494,6 +56474,366 @@
           }
         ],
         "summary": "Submit Review Result"
+      }
+    },
+    "/api/v1/schools": {
+      "get": {
+        "description": "List schools with optional filters.",
+        "operationId": "list_schools_api_v1_schools_get",
+        "parameters": [
+          {
+            "description": "Filter by city",
+            "in": "query",
+            "name": "city",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by city",
+              "title": "City"
+            }
+          },
+          {
+            "description": "Filter by active status",
+            "in": "query",
+            "name": "is_active",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": true,
+              "description": "Filter by active status",
+              "title": "Is Active"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SchoolOut"
+                  },
+                  "title": "Response List Schools Api V1 Schools Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "List Schools"
+      },
+      "post": {
+        "description": "Create a new school (staff/admin only).",
+        "operationId": "create_school_api_v1_schools_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SchoolCreateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SchoolOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Create School"
+      }
+    },
+    "/api/v1/schools/{school_id}": {
+      "get": {
+        "description": "Get school details.",
+        "operationId": "get_school_api_v1_schools__school_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "school_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "School Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SchoolOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get School"
+      },
+      "patch": {
+        "description": "Update school details (staff/admin only).",
+        "operationId": "update_school_api_v1_schools__school_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "school_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "School Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SchoolUpdateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SchoolOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Update School"
+      }
+    },
+    "/api/v1/schools/{school_id}/classrooms": {
+      "get": {
+        "description": "List classrooms associated with a school.",
+        "operationId": "list_school_classrooms_api_v1_schools__school_id__classrooms_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "school_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "School Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Include archived classrooms",
+            "in": "query",
+            "name": "include_archived",
+            "required": false,
+            "schema": {
+              "default": false,
+              "description": "Include archived classrooms",
+              "title": "Include Archived",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ClassroomSummaryOut"
+                  },
+                  "title": "Response List School Classrooms Api V1 Schools  School Id  Classrooms Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "List School Classrooms"
+      }
+    },
+    "/api/v1/schools/{school_id}/members": {
+      "post": {
+        "description": "Add a teacher or staff member to a school.",
+        "operationId": "add_school_member_api_v1_schools__school_id__members_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "school_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "School Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SchoolMemberAddIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SchoolMemberOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Add School Member"
       }
     },
     "/api/v1/search": {

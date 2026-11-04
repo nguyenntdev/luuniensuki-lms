@@ -1,0 +1,87 @@
+{
+  "ticket": "V5-T033",
+  "ticket_id": "V5-T033",
+  "wave": "W03",
+  "slot": "W03-A03",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Assignment and source-locked lessons in backend/routers/history_learning.py and backend/history_models.py",
+  "timestamp": "2026-11-05T00:00:00Z",
+  "summary": "Implemented classroom lesson assignments with immutable source-locked assessment basis in backend/history_models.py, backend/services/history_learning.py, and backend/routers/history_learning.py. Teachers assign lessons pinned to specific lesson content versions, evaluation rubrics (S1_SPATIAL, S2_TEMPORAL, S3_EVIDENCE, S4_ARGUMENT), and verified primary historical source sets. Enforced strict publication gate rejecting any assignment with unreviewed, disputed, or missing historical claims (HTTP 422 ASSIGNMENT_UNVERIFIED_CLAIMS). Enforced immutable assessment basis invariant: subsequent modifications to master lesson content or version do not alter the pinned assessment basis or student submissions for existing assignments.",
+  "invariants_enforced": {
+    "source_locked_lesson_assignment": "Assignments strictly capture and pin the lesson content version, lesson metadata snapshot, evaluation rubric, and primary historical source set at creation time.",
+    "pinned_assessment_basis_immutability": "Subsequent edits or version increments to the master LessonContent record in the database do not mutate the assignment's pinned assessment basis or student submissions (assessment_basis_snapshot).",
+    "negative_abuse_publication_gate": "An assignment cannot be published (via creation or /publish endpoint) if any required historical claim is in ('unreviewed', 'needs_source', 'rejected', 'disputed', 'superseded') or if the lesson is flagged 'blocked_for_authoritative_learning'. Violations fail with HTTP 422 ASSIGNMENT_UNVERIFIED_CLAIMS.",
+    "rubric_grading_workflow": "Submissions are evaluated against the pinned rubric criteria (e.g. S1-S4 historical competencies) with teacher scores, feedback, and timestamping.",
+    "classroom_scoping_and_rbac": "Only teachers of the classroom or admins can create, publish, or grade assignments; only enrolled classroom students can submit responses."
+  },
+  "changes": [
+    {
+      "file": "backend/history_models.py",
+      "description": "Added HistoryLessonAssignment and HistoryAssignmentSubmission domain models with JSONB snapshot columns (pinned_lesson_snapshot, rubric, pinned_source_ids, pinned_sources_snapshot, pinned_claim_ids, assessment_basis_snapshot) and get_assessment_basis helper method."
+    },
+    {
+      "file": "backend/models.py",
+      "description": "Exported HistoryLessonAssignment and HistoryAssignmentSubmission from backend.history_models to ensure inclusion in Base.metadata."
+    },
+    {
+      "file": "migrations/versions/0060_history_lesson_assignments.py",
+      "description": "Created purely additive Alembic migration creating history_lesson_assignments and history_assignment_submissions tables and foreign key indexes."
+    },
+    {
+      "file": "backend/apischemas/history_learning.py",
+      "description": "Added Pydantic schemas: HistoryLessonAssignmentCreateIn, HistoryLessonAssignmentOut, HistoryLessonAssignmentListOut, HistoryAssignmentAssessmentBasisOut, HistoryLessonAssignmentPublishOut, HistoryAssignmentSubmitIn, HistoryAssignmentSubmissionOut, HistoryAssignmentSubmissionListOut, HistoryAssignmentGradeIn."
+    },
+    {
+      "file": "backend/services/history_learning.py",
+      "description": "Implemented DEFAULT_HISTORICAL_RUBRIC, validate_assignment_for_publication, create_source_locked_assignment, publish_history_assignment, submit_history_assignment, and grade_history_assignment_submission."
+    },
+    {
+      "file": "backend/routers/history_learning.py",
+      "description": "Added endpoints: POST /api/v1/history/assignments, GET /api/v1/history/assignments, GET /api/v1/history/assignments/{id}, POST /api/v1/history/assignments/{id}/publish, GET /api/v1/history/assignments/{id}/assessment-basis, POST /api/v1/history/assignments/{id}/submit, GET /api/v1/history/assignments/{id}/submissions, GET /api/v1/history/assignments/{id}/submissions/{sub_id}, POST /api/v1/history/assignments/{id}/submissions/{sub_id}/grade."
+    },
+    {
+      "file": "tests/v5/test_v5_t033.py",
+      "description": "Comprehensive integration test suite covering assignment creation with pinned snapshots, negative abuse publication gate rejection against unreviewed/disputed claims, positive publication, pinned assessment basis immutability after master lesson mutation, rubric grading, and access control."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t033.py -v",
+    "total_tests": 6,
+    "passed_tests": 6,
+    "failed_tests": 0,
+    "test_details": [
+      {
+        "name": "test_teacher_assigns_lesson_with_pinned_version_rubric_and_source_set",
+        "result": "PASSED",
+        "assertion": "Verifies teacher can create a classroom lesson assignment with pinned lesson version, frozen lesson snapshot, rubric criteria (S1-S4), and primary source set."
+      },
+      {
+        "name": "test_negative_abuse_assignment_cannot_be_published_if_lesson_has_unverified_claims",
+        "result": "PASSED",
+        "assertion": "Negative abuse test: An assignment referencing unreviewed or disputed claims, or a lesson flagged blocked_for_authoritative_learning, is rejected by publication gate with HTTP 422 ASSIGNMENT_UNVERIFIED_CLAIMS."
+      },
+      {
+        "name": "test_assignment_publication_succeeds_when_all_claims_are_verified",
+        "result": "PASSED",
+        "assertion": "Positive test: When all linked claims reach verified status (expert_verified), assignment successfully transitions to published status with published_at timestamp."
+      },
+      {
+        "name": "test_pinned_assessment_basis_immutable_when_master_lesson_edited_later",
+        "result": "PASSED",
+        "assertion": "Invariant verification: Modifying master LessonContent in the database (bumping version, changing text) does not mutate existing assignment or submission assessment basis."
+      },
+      {
+        "name": "test_submission_and_rubric_grading_workflow",
+        "result": "PASSED",
+        "assertion": "Verifies student assignment submission against published assignment and teacher rubric scoring with S1-S4 criteria and feedback."
+      },
+      {
+        "name": "test_assignment_access_control_and_permissions",
+        "result": "PASSED",
+        "assertion": "Verifies RBAC and scoping: learners cannot create assignments, cross-classroom assignment creation is blocked (403), and non-enrolled students cannot submit."
+      }
+    ]
+  }
+}

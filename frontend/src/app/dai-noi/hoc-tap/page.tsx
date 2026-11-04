@@ -21,6 +21,13 @@ import {
   ArrowRight,
   ShieldCheck,
   ExternalLink,
+  ShieldAlert,
+  Award,
+  Activity,
+  RotateCcw,
+  Lock,
+  AlertCircle,
+  Check,
 } from "lucide-react";
 import ImperialHeader from "@/components/imperial/shell/ImperialHeader";
 import { Button } from "@/components/ui/button";
@@ -33,12 +40,114 @@ import {
 } from "@/lib/imperial/pedagogy-data";
 import { cn } from "@/lib/utils";
 
-type TabKey = "plan" | "worksheet" | "rubric";
+type TabKey = "plan" | "worksheet" | "rubric" | "progression";
 
 export default function ImperialLearningResourcesPage() {
   const [activeTab, setActiveTab] = useState<TabKey>("plan");
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
   const [printTeacherMode, setPrintTeacherMode] = useState(false);
+
+  // Student progression simulation & verification sandbox state
+  const [simStage, setSimStage] = useState<"hidden" | "discovered" | "learned" | "mastered">("hidden");
+  const [simXp, setSimXp] = useState(0);
+  const [simLogs, setSimLogs] = useState<Array<{ text: string; type: "info" | "success" | "warning" | "error"; time: string }>>([
+    { text: "Trạng thái khởi đầu: Ẩn (Hidden) — Chưa tương tác — 0 XP", type: "info", time: "00:00:00" },
+  ]);
+  const [simRateCount, setSimRateCount] = useState(0);
+
+  const addLog = (text: string, type: "info" | "success" | "warning" | "error") => {
+    const timeStr = new Date().toLocaleTimeString();
+    setSimLogs((prev) => [{ text, type, time: timeStr }, ...prev.slice(0, 9)]);
+  };
+
+  const handleSimDiscover = () => {
+    if (simRateCount > 4) {
+      addLog("HTTP 429 RATE_LIMIT_EXCEEDED: Quá nhiều yêu cầu tiến trình liên tục! Hãy đợi máy chủ điều tiết.", "error");
+      return;
+    }
+    setSimRateCount((c) => c + 1);
+
+    if (simStage === "hidden") {
+      setSimStage("discovered");
+      setSimXp((prev) => prev + 25);
+      addLog("Khám phá thành công (+25 XP): Chạm điểm 3D Hotspot -> Trạng thái: DISCOVERED", "success");
+    } else {
+      addLog("ANTI-REPLAY: Hoa văn đã được khám phá trước đó -> Không cấp trùng XP (+0 XP).", "warning");
+    }
+  };
+
+  const handleSimMaliciousMasteryClaim = () => {
+    if (simRateCount > 4) {
+      addLog("HTTP 429 RATE_LIMIT_EXCEEDED: Quá nhiều yêu cầu!", "error");
+      return;
+    }
+    setSimRateCount((c) => c + 1);
+
+    // Negative abuse check: Client claiming "mastered" directly from hotspot/client event
+    addLog(
+      "CHỐNG GIAN LẬN: Máy chủ từ chối yêu cầu client tự xưng 'MASTERED'! Thao tác Hotspot 3D chỉ được cấp tối đa DISCOVERED (+25 XP).",
+      "error"
+    );
+  };
+
+  const handleSimCompleteLesson = () => {
+    if (simRateCount > 4) {
+      addLog("HTTP 429 RATE_LIMIT_EXCEEDED: Quá nhiều yêu cầu!", "error");
+      return;
+    }
+    setSimRateCount((c) => c + 1);
+
+    if (simStage === "hidden" || simStage === "discovered") {
+      const delta = simStage === "hidden" ? 75 : 50;
+      setSimStage("learned");
+      setSimXp((prev) => prev + delta);
+      addLog(`Hoàn thành bài học (+${delta} XP): Xác nhận học liệu sư phạm -> Trạng thái: LEARNED`, "success");
+    } else {
+      addLog("ANTI-REPLAY: Bài học đã hoàn thành trước đó -> Giữ nguyên trạng thái (+0 XP).", "warning");
+    }
+  };
+
+  const handleSimSubmitQuizFail = () => {
+    if (simRateCount > 4) {
+      addLog("HTTP 429 RATE_LIMIT_EXCEEDED: Quá nhiều yêu cầu!", "error");
+      return;
+    }
+    setSimRateCount((c) => c + 1);
+
+    addLog(
+      "KẾT QUẢ KHẢO THÍ: Điểm 50% (< 80% chuẩn đạt) -> Không đạt điều kiện Tinh thông! Trạng thái giữ nguyên, không cấp Mastery XP (+0 XP).",
+      "warning"
+    );
+  };
+
+  const handleSimSubmitQuizPass = () => {
+    if (simRateCount > 4) {
+      addLog("HTTP 429 RATE_LIMIT_EXCEEDED: Quá nhiều yêu cầu!", "error");
+      return;
+    }
+    setSimRateCount((c) => c + 1);
+
+    if (simStage === "mastered") {
+      addLog("ANTI-REPLAY: Đã đạt danh hiệu Tinh thông trước đó -> Không cấp trùng thưởng (+0 XP).", "warning");
+    } else {
+      const neededForMastery = 150 - simXp;
+      setSimStage("mastered");
+      setSimXp(150);
+      addLog(
+        `KẾT QUẢ KHẢO THÍ: Điểm 100% (>= 80%) -> Xác thực Tinh thông thành công (+${neededForMastery} XP) -> Trạng thái: MASTERED!`,
+        "success"
+      );
+    }
+  };
+
+  const handleSimReset = () => {
+    setSimStage("hidden");
+    setSimXp(0);
+    setSimRateCount(0);
+    setSimLogs([
+      { text: "Đã đặt lại mô phỏng: Trạng thái: Ẩn (Hidden) — 0 XP", type: "info", time: new Date().toLocaleTimeString() },
+    ]);
+  };
 
   const handleOpenPrintModal = (teacherMode = false) => {
     setPrintTeacherMode(teacherMode);
@@ -177,6 +286,20 @@ export default function ImperialLearningResourcesPage() {
           >
             <FileCheck className="size-4" />
             <span>Khung đánh giá Rubric S1–S4</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab("progression")}
+            className={cn(
+              "flex items-center gap-2 px-4 py-2.5 rounded-t-xl text-sm font-semibold border-b-2 transition-colors",
+              activeTab === "progression"
+                ? "border-primary text-primary bg-primary/5"
+                : "border-transparent text-muted-foreground hover:text-foreground hover:bg-secondary/40",
+            )}
+          >
+            <ShieldCheck className="size-4" />
+            <span>Tiến trình năng lực & Chống gian lận</span>
           </button>
         </div>
 
@@ -571,6 +694,321 @@ export default function ImperialLearningResourcesPage() {
                     </div>
                   ))}
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================== */}
+        {/* Tab 4: Tiến trình năng lực & Chống gian lận (Progression Engine)*/}
+        {/* ============================================================== */}
+        {activeTab === "progression" && (
+          <div className="space-y-8 animate-in fade-in duration-200">
+            {/* Overview Card */}
+            <div className="p-6 rounded-2xl border border-border/80 bg-card space-y-5 shadow-sm">
+              <div className="border-b border-border/60 pb-4 flex flex-wrap items-center justify-between gap-3">
+                <div className="space-y-1 max-w-2xl">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
+                    <ShieldCheck className="size-3.5" />
+                    <span>Hệ thống Máy chủ Xác thực Tiến trình Học tập Chuẩn V5</span>
+                  </div>
+                  <h2 className="font-serif font-bold text-2xl text-foreground">
+                    Tiến trình Năng lực 4 Cấp độ & Cơ chế Chống Gian lận Điểm
+                  </h2>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Mỗi di vật và hoa văn trên Cửu Đỉnh tuân thủ chu trình tiến trình nghiêm ngặt do máy chủ kiểm định:
+                    <strong className="text-foreground"> Ẩn (Hidden) → Khám phá (Discovered) → Đã học (Learned) → Tinh thông (Mastered)</strong>.
+                    Tuyệt đối ngăn chặn hành vi khai thác client-side để nhận điểm tinh thông trái phép.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleSimReset}
+                    className="gap-1.5 text-xs border-border/80 text-muted-foreground hover:text-foreground"
+                  >
+                    <RotateCcw className="size-3.5" />
+                    <span>Đặt lại kiểm thử</span>
+                  </Button>
+                </div>
+              </div>
+
+              {/* 4 Discrete Progression Steps */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                {/* Step 1: Hidden */}
+                <div className={cn(
+                  "p-4 rounded-xl border space-y-2 transition-all",
+                  simStage === "hidden"
+                    ? "border-primary bg-primary/5 ring-1 ring-primary/30"
+                    : "border-border/60 bg-secondary/20 opacity-80"
+                )}>
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-muted text-muted-foreground">
+                      Cấp 0
+                    </span>
+                    <span className="text-[11px] font-semibold text-muted-foreground">0 XP</span>
+                  </div>
+                  <h4 className="font-serif font-bold text-sm text-foreground flex items-center gap-1.5">
+                    <Lock className="size-4 text-muted-foreground" />
+                    <span>Ẩn (Hidden)</span>
+                  </h4>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    Di vật chưa được học sinh khảo sát thực địa hoặc tương tác trên mô hình không gian số 3D.
+                  </p>
+                </div>
+
+                {/* Step 2: Discovered */}
+                <div className={cn(
+                  "p-4 rounded-xl border space-y-2 transition-all",
+                  simStage === "discovered"
+                    ? "border-amber-500 bg-amber-500/10 ring-1 ring-amber-500/30"
+                    : simStage === "learned" || simStage === "mastered"
+                    ? "border-border/60 bg-secondary/30"
+                    : "border-border/60 bg-secondary/20 opacity-80"
+                )}>
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300">
+                      Cấp 1
+                    </span>
+                    <span className="text-[11px] font-semibold text-amber-600 dark:text-amber-400 font-mono">+25 XP</span>
+                  </div>
+                  <h4 className="font-serif font-bold text-sm text-foreground flex items-center gap-1.5">
+                    <Compass className="size-4 text-amber-500" />
+                    <span>Khám phá (Discovered)</span>
+                  </h4>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    Chạm điểm tương tác 3D Hotspot hoặc quét mã thực địa. Máy chủ xác thực vị trí và mở khóa mô tả sơ khởi.
+                  </p>
+                </div>
+
+                {/* Step 3: Learned */}
+                <div className={cn(
+                  "p-4 rounded-xl border space-y-2 transition-all",
+                  simStage === "learned"
+                    ? "border-blue-500 bg-blue-500/10 ring-1 ring-blue-500/30"
+                    : simStage === "mastered"
+                    ? "border-border/60 bg-secondary/30"
+                    : "border-border/60 bg-secondary/20 opacity-80"
+                )}>
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-blue-500/20 text-blue-700 dark:text-blue-300">
+                      Cấp 2
+                    </span>
+                    <span className="text-[11px] font-semibold text-blue-600 dark:text-blue-400 font-mono">+50 XP (75 XP)</span>
+                  </div>
+                  <h4 className="font-serif font-bold text-sm text-foreground flex items-center gap-1.5">
+                    <BookOpen className="size-4 text-blue-500" />
+                    <span>Đã học (Learned)</span>
+                  </h4>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    Hoàn thành đọc bài học sư phạm, đối chiếu tư liệu chính sử triều Nguyễn và phiếu điền dã 4 cột.
+                  </p>
+                </div>
+
+                {/* Step 4: Mastered */}
+                <div className={cn(
+                  "p-4 rounded-xl border space-y-2 transition-all",
+                  simStage === "mastered"
+                    ? "border-emerald-500 bg-emerald-500/10 ring-1 ring-emerald-500/30"
+                    : "border-border/60 bg-secondary/20 opacity-80"
+                )}>
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">
+                      Cấp 3
+                    </span>
+                    <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 font-mono">+75 XP (150 XP)</span>
+                  </div>
+                  <h4 className="font-serif font-bold text-sm text-foreground flex items-center gap-1.5">
+                    <Award className="size-4 text-emerald-500" />
+                    <span>Tinh thông (Mastered)</span>
+                  </h4>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    Vượt qua bài trắc nghiệm khảo thí với điểm số đạt <strong className="text-foreground">≥ 80%</strong>. Máy chủ tự chấm và cấp danh hiệu.
+                  </p>
+                </div>
+              </div>
+
+              {/* Invariant & Anti-Abuse Rules Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2 text-xs">
+                <div className="p-4 rounded-xl border border-destructive/30 bg-destructive/5 space-y-1.5">
+                  <div className="flex items-center gap-2 text-destructive font-bold">
+                    <ShieldAlert className="size-4" />
+                    <span>Chống gian lận điểm (Negative Abuse)</span>
+                  </div>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Hành động chạm điểm 3D Hotspot hoặc client-side event <strong className="text-foreground">tuyệt đối không bao giờ được cấp điểm Tinh thông</strong>. Mọi trạng thái Tinh thông bắt buộc phải thông qua chấm bài thi thực trên server với điểm ≥ 80%.
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/5 space-y-1.5">
+                  <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400 font-bold">
+                    <RotateCcw className="size-4" />
+                    <span>Chống lặp lại (Anti-Replay)</span>
+                  </div>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Mỗi di vật chỉ được nhận thưởng XP một lần duy nhất cho mỗi mốc (tối đa 150 XP). Việc lặp lại thao tác khám phá hay làm lại bài thi đã đạt sẽ trả về 0 XP bổ sung.
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-xl border border-primary/30 bg-primary/5 space-y-1.5">
+                  <div className="flex items-center gap-2 text-primary font-bold">
+                    <Activity className="size-4" />
+                    <span>Bảo vệ tần suất (Rate Limiting)</span>
+                  </div>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Giới hạn tối đa 30 thao tác tiến trình mỗi 60 giây đối với mỗi tài khoản học sinh. Yêu cầu vượt ngưỡng sẽ bị từ chối với mã <strong className="text-foreground">HTTP 429 Too Many Requests</strong>.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Interactive Simulation Sandbox */}
+            <div className="p-6 rounded-2xl border border-border/80 bg-card space-y-5 shadow-sm">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-3">
+                <div className="space-y-1">
+                  <h3 className="font-serif font-bold text-lg text-foreground flex items-center gap-2">
+                    <Sparkles className="size-5 text-primary" />
+                    <span>Bảng Kiểm Thử Tương Tác Tiến Trình Sư Phạm</span>
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    Thử nghiệm trực tiếp các hành động để quan sát phản hồi máy chủ, ranh giới điểm thưởng và cơ chế chặn gian lận.
+                  </p>
+                </div>
+
+                {/* Status meter */}
+                <div className="flex items-center gap-4 bg-secondary/40 px-4 py-2 rounded-xl border border-border/60">
+                  <div className="text-right">
+                    <div className="text-[10px] uppercase font-bold text-muted-foreground">Trạng thái hiện tại</div>
+                    <div className="font-bold text-sm text-foreground uppercase font-mono">
+                      {simStage}
+                    </div>
+                  </div>
+                  <div className="h-8 w-px bg-border/60" />
+                  <div className="text-right">
+                    <div className="text-[10px] uppercase font-bold text-muted-foreground">Điểm tích lũy</div>
+                    <div className="font-bold text-sm text-primary font-mono">
+                      {simXp} / 150 XP
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="space-y-2">
+                <span className="text-xs font-semibold text-muted-foreground">Thao tác mô phỏng học sinh:</span>
+                <div className="flex flex-wrap gap-2.5">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleSimDiscover}
+                    className="gap-2 border-amber-500/40 text-amber-700 dark:text-amber-300 hover:bg-amber-500/10 text-xs"
+                  >
+                    <Compass className="size-3.5" />
+                    <span>1. Chạm 3D Hotspot (Khám phá)</span>
+                  </Button>
+
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleSimMaliciousMasteryClaim}
+                    className="gap-2 border-destructive/40 text-destructive hover:bg-destructive/10 text-xs"
+                  >
+                    <ShieldAlert className="size-3.5" />
+                    <span>2. Thử gian lận (Client tự xưng Mastered)</span>
+                  </Button>
+
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleSimCompleteLesson}
+                    className="gap-2 border-blue-500/40 text-blue-700 dark:text-blue-300 hover:bg-blue-500/10 text-xs"
+                  >
+                    <BookOpen className="size-3.5" />
+                    <span>3. Đọc & Hoàn thành bài học</span>
+                  </Button>
+
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleSimSubmitQuizFail}
+                    className="gap-2 border-orange-500/40 text-orange-700 dark:text-orange-300 hover:bg-orange-500/10 text-xs"
+                  >
+                    <AlertCircle className="size-3.5" />
+                    <span>4. Nộp bài trắc nghiệm (Điểm 50% &lt; 80%)</span>
+                  </Button>
+
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleSimSubmitQuizPass}
+                    className="gap-2 border-emerald-500/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/10 text-xs"
+                  >
+                    <Award className="size-3.5" />
+                    <span>5. Nộp bài trắc nghiệm (Điểm 100% ≥ 80%)</span>
+                  </Button>
+                </div>
+              </div>
+
+              {/* Server Audit Stream Log */}
+              <div className="space-y-2">
+                <span className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
+                  <Activity className="size-3.5 text-primary" />
+                  <span>Nhật ký máy chủ xác thực (Server Validation Stream):</span>
+                </span>
+                <div className="rounded-xl border border-border/80 bg-zinc-950 p-3.5 font-mono text-[11px] space-y-1.5 max-h-48 overflow-y-auto">
+                  {simLogs.map((log, idx) => (
+                    <div
+                      key={idx}
+                      className={cn(
+                        "flex items-start gap-2 leading-relaxed",
+                        log.type === "success" && "text-emerald-400",
+                        log.type === "warning" && "text-amber-400",
+                        log.type === "error" && "text-rose-400",
+                        log.type === "info" && "text-zinc-400"
+                      )}
+                    >
+                      <span className="text-zinc-500 shrink-0">[{log.time}]</span>
+                      <span>{log.text}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Fieldwork Stations Progression Matrix */}
+            <div className="p-6 rounded-2xl border border-border/80 bg-card space-y-4 shadow-sm">
+              <div className="border-b border-border/60 pb-3">
+                <h3 className="font-serif font-bold text-lg text-foreground">
+                  Bảng Theo Dõi 4 Trạm Điền Dã Đại Nội
+                </h3>
+                <p className="text-xs text-muted-foreground">
+                  Tiến độ từng trạm yêu cầu hoàn thành đầy đủ cả 3 khâu: Khảo sát thực địa, Đối chiếu sử liệu và Vượt qua khảo thí.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+                {FIELDWORK_WORKSHEET.stations.map((st) => (
+                  <div key={st.station_index} className="p-4 rounded-xl border border-border/70 bg-secondary/30 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono font-bold text-primary">Trạm {st.station_index}</span>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-primary/10 text-primary">
+                        Chuẩn đạt ≥ 80%
+                      </span>
+                    </div>
+                    <div className="font-serif font-bold text-sm text-foreground">
+                      {st.monument_name_vi}
+                    </div>
+                    <div className="text-[11px] text-muted-foreground">
+                      {st.zone_name_vi}
+                    </div>
+                    <div className="pt-2 border-t border-border/50 flex items-center justify-between text-[11px]">
+                      <span className="text-muted-foreground">Tối đa:</span>
+                      <span className="font-mono font-bold text-foreground">150 XP</span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

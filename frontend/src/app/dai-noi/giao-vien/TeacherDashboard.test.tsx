@@ -18,6 +18,7 @@ import {
   saveStudentSubmission,
   gradeStudentSubmission,
   INITIAL_STUDENT_SUBMISSIONS,
+  DEMO_STUDENT_SUBMISSIONS,
 } from "@/lib/imperial/submissions-api";
 import {
   fetchTeacherAssignments,
@@ -266,10 +267,16 @@ describe("STTTNNĐ Teacher Dashboard & Educational Pedagogy Suite", () => {
   // 4. Student Activity Submission & Teacher Rubric Evaluation Pipeline
   // ========================================================================= //
   describe("4. Student Activity Submission & Rubric Evaluation Pipeline", () => {
-    it("loads initial mock submissions when storage is empty", () => {
-      const list = loadStudentSubmissions();
-      expect(list.length).toBeGreaterThanOrEqual(5);
-      expect(list.some((s) => s.student_name.includes("Nguyễn Lê Hoàng Nam"))).toBe(true);
+    it("returns empty list in production when storage is empty, and isolates mock submissions to demoMode", () => {
+      // Production mode: fresh user sees NO fictional records
+      const freshList = loadStudentSubmissions();
+      expect(freshList).toEqual([]);
+      expect(freshList.some((s) => s.student_name?.includes("Nguyễn Lê Hoàng Nam"))).toBe(false);
+
+      // Demo mode: evaluation fixtures are available
+      const demoList = loadStudentSubmissions({ demoMode: true });
+      expect(demoList.length).toBeGreaterThanOrEqual(5);
+      expect(demoList.some((s) => s.student_name.includes("Nguyễn Lê Hoàng Nam"))).toBe(true);
     });
 
     it("saves new student submission locally without network dependency", () => {
@@ -296,7 +303,7 @@ describe("STTTNNĐ Teacher Dashboard & Educational Pedagogy Suite", () => {
     });
 
     it("evaluates and grades student submission with S1-S4 scores and feedback", () => {
-      const submissions = loadStudentSubmissions();
+      const submissions = loadStudentSubmissions({ demoMode: true });
       const targetSub = submissions[0];
 
       const graded = gradeStudentSubmission(
@@ -304,6 +311,7 @@ describe("STTTNNĐ Teacher Dashboard & Educational Pedagogy Suite", () => {
         { s1: 3, s2: 2, s3: 3, s4: 2 },
         "Lập luận M-E-E rất thuyết phục. Cần làm rõ thêm mốc tái thiết năm 1923.",
         "TS. Trần Văn Thọ — GV Lịch sử",
+        { demoMode: true },
       );
 
       expect(graded).not.toBeNull();
@@ -410,7 +418,7 @@ describe("STTTNNĐ Teacher Dashboard & Educational Pedagogy Suite", () => {
   // ========================================================================= //
   describe("7. Local Gradebook CSV Exporting", () => {
     it("exports gradebook to CSV locally in browser memory", () => {
-      const submissions = loadStudentSubmissions();
+      const submissions = loadStudentSubmissions({ demoMode: true });
       const csv = exportGradebookToCSV(submissions);
 
       expect(csv).toContain("Mã học sinh");
@@ -426,7 +434,7 @@ describe("STTTNNĐ Teacher Dashboard & Educational Pedagogy Suite", () => {
     });
 
     it("supports privacy-preserving anonymized export with HS-ANON prefix", () => {
-      const submissions = loadStudentSubmissions();
+      const submissions = loadStudentSubmissions({ demoMode: true });
       const anonymizedCSV = exportGradebookToCSV(submissions, {
         anonymize: true,
         anonymizePrefix: "HS-ANON-",

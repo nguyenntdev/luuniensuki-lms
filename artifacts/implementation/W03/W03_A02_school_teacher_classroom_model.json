@@ -1,0 +1,90 @@
+{
+  "ticket_id": "V5-T032",
+  "wave": "W03",
+  "slot": "W03-A02",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "goal": "School, teacher and classroom model in backend/models.py and backend/routers/classrooms.py.",
+  "status": "PASS",
+  "timestamp": "2026-11-05T00:30:00Z",
+  "summary": "Implemented comprehensive School, Teacher, and Classroom model enhancements and API contracts across backend/models.py, backend/schemas.py, backend/services/classroom.py, and backend/routers/classrooms.py. Added School and SchoolMember models with unique school code indices and role relationships. Linked Classroom to School with school_id foreign key and term scope. Enforced strict teacher ownership ensuring teachers only manage their own classrooms while outside teachers receive HTTP 403 Forbidden. Implemented secure join code validation supporting case-insensitive normalization and rejecting invalid, archived, or overcapacity classrooms. Built enrollment workflow supporting adult guardian flow (guardian_email, guardian_consent) with idempotent re-enrollment. Implemented GET /api/v1/classrooms/{id}/roster with role-based access control and PII privacy redaction for peer learners. Added strictly additive migration 0063_school_teacher_classroom_model.py, updated OpenAPI contract snapshot, regenerated frontend API types, and created 8/8 passing integration tests in tests/v5/test_v5_t032.py.",
+  "invariants_enforced": {
+    "school_association_and_membership": "Schools provide multi-tenant educational grouping for classrooms and faculty. Added School and SchoolMember models, unique school code checks, and GET /api/v1/schools/{id}/classrooms routing.",
+    "teacher_ownership_isolation": "Classrooms are owned by the creating teacher (teacher_id). Non-owner teachers attempting to read, update, archive, or delete another teacher's classroom receive HTTP 403 Forbidden.",
+    "secure_join_code_validation": "Unique 8-character uppercase alphanumeric codes generated without ambiguous characters. Validated upon join with case-insensitive normalization. Non-existent codes, archived classrooms, and classrooms exceeding max_students are rejected with HTTP 400/404.",
+    "learner_enrollment_and_guardian_flow": "Only users with learner role can join classrooms (staff/teachers receive HTTP 403). Supports adult guardian consent tracking (guardian_email, guardian_consent, guardian_user_id). Re-joining an already joined classroom is idempotent.",
+    "student_roster_and_pii_redaction": "Classroom roster at GET /api/v1/classrooms/{id}/roster is accessible to classroom teachers, admins, and enrolled learners. Outside students without enrollment receive HTTP 403 Forbidden. For enrolled students viewing peers, emails and guardian contact information are redacted.",
+    "migration_safety": "Database changes deployed via 0063_school_teacher_classroom_model.py using strictly additive DDL (CREATE TABLE IF NOT EXISTS, ADD COLUMN IF NOT EXISTS, CREATE INDEX IF NOT EXISTS) verified by lint-migration-safety.sh."
+  },
+  "contracts": {
+    "classroom_apis": {
+      "POST /api/v1/classrooms": "Creates classroom with optional school_id and term scope, returns ClassroomSummaryOut with 8-character unique join code.",
+      "GET /api/v1/classrooms": "Lists classrooms filtered by teacher ownership and optional school_id query parameter.",
+      "GET /api/v1/classrooms/{id}": "Returns ClassroomDetailOut for classroom teacher, admin, or enrolled students. Outside students/teachers receive 403.",
+      "PUT /api/v1/classrooms/{id}": "Updates classroom details including school_id and term scope. Enforces teacher ownership (403 for non-owners).",
+      "POST /api/v1/classrooms/join": "Learner joins classroom via class_code with adult guardian consent info. Idempotent.",
+      "GET /api/v1/classrooms/{id}/roster": "Returns ClassroomRosterOut. Outside students receive 403. Peer students see redacted PII.",
+      "GET /api/v1/classrooms/enrolled": "Returns classrooms where current user is enrolled as learner."
+    },
+    "school_apis": {
+      "POST /api/v1/schools": "Staff/admin creates school with unique code, name, location, and settings.",
+      "GET /api/v1/schools": "Lists schools with optional city and is_active filters.",
+      "GET /api/v1/schools/{id}": "Returns school details with classroom and member counts.",
+      "PATCH /api/v1/schools/{id}": "Updates school details. Teachers can update only their affiliated schools.",
+      "POST /api/v1/schools/{id}/members": "Adds teacher/staff user to school membership.",
+      "GET /api/v1/schools/{id}/classrooms": "Lists all classrooms belonging to a school."
+    }
+  },
+  "modified_files": [
+    "backend/models.py",
+    "backend/schemas.py",
+    "backend/services/classroom.py",
+    "backend/routers/classrooms.py",
+    "migrations/versions/0063_school_teacher_classroom_model.py",
+    "tests/v5/test_v5_t032.py",
+    "tests/backend/fixtures/openapi_snapshot.json",
+    "backend-rust/docs/route-inventory.json",
+    "frontend/src/types/api.ts",
+    "artifacts/implementation/W03/W03_A02_school_teacher_classroom_model.json"
+  ],
+  "verification": {
+    "backend_pytest": {
+      "command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t032.py -v",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "tests": [
+        "test_school_model_and_api_crud",
+        "test_classroom_creation_and_school_association",
+        "test_teacher_ownership_isolation",
+        "test_join_code_validation_and_enrollment",
+        "test_negative_abuse_outside_student_cannot_access_or_join_without_code",
+        "test_negative_abuse_archived_and_full_classrooms_reject_join",
+        "test_student_roster_access_and_pii_redaction",
+        "test_negative_abuse_non_learner_role_cannot_join_classroom"
+      ]
+    },
+    "contract_and_linter_checks": {
+      "openapi_snapshot": {
+        "command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/backend/test_openapi_snapshot.py -v",
+        "status": "PASSED"
+      },
+      "migration_safety": {
+        "command": "./scripts/ci/lint-migration-safety.sh",
+        "status": "PASSED"
+      },
+      "inventory_drift": {
+        "command": "./scripts/ci/lint-inventory-drift.sh",
+        "status": "PASSED"
+      },
+      "ledger_sync": {
+        "command": "./scripts/ci/lint-ledger-sync.sh",
+        "status": "PASSED"
+      },
+      "frontend_type_check": {
+        "command": "npm --prefix frontend run type-check",
+        "status": "PASSED"
+      }
+    }
+  }
+}

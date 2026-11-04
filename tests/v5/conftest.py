@@ -26,6 +26,8 @@ from sqlalchemy import create_engine, text
 from backend.base_model import Base
 import backend.history_models  # noqa: F401
 import backend.models_rbpc  # noqa: F401
+import backend.imperial_models  # noqa: F401
+import backend.imperial_v51_models  # noqa: F401
 import backend.models  # noqa: F401
 import backend.main as main  # noqa: F401
 

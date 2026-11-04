@@ -235,3 +235,73 @@ class PeerFeedbackOut(BaseModel):
     message: str
     template_key: str
     notification_id: UUID
+
+
+class StudentProgressionRules(BaseModel):
+    discovery_xp: int = 25
+    lesson_xp: int = 50
+    mastery_xp: int = 75
+    max_possible_xp_per_motif: int = 150
+    quiz_pass_threshold: int = 80
+
+
+class MotifProgressionItem(BaseModel):
+    motif_id: UUID
+    motif_title: str
+    urn_id: Optional[UUID] = None
+    urn_slug: Optional[str] = None
+    status: str
+    discovered_at: Optional[datetime] = None
+    lesson_viewed_at: Optional[datetime] = None
+    learned_at: Optional[datetime] = None
+    mastered_at: Optional[datetime] = None
+    quiz_attempts: int = 0
+    quiz_best_score: int = 0
+    xp_earned: int = 0
+    is_demo: bool = False
+    can_view_lesson: bool = True
+    can_take_quiz: bool = True
+    is_mastered: bool = False
+
+
+class StudentProgressionSummaryOut(BaseModel):
+    user_id: UUID
+    display_name: str
+    total_xp: int
+    current_streak: int
+    rank: str
+    total_motifs: int
+    hidden_count: int
+    discovered_count: int
+    learned_count: int
+    mastered_count: int
+    completion_percentage: float
+    mastery_percentage: float
+    motifs: list[MotifProgressionItem]
+    rules: StudentProgressionRules
+
+
+class ProgressionActionRequest(BaseModel):
+    action: str = Field(..., pattern="^(discover|complete_lesson|submit_quiz)$")
+    motif_id: UUID
+    time_spent_seconds: Optional[int] = 0
+    answers: Optional[dict[str, str]] = None
+    idempotency_key: Optional[str] = None
+    client_claimed_status: Optional[str] = None
+
+
+class ProgressionActionResponse(BaseModel):
+    success: bool
+    motif_id: UUID
+    previous_status: str
+    new_status: str
+    status_changed: bool
+    xp_awarded: int
+    total_xp: int
+    message: str
+    already_unlocked: bool = False
+    already_learned: bool = False
+    already_mastered: bool = False
+    quiz_score: Optional[int] = None
+    quiz_passed: Optional[bool] = None
+

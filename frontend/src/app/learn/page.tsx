@@ -38,6 +38,7 @@ import { setPageMeta } from "@/lib/seo";
 import { RbpcCard, RbpcCardHeader } from "@/components/rbpc/RbpcCard";
 import { RbpcButton } from "@/components/rbpc/RbpcButton";
 import { LearnRoadmapCard } from "@/components/rbpc/LearnRoadmapCard";
+import { PeerInquiryWorkspace } from "@/components/rbpc/PeerInquiryWorkspace";
 import { LEARN_PATHWAY_MODULES } from "@/lib/rbpc/learnModules";
 
 const PHASE_FILTERS: Array<{
@@ -531,6 +532,13 @@ function LearnPageContent() {
               </RbpcButton>
             </div>
           )}
+        </section>
+
+        {/* ===================================================================
+            6b. PEER / GROUP HISTORICAL INQUIRY WORKSPACE (V5-T038)
+            =================================================================== */}
+        <section aria-labelledby="peer-inquiry-heading" className="space-y-4 pt-4">
+          <PeerInquiryWorkspace locale={locale} />
         </section>
 
         {/* ===================================================================

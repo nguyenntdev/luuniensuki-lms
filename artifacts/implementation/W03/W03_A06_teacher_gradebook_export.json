@@ -1,0 +1,93 @@
+{
+  "ticket": "V5-T036",
+  "ticket_id": "V5-T036",
+  "wave": "W03",
+  "slot": "W03-A06",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Teacher gradebook and CSV export in frontend/src/app/dai-noi/giao-vien/TeacherDashboardClient.tsx and backend/routers/classrooms.py",
+  "timestamp": "2026-11-05T00:30:00Z",
+  "summary": "Implemented teacher gradebook viewing and authenticated CSV export in backend/routers/classrooms.py, backend/schemas.py, and frontend/src/app/dai-noi/giao-vien/TeacherDashboardClient.tsx. Renders real student roster with individual scores, completion metrics, quiz metrics, and status badges. Supports granular status filtering (all, missing, pending, completed) and search queries. Enforces strict horizontal privilege escalation protection (IDOR defense) ensuring Teacher A from School/Class A cannot view or export School/Class B's gradebook, failing with HTTP 403 Forbidden. Implemented UTF-8 BOM encoding for seamless Microsoft Excel rendering and privacy-preserving anonymized export (HS-ANON-xxx).",
+  "invariants_enforced": {
+    "horizontal_privilege_escalation_block": "Teachers can only access, view, and export gradebooks for classrooms where current_user.id == classroom.teacher_id (or user has ADMIN_ROLES). Cross-tenant or cross-classroom attempts strictly return HTTP 403 Forbidden.",
+    "learner_access_blocked": "Learner/student users are barred from teacher gradebook and export endpoints, returning HTTP 403 Forbidden.",
+    "unauthenticated_access_blocked": "Unauthenticated callers without valid JWT session receive HTTP 401 Unauthorized.",
+    "real_student_roster_and_scores": "Roster displays actual student details, overall progress %, total XP, quiz performance (passed/average score), and individual assignment completion/pending/overdue statuses.",
+    "missing_pending_status_filters": "Classroom gradebook accurately identifies missing/overdue tasks (uncompleted with due_at in past) vs pending tasks (in-progress/submitted with due_at in future or unexpired), cleanly partitioning rosters for teacher interventions.",
+    "authenticated_csv_export": "Exports gradebook with Content-Type text/csv, attachment Content-Disposition header, and UTF-8 BOM (\\ufeff) preventing Vietnamese diacritics corruption in Excel.",
+    "privacy_preserving_anonymization": "Optional anonymize=true parameter replaces student names and emails with HS-ANON-xxx identifiers to comply with student data privacy standards."
+  },
+  "changes": [
+    {
+      "file": "backend/schemas.py",
+      "description": "Added Pydantic schemas: StudentAssignmentProgressOut, StudentGradebookEntryOut, GradebookMetricsOut, and ClassroomGradebookOut."
+    },
+    {
+      "file": "backend/routers/classrooms.py",
+      "description": "Added helper _compute_classroom_gradebook and endpoints GET /api/v1/classrooms/{classroom_id}/gradebook and GET /api/v1/classrooms/{classroom_id}/gradebook/export. Enhanced GET /api/v1/classrooms/{classroom_id}/export to support status_filter, search, anonymize, and UTF-8 BOM encoding. Enforced _ensure_class_access on all endpoints."
+    },
+    {
+      "file": "frontend/src/lib/api.ts",
+      "description": "Added fetchClassroomGradebook and exportClassroomGradebookCsv client helpers and associated TypeScript response types."
+    },
+    {
+      "file": "frontend/src/app/dai-noi/giao-vien/TeacherDashboardClient.tsx",
+      "description": "Rendered real student roster, scores, missing/pending filters, classroom selector, and authenticated CSV export actions with error alert banners for 403 authorization failures."
+    },
+    {
+      "file": "tests/v5/test_v5_t036.py",
+      "description": "Created comprehensive integration test suite covering unauthenticated 401, learner 403, teacher horizontal abuse 403, positive gradebook view, status/search filters, CSV and anonymized exports, and admin cross-classroom access."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t036.py -v",
+    "total_tests": 7,
+    "passed_tests": 7,
+    "failed_tests": 0,
+    "test_details": [
+      {
+        "name": "test_unauthenticated_gradebook_and_export_returns_401",
+        "result": "PASSED",
+        "assertion": "Unauthenticated calls to /gradebook, /gradebook/export, and /export return 401 Unauthorized."
+      },
+      {
+        "name": "test_learner_access_to_gradebook_returns_403",
+        "result": "PASSED",
+        "assertion": "Learner/student users calling gradebook or export receive 403 Forbidden."
+      },
+      {
+        "name": "test_teacher_horizontal_privilege_escalation_blocked_returns_403",
+        "result": "PASSED",
+        "assertion": "Negative abuse: Teacher A cannot access or export Classroom B gradebook (HTTP 403 Forbidden), and Teacher B cannot access Classroom A."
+      },
+      {
+        "name": "test_teacher_can_view_own_gradebook_and_roster",
+        "result": "PASSED",
+        "assertion": "Teacher A can view Classroom A gradebook with accurate roster, student metrics, scores, and assignment breakdown."
+      },
+      {
+        "name": "test_teacher_gradebook_filter_by_status_and_search",
+        "result": "PASSED",
+        "assertion": "Filters by status (missing, pending, completed) and search queries (name, email) correctly partition student rosters."
+      },
+      {
+        "name": "test_teacher_can_export_gradebook_csv_and_anonymized",
+        "result": "PASSED",
+        "assertion": "Standard and filtered CSV exports return text/csv with UTF-8 BOM; anonymized export obscures student identities with HS-ANON prefix."
+      },
+      {
+        "name": "test_admin_cross_classroom_access",
+        "result": "PASSED",
+        "assertion": "Admin users retain authorized oversight to view and export gradebooks across all classrooms."
+      }
+    ],
+    "regression_tests": [
+      "pytest tests/backend/test_openapi_snapshot.py -v",
+      "./scripts/ci/lint-inventory-drift.sh",
+      "cd frontend && npm run test -- src/app/dai-noi/giao-vien/TeacherDashboard.test.tsx",
+      "cd frontend && npm run type-check",
+      "cd frontend && npm run lint:ci"
+    ]
+  }
+}

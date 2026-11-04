@@ -1,0 +1,90 @@
+{
+  "ticket": "V5-T039",
+  "ticket_id": "V5-T039",
+  "wave": "W03",
+  "slot": "W03-A09",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Learning outcome measurement scaffold in backend/history_models.py and learning domain",
+  "timestamp": "2026-11-05T00:00:00Z",
+  "summary": "Implemented authoritative learning outcome measurement scaffold connecting primary source-based historical inquiry tasks (pre_test, post_test, delayed_test) to multi-criteria rubric scoring (S1_SPATIAL, S2_TEMPORAL, S3_EVIDENCE, S4_ARGUMENT) by independent assessors under approved ethics/IRB protocols. Enforced strict negative abuse invariant: subjective self-report surveys (Likert satisfaction, confidence ratings, Google Forms feelings) are isolated and strictly forbidden from producing causal learning mastery metrics (raising HTTP 422 CANNOT_DERIVE_CAUSAL_METRICS_FROM_SURVEY). Added mathematical calculators for Hake's normalized learning gain, Cohen's d effect size, and inter-rater reliability agreement.",
+  "invariants_enforced": {
+    "negative_abuse_survey_isolation": "Subjective survey responses (self-reported feelings or Likert scale ratings) CANNOT produce causal learning mastery metrics. Any attempt to compute causal metrics or alter authoritative student mastery from survey data is rejected with HTTP 422 CANNOT_DERIVE_CAUSAL_METRICS_FROM_SURVEY.",
+    "ethics_protocol_governance": "Inquiry assessments require an active and approved ethics / IRB research protocol (HistoryEthicsProtocol). Draft, revoked, or expired protocols block assessment authoring and submissions with HTTP 422 ETHICS_PROTOCOL_REQUIRED.",
+    "independent_assessor_scoring": "Rubric evaluations must be conducted by independent educators/assessors (is_independent=True). Students are strictly blocked from grading their own submissions (HTTP 403 INDEPENDENT_ASSESSOR_REQUIRED). Dual independent ratings generate inter-rater agreement metrics.",
+    "causal_outcome_measurement": "Authoritative learning outcome records (HistoryCausalLearningMetric) require verified paired pre-test and post-test submissions grounded in primary sources (Khâm Định Đại Nam Hội Điển Sự Lệ, Đại Nam Thực Lục Chính Biên) and evaluated by independent assessors."
+  },
+  "changes": [
+    {
+      "file": "backend/domain/learning_outcome.py",
+      "description": "Created pure domain module defining AssessmentPhase, EthicsProtocolStatus, AssessmentInstrumentType, DEFAULT_HISTORICAL_INQUIRY_RUBRIC (S1-S4), domain exceptions (SubjectiveSurveyCannotProduceCausalMetricsError, EthicsProtocolRequiredError, IndependentAssessorRequiredError, InvalidRubricScoreError), and calculators for normalized learning gain, Cohen's d effect size, and inter-rater reliability."
+    },
+    {
+      "file": "backend/history_models.py",
+      "description": "Added SQLAlchemy models: HistoryEthicsProtocol, HistoryLearningOutcomeAssessment, HistoryLearningOutcomeSubmission, HistoryLearningOutcomeEvaluation, HistorySubjectiveSurvey, and HistoryCausalLearningMetric with foreign keys, constraints, and indexes. Re-exported domain classes and functions."
+    },
+    {
+      "file": "backend/models.py",
+      "description": "Re-exported the 6 learning outcome models to ensure Base.metadata includes all tables for database operations and migrations."
+    },
+    {
+      "file": "backend/apischemas/history_learning.py",
+      "description": "Defined Pydantic schemas: EthicsProtocolCreate, EthicsProtocolOut, LearningOutcomeAssessmentCreate, LearningOutcomeAssessmentOut, LearningOutcomeSubmissionCreate, LearningOutcomeSubmissionOut, RubricEvaluationCreate, RubricEvaluationOut, SubjectiveSurveyCreate, SubjectiveSurveyOut, CausalLearningMetricComputeIn, CausalLearningMetricOut, and CohortCausalLearningMetricsOut."
+    },
+    {
+      "file": "backend/services/history_learning.py",
+      "description": "Added business logic services: create_ethics_protocol, get_ethics_protocol, create_learning_outcome_assessment, submit_learning_outcome_assessment, evaluate_learning_outcome_submission, submit_subjective_survey, compute_causal_learning_outcome (with strict negative abuse check blocking survey inputs), and get_cohort_causal_learning_metrics."
+    },
+    {
+      "file": "backend/routers/history_learning.py",
+      "description": "Added REST API endpoints under /api/v1/history/learning-outcomes/* for ethics protocols, assessments, submissions, independent evaluations, surveys, causal metrics, and cohort metrics."
+    },
+    {
+      "file": "migrations/versions/0062_learning_outcome_measurement.py",
+      "description": "Added purely additive Alembic migration creating history_ethics_protocols, history_learning_outcome_assessments, history_learning_outcome_submissions, history_learning_outcome_evaluations, history_subjective_surveys, and history_causal_learning_metrics with indexes."
+    },
+    {
+      "file": "tests/v5/test_v5_t039.py",
+      "description": "Comprehensive test suite covering domain math, negative abuse rejection of subjective surveys for causal metrics, ethics protocol enforcement, independent assessor verification, pre/post causal flow end-to-end, and subjective survey isolation."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t039.py -v",
+    "total_tests": 6,
+    "passed_tests": 6,
+    "failed_tests": 0,
+    "test_details": [
+      {
+        "name": "test_domain_measurement_invariants_and_algorithms",
+        "result": "PASSED",
+        "assertion": "Verifies normalized learning gain formula, Cohen's d effect size, inter-rater reliability, rubric bounds validation, assessor independence, and active ethics protocol validation."
+      },
+      {
+        "name": "test_negative_abuse_subjective_survey_cannot_produce_causal_mastery_metrics",
+        "result": "PASSED",
+        "assertion": "P0 Negative Abuse Test: Subjective self-report surveys and feelings cannot produce causal learning metrics; raises SubjectiveSurveyCannotProduceCausalMetricsError and returns HTTP 422 CANNOT_DERIVE_CAUSAL_METRICS_FROM_SURVEY."
+      },
+      {
+        "name": "test_ethics_protocol_enforcement_on_inquiry_assessment_tasks",
+        "result": "PASSED",
+        "assertion": "Inquiry assessment tasks strictly require an approved ethics protocol; draft or unapproved protocols fail with HTTP 422 ETHICS_PROTOCOL_REQUIRED."
+      },
+      {
+        "name": "test_independent_assessor_scoring_and_dual_evaluation_agreement",
+        "result": "PASSED",
+        "assertion": "Students cannot score their own submissions (HTTP 403 INDEPENDENT_ASSESSOR_REQUIRED); dual independent raters evaluate using S1-S4 rubric and compute inter-rater agreement."
+      },
+      {
+        "name": "test_causal_learning_outcome_pre_post_end_to_end_flow",
+        "result": "PASSED",
+        "assertion": "Full causal learning measurement flow: pre-test baseline, intervention, post-test mastery, independent rubric grading, normalized gain g calculation, competency dimension breakdown (S1-S4), and cohort aggregation."
+      },
+      {
+        "name": "test_separate_subjective_self_report_survey_isolation",
+        "result": "PASSED",
+        "assertion": "Subjective self-report surveys are stored in a dedicated model (HistorySubjectiveSurvey) isolated from objective assessments."
+      }
+    ]
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "ticket": "V5-T037",
+  "ticket_id": "V5-T037",
+  "wave": "W03",
+  "slot": "W03-A07",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Student learning progression in backend/routers/progress.py and frontend/src/app/dai-noi/hoc-tap/.",
+  "timestamp": "2026-11-05T00:37:00Z",
+  "summary": "Implemented authoritative student learning progression in backend/routers/progress.py, backend/services/progress_service.py, backend/apischemas/progress.py, and frontend/src/app/dai-noi/hoc-tap/page.tsx. Strictly tracks genuine server-acknowledged actions through the discrete 4-stage funnel: hidden -> discovered -> learned -> mastered. Enforces anti-replay gamification with cumulative XP caps (25 XP for discovery, 50 XP for lesson completion, 75 XP for quiz mastery, max 150 XP per motif). Prohibits negative abuse: simply clicking a 3D hotspot or client event cannot grant mastery XP or mastered status; quiz completion with score >= 80% is mandatory. Implements sliding-window rate limiting (30 actions/min) returning HTTP 429, idempotency caching, guest access restriction, and comprehensive interactive pedagogical visualization.",
+  "invariants_enforced": {
+    "progression_funnel_integrity": "Strict state machine progression: hidden -> discovered -> learned -> mastered. State transitions are verified server-side and cannot be bypassed or skipped.",
+    "negative_abuse_hotspot_guard": "Hotspot 3D clicks or client-side events can ONLY transition from hidden to discovered (+25 XP). They CANNOT transition to learned or mastered, and client-claimed status parameters are strictly ignored.",
+    "lesson_mastery_boundary": "Verified lesson completion transitions to learned (+50 XP, total 75 XP). It CANNOT grant mastered status.",
+    "quiz_pass_threshold": "Mastery status and mastery bonus (+75 XP, total 150 XP) are strictly conditional on passing a server-evaluated quiz with score >= 80% (QUIZ_PASS_PERCENT). Scores < 80% record attempts but retain current status with 0 mastery XP.",
+    "anti_replay_gamification": "Zero duplicate XP for already discovered, learned, or mastered relics. Idempotency key deduplication returns cached responses without re-executing mutations.",
+    "rate_limiting_protection": "Sliding-window in-memory rate limiting (30 requests per 60 seconds per student) protects against bot spam, returning HTTP 429 RATE_LIMIT_EXCEEDED with Retry-After.",
+    "guest_access_guard": "Guest users can only progress demo relics (is_demo=True); access to non-demo relics is rejected with HTTP 403 FORBIDDEN_GUEST_ACCESS.",
+    "multi_tenant_student_isolation": "A student's progression on a relic is strictly isolated; progress earned by Student A does not leak to Student B."
+  },
+  "changes": [
+    {
+      "file": "backend/apischemas/progress.py",
+      "description": "Added StudentProgressionRules, MotifProgressionItem, StudentProgressionSummaryOut, ProgressionActionRequest, and ProgressionActionResponse schemas."
+    },
+    {
+      "file": "backend/services/progress_service.py",
+      "description": "Created progress_service module with ProgressionRateLimiter, idempotency cache, record_discovery, record_lesson_completion, record_quiz_completion, process_progression_action, get_student_progression_summary, and get_motif_progression_detail."
+    },
+    {
+      "file": "backend/routers/progress.py",
+      "description": "Created progress API router with endpoints: GET /api/v1/progress/summary, GET /api/v1/progress/motifs/{motif_id}, POST /api/v1/progress/action, POST /api/v1/progress/discover, POST /api/v1/progress/complete-lesson, and POST /api/v1/progress/submit-quiz."
+    },
+    {
+      "file": "backend/app.py",
+      "description": "Registered progress_router with the FastAPI application."
+    },
+    {
+      "file": "backend/services/__init__.py",
+      "description": "Exported progress_service."
+    },
+    {
+      "file": "frontend/src/app/dai-noi/hoc-tap/page.tsx",
+      "description": "Added Tab 'Tiến trình năng lực & Chống gian lận' with 4-stage progression stepper, anti-abuse rule explanation cards, and an interactive simulation sandbox testing server validation, anti-replay, and rate-limiting responses."
+    },
+    {
+      "file": "tests/v5/test_v5_t037.py",
+      "description": "Created comprehensive test suite with 10 integration test cases covering progression lifecycle, anti-replay, negative abuse guards, rate limiting, and multi-student data isolation."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t037.py -v",
+    "total_tests": 10,
+    "passed_tests": 10,
+    "failed_tests": 0,
+    "test_details": [
+      {
+        "name": "test_progression_state_machine_happy_path",
+        "description": "Verifies complete 4-step discrete lifecycle: hidden -> discovered (+25 XP) -> learned (+50 XP) -> mastered (+75 XP).",
+        "status": "PASSED"
+      },
+      {
+        "name": "test_anti_replay_gamification",
+        "description": "Verifies that duplicate discovery, lesson, and quiz calls award 0 duplicate XP, and idempotency key caching prevents re-execution.",
+        "status": "PASSED"
+      },
+      {
+        "name": "test_negative_abuse_hotspot_cannot_grant_mastery",
+        "description": "Verifies that 3D hotspot click cannot grant mastery XP or mastered status even when malicious client claims mastered in payload.",
+        "status": "PASSED"
+      },
+      {
+        "name": "test_negative_abuse_failing_quiz_cannot_grant_mastery",
+        "description": "Verifies that submitting a quiz with score < 80% (50%) records attempt but retains status and awards 0 mastery XP.",
+        "status": "PASSED"
+      },
+      {
+        "name": "test_guest_and_validation_guardrails",
+        "description": "Verifies guest role cannot access non-demo motifs (403), negative time spent is rejected (400), and non-existent motifs 404.",
+        "status": "PASSED"
+      },
+      {
+        "name": "test_rate_limiting_enforcement",
+        "description": "Verifies that sliding-window rate limit triggers HTTP 429 Too Many Requests with standard error envelope upon burst.",
+        "status": "PASSED"
+      },
+      {
+        "name": "test_progression_summary_and_stats",
+        "description": "Verifies progression summary aggregates counts across relics and returns completion/mastery percentages.",
+        "status": "PASSED"
+      },
+      {
+        "name": "test_negative_abuse_lesson_cannot_grant_mastery",
+        "description": "Verifies that completing a lesson transitions only to learned and awards max 75 cumulative XP, never granting mastered status.",
+        "status": "PASSED"
+      },
+      {
+        "name": "test_negative_abuse_unanswered_quiz",
+        "description": "Verifies submitting empty answers to quiz results in 0% score, retaining status with 0 XP awarded.",
+        "status": "PASSED"
+      },
+      {
+        "name": "test_cross_student_progression_isolation",
+        "description": "Verifies that Student A reaching mastered status on a motif leaves Student B's progress as hidden with 0 XP.",
+        "status": "PASSED"
+      }
+    ]
+  }
+}

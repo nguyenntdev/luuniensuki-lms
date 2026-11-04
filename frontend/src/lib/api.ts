@@ -971,6 +971,114 @@ export function assignQuestToClass({
   });
 }
 
+export async function listClasses(): Promise<any[]> {
+  try {
+    return await apiRequest<any[]>("/api/v1/classrooms");
+  } catch {
+    return [];
+  }
+}
+
+export interface ClassroomGradebookStudent {
+  student_id: string;
+  display_name: string;
+  email: string;
+  role: string;
+  avatar_url?: string | null;
+  joined_at: string;
+  overall_completion_percent: number;
+  total_xp: number;
+  quizzes_passed: number;
+  avg_quiz_score: number;
+  assignments: Array<{
+    assignment_id: string;
+    title: string;
+    due_at?: string | null;
+    status: string;
+    score?: number | null;
+    completed_at?: string | null;
+    is_missing: boolean;
+    is_pending: boolean;
+  }>;
+  completed_count: number;
+  pending_count: number;
+  missing_count: number;
+  status: "completed" | "pending" | "missing";
+}
+
+export interface ClassroomGradebookResponse {
+  classroom_id: string;
+  classroom_name: string;
+  teacher_id: string;
+  total_students: number;
+  metrics: {
+    total_students: number;
+    completed_count: number;
+    pending_count: number;
+    missing_count: number;
+    average_score: number;
+    average_completion_percent: number;
+  };
+  roster: ClassroomGradebookStudent[];
+}
+
+export async function fetchClassroomGradebook({
+  classroomId,
+  statusFilter,
+  search,
+}: {
+  classroomId: string;
+  statusFilter?: string;
+  search?: string;
+}): Promise<ClassroomGradebookResponse> {
+  const encoded = encodeURIComponent(classroomId);
+  const params = new URLSearchParams();
+  if (statusFilter && statusFilter !== "all") {
+    params.set("status_filter", statusFilter);
+  }
+  if (search && search.trim()) {
+    params.set("search", search.trim());
+  }
+  const query = params.toString() ? `?${params.toString()}` : "";
+  return apiRequest<ClassroomGradebookResponse>(`/api/v1/classrooms/${encoded}/gradebook${query}`);
+}
+
+export async function exportClassroomGradebookCsv({
+  classroomId,
+  statusFilter,
+  search,
+  anonymize,
+}: {
+  classroomId: string;
+  statusFilter?: string;
+  search?: string;
+  anonymize?: boolean;
+}): Promise<string> {
+  const encoded = encodeURIComponent(classroomId);
+  const params = new URLSearchParams();
+  if (statusFilter && statusFilter !== "all") {
+    params.set("status_filter", statusFilter);
+  }
+  if (search && search.trim()) {
+    params.set("search", search.trim());
+  }
+  if (anonymize) {
+    params.set("anonymize", "true");
+  }
+  const query = params.toString() ? `?${params.toString()}` : "";
+  const res = await fetch(`${API_BASE_URL}/api/v1/classrooms/${encoded}/gradebook/export${query}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      Accept: "text/csv",
+    },
+  });
+  if (!res.ok) {
+    throw await buildApiError(res);
+  }
+  return res.text();
+}
+
 // =============================================================================
 // LIVE SESSIONS API
 // =============================================================================

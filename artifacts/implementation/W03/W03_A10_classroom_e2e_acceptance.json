@@ -1,0 +1,36 @@
+{
+  "ticket": "V5-T040",
+  "slot": "W03-A10",
+  "title": "Classroom comprehensive end-to-end integration acceptance suite",
+  "status": "COMPLETED",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "changes": [
+    {
+      "file": "tests/v5/test_v5_t040.py",
+      "action": "CREATED",
+      "details": "End-to-end multi-school / multi-classroom lifecycle integration acceptance test suite covering: School A & School B creation, source-locked lesson assignment publication with claim verification gates, student enrollment via class code, M-E-E work submission, teacher rubric evaluation with feedback and scoring, student inspection of evaluation, UTF-8 BOM CSV gradebook export, strict tenant isolation across schools and teachers (403 FORBIDDEN on cross-school mutations), and negative abuse guardrails."
+    },
+    {
+      "file": "backend/routers/classrooms.py",
+      "action": "MODIFIED",
+      "details": "Ensured /api/v1/classrooms/enrolled route is defined before parameterized /api/v1/classrooms/{classroom_id} to prevent path parameter matching collisions."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t040.py -v",
+    "tests_total": 3,
+    "tests_passed": 3,
+    "tests_failed": 0,
+    "acceptance_criteria": [
+      "1. School A & School B setup with distinct teachers and classes: VERIFIED",
+      "2. Teacher A assigns source-locked lesson with rubric and verified claims: VERIFIED",
+      "3. Student A enrolls via join code and submits work: VERIFIED",
+      "4. Teacher A reviews and grades submission via rubric with feedback: VERIFIED",
+      "5. Student A inspects grade, rubric scores, and feedback: VERIFIED",
+      "6. Teacher A exports gradebook CSV with UTF-8 BOM encoding: VERIFIED",
+      "7. Multi-tenant isolation: Teacher B / Student B cannot view or modify School A data (403 returned): VERIFIED",
+      "8. Negative abuse guardrails: unpublished assignments (400), non-member submissions (403), fake join codes (400), invalid M-E-E content (422), unauthorized grading (403): VERIFIED"
+    ]
+  }
+}

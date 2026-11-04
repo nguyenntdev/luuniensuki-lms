@@ -261,6 +261,7 @@ class User(Base):
         Index("idx_users_username", "username"),
         Index("idx_users_role", "role"),
         Index("idx_users_starting_urn", "starting_urn_id"),
+        Index("idx_users_school", "school_id"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -277,6 +278,11 @@ class User(Base):
     starting_urn_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         PG_UUID(as_uuid=True),
         ForeignKey("urns.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    school_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("schools.id", ondelete="SET NULL"),
         nullable=True,
     )
     is_profile_public: Mapped[bool] = mapped_column(
@@ -386,6 +392,15 @@ class User(Base):
     class_memberships: Mapped[list["ClassMember"]] = relationship(
         back_populates="user",
         cascade="all, delete-orphan",
+        foreign_keys="ClassMember.user_id",
+    )
+    school: Mapped[Optional["School"]] = relationship(
+        foreign_keys=[school_id],
+    )
+    school_memberships: Mapped[list["SchoolMember"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+        foreign_keys="SchoolMember.user_id",
     )
     created_live_sessions: Mapped[list["LiveSession"]] = relationship(
         back_populates="created_by",
@@ -1628,10 +1643,87 @@ class QuestProgress(Base):
     quest: Mapped["Quest"] = relationship(back_populates="progress_entries")
 
 
+class School(Base):
+    __tablename__ = "schools"
+    __table_args__ = (
+        Index("idx_schools_code", "code"),
+        Index("idx_schools_name", "name"),
+        Index("idx_schools_city", "city"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    code: Mapped[Optional[str]] = mapped_column(
+        String(50), unique=True, nullable=True
+    )
+    address: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    city: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    region: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    is_active: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("true")
+    )
+    settings: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
+    classrooms: Mapped[list["Classroom"]] = relationship(
+        back_populates="school",
+    )
+    members: Mapped[list["SchoolMember"]] = relationship(
+        back_populates="school",
+        cascade="all, delete-orphan",
+    )
+
+
+class SchoolMember(Base):
+    __tablename__ = "school_members"
+    __table_args__ = (
+        UniqueConstraint("school_id", "user_id", name="uq_school_members"),
+        Index("idx_school_members_school", "school_id"),
+        Index("idx_school_members_user", "user_id"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    school_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("schools.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    role: Mapped[str] = mapped_column(
+        String(20), nullable=False, server_default=text("'teacher'")
+    )
+    joined_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+    school: Mapped["School"] = relationship(back_populates="members")
+    user: Mapped["User"] = relationship(
+        back_populates="school_memberships",
+        foreign_keys=[user_id],
+    )
+
+
 class Classroom(Base):
     __tablename__ = "classes"
     __table_args__ = (
         Index("idx_classes_teacher", "teacher_id"),
+        Index("idx_classes_school", "school_id"),
         Index("idx_classes_created_at", "created_at"),
         Index("idx_classes_class_code", "class_code"),
         UniqueConstraint("class_code", name="uq_classes_class_code"),
@@ -1647,6 +1739,12 @@ class Classroom(Base):
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
     )
+    school_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("schools.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    term: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
     class_code: Mapped[str] = mapped_column(
         String(8), nullable=False, unique=True, index=True
     )
@@ -1664,6 +1762,9 @@ class Classroom(Base):
 
     teacher: Mapped["User"] = relationship(
         back_populates="classes", foreign_keys=[teacher_id]
+    )
+    school: Mapped[Optional["School"]] = relationship(
+        back_populates="classrooms", foreign_keys=[school_id]
     )
     members: Mapped[list["ClassMember"]] = relationship(
         back_populates="classroom",
@@ -1685,6 +1786,7 @@ class ClassMember(Base):
         UniqueConstraint("class_id", "user_id", name="uq_class_members"),
         Index("idx_class_members_class", "class_id"),
         Index("idx_class_members_user", "user_id"),
+        Index("idx_class_members_guardian", "guardian_user_id"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -1703,12 +1805,22 @@ class ClassMember(Base):
     role: Mapped[str] = mapped_column(
         String(20), nullable=False, server_default=text("'learner'")
     )
+    guardian_user_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    guardian_email: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    guardian_consent: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("false")
+    )
     joined_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
 
     classroom: Mapped["Classroom"] = relationship(back_populates="members")
-    user: Mapped["User"] = relationship(back_populates="class_memberships")
+    user: Mapped["User"] = relationship(back_populates="class_memberships", foreign_keys=[user_id])
+    guardian: Mapped[Optional["User"]] = relationship(foreign_keys=[guardian_user_id])
 
 
 class LiveSession(Base):
@@ -4192,6 +4304,14 @@ from .history_models import (  # noqa: E402,F401
     HistoricalVerificationStatus,
     HistoryStory,
     HistoryCollection,
+    HistoryLessonAssignment,
+    HistoryAssignmentSubmission,
+    HistoryEthicsProtocol,
+    HistoryLearningOutcomeAssessment,
+    HistoryLearningOutcomeSubmission,
+    HistoryLearningOutcomeEvaluation,
+    HistorySubjectiveSurvey,
+    HistoryCausalLearningMetric,
 )
 
 # --------------------------------------------------------------------------- #
@@ -4257,4 +4377,14 @@ from .imperial_v51_models import (  # noqa: E402,F401
     ImperialAssignmentRelease,
     ImperialLearningMedia,
 )
+from .history_inquiry_models import (  # noqa: E402,F401
+    HistoricalInquiryActivity,
+    HistoricalInquiryGroup,
+    HistoricalInquiryGroupMember,
+    HistoricalInquirySubmission,
+    InquiryMemberRole,
+    InquiryPrivacyMode,
+    InquirySubmissionStatus,
+)
+
 

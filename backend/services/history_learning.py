@@ -23,15 +23,27 @@ from sqlalchemy.orm import Session
 
 from ..errors import AppError
 from ..models import (
+    ClassMember,
+    Classroom,
     ContentStatus,
     HistoricalClaim,
     HistoricalEntity,
     HistoricalEntityRelation,
     HistoricalSource,
+    HistoryAssignmentSubmission,
+    HistoryLessonAssignment,
+    HistoryCausalLearningMetric,
+    HistoryEthicsProtocol,
+    HistoryLearningOutcomeAssessment,
+    HistoryLearningOutcomeEvaluation,
+    HistoryLearningOutcomeSubmission,
+    HistorySubjectiveSurvey,
     LessonContent,
     QuizQuestion,
+    User,
     UserSkillLevel,
 )
+from ..rbac import STAFF_ROLES
 
 # --------------------------------------------------------------------------- #
 # Mastery dimensions (Spec 34)
@@ -1393,4 +1405,831 @@ def generate_curriculum_quiz_question(
     db.commit()
     db.refresh(question)
     return question
+
+
+# --------------------------------------------------------------------------- #
+# Source-Locked Classroom Assignment & Rubric Domain (V5-T033)
+# --------------------------------------------------------------------------- #
+DEFAULT_HISTORICAL_RUBRIC: dict[str, Any] = {
+    "criteria": {
+        "S1_SPATIAL": {
+            "name": "Không gian & Địa lý",
+            "description": "Xác định chính xác vị trí địa lý, không gian Cửu Đỉnh / Đại Nam",
+            "max_points": 25,
+            "weight": 0.25,
+        },
+        "S2_TEMPORAL": {
+            "name": "Thời gian & Biên niên",
+            "description": "Đặt sự kiện và di vật đúng niên đại lịch sử và triều đại",
+            "max_points": 25,
+            "weight": 0.25,
+        },
+        "S3_EVIDENCE": {
+            "name": "Chứng cứ & Nguồn sử",
+            "description": "Trích dẫn chính xác nguồn sử liệu nguyên cấp và bản đúc nổi",
+            "max_points": 25,
+            "weight": 0.25,
+        },
+        "S4_ARGUMENT": {
+            "name": "Lập luận & Đánh giá",
+            "description": "Lập luận mạch lạc, phê phán sử liệu và giải thích ý nghĩa biểu tượng",
+            "max_points": 25,
+            "weight": 0.25,
+        },
+    },
+    "max_score": 100,
+}
+
+
+def validate_assignment_for_publication(
+    db: Session,
+    lesson: LessonContent,
+    claim_ids: Optional[list[Union[str, UUID]]] = None,
+) -> tuple[bool, list[str]]:
+    """Validate whether an assignment satisfies the historical publication gate (Spec V5-T033).
+
+    Negative abuse invariant:
+    An assignment cannot be published if the lesson or associated claims have
+    unreviewed, disputed, rejected, or missing historical claims, or if the lesson
+    is blocked for authoritative learning.
+    """
+    issues: list[str] = []
+
+    # 1. Lesson status check
+    if getattr(lesson, "content_validation_status", "") == "blocked_for_authoritative_learning":
+        issues.append("Lesson is blocked for authoritative learning due to unverified historical claims")
+
+    # 2. Check lesson publication gate
+    is_lesson_valid, lesson_issues = validate_lesson_for_publication(
+        db, lesson, required_claim_ids=claim_ids
+    )
+    if not is_lesson_valid:
+        issues.extend(lesson_issues)
+
+    # 3. Explicit check on provided claim_ids
+    target_claims = []
+    if claim_ids:
+        for cid in claim_ids:
+            try:
+                target_claims.append(UUID(str(cid)))
+            except (ValueError, TypeError):
+                issues.append(f"Invalid claim UUID format: {cid}")
+
+    for cid in target_claims:
+        claim = db.get(HistoricalClaim, cid)
+        if claim is None:
+            issues.append(f"Required historical claim {cid} not found in database")
+        elif claim.verification_status not in ELIGIBLE_CLAIM_STATUSES:
+            snippet = (claim.statement_vi or "")[:50]
+            issues.append(
+                f"Historical claim {cid} ('{snippet}...') has ineligible verification_status "
+                f"'{claim.verification_status}' (must be expert_verified or editor_reviewed)"
+            )
+
+    return (len(issues) == 0, issues)
+
+
+def create_source_locked_assignment(
+    db: Session,
+    teacher_id: UUID,
+    classroom_id: UUID,
+    lesson_id: UUID,
+    title: str,
+    instructions: Optional[str] = None,
+    due_at: Optional[datetime] = None,
+    points: int = 100,
+    rubric: Optional[dict[str, Any]] = None,
+    source_ids: Optional[list[UUID]] = None,
+    claim_ids: Optional[list[UUID]] = None,
+    status: str = "draft",
+) -> HistoryLessonAssignment:
+    """Create a classroom lesson assignment with pinned version, rubric, and source set."""
+    classroom = db.get(Classroom, classroom_id)
+    if not classroom:
+        raise AppError("CLASSROOM_NOT_FOUND", "Classroom not found", 404)
+
+    lesson = db.get(LessonContent, lesson_id)
+    if not lesson:
+        raise AppError("LESSON_NOT_FOUND", "Lesson not found", 404)
+
+    # Pinned lesson snapshot
+    lesson_snapshot = {
+        "id": str(lesson.id),
+        "motif_id": str(lesson.motif_id) if lesson.motif_id else None,
+        "version": lesson.version,
+        "description": lesson.description,
+        "intro_text": lesson.intro_text,
+        "historical_context": lesson.historical_context,
+        "symbolism": lesson.symbolism,
+        "fun_fact": lesson.fun_fact,
+        "audio_narration_url": lesson.audio_narration_url,
+        "additional_images": lesson.additional_images,
+        "content_rating": lesson.content_rating.value if hasattr(lesson.content_rating, "value") else str(lesson.content_rating),
+        "content_validation_status": lesson.content_validation_status,
+        "status": lesson.status.value if hasattr(lesson.status, "value") else str(lesson.status),
+    }
+
+    # Pinned sources
+    sources_snapshot: list[dict[str, Any]] = []
+    pinned_source_ids: list[str] = []
+    if source_ids:
+        for sid in source_ids:
+            s_uuid = UUID(str(sid))
+            pinned_source_ids.append(str(s_uuid))
+            src = db.get(HistoricalSource, s_uuid)
+            if src:
+                sources_snapshot.append({
+                    "id": str(src.id),
+                    "title": src.title,
+                    "author_text": src.author_text,
+                    "source_type": src.source_type,
+                    "publication_year": src.publication_year,
+                    "citation_text": src.citation_text,
+                    "rights_status": src.rights_status,
+                    "license": src.license,
+                })
+
+    # Pinned claims
+    pinned_claim_ids: list[str] = []
+    if claim_ids:
+        for cid in claim_ids:
+            pinned_claim_ids.append(str(UUID(str(cid))))
+    elif lesson.additional_images and isinstance(lesson.additional_images, dict):
+        extra = lesson.additional_images.get("required_claim_ids") or lesson.additional_images.get("claim_ids")
+        if isinstance(extra, list):
+            for cid in extra:
+                try:
+                    pinned_claim_ids.append(str(UUID(str(cid))))
+                except (ValueError, TypeError):
+                    pass
+
+    # Rubric
+    assigned_rubric = rubric if rubric is not None else DEFAULT_HISTORICAL_RUBRIC
+
+    # If status is published, gate it!
+    published_at = None
+    if status == "published":
+        is_valid, issues = validate_assignment_for_publication(
+            db, lesson=lesson, claim_ids=[UUID(c) for c in pinned_claim_ids]
+        )
+        if not is_valid:
+            raise AppError(
+                "ASSIGNMENT_UNVERIFIED_CLAIMS",
+                f"Cannot publish assignment with unverified claims: {'; '.join(issues)}",
+                422,
+                details={"issues": issues},
+            )
+        published_at = func.now()
+
+    assignment = HistoryLessonAssignment(
+        classroom_id=classroom_id,
+        lesson_id=lesson_id,
+        assigned_by_id=teacher_id,
+        title=title,
+        instructions=instructions,
+        status=status,
+        due_at=due_at,
+        points=points,
+        pinned_version=lesson.version,
+        pinned_lesson_snapshot=lesson_snapshot,
+        rubric=assigned_rubric,
+        pinned_source_ids=pinned_source_ids,
+        pinned_sources_snapshot=sources_snapshot,
+        pinned_claim_ids=pinned_claim_ids,
+        published_at=published_at,
+    )
+    db.add(assignment)
+    db.commit()
+    db.refresh(assignment)
+    return assignment
+
+
+def publish_history_assignment(
+    db: Session,
+    assignment_id: UUID,
+    user_id: UUID,
+    is_admin: bool = False,
+) -> HistoryLessonAssignment:
+    """Publish an assignment enforcing the historical claims gate."""
+    assignment = db.get(HistoryLessonAssignment, assignment_id)
+    if not assignment:
+        raise AppError("ASSIGNMENT_NOT_FOUND", "Assignment not found", 404)
+
+    classroom = db.get(Classroom, assignment.classroom_id)
+    if not is_admin and classroom and classroom.teacher_id != user_id and assignment.assigned_by_id != user_id:
+        raise AppError("FORBIDDEN", "Only classroom teacher or admin can publish this assignment", 403)
+
+    lesson = db.get(LessonContent, assignment.lesson_id)
+    if not lesson:
+        raise AppError("LESSON_NOT_FOUND", "Associated lesson not found", 404)
+
+    claim_uuids = [UUID(c) for c in (assignment.pinned_claim_ids or [])]
+    is_valid, issues = validate_assignment_for_publication(db, lesson=lesson, claim_ids=claim_uuids)
+    if not is_valid:
+        raise AppError(
+            "ASSIGNMENT_UNVERIFIED_CLAIMS",
+            f"Cannot publish assignment with unverified claims: {'; '.join(issues)}",
+            422,
+            details={"issues": issues},
+        )
+
+    assignment.status = "published"
+    assignment.published_at = func.now()
+    db.commit()
+    db.refresh(assignment)
+    return assignment
+
+
+def validate_submission_content(submission_content: Any) -> dict[str, Any]:
+    """Validate student submission content according to M-E-E / S1-S4 principles.
+
+    Requires at least claim/hypothesis, evidence, and explanation/reasoning,
+    or a non-empty answer_text. Rejects empty/whitespace-only content.
+    """
+    if not isinstance(submission_content, dict) or not submission_content:
+        raise AppError("INVALID_SUBMISSION_CONTENT", "Submission content must be a non-empty object", 422)
+
+    claim = str(submission_content.get("claim") or submission_content.get("hypothesis") or "").strip()
+    evidence = str(submission_content.get("evidence") or "").strip()
+    explanation = str(submission_content.get("explanation") or submission_content.get("reasoning") or "").strip()
+    answer_text = str(submission_content.get("answer_text") or submission_content.get("text") or "").strip()
+
+    # Must provide either (claim, evidence, explanation) OR a non-empty answer_text with evidence
+    has_mee = bool(claim and evidence and explanation)
+    has_text = bool(answer_text and (evidence or claim or len(answer_text) >= 10))
+
+    if not has_mee and not has_text:
+        raise AppError(
+            "INVALID_SUBMISSION_CONTENT",
+            "Submission content must include valid historical claim (M), evidence (E), and explanation (E)",
+            422,
+        )
+
+    return submission_content
+
+
+def submit_history_assignment(
+    db: Session,
+    assignment_id: UUID,
+    student_id: UUID,
+    submission_content: dict[str, Any],
+    idempotency_key: Optional[str] = None,
+) -> tuple[HistoryAssignmentSubmission, bool]:
+    """Submit a response against a source-locked history assignment.
+
+    Enforces:
+    1. Assignment existence and published status.
+    2. Student classroom enrollment scope.
+    3. Assignment deadline enforcement (cannot submit after due_at).
+    4. Submission content validation (M-E-E historical structure).
+    5. Idempotent submission: if an identical idempotency_key or active submission exists,
+       returns the existing submission idempotently without duplicating records.
+
+    Returns:
+        tuple[HistoryAssignmentSubmission, bool]: (submission_record, is_newly_created)
+    """
+    assignment = db.get(HistoryLessonAssignment, assignment_id)
+    if not assignment:
+        raise AppError("ASSIGNMENT_NOT_FOUND", "Assignment not found", 404)
+
+    if assignment.status != "published":
+        raise AppError("ASSIGNMENT_NOT_PUBLISHED", "Cannot submit to an unpublished assignment", 400)
+
+    # Deadline enforcement
+    if assignment.due_at is not None:
+        now_utc = datetime.now(timezone.utc)
+        due_at_utc = assignment.due_at
+        if due_at_utc.tzinfo is None:
+            due_at_utc = due_at_utc.replace(tzinfo=timezone.utc)
+        if now_utc > due_at_utc:
+            raise AppError(
+                "ASSIGNMENT_DEADLINE_PASSED",
+                f"Assignment deadline has passed ({assignment.due_at.isoformat()}). Submissions are closed.",
+                400,
+            )
+
+    # Scope enforcement
+    member = db.scalar(
+        select(ClassMember).where(
+            ClassMember.class_id == assignment.classroom_id,
+            ClassMember.user_id == student_id,
+        )
+    )
+    user = db.get(User, student_id)
+    is_staff = user and user.role in STAFF_ROLES
+    if not member and not is_staff:
+        raise AppError("NOT_CLASS_MEMBER", "User is not an enrolled member of this classroom", 403)
+
+    # Content validation
+    validated_content = validate_submission_content(submission_content)
+
+    # Check idempotency by key first
+    if idempotency_key:
+        idem_match = db.scalar(
+            select(HistoryAssignmentSubmission).where(
+                HistoryAssignmentSubmission.assignment_id == assignment_id,
+                HistoryAssignmentSubmission.student_id == student_id,
+                HistoryAssignmentSubmission.idempotency_key == idempotency_key,
+            )
+        )
+        if idem_match:
+            return idem_match, False
+
+    basis_snapshot = assignment.get_assessment_basis()
+
+    existing = db.scalar(
+        select(HistoryAssignmentSubmission).where(
+            HistoryAssignmentSubmission.assignment_id == assignment_id,
+            HistoryAssignmentSubmission.student_id == student_id,
+        )
+    )
+    if existing:
+        # If student already submitted, update with idempotency key
+        existing.submission_content = validated_content
+        existing.status = "submitted"
+        existing.submitted_at = datetime.now(timezone.utc)
+        if idempotency_key:
+            existing.idempotency_key = idempotency_key
+        db.commit()
+        db.refresh(existing)
+        return existing, False
+
+    sub = HistoryAssignmentSubmission(
+        assignment_id=assignment_id,
+        student_id=student_id,
+        status="submitted",
+        submission_content=validated_content,
+        assessment_basis_snapshot=basis_snapshot,
+        idempotency_key=idempotency_key,
+    )
+    db.add(sub)
+    db.commit()
+    db.refresh(sub)
+    return sub, True
+
+
+def grade_history_assignment_submission(
+    db: Session,
+    submission_id: UUID,
+    teacher_id: UUID,
+    score: float,
+    rubric_evaluation: Optional[dict[str, Any]] = None,
+    teacher_feedback: Optional[str] = None,
+    is_admin: bool = False,
+) -> HistoryAssignmentSubmission:
+    """Grade a submission using rubric evaluation criteria."""
+    sub = db.get(HistoryAssignmentSubmission, submission_id)
+    if not sub:
+        raise AppError("SUBMISSION_NOT_FOUND", "Submission not found", 404)
+
+    assignment = db.get(HistoryLessonAssignment, sub.assignment_id)
+    if not assignment:
+        raise AppError("ASSIGNMENT_NOT_FOUND", "Assignment not found", 404)
+
+    classroom = db.get(Classroom, assignment.classroom_id)
+    if not is_admin and classroom and classroom.teacher_id != teacher_id and assignment.assigned_by_id != teacher_id:
+        raise AppError("FORBIDDEN", "Only classroom teacher or admin can grade submissions", 403)
+
+    sub.score = score
+    sub.rubric_evaluation = rubric_evaluation or {}
+    sub.teacher_feedback = teacher_feedback
+    sub.status = "graded"
+    sub.graded_at = func.now()
+    sub.graded_by_id = teacher_id
+    db.commit()
+    db.refresh(sub)
+    return sub
+
+
+# --------------------------------------------------------------------------- #
+# Learning Outcome Measurement Services (V5-T039 / Wave W03 / Slot A09)
+# --------------------------------------------------------------------------- #
+from ..domain.learning_outcome import (
+    DEFAULT_HISTORICAL_INQUIRY_RUBRIC,
+    AssessmentInstrumentType,
+    AssessmentPhase,
+    EthicsProtocolRequiredError,
+    EthicsProtocolStatus,
+    IndependentAssessorRequiredError,
+    InvalidRubricScoreError,
+    SubjectiveSurveyCannotProduceCausalMetricsError,
+    UnpairedAssessmentError,
+    calculate_effect_size_cohens_d,
+    calculate_inter_rater_reliability,
+    calculate_normalized_learning_gain,
+    validate_assessor_independence,
+    validate_ethics_protocol_active,
+    validate_rubric_scores,
+    verify_causal_learning_eligibility,
+)
+
+
+def create_ethics_protocol(
+    db: Session,
+    payload: dict[str, Any],
+    current_user_id: Optional[UUID] = None,
+) -> HistoryEthicsProtocol:
+    """Register a new research ethics / IRB protocol for learning measurements."""
+    code = payload["protocol_code"].strip()
+    existing = db.scalar(select(HistoryEthicsProtocol).where(HistoryEthicsProtocol.protocol_code == code))
+    if existing:
+        raise AppError("PROTOCOL_CODE_EXISTS", f"Protocol code '{code}' already exists", 409)
+
+    protocol = HistoryEthicsProtocol(
+        protocol_code=code,
+        title=payload["title"].strip(),
+        irb_institution=payload["irb_institution"].strip(),
+        status=payload.get("status", "approved"),
+        approved_by=payload.get("approved_by") or "IRB Ethics Board",
+        approved_at=func.now() if payload.get("status", "approved") == "approved" else None,
+        valid_until=payload.get("valid_until"),
+        data_retention_days=payload.get("data_retention_days", 365),
+        participant_consent_required=payload.get("participant_consent_required", True),
+    )
+    db.add(protocol)
+    db.commit()
+    db.refresh(protocol)
+    return protocol
+
+
+def get_ethics_protocol(db: Session, protocol_id: UUID) -> HistoryEthicsProtocol:
+    protocol = db.get(HistoryEthicsProtocol, protocol_id)
+    if not protocol:
+        raise AppError("ETHICS_PROTOCOL_NOT_FOUND", "Ethics protocol not found", 404)
+    return protocol
+
+
+def create_learning_outcome_assessment(
+    db: Session,
+    payload: dict[str, Any],
+    current_user_id: Optional[UUID] = None,
+) -> HistoryLearningOutcomeAssessment:
+    """Create a source-based historical inquiry assessment task (pre/post/delayed).
+
+    Enforces active approved ethics protocol invariant.
+    """
+    protocol_id = payload["ethics_protocol_id"]
+    protocol = db.get(HistoryEthicsProtocol, protocol_id)
+    if not protocol:
+        raise AppError("ETHICS_PROTOCOL_NOT_FOUND", "Specified ethics protocol not found", 404)
+
+    try:
+        validate_ethics_protocol_active(protocol.status, protocol.valid_until)
+    except EthicsProtocolRequiredError as exc:
+        raise AppError("ETHICS_PROTOCOL_REQUIRED", str(exc), 422)
+
+    slug = payload["slug"].strip()
+    existing = db.scalar(select(HistoryLearningOutcomeAssessment).where(HistoryLearningOutcomeAssessment.slug == slug))
+    if existing:
+        raise AppError("ASSESSMENT_SLUG_EXISTS", f"Assessment slug '{slug}' already exists", 409)
+
+    schema = payload.get("rubric_schema") or DEFAULT_HISTORICAL_INQUIRY_RUBRIC
+
+    assessment = HistoryLearningOutcomeAssessment(
+        ethics_protocol_id=protocol.id,
+        title=payload["title"].strip(),
+        slug=slug,
+        assessment_phase=payload.get("assessment_phase", "pre_test"),
+        instrument_type=AssessmentInstrumentType.source_inquiry_rubric.value,
+        target_urn_slug=payload.get("target_urn_slug"),
+        target_motif_slug=payload.get("target_motif_slug"),
+        prompt_markdown=payload["prompt_markdown"],
+        source_ids=[str(s) for s in (payload.get("source_ids") or [])],
+        claim_keys=list(payload.get("claim_keys") or []),
+        rubric_schema=schema,
+        max_score=payload.get("max_score", 100.0),
+        is_published=payload.get("is_published", True),
+        created_by=current_user_id,
+    )
+    db.add(assessment)
+    db.commit()
+    db.refresh(assessment)
+    return assessment
+
+
+def submit_learning_outcome_assessment(
+    db: Session,
+    assessment_id: UUID,
+    student_id: UUID,
+    responses: dict[str, Any],
+    citations_provided: list[str],
+) -> HistoryLearningOutcomeSubmission:
+    """Submit responses to a source-based inquiry assessment task."""
+    assessment = db.get(HistoryLearningOutcomeAssessment, assessment_id)
+    if not assessment:
+        raise AppError("ASSESSMENT_NOT_FOUND", "Inquiry assessment not found", 404)
+
+    # Check ethics protocol
+    protocol = db.get(HistoryEthicsProtocol, assessment.ethics_protocol_id)
+    if not protocol:
+        raise AppError("ETHICS_PROTOCOL_NOT_FOUND", "Associated ethics protocol not found", 404)
+    try:
+        validate_ethics_protocol_active(protocol.status, protocol.valid_until)
+    except EthicsProtocolRequiredError as exc:
+        raise AppError("ETHICS_PROTOCOL_REQUIRED", str(exc), 422)
+
+    submission = HistoryLearningOutcomeSubmission(
+        assessment_id=assessment.id,
+        student_id=student_id,
+        assessment_phase=assessment.assessment_phase,
+        instrument_type=assessment.instrument_type,
+        responses=responses,
+        citations_provided=citations_provided,
+        status="submitted",
+    )
+    db.add(submission)
+    db.commit()
+    db.refresh(submission)
+    return submission
+
+
+def evaluate_learning_outcome_submission(
+    db: Session,
+    submission_id: UUID,
+    assessor_id: UUID,
+    rubric_scores: dict[str, float],
+    feedback_markdown: Optional[str] = None,
+    evidence_notes: Optional[str] = None,
+) -> HistoryLearningOutcomeEvaluation:
+    """Score an inquiry submission with an independent assessor rubric evaluation."""
+    sub = db.get(HistoryLearningOutcomeSubmission, submission_id)
+    if not sub:
+        raise AppError("SUBMISSION_NOT_FOUND", "Inquiry submission not found", 404)
+
+    # Check independent assessor invariant: student cannot score their own work
+    try:
+        validate_assessor_independence(sub.student_id, assessor_id)
+    except IndependentAssessorRequiredError as exc:
+        raise AppError("INDEPENDENT_ASSESSOR_REQUIRED", str(exc), 403)
+
+    assessment = db.get(HistoryLearningOutcomeAssessment, sub.assessment_id)
+    schema = assessment.rubric_schema if assessment else DEFAULT_HISTORICAL_INQUIRY_RUBRIC
+
+    try:
+        total = validate_rubric_scores(schema, rubric_scores)
+    except InvalidRubricScoreError as exc:
+        raise AppError("INVALID_RUBRIC_SCORE", str(exc), 422)
+
+    existing = db.scalar(
+        select(HistoryLearningOutcomeEvaluation).where(
+            HistoryLearningOutcomeEvaluation.submission_id == sub.id,
+            HistoryLearningOutcomeEvaluation.assessor_id == assessor_id,
+        )
+    )
+    if existing:
+        existing.rubric_scores = rubric_scores
+        existing.total_score = total
+        existing.feedback_markdown = feedback_markdown
+        existing.evidence_notes = evidence_notes
+        existing.evaluated_at = func.now()
+        sub.status = "evaluated"
+        db.commit()
+        db.refresh(existing)
+        return existing
+
+    evaluation = HistoryLearningOutcomeEvaluation(
+        submission_id=sub.id,
+        assessor_id=assessor_id,
+        is_independent=True,
+        rubric_scores=rubric_scores,
+        total_score=total,
+        feedback_markdown=feedback_markdown,
+        evidence_notes=evidence_notes,
+    )
+    sub.status = "evaluated"
+    db.add(evaluation)
+    db.commit()
+    db.refresh(evaluation)
+    return evaluation
+
+
+def submit_subjective_survey(
+    db: Session,
+    student_id: UUID,
+    survey_name: str,
+    likert_responses: dict[str, int],
+    perceived_learning_score: Optional[float] = None,
+    satisfaction_score: Optional[float] = None,
+    feedback_text: Optional[str] = None,
+) -> HistorySubjectiveSurvey:
+    """Record a separate subjective self-report survey.
+    
+    This is strictly isolated and cannot be used for causal learning mastery claims.
+    """
+    survey = HistorySubjectiveSurvey(
+        student_id=student_id,
+        survey_name=survey_name.strip(),
+        instrument_type=AssessmentInstrumentType.self_report_survey.value,
+        is_subjective_self_report=True,
+        likert_responses=likert_responses,
+        perceived_learning_score=perceived_learning_score,
+        satisfaction_score=satisfaction_score,
+        feedback_text=feedback_text,
+    )
+    db.add(survey)
+    db.commit()
+    db.refresh(survey)
+    return survey
+
+
+def compute_causal_learning_outcome(
+    db: Session,
+    student_id: UUID,
+    ethics_protocol_id: UUID,
+    pre_submission_id: UUID,
+    post_submission_id: UUID,
+    delayed_submission_id: Optional[UUID] = None,
+    is_survey_data: bool = False,
+    survey_response_id: Optional[UUID] = None,
+) -> HistoryCausalLearningMetric:
+    """Derive causal learning mastery metric from paired pre/post inquiry rubric evaluations.
+
+    NEGATIVE ABUSE INVARIANT:
+    Subjective survey responses CANNOT produce causal learning mastery metrics.
+    Attempts to compute causal learning gain using survey data or subjective feelings
+    fail immediately with HTTP 422 CANNOT_DERIVE_CAUSAL_METRICS_FROM_SURVEY.
+    """
+    if is_survey_data or survey_response_id is not None:
+        raise AppError(
+            "CANNOT_DERIVE_CAUSAL_METRICS_FROM_SURVEY",
+            "Subjective survey responses (self-reported feelings or Likert scale satisfaction) "
+            "cannot produce causal learning mastery metrics. Causal mastery measurements strictly "
+            "require objective pre/post source-based inquiry assessments evaluated by independent rubric assessors.",
+            422,
+        )
+
+    # Validate ethics protocol
+    protocol = db.get(HistoryEthicsProtocol, ethics_protocol_id)
+    if not protocol:
+        raise AppError("ETHICS_PROTOCOL_NOT_FOUND", "Specified ethics protocol not found", 404)
+    try:
+        validate_ethics_protocol_active(protocol.status, protocol.valid_until)
+    except EthicsProtocolRequiredError as exc:
+        raise AppError("ETHICS_PROTOCOL_REQUIRED", str(exc), 422)
+
+    # Validate submissions
+    pre_sub = db.get(HistoryLearningOutcomeSubmission, pre_submission_id)
+    post_sub = db.get(HistoryLearningOutcomeSubmission, post_submission_id)
+
+    if not pre_sub or not post_sub:
+        raise AppError("SUBMISSION_NOT_FOUND", "Pre-test or post-test submission not found", 404)
+
+    # Enforce negative abuse check on submission instruments
+    if pre_sub.instrument_type != AssessmentInstrumentType.source_inquiry_rubric.value:
+        raise AppError("CANNOT_DERIVE_CAUSAL_METRICS_FROM_SURVEY", "Pre-test is not an objective rubric inquiry task", 422)
+    if post_sub.instrument_type != AssessmentInstrumentType.source_inquiry_rubric.value:
+        raise AppError("CANNOT_DERIVE_CAUSAL_METRICS_FROM_SURVEY", "Post-test is not an objective rubric inquiry task", 422)
+
+    if pre_sub.student_id != student_id or post_sub.student_id != student_id:
+        raise AppError("STUDENT_MISMATCH", "Submissions must belong to the specified student", 400)
+
+    if pre_sub.assessment_phase != AssessmentPhase.pre_test.value:
+        raise AppError("INVALID_ASSESSMENT_PHASE", f"Pre-submission phase must be 'pre_test', got '{pre_sub.assessment_phase}'", 400)
+    if post_sub.assessment_phase != AssessmentPhase.post_test.value:
+        raise AppError("INVALID_ASSESSMENT_PHASE", f"Post-submission phase must be 'post_test', got '{post_sub.assessment_phase}'", 400)
+
+    # Get independent evaluations
+    pre_evals = list(
+        db.scalars(
+            select(HistoryLearningOutcomeEvaluation).where(
+                HistoryLearningOutcomeEvaluation.submission_id == pre_sub.id,
+                HistoryLearningOutcomeEvaluation.is_independent == True,
+            )
+        ).all()
+    )
+    post_evals = list(
+        db.scalars(
+            select(HistoryLearningOutcomeEvaluation).where(
+                HistoryLearningOutcomeEvaluation.submission_id == post_sub.id,
+                HistoryLearningOutcomeEvaluation.is_independent == True,
+            )
+        ).all()
+    )
+
+    if not pre_evals:
+        raise AppError("EVALUATION_MISSING", "Pre-test submission has not been evaluated by an independent assessor", 422)
+    if not post_evals:
+        raise AppError("EVALUATION_MISSING", "Post-test submission has not been evaluated by an independent assessor", 422)
+
+    # Compute consensus scores (mean across independent evaluators)
+    pre_score = sum(e.total_score for e in pre_evals) / len(pre_evals)
+    post_score = sum(e.total_score for e in post_evals) / len(post_evals)
+
+    # Calculate inter-rater agreement if multiple evaluators exist on post
+    agreement = None
+    if len(post_evals) >= 2:
+        agreement = calculate_inter_rater_reliability(post_evals[0].total_score, post_evals[1].total_score, 100.0)
+
+    # Delayed test if provided
+    delayed_score = None
+    if delayed_submission_id:
+        del_sub = db.get(HistoryLearningOutcomeSubmission, delayed_submission_id)
+        if del_sub:
+            del_evals = list(
+                db.scalars(
+                    select(HistoryLearningOutcomeEvaluation).where(
+                        HistoryLearningOutcomeEvaluation.submission_id == del_sub.id,
+                        HistoryLearningOutcomeEvaluation.is_independent == True,
+                    )
+                ).all()
+            )
+            if del_evals:
+                delayed_score = sum(e.total_score for e in del_evals) / len(del_evals)
+
+    normalized_gain = calculate_normalized_learning_gain(pre_score, post_score, 100.0)
+    absolute_gain = round(post_score - pre_score, 2)
+
+    # Calculate per-competency gain (S1-S4)
+    competency_gains: dict[str, float] = {}
+    pre_criteria: dict[str, list[float]] = {}
+    for ev in pre_evals:
+        for k, v in (ev.rubric_scores or {}).items():
+            pre_criteria.setdefault(k, []).append(float(v))
+    post_criteria: dict[str, list[float]] = {}
+    for ev in post_evals:
+        for k, v in (ev.rubric_scores or {}).items():
+            post_criteria.setdefault(k, []).append(float(v))
+
+    for crit in ("S1_SPATIAL", "S2_TEMPORAL", "S3_EVIDENCE", "S4_ARGUMENT"):
+        c_pre = sum(pre_criteria.get(crit, [0.0])) / max(1, len(pre_criteria.get(crit, [0.0])))
+        c_post = sum(post_criteria.get(crit, [0.0])) / max(1, len(post_criteria.get(crit, [0.0])))
+        competency_gains[crit] = round(c_post - c_pre, 2)
+
+    metric = HistoryCausalLearningMetric(
+        student_id=student_id,
+        ethics_protocol_id=ethics_protocol_id,
+        pre_submission_id=pre_sub.id,
+        post_submission_id=post_sub.id,
+        delayed_submission_id=delayed_submission_id,
+        pre_score=round(pre_score, 2),
+        post_score=round(post_score, 2),
+        delayed_score=round(delayed_score, 2) if delayed_score is not None else None,
+        normalized_gain=normalized_gain,
+        absolute_gain=absolute_gain,
+        inter_rater_agreement=agreement,
+        competency_gains=competency_gains,
+        instrument_type=AssessmentInstrumentType.source_inquiry_rubric.value,
+        is_valid_causal_claim=True,
+    )
+    db.add(metric)
+    db.commit()
+    db.refresh(metric)
+    return metric
+
+
+def get_cohort_causal_learning_metrics(
+    db: Session,
+    ethics_protocol_id: UUID,
+) -> dict[str, Any]:
+    """Aggregate cohort learning outcome metrics for an approved ethics protocol."""
+    protocol = db.get(HistoryEthicsProtocol, ethics_protocol_id)
+    if not protocol:
+        raise AppError("ETHICS_PROTOCOL_NOT_FOUND", "Ethics protocol not found", 404)
+
+    metrics = list(
+        db.scalars(
+            select(HistoryCausalLearningMetric).where(
+                HistoryCausalLearningMetric.ethics_protocol_id == ethics_protocol_id
+            )
+        ).all()
+    )
+    if not metrics:
+        return {
+            "total_students": 0,
+            "mean_pre_score": 0.0,
+            "mean_post_score": 0.0,
+            "mean_normalized_gain": 0.0,
+            "effect_size_cohens_d": 0.0,
+            "mean_inter_rater_agreement": 1.0,
+            "competency_averages": {},
+            "ethics_protocol_code": protocol.protocol_code,
+        }
+
+    n = len(metrics)
+    pre_list = [m.pre_score for m in metrics]
+    post_list = [m.post_score for m in metrics]
+    gains = [m.normalized_gain for m in metrics]
+    agreements = [m.inter_rater_agreement for m in metrics if m.inter_rater_agreement is not None]
+
+    cohens_d = calculate_effect_size_cohens_d(pre_list, post_list)
+
+    # Average competency gains
+    comp_totals: dict[str, float] = {}
+    for m in metrics:
+        for k, v in (m.competency_gains or {}).items():
+            comp_totals[k] = comp_totals.get(k, 0.0) + float(v)
+    comp_avgs = {k: round(v / n, 2) for k, v in comp_totals.items()}
+
+    return {
+        "total_students": n,
+        "mean_pre_score": round(sum(pre_list) / n, 2),
+        "mean_post_score": round(sum(post_list) / n, 2),
+        "mean_normalized_gain": round(sum(gains) / n, 4),
+        "effect_size_cohens_d": cohens_d,
+        "mean_inter_rater_agreement": round(sum(agreements) / len(agreements), 4) if agreements else 1.0,
+        "competency_averages": comp_avgs,
+        "ethics_protocol_code": protocol.protocol_code,
+    }
+
+
 

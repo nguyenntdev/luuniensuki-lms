@@ -2420,6 +2420,7 @@ export interface paths {
         /**
          * Get Classroom
          * @description Get detailed classroom information including members and assignments.
+         *     Only authorized for classroom teacher, admins, or enrolled students.
          */
         get: operations["get_classroom_api_v1_classrooms__classroom_id__get"];
         /**
@@ -2530,6 +2531,48 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/classrooms/{classroom_id}/gradebook": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Classroom Gradebook
+         * @description Get classroom gradebook with real student roster, scores, missing/pending statuses.
+         *     Only accessible to assigned teachers and admins (blocks horizontal privilege escalation with 403).
+         */
+        get: operations["get_classroom_gradebook_api_v1_classrooms__classroom_id__gradebook_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/classrooms/{classroom_id}/gradebook/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export Classroom Gradebook Csv
+         * @description Export classroom gradebook to CSV with UTF-8 BOM encoding for Excel.
+         *     Only accessible to assigned teachers and admins (blocks horizontal privilege escalation with 403).
+         */
+        get: operations["export_classroom_gradebook_csv_api_v1_classrooms__classroom_id__gradebook_export_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/classrooms/{classroom_id}/leaderboard": {
         parameters: {
             query?: never;
@@ -2609,6 +2652,28 @@ export interface paths {
          *     Only accessible to teachers of the classroom and admins.
          */
         get: operations["get_class_progress_summary_api_v1_classrooms__classroom_id__progress_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/classrooms/{classroom_id}/roster": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Classroom Roster
+         * @description Get student roster for a classroom.
+         *     Authorized for classroom teacher, admins, and enrolled learners.
+         *     External students/teachers without authorization receive 403 Forbidden.
+         */
+        get: operations["get_classroom_roster_api_v1_classrooms__classroom_id__roster_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3174,6 +3239,170 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/history/assignments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List History Assignments
+         * @description List historical lesson assignments.
+         */
+        get: operations["list_history_assignments_api_v1_history_assignments_get"];
+        put?: never;
+        /**
+         * Create History Assignment
+         * @description Create a classroom lesson assignment with source-locked lesson snapshot and rubric.
+         */
+        post: operations["create_history_assignment_api_v1_history_assignments_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/assignments/{assignment_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get History Assignment
+         * @description Get single history lesson assignment.
+         */
+        get: operations["get_history_assignment_api_v1_history_assignments__assignment_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/assignments/{assignment_id}/assessment-basis": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get History Assignment Assessment Basis
+         * @description Retrieve the immutable assessment basis for an assignment (Spec V5-T033).
+         */
+        get: operations["get_history_assignment_assessment_basis_api_v1_history_assignments__assignment_id__assessment_basis_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/assignments/{assignment_id}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Publish History Assignment Endpoint
+         * @description Publish an assignment enforcing the negative abuse claim verification gate.
+         */
+        post: operations["publish_history_assignment_endpoint_api_v1_history_assignments__assignment_id__publish_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/assignments/{assignment_id}/submissions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List History Assignment Submissions
+         * @description List submissions for an assignment (teacher or admin).
+         */
+        get: operations["list_history_assignment_submissions_api_v1_history_assignments__assignment_id__submissions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/assignments/{assignment_id}/submissions/{submission_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get History Assignment Submission
+         * @description Get a single submission (by student owner or teacher/admin).
+         */
+        get: operations["get_history_assignment_submission_api_v1_history_assignments__assignment_id__submissions__submission_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/assignments/{assignment_id}/submissions/{submission_id}/grade": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Grade History Assignment Submission Endpoint
+         * @description Grade a submission using rubric criteria (teacher or admin).
+         */
+        post: operations["grade_history_assignment_submission_endpoint_api_v1_history_assignments__assignment_id__submissions__submission_id__grade_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/assignments/{assignment_id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Submit History Assignment Endpoint
+         * @description Submit student work against a source-locked assignment with validation and idempotency.
+         */
+        post: operations["submit_history_assignment_endpoint_api_v1_history_assignments__assignment_id__submit_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/history/claims/{claim_id}": {
         parameters: {
             query?: never;
@@ -3502,6 +3731,344 @@ export interface paths {
         get: operations["list_history_events_api_v1_history_events_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/inquiry/activities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Activities */
+        get: operations["list_activities_api_v1_history_inquiry_activities_get"];
+        put?: never;
+        /** Create Activity */
+        post: operations["create_activity_api_v1_history_inquiry_activities_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/inquiry/activities/{activity_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Activity */
+        get: operations["get_activity_api_v1_history_inquiry_activities__activity_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/inquiry/activities/{activity_id}/groups": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Groups */
+        get: operations["list_groups_api_v1_history_inquiry_activities__activity_id__groups_get"];
+        put?: never;
+        /** Create Group */
+        post: operations["create_group_api_v1_history_inquiry_activities__activity_id__groups_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/inquiry/groups/{group_id}/evidence": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add Evidence */
+        post: operations["add_evidence_api_v1_history_inquiry_groups__group_id__evidence_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/inquiry/groups/{group_id}/evidence/{evidence_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Remove Evidence */
+        delete: operations["remove_evidence_api_v1_history_inquiry_groups__group_id__evidence__evidence_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/inquiry/groups/{group_id}/members": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add Member */
+        post: operations["add_member_api_v1_history_inquiry_groups__group_id__members_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/inquiry/groups/{group_id}/submission": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Submission */
+        get: operations["get_submission_api_v1_history_inquiry_groups__group_id__submission_get"];
+        /** Update Submission */
+        put: operations["update_submission_api_v1_history_inquiry_groups__group_id__submission_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/inquiry/groups/{group_id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Submit Inquiry */
+        post: operations["submit_inquiry_api_v1_history_inquiry_groups__group_id__submit_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/inquiry/submissions/{submission_id}/moderate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Moderate Submission */
+        post: operations["moderate_submission_api_v1_history_inquiry_submissions__submission_id__moderate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/learning-outcomes/assessments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Learning Outcome Assessment Endpoint
+         * @description Create a source-based inquiry assessment task (pre/post/delayed) linked to an approved ethics protocol.
+         */
+        post: operations["create_learning_outcome_assessment_endpoint_api_v1_history_learning_outcomes_assessments_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/learning-outcomes/assessments/{assessment_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Learning Outcome Assessment Endpoint
+         * @description Retrieve an assessment task with prompt and rubric.
+         */
+        get: operations["get_learning_outcome_assessment_endpoint_api_v1_history_learning_outcomes_assessments__assessment_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/learning-outcomes/assessments/{assessment_id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Submit Learning Outcome Assessment Endpoint
+         * @description Student submits answers to an objective source inquiry assessment.
+         */
+        post: operations["submit_learning_outcome_assessment_endpoint_api_v1_history_learning_outcomes_assessments__assessment_id__submit_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/learning-outcomes/causal-metrics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Compute Causal Learning Outcome Endpoint
+         * @description Compute causal learning gain between pre/post objective inquiry assessments.
+         *
+         *     Negative abuse check: Rejects survey responses (feelings/satisfaction).
+         */
+        post: operations["compute_causal_learning_outcome_endpoint_api_v1_history_learning_outcomes_causal_metrics_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/learning-outcomes/cohort-metrics/{ethics_protocol_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Cohort Causal Metrics Endpoint
+         * @description Get aggregated cohort causal learning metrics (mean gain, Cohen's d, inter-rater reliability).
+         */
+        get: operations["get_cohort_causal_metrics_endpoint_api_v1_history_learning_outcomes_cohort_metrics__ethics_protocol_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/learning-outcomes/ethics-protocols": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Ethics Protocol Endpoint
+         * @description Register an ethics / IRB protocol for learning outcome measurement research (staff/admin).
+         */
+        post: operations["create_ethics_protocol_endpoint_api_v1_history_learning_outcomes_ethics_protocols_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/learning-outcomes/ethics-protocols/{protocol_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Ethics Protocol Endpoint
+         * @description Get ethics protocol details.
+         */
+        get: operations["get_ethics_protocol_endpoint_api_v1_history_learning_outcomes_ethics_protocols__protocol_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/learning-outcomes/submissions/{submission_id}/evaluate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Evaluate Learning Outcome Submission Endpoint
+         * @description Independent assessor evaluates a student submission against objective rubric criteria.
+         */
+        post: operations["evaluate_learning_outcome_submission_endpoint_api_v1_history_learning_outcomes_submissions__submission_id__evaluate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/learning-outcomes/surveys": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Submit Subjective Survey Endpoint
+         * @description Submit a subjective self-report survey (isolated from causal mastery metrics).
+         */
+        post: operations["submit_subjective_survey_endpoint_api_v1_history_learning_outcomes_surveys_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4734,6 +5301,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/imperial/teacher/submissions/{submission_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Submission Detail
+         * @description Get single student submission detail for evaluation (requires staff/teacher role).
+         */
+        get: operations["get_submission_detail_api_v1_imperial_teacher_submissions__submission_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/teacher/submissions/{submission_id}/audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Submission Audit
+         * @description Retrieve audit history and grading revisions for a submission (requires staff/teacher role).
+         */
+        get: operations["get_submission_audit_api_v1_imperial_teacher_submissions__submission_id__audit_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/imperial/teacher/submissions/{submission_id}/grade": {
         parameters: {
             query?: never;
@@ -5889,6 +6496,126 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/progress/action": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Handle Progression Action
+         * @description Process a server-verified progression action (discover, complete_lesson, submit_quiz).
+         */
+        post: operations["handle_progression_action_api_v1_progress_action_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/progress/complete-lesson": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Complete Lesson Action
+         * @description Record verified lesson completion.
+         */
+        post: operations["complete_lesson_action_api_v1_progress_complete_lesson_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/progress/discover": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Discover Motif
+         * @description Record genuine discovery (hotspot / 3D exploration).
+         */
+        post: operations["discover_motif_api_v1_progress_discover_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/progress/motifs/{motif_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Motif Progress
+         * @description Retrieve individual motif progression.
+         */
+        get: operations["get_motif_progress_api_v1_progress_motifs__motif_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/progress/submit-quiz": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Submit Quiz Action
+         * @description Record quiz submission and evaluate mastery.
+         */
+        post: operations["submit_quiz_action_api_v1_progress_submit_quiz_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/progress/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Progression Summary
+         * @description Retrieve full student learning progression summary.
+         */
+        get: operations["get_progression_summary_api_v1_progress_summary_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/quests": {
         parameters: {
             query?: never;
@@ -6576,6 +7303,94 @@ export interface paths {
          *     - 5: Perfect response
          */
         post: operations["submit_review_result_api_v1_review__card_id__post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/schools": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Schools
+         * @description List schools with optional filters.
+         */
+        get: operations["list_schools_api_v1_schools_get"];
+        put?: never;
+        /**
+         * Create School
+         * @description Create a new school (staff/admin only).
+         */
+        post: operations["create_school_api_v1_schools_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/schools/{school_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get School
+         * @description Get school details.
+         */
+        get: operations["get_school_api_v1_schools__school_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update School
+         * @description Update school details (staff/admin only).
+         */
+        patch: operations["update_school_api_v1_schools__school_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/schools/{school_id}/classrooms": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List School Classrooms
+         * @description List classrooms associated with a school.
+         */
+        get: operations["list_school_classrooms_api_v1_schools__school_id__classrooms_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/schools/{school_id}/members": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add School Member
+         * @description Add a teacher or staff member to a school.
+         */
+        post: operations["add_school_member_api_v1_schools__school_id__members_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -8249,6 +9064,19 @@ export interface components {
              */
             motif_id: string;
         };
+        /** AddGroupMemberIn */
+        AddGroupMemberIn: {
+            /**
+             * Role
+             * @default contributor
+             */
+            role: string;
+            /**
+             * User Id
+             * Format: uuid
+             */
+            user_id: string;
+        };
         /** AdminLessonCreateRequest */
         AdminLessonCreateRequest: {
             /** Additional Images */
@@ -8905,6 +9733,93 @@ export interface components {
             /** Total Size Bytes */
             total_size_bytes: number;
         };
+        /** CausalLearningMetricComputeIn */
+        CausalLearningMetricComputeIn: {
+            /** Delayed Submission Id */
+            delayed_submission_id?: string | null;
+            /**
+             * Ethics Protocol Id
+             * Format: uuid
+             */
+            ethics_protocol_id: string;
+            /**
+             * Is Survey Data
+             * @default false
+             */
+            is_survey_data: boolean;
+            /**
+             * Post Submission Id
+             * Format: uuid
+             */
+            post_submission_id: string;
+            /**
+             * Pre Submission Id
+             * Format: uuid
+             */
+            pre_submission_id: string;
+            /**
+             * Student Id
+             * Format: uuid
+             */
+            student_id: string;
+            /** Survey Response Id */
+            survey_response_id?: string | null;
+        };
+        /** CausalLearningMetricOut */
+        CausalLearningMetricOut: {
+            /** Absolute Gain */
+            absolute_gain: number;
+            /** Competency Gains */
+            competency_gains?: {
+                [key: string]: unknown;
+            };
+            /**
+             * Computed At
+             * Format: date-time
+             */
+            computed_at: string;
+            /** Delayed Score */
+            delayed_score?: number | null;
+            /** Delayed Submission Id */
+            delayed_submission_id?: string | null;
+            /**
+             * Ethics Protocol Id
+             * Format: uuid
+             */
+            ethics_protocol_id: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Instrument Type */
+            instrument_type: string;
+            /** Inter Rater Agreement */
+            inter_rater_agreement?: number | null;
+            /** Is Valid Causal Claim */
+            is_valid_causal_claim: boolean;
+            /** Normalized Gain */
+            normalized_gain: number;
+            /** Post Score */
+            post_score: number;
+            /**
+             * Post Submission Id
+             * Format: uuid
+             */
+            post_submission_id: string;
+            /** Pre Score */
+            pre_score: number;
+            /**
+             * Pre Submission Id
+             * Format: uuid
+             */
+            pre_submission_id: string;
+            /**
+             * Student Id
+             * Format: uuid
+             */
+            student_id: string;
+        };
         /**
          * CertificateOut
          * @description Output schema for certificate details.
@@ -9044,6 +9959,10 @@ export interface components {
             display_name: string;
             /** Email */
             email: string;
+            /** Guardian Consent */
+            guardian_consent?: boolean | null;
+            /** Guardian Email */
+            guardian_email?: string | null;
             /**
              * Id
              * Format: uuid
@@ -9156,10 +10075,14 @@ export interface components {
             max_students?: number | null;
             /** Name */
             name: string;
+            /** School Id */
+            school_id?: string | null;
             /** Settings */
             settings?: {
                 [key: string]: unknown;
             } | null;
+            /** Term */
+            term?: string | null;
         };
         /**
          * ClassroomDetailOut
@@ -9192,6 +10115,10 @@ export interface components {
             members: components["schemas"]["ClassMemberOut"][];
             /** Name */
             name: string;
+            /** School Id */
+            school_id?: string | null;
+            /** School Name */
+            school_name?: string | null;
             /** Settings */
             settings?: {
                 [key: string]: unknown;
@@ -9203,11 +10130,36 @@ export interface components {
             teacher_id: string;
             /** Teacher Name */
             teacher_name: string;
+            /** Term */
+            term?: string | null;
             /**
              * Updated At
              * Format: date-time
              */
             updated_at: string;
+        };
+        /**
+         * ClassroomGradebookOut
+         * @description Full gradebook output schema for teacher review and grading.
+         */
+        ClassroomGradebookOut: {
+            /**
+             * Classroom Id
+             * Format: uuid
+             */
+            classroom_id: string;
+            /** Classroom Name */
+            classroom_name: string;
+            metrics: components["schemas"]["GradebookMetricsOut"];
+            /** Roster */
+            roster: components["schemas"]["StudentGradebookEntryOut"][];
+            /**
+             * Teacher Id
+             * Format: uuid
+             */
+            teacher_id: string;
+            /** Total Students */
+            total_students: number;
         };
         /**
          * ClassroomJoinIn
@@ -9216,6 +10168,10 @@ export interface components {
         ClassroomJoinIn: {
             /** Class Code */
             class_code: string;
+            /** Guardian Consent */
+            guardian_consent?: boolean | null;
+            /** Guardian Email */
+            guardian_email?: string | null;
         };
         /**
          * ClassroomJoinOut
@@ -9225,6 +10181,64 @@ export interface components {
             classroom: components["schemas"]["ClassroomDetailOut"];
             /** Message */
             message: string;
+        };
+        /**
+         * ClassroomRosterOut
+         * @description Output schema for classroom student roster.
+         */
+        ClassroomRosterOut: {
+            /** Class Code */
+            class_code?: string | null;
+            /**
+             * Classroom Id
+             * Format: uuid
+             */
+            classroom_id: string;
+            /** Classroom Name */
+            classroom_name: string;
+            /** School Id */
+            school_id?: string | null;
+            /** School Name */
+            school_name?: string | null;
+            /** Student Count */
+            student_count: number;
+            /** Students */
+            students: components["schemas"]["ClassroomRosterStudentOut"][];
+            /** Teacher Name */
+            teacher_name: string;
+            /** Term */
+            term?: string | null;
+        };
+        /**
+         * ClassroomRosterStudentOut
+         * @description Output schema for a student entry in classroom roster.
+         */
+        ClassroomRosterStudentOut: {
+            /** Display Name */
+            display_name: string;
+            /** Email */
+            email?: string | null;
+            /** Guardian Consent */
+            guardian_consent?: boolean | null;
+            /** Guardian Email */
+            guardian_email?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Joined At
+             * Format: date-time
+             */
+            joined_at: string;
+            /** Role */
+            role: string;
+            /**
+             * User Id
+             * Format: uuid
+             */
+            user_id: string;
         };
         /**
          * ClassroomSummaryOut
@@ -9255,11 +10269,15 @@ export interface components {
             member_count: number;
             /** Name */
             name: string;
+            /** School Id */
+            school_id?: string | null;
             /**
              * Teacher Id
              * Format: uuid
              */
             teacher_id: string;
+            /** Term */
+            term?: string | null;
             /**
              * Updated At
              * Format: date-time
@@ -9277,10 +10295,14 @@ export interface components {
             max_students?: number | null;
             /** Name */
             name?: string | null;
+            /** School Id */
+            school_id?: string | null;
             /** Settings */
             settings?: {
                 [key: string]: unknown;
             } | null;
+            /** Term */
+            term?: string | null;
         };
         /** CoachGenerateIn */
         CoachGenerateIn: {
@@ -9305,6 +10327,27 @@ export interface components {
             message: string;
             /** Weekly Plan */
             weekly_plan?: string[];
+        };
+        /** CohortCausalLearningMetricsOut */
+        CohortCausalLearningMetricsOut: {
+            /** Competency Averages */
+            competency_averages: {
+                [key: string]: number;
+            };
+            /** Effect Size Cohens D */
+            effect_size_cohens_d: number;
+            /** Ethics Protocol Code */
+            ethics_protocol_code: string;
+            /** Mean Inter Rater Agreement */
+            mean_inter_rater_agreement: number;
+            /** Mean Normalized Gain */
+            mean_normalized_gain: number;
+            /** Mean Post Score */
+            mean_post_score: number;
+            /** Mean Pre Score */
+            mean_pre_score: number;
+            /** Total Students */
+            total_students: number;
         };
         /**
          * CohortRetentionItemOut
@@ -10287,6 +11330,71 @@ export interface components {
             /** User Rank */
             user_rank?: number | null;
         };
+        /** EthicsProtocolCreate */
+        EthicsProtocolCreate: {
+            /** Approved By */
+            approved_by?: string | null;
+            /**
+             * Data Retention Days
+             * @default 365
+             */
+            data_retention_days: number;
+            /** Irb Institution */
+            irb_institution: string;
+            /**
+             * Participant Consent Required
+             * @default true
+             */
+            participant_consent_required: boolean;
+            /** Protocol Code */
+            protocol_code: string;
+            /**
+             * Status
+             * @description draft, submitted, approved, revoked, expired
+             * @default approved
+             */
+            status: string;
+            /** Title */
+            title: string;
+            /** Valid Until */
+            valid_until?: string | null;
+        };
+        /** EthicsProtocolOut */
+        EthicsProtocolOut: {
+            /** Approved At */
+            approved_at?: string | null;
+            /** Approved By */
+            approved_by?: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Data Retention Days */
+            data_retention_days: number;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Irb Institution */
+            irb_institution: string;
+            /** Participant Consent Required */
+            participant_consent_required: boolean;
+            /** Protocol Code */
+            protocol_code: string;
+            /** Status */
+            status: string;
+            /** Title */
+            title: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Valid Until */
+            valid_until?: string | null;
+        };
         /**
          * ExperimentCreateIn
          * @description Input schema for creating an experiment.
@@ -11017,6 +12125,42 @@ export interface components {
             display_name: string;
             /** Stage */
             stage: string;
+        };
+        /**
+         * GradebookMetricsOut
+         * @description Aggregated metrics for a classroom gradebook.
+         */
+        GradebookMetricsOut: {
+            /**
+             * Average Completion Percent
+             * @default 0
+             */
+            average_completion_percent: number;
+            /**
+             * Average Score
+             * @default 0
+             */
+            average_score: number;
+            /**
+             * Completed Count
+             * @default 0
+             */
+            completed_count: number;
+            /**
+             * Missing Count
+             * @default 0
+             */
+            missing_count: number;
+            /**
+             * Pending Count
+             * @default 0
+             */
+            pending_count: number;
+            /**
+             * Total Students
+             * @default 0
+             */
+            total_students: number;
         };
         /**
          * GuestPreviewCompleteIn
@@ -12284,6 +13428,254 @@ export interface components {
             /** Valid To */
             valid_to?: string | null;
         };
+        /** HistoricalInquiryActivityCreate */
+        HistoricalInquiryActivityCreate: {
+            /** Classroom Id */
+            classroom_id?: string | null;
+            /** Description */
+            description: string;
+            /** Due At */
+            due_at?: string | null;
+            /** Guiding Questions */
+            guiding_questions?: string[];
+            /**
+             * Is Active
+             * @default true
+             */
+            is_active: boolean;
+            /** Rubric Criteria */
+            rubric_criteria?: {
+                [key: string]: unknown;
+            } | null;
+            /** Suggested Claim Ids */
+            suggested_claim_ids?: string[];
+            /** Suggested Source Ids */
+            suggested_source_ids?: string[];
+            /** Title */
+            title: string;
+        };
+        /** HistoricalInquiryActivityOut */
+        HistoricalInquiryActivityOut: {
+            /** Classroom Id */
+            classroom_id?: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Created By Id
+             * Format: uuid
+             */
+            created_by_id: string;
+            /** Description */
+            description: string;
+            /** Due At */
+            due_at?: string | null;
+            /**
+             * Groups Count
+             * @default 0
+             */
+            groups_count: number;
+            /** Guiding Questions */
+            guiding_questions?: string[];
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Is Active */
+            is_active: boolean;
+            /** Rubric Criteria */
+            rubric_criteria?: {
+                [key: string]: unknown;
+            } | null;
+            /** Suggested Claim Ids */
+            suggested_claim_ids?: string[];
+            /** Suggested Source Ids */
+            suggested_source_ids?: string[];
+            /** Title */
+            title: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** HistoricalInquiryGroupCreate */
+        HistoricalInquiryGroupCreate: {
+            /** Member Ids */
+            member_ids?: string[] | null;
+            /** Name */
+            name: string;
+        };
+        /** HistoricalInquiryGroupMemberOut */
+        HistoricalInquiryGroupMemberOut: {
+            /** Display Name */
+            display_name?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Joined At
+             * Format: date-time
+             */
+            joined_at: string;
+            /** Role */
+            role: string;
+            /**
+             * User Id
+             * Format: uuid
+             */
+            user_id: string;
+            /** Username */
+            username?: string | null;
+        };
+        /** HistoricalInquiryGroupOut */
+        HistoricalInquiryGroupOut: {
+            /**
+             * Activity Id
+             * Format: uuid
+             */
+            activity_id: string;
+            /** Classroom Id */
+            classroom_id?: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Created By Id
+             * Format: uuid
+             */
+            created_by_id: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Members */
+            members?: components["schemas"]["HistoricalInquiryGroupMemberOut"][];
+            /** Name */
+            name: string;
+            /** Score */
+            score?: number | null;
+            /** Submission Status */
+            submission_status?: string | null;
+        };
+        /** HistoricalInquirySubmissionOut */
+        HistoricalInquirySubmissionOut: {
+            /**
+             * Activity Id
+             * Format: uuid
+             */
+            activity_id: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Epistemic Rating */
+            epistemic_rating: string;
+            /** Evidence Items */
+            evidence_items?: components["schemas"]["InquiryEvidenceItemOut"][];
+            /**
+             * Group Id
+             * Format: uuid
+             */
+            group_id: string;
+            /** Hypothesis */
+            hypothesis: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Moderated At */
+            moderated_at?: string | null;
+            /** Moderated By Id */
+            moderated_by_id?: string | null;
+            /** Privacy Mode */
+            privacy_mode: string;
+            /** Rubric Evaluation */
+            rubric_evaluation?: {
+                [key: string]: unknown;
+            } | null;
+            /** Score */
+            score?: number | null;
+            /** Status */
+            status: string;
+            /** Submitted At */
+            submitted_at?: string | null;
+            /** Submitted By Id */
+            submitted_by_id?: string | null;
+            /** Synthesis Argument */
+            synthesis_argument: string;
+            /** Teacher Feedback */
+            teacher_feedback?: string | null;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Version */
+            version: number;
+        };
+        /** HistoricalInquirySubmissionUpdate */
+        HistoricalInquirySubmissionUpdate: {
+            /** Epistemic Rating */
+            epistemic_rating?: string | null;
+            /** Hypothesis */
+            hypothesis?: string | null;
+            /** Privacy Mode */
+            privacy_mode?: string | null;
+            /** Synthesis Argument */
+            synthesis_argument?: string | null;
+        };
+        /** HistoricalInquiryTeacherModerationIn */
+        HistoricalInquiryTeacherModerationIn: {
+            /** Rubric Evaluation */
+            rubric_evaluation?: {
+                [key: string]: unknown;
+            } | null;
+            /** Score */
+            score?: number | null;
+            /** Status */
+            status: string;
+            /** Teacher Feedback */
+            teacher_feedback: string;
+        };
+        /** HistoricalInquiryTeacherModerationOut */
+        HistoricalInquiryTeacherModerationOut: {
+            /**
+             * Moderated At
+             * Format: date-time
+             */
+            moderated_at: string;
+            /**
+             * Moderated By Id
+             * Format: uuid
+             */
+            moderated_by_id: string;
+            /** Rubric Evaluation */
+            rubric_evaluation?: {
+                [key: string]: unknown;
+            } | null;
+            /** Score */
+            score: number | null;
+            /** Status */
+            status: string;
+            /**
+             * Submission Id
+             * Format: uuid
+             */
+            submission_id: string;
+            /** Teacher Feedback */
+            teacher_feedback: string;
+        };
         /** HistoricalRelationCreate */
         HistoricalRelationCreate: {
             /** Claim Id */
@@ -12679,6 +14071,124 @@ export interface components {
             /** Volume */
             volume?: string | null;
         };
+        /** HistoryAssignmentAssessmentBasisOut */
+        HistoryAssignmentAssessmentBasisOut: {
+            /**
+             * Assignment Id
+             * Format: uuid
+             */
+            assignment_id: string;
+            /**
+             * Classroom Id
+             * Format: uuid
+             */
+            classroom_id: string;
+            /**
+             * Lesson Id
+             * Format: uuid
+             */
+            lesson_id: string;
+            /** Lesson Snapshot */
+            lesson_snapshot?: {
+                [key: string]: unknown;
+            };
+            /** Pinned Claim Ids */
+            pinned_claim_ids?: string[];
+            /** Pinned Source Ids */
+            pinned_source_ids?: string[];
+            /** Pinned Sources */
+            pinned_sources?: {
+                [key: string]: unknown;
+            }[];
+            /** Pinned Version */
+            pinned_version: number;
+            /** Published At */
+            published_at?: string | null;
+            /** Rubric */
+            rubric?: {
+                [key: string]: unknown;
+            };
+        };
+        /** HistoryAssignmentGradeIn */
+        HistoryAssignmentGradeIn: {
+            /** Rubric Evaluation */
+            rubric_evaluation?: {
+                [key: string]: unknown;
+            } | null;
+            /** Score */
+            score: number;
+            /** Teacher Feedback */
+            teacher_feedback?: string | null;
+        };
+        /** HistoryAssignmentSubmissionListOut */
+        HistoryAssignmentSubmissionListOut: {
+            /** Items */
+            items: components["schemas"]["HistoryAssignmentSubmissionOut"][];
+            /** Total */
+            total: number;
+        };
+        /** HistoryAssignmentSubmissionOut */
+        HistoryAssignmentSubmissionOut: {
+            /** Assessment Basis Snapshot */
+            assessment_basis_snapshot?: {
+                [key: string]: unknown;
+            };
+            /**
+             * Assignment Id
+             * Format: uuid
+             */
+            assignment_id: string;
+            /** Graded At */
+            graded_at?: string | null;
+            /** Graded By Id */
+            graded_by_id?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Idempotency Key */
+            idempotency_key?: string | null;
+            /** Rubric Evaluation */
+            rubric_evaluation?: {
+                [key: string]: unknown;
+            } | null;
+            /** Score */
+            score?: number | null;
+            /** Status */
+            status: string;
+            /**
+             * Student Id
+             * Format: uuid
+             */
+            student_id: string;
+            /** Submission Content */
+            submission_content?: {
+                [key: string]: unknown;
+            };
+            /**
+             * Submitted At
+             * Format: date-time
+             */
+            submitted_at: string;
+            /** Teacher Feedback */
+            teacher_feedback?: string | null;
+        };
+        /** HistoryAssignmentSubmitIn */
+        HistoryAssignmentSubmitIn: {
+            /**
+             * Idempotency Key
+             * @description Client idempotency key for network retry deduplication
+             */
+            idempotency_key?: string | null;
+            /**
+             * Submission Content
+             * @description Student response content, evidence citations, etc.
+             */
+            submission_content: {
+                [key: string]: unknown;
+            };
+        };
         /** HistoryCollectionCreate */
         HistoryCollectionCreate: {
             /** Description Vi */
@@ -12779,6 +14289,141 @@ export interface components {
             title_vi?: string | null;
             /** Visibility */
             visibility?: string | null;
+        };
+        /** HistoryLessonAssignmentCreateIn */
+        HistoryLessonAssignmentCreateIn: {
+            /** Claim Ids */
+            claim_ids?: string[] | null;
+            /**
+             * Classroom Id
+             * Format: uuid
+             */
+            classroom_id: string;
+            /** Due At */
+            due_at?: string | null;
+            /** Instructions */
+            instructions?: string | null;
+            /**
+             * Lesson Id
+             * Format: uuid
+             */
+            lesson_id: string;
+            /**
+             * Points
+             * @default 100
+             */
+            points: number;
+            /** Rubric */
+            rubric?: {
+                [key: string]: unknown;
+            } | null;
+            /** Source Ids */
+            source_ids?: string[] | null;
+            /**
+             * Status
+             * @default draft
+             */
+            status: string;
+            /** Title */
+            title: string;
+        };
+        /** HistoryLessonAssignmentListOut */
+        HistoryLessonAssignmentListOut: {
+            /** Items */
+            items: components["schemas"]["HistoryLessonAssignmentOut"][];
+            /** Total */
+            total: number;
+        };
+        /** HistoryLessonAssignmentOut */
+        HistoryLessonAssignmentOut: {
+            /** Assigned By Id */
+            assigned_by_id?: string | null;
+            /**
+             * Classroom Id
+             * Format: uuid
+             */
+            classroom_id: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Due At */
+            due_at?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Instructions */
+            instructions?: string | null;
+            /**
+             * Lesson Id
+             * Format: uuid
+             */
+            lesson_id: string;
+            /** Pinned Claim Ids */
+            pinned_claim_ids?: string[];
+            /** Pinned Lesson Snapshot */
+            pinned_lesson_snapshot?: {
+                [key: string]: unknown;
+            };
+            /** Pinned Source Ids */
+            pinned_source_ids?: string[];
+            /** Pinned Sources Snapshot */
+            pinned_sources_snapshot?: {
+                [key: string]: unknown;
+            }[];
+            /** Pinned Version */
+            pinned_version: number;
+            /** Points */
+            points: number;
+            /** Published At */
+            published_at?: string | null;
+            /** Rubric */
+            rubric?: {
+                [key: string]: unknown;
+            };
+            /** Status */
+            status: string;
+            /** Title */
+            title: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** HistoryLessonAssignmentPublishOut */
+        HistoryLessonAssignmentPublishOut: {
+            /**
+             * Classroom Id
+             * Format: uuid
+             */
+            classroom_id: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Lesson Id
+             * Format: uuid
+             */
+            lesson_id: string;
+            /** Pinned Source Ids */
+            pinned_source_ids?: string[];
+            /** Pinned Version */
+            pinned_version: number;
+            /**
+             * Published At
+             * Format: date-time
+             */
+            published_at: string;
+            /** Status */
+            status: string;
+            /** Verified Claim Ids */
+            verified_claim_ids?: string[];
         };
         /** HistoryLessonPublishIn */
         HistoryLessonPublishIn: {
@@ -15225,6 +16870,42 @@ export interface components {
             /** Year */
             year?: number | null;
         };
+        /** ImperialSubmissionAuditOut */
+        ImperialSubmissionAuditOut: {
+            /** Action */
+            action: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** New Value */
+            new_value?: {
+                [key: string]: unknown;
+            } | null;
+            /** Old Value */
+            old_value?: {
+                [key: string]: unknown;
+            } | null;
+            /** Resource Id */
+            resource_id?: string | null;
+            /**
+             * Resource Type
+             * @default imperial_submission
+             */
+            resource_type: string;
+            /** Reviewer Id */
+            reviewer_id?: string | null;
+            /** Submission Id */
+            submission_id?: string | null;
+            /** User Id */
+            user_id?: string | null;
+        };
         /** ImperialSubmissionCreate */
         ImperialSubmissionCreate: {
             /** Activity Id */
@@ -15369,6 +17050,56 @@ export interface components {
             /** Title Vi */
             title_vi: string;
         };
+        /** InquiryEvidenceItemIn */
+        InquiryEvidenceItemIn: {
+            /** Claim Id */
+            claim_id?: string | null;
+            /** Excerpt */
+            excerpt: string;
+            /** Interpretation Note */
+            interpretation_note: string;
+            /** Locator */
+            locator: string;
+            /**
+             * Source Id
+             * Format: uuid
+             */
+            source_id: string;
+            /**
+             * Support Type
+             * @default supports
+             */
+            support_type: string;
+        };
+        /** InquiryEvidenceItemOut */
+        InquiryEvidenceItemOut: {
+            /** Author */
+            author?: string | null;
+            /** Claim Id */
+            claim_id?: string | null;
+            /** Claim Title */
+            claim_title?: string | null;
+            /** Contributed At */
+            contributed_at: string;
+            /** Contributed By Name */
+            contributed_by_name: string;
+            /** Contributed By User Id */
+            contributed_by_user_id: string;
+            /** Excerpt */
+            excerpt: string;
+            /** Id */
+            id: string;
+            /** Interpretation Note */
+            interpretation_note: string;
+            /** Locator */
+            locator: string;
+            /** Source Id */
+            source_id: string;
+            /** Source Title */
+            source_title: string;
+            /** Support Type */
+            support_type: string;
+        };
         /**
          * LeaderboardEntryOut
          * @description Single entry in the class leaderboard.
@@ -15452,6 +17183,147 @@ export interface components {
             show_on_global?: boolean | null;
             /** Show Real Name */
             show_real_name?: boolean | null;
+        };
+        /** LearningOutcomeAssessmentCreate */
+        LearningOutcomeAssessmentCreate: {
+            /**
+             * Assessment Phase
+             * @description pre_test, post_test, delayed_test
+             * @default pre_test
+             */
+            assessment_phase: string;
+            /** Claim Keys */
+            claim_keys?: string[];
+            /**
+             * Ethics Protocol Id
+             * Format: uuid
+             */
+            ethics_protocol_id: string;
+            /**
+             * Is Published
+             * @default true
+             */
+            is_published: boolean;
+            /**
+             * Max Score
+             * @default 100
+             */
+            max_score: number;
+            /** Prompt Markdown */
+            prompt_markdown: string;
+            /** Rubric Schema */
+            rubric_schema?: {
+                [key: string]: unknown;
+            } | null;
+            /** Slug */
+            slug: string;
+            /** Source Ids */
+            source_ids?: string[];
+            /** Target Motif Slug */
+            target_motif_slug?: string | null;
+            /** Target Urn Slug */
+            target_urn_slug?: string | null;
+            /** Title */
+            title: string;
+        };
+        /** LearningOutcomeAssessmentOut */
+        LearningOutcomeAssessmentOut: {
+            /** Assessment Phase */
+            assessment_phase: string;
+            /** Claim Keys */
+            claim_keys?: unknown[];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Ethics Protocol Id
+             * Format: uuid
+             */
+            ethics_protocol_id: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Instrument Type */
+            instrument_type: string;
+            /** Is Published */
+            is_published: boolean;
+            /** Max Score */
+            max_score: number;
+            /** Prompt Markdown */
+            prompt_markdown: string;
+            /** Rubric Schema */
+            rubric_schema?: {
+                [key: string]: unknown;
+            };
+            /** Slug */
+            slug: string;
+            /** Source Ids */
+            source_ids?: unknown[];
+            /** Target Motif Slug */
+            target_motif_slug?: string | null;
+            /** Target Urn Slug */
+            target_urn_slug?: string | null;
+            /** Title */
+            title: string;
+        };
+        /** LearningOutcomeSubmissionCreate */
+        LearningOutcomeSubmissionCreate: {
+            /**
+             * Citations Provided
+             * @description Primary source citations utilized
+             */
+            citations_provided?: string[];
+            /**
+             * Responses
+             * @description Student inquiry answers, essay, source analysis
+             */
+            responses: {
+                [key: string]: unknown;
+            };
+        };
+        /** LearningOutcomeSubmissionOut */
+        LearningOutcomeSubmissionOut: {
+            /**
+             * Assessment Id
+             * Format: uuid
+             */
+            assessment_id: string;
+            /** Assessment Phase */
+            assessment_phase: string;
+            /** Citations Provided */
+            citations_provided?: unknown[];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Instrument Type */
+            instrument_type: string;
+            /** Responses */
+            responses?: {
+                [key: string]: unknown;
+            };
+            /** Status */
+            status: string;
+            /**
+             * Student Id
+             * Format: uuid
+             */
+            student_id: string;
+            /**
+             * Submitted At
+             * Format: date-time
+             */
+            submitted_at: string;
         };
         /**
          * LearningPathGenerateIn
@@ -16437,6 +18309,65 @@ export interface components {
             /** Xp Earned */
             xp_earned: number;
         };
+        /** MotifProgressionItem */
+        MotifProgressionItem: {
+            /**
+             * Can Take Quiz
+             * @default true
+             */
+            can_take_quiz: boolean;
+            /**
+             * Can View Lesson
+             * @default true
+             */
+            can_view_lesson: boolean;
+            /** Discovered At */
+            discovered_at?: string | null;
+            /**
+             * Is Demo
+             * @default false
+             */
+            is_demo: boolean;
+            /**
+             * Is Mastered
+             * @default false
+             */
+            is_mastered: boolean;
+            /** Learned At */
+            learned_at?: string | null;
+            /** Lesson Viewed At */
+            lesson_viewed_at?: string | null;
+            /** Mastered At */
+            mastered_at?: string | null;
+            /**
+             * Motif Id
+             * Format: uuid
+             */
+            motif_id: string;
+            /** Motif Title */
+            motif_title: string;
+            /**
+             * Quiz Attempts
+             * @default 0
+             */
+            quiz_attempts: number;
+            /**
+             * Quiz Best Score
+             * @default 0
+             */
+            quiz_best_score: number;
+            /** Status */
+            status: string;
+            /** Urn Id */
+            urn_id?: string | null;
+            /** Urn Slug */
+            urn_slug?: string | null;
+            /**
+             * Xp Earned
+             * @default 0
+             */
+            xp_earned: number;
+        };
         /** MotifQuizQuestionOut */
         MotifQuizQuestionOut: {
             /**
@@ -16811,6 +18742,70 @@ export interface components {
             total_xp: number;
             /** Xp Earned */
             xp_earned: number;
+        };
+        /** ProgressionActionRequest */
+        ProgressionActionRequest: {
+            /** Action */
+            action: string;
+            /** Answers */
+            answers?: {
+                [key: string]: string;
+            } | null;
+            /** Client Claimed Status */
+            client_claimed_status?: string | null;
+            /** Idempotency Key */
+            idempotency_key?: string | null;
+            /**
+             * Motif Id
+             * Format: uuid
+             */
+            motif_id: string;
+            /**
+             * Time Spent Seconds
+             * @default 0
+             */
+            time_spent_seconds: number | null;
+        };
+        /** ProgressionActionResponse */
+        ProgressionActionResponse: {
+            /**
+             * Already Learned
+             * @default false
+             */
+            already_learned: boolean;
+            /**
+             * Already Mastered
+             * @default false
+             */
+            already_mastered: boolean;
+            /**
+             * Already Unlocked
+             * @default false
+             */
+            already_unlocked: boolean;
+            /** Message */
+            message: string;
+            /**
+             * Motif Id
+             * Format: uuid
+             */
+            motif_id: string;
+            /** New Status */
+            new_status: string;
+            /** Previous Status */
+            previous_status: string;
+            /** Quiz Passed */
+            quiz_passed?: boolean | null;
+            /** Quiz Score */
+            quiz_score?: number | null;
+            /** Status Changed */
+            status_changed: boolean;
+            /** Success */
+            success: boolean;
+            /** Total Xp */
+            total_xp: number;
+            /** Xp Awarded */
+            xp_awarded: number;
         };
         /** PublicBadgeOut */
         PublicBadgeOut: {
@@ -19004,6 +20999,55 @@ export interface components {
              */
             quality: number;
         };
+        /** RubricEvaluationCreate */
+        RubricEvaluationCreate: {
+            /** Evidence Notes */
+            evidence_notes?: string | null;
+            /** Feedback Markdown */
+            feedback_markdown?: string | null;
+            /**
+             * Rubric Scores
+             * @description Criteria scores, e.g. S1_SPATIAL: 25.0
+             */
+            rubric_scores: {
+                [key: string]: number;
+            };
+        };
+        /** RubricEvaluationOut */
+        RubricEvaluationOut: {
+            /**
+             * Assessor Id
+             * Format: uuid
+             */
+            assessor_id: string;
+            /**
+             * Evaluated At
+             * Format: date-time
+             */
+            evaluated_at: string;
+            /** Evidence Notes */
+            evidence_notes?: string | null;
+            /** Feedback Markdown */
+            feedback_markdown?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Is Independent */
+            is_independent: boolean;
+            /** Rubric Scores */
+            rubric_scores: {
+                [key: string]: unknown;
+            };
+            /**
+             * Submission Id
+             * Format: uuid
+             */
+            submission_id: string;
+            /** Total Score */
+            total_score: number;
+        };
         /**
          * ScheduledEmailListOut
          * @description Schema for list of scheduled emails.
@@ -19062,6 +21106,139 @@ export interface components {
              * Format: uuid
              */
             user_id: string;
+        };
+        /**
+         * SchoolCreateIn
+         * @description Input schema for creating a school.
+         */
+        SchoolCreateIn: {
+            /** Address */
+            address?: string | null;
+            /** City */
+            city?: string | null;
+            /** Code */
+            code?: string | null;
+            /** Name */
+            name: string;
+            /** Region */
+            region?: string | null;
+            /** Settings */
+            settings?: {
+                [key: string]: unknown;
+            } | null;
+        };
+        /**
+         * SchoolMemberAddIn
+         * @description Input schema for adding a member to a school.
+         */
+        SchoolMemberAddIn: {
+            /**
+             * Role
+             * @default teacher
+             */
+            role: string;
+            /**
+             * User Id
+             * Format: uuid
+             */
+            user_id: string;
+        };
+        /**
+         * SchoolMemberOut
+         * @description Output schema for a school member.
+         */
+        SchoolMemberOut: {
+            /** Display Name */
+            display_name: string;
+            /** Email */
+            email: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Joined At
+             * Format: date-time
+             */
+            joined_at: string;
+            /** Role */
+            role: string;
+            /**
+             * School Id
+             * Format: uuid
+             */
+            school_id: string;
+            /**
+             * User Id
+             * Format: uuid
+             */
+            user_id: string;
+        };
+        /**
+         * SchoolOut
+         * @description Output schema for a school.
+         */
+        SchoolOut: {
+            /** Address */
+            address?: string | null;
+            /** City */
+            city?: string | null;
+            /**
+             * Classroom Count
+             * @default 0
+             */
+            classroom_count: number;
+            /** Code */
+            code?: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Is Active */
+            is_active: boolean;
+            /**
+             * Member Count
+             * @default 0
+             */
+            member_count: number;
+            /** Name */
+            name: string;
+            /** Region */
+            region?: string | null;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /**
+         * SchoolUpdateIn
+         * @description Input schema for updating a school.
+         */
+        SchoolUpdateIn: {
+            /** Address */
+            address?: string | null;
+            /** City */
+            city?: string | null;
+            /** Code */
+            code?: string | null;
+            /** Is Active */
+            is_active?: boolean | null;
+            /** Name */
+            name?: string | null;
+            /** Region */
+            region?: string | null;
+            /** Settings */
+            settings?: {
+                [key: string]: unknown;
+            } | null;
         };
         /** SearchResponse */
         SearchResponse: {
@@ -19864,6 +22041,106 @@ export interface components {
             status: string;
         };
         /**
+         * StudentAssignmentProgressOut
+         * @description Progress on a specific quest/trail assignment for a student.
+         */
+        StudentAssignmentProgressOut: {
+            /**
+             * Assignment Id
+             * Format: uuid
+             */
+            assignment_id: string;
+            /** Completed At */
+            completed_at?: string | null;
+            /** Due At */
+            due_at?: string | null;
+            /**
+             * Is Missing
+             * @default false
+             */
+            is_missing: boolean;
+            /**
+             * Is Pending
+             * @default false
+             */
+            is_pending: boolean;
+            /** Score */
+            score?: number | null;
+            /** Status */
+            status: string;
+            /** Title */
+            title: string;
+        };
+        /**
+         * StudentGradebookEntryOut
+         * @description Single student's gradebook record with roster details, scores, and status.
+         */
+        StudentGradebookEntryOut: {
+            /** Assignments */
+            assignments?: components["schemas"]["StudentAssignmentProgressOut"][];
+            /** Avatar Url */
+            avatar_url?: string | null;
+            /**
+             * Avg Quiz Score
+             * @default 0
+             */
+            avg_quiz_score: number;
+            /**
+             * Completed Count
+             * @default 0
+             */
+            completed_count: number;
+            /** Display Name */
+            display_name: string;
+            /** Email */
+            email: string;
+            /**
+             * Joined At
+             * Format: date-time
+             */
+            joined_at: string;
+            /**
+             * Missing Count
+             * @default 0
+             */
+            missing_count: number;
+            /**
+             * Overall Completion Percent
+             * @default 0
+             */
+            overall_completion_percent: number;
+            /**
+             * Pending Count
+             * @default 0
+             */
+            pending_count: number;
+            /**
+             * Quizzes Passed
+             * @default 0
+             */
+            quizzes_passed: number;
+            /**
+             * Role
+             * @default learner
+             */
+            role: string;
+            /**
+             * Status
+             * @default completed
+             */
+            status: string;
+            /**
+             * Student Id
+             * Format: uuid
+             */
+            student_id: string;
+            /**
+             * Total Xp
+             * @default 0
+             */
+            total_xp: number;
+        };
+        /**
          * StudentProgressOut
          * @description Detailed progress for a student in a classroom.
          */
@@ -19888,6 +22165,119 @@ export interface components {
              * Format: uuid
              */
             student_id: string;
+        };
+        /** StudentProgressionRules */
+        StudentProgressionRules: {
+            /**
+             * Discovery Xp
+             * @default 25
+             */
+            discovery_xp: number;
+            /**
+             * Lesson Xp
+             * @default 50
+             */
+            lesson_xp: number;
+            /**
+             * Mastery Xp
+             * @default 75
+             */
+            mastery_xp: number;
+            /**
+             * Max Possible Xp Per Motif
+             * @default 150
+             */
+            max_possible_xp_per_motif: number;
+            /**
+             * Quiz Pass Threshold
+             * @default 80
+             */
+            quiz_pass_threshold: number;
+        };
+        /** StudentProgressionSummaryOut */
+        StudentProgressionSummaryOut: {
+            /** Completion Percentage */
+            completion_percentage: number;
+            /** Current Streak */
+            current_streak: number;
+            /** Discovered Count */
+            discovered_count: number;
+            /** Display Name */
+            display_name: string;
+            /** Hidden Count */
+            hidden_count: number;
+            /** Learned Count */
+            learned_count: number;
+            /** Mastered Count */
+            mastered_count: number;
+            /** Mastery Percentage */
+            mastery_percentage: number;
+            /** Motifs */
+            motifs: components["schemas"]["MotifProgressionItem"][];
+            /** Rank */
+            rank: string;
+            rules: components["schemas"]["StudentProgressionRules"];
+            /** Total Motifs */
+            total_motifs: number;
+            /** Total Xp */
+            total_xp: number;
+            /**
+             * User Id
+             * Format: uuid
+             */
+            user_id: string;
+        };
+        /** SubjectiveSurveyCreate */
+        SubjectiveSurveyCreate: {
+            /** Feedback Text */
+            feedback_text?: string | null;
+            /**
+             * Likert Responses
+             * @description Likert 1-5 ratings for enjoyment, perceived confidence, etc.
+             */
+            likert_responses: {
+                [key: string]: number;
+            };
+            /** Perceived Learning Score */
+            perceived_learning_score?: number | null;
+            /** Satisfaction Score */
+            satisfaction_score?: number | null;
+            /** Survey Name */
+            survey_name: string;
+        };
+        /** SubjectiveSurveyOut */
+        SubjectiveSurveyOut: {
+            /** Feedback Text */
+            feedback_text?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Instrument Type */
+            instrument_type: string;
+            /** Is Subjective Self Report */
+            is_subjective_self_report: boolean;
+            /** Likert Responses */
+            likert_responses: {
+                [key: string]: unknown;
+            };
+            /** Perceived Learning Score */
+            perceived_learning_score?: number | null;
+            /** Satisfaction Score */
+            satisfaction_score?: number | null;
+            /**
+             * Student Id
+             * Format: uuid
+             */
+            student_id: string;
+            /**
+             * Submitted At
+             * Format: date-time
+             */
+            submitted_at: string;
+            /** Survey Name */
+            survey_name: string;
         };
         /**
          * SubmitForReviewIn
@@ -24988,6 +27378,8 @@ export interface operations {
             query?: {
                 /** @description Include archived classrooms */
                 include_archived?: boolean;
+                /** @description Filter by school ID */
+                school_id?: string | null;
             };
             header?: never;
             path?: never;
@@ -25361,7 +27753,88 @@ export interface operations {
     };
     export_class_progress_api_v1_classrooms__classroom_id__export_get: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Filter by: all, missing, pending, completed */
+                status_filter?: string | null;
+                /** @description Search by student name or email */
+                search?: string | null;
+                /** @description Anonymize student names and emails */
+                anonymize?: boolean;
+            };
+            header?: never;
+            path: {
+                classroom_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_classroom_gradebook_api_v1_classrooms__classroom_id__gradebook_get: {
+        parameters: {
+            query?: {
+                /** @description Filter by: all, missing, pending, completed */
+                status_filter?: string | null;
+                /** @description Search by student display name or email */
+                search?: string | null;
+            };
+            header?: never;
+            path: {
+                classroom_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClassroomGradebookOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    export_classroom_gradebook_csv_api_v1_classrooms__classroom_id__gradebook_export_get: {
+        parameters: {
+            query?: {
+                /** @description Filter by: all, missing, pending, completed */
+                status_filter?: string | null;
+                /** @description Search by student display name or email */
+                search?: string | null;
+                /** @description Anonymize student names and emails with HS-ANON prefix */
+                anonymize?: boolean;
+            };
             header?: never;
             path: {
                 classroom_id: string;
@@ -25542,6 +28015,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ClassProgressSummaryOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_classroom_roster_api_v1_classrooms__classroom_id__roster_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                classroom_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClassroomRosterOut"];
                 };
             };
             /** @description Validation Error */
@@ -26361,6 +28865,301 @@ export interface operations {
             };
         };
     };
+    list_history_assignments_api_v1_history_assignments_get: {
+        parameters: {
+            query?: {
+                classroom_id?: string | null;
+                lesson_id?: string | null;
+                status?: string | null;
+                offset?: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoryLessonAssignmentListOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_history_assignment_api_v1_history_assignments_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HistoryLessonAssignmentCreateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoryLessonAssignmentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_history_assignment_api_v1_history_assignments__assignment_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assignment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoryLessonAssignmentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_history_assignment_assessment_basis_api_v1_history_assignments__assignment_id__assessment_basis_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assignment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoryAssignmentAssessmentBasisOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    publish_history_assignment_endpoint_api_v1_history_assignments__assignment_id__publish_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assignment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoryLessonAssignmentPublishOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_history_assignment_submissions_api_v1_history_assignments__assignment_id__submissions_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assignment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoryAssignmentSubmissionListOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_history_assignment_submission_api_v1_history_assignments__assignment_id__submissions__submission_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assignment_id: string;
+                submission_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoryAssignmentSubmissionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    grade_history_assignment_submission_endpoint_api_v1_history_assignments__assignment_id__submissions__submission_id__grade_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assignment_id: string;
+                submission_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HistoryAssignmentGradeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoryAssignmentSubmissionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    submit_history_assignment_endpoint_api_v1_history_assignments__assignment_id__submit_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assignment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HistoryAssignmentSubmitIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoryAssignmentSubmissionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_history_claim_api_v1_history_claims__claim_id__get: {
         parameters: {
             query?: never;
@@ -26946,6 +29745,697 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+        };
+    };
+    list_activities_api_v1_history_inquiry_activities_get: {
+        parameters: {
+            query?: {
+                /** @description Filter activities by classroom ID */
+                classroom_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoricalInquiryActivityOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_activity_api_v1_history_inquiry_activities_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HistoricalInquiryActivityCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoricalInquiryActivityOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_activity_api_v1_history_inquiry_activities__activity_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                activity_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoricalInquiryActivityOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_groups_api_v1_history_inquiry_activities__activity_id__groups_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                activity_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoricalInquiryGroupOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_group_api_v1_history_inquiry_activities__activity_id__groups_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                activity_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HistoricalInquiryGroupCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoricalInquiryGroupOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_evidence_api_v1_history_inquiry_groups__group_id__evidence_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                group_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InquiryEvidenceItemIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InquiryEvidenceItemOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    remove_evidence_api_v1_history_inquiry_groups__group_id__evidence__evidence_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                group_id: string;
+                evidence_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoricalInquirySubmissionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_member_api_v1_history_inquiry_groups__group_id__members_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                group_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AddGroupMemberIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoricalInquiryGroupMemberOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_submission_api_v1_history_inquiry_groups__group_id__submission_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                group_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoricalInquirySubmissionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_submission_api_v1_history_inquiry_groups__group_id__submission_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                group_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HistoricalInquirySubmissionUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoricalInquirySubmissionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    submit_inquiry_api_v1_history_inquiry_groups__group_id__submit_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                group_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoricalInquirySubmissionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    moderate_submission_api_v1_history_inquiry_submissions__submission_id__moderate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                submission_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HistoricalInquiryTeacherModerationIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoricalInquiryTeacherModerationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_learning_outcome_assessment_endpoint_api_v1_history_learning_outcomes_assessments_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LearningOutcomeAssessmentCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LearningOutcomeAssessmentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_learning_outcome_assessment_endpoint_api_v1_history_learning_outcomes_assessments__assessment_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assessment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LearningOutcomeAssessmentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    submit_learning_outcome_assessment_endpoint_api_v1_history_learning_outcomes_assessments__assessment_id__submit_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assessment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LearningOutcomeSubmissionCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LearningOutcomeSubmissionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    compute_causal_learning_outcome_endpoint_api_v1_history_learning_outcomes_causal_metrics_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CausalLearningMetricComputeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CausalLearningMetricOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_cohort_causal_metrics_endpoint_api_v1_history_learning_outcomes_cohort_metrics__ethics_protocol_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                ethics_protocol_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CohortCausalLearningMetricsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_ethics_protocol_endpoint_api_v1_history_learning_outcomes_ethics_protocols_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EthicsProtocolCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EthicsProtocolOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_ethics_protocol_endpoint_api_v1_history_learning_outcomes_ethics_protocols__protocol_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                protocol_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EthicsProtocolOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    evaluate_learning_outcome_submission_endpoint_api_v1_history_learning_outcomes_submissions__submission_id__evaluate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                submission_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RubricEvaluationCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RubricEvaluationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    submit_subjective_survey_endpoint_api_v1_history_learning_outcomes_surveys_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SubjectiveSurveyCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SubjectiveSurveyOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -29251,6 +32741,68 @@ export interface operations {
             };
         };
     };
+    get_submission_detail_api_v1_imperial_teacher_submissions__submission_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                submission_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialSubmissionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_submission_audit_api_v1_imperial_teacher_submissions__submission_id__audit_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                submission_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImperialSubmissionAuditOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     grade_submission_api_v1_imperial_teacher_submissions__submission_id__grade_post: {
         parameters: {
             query?: never;
@@ -31042,6 +34594,189 @@ export interface operations {
             };
         };
     };
+    handle_progression_action_api_v1_progress_action_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProgressionActionRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProgressionActionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    complete_lesson_action_api_v1_progress_complete_lesson_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProgressionActionRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProgressionActionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    discover_motif_api_v1_progress_discover_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProgressionActionRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProgressionActionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_motif_progress_api_v1_progress_motifs__motif_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                motif_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MotifProgressionItem"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    submit_quiz_action_api_v1_progress_submit_quiz_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProgressionActionRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProgressionActionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_progression_summary_api_v1_progress_summary_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StudentProgressionSummaryOut"];
+                };
+            };
+        };
+    };
     list_quests_api_v1_quests_get: {
         parameters: {
             query?: never;
@@ -31964,6 +35699,210 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SpacedRepetitionCardOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_schools_api_v1_schools_get: {
+        parameters: {
+            query?: {
+                /** @description Filter by city */
+                city?: string | null;
+                /** @description Filter by active status */
+                is_active?: boolean | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SchoolOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_school_api_v1_schools_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SchoolCreateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SchoolOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_school_api_v1_schools__school_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                school_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SchoolOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_school_api_v1_schools__school_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                school_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SchoolUpdateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SchoolOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_school_classrooms_api_v1_schools__school_id__classrooms_get: {
+        parameters: {
+            query?: {
+                /** @description Include archived classrooms */
+                include_archived?: boolean;
+            };
+            header?: never;
+            path: {
+                school_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClassroomSummaryOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_school_member_api_v1_schools__school_id__members_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                school_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SchoolMemberAddIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SchoolMemberOut"];
                 };
             };
             /** @description Validation Error */

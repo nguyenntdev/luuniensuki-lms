@@ -2513,6 +2513,8 @@ class ClassroomCreateIn(BaseModel):
     description: Optional[str] = None
     max_students: Optional[int] = Field(None, ge=1, le=1000)
     settings: Optional[dict[str, Any]] = None
+    school_id: Optional[UUID] = None
+    term: Optional[str] = Field(None, max_length=50)
 
 
 class ClassroomUpdateIn(BaseModel):
@@ -2522,12 +2524,16 @@ class ClassroomUpdateIn(BaseModel):
     description: Optional[str] = None
     max_students: Optional[int] = Field(None, ge=1, le=1000)
     settings: Optional[dict[str, Any]] = None
+    school_id: Optional[UUID] = None
+    term: Optional[str] = Field(None, max_length=50)
 
 
 class ClassroomJoinIn(BaseModel):
     """Input schema for joining a classroom by code."""
 
-    class_code: str = Field(..., min_length=6, max_length=10, pattern="^[A-Z0-9]+$")
+    class_code: str = Field(..., min_length=6, max_length=10, pattern="^[a-zA-Z0-9]+$")
+    guardian_email: Optional[str] = None
+    guardian_consent: Optional[bool] = None
 
 
 class ClassMemberOut(BaseModel):
@@ -2539,6 +2545,8 @@ class ClassMemberOut(BaseModel):
     email: str
     role: str
     joined_at: datetime
+    guardian_email: Optional[str] = None
+    guardian_consent: Optional[bool] = None
 
 
 class ClassroomSummaryOut(BaseModel):
@@ -2555,6 +2563,8 @@ class ClassroomSummaryOut(BaseModel):
     assignment_count: int
     created_at: datetime
     updated_at: datetime
+    school_id: Optional[UUID] = None
+    term: Optional[str] = None
 
 
 class ClassroomDetailOut(BaseModel):
@@ -2574,6 +2584,9 @@ class ClassroomDetailOut(BaseModel):
     assignment_count: int
     created_at: datetime
     updated_at: datetime
+    school_id: Optional[UUID] = None
+    school_name: Optional[str] = None
+    term: Optional[str] = None
 
 
 class ClassroomJoinOut(BaseModel):
@@ -2581,6 +2594,96 @@ class ClassroomJoinOut(BaseModel):
 
     classroom: ClassroomDetailOut
     message: str
+
+
+# =============================================================================
+# School Schemas
+# =============================================================================
+
+
+class SchoolCreateIn(BaseModel):
+    """Input schema for creating a school."""
+
+    name: str = Field(..., min_length=1, max_length=255)
+    code: Optional[str] = Field(None, max_length=50)
+    address: Optional[str] = None
+    city: Optional[str] = None
+    region: Optional[str] = None
+    settings: Optional[dict[str, Any]] = None
+
+
+class SchoolUpdateIn(BaseModel):
+    """Input schema for updating a school."""
+
+    name: Optional[str] = Field(None, min_length=1, max_length=255)
+    code: Optional[str] = Field(None, max_length=50)
+    address: Optional[str] = None
+    city: Optional[str] = None
+    region: Optional[str] = None
+    is_active: Optional[bool] = None
+    settings: Optional[dict[str, Any]] = None
+
+
+class SchoolMemberAddIn(BaseModel):
+    """Input schema for adding a member to a school."""
+
+    user_id: UUID
+    role: str = Field("teacher", pattern="^(teacher|student|staff|principal|admin)$")
+
+
+class SchoolMemberOut(BaseModel):
+    """Output schema for a school member."""
+
+    id: UUID
+    school_id: UUID
+    user_id: UUID
+    display_name: str
+    email: str
+    role: str
+    joined_at: datetime
+
+
+class SchoolOut(BaseModel):
+    """Output schema for a school."""
+
+    id: UUID
+    name: str
+    code: Optional[str] = None
+    address: Optional[str] = None
+    city: Optional[str] = None
+    region: Optional[str] = None
+    is_active: bool
+    created_at: datetime
+    updated_at: datetime
+    classroom_count: int = 0
+    member_count: int = 0
+
+
+class ClassroomRosterStudentOut(BaseModel):
+    """Output schema for a student entry in classroom roster."""
+
+    id: UUID
+    user_id: UUID
+    display_name: str
+    email: Optional[str] = None
+    role: str
+    joined_at: datetime
+    guardian_email: Optional[str] = None
+    guardian_consent: Optional[bool] = None
+
+
+class ClassroomRosterOut(BaseModel):
+    """Output schema for classroom student roster."""
+
+    classroom_id: UUID
+    classroom_name: str
+    class_code: Optional[str] = None
+    teacher_name: str
+    term: Optional[str] = None
+    school_id: Optional[UUID] = None
+    school_name: Optional[str] = None
+    student_count: int
+    students: list[ClassroomRosterStudentOut]
 
 
 # =============================================================================
@@ -2961,6 +3064,66 @@ class LeaderboardOut(BaseModel):
     classroom_id: UUID
     order_by: str
     entries: list[LeaderboardEntryOut]
+
+
+# =============================================================================
+# Classroom Gradebook Schemas (V5.1 / Wave W03)
+# =============================================================================
+
+
+class StudentAssignmentProgressOut(BaseModel):
+    """Progress on a specific quest/trail assignment for a student."""
+
+    assignment_id: UUID
+    title: str
+    due_at: Optional[datetime] = None
+    status: str
+    score: Optional[float] = None
+    completed_at: Optional[datetime] = None
+    is_missing: bool = False
+    is_pending: bool = False
+
+
+class StudentGradebookEntryOut(BaseModel):
+    """Single student's gradebook record with roster details, scores, and status."""
+
+    student_id: UUID
+    display_name: str
+    email: str
+    role: str = "learner"
+    avatar_url: Optional[str] = None
+    joined_at: datetime
+    overall_completion_percent: float = 0.0
+    total_xp: int = 0
+    quizzes_passed: int = 0
+    avg_quiz_score: float = 0.0
+    assignments: list[StudentAssignmentProgressOut] = Field(default_factory=list)
+    completed_count: int = 0
+    pending_count: int = 0
+    missing_count: int = 0
+    status: str = "completed"
+
+
+class GradebookMetricsOut(BaseModel):
+    """Aggregated metrics for a classroom gradebook."""
+
+    total_students: int = 0
+    completed_count: int = 0
+    pending_count: int = 0
+    missing_count: int = 0
+    average_score: float = 0.0
+    average_completion_percent: float = 0.0
+
+
+class ClassroomGradebookOut(BaseModel):
+    """Full gradebook output schema for teacher review and grading."""
+
+    classroom_id: UUID
+    classroom_name: str
+    teacher_id: UUID
+    total_students: int
+    metrics: GradebookMetricsOut
+    roster: list[StudentGradebookEntryOut]
 
 
 # =============================================================================

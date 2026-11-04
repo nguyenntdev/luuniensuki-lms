@@ -1,0 +1,79 @@
+{
+  "ticket": "V5-T038",
+  "ticket_id": "V5-T038",
+  "wave": "W03",
+  "slot": "W03-A08",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Peer / group historical inquiry in backend/routers/ and frontend/src/app/learn/.",
+  "timestamp": "2026-11-05T00:00:00Z",
+  "summary": "Implemented, verified, and audited collaborative peer / group historical inquiry system with primary source evidence synthesis, contributor attribution, strict negative abuse prevention, privacy isolation, and teacher moderation workflows. Groups assemble primary historical sources and claims into verifiable arguments with epistemic rigor gates, preventing unauthorized cross-group alterations or premature claims of verified fact.",
+  "invariants_enforced": [
+    "COLLABORATIVE_SOURCE_EVIDENCE_SYNTHESIS: Peer groups assemble primary bibliographic evidence citations (HistoricalSource & HistoricalClaim) with contributor attribution (user ID, display name, timestamp, locator, and interpretation notes).",
+    "STRICT_NEGATIVE_ABUSE_PREVENTION: A member of one group CANNOT alter, inject evidence into, delete evidence from, or submit another group's collaborative inquiry submission (strictly rejected with HTTP 403 FORBIDDEN_SCOPE).",
+    "EPISTEMIC_RIGOR_VALIDATION: Submissions attempting to claim 'su_lieu_xac_thuc' (Sử liệu xác thực) without backing primary source citations are rejected with HTTP 422 INSUFFICIENT_EVIDENCE; citations to non-existent sources fail with HTTP 404.",
+    "PRIVACY_ISOLATION: Peer group drafts in 'private_group' mode are strictly confidential to group members and the classroom teacher (403 for other students). Approved submissions in 'class_visible' mode become readable across classroom peers while remaining strictly read-only.",
+    "TEACHER_MODERATION_LIFECYCLE: Only classroom teachers and staff can moderate, provide qualitative feedback, score against rubrics, approve, or request revisions. Revision requests unlock the draft for student re-work, while submitted/approved states are locked against modification."
+  ],
+  "verification": {
+    "test_file": "tests/v5/test_v5_t038.py",
+    "tests_passed": 9,
+    "tests_total": 9,
+    "openapi_snapshot_match": "PASSED (test_openapi_snapshot.py)",
+    "route_inventory_freshness": "PASSED (lint-inventory-drift.sh)",
+    "migration_safety": "PASSED (lint-migration-safety.sh)",
+    "frontend_type_check": "PASSED (tsc --noEmit)",
+    "frontend_lint_ci": "PASSED (eslint . --max-warnings=0)"
+  },
+  "changes": [
+    {
+      "file": "backend/history_inquiry_models.py",
+      "description": "Defined SQLAlchemy models for HistoricalInquiryActivity, HistoricalInquiryGroup, HistoricalInquiryGroupMember, and HistoricalInquirySubmission with indexes and unique constraints."
+    },
+    {
+      "file": "backend/history_models.py",
+      "description": "Re-exported historical inquiry models so Base.metadata includes them for test environments and Alembic autogenerate."
+    },
+    {
+      "file": "backend/models.py",
+      "description": "Imported historical inquiry models into backend.models."
+    },
+    {
+      "file": "migrations/versions/0061_peer_group_historical_inquiry.py",
+      "description": "Additive Alembic migration creating historical_inquiry_activities, historical_inquiry_groups, historical_inquiry_group_members, and historical_inquiry_submissions tables with indexes and foreign keys."
+    },
+    {
+      "file": "backend/apischemas/history_inquiry.py",
+      "description": "Pydantic schemas for inquiry activity creation, group management, collaborative evidence items, submissions, updates, and teacher moderation."
+    },
+    {
+      "file": "backend/services/history_inquiry.py",
+      "description": "Service domain logic implementing activity creation, group membership enforcement, collaborative evidence synthesis, strict negative abuse checks, privacy isolation, and teacher moderation."
+    },
+    {
+      "file": "backend/routers/history_inquiry.py",
+      "description": "FastAPI router endpoints under /api/v1/history/inquiry for activities, groups, members, evidence, submission, and moderation."
+    },
+    {
+      "file": "backend/app.py",
+      "description": "Registered history_inquiry router in create_app()."
+    },
+    {
+      "file": "frontend/src/components/rbpc/PeerInquiryWorkspace.tsx",
+      "description": "Contemporary Huế editorial collaborative inquiry UI supporting activity selection, group switching, hypothesis drafting, live source citation corroboration, member roster, and teacher feedback."
+    },
+    {
+      "file": "frontend/src/components/rbpc/index.ts",
+      "description": "Exported PeerInquiryWorkspace."
+    },
+    {
+      "file": "frontend/src/app/learn/page.tsx",
+      "description": "Integrated PeerInquiryWorkspace into the Learn pathway page."
+    },
+    {
+      "file": "tests/v5/test_v5_t038.py",
+      "description": "Comprehensive 9-test test suite verifying activities, groups, evidence synthesis, contributor attribution, epistemic rigor, privacy isolation, submission locking, revision lifecycle, and strict negative abuse isolation."
+    }
+  ]
+}

@@ -40,7 +40,7 @@ from fastapi import (
     status,
 )
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse, RedirectResponse, StreamingResponse
+from fastapi.responses import JSONResponse, RedirectResponse, Response, StreamingResponse
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.staticfiles import StaticFiles
 from jose import JWTError, jwt
@@ -335,6 +335,8 @@ from ..models import (
     Recommendation,
     RevokedRefreshToken,
     ScheduledEmail,
+    School,
+    SchoolMember,
     SkillType,
     SpacedRepetitionCard,
     StreakReward,
@@ -518,6 +520,7 @@ router = APIRouter()
 @router.get("/api/v1/classrooms", response_model=list[schemas.ClassroomSummaryOut])
 def list_classrooms(
     include_archived: bool = Query(False, description="Include archived classrooms"),
+    school_id: Optional[UUID] = Query(None, description="Filter by school ID"),
     current_user: User = Depends(get_staff_user),
     db: Session = Depends(get_db),
 ) -> list[schemas.ClassroomSummaryOut]:
@@ -532,6 +535,9 @@ def list_classrooms(
 
     if not include_archived:
         query = query.where(Classroom.is_archived == False)
+
+    if school_id:
+        query = query.where(Classroom.school_id == school_id)
 
     classrooms = db.execute(query.order_by(Classroom.created_at.desc())).scalars().all()
 
@@ -567,6 +573,8 @@ def list_classrooms(
             assignment_count=int(assignment_counts.get(classroom.id, 0)),
             created_at=classroom.created_at,
             updated_at=classroom.updated_at,
+            school_id=classroom.school_id,
+            term=classroom.term,
         )
         for classroom in classrooms
     ]
@@ -586,14 +594,19 @@ def create_classroom(
     """
     from ..services import classroom as classroom_service
 
-    classroom = classroom_service.create_classroom(
-        db=db,
-        teacher=current_user,
-        name=payload.name,
-        description=payload.description,
-        max_students=payload.max_students,
-        settings=payload.settings,
-    )
+    try:
+        classroom = classroom_service.create_classroom(
+            db=db,
+            teacher=current_user,
+            name=payload.name,
+            description=payload.description,
+            max_students=payload.max_students,
+            settings=payload.settings,
+            school_id=payload.school_id,
+            term=payload.term,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
     return schemas.ClassroomSummaryOut(
         id=classroom.id,
@@ -607,27 +620,96 @@ def create_classroom(
         assignment_count=0,
         created_at=classroom.created_at,
         updated_at=classroom.updated_at,
+        school_id=classroom.school_id,
+        term=classroom.term,
     )
+
+
+@router.get(
+    "/api/v1/classrooms/enrolled", response_model=list[schemas.ClassroomSummaryOut]
+)
+def get_enrolled_classrooms(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> list[schemas.ClassroomSummaryOut]:
+    """
+    Get all classrooms where the current user is enrolled as a student.
+    """
+    from ..services import classroom as classroom_service
+
+    classrooms = classroom_service.get_enrolled_classrooms(db, current_user)
+
+    if not classrooms:
+        return []
+
+    class_ids = [c.id for c in classrooms]
+    member_counts = dict(
+        db.execute(
+            select(ClassMember.class_id, func.count(ClassMember.id))
+            .where(ClassMember.class_id.in_(class_ids))
+            .group_by(ClassMember.class_id)
+        ).all()
+    )
+    assignment_counts = dict(
+        db.execute(
+            select(QuestAssignment.class_id, func.count(QuestAssignment.id))
+            .where(QuestAssignment.class_id.in_(class_ids))
+            .group_by(QuestAssignment.class_id)
+        ).all()
+    )
+
+    return [
+        schemas.ClassroomSummaryOut(
+            id=classroom.id,
+            name=classroom.name,
+            description=classroom.description,
+            teacher_id=classroom.teacher_id,
+            class_code=classroom.class_code,
+            max_students=classroom.max_students,
+            is_archived=classroom.is_archived,
+            member_count=int(member_counts.get(classroom.id, 0)),
+            assignment_count=int(assignment_counts.get(classroom.id, 0)),
+            created_at=classroom.created_at,
+            updated_at=classroom.updated_at,
+            school_id=classroom.school_id,
+            term=classroom.term,
+        )
+        for classroom in classrooms
+    ]
 
 
 @router.get("/api/v1/classrooms/{classroom_id}", response_model=schemas.ClassroomDetailOut)
 def get_classroom(
     classroom_id: UUID,
-    current_user: User = Depends(get_staff_user),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> schemas.ClassroomDetailOut:
     """
     Get detailed classroom information including members and assignments.
+    Only authorized for classroom teacher, admins, or enrolled students.
     """
     classroom = db.get(Classroom, classroom_id)
     if classroom is None:
         raise HTTPException(status_code=404, detail="Classroom not found")
 
-    _ensure_class_access(current_user, classroom)
+    is_teacher_owner = (current_user.role == UserRole.teacher and classroom.teacher_id == current_user.id)
+    is_admin = current_user.role in (UserRole.admin, UserRole.super_admin)
+    is_enrolled = False
+    if current_user.role == UserRole.learner:
+        membership = db.execute(
+            select(ClassMember).where(
+                and_(ClassMember.class_id == classroom.id, ClassMember.user_id == current_user.id)
+            )
+        ).scalar_one_or_none()
+        is_enrolled = (membership is not None)
+
+    if not (is_teacher_owner or is_admin or is_enrolled):
+        raise HTTPException(status_code=403, detail="Not authorized to access this classroom")
 
     # Get teacher info
     teacher = db.get(User, classroom.teacher_id)
     teacher_name = teacher.display_name if teacher else "Unknown"
+    school_name = classroom.school.name if classroom.school else None
 
     # Get members with user details
     members = (
@@ -648,6 +730,8 @@ def get_classroom(
         )
     ).scalar_one()
 
+    can_view_pii = is_teacher_owner or is_admin
+
     return schemas.ClassroomDetailOut(
         id=classroom.id,
         name=classroom.name,
@@ -658,14 +742,19 @@ def get_classroom(
         max_students=classroom.max_students,
         is_archived=classroom.is_archived,
         settings=classroom.settings,
+        school_id=classroom.school_id,
+        school_name=school_name,
+        term=classroom.term,
         members=[
             schemas.ClassMemberOut(
                 id=member.id,
                 user_id=member.user_id,
-                display_name=member.user.display_name,
-                email=member.user.email,
+                display_name=member.user.display_name if member.user else "Unknown",
+                email=member.user.email if (can_view_pii or member.user_id == current_user.id) else "",
                 role=member.role,
                 joined_at=member.joined_at,
+                guardian_email=member.guardian_email if (can_view_pii or member.user_id == current_user.id) else None,
+                guardian_consent=member.guardian_consent if (can_view_pii or member.user_id == current_user.id) else None,
             )
             for member in members
         ],
@@ -694,14 +783,19 @@ def update_classroom(
 
     _ensure_class_access(current_user, classroom)
 
-    classroom = classroom_service.update_classroom(
-        db=db,
-        classroom=classroom,
-        name=payload.name,
-        description=payload.description,
-        max_students=payload.max_students,
-        settings=payload.settings,
-    )
+    try:
+        classroom = classroom_service.update_classroom(
+            db=db,
+            classroom=classroom,
+            name=payload.name,
+            description=payload.description,
+            max_students=payload.max_students,
+            settings=payload.settings,
+            school_id=payload.school_id,
+            term=payload.term,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
     return get_classroom(classroom_id, current_user, db)
 
@@ -803,58 +897,13 @@ def join_classroom(
             db=db,
             user=current_user,
             class_code=payload.class_code,
+            guardian_email=payload.guardian_email,
+            guardian_consent=payload.guardian_consent,
         )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-    # Get teacher info
-    teacher = db.get(User, classroom.teacher_id)
-    teacher_name = teacher.display_name if teacher else "Unknown"
-
-    # Get all members
-    members = (
-        db.execute(
-            select(ClassMember)
-            .options(selectinload(ClassMember.user))
-            .where(ClassMember.class_id == classroom.id)
-        )
-        .scalars()
-        .all()
-    )
-
-    # Get assignment count
-    assignment_count = db.execute(
-        select(func.count(QuestAssignment.id)).where(
-            QuestAssignment.class_id == classroom.id
-        )
-    ).scalar_one()
-
-    classroom_detail = schemas.ClassroomDetailOut(
-        id=classroom.id,
-        name=classroom.name,
-        description=classroom.description,
-        teacher_id=classroom.teacher_id,
-        teacher_name=teacher_name,
-        class_code=classroom.class_code,
-        max_students=classroom.max_students,
-        is_archived=classroom.is_archived,
-        settings=classroom.settings,
-        members=[
-            schemas.ClassMemberOut(
-                id=m.id,
-                user_id=m.user_id,
-                display_name=m.user.display_name,
-                email=m.user.email,
-                role=m.role,
-                joined_at=m.joined_at,
-            )
-            for m in members
-        ],
-        member_count=len(members),
-        assignment_count=int(assignment_count),
-        created_at=classroom.created_at,
-        updated_at=classroom.updated_at,
-    )
+    classroom_detail = get_classroom(classroom.id, current_user, db)
 
     return schemas.ClassroomJoinOut(
         classroom=classroom_detail, message=f"Successfully joined {classroom.name}"
@@ -886,19 +935,308 @@ def remove_member(
 
 
 @router.get(
-    "/api/v1/classrooms/enrolled", response_model=list[schemas.ClassroomSummaryOut]
+    "/api/v1/classrooms/{classroom_id}/roster",
+    response_model=schemas.ClassroomRosterOut,
 )
-def get_enrolled_classrooms(
+def get_classroom_roster(
+    classroom_id: UUID,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-) -> list[schemas.ClassroomSummaryOut]:
+) -> schemas.ClassroomRosterOut:
     """
-    Get all classrooms where the current user is enrolled as a student.
+    Get student roster for a classroom.
+    Authorized for classroom teacher, admins, and enrolled learners.
+    External students/teachers without authorization receive 403 Forbidden.
     """
     from ..services import classroom as classroom_service
 
-    classrooms = classroom_service.get_enrolled_classrooms(db, current_user)
+    classroom = db.get(Classroom, classroom_id)
+    if classroom is None:
+        raise HTTPException(status_code=404, detail="Classroom not found")
 
+    try:
+        roster_data = classroom_service.get_classroom_roster(
+            db=db,
+            classroom=classroom,
+            viewer=current_user,
+        )
+    except PermissionError as e:
+        raise HTTPException(status_code=403, detail=str(e))
+
+    teacher = db.get(User, classroom.teacher_id)
+    teacher_name = teacher.display_name if teacher else "Unknown"
+    school_name = classroom.school.name if classroom.school else None
+
+    return schemas.ClassroomRosterOut(
+        classroom_id=classroom.id,
+        classroom_name=classroom.name,
+        class_code=classroom.class_code,
+        teacher_name=teacher_name,
+        term=classroom.term,
+        school_id=classroom.school_id,
+        school_name=school_name,
+        student_count=len(roster_data),
+        students=[
+            schemas.ClassroomRosterStudentOut(**s)
+            for s in roster_data
+        ],
+    )
+
+
+# =============================================================================
+# School Endpoints
+# =============================================================================
+
+
+@router.post(
+    "/api/v1/schools",
+    response_model=schemas.SchoolOut,
+    status_code=status.HTTP_201_CREATED,
+)
+def create_school(
+    payload: schemas.SchoolCreateIn,
+    current_user: User = Depends(get_staff_user),
+    db: Session = Depends(get_db),
+) -> schemas.SchoolOut:
+    """Create a new school (staff/admin only)."""
+    from ..services import classroom as classroom_service
+
+    try:
+        school = classroom_service.create_school(
+            db=db,
+            name=payload.name,
+            code=payload.code,
+            address=payload.address,
+            city=payload.city,
+            region=payload.region,
+            settings=payload.settings,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    # Associate creator if teacher without a school
+    if current_user.role == UserRole.teacher and not current_user.school_id:
+        classroom_service.add_school_member(db, school.id, current_user.id, role="teacher")
+
+    return schemas.SchoolOut(
+        id=school.id,
+        name=school.name,
+        code=school.code,
+        address=school.address,
+        city=school.city,
+        region=school.region,
+        is_active=school.is_active,
+        created_at=school.created_at,
+        updated_at=school.updated_at,
+        classroom_count=0,
+        member_count=1 if current_user.role == UserRole.teacher else 0,
+    )
+
+
+@router.get("/api/v1/schools", response_model=list[schemas.SchoolOut])
+def list_schools(
+    city: Optional[str] = Query(None, description="Filter by city"),
+    is_active: Optional[bool] = Query(True, description="Filter by active status"),
+    limit: int = Query(50, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+    current_user: User = Depends(get_current_user_optional),
+    db: Session = Depends(get_db),
+) -> list[schemas.SchoolOut]:
+    """List schools with optional filters."""
+    from ..services import classroom as classroom_service
+
+    schools = classroom_service.list_schools(
+        db=db, city=city, is_active=is_active, limit=limit, offset=offset
+    )
+    if not schools:
+        return []
+
+    school_ids = [s.id for s in schools]
+    class_counts = dict(
+        db.execute(
+            select(Classroom.school_id, func.count(Classroom.id))
+            .where(Classroom.school_id.in_(school_ids))
+            .group_by(Classroom.school_id)
+        ).all()
+    )
+    member_counts = dict(
+        db.execute(
+            select(SchoolMember.school_id, func.count(SchoolMember.id))
+            .where(SchoolMember.school_id.in_(school_ids))
+            .group_by(SchoolMember.school_id)
+        ).all()
+    )
+
+    return [
+        schemas.SchoolOut(
+            id=s.id,
+            name=s.name,
+            code=s.code,
+            address=s.address,
+            city=s.city,
+            region=s.region,
+            is_active=s.is_active,
+            created_at=s.created_at,
+            updated_at=s.updated_at,
+            classroom_count=int(class_counts.get(s.id, 0)),
+            member_count=int(member_counts.get(s.id, 0)),
+        )
+        for s in schools
+    ]
+
+
+@router.get("/api/v1/schools/{school_id}", response_model=schemas.SchoolOut)
+def get_school(
+    school_id: UUID,
+    current_user: User = Depends(get_current_user_optional),
+    db: Session = Depends(get_db),
+) -> schemas.SchoolOut:
+    """Get school details."""
+    from ..services import classroom as classroom_service
+
+    school = classroom_service.get_school(db, school_id)
+    if not school:
+        raise HTTPException(status_code=404, detail="School not found")
+
+    class_count = db.execute(
+        select(func.count(Classroom.id)).where(Classroom.school_id == school.id)
+    ).scalar_one()
+    member_count = db.execute(
+        select(func.count(SchoolMember.id)).where(SchoolMember.school_id == school.id)
+    ).scalar_one()
+
+    return schemas.SchoolOut(
+        id=school.id,
+        name=school.name,
+        code=school.code,
+        address=school.address,
+        city=school.city,
+        region=school.region,
+        is_active=school.is_active,
+        created_at=school.created_at,
+        updated_at=school.updated_at,
+        classroom_count=int(class_count),
+        member_count=int(member_count),
+    )
+
+
+@router.patch("/api/v1/schools/{school_id}", response_model=schemas.SchoolOut)
+def update_school(
+    school_id: UUID,
+    payload: schemas.SchoolUpdateIn,
+    current_user: User = Depends(get_staff_user),
+    db: Session = Depends(get_db),
+) -> schemas.SchoolOut:
+    """Update school details (staff/admin only)."""
+    from ..services import classroom as classroom_service
+
+    school = classroom_service.get_school(db, school_id)
+    if not school:
+        raise HTTPException(status_code=404, detail="School not found")
+
+    # If teacher, must be a member of this school or admin
+    if current_user.role == UserRole.teacher:
+        membership = db.execute(
+            select(SchoolMember).where(
+                and_(SchoolMember.school_id == school.id, SchoolMember.user_id == current_user.id)
+            )
+        ).scalar_one_or_none()
+        if not membership and current_user.school_id != school.id:
+            raise HTTPException(status_code=403, detail="Not authorized to update this school")
+
+    try:
+        updated = classroom_service.update_school(
+            db=db,
+            school=school,
+            name=payload.name,
+            code=payload.code,
+            address=payload.address,
+            city=payload.city,
+            region=payload.region,
+            is_active=payload.is_active,
+            settings=payload.settings,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    class_count = db.execute(
+        select(func.count(Classroom.id)).where(Classroom.school_id == school.id)
+    ).scalar_one()
+    member_count = db.execute(
+        select(func.count(SchoolMember.id)).where(SchoolMember.school_id == school.id)
+    ).scalar_one()
+
+    return schemas.SchoolOut(
+        id=updated.id,
+        name=updated.name,
+        code=updated.code,
+        address=updated.address,
+        city=updated.city,
+        region=updated.region,
+        is_active=updated.is_active,
+        created_at=updated.created_at,
+        updated_at=updated.updated_at,
+        classroom_count=int(class_count),
+        member_count=int(member_count),
+    )
+
+
+@router.post(
+    "/api/v1/schools/{school_id}/members",
+    response_model=schemas.SchoolMemberOut,
+    status_code=status.HTTP_201_CREATED,
+)
+def add_school_member(
+    school_id: UUID,
+    payload: schemas.SchoolMemberAddIn,
+    current_user: User = Depends(get_staff_user),
+    db: Session = Depends(get_db),
+) -> schemas.SchoolMemberOut:
+    """Add a teacher or staff member to a school."""
+    from ..services import classroom as classroom_service
+
+    try:
+        member = classroom_service.add_school_member(
+            db=db,
+            school_id=school_id,
+            user_id=payload.user_id,
+            role=payload.role,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    user = db.get(User, payload.user_id)
+    return schemas.SchoolMemberOut(
+        id=member.id,
+        school_id=member.school_id,
+        user_id=member.user_id,
+        display_name=user.display_name if user else "Unknown",
+        email=user.email if user else "",
+        role=member.role,
+        joined_at=member.joined_at,
+    )
+
+
+@router.get(
+    "/api/v1/schools/{school_id}/classrooms",
+    response_model=list[schemas.ClassroomSummaryOut],
+)
+def list_school_classrooms(
+    school_id: UUID,
+    include_archived: bool = Query(False, description="Include archived classrooms"),
+    current_user: User = Depends(get_current_user_optional),
+    db: Session = Depends(get_db),
+) -> list[schemas.ClassroomSummaryOut]:
+    """List classrooms associated with a school."""
+    from ..services import classroom as classroom_service
+
+    school = classroom_service.get_school(db, school_id)
+    if not school:
+        raise HTTPException(status_code=404, detail="School not found")
+
+    classrooms = classroom_service.get_school_classrooms(
+        db=db, school_id=school_id, include_archived=include_archived
+    )
     if not classrooms:
         return []
 
@@ -920,19 +1258,21 @@ def get_enrolled_classrooms(
 
     return [
         schemas.ClassroomSummaryOut(
-            id=classroom.id,
-            name=classroom.name,
-            description=classroom.description,
-            teacher_id=classroom.teacher_id,
-            class_code=classroom.class_code,
-            max_students=classroom.max_students,
-            is_archived=classroom.is_archived,
-            member_count=int(member_counts.get(classroom.id, 0)),
-            assignment_count=int(assignment_counts.get(classroom.id, 0)),
-            created_at=classroom.created_at,
-            updated_at=classroom.updated_at,
+            id=c.id,
+            name=c.name,
+            description=c.description,
+            teacher_id=c.teacher_id,
+            class_code=c.class_code,
+            max_students=c.max_students,
+            is_archived=c.is_archived,
+            member_count=int(member_counts.get(c.id, 0)),
+            assignment_count=int(assignment_counts.get(c.id, 0)),
+            created_at=c.created_at,
+            updated_at=c.updated_at,
+            school_id=c.school_id,
+            term=c.term,
         )
-        for classroom in classrooms
+        for c in classrooms
     ]
 
 
@@ -1382,9 +1722,345 @@ def get_class_leaderboard(
     )
 
 
+def _compute_classroom_gradebook(
+    db: Session,
+    classroom: Classroom,
+    status_filter: Optional[str] = None,
+    search: Optional[str] = None,
+) -> schemas.ClassroomGradebookOut:
+    """Compute full gradebook roster, scores, missing/pending metrics for a classroom."""
+    from ..services import student_progress as progress_service
+
+    members = (
+        db.execute(
+            select(ClassMember)
+            .options(selectinload(ClassMember.user))
+            .where(
+                and_(
+                    ClassMember.class_id == classroom.id,
+                    ClassMember.role == "learner",
+                )
+            )
+            .order_by(ClassMember.joined_at.asc())
+        )
+        .scalars()
+        .all()
+    )
+
+    assignments = (
+        db.execute(
+            select(QuestAssignment)
+            .options(selectinload(QuestAssignment.quest))
+            .where(QuestAssignment.class_id == classroom.id)
+            .order_by(QuestAssignment.assigned_at.desc())
+        )
+        .scalars()
+        .all()
+    )
+
+    assignment_ids = [a.id for a in assignments]
+    progress_map = {}
+    if assignment_ids:
+        progress_entries = (
+            db.execute(
+                select(AssignmentProgress).where(
+                    AssignmentProgress.assignment_id.in_(assignment_ids)
+                )
+            )
+            .scalars()
+            .all()
+        )
+        for prog in progress_entries:
+            progress_map[(prog.user_id, prog.assignment_id)] = prog
+
+    now = datetime.now(timezone.utc)
+
+    roster_entries = []
+    total_completed = 0
+    total_pending = 0
+    total_missing = 0
+    sum_quiz_scores = 0.0
+    sum_completion_percent = 0.0
+    valid_quiz_students = 0
+
+    for member in members:
+        user = member.user
+        if not user:
+            continue
+
+        try:
+            progress_data = progress_service.get_student_progress(
+                db, member.user_id, classroom.id
+            )
+            completion_pct = float(progress_data.get("overall_completion_percent", 0.0))
+            xp = int(progress_data.get("engagement", {}).get("total_xp", 0))
+            quizzes_passed = int(progress_data.get("quizzes", {}).get("passed", 0))
+            avg_score = float(progress_data.get("quizzes", {}).get("average_score", 0.0))
+        except (ValueError, Exception):
+            completion_pct = 0.0
+            xp = 0
+            quizzes_passed = 0
+            avg_score = 0.0
+
+        if avg_score > 0:
+            sum_quiz_scores += avg_score
+            valid_quiz_students += 1
+        sum_completion_percent += completion_pct
+
+        student_assignments = []
+        student_completed = 0
+        student_pending = 0
+        student_missing = 0
+
+        for a in assignments:
+            prog = progress_map.get((member.user_id, a.id))
+            raw_status = prog.status if prog else "assigned"
+            completed_at = prog.completed_at if prog else None
+
+            is_completed = raw_status == "completed"
+            is_overdue = False
+            if a.due_at is not None:
+                due_utc = (
+                    a.due_at
+                    if a.due_at.tzinfo is not None
+                    else a.due_at.replace(tzinfo=timezone.utc)
+                )
+                is_overdue = due_utc < now
+
+            is_missing = not is_completed and is_overdue
+            is_pending = not is_completed and not is_missing
+
+            effective_status = (
+                "completed" if is_completed else ("missing" if is_missing else raw_status)
+            )
+
+            if is_completed:
+                student_completed += 1
+            elif is_missing:
+                student_missing += 1
+            else:
+                student_pending += 1
+
+            title = (a.quest.name if a.quest else None) or a.notes or "Nhiệm vụ học tập"
+            student_assignments.append(
+                schemas.StudentAssignmentProgressOut(
+                    assignment_id=a.id,
+                    title=title,
+                    due_at=a.due_at,
+                    status=effective_status,
+                    score=float(a.points_override) if a.points_override is not None else None,
+                    completed_at=completed_at,
+                    is_missing=is_missing,
+                    is_pending=is_pending,
+                )
+            )
+
+        if student_missing > 0:
+            student_status = "missing"
+            total_missing += 1
+        elif student_pending > 0:
+            student_status = "pending"
+            total_pending += 1
+        else:
+            student_status = "completed"
+            total_completed += 1
+
+        entry = schemas.StudentGradebookEntryOut(
+            student_id=member.user_id,
+            display_name=user.display_name or user.username or "Học sinh",
+            email=user.email,
+            role=member.role,
+            avatar_url=None,
+            joined_at=member.joined_at,
+            overall_completion_percent=completion_pct,
+            total_xp=xp,
+            quizzes_passed=quizzes_passed,
+            avg_quiz_score=avg_score,
+            assignments=student_assignments,
+            completed_count=student_completed,
+            pending_count=student_pending,
+            missing_count=student_missing,
+            status=student_status,
+        )
+
+        matches_status = True
+        if status_filter:
+            sf = status_filter.lower().strip()
+            if sf in ("missing", "overdue"):
+                matches_status = entry.status == "missing"
+            elif sf in ("pending", "submitted", "in_progress"):
+                matches_status = entry.status == "pending"
+            elif sf in ("completed", "graded"):
+                matches_status = entry.status == "completed"
+            elif sf == "all":
+                matches_status = True
+
+        matches_search = True
+        if search and search.strip():
+            sq = search.lower().strip()
+            matches_search = (
+                sq in entry.display_name.lower() or sq in entry.email.lower()
+            )
+
+        if matches_status and matches_search:
+            roster_entries.append(entry)
+
+    total_count = len(members)
+    avg_score_total = (
+        round(sum_quiz_scores / valid_quiz_students, 1) if valid_quiz_students > 0 else 0.0
+    )
+    avg_comp_total = (
+        round(sum_completion_percent / total_count, 1) if total_count > 0 else 0.0
+    )
+
+    metrics = schemas.GradebookMetricsOut(
+        total_students=total_count,
+        completed_count=total_completed,
+        pending_count=total_pending,
+        missing_count=total_missing,
+        average_score=avg_score_total,
+        average_completion_percent=avg_comp_total,
+    )
+
+    return schemas.ClassroomGradebookOut(
+        classroom_id=classroom.id,
+        classroom_name=classroom.name,
+        teacher_id=classroom.teacher_id,
+        total_students=len(roster_entries),
+        metrics=metrics,
+        roster=roster_entries,
+    )
+
+
+@router.get(
+    "/api/v1/classrooms/{classroom_id}/gradebook",
+    response_model=schemas.ClassroomGradebookOut,
+)
+def get_classroom_gradebook(
+    classroom_id: UUID,
+    status_filter: Optional[str] = Query(None, description="Filter by: all, missing, pending, completed"),
+    search: Optional[str] = Query(None, description="Search by student display name or email"),
+    current_user: User = Depends(get_staff_user),
+    db: Session = Depends(get_db),
+) -> schemas.ClassroomGradebookOut:
+    """
+    Get classroom gradebook with real student roster, scores, missing/pending statuses.
+    Only accessible to assigned teachers and admins (blocks horizontal privilege escalation with 403).
+    """
+    classroom = db.get(Classroom, classroom_id)
+    if classroom is None:
+        raise HTTPException(status_code=404, detail="Classroom not found")
+
+    _ensure_class_access(current_user, classroom)
+
+    return _compute_classroom_gradebook(
+        db=db,
+        classroom=classroom,
+        status_filter=status_filter,
+        search=search,
+    )
+
+
+@router.get("/api/v1/classrooms/{classroom_id}/gradebook/export")
+def export_classroom_gradebook_csv(
+    classroom_id: UUID,
+    status_filter: Optional[str] = Query(None, description="Filter by: all, missing, pending, completed"),
+    search: Optional[str] = Query(None, description="Search by student display name or email"),
+    anonymize: bool = Query(False, description="Anonymize student names and emails with HS-ANON prefix"),
+    current_user: User = Depends(get_staff_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Export classroom gradebook to CSV with UTF-8 BOM encoding for Excel.
+    Only accessible to assigned teachers and admins (blocks horizontal privilege escalation with 403).
+    """
+    import csv
+    from io import StringIO
+
+    classroom = db.get(Classroom, classroom_id)
+    if classroom is None:
+        raise HTTPException(status_code=404, detail="Classroom not found")
+
+    _ensure_class_access(current_user, classroom)
+
+    gradebook = _compute_classroom_gradebook(
+        db=db,
+        classroom=classroom,
+        status_filter=status_filter,
+        search=search,
+    )
+
+    output = StringIO()
+    # Write UTF-8 BOM for Microsoft Excel compatibility
+    output.write("\ufeff")
+    writer = csv.writer(output)
+
+    writer.writerow(
+        [
+            "Mã học sinh",
+            "Họ và tên",
+            "Email",
+            "Lớp học",
+            "Tiến độ hoàn thành (%)",
+            "Tổng XP",
+            "Số bài trắc nghiệm đạt",
+            "Điểm TB trắc nghiệm",
+            "Bài tập hoàn thành",
+            "Bài tập chờ nộp/chấm (Pending)",
+            "Bài tập trễ hạn (Missing)",
+            "Trạng thái chung",
+        ]
+    )
+
+    for idx, student in enumerate(gradebook.roster, start=1):
+        if anonymize:
+            student_code = f"HS-ANON-{idx:03d}"
+            name = f"Học sinh {idx:03d}"
+            email = f"anon_{idx:03d}@hidden.local"
+        else:
+            student_code = str(student.student_id)
+            name = student.display_name
+            email = student.email
+
+        status_vi = (
+            "Trễ hạn (Missing)"
+            if student.status == "missing"
+            else ("Đang chờ (Pending)" if student.status == "pending" else "Hoàn thành (Completed)")
+        )
+
+        writer.writerow(
+            [
+                student_code,
+                name,
+                email,
+                classroom.name,
+                f"{student.overall_completion_percent:.1f}%",
+                student.total_xp,
+                student.quizzes_passed,
+                f"{student.avg_quiz_score:.1f}",
+                student.completed_count,
+                student.pending_count,
+                student.missing_count,
+                status_vi,
+            ]
+        )
+
+    output.seek(0)
+    return Response(
+        content=output.getvalue(),
+        media_type="text/csv; charset=utf-8",
+        headers={
+            "Content-Disposition": f'attachment; filename="classroom_{classroom_id}_gradebook.csv"'
+        },
+    )
+
+
 @router.get("/api/v1/classrooms/{classroom_id}/export")
 def export_class_progress(
     classroom_id: UUID,
+    status_filter: Optional[str] = Query(None, description="Filter by: all, missing, pending, completed"),
+    search: Optional[str] = Query(None, description="Search by student name or email"),
+    anonymize: bool = Query(False, description="Anonymize student names and emails"),
     current_user: User = Depends(get_staff_user),
     db: Session = Depends(get_db),
 ):
@@ -1416,6 +2092,7 @@ def export_class_progress(
                     ClassMember.role == "learner",
                 )
             )
+            .order_by(ClassMember.joined_at.asc())
         )
         .scalars()
         .all()
@@ -1423,6 +2100,7 @@ def export_class_progress(
 
     # Create CSV
     output = StringIO()
+    output.write("\ufeff")
     writer = csv.writer(output)
 
     # Write header
@@ -1447,17 +2125,42 @@ def export_class_progress(
     )
 
     # Write data for each student
+    idx = 1
     for member in members:
+        user = member.user
+        if not user:
+            continue
+
+        if search and search.strip():
+            sq = search.lower().strip()
+            if sq not in user.display_name.lower() and sq not in user.email.lower():
+                continue
+
         try:
             progress = progress_service.get_student_progress(
                 db, member.user_id, classroom_id
             )
 
+            if status_filter:
+                sf = status_filter.lower().strip()
+                comp_pct = progress.get("overall_completion_percent", 0.0)
+                if sf in ("completed", "graded") and comp_pct < 100.0:
+                    continue
+                elif sf in ("pending", "in_progress") and (comp_pct <= 0.0 or comp_pct >= 100.0):
+                    continue
+                elif sf in ("missing", "overdue") and comp_pct > 0.0:
+                    continue
+
+            s_id = f"HS-ANON-{idx:03d}" if anonymize else str(progress["student_id"])
+            s_name = f"Học sinh {idx:03d}" if anonymize else member.user.display_name
+            s_email = f"anon_{idx:03d}@hidden.local" if anonymize else member.user.email
+            idx += 1
+
             writer.writerow(
                 [
-                    str(progress["student_id"]),
-                    member.user.display_name,
-                    member.user.email,
+                    s_id,
+                    s_name,
+                    s_email,
                     progress["joined_at"].isoformat(),
                     progress["overall_completion_percent"],
                     progress["lessons"]["discovered"],

@@ -35,6 +35,7 @@ from ..apischemas.imperial import (
     ImperialSiteEvidence,
     ImperialSiteSummary,
     ImperialSiteTimeline,
+    ImperialSubmissionAuditOut,
     ImperialSubmissionCreate,
     ImperialSubmissionGrade,
     ImperialSubmissionOut,
@@ -416,6 +417,26 @@ def get_submissions_for_teacher(
     return imperial_learning.get_submissions_for_teacher(
         db, teacher_id=current_user.id, activity_id=activity_id
     )
+
+
+@router.get("/teacher/submissions/{submission_id}", response_model=ImperialSubmissionOut)
+def get_submission_detail(
+    submission_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_staff_user),
+):
+    """Get single student submission detail for evaluation (requires staff/teacher role)."""
+    return imperial_learning.get_submission_by_id(db, submission_id=submission_id)
+
+
+@router.get("/teacher/submissions/{submission_id}/audit", response_model=list[ImperialSubmissionAuditOut])
+def get_submission_audit(
+    submission_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_staff_user),
+):
+    """Retrieve audit history and grading revisions for a submission (requires staff/teacher role)."""
+    return imperial_learning.get_submission_audit_history(db, submission_id=submission_id)
 
 
 @router.post("/teacher/submissions/{submission_id}/grade", response_model=ImperialSubmissionOut)

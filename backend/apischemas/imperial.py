@@ -19,7 +19,7 @@ from datetime import datetime
 from typing import Any, Literal, Optional
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator, model_validator
 
 
 # --------------------------------------------------------------------------- #
@@ -644,6 +644,46 @@ class ImperialSubmissionOut(ImperialBaseSchema):
     submitted_at: datetime
     updated_at: datetime
     row_version: int = 1
+
+
+class ImperialSubmissionAuditOut(ImperialBaseSchema):
+    id: UUID
+    submission_id: Optional[UUID] = None
+    resource_id: Optional[UUID] = None
+    user_id: Optional[UUID] = None
+    reviewer_id: Optional[UUID] = None
+    action: str
+    resource_type: str = "imperial_submission"
+    old_value: Optional[dict[str, Any]] = None
+    new_value: Optional[dict[str, Any]] = None
+    created_at: datetime
+
+    @model_validator(mode="before")
+    @classmethod
+    def populate_fields(cls, data: Any) -> Any:
+        if hasattr(data, "resource_id"):
+            return {
+                "id": data.id,
+                "submission_id": data.resource_id,
+                "resource_id": data.resource_id,
+                "user_id": data.user_id,
+                "reviewer_id": data.user_id,
+                "action": data.action,
+                "resource_type": getattr(data, "resource_type", "imperial_submission"),
+                "old_value": getattr(data, "old_value", None),
+                "new_value": getattr(data, "new_value", None),
+                "created_at": getattr(data, "created_at", None),
+            }
+        elif isinstance(data, dict):
+            if "submission_id" not in data and "resource_id" in data:
+                data["submission_id"] = data["resource_id"]
+            if "resource_id" not in data and "submission_id" in data:
+                data["resource_id"] = data["submission_id"]
+            if "reviewer_id" not in data and "user_id" in data:
+                data["reviewer_id"] = data["user_id"]
+            if "user_id" not in data and "reviewer_id" in data:
+                data["user_id"] = data["reviewer_id"]
+        return data
 
 
 # --------------------------------------------------------------------------- #

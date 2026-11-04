@@ -30,6 +30,8 @@ from ..apischemas.imperial import (
     ImperialSubmissionOut,
 )
 from ..errors import AppError
+from ..models import AuditLog
+from ..services.audit import log_action
 from ..imperial_models import (
     CONTENT_SCOPE_IMPERIAL,
     ImperialActivity,
@@ -510,13 +512,38 @@ def get_submissions_for_teacher(
     return [ImperialSubmissionOut.model_validate(s) for s in submissions]
 
 
+def get_submission_by_id(db: Session, submission_id: UUID) -> ImperialSubmissionOut:
+    """Retrieve single submission detail for teacher evaluation."""
+    submission = db.get(ImperialSubmission, submission_id)
+    if not submission or submission.content_scope != CONTENT_SCOPE_IMPERIAL:
+        raise AppError("IMPERIAL_SUBMISSION_NOT_FOUND", f"Submission '{submission_id}' not found", 404)
+    return ImperialSubmissionOut.model_validate(submission)
+
+
+def get_submission_audit_history(db: Session, submission_id: UUID) -> list[AuditLog]:
+    """Retrieve immutable audit history and grading revisions for an imperial submission."""
+    submission = db.get(ImperialSubmission, submission_id)
+    if not submission or submission.content_scope != CONTENT_SCOPE_IMPERIAL:
+        raise AppError("IMPERIAL_SUBMISSION_NOT_FOUND", f"Submission '{submission_id}' not found", 404)
+
+    stmt = (
+        select(AuditLog)
+        .where(
+            AuditLog.resource_type == "imperial_submission",
+            AuditLog.resource_id == submission_id,
+        )
+        .order_by(AuditLog.created_at.asc())
+    )
+    return list(db.execute(stmt).scalars().all())
+
+
 def grade_submission(
     db: Session,
     submission_id: UUID,
     teacher_id: UUID,
     payload: Union[ImperialSubmissionGrade, dict[str, Any]],
 ) -> ImperialSubmissionOut:
-    """Record rubric scores S1-S4 (0-3 scale each), total score, and teacher feedback."""
+    """Record rubric scores S1-S4 (0-3 scale each), total score, and teacher feedback with audit history."""
     submission = db.get(ImperialSubmission, submission_id)
     if not submission or submission.content_scope != CONTENT_SCOPE_IMPERIAL:
         raise AppError("IMPERIAL_SUBMISSION_NOT_FOUND", f"Submission '{submission_id}' not found", 404)
@@ -545,7 +572,7 @@ def grade_submission(
     validated_rubrics: dict[str, int] = {}
     if raw_rubric_scores:
         for criterion, score_val in raw_rubric_scores.items():
-            if not isinstance(score_val, int) or score_val < 0 or score_val > 3:
+            if type(score_val) is not int or score_val < 0 or score_val > 3:
                 raise AppError(
                     "INVALID_RUBRIC_SCORE",
                     f"Rubric score '{criterion}' must be an integer between 0 and 3",
@@ -555,11 +582,24 @@ def grade_submission(
 
     # Compute total score if not explicitly given
     if score is not None:
+        if not isinstance(score, (int, float)) or type(score) is bool or score < 0.0:
+            raise AppError("INVALID_RUBRIC_SCORE", "Score must be a non-negative number", 400)
         final_score = float(score)
     elif validated_rubrics:
         final_score = float(sum(validated_rubrics.values()))
     else:
         final_score = 0.0
+
+    # Capture state before mutation for audit logging
+    old_value = {
+        "status": submission.status,
+        "score": submission.score,
+        "rubric_scores": submission.rubric_scores or {},
+        "feedback": submission.feedback,
+        "graded_by": str(submission.graded_by) if submission.graded_by else None,
+        "graded_at": submission.graded_at.isoformat() if submission.graded_at else None,
+        "row_version": submission.row_version,
+    }
 
     now = datetime.now(timezone.utc)
     submission.score = final_score
@@ -570,6 +610,28 @@ def grade_submission(
     submission.graded_at = now
     submission.updated_at = now
     submission.row_version = (submission.row_version or 1) + 1
+
+    # Capture state after mutation
+    new_value = {
+        "status": submission.status,
+        "score": submission.score,
+        "rubric_scores": submission.rubric_scores or {},
+        "feedback": submission.feedback,
+        "graded_by": str(submission.graded_by),
+        "graded_at": submission.graded_at.isoformat(),
+        "row_version": submission.row_version,
+    }
+
+    # Append immutable audit entry
+    log_action(
+        db,
+        user_id=teacher_id,
+        action="rubric_grade",
+        resource_type="imperial_submission",
+        resource_id=submission.id,
+        old_value=old_value,
+        new_value=new_value,
+    )
 
     db.commit()
     db.refresh(submission)

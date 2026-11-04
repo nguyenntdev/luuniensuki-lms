@@ -1,0 +1,82 @@
+{
+  "ticket": "V5-T034",
+  "ticket_id": "V5-T034",
+  "wave": "W03",
+  "slot": "W03-A04",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Submission server persistence in backend/routers/history_learning.py and frontend/src/lib/imperial/submissions-api.ts",
+  "timestamp": "2026-11-05T00:20:00Z",
+  "summary": "Implemented server authoritative submission persistence for historical learning assignments and inquiry tasks. Submissions require authenticated student context, verified classroom membership scope, M-E-E historical content validation, idempotency key deduplication, and strict deadline enforcement. Negative abuse protections guarantee that an offline browser client cannot forge a server-confirmed submission state, and duplicate POST submissions return the idempotent original submission record without row duplication.",
+  "invariants_enforced": {
+    "student_authentication": "POST /api/v1/history/assignments/{assignment_id}/submit requires an authenticated learner/student context; unauthenticated calls reject with 401/403.",
+    "classroom_and_assignment_scope": "Student must be an actively enrolled member of the assignment's classroom (ClassMember). Unenrolled cross-classroom students are rejected with HTTP 403 NOT_CLASS_MEMBER. Submissions to unpublished assignments are rejected with HTTP 400 ASSIGNMENT_NOT_PUBLISHED.",
+    "content_validation_mee": "Submission content is strictly validated. Rejects empty payloads, whitespace-only answers, and submissions lacking required M-E-E parts (Claim/Hypothesis, Evidence, and Explanation/Reasoning) with HTTP 422 INVALID_SUBMISSION_CONTENT.",
+    "deadline_enforcement": "Submissions attempted after the assignment due_at deadline are strictly blocked and rejected with HTTP 400 ASSIGNMENT_DEADLINE_PASSED.",
+    "idempotency_and_deduplication": "Submissions support an idempotency_key. Re-submitting with the identical idempotency_key returns the existing persisted submission and assessment basis snapshot idempotently without creating duplicate database rows.",
+    "negative_offline_abuse_protection": "Frontend persistStudentSubmissionToServer strictly checks navigator.onLine and throws CLIENT_OFFLINE if offline, preventing offline clients from faking a server-confirmed submission."
+  },
+  "changes": [
+    {
+      "file": "backend/history_models.py",
+      "description": "Added idempotency_key column and index idx_hist_submissions_idempotency to HistoryAssignmentSubmission model."
+    },
+    {
+      "file": "backend/services/history_learning.py",
+      "description": "Implemented validate_submission_content and updated submit_history_assignment with deadline enforcement, classroom membership verification, M-E-E validation, and idempotency key handling."
+    },
+    {
+      "file": "backend/apischemas/history_learning.py",
+      "description": "Added idempotency_key to HistoryAssignmentSubmitIn and HistoryAssignmentSubmissionOut schemas."
+    },
+    {
+      "file": "backend/routers/history_learning.py",
+      "description": "Updated submit_history_assignment_endpoint and _submission_to_out to accept and serialize idempotency_key."
+    },
+    {
+      "file": "frontend/src/lib/imperial/submissions-api.ts",
+      "description": "Added persistStudentSubmissionToServer implementing content validation, offline guard (throwing CLIENT_OFFLINE), idempotency key generation, and authoritative server submission."
+    },
+    {
+      "file": "migrations/versions/0060_history_lesson_assignments.py",
+      "description": "Added idempotency_key column and index to history_assignment_submissions schema migration."
+    },
+    {
+      "file": "tests/v5/test_v5_t034.py",
+      "description": "Created comprehensive test suite covering student authentication, M-E-E content validation, classroom scope enforcement, deadline enforcement, idempotency persistence, and frontend API contracts."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t034.py -v",
+    "total_tests": 6,
+    "passed_tests": 6,
+    "failed_tests": 0,
+    "test_details": [
+      {
+        "name": "test_submission_requires_authentication",
+        "result": "PASSED"
+      },
+      {
+        "name": "test_submission_content_validation_rejects_empty_and_incomplete",
+        "result": "PASSED"
+      },
+      {
+        "name": "test_submission_scope_enforcement_rejects_non_enrolled_student",
+        "result": "PASSED"
+      },
+      {
+        "name": "test_submission_deadline_enforcement_rejects_late_submission",
+        "result": "PASSED"
+      },
+      {
+        "name": "test_submission_idempotency_and_success_persistence",
+        "result": "PASSED"
+      },
+      {
+        "name": "test_frontend_submissions_api_contract_and_offline_abuse",
+        "result": "PASSED"
+      }
+    ]
+  }
+}

@@ -23,14 +23,10 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 
-from .config import settings
-from .db import get_db
-from .models import User, UserRole
-from .rbac import ADMIN_ROLES, STAFF_ROLES
-
-
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login", auto_error=False)
 
+from .config import settings
+from .db import get_db
 
 def _jwt_decode_kwargs() -> dict[str, Any]:
     """Build keyword arguments for ``jose.jwt.decode``.
@@ -58,12 +54,9 @@ def _jwt_decode_kwargs() -> dict[str, Any]:
     else:
         # python-jose enables verify_aud/verify_iss by default. Tokens issued
         # by this codebase now always carry iss/aud (Req 26.3), so without
-        # explicitly disabling verification the "accept regardless" transition
-        # path rejects every token ("Invalid audience"). Disable both so tokens
-        # are accepted whether or not they carry iss/aud, matching the original
-        # pre-modularization behavior. ``exp`` remains required in both states.
+        # this override any legacy token (or foreign test token) without
+        # iss/aud would fail validation even with validate_new_claims=False.
         kwargs["options"] = {
-            "require_exp": True,
             "verify_aud": False,
             "verify_iss": False,
         }
@@ -93,6 +86,10 @@ def _decode_access_token(raw_token: str) -> Optional[UUID]:
         return UUID(subject)
     except (JWTError, ValueError):
         return None
+
+
+from .models import User, UserRole
+from .rbac import ADMIN_ROLES, STAFF_ROLES
 
 
 def get_current_user(

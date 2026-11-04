@@ -1,0 +1,96 @@
+{
+  "ticket_id": "V5-T031",
+  "wave": "W03",
+  "slot": "W03-A01",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "goal": "Retire mock gradebook localStorage in frontend/src/lib/imperial/submissions-api.ts",
+  "status": "PASS",
+  "timestamp": "2026-11-05T00:20:00Z",
+  "summary": "Retired mock gradebook localStorage fallback in frontend/src/lib/imperial/submissions-api.ts. Isolated INITIAL_STUDENT_SUBMISSIONS as DEMO_STUDENT_SUBMISSIONS strictly gated behind explicit demoMode options. Updated loadStudentSubmissions, fetchTeacherSubmissionsFromBackend, and gradeSubmissionWithApi to interact with authoritative backend endpoints (/api/v1/imperial/teacher/submissions, /api/v1/history/submissions, /api/v1/imperial/teacher/submissions/{id}/grade). Ensured fresh production teachers and students receive empty lists ([]) and zero fictional names or fake grades. Verified with complete test coverage in tests/v5/test_v5_t031.py, Vitest, TypeScript type-check, and ESLint.",
+  "root_causes_addressed": {
+    "local_storage_synthetic_seeding": "loadStudentSubmissions previously seeded localStorage with INITIAL_STUDENT_SUBMISSIONS whenever storage was empty, causing all production users to see fictional students and fake grades.",
+    "ssr_synthetic_bleed": "loadStudentSubmissions returned INITIAL_STUDENT_SUBMISSIONS unconditionally during server-side rendering (SSR), preventing fresh empty states.",
+    "mock_gradebook_persistence": "gradeStudentSubmission and saveStudentSubmission only operated on browser memory/localStorage without communicating with authoritative backend APIs.",
+    "demo_fixture_leakage": "Evaluation fixtures were mixed with production data pathways rather than strictly partitioned behind explicit demoMode parameters."
+  },
+  "contracts": {
+    "submissions_api_contract": {
+      "loadStudentSubmissions": {
+        "production_empty_state": "Returns [] when localStorage is uninitialized or empty. Never seeds mock data.",
+        "demo_mode_state": "Returns DEMO_STUDENT_SUBMISSIONS only when options.demoMode is true."
+      },
+      "fetchTeacherSubmissionsFromBackend": {
+        "endpoints": [
+          "GET /api/v1/imperial/teacher/submissions",
+          "GET /api/v1/history/submissions"
+        ],
+        "production_behavior": "Fetches authoritative server submissions. For empty tenant, returns [] with zero synthetic entries.",
+        "demo_behavior": "Returns DEMO_STUDENT_SUBMISSIONS when options.demoMode is true."
+      },
+      "gradeSubmissionWithApi": {
+        "endpoints": [
+          "POST /api/v1/imperial/teacher/submissions/{id}/grade",
+          "POST /api/v1/history/submissions/{id}/grade"
+        ],
+        "behavior": "Persists S1-S4 rubric scores (0-3 scale), total score, and feedback to the server; synchronizes local state cache."
+      }
+    },
+    "security_and_rbac": {
+      "unauthenticated_calls": "Rejected with HTTP 401 across all submission and grading endpoints.",
+      "student_calls_to_gradebook": "Rejected with HTTP 403 Forbidden Scope.",
+      "rubric_boundary_validation": "Out-of-range scores (< 0 or > 3) rejected with HTTP 400 (INVALID_RUBRIC_SCORE)."
+    }
+  },
+  "modified_files": [
+    "frontend/src/lib/imperial/submissions-api.ts",
+    "frontend/src/app/dai-noi/giao-vien/TeacherDashboardClient.tsx",
+    "frontend/src/app/dai-noi/giao-vien/TeacherDashboard.test.tsx",
+    "backend/routers/history_learning.py",
+    "backend/deps.py",
+    "tests/v5/test_v5_t031.py",
+    "artifacts/implementation/W03/W03_A01_retire_mock_gradebook.json"
+  ],
+  "verification": {
+    "backend_pytest": {
+      "command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t031.py -v",
+      "total": 6,
+      "passed": 6,
+      "failed": 0,
+      "tests": [
+        "test_unauthenticated_gradebook_and_submissions_rejected",
+        "test_student_role_forbidden_from_teacher_gradebook",
+        "test_fresh_production_teacher_sees_zero_fictional_names_and_empty_list",
+        "test_real_student_submission_persisted_and_graded_via_server_apis",
+        "test_rubric_validation_rejects_out_of_scale_score",
+        "test_frontend_submissions_api_contract_and_fixture_isolation"
+      ]
+    },
+    "backend_regression_tests": {
+      "imperial_education_ai": {
+        "command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/backend/test_imperial_education_ai.py -v",
+        "total": 18,
+        "passed": 18,
+        "failed": 0
+      },
+      "openapi_snapshot": {
+        "command": "python3 -m pytest tests/backend/test_openapi_snapshot.py",
+        "status": "PASSED"
+      }
+    },
+    "frontend_vitest": {
+      "command": "npm test -- src/app/dai-noi/giao-vien/TeacherDashboard.test.tsx",
+      "total": 19,
+      "passed": 19,
+      "failed": 0
+    },
+    "frontend_type_check": {
+      "command": "npm run type-check",
+      "exit_code": 0
+    },
+    "frontend_lint": {
+      "command": "npm run lint:ci",
+      "exit_code": 0
+    }
+  }
+}

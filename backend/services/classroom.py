@@ -12,14 +12,14 @@ from __future__ import annotations
 
 import random
 import string
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 from uuid import UUID
 
 from sqlalchemy import select, func, and_
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
-from ..models import Classroom, ClassMember, User, UserRole
+from ..models import Classroom, ClassMember, School, SchoolMember, User, UserRole
 
 
 def generate_unique_class_code(db: Session, length: int = 8) -> str:
@@ -59,6 +59,8 @@ def create_classroom(
     description: Optional[str] = None,
     max_students: Optional[int] = None,
     settings: Optional[dict] = None,
+    school_id: Optional[UUID] = None,
+    term: Optional[str] = None,
 ) -> Classroom:
     """
     Create a new classroom.
@@ -70,16 +72,25 @@ def create_classroom(
         description: Classroom description
         max_students: Maximum number of students allowed
         settings: Additional classroom settings
+        school_id: Optional UUID of the associated school
+        term: Optional term/academic period (e.g. '2025-2026-HK1')
         
     Returns:
         Created Classroom instance
     """
+    if school_id:
+        school = db.get(School, school_id)
+        if not school:
+            raise ValueError("School not found")
+
     class_code = generate_unique_class_code(db)
     
     classroom = Classroom(
         name=name,
         description=description,
         teacher_id=teacher.id,
+        school_id=school_id or teacher.school_id,
+        term=term,
         class_code=class_code,
         max_students=max_students,
         is_archived=False,
@@ -100,6 +111,8 @@ def update_classroom(
     description: Optional[str] = None,
     max_students: Optional[int] = None,
     settings: Optional[dict] = None,
+    school_id: Optional[UUID] = None,
+    term: Optional[str] = None,
 ) -> Classroom:
     """
     Update classroom details.
@@ -111,6 +124,8 @@ def update_classroom(
         description: New description
         max_students: New max students limit
         settings: New settings
+        school_id: New school UUID
+        term: New term string
         
     Returns:
         Updated Classroom instance
@@ -123,8 +138,15 @@ def update_classroom(
         classroom.max_students = max_students
     if settings is not None:
         classroom.settings = settings
+    if school_id is not None:
+        school = db.get(School, school_id)
+        if not school:
+            raise ValueError("School not found")
+        classroom.school_id = school_id
+    if term is not None:
+        classroom.term = term
     
-    classroom.updated_at = datetime.utcnow()
+    classroom.updated_at = datetime.now(timezone.utc)
     
     db.commit()
     db.refresh(classroom)
@@ -176,6 +198,9 @@ def join_classroom_by_code(
     db: Session,
     user: User,
     class_code: str,
+    guardian_email: Optional[str] = None,
+    guardian_consent: Optional[bool] = None,
+    guardian_user_id: Optional[UUID] = None,
 ) -> tuple[Classroom, ClassMember]:
     """
     Join a classroom using a class code.
@@ -184,16 +209,24 @@ def join_classroom_by_code(
         db: Database session
         user: User joining the classroom
         class_code: Classroom code
+        guardian_email: Optional guardian email for adult guardian consent flow
+        guardian_consent: Optional boolean indicating guardian consent
+        guardian_user_id: Optional UUID of guardian User account
 
     Returns:
         Tuple of (Classroom, ClassMember)
 
     Raises:
-        ValueError: If classroom not found, archived, or full
+        ValueError: If code invalid, classroom not found, archived, or full
     """
+    if not class_code or not class_code.strip():
+        raise ValueError("Class code must not be empty")
+
+    normalized_code = class_code.strip().upper()
+
     # Find classroom by code
     classroom = db.execute(
-        select(Classroom).where(Classroom.class_code == class_code.upper())
+        select(Classroom).where(Classroom.class_code == normalized_code)
     ).scalar_one_or_none()
 
     if classroom is None:
@@ -213,6 +246,14 @@ def join_classroom_by_code(
     ).scalar_one_or_none()
 
     if existing_member:
+        if guardian_email and not existing_member.guardian_email:
+            existing_member.guardian_email = guardian_email
+        if guardian_consent is not None:
+            existing_member.guardian_consent = bool(guardian_consent)
+        if guardian_user_id and not existing_member.guardian_user_id:
+            existing_member.guardian_user_id = guardian_user_id
+        db.commit()
+        db.refresh(existing_member)
         return classroom, existing_member
 
     # Check max students limit
@@ -231,6 +272,9 @@ def join_classroom_by_code(
         class_id=classroom.id,
         user_id=user.id,
         role="learner",
+        guardian_email=guardian_email,
+        guardian_consent=bool(guardian_consent) if guardian_consent is not None else False,
+        guardian_user_id=guardian_user_id,
     )
 
     db.add(member)
@@ -316,4 +360,212 @@ def get_classroom_member_count(db: Session, classroom_id: UUID) -> int:
     ).scalar_one()
 
     return count
+
+
+# =============================================================================
+# School Service Functions
+# =============================================================================
+
+
+def create_school(
+    db: Session,
+    name: str,
+    code: Optional[str] = None,
+    address: Optional[str] = None,
+    city: Optional[str] = None,
+    region: Optional[str] = None,
+    settings: Optional[dict] = None,
+) -> School:
+    """Create a new school entity."""
+    if not name or not name.strip():
+        raise ValueError("School name must not be empty")
+
+    normalized_code = code.strip().upper() if code else None
+    if normalized_code:
+        existing = db.execute(
+            select(School).where(School.code == normalized_code)
+        ).scalar_one_or_none()
+        if existing:
+            raise ValueError(f"School with code '{normalized_code}' already exists")
+
+    school = School(
+        name=name.strip(),
+        code=normalized_code,
+        address=address.strip() if address else None,
+        city=city.strip() if city else None,
+        region=region.strip() if region else None,
+        is_active=True,
+        settings=settings or {},
+    )
+    db.add(school)
+    db.commit()
+    db.refresh(school)
+    return school
+
+
+def get_school(db: Session, school_id: UUID) -> Optional[School]:
+    """Retrieve school by ID."""
+    return db.get(School, school_id)
+
+
+def list_schools(
+    db: Session,
+    city: Optional[str] = None,
+    is_active: Optional[bool] = True,
+    limit: int = 50,
+    offset: int = 0,
+) -> list[School]:
+    """List schools with optional filters."""
+    query = select(School)
+    if is_active is not None:
+        query = query.where(School.is_active == is_active)
+    if city:
+        query = query.where(School.city.ilike(f"%{city}%"))
+    query = query.order_by(School.name.asc()).offset(offset).limit(limit)
+    return list(db.execute(query).scalars().all())
+
+
+def update_school(
+    db: Session,
+    school: School,
+    name: Optional[str] = None,
+    code: Optional[str] = None,
+    address: Optional[str] = None,
+    city: Optional[str] = None,
+    region: Optional[str] = None,
+    is_active: Optional[bool] = None,
+    settings: Optional[dict] = None,
+) -> School:
+    """Update school attributes."""
+    if name is not None:
+        if not name.strip():
+            raise ValueError("School name cannot be empty")
+        school.name = name.strip()
+    if code is not None:
+        normalized_code = code.strip().upper() if code else None
+        if normalized_code:
+            existing = db.execute(
+                select(School).where(
+                    and_(School.code == normalized_code, School.id != school.id)
+                )
+            ).scalar_one_or_none()
+            if existing:
+                raise ValueError(f"School with code '{normalized_code}' already exists")
+        school.code = normalized_code
+    if address is not None:
+        school.address = address.strip() if address else None
+    if city is not None:
+        school.city = city.strip() if city else None
+    if region is not None:
+        school.region = region.strip() if region else None
+    if is_active is not None:
+        school.is_active = is_active
+    if settings is not None:
+        school.settings = settings
+
+    school.updated_at = datetime.now(timezone.utc)
+    db.commit()
+    db.refresh(school)
+    return school
+
+
+def add_school_member(
+    db: Session,
+    school_id: UUID,
+    user_id: UUID,
+    role: str = "teacher",
+) -> SchoolMember:
+    """Add or update a teacher or member in a school."""
+    school = db.get(School, school_id)
+    if not school:
+        raise ValueError("School not found")
+    user = db.get(User, user_id)
+    if not user:
+        raise ValueError("User not found")
+
+    existing = db.execute(
+        select(SchoolMember).where(
+            and_(SchoolMember.school_id == school_id, SchoolMember.user_id == user_id)
+        )
+    ).scalar_one_or_none()
+
+    if existing:
+        existing.role = role
+        db.commit()
+        db.refresh(existing)
+        return existing
+
+    member = SchoolMember(
+        school_id=school_id,
+        user_id=user_id,
+        role=role,
+    )
+    db.add(member)
+    if not user.school_id:
+        user.school_id = school_id
+    db.commit()
+    db.refresh(member)
+    return member
+
+
+def get_school_classrooms(
+    db: Session,
+    school_id: UUID,
+    include_archived: bool = False,
+) -> list[Classroom]:
+    """Get all classrooms belonging to a school."""
+    query = select(Classroom).where(Classroom.school_id == school_id)
+    if not include_archived:
+        query = query.where(Classroom.is_archived == False)
+    return list(db.execute(query.order_by(Classroom.created_at.desc())).scalars().all())
+
+
+def get_classroom_roster(
+    db: Session,
+    classroom: Classroom,
+    viewer: User,
+) -> list[dict]:
+    """
+    Get the student roster for a classroom with strict authorization checks.
+    
+    Authorization:
+    - Admin or super_admin: full details
+    - Classroom teacher: full details
+    - Enrolled student: peer list with PII redacted
+    - External student or non-associated user: PermissionError
+    """
+    is_admin = viewer.role in (UserRole.admin, UserRole.super_admin)
+    is_teacher = (viewer.role == UserRole.teacher and classroom.teacher_id == viewer.id)
+
+    enrolled = db.execute(
+        select(ClassMember).where(
+            and_(ClassMember.class_id == classroom.id, ClassMember.user_id == viewer.id)
+        )
+    ).scalar_one_or_none()
+
+    if not (is_admin or is_teacher or enrolled):
+        raise PermissionError("Not authorized to access classroom roster")
+
+    members = db.execute(
+        select(ClassMember)
+        .options(selectinload(ClassMember.user))
+        .where(ClassMember.class_id == classroom.id)
+        .order_by(ClassMember.joined_at.asc())
+    ).scalars().all()
+
+    can_view_pii = is_admin or is_teacher
+    roster = []
+    for m in members:
+        user = m.user
+        roster.append({
+            "id": m.id,
+            "user_id": m.user_id,
+            "display_name": user.display_name if user else "Unknown",
+            "email": user.email if (can_view_pii or m.user_id == viewer.id) else None,
+            "role": m.role,
+            "joined_at": m.joined_at,
+            "guardian_email": m.guardian_email if (can_view_pii or m.user_id == viewer.id) else None,
+            "guardian_consent": m.guardian_consent if (can_view_pii or m.user_id == viewer.id) else None,
+        })
+    return roster
 

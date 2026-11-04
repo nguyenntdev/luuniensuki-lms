@@ -214,4 +214,20 @@ Deploy workflow (`deploy.yml`) uses Python 3.12 and runs `pytest tests/backend` 
   - `V5-T029` (W02-A09): Source-guided curriculum mapping enforcing publication gates against unreviewed or disputed claims.
   - `V5-T030` (W02-A10): Reproducible 162 publication audit CLI (`scripts/dev/audit_162_publication.py`) checking 5 mandatory quality gates per relic.
 
+### Wave W03: Real LMS / Rubric / Classroom (COMPLETED)
+- **Status**: 10/10 slots complete. 78/78 tests passing.
+- **Artifacts**: `artifacts/implementation/W03/` (`W03_A01`–`W03_A10`).
+- **Verified Invariants**:
+  - `V5-T031` (W03-A01): Retire mock gradebook localStorage in `submissions-api.ts`. Production users receive zero fictional student names or mock grades.
+  - `V5-T032` (W03-A02): School, teacher and classroom models with guardian consent flow, join codes, and horizontal classroom isolation.
+  - `V5-T033` (W03-A03): Source-locked lesson assignments with immutable pinned assessment basis and publication gates against unverified claims.
+  - `V5-T034` (W03-A04): Submission server persistence with M-E-E historical content validation, idempotency key deduplication, and deadline enforcement.
+  - `V5-T035` (W03-A05): Teacher rubric grading API (0-3 criteria scale), reviewer attribution, and tamper-resistant student submission contracts.
+  - `V5-T036` (W03-A06): Teacher gradebook and authenticated CSV export with strict IDOR protections blocking cross-school data leaks.
+  - `V5-T037` (W03-A07): Student learning progression (hidden->discovered->learned->mastered) driven by genuine server actions, with anti-replay and rate limiting.
+  - `V5-T038` (W03-A08): Peer/group historical inquiry with collaborative evidence synthesis, teacher moderation, and cross-group privacy isolation.
+  - `V5-T039` (W03-A09): Learning outcome measurement scaffold enforcing dual-assessor scoring and blocking causal labels derived from subjective surveys.
+  - `V5-T040` (W03-A10): Complete classroom end-to-end acceptance suite across multi-school setups, assignments, submissions, grading, and exports.
+
+
 

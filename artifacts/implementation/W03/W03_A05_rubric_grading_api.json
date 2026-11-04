@@ -1,0 +1,88 @@
+{
+  "ticket": "V5-T035",
+  "ticket_id": "V5-T035",
+  "wave": "W03",
+  "slot": "W03-A05",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "Rubric grading API in backend/routers/ and frontend/src/app/dai-noi/giao-vien/",
+  "timestamp": "2026-11-05T00:35:00Z",
+  "summary": "Implemented authoritative teacher rubric scoring across the 4 core historical reasoning criteria (S1 spatial reasoning, S2 temporal dimension, S3 primary evidence, S4 historical argumentation on a 0-3 scale each) with real reviewer attribution, timestamps, qualitative feedback notes, and immutable audit revision tracking. Protected against client-side devtools tampering: unauthorized learners/students cannot forge a graded status during submission creation or offline batch sync, and direct grading calls from unauthorized roles strictly return HTTP 403 Forbidden. Implemented audit history retrieval (GET /api/v1/imperial/teacher/submissions/{id}/audit) and connected frontend grading drawer with optimistic UI updates, error alert banners, and live audit revisions.",
+  "invariants_enforced": {
+    "rubric_scoring_scale_0_to_3": "Each rubric criterion (S1_spatial, S2_temporal, S3_evidence, S4_argument) is strictly validated as an integer within 0..3. Values outside this range, non-integers, or booleans fail immediately with HTTP 400 INVALID_RUBRIC_SCORE.",
+    "reviewer_attribution_and_timestamp": "When graded, the submission atomically records graded_by=current_user.id, graded_at=now(utc), teacher qualitative feedback note, and increments row_version.",
+    "immutable_audit_logging_and_revisions": "Every grading action and subsequent revision appends an immutable entry to audit_logs (resource_type='imperial_submission', action='rubric_grade') recording before/after diffs, scores, reviewer ID, and timestamps.",
+    "anti_abuse_devtools_forge_block": "Client devtools attempting to submit fabricated statuses ('status': 'graded', 'score': 12.0, 'rubric_scores': {...}) have these fields completely ignored by the server during activity creation and batch sync, forcing status='submitted' and score=None.",
+    "role_scoped_authorization": "Only authenticated staff/teachers (STAFF_ROLES) can execute grading mutations or inspect submission audit trails; learner and guest callers strictly receive HTTP 403 Forbidden; unauthenticated callers receive HTTP 401 Unauthorized."
+  },
+  "changes": [
+    {
+      "file": "backend/apischemas/imperial.py",
+      "description": "Added ImperialSubmissionAuditOut schema with model validator populating reviewer_id, submission_id, resource_id, and audit diff payloads."
+    },
+    {
+      "file": "backend/services/imperial_learning.py",
+      "description": "Enhanced grade_submission to enforce strict 0-3 integer criterion validation (rejecting booleans), capture pre- and post-mutation state diffs, append immutable audit log records atomically, and increment row_version. Added get_submission_by_id and get_submission_audit_history services."
+    },
+    {
+      "file": "backend/routers/imperial.py",
+      "description": "Added GET /api/v1/imperial/teacher/submissions/{submission_id} and GET /api/v1/imperial/teacher/submissions/{submission_id}/audit endpoints protected by get_staff_user dependency."
+    },
+    {
+      "file": "frontend/src/lib/imperial/submissions-api.ts",
+      "description": "Added fetchTeacherSubmissionsFromBackend, gradeSubmissionWithApi, fetchSubmissionAuditFromBackend, and mapBackendSubmissionToClient while preserving offline/test initial fixtures."
+    },
+    {
+      "file": "frontend/src/app/dai-noi/giao-vien/TeacherDashboardClient.tsx",
+      "description": "Integrated backend grading API call with loading and error states, negative abuse role checks (preventing non-teachers from grading), reviewer attribution display, and audit history revisions drawer."
+    },
+    {
+      "file": "tests/v5/test_v5_t035.py",
+      "description": "Created comprehensive test suite covering rubric 0-3 scoring, reviewer ID/timestamp, audit log revisions, negative abuse devtools forge prevention, learner 403 blocks, and strict input validation."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t035.py -v",
+    "total_tests": 7,
+    "passed_tests": 7,
+    "failed_tests": 0,
+    "test_details": [
+      {
+        "name": "test_teacher_rubric_scoring_success",
+        "result": "PASSED",
+        "assertion": "Verifies teacher rubric scoring across S1-S4 criteria (0-3 scale), reviewer ID, timestamp, feedback note, and single submission retrieval."
+      },
+      {
+        "name": "test_submission_audit_history_and_revisions",
+        "result": "PASSED",
+        "assertion": "Verifies that initial grading and subsequent re-grading append immutable audit records with state diffs and row_version tracking."
+      },
+      {
+        "name": "test_unauthorized_student_cannot_call_grading_api",
+        "result": "PASSED",
+        "assertion": "Negative abuse: Learner/student accounts attempting to call the teacher grading API receive HTTP 403 Forbidden."
+      },
+      {
+        "name": "test_client_devtools_cannot_forge_graded_status_during_submission",
+        "result": "PASSED",
+        "assertion": "Negative abuse: Injected devtools fields (status='graded', score=12.0) are completely ignored by the server, preserving status='submitted'."
+      },
+      {
+        "name": "test_unauthorized_student_cannot_view_audit_history",
+        "result": "PASSED",
+        "assertion": "Learner and unauthenticated users are blocked from viewing submission audit trails (HTTP 403/401)."
+      },
+      {
+        "name": "test_rubric_validation_rejects_invalid_values",
+        "result": "PASSED",
+        "assertion": "Out-of-scale rubric scores (>3 or <0) and non-existent submissions return HTTP 400 and 404 respectively."
+      },
+      {
+        "name": "test_teacher_can_request_resubmission",
+        "result": "PASSED",
+        "assertion": "Teachers can return submissions with status 'resubmit_requested' and constructive guidance recorded in the audit trail."
+      }
+    ]
+  }
+}

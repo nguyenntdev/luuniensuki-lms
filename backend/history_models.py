@@ -596,6 +596,323 @@ class HistoryCollection(Base):
     published_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
+class HistoryLessonAssignment(Base):
+    """Teacher classroom lesson assignment with source-locked assessment basis (Spec V5-T033).
+
+    Freezes the lesson content, rubric, and source set at assignment creation time.
+    Future edits to the master lesson DO NOT alter this assignment's assessment basis.
+    Enforces publication gate rejecting assignments with unverified/disputed claims.
+    """
+
+    __tablename__ = "history_lesson_assignments"
+    __table_args__ = (
+        Index("idx_hist_assignments_class", "classroom_id"),
+        Index("idx_hist_assignments_lesson", "lesson_id"),
+        Index("idx_hist_assignments_teacher", "assigned_by_id"),
+        Index("idx_hist_assignments_status", "status"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    classroom_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("classes.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    lesson_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("lesson_content.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    assigned_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    title: Mapped[str] = mapped_column(Text, nullable=False)
+    instructions: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    status: Mapped[str] = mapped_column(Text, nullable=False, default="draft")
+    due_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    points: Mapped[int] = mapped_column(Integer, nullable=False, default=100)
+
+    # Pinned / source-locked fields
+    pinned_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    pinned_lesson_snapshot: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    rubric: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    pinned_source_ids: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    pinned_sources_snapshot: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    pinned_claim_ids: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+    published_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+
+    classroom: Mapped["Classroom"] = relationship(foreign_keys=[classroom_id])
+    lesson: Mapped["LessonContent"] = relationship(foreign_keys=[lesson_id])
+    assigned_by: Mapped[Optional["User"]] = relationship(foreign_keys=[assigned_by_id])
+    submissions: Mapped[list["HistoryAssignmentSubmission"]] = relationship(
+        back_populates="assignment", cascade="all, delete-orphan"
+    )
+
+    def get_assessment_basis(self) -> dict[str, Any]:
+        """Return the immutable assessment basis for this assignment."""
+        return {
+            "assignment_id": str(self.id),
+            "classroom_id": str(self.classroom_id),
+            "lesson_id": str(self.lesson_id),
+            "pinned_version": self.pinned_version,
+            "lesson_snapshot": dict(self.pinned_lesson_snapshot or {}),
+            "rubric": dict(self.rubric or {}),
+            "pinned_source_ids": [str(s) for s in (self.pinned_source_ids or [])],
+            "pinned_sources": list(self.pinned_sources_snapshot or []),
+            "pinned_claim_ids": [str(c) for c in (self.pinned_claim_ids or [])],
+            "published_at": self.published_at.isoformat() if self.published_at else None,
+        }
+
+
+class HistoryAssignmentSubmission(Base):
+    """Student submission against a source-locked history lesson assignment (Spec V5-T033).
+
+    Locks the assignment's assessment basis into `assessment_basis_snapshot` at submission time.
+    """
+
+    __tablename__ = "history_assignment_submissions"
+    __table_args__ = (
+        UniqueConstraint("assignment_id", "student_id", name="uq_hist_assignment_student"),
+        Index("idx_hist_submissions_assignment", "assignment_id"),
+        Index("idx_hist_submissions_student", "student_id"),
+        Index("idx_hist_submissions_status", "status"),
+        Index("idx_hist_submissions_idempotency", "idempotency_key"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    assignment_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("history_lesson_assignments.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    student_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    status: Mapped[str] = mapped_column(
+        Text, nullable=False, default="submitted"
+    )  # "draft", "submitted", "graded", "returned"
+    submission_content: Mapped[dict] = mapped_column(
+        JSONB, nullable=False, default=dict
+    )
+    assessment_basis_snapshot: Mapped[dict] = mapped_column(
+        JSONB, nullable=False, default=dict
+    )
+    idempotency_key: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    score: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    rubric_evaluation: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
+    teacher_feedback: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    submitted_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    graded_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    graded_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+
+    assignment: Mapped["HistoryLessonAssignment"] = relationship(
+        back_populates="submissions"
+    )
+    student: Mapped["User"] = relationship(foreign_keys=[student_id])
+    graded_by: Mapped[Optional["User"]] = relationship(foreign_keys=[graded_by_id])
+
+
+# --------------------------------------------------------------------------- #
+# Learning Outcome Measurement Models (V5-T039 / Wave W03 / Slot A09)
+# --------------------------------------------------------------------------- #
+class HistoryEthicsProtocol(Base):
+    """Ethics / IRB protocol registry for learning outcome research (Spec 63.2)."""
+
+    __tablename__ = "history_ethics_protocols"
+    __table_args__ = (
+        UniqueConstraint("protocol_code"),
+        Index("idx_history_ethics_status", "status"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    protocol_code: Mapped[str] = mapped_column(Text, nullable=False)
+    title: Mapped[str] = mapped_column(Text, nullable=False)
+    irb_institution: Mapped[str] = mapped_column(Text, nullable=False)
+    status: Mapped[str] = mapped_column(Text, nullable=False, default="submitted")
+    approved_by: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    approved_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    valid_until: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    data_retention_days: Mapped[int] = mapped_column(Integer, nullable=False, default=365)
+    participant_consent_required: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())
+
+
+class HistoryLearningOutcomeAssessment(Base):
+    """Source-based historical inquiry assessment task (pre/post/delayed)."""
+
+    __tablename__ = "history_learning_outcome_assessments"
+    __table_args__ = (
+        UniqueConstraint("slug"),
+        Index("idx_hist_lo_assess_phase", "assessment_phase"),
+        Index("idx_hist_lo_assess_protocol", "ethics_protocol_id"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    ethics_protocol_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("history_ethics_protocols.id", ondelete="RESTRICT"), nullable=False
+    )
+    title: Mapped[str] = mapped_column(Text, nullable=False)
+    slug: Mapped[str] = mapped_column(Text, nullable=False)
+    assessment_phase: Mapped[str] = mapped_column(Text, nullable=False, default="pre_test")
+    instrument_type: Mapped[str] = mapped_column(Text, nullable=False, default="source_inquiry_rubric")
+    target_urn_slug: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    target_motif_slug: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    prompt_markdown: Mapped[str] = mapped_column(Text, nullable=False)
+    source_ids: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    claim_keys: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    rubric_schema: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    max_score: Mapped[float] = mapped_column(Float, nullable=False, default=100.0)
+    is_published: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    created_by: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("users.id"), nullable=True
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())
+
+
+class HistoryLearningOutcomeSubmission(Base):
+    """Student submission to an objective source-based inquiry assessment."""
+
+    __tablename__ = "history_learning_outcome_submissions"
+    __table_args__ = (
+        Index("idx_hist_lo_sub_student_phase", "student_id", "assessment_phase"),
+        Index("idx_hist_lo_sub_assess", "assessment_id"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    assessment_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("history_learning_outcome_assessments.id", ondelete="CASCADE"), nullable=False
+    )
+    student_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    assessment_phase: Mapped[str] = mapped_column(Text, nullable=False, default="pre_test")
+    instrument_type: Mapped[str] = mapped_column(Text, nullable=False, default="source_inquiry_rubric")
+    responses: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    citations_provided: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    status: Mapped[str] = mapped_column(Text, nullable=False, default="submitted")
+    submitted_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())
+
+
+class HistoryLearningOutcomeEvaluation(Base):
+    """Independent assessor rubric evaluation for an inquiry submission."""
+
+    __tablename__ = "history_learning_outcome_evaluations"
+    __table_args__ = (
+        UniqueConstraint("submission_id", "assessor_id"),
+        Index("idx_hist_lo_eval_sub", "submission_id"),
+        Index("idx_hist_lo_eval_assessor", "assessor_id"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    submission_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("history_learning_outcome_submissions.id", ondelete="CASCADE"), nullable=False
+    )
+    assessor_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    is_independent: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    rubric_scores: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    total_score: Mapped[float] = mapped_column(Float, nullable=False)
+    feedback_markdown: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    evidence_notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    evaluated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+
+
+class HistorySubjectiveSurvey(Base):
+    """Subjective self-report surveys (e.g. Likert satisfaction/feelings).
+    
+    Strictly isolated: Cannot produce causal learning mastery metrics.
+    """
+
+    __tablename__ = "history_subjective_surveys"
+    __table_args__ = (
+        Index("idx_hist_subj_survey_student", "student_id"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    student_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    survey_name: Mapped[str] = mapped_column(Text, nullable=False)
+    instrument_type: Mapped[str] = mapped_column(Text, nullable=False, default="self_report_survey")
+    is_subjective_self_report: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    likert_responses: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    perceived_learning_score: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    satisfaction_score: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    feedback_text: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    submitted_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+
+
+class HistoryCausalLearningMetric(Base):
+    """Authoritative causal learning outcome metric derived from pre/post rubric scores."""
+
+    __tablename__ = "history_causal_learning_metrics"
+    __table_args__ = (
+        Index("idx_hist_causal_metric_student", "student_id"),
+        Index("idx_hist_causal_metric_protocol", "ethics_protocol_id"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    student_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    ethics_protocol_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("history_ethics_protocols.id", ondelete="CASCADE"), nullable=False
+    )
+    pre_submission_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("history_learning_outcome_submissions.id"), nullable=False
+    )
+    post_submission_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("history_learning_outcome_submissions.id"), nullable=False
+    )
+    delayed_submission_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("history_learning_outcome_submissions.id"), nullable=True
+    )
+    pre_score: Mapped[float] = mapped_column(Float, nullable=False)
+    post_score: Mapped[float] = mapped_column(Float, nullable=False)
+    delayed_score: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    normalized_gain: Mapped[float] = mapped_column(Float, nullable=False)
+    absolute_gain: Mapped[float] = mapped_column(Float, nullable=False)
+    inter_rater_agreement: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    competency_gains: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    instrument_type: Mapped[str] = mapped_column(Text, nullable=False, default="source_inquiry_rubric")
+    is_valid_causal_claim: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    computed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+
+
 # --------------------------------------------------------------------------- #
 # Canonical Urn & Motif Domain Mapping (Cửu Đỉnh 9x18 = 162)
 # --------------------------------------------------------------------------- #
@@ -681,4 +998,42 @@ from .services.asset_rights import (  # noqa: E402
     validate_manifest_attribution,
     validate_manifest_checksum_integrity,
 )
+
+# --------------------------------------------------------------------------- #
+# Peer / Group Historical Inquiry Models (V5-T038 / W03-A08)
+# --------------------------------------------------------------------------- #
+from .history_inquiry_models import (  # noqa: E402
+    HistoricalInquiryActivity,
+    HistoricalInquiryGroup,
+    HistoricalInquiryGroupMember,
+    HistoricalInquirySubmission,
+    InquiryMemberRole,
+    InquiryPrivacyMode,
+    InquirySubmissionStatus,
+)
+
+# --------------------------------------------------------------------------- #
+# Learning Outcome Measurement Domain (V5-T039 / Wave W03 / Slot A09)
+# --------------------------------------------------------------------------- #
+from .domain.learning_outcome import (  # noqa: E402
+    DEFAULT_HISTORICAL_INQUIRY_RUBRIC,
+    AssessmentInstrumentType,
+    AssessmentPhase,
+    EthicsProtocolRequiredError,
+    EthicsProtocolStatus,
+    IndependentAssessorRequiredError,
+    InvalidRubricScoreError,
+    LearningOutcomeError,
+    SubjectiveSurveyCannotProduceCausalMetricsError,
+    UnpairedAssessmentError,
+    calculate_effect_size_cohens_d,
+    calculate_inter_rater_reliability,
+    calculate_normalized_learning_gain,
+    validate_assessor_independence,
+    validate_ethics_protocol_active,
+    validate_rubric_scores,
+    verify_causal_learning_eligibility,
+)
+
+
 

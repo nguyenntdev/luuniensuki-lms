@@ -74,6 +74,7 @@ def imperial_db_engine():
         ImperialPathStep.__table__,
         ImperialActivity.__table__,
         ImperialSubmission.__table__,
+        models.AuditLog.__table__,
     ]
     # Clean PostgreSQL specific defaults for SQLite compatibility
     for t in tables:
@@ -95,6 +96,7 @@ def clean_database_tables(imperial_db_engine):
     """Clean all test tables between each test run to ensure strict isolation."""
     TestingSession = sessionmaker(bind=imperial_db_engine, autoflush=False, autocommit=False)
     with TestingSession() as sess:
+        sess.query(models.AuditLog).delete()
         sess.query(ImperialSubmission).delete()
         sess.query(ImperialActivity).delete()
         sess.query(ImperialPathStep).delete()
