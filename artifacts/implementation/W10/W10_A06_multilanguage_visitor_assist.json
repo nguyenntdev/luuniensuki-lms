@@ -1,0 +1,92 @@
+{
+  "ticket": "V5-T106",
+  "ticket_id": "V5-T106",
+  "wave": "W10",
+  "slot": "W10-A06",
+  "role": "W10-A06",
+  "priority": "P2",
+  "classification": "NEW_PRODUCT_FEATURE",
+  "status": "COMPLETED",
+  "goal": "Multi-language visitor assist in frontend/src/lib/rbpc/copy.ts and backend/services/rbpc_ai.py.",
+  "timestamp": "2026-11-05T18:50:00Z",
+  "summary": "Implemented comprehensive multi-language visitor assist across Vietnamese (primary authoritative), English (primary international bridge), French, Japanese, and Korean. Extended languages (FR, JA, KO) strictly require human review and enforce explicit bounded AI assist disclaimers and localized epistemic notices. Enforces critical negative abuse invariant: missing primary sources strictly trigger explicit uncertainty disclaimers in the visitor's requested language instead of generating ungrounded speculative translations or phantom citations.",
+  "invariants_verified": {
+    "supported_visitor_locales_and_metadata": "Supports 'vi', 'en', 'fr', 'ja', 'ko' with strict locale metadata separating native/primary languages ('vi', 'en') from restricted human-reviewed languages ('fr', 'ja', 'ko').",
+    "bounded_ai_assist_and_explicit_disclaimers": "Extended visitor languages (French, Japanese, Korean) carry mandatory human-reviewed translation badges, bounded AI assist disclaimers, and clear delimitations restricting answers to verified archival sources and artisan testimony.",
+    "delimiter_boundaries_and_prompt_injection_defense": "Prompt templates and context headers enforce Delimiter Boundaries (CLAIM_START ... CLAIM_END) and neutralize prompt injection attempts in all supported languages.",
+    "negative_abuse_missing_primary_sources_return_uncertainty": "When verified primary sources are absent in the database, the system strictly returns structured uncertainty disclaimers in the visitor's language (e.g. French 'Aucune source primaire indépendante...', Japanese '原典史料が確認できません...', Korean '1차 사료가 존재하지 않습니다...'), never fabricating ungrounded translations.",
+    "deterministic_multilanguage_synthesis": "Provides 100% deterministic, evidence-only fallback generation adhering to the visitor's language with source citations and epistemic notices."
+  },
+  "changes": [
+    {
+      "file": "frontend/src/lib/rbpc/copy.ts",
+      "description": "Added RbpcSupportedVisitorLocale ('vi' | 'en' | 'fr' | 'ja' | 'ko'), MultiLanguageAssistMetadata, RBPC_VISITOR_LOCALE_METADATA, VISITOR_ASSIST_DISCLAIMERS (VI, EN, FR, JA, KO), and helper functions getVisitorAssistDisclaimer and getVisitorLocaleMetadata."
+    },
+    {
+      "file": "frontend/src/components/rbpc/CulturalBridgePanel.tsx",
+      "description": "Updated CulturalBridgePanelProps to accept RbpcSupportedVisitorLocale and conditionally render bounded AI assist notices and human-reviewed badges for restricted visitor languages."
+    },
+    {
+      "file": "frontend/src/components/rbpc/culturalBridgePanel.test.ts",
+      "description": "Added unit test verifying CulturalBridgePanel supports multi-language visitor assist with human review and disclaimers (FR, JA, KO)."
+    },
+    {
+      "file": "frontend/src/components/rbpc/rbpcLibrary.test.ts",
+      "description": "Added unit test verifying multi-language visitor assist disclaimers, language metadata, and badge texts."
+    },
+    {
+      "file": "backend/services/rbpc_ai.py",
+      "description": "Added multi-language assist configuration (SUPPORTED_VISITOR_LOCALES, PRIMARY_UNRESTRICTED_LOCALES, RESTRICTED_HUMAN_REVIEWED_LOCALES, CONTEXT_HEADERS, EVIDENCE_GAP_MESSAGES, EPISTEMIC_UNSUPPORTED_NOTICES, BOUNDED_AI_DISCLAIMERS). Updated build_rbpc_retrieval_context, build_rbpc_system_prompt, attach_epistemic_disclaimer, build_rbpc_deterministic_answer, build_rbpc_fallback_response, answer_cultural_question, and added get_supported_visitor_locales, get_visitor_locale_metadata, and verify_multilanguage_visitor_query."
+    },
+    {
+      "file": "backend/apischemas/rbpc.py",
+      "description": "Updated RbpcCulturalBridgeRequest.locale regex pattern to '^(vi|en|fr|ja|ko)$'."
+    },
+    {
+      "file": "backend/models_rbpc.py",
+      "description": "Added foreign_keys=[inquiry_id] to RbpcSeatReservation.inquiry relationship to resolve SQLAlchemy mapper ambiguity."
+    },
+    {
+      "file": "tests/v5/test_v5_t106.py",
+      "description": "Authored comprehensive test suite verifying supported locales, system prompts, negative abuse missing source disclaimers, deterministic multi-language synthesis, end-to-end dispatcher, and REST API integration."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t106.py -v",
+    "total_tests": 6,
+    "passed_tests": 6,
+    "failed_tests": 0,
+    "test_details": [
+      {
+        "name": "test_multilanguage_supported_locales_and_metadata",
+        "result": "PASSED",
+        "description": "Verifies primary (VI, EN) vs restricted human-reviewed languages (FR, JA, KO) and metadata policies."
+      },
+      {
+        "name": "test_multilanguage_system_prompts_and_context_headers",
+        "result": "PASSED",
+        "description": "Verifies system prompt directives, delimiter headers, and injection defenses for each language."
+      },
+      {
+        "name": "test_negative_abuse_missing_primary_source_returns_uncertainty_in_visitor_language",
+        "result": "PASSED",
+        "description": "Verifies negative abuse defense ensuring missing primary sources strictly yield uncertainty disclaimers in the visitor's language."
+      },
+      {
+        "name": "test_deterministic_multilanguage_synthesis_with_disclaimers",
+        "result": "PASSED",
+        "description": "Verifies deterministic fallback generator outputs bounded AI notices and epistemic warnings per language."
+      },
+      {
+        "name": "test_e2e_cultural_bridge_dispatcher_multilanguage",
+        "result": "PASSED",
+        "description": "Verifies answer_cultural_question end-to-end across multiple languages with evidence citation binding."
+      },
+      {
+        "name": "test_cultural_bridge_api_endpoint_multilanguage",
+        "result": "PASSED",
+        "description": "Verifies POST /api/v1/rbpc/cultural-bridge REST API endpoint accepts and serves multi-language queries."
+      }
+    ]
+  }
+}

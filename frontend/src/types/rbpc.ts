@@ -450,6 +450,39 @@ export interface InquiryStatusResponse {
   partySize?: number | null;
   lastUpdatedAt: IsoDateTimeString;
   createdAt?: IsoDateTimeString;
+  emailOptIn?: boolean;
+  smsOptIn?: boolean;
+  isOverdue?: boolean;
+  slaDueAt?: IsoDateTimeString | null;
+  canEscalate?: boolean;
+  escalatedAt?: IsoDateTimeString | null;
+  escalationReason?: string | null;
+  escalationCount?: number;
+}
+
+export interface InquiryNotificationPreferencesUpdate {
+  emailOptIn?: boolean;
+  smsOptIn?: boolean;
+  frequency?: string;
+}
+
+export interface InquiryNotificationPreferencesResponse {
+  reference: string;
+  emailOptIn: boolean;
+  smsOptIn: boolean;
+  unsubscribed: boolean;
+  message: string;
+  updatedAt: IsoDateTimeString;
+}
+
+export interface InquiryEscalationResponse {
+  reference: string;
+  status: InquiryStatus;
+  escalatedAt: IsoDateTimeString;
+  escalationCount: number;
+  slaOverdueSeconds: number;
+  message: string;
+  notificationDispatched: boolean;
 }
 
 export interface InquirySubmissionResult {
@@ -546,7 +579,128 @@ export interface LearnPathwayModule {
 }
 
 // ============================================================================
-// 8. API Envelopes & Utility Responses
+// 8. Verified Reviews & Disputes (V5-T107)
+// ============================================================================
+
+export type CustomerReviewStatus =
+  | "pending_moderation"
+  | "published"
+  | "rejected"
+  | "disputed"
+  | "archived";
+
+export type DisputeStatus =
+  | "opened"
+  | "under_review"
+  | "resolved_upheld"
+  | "resolved_overturned"
+  | "dismissed";
+
+export interface CustomerReviewItem {
+  id: string;
+  experienceId: string;
+  experienceSlug?: string;
+  authorDisplayName: string;
+  rating: number; // 1 - 5
+  title: string;
+  comment: string;
+  verifiedCompleted: boolean;
+  status: CustomerReviewStatus;
+  createdAt: IsoDateTimeString;
+  updatedAt: IsoDateTimeString;
+}
+
+export interface CustomerReviewListResponse {
+  items: CustomerReviewItem[];
+  total: number;
+  averageRating: number;
+}
+
+export interface ReviewDisputeItem {
+  id: string;
+  reviewId: string;
+  disputantUserId?: string;
+  reason: string;
+  evidencePayload: Record<string, unknown>;
+  status: DisputeStatus;
+  resolvedById?: string;
+  resolutionNotes?: string;
+  resolvedAt?: IsoDateTimeString;
+  createdAt: IsoDateTimeString;
+  updatedAt: IsoDateTimeString;
+}
+
+// ============================================================================
+// 9. Public Impact Dashboard (V5-T110)
+// ============================================================================
+
+export interface RbpcObservedMetrics {
+  published_stories_count: number;
+  consented_creators_count: number;
+  active_experiences_count: number;
+  total_inquiries_received: number;
+  verified_heritage_places_count: number;
+  verified_source_citations_count: number;
+  completed_experiences_count: number;
+  artisan_payout_vnd_settled: number;
+  sponsor_support_vnd_verified: number;
+}
+
+export interface RbpcProjectedMetrics {
+  estimated_monthly_demand?: number | null;
+  projected_local_value_addition_vnd?: number | null;
+  projection_basis: string;
+}
+
+export interface RbpcImpactMetricsOut {
+  observed_metrics: RbpcObservedMetrics;
+  projected_metrics: RbpcProjectedMetrics;
+  scope: string;
+  generated_at: IsoDateTimeString;
+}
+
+// ============================================================================
+// 10. Curator-Controlled Story Recommendations (V5-T105)
+// ============================================================================
+
+export interface CuratorWorkshopLink {
+  creator_slug: string;
+  creator_name: string;
+  craft_tradition: string;
+  experience_slug: string;
+  experience_title: string;
+  area_public: string;
+  pricing_display?: string;
+  availability_mode: string;
+  is_verified_artisan: boolean;
+  consent_status: string;
+  artisan_dignity_note: string;
+}
+
+export interface CuratorStoryRecommendation {
+  story_slug: string;
+  title: string;
+  intro: string;
+  approved_summary: string;
+  category?: string;
+  primary_asset_url?: string;
+  linkage_type: "object_associated_craft" | "historical_object_context" | "thematic_heritage_craft" | string;
+  historical_justification: string;
+  reading_time_minutes: number;
+  workshop?: CuratorWorkshopLink | null;
+  verified_historical_relationship: boolean;
+  no_implied_fake_imperial_lineage: boolean;
+}
+
+export interface CuratorStoryRecommendationsResponse {
+  story_slug: string;
+  recommendations: CuratorStoryRecommendation[];
+  total: number;
+  locale: string;
+}
+
+// ============================================================================
+// 11. API Envelopes & Utility Responses
 // ============================================================================
 
 export interface RbpcApiResponse<T> {

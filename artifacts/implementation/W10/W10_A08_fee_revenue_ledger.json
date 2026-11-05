@@ -1,0 +1,96 @@
+{
+  "ticket_id": "V5-T108",
+  "wave": "W10",
+  "slot": "A08",
+  "role": "W10-A08",
+  "priority": "P2",
+  "classification": "NEW_PRODUCT_FEATURE",
+  "title": "Fee/revenue ledger with actual confirmation",
+  "status": "COMPLETED",
+  "verified_at": "2026-11-05T11:40:00Z",
+  "target_modules": [
+    "backend/models_rbpc.py",
+    "backend/apischemas/rbpc.py",
+    "backend/routers/rbpc.py",
+    "migrations/versions/0079_rbpc_fee_revenue_ledger.py",
+    "tests/v5/test_v5_t108.py"
+  ],
+  "implementation_summary": {
+    "model_table": "rbpc_settlement_ledger",
+    "enums": [
+      "RbpcSettlementStatus (pending_compliance, approved, settled, refunded, disputed)",
+      "RbpcPayoutStatus (pending, approved, disbursed, withheld, cancelled)"
+    ],
+    "financial_breakdown": {
+      "gross_amount_vnd": "Gross transacted amount (VND) with ck_rbpc_settlement_gross_nonneg constraint",
+      "take_rate": "Contracted platform take rate (0.0 to 1.0, default 0.1500 / 15%)",
+      "platform_fee_vnd": "Gross * take_rate",
+      "tax_vat_vnd": "Gross * vat_rate (default 0.0800 / 8%)",
+      "artisan_payout_vnd": "Gross - platform_fee - tax_vat",
+      "refund_amount_vnd": "Deducted upon approved refund"
+    },
+    "compliance_and_governance": {
+      "workflow": "Pending Compliance -> Compliance Review by Staff/Admin -> Approved -> Payout Disbursed -> Settled",
+      "audit_trail": "Append-only cryptographic hash chained audit records in rbpc_content_audit",
+      "role_enforcement": "Staff/Admin (ADMIN_ROLES) required for compliance approval and disbursement; non-staff receives 403 FORBIDDEN_SCOPE"
+    },
+    "negative_abuse_invariant": {
+      "rule": "Merely changing inquiry status to 'confirmed' produces zero revenue in the financial ledger without verified settlement.",
+      "enforcement": "Financial summary queries rbpc_settlement_ledger only where status IN ('approved', 'settled'); inquiry status changes never insert or alter settlement revenue rows."
+    }
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/settlements",
+      "description": "Record verified settlement transaction for confirmed/closed inquiries"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/partner/settlements",
+      "description": "List partner-scoped settlements with provider multi-tenant isolation"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/partner/settlements/{id}",
+      "description": "Get settlement detail with ownership authorization check"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/editor/settlements/{id}/compliance",
+      "description": "Review and approve/hold settlement compliance before disbursement"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/editor/settlements/{id}/disburse",
+      "description": "Disburse approved artisan payout and transition to settled status"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/settlements/{id}/refund",
+      "description": "Process partial or full refund with fee/payout arithmetic recalculation"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/ledger/summary",
+      "description": "Aggregate verified financial ledger metrics separating observed gross from projections"
+    }
+  ],
+  "verification_results": {
+    "test_suite": "tests/v5/test_v5_t108.py",
+    "tests_total": 6,
+    "tests_passed": 6,
+    "tests_failed": 0,
+    "scenarios_covered": [
+      "Negative abuse: confirmed status alone produces 0 VND in financial ledger",
+      "Unconfirmed inquiry rejected with 400 RBPC_INQUIRY_NOT_CONFIRMED",
+      "Contracted take rate, platform fee, VAT, and artisan payout calculations",
+      "Compliance review approval and artisan payout disbursement lifecycle",
+      "Partial and full refund arithmetic and excess refund rejection",
+      "Multi-tenant isolation and 403 FORBIDDEN_SCOPE enforcement"
+    ],
+    "migration_safety": "PASSED (0079_rbpc_fee_revenue_ledger verified single head, additive only, 0 destructive ops)",
+    "openapi_snapshot": "PASSED (byte-for-byte synced)",
+    "route_inventory": "PASSED (599 routes generated and synced without drift)"
+  }
+}

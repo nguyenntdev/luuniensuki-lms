@@ -319,6 +319,21 @@ Deploy workflow (`deploy.yml`) uses Python 3.12 and runs `pytest tests/backend` 
   - `V5-T099` (W09-A09): Teacher onboarding and support center with sample lesson templates, SLA-tracked support tickets, and guest teacher PII isolation.
   - `V5-T100` (W09-A10): Formal school pilot measurement and ethics protocol with guardian informed consent, teacher workload limits, and survey firewalling.
 
+### Wave W10: New Heritage Market / Visitor & Artisan Features (COMPLETED)
+- **Status**: 10/10 slots complete. 73/73 tests passing.
+- **Artifacts**: `artifacts/implementation/W10/` (`W10_A01`–`W10_A10`).
+- **Verified Invariants**:
+  - `V5-T101` (W10-A01): Partner self-onboarding with verification. Unverified partners cannot publish portraits or experience listings without staff verification.
+  - `V5-T102` (W10-A02): Real availability calendar and seat reservation locking. Two users cannot confirm or reserve the last seat concurrently.
+  - `V5-T103` (W10-A03): Customer inquiry notification center with preferences, late escalation after 24h SLA breach, and zero fake sent reports.
+  - `V5-T104` (W10-A04): Museum QR guided trails with HMAC-SHA256 tokens, 2D rubbing fallbacks, and honest accessibility telemetry.
+  - `V5-T105` (W10-A05): Curator-controlled story recommendations based on verified craft relationships; unverified artisan claims strictly hidden.
+  - `V5-T106` (W10-A06): Multilingual visitor assistance (VI/EN first, human-reviewed tiers for FR/JA/KO) returning structured uncertainty on missing sources.
+  - `V5-T107` (W10-A07): Verified customer reviews gated to completed/closed inquiries with anti-fraud spam heuristic detection and dispute mediation.
+  - `V5-T108` (W10-A08): Fee and revenue ledger with contracted take rate; changing inquiry status alone produces zero revenue without settlement.
+  - `V5-T109` (W10-A09): Creator oral history consent studio with versioned transcripts, per-use consent scopes, and immediate public revocation.
+  - `V5-T110` (W10-A10): Public impact dashboard sourced from real completed inquiries and settled payouts; empty database displays zero metrics.
+
 ### 10 Educational Research Studies (LN-01 through LN-10) Implementation & Benchmark Verification (COMPLETED)
 - **Status**: 10/10 studies complete. 134/134 tests passing. 7,200/7,200 scenarios evaluated. Release ready gate: PASSED.
 - **Artifacts**: `research_artifacts/LN-01/` through `research_artifacts/LN-10/`.

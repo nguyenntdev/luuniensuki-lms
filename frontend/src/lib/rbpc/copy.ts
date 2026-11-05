@@ -12,6 +12,121 @@
  */
 
 export type RbpcLocale = "vi" | "en";
+export type RbpcSupportedVisitorLocale = "vi" | "en" | "fr" | "ja" | "ko";
+
+export interface MultiLanguageAssistMetadata {
+  code: RbpcSupportedVisitorLocale;
+  label: string;
+  nativeLabel: string;
+  reviewStatus: "native" | "human_verified" | "restricted_human_review_required";
+  disclaimerRequired: boolean;
+  notes: string;
+}
+
+export const RBPC_VISITOR_LOCALE_METADATA: Record<RbpcSupportedVisitorLocale, MultiLanguageAssistMetadata> = {
+  vi: {
+    code: "vi",
+    label: "Vietnamese",
+    nativeLabel: "Tiếng Việt",
+    reviewStatus: "native",
+    disclaimerRequired: false,
+    notes: "Primary authoritative source language.",
+  },
+  en: {
+    code: "en",
+    label: "English",
+    nativeLabel: "English",
+    reviewStatus: "native",
+    disclaimerRequired: false,
+    notes: "Primary international bridge language.",
+  },
+  fr: {
+    code: "fr",
+    label: "French",
+    nativeLabel: "Français",
+    reviewStatus: "human_verified",
+    disclaimerRequired: true,
+    notes: "Strict human epigrapher / French colonial archives reviewed translation.",
+  },
+  ja: {
+    code: "ja",
+    label: "Japanese",
+    nativeLabel: "日本語",
+    reviewStatus: "human_verified",
+    disclaimerRequired: true,
+    notes: "Strict human Asian bronze heritage & craftsmanship reviewed translation.",
+  },
+  ko: {
+    code: "ko",
+    label: "Korean",
+    nativeLabel: "한국어",
+    reviewStatus: "human_verified",
+    disclaimerRequired: true,
+    notes: "Strict human East Asian cultural heritage reviewed translation.",
+  },
+};
+
+export interface VisitorAssistDisclaimerCopy {
+  humanReviewedBadge: string;
+  boundedAiNotice: string;
+  evidenceGapNotice: string;
+  missingPrimarySourceDisclaimer: string;
+  languageReviewNote: string;
+}
+
+export const VISITOR_ASSIST_DISCLAIMERS: Record<RbpcSupportedVisitorLocale, VisitorAssistDisclaimerCopy> = {
+  vi: {
+    humanReviewedBadge: "Nội dung thẩm định nhân văn",
+    boundedAiNotice:
+      "Trợ lý văn hóa AI hoạt động trong phạm vi tư liệu lưu trữ đã kiểm chứng; không thay thế sự chia sẻ trực tiếp từ nghệ nhân.",
+    evidenceGapNotice:
+      "Tài liệu nghiên cứu đã được phê duyệt hiện chưa ghi nhận chi tiết về câu hỏi này.",
+    missingPrimarySourceDisclaimer:
+      "Chưa có nguồn kiểm chứng độc lập cho phạm vi câu hỏi này. Hệ thống không phỏng đoán hay tự sinh bản dịch chưa qua thẩm định.",
+    languageReviewNote: "Ngôn ngữ nguồn chính thức (Tiếng Việt).",
+  },
+  en: {
+    humanReviewedBadge: "Human-Reviewed Heritage Translation",
+    boundedAiNotice:
+      "Bounded AI Assistant: Insights are strictly scoped to verified archival sources and direct artisan testimony.",
+    evidenceGapNotice:
+      "Approved research materials currently have no record of details regarding this query.",
+    missingPrimarySourceDisclaimer:
+      "No independent primary source exists in our records for this query scope. The system strictly avoids ungrounded speculative translation.",
+    languageReviewNote: "Primary international bridge language.",
+  },
+  fr: {
+    humanReviewedBadge: "Traduction vérifiée par des experts humains",
+    boundedAiNotice:
+      "Assistant IA encadré : Les réponses sont rigoureusement limitées aux archives vérifiées et aux témoignages d'artisans.",
+    evidenceGapNotice:
+      "Les documents de recherche approuvés ne contiennent actuellement aucune trace relative à cette demande.",
+    missingPrimarySourceDisclaimer:
+      "Aucune source primaire vérifiée n'a été trouvée pour cette question. Le système refuse toute traduction spéculative non vérifiée.",
+    languageReviewNote:
+      "Langue soumise à une révision humaine stricte avant publication.",
+  },
+  ja: {
+    humanReviewedBadge: "専門家による人手確認済み翻訳",
+    boundedAiNotice:
+      "厳格なAI支援：検証済みの公的史料および工芸職人の証言に基づく回答のみを提供します。",
+    evidenceGapNotice:
+      "承認された学術・史料記録には、本質問に関する該当記録が現在存在しません。",
+    missingPrimarySourceDisclaimer:
+      "本質問範囲に対応する検証済み原典史料が確認できません。根拠のない推測や未検証のAI翻訳は出力されません。",
+    languageReviewNote: "人手による厳格な校閲・監修を経たテキストです。",
+  },
+  ko: {
+    humanReviewedBadge: "전문가 검수를 거친 공식 번역",
+    boundedAiNotice:
+      "엄격히 제한된 AI 보조: 검증된 역사적 사료 및 전통 장인의 증언에 한정하여 문화적 맥락을 안내합니다.",
+    evidenceGapNotice:
+      "승인된 연구 문헌에는 현재 해당 질의에 관한 검증된 기록이 없습니다.",
+    missingPrimarySourceDisclaimer:
+      "해당 질의 범위에 대해 검증된 1차 사료가 존재하지 않습니다. 본 시스템은 근거 없는 추측이나 미검증 번역을 일체 생성하지 않습니다.",
+    languageReviewNote: "전문가의 엄격한 인문학적 감수를 필한 언어 지원입니다.",
+  },
+};
 
 export interface EpistemicStatusItem {
   id: string;
@@ -780,6 +895,37 @@ export function getEpistemicBadgeCopy(
       label: statusId,
       description: "",
       badgeClass: "rbpc-badge-review",
+    }
+  );
+}
+
+/**
+ * Retrieve visitor assist disclaimer copy for a given locale (vi, en, fr, ja, ko).
+ * Defaults to "en" for unsupported or fallback locales.
+ */
+export function getVisitorAssistDisclaimer(
+  locale: string = "vi"
+): VisitorAssistDisclaimerCopy {
+  const norm = locale.toLowerCase().trim() as RbpcSupportedVisitorLocale;
+  return VISITOR_ASSIST_DISCLAIMERS[norm] || VISITOR_ASSIST_DISCLAIMERS.en;
+}
+
+/**
+ * Returns metadata regarding whether a language requires strict human review
+ * and explicit bounded AI disclaimers.
+ */
+export function getVisitorLocaleMetadata(
+  locale: string = "vi"
+): MultiLanguageAssistMetadata {
+  const norm = locale.toLowerCase().trim() as RbpcSupportedVisitorLocale;
+  return (
+    RBPC_VISITOR_LOCALE_METADATA[norm] || {
+      code: "en",
+      label: "English",
+      nativeLabel: "English",
+      reviewStatus: "restricted_human_review_required",
+      disclaimerRequired: true,
+      notes: "Unsupported or unreviewed locale. Falls back to English with strict disclaimers.",
     }
   );
 }

@@ -14,7 +14,13 @@ import {
   EVIDENCE_STAGES,
   parseEvidenceStage,
 } from "./index";
-import { getEpistemicBadgeCopy, getRbpcCopy } from "@/lib/rbpc/copy";
+import {
+  getEpistemicBadgeCopy,
+  getRbpcCopy,
+  getVisitorAssistDisclaimer,
+  getVisitorLocaleMetadata,
+  RBPC_VISITOR_LOCALE_METADATA,
+} from "@/lib/rbpc/copy";
 
 describe("RbpcButton Component Contract", () => {
   it("exports a valid React component with correct displayName", () => {
@@ -258,5 +264,33 @@ describe("EvidenceStatus Component Contract (S0 to S4 Rubric)", () => {
       const el = React.createElement(EvidenceStatus, { stage: "S2", variant: v });
       expect(el.props.variant).toBe(v);
     }
+  });
+
+  it("verifies multi-language visitor assist disclaimers and human review metadata", () => {
+    expect(RBPC_VISITOR_LOCALE_METADATA.vi.reviewStatus).toBe("native");
+    expect(RBPC_VISITOR_LOCALE_METADATA.en.reviewStatus).toBe("native");
+    expect(RBPC_VISITOR_LOCALE_METADATA.fr.reviewStatus).toBe("human_verified");
+    expect(RBPC_VISITOR_LOCALE_METADATA.ja.reviewStatus).toBe("human_verified");
+    expect(RBPC_VISITOR_LOCALE_METADATA.ko.reviewStatus).toBe("human_verified");
+
+    // French disclaimer check
+    const frDisc = getVisitorAssistDisclaimer("fr");
+    expect(frDisc.humanReviewedBadge).toContain("Traduction vérifiée");
+    expect(frDisc.missingPrimarySourceDisclaimer).toContain("Aucune source primaire");
+
+    // Japanese disclaimer check
+    const jaDisc = getVisitorAssistDisclaimer("ja");
+    expect(jaDisc.humanReviewedBadge).toContain("専門家による人手確認済み翻訳");
+    expect(jaDisc.missingPrimarySourceDisclaimer).toContain("検証済み原典史料が確認できません");
+
+    // Korean disclaimer check
+    const koDisc = getVisitorAssistDisclaimer("ko");
+    expect(koDisc.humanReviewedBadge).toContain("전문가 검수를 거친 공식 번역");
+    expect(koDisc.missingPrimarySourceDisclaimer).toContain("검증된 1차 사료가 존재하지 않습니다");
+
+    // Metadata bounding
+    const frMeta = getVisitorLocaleMetadata("fr");
+    expect(frMeta.disclaimerRequired).toBe(true);
+    expect(frMeta.reviewStatus).toBe("human_verified");
   });
 });

@@ -1,0 +1,102 @@
+{
+  "ticket": "V5-T107",
+  "ticket_id": "V5-T107",
+  "wave": "W10",
+  "slot": "W10-A07",
+  "priority": "P2",
+  "classification": "NEW_PRODUCT_FEATURE",
+  "status": "COMPLETED",
+  "goal": "Verified customer reviews and disputes in backend/models_rbpc.py and frontend/src/app/rbpc/",
+  "timestamp": "2026-11-06T08:30:00Z",
+  "summary": "Implemented verified customer reviews and dispute management for RBPC heritage workshop experiences. Strict verification ensures that only customers with completed inquiries ('closed' state) can submit ratings and reviews. Automated anti-fraud heuristics detect URLs, script injections, commercial spam, and excessive repetition, routing flagged reviews to staff moderation. Added dispute resolution workflow for partners and visitors, and integrated review submission directly into the public inquiry status tracking portal.",
+  "invariants_verified": {
+    "verified_completed_requirement": "Only inquiries in 'closed' (completed) state can submit reviews; inquiries in 'new', 'contacted', 'confirmed', or 'declined' are rejected with 400 RBPC_INQUIRY_NOT_COMPLETED.",
+    "negative_abuse_prevention": "Uncompleted, fake, or cancelled inquiries cannot post ratings or reviews (404 for invalid tokens, 400 for uncompleted). One review per completed inquiry is strictly enforced (409 Conflict).",
+    "anti_fraud_heuristics": "Automatic fraud scanner detects spam keywords, promotional URLs, scripts, and repetitive characters, routing suspicious reviews to pending_moderation.",
+    "moderation_queue": "Staff and admin roles can review pending items, inspect fraud flags, approve, reject, or archive reviews (403 for unauthorized users).",
+    "dispute_workflow": "Partners or users can file structured disputes against reviews, which staff can resolve (upheld, overturned, or dismissed)."
+  },
+  "changes": [
+    {
+      "file": "backend/models_rbpc.py",
+      "description": "Defined RbpcCustomerReview and RbpcReviewDispute models with CHECK constraints, foreign keys, unique constraint on inquiry_id, and enum validations for RbpcReviewStatus and RbpcDisputeStatus."
+    },
+    {
+      "file": "migrations/versions/0083_rbpc_verified_reviews_disputes.py",
+      "description": "Created additive Alembic migration creating rbpc_customer_reviews and rbpc_review_disputes tables with appropriate indexes and check constraints."
+    },
+    {
+      "file": "backend/apischemas/rbpc.py",
+      "description": "Added Pydantic schemas: RbpcCustomerReviewCreate, RbpcCustomerReviewOut, RbpcCustomerReviewAdminOut, RbpcCustomerReviewModeration, RbpcReviewDisputeCreate, RbpcReviewDisputeOut, RbpcReviewDisputeResolution, RbpcCustomerReviewListOut, RbpcCustomerReviewAdminListOut."
+    },
+    {
+      "file": "backend/routers/rbpc.py",
+      "description": "Added endpoints: POST /api/v1/rbpc/reviews (submit verified review), GET /api/v1/rbpc/experiences/{slug}/reviews (public published reviews), GET /api/v1/rbpc/admin/reviews (staff moderation queue), PATCH /api/v1/rbpc/admin/reviews/{id}/moderate (moderate review), POST /api/v1/rbpc/reviews/{id}/dispute (file dispute), PATCH /api/v1/rbpc/admin/disputes/{id}/resolve (resolve dispute)."
+    },
+    {
+      "file": "frontend/src/types/rbpc.ts",
+      "description": "Added TypeScript types for CustomerReviewStatus, DisputeStatus, CustomerReviewItem, CustomerReviewListResponse, and ReviewDisputeItem."
+    },
+    {
+      "file": "frontend/src/lib/rbpc/inquiries.ts",
+      "description": "Added submitCustomerReviewApi, fetchExperienceReviewsApi, and fileReviewDisputeApi client methods."
+    },
+    {
+      "file": "frontend/src/app/rbpc/inquiries/page.tsx",
+      "description": "Integrated verified review form into public tracking view when inquiry status is 'closed', displaying anti-abuse notices for non-closed inquiries."
+    },
+    {
+      "file": "tests/v5/test_v5_t107.py",
+      "description": "Created comprehensive test suite covering completed status requirement, negative abuse rejection, fraud detection, public reviews calculation, moderation, and dispute resolution."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t107.py -v",
+    "total_tests": 8,
+    "passed_tests": 8,
+    "failed_tests": 0,
+    "test_details": [
+      {
+        "name": "test_verified_completed_inquiry_can_submit_review",
+        "result": "PASSED"
+      },
+      {
+        "name": "test_negative_abuse_uncompleted_inquiries_cannot_submit_reviews",
+        "result": "PASSED"
+      },
+      {
+        "name": "test_negative_abuse_fake_or_nonexistent_token_rejected",
+        "result": "PASSED"
+      },
+      {
+        "name": "test_negative_abuse_duplicate_review_for_same_inquiry_rejected",
+        "result": "PASSED"
+      },
+      {
+        "name": "test_anti_fraud_detection_routes_spam_to_moderation",
+        "result": "PASSED"
+      },
+      {
+        "name": "test_public_experience_reviews_list_only_published",
+        "result": "PASSED"
+      },
+      {
+        "name": "test_admin_review_moderation_queue_and_permissions",
+        "result": "PASSED"
+      },
+      {
+        "name": "test_review_dispute_creation_and_resolution",
+        "result": "PASSED"
+      }
+    ],
+    "regression_tests": {
+      "migration_safety": "scripts/ci/lint-migration-safety.sh passed (single head 0083, additive-only check passed)",
+      "inventory_drift": "scripts/ci/lint-inventory-drift.sh passed (617 routes)",
+      "openapi_snapshot": "test_openapi_snapshot.py passed",
+      "error_envelope": "test_validation_error_envelope.py passed",
+      "rbpc_endpoints": "test_rbpc_endpoints.py passed (9/9)",
+      "frontend_typecheck": "npm run type-check passed with 0 errors",
+      "vitest_contracts": "inquiriesPages.test.ts passed (25/25)"
+    }
+  }
+}

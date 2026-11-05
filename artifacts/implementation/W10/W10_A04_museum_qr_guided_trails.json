@@ -1,0 +1,97 @@
+{
+  "ticket": "V5-T104",
+  "ticket_id": "V5-T104",
+  "wave": "W10",
+  "slot": "W10-A04",
+  "priority": "P2",
+  "classification": "NEW_PRODUCT_FEATURE",
+  "status": "COMPLETED",
+  "goal": "Museum QR guided trails in frontend/src/app/heritage/[slug]/ and backend/routers/heritage.py.",
+  "timestamp": "2026-11-05T12:05:00Z",
+  "summary": "Implemented Museum QR guided trails architecture for heritage monuments and sites across Hue. Added backend domain service backend/services/heritage_trails.py, endpoints GET /api/v1/heritage/places/{slug}/trail and POST /api/v1/heritage/trail/verify-qr in backend/routers/heritage.py, schema definitions in backend/apischemas/heritage.py, frontend MuseumQRGuidedTrail component and integration into frontend/src/app/heritage/[slug]/page.tsx. Ensured on-site QR stations link directly to verified historical context and primary source evidence, provide 100% authentic 2D rubbing fallback with disk verification and SHA-256 integrity, and expose transparent wheelchair/physical accessibility route telemetry. Enforced negative abuse defense invariant where unknown or unassessed accessibility data is NEVER falsely advertised as accessible.",
+  "invariants_enforced": {
+    "qr_primary_source_linking": "Every museum trail station is backed by verified bibliographic sources (Quốc Sử Quán / UNESCO) from the database; visitors scanning the station QR are routed to verified evidence.",
+    "qr_cryptographic_verification": "Station QR tokens are signed via HMAC-SHA256 with authority, timestamp, and site constraints; tampered tokens, expired tokens, or mismatched sites are strictly rejected with HTTP 400.",
+    "offline_2d_rubbing_fallback": "Every trail station provides a verified 2D rubbing fallback with disk file existence, byte size, legal rights attribution, and SHA-256 checksum for low-bandwidth or offline environments.",
+    "transparent_accessibility_route_info": "Real surveyed accessibility telemetry (wheelchair routes, ramps, tactile paving, rest stops) is reported for surveyed sites (e.g. Điện Thái Hòa, Ngọ Môn, Hiển Lâm Các, Lăng Tự Đức, Lăng Khải Định).",
+    "negative_abuse_unknown_accessibility_never_falsely_advertised": "Sites without official field verification return accessibility_grade='unknown_unverified', wheelchair_accessible=False, is_accessibility_verified=False, and clear cautionary notices so visitors with reduced mobility are never misled.",
+    "unpublished_content_protection": "Draft or candidate heritage place trails are restricted to authenticated staff users; public or anonymous access returns HTTP 404 Not Found."
+  },
+  "changes": [
+    {
+      "file": "backend/services/heritage_trails.py",
+      "description": "Created domain service with HERITAGE_SITE_ACCESSIBILITY_REGISTRY, DEFAULT_UNVERIFIED_ACCESSIBILITY, generate_station_qr_payload, verify_station_qr_token, resolve_station_rubbing_fallback, and get_museum_guided_trail."
+    },
+    {
+      "file": "backend/apischemas/heritage.py",
+      "description": "Added Pydantic schemas: HeritageTrailAccessibilityInfo, HeritageTrailRubbingFallback, HeritageTrailStationOut, HeritageMuseumTrailOut, HeritageTrailQRVerifyIn, HeritageTrailQRVerifyOut."
+    },
+    {
+      "file": "backend/routers/heritage.py",
+      "description": "Added GET /api/v1/heritage/places/{slug}/trail and POST /api/v1/heritage/trail/verify-qr endpoints with RBAC protection and source linking."
+    },
+    {
+      "file": "frontend/src/lib/api.ts",
+      "description": "Added getHeritagePlaceTrail and verifyHeritageTrailQR client API functions."
+    },
+    {
+      "file": "frontend/src/components/explore/MuseumQRGuidedTrail.tsx",
+      "description": "Created interactive UI component with tabs for QR Trail Stations, 2D Rubbing Fallback, and Accessibility Route Information, plus modal QR code inspect dialog."
+    },
+    {
+      "file": "frontend/src/app/heritage/[slug]/page.tsx",
+      "description": "Integrated MuseumQRGuidedTrail into the heritage place detail page."
+    },
+    {
+      "file": "tests/v5/test_v5_t104.py",
+      "description": "Comprehensive test suite covering trail retrieval, cryptographic QR verification & tamper resistance, accessibility reporting, negative abuse defense against false advertising, and unpublished place protection."
+    },
+    {
+      "file": "tests/backend/fixtures/openapi_snapshot.json",
+      "description": "Synchronized OpenAPI snapshot with new /trail and /verify-qr routes."
+    },
+    {
+      "file": "frontend/src/types/api.ts",
+      "description": "Regenerated frontend TypeScript types via npm run gen:api."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t104.py -v",
+    "tests_total": 5,
+    "tests_passed": 5,
+    "tests_failed": 0,
+    "test_cases": [
+      {
+        "name": "test_museum_qr_guided_trail_retrieval_and_sources",
+        "result": "PASSED",
+        "description": "Verifies retrieval of trail with verified primary sources, 2D rubbing fallback, and station QR payload."
+      },
+      {
+        "name": "test_trail_qr_cryptographic_verification_and_tampering",
+        "result": "PASSED",
+        "description": "Verifies genuine HMAC-SHA256 signature verification and rejection of tampered, expired, or mismatched tokens."
+      },
+      {
+        "name": "test_trail_accessibility_positive_and_negative_reporting",
+        "result": "PASSED",
+        "description": "Verifies true positive reporting for ramped sites and true negative reporting with barrier warnings for stepped sites."
+      },
+      {
+        "name": "test_negative_abuse_unknown_accessibility_is_never_advertised_as_accessible",
+        "result": "PASSED",
+        "description": "Enforces negative abuse invariant: unverified sites strictly return wheelchair_accessible=False and cautionary alert."
+      },
+      {
+        "name": "test_unpublished_place_trail_protection",
+        "result": "PASSED",
+        "description": "Verifies draft/unpublished places return HTTP 404 to unauthenticated or non-staff callers."
+      }
+    ],
+    "lint_and_build": {
+      "tsc_type_check": "PASSED",
+      "eslint_lint_ci": "PASSED",
+      "route_inventory": "PASSED (617 routes in sync)",
+      "openapi_snapshot": "PASSED"
+    }
+  }
+}

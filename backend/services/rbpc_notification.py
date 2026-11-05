@@ -452,3 +452,81 @@ def queue_inquiry_notification(
         )
 
     return outbox
+
+
+# --------------------------------------------------------------------------- #
+# Customer Escalation & Status Notification Dispatcher (V5-T103)
+# --------------------------------------------------------------------------- #
+def dispatch_inquiry_escalation(
+    db: Session,
+    inquiry: RbpcInquiry,
+    reason: Optional[str] = None,
+    provider: Optional[Any] = None,
+) -> dict[str, Any]:
+    """Dispatch escalation alert to partner and admin for overdue inquiries.
+
+    Negative abuse invariant (V5-T103):
+    Network or provider failure NEVER reports fake confirmed or delivered status.
+    If provider fails or errors, inquiry escalation is still recorded on inquiry
+    with outbox status failed_retryable/queued, and returns notification_dispatched=False.
+    """
+    now = datetime.now(timezone.utc)
+    inquiry.escalated_at = now
+    inquiry.escalation_reason = (reason or "Khách hàng yêu cầu hỗ trợ do quá hạn phản hồi 24 giờ.").strip()
+    inquiry.escalation_count += 1
+    inquiry.updated_at = now
+
+    # Determine partner notification channel
+    outbox = queue_inquiry_notification(
+        db,
+        inquiry=inquiry,
+        event_type="partner_late_escalation",
+        channel="email",
+        provider=provider,
+    )
+
+    is_delivered = (outbox.status == RbpcNotificationStatus.sent.value)
+
+    return {
+        "escalated_at": now,
+        "escalation_count": inquiry.escalation_count,
+        "notification_dispatched": is_delivered,
+        "outbox_status": outbox.status,
+    }
+
+
+def update_inquiry_notification_preferences(
+    db: Session,
+    inquiry: RbpcInquiry,
+    email_opt_in: Optional[bool] = None,
+    sms_opt_in: Optional[bool] = None,
+    frequency: Optional[str] = None,
+) -> RbpcInquiry:
+    """Update opt-in preferences or unsubscribe customer from updates."""
+    prefs = dict(inquiry.notification_preferences or {})
+
+    if email_opt_in is not None:
+        inquiry.email_opt_in = bool(email_opt_in)
+    if sms_opt_in is not None:
+        inquiry.sms_opt_in = bool(sms_opt_in)
+    if frequency is not None:
+        prefs["frequency"] = str(frequency)
+
+    inquiry.notification_preferences = prefs
+    inquiry.updated_at = datetime.now(timezone.utc)
+    return inquiry
+
+
+def unsubscribe_inquiry_notifications(
+    db: Session,
+    inquiry: RbpcInquiry,
+) -> RbpcInquiry:
+    """Explicitly unsubscribe customer from all optional email and SMS notifications."""
+    inquiry.email_opt_in = False
+    inquiry.sms_opt_in = False
+    prefs = dict(inquiry.notification_preferences or {})
+    prefs["unsubscribed_at"] = datetime.now(timezone.utc).isoformat()
+    inquiry.notification_preferences = prefs
+    inquiry.updated_at = datetime.now(timezone.utc)
+    return inquiry
+

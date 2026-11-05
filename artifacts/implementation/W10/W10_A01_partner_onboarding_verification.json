@@ -1,0 +1,113 @@
+{
+  "ticket_id": "V5-T101",
+  "wave": "W10",
+  "slot": "A01",
+  "role": "W10-A01",
+  "priority": "P2",
+  "classification": "NEW_PRODUCT_FEATURE",
+  "title": "Partner self-onboarding with verification",
+  "status": "COMPLETED",
+  "verified_at": "2026-11-05T12:08:00Z",
+  "target_modules": [
+    "backend/models_rbpc.py",
+    "backend/apischemas/rbpc.py",
+    "backend/routers/rbpc.py",
+    "frontend/src/app/rbpc/partner/page.tsx",
+    "tests/v5/test_v5_t101.py"
+  ],
+  "implementation_summary": {
+    "partner_onboarding": {
+      "model_enhancements": {
+        "RbpcCreator": [
+          "user_id (UUID references users.id)",
+          "verification_notes (TEXT audit comments)",
+          "identity_document_ref (TEXT document reference)",
+          "rights_clearance_notes (TEXT licensing notes)",
+          "verified_at (TIMESTAMPTZ approval timestamp)"
+        ],
+        "RbpcExperience": [
+          "moderation_notes (TEXT audit remarks)",
+          "moderated_by_id (UUID references users.id)",
+          "moderated_at (TIMESTAMPTZ)",
+          "rights_checked (BOOLEAN)"
+        ]
+      },
+      "defaults": {
+        "is_verified": false,
+        "consent_status": "pending_review",
+        "publication_state": "draft",
+        "rights_checked": false
+      }
+    },
+    "governance_and_audit": {
+      "role_enforcement": "Staff/Admin (STAFF_ROLES) strictly required to verify partners or moderate experience listings; non-staff receive HTTP 403 FORBIDDEN_SCOPE",
+      "audit_trail": "Append-only cryptographic hash chain logging into rbpc_content_audit for onboarding, profile edits, verifications, and moderations",
+      "reverification_trigger": "Editing artisan portrait URL automatically marks is_verified=False and consent_status='pending_review' requiring staff re-review"
+    },
+    "negative_abuse_invariant": {
+      "rule": "Unverified partner cannot publish portrait or experience listing without staff verification.",
+      "enforcement": [
+        "Public endpoint GET /api/v1/rbpc/creators/{slug} redacts approved_portrait_url to None whenever creator.is_verified is False.",
+        "Staff moderation endpoint /api/v1/rbpc/admin/experiences/{id}/moderate rejects publication_state='published' with HTTP 400 RBPC_UNVERIFIED_ARTISAN if creator.is_verified is False.",
+        "Staff moderation endpoint rejects publication_state='published' with HTTP 400 RBPC_RIGHTS_NOT_CHECKED if rights_checked is False.",
+        "Public endpoint GET /api/v1/rbpc/experiences/{slug} and story experiences return HTTP 404 if linked creator is unverified."
+      ]
+    }
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/onboarding",
+      "description": "Authenticated partner self-onboarding registering creator profile in pending_review state"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/partner/profile",
+      "description": "Retrieve authenticated partner's artisan profile"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/rbpc/partner/profile",
+      "description": "Update artisan profile details with auto re-verification upon portrait modification"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/admin/creators/{id}/verify",
+      "description": "Staff verification of partner identity, consent documents, and rights clearance"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/experiences",
+      "description": "Partner creation of cultural experience offering in draft state"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/rbpc/admin/experiences/{id}/moderate",
+      "description": "Staff moderation and rights check for experience listing"
+    }
+  ],
+  "frontend_enhancements": [
+    {
+      "file": "frontend/src/app/rbpc/partner/page.tsx",
+      "features": [
+        "Interactive navigation tabs: Inquiries Inbox, Artisan Profile & Verification, and Register Experience",
+        "Self-onboarding and profile editing form with consent and identity reference fields",
+        "Real-time verification badge indicators (Verified vs Pending Staff Verification)",
+        "Experience listing submission form in Draft mode awaiting moderation"
+      ]
+    }
+  ],
+  "verification_results": {
+    "test_file": "tests/v5/test_v5_t101.py",
+    "total_tests": 5,
+    "passed": 5,
+    "failed": 0,
+    "tests": [
+      "test_partner_self_onboarding_and_defaults",
+      "test_guest_and_unauthenticated_cannot_onboard",
+      "test_partner_profile_edits_and_reverification_on_portrait_change",
+      "test_staff_verification_role_protection",
+      "test_negative_abuse_unverified_cannot_publish_portrait_or_listing"
+    ]
+  }
+}

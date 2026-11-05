@@ -22,6 +22,11 @@ import {
   AlertCircle,
   HelpCircle,
   Filter,
+  UserCheck,
+  FileCheck,
+  Upload,
+  PlusCircle,
+  Mic,
 } from "lucide-react";
 import type { InquiryStatus, RbpcLocale } from "@/types/rbpc";
 import { getRbpcCopy } from "@/lib/rbpc/copy";
@@ -33,6 +38,7 @@ import {
   PartnerInboxItemWithAudit,
   InquiryAuditLogEntry,
 } from "@/components/rbpc/PartnerInboxView";
+import { CreatorConsentStudio } from "./CreatorConsentStudio";
 import { RbpcButton } from "@/components/rbpc/RbpcButton";
 import { RbpcCard } from "@/components/rbpc/RbpcCard";
 import {
@@ -86,6 +92,70 @@ function PartnerDashboardContent() {
   const [selectedProviderId, setSelectedProviderId] = useState<string>(
     user?.id ? user.id : providerParam
   );
+
+  // Navigation tabs: "inbox" | "onboarding" | "experience" | "oral_history"
+  const [activeTab, setActiveTab] = useState<"inbox" | "onboarding" | "experience" | "oral_history">("inbox");
+
+  // Onboarding & Profile Form State
+  const [profileData, setProfileData] = useState<{
+    slug: string;
+    public_name: string;
+    craft_tradition_vi: string;
+    craft_tradition_en: string;
+    approved_bio_vi: string;
+    approved_bio_en: string;
+    approved_portrait_url: string;
+    public_region: string;
+    years_of_practice: number | "";
+    generation_lineage: string;
+    display_consent_ref: string;
+    identity_document_ref: string;
+    rights_clearance_notes: string;
+    is_verified?: boolean;
+    consent_status?: string;
+  }>({
+    slug: "",
+    public_name: "",
+    craft_tradition_vi: "",
+    craft_tradition_en: "",
+    approved_bio_vi: "",
+    approved_bio_en: "",
+    approved_portrait_url: "",
+    public_region: "Huế",
+    years_of_practice: "",
+    generation_lineage: "",
+    display_consent_ref: "",
+    identity_document_ref: "",
+    rights_clearance_notes: "",
+  });
+  const [hasExistingProfile, setHasExistingProfile] = useState<boolean>(false);
+  const [isSubmittingProfile, setIsSubmittingProfile] = useState(false);
+
+  // Experience Listing Form State
+  const [expFormData, setExpFormData] = useState<{
+    slug: string;
+    title_vi: string;
+    title_en: string;
+    description_vi: string;
+    description_en: string;
+    area_public: string;
+    duration_minutes: number | "";
+    pricing_display: string;
+    indicative_price_amount: number | "";
+    max_party_size: number | "";
+  }>({
+    slug: "",
+    title_vi: "",
+    title_en: "",
+    description_vi: "",
+    description_en: "",
+    area_public: "Huế",
+    duration_minutes: 90,
+    pricing_display: "Từ 250.000 VNĐ / khách",
+    indicative_price_amount: 250000,
+    max_party_size: 10,
+  });
+  const [isSubmittingExp, setIsSubmittingExp] = useState(false);
 
   // Inquiries State - Initialized as empty array [] (no seed data in production)
   const [inquiries, setInquiries] = useState<PartnerInboxItemWithAudit[]>([]);
@@ -343,6 +413,13 @@ function PartnerDashboardContent() {
               <span>{locale === "vi" ? "Làm mới" : "Refresh"}</span>
             </button>
 
+            <Link
+              href="/rbpc/impact"
+              className="inline-flex items-center gap-1.5 rounded-full border border-[var(--rbpc-divider)] bg-[var(--rbpc-surface)] px-3 py-1 text-xs font-semibold text-[var(--rbpc-ink)] hover:border-[var(--rbpc-primary-border)] transition-colors"
+            >
+              <span>{locale === "vi" ? "Bảng tác động" : "Impact"}</span>
+            </Link>
+
             {isAuthenticated ? (
               <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-800 dark:text-emerald-300">
                 <ShieldCheck className="h-3.5 w-3.5" />
@@ -543,17 +620,384 @@ function PartnerDashboardContent() {
           </RbpcCard>
         </div>
 
-        {/* Embedded Core PartnerInboxView Component */}
-        <div className="space-y-4">
-          <PartnerInboxView
-            inquiries={inquiries}
-            providerId={selectedProviderId === "all" ? undefined : selectedProviderId}
-            providerName={locale === "vi" ? currentProvider.nameVi : currentProvider.nameEn}
-            locale={locale}
-            onStatusChange={handleStatusChange}
-            onSaveNotes={handleSaveNotes}
-          />
+        {/* Navigation Tabs */}
+        <div className="flex border-b border-[var(--rbpc-divider)] gap-2">
+          <button
+            type="button"
+            onClick={() => setActiveTab("inbox")}
+            className={cn(
+              "flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-semibold border-b-2 transition-all",
+              activeTab === "inbox"
+                ? "border-[var(--rbpc-primary)] text-[var(--rbpc-primary)]"
+                : "border-transparent text-[var(--rbpc-ink-subtle)] hover:text-[var(--rbpc-ink)]"
+            )}
+          >
+            <Inbox className="h-4 w-4" />
+            <span>{locale === "vi" ? "Hộp thư tiếp nhận" : "Inquiries Inbox"}</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("onboarding")}
+            className={cn(
+              "flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-semibold border-b-2 transition-all",
+              activeTab === "onboarding"
+                ? "border-[var(--rbpc-primary)] text-[var(--rbpc-primary)]"
+                : "border-transparent text-[var(--rbpc-ink-subtle)] hover:text-[var(--rbpc-ink)]"
+            )}
+          >
+            <UserCheck className="h-4 w-4" />
+            <span>{locale === "vi" ? "Hồ sơ nghệ nhân & Xác thực" : "Artisan Profile & Verification"}</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("experience")}
+            className={cn(
+              "flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-semibold border-b-2 transition-all",
+              activeTab === "experience"
+                ? "border-[var(--rbpc-primary)] text-[var(--rbpc-primary)]"
+                : "border-transparent text-[var(--rbpc-ink-subtle)] hover:text-[var(--rbpc-ink)]"
+            )}
+          >
+            <FileCheck className="h-4 w-4" />
+            <span>{locale === "vi" ? "Đăng ký trải nghiệm" : "Register Experience"}</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("oral_history")}
+            className={cn(
+              "flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-semibold border-b-2 transition-all",
+              activeTab === "oral_history"
+                ? "border-[var(--rbpc-primary)] text-[var(--rbpc-primary)]"
+                : "border-transparent text-[var(--rbpc-ink-subtle)] hover:text-[var(--rbpc-ink)]"
+            )}
+          >
+            <Mic className="h-4 w-4" />
+            <span>{locale === "vi" ? "Lịch sử truyền khẩu & Đồng thuận" : "Oral History Studio"}</span>
+          </button>
         </div>
+
+        {activeTab === "inbox" ? (
+          <>
+            {/* Embedded Core PartnerInboxView Component */}
+            <div className="space-y-4">
+              <PartnerInboxView
+                inquiries={inquiries}
+                providerId={selectedProviderId === "all" ? undefined : selectedProviderId}
+                providerName={locale === "vi" ? currentProvider.nameVi : currentProvider.nameEn}
+                locale={locale}
+                onStatusChange={handleStatusChange}
+                onSaveNotes={handleSaveNotes}
+              />
+            </div>
+          </>
+        ) : activeTab === "onboarding" ? (
+          <div className="space-y-6">
+            <RbpcCard elevation="surface" padding="responsive" className="space-y-4">
+              <div className="flex items-center justify-between border-b border-[var(--rbpc-divider)] pb-3">
+                <div className="space-y-1">
+                  <h3 className="font-serif text-lg font-bold text-[var(--rbpc-ink)]">
+                    {locale === "vi"
+                      ? "Đăng ký & Cập nhật Hồ sơ Nghệ nhân (Artisan Self-Onboarding)"
+                      : "Artisan Profile Self-Onboarding & Identity Review"}
+                  </h3>
+                  <p className="text-xs text-[var(--rbpc-ink-subtle)]">
+                    {locale === "vi"
+                      ? "Chân dung và thông tin xuất bản sẽ được nhân sự kiểm tra giấy phép và văn bản đồng thuận trước khi hiển thị công khai."
+                      : "Portraits and bios require staff identity, rights, and consent verification before public publication."}
+                  </p>
+                </div>
+                {profileData.is_verified ? (
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-800">
+                    <ShieldCheck className="h-3.5 w-3.5" />
+                    <span>{locale === "vi" ? "Đã xác thực" : "Verified"}</span>
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-800">
+                    <AlertCircle className="h-3.5 w-3.5" />
+                    <span>{locale === "vi" ? "Chờ nhân viên duyệt" : "Pending Staff Verification"}</span>
+                  </span>
+                )}
+              </div>
+
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  setIsSubmittingProfile(true);
+                  try {
+                    const endpoint = hasExistingProfile
+                      ? "/api/v1/rbpc/partner/profile"
+                      : "/api/v1/rbpc/partner/onboarding";
+                    const method = hasExistingProfile ? "PUT" : "POST";
+                    const res = await fetch(endpoint, {
+                      method,
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        slug: profileData.slug,
+                        public_name: profileData.public_name,
+                        craft_tradition_vi: profileData.craft_tradition_vi,
+                        approved_bio_vi: profileData.approved_bio_vi,
+                        approved_portrait_url: profileData.approved_portrait_url || undefined,
+                        years_of_practice: Number(profileData.years_of_practice) || undefined,
+                        generation_lineage: profileData.generation_lineage || undefined,
+                        display_consent_ref: profileData.display_consent_ref || undefined,
+                        identity_document_ref: profileData.identity_document_ref || undefined,
+                        rights_clearance_notes: profileData.rights_clearance_notes || undefined,
+                      }),
+                    });
+                    if (!res.ok) {
+                      const err = await res.json().catch(() => ({}));
+                      throw new Error(err?.error?.message || "Lỗi lưu hồ sơ đối tác");
+                    }
+                    const saved = await res.json();
+                    setProfileData((prev) => ({
+                      ...prev,
+                      ...saved,
+                      is_verified: saved.is_verified,
+                      consent_status: saved.consent_status,
+                    }));
+                    setHasExistingProfile(true);
+                    setDashboardAlert({
+                      type: "success",
+                      message: locale === "vi" ? "Đã gửi hồ sơ nghệ nhân thành công!" : "Profile submitted successfully!",
+                    });
+                  } catch (err) {
+                    setDashboardAlert({
+                      type: "error",
+                      message: err instanceof Error ? err.message : "Thao tác thất bại",
+                    });
+                  } finally {
+                    setIsSubmittingProfile(false);
+                  }
+                }}
+                className="space-y-4"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-[var(--rbpc-ink)]">
+                      {locale === "vi" ? "Mã định danh (Slug)" : "Unique Slug"} *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      disabled={hasExistingProfile}
+                      value={profileData.slug}
+                      onChange={(e) => setProfileData({ ...profileData, slug: e.target.value })}
+                      placeholder="vd: nghe-nhan-nguyen-van-a"
+                      className="w-full rounded-md border border-[var(--rbpc-divider)] bg-[var(--rbpc-surface)] px-3 py-2 text-xs text-[var(--rbpc-ink)] disabled:opacity-50"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-[var(--rbpc-ink)]">
+                      {locale === "vi" ? "Họ tên Nghệ nhân / Xưởng" : "Artisan / Workshop Name"} *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={profileData.public_name}
+                      onChange={(e) => setProfileData({ ...profileData, public_name: e.target.value })}
+                      placeholder="vd: Nghệ nhân Nguyễn Văn A"
+                      className="w-full rounded-md border border-[var(--rbpc-divider)] bg-[var(--rbpc-surface)] px-3 py-2 text-xs text-[var(--rbpc-ink)]"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-[var(--rbpc-ink)]">
+                      {locale === "vi" ? "Nghề truyền thống" : "Traditional Craft"} *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={profileData.craft_tradition_vi}
+                      onChange={(e) => setProfileData({ ...profileData, craft_tradition_vi: e.target.value })}
+                      placeholder="vd: Đúc đồng Phường Đúc"
+                      className="w-full rounded-md border border-[var(--rbpc-divider)] bg-[var(--rbpc-surface)] px-3 py-2 text-xs text-[var(--rbpc-ink)]"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-[var(--rbpc-ink)]">
+                      {locale === "vi" ? "Đường dẫn ảnh chân dung (URL)" : "Portrait Image URL"}
+                    </label>
+                    <input
+                      type="url"
+                      value={profileData.approved_portrait_url}
+                      onChange={(e) => setProfileData({ ...profileData, approved_portrait_url: e.target.value })}
+                      placeholder="https://... (ảnh cần nhân sự kiểm duyệt bản quyền)"
+                      className="w-full rounded-md border border-[var(--rbpc-divider)] bg-[var(--rbpc-surface)] px-3 py-2 text-xs text-[var(--rbpc-ink)]"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold text-[var(--rbpc-ink)]">
+                    {locale === "vi" ? "Tiểu sử & Quá trình làm nghề" : "Artisan Bio & Lineage"} *
+                  </label>
+                  <textarea
+                    required
+                    rows={3}
+                    value={profileData.approved_bio_vi}
+                    onChange={(e) => setProfileData({ ...profileData, approved_bio_vi: e.target.value })}
+                    placeholder="Mô tả truyền thống gia tộc, số năm gắn bó với nghề..."
+                    className="w-full rounded-md border border-[var(--rbpc-divider)] bg-[var(--rbpc-surface)] px-3 py-2 text-xs text-[var(--rbpc-ink)]"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-[var(--rbpc-ink)]">
+                      {locale === "vi" ? "Mã văn bản đồng thuận (Consent Ref)" : "Consent Agreement Ref"}
+                    </label>
+                    <input
+                      type="text"
+                      value={profileData.display_consent_ref}
+                      onChange={(e) => setProfileData({ ...profileData, display_consent_ref: e.target.value })}
+                      placeholder="HĐ-ĐONGTHUAN-2026-001"
+                      className="w-full rounded-md border border-[var(--rbpc-divider)] bg-[var(--rbpc-surface)] px-3 py-2 text-xs text-[var(--rbpc-ink)]"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-[var(--rbpc-ink)]">
+                      {locale === "vi" ? "Mã số định danh/CMND xác thực" : "Identity Verification Document Ref"}
+                    </label>
+                    <input
+                      type="text"
+                      value={profileData.identity_document_ref}
+                      onChange={(e) => setProfileData({ ...profileData, identity_document_ref: e.target.value })}
+                      placeholder="ID-REF-XXXX"
+                      className="w-full rounded-md border border-[var(--rbpc-divider)] bg-[var(--rbpc-surface)] px-3 py-2 text-xs text-[var(--rbpc-ink)]"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end pt-2">
+                  <RbpcButton type="submit" disabled={isSubmittingProfile} variant="primary" size="sm">
+                    {isSubmittingProfile
+                      ? locale === "vi" ? "Đang gửi..." : "Saving..."
+                      : hasExistingProfile
+                      ? locale === "vi" ? "Cập nhật hồ sơ" : "Update Profile"
+                      : locale === "vi" ? "Đăng ký xác thực" : "Submit for Verification"}
+                  </RbpcButton>
+                </div>
+              </form>
+            </RbpcCard>
+          </div>
+        ) : activeTab === "experience" ? (
+          <div className="space-y-6">
+            <RbpcCard elevation="surface" padding="responsive" className="space-y-4">
+              <div className="border-b border-[var(--rbpc-divider)] pb-3">
+                <h3 className="font-serif text-lg font-bold text-[var(--rbpc-ink)]">
+                  {locale === "vi"
+                    ? "Đăng ký Trải nghiệm Văn hóa Làng nghề (Experience Submission)"
+                    : "Cultural Experience Submission & Moderation"}
+                </h3>
+                <p className="text-xs text-[var(--rbpc-ink-subtle)]">
+                  {locale === "vi"
+                    ? "Trải nghiệm mới sẽ ở trạng thái 'Bản nháp' cho đến khi nhân viên kiểm tra bản quyền và xác thực nghệ nhân."
+                    : "New listings remain in Draft until verified and moderated by staff."}
+                </p>
+              </div>
+
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  setIsSubmittingExp(true);
+                  try {
+                    const res = await fetch("/api/v1/rbpc/partner/experiences", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        slug: expFormData.slug,
+                        title_vi: expFormData.title_vi,
+                        title_en: expFormData.title_en || undefined,
+                        description_vi: expFormData.description_vi,
+                        description_en: expFormData.description_en || undefined,
+                        area_public: expFormData.area_public,
+                        duration_minutes: Number(expFormData.duration_minutes) || undefined,
+                        pricing_display: expFormData.pricing_display || undefined,
+                        indicative_price_amount: Number(expFormData.indicative_price_amount) || undefined,
+                        max_party_size: Number(expFormData.max_party_size) || 10,
+                      }),
+                    });
+                    if (!res.ok) {
+                      const err = await res.json().catch(() => ({}));
+                      throw new Error(err?.error?.message || "Không thể tạo trải nghiệm");
+                    }
+                    setDashboardAlert({
+                      type: "success",
+                      message: locale === "vi"
+                        ? "Đã tạo bản nháp trải nghiệm thành công! Đang chờ kiểm duyệt."
+                        : "Experience draft created! Awaiting staff moderation.",
+                    });
+                  } catch (err) {
+                    setDashboardAlert({
+                      type: "error",
+                      message: err instanceof Error ? err.message : "Thao tác thất bại",
+                    });
+                  } finally {
+                    setIsSubmittingExp(false);
+                  }
+                }}
+                className="space-y-4"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-[var(--rbpc-ink)]">
+                      {locale === "vi" ? "Mã trải nghiệm (Slug)" : "Experience Slug"} *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={expFormData.slug}
+                      onChange={(e) => setExpFormData({ ...expFormData, slug: e.target.value })}
+                      placeholder="trai-nghiem-duc-dong-hue"
+                      className="w-full rounded-md border border-[var(--rbpc-divider)] bg-[var(--rbpc-surface)] px-3 py-2 text-xs text-[var(--rbpc-ink)]"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-[var(--rbpc-ink)]">
+                      {locale === "vi" ? "Tiêu đề trải nghiệm" : "Experience Title"} *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={expFormData.title_vi}
+                      onChange={(e) => setExpFormData({ ...expFormData, title_vi: e.target.value })}
+                      placeholder="Học đúc chuông đồng cùng nghệ nhân..."
+                      className="w-full rounded-md border border-[var(--rbpc-divider)] bg-[var(--rbpc-surface)] px-3 py-2 text-xs text-[var(--rbpc-ink)]"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold text-[var(--rbpc-ink)]">
+                    {locale === "vi" ? "Mô tả chi tiết lịch trình" : "Detailed Description"} *
+                  </label>
+                  <textarea
+                    required
+                    rows={4}
+                    value={expFormData.description_vi}
+                    onChange={(e) => setExpFormData({ ...expFormData, description_vi: e.target.value })}
+                    placeholder="Giới thiệu quy trình trải nghiệm, vật liệu cung cấp..."
+                    className="w-full rounded-md border border-[var(--rbpc-divider)] bg-[var(--rbpc-surface)] px-3 py-2 text-xs text-[var(--rbpc-ink)]"
+                  />
+                </div>
+
+                <div className="flex justify-end pt-2">
+                  <RbpcButton type="submit" disabled={isSubmittingExp} variant="primary" size="sm">
+                    {isSubmittingExp
+                      ? locale === "vi" ? "Đang lưu..." : "Saving..."
+                      : locale === "vi" ? "Gửi duyệt trải nghiệm" : "Submit Listing"}
+                  </RbpcButton>
+                </div>
+              </form>
+            </RbpcCard>
+          </div>
+        ) : (
+          <CreatorConsentStudio
+            creatorId={selectedProviderId === "all" ? undefined : selectedProviderId}
+            locale={locale}
+            isStaffOrPartner={isStaffOrPartner}
+            onAlert={setDashboardAlert}
+          />
+        )}
 
         {/* Security & Architectural Invariant Footer Card */}
         <RbpcCard elevation="inset" padding="responsive" className="text-xs text-[var(--rbpc-ink)] space-y-3">

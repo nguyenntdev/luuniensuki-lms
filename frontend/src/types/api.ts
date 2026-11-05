@@ -3962,6 +3962,33 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/heritage/places/{slug}/trail": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Heritage Place Trail
+         * @description Retrieve curated museum QR guided trail for a heritage place.
+         *
+         *     Returns:
+         *     - QR token linking to verified historical context and primary sources
+         *     - Authentic 2D rubbing fallback with file existence & SHA-256 verification
+         *     - Transparent accessibility route information (wheelchair access, ramps, rest stops)
+         *     - Negative abuse defense: Unverified accessibility data is NEVER falsely advertised
+         *       as accessible (wheelchair_accessible=False, is_accessibility_verified=False).
+         */
+        get: operations["get_heritage_place_trail_api_v1_heritage_places__slug__trail_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/heritage/search": {
         parameters: {
             query?: never;
@@ -3979,6 +4006,28 @@ export interface paths {
         get: operations["search_heritage_places_api_v1_heritage_search_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/heritage/trail/verify-qr": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Verify Heritage Trail Qr Token
+         * @description Verify cryptographic authenticity of a museum trail station QR code.
+         *
+         *     Validates HMAC-SHA256 signature, expiry, and site match. Rejects tampered or expired tokens.
+         */
+        post: operations["verify_heritage_trail_qr_token_api_v1_heritage_trail_verify_qr_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -8781,6 +8830,158 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/rbpc/admin/creators/{id}/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Staff Verify Creator
+         * @description Staff endpoint to verify partner identity, display consent, and rights.
+         *
+         *     Only STAFF_ROLES can approve or reject verification.
+         */
+        post: operations["staff_verify_creator_api_v1_rbpc_admin_creators__id__verify_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/admin/disputes/{id}/resolve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Resolve Review Dispute
+         * @description Staff/admin resolves a review dispute.
+         */
+        patch: operations["resolve_review_dispute_api_v1_rbpc_admin_disputes__id__resolve_patch"];
+        trace?: never;
+    };
+    "/api/v1/rbpc/admin/experiences/{id}/moderate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Staff Moderate Experience
+         * @description Staff endpoint to review and moderate experience listing and rights clearance.
+         *
+         *     Negative abuse invariant: Cannot set publication_state='published' if the host artisan
+         *     creator is not verified (is_verified=False) or rights are not cleared.
+         */
+        patch: operations["staff_moderate_experience_api_v1_rbpc_admin_experiences__id__moderate_patch"];
+        trace?: never;
+    };
+    "/api/v1/rbpc/admin/reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Admin List Reviews
+         * @description Staff/admin moderation queue for customer reviews and fraud inspection.
+         */
+        get: operations["admin_list_reviews_api_v1_rbpc_admin_reviews_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/admin/reviews/{id}/moderate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Moderate Customer Review
+         * @description Moderate a review: approve/publish, reject, or archive.
+         */
+        patch: operations["moderate_customer_review_api_v1_rbpc_admin_reviews__id__moderate_patch"];
+        trace?: never;
+    };
+    "/api/v1/rbpc/availability/reservations/{ref}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Reservation Status
+         * @description Visitor lookup of reservation status and remaining hold timeout.
+         *
+         *     If pending reservation has expired past expires_at, status transitions to expired
+         *     and seats are released back to the slot inventory.
+         */
+        get: operations["get_reservation_status_api_v1_rbpc_availability_reservations__ref__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/availability/reserve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Reserve Workshop Seats
+         * @description Temporarily hold seat capacity in a workshop slot with a reserve timeout.
+         *
+         *     Enforces concurrency race condition safety via row-level pessimistic locking
+         *     (with_for_update) and check constraint (reserved_seats + confirmed_seats <= capacity).
+         *     Two concurrent requests cannot book the last remaining seat twice.
+         */
+        post: operations["reserve_workshop_seats_api_v1_rbpc_availability_reserve_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/rbpc/config": {
         parameters: {
             query?: never;
@@ -8870,6 +9071,53 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/rbpc/editor/settlements/{id}/compliance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Review Settlement Compliance
+         * @description Review and approve or hold a settlement for compliance and artisan payout.
+         *
+         *     Restricted to ADMIN_ROLES (admin, super_admin).
+         *     When approved: status -> 'approved', payout_status -> 'approved'.
+         *     When held/rejected: status -> 'pending_compliance', payout_status -> 'withheld'.
+         */
+        post: operations["review_settlement_compliance_api_v1_rbpc_editor_settlements__id__compliance_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/editor/settlements/{id}/disburse": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Disburse Artisan Payout
+         * @description Mark artisan payout as disbursed once banking transfer is complete.
+         *
+         *     Requires prior compliance approval. Cannot disburse unapproved settlements.
+         *     Transitions status -> 'settled' and payout_status -> 'disbursed'.
+         */
+        post: operations["disburse_artisan_payout_api_v1_rbpc_editor_settlements__id__disburse_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/rbpc/experiences/{slug}": {
         parameters: {
             query?: never;
@@ -8882,6 +9130,48 @@ export interface paths {
          * @description Retrieve details of a cultural workshop offering with honest inquiry-only notice.
          */
         get: operations["get_rbpc_experience_api_v1_rbpc_experiences__slug__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/experiences/{slug}/availability": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Experience Availability
+         * @description Retrieve workshop slots and real seat availability calendar for an experience.
+         *
+         *     Cleans up expired pending reservations, releasing seats back to available capacity.
+         */
+        get: operations["get_experience_availability_api_v1_rbpc_experiences__slug__availability_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/experiences/{slug}/reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Experience Reviews
+         * @description Public endpoint to fetch verified published reviews for an experience.
+         */
+        get: operations["list_experience_reviews_api_v1_rbpc_experiences__slug__reviews_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -8959,6 +9249,70 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/rbpc/inquiries/status/{opaqueToken}/escalate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Escalate Inquiry By Token
+         * @description Customer Notification Center: Escalate late partner response when SLA (24h) is overdue.
+         *
+         *     Negative abuse invariant (V5-T103):
+         *     Network or provider error never shows or sends fake confirmed status.
+         *     Escalations only apply to inquiries that are overdue and not already resolved/closed.
+         */
+        post: operations["escalate_inquiry_by_token_api_v1_rbpc_inquiries_status__opaqueToken__escalate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/inquiries/status/{opaqueToken}/preferences": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Update Inquiry Preferences By Token
+         * @description Customer Notification Center: Update notification channels (Email / SMS) opt-in preferences.
+         */
+        post: operations["update_inquiry_preferences_by_token_api_v1_rbpc_inquiries_status__opaqueToken__preferences_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/inquiries/status/{opaqueToken}/unsubscribe": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Unsubscribe Inquiry By Token
+         * @description Customer Notification Center: Unsubscribe from all optional email and SMS notifications.
+         */
+        post: operations["unsubscribe_inquiry_by_token_api_v1_rbpc_inquiries_status__opaqueToken__unsubscribe_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/rbpc/inquiries/status/{opaqueToken}/withdraw": {
         parameters: {
             query?: never;
@@ -8978,6 +9332,121 @@ export interface paths {
          *     - Appends immutable cryptographic audit entry to rbpc_content_audit
          */
         post: operations["withdraw_inquiry_status_consent_api_v1_rbpc_inquiries_status__opaqueToken__withdraw_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/ledger/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Ledger Financial Summary
+         * @description Aggregate financial summary from the verified settlement ledger.
+         *
+         *     Negative abuse invariant (V5-T108):
+         *     Inquiries in 'confirmed' status alone contribute 0 VND. Only explicit
+         *     records in `rbpc_settlement_ledger` contribute to actual revenue.
+         */
+        get: operations["get_ledger_financial_summary_api_v1_rbpc_ledger_summary_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/oral-history/{recording_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Oral History Public
+         * @description Public / student access to an oral history recording and its verified transcript.
+         *
+         *     Negative abuse invariant (V5-T109):
+         *     If consent is revoked, erased, or not consented:
+         *     - Public access is rejected with HTTP 403 FORBIDDEN (or HTTP 410 GONE).
+         *     - Returns anti-stale cache-control headers (no-store, no-cache).
+         */
+        get: operations["get_oral_history_public_api_v1_rbpc_oral_history__recording_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/partner/availability/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Cancel Workshop Reservation
+         * @description Cancel a reservation or hold, restoring seat capacity to the available pool.
+         */
+        post: operations["cancel_workshop_reservation_api_v1_rbpc_partner_availability_cancel_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/partner/availability/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Confirm Workshop Reservation
+         * @description Partner confirmation of a reserved workshop seat hold.
+         *
+         *     Pessimistic row locking ensures two concurrent requests cannot confirm the last remaining seat twice.
+         *     Rejects expired holds and releases seats. Moves reserved_seats to confirmed_seats upon confirmation.
+         */
+        post: operations["confirm_workshop_reservation_api_v1_rbpc_partner_availability_confirm_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/partner/experiences": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Partner Create Experience
+         * @description Allow an authenticated partner to submit an experience listing.
+         *
+         *     Defaults to publication_state='draft' and rights_checked=False.
+         *     Negative abuse invariant: unverified partner cannot publish without staff verification.
+         */
+        post: operations["partner_create_experience_api_v1_rbpc_partner_experiences_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -9028,6 +9497,293 @@ export interface paths {
          *     Enforces valid lifecycle state transitions.
          */
         patch: operations["update_partner_inquiry_status_api_v1_rbpc_partner_inquiries__id__patch"];
+        trace?: never;
+    };
+    "/api/v1/rbpc/partner/onboarding": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Partner Self Onboard
+         * @description Allow an authenticated partner/artisan to register a craft profile.
+         *
+         *     Defaults to is_verified=False and consent_status='pending_review' until staff verification.
+         */
+        post: operations["partner_self_onboard_api_v1_rbpc_partner_onboarding_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/partner/oral-history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Partner Oral History
+         * @description List oral history recordings for partner studio with role-based scoping.
+         */
+        get: operations["list_partner_oral_history_api_v1_rbpc_partner_oral_history_get"];
+        put?: never;
+        /**
+         * Create Oral History Recording
+         * @description Create a new oral history recording draft with cultural context and initial transcript.
+         */
+        post: operations["create_oral_history_recording_api_v1_rbpc_partner_oral_history_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/partner/oral-history/{recording_id}/consent": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Update Recording Consent
+         * @description Grant or update per-use media consent for an oral history recording.
+         */
+        post: operations["update_recording_consent_api_v1_rbpc_partner_oral_history__recording_id__consent_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/partner/oral-history/{recording_id}/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Revoke Oral History Recording
+         * @description Revoke consent or request erasure (right-to-erasure / GDPR / Decree 13/2023/ND-CP).
+         *
+         *     Negative abuse invariant (V5-T109):
+         *     Immediately invalidates local and persistent CDN caches via AssetCacheRevocation
+         *     and registers an immutable audit entry. Subsequent public calls immediately return 403.
+         */
+        post: operations["revoke_oral_history_recording_api_v1_rbpc_partner_oral_history__recording_id__revoke_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/partner/oral-history/{recording_id}/versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add Transcript Version
+         * @description Add a new versioned transcript with timecode cues to an oral history recording.
+         */
+        post: operations["add_transcript_version_api_v1_rbpc_partner_oral_history__recording_id__versions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/partner/profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Partner Profile
+         * @description Retrieve the authenticated partner's artisan profile.
+         */
+        get: operations["get_partner_profile_api_v1_rbpc_partner_profile_get"];
+        /**
+         * Update Partner Profile
+         * @description Allow an artisan partner to edit their profile details.
+         *
+         *     Updating core identity fields or portrait URL automatically flags for re-review
+         *     if previous verification was completed.
+         */
+        put: operations["update_partner_profile_api_v1_rbpc_partner_profile_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/partner/settlements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Settlements
+         * @description List settlements scoped to the authenticated partner/provider or all if admin/staff.
+         */
+        get: operations["list_settlements_api_v1_rbpc_partner_settlements_get"];
+        put?: never;
+        /**
+         * Record Settlement Transaction
+         * @description Record an actual confirmed financial settlement for an inquiry.
+         *
+         *     Invariants:
+         *     1. Inquiry MUST exist and MUST be in 'confirmed' or 'closed' status. An inquiry
+         *        in 'new' or 'contacted' status CANNOT produce a settlement record.
+         *     2. Merely changing status to 'confirmed' does NOT create a settlement record
+         *        nor any revenue in the ledger.
+         *     3. Caller must be the assigned provider, experience owner, or staff/admin.
+         *     4. Automatically computes contracted platform fee (take_rate), tax/VAT,
+         *        and net artisan payout:
+         *        - platform_fee = gross_amount * take_rate
+         *        - tax_vat = gross_amount * vat_rate
+         *        - artisan_payout = gross_amount - platform_fee - tax_vat
+         *     5. Initial status is 'pending_compliance' and payout_status is 'pending'.
+         *        Payout disbursement requires compliance approval.
+         */
+        post: operations["record_settlement_transaction_api_v1_rbpc_partner_settlements_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/partner/settlements/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Settlement Detail
+         * @description Get single settlement detail with multi-tenant access control.
+         */
+        get: operations["get_settlement_detail_api_v1_rbpc_partner_settlements__id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/partner/settlements/{id}/refund": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Process Settlement Refund
+         * @description Process a full or partial refund against a settlement.
+         *
+         *     Re-computes platform fee and artisan payout deductions accordingly.
+         *     Marks status -> 'refunded' if fully refunded.
+         */
+        post: operations["process_settlement_refund_api_v1_rbpc_partner_settlements__id__refund_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/partner/slots": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Partner Workshop Slots
+         * @description List workshop slots for experiences owned by the authenticated partner.
+         */
+        get: operations["list_partner_workshop_slots_api_v1_rbpc_partner_slots_get"];
+        put?: never;
+        /**
+         * Create Workshop Slot
+         * @description Partner endpoint to open a new calendar workshop slot with seat capacity.
+         */
+        post: operations["create_workshop_slot_api_v1_rbpc_partner_slots_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Customer Review
+         * @description Submit a verified customer review for a completed inquiry.
+         *
+         *     Negative abuse invariant (V5-T107):
+         *     Only customers with verified completed experience inquiries (state == 'closed'
+         *     and completion verified) can submit reviews. Uncompleted, fake, or cancelled
+         *     inquiries cannot post ratings or reviews.
+         */
+        post: operations["create_customer_review_api_v1_rbpc_reviews_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/reviews/{id}/dispute": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * File Review Dispute
+         * @description File a dispute against a review.
+         */
+        post: operations["file_review_dispute_api_v1_rbpc_reviews__id__dispute_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/rbpc/stories": {
@@ -9924,6 +10680,270 @@ export interface paths {
          * @description List all active tags, optionally filtered by type.
          */
         get: operations["list_tags_api_v1_tags_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/teacher/onboarding/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Complete Teacher Onboarding
+         * @description Mark onboarding tour as completely finished.
+         */
+        post: operations["complete_teacher_onboarding_api_v1_teacher_onboarding_complete_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/teacher/onboarding/dismiss": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Dismiss Teacher Tour
+         * @description Dismiss or re-enable the interactive onboarding tour banner.
+         */
+        post: operations["dismiss_teacher_tour_api_v1_teacher_onboarding_dismiss_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/teacher/onboarding/profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Teacher Onboarding Profile
+         * @description Retrieve teacher onboarding profile, school verification status, and demo mode.
+         */
+        get: operations["get_teacher_onboarding_profile_api_v1_teacher_onboarding_profile_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/teacher/onboarding/reset": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Reset Teacher Onboarding
+         * @description Reset onboarding tour progress for re-training or demo restart.
+         */
+        post: operations["reset_teacher_onboarding_api_v1_teacher_onboarding_reset_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/teacher/onboarding/step": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Record Teacher Onboarding Step
+         * @description Record an onboarding tour step completion.
+         */
+        post: operations["record_teacher_onboarding_step_api_v1_teacher_onboarding_step_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/teacher/sample-templates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Sample Templates
+         * @description List verified sample lesson templates clearly marked as 'SAMPLE TEMPLATE'.
+         */
+        get: operations["list_sample_templates_api_v1_teacher_sample_templates_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/teacher/sample-templates/{template_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Sample Template
+         * @description Retrieve details for a specific sample lesson template.
+         */
+        get: operations["get_sample_template_api_v1_teacher_sample_templates__template_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/teacher/sample-templates/{template_id}/clone": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Clone Sample Template
+         * @description Clone a verified sample template into an editable personal draft lesson plan.
+         */
+        post: operations["clone_sample_template_api_v1_teacher_sample_templates__template_id__clone_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/teacher/support/tickets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Support Tickets
+         * @description List submitted support tickets.
+         */
+        get: operations["list_support_tickets_api_v1_teacher_support_tickets_get"];
+        put?: never;
+        /**
+         * Create Support Ticket
+         * @description Submit a teacher support ticket for pedagogical, technical, curriculum, or verification help.
+         */
+        post: operations["create_support_ticket_api_v1_teacher_support_tickets_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/teacher/support/tickets/{ticket_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Support Ticket
+         * @description Get details of a specific support ticket.
+         */
+        get: operations["get_support_ticket_api_v1_teacher_support_tickets__ticket_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/teacher/support/tickets/{ticket_id}/reply": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Reply Support Ticket
+         * @description Add a follow-up reply or teacher comment to an existing support ticket.
+         */
+        post: operations["reply_support_ticket_api_v1_teacher_support_tickets__ticket_id__reply_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/teacher/training/resources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Training Resources
+         * @description List curated professional development and teacher training resources.
+         */
+        get: operations["list_training_resources_api_v1_teacher_training_resources_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/teacher/training/resources/{resource_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Training Resource
+         * @description Retrieve details of a specific teacher training resource.
+         */
+        get: operations["get_training_resource_api_v1_teacher_training_resources__resource_id__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -16002,6 +17022,49 @@ export interface components {
          */
         HeritageMediaType: "photo" | "audio" | "video" | "sketchfab_embed" | "glb" | "document";
         /**
+         * HeritageMuseumTrailOut
+         * @description Full museum QR guided trail payload linking verified context, sources, and access info.
+         */
+        HeritageMuseumTrailOut: {
+            accessibility: components["schemas"]["HeritageTrailAccessibilityInfo"];
+            /**
+             * Estimated Duration Minutes
+             * @default 35
+             */
+            estimated_duration_minutes: number;
+            offline_rubbing_fallback: components["schemas"]["HeritageTrailRubbingFallback"];
+            /** Place Name En */
+            place_name_en?: string | null;
+            /** Place Name Vi */
+            place_name_vi: string;
+            /** Place Slug */
+            place_slug: string;
+            /** Primary Sources */
+            primary_sources?: {
+                [key: string]: unknown;
+            }[];
+            /**
+             * Primary Sources Count
+             * @default 0
+             */
+            primary_sources_count: number;
+            /** Stations */
+            stations?: components["schemas"]["HeritageTrailStationOut"][];
+            /** Summary En */
+            summary_en?: string | null;
+            /** Summary Vi */
+            summary_vi: string;
+            /**
+             * Total Stations
+             * @default 1
+             */
+            total_stations: number;
+            /** Trail Title En */
+            trail_title_en?: string | null;
+            /** Trail Title Vi */
+            trail_title_vi: string;
+        };
+        /**
          * HeritagePlaceDetailOut
          * @description Deep representation of a heritage place including relational evidence and media.
          */
@@ -16414,6 +17477,147 @@ export interface components {
              * @description Verified factual statement or extracted claim supported by this source.
              */
             statement: string;
+        };
+        /**
+         * HeritageTrailAccessibilityInfo
+         * @description Wheelchair and physical accessibility route telemetry for on-site visitors.
+         */
+        HeritageTrailAccessibilityInfo: {
+            /**
+             * Accessibility Grade
+             * @description Grade: full_wheelchair, partial_step_assistance, inaccessible_steep_steps, unknown_unverified
+             */
+            accessibility_grade: string;
+            /**
+             * Auditory Beacon Available
+             * @default false
+             */
+            auditory_beacon_available: boolean;
+            /**
+             * Is Accessibility Verified
+             * @description Whether accessibility route has been officially surveyed by staff/HMCC.
+             */
+            is_accessibility_verified: boolean;
+            /** Ramp Locations */
+            ramp_locations?: string[];
+            /**
+             * Rest Stops Count
+             * @default 0
+             */
+            rest_stops_count: number;
+            /** Safety Notes */
+            safety_notes?: string | null;
+            /**
+             * Tactile Paving
+             * @default false
+             */
+            tactile_paving: boolean;
+            /**
+             * Wheelchair Accessible
+             * @description Strictly False if accessibility grade is unknown or inaccessible.
+             */
+            wheelchair_accessible: boolean;
+            /** Wheelchair Route Summary */
+            wheelchair_route_summary: string;
+        };
+        /**
+         * HeritageTrailQRVerifyIn
+         * @description Request payload to verify cryptographic authenticity of an on-site station QR code.
+         */
+        HeritageTrailQRVerifyIn: {
+            /** Expected Site */
+            expected_site?: string | null;
+            /** Qr Token */
+            qr_token: string;
+        };
+        /**
+         * HeritageTrailQRVerifyOut
+         * @description Response payload for verified on-site station QR token.
+         */
+        HeritageTrailQRVerifyOut: {
+            /** Authority */
+            authority: string;
+            /** Expires At */
+            expires_at: number;
+            /** Issued At */
+            issued_at: number;
+            /** Nonce */
+            nonce: string;
+            /** Site Slug */
+            site_slug: string;
+            /** Station Index */
+            station_index: number;
+            /** Verified */
+            verified: boolean;
+        };
+        /**
+         * HeritageTrailRubbingFallback
+         * @description 100% authentic 2D rubbing asset fallback for low-bandwidth or offline fieldwork.
+         */
+        HeritageTrailRubbingFallback: {
+            /** Asset Url */
+            asset_url: string;
+            /**
+             * Byte Size
+             * @default 0
+             */
+            byte_size: number;
+            /** Description En */
+            description_en?: string | null;
+            /** Description Vi */
+            description_vi: string;
+            /**
+             * File Exists
+             * @default true
+             */
+            file_exists: boolean;
+            /**
+             * Format
+             * @default image/jpeg
+             */
+            format: string;
+            /** Legal Basis */
+            legal_basis: string;
+            /** Local Path */
+            local_path: string;
+            /** Rights Attribution */
+            rights_attribution: string;
+            /** Sha256 */
+            sha256: string;
+        };
+        /**
+         * HeritageTrailStationOut
+         * @description On-site physical trail station with cryptographic QR token and source linking.
+         */
+        HeritageTrailStationOut: {
+            accessibility_info: components["schemas"]["HeritageTrailAccessibilityInfo"];
+            /** Authority */
+            authority: string;
+            /** Inspection Prompt En */
+            inspection_prompt_en?: string | null;
+            /** Inspection Prompt Vi */
+            inspection_prompt_vi: string;
+            /** Location Lat */
+            location_lat?: number | null;
+            /** Location Lon */
+            location_lon?: number | null;
+            offline_rubbing: components["schemas"]["HeritageTrailRubbingFallback"];
+            /** Primary Sources */
+            primary_sources?: {
+                [key: string]: unknown;
+            }[];
+            /** Qr Data Uri */
+            qr_data_uri: string;
+            /** Qr Token */
+            qr_token: string;
+            /** Station Code */
+            station_code: string;
+            /** Station Index */
+            station_index: number;
+            /** Title En */
+            title_en?: string | null;
+            /** Title Vi */
+            title_vi: string;
         };
         /** HistoricalAssetCreate */
         HistoricalAssetCreate: {
@@ -25056,6 +26260,65 @@ export interface components {
             xp: number;
         };
         /**
+         * RbpcAudioConsentScope
+         * @enum {string}
+         */
+        RbpcAudioConsentScope: "full_public" | "educational_only" | "preview_only" | "revoked";
+        /**
+         * RbpcAudioTranscriptVersionOut
+         * @description Audio transcript revision record.
+         */
+        RbpcAudioTranscriptVersionOut: {
+            /** Artisan Verified At */
+            artisan_verified_at?: string | null;
+            /** Author Id */
+            author_id?: string | null;
+            /** Change Summary */
+            change_summary?: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Is Verified By Artisan
+             * @default false
+             */
+            is_verified_by_artisan: boolean;
+            /**
+             * Recording Id
+             * Format: uuid
+             */
+            recording_id: string;
+            /** Timed Cues */
+            timed_cues?: components["schemas"]["RbpcTranscriptCue"][];
+            /** Transcript Text En */
+            transcript_text_en?: string | null;
+            /** Transcript Text Vi */
+            transcript_text_vi: string;
+            /** Version Number */
+            version_number: number;
+        };
+        /**
+         * RbpcAvailabilityCalendarOut
+         * @description Calendar schedule of workshop slots for an experience.
+         */
+        RbpcAvailabilityCalendarOut: {
+            /** Experience Slug */
+            experience_slug: string;
+            /** Experience Title */
+            experience_title: string;
+            /** Slots */
+            slots: components["schemas"]["RbpcWorkshopSlotOut"][];
+            /** Total Slots */
+            total_slots: number;
+        };
+        /**
          * RbpcAvailabilityMode
          * @enum {string}
          */
@@ -25301,6 +26564,17 @@ export interface components {
              */
             id: string;
             /**
+             * Identity Document Ref
+             * @description Encrypted/redacted reference to verified identity document.
+             */
+            identity_document_ref?: string | null;
+            /**
+             * Is Verified
+             * @description Whether staff/admin has reviewed identity, consent, and rights.
+             * @default false
+             */
+            is_verified: boolean;
+            /**
              * Public Name
              * @description Public display name or artisan title.
              */
@@ -25311,10 +26585,22 @@ export interface components {
              */
             public_region: string;
             /**
+             * Rights Clearance Notes
+             * @description Rights clearance and portrait usage permissions.
+             */
+            rights_clearance_notes?: string | null;
+            /**
              * Slug
              * @description URL-safe identifier.
              */
             slug: string;
+            /**
+             * Verification Notes
+             * @description Verification audit comments.
+             */
+            verification_notes?: string | null;
+            /** Verified At */
+            verified_at?: string | null;
             /**
              * Years Of Practice
              * @description Years dedicated to the craft tradition.
@@ -25366,7 +26652,7 @@ export interface components {
             } | null;
             /**
              * Locale
-             * @description Desired response locale (vi or en).
+             * @description Desired response locale (vi, en, fr, ja, ko).
              * @default vi
              */
             locale: string;
@@ -25460,10 +26746,200 @@ export interface components {
             uncertainty_note?: string | null;
         };
         /**
+         * RbpcCustomerReviewAdminListOut
+         * @description Moderation list of customer reviews.
+         */
+        RbpcCustomerReviewAdminListOut: {
+            /** Items */
+            items: components["schemas"]["RbpcCustomerReviewAdminOut"][];
+            /**
+             * Pending Count
+             * @default 0
+             */
+            pending_count: number;
+            /** Total */
+            total: number;
+        };
+        /**
+         * RbpcCustomerReviewAdminOut
+         * @description Internal moderation view of a review with fraud flags and inquiry linkage.
+         */
+        RbpcCustomerReviewAdminOut: {
+            /** Author Display Name */
+            author_display_name: string;
+            /** Author User Id */
+            author_user_id?: string | null;
+            /** Comment */
+            comment: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Disputes */
+            disputes?: components["schemas"]["RbpcReviewDisputeOut"][];
+            /**
+             * Experience Id
+             * Format: uuid
+             */
+            experience_id: string;
+            /** Fraud Flags */
+            fraud_flags: {
+                [key: string]: unknown;
+            };
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Inquiry Id
+             * Format: uuid
+             */
+            inquiry_id: string;
+            /** Moderated At */
+            moderated_at?: string | null;
+            /** Moderated By Id */
+            moderated_by_id?: string | null;
+            /** Moderation Notes */
+            moderation_notes?: string | null;
+            /** Rating */
+            rating: number;
+            status: components["schemas"]["RbpcReviewStatus"];
+            /** Title */
+            title: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Verified Completed */
+            verified_completed: boolean;
+        };
+        /**
+         * RbpcCustomerReviewCreate
+         * @description Customer payload to submit a verified review for a completed inquiry.
+         */
+        RbpcCustomerReviewCreate: {
+            /**
+             * Author Display Name
+             * @description Public author alias. If omitted, uses inquiry contact name or anonymous format.
+             */
+            author_display_name?: string | null;
+            /**
+             * Comment
+             * @description Detailed review of the workshop experience.
+             */
+            comment: string;
+            /**
+             * Inquiry Token
+             * @description Opaque status token of the inquiry proving possession and completion.
+             */
+            inquiry_token: string;
+            /**
+             * Rating
+             * @description Rating from 1 (lowest) to 5 (highest).
+             */
+            rating: number;
+            /**
+             * Title
+             * @description Short summary or headline of the experience review.
+             */
+            title: string;
+        };
+        /**
+         * RbpcCustomerReviewListOut
+         * @description List of customer reviews.
+         */
+        RbpcCustomerReviewListOut: {
+            /**
+             * Average Rating
+             * @default 0
+             */
+            average_rating: number;
+            /** Items */
+            items: components["schemas"]["RbpcCustomerReviewOut"][];
+            /** Total */
+            total: number;
+        };
+        /**
+         * RbpcCustomerReviewModeration
+         * @description Staff/admin action to moderate a review (publish, reject, archive).
+         */
+        RbpcCustomerReviewModeration: {
+            /**
+             * Notes
+             * @description Staff moderation audit reasoning.
+             */
+            notes?: string | null;
+            /** @description Target review status: published, rejected, archived. */
+            status: components["schemas"]["RbpcReviewStatus"];
+        };
+        /**
+         * RbpcCustomerReviewOut
+         * @description Public customer review representation with verified badge and zero PII.
+         */
+        RbpcCustomerReviewOut: {
+            /** Author Display Name */
+            author_display_name: string;
+            /** Comment */
+            comment: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Experience Id
+             * Format: uuid
+             */
+            experience_id: string;
+            /** Experience Slug */
+            experience_slug?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Rating */
+            rating: number;
+            status: components["schemas"]["RbpcReviewStatus"];
+            /** Title */
+            title: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Verified Completed */
+            verified_completed: boolean;
+        };
+        /**
+         * RbpcDisputeStatus
+         * @enum {string}
+         */
+        RbpcDisputeStatus: "opened" | "under_review" | "resolved_upheld" | "resolved_overturned" | "dismissed";
+        /**
          * RbpcEpistemicCertainty
          * @enum {string}
          */
         RbpcEpistemicCertainty: "high" | "medium" | "contested" | "insufficient_sources";
+        /**
+         * RbpcExperienceModerationIn
+         * @description Staff moderation payload for experience listing.
+         */
+        RbpcExperienceModerationIn: {
+            /** Moderation Notes */
+            moderation_notes?: string | null;
+            /** Publication State */
+            publication_state: string;
+            /**
+             * Rights Checked
+             * @description Confirm all media and brand rights cleared.
+             * @default true
+             */
+            rights_checked: boolean;
+        };
         /**
          * RbpcExperienceOut
          * @description Real-world cultural experience with honest inquiry-only notice.
@@ -25536,6 +27012,13 @@ export interface components {
              * @default 10
              */
             max_party_size: number | null;
+            /** Moderated At */
+            moderated_at?: string | null;
+            /**
+             * Moderation Notes
+             * @description Staff moderation audit notes.
+             */
+            moderation_notes?: string | null;
             /**
              * Notice
              * @description Honest transparency disclosure.
@@ -25547,6 +27030,12 @@ export interface components {
              * @default published
              */
             publication_state: string;
+            /**
+             * Rights Checked
+             * @description Whether licensing and intellectual rights have been cleared.
+             * @default false
+             */
+            rights_checked: boolean;
             /**
              * Slug
              * @description URL-safe identifier.
@@ -25589,6 +27078,12 @@ export interface components {
             consent: components["schemas"]["RbpcConsentIn"];
             contact: components["schemas"]["RbpcContactIn"];
             /**
+             * Email Opt In
+             * @description Whether visitor opts in to receive status update notifications via email.
+             * @default true
+             */
+            email_opt_in: boolean;
+            /**
              * Experience Slug
              * @description Target experience offering slug.
              */
@@ -25614,6 +27109,88 @@ export interface components {
              * @description Desired workshop/tour date (must be in the future).
              */
             preferred_date?: string | null;
+            /**
+             * Sms Opt In
+             * @description Whether visitor opts in to receive SMS alerts for urgent confirmations or changes.
+             * @default false
+             */
+            sms_opt_in: boolean;
+        };
+        /**
+         * RbpcInquiryEscalationCreate
+         * @description Customer request to escalate a late partner response.
+         */
+        RbpcInquiryEscalationCreate: {
+            /**
+             * Reason
+             * @description Reason customer is escalating (e.g. overdue 24h SLA, urgent travel plan).
+             */
+            reason?: string | null;
+        };
+        /**
+         * RbpcInquiryEscalationOut
+         * @description Result of partner late response escalation.
+         */
+        RbpcInquiryEscalationOut: {
+            /**
+             * Escalated At
+             * Format: date-time
+             */
+            escalated_at: string;
+            /** Escalation Count */
+            escalation_count: number;
+            /** Message */
+            message: string;
+            /** Notification Dispatched */
+            notification_dispatched: boolean;
+            /** Reference */
+            reference: string;
+            /** Sla Overdue Seconds */
+            sla_overdue_seconds: number;
+            status: components["schemas"]["RbpcInquiryStatus"];
+        };
+        /**
+         * RbpcInquiryNotificationPreferenceOut
+         * @description Result of updating notification preferences.
+         */
+        RbpcInquiryNotificationPreferenceOut: {
+            /** Email Opt In */
+            email_opt_in: boolean;
+            /** Message */
+            message: string;
+            /** Reference */
+            reference: string;
+            /** Sms Opt In */
+            sms_opt_in: boolean;
+            /** Unsubscribed */
+            unsubscribed: boolean;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /**
+         * RbpcInquiryNotificationPreferenceUpdate
+         * @description Update opt-in preferences for customer notifications.
+         */
+        RbpcInquiryNotificationPreferenceUpdate: {
+            /**
+             * Email Opt In
+             * @description Opt in or out of email updates.
+             */
+            email_opt_in?: boolean | null;
+            /**
+             * Frequency
+             * @description Digest frequency (immediate, daily).
+             * @default immediate
+             */
+            frequency: string | null;
+            /**
+             * Sms Opt In
+             * @description Opt in or out of SMS updates.
+             */
+            sms_opt_in?: boolean | null;
         };
         /**
          * RbpcInquiryOut
@@ -25658,10 +27235,44 @@ export interface components {
          */
         RbpcInquiryStatusOut: {
             /**
+             * Can Escalate
+             * @description True if customer can escalate late response.
+             * @default false
+             */
+            can_escalate: boolean;
+            /**
+             * Email Opt In
+             * @description Email status update preference.
+             * @default true
+             */
+            email_opt_in: boolean;
+            /**
+             * Escalated At
+             * @description Timestamp of partner escalation if triggered.
+             */
+            escalated_at?: string | null;
+            /**
+             * Escalation Count
+             * @description Total number of escalations triggered.
+             * @default 0
+             */
+            escalation_count: number;
+            /**
+             * Escalation Reason
+             * @description Reason recorded for escalation.
+             */
+            escalation_reason?: string | null;
+            /**
              * Experience Title
              * @description Title of the requested experience.
              */
             experience_title: string;
+            /**
+             * Is Overdue
+             * @description True if partner SLA (24h) is overdue without action.
+             * @default false
+             */
+            is_overdue: boolean;
             /**
              * Last Updated At
              * Format: date-time
@@ -25676,6 +27287,17 @@ export interface components {
              * @description Non-sequential reference code.
              */
             reference: string;
+            /**
+             * Sla Due At
+             * @description 24h partner SLA deadline.
+             */
+            sla_due_at?: string | null;
+            /**
+             * Sms Opt In
+             * @description SMS notification preference.
+             * @default false
+             */
+            sms_opt_in: boolean;
             /** @description Current inquiry lifecycle state. */
             status: components["schemas"]["RbpcInquiryStatus"];
             /**
@@ -25728,6 +27350,60 @@ export interface components {
             status_message: string;
         };
         /**
+         * RbpcLedgerFinancialSummary
+         * @description Aggregate financial summary from the verified settlement ledger.
+         */
+        RbpcLedgerFinancialSummary: {
+            /**
+             * Approved Settlements Count
+             * @description Number of compliance-approved settlements
+             * @default 0
+             */
+            approved_settlements_count: number;
+            /**
+             * Contracted Take Rate Avg
+             * @description Weighted or average contracted take rate
+             * @default 0.15
+             */
+            contracted_take_rate_avg: number;
+            /**
+             * Pending Settlements Count
+             * @description Settlements awaiting compliance
+             * @default 0
+             */
+            pending_settlements_count: number;
+            /**
+             * Total Artisan Payout Vnd
+             * @description Total net payout allocated to artisans
+             * @default 0
+             */
+            total_artisan_payout_vnd: number;
+            /**
+             * Total Gross Settled Vnd
+             * @description Total gross settled transaction volume
+             * @default 0
+             */
+            total_gross_settled_vnd: number;
+            /**
+             * Total Platform Fee Vnd
+             * @description Total platform fee earned
+             * @default 0
+             */
+            total_platform_fee_vnd: number;
+            /**
+             * Total Refund Vnd
+             * @description Total refunded amount
+             * @default 0
+             */
+            total_refund_vnd: number;
+            /**
+             * Total Tax Vat Vnd
+             * @description Total taxes collected/remitted
+             * @default 0
+             */
+            total_tax_vat_vnd: number;
+        };
+        /**
          * RbpcObservedMetrics
          * @description Real, verified aggregate statistics observed in the database.
          */
@@ -25738,6 +27414,18 @@ export interface components {
              * @default 0
              */
             active_experiences_count: number;
+            /**
+             * Artisan Payout Vnd Settled
+             * @description Total verified actual artisan payouts settled through the financial ledger (VND).
+             * @default 0
+             */
+            artisan_payout_vnd_settled: number;
+            /**
+             * Completed Experiences Count
+             * @description Total verified completed cultural experiences observed from real closed inquiries.
+             * @default 0
+             */
+            completed_experiences_count: number;
             /**
              * Consented Creators Count
              * @description Total living practitioners with verified written consent.
@@ -25774,6 +27462,229 @@ export interface components {
              * @default 0
              */
             verified_source_citations_count: number;
+        };
+        /**
+         * RbpcOralHistoryConsentUpdateIn
+         * @description Update per-use media consent scope and grant agreement.
+         */
+        RbpcOralHistoryConsentUpdateIn: {
+            /** Consent Agreement Ref */
+            consent_agreement_ref?: string | null;
+            /** Consent Granted */
+            consent_granted: boolean;
+            /** Consent Notes */
+            consent_notes?: string | null;
+            consent_scope: components["schemas"]["RbpcAudioConsentScope"];
+        };
+        /**
+         * RbpcOralHistoryCreateIn
+         * @description Create a new oral history recording draft.
+         */
+        RbpcOralHistoryCreateIn: {
+            /**
+             * Audio Duration Seconds
+             * @default 0
+             */
+            audio_duration_seconds: number;
+            /** Audio Sha256 */
+            audio_sha256?: string | null;
+            /** Audio Url */
+            audio_url?: string | null;
+            /**
+             * Creator Id
+             * Format: uuid
+             */
+            creator_id: string;
+            /** Cultural Context En */
+            cultural_context_en?: string | null;
+            /** Cultural Context Vi */
+            cultural_context_vi: string;
+            /**
+             * Epistemic Certainty
+             * @default community_tradition
+             */
+            epistemic_certainty: string | null;
+            /** Initial Cues */
+            initial_cues?: components["schemas"]["RbpcTranscriptCue"][];
+            /** Initial Transcript En */
+            initial_transcript_en?: string | null;
+            /** Initial Transcript Vi */
+            initial_transcript_vi?: string | null;
+            /** Interviewer Name */
+            interviewer_name?: string | null;
+            /**
+             * Mime Type
+             * @default audio/webm
+             */
+            mime_type: string;
+            /** Recording Date */
+            recording_date?: string | null;
+            /** Recording Location */
+            recording_location?: string | null;
+            /** Title En */
+            title_en?: string | null;
+            /** Title Vi */
+            title_vi: string;
+        };
+        /**
+         * RbpcOralHistoryRecordingListOut
+         * @description List of oral history recordings.
+         */
+        RbpcOralHistoryRecordingListOut: {
+            /** Items */
+            items: components["schemas"]["RbpcOralHistoryRecordingOut"][];
+            /** Total */
+            total: number;
+        };
+        /**
+         * RbpcOralHistoryRecordingOut
+         * @description Oral history recording public / partner view.
+         */
+        RbpcOralHistoryRecordingOut: {
+            /** Audio Duration Seconds */
+            audio_duration_seconds: number;
+            /** Audio Sha256 */
+            audio_sha256?: string | null;
+            /** Audio Url */
+            audio_url?: string | null;
+            /** Consent Agreement Ref */
+            consent_agreement_ref?: string | null;
+            /** Consent Granted */
+            consent_granted: boolean;
+            /** Consent Granted At */
+            consent_granted_at?: string | null;
+            /** Consent Notes */
+            consent_notes?: string | null;
+            consent_scope: components["schemas"]["RbpcAudioConsentScope"];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Creator Id
+             * Format: uuid
+             */
+            creator_id: string;
+            /** Cultural Context En */
+            cultural_context_en?: string | null;
+            /** Cultural Context Vi */
+            cultural_context_vi: string;
+            /** Current Version Number */
+            current_version_number: number;
+            /** Epistemic Certainty */
+            epistemic_certainty: string;
+            /** Erased At */
+            erased_at?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Interviewer Name */
+            interviewer_name?: string | null;
+            latest_transcript?: components["schemas"]["RbpcAudioTranscriptVersionOut"] | null;
+            /** Mime Type */
+            mime_type: string;
+            /** Recording Code */
+            recording_code: string;
+            /** Recording Date */
+            recording_date?: string | null;
+            /** Recording Location */
+            recording_location?: string | null;
+            /** Revocation Reason */
+            revocation_reason?: string | null;
+            /** Revoked At */
+            revoked_at?: string | null;
+            status: components["schemas"]["RbpcOralHistoryStatus"];
+            /** Title En */
+            title_en?: string | null;
+            /** Title Vi */
+            title_vi: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /**
+         * RbpcOralHistoryRevokeIn
+         * @description Revoke consent or request erasure (right-to-erasure / GDPR / Decree 13/2023/ND-CP).
+         */
+        RbpcOralHistoryRevokeIn: {
+            /**
+             * Erase Data
+             * @description Whether to scrub media references and text under right-to-erasure.
+             * @default false
+             */
+            erase_data: boolean;
+            /** Reason */
+            reason: string;
+        };
+        /**
+         * RbpcOralHistoryStatus
+         * @enum {string}
+         */
+        RbpcOralHistoryStatus: "draft" | "submitted" | "consented" | "revoked" | "erased";
+        /**
+         * RbpcOralHistoryTranscriptUpdateIn
+         * @description Submit a new version of the transcript with diff/summary.
+         */
+        RbpcOralHistoryTranscriptUpdateIn: {
+            /** Change Summary */
+            change_summary?: string | null;
+            /** Timed Cues */
+            timed_cues?: components["schemas"]["RbpcTranscriptCue"][];
+            /** Transcript Text En */
+            transcript_text_en?: string | null;
+            /** Transcript Text Vi */
+            transcript_text_vi: string;
+            /**
+             * Verify By Artisan
+             * @default false
+             */
+            verify_by_artisan: boolean;
+        };
+        /**
+         * RbpcPartnerExperienceCreateIn
+         * @description Partner submission to create a cultural experience listing.
+         */
+        RbpcPartnerExperienceCreateIn: {
+            /**
+             * Area Public
+             * @default Huế
+             */
+            area_public: string;
+            /**
+             * Currency
+             * @default VND
+             */
+            currency: string;
+            /** Description En */
+            description_en?: string | null;
+            /** Description Vi */
+            description_vi: string;
+            /** Duration Minutes */
+            duration_minutes?: number | null;
+            /** Indicative Price Amount */
+            indicative_price_amount?: number | null;
+            /** Languages Supported */
+            languages_supported?: string[];
+            /**
+             * Max Party Size
+             * @default 10
+             */
+            max_party_size: number | null;
+            /** Notice */
+            notice?: string | null;
+            /** Pricing Display */
+            pricing_display?: string | null;
+            /** Slug */
+            slug: string;
+            /** Title En */
+            title_en?: string | null;
+            /** Title Vi */
+            title_vi: string;
         };
         /**
          * RbpcPartnerInquiryListOut
@@ -25841,6 +27752,128 @@ export interface components {
             status: components["schemas"]["RbpcInquiryStatus"];
         };
         /**
+         * RbpcPartnerOnboardingIn
+         * @description Self-onboarding registration payload for a partner/artisan.
+         */
+        RbpcPartnerOnboardingIn: {
+            /** Approved Bio En */
+            approved_bio_en?: string | null;
+            /**
+             * Approved Bio Vi
+             * @description Biography or craft history.
+             */
+            approved_bio_vi: string;
+            /**
+             * Approved Portrait Url
+             * @description Portrait URL (unverified until staff review).
+             */
+            approved_portrait_url?: string | null;
+            /** Craft Tradition En */
+            craft_tradition_en?: string | null;
+            /**
+             * Craft Tradition Vi
+             * @description Traditional craft name in Vietnamese.
+             */
+            craft_tradition_vi: string;
+            /**
+             * Display Consent Ref
+             * @description Reference to consent agreement.
+             */
+            display_consent_ref?: string | null;
+            /** Generation Lineage */
+            generation_lineage?: string | null;
+            /** Heritage Place Slug */
+            heritage_place_slug?: string | null;
+            /**
+             * Identity Document Ref
+             * @description Identity documentation reference.
+             */
+            identity_document_ref?: string | null;
+            /**
+             * Public Name
+             * @description Artisan or workshop name.
+             */
+            public_name: string;
+            /**
+             * Public Region
+             * @default Huế
+             */
+            public_region: string;
+            /**
+             * Rights Clearance Notes
+             * @description Rights and portrait licensing notes.
+             */
+            rights_clearance_notes?: string | null;
+            /**
+             * Slug
+             * @description Unique URL slug.
+             */
+            slug: string;
+            /** Years Of Practice */
+            years_of_practice?: number | null;
+        };
+        /**
+         * RbpcPartnerProfileUpdateIn
+         * @description Artisan profile update payload for existing partner.
+         */
+        RbpcPartnerProfileUpdateIn: {
+            /** Approved Bio En */
+            approved_bio_en?: string | null;
+            /** Approved Bio Vi */
+            approved_bio_vi?: string | null;
+            /** Approved Portrait Url */
+            approved_portrait_url?: string | null;
+            /** Craft Tradition En */
+            craft_tradition_en?: string | null;
+            /** Craft Tradition Vi */
+            craft_tradition_vi?: string | null;
+            /** Display Consent Ref */
+            display_consent_ref?: string | null;
+            /** Generation Lineage */
+            generation_lineage?: string | null;
+            /** Identity Document Ref */
+            identity_document_ref?: string | null;
+            /** Public Name */
+            public_name?: string | null;
+            /** Public Region */
+            public_region?: string | null;
+            /** Rights Clearance Notes */
+            rights_clearance_notes?: string | null;
+            /** Years Of Practice */
+            years_of_practice?: number | null;
+        };
+        /**
+         * RbpcPartnerVerificationIn
+         * @description Staff review & verification payload for artisan profile.
+         */
+        RbpcPartnerVerificationIn: {
+            /**
+             * @description Verified consent state.
+             * @default verified_written_consent
+             */
+            consent_status: components["schemas"]["RbpcConsentStatus"] | null;
+            /**
+             * Is Verified
+             * @description Staff decision on identity and consent verification.
+             */
+            is_verified: boolean;
+            /**
+             * Rights Clearance Notes
+             * @description Licensing and media clearance remarks.
+             */
+            rights_clearance_notes?: string | null;
+            /**
+             * Verification Notes
+             * @description Review remarks and verification evidence.
+             */
+            verification_notes?: string | null;
+        };
+        /**
+         * RbpcPayoutStatus
+         * @enum {string}
+         */
+        RbpcPayoutStatus: "pending" | "approved" | "disbursed" | "withheld" | "cancelled";
+        /**
          * RbpcProjectedMetrics
          * @description Estimated forward-looking commercial and economic impact hypotheses.
          */
@@ -25861,6 +27894,359 @@ export interface components {
              * @default Các số liệu dự phóng là giả định mô hình kinh doanh phục vụ nghiên cứu và đề án RBPC 2026, không phải doanh thu đã ghi nhận.
              */
             projection_basis: string;
+        };
+        /**
+         * RbpcReservationCancelIn
+         * @description Partner or visitor action to cancel/release a reservation.
+         */
+        RbpcReservationCancelIn: {
+            /** Reason */
+            reason?: string | null;
+            /**
+             * Reservation Id
+             * Format: uuid
+             */
+            reservation_id: string;
+        };
+        /**
+         * RbpcReservationConfirmIn
+         * @description Partner action to confirm a reserved seat hold.
+         */
+        RbpcReservationConfirmIn: {
+            /** Partner Note */
+            partner_note?: string | null;
+            /**
+             * Reservation Id
+             * Format: uuid
+             */
+            reservation_id: string;
+        };
+        /**
+         * RbpcReviewDisputeCreate
+         * @description Partner or visitor filing a dispute against a published or pending review.
+         */
+        RbpcReviewDisputeCreate: {
+            /**
+             * Evidence Payload
+             * @description Structured supporting evidence or documentation.
+             */
+            evidence_payload?: {
+                [key: string]: unknown;
+            };
+            /**
+             * Reason
+             * @description Specific reason for contesting the review (e.g. defamation, factually inaccurate, unexperienced).
+             */
+            reason: string;
+        };
+        /**
+         * RbpcReviewDisputeOut
+         * @description Dispute record representation.
+         */
+        RbpcReviewDisputeOut: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Disputant User Id */
+            disputant_user_id?: string | null;
+            /** Evidence Payload */
+            evidence_payload: {
+                [key: string]: unknown;
+            };
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Reason */
+            reason: string;
+            /** Resolution Notes */
+            resolution_notes?: string | null;
+            /** Resolved At */
+            resolved_at?: string | null;
+            /** Resolved By Id */
+            resolved_by_id?: string | null;
+            /**
+             * Review Id
+             * Format: uuid
+             */
+            review_id: string;
+            status: components["schemas"]["RbpcDisputeStatus"];
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /**
+         * RbpcReviewDisputeResolution
+         * @description Staff/admin resolution of a review dispute.
+         */
+        RbpcReviewDisputeResolution: {
+            /**
+             * Notes
+             * @description Formal resolution notes and reasoning.
+             */
+            notes?: string | null;
+            /** @description Resolution status: resolved_upheld (review overturned), resolved_overturned (dispute rejected, review stays), dismissed. */
+            status: components["schemas"]["RbpcDisputeStatus"];
+        };
+        /**
+         * RbpcReviewStatus
+         * @enum {string}
+         */
+        RbpcReviewStatus: "pending_moderation" | "published" | "rejected" | "disputed" | "archived";
+        /**
+         * RbpcSeatReservationOut
+         * @description Receipt for a seat reservation or booking hold.
+         */
+        RbpcSeatReservationOut: {
+            /** Confirmed At */
+            confirmed_at?: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Customer Contact */
+            customer_contact: string;
+            /** Customer Name */
+            customer_name: string;
+            /** Experience Slug */
+            experience_slug?: string | null;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Message
+             * @default Thao tác thành công.
+             */
+            message: string;
+            /** Public Ref */
+            public_ref: string;
+            /** Remaining Seconds */
+            remaining_seconds: number;
+            /** Seats */
+            seats: number;
+            /**
+             * Slot Id
+             * Format: uuid
+             */
+            slot_id: string;
+            /** Status */
+            status: string;
+        };
+        /**
+         * RbpcSeatReserveIn
+         * @description Visitor payload to temporarily reserve seats in a workshop slot.
+         */
+        RbpcSeatReserveIn: {
+            /** Customer Contact */
+            customer_contact: string;
+            /** Customer Name */
+            customer_name: string;
+            /**
+             * Hold Timeout Seconds
+             * @default 900
+             */
+            hold_timeout_seconds: number;
+            /** Idempotency Key */
+            idempotency_key?: string | null;
+            /** Inquiry Id */
+            inquiry_id?: string | null;
+            /**
+             * Seats
+             * @default 1
+             */
+            seats: number;
+            /**
+             * Slot Id
+             * Format: uuid
+             */
+            slot_id: string;
+        };
+        /**
+         * RbpcSettlementComplianceReview
+         * @description Compliance approval or rejection of a settlement.
+         */
+        RbpcSettlementComplianceReview: {
+            /**
+             * Approved
+             * @description True if approved for payout, False if rejected/held
+             */
+            approved: boolean;
+            /**
+             * Compliance Notes
+             * @description Compliance reviewer notes
+             */
+            compliance_notes?: string | null;
+        };
+        /**
+         * RbpcSettlementCreate
+         * @description Create a verified settlement record for an inquiry with contracted take rate.
+         */
+        RbpcSettlementCreate: {
+            /**
+             * Compliance Notes
+             * @description Initial notes or justification for the settlement
+             */
+            compliance_notes?: string | null;
+            /**
+             * Gross Amount Vnd
+             * @description Gross transacted amount in VND
+             */
+            gross_amount_vnd: number;
+            /**
+             * Inquiry Id
+             * Format: uuid
+             * @description ID of the confirmed inquiry
+             */
+            inquiry_id: string;
+            /**
+             * Take Rate
+             * @description Contracted platform take rate (e.g. 0.15 for 15%)
+             * @default 0.15
+             */
+            take_rate: number | null;
+            /**
+             * Transaction Proof Hash
+             * @description Cryptographic or banking reference/hash proof of payment
+             */
+            transaction_proof_hash?: string | null;
+            /**
+             * Vat Rate
+             * @description Applicable tax/VAT rate (default 8% for cultural services)
+             * @default 0.08
+             */
+            vat_rate: number | null;
+        };
+        /**
+         * RbpcSettlementListOut
+         * @description List of settlements.
+         */
+        RbpcSettlementListOut: {
+            /** Items */
+            items: components["schemas"]["RbpcSettlementOut"][];
+            /** Total */
+            total: number;
+        };
+        /**
+         * RbpcSettlementOut
+         * @description Detailed settlement ledger record.
+         */
+        RbpcSettlementOut: {
+            /** Artisan Payout Vnd */
+            artisan_payout_vnd: number;
+            /** Compliance Approved */
+            compliance_approved: boolean;
+            /** Compliance Notes */
+            compliance_notes?: string | null;
+            /** Compliance Reviewed At */
+            compliance_reviewed_at?: string | null;
+            /** Compliance Reviewer Id */
+            compliance_reviewer_id?: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Creator Id */
+            creator_id?: string | null;
+            /**
+             * Currency
+             * @default VND
+             */
+            currency: string;
+            /** Disbursed At */
+            disbursed_at?: string | null;
+            /** Gross Amount Vnd */
+            gross_amount_vnd: number;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Inquiry Id
+             * Format: uuid
+             */
+            inquiry_id: string;
+            payout_status: components["schemas"]["RbpcPayoutStatus"];
+            /** Platform Fee Vnd */
+            platform_fee_vnd: number;
+            /** Provider Id */
+            provider_id?: string | null;
+            /** Refund Amount Vnd */
+            refund_amount_vnd: number;
+            /** Settlement Ref */
+            settlement_ref: string;
+            status: components["schemas"]["RbpcSettlementStatus"];
+            /** Take Rate */
+            take_rate: number;
+            /** Tax Vat Vnd */
+            tax_vat_vnd: number;
+            /** Transaction Proof Hash */
+            transaction_proof_hash?: string | null;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /**
+         * RbpcSettlementRefund
+         * @description Process a partial or full refund against a settlement.
+         */
+        RbpcSettlementRefund: {
+            /**
+             * Reason
+             * @description Reason for refund
+             */
+            reason: string;
+            /**
+             * Refund Amount Vnd
+             * @description Amount to refund in VND
+             */
+            refund_amount_vnd: number;
+        };
+        /**
+         * RbpcSettlementStatus
+         * @enum {string}
+         */
+        RbpcSettlementStatus: "pending_compliance" | "approved" | "settled" | "refunded" | "disputed";
+        /**
+         * RbpcSlotCreateIn
+         * @description Partner payload to open a new workshop slot.
+         */
+        RbpcSlotCreateIn: {
+            /**
+             * Capacity
+             * @default 10
+             */
+            capacity: number;
+            /**
+             * End Time
+             * Format: date-time
+             */
+            end_time: string;
+            /** Experience Slug */
+            experience_slug: string;
+            /** Notes */
+            notes?: string | null;
+            /**
+             * Start Time
+             * Format: date-time
+             */
+            start_time: string;
         };
         /**
          * RbpcStoryDetailOut
@@ -26010,6 +28396,94 @@ export interface components {
          * @enum {string}
          */
         RbpcSupportType: "direct" | "contextual" | "interpretation" | "unverified";
+        /**
+         * RbpcTranscriptCue
+         * @description Timecoded narration cue segment.
+         */
+        RbpcTranscriptCue: {
+            /**
+             * End Time Sec
+             * @description Optional cue end time in seconds.
+             */
+            end_time_sec?: number | null;
+            /**
+             * Section Title
+             * @description Section or thematic title.
+             */
+            section_title?: string | null;
+            /**
+             * Speaker
+             * @description Speaker name or attribution.
+             */
+            speaker?: string | null;
+            /**
+             * Text
+             * @description Narration text segment.
+             */
+            text: string;
+            /**
+             * Time Sec
+             * @description Start time cue in seconds.
+             */
+            time_sec: number;
+        };
+        /**
+         * RbpcWorkshopSlotOut
+         * @description Workshop calendar time slot with seat capacity metrics.
+         */
+        RbpcWorkshopSlotOut: {
+            /** Available Seats */
+            available_seats: number;
+            /** Capacity */
+            capacity: number;
+            /**
+             * Confirmed Seats
+             * @default 0
+             */
+            confirmed_seats: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * End Time
+             * Format: date-time
+             */
+            end_time: string;
+            /**
+             * Experience Id
+             * Format: uuid
+             */
+            experience_id: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Notes */
+            notes?: string | null;
+            /**
+             * Reserved Seats
+             * @default 0
+             */
+            reserved_seats: number;
+            /**
+             * Start Time
+             * Format: date-time
+             */
+            start_time: string;
+            /**
+             * Status
+             * @default open
+             */
+            status: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
         /** RecommendationAIOut */
         RecommendationAIOut: {
             /** Job Id */
@@ -26948,6 +29422,69 @@ export interface components {
             submission_id: string;
             /** Total Score */
             total_score: number;
+        };
+        /** SampleLessonTemplateCloneOut */
+        SampleLessonTemplateCloneOut: {
+            /**
+             * Cloned Plan Id
+             * Format: uuid
+             */
+            cloned_plan_id: string;
+            /** Message */
+            message: string;
+            /**
+             * Status
+             * @default draft
+             */
+            status: string;
+            /** Title */
+            title: string;
+            /** Topic */
+            topic: string;
+        };
+        /** SampleLessonTemplateOut */
+        SampleLessonTemplateOut: {
+            /** Assessment Rubric */
+            assessment_rubric?: {
+                [key: string]: unknown;
+            };
+            /** Curriculum Framework */
+            curriculum_framework: string;
+            /** Disclaimer */
+            disclaimer: string;
+            /** Duration Minutes */
+            duration_minutes: number;
+            /** Id */
+            id: string;
+            /** Inquiry Activities */
+            inquiry_activities?: {
+                [key: string]: unknown;
+            }[];
+            /**
+             * Is Sample Template
+             * @default true
+             */
+            is_sample_template: boolean;
+            /**
+             * Media Variant
+             * @default 2d_rubbing
+             */
+            media_variant: string;
+            /** Objectives */
+            objectives?: {
+                [key: string]: unknown;
+            };
+            /** Target Grade */
+            target_grade: string;
+            /**
+             * Template Badge
+             * @default SAMPLE TEMPLATE
+             */
+            template_badge: string;
+            /** Title */
+            title: string;
+            /** Topic */
+            topic: string;
         };
         /**
          * ScheduledEmailListOut
@@ -28377,6 +30914,179 @@ export interface components {
             teacher_id: string;
             /** Teacher Name */
             teacher_name: string;
+        };
+        /** TeacherOnboardingDismissIn */
+        TeacherOnboardingDismissIn: {
+            /**
+             * Dismiss
+             * @default true
+             */
+            dismiss: boolean;
+        };
+        /** TeacherOnboardingProfileOut */
+        TeacherOnboardingProfileOut: {
+            /** Completed At */
+            completed_at?: string | null;
+            /** Completed Steps */
+            completed_steps?: string[];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Current Step
+             * @default welcome
+             */
+            current_step: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Is Completed
+             * @default false
+             */
+            is_completed: boolean;
+            /**
+             * Is School Verified
+             * @default true
+             */
+            is_school_verified: boolean;
+            /**
+             * Mode
+             * @description 'demo' or 'verified'
+             * @default verified
+             */
+            mode: string;
+            /** School Id */
+            school_id?: string | null;
+            /** School Name */
+            school_name?: string | null;
+            /**
+             * Teacher Id
+             * Format: uuid
+             */
+            teacher_id: string;
+            /**
+             * Tour Dismissed
+             * @default false
+             */
+            tour_dismissed: boolean;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Verification Warning */
+            verification_warning?: string | null;
+        };
+        /** TeacherOnboardingStepIn */
+        TeacherOnboardingStepIn: {
+            /**
+             * Completed
+             * @default true
+             */
+            completed: boolean;
+            /**
+             * Step
+             * @description Onboarding step key, e.g. welcome, sample_templates, etc.
+             */
+            step: string;
+        };
+        /** TeacherSupportTicketCreateIn */
+        TeacherSupportTicketCreateIn: {
+            /**
+             * Category
+             * @description Category: pedagogical_guidance, curriculum_alignment, technical_issue, account_verification, rubric_scoring, student_privacy, other
+             */
+            category: string;
+            /** Message */
+            message: string;
+            /**
+             * Priority
+             * @description Priority: low, normal, high, urgent
+             * @default normal
+             */
+            priority: string;
+            /** School Id */
+            school_id?: string | null;
+            /** Subject */
+            subject: string;
+        };
+        /** TeacherSupportTicketOut */
+        TeacherSupportTicketOut: {
+            /** Admin Response */
+            admin_response?: string | null;
+            /** Category */
+            category: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Message */
+            message: string;
+            /** Priority */
+            priority: string;
+            /** Resolved At */
+            resolved_at?: string | null;
+            /** Responses */
+            responses?: {
+                [key: string]: unknown;
+            }[];
+            /** School Id */
+            school_id?: string | null;
+            /** School Name */
+            school_name?: string | null;
+            /** Status */
+            status: string;
+            /** Subject */
+            subject: string;
+            /**
+             * Teacher Id
+             * Format: uuid
+             */
+            teacher_id: string;
+            /** Teacher Name */
+            teacher_name: string;
+            /** Ticket Code */
+            ticket_code: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** TeacherSupportTicketReplyIn */
+        TeacherSupportTicketReplyIn: {
+            /** Message */
+            message: string;
+        };
+        /** TeacherTrainingResourceOut */
+        TeacherTrainingResourceOut: {
+            /** Category */
+            category: string;
+            /** Duration Minutes */
+            duration_minutes: number;
+            /** Format */
+            format: string;
+            /** Id */
+            id: string;
+            /** Is Mandatory For Verification */
+            is_mandatory_for_verification: boolean;
+            /** Resource Url */
+            resource_url: string;
+            /** Summary */
+            summary: string;
+            /** Title */
+            title: string;
         };
         /** TeacherWorkloadLogCreate */
         TeacherWorkloadLogCreate: {
@@ -36283,6 +38993,37 @@ export interface operations {
             };
         };
     };
+    get_heritage_place_trail_api_v1_heritage_places__slug__trail_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HeritageMuseumTrailOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     search_heritage_places_api_v1_heritage_search_get: {
         parameters: {
             query: {
@@ -36306,6 +39047,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HeritageSearchOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    verify_heritage_trail_qr_token_api_v1_heritage_trail_verify_qr_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HeritageTrailQRVerifyIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HeritageTrailQRVerifyOut"];
                 };
             };
             /** @description Validation Error */
@@ -44567,6 +47341,241 @@ export interface operations {
             };
         };
     };
+    staff_verify_creator_api_v1_rbpc_admin_creators__id__verify_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RbpcPartnerVerificationIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcCreatorOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    resolve_review_dispute_api_v1_rbpc_admin_disputes__id__resolve_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RbpcReviewDisputeResolution"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcReviewDisputeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    staff_moderate_experience_api_v1_rbpc_admin_experiences__id__moderate_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RbpcExperienceModerationIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcExperienceOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    admin_list_reviews_api_v1_rbpc_admin_reviews_get: {
+        parameters: {
+            query?: {
+                status?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcCustomerReviewAdminListOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    moderate_customer_review_api_v1_rbpc_admin_reviews__id__moderate_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RbpcCustomerReviewModeration"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcCustomerReviewAdminOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_reservation_status_api_v1_rbpc_availability_reservations__ref__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                ref: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcSeatReservationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reserve_workshop_seats_api_v1_rbpc_availability_reserve_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RbpcSeatReserveIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcSeatReservationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_rbpc_config_api_v1_rbpc_config_get: {
         parameters: {
             query?: never;
@@ -44686,6 +47695,72 @@ export interface operations {
             };
         };
     };
+    review_settlement_compliance_api_v1_rbpc_editor_settlements__id__compliance_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RbpcSettlementComplianceReview"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcSettlementOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    disburse_artisan_payout_api_v1_rbpc_editor_settlements__id__disburse_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcSettlementOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_rbpc_experience_api_v1_rbpc_experiences__slug__get: {
         parameters: {
             query?: never;
@@ -44704,6 +47779,71 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RbpcExperienceOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_experience_availability_api_v1_rbpc_experiences__slug__availability_get: {
+        parameters: {
+            query?: {
+                start_date?: string | null;
+                end_date?: string | null;
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcAvailabilityCalendarOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_experience_reviews_api_v1_rbpc_experiences__slug__reviews_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcCustomerReviewListOut"];
                 };
             };
             /** @description Validation Error */
@@ -44801,6 +47941,107 @@ export interface operations {
             };
         };
     };
+    escalate_inquiry_by_token_api_v1_rbpc_inquiries_status__opaqueToken__escalate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                opaqueToken: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["RbpcInquiryEscalationCreate"] | null;
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcInquiryEscalationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_inquiry_preferences_by_token_api_v1_rbpc_inquiries_status__opaqueToken__preferences_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                opaqueToken: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RbpcInquiryNotificationPreferenceUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcInquiryNotificationPreferenceOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    unsubscribe_inquiry_by_token_api_v1_rbpc_inquiries_status__opaqueToken__unsubscribe_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                opaqueToken: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcInquiryNotificationPreferenceOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     withdraw_inquiry_status_consent_api_v1_rbpc_inquiries_status__opaqueToken__withdraw_post: {
         parameters: {
             query?: never;
@@ -44819,6 +48060,156 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RbpcInquiryWithdrawOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_ledger_financial_summary_api_v1_rbpc_ledger_summary_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcLedgerFinancialSummary"];
+                };
+            };
+        };
+    };
+    get_oral_history_public_api_v1_rbpc_oral_history__recording_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                recording_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcOralHistoryRecordingOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    cancel_workshop_reservation_api_v1_rbpc_partner_availability_cancel_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RbpcReservationCancelIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcSeatReservationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    confirm_workshop_reservation_api_v1_rbpc_partner_availability_confirm_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RbpcReservationConfirmIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcSeatReservationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    partner_create_experience_api_v1_rbpc_partner_experiences_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RbpcPartnerExperienceCreateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcExperienceOut"];
                 };
             };
             /** @description Validation Error */
@@ -44874,6 +48265,512 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RbpcPartnerInquiryOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    partner_self_onboard_api_v1_rbpc_partner_onboarding_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RbpcPartnerOnboardingIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcCreatorOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_partner_oral_history_api_v1_rbpc_partner_oral_history_get: {
+        parameters: {
+            query?: {
+                creator_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcOralHistoryRecordingListOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_oral_history_recording_api_v1_rbpc_partner_oral_history_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RbpcOralHistoryCreateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcOralHistoryRecordingOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_recording_consent_api_v1_rbpc_partner_oral_history__recording_id__consent_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                recording_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RbpcOralHistoryConsentUpdateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcOralHistoryRecordingOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    revoke_oral_history_recording_api_v1_rbpc_partner_oral_history__recording_id__revoke_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                recording_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RbpcOralHistoryRevokeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcOralHistoryRecordingOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_transcript_version_api_v1_rbpc_partner_oral_history__recording_id__versions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                recording_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RbpcOralHistoryTranscriptUpdateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcOralHistoryRecordingOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_partner_profile_api_v1_rbpc_partner_profile_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcCreatorOut"];
+                };
+            };
+        };
+    };
+    update_partner_profile_api_v1_rbpc_partner_profile_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RbpcPartnerProfileUpdateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcCreatorOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_settlements_api_v1_rbpc_partner_settlements_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcSettlementListOut"];
+                };
+            };
+        };
+    };
+    record_settlement_transaction_api_v1_rbpc_partner_settlements_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RbpcSettlementCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcSettlementOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_settlement_detail_api_v1_rbpc_partner_settlements__id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcSettlementOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    process_settlement_refund_api_v1_rbpc_partner_settlements__id__refund_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RbpcSettlementRefund"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcSettlementOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_partner_workshop_slots_api_v1_rbpc_partner_slots_get: {
+        parameters: {
+            query?: {
+                experience_slug?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcWorkshopSlotOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_workshop_slot_api_v1_rbpc_partner_slots_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RbpcSlotCreateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcWorkshopSlotOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_customer_review_api_v1_rbpc_reviews_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RbpcCustomerReviewCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcCustomerReviewOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    file_review_dispute_api_v1_rbpc_reviews__id__dispute_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RbpcReviewDisputeCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcReviewDisputeOut"];
                 };
             };
             /** @description Validation Error */
@@ -46270,6 +50167,408 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TagOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    complete_teacher_onboarding_api_v1_teacher_onboarding_complete_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TeacherOnboardingProfileOut"];
+                };
+            };
+        };
+    };
+    dismiss_teacher_tour_api_v1_teacher_onboarding_dismiss_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TeacherOnboardingDismissIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TeacherOnboardingProfileOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_teacher_onboarding_profile_api_v1_teacher_onboarding_profile_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TeacherOnboardingProfileOut"];
+                };
+            };
+        };
+    };
+    reset_teacher_onboarding_api_v1_teacher_onboarding_reset_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TeacherOnboardingProfileOut"];
+                };
+            };
+        };
+    };
+    record_teacher_onboarding_step_api_v1_teacher_onboarding_step_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TeacherOnboardingStepIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TeacherOnboardingProfileOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_sample_templates_api_v1_teacher_sample_templates_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SampleLessonTemplateOut"][];
+                };
+            };
+        };
+    };
+    get_sample_template_api_v1_teacher_sample_templates__template_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                template_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SampleLessonTemplateOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    clone_sample_template_api_v1_teacher_sample_templates__template_id__clone_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                template_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SampleLessonTemplateCloneOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_support_tickets_api_v1_teacher_support_tickets_get: {
+        parameters: {
+            query?: {
+                status?: string | null;
+                category?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TeacherSupportTicketOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_support_ticket_api_v1_teacher_support_tickets_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TeacherSupportTicketCreateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TeacherSupportTicketOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_support_ticket_api_v1_teacher_support_tickets__ticket_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                ticket_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TeacherSupportTicketOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reply_support_ticket_api_v1_teacher_support_tickets__ticket_id__reply_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                ticket_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TeacherSupportTicketReplyIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TeacherSupportTicketOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_training_resources_api_v1_teacher_training_resources_get: {
+        parameters: {
+            query?: {
+                /** @description Filter by training category */
+                category?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TeacherTrainingResourceOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_training_resource_api_v1_teacher_training_resources__resource_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                resource_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TeacherTrainingResourceOut"];
                 };
             };
             /** @description Validation Error */

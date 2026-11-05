@@ -34,6 +34,7 @@ from ..apischemas.heritage import (
     HeritageEngagementOut,
     HeritageEntityType,
     HeritageMediaAssetOut,
+    HeritageMuseumTrailOut,
     HeritagePlaceDetailOut,
     HeritagePlaceListOut,
     HeritagePlaceOut,
@@ -42,6 +43,8 @@ from ..apischemas.heritage import (
     HeritageSearchItemOut,
     HeritageSearchOut,
     HeritageSourceEvidenceOut,
+    HeritageTrailQRVerifyIn,
+    HeritageTrailQRVerifyOut,
 )
 from ..db import get_db
 from ..deps import get_current_user_optional, get_staff_user
@@ -56,7 +59,7 @@ from ..models_rbpc import (
     RbpcStory,
 )
 from ..rbac import STAFF_ROLES
-from ..services import heritage_catalog
+from ..services import heritage_catalog, heritage_trails
 
 logger = logging.getLogger("luuniensuki.heritage")
 
@@ -743,3 +746,76 @@ def update_heritage_catalog_revision(
         "updated": updated,
         "global_revision": heritage_catalog.get_global_revision(),
     }
+
+
+# --------------------------------------------------------------------------- #
+# Museum QR Guided Trails Endpoints (Ticket V5-T104 / Wave W10 Slot A04)
+# --------------------------------------------------------------------------- #
+@router.get(
+    "/api/v1/heritage/places/{slug}/trail",
+    response_model=HeritageMuseumTrailOut,
+)
+def get_heritage_place_trail(
+    slug: str,
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user_optional),
+):
+    """Retrieve curated museum QR guided trail for a heritage place.
+
+    Returns:
+    - QR token linking to verified historical context and primary sources
+    - Authentic 2D rubbing fallback with file existence & SHA-256 verification
+    - Transparent accessibility route information (wheelchair access, ramps, rest stops)
+    - Negative abuse defense: Unverified accessibility data is NEVER falsely advertised
+      as accessible (wheelchair_accessible=False, is_accessibility_verified=False).
+    """
+    valid_slug = _validate_slug(slug)
+    is_staff = _is_staff_user(current_user)
+
+    stmt = (
+        select(HeritagePlace)
+        .options(
+            selectinload(HeritagePlace.sources),
+        )
+        .where(
+            HeritagePlace.slug == valid_slug,
+            HeritagePlace.content_scope == "RBPC_HUE",
+        )
+    )
+    place = db.scalar(stmt)
+    if not place:
+        raise AppError("HERITAGE_PLACE_NOT_FOUND", f"Heritage place '{slug}' not found.", status.HTTP_404_NOT_FOUND)
+
+    if not is_staff and place.editorial_status != HeritageRecordStatus.published.value:
+        raise AppError("HERITAGE_PLACE_NOT_FOUND", f"Heritage place '{slug}' not found.", status.HTTP_404_NOT_FOUND)
+
+    trail_data = heritage_trails.get_museum_guided_trail(db=db, place=place)
+    return HeritageMuseumTrailOut.model_validate(trail_data)
+
+
+@router.post(
+    "/api/v1/heritage/trail/verify-qr",
+    response_model=HeritageTrailQRVerifyOut,
+)
+def verify_heritage_trail_qr_token(
+    payload: HeritageTrailQRVerifyIn,
+):
+    """Verify cryptographic authenticity of a museum trail station QR code.
+
+    Validates HMAC-SHA256 signature, expiry, and site match. Rejects tampered or expired tokens.
+    """
+    verified_payload = heritage_trails.verify_station_qr_token(
+        qr_token=payload.qr_token,
+        expected_site=payload.expected_site,
+    )
+
+    return HeritageTrailQRVerifyOut(
+        verified=True,
+        site_slug=verified_payload["site"],
+        station_index=verified_payload["idx"],
+        authority=verified_payload["auth"],
+        issued_at=verified_payload["iat"],
+        expires_at=verified_payload["exp"],
+        nonce=verified_payload["nonce"],
+    )
+

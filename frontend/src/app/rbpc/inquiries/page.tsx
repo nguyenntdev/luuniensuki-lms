@@ -23,6 +23,11 @@ import {
   Layers,
   Compass,
   FileCheck2,
+  Star,
+  ShieldAlert,
+  Bell,
+  BellOff,
+  Flame,
 } from "lucide-react";
 import type {
   InquiryFormValues,
@@ -47,6 +52,10 @@ import {
   saveStoredInquiry,
   submitInquiryToApi,
   fetchInquiryStatusByToken,
+  submitCustomerReviewApi,
+  updateInquiryNotificationPreferences,
+  unsubscribeInquiryNotifications,
+  escalateInquiryLateResponse,
 } from "@/lib/rbpc/inquiries";
 
 function resolveExperience(slug: string | null): CuratedExperienceOption {
@@ -152,6 +161,25 @@ function InquiriesContent() {
   const [isLookingUp, setIsLookingUp] = useState(false);
   const [lookupResult, setLookupResult] = useState<InquiryStatusResponse | null>(null);
   const [lookupError, setLookupError] = useState<string | null>(null);
+
+  // Verified Customer Review State (V5-T107)
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewTitle, setReviewTitle] = useState("");
+  const [reviewComment, setReviewComment] = useState("");
+  const [reviewAuthorName, setReviewAuthorName] = useState("");
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [reviewSuccessMessage, setReviewSuccessMessage] = useState<string | null>(null);
+  const [reviewErrorMessage, setReviewErrorMessage] = useState<string | null>(null);
+
+  // Customer Notification Center State (V5-T103)
+  const [emailOptIn, setEmailOptIn] = useState(true);
+  const [smsOptIn, setSmsOptIn] = useState(false);
+  const [isUpdatingPrefs, setIsUpdatingPrefs] = useState(false);
+  const [prefsMessage, setPrefsMessage] = useState<string | null>(null);
+  const [isEscalating, setIsEscalating] = useState(false);
+  const [escalationReasonInput, setEscalationReasonInput] = useState("");
+  const [escalationMessage, setEscalationMessage] = useState<string | null>(null);
+  const [escalationError, setEscalationError] = useState<string | null>(null);
 
   // Stored historical tokens
   const [storedInquiries, setStoredInquiries] = useState<
@@ -332,6 +360,13 @@ function InquiriesContent() {
     try {
       const res = await fetchInquiryStatusByToken(token);
       setLookupResult(res);
+      setEmailOptIn(res.emailOptIn ?? true);
+      setSmsOptIn(res.smsOptIn ?? false);
+      setPrefsMessage(null);
+      setEscalationMessage(null);
+      setEscalationError(null);
+      setReviewSuccessMessage(null);
+      setReviewErrorMessage(null);
     } catch (err) {
       setLookupError(
         err instanceof Error
@@ -356,6 +391,145 @@ function InquiriesContent() {
     setPrivacyAccepted(false);
     setIdempotencyKey(generateClientUuid());
     setFormErrors({});
+  };
+
+  const handleReviewSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!lookupResult) return;
+    if (lookupResult.status !== "closed") {
+      setReviewErrorMessage(
+        locale === "vi"
+          ? "Chỉ những trải nghiệm đã hoàn tất (trạng thái 'closed') mới có thể đánh giá."
+          : "Only completed experiences (status 'closed') can be reviewed."
+      );
+      return;
+    }
+
+    setIsSubmittingReview(true);
+    setReviewErrorMessage(null);
+    setReviewSuccessMessage(null);
+
+    try {
+      await submitCustomerReviewApi({
+        inquiry_token: lookupToken.trim(),
+        rating: reviewRating,
+        title: reviewTitle.trim(),
+        comment: reviewComment.trim(),
+        author_display_name: reviewAuthorName.trim() || undefined,
+      });
+      setReviewSuccessMessage(
+        locale === "vi"
+          ? "Đánh giá của bạn đã được ghi nhận thành công và kiểm duyệt qua hệ thống chống gian lận."
+          : "Your review has been successfully submitted and verified via the anti-fraud moderation system."
+      );
+      setReviewTitle("");
+      setReviewComment("");
+    } catch (err) {
+      setReviewErrorMessage(
+        err instanceof Error
+          ? err.message
+          : locale === "vi"
+          ? "Không thể gửi đánh giá. Vui lòng thử lại sau."
+          : "Failed to submit review. Please try again later."
+      );
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
+
+  const handleUpdatePreferences = async (newEmail: boolean, newSms: boolean) => {
+    if (!lookupToken.trim()) return;
+    setIsUpdatingPrefs(true);
+    setPrefsMessage(null);
+    try {
+      const res = await updateInquiryNotificationPreferences(lookupToken.trim(), {
+        emailOptIn: newEmail,
+        smsOptIn: newSms,
+      });
+      setEmailOptIn(res.emailOptIn);
+      setSmsOptIn(res.smsOptIn);
+      setPrefsMessage(
+        locale === "vi"
+          ? res.message
+          : res.unsubscribed
+          ? "Unsubscribed from all automatic updates (Email & SMS)."
+          : "Notification preferences updated successfully."
+      );
+      if (lookupResult) {
+        setLookupResult({
+          ...lookupResult,
+          emailOptIn: res.emailOptIn,
+          smsOptIn: res.smsOptIn,
+        });
+      }
+    } catch (err) {
+      setPrefsMessage(
+        err instanceof Error ? err.message : "Failed to update notification preferences."
+      );
+    } finally {
+      setIsUpdatingPrefs(false);
+    }
+  };
+
+  const handleUnsubscribeAll = async () => {
+    if (!lookupToken.trim()) return;
+    setIsUpdatingPrefs(true);
+    setPrefsMessage(null);
+    try {
+      const res = await unsubscribeInquiryNotifications(lookupToken.trim());
+      setEmailOptIn(false);
+      setSmsOptIn(false);
+      setPrefsMessage(
+        locale === "vi"
+          ? res.message
+          : "Unsubscribed from all automatic updates (Email & SMS)."
+      );
+      if (lookupResult) {
+        setLookupResult({
+          ...lookupResult,
+          emailOptIn: false,
+          smsOptIn: false,
+        });
+      }
+    } catch (err) {
+      setPrefsMessage(
+        err instanceof Error ? err.message : "Failed to unsubscribe."
+      );
+    } finally {
+      setIsUpdatingPrefs(false);
+    }
+  };
+
+  const handleEscalateResponse = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!lookupToken.trim() || !lookupResult) return;
+    setIsEscalating(true);
+    setEscalationMessage(null);
+    setEscalationError(null);
+    try {
+      const res = await escalateInquiryLateResponse(
+        lookupToken.trim(),
+        escalationReasonInput.trim() || undefined
+      );
+      setEscalationMessage(
+        locale === "vi"
+          ? "Đã gửi thông báo nhắc nhở khẩn cấp đến xưởng nghề. Chúng tôi sẽ theo dõi sát sao tiến độ."
+          : "Urgent reminder alert dispatched to workshop coordinator. Our team will follow up directly."
+      );
+      setEscalationReasonInput("");
+      setLookupResult({
+        ...lookupResult,
+        canEscalate: false,
+        escalatedAt: res.escalatedAt,
+        escalationCount: res.escalationCount,
+      });
+    } catch (err) {
+      setEscalationError(
+        err instanceof Error ? err.message : "Failed to escalate response."
+      );
+    } finally {
+      setIsEscalating(false);
+    }
   };
 
   return (
@@ -393,6 +567,12 @@ function InquiriesContent() {
             >
               <span>{locale === "vi" ? "English" : "Tiếng Việt"}</span>
             </button>
+            <Link
+              href="/rbpc/impact"
+              className="inline-flex items-center gap-1.5 rounded-full border border-[var(--rbpc-divider)] bg-[var(--rbpc-surface)] px-3 py-1 text-xs font-semibold text-[var(--rbpc-ink)] hover:border-[var(--rbpc-primary-border)] transition-colors"
+            >
+              <span>{locale === "vi" ? "Bảng tác động" : "Impact"}</span>
+            </Link>
             <Link
               href="/rbpc/partner"
               className="inline-flex items-center gap-1.5 rounded-full border border-[var(--rbpc-primary-border)] bg-[var(--rbpc-primary-subtle)] px-3 py-1 text-xs font-semibold text-[var(--rbpc-primary)] hover:bg-[var(--rbpc-primary)] hover:text-white transition-all"
@@ -1296,6 +1476,306 @@ function InquiriesContent() {
                         )}
                       </span>
                     </div>
+                  </div>
+
+                  {/* Customer Notification Center (V5-T103) */}
+                  <div className="pt-6 border-t border-[var(--rbpc-divider-subtle)] space-y-4">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <h3 className="text-sm sm:text-base font-serif font-bold text-[var(--rbpc-ink)] flex items-center gap-2">
+                        <Bell className="h-4 w-4 text-[var(--rbpc-primary)]" />
+                        <span>
+                          {locale === "vi"
+                            ? "Trung tâm thông báo & Tùy chọn cập nhật"
+                            : "Customer Notification Center"}
+                        </span>
+                      </h3>
+
+                      <div className="flex items-center gap-2">
+                        {lookupResult.isOverdue && (
+                          <span className="inline-flex items-center gap-1 rounded-full border border-rose-500/40 bg-rose-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-rose-700 dark:text-rose-300">
+                            <Clock className="h-3 w-3" />
+                            <span>{locale === "vi" ? "Quá hạn SLA 24h" : "SLA 24h Overdue"}</span>
+                          </span>
+                        )}
+                        {lookupResult.escalatedAt && (
+                          <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-amber-800 dark:text-amber-300">
+                            <Flame className="h-3 w-3 text-amber-600" />
+                            <span>
+                              {locale === "vi"
+                                ? `Đã nhắc nhở (${lookupResult.escalationCount || 1})`
+                                : `Escalated (${lookupResult.escalationCount || 1})`}
+                            </span>
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Notification Feedback Messages */}
+                    {prefsMessage && (
+                      <div className="rounded-lg bg-[var(--rbpc-primary-subtle)] border border-[var(--rbpc-primary-border)] p-3 text-xs text-[var(--rbpc-primary)] flex items-center gap-2">
+                        <CheckCircle2 className="h-4 w-4 shrink-0" />
+                        <span>{prefsMessage}</span>
+                      </div>
+                    )}
+                    {escalationMessage && (
+                      <div className="rounded-lg bg-emerald-50 border border-emerald-200 p-3 text-xs text-emerald-800 flex items-center gap-2">
+                        <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
+                        <span>{escalationMessage}</span>
+                      </div>
+                    )}
+                    {escalationError && (
+                      <div className="rounded-lg bg-rose-50 border border-rose-200 p-3 text-xs text-rose-800 flex items-center gap-2">
+                        <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" />
+                        <span>{escalationError}</span>
+                      </div>
+                    )}
+
+                    {/* Opt-in toggles & unsubscribe */}
+                    <div className="rounded-xl border border-[var(--rbpc-divider-subtle)] bg-[var(--rbpc-surface)] p-4 sm:p-5 space-y-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div className="space-y-1">
+                          <span className="block text-xs font-semibold text-[var(--rbpc-ink)]">
+                            {locale === "vi"
+                              ? "Kênh nhận thông báo trạng thái cập nhật:"
+                              : "Tracking Notification Channels:"}
+                          </span>
+                          <p className="text-[11px] text-[var(--rbpc-muted)]">
+                            {locale === "vi"
+                              ? "Chọn kênh liên hệ tự động khi đối tác phản hồi hoặc cập nhật lịch hẹn."
+                              : "Receive immediate alerts when the craft partner updates availability."}
+                          </p>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                          <button
+                            type="button"
+                            onClick={() => handleUpdatePreferences(!emailOptIn, smsOptIn)}
+                            disabled={isUpdatingPrefs}
+                            className={cn(
+                              "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold transition-all select-none",
+                              emailOptIn
+                                ? "border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-200"
+                                : "border-[var(--rbpc-divider)] bg-[var(--rbpc-surface-muted)] text-[var(--rbpc-muted)]"
+                            )}
+                          >
+                            <Mail className="h-3.5 w-3.5" />
+                            <span>{locale === "vi" ? "Email (Bật)" : "Email (On)"}</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleUpdatePreferences(emailOptIn, !smsOptIn)}
+                            disabled={isUpdatingPrefs}
+                            className={cn(
+                              "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold transition-all select-none",
+                              smsOptIn
+                                ? "border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-200"
+                                : "border-[var(--rbpc-divider)] bg-[var(--rbpc-surface-muted)] text-[var(--rbpc-muted)]"
+                            )}
+                          >
+                            <Phone className="h-3.5 w-3.5" />
+                            <span>{locale === "vi" ? "SMS (Bật)" : "SMS (On)"}</span>
+                          </button>
+
+                          {(emailOptIn || smsOptIn) && (
+                            <button
+                              type="button"
+                              onClick={handleUnsubscribeAll}
+                              disabled={isUpdatingPrefs}
+                              className="text-xs text-[var(--rbpc-muted)] hover:text-rose-600 underline transition-colors"
+                            >
+                              {locale === "vi" ? "Hủy đăng ký" : "Unsubscribe"}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Escalation Section if Overdue */}
+                      {lookupResult.canEscalate && (
+                        <div className="pt-4 border-t border-[var(--rbpc-divider-subtle)] space-y-3">
+                          <div className="flex items-start gap-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 p-3 text-xs text-amber-900 dark:text-amber-200">
+                            <Flame className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+                            <div>
+                              <strong className="block font-semibold">
+                                {locale === "vi"
+                                  ? "Đối tác chưa phản hồi trong 24 giờ tiêu chuẩn."
+                                  : "Workshop coordinator has not responded within the 24-hour SLA."}
+                              </strong>
+                              <span>
+                                {locale === "vi"
+                                  ? "Bạn có thể gửi yêu cầu nhắc nhở ưu tiên đến ban quản lý xưởng để thúc đẩy tiến độ."
+                                  : "You can trigger an expedited response escalation to workshop management."}
+                              </span>
+                            </div>
+                          </div>
+
+                          <form onSubmit={handleEscalateResponse} className="flex flex-col sm:flex-row gap-2">
+                            <input
+                              type="text"
+                              value={escalationReasonInput}
+                              onChange={(e) => setEscalationReasonInput(e.target.value)}
+                              placeholder={
+                                locale === "vi"
+                                  ? "Lý do khẩn (VD: Lịch trình du lịch gấp trong tuần này)..."
+                                  : "Reason (e.g., tight travel schedule this weekend)..."
+                              }
+                              className="rbpc-input flex-1 text-xs"
+                            />
+                            <RbpcButton
+                              type="submit"
+                              variant="secondary"
+                              size="sm"
+                              isLoading={isEscalating}
+                              loadingText={locale === "vi" ? "Đang gửi..." : "Escalating..."}
+                              className="whitespace-nowrap"
+                            >
+                              <Flame className="h-3.5 w-3.5 mr-1 text-amber-600" />
+                              <span>{locale === "vi" ? "Gửi nhắc nhở khẩn cấp" : "Escalate to Partner"}</span>
+                            </RbpcButton>
+                          </form>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Verified Customer Review Section (V5-T107) */}
+                  <div className="pt-6 border-t border-[var(--rbpc-divider-subtle)] space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-sm sm:text-base font-serif font-bold text-[var(--rbpc-ink)] flex items-center gap-2">
+                        <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
+                        <span>
+                          {locale === "vi"
+                            ? "Đánh giá trải nghiệm thực tế (Đã xác minh)"
+                            : "Verified Experience Review"}
+                        </span>
+                      </h3>
+                      {lookupResult.status === "closed" ? (
+                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
+                          <CheckCircle2 className="h-3 w-3" />
+                          <span>{locale === "vi" ? "Đủ điều kiện đánh giá" : "Eligible to Review"}</span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full">
+                          <ShieldAlert className="h-3 w-3" />
+                          <span>{locale === "vi" ? "Chưa hoàn tất trải nghiệm" : "Experience Incomplete"}</span>
+                        </span>
+                      )}
+                    </div>
+
+                    {lookupResult.status !== "closed" ? (
+                      <div className="rounded-lg bg-amber-50/70 border border-amber-200/60 p-3.5 text-xs text-amber-900 leading-relaxed">
+                        {locale === "vi"
+                          ? "Quy tắc chống lạm dụng: Chỉ những khách hàng đã tham gia và hoàn tất lịch trải nghiệm (trạng thái 'Đã kết thúc / closed') mới có thể gửi đánh giá và chấm điểm."
+                          : "Anti-abuse invariant: Only visitors who have attended and concluded their experience (status 'closed') can submit ratings and reviews."}
+                      </div>
+                    ) : (
+                      <form onSubmit={handleReviewSubmit} className="space-y-4 rounded-xl border border-[var(--rbpc-divider-subtle)] bg-[var(--rbpc-surface)] p-4 sm:p-5">
+                        {reviewSuccessMessage && (
+                          <div className="rounded-lg bg-emerald-50 border border-emerald-200 p-3 text-xs text-emerald-800 flex items-center gap-2">
+                            <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
+                            <span>{reviewSuccessMessage}</span>
+                          </div>
+                        )}
+                        {reviewErrorMessage && (
+                          <div className="rounded-lg bg-rose-50 border border-rose-200 p-3 text-xs text-rose-800 flex items-center gap-2">
+                            <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" />
+                            <span>{reviewErrorMessage}</span>
+                          </div>
+                        )}
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="space-y-1">
+                            <label className="block text-xs font-semibold text-[var(--rbpc-ink)]">
+                              {locale === "vi" ? "Đánh giá chất lượng (1 - 5 sao)" : "Rating (1 - 5 Stars)"}
+                            </label>
+                            <div className="flex items-center gap-1">
+                              {[1, 2, 3, 4, 5].map((s) => (
+                                <button
+                                  key={s}
+                                  type="button"
+                                  onClick={() => setReviewRating(s)}
+                                  className="p-1 hover:scale-110 transition-transform"
+                                  title={`${s} sao`}
+                                >
+                                  <Star
+                                    className={cn(
+                                      "h-5 w-5",
+                                      s <= reviewRating
+                                        ? "text-amber-500 fill-amber-500"
+                                        : "text-slate-300"
+                                    )}
+                                  />
+                                </button>
+                              ))}
+                              <span className="ml-2 text-xs font-mono font-bold text-amber-600">
+                                {reviewRating}/5
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="space-y-1">
+                            <label htmlFor="review-author" className="block text-xs font-semibold text-[var(--rbpc-ink)]">
+                              {locale === "vi" ? "Tên hiển thị công khai (tùy chọn)" : "Display Name (Optional)"}
+                            </label>
+                            <input
+                              id="review-author"
+                              type="text"
+                              value={reviewAuthorName}
+                              onChange={(e) => setReviewAuthorName(e.target.value)}
+                              placeholder={locale === "vi" ? "Để trống sẽ dùng tên viết tắt bảo mật" : "Leave blank for privacy masking"}
+                              className="rbpc-input text-xs"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="space-y-1">
+                          <label htmlFor="review-title" className="block text-xs font-semibold text-[var(--rbpc-ink)]">
+                            {locale === "vi" ? "Tiêu đề đánh giá" : "Review Headline"} *
+                          </label>
+                          <input
+                            id="review-title"
+                            type="text"
+                            required
+                            minLength={3}
+                            maxLength={200}
+                            value={reviewTitle}
+                            onChange={(e) => setReviewTitle(e.target.value)}
+                            placeholder={locale === "vi" ? "VD: Trải nghiệm tuyệt vời tại xưởng đúc đồng..." : "e.g. Authentic traditional casting workshop..."}
+                            className="rbpc-input text-xs"
+                          />
+                        </div>
+
+                        <div className="space-y-1">
+                          <label htmlFor="review-comment" className="block text-xs font-semibold text-[var(--rbpc-ink)]">
+                            {locale === "vi" ? "Nội dung nhận xét chi tiết" : "Detailed Experience Feedback"} *
+                          </label>
+                          <textarea
+                            id="review-comment"
+                            required
+                            rows={3}
+                            minLength={10}
+                            maxLength={2000}
+                            value={reviewComment}
+                            onChange={(e) => setReviewComment(e.target.value)}
+                            placeholder={locale === "vi" ? "Chia sẻ cảm nhận về sự hướng dẫn của nghệ nhân, không gian xưởng và tác phẩm hoàn thành..." : "Share your thoughts about the artisan's guidance, workshop setting, and your finished craft..."}
+                            className="rbpc-textarea text-xs resize-none"
+                          />
+                        </div>
+
+                        <div className="flex justify-end">
+                          <RbpcButton
+                            type="submit"
+                            variant="primary"
+                            size="sm"
+                            isLoading={isSubmittingReview}
+                            loadingText={locale === "vi" ? "Đang gửi..." : "Submitting..."}
+                          >
+                            <Star className="h-3.5 w-3.5 mr-1" />
+                            <span>{locale === "vi" ? "Gửi đánh giá xác minh" : "Submit Verified Review"}</span>
+                          </RbpcButton>
+                        </div>
+                      </form>
+                    )}
                   </div>
                 </div>
               )}

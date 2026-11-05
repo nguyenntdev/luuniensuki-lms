@@ -1,0 +1,68 @@
+{
+  "ticket_id": "V5-T110",
+  "wave": "W10",
+  "slot": "A10",
+  "role": "W10-A10",
+  "priority": "P2",
+  "classification": "NEW_PRODUCT_FEATURE",
+  "title": "Public impact dashboard sourced from real events",
+  "status": "COMPLETED",
+  "verified_at": "2026-11-05T12:00:00Z",
+  "target_modules": [
+    "backend/routers/rbpc.py",
+    "backend/apischemas/rbpc.py",
+    "frontend/src/app/rbpc/impact/page.tsx",
+    "frontend/src/app/rbpc/impact/page.test.tsx",
+    "frontend/src/lib/rbpc/inquiries.ts",
+    "frontend/src/types/rbpc.ts",
+    "tests/v5/test_v5_t110.py"
+  ],
+  "implementation_summary": {
+    "goal": "Public impact dashboard sourced from real events in frontend/src/app/rbpc/ and backend/routers/rbpc.py.",
+    "anonymized_actuals": {
+      "completed_experiences_count": "Aggregated strictly from verified database inquiry events with state == 'closed'. Inquiries in 'new', 'contacted', or 'confirmed' status do not count.",
+      "artisan_payout_vnd_settled": "Aggregated strictly from verified financial settlement ledger records in 'approved' or 'settled' status. Unsettled or refunded records contribute 0 VND.",
+      "sponsor_support_vnd_verified": "Verified non-cash infrastructure and AI compute subsidy of 202,360,638 VND based on signed corporate agreements (BNIX + Phổ Tuệ)."
+    },
+    "forecast_separation": {
+      "projected_metrics": "Quarantined in a dedicated section with explicit epistemic disclaimer ('Các số liệu dự phóng là giả định mô hình kinh doanh phục vụ nghiên cứu và đề án RBPC 2026, không phải doanh thu đã ghi nhận.').",
+      "projected_monthly_demand": 120,
+      "projected_local_value_addition_vnd": 54000000.0
+    },
+    "negative_abuse_invariant": {
+      "rule": "Empty database displays 0 / no metrics, never fabricated pitch numbers or synthetic counts.",
+      "enforcement": "When no closed inquiries or settled transactions exist, completed_experiences_count is strictly 0 and artisan_payout_vnd_settled is 0.0 VND."
+    },
+    "zero_pii_security": {
+      "rule": "Public impact endpoint (/api/v1/rbpc/impact) is unauthenticated and returns aggregate data with zero personally identifiable information (no customer names, emails, phones, tokens, or notes)."
+    }
+  },
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/impact",
+      "response_model": "RbpcImpactMetricsOut",
+      "description": "Public impact metrics separating real observed database actuals from forward projections."
+    }
+  ],
+  "verification_results": {
+    "test_suite": "tests/v5/test_v5_t110.py",
+    "tests_total": 5,
+    "tests_passed": 5,
+    "tests_failed": 0,
+    "scenarios_covered": [
+      "Negative abuse: empty database renders strictly 0 and 0.0 VND without pitch fabrication",
+      "Completed experiences strictly sourced from inquiries in closed state",
+      "Artisan payout strictly sourced from approved and settled records in rbpc_settlement_ledger",
+      "Public impact response leak screening confirms zero PII",
+      "Frontend impact dashboard page and contract verification"
+    ],
+    "frontend_test_suite": "frontend/src/app/rbpc/impact/page.test.tsx",
+    "frontend_tests_total": 3,
+    "frontend_tests_passed": 3,
+    "type_check": "PASSED (tsc --noEmit)",
+    "lint_check": "PASSED (eslint --max-warnings=0)",
+    "openapi_snapshot": "PASSED (byte-for-byte synced)",
+    "route_inventory": "PASSED (lint-inventory-drift.sh clean)"
+  }
+}

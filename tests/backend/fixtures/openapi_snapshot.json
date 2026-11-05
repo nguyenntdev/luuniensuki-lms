@@ -13100,6 +13100,106 @@
         "title": "HeritageMediaType",
         "type": "string"
       },
+      "HeritageMuseumTrailOut": {
+        "description": "Full museum QR guided trail payload linking verified context, sources, and access info.",
+        "properties": {
+          "accessibility": {
+            "$ref": "#/components/schemas/HeritageTrailAccessibilityInfo"
+          },
+          "estimated_duration_minutes": {
+            "default": 35,
+            "title": "Estimated Duration Minutes",
+            "type": "integer"
+          },
+          "offline_rubbing_fallback": {
+            "$ref": "#/components/schemas/HeritageTrailRubbingFallback"
+          },
+          "place_name_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Place Name En"
+          },
+          "place_name_vi": {
+            "title": "Place Name Vi",
+            "type": "string"
+          },
+          "place_slug": {
+            "title": "Place Slug",
+            "type": "string"
+          },
+          "primary_sources": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Primary Sources",
+            "type": "array"
+          },
+          "primary_sources_count": {
+            "default": 0,
+            "title": "Primary Sources Count",
+            "type": "integer"
+          },
+          "stations": {
+            "items": {
+              "$ref": "#/components/schemas/HeritageTrailStationOut"
+            },
+            "title": "Stations",
+            "type": "array"
+          },
+          "summary_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary En"
+          },
+          "summary_vi": {
+            "title": "Summary Vi",
+            "type": "string"
+          },
+          "total_stations": {
+            "default": 1,
+            "title": "Total Stations",
+            "type": "integer"
+          },
+          "trail_title_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Trail Title En"
+          },
+          "trail_title_vi": {
+            "title": "Trail Title Vi",
+            "type": "string"
+          }
+        },
+        "required": [
+          "place_slug",
+          "place_name_vi",
+          "trail_title_vi",
+          "summary_vi",
+          "accessibility",
+          "offline_rubbing_fallback"
+        ],
+        "title": "HeritageMuseumTrailOut",
+        "type": "object"
+      },
       "HeritagePlaceDetailOut": {
         "description": "Deep representation of a heritage place including relational evidence and media.",
         "properties": {
@@ -14092,6 +14192,309 @@
           "statement"
         ],
         "title": "HeritageSourceEvidenceOut",
+        "type": "object"
+      },
+      "HeritageTrailAccessibilityInfo": {
+        "description": "Wheelchair and physical accessibility route telemetry for on-site visitors.",
+        "properties": {
+          "accessibility_grade": {
+            "description": "Grade: full_wheelchair, partial_step_assistance, inaccessible_steep_steps, unknown_unverified",
+            "title": "Accessibility Grade",
+            "type": "string"
+          },
+          "auditory_beacon_available": {
+            "default": false,
+            "title": "Auditory Beacon Available",
+            "type": "boolean"
+          },
+          "is_accessibility_verified": {
+            "description": "Whether accessibility route has been officially surveyed by staff/HMCC.",
+            "title": "Is Accessibility Verified",
+            "type": "boolean"
+          },
+          "ramp_locations": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Ramp Locations",
+            "type": "array"
+          },
+          "rest_stops_count": {
+            "default": 0,
+            "title": "Rest Stops Count",
+            "type": "integer"
+          },
+          "safety_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Safety Notes"
+          },
+          "tactile_paving": {
+            "default": false,
+            "title": "Tactile Paving",
+            "type": "boolean"
+          },
+          "wheelchair_accessible": {
+            "description": "Strictly False if accessibility grade is unknown or inaccessible.",
+            "title": "Wheelchair Accessible",
+            "type": "boolean"
+          },
+          "wheelchair_route_summary": {
+            "title": "Wheelchair Route Summary",
+            "type": "string"
+          }
+        },
+        "required": [
+          "accessibility_grade",
+          "wheelchair_accessible",
+          "is_accessibility_verified",
+          "wheelchair_route_summary"
+        ],
+        "title": "HeritageTrailAccessibilityInfo",
+        "type": "object"
+      },
+      "HeritageTrailQRVerifyIn": {
+        "description": "Request payload to verify cryptographic authenticity of an on-site station QR code.",
+        "properties": {
+          "expected_site": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Site"
+          },
+          "qr_token": {
+            "title": "Qr Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "qr_token"
+        ],
+        "title": "HeritageTrailQRVerifyIn",
+        "type": "object"
+      },
+      "HeritageTrailQRVerifyOut": {
+        "description": "Response payload for verified on-site station QR token.",
+        "properties": {
+          "authority": {
+            "title": "Authority",
+            "type": "string"
+          },
+          "expires_at": {
+            "title": "Expires At",
+            "type": "integer"
+          },
+          "issued_at": {
+            "title": "Issued At",
+            "type": "integer"
+          },
+          "nonce": {
+            "title": "Nonce",
+            "type": "string"
+          },
+          "site_slug": {
+            "title": "Site Slug",
+            "type": "string"
+          },
+          "station_index": {
+            "title": "Station Index",
+            "type": "integer"
+          },
+          "verified": {
+            "title": "Verified",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "verified",
+          "site_slug",
+          "station_index",
+          "authority",
+          "issued_at",
+          "expires_at",
+          "nonce"
+        ],
+        "title": "HeritageTrailQRVerifyOut",
+        "type": "object"
+      },
+      "HeritageTrailRubbingFallback": {
+        "description": "100% authentic 2D rubbing asset fallback for low-bandwidth or offline fieldwork.",
+        "properties": {
+          "asset_url": {
+            "title": "Asset Url",
+            "type": "string"
+          },
+          "byte_size": {
+            "default": 0,
+            "title": "Byte Size",
+            "type": "integer"
+          },
+          "description_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description En"
+          },
+          "description_vi": {
+            "title": "Description Vi",
+            "type": "string"
+          },
+          "file_exists": {
+            "default": true,
+            "title": "File Exists",
+            "type": "boolean"
+          },
+          "format": {
+            "default": "image/jpeg",
+            "title": "Format",
+            "type": "string"
+          },
+          "legal_basis": {
+            "title": "Legal Basis",
+            "type": "string"
+          },
+          "local_path": {
+            "title": "Local Path",
+            "type": "string"
+          },
+          "rights_attribution": {
+            "title": "Rights Attribution",
+            "type": "string"
+          },
+          "sha256": {
+            "title": "Sha256",
+            "type": "string"
+          }
+        },
+        "required": [
+          "asset_url",
+          "local_path",
+          "sha256",
+          "rights_attribution",
+          "legal_basis",
+          "description_vi"
+        ],
+        "title": "HeritageTrailRubbingFallback",
+        "type": "object"
+      },
+      "HeritageTrailStationOut": {
+        "description": "On-site physical trail station with cryptographic QR token and source linking.",
+        "properties": {
+          "accessibility_info": {
+            "$ref": "#/components/schemas/HeritageTrailAccessibilityInfo"
+          },
+          "authority": {
+            "title": "Authority",
+            "type": "string"
+          },
+          "inspection_prompt_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inspection Prompt En"
+          },
+          "inspection_prompt_vi": {
+            "title": "Inspection Prompt Vi",
+            "type": "string"
+          },
+          "location_lat": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location Lat"
+          },
+          "location_lon": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location Lon"
+          },
+          "offline_rubbing": {
+            "$ref": "#/components/schemas/HeritageTrailRubbingFallback"
+          },
+          "primary_sources": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Primary Sources",
+            "type": "array"
+          },
+          "qr_data_uri": {
+            "title": "Qr Data Uri",
+            "type": "string"
+          },
+          "qr_token": {
+            "title": "Qr Token",
+            "type": "string"
+          },
+          "station_code": {
+            "title": "Station Code",
+            "type": "string"
+          },
+          "station_index": {
+            "title": "Station Index",
+            "type": "integer"
+          },
+          "title_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title En"
+          },
+          "title_vi": {
+            "title": "Title Vi",
+            "type": "string"
+          }
+        },
+        "required": [
+          "station_index",
+          "station_code",
+          "title_vi",
+          "inspection_prompt_vi",
+          "qr_token",
+          "qr_data_uri",
+          "authority",
+          "offline_rubbing",
+          "accessibility_info"
+        ],
+        "title": "HeritageTrailStationOut",
         "type": "object"
       },
       "HistoricalAssetCreate": {
@@ -37104,6 +37507,143 @@
         "title": "RankOut",
         "type": "object"
       },
+      "RbpcAudioConsentScope": {
+        "enum": [
+          "full_public",
+          "educational_only",
+          "preview_only",
+          "revoked"
+        ],
+        "title": "RbpcAudioConsentScope",
+        "type": "string"
+      },
+      "RbpcAudioTranscriptVersionOut": {
+        "description": "Audio transcript revision record.",
+        "properties": {
+          "artisan_verified_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Artisan Verified At"
+          },
+          "author_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Author Id"
+          },
+          "change_summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Change Summary"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "is_verified_by_artisan": {
+            "default": false,
+            "title": "Is Verified By Artisan",
+            "type": "boolean"
+          },
+          "recording_id": {
+            "format": "uuid",
+            "title": "Recording Id",
+            "type": "string"
+          },
+          "timed_cues": {
+            "items": {
+              "$ref": "#/components/schemas/RbpcTranscriptCue"
+            },
+            "title": "Timed Cues",
+            "type": "array"
+          },
+          "transcript_text_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transcript Text En"
+          },
+          "transcript_text_vi": {
+            "title": "Transcript Text Vi",
+            "type": "string"
+          },
+          "version_number": {
+            "title": "Version Number",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "recording_id",
+          "version_number",
+          "transcript_text_vi",
+          "created_at"
+        ],
+        "title": "RbpcAudioTranscriptVersionOut",
+        "type": "object"
+      },
+      "RbpcAvailabilityCalendarOut": {
+        "description": "Calendar schedule of workshop slots for an experience.",
+        "properties": {
+          "experience_slug": {
+            "title": "Experience Slug",
+            "type": "string"
+          },
+          "experience_title": {
+            "title": "Experience Title",
+            "type": "string"
+          },
+          "slots": {
+            "items": {
+              "$ref": "#/components/schemas/RbpcWorkshopSlotOut"
+            },
+            "title": "Slots",
+            "type": "array"
+          },
+          "total_slots": {
+            "title": "Total Slots",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "experience_slug",
+          "experience_title",
+          "slots",
+          "total_slots"
+        ],
+        "title": "RbpcAvailabilityCalendarOut",
+        "type": "object"
+      },
       "RbpcAvailabilityMode": {
         "enum": [
           "inquiry_only",
@@ -37461,6 +38001,24 @@
             "title": "Id",
             "type": "string"
           },
+          "identity_document_ref": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Encrypted/redacted reference to verified identity document.",
+            "title": "Identity Document Ref"
+          },
+          "is_verified": {
+            "default": false,
+            "description": "Whether staff/admin has reviewed identity, consent, and rights.",
+            "title": "Is Verified",
+            "type": "boolean"
+          },
           "public_name": {
             "description": "Public display name or artisan title.",
             "title": "Public Name",
@@ -37471,10 +38029,46 @@
             "title": "Public Region",
             "type": "string"
           },
+          "rights_clearance_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Rights clearance and portrait usage permissions.",
+            "title": "Rights Clearance Notes"
+          },
           "slug": {
             "description": "URL-safe identifier.",
             "title": "Slug",
             "type": "string"
+          },
+          "verification_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Verification audit comments.",
+            "title": "Verification Notes"
+          },
+          "verified_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verified At"
           },
           "years_of_practice": {
             "anyOf": [
@@ -37569,8 +38163,8 @@
           },
           "locale": {
             "default": "vi",
-            "description": "Desired response locale (vi or en).",
-            "pattern": "^(vi|en)$",
+            "description": "Desired response locale (vi, en, fr, ja, ko).",
+            "pattern": "^(vi|en|fr|ja|ko)$",
             "title": "Locale",
             "type": "string"
           },
@@ -37721,6 +38315,353 @@
         "title": "RbpcCulturalBridgeResponse",
         "type": "object"
       },
+      "RbpcCustomerReviewAdminListOut": {
+        "description": "Moderation list of customer reviews.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RbpcCustomerReviewAdminOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "pending_count": {
+            "default": 0,
+            "title": "Pending Count",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total"
+        ],
+        "title": "RbpcCustomerReviewAdminListOut",
+        "type": "object"
+      },
+      "RbpcCustomerReviewAdminOut": {
+        "description": "Internal moderation view of a review with fraud flags and inquiry linkage.",
+        "properties": {
+          "author_display_name": {
+            "title": "Author Display Name",
+            "type": "string"
+          },
+          "author_user_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Author User Id"
+          },
+          "comment": {
+            "title": "Comment",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "disputes": {
+            "items": {
+              "$ref": "#/components/schemas/RbpcReviewDisputeOut"
+            },
+            "title": "Disputes",
+            "type": "array"
+          },
+          "experience_id": {
+            "format": "uuid",
+            "title": "Experience Id",
+            "type": "string"
+          },
+          "fraud_flags": {
+            "additionalProperties": true,
+            "title": "Fraud Flags",
+            "type": "object"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "inquiry_id": {
+            "format": "uuid",
+            "title": "Inquiry Id",
+            "type": "string"
+          },
+          "moderated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Moderated At"
+          },
+          "moderated_by_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Moderated By Id"
+          },
+          "moderation_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Moderation Notes"
+          },
+          "rating": {
+            "title": "Rating",
+            "type": "integer"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RbpcReviewStatus"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "verified_completed": {
+            "title": "Verified Completed",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "inquiry_id",
+          "experience_id",
+          "author_display_name",
+          "rating",
+          "title",
+          "comment",
+          "verified_completed",
+          "status",
+          "fraud_flags",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "RbpcCustomerReviewAdminOut",
+        "type": "object"
+      },
+      "RbpcCustomerReviewCreate": {
+        "description": "Customer payload to submit a verified review for a completed inquiry.",
+        "properties": {
+          "author_display_name": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Public author alias. If omitted, uses inquiry contact name or anonymous format.",
+            "title": "Author Display Name"
+          },
+          "comment": {
+            "description": "Detailed review of the workshop experience.",
+            "maxLength": 2000,
+            "minLength": 10,
+            "title": "Comment",
+            "type": "string"
+          },
+          "inquiry_token": {
+            "description": "Opaque status token of the inquiry proving possession and completion.",
+            "maxLength": 255,
+            "minLength": 16,
+            "title": "Inquiry Token",
+            "type": "string"
+          },
+          "rating": {
+            "description": "Rating from 1 (lowest) to 5 (highest).",
+            "maximum": 5.0,
+            "minimum": 1.0,
+            "title": "Rating",
+            "type": "integer"
+          },
+          "title": {
+            "description": "Short summary or headline of the experience review.",
+            "maxLength": 200,
+            "minLength": 3,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "inquiry_token",
+          "rating",
+          "title",
+          "comment"
+        ],
+        "title": "RbpcCustomerReviewCreate",
+        "type": "object"
+      },
+      "RbpcCustomerReviewListOut": {
+        "description": "List of customer reviews.",
+        "properties": {
+          "average_rating": {
+            "default": 0.0,
+            "title": "Average Rating",
+            "type": "number"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RbpcCustomerReviewOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total"
+        ],
+        "title": "RbpcCustomerReviewListOut",
+        "type": "object"
+      },
+      "RbpcCustomerReviewModeration": {
+        "description": "Staff/admin action to moderate a review (publish, reject, archive).",
+        "properties": {
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Staff moderation audit reasoning.",
+            "title": "Notes"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RbpcReviewStatus",
+            "description": "Target review status: published, rejected, archived."
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "RbpcCustomerReviewModeration",
+        "type": "object"
+      },
+      "RbpcCustomerReviewOut": {
+        "description": "Public customer review representation with verified badge and zero PII.",
+        "properties": {
+          "author_display_name": {
+            "title": "Author Display Name",
+            "type": "string"
+          },
+          "comment": {
+            "title": "Comment",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "experience_id": {
+            "format": "uuid",
+            "title": "Experience Id",
+            "type": "string"
+          },
+          "experience_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Experience Slug"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "rating": {
+            "title": "Rating",
+            "type": "integer"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RbpcReviewStatus"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "verified_completed": {
+            "title": "Verified Completed",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "experience_id",
+          "author_display_name",
+          "rating",
+          "title",
+          "comment",
+          "verified_completed",
+          "status",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "RbpcCustomerReviewOut",
+        "type": "object"
+      },
+      "RbpcDisputeStatus": {
+        "enum": [
+          "opened",
+          "under_review",
+          "resolved_upheld",
+          "resolved_overturned",
+          "dismissed"
+        ],
+        "title": "RbpcDisputeStatus",
+        "type": "string"
+      },
       "RbpcEpistemicCertainty": {
         "enum": [
           "high",
@@ -37730,6 +38671,39 @@
         ],
         "title": "RbpcEpistemicCertainty",
         "type": "string"
+      },
+      "RbpcExperienceModerationIn": {
+        "description": "Staff moderation payload for experience listing.",
+        "properties": {
+          "moderation_notes": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Moderation Notes"
+          },
+          "publication_state": {
+            "pattern": "^(published|draft|archived|rejected)$",
+            "title": "Publication State",
+            "type": "string"
+          },
+          "rights_checked": {
+            "default": true,
+            "description": "Confirm all media and brand rights cleared.",
+            "title": "Rights Checked",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "publication_state"
+        ],
+        "title": "RbpcExperienceModerationIn",
+        "type": "object"
       },
       "RbpcExperienceOut": {
         "description": "Real-world cultural experience with honest inquiry-only notice.",
@@ -37861,6 +38835,30 @@
             "default": 10,
             "title": "Max Party Size"
           },
+          "moderated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Moderated At"
+          },
+          "moderation_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Staff moderation audit notes.",
+            "title": "Moderation Notes"
+          },
           "notice": {
             "default": "Yêu cầu trải nghiệm chỉ là bước liên hệ xác nhận, không phải giao dịch thanh toán tức thì.",
             "description": "Honest transparency disclosure.",
@@ -37871,6 +38869,12 @@
             "default": "published",
             "title": "Publication State",
             "type": "string"
+          },
+          "rights_checked": {
+            "default": false,
+            "description": "Whether licensing and intellectual rights have been cleared.",
+            "title": "Rights Checked",
+            "type": "boolean"
           },
           "slug": {
             "description": "URL-safe identifier.",
@@ -37944,6 +38948,12 @@
           "contact": {
             "$ref": "#/components/schemas/RbpcContactIn"
           },
+          "email_opt_in": {
+            "default": true,
+            "description": "Whether visitor opts in to receive status update notifications via email.",
+            "title": "Email Opt In",
+            "type": "boolean"
+          },
           "experience_slug": {
             "description": "Target experience offering slug.",
             "maxLength": 200,
@@ -37991,6 +39001,12 @@
             ],
             "description": "Desired workshop/tour date (must be in the future).",
             "title": "Preferred Date"
+          },
+          "sms_opt_in": {
+            "default": false,
+            "description": "Whether visitor opts in to receive SMS alerts for urgent confirmations or changes.",
+            "title": "Sms Opt In",
+            "type": "boolean"
           }
         },
         "required": [
@@ -38000,6 +39016,154 @@
           "idempotency_key"
         ],
         "title": "RbpcInquiryCreate",
+        "type": "object"
+      },
+      "RbpcInquiryEscalationCreate": {
+        "description": "Customer request to escalate a late partner response.",
+        "properties": {
+          "reason": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Reason customer is escalating (e.g. overdue 24h SLA, urgent travel plan).",
+            "title": "Reason"
+          }
+        },
+        "title": "RbpcInquiryEscalationCreate",
+        "type": "object"
+      },
+      "RbpcInquiryEscalationOut": {
+        "description": "Result of partner late response escalation.",
+        "properties": {
+          "escalated_at": {
+            "format": "date-time",
+            "title": "Escalated At",
+            "type": "string"
+          },
+          "escalation_count": {
+            "title": "Escalation Count",
+            "type": "integer"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "notification_dispatched": {
+            "title": "Notification Dispatched",
+            "type": "boolean"
+          },
+          "reference": {
+            "title": "Reference",
+            "type": "string"
+          },
+          "sla_overdue_seconds": {
+            "title": "Sla Overdue Seconds",
+            "type": "number"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RbpcInquiryStatus"
+          }
+        },
+        "required": [
+          "reference",
+          "status",
+          "escalated_at",
+          "escalation_count",
+          "sla_overdue_seconds",
+          "message",
+          "notification_dispatched"
+        ],
+        "title": "RbpcInquiryEscalationOut",
+        "type": "object"
+      },
+      "RbpcInquiryNotificationPreferenceOut": {
+        "description": "Result of updating notification preferences.",
+        "properties": {
+          "email_opt_in": {
+            "title": "Email Opt In",
+            "type": "boolean"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "reference": {
+            "title": "Reference",
+            "type": "string"
+          },
+          "sms_opt_in": {
+            "title": "Sms Opt In",
+            "type": "boolean"
+          },
+          "unsubscribed": {
+            "title": "Unsubscribed",
+            "type": "boolean"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reference",
+          "email_opt_in",
+          "sms_opt_in",
+          "unsubscribed",
+          "message",
+          "updated_at"
+        ],
+        "title": "RbpcInquiryNotificationPreferenceOut",
+        "type": "object"
+      },
+      "RbpcInquiryNotificationPreferenceUpdate": {
+        "description": "Update opt-in preferences for customer notifications.",
+        "properties": {
+          "email_opt_in": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Opt in or out of email updates.",
+            "title": "Email Opt In"
+          },
+          "frequency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "immediate",
+            "description": "Digest frequency (immediate, daily).",
+            "title": "Frequency"
+          },
+          "sms_opt_in": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Opt in or out of SMS updates.",
+            "title": "Sms Opt In"
+          }
+        },
+        "title": "RbpcInquiryNotificationPreferenceUpdate",
         "type": "object"
       },
       "RbpcInquiryOut": {
@@ -38054,10 +39218,59 @@
       "RbpcInquiryStatusOut": {
         "description": "Public status inquiry output: ZERO PII returned.",
         "properties": {
+          "can_escalate": {
+            "default": false,
+            "description": "True if customer can escalate late response.",
+            "title": "Can Escalate",
+            "type": "boolean"
+          },
+          "email_opt_in": {
+            "default": true,
+            "description": "Email status update preference.",
+            "title": "Email Opt In",
+            "type": "boolean"
+          },
+          "escalated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Timestamp of partner escalation if triggered.",
+            "title": "Escalated At"
+          },
+          "escalation_count": {
+            "default": 0,
+            "description": "Total number of escalations triggered.",
+            "title": "Escalation Count",
+            "type": "integer"
+          },
+          "escalation_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Reason recorded for escalation.",
+            "title": "Escalation Reason"
+          },
           "experience_title": {
             "description": "Title of the requested experience.",
             "title": "Experience Title",
             "type": "string"
+          },
+          "is_overdue": {
+            "default": false,
+            "description": "True if partner SLA (24h) is overdue without action.",
+            "title": "Is Overdue",
+            "type": "boolean"
           },
           "last_updated_at": {
             "format": "date-time",
@@ -38091,6 +39304,25 @@
             "description": "Non-sequential reference code.",
             "title": "Reference",
             "type": "string"
+          },
+          "sla_due_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "24h partner SLA deadline.",
+            "title": "Sla Due At"
+          },
+          "sms_opt_in": {
+            "default": false,
+            "description": "SMS notification preference.",
+            "title": "Sms Opt In",
+            "type": "boolean"
           },
           "status": {
             "$ref": "#/components/schemas/RbpcInquiryStatus",
@@ -38179,6 +39411,61 @@
         "title": "RbpcInquiryWithdrawOut",
         "type": "object"
       },
+      "RbpcLedgerFinancialSummary": {
+        "description": "Aggregate financial summary from the verified settlement ledger.",
+        "properties": {
+          "approved_settlements_count": {
+            "default": 0,
+            "description": "Number of compliance-approved settlements",
+            "title": "Approved Settlements Count",
+            "type": "integer"
+          },
+          "contracted_take_rate_avg": {
+            "default": 0.15,
+            "description": "Weighted or average contracted take rate",
+            "title": "Contracted Take Rate Avg",
+            "type": "number"
+          },
+          "pending_settlements_count": {
+            "default": 0,
+            "description": "Settlements awaiting compliance",
+            "title": "Pending Settlements Count",
+            "type": "integer"
+          },
+          "total_artisan_payout_vnd": {
+            "default": 0.0,
+            "description": "Total net payout allocated to artisans",
+            "title": "Total Artisan Payout Vnd",
+            "type": "number"
+          },
+          "total_gross_settled_vnd": {
+            "default": 0.0,
+            "description": "Total gross settled transaction volume",
+            "title": "Total Gross Settled Vnd",
+            "type": "number"
+          },
+          "total_platform_fee_vnd": {
+            "default": 0.0,
+            "description": "Total platform fee earned",
+            "title": "Total Platform Fee Vnd",
+            "type": "number"
+          },
+          "total_refund_vnd": {
+            "default": 0.0,
+            "description": "Total refunded amount",
+            "title": "Total Refund Vnd",
+            "type": "number"
+          },
+          "total_tax_vat_vnd": {
+            "default": 0.0,
+            "description": "Total taxes collected/remitted",
+            "title": "Total Tax Vat Vnd",
+            "type": "number"
+          }
+        },
+        "title": "RbpcLedgerFinancialSummary",
+        "type": "object"
+      },
       "RbpcObservedMetrics": {
         "description": "Real, verified aggregate statistics observed in the database.",
         "properties": {
@@ -38186,6 +39473,18 @@
             "default": 0,
             "description": "Total published experience listings open for inquiries.",
             "title": "Active Experiences Count",
+            "type": "integer"
+          },
+          "artisan_payout_vnd_settled": {
+            "default": 0.0,
+            "description": "Total verified actual artisan payouts settled through the financial ledger (VND).",
+            "title": "Artisan Payout Vnd Settled",
+            "type": "number"
+          },
+          "completed_experiences_count": {
+            "default": 0,
+            "description": "Total verified completed cultural experiences observed from real closed inquiries.",
+            "title": "Completed Experiences Count",
             "type": "integer"
           },
           "consented_creators_count": {
@@ -38226,6 +39525,688 @@
           }
         },
         "title": "RbpcObservedMetrics",
+        "type": "object"
+      },
+      "RbpcOralHistoryConsentUpdateIn": {
+        "description": "Update per-use media consent scope and grant agreement.",
+        "properties": {
+          "consent_agreement_ref": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Consent Agreement Ref"
+          },
+          "consent_granted": {
+            "title": "Consent Granted",
+            "type": "boolean"
+          },
+          "consent_notes": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Consent Notes"
+          },
+          "consent_scope": {
+            "$ref": "#/components/schemas/RbpcAudioConsentScope"
+          }
+        },
+        "required": [
+          "consent_scope",
+          "consent_granted"
+        ],
+        "title": "RbpcOralHistoryConsentUpdateIn",
+        "type": "object"
+      },
+      "RbpcOralHistoryCreateIn": {
+        "description": "Create a new oral history recording draft.",
+        "properties": {
+          "audio_duration_seconds": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Audio Duration Seconds",
+            "type": "integer"
+          },
+          "audio_sha256": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Audio Sha256"
+          },
+          "audio_url": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Audio Url"
+          },
+          "creator_id": {
+            "format": "uuid",
+            "title": "Creator Id",
+            "type": "string"
+          },
+          "cultural_context_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cultural Context En"
+          },
+          "cultural_context_vi": {
+            "minLength": 10,
+            "title": "Cultural Context Vi",
+            "type": "string"
+          },
+          "epistemic_certainty": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "community_tradition",
+            "title": "Epistemic Certainty"
+          },
+          "initial_cues": {
+            "items": {
+              "$ref": "#/components/schemas/RbpcTranscriptCue"
+            },
+            "title": "Initial Cues",
+            "type": "array"
+          },
+          "initial_transcript_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Initial Transcript En"
+          },
+          "initial_transcript_vi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Initial Transcript Vi"
+          },
+          "interviewer_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interviewer Name"
+          },
+          "mime_type": {
+            "default": "audio/webm",
+            "title": "Mime Type",
+            "type": "string"
+          },
+          "recording_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recording Date"
+          },
+          "recording_location": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recording Location"
+          },
+          "title_en": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title En"
+          },
+          "title_vi": {
+            "maxLength": 255,
+            "minLength": 2,
+            "title": "Title Vi",
+            "type": "string"
+          }
+        },
+        "required": [
+          "creator_id",
+          "title_vi",
+          "cultural_context_vi"
+        ],
+        "title": "RbpcOralHistoryCreateIn",
+        "type": "object"
+      },
+      "RbpcOralHistoryRecordingListOut": {
+        "description": "List of oral history recordings.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RbpcOralHistoryRecordingOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total"
+        ],
+        "title": "RbpcOralHistoryRecordingListOut",
+        "type": "object"
+      },
+      "RbpcOralHistoryRecordingOut": {
+        "description": "Oral history recording public / partner view.",
+        "properties": {
+          "audio_duration_seconds": {
+            "title": "Audio Duration Seconds",
+            "type": "integer"
+          },
+          "audio_sha256": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Audio Sha256"
+          },
+          "audio_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Audio Url"
+          },
+          "consent_agreement_ref": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Consent Agreement Ref"
+          },
+          "consent_granted": {
+            "title": "Consent Granted",
+            "type": "boolean"
+          },
+          "consent_granted_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Consent Granted At"
+          },
+          "consent_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Consent Notes"
+          },
+          "consent_scope": {
+            "$ref": "#/components/schemas/RbpcAudioConsentScope"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "creator_id": {
+            "format": "uuid",
+            "title": "Creator Id",
+            "type": "string"
+          },
+          "cultural_context_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cultural Context En"
+          },
+          "cultural_context_vi": {
+            "title": "Cultural Context Vi",
+            "type": "string"
+          },
+          "current_version_number": {
+            "title": "Current Version Number",
+            "type": "integer"
+          },
+          "epistemic_certainty": {
+            "title": "Epistemic Certainty",
+            "type": "string"
+          },
+          "erased_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Erased At"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "interviewer_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interviewer Name"
+          },
+          "latest_transcript": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RbpcAudioTranscriptVersionOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "mime_type": {
+            "title": "Mime Type",
+            "type": "string"
+          },
+          "recording_code": {
+            "title": "Recording Code",
+            "type": "string"
+          },
+          "recording_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recording Date"
+          },
+          "recording_location": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recording Location"
+          },
+          "revocation_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revocation Reason"
+          },
+          "revoked_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revoked At"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RbpcOralHistoryStatus"
+          },
+          "title_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title En"
+          },
+          "title_vi": {
+            "title": "Title Vi",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "creator_id",
+          "recording_code",
+          "title_vi",
+          "audio_duration_seconds",
+          "mime_type",
+          "cultural_context_vi",
+          "epistemic_certainty",
+          "consent_scope",
+          "status",
+          "consent_granted",
+          "current_version_number",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "RbpcOralHistoryRecordingOut",
+        "type": "object"
+      },
+      "RbpcOralHistoryRevokeIn": {
+        "description": "Revoke consent or request erasure (right-to-erasure / GDPR / Decree 13/2023/ND-CP).",
+        "properties": {
+          "erase_data": {
+            "default": false,
+            "description": "Whether to scrub media references and text under right-to-erasure.",
+            "title": "Erase Data",
+            "type": "boolean"
+          },
+          "reason": {
+            "maxLength": 1000,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "RbpcOralHistoryRevokeIn",
+        "type": "object"
+      },
+      "RbpcOralHistoryStatus": {
+        "enum": [
+          "draft",
+          "submitted",
+          "consented",
+          "revoked",
+          "erased"
+        ],
+        "title": "RbpcOralHistoryStatus",
+        "type": "string"
+      },
+      "RbpcOralHistoryTranscriptUpdateIn": {
+        "description": "Submit a new version of the transcript with diff/summary.",
+        "properties": {
+          "change_summary": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Change Summary"
+          },
+          "timed_cues": {
+            "items": {
+              "$ref": "#/components/schemas/RbpcTranscriptCue"
+            },
+            "title": "Timed Cues",
+            "type": "array"
+          },
+          "transcript_text_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transcript Text En"
+          },
+          "transcript_text_vi": {
+            "minLength": 5,
+            "title": "Transcript Text Vi",
+            "type": "string"
+          },
+          "verify_by_artisan": {
+            "default": false,
+            "title": "Verify By Artisan",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "transcript_text_vi"
+        ],
+        "title": "RbpcOralHistoryTranscriptUpdateIn",
+        "type": "object"
+      },
+      "RbpcPartnerExperienceCreateIn": {
+        "description": "Partner submission to create a cultural experience listing.",
+        "properties": {
+          "area_public": {
+            "default": "Huế",
+            "maxLength": 100,
+            "title": "Area Public",
+            "type": "string"
+          },
+          "currency": {
+            "default": "VND",
+            "maxLength": 10,
+            "title": "Currency",
+            "type": "string"
+          },
+          "description_en": {
+            "anyOf": [
+              {
+                "maxLength": 5000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description En"
+          },
+          "description_vi": {
+            "maxLength": 5000,
+            "minLength": 10,
+            "title": "Description Vi",
+            "type": "string"
+          },
+          "duration_minutes": {
+            "anyOf": [
+              {
+                "maximum": 1440.0,
+                "minimum": 15.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration Minutes"
+          },
+          "indicative_price_amount": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Indicative Price Amount"
+          },
+          "languages_supported": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Languages Supported",
+            "type": "array"
+          },
+          "max_party_size": {
+            "anyOf": [
+              {
+                "maximum": 50.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": 10,
+            "title": "Max Party Size"
+          },
+          "notice": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notice"
+          },
+          "pricing_display": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pricing Display"
+          },
+          "slug": {
+            "maxLength": 100,
+            "minLength": 3,
+            "title": "Slug",
+            "type": "string"
+          },
+          "title_en": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title En"
+          },
+          "title_vi": {
+            "maxLength": 255,
+            "minLength": 3,
+            "title": "Title Vi",
+            "type": "string"
+          }
+        },
+        "required": [
+          "slug",
+          "title_vi",
+          "description_vi"
+        ],
+        "title": "RbpcPartnerExperienceCreateIn",
         "type": "object"
       },
       "RbpcPartnerInquiryListOut": {
@@ -38365,6 +40346,385 @@
         "title": "RbpcPartnerInquiryUpdate",
         "type": "object"
       },
+      "RbpcPartnerOnboardingIn": {
+        "description": "Self-onboarding registration payload for a partner/artisan.",
+        "properties": {
+          "approved_bio_en": {
+            "anyOf": [
+              {
+                "maxLength": 5000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved Bio En"
+          },
+          "approved_bio_vi": {
+            "description": "Biography or craft history.",
+            "maxLength": 5000,
+            "minLength": 10,
+            "title": "Approved Bio Vi",
+            "type": "string"
+          },
+          "approved_portrait_url": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Portrait URL (unverified until staff review).",
+            "title": "Approved Portrait Url"
+          },
+          "craft_tradition_en": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Craft Tradition En"
+          },
+          "craft_tradition_vi": {
+            "description": "Traditional craft name in Vietnamese.",
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Craft Tradition Vi",
+            "type": "string"
+          },
+          "display_consent_ref": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Reference to consent agreement.",
+            "title": "Display Consent Ref"
+          },
+          "generation_lineage": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Generation Lineage"
+          },
+          "heritage_place_slug": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Heritage Place Slug"
+          },
+          "identity_document_ref": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Identity documentation reference.",
+            "title": "Identity Document Ref"
+          },
+          "public_name": {
+            "description": "Artisan or workshop name.",
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Public Name",
+            "type": "string"
+          },
+          "public_region": {
+            "default": "Huế",
+            "maxLength": 100,
+            "title": "Public Region",
+            "type": "string"
+          },
+          "rights_clearance_notes": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Rights and portrait licensing notes.",
+            "title": "Rights Clearance Notes"
+          },
+          "slug": {
+            "description": "Unique URL slug.",
+            "maxLength": 100,
+            "minLength": 3,
+            "title": "Slug",
+            "type": "string"
+          },
+          "years_of_practice": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Years Of Practice"
+          }
+        },
+        "required": [
+          "slug",
+          "public_name",
+          "craft_tradition_vi",
+          "approved_bio_vi"
+        ],
+        "title": "RbpcPartnerOnboardingIn",
+        "type": "object"
+      },
+      "RbpcPartnerProfileUpdateIn": {
+        "description": "Artisan profile update payload for existing partner.",
+        "properties": {
+          "approved_bio_en": {
+            "anyOf": [
+              {
+                "maxLength": 5000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved Bio En"
+          },
+          "approved_bio_vi": {
+            "anyOf": [
+              {
+                "maxLength": 5000,
+                "minLength": 10,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved Bio Vi"
+          },
+          "approved_portrait_url": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved Portrait Url"
+          },
+          "craft_tradition_en": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Craft Tradition En"
+          },
+          "craft_tradition_vi": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 2,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Craft Tradition Vi"
+          },
+          "display_consent_ref": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Display Consent Ref"
+          },
+          "generation_lineage": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Generation Lineage"
+          },
+          "identity_document_ref": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Identity Document Ref"
+          },
+          "public_name": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 2,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Public Name"
+          },
+          "public_region": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Public Region"
+          },
+          "rights_clearance_notes": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rights Clearance Notes"
+          },
+          "years_of_practice": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Years Of Practice"
+          }
+        },
+        "title": "RbpcPartnerProfileUpdateIn",
+        "type": "object"
+      },
+      "RbpcPartnerVerificationIn": {
+        "description": "Staff review & verification payload for artisan profile.",
+        "properties": {
+          "consent_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RbpcConsentStatus"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "verified_written_consent",
+            "description": "Verified consent state."
+          },
+          "is_verified": {
+            "description": "Staff decision on identity and consent verification.",
+            "title": "Is Verified",
+            "type": "boolean"
+          },
+          "rights_clearance_notes": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Licensing and media clearance remarks.",
+            "title": "Rights Clearance Notes"
+          },
+          "verification_notes": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Review remarks and verification evidence.",
+            "title": "Verification Notes"
+          }
+        },
+        "required": [
+          "is_verified"
+        ],
+        "title": "RbpcPartnerVerificationIn",
+        "type": "object"
+      },
+      "RbpcPayoutStatus": {
+        "enum": [
+          "pending",
+          "approved",
+          "disbursed",
+          "withheld",
+          "cancelled"
+        ],
+        "title": "RbpcPayoutStatus",
+        "type": "string"
+      },
       "RbpcProjectedMetrics": {
         "description": "Estimated forward-looking commercial and economic impact hypotheses.",
         "properties": {
@@ -38400,6 +40760,744 @@
           }
         },
         "title": "RbpcProjectedMetrics",
+        "type": "object"
+      },
+      "RbpcReservationCancelIn": {
+        "description": "Partner or visitor action to cancel/release a reservation.",
+        "properties": {
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "reservation_id": {
+            "format": "uuid",
+            "title": "Reservation Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reservation_id"
+        ],
+        "title": "RbpcReservationCancelIn",
+        "type": "object"
+      },
+      "RbpcReservationConfirmIn": {
+        "description": "Partner action to confirm a reserved seat hold.",
+        "properties": {
+          "partner_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Partner Note"
+          },
+          "reservation_id": {
+            "format": "uuid",
+            "title": "Reservation Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reservation_id"
+        ],
+        "title": "RbpcReservationConfirmIn",
+        "type": "object"
+      },
+      "RbpcReviewDisputeCreate": {
+        "description": "Partner or visitor filing a dispute against a published or pending review.",
+        "properties": {
+          "evidence_payload": {
+            "additionalProperties": true,
+            "description": "Structured supporting evidence or documentation.",
+            "title": "Evidence Payload",
+            "type": "object"
+          },
+          "reason": {
+            "description": "Specific reason for contesting the review (e.g. defamation, factually inaccurate, unexperienced).",
+            "maxLength": 1000,
+            "minLength": 10,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "RbpcReviewDisputeCreate",
+        "type": "object"
+      },
+      "RbpcReviewDisputeOut": {
+        "description": "Dispute record representation.",
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "disputant_user_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disputant User Id"
+          },
+          "evidence_payload": {
+            "additionalProperties": true,
+            "title": "Evidence Payload",
+            "type": "object"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          },
+          "resolution_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resolution Notes"
+          },
+          "resolved_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resolved At"
+          },
+          "resolved_by_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resolved By Id"
+          },
+          "review_id": {
+            "format": "uuid",
+            "title": "Review Id",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RbpcDisputeStatus"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "review_id",
+          "reason",
+          "evidence_payload",
+          "status",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "RbpcReviewDisputeOut",
+        "type": "object"
+      },
+      "RbpcReviewDisputeResolution": {
+        "description": "Staff/admin resolution of a review dispute.",
+        "properties": {
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Formal resolution notes and reasoning.",
+            "title": "Notes"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RbpcDisputeStatus",
+            "description": "Resolution status: resolved_upheld (review overturned), resolved_overturned (dispute rejected, review stays), dismissed."
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "RbpcReviewDisputeResolution",
+        "type": "object"
+      },
+      "RbpcReviewStatus": {
+        "enum": [
+          "pending_moderation",
+          "published",
+          "rejected",
+          "disputed",
+          "archived"
+        ],
+        "title": "RbpcReviewStatus",
+        "type": "string"
+      },
+      "RbpcSeatReservationOut": {
+        "description": "Receipt for a seat reservation or booking hold.",
+        "properties": {
+          "confirmed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confirmed At"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "customer_contact": {
+            "title": "Customer Contact",
+            "type": "string"
+          },
+          "customer_name": {
+            "title": "Customer Name",
+            "type": "string"
+          },
+          "experience_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Experience Slug"
+          },
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "message": {
+            "default": "Thao tác thành công.",
+            "title": "Message",
+            "type": "string"
+          },
+          "public_ref": {
+            "title": "Public Ref",
+            "type": "string"
+          },
+          "remaining_seconds": {
+            "title": "Remaining Seconds",
+            "type": "integer"
+          },
+          "seats": {
+            "title": "Seats",
+            "type": "integer"
+          },
+          "slot_id": {
+            "format": "uuid",
+            "title": "Slot Id",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "public_ref",
+          "slot_id",
+          "seats",
+          "status",
+          "expires_at",
+          "remaining_seconds",
+          "customer_name",
+          "customer_contact",
+          "created_at"
+        ],
+        "title": "RbpcSeatReservationOut",
+        "type": "object"
+      },
+      "RbpcSeatReserveIn": {
+        "description": "Visitor payload to temporarily reserve seats in a workshop slot.",
+        "properties": {
+          "customer_contact": {
+            "maxLength": 120,
+            "minLength": 5,
+            "title": "Customer Contact",
+            "type": "string"
+          },
+          "customer_name": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Customer Name",
+            "type": "string"
+          },
+          "hold_timeout_seconds": {
+            "default": 900,
+            "maximum": 1800.0,
+            "minimum": 60.0,
+            "title": "Hold Timeout Seconds",
+            "type": "integer"
+          },
+          "idempotency_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Idempotency Key"
+          },
+          "inquiry_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inquiry Id"
+          },
+          "seats": {
+            "default": 1,
+            "maximum": 10.0,
+            "minimum": 1.0,
+            "title": "Seats",
+            "type": "integer"
+          },
+          "slot_id": {
+            "format": "uuid",
+            "title": "Slot Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "slot_id",
+          "customer_name",
+          "customer_contact"
+        ],
+        "title": "RbpcSeatReserveIn",
+        "type": "object"
+      },
+      "RbpcSettlementComplianceReview": {
+        "description": "Compliance approval or rejection of a settlement.",
+        "properties": {
+          "approved": {
+            "description": "True if approved for payout, False if rejected/held",
+            "title": "Approved",
+            "type": "boolean"
+          },
+          "compliance_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Compliance reviewer notes",
+            "title": "Compliance Notes"
+          }
+        },
+        "required": [
+          "approved"
+        ],
+        "title": "RbpcSettlementComplianceReview",
+        "type": "object"
+      },
+      "RbpcSettlementCreate": {
+        "description": "Create a verified settlement record for an inquiry with contracted take rate.",
+        "properties": {
+          "compliance_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Initial notes or justification for the settlement",
+            "title": "Compliance Notes"
+          },
+          "gross_amount_vnd": {
+            "description": "Gross transacted amount in VND",
+            "minimum": 0.0,
+            "title": "Gross Amount Vnd",
+            "type": "number"
+          },
+          "inquiry_id": {
+            "description": "ID of the confirmed inquiry",
+            "format": "uuid",
+            "title": "Inquiry Id",
+            "type": "string"
+          },
+          "take_rate": {
+            "anyOf": [
+              {
+                "maximum": 1.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": 0.15,
+            "description": "Contracted platform take rate (e.g. 0.15 for 15%)",
+            "title": "Take Rate"
+          },
+          "transaction_proof_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Cryptographic or banking reference/hash proof of payment",
+            "title": "Transaction Proof Hash"
+          },
+          "vat_rate": {
+            "anyOf": [
+              {
+                "maximum": 0.2,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": 0.08,
+            "description": "Applicable tax/VAT rate (default 8% for cultural services)",
+            "title": "Vat Rate"
+          }
+        },
+        "required": [
+          "inquiry_id",
+          "gross_amount_vnd"
+        ],
+        "title": "RbpcSettlementCreate",
+        "type": "object"
+      },
+      "RbpcSettlementListOut": {
+        "description": "List of settlements.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RbpcSettlementOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total"
+        ],
+        "title": "RbpcSettlementListOut",
+        "type": "object"
+      },
+      "RbpcSettlementOut": {
+        "description": "Detailed settlement ledger record.",
+        "properties": {
+          "artisan_payout_vnd": {
+            "title": "Artisan Payout Vnd",
+            "type": "number"
+          },
+          "compliance_approved": {
+            "title": "Compliance Approved",
+            "type": "boolean"
+          },
+          "compliance_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Compliance Notes"
+          },
+          "compliance_reviewed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Compliance Reviewed At"
+          },
+          "compliance_reviewer_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Compliance Reviewer Id"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "creator_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Creator Id"
+          },
+          "currency": {
+            "default": "VND",
+            "title": "Currency",
+            "type": "string"
+          },
+          "disbursed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disbursed At"
+          },
+          "gross_amount_vnd": {
+            "title": "Gross Amount Vnd",
+            "type": "number"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "inquiry_id": {
+            "format": "uuid",
+            "title": "Inquiry Id",
+            "type": "string"
+          },
+          "payout_status": {
+            "$ref": "#/components/schemas/RbpcPayoutStatus"
+          },
+          "platform_fee_vnd": {
+            "title": "Platform Fee Vnd",
+            "type": "number"
+          },
+          "provider_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provider Id"
+          },
+          "refund_amount_vnd": {
+            "title": "Refund Amount Vnd",
+            "type": "number"
+          },
+          "settlement_ref": {
+            "title": "Settlement Ref",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RbpcSettlementStatus"
+          },
+          "take_rate": {
+            "title": "Take Rate",
+            "type": "number"
+          },
+          "tax_vat_vnd": {
+            "title": "Tax Vat Vnd",
+            "type": "number"
+          },
+          "transaction_proof_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transaction Proof Hash"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "settlement_ref",
+          "inquiry_id",
+          "gross_amount_vnd",
+          "take_rate",
+          "platform_fee_vnd",
+          "tax_vat_vnd",
+          "artisan_payout_vnd",
+          "refund_amount_vnd",
+          "status",
+          "payout_status",
+          "compliance_approved",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "RbpcSettlementOut",
+        "type": "object"
+      },
+      "RbpcSettlementRefund": {
+        "description": "Process a partial or full refund against a settlement.",
+        "properties": {
+          "reason": {
+            "description": "Reason for refund",
+            "title": "Reason",
+            "type": "string"
+          },
+          "refund_amount_vnd": {
+            "description": "Amount to refund in VND",
+            "exclusiveMinimum": 0.0,
+            "title": "Refund Amount Vnd",
+            "type": "number"
+          }
+        },
+        "required": [
+          "refund_amount_vnd",
+          "reason"
+        ],
+        "title": "RbpcSettlementRefund",
+        "type": "object"
+      },
+      "RbpcSettlementStatus": {
+        "enum": [
+          "pending_compliance",
+          "approved",
+          "settled",
+          "refunded",
+          "disputed"
+        ],
+        "title": "RbpcSettlementStatus",
+        "type": "string"
+      },
+      "RbpcSlotCreateIn": {
+        "description": "Partner payload to open a new workshop slot.",
+        "properties": {
+          "capacity": {
+            "default": 10,
+            "maximum": 100.0,
+            "minimum": 1.0,
+            "title": "Capacity",
+            "type": "integer"
+          },
+          "end_time": {
+            "format": "date-time",
+            "title": "End Time",
+            "type": "string"
+          },
+          "experience_slug": {
+            "maxLength": 160,
+            "minLength": 2,
+            "title": "Experience Slug",
+            "type": "string"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "start_time": {
+            "format": "date-time",
+            "title": "Start Time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "experience_slug",
+          "start_time",
+          "end_time"
+        ],
+        "title": "RbpcSlotCreateIn",
         "type": "object"
       },
       "RbpcStoryDetailOut": {
@@ -38812,6 +41910,152 @@
         ],
         "title": "RbpcSupportType",
         "type": "string"
+      },
+      "RbpcTranscriptCue": {
+        "description": "Timecoded narration cue segment.",
+        "properties": {
+          "end_time_sec": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional cue end time in seconds.",
+            "title": "End Time Sec"
+          },
+          "section_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Section or thematic title.",
+            "title": "Section Title"
+          },
+          "speaker": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Speaker name or attribution.",
+            "title": "Speaker"
+          },
+          "text": {
+            "description": "Narration text segment.",
+            "minLength": 1,
+            "title": "Text",
+            "type": "string"
+          },
+          "time_sec": {
+            "description": "Start time cue in seconds.",
+            "minimum": 0.0,
+            "title": "Time Sec",
+            "type": "number"
+          }
+        },
+        "required": [
+          "time_sec",
+          "text"
+        ],
+        "title": "RbpcTranscriptCue",
+        "type": "object"
+      },
+      "RbpcWorkshopSlotOut": {
+        "description": "Workshop calendar time slot with seat capacity metrics.",
+        "properties": {
+          "available_seats": {
+            "minimum": 0.0,
+            "title": "Available Seats",
+            "type": "integer"
+          },
+          "capacity": {
+            "maximum": 100.0,
+            "minimum": 1.0,
+            "title": "Capacity",
+            "type": "integer"
+          },
+          "confirmed_seats": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Confirmed Seats",
+            "type": "integer"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "end_time": {
+            "format": "date-time",
+            "title": "End Time",
+            "type": "string"
+          },
+          "experience_id": {
+            "format": "uuid",
+            "title": "Experience Id",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "reserved_seats": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Reserved Seats",
+            "type": "integer"
+          },
+          "start_time": {
+            "format": "date-time",
+            "title": "Start Time",
+            "type": "string"
+          },
+          "status": {
+            "default": "open",
+            "title": "Status",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "experience_id",
+          "start_time",
+          "end_time",
+          "capacity",
+          "available_seats",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "RbpcWorkshopSlotOut",
+        "type": "object"
       },
       "RecommendationAIOut": {
         "properties": {
@@ -58095,6 +61339,54 @@
         ]
       }
     },
+    "/api/v1/heritage/places/{slug}/trail": {
+      "get": {
+        "description": "Retrieve curated museum QR guided trail for a heritage place.\n\nReturns:\n- QR token linking to verified historical context and primary sources\n- Authentic 2D rubbing fallback with file existence & SHA-256 verification\n- Transparent accessibility route information (wheelchair access, ramps, rest stops)\n- Negative abuse defense: Unverified accessibility data is NEVER falsely advertised\n  as accessible (wheelchair_accessible=False, is_accessibility_verified=False).",
+        "operationId": "get_heritage_place_trail_api_v1_heritage_places__slug__trail_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": {
+              "title": "Slug",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HeritageMuseumTrailOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Heritage Place Trail",
+        "tags": [
+          "heritage"
+        ]
+      }
+    },
     "/api/v1/heritage/search": {
       "get": {
         "description": "Accent-tolerant, diacritic-insensitive search across heritage places.\n\nMatches query against Vietnamese names, English names, UNESCO reference IDs,\nand summaries with relevance scoring. Public visitors only search published entries.",
@@ -58167,6 +61459,48 @@
           }
         ],
         "summary": "Search Heritage Places",
+        "tags": [
+          "heritage"
+        ]
+      }
+    },
+    "/api/v1/heritage/trail/verify-qr": {
+      "post": {
+        "description": "Verify cryptographic authenticity of a museum trail station QR code.\n\nValidates HMAC-SHA256 signature, expiry, and site match. Rejects tampered or expired tokens.",
+        "operationId": "verify_heritage_trail_qr_token_api_v1_heritage_trail_verify_qr_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HeritageTrailQRVerifyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HeritageTrailQRVerifyOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Verify Heritage Trail Qr Token",
         "tags": [
           "heritage"
         ]
@@ -71689,6 +75023,382 @@
         "summary": "List Ranks"
       }
     },
+    "/api/v1/rbpc/admin/creators/{id}/verify": {
+      "post": {
+        "description": "Staff endpoint to verify partner identity, display consent, and rights.\n\nOnly STAFF_ROLES can approve or reject verification.",
+        "operationId": "staff_verify_creator_api_v1_rbpc_admin_creators__id__verify_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcPartnerVerificationIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcCreatorOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Staff Verify Creator",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/admin/disputes/{id}/resolve": {
+      "patch": {
+        "description": "Staff/admin resolves a review dispute.",
+        "operationId": "resolve_review_dispute_api_v1_rbpc_admin_disputes__id__resolve_patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcReviewDisputeResolution"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcReviewDisputeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Resolve Review Dispute",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/admin/experiences/{id}/moderate": {
+      "patch": {
+        "description": "Staff endpoint to review and moderate experience listing and rights clearance.\n\nNegative abuse invariant: Cannot set publication_state='published' if the host artisan\ncreator is not verified (is_verified=False) or rights are not cleared.",
+        "operationId": "staff_moderate_experience_api_v1_rbpc_admin_experiences__id__moderate_patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcExperienceModerationIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcExperienceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Staff Moderate Experience",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/admin/reviews": {
+      "get": {
+        "description": "Staff/admin moderation queue for customer reviews and fraud inspection.",
+        "operationId": "admin_list_reviews_api_v1_rbpc_admin_reviews_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcCustomerReviewAdminListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Admin List Reviews",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/admin/reviews/{id}/moderate": {
+      "patch": {
+        "description": "Moderate a review: approve/publish, reject, or archive.",
+        "operationId": "moderate_customer_review_api_v1_rbpc_admin_reviews__id__moderate_patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcCustomerReviewModeration"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcCustomerReviewAdminOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Moderate Customer Review",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/availability/reservations/{ref}": {
+      "get": {
+        "description": "Visitor lookup of reservation status and remaining hold timeout.\n\nIf pending reservation has expired past expires_at, status transitions to expired\nand seats are released back to the slot inventory.",
+        "operationId": "get_reservation_status_api_v1_rbpc_availability_reservations__ref__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ref",
+            "required": true,
+            "schema": {
+              "title": "Ref",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcSeatReservationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Reservation Status",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/availability/reserve": {
+      "post": {
+        "description": "Temporarily hold seat capacity in a workshop slot with a reserve timeout.\n\nEnforces concurrency race condition safety via row-level pessimistic locking\n(with_for_update) and check constraint (reserved_seats + confirmed_seats <= capacity).\nTwo concurrent requests cannot book the last remaining seat twice.",
+        "operationId": "reserve_workshop_seats_api_v1_rbpc_availability_reserve_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcSeatReserveIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcSeatReservationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reserve Workshop Seats",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
     "/api/v1/rbpc/config": {
       "get": {
         "description": "Retrieve runtime configuration, active feature flags, and consent versions.\n\nZero secrets or internal keys are ever exposed.",
@@ -71855,6 +75565,114 @@
         ]
       }
     },
+    "/api/v1/rbpc/editor/settlements/{id}/compliance": {
+      "post": {
+        "description": "Review and approve or hold a settlement for compliance and artisan payout.\n\nRestricted to ADMIN_ROLES (admin, super_admin).\nWhen approved: status -> 'approved', payout_status -> 'approved'.\nWhen held/rejected: status -> 'pending_compliance', payout_status -> 'withheld'.",
+        "operationId": "review_settlement_compliance_api_v1_rbpc_editor_settlements__id__compliance_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcSettlementComplianceReview"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcSettlementOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Review Settlement Compliance",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/editor/settlements/{id}/disburse": {
+      "post": {
+        "description": "Mark artisan payout as disbursed once banking transfer is complete.\n\nRequires prior compliance approval. Cannot disburse unapproved settlements.\nTransitions status -> 'settled' and payout_status -> 'disbursed'.",
+        "operationId": "disburse_artisan_payout_api_v1_rbpc_editor_settlements__id__disburse_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcSettlementOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Disburse Artisan Payout",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
     "/api/v1/rbpc/experiences/{slug}": {
       "get": {
         "description": "Retrieve details of a cultural workshop offering with honest inquiry-only notice.",
@@ -71893,6 +75711,126 @@
           }
         },
         "summary": "Get Rbpc Experience",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/experiences/{slug}/availability": {
+      "get": {
+        "description": "Retrieve workshop slots and real seat availability calendar for an experience.\n\nCleans up expired pending reservations, releasing seats back to available capacity.",
+        "operationId": "get_experience_availability_api_v1_rbpc_experiences__slug__availability_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": {
+              "title": "Slug",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "start_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Start Date"
+            }
+          },
+          {
+            "in": "query",
+            "name": "end_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "End Date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcAvailabilityCalendarOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Experience Availability",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/experiences/{slug}/reviews": {
+      "get": {
+        "description": "Public endpoint to fetch verified published reviews for an experience.",
+        "operationId": "list_experience_reviews_api_v1_rbpc_experiences__slug__reviews_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": {
+              "title": "Slug",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcCustomerReviewListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Experience Reviews",
         "tags": [
           "rbpc"
         ]
@@ -72005,6 +75943,162 @@
         ]
       }
     },
+    "/api/v1/rbpc/inquiries/status/{opaqueToken}/escalate": {
+      "post": {
+        "description": "Customer Notification Center: Escalate late partner response when SLA (24h) is overdue.\n\nNegative abuse invariant (V5-T103):\nNetwork or provider error never shows or sends fake confirmed status.\nEscalations only apply to inquiries that are overdue and not already resolved/closed.",
+        "operationId": "escalate_inquiry_by_token_api_v1_rbpc_inquiries_status__opaqueToken__escalate_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "opaqueToken",
+            "required": true,
+            "schema": {
+              "title": "Opaquetoken",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/RbpcInquiryEscalationCreate"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Payload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcInquiryEscalationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Escalate Inquiry By Token",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/inquiries/status/{opaqueToken}/preferences": {
+      "post": {
+        "description": "Customer Notification Center: Update notification channels (Email / SMS) opt-in preferences.",
+        "operationId": "update_inquiry_preferences_by_token_api_v1_rbpc_inquiries_status__opaqueToken__preferences_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "opaqueToken",
+            "required": true,
+            "schema": {
+              "title": "Opaquetoken",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcInquiryNotificationPreferenceUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcInquiryNotificationPreferenceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Inquiry Preferences By Token",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/inquiries/status/{opaqueToken}/unsubscribe": {
+      "post": {
+        "description": "Customer Notification Center: Unsubscribe from all optional email and SMS notifications.",
+        "operationId": "unsubscribe_inquiry_by_token_api_v1_rbpc_inquiries_status__opaqueToken__unsubscribe_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "opaqueToken",
+            "required": true,
+            "schema": {
+              "title": "Opaquetoken",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcInquiryNotificationPreferenceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Unsubscribe Inquiry By Token",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
     "/api/v1/rbpc/inquiries/status/{opaqueToken}/withdraw": {
       "post": {
         "description": "Allow visitor to withdraw consent and redact contact details immediately.\n\nVietnam Decree 13/2023/ND-CP Article 11 right of withdrawal / right to erasure:\n- Scrubs name, contact_value, message to remove visitor PII\n- Marks privacy_accepted = False and state = closed\n- Appends immutable cryptographic audit entry to rbpc_content_audit",
@@ -72043,6 +76137,223 @@
           }
         },
         "summary": "Withdraw Inquiry Status Consent",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/ledger/summary": {
+      "get": {
+        "description": "Aggregate financial summary from the verified settlement ledger.\n\nNegative abuse invariant (V5-T108):\nInquiries in 'confirmed' status alone contribute 0 VND. Only explicit\nrecords in `rbpc_settlement_ledger` contribute to actual revenue.",
+        "operationId": "get_ledger_financial_summary_api_v1_rbpc_ledger_summary_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcLedgerFinancialSummary"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Ledger Financial Summary",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/oral-history/{recording_id}": {
+      "get": {
+        "description": "Public / student access to an oral history recording and its verified transcript.\n\nNegative abuse invariant (V5-T109):\nIf consent is revoked, erased, or not consented:\n- Public access is rejected with HTTP 403 FORBIDDEN (or HTTP 410 GONE).\n- Returns anti-stale cache-control headers (no-store, no-cache).",
+        "operationId": "get_oral_history_public_api_v1_rbpc_oral_history__recording_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "recording_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Recording Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcOralHistoryRecordingOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Oral History Public",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/partner/availability/cancel": {
+      "post": {
+        "description": "Cancel a reservation or hold, restoring seat capacity to the available pool.",
+        "operationId": "cancel_workshop_reservation_api_v1_rbpc_partner_availability_cancel_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcReservationCancelIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcSeatReservationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Cancel Workshop Reservation",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/partner/availability/confirm": {
+      "post": {
+        "description": "Partner confirmation of a reserved workshop seat hold.\n\nPessimistic row locking ensures two concurrent requests cannot confirm the last remaining seat twice.\nRejects expired holds and releases seats. Moves reserved_seats to confirmed_seats upon confirmation.",
+        "operationId": "confirm_workshop_reservation_api_v1_rbpc_partner_availability_confirm_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcReservationConfirmIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcSeatReservationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Confirm Workshop Reservation",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/partner/experiences": {
+      "post": {
+        "description": "Allow an authenticated partner to submit an experience listing.\n\nDefaults to publication_state='draft' and rights_checked=False.\nNegative abuse invariant: unverified partner cannot publish without staff verification.",
+        "operationId": "partner_create_experience_api_v1_rbpc_partner_experiences_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcPartnerExperienceCreateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcExperienceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Partner Create Experience",
         "tags": [
           "rbpc"
         ]
@@ -72129,6 +76440,793 @@
           }
         ],
         "summary": "Update Partner Inquiry Status",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/partner/onboarding": {
+      "post": {
+        "description": "Allow an authenticated partner/artisan to register a craft profile.\n\nDefaults to is_verified=False and consent_status='pending_review' until staff verification.",
+        "operationId": "partner_self_onboard_api_v1_rbpc_partner_onboarding_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcPartnerOnboardingIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcCreatorOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Partner Self Onboard",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/partner/oral-history": {
+      "get": {
+        "description": "List oral history recordings for partner studio with role-based scoping.",
+        "operationId": "list_partner_oral_history_api_v1_rbpc_partner_oral_history_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "creator_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Creator Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcOralHistoryRecordingListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "List Partner Oral History",
+        "tags": [
+          "rbpc"
+        ]
+      },
+      "post": {
+        "description": "Create a new oral history recording draft with cultural context and initial transcript.",
+        "operationId": "create_oral_history_recording_api_v1_rbpc_partner_oral_history_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcOralHistoryCreateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcOralHistoryRecordingOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Create Oral History Recording",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/partner/oral-history/{recording_id}/consent": {
+      "post": {
+        "description": "Grant or update per-use media consent for an oral history recording.",
+        "operationId": "update_recording_consent_api_v1_rbpc_partner_oral_history__recording_id__consent_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "recording_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Recording Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcOralHistoryConsentUpdateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcOralHistoryRecordingOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Update Recording Consent",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/partner/oral-history/{recording_id}/revoke": {
+      "post": {
+        "description": "Revoke consent or request erasure (right-to-erasure / GDPR / Decree 13/2023/ND-CP).\n\nNegative abuse invariant (V5-T109):\nImmediately invalidates local and persistent CDN caches via AssetCacheRevocation\nand registers an immutable audit entry. Subsequent public calls immediately return 403.",
+        "operationId": "revoke_oral_history_recording_api_v1_rbpc_partner_oral_history__recording_id__revoke_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "recording_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Recording Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcOralHistoryRevokeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcOralHistoryRecordingOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Revoke Oral History Recording",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/partner/oral-history/{recording_id}/versions": {
+      "post": {
+        "description": "Add a new versioned transcript with timecode cues to an oral history recording.",
+        "operationId": "add_transcript_version_api_v1_rbpc_partner_oral_history__recording_id__versions_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "recording_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Recording Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcOralHistoryTranscriptUpdateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcOralHistoryRecordingOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Add Transcript Version",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/partner/profile": {
+      "get": {
+        "description": "Retrieve the authenticated partner's artisan profile.",
+        "operationId": "get_partner_profile_api_v1_rbpc_partner_profile_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcCreatorOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Partner Profile",
+        "tags": [
+          "rbpc"
+        ]
+      },
+      "put": {
+        "description": "Allow an artisan partner to edit their profile details.\n\nUpdating core identity fields or portrait URL automatically flags for re-review\nif previous verification was completed.",
+        "operationId": "update_partner_profile_api_v1_rbpc_partner_profile_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcPartnerProfileUpdateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcCreatorOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Update Partner Profile",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/partner/settlements": {
+      "get": {
+        "description": "List settlements scoped to the authenticated partner/provider or all if admin/staff.",
+        "operationId": "list_settlements_api_v1_rbpc_partner_settlements_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcSettlementListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "List Settlements",
+        "tags": [
+          "rbpc"
+        ]
+      },
+      "post": {
+        "description": "Record an actual confirmed financial settlement for an inquiry.\n\nInvariants:\n1. Inquiry MUST exist and MUST be in 'confirmed' or 'closed' status. An inquiry\n   in 'new' or 'contacted' status CANNOT produce a settlement record.\n2. Merely changing status to 'confirmed' does NOT create a settlement record\n   nor any revenue in the ledger.\n3. Caller must be the assigned provider, experience owner, or staff/admin.\n4. Automatically computes contracted platform fee (take_rate), tax/VAT,\n   and net artisan payout:\n   - platform_fee = gross_amount * take_rate\n   - tax_vat = gross_amount * vat_rate\n   - artisan_payout = gross_amount - platform_fee - tax_vat\n5. Initial status is 'pending_compliance' and payout_status is 'pending'.\n   Payout disbursement requires compliance approval.",
+        "operationId": "record_settlement_transaction_api_v1_rbpc_partner_settlements_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcSettlementCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcSettlementOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Record Settlement Transaction",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/partner/settlements/{id}": {
+      "get": {
+        "description": "Get single settlement detail with multi-tenant access control.",
+        "operationId": "get_settlement_detail_api_v1_rbpc_partner_settlements__id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcSettlementOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Settlement Detail",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/partner/settlements/{id}/refund": {
+      "post": {
+        "description": "Process a full or partial refund against a settlement.\n\nRe-computes platform fee and artisan payout deductions accordingly.\nMarks status -> 'refunded' if fully refunded.",
+        "operationId": "process_settlement_refund_api_v1_rbpc_partner_settlements__id__refund_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcSettlementRefund"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcSettlementOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Process Settlement Refund",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/partner/slots": {
+      "get": {
+        "description": "List workshop slots for experiences owned by the authenticated partner.",
+        "operationId": "list_partner_workshop_slots_api_v1_rbpc_partner_slots_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "experience_slug",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Experience Slug"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RbpcWorkshopSlotOut"
+                  },
+                  "title": "Response List Partner Workshop Slots Api V1 Rbpc Partner Slots Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "List Partner Workshop Slots",
+        "tags": [
+          "rbpc"
+        ]
+      },
+      "post": {
+        "description": "Partner endpoint to open a new calendar workshop slot with seat capacity.",
+        "operationId": "create_workshop_slot_api_v1_rbpc_partner_slots_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcSlotCreateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcWorkshopSlotOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Create Workshop Slot",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/reviews": {
+      "post": {
+        "description": "Submit a verified customer review for a completed inquiry.\n\nNegative abuse invariant (V5-T107):\nOnly customers with verified completed experience inquiries (state == 'closed'\nand completion verified) can submit reviews. Uncompleted, fake, or cancelled\ninquiries cannot post ratings or reviews.",
+        "operationId": "create_customer_review_api_v1_rbpc_reviews_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcCustomerReviewCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcCustomerReviewOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Create Customer Review",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/reviews/{id}/dispute": {
+      "post": {
+        "description": "File a dispute against a review.",
+        "operationId": "file_review_dispute_api_v1_rbpc_reviews__id__dispute_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcReviewDisputeCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcReviewDisputeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "File Review Dispute",
         "tags": [
           "rbpc"
         ]
@@ -72246,6 +77344,67 @@
           }
         ],
         "summary": "Get Rbpc Story Detail",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/stories/{slug}/recommendations": {
+      "get": {
+        "description": "Retrieve curator-controlled story recommendations linked to this story.\n\nInvariants (V5-T105):\n- Rule-based object -> craft workshop linkages with verified historical relationships.\n- Negative abuse: Unverified artisan relationships or commercial claims are strictly hidden.\n- Strictly no implied fake imperial lineage.",
+        "operationId": "get_story_recommendations_endpoint_api_v1_rbpc_stories__slug__recommendations_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": {
+              "title": "Slug",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "locale",
+            "required": false,
+            "schema": {
+              "default": "vi",
+              "title": "Locale",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 5,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Story Recommendations Endpoint",
         "tags": [
           "rbpc"
         ]

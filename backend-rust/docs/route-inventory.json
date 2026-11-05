@@ -1615,7 +1615,19 @@
   },
   {
     "method": "GET",
+    "path": "/api/v1/heritage/places/{slug}/trail",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
     "path": "/api/v1/heritage/search",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/heritage/trail/verify-qr",
     "group": "misc",
     "status": "gateway"
   },
@@ -2382,6 +2394,48 @@
     "status": "gateway"
   },
   {
+    "method": "POST",
+    "path": "/api/v1/rbpc/admin/creators/{id}/verify",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/v1/rbpc/admin/disputes/{id}/resolve",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/v1/rbpc/admin/experiences/{id}/moderate",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/admin/reviews",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/v1/rbpc/admin/reviews/{id}/moderate",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/availability/reservations/{ref}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/rbpc/availability/reserve",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
     "method": "GET",
     "path": "/api/v1/rbpc/config",
     "group": "misc",
@@ -2406,8 +2460,32 @@
     "status": "gateway"
   },
   {
+    "method": "POST",
+    "path": "/api/v1/rbpc/editor/settlements/{id}/compliance",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/rbpc/editor/settlements/{id}/disburse",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
     "method": "GET",
     "path": "/api/v1/rbpc/experiences/{slug}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/experiences/{slug}/availability",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/experiences/{slug}/reviews",
     "group": "misc",
     "status": "gateway"
   },
@@ -2431,7 +2509,55 @@
   },
   {
     "method": "POST",
+    "path": "/api/v1/rbpc/inquiries/status/{opaqueToken}/escalate",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/rbpc/inquiries/status/{opaqueToken}/preferences",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/rbpc/inquiries/status/{opaqueToken}/unsubscribe",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
     "path": "/api/v1/rbpc/inquiries/status/{opaqueToken}/withdraw",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/ledger/summary",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/oral-history/{recording_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/rbpc/partner/availability/cancel",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/rbpc/partner/availability/confirm",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/rbpc/partner/experiences",
     "group": "misc",
     "status": "gateway"
   },
@@ -2448,6 +2574,102 @@
     "status": "gateway"
   },
   {
+    "method": "POST",
+    "path": "/api/v1/rbpc/partner/onboarding",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/partner/oral-history",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/rbpc/partner/oral-history",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/rbpc/partner/oral-history/{recording_id}/consent",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/rbpc/partner/oral-history/{recording_id}/revoke",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/rbpc/partner/oral-history/{recording_id}/versions",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/partner/profile",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/rbpc/partner/profile",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/partner/settlements",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/rbpc/partner/settlements",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/partner/settlements/{id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/rbpc/partner/settlements/{id}/refund",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/partner/slots",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/rbpc/partner/slots",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/rbpc/reviews",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/rbpc/reviews/{id}/dispute",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
     "method": "GET",
     "path": "/api/v1/rbpc/stories",
     "group": "misc",
@@ -2456,6 +2678,12 @@
   {
     "method": "GET",
     "path": "/api/v1/rbpc/stories/{slug}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/stories/{slug}/recommendations",
     "group": "misc",
     "status": "gateway"
   },

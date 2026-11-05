@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { getHeritagePlaceDetail } from "@/lib/api";
+import { getHeritagePlaceDetail, getHeritagePlaceTrail } from "@/lib/api";
 import { DEFAULT_HERITAGE_PLACES } from "@/lib/rbpc/heritageData";
 import type {
   HeritagePlace,
@@ -37,6 +37,9 @@ import type {
 } from "@/types/heritage";
 import HeritageMediaTabs from "@/components/explore/HeritageMediaTabs";
 import SourceEvidenceRail from "@/components/explore/SourceEvidenceRail";
+import MuseumQRGuidedTrail, {
+  type MuseumGuidedTrailData,
+} from "@/components/explore/MuseumQRGuidedTrail";
 import LivingBridgeCard from "@/components/explore/LivingBridgeCard";
 import { CulturalBridgePanel } from "@/components/rbpc/CulturalBridgePanel";
 import Skeleton from "@/components/Skeleton";
@@ -68,6 +71,7 @@ export default function HeritagePlaceDetailPage() {
 
   const [loading, setLoading] = useState(true);
   const [place, setPlace] = useState<HeritagePlace | null>(null);
+  const [trail, setTrail] = useState<MuseumGuidedTrailData | null>(null);
   const [isCitationDrawerOpen, setIsCitationDrawerOpen] = useState(false);
 
   // Default synthetic fallback sources grounded in official records
@@ -228,6 +232,14 @@ export default function HeritagePlaceDetailPage() {
         const detail = await getHeritagePlaceDetail(slug);
         if (active && detail) {
           setPlace(detail);
+          try {
+            const trailData = await getHeritagePlaceTrail(slug);
+            if (active && trailData) {
+              setTrail(trailData);
+            }
+          } catch (tErr) {
+            // Trail optional
+          }
           setLoading(false);
           return;
         }
@@ -238,6 +250,14 @@ export default function HeritagePlaceDetailPage() {
       const found = DEFAULT_HERITAGE_PLACES.find((p) => p.slug === slug);
       if (active) {
         setPlace(found || null);
+        try {
+          const trailData = await getHeritagePlaceTrail(slug);
+          if (active && trailData) {
+            setTrail(trailData);
+          }
+        } catch (tErr) {
+          // Trail optional
+        }
         setLoading(false);
       }
     }
@@ -519,6 +539,17 @@ export default function HeritagePlaceDetailPage() {
               onOpenCitationDrawer={() => setIsCitationDrawerOpen(true)}
             />
           </section>
+
+          {/* D. Museum QR Guided Trail & Accessibility */}
+          {trail && (
+            <section aria-label="Tuyến khảo cứu hiện trường và mã QR">
+              <MuseumQRGuidedTrail
+                trail={trail}
+                locale="vi"
+                onOpenCitationDrawer={() => setIsCitationDrawerOpen(true)}
+              />
+            </section>
+          )}
         </div>
 
         {/* Right Column (4 cols on lg) */}

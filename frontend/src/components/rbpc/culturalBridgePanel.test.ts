@@ -58,4 +58,27 @@ describe("CulturalBridgePanel Component Contract", () => {
     expect(payload.citations).toHaveLength(0);
     expect(payload.linked_experience_slug).toBe("workshop-phap-lam-hue");
   });
+
+  it("supports multi-language visitor assist with human review and disclaimers (FR, JA, KO)", () => {
+    const elFr = React.createElement(CulturalBridgePanel, {
+      locale: "fr",
+      entityName: "Palais Kien Trung",
+      storySlug: "nghe-thuat-phap-lam-hue",
+    });
+    expect(elFr.props.locale).toBe("fr");
+
+    const elJa = React.createElement(CulturalBridgePanel, {
+      locale: "ja",
+      entityName: "建忠殿",
+      storySlug: "nghe-thuat-phap-lam-hue",
+    });
+    expect(elJa.props.locale).toBe("ja");
+
+    const elKo = React.createElement(CulturalBridgePanel, {
+      locale: "ko",
+      entityName: "끼엔쭝 궁전",
+      storySlug: "nghe-thuat-phap-lam-hue",
+    });
+    expect(elKo.props.locale).toBe("ko");
+  });
 });

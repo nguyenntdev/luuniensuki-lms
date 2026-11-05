@@ -1,0 +1,78 @@
+{
+  "ticket_id": "V5-T105",
+  "wave": "W10",
+  "slot": "A05",
+  "role": "W10-A05",
+  "priority": "P2",
+  "classification": "NEW_PRODUCT_FEATURE",
+  "title": "Curator-Controlled Story Recommendations with Object-Craft Workshop Linkages",
+  "status": "COMPLETED",
+  "verified_at": "2026-11-05T19:25:00Z",
+  "target_modules": [
+    "backend/services/rbpc_ai.py",
+    "backend/routers/rbpc.py",
+    "backend/apischemas/rbpc.py",
+    "frontend/src/types/rbpc.ts",
+    "frontend/src/lib/rbpc/inquiries.ts",
+    "frontend/src/components/rbpc/CuratorStoryRecommendations.tsx",
+    "frontend/src/components/rbpc/index.ts",
+    "frontend/src/app/stories/[slug]/page.jsx",
+    "tests/v5/test_v5_t105.py",
+    "frontend/src/components/rbpc/curatorStoryRecommendations.test.ts"
+  ],
+  "implementation_summary": {
+    "recommendation_engine": {
+      "function": "get_curator_story_recommendations in backend/services/rbpc_ai.py",
+      "scope": "Strictly content_scope == 'RBPC_HUE' and status == 'published'",
+      "linkage_mechanism": "Rule-based object -> craft workshop linkages using verified relational evidence (e.g. associated_craft, cultural_trade in heritage_heritage_relations)",
+      "linkage_types": [
+        "object_associated_craft",
+        "historical_object_context",
+        "thematic_heritage_craft"
+      ]
+    },
+    "endpoint": {
+      "method": "GET",
+      "path": "/api/v1/rbpc/stories/{slug}/recommendations",
+      "description": "Returns curated story and verified craft workshop recommendations with historical justifications"
+    },
+    "cultural_bridge_integration": {
+      "service": "answer_cultural_question in backend/services/rbpc_ai.py",
+      "enhancement": "Seamlessly integrates verified living artisan & workshop linkages (linked_creator_slug, linked_creator_name, linked_experience_slug, linked_experience_title)"
+    },
+    "frontend_components": {
+      "component": "CuratorStoryRecommendations in frontend/src/components/rbpc/CuratorStoryRecommendations.tsx",
+      "features": [
+        "Displays verified historical linkage badge ('Verified Heritage Link' / 'Liên kết thẩm định')",
+        "Includes clear artisan dignity note separating 1835 royal antiquities from modern living practitioners",
+        "Provides 44x44px touch targets for accessibility (WCAG 2.5.5)",
+        "Fails closed when no verified recommendations exist"
+      ],
+      "story_page_integration": "Embedded in frontend/src/app/stories/[slug]/page.jsx beneath bibliographic footnotes"
+    },
+    "negative_abuse_invariants": {
+      "unverified_artisan_hidden": "Artisans with pending_review, unverified status, or missing consent are strictly excluded from recommendations",
+      "unverified_commercial_hidden": "Commercial experiences not linked to verified consented creators are strictly filtered out",
+      "no_fake_imperial_lineage": "check_fake_imperial_lineage scans bio, lineage, and experience descriptions, strictly blocking claims of royal authorization, royal descendant urn casters, or imperial relic sales"
+    }
+  },
+  "verification_results": {
+    "backend_test_suite": "tests/v5/test_v5_t105.py",
+    "backend_tests_total": 6,
+    "backend_tests_passed": 6,
+    "backend_tests_failed": 0,
+    "backend_scenarios_covered": [
+      "test_fake_imperial_lineage_detection (positive & negative assertion checks)",
+      "test_curator_story_recommendations_rule_based_linkage (object -> associated_craft workshop)",
+      "test_negative_abuse_unverified_artisan_and_commercial_claims_hidden (strict negative abuse gate)",
+      "test_curator_story_recommendations_fail_closed (unknown story / object returns empty gracefully)",
+      "test_answer_cultural_question_integrates_verified_workshop (Q&A metadata linkage)",
+      "test_api_curator_story_recommendations_endpoint (GET /api/v1/rbpc/stories/{slug}/recommendations 200/404)"
+    ],
+    "frontend_test_suite": "frontend/src/components/rbpc/curatorStoryRecommendations.test.ts",
+    "frontend_tests_total": 4,
+    "frontend_tests_passed": 4,
+    "frontend_tests_failed": 0,
+    "type_check": "tsc --noEmit passed cleanly with zero errors"
+  }
+}

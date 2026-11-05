@@ -1,0 +1,85 @@
+{
+  "ticket_id": "V5-T109",
+  "wave": "W10",
+  "slot": "A09",
+  "role": "W10-A09",
+  "priority": "P2",
+  "classification": "NEW_PRODUCT_FEATURE",
+  "title": "Creator oral history consent studio",
+  "status": "COMPLETED",
+  "verified_at": "2026-11-05T12:00:00Z",
+  "target_modules": [
+    "frontend/src/app/rbpc/partner/page.tsx",
+    "frontend/src/app/rbpc/partner/CreatorConsentStudio.tsx",
+    "backend/models_rbpc.py",
+    "backend/models.py",
+    "backend/apischemas/rbpc.py",
+    "backend/routers/rbpc.py",
+    "migrations/versions/0084_rbpc_oral_history_consent_studio.py",
+    "tests/v5/test_v5_t109.py"
+  ],
+  "implementation_summary": {
+    "model_tables": [
+      "rbpc_oral_history_recordings",
+      "rbpc_audio_transcript_versions"
+    ],
+    "enums": [
+      "RbpcAudioConsentScope (full_public, educational_only, preview_only, revoked)",
+      "RbpcOralHistoryStatus (draft, submitted, consented, revoked, erased)"
+    ],
+    "core_capabilities": {
+      "audio_transcript_versioning": "Multi-version transcript tracking (v1, v2, ...) with synchronized timed narration cues, speaker attribution, section titles, and artisan human verification timestamps.",
+      "per_use_media_consent": "Granular scope enforcement (full_public, educational_only, preview_only, revoked) linked to written consent agreement references and audit logging.",
+      "right_to_erasure": "Right to erasure / right to be forgotten under Decree 13/2023/ND-CP and GDPR, scrubbed media asset links, and redacting transcript texts with immutable audit trails.",
+      "cultural_context_preservation": "Preserves intangible cultural context, interviewer attribution, recording location, date, and community tradition epistemic certainty.",
+      "negative_abuse_invariant": "When an oral history recording is revoked or erased, public endpoint immediately rejects access with HTTP 403 / 410, returning anti-stale cache headers (no-cache, no-store) and registering immediate invalidation in local memory and persistent CDN revocation registry (AssetCacheRevocation)."
+    }
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/oral-history",
+      "description": "Create a new oral history recording draft with initial transcript and cultural context"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/partner/oral-history",
+      "description": "List oral history recordings scoped to authenticated partner workshop with multi-tenant isolation"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/oral-history/{recording_id}",
+      "description": "Public / learner retrieval of approved oral history and transcript with fail-closed revocation defense"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/oral-history/{recording_id}/versions",
+      "description": "Add a new versioned transcript with timed cues, change summaries, and artisan verification"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/oral-history/{recording_id}/consent",
+      "description": "Update per-use media consent scope, agreement reference, and notes"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/oral-history/{recording_id}/revoke",
+      "description": "Revoke consent or request erasure, immediately invalidating CDN caches and scrubbed data"
+    }
+  ],
+  "verification_results": {
+    "test_suite": "tests/v5/test_v5_t109.py",
+    "tests_total": 4,
+    "tests_passed": 4,
+    "tests_failed": 0,
+    "scenarios_covered": [
+      "Negative abuse: Revoked audio immediately unavailable publicly (HTTP 403) and CDN/local caches invalidated with no-cache/no-store headers and AssetCacheRevocation ledger registration",
+      "Multi-version transcript evolution: v1 -> v2 versioning, synchronized timed cues, and artisan verification metadata",
+      "Right to erasure: Scrubbing of voice audio URLs, content hashes, and transcript redactions under Decree 13/2023/ND-CP",
+      "Partner oral history studio: Multi-tenant provider scoping, creator binding, and listing isolation"
+    ],
+    "migration_safety": "Alembic single head verified (0084_rbpc_oral_history_consent_studio), strictly additive operations, 0 destructive violations",
+    "frontend_type_check": "tsc --noEmit passed cleanly with 0 type errors",
+    "frontend_vitest": "src/components/rbpc/inquiriesPages.test.ts 25/25 tests passing"
+  }
+}

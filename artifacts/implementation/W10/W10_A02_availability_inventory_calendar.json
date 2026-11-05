@@ -1,0 +1,105 @@
+{
+  "ticket_id": "V5-T102",
+  "wave": "W10",
+  "slot": "A02",
+  "role": "W10-A02",
+  "priority": "P2",
+  "classification": "NEW_PRODUCT_FEATURE",
+  "title": "Real availability inventory/calendar",
+  "status": "COMPLETED",
+  "verified_at": "2026-11-05T12:00:00Z",
+  "target_modules": [
+    "backend/models_rbpc.py",
+    "backend/apischemas/rbpc.py",
+    "backend/routers/rbpc.py",
+    "migrations/versions/0082_rbpc_availability_inventory_calendar.py",
+    "tests/v5/test_v5_t102.py"
+  ],
+  "implementation_summary": {
+    "model_tables": [
+      "rbpc_workshop_slots",
+      "rbpc_seat_reservations"
+    ],
+    "enums": [
+      "RbpcSlotStatus (open, closed, cancelled)",
+      "RbpcReservationStatus (pending, confirmed, expired, cancelled)"
+    ],
+    "inventory_and_capacity_rules": {
+      "slot_capacity": "Total seats per workshop session (1 to 100, constrained by ck_rbpc_slots_capacity_range)",
+      "reserved_seats": "Temporary holds with active reserve timeouts (ck_rbpc_slots_reserved_nonneg)",
+      "confirmed_seats": "Provider/customer confirmed seat bookings (ck_rbpc_slots_confirmed_nonneg)",
+      "capacity_invariant": "Physical database constraint: reserved_seats + confirmed_seats <= capacity (ck_rbpc_slots_capacity_bound)",
+      "available_seats": "max(0, capacity - confirmed_seats - reserved_seats)"
+    },
+    "reserve_timeout_and_expiration": {
+      "hold_timeout_seconds": "Configurable hold duration (default 900s, bounds 60-1800s)",
+      "lazy_and_explicit_cleanup": "Pending holds past expires_at automatically transition to 'expired', releasing reserved_seats back to available pool",
+      "no_false_checkouts": "Expired holds reject confirmation attempts with HTTP 409 RESERVATION_EXPIRED"
+    },
+    "concurrency_race_condition_defense": {
+      "negative_abuse_invariant": "Two users cannot confirm or reserve the last remaining seat twice.",
+      "pessimistic_locking": "Transactions acquire row-level lock (with_for_update) on workshop slot and reservation rows, serializing concurrent allocations.",
+      "database_check_constraint": "PostgreSQL CheckConstraint ck_rbpc_slots_capacity_bound guarantees zero overbooking even across distributed worker threads."
+    }
+  },
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/experiences/{slug}/availability",
+      "description": "Retrieve workshop slots and real seat availability calendar for an experience"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/availability/reserve",
+      "description": "Temporarily hold seat capacity with countdown timeout and idempotency protection"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/availability/reservations/{ref}",
+      "description": "Visitor status lookup with lazy expiration cleanup and remaining hold countdown"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/availability/confirm",
+      "description": "Partner confirmation moving seats from reserved to confirmed permanently with audit log"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/availability/cancel",
+      "description": "Partner or visitor cancellation restoring seat capacity back to available inventory"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/slots",
+      "description": "Partner endpoint to open a new calendar workshop slot with seat capacity"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/partner/slots",
+      "description": "List workshop slots for experiences owned by authenticated partner"
+    }
+  ],
+  "verification_results": {
+    "test_suite": "tests/v5/test_v5_t102.py",
+    "tests_total": 12,
+    "tests_passed": 12,
+    "tests_failed": 0,
+    "scenarios_covered": [
+      "Query experience availability calendar returns correct slots and seat metrics",
+      "Reserving seats holds capacity with reserve timeout and returns reservation receipt",
+      "Idempotent reservation replay returns original receipt without double-holding seats",
+      "Differing payload with same idempotency key rejected with 409 RBPC_IDEMPOTENCY_CONFLICT",
+      "Attempting to reserve more seats than capacity rejected with 409 INSUFFICIENT_SEAT_CAPACITY",
+      "Expired holds automatically transition to expired and release seats back to available inventory",
+      "Partner confirmation transitions seats from reserved to confirmed and synchronizes linked inquiry",
+      "Partner confirmation of expired hold rejected with 409 RESERVATION_EXPIRED (no false checkout)",
+      "Cancelling reservation restores seat capacity back to available pool",
+      "Multi-tenant RBAC: guest forbidden (403), cross-tenant mutation rejected (403 FORBIDDEN_SCOPE)",
+      "Negative abuse: Two concurrent worker threads attempting to reserve last seat on capacity=1 slot (exactly 1 succeeds, 1 rejected with 409)",
+      "Negative abuse: Two concurrent worker threads attempting to confirm the same reservation (zero overbooking, capacity strictly preserved)"
+    ],
+    "migration_safety": "PASSED (0082_rbpc_availability_inventory_calendar verified, single head, additive only, 0 destructive ops)",
+    "openapi_snapshot": "PASSED (byte-for-byte synced)",
+    "route_inventory": "PASSED (623 routes generated and synced without drift)"
+  }
+}

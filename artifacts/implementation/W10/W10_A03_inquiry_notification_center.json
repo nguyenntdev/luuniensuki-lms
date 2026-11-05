@@ -1,0 +1,66 @@
+{
+  "ticket": "V5-T103",
+  "slot": "W10-A03",
+  "title": "Inquiry Customer Notification Center & Partner SLA Escalation",
+  "status": "COMPLETED",
+  "priority": "P2",
+  "classification": "NEW_PRODUCT_FEATURE",
+  "changes": [
+    {
+      "file": "migrations/versions/0081_rbpc_inquiry_notification_preferences.py",
+      "action": "CREATED",
+      "details": "Additive migration adding email_opt_in, sms_opt_in, notification_preferences, escalated_at, escalation_reason, escalation_count columns and indexes to rbpc_inquiries."
+    },
+    {
+      "file": "backend/models_rbpc.py",
+      "action": "MODIFIED",
+      "details": "Added notification preferences, opt-in flags, and partner escalation fields to RbpcInquiry model."
+    },
+    {
+      "file": "backend/apischemas/rbpc.py",
+      "action": "MODIFIED",
+      "details": "Added RbpcInquiryNotificationPreferenceUpdate, RbpcInquiryNotificationPreferenceOut, RbpcInquiryEscalationCreate, RbpcInquiryEscalationOut schemas and extended RbpcInquiryStatusOut and RbpcInquiryCreate with opt-in preferences."
+    },
+    {
+      "file": "backend/services/rbpc_notification.py",
+      "action": "MODIFIED",
+      "details": "Implemented dispatch_inquiry_escalation, update_inquiry_notification_preferences, and unsubscribe_inquiry_notifications with zero-PII and zero-fake-sent guarantees."
+    },
+    {
+      "file": "backend/routers/rbpc.py",
+      "action": "MODIFIED",
+      "details": "Added POST /status/{opaqueToken}/preferences, POST /status/{opaqueToken}/unsubscribe, POST /status/{opaqueToken}/escalate, and enriched GET /status/{opaqueToken} with customer notification center data."
+    },
+    {
+      "file": "frontend/src/types/rbpc.ts",
+      "action": "MODIFIED",
+      "details": "Updated InquiryStatusResponse with opt-in, SLA overdue, and escalation fields; added notification preference and escalation interfaces."
+    },
+    {
+      "file": "frontend/src/lib/rbpc/inquiries.ts",
+      "action": "MODIFIED",
+      "details": "Added updateInquiryNotificationPreferences, unsubscribeInquiryNotifications, and escalateInquiryLateResponse API functions."
+    },
+    {
+      "file": "frontend/src/app/rbpc/inquiries/page.tsx",
+      "action": "MODIFIED",
+      "details": "Integrated Customer Notification Center in the tracking view with live Email/SMS toggle badges, one-click unsubscribe, overdue SLA warning badge, and partner escalation form."
+    },
+    {
+      "file": "tests/v5/test_v5_t103.py",
+      "action": "CREATED",
+      "details": "10 comprehensive unit and integration tests verifying tracking status zero PII, preference updates, unsubscribe, 24h SLA overdue escalation, cooldown throttling, and negative abuse network error handling."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t103.py -v",
+    "tests_total": 10,
+    "tests_passed": 10,
+    "tests_failed": 0,
+    "invariants": {
+      "negative_abuse_provider_resilience": "VERIFIED - Network timeouts or connection drops during partner notification dispatch never show or send fake confirmed/delivered status",
+      "zero_pii": "VERIFIED - Status queries disclose zero contact names, emails, phones, or internal notes",
+      "sla_escalation": "VERIFIED - Partner late escalation strictly enforces >24h SLA deadline and rate limit cooldown"
+    }
+  }
+}

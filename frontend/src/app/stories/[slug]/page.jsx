@@ -33,6 +33,7 @@ import {
   StoryBilingualPassage,
 } from "@/components/history/StoryCitationRenderer";
 import { CitationDrawer } from "@/components/rbpc/CitationDrawer";
+import { CuratorStoryRecommendations } from "@/components/rbpc/CuratorStoryRecommendations";
 import { parseStoryFootnotes } from "@/lib/history";
 
 function BlockLink({
@@ -855,6 +856,20 @@ export default function StoryDetailPage() {
           />
         </div>
       )}
+
+      {/* Curator-Controlled Story & Workshop Recommendations (V5-T105) */}
+      <section aria-label="Gợi ý câu chuyện và xưởng nghề liên quan" className="mt-10 max-w-3xl">
+        <CuratorStoryRecommendations
+          storySlug={slug}
+          locale="vi"
+          onSelectStory={(targetSlug) => {
+            window.location.href = `/stories/${targetSlug}`;
+          }}
+          onExploreWorkshop={(expSlug) => {
+            window.location.href = `/rbpc/experiences/${expSlug}`;
+          }}
+        />
+      </section>
 
       {/* Slide-out Source Drawer */}
       <CitationDrawer

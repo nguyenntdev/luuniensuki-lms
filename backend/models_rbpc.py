@@ -161,6 +161,7 @@ class RbpcEpistemicCertainty(str, Enum):
     medium = "medium"
     contested = "contested"
     insufficient_sources = "insufficient_sources"
+    community_tradition = "community_tradition"
 
 
 class RbpcNotificationStatus(str, Enum):
@@ -169,6 +170,66 @@ class RbpcNotificationStatus(str, Enum):
     sent = "sent"
     failed_retryable = "failed_retryable"
     failed = "failed"
+
+
+class RbpcSettlementStatus(str, Enum):
+    pending_compliance = "pending_compliance"
+    approved = "approved"
+    settled = "settled"
+    refunded = "refunded"
+    disputed = "disputed"
+
+
+class RbpcPayoutStatus(str, Enum):
+    pending = "pending"
+    approved = "approved"
+    disbursed = "disbursed"
+    withheld = "withheld"
+    cancelled = "cancelled"
+
+
+class RbpcReviewStatus(str, Enum):
+    pending_moderation = "pending_moderation"
+    published = "published"
+    rejected = "rejected"
+    disputed = "disputed"
+    archived = "archived"
+
+
+class RbpcDisputeStatus(str, Enum):
+    opened = "opened"
+    under_review = "under_review"
+    resolved_upheld = "resolved_upheld"
+    resolved_overturned = "resolved_overturned"
+    dismissed = "dismissed"
+
+
+class RbpcSlotStatus(str, Enum):
+    open = "open"
+    closed = "closed"
+    cancelled = "cancelled"
+
+
+class RbpcReservationStatus(str, Enum):
+    pending = "pending"
+    confirmed = "confirmed"
+    expired = "expired"
+    cancelled = "cancelled"
+
+
+class RbpcAudioConsentScope(str, Enum):
+    full_public = "full_public"
+    educational_only = "educational_only"
+    preview_only = "preview_only"
+    revoked = "revoked"
+
+
+class RbpcOralHistoryStatus(str, Enum):
+    draft = "draft"
+    submitted = "submitted"
+    consented = "consented"
+    revoked = "revoked"
+    erased = "erased"
 
 
 def _validate_enum(enum_cls: type[Enum], key: str, val: Any) -> str:
@@ -572,6 +633,15 @@ class RbpcCreator(Base):
         ForeignKey("users.id", ondelete="SET NULL"),
         nullable=True,
     )
+    user_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    verification_notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    identity_document_ref: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    rights_clearance_notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    verified_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
@@ -658,6 +728,14 @@ class RbpcExperience(Base):
         JSONB, nullable=False, default=lambda: ["vi"]
     )
     notice: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    moderation_notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    moderated_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    moderated_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    rights_checked: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
@@ -675,6 +753,11 @@ class RbpcExperience(Base):
     stories: Mapped[list[RbpcStory]] = relationship(
         "RbpcStory",
         back_populates="experience",
+    )
+    workshop_slots: Mapped[list[RbpcWorkshopSlot]] = relationship(
+        "RbpcWorkshopSlot",
+        back_populates="experience",
+        cascade="all, delete-orphan",
     )
 
     @validates("availability_mode")
@@ -859,6 +942,8 @@ class RbpcInquiry(Base):
         Index("idx_rbpc_inquiries_provider", "provider_id"),
         Index("idx_rbpc_inquiries_retention", "retention_due_at"),
         Index("idx_rbpc_inquiries_sla", "sla_due_at"),
+        Index("idx_rbpc_inquiries_escalated", "escalated_at"),
+        Index("idx_rbpc_inquiries_optin", "email_opt_in", "sms_opt_in"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -894,6 +979,26 @@ class RbpcInquiry(Base):
     sla_due_at: Mapped[Optional[datetime]] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
+    email_opt_in: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    sms_opt_in: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    notification_preferences: Mapped[dict] = mapped_column(
+        JSONB, nullable=False, default=dict
+    )
+    escalated_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    escalation_reason: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    escalation_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    slot_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("rbpc_workshop_slots.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    reservation_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("rbpc_seat_reservations.id", ondelete="SET NULL"),
+        nullable=True,
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
@@ -920,6 +1025,24 @@ class RbpcInquiry(Base):
         "RbpcNotificationOutbox",
         back_populates="inquiry",
         cascade="all, delete-orphan",
+    )
+    settlements: Mapped[list[RbpcSettlementLedger]] = relationship(
+        "RbpcSettlementLedger",
+        back_populates="inquiry",
+        cascade="all, delete-orphan",
+    )
+    reviews: Mapped[list[RbpcCustomerReview]] = relationship(
+        "RbpcCustomerReview",
+        back_populates="inquiry",
+        cascade="all, delete-orphan",
+    )
+    workshop_slot: Mapped[Optional[RbpcWorkshopSlot]] = relationship(
+        "RbpcWorkshopSlot",
+        foreign_keys=[slot_id],
+    )
+    reservation: Mapped[Optional[RbpcSeatReservation]] = relationship(
+        "RbpcSeatReservation",
+        foreign_keys=[reservation_id],
     )
 
     @validates("contact_channel")
@@ -1071,4 +1194,611 @@ class RbpcNotificationOutbox(Base):
     @validates("status")
     def validate_status(self, key: str, value: Any) -> str:
         return _validate_enum(RbpcNotificationStatus, key, value)
+
+
+# --------------------------------------------------------------------------- #
+# Table 13: RBPC Fee & Revenue Settlement Ledger (Verified Transactions)
+# --------------------------------------------------------------------------- #
+class RbpcSettlementLedger(Base):
+    """Immutable financial ledger for commercial settlements, contracted take rates,
+    taxes, refunds, and artisan payouts after compliance approval.
+
+    Negative abuse invariant (V5-T108):
+    Merely transitioning an inquiry to 'confirmed' produces ZERO revenue in this
+    ledger. A verified settlement record with positive amounts requires explicit
+    settlement recording and compliance approval.
+    """
+
+    __tablename__ = "rbpc_settlement_ledger"
+    __table_args__ = (
+        UniqueConstraint("settlement_ref", name="uq_rbpc_settlement_ref"),
+        CheckConstraint(
+            "gross_amount_vnd >= 0.0",
+            name="ck_rbpc_settlement_gross_nonneg",
+        ),
+        CheckConstraint(
+            "take_rate >= 0.0 AND take_rate <= 1.0",
+            name="ck_rbpc_settlement_take_rate_range",
+        ),
+        CheckConstraint(
+            "status IN ('pending_compliance','approved','settled','refunded','disputed')",
+            name="ck_rbpc_settlement_status",
+        ),
+        CheckConstraint(
+            "payout_status IN ('pending','approved','disbursed','withheld','cancelled')",
+            name="ck_rbpc_settlement_payout_status",
+        ),
+        Index("idx_rbpc_settlement_inquiry", "inquiry_id"),
+        Index("idx_rbpc_settlement_provider", "provider_id"),
+        Index("idx_rbpc_settlement_creator", "creator_id"),
+        Index("idx_rbpc_settlement_status", "status"),
+        Index("idx_rbpc_settlement_payout", "payout_status"),
+        Index("idx_rbpc_settlement_created", "created_at"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    settlement_ref: Mapped[str] = mapped_column(Text, nullable=False)
+    inquiry_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("rbpc_inquiries.id", ondelete="RESTRICT"),
+        nullable=False,
+    )
+    provider_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    creator_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("rbpc_creators.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+
+    # Financial Breakdowns (in VND)
+    gross_amount_vnd: Mapped[float] = mapped_column(
+        Numeric(14, 2), nullable=False, default=0.0
+    )
+    take_rate: Mapped[float] = mapped_column(
+        Numeric(5, 4), nullable=False, default=0.1500  # Default 15% platform contracted take rate
+    )
+    platform_fee_vnd: Mapped[float] = mapped_column(
+        Numeric(14, 2), nullable=False, default=0.0
+    )
+    tax_vat_vnd: Mapped[float] = mapped_column(
+        Numeric(14, 2), nullable=False, default=0.0  # VAT / applicable local taxes
+    )
+    artisan_payout_vnd: Mapped[float] = mapped_column(
+        Numeric(14, 2), nullable=False, default=0.0  # Net payout owed to artisan/provider
+    )
+    refund_amount_vnd: Mapped[float] = mapped_column(
+        Numeric(14, 2), nullable=False, default=0.0  # Deducted upon refund
+    )
+
+    status: Mapped[str] = mapped_column(
+        Text, nullable=False, default=RbpcSettlementStatus.pending_compliance.value
+    )
+    payout_status: Mapped[str] = mapped_column(
+        Text, nullable=False, default=RbpcPayoutStatus.pending.value
+    )
+
+    # Compliance & Verification metadata
+    compliance_approved: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    compliance_reviewer_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    compliance_reviewed_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    compliance_notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    # Settlement transaction proof
+    transaction_proof_hash: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    currency: Mapped[str] = mapped_column(Text, nullable=False, default="VND")
+    disbursed_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
+    )
+
+    # Relationships
+    inquiry: Mapped[RbpcInquiry] = relationship("RbpcInquiry", back_populates="settlements")
+    creator: Mapped[Optional[RbpcCreator]] = relationship("RbpcCreator")
+
+    @validates("status")
+    def validate_status(self, key: str, value: Any) -> str:
+        return _validate_enum(RbpcSettlementStatus, key, value)
+
+    @validates("payout_status")
+    def validate_payout_status(self, key: str, value: Any) -> str:
+        return _validate_enum(RbpcPayoutStatus, key, value)
+
+
+# --------------------------------------------------------------------------- #
+# Table 14: RBPC Verified Customer Reviews (Completed Inquiries Only)
+# --------------------------------------------------------------------------- #
+class RbpcCustomerReview(Base):
+    """Verified customer reviews for cultural experiences.
+
+    Negative abuse invariant (V5-T107):
+    Only customers with verified completed experience inquiries (state == 'closed'
+    and completion verified) can submit reviews. Uncompleted, fake, or cancelled
+    inquiries cannot post ratings or reviews. Reviews pass through automated
+    anti-fraud heuristics and moderation queue.
+    """
+
+    __tablename__ = "rbpc_customer_reviews"
+    __table_args__ = (
+        UniqueConstraint("inquiry_id", name="uq_rbpc_review_inquiry"),
+        CheckConstraint(
+            "rating >= 1 AND rating <= 5",
+            name="ck_rbpc_review_rating_range",
+        ),
+        CheckConstraint(
+            "status IN ('pending_moderation','published','rejected','disputed','archived')",
+            name="ck_rbpc_review_status",
+        ),
+        Index("idx_rbpc_review_exp", "experience_id"),
+        Index("idx_rbpc_review_status", "status"),
+        Index("idx_rbpc_review_created", "created_at"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    inquiry_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("rbpc_inquiries.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    experience_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("rbpc_experiences.id", ondelete="RESTRICT"),
+        nullable=False,
+    )
+    author_user_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    author_display_name: Mapped[str] = mapped_column(Text, nullable=False)
+    rating: Mapped[int] = mapped_column(Integer, nullable=False)
+    title: Mapped[str] = mapped_column(Text, nullable=False)
+    comment: Mapped[str] = mapped_column(Text, nullable=False)
+    verified_completed: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    status: Mapped[str] = mapped_column(
+        Text, nullable=False, default=RbpcReviewStatus.pending_moderation.value
+    )
+    fraud_flags: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    moderated_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    moderated_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    moderation_notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
+    )
+
+    # Relationships
+    inquiry: Mapped[RbpcInquiry] = relationship("RbpcInquiry", back_populates="reviews")
+    experience: Mapped[RbpcExperience] = relationship("RbpcExperience")
+    disputes: Mapped[list[RbpcReviewDispute]] = relationship(
+        "RbpcReviewDispute",
+        back_populates="review",
+        cascade="all, delete-orphan",
+    )
+
+    @validates("status")
+    def validate_status(self, key: str, value: Any) -> str:
+        return _validate_enum(RbpcReviewStatus, key, value)
+
+
+# --------------------------------------------------------------------------- #
+# Table 15: RBPC Review Disputes (Partner / Customer Contestation Queue)
+# --------------------------------------------------------------------------- #
+class RbpcReviewDispute(Base):
+    """Disputes filed against reviews by partners or customers for moderation review."""
+
+    __tablename__ = "rbpc_review_disputes"
+    __table_args__ = (
+        CheckConstraint(
+            "status IN ('opened','under_review','resolved_upheld','resolved_overturned','dismissed')",
+            name="ck_rbpc_dispute_status",
+        ),
+        Index("idx_rbpc_dispute_review", "review_id"),
+        Index("idx_rbpc_dispute_status", "status"),
+        Index("idx_rbpc_dispute_created", "created_at"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    review_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("rbpc_customer_reviews.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    disputant_user_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    reason: Mapped[str] = mapped_column(Text, nullable=False)
+    evidence_payload: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    status: Mapped[str] = mapped_column(
+        Text, nullable=False, default=RbpcDisputeStatus.opened.value
+    )
+    resolved_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    resolution_notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    resolved_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
+    )
+
+    # Relationships
+    review: Mapped[RbpcCustomerReview] = relationship("RbpcCustomerReview", back_populates="disputes")
+
+    @validates("status")
+    def validate_status(self, key: str, value: Any) -> str:
+        return _validate_enum(RbpcDisputeStatus, key, value)
+
+
+# --------------------------------------------------------------------------- #
+# Table 16: RBPC Workshop Availability Slots (Finite Seat Capacity & Schedules)
+# --------------------------------------------------------------------------- #
+class RbpcWorkshopSlot(Base):
+    """Calendar time slot for a workshop offering with finite seat capacity.
+
+    Negative abuse invariant (V5-T102):
+    Concurrency race condition prevented: reserved_seats + confirmed_seats <= capacity
+    is enforced at both application layer (with row-level pessimistic locks)
+    and database storage engine layer (CheckConstraint ck_rbpc_slots_capacity_bound).
+    Two concurrent requests cannot book or confirm the last remaining seat twice.
+    """
+
+    __tablename__ = "rbpc_workshop_slots"
+    __table_args__ = (
+        CheckConstraint(
+            "capacity >= 1 AND capacity <= 100",
+            name="ck_rbpc_slots_capacity_range",
+        ),
+        CheckConstraint(
+            "reserved_seats >= 0",
+            name="ck_rbpc_slots_reserved_nonneg",
+        ),
+        CheckConstraint(
+            "confirmed_seats >= 0",
+            name="ck_rbpc_slots_confirmed_nonneg",
+        ),
+        CheckConstraint(
+            "reserved_seats + confirmed_seats <= capacity",
+            name="ck_rbpc_slots_capacity_bound",
+        ),
+        CheckConstraint(
+            "end_time > start_time",
+            name="ck_rbpc_slots_time_valid",
+        ),
+        CheckConstraint(
+            "status IN ('open','closed','cancelled')",
+            name="ck_rbpc_slots_status",
+        ),
+        Index("idx_rbpc_slots_exp", "experience_id"),
+        Index("idx_rbpc_slots_time", "start_time", "end_time"),
+        Index("idx_rbpc_slots_status", "status"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    experience_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("rbpc_experiences.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    start_time: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
+    end_time: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
+    capacity: Mapped[int] = mapped_column(Integer, nullable=False, default=10)
+    reserved_seats: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    confirmed_seats: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    status: Mapped[str] = mapped_column(
+        Text, nullable=False, default=RbpcSlotStatus.open.value
+    )
+    notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
+    )
+
+    # Relationships
+    experience: Mapped[RbpcExperience] = relationship(
+        "RbpcExperience", back_populates="workshop_slots"
+    )
+    reservations: Mapped[list[RbpcSeatReservation]] = relationship(
+        "RbpcSeatReservation",
+        back_populates="slot",
+        cascade="all, delete-orphan",
+    )
+
+    @validates("status")
+    def validate_status(self, key: str, value: Any) -> str:
+        return _validate_enum(RbpcSlotStatus, key, value)
+
+    @property
+    def available_seats(self) -> int:
+        return max(0, self.capacity - self.confirmed_seats - self.reserved_seats)
+
+
+# --------------------------------------------------------------------------- #
+# Table 17: RBPC Workshop Seat Reservations (Hold Timeouts & Confirmations)
+# --------------------------------------------------------------------------- #
+class RbpcSeatReservation(Base):
+    """Temporary hold or confirmed booking on seats in a workshop slot.
+
+    Holds are subject to reserve timeouts (expires_at). Stale holds release
+    seats automatically back to available inventory. Provider confirmation locks
+    seats permanently.
+    """
+
+    __tablename__ = "rbpc_seat_reservations"
+    __table_args__ = (
+        UniqueConstraint("public_ref", name="uq_rbpc_reservations_public_ref"),
+        UniqueConstraint("idempotency_key", name="uq_rbpc_reservations_idempotency"),
+        CheckConstraint(
+            "seats >= 1 AND seats <= 20",
+            name="ck_rbpc_reservations_seats_range",
+        ),
+        CheckConstraint(
+            "status IN ('pending','confirmed','expired','cancelled')",
+            name="ck_rbpc_reservations_status",
+        ),
+        Index("idx_rbpc_reservations_slot", "slot_id"),
+        Index("idx_rbpc_reservations_status", "status"),
+        Index("idx_rbpc_reservations_expires", "expires_at"),
+        Index("idx_rbpc_reservations_inquiry", "inquiry_id"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    slot_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("rbpc_workshop_slots.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    inquiry_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("rbpc_inquiries.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    user_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    public_ref: Mapped[str] = mapped_column(Text, nullable=False)
+    seats: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    status: Mapped[str] = mapped_column(
+        Text, nullable=False, default=RbpcReservationStatus.pending.value
+    )
+    hold_timeout_seconds: Mapped[int] = mapped_column(Integer, nullable=False, default=900)
+    expires_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
+    confirmed_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    confirmed_by: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    customer_name: Mapped[str] = mapped_column(Text, nullable=False)
+    customer_contact: Mapped[str] = mapped_column(Text, nullable=False)
+    idempotency_key: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
+    )
+
+    # Relationships
+    slot: Mapped[RbpcWorkshopSlot] = relationship(
+        "RbpcWorkshopSlot", back_populates="reservations"
+    )
+    inquiry: Mapped[Optional[RbpcInquiry]] = relationship(
+        "RbpcInquiry", foreign_keys=[inquiry_id]
+    )
+
+    @validates("status")
+    def validate_status(self, key: str, value: Any) -> str:
+        return _validate_enum(RbpcReservationStatus, key, value)
+
+
+# --------------------------------------------------------------------------- #
+# Table 18: RBPC Oral History Recordings & Consent Studio (Living Memory & Right to Erasure)
+# --------------------------------------------------------------------------- #
+class RbpcOralHistoryRecording(Base):
+    """Living practitioner oral history recording, cultural context, per-use consent,
+    and right-to-erasure lifecycle.
+
+    Negative abuse invariant (V5-T109):
+    When consent is revoked or erased:
+    1. Status transitions to 'revoked' or 'erased' with immutable timestamp and reason.
+    2. Public endpoint immediately refuses to serve the audio and transcript with HTTP 403 / 410.
+    3. Associated audio URL and content hashes are immediately purged and invalidated
+       in both local memory and persistent CDN invalidation ledger (AssetCacheRevocation).
+    """
+
+    __tablename__ = "rbpc_oral_history_recordings"
+    __table_args__ = (
+        UniqueConstraint("creator_id", "recording_code", name="uq_rbpc_oral_history_code"),
+        CheckConstraint(
+            "consent_scope IN ('full_public','educational_only','preview_only','revoked')",
+            name="ck_rbpc_oral_history_consent_scope",
+        ),
+        CheckConstraint(
+            "status IN ('draft','submitted','consented','revoked','erased')",
+            name="ck_rbpc_oral_history_status",
+        ),
+        Index("idx_rbpc_oral_history_creator", "creator_id"),
+        Index("idx_rbpc_oral_history_status", "status"),
+        Index("idx_rbpc_oral_history_scope", "consent_scope"),
+        Index("idx_rbpc_oral_history_created", "created_at"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    creator_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("rbpc_creators.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    recording_code: Mapped[str] = mapped_column(Text, nullable=False)
+    title_vi: Mapped[str] = mapped_column(Text, nullable=False)
+    title_en: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    audio_url: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    audio_sha256: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    audio_duration_seconds: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    mime_type: Mapped[str] = mapped_column(Text, nullable=False, default="audio/webm")
+
+    # Cultural context preservation
+    cultural_context_vi: Mapped[str] = mapped_column(Text, nullable=False)
+    cultural_context_en: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    recording_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
+    recording_location: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    interviewer_name: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    epistemic_certainty: Mapped[str] = mapped_column(
+        Text, nullable=False, default=RbpcEpistemicCertainty.community_tradition.value
+    )
+
+    # Granular Per-Use Media Consent & Lifecycle
+    consent_scope: Mapped[str] = mapped_column(
+        Text, nullable=False, default=RbpcAudioConsentScope.preview_only.value
+    )
+    status: Mapped[str] = mapped_column(
+        Text, nullable=False, default=RbpcOralHistoryStatus.draft.value
+    )
+    consent_granted: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    consent_agreement_ref: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    consent_granted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    consent_notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    # Right to Erasure / Revocation
+    revoked_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    revocation_reason: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    revoked_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    erased_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    # Version tracking pointer (current active version)
+    current_version_number: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
+    )
+
+    # Relationships
+    creator: Mapped[RbpcCreator] = relationship("RbpcCreator")
+    transcript_versions: Mapped[list[RbpcAudioTranscriptVersion]] = relationship(
+        "RbpcAudioTranscriptVersion",
+        back_populates="recording",
+        cascade="all, delete-orphan",
+        order_by="desc(RbpcAudioTranscriptVersion.version_number)",
+    )
+
+    @validates("consent_scope")
+    def validate_consent_scope(self, key: str, value: Any) -> str:
+        return _validate_enum(RbpcAudioConsentScope, key, value)
+
+    @validates("status")
+    def validate_status(self, key: str, value: Any) -> str:
+        return _validate_enum(RbpcOralHistoryStatus, key, value)
+
+
+# --------------------------------------------------------------------------- #
+# Table 19: RBPC Audio Transcript Versions (Timecoded Cues & Version History)
+# --------------------------------------------------------------------------- #
+class RbpcAudioTranscriptVersion(Base):
+    """Versioned audio transcript with timecoded cues, bilingual text,
+    and human artisan verification status.
+    """
+
+    __tablename__ = "rbpc_audio_transcript_versions"
+    __table_args__ = (
+        UniqueConstraint("recording_id", "version_number", name="uq_rbpc_audio_version"),
+        Index("idx_rbpc_audio_ver_rec", "recording_id"),
+        Index("idx_rbpc_audio_ver_created", "created_at"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    recording_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("rbpc_oral_history_recordings.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    version_number: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    transcript_text_vi: Mapped[str] = mapped_column(Text, nullable=False)
+    transcript_text_en: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    timed_cues: Mapped[list[dict]] = mapped_column(JSONB, nullable=False, default=list)
+    change_summary: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    author_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    is_verified_by_artisan: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    artisan_verified_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+    # Relationships
+    recording: Mapped[RbpcOralHistoryRecording] = relationship(
+        "RbpcOralHistoryRecording", back_populates="transcript_versions"
+    )
+
+
+
 

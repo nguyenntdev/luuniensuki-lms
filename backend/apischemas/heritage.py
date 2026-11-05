@@ -481,3 +481,102 @@ class HeritageCatalogRevisionUpdateIn(BaseModel):
     name_en: Optional[str] = None
     name_han_nom: Optional[str] = None
     reviewer_notes: Optional[str] = None
+
+
+# --------------------------------------------------------------------------- #
+# Museum QR Guided Trails Schemas (Ticket V5-T104 / Wave W10 Slot A04)
+# --------------------------------------------------------------------------- #
+class HeritageTrailAccessibilityInfo(BaseModel):
+    """Wheelchair and physical accessibility route telemetry for on-site visitors."""
+
+    accessibility_grade: str = Field(
+        ...,
+        description="Grade: full_wheelchair, partial_step_assistance, inaccessible_steep_steps, unknown_unverified",
+    )
+    wheelchair_accessible: bool = Field(
+        ...,
+        description="Strictly False if accessibility grade is unknown or inaccessible.",
+    )
+    is_accessibility_verified: bool = Field(
+        ...,
+        description="Whether accessibility route has been officially surveyed by staff/HMCC.",
+    )
+    wheelchair_route_summary: str
+    ramp_locations: list[str] = Field(default_factory=list)
+    tactile_paving: bool = False
+    rest_stops_count: int = 0
+    auditory_beacon_available: bool = False
+    safety_notes: Optional[str] = None
+
+
+class HeritageTrailRubbingFallback(BaseModel):
+    """100% authentic 2D rubbing asset fallback for low-bandwidth or offline fieldwork."""
+
+    asset_url: str
+    local_path: str
+    format: str = "image/jpeg"
+    sha256: str
+    file_exists: bool = True
+    byte_size: int = 0
+    rights_attribution: str
+    legal_basis: str
+    description_vi: str
+    description_en: Optional[str] = None
+
+
+class HeritageTrailStationOut(BaseModel):
+    """On-site physical trail station with cryptographic QR token and source linking."""
+
+    station_index: int
+    station_code: str
+    title_vi: str
+    title_en: Optional[str] = None
+    location_lat: Optional[float] = None
+    location_lon: Optional[float] = None
+    inspection_prompt_vi: str
+    inspection_prompt_en: Optional[str] = None
+    qr_token: str
+    qr_data_uri: str
+    authority: str
+    offline_rubbing: HeritageTrailRubbingFallback
+    primary_sources: list[dict[str, Any]] = Field(default_factory=list)
+    accessibility_info: HeritageTrailAccessibilityInfo
+
+
+class HeritageMuseumTrailOut(BaseModel):
+    """Full museum QR guided trail payload linking verified context, sources, and access info."""
+
+    place_slug: str
+    place_name_vi: str
+    place_name_en: Optional[str] = None
+    trail_title_vi: str
+    trail_title_en: Optional[str] = None
+    summary_vi: str
+    summary_en: Optional[str] = None
+    estimated_duration_minutes: int = 35
+    total_stations: int = 1
+    accessibility: HeritageTrailAccessibilityInfo
+    offline_rubbing_fallback: HeritageTrailRubbingFallback
+    primary_sources_count: int = 0
+    primary_sources: list[dict[str, Any]] = Field(default_factory=list)
+    stations: list[HeritageTrailStationOut] = Field(default_factory=list)
+
+
+class HeritageTrailQRVerifyIn(BaseModel):
+    """Request payload to verify cryptographic authenticity of an on-site station QR code."""
+
+    qr_token: str
+    expected_site: Optional[str] = None
+
+
+class HeritageTrailQRVerifyOut(BaseModel):
+    """Response payload for verified on-site station QR token."""
+
+    verified: bool
+    site_slug: str
+    station_index: int
+    authority: str
+    issued_at: int
+    expires_at: int
+    nonce: str
+

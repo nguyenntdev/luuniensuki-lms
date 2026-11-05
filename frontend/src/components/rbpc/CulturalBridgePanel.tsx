@@ -5,7 +5,7 @@ import { MessageSquare, Sparkles, AlertCircle, ArrowRight, ExternalLink, Refresh
 import { EpistemicBadge } from "./EpistemicBadge";
 import { RbpcButton } from "./RbpcButton";
 import { RbpcCard, RbpcCardHeader, RbpcCardTitle, RbpcCardContent, RbpcCardFooter } from "./RbpcCard";
-import { getRbpcCopy } from "@/lib/rbpc/copy";
+import { getRbpcCopy, getVisitorAssistDisclaimer, getVisitorLocaleMetadata, type RbpcSupportedVisitorLocale } from "@/lib/rbpc/copy";
 import type { EpistemicCertainty } from "@/types/rbpc";
 
 export interface CulturalBridgeCitation {
@@ -34,7 +34,7 @@ export interface CulturalBridgePanelProps {
   entitySlug?: string;
   storySlug?: string;
   entityName?: string;
-  locale?: "vi" | "en";
+  locale?: RbpcSupportedVisitorLocale | "vi" | "en";
   className?: string;
   onCitationClick?: (citation: CulturalBridgeCitation) => void;
   onExploreExperienceClick?: (experienceSlug: string) => void;
@@ -65,7 +65,9 @@ export function CulturalBridgePanel({
   onExploreExperienceClick,
   customEndpoint = "/api/v1/rbpc/cultural-bridge",
 }: CulturalBridgePanelProps) {
-  const copy = getRbpcCopy(locale);
+  const copy = getRbpcCopy(locale === "en" ? "en" : "vi");
+  const visitorMeta = getVisitorLocaleMetadata(locale);
+  const visitorDisclaimers = getVisitorAssistDisclaimer(locale);
   const inputId = useId();
   const [question, setQuestion] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -244,7 +246,7 @@ export function CulturalBridgePanel({
             <div className="mb-2 flex items-center justify-between gap-2">
               <EpistemicBadge
                 status={responsePayload.epistemic_certainty}
-                locale={locale}
+                locale={locale === "en" ? "en" : "vi"}
                 size="sm"
               />
               {responsePayload.status === "insufficient_evidence" && (
@@ -259,6 +261,18 @@ export function CulturalBridgePanel({
             <div className="prose prose-sm max-w-none text-ink/90 leading-relaxed font-sans">
               <p className="whitespace-pre-line text-sm">{responsePayload.answer_markdown}</p>
             </div>
+
+            {/* Bounded AI Assist & Human Review Disclaimer */}
+            {visitorMeta.disclaimerRequired && (
+              <div className="mt-3 rounded border border-highlight/30 bg-highlight/5 p-2.5 text-[11px] text-ink/80 space-y-1">
+                <span className="font-semibold text-highlight block">
+                  🛡️ {visitorDisclaimers.humanReviewedBadge}
+                </span>
+                <p className="leading-tight text-muted/90">
+                  {visitorDisclaimers.boundedAiNotice}
+                </p>
+              </div>
+            )}
 
             {/* Citations List */}
             {responsePayload.citations && responsePayload.citations.length > 0 && (

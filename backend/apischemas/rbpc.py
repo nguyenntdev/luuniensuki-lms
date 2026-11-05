@@ -69,6 +69,67 @@ class RbpcConsentStatus(str, Enum):
     revoked = "revoked"
 
 
+class RbpcSettlementStatus(str, Enum):
+    pending_compliance = "pending_compliance"
+    approved = "approved"
+    settled = "settled"
+    refunded = "refunded"
+    disputed = "disputed"
+
+
+class RbpcPayoutStatus(str, Enum):
+    pending = "pending"
+    approved = "approved"
+    disbursed = "disbursed"
+    withheld = "withheld"
+    cancelled = "cancelled"
+
+
+class RbpcReviewStatus(str, Enum):
+    pending_moderation = "pending_moderation"
+    published = "published"
+    rejected = "rejected"
+    disputed = "disputed"
+    archived = "archived"
+
+
+class RbpcDisputeStatus(str, Enum):
+    opened = "opened"
+    under_review = "under_review"
+    resolved_upheld = "resolved_upheld"
+    resolved_overturned = "resolved_overturned"
+    dismissed = "dismissed"
+
+
+class RbpcSlotStatus(str, Enum):
+    open = "open"
+    closed = "closed"
+    cancelled = "cancelled"
+
+
+class RbpcReservationStatus(str, Enum):
+    pending = "pending"
+    confirmed = "confirmed"
+    expired = "expired"
+    cancelled = "cancelled"
+
+
+class RbpcAudioConsentScope(str, Enum):
+    full_public = "full_public"
+    educational_only = "educational_only"
+    preview_only = "preview_only"
+    revoked = "revoked"
+
+
+class RbpcOralHistoryStatus(str, Enum):
+    draft = "draft"
+    submitted = "submitted"
+    consented = "consented"
+    revoked = "revoked"
+    erased = "erased"
+
+
+
 # --------------------------------------------------------------------------- #
 # Config & Feature Flags
 # --------------------------------------------------------------------------- #
@@ -166,6 +227,23 @@ class RbpcCreatorOut(BaseModel):
         default=None,
         description="Associated heritage place slug if tied to a specific community monument.",
     )
+    is_verified: bool = Field(
+        default=False,
+        description="Whether staff/admin has reviewed identity, consent, and rights.",
+    )
+    verification_notes: Optional[str] = Field(
+        default=None,
+        description="Verification audit comments.",
+    )
+    identity_document_ref: Optional[str] = Field(
+        default=None,
+        description="Encrypted/redacted reference to verified identity document.",
+    )
+    rights_clearance_notes: Optional[str] = Field(
+        default=None,
+        description="Rights clearance and portrait usage permissions.",
+    )
+    verified_at: Optional[datetime] = None
     created_at: datetime
 
 
@@ -199,6 +277,80 @@ class RbpcCreatorConsentUpdate(BaseModel):
                 data = dict(data)
                 data["consent_status"] = data["status"]
         return data
+
+
+class RbpcPartnerOnboardingIn(BaseModel):
+    """Self-onboarding registration payload for a partner/artisan."""
+
+    slug: str = Field(..., min_length=3, max_length=100, description="Unique URL slug.")
+    public_name: str = Field(..., min_length=2, max_length=200, description="Artisan or workshop name.")
+    craft_tradition_vi: str = Field(..., min_length=2, max_length=200, description="Traditional craft name in Vietnamese.")
+    craft_tradition_en: Optional[str] = Field(None, max_length=200)
+    approved_bio_vi: str = Field(..., min_length=10, max_length=5000, description="Biography or craft history.")
+    approved_bio_en: Optional[str] = Field(None, max_length=5000)
+    approved_portrait_url: Optional[str] = Field(None, max_length=1000, description="Portrait URL (unverified until staff review).")
+    public_region: str = Field(default="Huế", max_length=100)
+    years_of_practice: Optional[int] = Field(None, ge=0, le=100)
+    generation_lineage: Optional[str] = Field(None, max_length=200)
+    heritage_place_slug: Optional[str] = Field(None, max_length=100)
+    display_consent_ref: Optional[str] = Field(None, max_length=200, description="Reference to consent agreement.")
+    identity_document_ref: Optional[str] = Field(None, max_length=200, description="Identity documentation reference.")
+    rights_clearance_notes: Optional[str] = Field(None, max_length=1000, description="Rights and portrait licensing notes.")
+
+
+class RbpcPartnerProfileUpdateIn(BaseModel):
+    """Artisan profile update payload for existing partner."""
+
+    public_name: Optional[str] = Field(None, min_length=2, max_length=200)
+    craft_tradition_vi: Optional[str] = Field(None, min_length=2, max_length=200)
+    craft_tradition_en: Optional[str] = Field(None, max_length=200)
+    approved_bio_vi: Optional[str] = Field(None, min_length=10, max_length=5000)
+    approved_bio_en: Optional[str] = Field(None, max_length=5000)
+    approved_portrait_url: Optional[str] = Field(None, max_length=1000)
+    public_region: Optional[str] = Field(None, max_length=100)
+    years_of_practice: Optional[int] = Field(None, ge=0, le=100)
+    generation_lineage: Optional[str] = Field(None, max_length=200)
+    display_consent_ref: Optional[str] = Field(None, max_length=200)
+    identity_document_ref: Optional[str] = Field(None, max_length=200)
+    rights_clearance_notes: Optional[str] = Field(None, max_length=1000)
+
+
+class RbpcPartnerVerificationIn(BaseModel):
+    """Staff review & verification payload for artisan profile."""
+
+    is_verified: bool = Field(..., description="Staff decision on identity and consent verification.")
+    consent_status: Optional[RbpcConsentStatus] = Field(
+        default=RbpcConsentStatus.verified_written_consent,
+        description="Verified consent state.",
+    )
+    verification_notes: Optional[str] = Field(None, max_length=1000, description="Review remarks and verification evidence.")
+    rights_clearance_notes: Optional[str] = Field(None, max_length=1000, description="Licensing and media clearance remarks.")
+
+
+class RbpcPartnerExperienceCreateIn(BaseModel):
+    """Partner submission to create a cultural experience listing."""
+
+    slug: str = Field(..., min_length=3, max_length=100)
+    title_vi: str = Field(..., min_length=3, max_length=255)
+    title_en: Optional[str] = Field(None, max_length=255)
+    description_vi: str = Field(..., min_length=10, max_length=5000)
+    description_en: Optional[str] = Field(None, max_length=5000)
+    area_public: str = Field(default="Huế", max_length=100)
+    duration_minutes: Optional[int] = Field(None, ge=15, le=1440)
+    pricing_display: Optional[str] = Field(None, max_length=100)
+    indicative_price_amount: Optional[float] = Field(None, ge=0)
+    currency: str = Field(default="VND", max_length=10)
+    max_party_size: Optional[int] = Field(default=10, ge=1, le=50)
+    languages_supported: list[str] = Field(default_factory=lambda: ["vi"])
+    notice: Optional[str] = Field(None, max_length=500)
+
+
+class RbpcExperienceModerationIn(BaseModel):
+    """Staff moderation payload for experience listing."""
+
+    publication_state: str = Field(..., pattern="^(published|draft|archived|rejected)$")
+    rights_checked: bool = Field(default=True, description="Confirm all media and brand rights cleared.")
+    moderation_notes: Optional[str] = Field(None, max_length=1000)
 
 
 # --------------------------------------------------------------------------- #
@@ -247,6 +399,15 @@ class RbpcExperienceOut(BaseModel):
         default="Yêu cầu trải nghiệm chỉ là bước liên hệ xác nhận, không phải giao dịch thanh toán tức thì.",
         description="Honest transparency disclosure.",
     )
+    rights_checked: bool = Field(
+        default=False,
+        description="Whether licensing and intellectual rights have been cleared.",
+    )
+    moderation_notes: Optional[str] = Field(
+        default=None,
+        description="Staff moderation audit notes.",
+    )
+    moderated_at: Optional[datetime] = None
 
 
 class RbpcExperienceListOut(BaseModel):
@@ -352,8 +513,8 @@ class RbpcCulturalBridgeRequest(BaseModel):
     )
     locale: str = Field(
         default="vi",
-        pattern="^(vi|en)$",
-        description="Desired response locale (vi or en).",
+        pattern="^(vi|en|fr|ja|ko)$",
+        description="Desired response locale (vi, en, fr, ja, ko).",
     )
     context_preferences: Optional[dict[str, Any]] = Field(
         default=None,
@@ -514,6 +675,14 @@ class RbpcInquiryCreate(BaseModel):
         description="Optional inquiry notes or dietary/accessibility requests.",
     )
     consent: RbpcConsentIn
+    email_opt_in: bool = Field(
+        default=True,
+        description="Whether visitor opts in to receive status update notifications via email.",
+    )
+    sms_opt_in: bool = Field(
+        default=False,
+        description="Whether visitor opts in to receive SMS alerts for urgent confirmations or changes.",
+    )
     idempotency_key: str = Field(
         ...,
         min_length=16,
@@ -592,6 +761,56 @@ class RbpcInquiryStatusOut(BaseModel):
     preferred_date: Optional[date] = None
     party_size: Optional[int] = None
     last_updated_at: datetime
+    # Customer Notification Center Fields (V5-T103)
+    email_opt_in: bool = Field(default=True, description="Email status update preference.")
+    sms_opt_in: bool = Field(default=False, description="SMS notification preference.")
+    is_overdue: bool = Field(default=False, description="True if partner SLA (24h) is overdue without action.")
+    sla_due_at: Optional[datetime] = Field(default=None, description="24h partner SLA deadline.")
+    can_escalate: bool = Field(default=False, description="True if customer can escalate late response.")
+    escalated_at: Optional[datetime] = Field(default=None, description="Timestamp of partner escalation if triggered.")
+    escalation_reason: Optional[str] = Field(default=None, description="Reason recorded for escalation.")
+    escalation_count: int = Field(default=0, description="Total number of escalations triggered.")
+
+
+class RbpcInquiryNotificationPreferenceUpdate(BaseModel):
+    """Update opt-in preferences for customer notifications."""
+
+    email_opt_in: Optional[bool] = Field(default=None, description="Opt in or out of email updates.")
+    sms_opt_in: Optional[bool] = Field(default=None, description="Opt in or out of SMS updates.")
+    frequency: Optional[str] = Field(default="immediate", description="Digest frequency (immediate, daily).")
+
+
+class RbpcInquiryNotificationPreferenceOut(BaseModel):
+    """Result of updating notification preferences."""
+
+    reference: str
+    email_opt_in: bool
+    sms_opt_in: bool
+    unsubscribed: bool
+    message: str
+    updated_at: datetime
+
+
+class RbpcInquiryEscalationCreate(BaseModel):
+    """Customer request to escalate a late partner response."""
+
+    reason: Optional[str] = Field(
+        default=None,
+        max_length=500,
+        description="Reason customer is escalating (e.g. overdue 24h SLA, urgent travel plan).",
+    )
+
+
+class RbpcInquiryEscalationOut(BaseModel):
+    """Result of partner late response escalation."""
+
+    reference: str
+    status: RbpcInquiryStatus
+    escalated_at: datetime
+    escalation_count: int
+    sla_overdue_seconds: float
+    message: str
+    notification_dispatched: bool
 
 
 class RbpcInquiryWithdrawOut(BaseModel):
@@ -695,6 +914,14 @@ class RbpcObservedMetrics(BaseModel):
         default=0,
         description="Total bibliographic claims verified across the knowledge graph.",
     )
+    completed_experiences_count: int = Field(
+        default=0,
+        description="Total verified completed cultural experiences observed from real closed inquiries.",
+    )
+    artisan_payout_vnd_settled: float = Field(
+        default=0.0,
+        description="Total verified actual artisan payouts settled through the financial ledger (VND).",
+    )
     sponsor_support_vnd_verified: float = Field(
         default=202360638.0,
         description="Total verified in-kind sponsorship value (VND) supported by signed documents (BNIX + Phổ Tuệ).",
@@ -727,3 +954,465 @@ class RbpcImpactMetricsOut(BaseModel):
     projected_metrics: RbpcProjectedMetrics
     scope: str = Field(default="RBPC_HUE")
     generated_at: datetime
+
+
+# --------------------------------------------------------------------------- #
+# Fee & Revenue Settlement Ledger Schemas (V5-T108)
+# --------------------------------------------------------------------------- #
+class RbpcSettlementCreate(BaseModel):
+    """Create a verified settlement record for an inquiry with contracted take rate."""
+
+    inquiry_id: UUID = Field(..., description="ID of the confirmed inquiry")
+    gross_amount_vnd: float = Field(..., ge=0.0, description="Gross transacted amount in VND")
+    take_rate: Optional[float] = Field(
+        default=0.1500,
+        ge=0.0,
+        le=1.0,
+        description="Contracted platform take rate (e.g. 0.15 for 15%)",
+    )
+    vat_rate: Optional[float] = Field(
+        default=0.0800,
+        ge=0.0,
+        le=0.20,
+        description="Applicable tax/VAT rate (default 8% for cultural services)",
+    )
+    transaction_proof_hash: Optional[str] = Field(
+        default=None,
+        description="Cryptographic or banking reference/hash proof of payment",
+    )
+    compliance_notes: Optional[str] = Field(
+        default=None,
+        description="Initial notes or justification for the settlement",
+    )
+
+
+class RbpcSettlementComplianceReview(BaseModel):
+    """Compliance approval or rejection of a settlement."""
+
+    approved: bool = Field(..., description="True if approved for payout, False if rejected/held")
+    compliance_notes: Optional[str] = Field(default=None, description="Compliance reviewer notes")
+
+
+class RbpcSettlementRefund(BaseModel):
+    """Process a partial or full refund against a settlement."""
+
+    refund_amount_vnd: float = Field(..., gt=0.0, description="Amount to refund in VND")
+    reason: str = Field(..., description="Reason for refund")
+
+
+class RbpcSettlementOut(BaseModel):
+    """Detailed settlement ledger record."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    settlement_ref: str
+    inquiry_id: UUID
+    provider_id: Optional[UUID] = None
+    creator_id: Optional[UUID] = None
+    gross_amount_vnd: float
+    take_rate: float
+    platform_fee_vnd: float
+    tax_vat_vnd: float
+    artisan_payout_vnd: float
+    refund_amount_vnd: float
+    status: RbpcSettlementStatus
+    payout_status: RbpcPayoutStatus
+    compliance_approved: bool
+    compliance_reviewer_id: Optional[UUID] = None
+    compliance_reviewed_at: Optional[datetime] = None
+    compliance_notes: Optional[str] = None
+    transaction_proof_hash: Optional[str] = None
+    currency: str = "VND"
+    disbursed_at: Optional[datetime] = None
+    created_at: datetime
+    updated_at: datetime
+
+
+class RbpcSettlementListOut(BaseModel):
+    """List of settlements."""
+
+    items: list[RbpcSettlementOut]
+    total: int
+
+
+class RbpcLedgerFinancialSummary(BaseModel):
+    """Aggregate financial summary from the verified settlement ledger."""
+
+    total_gross_settled_vnd: float = Field(default=0.0, description="Total gross settled transaction volume")
+    total_platform_fee_vnd: float = Field(default=0.0, description="Total platform fee earned")
+    total_tax_vat_vnd: float = Field(default=0.0, description="Total taxes collected/remitted")
+    total_artisan_payout_vnd: float = Field(default=0.0, description="Total net payout allocated to artisans")
+    total_refund_vnd: float = Field(default=0.0, description="Total refunded amount")
+    approved_settlements_count: int = Field(default=0, description="Number of compliance-approved settlements")
+    pending_settlements_count: int = Field(default=0, description="Settlements awaiting compliance")
+    contracted_take_rate_avg: float = Field(default=0.15, description="Weighted or average contracted take rate")
+
+
+# --------------------------------------------------------------------------- #
+# Verified Customer Reviews & Disputes Schemas (V5-T107)
+# --------------------------------------------------------------------------- #
+class RbpcCustomerReviewCreate(BaseModel):
+    """Customer payload to submit a verified review for a completed inquiry."""
+
+    inquiry_token: str = Field(
+        ...,
+        min_length=16,
+        max_length=255,
+        description="Opaque status token of the inquiry proving possession and completion.",
+    )
+    rating: int = Field(
+        ...,
+        ge=1,
+        le=5,
+        description="Rating from 1 (lowest) to 5 (highest).",
+    )
+    title: str = Field(
+        ...,
+        min_length=3,
+        max_length=200,
+        description="Short summary or headline of the experience review.",
+    )
+    comment: str = Field(
+        ...,
+        min_length=10,
+        max_length=2000,
+        description="Detailed review of the workshop experience.",
+    )
+    author_display_name: Optional[str] = Field(
+        default=None,
+        max_length=100,
+        description="Public author alias. If omitted, uses inquiry contact name or anonymous format.",
+    )
+
+
+class RbpcCustomerReviewModeration(BaseModel):
+    """Staff/admin action to moderate a review (publish, reject, archive)."""
+
+    status: RbpcReviewStatus = Field(
+        ...,
+        description="Target review status: published, rejected, archived.",
+    )
+    notes: Optional[str] = Field(
+        default=None,
+        max_length=1000,
+        description="Staff moderation audit reasoning.",
+    )
+
+
+class RbpcReviewDisputeCreate(BaseModel):
+    """Partner or visitor filing a dispute against a published or pending review."""
+
+    reason: str = Field(
+        ...,
+        min_length=10,
+        max_length=1000,
+        description="Specific reason for contesting the review (e.g. defamation, factually inaccurate, unexperienced).",
+    )
+    evidence_payload: dict[str, Any] = Field(
+        default_factory=dict,
+        description="Structured supporting evidence or documentation.",
+    )
+
+
+class RbpcReviewDisputeResolution(BaseModel):
+    """Staff/admin resolution of a review dispute."""
+
+    status: RbpcDisputeStatus = Field(
+        ...,
+        description="Resolution status: resolved_upheld (review overturned), resolved_overturned (dispute rejected, review stays), dismissed.",
+    )
+    notes: Optional[str] = Field(
+        default=None,
+        max_length=1000,
+        description="Formal resolution notes and reasoning.",
+    )
+
+
+class RbpcReviewDisputeOut(BaseModel):
+    """Dispute record representation."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    review_id: UUID
+    disputant_user_id: Optional[UUID] = None
+    reason: str
+    evidence_payload: dict[str, Any]
+    status: RbpcDisputeStatus
+    resolved_by_id: Optional[UUID] = None
+    resolution_notes: Optional[str] = None
+    resolved_at: Optional[datetime] = None
+    created_at: datetime
+    updated_at: datetime
+
+
+class RbpcCustomerReviewOut(BaseModel):
+    """Public customer review representation with verified badge and zero PII."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    experience_id: UUID
+    experience_slug: Optional[str] = None
+    author_display_name: str
+    rating: int
+    title: str
+    comment: str
+    verified_completed: bool
+    status: RbpcReviewStatus
+    created_at: datetime
+    updated_at: datetime
+
+
+class RbpcCustomerReviewAdminOut(BaseModel):
+    """Internal moderation view of a review with fraud flags and inquiry linkage."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    inquiry_id: UUID
+    experience_id: UUID
+    author_user_id: Optional[UUID] = None
+    author_display_name: str
+    rating: int
+    title: str
+    comment: str
+    verified_completed: bool
+    status: RbpcReviewStatus
+    fraud_flags: dict[str, Any]
+    moderated_by_id: Optional[UUID] = None
+    moderated_at: Optional[datetime] = None
+    moderation_notes: Optional[str] = None
+    disputes: list[RbpcReviewDisputeOut] = Field(default_factory=list)
+    created_at: datetime
+    updated_at: datetime
+
+
+class RbpcCustomerReviewListOut(BaseModel):
+    """List of customer reviews."""
+
+    items: list[RbpcCustomerReviewOut]
+    total: int
+    average_rating: float = 0.0
+
+
+class RbpcCustomerReviewAdminListOut(BaseModel):
+    """Moderation list of customer reviews."""
+
+    items: list[RbpcCustomerReviewAdminOut]
+    total: int
+    pending_count: int = 0
+
+
+# --------------------------------------------------------------------------- #
+# Workshop Availability Inventory & Calendar Schemas (V5-T102)
+# --------------------------------------------------------------------------- #
+class RbpcWorkshopSlotOut(BaseModel):
+    """Workshop calendar time slot with seat capacity metrics."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    experience_id: UUID
+    start_time: datetime
+    end_time: datetime
+    capacity: int = Field(..., ge=1, le=100)
+    reserved_seats: int = Field(default=0, ge=0)
+    confirmed_seats: int = Field(default=0, ge=0)
+    available_seats: int = Field(..., ge=0)
+    status: str = Field(default="open")
+    notes: Optional[str] = None
+    created_at: datetime
+    updated_at: datetime
+
+
+class RbpcAvailabilityCalendarOut(BaseModel):
+    """Calendar schedule of workshop slots for an experience."""
+
+    experience_slug: str
+    experience_title: str
+    slots: list[RbpcWorkshopSlotOut]
+    total_slots: int
+
+
+class RbpcSlotCreateIn(BaseModel):
+    """Partner payload to open a new workshop slot."""
+
+    experience_slug: str = Field(..., min_length=2, max_length=160)
+    start_time: datetime
+    end_time: datetime
+    capacity: int = Field(default=10, ge=1, le=100)
+    notes: Optional[str] = None
+
+
+class RbpcSeatReserveIn(BaseModel):
+    """Visitor payload to temporarily reserve seats in a workshop slot."""
+
+    slot_id: UUID
+    seats: int = Field(default=1, ge=1, le=10)
+    customer_name: str = Field(..., min_length=2, max_length=120)
+    customer_contact: str = Field(..., min_length=5, max_length=120)
+    hold_timeout_seconds: int = Field(default=900, ge=60, le=1800)
+    idempotency_key: Optional[str] = None
+    inquiry_id: Optional[UUID] = None
+
+
+class RbpcSeatReservationOut(BaseModel):
+    """Receipt for a seat reservation or booking hold."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    public_ref: str
+    slot_id: UUID
+    experience_slug: Optional[str] = None
+    seats: int
+    status: str
+    expires_at: datetime
+    remaining_seconds: int
+    customer_name: str
+    customer_contact: str
+    confirmed_at: Optional[datetime] = None
+    message: str = "Thao tác thành công."
+    created_at: datetime
+
+
+class RbpcReservationConfirmIn(BaseModel):
+    """Partner action to confirm a reserved seat hold."""
+
+    reservation_id: UUID
+    partner_note: Optional[str] = None
+
+
+class RbpcReservationCancelIn(BaseModel):
+    """Partner or visitor action to cancel/release a reservation."""
+
+    reservation_id: UUID
+    reason: Optional[str] = None
+
+
+# --------------------------------------------------------------------------- #
+# Oral History & Consent Studio Schemas (V5-T109)
+# --------------------------------------------------------------------------- #
+class RbpcTranscriptCue(BaseModel):
+    """Timecoded narration cue segment."""
+
+    time_sec: float = Field(..., ge=0.0, description="Start time cue in seconds.")
+    end_time_sec: Optional[float] = Field(default=None, ge=0.0, description="Optional cue end time in seconds.")
+    text: str = Field(..., min_length=1, description="Narration text segment.")
+    speaker: Optional[str] = Field(default=None, description="Speaker name or attribution.")
+    section_title: Optional[str] = Field(default=None, description="Section or thematic title.")
+
+
+class RbpcAudioTranscriptVersionOut(BaseModel):
+    """Audio transcript revision record."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    recording_id: UUID
+    version_number: int
+    transcript_text_vi: str
+    transcript_text_en: Optional[str] = None
+    timed_cues: list[RbpcTranscriptCue] = Field(default_factory=list)
+    change_summary: Optional[str] = None
+    author_id: Optional[UUID] = None
+    is_verified_by_artisan: bool = False
+    artisan_verified_at: Optional[datetime] = None
+    created_at: datetime
+
+
+class RbpcOralHistoryRecordingOut(BaseModel):
+    """Oral history recording public / partner view."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    creator_id: UUID
+    recording_code: str
+    title_vi: str
+    title_en: Optional[str] = None
+    audio_url: Optional[str] = None
+    audio_sha256: Optional[str] = None
+    audio_duration_seconds: int
+    mime_type: str
+    cultural_context_vi: str
+    cultural_context_en: Optional[str] = None
+    recording_date: Optional[date] = None
+    recording_location: Optional[str] = None
+    interviewer_name: Optional[str] = None
+    epistemic_certainty: str
+    consent_scope: RbpcAudioConsentScope
+    status: RbpcOralHistoryStatus
+    consent_granted: bool
+    consent_agreement_ref: Optional[str] = None
+    consent_granted_at: Optional[datetime] = None
+    consent_notes: Optional[str] = None
+    revoked_at: Optional[datetime] = None
+    revocation_reason: Optional[str] = None
+    erased_at: Optional[datetime] = None
+    current_version_number: int
+    created_at: datetime
+    updated_at: datetime
+    latest_transcript: Optional[RbpcAudioTranscriptVersionOut] = None
+
+
+class RbpcOralHistoryRecordingListOut(BaseModel):
+    """List of oral history recordings."""
+
+    items: list[RbpcOralHistoryRecordingOut]
+    total: int
+
+
+class RbpcOralHistoryCreateIn(BaseModel):
+    """Create a new oral history recording draft."""
+
+    creator_id: UUID
+    title_vi: str = Field(..., min_length=2, max_length=255)
+    title_en: Optional[str] = Field(default=None, max_length=255)
+    audio_url: Optional[str] = Field(default=None, max_length=1000)
+    audio_sha256: Optional[str] = Field(default=None, max_length=64)
+    audio_duration_seconds: int = Field(default=0, ge=0)
+    mime_type: str = Field(default="audio/webm")
+    cultural_context_vi: str = Field(..., min_length=10)
+    cultural_context_en: Optional[str] = None
+    recording_date: Optional[date] = None
+    recording_location: Optional[str] = None
+    interviewer_name: Optional[str] = None
+    epistemic_certainty: Optional[str] = "community_tradition"
+    initial_transcript_vi: Optional[str] = None
+    initial_transcript_en: Optional[str] = None
+    initial_cues: list[RbpcTranscriptCue] = Field(default_factory=list)
+
+
+class RbpcOralHistoryTranscriptUpdateIn(BaseModel):
+    """Submit a new version of the transcript with diff/summary."""
+
+    transcript_text_vi: str = Field(..., min_length=5)
+    transcript_text_en: Optional[str] = None
+    timed_cues: list[RbpcTranscriptCue] = Field(default_factory=list)
+    change_summary: Optional[str] = Field(default=None, max_length=500)
+    verify_by_artisan: bool = False
+
+
+class RbpcOralHistoryConsentUpdateIn(BaseModel):
+    """Update per-use media consent scope and grant agreement."""
+
+    consent_scope: RbpcAudioConsentScope
+    consent_granted: bool
+    consent_agreement_ref: Optional[str] = Field(default=None, max_length=255)
+    consent_notes: Optional[str] = Field(default=None, max_length=1000)
+
+
+class RbpcOralHistoryRevokeIn(BaseModel):
+    """Revoke consent or request erasure (right-to-erasure / GDPR / Decree 13/2023/ND-CP)."""
+
+    reason: str = Field(..., min_length=5, max_length=1000)
+    erase_data: bool = Field(
+        default=False,
+        description="Whether to scrub media references and text under right-to-erasure.",
+    )
+
+
+

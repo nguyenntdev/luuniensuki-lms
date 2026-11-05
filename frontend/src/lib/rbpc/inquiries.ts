@@ -14,6 +14,8 @@ import type {
   PartnerInquiryUpdatePayload,
   RbpcExperience,
   ContactMethod,
+  RbpcImpactMetricsOut,
+  CuratorStoryRecommendationsResponse,
 } from "@/types/rbpc";
 import type { PartnerInboxItemWithAudit, InquiryAuditLogEntry } from "@/components/rbpc/PartnerInboxView";
 
@@ -408,6 +410,14 @@ export async function fetchInquiryStatusByToken(
       lastUpdatedAt?: string;
       created_at?: string;
       createdAt?: string;
+      email_opt_in?: boolean;
+      sms_opt_in?: boolean;
+      is_overdue?: boolean;
+      sla_due_at?: string | null;
+      can_escalate?: boolean;
+      escalated_at?: string | null;
+      escalation_reason?: string | null;
+      escalation_count?: number;
     }
 
     const res = await apiRequest<BackendInquiryStatusResponse>(
@@ -427,6 +437,14 @@ export async function fetchInquiryStatusByToken(
       partySize: res.partySize ?? res.party_size ?? null,
       lastUpdatedAt: res.lastUpdatedAt || res.last_updated_at || new Date().toISOString(),
       createdAt: res.createdAt || res.created_at,
+      emailOptIn: res.email_opt_in ?? true,
+      smsOptIn: res.sms_opt_in ?? false,
+      isOverdue: res.is_overdue ?? false,
+      slaDueAt: res.sla_due_at ?? null,
+      canEscalate: res.can_escalate ?? false,
+      escalatedAt: res.escalated_at ?? null,
+      escalationReason: res.escalation_reason ?? null,
+      escalationCount: res.escalation_count ?? 0,
     };
   } catch (error) {
     if (error instanceof InquiryNotFoundError) {
@@ -469,6 +487,144 @@ export async function fetchInquiryStatusByToken(
 
     throw new InquiryNotFoundError("Không tìm thấy hồ sơ với mã tra cứu này.");
   }
+}
+
+export async function updateInquiryNotificationPreferences(
+  opaqueToken: string,
+  payload: {
+    emailOptIn?: boolean;
+    smsOptIn?: boolean;
+    frequency?: string;
+  }
+): Promise<{
+  reference: string;
+  emailOptIn: boolean;
+  smsOptIn: boolean;
+  unsubscribed: boolean;
+  message: string;
+  updatedAt: string;
+}> {
+  const token = opaqueToken.trim();
+  if (!token) {
+    throw new InquiryNotFoundError("Mã tra cứu không được để trống.", { status: 400 });
+  }
+
+  interface BackendPrefOut {
+    reference: string;
+    email_opt_in: boolean;
+    sms_opt_in: boolean;
+    unsubscribed: boolean;
+    message: string;
+    updated_at: string;
+  }
+
+  const res = await apiRequest<BackendPrefOut>(
+    `/api/v1/rbpc/inquiries/status/${encodeURIComponent(token)}/preferences`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        email_opt_in: payload.emailOptIn,
+        sms_opt_in: payload.smsOptIn,
+        frequency: payload.frequency,
+      }),
+    }
+  );
+
+  return {
+    reference: res.reference,
+    emailOptIn: res.email_opt_in,
+    smsOptIn: res.sms_opt_in,
+    unsubscribed: res.unsubscribed,
+    message: res.message,
+    updatedAt: res.updated_at,
+  };
+}
+
+export async function unsubscribeInquiryNotifications(
+  opaqueToken: string
+): Promise<{
+  reference: string;
+  emailOptIn: boolean;
+  smsOptIn: boolean;
+  unsubscribed: boolean;
+  message: string;
+  updatedAt: string;
+}> {
+  const token = opaqueToken.trim();
+  if (!token) {
+    throw new InquiryNotFoundError("Mã tra cứu không được để trống.", { status: 400 });
+  }
+
+  interface BackendPrefOut {
+    reference: string;
+    email_opt_in: boolean;
+    sms_opt_in: boolean;
+    unsubscribed: boolean;
+    message: string;
+    updated_at: string;
+  }
+
+  const res = await apiRequest<BackendPrefOut>(
+    `/api/v1/rbpc/inquiries/status/${encodeURIComponent(token)}/unsubscribe`,
+    {
+      method: "POST",
+    }
+  );
+
+  return {
+    reference: res.reference,
+    emailOptIn: res.email_opt_in,
+    smsOptIn: res.sms_opt_in,
+    unsubscribed: res.unsubscribed,
+    message: res.message,
+    updatedAt: res.updated_at,
+  };
+}
+
+export async function escalateInquiryLateResponse(
+  opaqueToken: string,
+  reason?: string
+): Promise<{
+  reference: string;
+  status: InquiryStatus;
+  escalatedAt: string;
+  escalationCount: number;
+  slaOverdueSeconds: number;
+  message: string;
+  notificationDispatched: boolean;
+}> {
+  const token = opaqueToken.trim();
+  if (!token) {
+    throw new InquiryNotFoundError("Mã tra cứu không được để trống.", { status: 400 });
+  }
+
+  interface BackendEscOut {
+    reference: string;
+    status: InquiryStatus;
+    escalated_at: string;
+    escalation_count: number;
+    sla_overdue_seconds: number;
+    message: string;
+    notification_dispatched: boolean;
+  }
+
+  const res = await apiRequest<BackendEscOut>(
+    `/api/v1/rbpc/inquiries/status/${encodeURIComponent(token)}/escalate`,
+    {
+      method: "POST",
+      body: JSON.stringify({ reason: reason || null }),
+    }
+  );
+
+  return {
+    reference: res.reference,
+    status: res.status,
+    escalatedAt: res.escalated_at,
+    escalationCount: res.escalation_count,
+    slaOverdueSeconds: res.sla_overdue_seconds,
+    message: res.message,
+    notificationDispatched: res.notification_dispatched,
+  };
 }
 
 export interface FetchPartnerInquiriesOptions {
@@ -538,3 +694,93 @@ export async function updatePartnerInquiryStatusApi(
     },
   });
 }
+
+// ============================================================================
+// Verified Reviews & Disputes API Client (V5-T107)
+// ============================================================================
+
+export interface SubmitReviewPayload {
+  inquiry_token: string;
+  rating: number;
+  title: string;
+  comment: string;
+  author_display_name?: string;
+}
+
+export interface ReviewResponse {
+  id: string;
+  experience_id: string;
+  experience_slug?: string;
+  author_display_name: string;
+  rating: number;
+  title: string;
+  comment: string;
+  verified_completed: boolean;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ReviewListResponse {
+  items: ReviewResponse[];
+  total: number;
+  average_rating: number;
+}
+
+export async function submitCustomerReviewApi(
+  payload: SubmitReviewPayload
+): Promise<ReviewResponse> {
+  return await apiRequest<ReviewResponse>("/api/v1/rbpc/reviews", {
+    method: "POST",
+    body: payload,
+  });
+}
+
+export async function fetchExperienceReviewsApi(
+  slug: string
+): Promise<ReviewListResponse> {
+  return await apiRequest<ReviewListResponse>(
+    `/api/v1/rbpc/experiences/${encodeURIComponent(slug)}/reviews`
+  );
+}
+
+export async function fileReviewDisputeApi(
+  reviewId: string,
+  reason: string,
+  evidencePayload?: Record<string, unknown>
+): Promise<{ id: string; status: string; reason: string }> {
+  return await apiRequest<{ id: string; status: string; reason: string }>(
+    `/api/v1/rbpc/reviews/${encodeURIComponent(reviewId)}/dispute`,
+    {
+      method: "POST",
+      body: {
+        reason,
+        evidence_payload: evidencePayload || {},
+      },
+    }
+  );
+}
+
+// ============================================================================
+// Public Impact Metrics API Client (V5-T110)
+// ============================================================================
+
+export async function fetchImpactMetricsApi(): Promise<RbpcImpactMetricsOut> {
+  return await apiRequest<RbpcImpactMetricsOut>("/api/v1/rbpc/impact");
+}
+
+// ============================================================================
+// Curator-Controlled Story Recommendations Client (V5-T105)
+// ============================================================================
+
+export async function fetchCuratorStoryRecommendationsApi(
+  storySlug: string,
+  locale: string = "vi",
+  limit: number = 5
+): Promise<CuratorStoryRecommendationsResponse> {
+  return await apiRequest<CuratorStoryRecommendationsResponse>(
+    `/api/v1/rbpc/stories/${encodeURIComponent(storySlug)}/recommendations?locale=${encodeURIComponent(locale)}&limit=${limit}`
+  );
+}
+
+

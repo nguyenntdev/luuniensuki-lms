@@ -2950,6 +2950,23 @@ export function getHeritagePlaceDetail(slug: string): Promise<HeritagePlaceDetai
   );
 }
 
+export function getHeritagePlaceTrail(slug: string): Promise<any> {
+  return apiRequest<any>(
+    `/api/v1/heritage/places/${encodeURIComponent(slug)}/trail`
+  );
+}
+
+export function verifyHeritageTrailQR(payload: { qr_token: string; expected_site?: string }): Promise<any> {
+  return apiRequest<any>(
+    "/api/v1/heritage/trail/verify-qr",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    }
+  );
+}
+
 export function searchHeritagePlaces(
   query: string,
   limit: number = 20
