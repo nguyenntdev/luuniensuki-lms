@@ -1,0 +1,95 @@
+{
+  "ticket": "V5-T074",
+  "wave": "W07",
+  "slot": "A04",
+  "role": "W07-A04",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "goal": "P01/P02 legal source acquisition in backend/services/research_factory/",
+  "implementation_summary": {
+    "modules_created": [
+      "backend/services/research_factory/contracts.py",
+      "backend/services/research_factory/providers/base.py",
+      "backend/services/research_factory/providers/registry.py",
+      "backend/services/research_factory/discovery.py",
+      "backend/services/research_factory/acquisition.py"
+    ],
+    "modules_updated": [
+      "backend/services/research_factory/__init__.py"
+    ],
+    "test_suite": "tests/v5/test_v5_t074.py",
+    "features_delivered": [
+      "Provider connectors with rights/robots/licensing validation: Built BaseProviderConnector and ProviderRegistry supporting official heritage registries (UNESCO, MOWCAP, DSVH, Nom Foundation, National Museum, HMCC), open scholarly metadata (DOI, Crossref), with configurable rate limits, robots.txt policies, and domain allowlists.",
+      "Strict no-paywall-bypass enforcement: Detects subscription barriers on commercial academic publishers (JSTOR, Elsevier, Springer, etc.) and strictly rejects unauthorized scraper bypass attempts, bypass headers (X-Bypass-Paywall, X-Proxy-Scrape), and User-Agent spoofing (PaywallBypassError).",
+      "Robots.txt compliance: Evaluates paths against robots.txt rules and disallows scraping of restricted/private directories (RobotsDisallowedError).",
+      "Forbidden pirate & shadow domain blocking: Enforces explicit denylist blocking unauthorized pirated scan libraries and darkweb repositories (Sci-Hub, LibGen, pirated-scans.org) with ForbiddenDomainError.",
+      "Authority verification and anti-impersonation: Maps official institutions to canonical domains and detects suspicious personal blogs (blogspot, wordpress, etc.) spoofing museum identities (AuthorityImpersonationError).",
+      "Malware & document sanitization: Inspects payload magic bytes and rejects executable binaries (Windows PE MZ, Linux ELF, Shell script) disguised as PDFs or documents (MaliciousPayloadError).",
+      "Rights action matrix & negative abuse defense: Public domain and open licenses (CC0, CC-BY, CC-BY-SA, CC-BY-NC) cleared with display/derivative permissions; attempting to ingest full digital scans of copyrighted works without permission is strictly blocked (ForbiddenCopyrightedScanError) while bibliographic metadata citations are permitted with excerpt redaction (ALLOWED_METADATA_ONLY).",
+      "Strict rule - Unknown rights != granted: Ambiguous or unreviewed rights are strictly quarantined (QUARANTINED_PENDING_REVIEW) and blocked from database ingestion until cleared by human rights review.",
+      "P01 Candidate discovery & deduplication: Performs deterministic URL canonicalization (stripping UTM tracking and session queries), DOI and ISBN normalization, candidate intra-batch deduplication, and database deduplication against existing HistoricalSource records.",
+      "P02 Legal acquisition & database persistence: Persists approved sources into PostgreSQL HistoricalSource table idempotently with verification_status ('accessible' or 'rights_restricted'), deterministic SHA-256 checksums, and excerpts."
+    ]
+  },
+  "verification": {
+    "command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t074.py -v",
+    "result": "PASSED (11/11 tests)",
+    "test_details": [
+      {
+        "name": "test_provider_connectors_registry_and_policies",
+        "result": "PASSED",
+        "assertion": "Verifies built-in authorized connectors (UNESCO, MOWCAP, DSVH, Nom Foundation, National Museum, DOI, Crossref), domain extraction, and connector lookup."
+      },
+      {
+        "name": "test_robots_txt_compliance_enforced",
+        "result": "PASSED",
+        "assertion": "Verifies paths disallowed by robots.txt (/restricted/*) are deterministically blocked with RobotsDisallowedError."
+      },
+      {
+        "name": "test_negative_abuse_forbidden_copyrighted_scan_blocked",
+        "result": "PASSED",
+        "assertion": "Required negative abuse test: Attempting to acquire or ingest a full scanned PDF of an in-copyright book without license is strictly blocked with ForbiddenCopyrightedScanError, while metadata citation is allowed with excerpt redaction."
+      },
+      {
+        "name": "test_negative_abuse_paywall_bypass_blocked",
+        "result": "PASSED",
+        "assertion": "Verifies scraping behind paywalls or passing bypass evasion headers (X-Bypass-Paywall) or spoofed User-Agent is blocked with PaywallBypassError."
+      },
+      {
+        "name": "test_negative_abuse_forbidden_pirate_domain_blocked",
+        "result": "PASSED",
+        "assertion": "Verifies pirate scan repositories and shadow libraries (Sci-Hub, LibGen) are strictly blocked with ForbiddenDomainError."
+      },
+      {
+        "name": "test_negative_abuse_unapproved_source_quarantined",
+        "result": "PASSED",
+        "assertion": "Verifies sources from unapproved/unverified domains are quarantined with QUARANTINED_PENDING_REVIEW and blocked from DB ingestion."
+      },
+      {
+        "name": "test_negative_abuse_malicious_payload_sanitized",
+        "result": "PASSED",
+        "assertion": "Verifies executable binaries (PE MZ, ELF, shell script) or corrupt binaries masked as PDFs are rejected with MaliciousPayloadError."
+      },
+      {
+        "name": "test_negative_abuse_authority_impersonation_detected",
+        "result": "PASSED",
+        "assertion": "Verifies personal blogs spoofing official museum authority (Bảo tàng Lịch sử Quốc gia on blogspot.com) are detected and blocked with AuthorityImpersonationError."
+      },
+      {
+        "name": "test_unknown_rights_never_converted_to_granted",
+        "result": "PASSED",
+        "assertion": "Verifies ambiguous/unknown rights are strictly quarantined and never auto-granted."
+      },
+      {
+        "name": "test_p01_candidate_discovery_and_deduplication",
+        "result": "PASSED",
+        "assertion": "Verifies URL canonicalization (stripping tracking params), DOI/ISBN normalization, and batch deduplication."
+      },
+      {
+        "name": "test_p02_source_acquisition_and_db_ingestion_idempotency",
+        "result": "PASSED",
+        "assertion": "Verifies ingestion of approved sources into HistoricalSource, SHA-256 checksumming, and idempotent re-ingestion."
+      }
+    ]
+  }
+}

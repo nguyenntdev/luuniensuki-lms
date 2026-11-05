@@ -1,0 +1,40 @@
+{
+  "ticket": "V5-T080",
+  "wave": "W07",
+  "slot": "A10",
+  "role": "W07-A10",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "goal": "Research factory chaos/e2e testing.",
+  "implementation_summary": {
+    "modules_created_or_updated": [
+      "tests/v5/test_v5_t080.py",
+      "backend/services/research_factory/concurrency.py",
+      "backend/services/research_factory/wave_dispatcher.py",
+      "backend/services/research_factory/leasing.py",
+      "backend/services/research_factory/__init__.py",
+      "backend/research_factory_models.py",
+      "tests/v5/conftest.py"
+    ],
+    "test_suite": "tests/v5/test_v5_t080.py",
+    "features_delivered": [
+      "True concurrency overlap (10 workers): synchronized thread barrier coordinates exactly 10 worker threads leasing and executing distinct slots simultaneously; measured by sweep-line algorithm (measure_overlapping_tasks) with observed_peak >= 10",
+      "Provider rate limit caps (max 5): 10 concurrent worker threads making external AI/OCR calls are strictly constrained to <= 5 simultaneous active allocations via ProviderConcurrencyConfig and ProviderSemaphoreLease",
+      "Lease expiry and resilient worker recovery: crashed worker tasks (expired lease_until) are reclaimed by recovery workers with incremented attempt numbers and new lease tokens, while zombie worker commits with stale tokens are rejected with LeaseLostError",
+      "Duplicate job deduplication: idempotent phase wave re-dispatching returns existing 10 jobs without duplicate database rows or constraint violations",
+      "Ingestion prompt injection neutralization: untrusted source text containing instruction overrides, system extractions, boundary breakouts, and hidden unicode control characters are sanitized and neutralized",
+      "Source rights revocation publication gate: revoked historical sources (rights_status='revoked' or public_display_allowed=False) immediately fail closed in CDN distribution policy (AssetRightsRevokedError) and domain governance",
+      "Negative abuse invariant: observed_peak exact; '10 concurrent' label is strictly rejected when measured peak is < 10 (e.g. 9 or 1), verified via validate_concurrency_invariant and ConcurrencyMeasurementError",
+      "State machine and cancellation safety: canceled runs revoke active leases and block subsequent phase wave dispatches with InvalidPhaseStateError",
+      "Persistence resilience: research runs, phases, jobs, attempts, and evidence records survive session close and database reconnections without data loss"
+    ]
+  },
+  "verification": {
+    "command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t080.py -v",
+    "result": "PASSED (9/9 tests passed in 5.76s)",
+    "suite_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t071.py tests/v5/test_v5_t072.py tests/v5/test_v5_t073.py tests/v5/test_v5_t074.py tests/v5/test_v5_t077.py tests/v5/test_v5_t080.py -v",
+    "suite_result": "PASSED (61/61 tests passed in 13.68s)",
+    "negative_test_status": "PASSED (test_negative_abuse_observed_peak_exact_10_label_only_when_measured and test_negative_abuse_persistence_across_session_restart passed)"
+  },
+  "status": "COMPLETED"
+}

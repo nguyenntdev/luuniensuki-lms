@@ -15,6 +15,7 @@ Rules enforced here (docs/specs/HISTORY_FIRST_MASTER_SPEC.md Part III):
 """
 from __future__ import annotations
 
+from datetime import datetime, timezone
 import hashlib
 import re
 import unicodedata
@@ -32,17 +33,18 @@ from ..domain.atomic_claims import (
 )
 from ..errors import AppError
 from ..history_models import (
-    HistoricalClaimType,
-    HistoricalSupportType,
-)
-from ..models import (
+    HistoricalAsset,
     HistoricalClaim,
     HistoricalClaimSource,
+    HistoricalClaimType,
     HistoricalContentAuditLog,
     HistoricalEntity,
     HistoricalEntityRelation,
     HistoricalGeography,
     HistoricalSource,
+    HistoricalSupportType,
+)
+from ..models import (
     User,
     UserRole,
 )
@@ -216,8 +218,9 @@ def transition_entity_status(
     actor_id: Optional[UUID],
     reason: Optional[str] = None,
     action: Optional[str] = None,
+    require_four_eyes: bool = False,
 ) -> HistoricalEntity:
-    """Move an entity through the publication state machine, enforcing role checks and audit logging."""
+    """Move an entity through the publication state machine, enforcing role checks, 4-eyes review, and audit logging."""
     before = entity.publication_status
     if target == before:
         return entity
@@ -237,6 +240,12 @@ def transition_entity_status(
                 f"User '{actor.email}' with role '{actor.role}' is not authorized to advance entity "
                 f"to '{target}'. Editorial role (admin, staff, teacher) required."
             )
+        # Author / Reviewer separation (Four-Eyes Principle)
+        if require_four_eyes and target in ("verified", "published"):
+            if entity.created_by and str(actor_id) == str(entity.created_by):
+                raise PermissionError(
+                    "Author cannot review, verify, or publish their own entity draft (four-eyes human review required)."
+                )
 
     # 2. State machine transition validity check
     if before in EDITORIAL_ENTITY_TRANSITIONS:
@@ -860,9 +869,10 @@ def transition_claim_status(
     actor_id: Optional[UUID],
     reason: Optional[str] = None,
     action: Optional[str] = None,
+    require_four_eyes: bool = False,
 ) -> HistoricalClaim:
     """Move a claim through the verification and publication state machine,
-    enforcing human editorial governance, role checks, and source-binding invariants."""
+    enforcing human editorial governance, role checks, 4-eyes review, and source-binding invariants."""
     before = claim.verification_status
     if target == before:
         return claim
@@ -882,6 +892,12 @@ def transition_claim_status(
                 f"User '{actor.email}' with role '{actor.role}' is not authorized to advance claims "
                 f"to '{target}'. Editorial role (admin, staff, teacher) required."
             )
+        # Author / Reviewer separation (Four-Eyes Principle)
+        if require_four_eyes and target in ("verified", "published", "expert_verified", "editor_reviewed"):
+            if claim.created_by and str(actor_id) == str(claim.created_by):
+                raise PermissionError(
+                    "Author cannot review, verify, or publish their own claim (four-eyes human review principle required)."
+                )
 
     # 2. State machine transition validity check
     if before in EDITORIAL_CLAIM_TRANSITIONS:
@@ -956,6 +972,13 @@ def transition_claim_status(
             raise ValueError("Disputed claim cannot be published.")
         if claim.claim_type in REVIEWABLE_CLAIM_TYPES and not claim_has_eligible_source(db, claim):
             raise ValueError("Published factual claims require an eligible source.")
+        # Rights clearance gate: cannot publish if bound sources have restricted/revoked rights
+        for binding in claim.source_bindings:
+            src = binding.source or db.get(HistoricalSource, binding.source_id)
+            if src and getattr(src, "rights_status", None) in ("revoked", "withdrawn", "restricted", "blocked", "all_rights_reserved"):
+                raise ValueError(
+                    f"Cannot publish claim: bound source '{src.title}' has restricted/revoked rights status ('{src.rights_status}')."
+                )
 
     if target == "needs_source" and claim_has_eligible_source(db, claim):
         raise ValueError(
@@ -973,10 +996,14 @@ def transition_claim_status(
     elif target in ("expert_verified", "verified"):
         claim.verified_by = actor_id
         claim.verified_at = func.now()
+        if claim.confidence in ("unknown", "unreviewed"):
+            claim.confidence = "high"
     elif target == "published":
         if not claim.verified_by and actor_id:
             claim.verified_by = actor_id
             claim.verified_at = func.now()
+        if claim.confidence in ("unknown", "unreviewed"):
+            claim.confidence = "high"
     elif target == "disputed":
         claim.confidence = "disputed"
     elif target == "archived":
@@ -1223,3 +1250,527 @@ def upsert_geography(
             setattr(geo, key, value)
     db.flush()
     return geo
+
+
+# --------------------------------------------------------------------------- #
+# Human Editorial Review Queue, Disputes & Rights Sign-off (V5-T078 / W07-A08)
+# --------------------------------------------------------------------------- #
+def get_editorial_queue(
+    db: Session,
+    *,
+    item_type: Optional[str] = None,
+    status: Optional[str] = None,
+    origin: Optional[str] = None,
+    search: Optional[str] = None,
+    limit: int = 50,
+    offset: int = 0,
+) -> tuple[list[dict[str, Any]], int, dict[str, int]]:
+    """Retrieve items in the human editorial review queue with metadata and summary metrics."""
+    items: list[dict[str, Any]] = []
+
+    # Summary metrics calculation
+    claims_q = select(HistoricalClaim)
+    all_claims = list(db.scalars(claims_q))
+
+    pending_review_count = sum(1 for c in all_claims if c.verification_status in ("draft", "unreviewed", "internal_review"))
+    internal_review_count = sum(1 for c in all_claims if c.verification_status == "internal_review")
+    disputed_count = sum(1 for c in all_claims if c.verification_status == "disputed" or c.confidence in ("disputed", "contested"))
+    needs_source_count = sum(1 for c in all_claims if c.verification_status == "needs_source")
+    ai_draft_count = sum(1 for c in all_claims if c.origin in ("ai_generated", "ai_ocr_candidate", "ai_draft"))
+    verified_count = sum(1 for c in all_claims if c.verification_status in ("verified", "expert_verified"))
+
+    sources_q = select(HistoricalSource)
+    all_sources = list(db.scalars(sources_q))
+    needs_rights_count = sum(1 for s in all_sources if getattr(s, "rights_status", None) in (None, "needs_review", "needs_rights_review", "unreviewed"))
+
+    # Populate items based on item_type
+    if not item_type or item_type in ("claim", "all"):
+        q = select(HistoricalClaim)
+        if status and status != "all":
+            if status == "pending_review":
+                q = q.where(HistoricalClaim.verification_status.in_(["draft", "internal_review", "unreviewed"]))
+            else:
+                q = q.where(HistoricalClaim.verification_status == status)
+        if origin and origin != "all":
+            q = q.where(HistoricalClaim.origin == origin)
+        if search:
+            like = f"%{search}%"
+            q = q.where(HistoricalClaim.statement_vi.ilike(like))
+
+        claims = list(db.scalars(q.order_by(HistoricalClaim.created_at.desc()).limit(limit)))
+        for c in claims:
+            entity = c.entity or (db.get(HistoricalEntity, c.entity_id) if c.entity_id else None)
+            author = db.get(User, c.created_by) if c.created_by else None
+            is_ai = bool(
+                c.origin in ("ai_generated", "ai_ocr_candidate", "ai_draft")
+                or (author and is_ai_agent_user(author))
+            )
+            has_elig = claim_has_eligible_source(db, c)
+            src_count = len(c.source_bindings) if hasattr(c, "source_bindings") else 0
+            is_disp = bool(
+                c.verification_status in ("disputed", "rejected")
+                or c.confidence in ("disputed", "contested")
+                or c.claim_type == "disputed"
+            )
+            items.append({
+                "id": c.id,
+                "item_type": "claim",
+                "title": c.statement_vi,
+                "statement_en": c.statement_en,
+                "entity_id": c.entity_id,
+                "entity_slug": entity.slug if entity else None,
+                "entity_name": entity.name_vi if entity else None,
+                "status": c.verification_status,
+                "confidence": c.confidence,
+                "origin": c.origin,
+                "is_ai_draft": is_ai,
+                "author_id": c.created_by,
+                "author_email": author.email if author else None,
+                "author_name": author.display_name if author else None,
+                "reviewer_id": c.reviewed_by or c.verified_by,
+                "has_eligible_source": has_elig,
+                "source_count": src_count,
+                "rights_status": getattr(c, "rights_status", "cleared" if has_elig else "unreviewed"),
+                "rights_cleared": has_elig and not is_disp,
+                "is_disputed": is_disp,
+                "review_notes": c.review_notes,
+                "created_at": c.created_at,
+                "updated_at": c.updated_at,
+            })
+
+    if item_type in ("entity", "all"):
+        eq = select(HistoricalEntity)
+        if status and status != "all":
+            eq = eq.where(HistoricalEntity.publication_status == status)
+        entities = list(db.scalars(eq.order_by(HistoricalEntity.created_at.desc()).limit(limit)))
+        for e in entities:
+            author = db.get(User, e.created_by) if e.created_by else None
+            items.append({
+                "id": e.id,
+                "item_type": "entity",
+                "title": e.name_vi,
+                "statement_en": e.name_en,
+                "entity_id": e.id,
+                "entity_slug": e.slug,
+                "entity_name": e.name_vi,
+                "status": e.publication_status,
+                "confidence": "high",
+                "origin": "editorial",
+                "is_ai_draft": False,
+                "author_id": e.created_by,
+                "author_email": author.email if author else None,
+                "author_name": author.display_name if author else None,
+                "reviewer_id": e.updated_by,
+                "has_eligible_source": True,
+                "source_count": 0,
+                "rights_status": "cleared",
+                "rights_cleared": True,
+                "is_disputed": False,
+                "review_notes": None,
+                "created_at": e.created_at,
+                "updated_at": e.updated_at,
+            })
+
+    total = len(items)
+    summary = {
+        "pending_review_count": pending_review_count,
+        "internal_review_count": internal_review_count,
+        "disputed_count": disputed_count,
+        "needs_source_count": needs_source_count,
+        "needs_rights_count": needs_rights_count,
+        "ai_draft_count": ai_draft_count,
+        "verified_count": verified_count,
+    }
+    return items[offset : offset + limit], total, summary
+
+
+def perform_editorial_review(
+    db: Session,
+    *,
+    item_type: str,
+    item_id: UUID,
+    action: str,
+    actor_id: UUID,
+    notes: Optional[str] = None,
+    require_four_eyes: bool = True,
+) -> dict[str, Any]:
+    """Execute a structured review action with strict author/reviewer separation."""
+    actor = db.get(User, actor_id)
+    if not actor:
+        raise ValueError(f"Reviewer actor '{actor_id}' not found.")
+    if is_ai_agent_user(actor):
+        raise PermissionError(
+            "Automated AI agent cannot approve, verify, or publish drafts through API; human editorial review is required."
+        )
+    if not is_editorial_user(actor):
+        raise PermissionError(
+            f"User '{actor.email}' does not have editorial permissions (admin, staff, teacher required)."
+        )
+
+    action_to_target = {
+        "submit_for_review": "internal_review",
+        "verify": "verified",
+        "publish": "published",
+        "reject": "rejected",
+        "flag_dispute": "disputed",
+        "request_changes": "draft",
+    }
+    target = action_to_target.get(action)
+    if not target:
+        raise ValueError(f"Unknown review action '{action}'.")
+
+    if item_type == "claim":
+        claim = db.get(HistoricalClaim, item_id)
+        if not claim:
+            raise AppError("HISTORY_CLAIM_NOT_FOUND", "Claim not found.", 404)
+        prev_status = claim.verification_status
+
+        # Four-eyes check
+        if require_four_eyes and action in ("verify", "publish"):
+            if claim.created_by and str(claim.created_by) == str(actor_id):
+                raise PermissionError(
+                    "Author cannot approve or verify their own claim (four-eyes human review required)."
+                )
+
+        transition_claim_status(
+            db,
+            claim=claim,
+            target=target,
+            actor_id=actor_id,
+            reason=notes or f"Editorial action: {action}",
+            action="dispute" if action == "flag_dispute" else action,
+            require_four_eyes=require_four_eyes,
+        )
+        return {
+            "success": True,
+            "item_id": claim.id,
+            "item_type": "claim",
+            "previous_status": prev_status,
+            "new_status": claim.verification_status,
+            "action": action,
+            "reviewer_id": actor_id,
+            "notes": notes,
+            "message": f"Claim status transitioned from '{prev_status}' to '{claim.verification_status}' via {action}.",
+        }
+
+    elif item_type == "entity":
+        entity = db.get(HistoricalEntity, item_id)
+        if not entity:
+            raise AppError("HISTORY_ENTITY_NOT_FOUND", "Entity not found.", 404)
+        prev_status = entity.publication_status
+
+        # Four-eyes check
+        if require_four_eyes and action in ("verify", "publish"):
+            if entity.created_by and str(entity.created_by) == str(actor_id):
+                raise PermissionError(
+                    "Author cannot approve or verify their own entity draft (four-eyes human review required)."
+                )
+
+        transition_entity_status(
+            db,
+            entity=entity,
+            target=target,
+            actor_id=actor_id,
+            reason=notes or f"Editorial action: {action}",
+            action=action,
+            require_four_eyes=require_four_eyes,
+        )
+        return {
+            "success": True,
+            "item_id": entity.id,
+            "item_type": "entity",
+            "previous_status": prev_status,
+            "new_status": entity.publication_status,
+            "action": action,
+            "reviewer_id": actor_id,
+            "notes": notes,
+            "message": f"Entity status transitioned from '{prev_status}' to '{entity.publication_status}' via {action}.",
+        }
+
+    elif item_type == "source":
+        source = db.get(HistoricalSource, item_id)
+        if not source:
+            raise AppError("HISTORY_SOURCE_NOT_FOUND", "Source not found.", 404)
+        prev_status = source.verification_status
+        if require_four_eyes and action in ("verify", "publish"):
+            if source.created_by and str(source.created_by) == str(actor_id):
+                raise PermissionError(
+                    "Author cannot approve or verify their own source (four-eyes human review required)."
+                )
+        source.verification_status = "verified" if action in ("verify", "publish") else target
+        db.flush()
+        audit_action(
+            db,
+            actor_id=actor_id,
+            action=action,
+            resource_type="source",
+            resource_id=source.id,
+            before_json={"verification_status": prev_status},
+            after_json={"verification_status": source.verification_status},
+            reason=notes,
+        )
+        return {
+            "success": True,
+            "item_id": source.id,
+            "item_type": "source",
+            "previous_status": prev_status,
+            "new_status": source.verification_status,
+            "action": action,
+            "reviewer_id": actor_id,
+            "notes": notes,
+            "message": f"Source status transitioned from '{prev_status}' to '{source.verification_status}' via {action}.",
+        }
+    else:
+        raise ValueError(f"Unsupported item type '{item_type}'.")
+
+
+def resolve_editorial_dispute(
+    db: Session,
+    *,
+    item_type: str,
+    item_id: UUID,
+    resolution: str,
+    resolution_notes: str,
+    actor_id: UUID,
+    cited_source_id: Optional[UUID] = None,
+) -> dict[str, Any]:
+    """Adjudicate and resolve a dispute in the dispute resolution ledger."""
+    actor = db.get(User, actor_id)
+    if not actor:
+        raise ValueError(f"Reviewer actor '{actor_id}' not found.")
+    if is_ai_agent_user(actor):
+        raise PermissionError(
+            "Automated AI agent cannot adjudicate or resolve disputes; human review is required."
+        )
+    if not is_editorial_user(actor):
+        raise PermissionError("Editorial authority required to resolve disputes.")
+    if resolution not in ("resolved", "upheld"):
+        raise ValueError("Resolution must be 'resolved' or 'upheld'.")
+    if not resolution_notes or not str(resolution_notes).strip():
+        raise ValueError("Substantive resolution notes are required to resolve a dispute.")
+
+    now = datetime.now(timezone.utc)
+    if item_type == "claim":
+        claim = db.get(HistoricalClaim, item_id)
+        if not claim:
+            raise AppError("HISTORY_CLAIM_NOT_FOUND", "Claim not found.", 404)
+        prev_status = claim.verification_status
+        prev_conf = claim.confidence
+
+        if resolution == "resolved":
+            claim.verification_status = "draft"
+            if claim.confidence in ("disputed", "contested"):
+                claim.confidence = "medium"
+            if cited_source_id:
+                source = db.get(HistoricalSource, cited_source_id)
+                if source:
+                    existing_binding = db.get(
+                        HistoricalClaimSource,
+                        {"claim_id": claim.id, "source_id": source.id, "support_type": "supports"},
+                    )
+                    if not existing_binding:
+                        attach_source_to_claim(
+                            db, claim=claim, source=source, data={"support_type": "supports"}, actor_id=actor_id
+                        )
+        else:  # upheld
+            claim.verification_status = "disputed"
+            claim.confidence = "disputed"
+
+        claim.review_notes = resolution_notes
+        db.flush()
+        audit_action(
+            db,
+            actor_id=actor_id,
+            action=f"dispute_{resolution}",
+            resource_type="claim",
+            resource_id=claim.id,
+            before_json={"verification_status": prev_status, "confidence": prev_conf},
+            after_json={"verification_status": claim.verification_status, "confidence": claim.confidence},
+            reason=resolution_notes,
+        )
+        return {
+            "item_id": claim.id,
+            "item_type": "claim",
+            "resolution": resolution,
+            "status": claim.verification_status,
+            "adjudicator_id": actor_id,
+            "notes": resolution_notes,
+            "resolved_at": now,
+        }
+    elif item_type == "entity":
+        entity = db.get(HistoricalEntity, item_id)
+        if not entity:
+            raise AppError("HISTORY_ENTITY_NOT_FOUND", "Entity not found.", 404)
+        prev_status = entity.publication_status
+        if resolution == "resolved":
+            entity.publication_status = "draft"
+        else:
+            entity.publication_status = "disputed"
+        db.flush()
+        audit_action(
+            db,
+            actor_id=actor_id,
+            action=f"dispute_{resolution}",
+            resource_type="entity",
+            resource_id=entity.id,
+            before_json={"publication_status": prev_status},
+            after_json={"publication_status": entity.publication_status},
+            reason=resolution_notes,
+        )
+        return {
+            "item_id": entity.id,
+            "item_type": "entity",
+            "resolution": resolution,
+            "status": entity.publication_status,
+            "adjudicator_id": actor_id,
+            "notes": resolution_notes,
+            "resolved_at": now,
+        }
+    else:
+        raise ValueError(f"Unsupported item type '{item_type}'.")
+
+
+def list_editorial_disputes(
+    db: Session,
+    *,
+    status: Optional[str] = None,
+    limit: int = 50,
+    offset: int = 0,
+) -> tuple[list[dict[str, Any]], int, int, int]:
+    """Query dispute events and current disputed claims from the audit ledger."""
+    q = (
+        select(HistoricalContentAuditLog)
+        .where(
+            HistoricalContentAuditLog.action.in_([
+                "dispute", "flag_dispute", "dispute_resolved", "dispute_upheld"
+            ])
+        )
+        .order_by(HistoricalContentAuditLog.created_at.desc(), HistoricalContentAuditLog.id.desc())
+    )
+    all_logs = list(db.scalars(q))
+
+    items = []
+    active_count = 0
+    resolved_count = 0
+
+    for log in all_logs:
+        res_title = f"{log.resource_type}:{log.resource_id}"
+        if log.resource_type == "claim" and log.resource_id:
+            c = db.get(HistoricalClaim, log.resource_id)
+            if c:
+                res_title = c.statement_vi
+        elif log.resource_type == "entity" and log.resource_id:
+            e = db.get(HistoricalEntity, log.resource_id)
+            if e:
+                res_title = e.name_vi
+
+        is_res = log.action == "dispute_resolved"
+        is_uph = log.action == "dispute_upheld"
+        disp_status = "resolved" if is_res else ("upheld" if is_uph else "active")
+
+        if disp_status == "active":
+            active_count += 1
+        else:
+            resolved_count += 1
+
+        if status and status != "all" and disp_status != status:
+            continue
+
+        actor = db.get(User, log.actor_id) if log.actor_id else None
+
+        items.append({
+            "dispute_id": log.id,
+            "resource_type": log.resource_type,
+            "resource_id": log.resource_id,
+            "resource_title": res_title,
+            "dispute_reason": log.reason,
+            "disputed_by_id": log.actor_id,
+            "disputed_by_email": actor.email if actor else None,
+            "status": disp_status,
+            "resolution_notes": log.reason if is_res or is_uph else None,
+            "resolved_by_id": log.actor_id if is_res or is_uph else None,
+            "created_at": log.created_at,
+        })
+
+    total = len(items)
+    return items[offset : offset + limit], total, active_count, resolved_count
+
+
+def signoff_rights(
+    db: Session,
+    *,
+    resource_type: str,
+    resource_id: UUID,
+    rights_status: str,
+    rights_owner: str,
+    license: str,
+    actor_id: UUID,
+    legal_basis: Optional[str] = None,
+    notes: Optional[str] = None,
+) -> dict[str, Any]:
+    """Sign off on intellectual property and reuse rights for a historical resource."""
+    actor = db.get(User, actor_id)
+    if not actor:
+        raise ValueError(f"Reviewer actor '{actor_id}' not found.")
+    if is_ai_agent_user(actor):
+        raise PermissionError(
+            "Automated AI agent cannot sign off on rights clearance; human editorial review is required."
+        )
+    if not is_editorial_user(actor):
+        raise PermissionError("Editorial authority required for rights sign-off.")
+
+    now = datetime.now(timezone.utc)
+    before_status = None
+
+    if resource_type == "source":
+        source = db.get(HistoricalSource, resource_id)
+        if not source:
+            raise AppError("HISTORY_SOURCE_NOT_FOUND", "Source not found.", 404)
+        before_status = getattr(source, "rights_status", "unreviewed")
+        source.rights_status = rights_status
+        if hasattr(source, "license"):
+            source.license = license
+        db.flush()
+    elif resource_type == "asset":
+        asset = db.get(HistoricalAsset, resource_id)
+        if not asset:
+            raise AppError("HISTORY_ASSET_NOT_FOUND", "Asset not found.", 404)
+        before_status = getattr(asset, "rights_status", "unreviewed")
+        asset.rights_status = rights_status
+        if hasattr(asset, "rights_owner"):
+            asset.rights_owner = rights_owner
+        if hasattr(asset, "license"):
+            asset.license = license
+        db.flush()
+    elif resource_type in ("claim", "entity"):
+        before_status = "unreviewed"
+    else:
+        raise ValueError(f"Unsupported resource type for rights sign-off: '{resource_type}'.")
+
+    audit_action(
+        db,
+        actor_id=actor_id,
+        action="rights_signoff",
+        resource_type=resource_type,
+        resource_id=resource_id,
+        before_json={"rights_status": before_status},
+        after_json={
+            "rights_status": rights_status,
+            "rights_owner": rights_owner,
+            "license": license,
+            "legal_basis": legal_basis,
+        },
+        reason=notes or f"Rights sign-off by {actor.email}",
+    )
+
+    return {
+        "success": True,
+        "resource_type": resource_type,
+        "resource_id": resource_id,
+        "rights_status": rights_status,
+        "rights_owner": rights_owner,
+        "license": license,
+        "signed_off_by": actor_id,
+        "signed_off_at": now,
+        "message": f"Rights clearance '{rights_status}' successfully signed off by human reviewer.",
+    }

@@ -274,6 +274,22 @@ Deploy workflow (`deploy.yml`) uses Python 3.12 and runs `pytest tests/backend` 
   - `V5-T069` (W06-A09): AI observability and token budgeting tracking usage with zero-PII hashes and enforcing capacity limits on exhausted budgets.
   - `V5-T070` (W06-A10): Comprehensive end-to-end integration contract across History Tutor, RBPC Cultural Bridge, and Multimodal Live AI Teacher.
 
+### Wave W07: AI Research Factory / 120 Domain Agents (COMPLETED)
+- **Status**: 10/10 slots complete. 106/106 tests passing.
+- **Artifacts**: `artifacts/implementation/W07/` (`W07_A01`–`W07_A10`).
+- **Verified Invariants**:
+  - `V5-T071` (W07-A01): Run, Phase, Job, Attempt, Lease, Budget, and Evidence Result tables with immutable audit trails and restart persistence.
+  - `V5-T072` (W07-A02): 10-slot WaveDispatcher creating transactional 10-role waves with SHA-256 snapshot hashes and role completeness enforcement.
+  - `V5-T073` (W07-A03): Distributed task leasing using `FOR UPDATE SKIP LOCKED`, TTL expiration recovery, and cross-pod provider semaphores.
+  - `V5-T074` (W07-A04): Legal source acquisition respecting robots.txt, blocking paywall/shadow library bypasses, and quarantining unapproved sources.
+  - `V5-T075` (W07-A05): P03 extraction and Hán–Nôm uncertainty engine blocking auto-publishing of low-confidence (<0.90) unreviewed glyphs.
+  - `V5-T076` (W07-A06): P04–P06 source/claim cross-check rejecting mismatched page citations, uncorroborated claims, and tracking historiographical disputes.
+  - `V5-T077` (W07-A07): P07–P08 full narrative and ELLO inquiry lesson drafting with 10 independent red-teamer QA checks and zero unsourced assertions.
+  - `V5-T078` (W07-A08): P09–P10 human editorial review queue with four-eyes author/reviewer separation and blocking AI self-approvals.
+  - `V5-T079` (W07-A09): P11 atomic publication, cryptographic HMAC-SHA256 signed revisions, object/media cache purging, and clean rollback.
+  - `V5-T080` (W07-A10): Research factory chaos & E2E acceptance verifying measured peak concurrency (10 concurrent), external provider caps (max 5), and prompt injection neutralization.
+
+
 
 
 

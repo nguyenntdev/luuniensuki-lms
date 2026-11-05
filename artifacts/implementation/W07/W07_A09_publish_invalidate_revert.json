@@ -1,0 +1,110 @@
+{
+  "ticket_id": "V5-T079",
+  "wave": "W07",
+  "slot": "W07-A09",
+  "role": "W07-A09",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "goal": "P11 publish, invalidate and revert in backend/services/research_factory/ and backend/routers/.",
+  "status": "COMPLETED",
+  "timestamp": "2026-11-05T03:00:00Z",
+  "summary": "Completed production implementation of Phase P11 release management in the AI Research Factory. Built two-phase preflight validation against publication gates, immutable snapshot creation with cryptographic HMAC-SHA256 signed revisions, atomic database publication pointer swap, comprehensive object & media cache purging, granular invalidation/retraction of expired sources or disputed claims, and emergency atomic rollback capabilities. Fully verified CONC-009 negative abuse protection: catastrophic mid-release failures cleanly abort the transaction, guaranteeing zero half-published stories or dangling unlinked objects.",
+  "code_boundaries": {
+    "service_module": "backend/services/research_factory/releases.py",
+    "router_module": "backend/routers/research_factory.py",
+    "schema_module": "backend/apischemas/research_factory.py",
+    "persistence_models": "backend/research_factory_models.py",
+    "alembic_migration": "migrations/versions/0071_research_publication_releases.py",
+    "integration_test": "tests/v5/test_v5_t079.py"
+  },
+  "endpoints_implemented": [
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/research-factory/releases/preflight",
+      "description": "Two-phase preflight gate check across editorial approval, claim corroboration, rights clearance, and 2D rubbing fallbacks."
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/research-factory/releases",
+      "description": "Atomic creation of frozen snapshot, HMAC-SHA256 signed revision, story status swap, and cache purging."
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/research-factory/releases/active",
+      "description": "Lookup currently active published release for a given content scope."
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/research-factory/releases/{release_id}",
+      "description": "Fetch release manifest, signed revision, and full snapshot payload."
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/research-factory/releases/{release_id}/invalidate",
+      "description": "P11 watcher invalidation protocol for rights expiration, scholarly disputes, or 404 broken links."
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/research-factory/releases/{release_id}/rollback",
+      "description": "Atomically revert publication release to prior approved version or demote to internal review, invalidating CDN caches."
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/research-factory/releases/{release_id}/audit",
+      "description": "Audited ledger of correction events and cache purge records."
+    }
+  ],
+  "invariants_verified": {
+    "preflight_gates": "Enforces strict validation before publication: blocks unreviewed 'draft' stories, blocks disputed claims ('disputed', 'needs_source'), blocks revoked sources (rights_status='revoked'), and ensures all 3D assets have verified 2D rubbing fallbacks.",
+    "atomic_snapshot_and_signing": "Frozen immutable snapshot payload computed with canonical JSON serialization and SHA-256 manifest digest. Signed revision bound to manifest_sha256, release_code, and signer identity using HMAC-SHA256 constant-time verification.",
+    "negative_abuse_conc009": "Failure mid-release cannot show half-published stories or dangling unlinked objects. Simulated or unexpected exceptions during the release transaction immediately revert all story mutations and discard the uncommitted release; unauthenticated requests return 404.",
+    "tamper_detection": "Modifying any byte of the manifest SHA, release code, or signer identity causes constant-time signature verification to fail deterministically.",
+    "invalidation_retraction": "P11 invalidation immediately demotes stories to 'archived', claims to 'disputed', and marks revoked sources; registers append-only ResearchCorrectionEvent and purges CDN caches.",
+    "atomic_rollback": "Emergency rollback marks release as ROLLED_BACK, restores previous version's snapshot if provided, purges stale caches, and prevents duplicate rollback attempts with HTTP 409 Conflict.",
+    "cache_purge_engine": "Registers ResearchCachePurgeEvent for story slugs, entity keys, and core listing routes, alongside AssetCacheRevocation entries for immediate CDN and proxy purging.",
+    "role_based_access_control": "Requires staff or admin permissions; learners and unauthenticated callers receive 403 Forbidden and 401 Unauthorized."
+  },
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t079.py -v",
+    "tests_total": 7,
+    "tests_passed": 7,
+    "tests_failed": 0,
+    "test_cases": [
+      {
+        "name": "test_preflight_validation_gates_and_blockers",
+        "result": "PASSED",
+        "description": "Preflight must block unreviewed draft content, disputed claims, and revoked sources."
+      },
+      {
+        "name": "test_atomic_publication_and_cryptographic_signed_revision",
+        "result": "PASSED",
+        "description": "Atomic publication creates frozen snapshot, valid HMAC signature, and purges caches."
+      },
+      {
+        "name": "test_negative_abuse_mid_release_failure_clean_rollback_conc009",
+        "result": "PASSED",
+        "description": "Failure mid-release MUST cleanly roll back; no half-published stories or dangling records (CONC-009)."
+      },
+      {
+        "name": "test_cryptographic_signature_tamper_detection",
+        "result": "PASSED",
+        "description": "Tampering with manifest digest, release code, or signature is detected deterministically."
+      },
+      {
+        "name": "test_invalidation_and_retraction_protocol",
+        "result": "PASSED",
+        "description": "Invalidating a story removes it from public view, logs a correction event, and purges caches."
+      },
+      {
+        "name": "test_atomic_rollback_to_prior_approved_release",
+        "result": "PASSED",
+        "description": "Rollback restores prior release state, marks flawed release ROLLED_BACK, and rejects replay."
+      },
+      {
+        "name": "test_api_endpoints_idempotency_and_rbac",
+        "result": "PASSED",
+        "description": "Admin API endpoints enforce RBAC (403 for learners) and conflict handling (409)."
+      }
+    ]
+  }
+}

@@ -7521,6 +7521,738 @@
         "title": "DueCardsOut",
         "type": "object"
       },
+      "EditorialDisputeItemOut": {
+        "properties": {
+          "created_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "dispute_id": {
+            "title": "Dispute Id",
+            "type": "integer"
+          },
+          "dispute_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dispute Reason"
+          },
+          "disputed_by_email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disputed By Email"
+          },
+          "disputed_by_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disputed By Id"
+          },
+          "resolution_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resolution Notes"
+          },
+          "resolved_by_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resolved By Id"
+          },
+          "resource_id": {
+            "format": "uuid",
+            "title": "Resource Id",
+            "type": "string"
+          },
+          "resource_title": {
+            "title": "Resource Title",
+            "type": "string"
+          },
+          "resource_type": {
+            "title": "Resource Type",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dispute_id",
+          "resource_type",
+          "resource_id",
+          "resource_title",
+          "status"
+        ],
+        "title": "EditorialDisputeItemOut",
+        "type": "object"
+      },
+      "EditorialDisputeListOut": {
+        "properties": {
+          "active_count": {
+            "default": 0,
+            "title": "Active Count",
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/EditorialDisputeItemOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "resolved_count": {
+            "default": 0,
+            "title": "Resolved Count",
+            "type": "integer"
+          },
+          "total": {
+            "default": 0,
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "title": "EditorialDisputeListOut",
+        "type": "object"
+      },
+      "EditorialDisputeResolveIn": {
+        "properties": {
+          "cited_source_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cited Source Id"
+          },
+          "item_id": {
+            "format": "uuid",
+            "title": "Item Id",
+            "type": "string"
+          },
+          "item_type": {
+            "pattern": "^(claim|entity)$",
+            "title": "Item Type",
+            "type": "string"
+          },
+          "resolution": {
+            "pattern": "^(resolved|upheld)$",
+            "title": "Resolution",
+            "type": "string"
+          },
+          "resolution_notes": {
+            "minLength": 3,
+            "title": "Resolution Notes",
+            "type": "string"
+          }
+        },
+        "required": [
+          "item_type",
+          "item_id",
+          "resolution",
+          "resolution_notes"
+        ],
+        "title": "EditorialDisputeResolveIn",
+        "type": "object"
+      },
+      "EditorialDisputeResolveOut": {
+        "properties": {
+          "adjudicator_id": {
+            "format": "uuid",
+            "title": "Adjudicator Id",
+            "type": "string"
+          },
+          "item_id": {
+            "format": "uuid",
+            "title": "Item Id",
+            "type": "string"
+          },
+          "item_type": {
+            "title": "Item Type",
+            "type": "string"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string"
+          },
+          "resolution": {
+            "title": "Resolution",
+            "type": "string"
+          },
+          "resolved_at": {
+            "format": "date-time",
+            "title": "Resolved At",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "success": {
+            "default": true,
+            "title": "Success",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "item_id",
+          "item_type",
+          "resolution",
+          "status",
+          "adjudicator_id",
+          "notes",
+          "resolved_at",
+          "message"
+        ],
+        "title": "EditorialDisputeResolveOut",
+        "type": "object"
+      },
+      "EditorialQueueItemOut": {
+        "properties": {
+          "author_email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Author Email"
+          },
+          "author_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Author Id"
+          },
+          "author_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Author Name"
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "entity_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entity Id"
+          },
+          "entity_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entity Name"
+          },
+          "entity_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entity Slug"
+          },
+          "has_eligible_source": {
+            "default": false,
+            "title": "Has Eligible Source",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "is_ai_draft": {
+            "default": false,
+            "title": "Is Ai Draft",
+            "type": "boolean"
+          },
+          "is_disputed": {
+            "default": false,
+            "title": "Is Disputed",
+            "type": "boolean"
+          },
+          "item_type": {
+            "title": "Item Type",
+            "type": "string"
+          },
+          "origin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Origin"
+          },
+          "review_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Review Notes"
+          },
+          "reviewer_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewer Id"
+          },
+          "rights_cleared": {
+            "default": false,
+            "title": "Rights Cleared",
+            "type": "boolean"
+          },
+          "rights_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rights Status"
+          },
+          "source_count": {
+            "default": 0,
+            "title": "Source Count",
+            "type": "integer"
+          },
+          "statement_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Statement En"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "required": [
+          "id",
+          "item_type",
+          "title",
+          "status"
+        ],
+        "title": "EditorialQueueItemOut",
+        "type": "object"
+      },
+      "EditorialQueueListOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/EditorialQueueItemOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/EditorialQueueSummaryOut"
+          },
+          "total": {
+            "default": 0,
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "title": "EditorialQueueListOut",
+        "type": "object"
+      },
+      "EditorialQueueSummaryOut": {
+        "properties": {
+          "ai_draft_count": {
+            "default": 0,
+            "title": "Ai Draft Count",
+            "type": "integer"
+          },
+          "disputed_count": {
+            "default": 0,
+            "title": "Disputed Count",
+            "type": "integer"
+          },
+          "internal_review_count": {
+            "default": 0,
+            "title": "Internal Review Count",
+            "type": "integer"
+          },
+          "needs_rights_count": {
+            "default": 0,
+            "title": "Needs Rights Count",
+            "type": "integer"
+          },
+          "needs_source_count": {
+            "default": 0,
+            "title": "Needs Source Count",
+            "type": "integer"
+          },
+          "pending_review_count": {
+            "default": 0,
+            "title": "Pending Review Count",
+            "type": "integer"
+          },
+          "verified_count": {
+            "default": 0,
+            "title": "Verified Count",
+            "type": "integer"
+          }
+        },
+        "title": "EditorialQueueSummaryOut",
+        "type": "object"
+      },
+      "EditorialReviewActionIn": {
+        "properties": {
+          "action": {
+            "pattern": "^(submit_for_review|verify|publish|reject|flag_dispute|request_changes)$",
+            "title": "Action",
+            "type": "string"
+          },
+          "item_id": {
+            "format": "uuid",
+            "title": "Item Id",
+            "type": "string"
+          },
+          "item_type": {
+            "pattern": "^(claim|entity|source)$",
+            "title": "Item Type",
+            "type": "string"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "rights_signoff": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rights Signoff"
+          }
+        },
+        "required": [
+          "item_type",
+          "item_id",
+          "action"
+        ],
+        "title": "EditorialReviewActionIn",
+        "type": "object"
+      },
+      "EditorialReviewActionOut": {
+        "properties": {
+          "action": {
+            "title": "Action",
+            "type": "string"
+          },
+          "item_id": {
+            "format": "uuid",
+            "title": "Item Id",
+            "type": "string"
+          },
+          "item_type": {
+            "title": "Item Type",
+            "type": "string"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "new_status": {
+            "title": "New Status",
+            "type": "string"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "previous_status": {
+            "title": "Previous Status",
+            "type": "string"
+          },
+          "reviewer_id": {
+            "format": "uuid",
+            "title": "Reviewer Id",
+            "type": "string"
+          },
+          "success": {
+            "title": "Success",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success",
+          "item_id",
+          "item_type",
+          "previous_status",
+          "new_status",
+          "action",
+          "reviewer_id",
+          "message"
+        ],
+        "title": "EditorialReviewActionOut",
+        "type": "object"
+      },
+      "EditorialRightsSignoffIn": {
+        "properties": {
+          "legal_basis": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Legal Basis"
+          },
+          "license": {
+            "minLength": 1,
+            "title": "License",
+            "type": "string"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "resource_id": {
+            "format": "uuid",
+            "title": "Resource Id",
+            "type": "string"
+          },
+          "resource_type": {
+            "pattern": "^(source|asset|claim|entity)$",
+            "title": "Resource Type",
+            "type": "string"
+          },
+          "rights_owner": {
+            "minLength": 1,
+            "title": "Rights Owner",
+            "type": "string"
+          },
+          "rights_status": {
+            "minLength": 1,
+            "title": "Rights Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "resource_type",
+          "resource_id",
+          "rights_status",
+          "rights_owner",
+          "license"
+        ],
+        "title": "EditorialRightsSignoffIn",
+        "type": "object"
+      },
+      "EditorialRightsSignoffOut": {
+        "properties": {
+          "license": {
+            "title": "License",
+            "type": "string"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "resource_id": {
+            "format": "uuid",
+            "title": "Resource Id",
+            "type": "string"
+          },
+          "resource_type": {
+            "title": "Resource Type",
+            "type": "string"
+          },
+          "rights_owner": {
+            "title": "Rights Owner",
+            "type": "string"
+          },
+          "rights_status": {
+            "title": "Rights Status",
+            "type": "string"
+          },
+          "signed_off_at": {
+            "format": "date-time",
+            "title": "Signed Off At",
+            "type": "string"
+          },
+          "signed_off_by": {
+            "format": "uuid",
+            "title": "Signed Off By",
+            "type": "string"
+          },
+          "success": {
+            "title": "Success",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success",
+          "resource_type",
+          "resource_id",
+          "rights_status",
+          "rights_owner",
+          "license",
+          "signed_off_by",
+          "signed_off_at",
+          "message"
+        ],
+        "title": "EditorialRightsSignoffOut",
+        "type": "object"
+      },
       "EmailTemplateCreate": {
         "description": "Schema for creating an email template.",
         "properties": {
@@ -24299,6 +25031,67 @@
         "title": "InquiryEvidenceItemOut",
         "type": "object"
       },
+      "InvalidationResultOut": {
+        "properties": {
+          "invalidated_claim_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Invalidated Claim Ids",
+            "type": "array"
+          },
+          "invalidated_story_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Invalidated Story Ids",
+            "type": "array"
+          },
+          "purged_cache_keys": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Purged Cache Keys",
+            "type": "array"
+          },
+          "rationale": {
+            "title": "Rationale",
+            "type": "string"
+          },
+          "release_id": {
+            "format": "uuid",
+            "title": "Release Id",
+            "type": "string"
+          },
+          "revoked_source_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Revoked Source Ids",
+            "type": "array"
+          },
+          "timestamp": {
+            "format": "date-time",
+            "title": "Timestamp",
+            "type": "string"
+          },
+          "trigger_type": {
+            "title": "Trigger Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "release_id",
+          "trigger_type",
+          "rationale",
+          "timestamp"
+        ],
+        "title": "InvalidationResultOut",
+        "type": "object"
+      },
       "LeaderboardEntryOut": {
         "description": "Single entry in the class leaderboard.",
         "properties": {
@@ -33995,6 +34788,444 @@
         "title": "RejectContentIn",
         "type": "object"
       },
+      "ReleaseAuditOut": {
+        "properties": {
+          "cache_purges": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Cache Purges",
+            "type": "array"
+          },
+          "corrections": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Corrections",
+            "type": "array"
+          },
+          "release_code": {
+            "title": "Release Code",
+            "type": "string"
+          },
+          "release_id": {
+            "format": "uuid",
+            "title": "Release Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "release_id",
+          "release_code"
+        ],
+        "title": "ReleaseAuditOut",
+        "type": "object"
+      },
+      "ReleaseCreateIn": {
+        "properties": {
+          "allow_unreviewed": {
+            "default": false,
+            "description": "Whether to bypass draft checks (strictly for tests/preview).",
+            "title": "Allow Unreviewed",
+            "type": "boolean"
+          },
+          "previous_release_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Explicit previous release pointer.",
+            "title": "Previous Release Id"
+          },
+          "release_code": {
+            "description": "Unique human-readable release identifier.",
+            "maxLength": 64,
+            "minLength": 3,
+            "title": "Release Code",
+            "type": "string"
+          },
+          "scope": {
+            "default": "cuu_dinh_162_motifs",
+            "description": "Content scope.",
+            "title": "Scope",
+            "type": "string"
+          },
+          "simulate_failure_at_story_idx": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Negative abuse test flag to simulate mid-release crash and verify rollback.",
+            "title": "Simulate Failure At Story Idx"
+          },
+          "story_ids": {
+            "description": "List of HistoryStory UUIDs to atomically publish.",
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Story Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "release_code",
+          "story_ids"
+        ],
+        "title": "ReleaseCreateIn",
+        "type": "object"
+      },
+      "ReleaseDetailOut": {
+        "properties": {
+          "cache_purge_status": {
+            "title": "Cache Purge Status",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "invalidated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Invalidated At"
+          },
+          "manifest_sha256": {
+            "title": "Manifest Sha256",
+            "type": "string"
+          },
+          "previous_release_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous Release Id"
+          },
+          "published_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Published At"
+          },
+          "purged_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Purged At"
+          },
+          "release_code": {
+            "title": "Release Code",
+            "type": "string"
+          },
+          "rolled_back_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rolled Back At"
+          },
+          "scope": {
+            "title": "Scope",
+            "type": "string"
+          },
+          "signed_revision": {
+            "title": "Signed Revision",
+            "type": "string"
+          },
+          "signer_identity": {
+            "title": "Signer Identity",
+            "type": "string"
+          },
+          "signer_role": {
+            "title": "Signer Role",
+            "type": "string"
+          },
+          "snapshot_payload": {
+            "additionalProperties": true,
+            "title": "Snapshot Payload",
+            "type": "object"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "stories_count": {
+            "default": 0,
+            "title": "Stories Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "release_code",
+          "scope",
+          "status",
+          "manifest_sha256",
+          "signed_revision",
+          "signer_identity",
+          "signer_role",
+          "cache_purge_status",
+          "created_at"
+        ],
+        "title": "ReleaseDetailOut",
+        "type": "object"
+      },
+      "ReleaseInvalidateIn": {
+        "properties": {
+          "claim_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Claim Id"
+          },
+          "entity_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entity Slug"
+          },
+          "rationale": {
+            "description": "Audited explanation of the retraction.",
+            "minLength": 5,
+            "title": "Rationale",
+            "type": "string"
+          },
+          "source_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Id"
+          },
+          "story_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Story Id"
+          },
+          "trigger_type": {
+            "default": "RIGHTS_EXPIRATION",
+            "description": "Reason trigger for invalidation.",
+            "pattern": "^(RIGHTS_EXPIRATION|SCHOLARLY_RETRACTION|CORRECTION_TRIAGE|LINK_404|MALFORMED_CLAIM|MANUAL)$",
+            "title": "Trigger Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "rationale"
+        ],
+        "title": "ReleaseInvalidateIn",
+        "type": "object"
+      },
+      "ReleasePreflightIn": {
+        "properties": {
+          "allow_unreviewed": {
+            "default": false,
+            "description": "Flag for emergency/preview validation.",
+            "title": "Allow Unreviewed",
+            "type": "boolean"
+          },
+          "claim_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional extra claims to validate.",
+            "title": "Claim Ids"
+          },
+          "scope": {
+            "default": "cuu_dinh_162_motifs",
+            "description": "Target content scope identifier.",
+            "title": "Scope",
+            "type": "string"
+          },
+          "story_ids": {
+            "description": "List of HistoryStory UUIDs to validate.",
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Story Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "story_ids"
+        ],
+        "title": "ReleasePreflightIn",
+        "type": "object"
+      },
+      "ReleasePreflightReportOut": {
+        "properties": {
+          "assets_count": {
+            "title": "Assets Count",
+            "type": "integer"
+          },
+          "blockers": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Blockers",
+            "type": "array"
+          },
+          "can_publish": {
+            "title": "Can Publish",
+            "type": "boolean"
+          },
+          "checks": {
+            "additionalProperties": {
+              "type": "boolean"
+            },
+            "title": "Checks",
+            "type": "object"
+          },
+          "claims_count": {
+            "title": "Claims Count",
+            "type": "integer"
+          },
+          "manifest_sha256": {
+            "title": "Manifest Sha256",
+            "type": "string"
+          },
+          "scope": {
+            "title": "Scope",
+            "type": "string"
+          },
+          "sources_count": {
+            "title": "Sources Count",
+            "type": "integer"
+          },
+          "stories_count": {
+            "title": "Stories Count",
+            "type": "integer"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "can_publish",
+          "scope",
+          "manifest_sha256",
+          "stories_count",
+          "claims_count",
+          "sources_count",
+          "assets_count",
+          "checks"
+        ],
+        "title": "ReleasePreflightReportOut",
+        "type": "object"
+      },
+      "ReleaseRollbackIn": {
+        "properties": {
+          "restore_release_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional specific previous release to restore.",
+            "title": "Restore Release Id"
+          },
+          "rollback_reason": {
+            "description": "Audited reason for rolling back this publication release.",
+            "minLength": 5,
+            "title": "Rollback Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "rollback_reason"
+        ],
+        "title": "ReleaseRollbackIn",
+        "type": "object"
+      },
       "RelicInspectionCompleteRequest": {
         "description": "Payload submitted when a student completes an inspection of a heritage relic.",
         "properties": {
@@ -34523,6 +35754,60 @@
           "quality"
         ],
         "title": "ReviewSubmitIn",
+        "type": "object"
+      },
+      "RollbackResultOut": {
+        "properties": {
+          "purged_cache_keys": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Purged Cache Keys",
+            "type": "array"
+          },
+          "release_code": {
+            "title": "Release Code",
+            "type": "string"
+          },
+          "restored_release_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Restored Release Id"
+          },
+          "reverted_stories_count": {
+            "title": "Reverted Stories Count",
+            "type": "integer"
+          },
+          "rollback_reason": {
+            "title": "Rollback Reason",
+            "type": "string"
+          },
+          "rolled_back_release_id": {
+            "format": "uuid",
+            "title": "Rolled Back Release Id",
+            "type": "string"
+          },
+          "timestamp": {
+            "format": "date-time",
+            "title": "Timestamp",
+            "type": "string"
+          }
+        },
+        "required": [
+          "rolled_back_release_id",
+          "release_code",
+          "rollback_reason",
+          "reverted_stories_count",
+          "timestamp"
+        ],
+        "title": "RollbackResultOut",
         "type": "object"
       },
       "RubricEvaluationCreate": {
@@ -41011,6 +42296,346 @@
         "summary": "Resolve Crash Report"
       }
     },
+    "/api/v1/admin/editorial/disputes": {
+      "get": {
+        "operationId": "get_admin_editorial_disputes_api_v1_admin_editorial_disputes_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EditorialDisputeListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Admin Editorial Disputes",
+        "tags": [
+          "history"
+        ]
+      }
+    },
+    "/api/v1/admin/editorial/disputes/resolve": {
+      "post": {
+        "operationId": "resolve_admin_editorial_dispute_api_v1_admin_editorial_disputes_resolve_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditorialDisputeResolveIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EditorialDisputeResolveOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Resolve Admin Editorial Dispute",
+        "tags": [
+          "history"
+        ]
+      }
+    },
+    "/api/v1/admin/editorial/queue": {
+      "get": {
+        "operationId": "get_admin_editorial_queue_api_v1_admin_editorial_queue_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "item_type",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Item Type"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "origin",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Origin"
+            }
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Search"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EditorialQueueListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Admin Editorial Queue",
+        "tags": [
+          "history"
+        ]
+      }
+    },
+    "/api/v1/admin/editorial/review": {
+      "post": {
+        "operationId": "submit_editorial_review_api_v1_admin_editorial_review_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditorialReviewActionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EditorialReviewActionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Submit Editorial Review",
+        "tags": [
+          "history"
+        ]
+      }
+    },
+    "/api/v1/admin/editorial/rights-signoff": {
+      "post": {
+        "operationId": "signoff_admin_editorial_rights_api_v1_admin_editorial_rights_signoff_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditorialRightsSignoffIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EditorialRightsSignoffOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Signoff Admin Editorial Rights",
+        "tags": [
+          "history"
+        ]
+      }
+    },
     "/api/v1/admin/email-templates": {
       "get": {
         "description": "List all email templates (admin only).\n\nQuery parameters:\n- page: Page number (default: 1)\n- page_size: Items per page (default: 20, max: 100)\n- active_only: Filter to active templates only",
@@ -42213,6 +43838,16 @@
                 }
               ],
               "title": "Reason"
+            }
+          },
+          {
+            "in": "query",
+            "name": "require_four_eyes",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Require Four Eyes",
+              "type": "boolean"
             }
           }
         ],
@@ -45172,6 +46807,365 @@
           }
         ],
         "summary": "Admin Resolve Abuse Report"
+      }
+    },
+    "/api/v1/admin/research-factory/releases": {
+      "post": {
+        "description": "Atomically publish a collection of approved stories with signed revision and cache purge.",
+        "operationId": "create_publication_release_api_v1_admin_research_factory_releases_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReleaseCreateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReleaseDetailOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Create Publication Release",
+        "tags": [
+          "research-factory-admin"
+        ]
+      }
+    },
+    "/api/v1/admin/research-factory/releases/active": {
+      "get": {
+        "description": "Retrieve the currently active published release manifest.",
+        "operationId": "get_active_release_api_v1_admin_research_factory_releases_active_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "scope",
+            "required": false,
+            "schema": {
+              "default": "cuu_dinh_162_motifs",
+              "title": "Scope",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReleaseDetailOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Active Release",
+        "tags": [
+          "research-factory-admin"
+        ]
+      }
+    },
+    "/api/v1/admin/research-factory/releases/preflight": {
+      "post": {
+        "description": "Run two-phase preflight validation against editorial, rights, and asset gates.",
+        "operationId": "check_release_preflight_api_v1_admin_research_factory_releases_preflight_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReleasePreflightIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReleasePreflightReportOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Check Release Preflight",
+        "tags": [
+          "research-factory-admin"
+        ]
+      }
+    },
+    "/api/v1/admin/research-factory/releases/{release_id}": {
+      "get": {
+        "description": "Retrieve detailed snapshot and signed manifest for a specific release.",
+        "operationId": "get_release_by_id_api_v1_admin_research_factory_releases__release_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "release_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Release Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReleaseDetailOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Release By Id",
+        "tags": [
+          "research-factory-admin"
+        ]
+      }
+    },
+    "/api/v1/admin/research-factory/releases/{release_id}/audit": {
+      "get": {
+        "description": "Retrieve correction events and cache purge records for a release.",
+        "operationId": "get_release_audit_trail_api_v1_admin_research_factory_releases__release_id__audit_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "release_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Release Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReleaseAuditOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Release Audit Trail",
+        "tags": [
+          "research-factory-admin"
+        ]
+      }
+    },
+    "/api/v1/admin/research-factory/releases/{release_id}/invalidate": {
+      "post": {
+        "description": "Invalidate a specific story, claim, or entire release and immediately purge caches.",
+        "operationId": "invalidate_release_api_v1_admin_research_factory_releases__release_id__invalidate_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "release_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Release Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReleaseInvalidateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidationResultOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Invalidate Release",
+        "tags": [
+          "research-factory-admin"
+        ]
+      }
+    },
+    "/api/v1/admin/research-factory/releases/{release_id}/rollback": {
+      "post": {
+        "description": "Atomically roll back a published release to a prior state and purge caches.",
+        "operationId": "rollback_release_api_v1_admin_research_factory_releases__release_id__rollback_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "release_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Release Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReleaseRollbackIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RollbackResultOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Rollback Release",
+        "tags": [
+          "research-factory-admin"
+        ]
       }
     },
     "/api/v1/admin/scheduled-emails": {

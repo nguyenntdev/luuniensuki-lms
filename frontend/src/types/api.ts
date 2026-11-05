@@ -467,6 +467,91 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/editorial/disputes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Admin Editorial Disputes */
+        get: operations["get_admin_editorial_disputes_api_v1_admin_editorial_disputes_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/editorial/disputes/resolve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Resolve Admin Editorial Dispute */
+        post: operations["resolve_admin_editorial_dispute_api_v1_admin_editorial_disputes_resolve_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/editorial/queue": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Admin Editorial Queue */
+        get: operations["get_admin_editorial_queue_api_v1_admin_editorial_queue_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/editorial/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Submit Editorial Review */
+        post: operations["submit_editorial_review_api_v1_admin_editorial_review_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/editorial/rights-signoff": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Signoff Admin Editorial Rights */
+        post: operations["signoff_admin_editorial_rights_api_v1_admin_editorial_rights_signoff_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/email-templates": {
         parameters: {
             query?: never;
@@ -1779,6 +1864,146 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/research-factory/releases": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Publication Release
+         * @description Atomically publish a collection of approved stories with signed revision and cache purge.
+         */
+        post: operations["create_publication_release_api_v1_admin_research_factory_releases_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/research-factory/releases/active": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Active Release
+         * @description Retrieve the currently active published release manifest.
+         */
+        get: operations["get_active_release_api_v1_admin_research_factory_releases_active_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/research-factory/releases/preflight": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Check Release Preflight
+         * @description Run two-phase preflight validation against editorial, rights, and asset gates.
+         */
+        post: operations["check_release_preflight_api_v1_admin_research_factory_releases_preflight_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/research-factory/releases/{release_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Release By Id
+         * @description Retrieve detailed snapshot and signed manifest for a specific release.
+         */
+        get: operations["get_release_by_id_api_v1_admin_research_factory_releases__release_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/research-factory/releases/{release_id}/audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Release Audit Trail
+         * @description Retrieve correction events and cache purge records for a release.
+         */
+        get: operations["get_release_audit_trail_api_v1_admin_research_factory_releases__release_id__audit_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/research-factory/releases/{release_id}/invalidate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Invalidate Release
+         * @description Invalidate a specific story, claim, or entire release and immediately purge caches.
+         */
+        post: operations["invalidate_release_api_v1_admin_research_factory_releases__release_id__invalidate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/research-factory/releases/{release_id}/rollback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Rollback Release
+         * @description Atomically roll back a published release to a prior state and purge caches.
+         */
+        post: operations["rollback_release_api_v1_admin_research_factory_releases__release_id__rollback_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/scheduled-emails": {
         parameters: {
             query?: never;
@@ -2072,6 +2297,66 @@ export interface paths {
         put?: never;
         /** Ai Generate Lesson */
         post: operations["ai_generate_lesson_api_v1_ai_lessons_generate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ai/observability/budget": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Budget Status
+         * @description Check current user's AI token and cost budget allowance and remaining headroom.
+         */
+        get: operations["get_budget_status_api_v1_ai_observability_budget_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ai/observability/budget/caps": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Set Budget Cap
+         * @description Set custom daily token and cost budget ceilings for a user or classroom (Staff/Admin only).
+         */
+        post: operations["set_budget_cap_api_v1_ai_observability_budget_caps_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ai/observability/metrics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Observability Metrics
+         * @description Retrieve system-wide AI observability metrics, token counts, cost, and latency percentiles (Staff only).
+         */
+        get: operations["get_observability_metrics_api_v1_ai_observability_metrics_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -4801,6 +5086,31 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/history/tutor/citations/{source_id}/provenance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * History Tutor Citation Provenance
+         * @description Inspect exact primary source reference and cryptographic provenance chain.
+         *
+         *     Guards against negative abuse:
+         *     - 404 for non-existent or fabricated sources.
+         *     - 422 for tampered or mismatched provenance hashes.
+         *     - Disputed claims cannot claim settled authority.
+         */
+        get: operations["history_tutor_citation_provenance_api_v1_history_tutor_citations__source_id__provenance_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/history/tutor/entities": {
         parameters: {
             query?: never;
@@ -4810,6 +5120,31 @@ export interface paths {
         };
         /** History Tutor Entities */
         get: operations["history_tutor_entities_api_v1_history_tutor_entities_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/tutor/provenance/{source_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * History Tutor Citation Provenance
+         * @description Inspect exact primary source reference and cryptographic provenance chain.
+         *
+         *     Guards against negative abuse:
+         *     - 404 for non-existent or fabricated sources.
+         *     - 422 for tampered or mismatched provenance hashes.
+         *     - Disputed claims cannot claim settled authority.
+         */
+        get: operations["history_tutor_citation_provenance_api_v1_history_tutor_provenance__source_id__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -9128,6 +9463,129 @@ export interface components {
             /** Job Id */
             job_id?: string | null;
         };
+        /** AIBudgetCapOut */
+        AIBudgetCapOut: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Daily Cost Limit Usd */
+            daily_cost_limit_usd: number;
+            /** Daily Token Limit */
+            daily_token_limit: number;
+            /** Entity Id */
+            entity_id: string;
+            /** Entity Type */
+            entity_type: string;
+            /** Id */
+            id: string;
+            /** Is Active */
+            is_active: boolean;
+            /** Max Tokens Per Request */
+            max_tokens_per_request: number;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** AIBudgetCapSetIn */
+        AIBudgetCapSetIn: {
+            /**
+             * Daily Cost Limit Usd
+             * @description Daily cost cap in USD
+             * @default 5
+             */
+            daily_cost_limit_usd: number;
+            /**
+             * Daily Token Limit
+             * @description Daily token cap
+             * @default 500000
+             */
+            daily_token_limit: number;
+            /**
+             * Entity Id
+             * Format: uuid
+             * @description Target UUID for user or classroom
+             */
+            entity_id: string;
+            /**
+             * Entity Type
+             * @description Entity type: 'user' or 'classroom'
+             * @enum {string}
+             */
+            entity_type: "user" | "classroom";
+            /**
+             * Max Tokens Per Request
+             * @description Per-request max tokens limit
+             * @default 4096
+             */
+            max_tokens_per_request: number | null;
+        };
+        /** AIBudgetStatusOut */
+        AIBudgetStatusOut: {
+            /**
+             * Cost Remaining Usd
+             * @description Cost remaining before exhaustion in USD
+             */
+            cost_remaining_usd: number;
+            /**
+             * Cost Used Today Usd
+             * @description Estimated cost consumed today in USD
+             */
+            cost_used_today_usd: number;
+            /**
+             * Daily Cost Limit Usd
+             * @description Maximum cost allowed in USD per 24h window
+             */
+            daily_cost_limit_usd: number;
+            /**
+             * Daily Token Limit
+             * @description Maximum tokens allowed per 24h window
+             */
+            daily_token_limit: number;
+            /**
+             * Entity Id
+             * @description Entity identifier
+             */
+            entity_id?: string | null;
+            /**
+             * Entity Type
+             * @description 'user' or 'classroom'
+             */
+            entity_type: string;
+            /**
+             * Is Budget Exhausted
+             * @description True if token or cost ceiling is reached
+             */
+            is_budget_exhausted: boolean;
+            /**
+             * Policy
+             * @default daily_sliding_window_fail_closed
+             */
+            policy: string;
+            /**
+             * Reset At
+             * @description ISO-8601 UTC timestamp of window reset
+             */
+            reset_at: string;
+            /**
+             * Retry After Seconds
+             * @description Seconds until window reset (UTC midnight)
+             */
+            retry_after_seconds: number;
+            /**
+             * Tokens Remaining
+             * @description Tokens remaining before exhaustion
+             */
+            tokens_remaining: number;
+            /**
+             * Tokens Used Today
+             * @description Tokens consumed today
+             */
+            tokens_used_today: number;
+        };
         /** AIChatMessage */
         AIChatMessage: {
             /** Content */
@@ -9399,6 +9857,122 @@ export interface components {
             role: string;
             /** Tokens Used */
             tokens_used?: number | null;
+        };
+        /** AIObservabilityMetricsOut */
+        AIObservabilityMetricsOut: {
+            /**
+             * Avg Latency Ms
+             * @description Average latency in milliseconds
+             */
+            avg_latency_ms: number;
+            /**
+             * By Model
+             * @description Breakdown by AI model
+             */
+            by_model?: {
+                [key: string]: unknown;
+            };
+            /**
+             * By Operation
+             * @description Breakdown by operation
+             */
+            by_operation?: {
+                [key: string]: unknown;
+            };
+            /**
+             * By Status
+             * @description Breakdown by status code/outcome
+             */
+            by_status?: {
+                [key: string]: number;
+            };
+            /**
+             * Citation Validity Rate
+             * @description Valid citations ratio (0.0 to 1.0)
+             */
+            citation_validity_rate: number;
+            /**
+             * Completion Tokens
+             * @description Sum of completion/output tokens
+             */
+            completion_tokens: number;
+            /**
+             * Error Requests
+             * @description Error or rejected operations
+             */
+            error_requests: number;
+            /**
+             * Fallback Requests
+             * @description Operations that degraded to deterministic fallback
+             */
+            fallback_requests: number;
+            /**
+             * Generated At
+             * @description Report generation timestamp
+             */
+            generated_at: string;
+            /**
+             * Invalid Citations
+             * @description Total dropped or hallucinated citations
+             */
+            invalid_citations: number;
+            /**
+             * P95 Latency Ms
+             * @description 95th percentile latency in milliseconds
+             */
+            p95_latency_ms: number;
+            /**
+             * Prompt Tokens
+             * @description Sum of prompt/input tokens
+             */
+            prompt_tokens: number;
+            /**
+             * Success Rate
+             * @description Fraction of requests that succeeded (0.0 to 1.0)
+             */
+            success_rate: number;
+            /**
+             * Successful Requests
+             * @description Successful operations
+             */
+            successful_requests: number;
+            /**
+             * Total Citations Validated
+             * @description Total citation evaluations
+             */
+            total_citations_validated: number;
+            /**
+             * Total Cost Usd
+             * @description Total estimated spend in USD
+             */
+            total_cost_usd: number;
+            /**
+             * Total Requests
+             * @description Total AI operations in window
+             */
+            total_requests: number;
+            /**
+             * Total Tokens
+             * @description Sum of prompt + completion tokens
+             */
+            total_tokens: number;
+            /**
+             * Valid Citations
+             * @description Total valid citations verified against sources
+             */
+            valid_citations: number;
+            /**
+             * Window Hours
+             * @description Lookback window in hours
+             * @default 24
+             */
+            window_hours: number;
+            /**
+             * Zero Pii Confirmed
+             * @description Strictly verified zero PII in telemetry
+             * @default true
+             */
+            zero_pii_confirmed: boolean;
         };
         /** AIQuestionRequest */
         AIQuestionRequest: {
@@ -10692,6 +11266,52 @@ export interface components {
             /** New Password */
             new_password: string;
         };
+        /** CitationProvenanceRecord */
+        CitationProvenanceRecord: {
+            /** Archive Url */
+            archive_url?: string | null;
+            /** Author */
+            author?: string | null;
+            /** Bound Claims */
+            bound_claims?: {
+                [key: string]: unknown;
+            }[];
+            /** Chapter */
+            chapter?: string | null;
+            /**
+             * Epistemic Certainty
+             * @default su_lieu_xac_thuc
+             */
+            epistemic_certainty: string;
+            /**
+             * Is Disputed
+             * @default false
+             */
+            is_disputed: boolean;
+            /** Locator */
+            locator: string;
+            /** Pages */
+            pages?: string | null;
+            /** Provenance Hash */
+            provenance_hash: string;
+            /**
+             * Provenance Verified
+             * @default true
+             */
+            provenance_verified: boolean;
+            /** Publication Year */
+            publication_year?: number | null;
+            /** Rights Status */
+            rights_status: string;
+            /** Source Id */
+            source_id: string;
+            /** Source Title */
+            source_title: string;
+            /** Verification Status */
+            verification_status: string;
+            /** Volume */
+            volume?: string | null;
+        };
         /**
          * ClaimDailyStreakOut
          * @description Response for claiming daily streak reward.
@@ -11934,6 +12554,314 @@ export interface components {
             cards: components["schemas"]["SpacedRepetitionCardOut"][];
             /** Total Due */
             total_due: number;
+        };
+        /** EditorialDisputeItemOut */
+        EditorialDisputeItemOut: {
+            /** Created At */
+            created_at?: string | null;
+            /** Dispute Id */
+            dispute_id: number;
+            /** Dispute Reason */
+            dispute_reason?: string | null;
+            /** Disputed By Email */
+            disputed_by_email?: string | null;
+            /** Disputed By Id */
+            disputed_by_id?: string | null;
+            /** Resolution Notes */
+            resolution_notes?: string | null;
+            /** Resolved By Id */
+            resolved_by_id?: string | null;
+            /**
+             * Resource Id
+             * Format: uuid
+             */
+            resource_id: string;
+            /** Resource Title */
+            resource_title: string;
+            /** Resource Type */
+            resource_type: string;
+            /** Status */
+            status: string;
+        };
+        /** EditorialDisputeListOut */
+        EditorialDisputeListOut: {
+            /**
+             * Active Count
+             * @default 0
+             */
+            active_count: number;
+            /** Items */
+            items?: components["schemas"]["EditorialDisputeItemOut"][];
+            /**
+             * Resolved Count
+             * @default 0
+             */
+            resolved_count: number;
+            /**
+             * Total
+             * @default 0
+             */
+            total: number;
+        };
+        /** EditorialDisputeResolveIn */
+        EditorialDisputeResolveIn: {
+            /** Cited Source Id */
+            cited_source_id?: string | null;
+            /**
+             * Item Id
+             * Format: uuid
+             */
+            item_id: string;
+            /** Item Type */
+            item_type: string;
+            /** Resolution */
+            resolution: string;
+            /** Resolution Notes */
+            resolution_notes: string;
+        };
+        /** EditorialDisputeResolveOut */
+        EditorialDisputeResolveOut: {
+            /**
+             * Adjudicator Id
+             * Format: uuid
+             */
+            adjudicator_id: string;
+            /**
+             * Item Id
+             * Format: uuid
+             */
+            item_id: string;
+            /** Item Type */
+            item_type: string;
+            /** Message */
+            message: string;
+            /** Notes */
+            notes: string;
+            /** Resolution */
+            resolution: string;
+            /**
+             * Resolved At
+             * Format: date-time
+             */
+            resolved_at: string;
+            /** Status */
+            status: string;
+            /**
+             * Success
+             * @default true
+             */
+            success: boolean;
+        };
+        /** EditorialQueueItemOut */
+        EditorialQueueItemOut: {
+            /** Author Email */
+            author_email?: string | null;
+            /** Author Id */
+            author_id?: string | null;
+            /** Author Name */
+            author_name?: string | null;
+            /** Confidence */
+            confidence?: string | null;
+            /** Created At */
+            created_at?: string | null;
+            /** Entity Id */
+            entity_id?: string | null;
+            /** Entity Name */
+            entity_name?: string | null;
+            /** Entity Slug */
+            entity_slug?: string | null;
+            /**
+             * Has Eligible Source
+             * @default false
+             */
+            has_eligible_source: boolean;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Is Ai Draft
+             * @default false
+             */
+            is_ai_draft: boolean;
+            /**
+             * Is Disputed
+             * @default false
+             */
+            is_disputed: boolean;
+            /** Item Type */
+            item_type: string;
+            /** Origin */
+            origin?: string | null;
+            /** Review Notes */
+            review_notes?: string | null;
+            /** Reviewer Id */
+            reviewer_id?: string | null;
+            /**
+             * Rights Cleared
+             * @default false
+             */
+            rights_cleared: boolean;
+            /** Rights Status */
+            rights_status?: string | null;
+            /**
+             * Source Count
+             * @default 0
+             */
+            source_count: number;
+            /** Statement En */
+            statement_en?: string | null;
+            /** Status */
+            status: string;
+            /** Title */
+            title: string;
+            /** Updated At */
+            updated_at?: string | null;
+        };
+        /** EditorialQueueListOut */
+        EditorialQueueListOut: {
+            /** Items */
+            items?: components["schemas"]["EditorialQueueItemOut"][];
+            summary?: components["schemas"]["EditorialQueueSummaryOut"];
+            /**
+             * Total
+             * @default 0
+             */
+            total: number;
+        };
+        /** EditorialQueueSummaryOut */
+        EditorialQueueSummaryOut: {
+            /**
+             * Ai Draft Count
+             * @default 0
+             */
+            ai_draft_count: number;
+            /**
+             * Disputed Count
+             * @default 0
+             */
+            disputed_count: number;
+            /**
+             * Internal Review Count
+             * @default 0
+             */
+            internal_review_count: number;
+            /**
+             * Needs Rights Count
+             * @default 0
+             */
+            needs_rights_count: number;
+            /**
+             * Needs Source Count
+             * @default 0
+             */
+            needs_source_count: number;
+            /**
+             * Pending Review Count
+             * @default 0
+             */
+            pending_review_count: number;
+            /**
+             * Verified Count
+             * @default 0
+             */
+            verified_count: number;
+        };
+        /** EditorialReviewActionIn */
+        EditorialReviewActionIn: {
+            /** Action */
+            action: string;
+            /**
+             * Item Id
+             * Format: uuid
+             */
+            item_id: string;
+            /** Item Type */
+            item_type: string;
+            /** Notes */
+            notes?: string | null;
+            /** Rights Signoff */
+            rights_signoff?: {
+                [key: string]: unknown;
+            } | null;
+        };
+        /** EditorialReviewActionOut */
+        EditorialReviewActionOut: {
+            /** Action */
+            action: string;
+            /**
+             * Item Id
+             * Format: uuid
+             */
+            item_id: string;
+            /** Item Type */
+            item_type: string;
+            /** Message */
+            message: string;
+            /** New Status */
+            new_status: string;
+            /** Notes */
+            notes?: string | null;
+            /** Previous Status */
+            previous_status: string;
+            /**
+             * Reviewer Id
+             * Format: uuid
+             */
+            reviewer_id: string;
+            /** Success */
+            success: boolean;
+        };
+        /** EditorialRightsSignoffIn */
+        EditorialRightsSignoffIn: {
+            /** Legal Basis */
+            legal_basis?: string | null;
+            /** License */
+            license: string;
+            /** Notes */
+            notes?: string | null;
+            /**
+             * Resource Id
+             * Format: uuid
+             */
+            resource_id: string;
+            /** Resource Type */
+            resource_type: string;
+            /** Rights Owner */
+            rights_owner: string;
+            /** Rights Status */
+            rights_status: string;
+        };
+        /** EditorialRightsSignoffOut */
+        EditorialRightsSignoffOut: {
+            /** License */
+            license: string;
+            /** Message */
+            message: string;
+            /**
+             * Resource Id
+             * Format: uuid
+             */
+            resource_id: string;
+            /** Resource Type */
+            resource_type: string;
+            /** Rights Owner */
+            rights_owner: string;
+            /** Rights Status */
+            rights_status: string;
+            /**
+             * Signed Off At
+             * Format: date-time
+             */
+            signed_off_at: string;
+            /**
+             * Signed Off By
+             * Format: uuid
+             */
+            signed_off_by: string;
+            /** Success */
+            success: boolean;
         };
         /**
          * EmailTemplateCreate
@@ -15642,13 +16570,37 @@ export interface components {
              */
             heritage_scope: string | null;
             /**
+             * Hint Level
+             * @description Progression level for hints: 1 (observation prompt), 2 (source consultation clue), 3 (guided synthesis).
+             * @default 1
+             */
+            hint_level: number | null;
+            /**
              * Include Unverified
              * @description When true, unreviewed/needs_source claims may be retrieved but are always clearly labelled as unverified (Spec 37.1).
              * @default false
              */
             include_unverified: boolean;
+            /**
+             * Inspect Provenance
+             * @description When true, returns cryptographic SHA-256 provenance chain and primary source verification records.
+             * @default false
+             */
+            inspect_provenance: boolean | null;
+            /**
+             * Mode
+             * @description Learning mode: direct (factual answer) or hint_first / socratic (guided progressive inquiry).
+             * @default direct
+             */
+            mode: ("direct" | "hint_first" | "socratic") | null;
             /** Question */
             question: string;
+            /**
+             * Reveal Answer
+             * @description Explicit flag to reveal the direct answer after reviewing hints.
+             * @default false
+             */
+            reveal_answer: boolean | null;
         };
         /** HistoryTutorAskOut */
         HistoryTutorAskOut: {
@@ -15664,8 +16616,29 @@ export interface components {
             /** Epistemic Summary */
             epistemic_summary: string;
             grounding: components["schemas"]["HistoryTutorGrounding"];
+            /**
+             * Mode
+             * @default direct
+             * @enum {string}
+             */
+            mode: "direct" | "hint_first" | "socratic";
+            /** Motif Guidance */
+            motif_guidance?: string | null;
+            /** Observation Prompts */
+            observation_prompts?: string[];
+            /** Provenance Records */
+            provenance_records?: components["schemas"]["CitationProvenanceRecord"][];
             /** Related Entities */
             related_entities?: components["schemas"]["HistoryTutorRelatedEntity"][];
+            /**
+             * Revealed Direct Answer
+             * @default true
+             */
+            revealed_direct_answer: boolean;
+            /** Socratic Hints */
+            socratic_hints?: string[];
+            /** Source Investigation Guidance */
+            source_investigation_guidance?: string | null;
             /** Suggested Actions */
             suggested_actions?: components["schemas"]["HistoryTutorSuggestedAction"][];
             /** Uncertainties */
@@ -15673,12 +16646,26 @@ export interface components {
         };
         /** HistoryTutorCitation */
         HistoryTutorCitation: {
+            /** Archive Url */
+            archive_url?: string | null;
+            /** Author */
+            author?: string | null;
             /** Claim Ids */
             claim_ids: string[];
             /** Locator */
             locator: string;
+            /** Provenance Hash */
+            provenance_hash?: string | null;
+            /** Publication Year */
+            publication_year?: number | null;
+            /** Reliability Level */
+            reliability_level?: string | null;
             /** Source Id */
             source_id: string;
+            /** Source Title */
+            source_title?: string | null;
+            /** Verification Status */
+            verification_status?: string | null;
         };
         /** HistoryTutorGrounding */
         HistoryTutorGrounding: {
@@ -18018,6 +19005,31 @@ export interface components {
             /** Support Type */
             support_type: string;
         };
+        /** InvalidationResultOut */
+        InvalidationResultOut: {
+            /** Invalidated Claim Ids */
+            invalidated_claim_ids?: string[];
+            /** Invalidated Story Ids */
+            invalidated_story_ids?: string[];
+            /** Purged Cache Keys */
+            purged_cache_keys?: string[];
+            /** Rationale */
+            rationale: string;
+            /**
+             * Release Id
+             * Format: uuid
+             */
+            release_id: string;
+            /** Revoked Source Ids */
+            revoked_source_ids?: string[];
+            /**
+             * Timestamp
+             * Format: date-time
+             */
+            timestamp: string;
+            /** Trigger Type */
+            trigger_type: string;
+        };
         /**
          * LeaderboardEntryOut
          * @description Single entry in the class leaderboard.
@@ -18728,19 +19740,47 @@ export interface components {
             checkpoint?: components["schemas"]["LiveAITeacherCheckpointOut"] | null;
             /** Citations */
             citations?: components["schemas"]["LiveAITeacherCitationOut"][];
+            /** Fallback Indicator */
+            fallback_indicator?: string | null;
             /**
              * Forced Hint First
              * @default false
              */
             forced_hint_first: boolean;
+            /** Guardrail Categories */
+            guardrail_categories?: string[];
+            /**
+             * Guardrail Status
+             * @default passed
+             */
+            guardrail_status: string;
+            /**
+             * Is Fallback
+             * @default false
+             */
+            is_fallback: boolean;
+            /**
+             * Is Synthetic
+             * @default false
+             */
+            is_synthetic: boolean;
             /** Mode */
             mode: string;
             /** Model */
             model?: string | null;
             /** Persona */
             persona?: string | null;
+            /** Provenance */
+            provenance?: {
+                [key: string]: unknown;
+            } | null;
             /** Provider */
             provider: string;
+            /**
+             * Provider Mode
+             * @default live
+             */
+            provider_mode: string;
             /** References */
             references?: components["schemas"]["LiveAITeacherReferenceOut"][];
             rubric?: components["schemas"]["LiveAITeacherRubricOut"] | null;
@@ -18788,10 +19828,38 @@ export interface components {
          * @description Output for backend STT transcription in live AI teacher.
          */
         LiveAITeacherSTTOut: {
+            /** Fallback Indicator */
+            fallback_indicator?: string | null;
+            /** Guardrail Categories */
+            guardrail_categories?: string[];
+            /**
+             * Guardrail Status
+             * @default passed
+             */
+            guardrail_status: string;
+            /**
+             * Is Fallback
+             * @default false
+             */
+            is_fallback: boolean;
+            /**
+             * Is Synthetic
+             * @default false
+             */
+            is_synthetic: boolean;
             /** Model */
             model?: string | null;
+            /** Provenance */
+            provenance?: {
+                [key: string]: unknown;
+            } | null;
             /** Provider */
             provider: string;
+            /**
+             * Provider Mode
+             * @default live
+             */
+            provider_mode: string;
             /** Transcript */
             transcript: string;
         };
@@ -22217,6 +23285,192 @@ export interface components {
              */
             review_notes: string;
         };
+        /** ReleaseAuditOut */
+        ReleaseAuditOut: {
+            /** Cache Purges */
+            cache_purges?: {
+                [key: string]: unknown;
+            }[];
+            /** Corrections */
+            corrections?: {
+                [key: string]: unknown;
+            }[];
+            /** Release Code */
+            release_code: string;
+            /**
+             * Release Id
+             * Format: uuid
+             */
+            release_id: string;
+        };
+        /** ReleaseCreateIn */
+        ReleaseCreateIn: {
+            /**
+             * Allow Unreviewed
+             * @description Whether to bypass draft checks (strictly for tests/preview).
+             * @default false
+             */
+            allow_unreviewed: boolean;
+            /**
+             * Previous Release Id
+             * @description Explicit previous release pointer.
+             */
+            previous_release_id?: string | null;
+            /**
+             * Release Code
+             * @description Unique human-readable release identifier.
+             */
+            release_code: string;
+            /**
+             * Scope
+             * @description Content scope.
+             * @default cuu_dinh_162_motifs
+             */
+            scope: string;
+            /**
+             * Simulate Failure At Story Idx
+             * @description Negative abuse test flag to simulate mid-release crash and verify rollback.
+             */
+            simulate_failure_at_story_idx?: number | null;
+            /**
+             * Story Ids
+             * @description List of HistoryStory UUIDs to atomically publish.
+             */
+            story_ids: string[];
+        };
+        /** ReleaseDetailOut */
+        ReleaseDetailOut: {
+            /** Cache Purge Status */
+            cache_purge_status: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Invalidated At */
+            invalidated_at?: string | null;
+            /** Manifest Sha256 */
+            manifest_sha256: string;
+            /** Previous Release Id */
+            previous_release_id?: string | null;
+            /** Published At */
+            published_at?: string | null;
+            /** Purged At */
+            purged_at?: string | null;
+            /** Release Code */
+            release_code: string;
+            /** Rolled Back At */
+            rolled_back_at?: string | null;
+            /** Scope */
+            scope: string;
+            /** Signed Revision */
+            signed_revision: string;
+            /** Signer Identity */
+            signer_identity: string;
+            /** Signer Role */
+            signer_role: string;
+            /** Snapshot Payload */
+            snapshot_payload?: {
+                [key: string]: unknown;
+            };
+            /** Status */
+            status: string;
+            /**
+             * Stories Count
+             * @default 0
+             */
+            stories_count: number;
+        };
+        /** ReleaseInvalidateIn */
+        ReleaseInvalidateIn: {
+            /** Claim Id */
+            claim_id?: string | null;
+            /** Entity Slug */
+            entity_slug?: string | null;
+            /**
+             * Rationale
+             * @description Audited explanation of the retraction.
+             */
+            rationale: string;
+            /** Source Id */
+            source_id?: string | null;
+            /** Story Id */
+            story_id?: string | null;
+            /**
+             * Trigger Type
+             * @description Reason trigger for invalidation.
+             * @default RIGHTS_EXPIRATION
+             */
+            trigger_type: string;
+        };
+        /** ReleasePreflightIn */
+        ReleasePreflightIn: {
+            /**
+             * Allow Unreviewed
+             * @description Flag for emergency/preview validation.
+             * @default false
+             */
+            allow_unreviewed: boolean;
+            /**
+             * Claim Ids
+             * @description Optional extra claims to validate.
+             */
+            claim_ids?: string[] | null;
+            /**
+             * Scope
+             * @description Target content scope identifier.
+             * @default cuu_dinh_162_motifs
+             */
+            scope: string;
+            /**
+             * Story Ids
+             * @description List of HistoryStory UUIDs to validate.
+             */
+            story_ids: string[];
+        };
+        /** ReleasePreflightReportOut */
+        ReleasePreflightReportOut: {
+            /** Assets Count */
+            assets_count: number;
+            /** Blockers */
+            blockers?: string[];
+            /** Can Publish */
+            can_publish: boolean;
+            /** Checks */
+            checks: {
+                [key: string]: boolean;
+            };
+            /** Claims Count */
+            claims_count: number;
+            /** Manifest Sha256 */
+            manifest_sha256: string;
+            /** Scope */
+            scope: string;
+            /** Sources Count */
+            sources_count: number;
+            /** Stories Count */
+            stories_count: number;
+            /** Warnings */
+            warnings?: string[];
+        };
+        /** ReleaseRollbackIn */
+        ReleaseRollbackIn: {
+            /**
+             * Restore Release Id
+             * @description Optional specific previous release to restore.
+             */
+            restore_release_id?: string | null;
+            /**
+             * Rollback Reason
+             * @description Audited reason for rolling back this publication release.
+             */
+            rollback_reason: string;
+        };
         /**
          * RelicInspectionCompleteRequest
          * @description Payload submitted when a student completes an inspection of a heritage relic.
@@ -22512,6 +23766,29 @@ export interface components {
              * @description Quality rating from 0-5
              */
             quality: number;
+        };
+        /** RollbackResultOut */
+        RollbackResultOut: {
+            /** Purged Cache Keys */
+            purged_cache_keys?: string[];
+            /** Release Code */
+            release_code: string;
+            /** Restored Release Id */
+            restored_release_id?: string | null;
+            /** Reverted Stories Count */
+            reverted_stories_count: number;
+            /** Rollback Reason */
+            rollback_reason: string;
+            /**
+             * Rolled Back Release Id
+             * Format: uuid
+             */
+            rolled_back_release_id: string;
+            /**
+             * Timestamp
+             * Format: date-time
+             */
+            timestamp: string;
         };
         /** RubricEvaluationCreate */
         RubricEvaluationCreate: {
@@ -23055,16 +24332,34 @@ export interface components {
             by_provider?: {
                 [key: string]: unknown;
             };
+            /** By Provider Mode */
+            by_provider_mode?: {
+                [key: string]: unknown;
+            };
             /** Drop Rate */
             drop_rate: number;
             /** Error Budget */
             error_budget: number;
+            /**
+             * Fallback Count
+             * @default 0
+             */
+            fallback_count: number;
             /** Generated At */
             generated_at: string;
+            /** Guardrail Stats */
+            guardrail_stats?: {
+                [key: string]: unknown;
+            };
             /** P95 Latency Ms */
             p95_latency_ms: number;
             /** Success Rate */
             success_rate: number;
+            /**
+             * Synthetic Count
+             * @default 0
+             */
+            synthetic_count: number;
             /** Token Usage */
             token_usage?: {
                 [key: string]: number;
@@ -25508,6 +26803,174 @@ export interface operations {
             };
         };
     };
+    get_admin_editorial_disputes_api_v1_admin_editorial_disputes_get: {
+        parameters: {
+            query?: {
+                status?: string | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EditorialDisputeListOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    resolve_admin_editorial_dispute_api_v1_admin_editorial_disputes_resolve_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EditorialDisputeResolveIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EditorialDisputeResolveOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_editorial_queue_api_v1_admin_editorial_queue_get: {
+        parameters: {
+            query?: {
+                item_type?: string | null;
+                status?: string | null;
+                origin?: string | null;
+                search?: string | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EditorialQueueListOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    submit_editorial_review_api_v1_admin_editorial_review_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EditorialReviewActionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EditorialReviewActionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    signoff_admin_editorial_rights_api_v1_admin_editorial_rights_signoff_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EditorialRightsSignoffIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EditorialRightsSignoffOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_email_templates_api_v1_admin_email_templates_get: {
         parameters: {
             query?: {
@@ -26194,6 +27657,7 @@ export interface operations {
             query: {
                 target: string;
                 reason?: string | null;
+                require_four_eyes?: boolean;
             };
             header?: never;
             path: {
@@ -28030,6 +29494,235 @@ export interface operations {
             };
         };
     };
+    create_publication_release_api_v1_admin_research_factory_releases_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReleaseCreateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReleaseDetailOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_active_release_api_v1_admin_research_factory_releases_active_get: {
+        parameters: {
+            query?: {
+                scope?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReleaseDetailOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    check_release_preflight_api_v1_admin_research_factory_releases_preflight_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReleasePreflightIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReleasePreflightReportOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_release_by_id_api_v1_admin_research_factory_releases__release_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                release_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReleaseDetailOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_release_audit_trail_api_v1_admin_research_factory_releases__release_id__audit_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                release_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReleaseAuditOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    invalidate_release_api_v1_admin_research_factory_releases__release_id__invalidate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                release_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReleaseInvalidateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InvalidationResultOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    rollback_release_api_v1_admin_research_factory_releases__release_id__rollback_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                release_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReleaseRollbackIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RollbackResultOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_scheduled_emails_api_v1_admin_scheduled_emails_get: {
         parameters: {
             query?: {
@@ -28546,6 +30239,109 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["LessonGenerateOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_budget_status_api_v1_ai_observability_budget_get: {
+        parameters: {
+            query?: {
+                /** @description Optional classroom context */
+                classroom_id?: string | null;
+                /** @description Target user (admin/staff/teacher only) */
+                user_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AIBudgetStatusOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    set_budget_cap_api_v1_ai_observability_budget_caps_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AIBudgetCapSetIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AIBudgetCapOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_observability_metrics_api_v1_ai_observability_metrics_get: {
+        parameters: {
+            query?: {
+                /** @description Lookback window in hours */
+                hours?: number;
+                /** @description Optional operation filter */
+                operation?: string | null;
+                /** @description Optional model filter */
+                model?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AIObservabilityMetricsOut"];
                 };
             };
             /** @description Validation Error */
@@ -33297,6 +35093,10 @@ export interface operations {
             query?: {
                 /** @description Optional heritage scope filter: CUU_DINH, RBPC_HUE, ALL */
                 heritage_scope?: string | null;
+                /** @description Optional classroom context for budget tracking */
+                classroom_id?: string | null;
+                /** @description When true, rejects with HTTP 429 on exhausted budget rather than falling back */
+                strict_budget?: boolean;
             };
             header?: never;
             path?: never;
@@ -33328,6 +35128,40 @@ export interface operations {
             };
         };
     };
+    history_tutor_citation_provenance_api_v1_history_tutor_citations__source_id__provenance_get: {
+        parameters: {
+            query?: {
+                /** @description Optional SHA-256 hash to verify against tampering */
+                expected_hash?: string | null;
+            };
+            header?: never;
+            path: {
+                source_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CitationProvenanceRecord"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     history_tutor_entities_api_v1_history_tutor_entities_get: {
         parameters: {
             query: {
@@ -33346,6 +35180,40 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    history_tutor_citation_provenance_api_v1_history_tutor_provenance__source_id__get: {
+        parameters: {
+            query?: {
+                /** @description Optional SHA-256 hash to verify against tampering */
+                expected_hash?: string | null;
+            };
+            header?: never;
+            path: {
+                source_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CitationProvenanceRecord"];
                 };
             };
             /** @description Validation Error */

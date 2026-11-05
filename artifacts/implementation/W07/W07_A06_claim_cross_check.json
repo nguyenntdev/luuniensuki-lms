@@ -1,0 +1,90 @@
+{
+  "ticket": "V5-T076",
+  "wave": "W07",
+  "slot": "A06",
+  "role": "W07-A06",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "P04–P06 source/claim cross-check in backend/services/research_factory/ and backend/history_models.py",
+  "timestamp": "2026-11-05T21:40:00Z",
+  "implementation_summary": {
+    "modules_created": [
+      "backend/services/research_factory/citations.py",
+      "backend/services/research_factory/corroboration.py",
+      "backend/services/research_factory/cross_check.py"
+    ],
+    "modules_updated": [
+      "backend/services/research_factory/__init__.py",
+      "backend/history_models.py"
+    ],
+    "test_suite": "tests/v5/test_v5_t076.py",
+    "features_delivered": [
+      "Edition Normalization & Canonical Matching (P04/P05): Standardizes primary source titles, publishers, editions, volumes, and page locators. Maps variant editions and translations into canonical works (WORK-DNTL for Đại Nam thực lục, WORK-DNNTC for Đại Nam nhất thống chí, WORK-KDHDSL for Khâm định Đại Nam hội điển sự lệ, WORK-DKDDC for Đồng Khánh địa dư chí, WORK-CDH-2012 for Cửu Đỉnh Huế).",
+      "Mirror Source Detection & Anti-Double-Counting (P05 Gate): detect_duplicate_or_mirror_sources detects when multiple citations refer to derivative translations or reprints of the same root canonical chronicle (e.g. 1962 and 2007 editions of Đại Nam thực lục). Enforces the invariant 'Do not count mirrors twice' by collapsing them into 1 independent origin.",
+      "Negative Abuse Defense - Mismatched Page Citation Rejected: validate_citation_locator deterministically blocks citations referencing page numbers exceeding source page boundaries (e.g. citing page 999 when source only has 120 pages), inverted ranges (page_start > page_end), or non-positive pages with MismatchedPageCitationError.",
+      "Negative Abuse Defense - Uncorroborated Claim Citation Rejected: verify_claim_corroboration_policy deterministically blocks factual claims lacking locators, missing quotation excerpts, citing non-existent sources, or lacking 'supports'/'primary_evidence_for' bindings with UncorroboratedClaimCitationError.",
+      "Cross-Source Contradiction Detection & Automatic Demotion (P05): detect_contradictions_between_claims identifies conflicting statements across sources. Attaching a source with support_type='contradicts' immediately demotes verified claims to 'disputed'. Disputed claims cannot auto-verify without explicit resolution (DisputedClaimCannotAutoVerifyError).",
+      "Scholarly Dispute Ledger (P06): ScholarlyDisputeLedger tracks active historiographical controversies (such as relief motif identification on urn_nghi_dinh_03 'Kiển thảo' vs cocoon grass). Disagreements are retained and cannot be suppressed or deleted for narrative smoothness ('Xóa bất đồng vì muốn bài trôi chảy' blocked).",
+      "Chronology Resolution & Precision Abuse Defense (P05/P06): resolve_date_chronology maps reign eras (Minh Mạng 16 = 1835) to Gregorian years, reconciles distinct sequential milestones (1835 start vs 1837 installation), and flags true year conflicts. Overprecise claims asserting exact calendar days from decade-precision sources are rejected with OverpreciseChronologyError.",
+      "Historical Geography Temporal Mapping & Anachronism Defense (P05/P06): resolve_place_geography maps 19th-century Nguyễn territory (Trấn Hải Đài, Thừa Thiên phủ, Hải Vân Quan) to modern administrative correspondence. Modern boundaries asserted without temporal qualification are blocked with AnachronisticGeographyError.",
+      "Unified Cross-Check Pipeline Facade: cross_check_entity_claims executes the complete P04-P06 verification on database entities, emitting an immutable CrossCheckReport with deterministic SHA-256 summary digests."
+    ]
+  },
+  "verification": {
+    "command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t076.py -v",
+    "result": "PASSED (10/10 tests)",
+    "test_details": [
+      {
+        "name": "test_normalize_editions_and_canonical_matching",
+        "result": "PASSED",
+        "assertion": "Verifies edition normalization maps variants and translations of Đại Nam thực lục, Đại Nam nhất thống chí, and museum monographs to canonical works with volume and edition standardization."
+      },
+      {
+        "name": "test_detect_duplicate_and_mirror_sources",
+        "result": "PASSED",
+        "assertion": "Verifies that reprint/derivative editions of the same canonical work are grouped together and counted as 1 independent origin (P05 Gate: Do not count mirrors twice)."
+      },
+      {
+        "name": "test_mismatched_page_citation_rejected_negative_abuse",
+        "result": "PASSED",
+        "assertion": "Required negative abuse test: Citing page 999 on a 120-page source, inverted page ranges, or non-positive pages are rejected with MismatchedPageCitationError."
+      },
+      {
+        "name": "test_uncorroborated_claim_citation_rejected_negative_abuse",
+        "result": "PASSED",
+        "assertion": "Required negative abuse test: Factual claims with empty quotation excerpts, missing locators, or zero source bindings are rejected with UncorroboratedClaimCitationError."
+      },
+      {
+        "name": "test_successful_claim_source_binding_and_locator_validation",
+        "result": "PASSED",
+        "assertion": "Verifies valid citation locator with page range and volume normalizes cleanly into standard citation string."
+      },
+      {
+        "name": "test_cross_source_contradiction_detection_and_auto_demotion",
+        "result": "PASSED",
+        "assertion": "Verifies contradiction detection and automatic demotion of verified claims to 'disputed' upon attaching contradicting sources, blocking premature verification."
+      },
+      {
+        "name": "test_scholarly_dispute_ledger_tracking",
+        "result": "PASSED",
+        "assertion": "Verifies that scholarly disputes (such as motif identification for urn_nghi_dinh_03) are preserved in the ledger and block unapproved verification."
+      },
+      {
+        "name": "test_chronology_resolution_and_precision_abuse",
+        "result": "PASSED",
+        "assertion": "Verifies milestone sequential reconciliation, detects same-milestone contradictions, and rejects claiming exact day precision from decade-precision sources (OverpreciseChronologyError)."
+      },
+      {
+        "name": "test_geography_temporal_mapping_and_anachronism_abuse",
+        "result": "PASSED",
+        "assertion": "Verifies temporal mapping of historical places (Trấn Hải Đài -> Cửa Thuận An) and rejects anachronistic projection of modern boundaries (AnachronisticGeographyError)."
+      },
+      {
+        "name": "test_end_to_end_entity_cross_check_pipeline",
+        "result": "PASSED",
+        "assertion": "Verifies full cross_check_entity_claims database integration with mirror source detection, citation verification, and deterministic SHA-256 report generation."
+      }
+    ]
+  }
+}

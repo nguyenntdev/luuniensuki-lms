@@ -1,0 +1,118 @@
+{
+  "ticket": "V5-T077",
+  "wave": "W07",
+  "slot": "A07",
+  "role": "W07-A07",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "status": "COMPLETED",
+  "goal": "P07–P08 full narrative + lesson draft in backend/services/research_factory/.",
+  "timestamp": "2026-11-05T22:30:00Z",
+  "implementation_summary": {
+    "modules_created": [
+      "backend/services/research_factory/dossier.py",
+      "backend/services/research_factory/writers.py",
+      "backend/services/research_factory/lesson_writer.py",
+      "backend/services/research_factory/content_assembler.py",
+      "backend/services/research_factory/qa.py",
+      "backend/services/research_factory/service.py"
+    ],
+    "modules_updated": [
+      "backend/services/research_factory/__init__.py",
+      "tests/v5/conftest.py"
+    ],
+    "test_suite": "tests/v5/test_v5_t077.py",
+    "features_delivered": [
+      "P07 Long-Form Historian Narrative Drafting (P07-A01 & P07-A02): Full bilingual narrative sections in Vietnamese and English constructed strictly from verified claims in ResearchDossier.",
+      "Per-Sentence Source Binding: Every factual sentence is bound to a SentenceClaimRef linking claim_id, source_id, source_title, and locator with zero unsourced assertions.",
+      "Museum Label & Epigraphy Notes (P07-A03 & P07-A04): 80-150 word bilingual museum label with archival citations, and reviewed Hán-Nôm notes with verified glyph provenance (rejecting unreviewed glyph promotion).",
+      "3D/AR Narration with Mandatory 2D Fallback (P07-A05): Generates 3D mesh hotspot scripts while strictly requiring an authentic 2D rubbing archive fallback for low-power and non-WebGL environments.",
+      "ELLO 6-Step Historical Inquiry Lesson (P07-A07): Pedagogical lesson sequence (hook, observation, source_analysis, synthesis, reflection, evaluation) requiring students to cite primary evidence on every step.",
+      "4-Level Rubric & Source-Locked Assessment (P07-A08): 4-level rubric (0-3 criteria scale) across mastery dimensions (source literacy, evidence reasoning, contextualization) and factual quizzes locked to verified sources.",
+      "Content Bundle Assembly (P07-A10): Integrates all 9 drafting outputs into ContentBundleDraft with deterministic SHA-256 lineage and bibliography validation.",
+      "P08 Independent QA Runner (P08-A01..A10): 10 concurrent adversarial checkers inspecting sentence bindings, locators, chronology, Hán-Nôm glyphs, disputes, ELLO rubrics, quiz validity, and 2D fallbacks.",
+      "Severity Ledger & Release Gate (P08 Gate): Evaluates all findings into P0 (Blocker), P1 (Warning), and P2 (Info). Any unresolved P0 blocker strictly marks gate as GATE_BLOCKED, blocking publication.",
+      "Negative Abuse Defense - No Source -> No Invented Fact: Sentences without verified sources or novel unsupported English facts are deterministically detected as P0 blockers (UNSOURCED_FACTUAL_ASSERTION, UNSUPPORTED_EN_FACT) and trigger GATE_BLOCKED.",
+      "Database Persistence & Lineage: Persists complete P07 content bundles and P08 QA reports as immutable ResearchEvidenceResult envelopes attached to ResearchRun and ResearchPhase."
+    ]
+  },
+  "verification": {
+    "command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t077.py -v",
+    "result": "PASSED (13/13 tests)",
+    "test_details": [
+      {
+        "name": "test_p07_narrative_drafting_sentence_binding",
+        "result": "PASSED",
+        "assertion": "Verifies that P07 drafting binds every factual sentence to a verified claim and source with specific locators across VI, EN, and museum label."
+      },
+      {
+        "name": "test_p07_hannom_and_3d_narration_script",
+        "result": "PASSED",
+        "assertion": "Verifies reviewed Hán-Nôm editorial notes and 3D narration script with mandatory 2D rubbing fallback."
+      },
+      {
+        "name": "test_p07_ello_lesson_and_rubric_pack",
+        "result": "PASSED",
+        "assertion": "Verifies that ELLO lesson implements all 6 inquiry steps with evidence requirements and 4-level rubric across mastery dimensions."
+      },
+      {
+        "name": "test_content_bundle_draft_assembly",
+        "result": "PASSED",
+        "assertion": "Verifies assemble_content_bundle integrates all 9 outputs with cryptographic SHA-256 and aggregated sentence bindings."
+      },
+      {
+        "name": "test_p08_independent_qa_gate_passed",
+        "result": "PASSED",
+        "assertion": "Verifies that a clean, fully verified content bundle passes all 10 QA checkers with 0 P0 blockers (GATE_PASSED)."
+      },
+      {
+        "name": "test_negative_abuse_unsourced_sentence_fails_qa",
+        "result": "PASSED",
+        "assertion": "Negative abuse test: Injected sentence without verified source binding triggers P0_BLOCKER (UNSOURCED_FACTUAL_ASSERTION) and GATE_BLOCKED."
+      },
+      {
+        "name": "test_negative_abuse_invented_english_fact_fails_qa",
+        "result": "PASSED",
+        "assertion": "Negative abuse test: English narrative adding unsupported facts absent from dossier triggers P0_BLOCKER (UNSUPPORTED_EN_FACT) and GATE_BLOCKED."
+      },
+      {
+        "name": "test_negative_abuse_quiz_on_disputed_claim_blocked",
+        "result": "PASSED",
+        "assertion": "Negative abuse test: Factual quiz constructed on disputed claim triggers P0_BLOCKER (QUIZ_ON_DISPUTED_CLAIM) and GATE_BLOCKED."
+      },
+      {
+        "name": "test_negative_abuse_missing_2d_fallback_blocked",
+        "result": "PASSED",
+        "assertion": "Negative abuse test: 3D interactive script lacking 2D rubbing fallback triggers P0_BLOCKER (MISSING_2D_FALLBACK) and GATE_BLOCKED."
+      },
+      {
+        "name": "test_negative_abuse_unverified_han_nom_glyph_blocked",
+        "result": "PASSED",
+        "assertion": "Negative abuse test: Unreviewed Hán-Nôm glyph triggers P0_BLOCKER (UNVERIFIED_HAN_NOM_GLYPH) and GATE_BLOCKED."
+      },
+      {
+        "name": "test_negative_abuse_fabricated_locator_blocked",
+        "result": "PASSED",
+        "assertion": "Negative abuse test: Fabricated or placeholder page locator triggers P0_BLOCKER (FABRICATED_CITATION_LOCATOR) and GATE_BLOCKED."
+      },
+      {
+        "name": "test_negative_abuse_chronological_contradiction_blocked",
+        "result": "PASSED",
+        "assertion": "Negative abuse test: Chronological contradiction (e.g. 20th century) triggers P0_BLOCKER (CHRONOLOGICAL_CONTRADICTION) and GATE_BLOCKED."
+      },
+      {
+        "name": "test_factory_persistence_and_dossier_from_db",
+        "result": "PASSED",
+        "assertion": "Verifies DB seeding, build_dossier_from_entity, and persistence into ResearchRun, ResearchPhase, ResearchJob, and ResearchEvidenceResult."
+      }
+    ]
+  },
+  "invariants_enforced": [
+    "No source -> no invented fact: every single factual sentence is bound to a verified source.",
+    "Zero unsourced assertions: any statement lacking verified citation triggers P0 blocker.",
+    "4-level rubric spanning 0-3 criteria scale with evidence citation requirements.",
+    "Mandatory 2D rubbing fallback for 3D/AR narration scripts.",
+    "Zero unreviewed Hán-Nôm glyph promotion.",
+    "Any unresolved P0 blocker strictly causes GATE_BLOCKED."
+  ]
+}

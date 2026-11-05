@@ -1,0 +1,38 @@
+{
+  "ticket": "V5-T073",
+  "wave": "W07",
+  "slot": "A03",
+  "role": "W07-A03",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "goal": "Distributed leasing and concurrency in backend/services/research_factory/",
+  "implementation_summary": {
+    "modules_created_or_updated": [
+      "backend/services/research_factory/leasing.py",
+      "backend/services/research_factory/semaphore.py",
+      "backend/services/research_factory/concurrency.py",
+      "backend/services/research_factory/__init__.py",
+      "backend/research_factory_models.py",
+      "migrations/versions/0070_research_factory_core.py",
+      "tests/v5/test_v5_t073.py"
+    ],
+    "test_suite": "tests/v5/test_v5_t073.py",
+    "features_delivered": [
+      "Atomic job leasing via PostgreSQL SELECT ... FOR UPDATE SKIP LOCKED in lease_next_job with short-lived database transactions, preventing long row-locks across network calls",
+      "Configurable lease TTL and atomic renewal with heartbeat tracking in renew_lease, checking active lease tokens and worker pod ownership",
+      "Negative abuse defense: Two worker pods running concurrently cannot lease the same task simultaneously (proven via concurrent multi-threaded barrier tests where exactly 1 pod wins and the other skips with None)",
+      "Split-brain defense: Stale workers whose lease expired cannot renew or complete jobs; attempts are strictly rejected with LeaseLostError",
+      "Distributed provider semaphores (acquire_provider_slot, release_provider_slot, renew_provider_slot) using transactional PostgreSQL serialization and active lease weighting to enforce external AI/OCR concurrency caps across multi-container deployments",
+      "Synchronous and asynchronous context manager DistributedProviderSemaphore supporting with and async with with automatic permit acquisition, polling timeout, and guaranteed cleanup",
+      "Automatic expiration eviction and daemon recovery in recover_expired_leases to reclaim abandoned or crashed worker tasks back to QUEUED or mark FAILED when max_attempts is exceeded",
+      "Sweep-line algorithm implementation (measure_overlapping_tasks) and ConcurrencyTracker for measuring peak overlapping concurrent task executions with millisecond precision",
+      "Real-time database active concurrency monitoring via measure_active_concurrency inspecting active leases, queued jobs, completed counts, and provider semaphore allocations"
+    ]
+  },
+  "verification": {
+    "command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t073.py -v",
+    "result": "PASSED (11/11 tests passed in 5.94s)",
+    "negative_test_status": "PASSED (test_negative_abuse_two_worker_pods_cannot_lease_same_task and test_negative_stale_worker_split_brain_rejected passed)"
+  },
+  "status": "COMPLETED"
+}

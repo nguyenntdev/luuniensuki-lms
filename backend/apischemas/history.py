@@ -496,3 +496,133 @@ class EntityCitationBundleOut(BaseModel):
     bundle_provenance_hash: str
     total_sources_count: int = 0
     has_restricted_sources: bool = False
+
+
+# --------------------------------------------------------------------------- #
+# Editorial Review Queue & Governance Schemas (V5-T078 / W07-A08)
+# --------------------------------------------------------------------------- #
+class EditorialQueueItemOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    item_type: str  # "claim" | "entity" | "source"
+    title: str
+    statement_en: Optional[str] = None
+    entity_id: Optional[UUID] = None
+    entity_slug: Optional[str] = None
+    entity_name: Optional[str] = None
+    status: str
+    confidence: Optional[str] = None
+    origin: Optional[str] = None
+    is_ai_draft: bool = False
+    author_id: Optional[UUID] = None
+    author_email: Optional[str] = None
+    author_name: Optional[str] = None
+    reviewer_id: Optional[UUID] = None
+    has_eligible_source: bool = False
+    source_count: int = 0
+    rights_status: Optional[str] = None
+    rights_cleared: bool = False
+    is_disputed: bool = False
+    review_notes: Optional[str] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+
+class EditorialQueueSummaryOut(BaseModel):
+    pending_review_count: int = 0
+    internal_review_count: int = 0
+    disputed_count: int = 0
+    needs_source_count: int = 0
+    needs_rights_count: int = 0
+    ai_draft_count: int = 0
+    verified_count: int = 0
+
+
+class EditorialQueueListOut(BaseModel):
+    items: list[EditorialQueueItemOut] = Field(default_factory=list)
+    total: int = 0
+    summary: EditorialQueueSummaryOut = Field(default_factory=EditorialQueueSummaryOut)
+
+
+class EditorialReviewActionIn(BaseModel):
+    item_type: str = Field(..., pattern="^(claim|entity|source)$")
+    item_id: UUID
+    action: str = Field(..., pattern="^(submit_for_review|verify|publish|reject|flag_dispute|request_changes)$")
+    notes: Optional[str] = None
+    rights_signoff: Optional[dict[str, Any]] = None
+
+
+class EditorialReviewActionOut(BaseModel):
+    success: bool
+    item_id: UUID
+    item_type: str
+    previous_status: str
+    new_status: str
+    action: str
+    reviewer_id: UUID
+    notes: Optional[str] = None
+    message: str
+
+
+class EditorialDisputeItemOut(BaseModel):
+    dispute_id: int
+    resource_type: str
+    resource_id: UUID
+    resource_title: str
+    dispute_reason: Optional[str] = None
+    disputed_by_id: Optional[UUID] = None
+    disputed_by_email: Optional[str] = None
+    status: str  # "active" | "resolved" | "upheld"
+    resolution_notes: Optional[str] = None
+    resolved_by_id: Optional[UUID] = None
+    created_at: Optional[datetime] = None
+
+
+class EditorialDisputeListOut(BaseModel):
+    items: list[EditorialDisputeItemOut] = Field(default_factory=list)
+    total: int = 0
+    active_count: int = 0
+    resolved_count: int = 0
+
+
+class EditorialDisputeResolveIn(BaseModel):
+    item_type: str = Field(..., pattern="^(claim|entity)$")
+    item_id: UUID
+    resolution: str = Field(..., pattern="^(resolved|upheld)$")
+    resolution_notes: str = Field(..., min_length=3)
+    cited_source_id: Optional[UUID] = None
+
+
+class EditorialDisputeResolveOut(BaseModel):
+    success: bool = True
+    item_id: UUID
+    item_type: str
+    resolution: str
+    status: str
+    adjudicator_id: UUID
+    notes: str
+    resolved_at: datetime
+    message: str
+
+
+class EditorialRightsSignoffIn(BaseModel):
+    resource_type: str = Field(..., pattern="^(source|asset|claim|entity)$")
+    resource_id: UUID
+    rights_status: str = Field(..., min_length=1)
+    rights_owner: str = Field(..., min_length=1)
+    license: str = Field(..., min_length=1)
+    legal_basis: Optional[str] = None
+    notes: Optional[str] = None
+
+
+class EditorialRightsSignoffOut(BaseModel):
+    success: bool
+    resource_type: str
+    resource_id: UUID
+    rights_status: str
+    rights_owner: str
+    license: str
+    signed_off_by: UUID
+    signed_off_at: datetime
+    message: str

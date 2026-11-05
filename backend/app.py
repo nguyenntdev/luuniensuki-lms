@@ -240,6 +240,7 @@ def create_app() -> FastAPI:
     from .routers import media_cms as media_cms_router
     from .routers import offline as offline_router
     from .routers import quests as quests_router
+    from .routers import research_factory as research_factory_router
 
     app.include_router(auth_router.router)
     app.include_router(users_router.router)
@@ -264,5 +265,6 @@ def create_app() -> FastAPI:
     app.include_router(history_inquiry_router.router)
     app.include_router(media_cms_router.router)
     app.include_router(offline_router.router)
+    app.include_router(research_factory_router.router)
 
     return app

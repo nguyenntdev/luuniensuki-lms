@@ -32,6 +32,7 @@ import backend.history_models  # noqa: F401
 import backend.models_rbpc  # noqa: F401
 import backend.imperial_models  # noqa: F401
 import backend.imperial_v51_models  # noqa: F401
+import backend.research_factory_models  # noqa: F401
 import backend.main as main  # noqa: E402  (DATABASE_URL must be set before importing)
 
 

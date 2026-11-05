@@ -1,0 +1,101 @@
+{
+  "ticket_id": "V5-T078",
+  "wave": "W07",
+  "slot": "W07-A08",
+  "role": "W07-A08",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "goal": "P09–P10 human editorial review queue in backend/routers/ and frontend/src/app/admin/.",
+  "status": "COMPLETED",
+  "timestamp": "2026-11-05T09:45:00Z",
+  "summary": "Implemented P09–P10 human editorial review queue, four-eyes author/reviewer separation, dispute resolution ledger, and rights sign-off across backend/services/history_governance.py, backend/routers/history.py, backend/apischemas/history.py, and frontend/src/app/admin/editorial/. Established strict peer review governance ensuring authors cannot self-approve their own drafts, automated AI agents cannot approve or publish claims through API, and disputed or rights-restricted materials are blocked from publication.",
+  "invariants_enforced": {
+    "structured_review_queue": "GET /api/v1/admin/editorial/queue provides structured filtering of drafts, claims, and entities awaiting editorial evaluation, with real-time summary KPI metrics (pending, in review, disputed, needs source, needs rights, AI drafts, verified).",
+    "author_reviewer_separation_four_eyes": "Four-Eyes Principle strictly blocks an author from verifying or publishing their own submissions (created_by == actor_id), returning HTTP 403 Forbidden with code HISTORY_SELF_APPROVAL_FORBIDDEN. Independent peer human review is mandatory.",
+    "anti_ai_self_approval_guardrail": "Automated AI agent accounts (is_ai_agent=True or bot accounts) are prohibited from approving, verifying, or publishing drafts through the API (HTTP 403 Forbidden with code HISTORY_AI_APPROVAL_FORBIDDEN), guaranteeing human accountability.",
+    "dispute_resolution_ledger": "Systematic tracking of scholarly contradictions and claim disputes via GET /api/v1/admin/editorial/disputes and POST /api/v1/admin/editorial/disputes/resolve, capturing substantive adjudication rationale, resolution status (resolved/upheld), and immutable audit logs.",
+    "rights_signoff_and_publication_gate": "Formal IP/licensing sign-off via POST /api/v1/admin/editorial/rights-signoff attaching rights owner, license, and legal basis to sources and assets. Publication gate strictly rejects claims or entities bound to restricted or revoked sources.",
+    "non_editorial_role_protection": "Non-editorial users (learners, guests, unauthenticated) are blocked from accessing the editorial queue, dispute ledger, or performing review actions (HTTP 401/403).",
+    "persistence_and_auditability": "All editorial state transitions, dispute adjudications, and rights approvals append tamper-evident entries to historical_content_audit_log with actor attribution, diffs, and review notes, persisting across sessions and reloads."
+  },
+  "endpoints_delivered": [
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/editorial/queue",
+      "description": "Lists claims, entities, and sources in the review queue with summary counters and filters (item_type, status, origin, search)."
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/editorial/review",
+      "description": "Executes review actions (submit_for_review, verify, publish, reject, flag_dispute) enforcing four-eyes author/reviewer separation and anti-AI guardrails."
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/editorial/disputes",
+      "description": "Queries the dispute resolution ledger for active and resolved historiographical disputes."
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/editorial/disputes/resolve",
+      "description": "Adjudicates disputes with human accountability, resolution rationale, and optional source attachments."
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/editorial/rights-signoff",
+      "description": "Records legal rights sign-off (cleared/verified/public_domain) for sources, assets, or claims."
+    }
+  ],
+  "frontend_delivered": [
+    {
+      "path": "frontend/src/app/admin/editorial/page.tsx",
+      "description": "Server page defining metadata and rendering the Editorial Review client."
+    },
+    {
+      "path": "frontend/src/app/admin/editorial/EditorialReviewClient.tsx",
+      "description": "Interactive Next.js client component with review queue table, 4-eyes author disablement warning, AI vs Human badges, review modals, dispute resolution ledger, and rights sign-off form."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t078.py -v",
+    "tests_total": 7,
+    "tests_passed": 7,
+    "tests_failed": 0,
+    "test_cases": [
+      {
+        "name": "test_editorial_queue_retrieval_and_filtering",
+        "result": "PASSED",
+        "description": "Verifies that GET /api/v1/admin/editorial/queue lists pending items with accurate summary metrics, AI draft flags, and status filters."
+      },
+      {
+        "name": "test_four_eyes_author_reviewer_separation_enforced",
+        "result": "PASSED",
+        "description": "Verifies that an author cannot verify or publish their own claim (HTTP 403 HISTORY_SELF_APPROVAL_FORBIDDEN), while an independent peer reviewer can."
+      },
+      {
+        "name": "test_negative_abuse_ai_agent_cannot_approve_own_draft_or_any_draft",
+        "result": "PASSED",
+        "description": "Negative abuse test asserting that automated AI bot accounts receive HTTP 403 HISTORY_AI_APPROVAL_FORBIDDEN when attempting to approve or transition drafts."
+      },
+      {
+        "name": "test_non_editorial_roles_strictly_forbidden",
+        "result": "PASSED",
+        "description": "Negative abuse test asserting that unauthenticated requests receive 401 and learners/guests receive 403 when trying to access the editorial queue or submit reviews."
+      },
+      {
+        "name": "test_dispute_resolution_ledger_workflow",
+        "result": "PASSED",
+        "description": "Verifies dispute flagging, ledger indexing in GET /api/v1/admin/editorial/disputes, and human adjudication in POST /api/v1/admin/editorial/disputes/resolve."
+      },
+      {
+        "name": "test_rights_signoff_workflow_and_publication_gate",
+        "result": "PASSED",
+        "description": "Verifies rights sign-off via POST /api/v1/admin/editorial/rights-signoff and asserts that claims bound to restricted or revoked sources are rejected from publication."
+      },
+      {
+        "name": "test_editorial_lifecycle_e2e_persistence",
+        "result": "PASSED",
+        "description": "End-to-end verification of complete P09–P10 lifecycle across Draft -> Review -> Peer Verification -> Rights Sign-off -> Publication, with DB persistence and 5-stage audit trail."
+      }
+    ]
+  }
+}

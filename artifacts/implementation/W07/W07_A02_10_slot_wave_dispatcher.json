@@ -1,0 +1,36 @@
+{
+  "ticket": "V5-T072",
+  "wave": "W07",
+  "slot": "A02",
+  "role": "W07-A02",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "goal": "10-slot WaveDispatcher in backend/services/research_factory/",
+  "implementation_summary": {
+    "modules_created_or_updated": [
+      "backend/services/research_factory/roles.py",
+      "backend/services/research_factory/wave_dispatcher.py",
+      "backend/services/research_factory/__init__.py",
+      "backend/research_factory_models.py",
+      "tests/v5/test_v5_t071.py",
+      "tests/v5/test_v5_t072.py"
+    ],
+    "test_suite": "tests/v5/test_v5_t072.py",
+    "features_delivered": [
+      "Phase roles registry (backend/services/research_factory/roles.py) mapping all 12 phases P00 to P11 to their strictly ordered, authentic 10-role subagent specifications with role names, codes, default providers, and token estimates",
+      "WaveDispatcher (backend/services/research_factory/wave_dispatcher.py) implementing single-transaction creation of exactly 10 unique slots per phase wave with status QUEUED",
+      "Payload snapshot hashing computing deterministic SHA-256 digests over input parameters, bound to both the phase and individual jobs",
+      "Durable queue management with priority, attempt count, slot numbering (1..10), and idempotency key deduplication to support crash recovery and replay",
+      "Idempotent replay logic returning existing phase wave records without double-enqueueing jobs",
+      "Phase status inspection API returning full 10-slot health breakdowns and is_complete_ten validation",
+      "Negative abuse defense: One role absent -> wave does not falsely count ten. Missing role or slot gap raises RoleIncompleteError and prevents database commit"
+    ]
+  },
+  "verification": {
+    "command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t072.py -v",
+    "result": "PASSED (7/7 tests passed in 2.63s)",
+    "suite_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t071.py tests/v5/test_v5_t072.py -v",
+    "suite_result": "PASSED (17/17 tests passed in 6.01s)"
+  },
+  "status": "COMPLETED"
+}

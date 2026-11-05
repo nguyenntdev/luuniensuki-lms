@@ -19,6 +19,16 @@ from sqlalchemy import func, or_, select, text
 from sqlalchemy.orm import Session
 
 from ..apischemas.history import (
+    EditorialDisputeItemOut,
+    EditorialDisputeListOut,
+    EditorialDisputeResolveIn,
+    EditorialDisputeResolveOut,
+    EditorialQueueItemOut,
+    EditorialQueueListOut,
+    EditorialReviewActionIn,
+    EditorialReviewActionOut,
+    EditorialRightsSignoffIn,
+    EditorialRightsSignoffOut,
     EntityCitationBundleOut,
     HistoricalAssetCreate,
     HistoricalAssetOut,
@@ -761,6 +771,7 @@ def transition_claim_status(
     claim_id: UUID,
     target: str = Query(...),
     reason: Optional[str] = Query(default=None),
+    require_four_eyes: bool = Query(default=False),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -788,9 +799,13 @@ def transition_claim_status(
             actor_id=current_user.id,
             reason=reason,
             action=action_map.get(target, "update"),
+            require_four_eyes=require_four_eyes,
         )
     except PermissionError as exc:
-        raise HTTPException(status_code=403, detail=str(exc)) from exc
+        code = "HISTORY_AI_APPROVAL_FORBIDDEN" if "AI agent" in str(exc) else (
+            "HISTORY_SELF_APPROVAL_FORBIDDEN" if "Author cannot" in str(exc) or "four-eyes" in str(exc) else "FORBIDDEN"
+        )
+        raise AppError(code, str(exc), 403) from exc
     except ValueError as exc:
         raise AppError("HISTORY_CLAIM_INVALID_TRANSITION", str(exc), 422) from exc
     db.commit()
@@ -934,3 +949,185 @@ def list_history_audit(
         ],
         "total": len(rows),
     }
+
+
+# --------------------------------------------------------------------------- #
+# Human Editorial Review Queue, Disputes & Rights Sign-off (V5-T078 / W07-A08)
+# --------------------------------------------------------------------------- #
+@router.get(
+    "/api/v1/admin/editorial/queue",
+    response_model=EditorialQueueListOut,
+    dependencies=[Depends(get_staff_user)],
+)
+def get_admin_editorial_queue(
+    item_type: Optional[str] = Query(default=None),
+    status: Optional[str] = Query(default=None),
+    origin: Optional[str] = Query(default=None),
+    search: Optional[str] = Query(default=None),
+    limit: int = Query(default=50, ge=1, le=200),
+    offset: int = Query(default=0, ge=0),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    items, total, summary = gov.get_editorial_queue(
+        db,
+        item_type=item_type,
+        status=status,
+        origin=origin,
+        search=search,
+        limit=limit,
+        offset=offset,
+    )
+    return {"items": items, "total": total, "summary": summary}
+
+
+@router.post(
+    "/api/v1/admin/editorial/review",
+    response_model=EditorialReviewActionOut,
+    dependencies=[Depends(get_staff_user)],
+)
+def submit_editorial_review(
+    payload: EditorialReviewActionIn,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    if gov.is_ai_agent_user(current_user):
+        raise AppError(
+            "HISTORY_AI_APPROVAL_FORBIDDEN",
+            "Automated AI agent cannot approve, verify, or publish drafts through API; human editorial review is required.",
+            403,
+        )
+    try:
+        res = gov.perform_editorial_review(
+            db,
+            item_type=payload.item_type,
+            item_id=payload.item_id,
+            action=payload.action,
+            actor_id=current_user.id,
+            notes=payload.notes,
+            require_four_eyes=True,
+        )
+        if payload.rights_signoff:
+            gov.signoff_rights(
+                db,
+                resource_type=payload.item_type,
+                resource_id=payload.item_id,
+                rights_status=payload.rights_signoff.get("rights_status", "cleared"),
+                rights_owner=payload.rights_signoff.get("rights_owner", "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)"),
+                license=payload.rights_signoff.get("license", "CC BY 4.0 / Educational Fair Use"),
+                actor_id=current_user.id,
+                legal_basis=payload.rights_signoff.get("legal_basis"),
+                notes=payload.notes,
+            )
+        db.commit()
+        return res
+    except PermissionError as exc:
+        code = "HISTORY_AI_APPROVAL_FORBIDDEN" if "AI agent" in str(exc) else (
+            "HISTORY_SELF_APPROVAL_FORBIDDEN" if "Author cannot" in str(exc) or "four-eyes" in str(exc) else "FORBIDDEN"
+        )
+        raise AppError(code, str(exc), 403) from exc
+    except ValueError as exc:
+        raise AppError("HISTORY_EDITORIAL_ACTION_INVALID", str(exc), 422) from exc
+
+
+@router.get(
+    "/api/v1/admin/editorial/disputes",
+    response_model=EditorialDisputeListOut,
+    dependencies=[Depends(get_staff_user)],
+)
+def get_admin_editorial_disputes(
+    status: Optional[str] = Query(default=None),
+    limit: int = Query(default=50, ge=1, le=200),
+    offset: int = Query(default=0, ge=0),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    items, total, active_count, resolved_count = gov.list_editorial_disputes(
+        db, status=status, limit=limit, offset=offset
+    )
+    return {
+        "items": items,
+        "total": total,
+        "active_count": active_count,
+        "resolved_count": resolved_count,
+    }
+
+
+@router.post(
+    "/api/v1/admin/editorial/disputes/resolve",
+    response_model=EditorialDisputeResolveOut,
+    dependencies=[Depends(get_staff_user)],
+)
+def resolve_admin_editorial_dispute(
+    payload: EditorialDisputeResolveIn,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    if gov.is_ai_agent_user(current_user):
+        raise AppError(
+            "HISTORY_AI_APPROVAL_FORBIDDEN",
+            "Automated AI agent cannot adjudicate or resolve disputes; human review is required.",
+            403,
+        )
+    try:
+        res = gov.resolve_editorial_dispute(
+            db,
+            item_type=payload.item_type,
+            item_id=payload.item_id,
+            resolution=payload.resolution,
+            resolution_notes=payload.resolution_notes,
+            actor_id=current_user.id,
+            cited_source_id=payload.cited_source_id,
+        )
+        db.commit()
+        return {
+            "success": True,
+            "item_id": res["item_id"],
+            "item_type": res["item_type"],
+            "resolution": res["resolution"],
+            "status": res["status"],
+            "adjudicator_id": res["adjudicator_id"],
+            "notes": res["notes"],
+            "resolved_at": res["resolved_at"],
+            "message": f"Dispute successfully {res['resolution']} by human editor.",
+        }
+    except PermissionError as exc:
+        raise AppError("FORBIDDEN", str(exc), 403) from exc
+    except ValueError as exc:
+        raise AppError("HISTORY_DISPUTE_RESOLUTION_INVALID", str(exc), 422) from exc
+
+
+@router.post(
+    "/api/v1/admin/editorial/rights-signoff",
+    response_model=EditorialRightsSignoffOut,
+    dependencies=[Depends(get_staff_user)],
+)
+def signoff_admin_editorial_rights(
+    payload: EditorialRightsSignoffIn,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    if gov.is_ai_agent_user(current_user):
+        raise AppError(
+            "HISTORY_AI_APPROVAL_FORBIDDEN",
+            "Automated AI agent cannot sign off on rights clearance; human editorial review is required.",
+            403,
+        )
+    try:
+        res = gov.signoff_rights(
+            db,
+            resource_type=payload.resource_type,
+            resource_id=payload.resource_id,
+            rights_status=payload.rights_status,
+            rights_owner=payload.rights_owner,
+            license=payload.license,
+            actor_id=current_user.id,
+            legal_basis=payload.legal_basis,
+            notes=payload.notes,
+        )
+        db.commit()
+        return res
+    except PermissionError as exc:
+        raise AppError("FORBIDDEN", str(exc), 403) from exc
+    except ValueError as exc:
+        raise AppError("HISTORY_RIGHTS_SIGNOFF_INVALID", str(exc), 422) from exc

@@ -133,6 +133,36 @@
   },
   {
     "method": "GET",
+    "path": "/api/v1/admin/editorial/disputes",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/editorial/disputes/resolve",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/editorial/queue",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/editorial/review",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/editorial/rights-signoff",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
     "path": "/api/v1/admin/email-templates",
     "group": "admin",
     "status": "gateway"
@@ -2666,6 +2696,48 @@
   {
     "method": "GET",
     "path": "/preview/{item_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/releases",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/releases/active",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/releases/preflight",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/releases/{release_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/releases/{release_id}/audit",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/releases/{release_id}/invalidate",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/releases/{release_id}/rollback",
     "group": "misc",
     "status": "gateway"
   },

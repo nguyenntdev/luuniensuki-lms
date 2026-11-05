@@ -1149,4 +1149,39 @@ from .services.mobile_route_audit import (  # noqa: E402
     verify_screen_data_contracts,
 )
 
-
+# --------------------------------------------------------------------------- #
+# P04–P06 Source/Claim Cross-Check & Corroboration Domain (V5-T076 / W07-A06)
+# --------------------------------------------------------------------------- #
+from .services.research_factory.citations import (  # noqa: E402
+    CitationValidationResult,
+    InvalidLocatorFormatError,
+    MismatchedPageCitationError,
+    ResearchFactoryCitationError,
+    UncorroboratedClaimCitationError,
+    validate_citation_locator,
+    verify_claim_corroboration_policy,
+)
+from .services.research_factory.corroboration import (  # noqa: E402
+    CANONICAL_WORKS,
+    AnachronisticGeographyError,
+    CanonicalWork,
+    ContradictionRecord,
+    ContradictionStatus,
+    DisputeCategory,
+    DisputedClaimCannotAutoVerifyError,
+    MirrorDetectionResult,
+    NormalizedEdition,
+    OverpreciseChronologyError,
+    ScholarlyDispute,
+    ScholarlyDisputeLedger,
+    detect_duplicate_or_mirror_sources,
+    dispute_ledger,
+    normalize_edition,
+    resolve_date_chronology,
+    resolve_place_geography,
+)
+from .services.research_factory.cross_check import (  # noqa: E402
+    CrossCheckReport,
+    bind_claim_source_verified,
+    cross_check_entity_claims,
+)

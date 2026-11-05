@@ -1,0 +1,131 @@
+{
+  "ticket_id": "V5-T071",
+  "wave": "W07",
+  "slot": "W07-A01",
+  "role": "W07-A01",
+  "priority": "P1",
+  "classification": "PRODUCTION_COMPLETION",
+  "goal": "Run and job tables for AI Research Factory.",
+  "status": "COMPLETED",
+  "timestamp": "2026-11-05T03:30:00Z",
+  "summary": "Implemented core persistence models and purely additive Alembic migration for the 12-phase x 10-concurrent subagent AI Research Factory. Created tables and relationships for ResearchRun, ResearchPhase, ResearchJob (ResearchAgentJob), ResearchAttempt, ResearchLease, ResearchBudget, ResearchEvidenceResult, ProviderSemaphoreLease, and ProviderConcurrencyConfig. Enforced 10-slot uniqueness per phase wave, distributed leasing with heartbeats and fence tokens, budget tracking, and immutable SHA-256 evidence digests. Verified persistence resilience across process/session restarts.",
+  "entities_and_tables": [
+    {
+      "table_name": "research_runs",
+      "model": "ResearchRun",
+      "purpose": "Top-level orchestrator run across historical urn/relief subject scopes, tracking configuration version, manifest SHA-256 digest, status, and budget."
+    },
+    {
+      "table_name": "research_phases",
+      "model": "ResearchPhase",
+      "purpose": "Execution trace for pipeline phases P00 through P11 with barrier gates, input/output SHA digests, wave numbering, and human sign-off triggers."
+    },
+    {
+      "table_name": "research_agent_jobs",
+      "model": "ResearchJob / ResearchAgentJob",
+      "purpose": "10-subagent concurrency slots per wave with unique (phase_id, slot_number), check constraint slot_number 1..10, idempotency keys, and leasing state."
+    },
+    {
+      "table_name": "research_job_attempts",
+      "model": "ResearchAttempt",
+      "purpose": "Immutable execution attempts per agent job with duration, worker ID, tokens, cost, and error envelopes."
+    },
+    {
+      "table_name": "research_job_leases",
+      "model": "ResearchLease",
+      "purpose": "Distributed concurrency leases with worker ID, lease token, fence token, heartbeat timestamps, and TTL expiration."
+    },
+    {
+      "table_name": "research_budgets",
+      "model": "ResearchBudget",
+      "purpose": "Run and phase level cost, query count, and token spend caps preventing runaway provider billing."
+    },
+    {
+      "table_name": "research_evidence_results",
+      "model": "ResearchEvidenceResult",
+      "purpose": "Immutable evidence envelopes produced by subagent jobs with artifact URIs, cryptographic SHA-256 digests, and citation linkages."
+    },
+    {
+      "table_name": "provider_semaphore_leases",
+      "model": "ProviderSemaphoreLease",
+      "purpose": "Distributed cross-pod rate/concurrency semaphore for third-party inference providers."
+    },
+    {
+      "table_name": "provider_concurrency_configs",
+      "model": "ProviderConcurrencyConfig",
+      "purpose": "Per-provider rate and concurrency caps."
+    }
+  ],
+  "invariants_verified": {
+    "10_slot_uniqueness": "uq_research_job_phase_slot strictly blocks more than 1 agent occupying the same slot within a phase wave; chk_research_job_slot_range enforces 1 <= slot <= 10.",
+    "distributed_leasing": "ResearchLease manages worker lock acquisition with heartbeat TTL, preventing multi-pod race conditions.",
+    "negative_abuse_restart_persistence": "Restarting/crashing the process or worker engine preserves complete run, phase, and job history without loss or reset.",
+    "immutable_evidence_hashing": "Evidence results store SHA-256 cryptographic digests of raw artifact envelopes, guaranteeing tamper detection.",
+    "cascade_deletion_safety": "Deleting a run cleanly cascades to all child phases, jobs, attempts, leases, budgets, and evidence records.",
+    "budget_accounting": "Budget rows track token consumption and cost allocations, flagging exhaustion when limits are exceeded."
+  },
+  "migration_details": {
+    "revision": "0070_research_factory_core",
+    "down_revision": "0069_ai_privacy_child_protections",
+    "migration_file": "migrations/versions/0070_research_factory_core.py",
+    "safety_lint": "PASSED (purely additive, no destructive operations)"
+  },
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t071.py -v",
+    "tests_total": 10,
+    "tests_passed": 10,
+    "tests_failed": 0,
+    "test_cases": [
+      {
+        "name": "test_research_run_creation_and_attributes",
+        "result": "PASSED",
+        "description": "Verifies ResearchRun entity creation with default attributes and user attribution."
+      },
+      {
+        "name": "test_research_phase_and_10_slot_jobs",
+        "result": "PASSED",
+        "description": "Verifies that a phase holds exactly 10 distinct subagent slots."
+      },
+      {
+        "name": "test_slot_uniqueness_negative_constraint",
+        "result": "PASSED",
+        "description": "Negative constraint test: duplicate slot_number on same phase raises IntegrityError."
+      },
+      {
+        "name": "test_slot_range_negative_constraint",
+        "result": "PASSED",
+        "description": "Negative constraint test: slot_number outside 1..10 violates check constraint."
+      },
+      {
+        "name": "test_worker_lease_and_heartbeat_lifecycle",
+        "result": "PASSED",
+        "description": "Verifies distributed worker lease creation, token, and release."
+      },
+      {
+        "name": "test_research_attempt_execution_metrics_and_errors",
+        "result": "PASSED",
+        "description": "Verifies immutable attempt tracking with duration, worker, and error details."
+      },
+      {
+        "name": "test_research_budget_accounting_and_caps",
+        "result": "PASSED",
+        "description": "Verifies provider budget allocation and token spend per run."
+      },
+      {
+        "name": "test_evidence_result_immutable_envelope",
+        "result": "PASSED",
+        "description": "Verifies ResearchEvidenceResult stores immutable schema envelope and artifact linkage."
+      },
+      {
+        "name": "test_negative_abuse_restart_does_not_erase_run_history",
+        "result": "PASSED",
+        "description": "Negative/abuse invariant test: Service restart/crash does not erase run history."
+      },
+      {
+        "name": "test_cascade_deletion_cleans_child_records",
+        "result": "PASSED",
+        "description": "Verifies deleting a ResearchRun cascades cleanly to child records."
+      }
+    ]
+  }
+}
