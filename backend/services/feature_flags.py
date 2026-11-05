@@ -156,3 +156,99 @@ def get_all_features_for_user(
 
     return result
 
+
+# =============================================================================
+# Release Flags & Kill Switches Management (V5-T089)
+# =============================================================================
+
+# In-memory runtime override store: flag_key -> bool
+_RUNTIME_OVERRIDES: dict[str, bool] = {}
+
+KILL_SWITCH_FLAGS = {
+    "FEATURE_FLAG_AI_TUTOR_ENABLED": "ai_tutor",
+    "FEATURE_FLAG_LIVEKIT_MEDIA_ENABLED": "livekit_media",
+    "FEATURE_FLAG_RBPC_COMMERCE_ENABLED": "rbpc_commerce",
+}
+
+
+def set_runtime_override(flag_key: str, enabled: bool) -> None:
+    """Set in-memory runtime override for a feature flag or kill switch."""
+    _RUNTIME_OVERRIDES[flag_key] = bool(enabled)
+
+
+def clear_runtime_overrides() -> None:
+    """Clear all in-memory runtime overrides."""
+    _RUNTIME_OVERRIDES.clear()
+
+
+def get_runtime_overrides() -> dict[str, bool]:
+    """Retrieve all active in-memory runtime overrides."""
+    return dict(_RUNTIME_OVERRIDES)
+
+
+def is_feature_flag_enabled(
+    flag_key: str,
+    db: Optional[Session] = None,
+    default: bool = True,
+) -> bool:
+    """
+    Check if a feature flag / kill switch is enabled.
+    Resolution priority:
+    1. In-memory runtime override (set via admin endpoint)
+    2. Database FeatureFlag record (if db provided)
+    3. Configuration setting on `backend.config.settings` (e.g. settings.feature_flag_ai_tutor_enabled)
+    4. Default fallback
+    """
+    # 1. Runtime override
+    if flag_key in _RUNTIME_OVERRIDES:
+        return _RUNTIME_OVERRIDES[flag_key]
+
+    # Normalize lower_key (e.g. FEATURE_FLAG_AI_TUTOR_ENABLED -> feature_flag_ai_tutor_enabled)
+    lower_key = flag_key.lower()
+    if lower_key in _RUNTIME_OVERRIDES:
+        return _RUNTIME_OVERRIDES[lower_key]
+
+    # 2. Database override
+    if db is not None:
+        try:
+            db_flag = db.execute(
+                select(FeatureFlag).where(
+                    (FeatureFlag.key == flag_key) | (FeatureFlag.key == lower_key)
+                )
+            ).scalar_one_or_none()
+            if db_flag is not None:
+                return bool(db_flag.is_enabled)
+        except Exception:
+            pass
+
+    # 3. Settings config
+    from backend.config import settings
+
+    if hasattr(settings, lower_key):
+        return bool(getattr(settings, lower_key))
+    if hasattr(settings, flag_key):
+        return bool(getattr(settings, flag_key))
+
+    return default
+
+
+def assert_kill_switch_active(
+    flag_key: str,
+    feature_name: str,
+    friendly_message: Optional[str] = None,
+    db: Optional[Session] = None,
+) -> None:
+    """
+    Assert that a feature is enabled. If tripped (disabled), raises HTTP 503
+    Service Unavailable with standard error envelope and a user-friendly maintenance notice.
+    """
+    from fastapi import HTTPException, status
+
+    if not is_feature_flag_enabled(flag_key, db=db):
+        msg = friendly_message or f"Tính năng {feature_name} đang tạm ngưng bảo trì hệ thống. Vui lòng thử lại sau."
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=msg,
+            headers={"Retry-After": "300"},
+        )
+

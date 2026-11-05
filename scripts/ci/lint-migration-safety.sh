@@ -35,7 +35,32 @@ fi
 
 ERRORS=0
 
-# Dangerous patterns (case-insensitive)
+# Check 1: Topology check — ensure exactly 1 head (no diverging heads)
+echo "Checking Alembic topology (single head invariant)..."
+HEAD_INFO=$(PYTHONPATH=. python3 -c "
+import sys
+from pathlib import Path
+REPO_ROOT = Path('.').resolve()
+sys.path.insert(0, str(REPO_ROOT))
+from alembic.config import Config
+from alembic.script import ScriptDirectory
+cfg = Config('alembic.ini')
+s = ScriptDirectory.from_config(cfg)
+heads = s.get_heads()
+print(f'{len(heads)}:{\" \".join(heads)}')
+" 2>/dev/null || echo "0:")
+
+HEAD_COUNT="${HEAD_INFO%%:*}"
+HEADS="${HEAD_INFO#*:}"
+
+if [ "$HEAD_COUNT" -ne 1 ]; then
+    echo "ERROR: Multiple or zero migration heads detected! Found $HEAD_COUNT heads ($HEADS)."
+    ERRORS=$((ERRORS + 1))
+else
+    echo "OK: Single Alembic migration head verified: $HEADS"
+fi
+
+# Check 2: Dangerous patterns in migration files
 DANGEROUS_PATTERNS=(
     "DROP\s+TABLE"
     "DROP\s+COLUMN"
@@ -80,6 +105,15 @@ for file in $MIGRATION_FILES; do
         fi
     done
 done
+
+# Check 3: Full migration preflight dry run (offline SQL generation)
+if [ -f "scripts/dev/migration_preflight.py" ]; then
+    echo "Running migration preflight dry-run validator..."
+    if ! PYTHONPATH=. python3 scripts/dev/migration_preflight.py --strict; then
+        echo "ERROR: Migration preflight validation failed."
+        ERRORS=$((ERRORS + 1))
+    fi
+fi
 
 if [ $ERRORS -gt 0 ]; then
     echo "FAILED: Found $ERRORS dangerous migration operations."

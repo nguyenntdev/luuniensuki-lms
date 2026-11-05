@@ -1,0 +1,104 @@
+{
+  "ticket_id": "V5-T089",
+  "wave": "W08",
+  "slot": "W08-A09",
+  "role": "W08-A09",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "goal": "Feature release flags, kill switches, and incident runbooks.",
+  "status": "COMPLETED",
+  "timestamp": "2026-11-05T04:15:00Z",
+  "summary": "Implemented granular feature release flags and emergency kill switches for AI Tutor inference, WebRTC LiveKit media streaming, and RBPC workshop booking commerce. Added an authenticated admin runtime toggle API and in-memory override manager with database persistence. Tripped kill switches immediately return HTTP 503 Service Unavailable with localized friendly maintenance notices and Retry-After headers, while preserving independent operation of core public heritage catalog and story browsing. Created comprehensive incident runbooks in docs/runbooks/INCIDENT_RUNBOOK_OUTAGE.md, frontend client feature flag utilities in frontend/src/lib/featureFlags.ts, and a full verification test suite.",
+  "files_modified": [
+    {
+      "file": "backend/config.py",
+      "changes": "Added feature flag settings: feature_flag_ai_tutor_enabled, feature_flag_livekit_media_enabled, and feature_flag_rbpc_commerce_enabled with default true."
+    },
+    {
+      "file": "backend/services/feature_flags.py",
+      "changes": "Added in-memory runtime overrides store (_RUNTIME_OVERRIDES), is_feature_flag_enabled() resolver (checking runtime override, DB, and settings config), and assert_kill_switch_active() raising HTTP 503 Service Unavailable with friendly maintenance messages and Retry-After headers."
+    },
+    {
+      "file": "backend/routers/admin.py",
+      "changes": "Added admin runtime endpoints: GET /api/v1/admin/kill-switches to inspect active status and overrides, and POST /api/v1/admin/kill-switches/{flag_key}/toggle to toggle flags at runtime with optional DB persistence."
+    },
+    {
+      "file": "backend/routers/ai.py",
+      "changes": "Enforced assert_kill_switch_active('FEATURE_FLAG_AI_TUTOR_ENABLED') on POST /api/v1/ai/tutor and POST /api/v1/ai/tutor/stream."
+    },
+    {
+      "file": "backend/routers/history_tutor.py",
+      "changes": "Enforced assert_kill_switch_active('FEATURE_FLAG_AI_TUTOR_ENABLED') on POST /api/v1/history/tutor/ask."
+    },
+    {
+      "file": "backend/routers/live.py",
+      "changes": "Enforced assert_kill_switch_active('FEATURE_FLAG_LIVEKIT_MEDIA_ENABLED') on POST /api/v1/live-sessions/{id}/token and POST /api/v1/live-sessions/{id}/join."
+    },
+    {
+      "file": "backend/routers/rbpc.py",
+      "changes": "Enforced assert_kill_switch_active('FEATURE_FLAG_RBPC_COMMERCE_ENABLED') on POST /api/v1/rbpc/inquiries, and updated GET /api/v1/rbpc/config to dynamically reflect active kill switch status."
+    },
+    {
+      "file": "frontend/src/lib/featureFlags.ts",
+      "changes": "Created client TypeScript module defining FeatureFlagState, DEFAULT_FEATURE_FLAGS, FEATURE_MAINTENANCE_MESSAGES, resolveFeatureFlags(), isFeatureActive(), and isKillSwitchError()."
+    },
+    {
+      "file": "docs/runbooks/INCIDENT_RUNBOOK_OUTAGE.md",
+      "changes": "Created comprehensive P0 incident outage runbook detailing golden rules, kill switches, SEV-1 to SEV-3 triage matrix, admin API toggle instructions, fallback behaviors, and post-incident review checklist."
+    },
+    {
+      "file": "tests/v5/test_v5_t089.py",
+      "changes": "Created test suite testing 503 responses upon tripping kill switches for AI, LiveKit, and Commerce; feature independence ensuring public browse stays 200 OK; admin toggle endpoints and RBAC; and runbook document validity."
+    }
+  ],
+  "invariants_verified": {
+    "granular_kill_switches": "FEATURE_FLAG_AI_TUTOR_ENABLED, FEATURE_FLAG_LIVEKIT_MEDIA_ENABLED, and FEATURE_FLAG_RBPC_COMMERCE_ENABLED operate independently and can be toggled via config, DB, or admin runtime API.",
+    "immediate_503_maintenance": "Tripping any kill switch immediately rejects requests to the targeted feature with HTTP 503 Service Unavailable, a localized user-friendly message, and standard error envelope.",
+    "service_independence": "Disabling AI inference or commerce booking leaves public heritage browsing (/heritage/catalog, /heritage/places, /rbpc/stories, /health) 100% operational.",
+    "admin_rbac": "Kill switch inspection and runtime toggle endpoints are strictly protected by require_admin; unauthenticated or learner callers receive 401/403.",
+    "incident_runbook_completeness": "INCIDENT_RUNBOOK_OUTAGE.md contains documented procedures for all 3 kill switches, curl commands for toggling, severity matrices, and verification steps."
+  },
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t089.py -v",
+    "tests_total": 7,
+    "tests_passed": 7,
+    "tests_failed": 0,
+    "test_cases": [
+      {
+        "name": "test_ai_tutor_kill_switch_blocks_with_503",
+        "result": "PASSED",
+        "description": "Verifies that tripping FEATURE_FLAG_AI_TUTOR_ENABLED immediately blocks /history/tutor/ask and /ai/tutor with HTTP 503."
+      },
+      {
+        "name": "test_livekit_media_kill_switch_blocks_with_503",
+        "result": "PASSED",
+        "description": "Verifies that tripping FEATURE_FLAG_LIVEKIT_MEDIA_ENABLED blocks live session token issuance and room join with HTTP 503."
+      },
+      {
+        "name": "test_rbpc_commerce_kill_switch_blocks_with_503",
+        "result": "PASSED",
+        "description": "Verifies that tripping FEATURE_FLAG_RBPC_COMMERCE_ENABLED blocks inquiry submissions with HTTP 503 and updates /rbpc/config."
+      },
+      {
+        "name": "test_feature_independence_public_browse_remains_active_when_ai_and_commerce_killed",
+        "result": "PASSED",
+        "description": "Verifies that public catalog, heritage places, cultural stories, and health checks remain 200 OK when AI and commerce are disabled."
+      },
+      {
+        "name": "test_commerce_active_when_ai_killed",
+        "result": "PASSED",
+        "description": "Verifies that disabling AI does not affect commerce configuration or availability."
+      },
+      {
+        "name": "test_admin_kill_switch_endpoints_and_rbac",
+        "result": "PASSED",
+        "description": "Verifies GET /api/v1/admin/kill-switches and POST /toggle endpoints, runtime effect, and 401/403 RBAC enforcement."
+      },
+      {
+        "name": "test_incident_runbook_validity",
+        "result": "PASSED",
+        "description": "Verifies that docs/runbooks/INCIDENT_RUNBOOK_OUTAGE.md exists and contains all required keys and operational guidelines."
+      }
+    ]
+  }
+}

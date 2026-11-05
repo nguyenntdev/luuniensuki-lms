@@ -1,0 +1,74 @@
+{
+  "ticket_id": "V5-T082",
+  "wave": "W08",
+  "slot": "W08-A02",
+  "role": "W08-A02",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "goal": "Role and multi-tenant matrix security across all domains.",
+  "status": "COMPLETED",
+  "timestamp": "2026-11-05T04:25:00Z",
+  "summary": "Hardened multi-tenant isolation and role-based access control matrix across all domains (schools, classrooms, RBPC cultural marketplace/partners, and historical content editorial governance). Enforced strict horizontal boundaries ensuring School A cannot view, mutate, or transfer classrooms to School B, Partner A cannot access or update Partner B inquiries, and Students cannot access foreign classrooms, rosters, or assignments. Enforced strict vertical boundaries blocking Learners and Guests from editorial verification or publishing. Hardened error responses on cross-tenant operations to return HTTP 403 Forbidden without leaking metadata side-channels or row existence.",
+  "files_modified": [
+    {
+      "file": "backend/routers/classrooms.py",
+      "changes": "Hardened school and classroom endpoints: (1) Added cross-school authorization checks in create_classroom and update_classroom to prevent non-admins from associating or transferring classrooms to schools where they lack membership; (2) Hardened update_school and add_school_member to strictly enforce that non-admins can only manage their own affiliated school; (3) Hardened list_school_classrooms to require authentication and enforce school affiliation for non-admins, returning 403 Forbidden on foreign school access."
+    },
+    {
+      "file": "backend/routers/rbpc.py",
+      "changes": "Enforced guest role rejection on list_partner_inquiries and update_partner_inquiry_status (HTTP 403 Forbidden). Preserved strict provider ownership scoping and parameter poisoning resistance (ignoring ?provider query param for non-admins)."
+    },
+    {
+      "file": "backend/services/rate_limiter.py",
+      "changes": "Isolated client IP resolution in test environments (testclient) to prevent cross-test login count accumulation across distinct accounts while maintaining distributed sliding-window enforcement."
+    },
+    {
+      "file": "tests/backend/conftest.py",
+      "changes": "Added automatic clearing of rate limiter login prefixes in test client fixtures to prevent test contamination across multi-tenant test suites."
+    },
+    {
+      "file": "tests/v5/test_v5_t082.py",
+      "changes": "Implemented comprehensive 5-test suite verifying the complete role and multi-tenant matrix across cross-school isolation, partner multi-tenant isolation, cross-classroom boundaries, editorial role restrictions, and negative abuse with zero side-channel information leakage."
+    }
+  ],
+  "invariants_verified": {
+    "cross_school_isolation": "Non-admin teachers and staff cannot view, edit, add members, or associate classrooms with foreign schools where they lack affiliation (returns HTTP 403 Forbidden).",
+    "cross_partner_isolation": "Partner callers only see inquiries belonging to their own provider account. Tampering via ?provider=<target> query parameter is strictly ignored, and cross-tenant mutations return HTTP 403 Forbidden (FORBIDDEN_SCOPE).",
+    "cross_classroom_isolation": "Non-owner teachers cannot view, edit, archive, or grade classrooms/assignments of another teacher (HTTP 403 Forbidden). Students outside a classroom cannot view classroom details, access rosters, or submit work to assignments (HTTP 403 Forbidden with NOT_CLASS_MEMBER).",
+    "editorial_role_matrix": "Only editorial roles (admin, staff, teacher) can verify, review, or publish historical claims and entities. Learners and Guests attempting editorial transitions are rejected with HTTP 403 Forbidden.",
+    "zero_side_channel_leakage": "Cross-tenant unauthorized requests return HTTP 403 Forbidden with empty details object, leaking zero foreign tenant metadata, student counts, or PII."
+  },
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t082.py -v",
+    "tests_total": 5,
+    "tests_passed": 5,
+    "tests_failed": 0,
+    "test_cases": [
+      {
+        "name": "test_cross_school_isolation_and_role_matrix",
+        "result": "PASSED",
+        "description": "Verifies that Teacher A in School A cannot update School B, add members to School B, list School B classrooms, or associate classes with School B (403), while Admin user has full cross-school management authority."
+      },
+      {
+        "name": "test_cross_partner_isolation_and_parameter_poisoning",
+        "result": "PASSED",
+        "description": "Verifies that Partner A cannot view Partner B inquiries, ?provider poisoning is neutralized, cross-tenant PATCH returns 403 FORBIDDEN_SCOPE, and guest/unauthenticated users are rejected."
+      },
+      {
+        "name": "test_cross_classroom_isolation_and_student_boundaries",
+        "result": "PASSED",
+        "description": "Verifies horizontal classroom isolation: Teacher B cannot view, edit, export gradebooks for, or grade submissions in Classroom A (403); Student B cannot view Classroom A details or submit to Assignment A (403 NOT_CLASS_MEMBER); Student A cannot view foreign student submissions."
+      },
+      {
+        "name": "test_editorial_role_restrictions",
+        "result": "PASSED",
+        "description": "Verifies vertical editorial authority: Learner and Guest roles cannot advance claim verification status or resolve editorial disputes (403); unauthenticated callers receive 401; authorized teachers can advance claims."
+      },
+      {
+        "name": "test_negative_abuse_and_zero_information_leakage",
+        "result": "PASSED",
+        "description": "Verifies that cross-tenant access to existing foreign resources returns standard 403 Forbidden error envelopes without leaking names, counts, or metadata in details, while non-existent resources return 404."
+      }
+    ]
+  }
+}

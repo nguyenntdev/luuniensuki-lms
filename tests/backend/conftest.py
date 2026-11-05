@@ -74,9 +74,16 @@ def client(db_session):
     def override_get_db():
         yield db_session
 
+    from backend.services.rate_limiter import rate_limiter
+    rate_limiter.clear_prefix("auth:login:", db=db_session)
+    rate_limiter.clear_prefix("inquiry:", db=db_session)
+    main._auth_rate_limit_state.clear()
     main.app.dependency_overrides[main.get_db] = override_get_db
     with TestClient(main.app) as client:
         yield client
+    rate_limiter.clear_prefix("auth:login:", db=db_session)
+    rate_limiter.clear_prefix("inquiry:", db=db_session)
+    main._auth_rate_limit_state.clear()
     main.app.dependency_overrides.clear()
 
 

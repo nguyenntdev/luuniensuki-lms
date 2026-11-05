@@ -343,6 +343,18 @@
   },
   {
     "method": "GET",
+    "path": "/api/v1/admin/kill-switches",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/kill-switches/{flag_key}/toggle",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
     "path": "/api/v1/admin/lessons",
     "group": "admin",
     "status": "gateway"

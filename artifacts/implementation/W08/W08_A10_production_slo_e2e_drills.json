@@ -1,0 +1,69 @@
+{
+  "ticket_id": "V5-T090",
+  "wave": "W08",
+  "slot": "W08-A10",
+  "role": "W08-A10",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "goal": "Production Service Level Objective (SLO) end-to-end drills.",
+  "status": "COMPLETED",
+  "timestamp": "2026-11-05T04:30:00Z",
+  "summary": "Implemented comprehensive Production SLO engine and end-to-end verification suite. Verified p95 latency targets (<= 300ms) for high-frequency static and read endpoints, upstream failure resilience (502/503 capacity limits and Retry-After exponential/fixed backoff handling), and 100% 2D rubbing fallback presence across all 9 Urns and 162 motif relics. Implemented strict anti-abuse release gates where any critical fake success (mock booking, fake payment, fabricated grade) blocks production deployment with GATE_BLOCKED, while valid executions produce a cryptographically signed GATE_PASSED release sheet.",
+  "files_modified_or_created": [
+    {
+      "file": "backend/services/production_slo.py",
+      "action": "created",
+      "changes": "Created ProductionSLOEngine implementing latency benchmark evaluation (p95 <= 300ms), upstream 502/503 resilience and Retry-After validation, 2D fallback availability checker, fake success audit engine, and signed release gate sheet assembler (SHA-256 seal)."
+    },
+    {
+      "file": "tests/v5/test_v5_t090.py",
+      "action": "created",
+      "changes": "Implemented 5-test comprehensive SLO verification suite covering read endpoint latency budgets, upstream 502/503 resilience and Retry-After contracts, 100% 2D rubbing fallback availability on disk and manifests, negative abuse release gate blocking on fake success, and end-to-end clean drill generating signed GATE_PASSED certificate."
+    },
+    {
+      "file": "frontend/e2e/production-slo-drills.spec.ts",
+      "action": "created",
+      "changes": "Added Playwright E2E spec verifying browser-level read latency budget, 2D accessible fallback availability for Cao Đỉnh, and zero fake success on invalid visitor booking tokens."
+    }
+  ],
+  "invariants_verified": {
+    "read_latency_budget": "Static and read-only endpoints (/health, /api/v1/rbpc/config, /api/v1/heritage/places, /api/v1/history/stories, /api/v1/heritage/catalog) strictly achieve p95 <= 300ms.",
+    "upstream_resilience_and_retry": "Upstream capacity limits or 502/503 outages are handled gracefully with typed Retry-After headers, exponential backoff policies, or deterministic fallbacks.",
+    "complete_2d_fallback_coverage": "All 9 Imperial Urns and all 162 motif relief records maintain 100% verified 2D rubbing fallback assets on disk and in data registries.",
+    "zero_fake_success_gate": "Any simulation of critical transactional flows (instant payment mock, synthetic booking confirmation, fabricated student grade) strictly blocks release gate with GATE_BLOCKED.",
+    "cryptographic_gate_sheet": "Clean production runs generate a signed release gate report with SHA-256 integrity hash confirming all SLO criteria are satisfied."
+  },
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t090.py -v",
+    "tests_total": 5,
+    "tests_passed": 5,
+    "tests_failed": 0,
+    "test_cases": [
+      {
+        "name": "test_slo_read_endpoints_latency_p95_budget",
+        "result": "PASSED",
+        "description": "Verifies that high-frequency read and static endpoints meet the p95 <= 300ms budget."
+      },
+      {
+        "name": "test_slo_upstream_resilience_and_retry_headers",
+        "result": "PASSED",
+        "description": "Verifies graceful handling of upstream capacity limits, 502/503 errors, and retry headers."
+      },
+      {
+        "name": "test_slo_2d_fallback_availability_all_relics",
+        "result": "PASSED",
+        "description": "Verifies that 100% of all 9 urns and all 162 motifs have valid 2D rubbing fallbacks."
+      },
+      {
+        "name": "test_negative_abuse_fake_success_strictly_blocks_release_gate",
+        "result": "PASSED",
+        "description": "Negative Abuse Test: Any critical fake success (mock booking, fake payment, fabricated grade) strictly triggers GATE_BLOCKED and fails the production release gate."
+      },
+      {
+        "name": "test_production_slo_e2e_drill_gate_passed",
+        "result": "PASSED",
+        "description": "End-to-End Drill: Executes latency benchmarks, resilience verification, 2D fallback audit, and anti-fake audits to generate a cryptographically signed GATE_PASSED release sheet."
+      }
+    ]
+  }
+}

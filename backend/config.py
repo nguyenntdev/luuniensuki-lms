@@ -17,7 +17,15 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # Sentinel values that are never acceptable for secrets in production. Used by
 # the startup validator to fail closed when a real secret has not been supplied.
-SENTINELS = {"", "CHANGE_ME_IN_PRODUCTION"}
+SENTINELS = {
+    "",
+    "CHANGE_ME_IN_PRODUCTION",
+    "change-me",
+    "secret",
+    "test-sentinel",
+    "change_me",
+    "test_sentinel",
+}
 
 
 class Settings(BaseSettings):
@@ -254,6 +262,7 @@ class Settings(BaseSettings):
     # ==========================================================================
     rate_limit_requests_per_minute: int = 60
     rate_limit_burst: int = 10
+    auth_login_rate_limit_per_minute: int = 5
     live_rate_limit_requests_per_minute: int = 120
     live_ai_rate_limit_requests_per_minute: int = 45
     live_rate_limit_window_seconds: int = 60
@@ -284,6 +293,13 @@ class Settings(BaseSettings):
     # the constrained box is internal-testing only). Over-cap sessions fall back
     # to the legacy turn-based loop.
     live_realtime_max_sessions: int = 2
+
+    # ==========================================================================
+    # Release Feature Flags & Kill Switches (V5-T089)
+    # ==========================================================================
+    feature_flag_ai_tutor_enabled: bool = True
+    feature_flag_livekit_media_enabled: bool = True
+    feature_flag_rbpc_commerce_enabled: bool = True
 
     # ==========================================================================
     # Computed Properties
@@ -318,11 +334,16 @@ class Settings(BaseSettings):
         When the operator has not explicitly overridden ``cookie_secure``
         (i.e. it is ``None`` because ``COOKIE_SECURE`` was not supplied), the
         secure flag defaults to enabled in production and disabled otherwise.
-        An explicit value always takes precedence.
+        In production, cookies must always be secure (unless explicitly
+        overridden to False, which will be blocked by production security validation).
         """
+        if self.is_production:
+            if self.cookie_secure is False:
+                return False
+            return True
         if self.cookie_secure is not None:
             return self.cookie_secure
-        return self.is_production
+        return False
 
     @property
     def demo_mode_effective(self) -> bool:
@@ -349,7 +370,13 @@ class Settings(BaseSettings):
         if self.is_production:
             problems: list[str] = []
 
-            if self.jwt_secret_key in SENTINELS:
+            jwt_val = (self.jwt_secret_key or "").strip()
+            if (
+                not jwt_val
+                or jwt_val in SENTINELS
+                or jwt_val.lower() in {s.lower() for s in SENTINELS}
+                or jwt_val.upper().startswith("CHANGE_ME")
+            ):
                 problems.append("JWT_SECRET_KEY")
 
             if self.cors_allow_credentials and "*" in self.cors_origins_list:
@@ -360,6 +387,15 @@ class Settings(BaseSettings):
 
             if self.demo_mode is True:
                 problems.append("DEMO_MODE (cannot be enabled in production)")
+
+            if self.cookie_secure is False or not self.cookie_secure_effective:
+                problems.append("COOKIE_SECURE (cannot be disabled in production)")
+
+            samesite_lower = (self.cookie_samesite or "").lower()
+            if samesite_lower not in {"lax", "strict"}:
+                problems.append(
+                    f"COOKIE_SAMESITE (must be 'lax' or 'strict' in production, got '{self.cookie_samesite}')"
+                )
 
             if problems:
                 raise RuntimeError(

@@ -15,6 +15,8 @@ use crate::routes::metrics::{
 
 /// Header name for the request identifier.
 pub const REQUEST_ID_HEADER: &str = "x-request-id";
+/// Header name for the correlation identifier.
+pub const CORRELATION_ID_HEADER: &str = "x-correlation-id";
 
 /// Initialize the global tracing subscriber with JSON output and env filter.
 pub fn init() {
@@ -45,10 +47,23 @@ pub async fn request_id_and_logging(mut req: Request, next: Next) -> Response {
         .map(|s| s.to_string())
         .unwrap_or_else(|| Uuid::new_v4().to_string());
 
-    // Insert request_id header so downstream handlers can read it
+    // Extract or mint correlation_id (defaults to request_id if not supplied)
+    let correlation_id = req
+        .headers()
+        .get(CORRELATION_ID_HEADER)
+        .and_then(|v| v.to_str().ok())
+        .map(|s| s.to_string())
+        .unwrap_or_else(|| request_id.clone());
+
+    // Insert headers so downstream handlers can read them
     req.headers_mut().insert(
         REQUEST_ID_HEADER,
         HeaderValue::from_str(&request_id).unwrap_or_else(|_| HeaderValue::from_static("unknown")),
+    );
+    req.headers_mut().insert(
+        CORRELATION_ID_HEADER,
+        HeaderValue::from_str(&correlation_id)
+            .unwrap_or_else(|_| HeaderValue::from_static("unknown")),
     );
 
     let method = req.method().to_string();
@@ -70,6 +85,7 @@ pub async fn request_id_and_logging(mut req: Request, next: Next) -> Response {
     if status >= 500 {
         tracing::error!(
             request_id = %request_id,
+            correlation_id = %correlation_id,
             method = %method,
             path = %path,
             status = status,
@@ -81,6 +97,7 @@ pub async fn request_id_and_logging(mut req: Request, next: Next) -> Response {
     } else {
         tracing::info!(
             request_id = %request_id,
+            correlation_id = %correlation_id,
             method = %method,
             path = %path,
             status = status,
@@ -102,11 +119,16 @@ pub async fn request_id_and_logging(mut req: Request, next: Next) -> Response {
         }
     }
 
-    // Add request_id to response headers
+    // Add request_id and correlation_id to response headers
     let mut response = response;
     response.headers_mut().insert(
         REQUEST_ID_HEADER,
         HeaderValue::from_str(&request_id).unwrap_or_else(|_| HeaderValue::from_static("unknown")),
+    );
+    response.headers_mut().insert(
+        CORRELATION_ID_HEADER,
+        HeaderValue::from_str(&correlation_id)
+            .unwrap_or_else(|_| HeaderValue::from_static("unknown")),
     );
 
     response

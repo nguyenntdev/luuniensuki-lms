@@ -64,6 +64,7 @@ services:
         condition: service_healthy
     volumes:
       - ./ban-duc-noi:/app/ban-duc-noi:ro
+      - ./backups:/app/backups
     command: >
       /bin/sh -c
       "gunicorn -k uvicorn.workers.UvicornWorker
@@ -248,3 +249,4 @@ services:
 
 volumes:
   postgres_data:
+  backups_data:

@@ -1532,6 +1532,21 @@ def upload_avatar(
     db: Session = Depends(get_db),
 ):
     try:
+        # Check forbidden executable and script extensions
+        if file.filename:
+            ext = Path(file.filename).suffix.lower()
+            if ext in {
+                ".exe", ".sh", ".php", ".html", ".htm", ".js", ".py", ".bat",
+                ".cmd", ".msi", ".dll", ".so", ".cgi", ".pl", ".jar", ".jsp",
+                ".bin", ".elf", ".vbs", ".ps1", ".com", ".scr", ".phtml", ".phar",
+            }:
+                raise AppError(
+                    code="FORBIDDEN_FILE_TYPE",
+                    message=f"Executable and script files are strictly prohibited ({ext})",
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    details={"extension": ext},
+                )
+
         contents = file.file.read(MAX_AVATAR_SIZE + 1)
         if len(contents) > MAX_AVATAR_SIZE:
             raise AppError(
@@ -1539,6 +1554,24 @@ def upload_avatar(
                 message="Avatar file too large",
                 status_code=status.HTTP_400_BAD_REQUEST,
                 details={"max_bytes": MAX_AVATAR_SIZE},
+            )
+
+        # Executable binary signature check
+        header = contents[:16]
+        if header.startswith(b"MZ") or header.startswith(b"\x7fELF") or header.startswith(b"#!"):
+            raise AppError(
+                code="MALICIOUS_CONTENT_DETECTED",
+                message="Executable binary signature detected in upload",
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Embedded script or HTML injection check
+        first_chunk = contents[:2048].lower()
+        if b"<?php" in first_chunk or b"<html" in first_chunk or b"<script" in first_chunk:
+            raise AppError(
+                code="MALICIOUS_CONTENT_DETECTED",
+                message="Embedded script or HTML detected in image upload",
+                status_code=status.HTTP_400_BAD_REQUEST,
             )
 
         # Validate by actual file content (magic bytes), never trusting the

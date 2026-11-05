@@ -3716,6 +3716,93 @@ def delete_feature_flag(
     return Response(status_code=204)
 
 
+# =============================================================================
+# Release Flags & Kill Switches Admin Endpoints (V5-T089)
+# =============================================================================
+
+class KillSwitchStatusOut(BaseModel):
+    flags: dict[str, bool]
+    overrides: dict[str, bool]
+
+
+class KillSwitchToggleIn(BaseModel):
+    enabled: bool
+    persist_db: bool = True
+    reason: Optional[str] = None
+
+
+@router.get(
+    "/api/v1/admin/kill-switches",
+    response_model=KillSwitchStatusOut,
+    include_in_schema=False,
+)
+def get_kill_switches_status(
+    current_user: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> KillSwitchStatusOut:
+    """Get active status and runtime overrides for all system kill switches."""
+    from ..services import feature_flags as ff_service
+
+    keys = [
+        "FEATURE_FLAG_AI_TUTOR_ENABLED",
+        "FEATURE_FLAG_LIVEKIT_MEDIA_ENABLED",
+        "FEATURE_FLAG_RBPC_COMMERCE_ENABLED",
+    ]
+    flags_status = {k: ff_service.is_feature_flag_enabled(k, db=db) for k in keys}
+    overrides = ff_service.get_runtime_overrides()
+    return KillSwitchStatusOut(flags=flags_status, overrides=overrides)
+
+
+@router.post(
+    "/api/v1/admin/kill-switches/{flag_key}/toggle",
+    response_model=dict[str, Any],
+    include_in_schema=False,
+)
+def toggle_kill_switch(
+    flag_key: str,
+    payload: KillSwitchToggleIn,
+    current_user: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> dict[str, Any]:
+    """Toggle a kill switch / release flag at runtime (admin only)."""
+    from ..services import feature_flags as ff_service
+
+    normalized_key = flag_key.strip().upper()
+    ff_service.set_runtime_override(normalized_key, payload.enabled)
+    ff_service.set_runtime_override(normalized_key.lower(), payload.enabled)
+
+    # Optionally persist in database FeatureFlag table
+    if payload.persist_db:
+        flag = db.execute(
+            select(FeatureFlag).where(
+                (FeatureFlag.key == normalized_key)
+                | (FeatureFlag.key == normalized_key.lower())
+            )
+        ).scalar_one_or_none()
+        if flag is None:
+            flag = FeatureFlag(
+                key=normalized_key,
+                name=f"Kill Switch: {normalized_key}",
+                description=payload.reason or f"Runtime kill switch {normalized_key}",
+                is_enabled=payload.enabled,
+                rollout_percentage=100 if payload.enabled else 0,
+                created_by_id=current_user.id,
+            )
+            db.add(flag)
+        else:
+            flag.is_enabled = payload.enabled
+            if payload.reason:
+                flag.description = payload.reason
+        db.commit()
+
+    return {
+        "status": "success",
+        "flag_key": normalized_key,
+        "enabled": payload.enabled,
+        "runtime_overrides": ff_service.get_runtime_overrides(),
+    }
+
+
 @router.get("/api/v1/admin/experiments", response_model=list[schemas.ExperimentOut])
 def list_experiments(
     current_user: User = Depends(require_admin),

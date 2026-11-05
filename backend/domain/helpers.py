@@ -970,7 +970,7 @@ def get_allowed_content_ratings(user: User) -> list[ContentRating]:
 def _is_valid_display_name(display_name: str) -> bool:
     normalized = unicodedata.normalize("NFC", display_name)
     for character in normalized:
-        if character == " ":
+        if character in (" ", "-", "_", ".", "(", ")"):
             continue
         if "0" <= character <= "9":
             continue

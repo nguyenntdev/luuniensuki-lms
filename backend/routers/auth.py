@@ -17,6 +17,7 @@ import hashlib
 import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Optional
+import unicodedata
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
@@ -36,6 +37,7 @@ from ..apischemas.auth import (
 )
 from ..config import settings
 from ..deps import get_current_user, get_db
+from ..domain.helpers import _is_valid_display_name
 from ..domain.auth_session import (
     _build_auth_me_response,
     _clear_auth_cookies,
@@ -71,10 +73,22 @@ def register(
             status_code=status.HTTP_409_CONFLICT,
         )
 
+    normalized_display_name = unicodedata.normalize("NFC", payload.display_name.strip())
+    if (
+        "<" in normalized_display_name
+        or ">" in normalized_display_name
+        or not _is_valid_display_name(normalized_display_name)
+    ):
+        raise AppError(
+            code="INVALID_DISPLAY_NAME",
+            message="Display name contains invalid characters or HTML tags",
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
     user = User(
         email=str(payload.email),
         password_hash="",
-        display_name=payload.display_name,
+        display_name=normalized_display_name,
     )
     try:
         user.password_hash = hash_password(payload.password)
@@ -125,8 +139,22 @@ def register(
 
 @router.post("/api/v1/auth/login", response_model=AuthMeResponse)
 def login(
-    payload: AuthLoginRequest, response: Response, db: Session = Depends(get_db)
+    payload: AuthLoginRequest,
+    request: Request,
+    response: Response,
+    db: Session = Depends(get_db),
 ) -> AuthMeResponse:
+    from ..services.rate_limiter import rate_limiter
+
+    login_limit = getattr(settings, "auth_login_rate_limit_per_minute", 5)
+    rate_limiter.check_login_rate_limit(
+        db=db,
+        request=request,
+        email=str(payload.email),
+        limit=login_limit,
+        window_seconds=60,
+    )
+
     user = db.execute(
         select(User).where(User.email == str(payload.email))
     ).scalar_one_or_none()

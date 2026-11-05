@@ -27,13 +27,15 @@ from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.middleware.cors import CORSMiddleware
 
-from .config import settings
+from .config import SENTINELS, settings
 from .errors import (
     AppError,
     app_exception_handler,
     http_exception_handler,
     validation_exception_handler,
 )
+from .logging_config import setup_logging
+from .middleware import CorrelationIdMiddleware, StructuredLoggingMiddleware
 
 # Use the same named logger as ``backend.main`` so log output is unchanged.
 logger = logging.getLogger("luuniensuki.api")
@@ -44,7 +46,7 @@ logger = logging.getLogger("luuniensuki.api")
 # mount, so a conservative self-only policy is appropriate. Keep this as a
 # module-level constant so the policy is easy to review and tune in one place.
 CONTENT_SECURITY_POLICY = (
-    "default-src 'self'; frame-ancestors 'none'; object-src 'none'"
+    "default-src 'self'; script-src 'self'; frame-ancestors 'none'; object-src 'none'"
 )
 
 # Avatar upload directory (Req 11.1-11.3). Defined here for the static mount.
@@ -72,7 +74,16 @@ ASSETS_DIR = Path(__file__).parent / "assets"
 # state the middleware reads.
 _AUTH_RATE_LIMIT_WINDOW_SECONDS = 60
 # Maps client key -> (window_start_epoch, count).
-_auth_rate_limit_state: dict[str, tuple[float, int]] = {}
+class _AuthRateLimitStateDict(dict):
+    def clear(self):
+        super().clear()
+        try:
+            from .services.rate_limiter import rate_limiter
+            rate_limiter.clear_prefix("auth:login:")
+        except Exception:
+            pass
+
+_auth_rate_limit_state: dict[str, tuple[float, int]] = _AuthRateLimitStateDict()
 
 
 def _auth_rate_limit_key(request: Request) -> str:
@@ -161,6 +172,29 @@ def create_app() -> FastAPI:
     middleware, then the rate-limit middleware, then the static mounts. Routes
     are registered separately in ``backend.main`` on the returned instance.
     """
+    # Fail closed on insecure secret or cookie configuration in production
+    if settings.is_production:
+        jwt_key_normalized = (settings.jwt_secret_key or "").strip()
+        if (
+            not jwt_key_normalized
+            or jwt_key_normalized in SENTINELS
+            or jwt_key_normalized.lower() in {s.lower() for s in SENTINELS}
+            or jwt_key_normalized.upper().startswith("CHANGE_ME")
+        ):
+            raise RuntimeError(
+                "Insecure production configuration: JWT_SECRET_KEY cannot be empty or a sentinel value in production"
+            )
+
+        if settings.cookie_secure is False or not settings.cookie_secure_effective:
+            raise RuntimeError(
+                "Insecure production configuration: COOKIE_SECURE cannot be False in production"
+            )
+        samesite_lower = (settings.cookie_samesite or "").lower()
+        if samesite_lower not in {"lax", "strict"}:
+            raise RuntimeError(
+                f"Insecure production configuration: COOKIE_SAMESITE must be 'lax' or 'strict' in production, got '{settings.cookie_samesite}'"
+            )
+
     app = FastAPI(title="Luuniensuki API", version="0.1.0")
     app.add_exception_handler(AppError, app_exception_handler)
     app.add_exception_handler(StarletteHTTPException, http_exception_handler)
@@ -185,6 +219,8 @@ def create_app() -> FastAPI:
         )
         cors_allow_credentials = False
 
+    setup_logging()
+
     app.add_middleware(
         CORSMiddleware,
         allow_origins=cors_origins,
@@ -192,6 +228,8 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    app.add_middleware(StructuredLoggingMiddleware)
+    app.add_middleware(CorrelationIdMiddleware)
 
     # Register HTTP middleware in the same order as the original module so the
     # resulting middleware stack (and execution order) is unchanged.

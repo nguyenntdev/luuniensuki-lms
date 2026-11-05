@@ -61,9 +61,9 @@ from ..apischemas.rbpc import (
 )
 from ..config import get_settings
 from ..db import get_db
-from ..deps import get_current_user, get_current_user_optional
+from ..deps import get_current_user, get_current_user_optional, verify_csrf
 from ..errors import AppError
-from ..models import User
+from ..models import User, UserRole
 from ..models_rbpc import (
     HeritagePlace,
     HeritageSourceEvidence,
@@ -103,7 +103,16 @@ INQUIRY_STATUS_MESSAGES = {
 }
 
 # Rate limiter state for inquiry submissions: max 5 requests per IP / hour (3600 seconds)
-_inquiry_rate_limit_store: dict[str, list[datetime]] = {}
+class _InquiryRateLimitStore(dict):
+    def clear(self):
+        super().clear()
+        try:
+            from ..services.rate_limiter import rate_limiter
+            rate_limiter.clear_prefix("inquiry:")
+        except Exception:
+            pass
+
+_inquiry_rate_limit_store: dict[str, list[datetime]] = _InquiryRateLimitStore()
 INQUIRY_RATE_LIMIT_PER_HOUR = 5
 INQUIRY_RATE_LIMIT_WINDOW_SECONDS = 3600
 
@@ -141,12 +150,30 @@ def _get_client_ip(request: Request) -> str:
     return "unknown"
 
 
-def _check_inquiry_rate_limit(request: Request) -> str:
+def _check_inquiry_rate_limit(request: Request, db: Optional[Session] = None) -> str:
     """Enforce rate-limiting on inquiry submissions (max 5 requests per IP/hour)."""
+    from ..services.rate_limiter import rate_limiter
+
     ip = _get_client_ip(request)
     now = datetime.now(timezone.utc)
     window_start = now - timedelta(seconds=INQUIRY_RATE_LIMIT_WINDOW_SECONDS)
 
+    # 1. Enforce distributed rate limit when db session is supplied
+    if db is not None:
+        if len(_inquiry_rate_limit_store) == 0 or (ip in _inquiry_rate_limit_store and len(_inquiry_rate_limit_store[ip]) == 0):
+            rate_limiter.clear_prefix(f"inquiry:ip:{ip}", db=db)
+        rate_limiter.check_inquiry_rate_limit(
+            db=db,
+            request=request,
+            limit=INQUIRY_RATE_LIMIT_PER_HOUR,
+            window_seconds=INQUIRY_RATE_LIMIT_WINDOW_SECONDS,
+        )
+        if ip not in _inquiry_rate_limit_store:
+            _inquiry_rate_limit_store[ip] = []
+        _inquiry_rate_limit_store[ip].append(now)
+        return ip
+
+    # 2. In-memory fallback
     if ip in _inquiry_rate_limit_store:
         _inquiry_rate_limit_store[ip] = [
             ts for ts in _inquiry_rate_limit_store[ip] if ts > window_start
@@ -363,11 +390,16 @@ def get_rbpc_config():
 
     Zero secrets or internal keys are ever exposed.
     """
+    from ..services.feature_flags import is_feature_flag_enabled
+
     app_settings = get_settings()
+    inquiry_active = is_feature_flag_enabled("FEATURE_FLAG_RBPC_COMMERCE_ENABLED")
+    ai_active = is_feature_flag_enabled("FEATURE_FLAG_AI_TUTOR_ENABLED")
+
     return RbpcConfigOut(
         enabled=True,
-        ai_enabled=True,
-        inquiry_enabled=True,
+        ai_enabled=ai_active,
+        inquiry_enabled=inquiry_active,
         supported_locales=["vi", "en"],
         default_locale="vi",
         demo_mode=app_settings.demo_mode_effective,
@@ -638,8 +670,17 @@ def create_rbpc_inquiry(
     Requires idempotency key, explicit opt-in consent, and future preferred date.
     Zero automated simulated payment: routes to partner review.
     """
+    from ..services.feature_flags import assert_kill_switch_active
+
+    assert_kill_switch_active(
+        "FEATURE_FLAG_RBPC_COMMERCE_ENABLED",
+        feature_name="Đặt lịch & Tiếp nhận yêu cầu Trải nghiệm",
+        friendly_message="Hệ thống tiếp nhận yêu cầu đặt lịch trải nghiệm đang tạm ngưng bảo trì. Vui lòng quay lại sau.",
+        db=db,
+    )
+
     # Guardrail 1: Rate limiting (max 5 requests per IP/hour)
-    _check_inquiry_rate_limit(request)
+    _check_inquiry_rate_limit(request, db=db)
 
     # Guardrail 2: Client UUID idempotency key validation
     validated_key = _validate_client_uuid(payload.idempotency_key)
@@ -1001,6 +1042,8 @@ def list_partner_inquiries(
     belonging to their own provider account.
     """
     is_admin = current_user.role in ADMIN_ROLES
+    if current_user.role == UserRole.guest:
+        raise AppError("FORBIDDEN", "Guest users cannot access partner inquiries.", status.HTTP_403_FORBIDDEN)
 
     stmt = select(RbpcInquiry).options(selectinload(RbpcInquiry.experience))
     if not is_admin:
@@ -1065,6 +1108,18 @@ def update_partner_inquiry_status(
     Rejects unauthorized access with 403 FORBIDDEN_SCOPE.
     Enforces valid lifecycle state transitions.
     """
+    verify_csrf(request)
+
+    if payload.note is not None:
+        if SCRIPT_PATTERN.search(payload.note):
+            raise AppError(
+                "MALICIOUS_INPUT_DETECTED",
+                "Nội dung ghi chú chứa mã lệnh hoặc cú pháp script bị cấm.",
+                status.HTTP_422_UNPROCESSABLE_ENTITY,
+            )
+        cleaned_note = _sanitize_text(payload.note) or ""
+        payload.note = cleaned_note
+
     inquiry = db.scalar(
         select(RbpcInquiry)
         .options(selectinload(RbpcInquiry.experience))
@@ -1074,6 +1129,8 @@ def update_partner_inquiry_status(
         raise AppError("RBPC_INQUIRY_NOT_FOUND", f"Inquiry '{id}' not found.", status.HTTP_404_NOT_FOUND)
 
     is_admin = current_user.role in ADMIN_ROLES
+    if current_user.role == UserRole.guest:
+        raise AppError("FORBIDDEN", "Guest users cannot manage partner inquiries.", status.HTTP_403_FORBIDDEN)
     if not is_admin:
         exp = inquiry.experience
         is_owner = (
@@ -1166,6 +1223,7 @@ def update_partner_inquiry_status(
 def update_creator_consent(
     id: UUID,
     payload: RbpcCreatorConsentUpdate,
+    request: Request,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -1173,6 +1231,7 @@ def update_creator_consent(
 
     Enforces editor/staff permissions (STAFF_ROLES) and logs cryptographic audit trail.
     """
+    verify_csrf(request)
     if current_user.role not in STAFF_ROLES:
         raise AppError(
             "FORBIDDEN_SCOPE",

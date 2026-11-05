@@ -2150,6 +2150,24 @@ class LiveRateLimitLog(Base):
     session: Mapped[Optional["LiveSession"]] = relationship()
 
 
+class RateLimitEntry(Base):
+    """Distributed rate limiting log table for sliding-window request throttling."""
+    __tablename__ = "rate_limit_entries"
+    __table_args__ = (
+        Index("idx_rate_limit_entries_key_created_at", "key", "created_at"),
+        Index("idx_rate_limit_entries_created_at", "created_at"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    key: Mapped[str] = mapped_column(String(255), nullable=False)
+    endpoint: Mapped[str] = mapped_column(String(128), nullable=False, default="")
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+
 class QuestAssignment(Base):
     __tablename__ = "quest_assignments"
     __table_args__ = (

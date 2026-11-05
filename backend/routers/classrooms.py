@@ -594,6 +594,16 @@ def create_classroom(
     """
     from ..services import classroom as classroom_service
 
+    if payload.school_id and current_user.role not in ADMIN_ROLES:
+        if current_user.school_id and current_user.school_id != payload.school_id:
+            membership = db.execute(
+                select(SchoolMember).where(
+                    and_(SchoolMember.school_id == payload.school_id, SchoolMember.user_id == current_user.id)
+                )
+            ).scalar_one_or_none()
+            if not membership:
+                raise HTTPException(status_code=403, detail="Not authorized to create classroom for another school")
+
     try:
         classroom = classroom_service.create_classroom(
             db=db,
@@ -782,6 +792,16 @@ def update_classroom(
         raise HTTPException(status_code=404, detail="Classroom not found")
 
     _ensure_class_access(current_user, classroom)
+
+    if payload.school_id and payload.school_id != classroom.school_id and current_user.role not in ADMIN_ROLES:
+        if current_user.school_id and current_user.school_id != payload.school_id:
+            membership = db.execute(
+                select(SchoolMember).where(
+                    and_(SchoolMember.school_id == payload.school_id, SchoolMember.user_id == current_user.id)
+                )
+            ).scalar_one_or_none()
+            if not membership:
+                raise HTTPException(status_code=403, detail="Not authorized to transfer classroom to another school")
 
     try:
         classroom = classroom_service.update_classroom(
@@ -1130,19 +1150,19 @@ def update_school(
     """Update school details (staff/admin only)."""
     from ..services import classroom as classroom_service
 
+    # Cross-school tenant isolation: non-admin must belong to this school
+    if current_user.role not in ADMIN_ROLES:
+        membership = db.execute(
+            select(SchoolMember).where(
+                and_(SchoolMember.school_id == school_id, SchoolMember.user_id == current_user.id)
+            )
+        ).scalar_one_or_none()
+        if not membership and current_user.school_id != school_id:
+            raise HTTPException(status_code=403, detail="Not authorized to update this school")
+
     school = classroom_service.get_school(db, school_id)
     if not school:
         raise HTTPException(status_code=404, detail="School not found")
-
-    # If teacher, must be a member of this school or admin
-    if current_user.role == UserRole.teacher:
-        membership = db.execute(
-            select(SchoolMember).where(
-                and_(SchoolMember.school_id == school.id, SchoolMember.user_id == current_user.id)
-            )
-        ).scalar_one_or_none()
-        if not membership and current_user.school_id != school.id:
-            raise HTTPException(status_code=403, detail="Not authorized to update this school")
 
     try:
         updated = classroom_service.update_school(
@@ -1195,6 +1215,20 @@ def add_school_member(
     """Add a teacher or staff member to a school."""
     from ..services import classroom as classroom_service
 
+    # Cross-school tenant isolation: non-admin must belong to this school
+    if current_user.role not in ADMIN_ROLES:
+        membership = db.execute(
+            select(SchoolMember).where(
+                and_(SchoolMember.school_id == school_id, SchoolMember.user_id == current_user.id)
+            )
+        ).scalar_one_or_none()
+        if not membership and current_user.school_id != school_id:
+            raise HTTPException(status_code=403, detail="Not authorized to manage members of this school")
+
+    school = classroom_service.get_school(db, school_id)
+    if not school:
+        raise HTTPException(status_code=404, detail="School not found")
+
     try:
         member = classroom_service.add_school_member(
             db=db,
@@ -1224,11 +1258,43 @@ def add_school_member(
 def list_school_classrooms(
     school_id: UUID,
     include_archived: bool = Query(False, description="Include archived classrooms"),
-    current_user: User = Depends(get_current_user_optional),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> list[schemas.ClassroomSummaryOut]:
     """List classrooms associated with a school."""
     from ..services import classroom as classroom_service
+
+    # Cross-school tenant isolation: non-admin must be affiliated with this school
+    if current_user.role not in ADMIN_ROLES:
+        is_affiliated = (current_user.school_id == school_id)
+        if not is_affiliated:
+            sm = db.execute(
+                select(SchoolMember.id).where(
+                    and_(SchoolMember.school_id == school_id, SchoolMember.user_id == current_user.id)
+                )
+            ).scalar_one_or_none()
+            is_affiliated = (sm is not None)
+        if not is_affiliated and current_user.role == UserRole.teacher:
+            owns_class = db.execute(
+                select(Classroom.id).where(
+                    and_(Classroom.school_id == school_id, Classroom.teacher_id == current_user.id)
+                )
+            ).scalar_one_or_none()
+            is_affiliated = (owns_class is not None)
+        if not is_affiliated and current_user.role == UserRole.learner:
+            enrolled = db.execute(
+                select(ClassMember.id)
+                .join(Classroom, ClassMember.class_id == Classroom.id)
+                .where(
+                    and_(Classroom.school_id == school_id, ClassMember.user_id == current_user.id)
+                )
+            ).scalar_one_or_none()
+            is_affiliated = (enrolled is not None)
+        if not is_affiliated:
+            raise HTTPException(
+                status_code=403,
+                detail="Not authorized to access classrooms for this school",
+            )
 
     school = classroom_service.get_school(db, school_id)
     if not school:

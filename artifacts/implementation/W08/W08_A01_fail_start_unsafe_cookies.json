@@ -1,0 +1,155 @@
+{
+  "ticket_id": "V5-T081",
+  "wave": "W08",
+  "slot": "W08-A01",
+  "role": "W08-A01",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "goal": "Fail-start unsafe production cookies.",
+  "status": "COMPLETED",
+  "timestamp": "2026-11-05T03:45:00Z",
+  "summary": "Enforced strict fail-closed startup validation for authentication and session cookies in production. Any attempt to configure COOKIE_SECURE=false, insecure SameSite values (such as 'none' or invalid strings), or insecure cookie flags in production now immediately halts application startup with a fatal RuntimeError. Eliminated warning-only overrides in auth session handling, ensuring cookies always carry secure=True, httponly=True, and samesite in {'lax', 'strict'}. Validated startup refusal at both Settings model validation and create_app factory levels.",
+  "files_modified": [
+    {
+      "file": "backend/config.py",
+      "changes": "Added strict production validation rules in _validate_production_security to check cookie_secure and cookie_samesite, raising RuntimeError if COOKIE_SECURE is disabled or SameSite is not 'lax' or 'strict'. Updated cookie_secure_effective property."
+    },
+    {
+      "file": "backend/app.py",
+      "changes": "Added fail-closed defense-in-depth security checks in create_app() to refuse startup if cookie_secure is False or cookie_samesite is insecure when running in production."
+    },
+    {
+      "file": "backend/domain/auth_session.py",
+      "changes": "Replaced warning-only log message with fatal RuntimeError in _set_auth_cookies and _cookie_params when insecure cookie parameters are attempted in production. Added httponly=True on _clear_auth_cookies."
+    },
+    {
+      "file": "tests/v5/test_v5_t081.py",
+      "changes": "Created comprehensive 22-test suite covering production settings validation failure, env var handling, SameSite validation, positive valid production configurations, create_app startup enforcement, domain cookie emission flags, and permissive development mode."
+    }
+  ],
+  "invariants_verified": {
+    "fail_closed_production_cookies": "In production (ENVIRONMENT=production), configuring COOKIE_SECURE=false, '0', 'off', or 'no' raises a fatal RuntimeError on startup.",
+    "samesite_production_restriction": "In production, COOKIE_SAMESITE must be 'lax' or 'strict'; 'none' or invalid values fail closed with RuntimeError.",
+    "secure_emission_contract": "All auth cookies (_set_auth_cookies) emit Secure, HttpOnly, and SameSite attributes in production with zero warning-only plaintext fallback.",
+    "factory_defense_in_depth": "create_app() explicitly checks production cookie security posture and halts application startup on violation.",
+    "dev_permissiveness": "Development environments remain permissive (allowing cookie_secure=False) to support local HTTP development workflows without breaking."
+  },
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t081.py -v",
+    "tests_total": 22,
+    "tests_passed": 22,
+    "tests_failed": 0,
+    "test_cases": [
+      {
+        "name": "test_production_cookie_secure_false_rejected[False0]",
+        "result": "PASSED",
+        "description": "Verifies that passing cookie_secure=False raises RuntimeError with COOKIE_SECURE."
+      },
+      {
+        "name": "test_production_cookie_secure_false_rejected[false]",
+        "result": "PASSED",
+        "description": "Verifies that passing cookie_secure='false' raises RuntimeError."
+      },
+      {
+        "name": "test_production_cookie_secure_false_rejected[False1]",
+        "result": "PASSED",
+        "description": "Verifies that passing cookie_secure='False' raises RuntimeError."
+      },
+      {
+        "name": "test_production_cookie_secure_false_rejected[0]",
+        "result": "PASSED",
+        "description": "Verifies that passing cookie_secure='0' raises RuntimeError."
+      },
+      {
+        "name": "test_production_cookie_secure_false_rejected[off]",
+        "result": "PASSED",
+        "description": "Verifies that passing cookie_secure='off' raises RuntimeError."
+      },
+      {
+        "name": "test_production_cookie_secure_false_rejected[no]",
+        "result": "PASSED",
+        "description": "Verifies that passing cookie_secure='no' raises RuntimeError."
+      },
+      {
+        "name": "test_production_cookie_secure_env_var_false_rejected",
+        "result": "PASSED",
+        "description": "Verifies that environment variable COOKIE_SECURE=false fails closed on Settings initialization."
+      },
+      {
+        "name": "test_production_cookie_samesite_insecure_rejected[none]",
+        "result": "PASSED",
+        "description": "Verifies that SameSite='none' in production raises RuntimeError."
+      },
+      {
+        "name": "test_production_cookie_samesite_insecure_rejected[None]",
+        "result": "PASSED",
+        "description": "Verifies that SameSite='None' in production raises RuntimeError."
+      },
+      {
+        "name": "test_production_cookie_samesite_insecure_rejected[NONE]",
+        "result": "PASSED",
+        "description": "Verifies that SameSite='NONE' in production raises RuntimeError."
+      },
+      {
+        "name": "test_production_cookie_samesite_insecure_rejected[invalid]",
+        "result": "PASSED",
+        "description": "Verifies that SameSite='invalid' in production raises RuntimeError."
+      },
+      {
+        "name": "test_production_cookie_samesite_insecure_rejected[]",
+        "result": "PASSED",
+        "description": "Verifies that empty SameSite in production raises RuntimeError."
+      },
+      {
+        "name": "test_production_default_cookies_are_secure",
+        "result": "PASSED",
+        "description": "Verifies that default production settings enforce cookie_secure_effective=True and lax SameSite."
+      },
+      {
+        "name": "test_production_explicit_secure_true_succeeds",
+        "result": "PASSED",
+        "description": "Verifies that explicit cookie_secure=True and SameSite='strict' succeed."
+      },
+      {
+        "name": "test_create_app_fails_start_on_insecure_cookie_secure",
+        "result": "PASSED",
+        "description": "Verifies that create_app() fails closed when cookie_secure is False in production."
+      },
+      {
+        "name": "test_create_app_fails_start_on_insecure_cookie_samesite",
+        "result": "PASSED",
+        "description": "Verifies that create_app() fails closed when cookie_samesite is insecure in production."
+      },
+      {
+        "name": "test_domain_cookie_params_in_production",
+        "result": "PASSED",
+        "description": "Verifies that _cookie_params() outputs secure=True, samesite=lax, path=/ in production."
+      },
+      {
+        "name": "test_domain_cookie_params_rejects_insecure_in_production",
+        "result": "PASSED",
+        "description": "Verifies that _cookie_params() raises RuntimeError if forced into insecure posture in production."
+      },
+      {
+        "name": "test_domain_set_auth_cookies_emits_secure_and_httponly",
+        "result": "PASSED",
+        "description": "Verifies that _set_auth_cookies() adds Secure, HttpOnly, and SameSite on response headers."
+      },
+      {
+        "name": "test_domain_clear_auth_cookies_emits_secure_and_httponly",
+        "result": "PASSED",
+        "description": "Verifies that _clear_auth_cookies() adds Secure, HttpOnly, and Max-Age=0 on deletion headers."
+      },
+      {
+        "name": "test_domain_set_auth_cookies_fails_closed_on_forced_insecure",
+        "result": "PASSED",
+        "description": "Verifies that _set_auth_cookies() fails closed with RuntimeError if insecure parameters are forced."
+      },
+      {
+        "name": "test_development_mode_allows_insecure_cookies_for_local_http",
+        "result": "PASSED",
+        "description": "Verifies that development mode allows cookie_secure=False for local HTTP testing without Secure flag."
+      }
+    ]
+  }
+}

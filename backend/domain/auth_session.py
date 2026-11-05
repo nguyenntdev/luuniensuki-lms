@@ -37,10 +37,23 @@ logger = logging.getLogger("luuniensuki.api")
 
 def _cookie_params() -> dict[str, Any]:
     samesite = (settings.cookie_samesite or "lax").lower()
-    if samesite not in {"lax", "strict", "none"}:
-        samesite = "lax"
+    if settings.is_production:
+        if samesite not in {"lax", "strict"}:
+            raise RuntimeError(
+                f"Insecure cookie samesite in production: {settings.cookie_samesite}. Must be 'lax' or 'strict'."
+            )
+        if not settings.cookie_secure_effective:
+            raise RuntimeError(
+                "Insecure auth cookies cannot be used in production: secure flag must be True"
+            )
+        secure = True
+    else:
+        if samesite not in {"lax", "strict", "none"}:
+            samesite = "lax"
+        secure = settings.cookie_secure_effective
+
     params: dict[str, Any] = {
-        "secure": settings.cookie_secure_effective,
+        "secure": secure,
         "samesite": samesite,
         "path": settings.cookie_path,
     }
@@ -53,12 +66,15 @@ def _set_auth_cookies(
     response: Response, *, access_token: str, refresh_token: str
 ) -> None:
     params = _cookie_params()
-    if settings.is_production and not params["secure"]:
-        logger.warning(
-            "Secure auth cookies are DISABLED in production because "
-            "COOKIE_SECURE was explicitly overridden to a non-secure value; "
-            "session credentials may be transmitted over plaintext connections."
-        )
+    if settings.is_production:
+        if not params.get("secure", False):
+            raise RuntimeError(
+                "Fatal: Attempted to set insecure auth cookies in production (secure=False)."
+            )
+        if params.get("samesite") not in {"lax", "strict"}:
+            raise RuntimeError(
+                f"Fatal: Insecure cookie samesite in production ({params.get('samesite')}). Must be 'lax' or 'strict'."
+            )
     access_max_age = int(settings.access_token_expire_minutes) * 60
     refresh_max_age = int(settings.refresh_token_expire_days) * 24 * 60 * 60
     response.set_cookie(
@@ -79,8 +95,16 @@ def _set_auth_cookies(
 
 def _clear_auth_cookies(response: Response) -> None:
     params = _cookie_params()
-    response.delete_cookie(settings.access_cookie_name, **params)
-    response.delete_cookie(settings.refresh_cookie_name, **params)
+    response.delete_cookie(
+        settings.access_cookie_name,
+        httponly=True,
+        **params,
+    )
+    response.delete_cookie(
+        settings.refresh_cookie_name,
+        httponly=True,
+        **params,
+    )
 
 
 def _decode_refresh_token_best_effort(raw_token: str) -> Optional[dict[str, Any]]:

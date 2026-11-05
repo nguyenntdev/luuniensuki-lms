@@ -1,0 +1,51 @@
+# -*- coding: utf-8 -*-
+"""Service wrapper for backup and restore rehearsal operations."""
+from __future__ import annotations
+
+from scripts.backup.backup_engine import (
+    CRITICAL_VERIFICATION_TABLES,
+    DEFAULT_DRILL_DB,
+    DEFAULT_RPO_TARGET_SECONDS,
+    DEFAULT_RTO_TARGET_SECONDS,
+    BackupError,
+    DatabaseConfig,
+    DecryptionError,
+    IntegrityError,
+    LiveDatabaseProtectionError,
+    RestoreError,
+    compute_sha256,
+    create_backup,
+    decrypt_data,
+    dump_database_sql,
+    encrypt_data,
+    get_all_table_counts,
+    get_latest_record_timestamp,
+    recreate_disposable_database,
+    restore_rehearsal,
+    restore_sql_into_db,
+    verify_backup_integrity,
+)
+
+__all__ = [
+    "CRITICAL_VERIFICATION_TABLES",
+    "DEFAULT_DRILL_DB",
+    "DEFAULT_RPO_TARGET_SECONDS",
+    "DEFAULT_RTO_TARGET_SECONDS",
+    "BackupError",
+    "DatabaseConfig",
+    "DecryptionError",
+    "IntegrityError",
+    "LiveDatabaseProtectionError",
+    "RestoreError",
+    "compute_sha256",
+    "create_backup",
+    "decrypt_data",
+    "dump_database_sql",
+    "encrypt_data",
+    "get_all_table_counts",
+    "get_latest_record_timestamp",
+    "recreate_disposable_database",
+    "restore_rehearsal",
+    "restore_sql_into_db",
+    "verify_backup_integrity",
+]

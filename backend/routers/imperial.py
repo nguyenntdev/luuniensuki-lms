@@ -53,6 +53,7 @@ from ..deps import (
     get_current_user,
     get_current_user_optional,
     get_staff_user,
+    verify_csrf,
 )
 from ..errors import AppError
 from ..models import User, UserRole
@@ -405,38 +406,8 @@ def check_asset_license_endpoint(
 # Admin Endpoints (RBAC Protected)
 # =========================================================================== #
 def verify_map_admin_csrf(request: Request) -> None:
-    """Enforce CSRF and Bearer token defense for administrative map mutations.
-
-    Invariants:
-    1. Requests with Authorization: Bearer <token> header are immune to ambient cookie CSRF attacks.
-    2. Requests authenticated via session cookies (access_cookie_name) MUST contain a custom
-       anti-CSRF header (X-Requested-With or X-CSRF-Token) and MUST NOT have Sec-Fetch-Site: cross-site.
-    """
-    if request.method in ("GET", "HEAD", "OPTIONS"):
-        return
-
-    auth_header = request.headers.get("authorization", "")
-    if auth_header.strip().startswith("Bearer "):
-        return
-
-    cookie_token = request.cookies.get(settings.access_cookie_name)
-    if cookie_token:
-        sec_fetch_site = request.headers.get("sec-fetch-site")
-        if sec_fetch_site == "cross-site":
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="CSRF validation failed: cross-site cookie mutation rejected",
-            )
-        has_csrf_header = bool(
-            request.headers.get("x-requested-with")
-            or request.headers.get("x-csrf-token")
-            or request.headers.get("x-xsrf-token")
-        )
-        if not has_csrf_header:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="CSRF validation failed: missing custom anti-CSRF header on cookie mutation",
-            )
+    """Enforce CSRF and Bearer token defense for administrative map mutations."""
+    verify_csrf(request, require_custom_header=True)
 
 
 @router.get("/admin/maps", response_model=list[ImperialMapAssetSummary])

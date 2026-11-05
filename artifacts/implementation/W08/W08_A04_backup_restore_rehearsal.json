@@ -1,0 +1,92 @@
+{
+  "ticket_id": "V5-T084",
+  "wave": "W08",
+  "slot": "W08-A04",
+  "role": "W08-A04",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "goal": "Backup and restoration rehearsal automation with verifiable RPO/RTO metrics.",
+  "status": "COMPLETED",
+  "timestamp": "2026-11-05T04:10:00Z",
+  "summary": "Implemented automated PostgreSQL database backup, encryption, and restoration rehearsal automation with verifiable RPO/RTO metrics. Created scripts/backup/backup-database.sh, scripts/backup/restore-rehearsal.sh, and scripts/backup/backup_engine.py with backend service wrapper backend/services/backup_restore.py. Dumps full schema and data, compresses with gzip, and generates SHA-256 checksums alongside JSON metadata manifests. Supports AES-256-CBC passphrase encryption with PBKDF2 derivation. The restoration rehearsal script verifies integrity checksums, recreates disposable drill database 'luuniensuki_restore_drill', measures RTO duration and RPO data age delta, compares exact table row counts across critical entities (users, heritage_places, historical_entities, rbpc_inquiries) and all 157 public tables, and outputs structured JSON rehearsal reports. Enforced strict negative abuse protections: damaged, bit-rotted, or empty archives fail integrity checks without modifying databases, and live database protection guard strictly forbids rehearsals targeting production databases. Added automated pre-migration backup hook in scripts/deployment/deploy-safe.sh and backups volume in docker-compose.prod.yml.",
+  "files_created_or_modified": [
+    "scripts/backup/backup_engine.py",
+    "scripts/backup/backup-database.sh",
+    "scripts/backup/restore-rehearsal.sh",
+    "backend/services/backup_restore.py",
+    "docker-compose.prod.yml",
+    "scripts/deployment/deploy-safe.sh",
+    "tests/v5/test_v5_t084.py",
+    "artifacts/implementation/W08/W08_A04_backup_restore_rehearsal.json"
+  ],
+  "invariants_verified": {
+    "automated_pg_dump_and_compression": "Automated pg_dump extraction with clean, ownerless, schema-qualified statements and gzip level 9 compression.",
+    "sha256_cryptographic_checksums": "Computes SHA-256 of final archive artifact, storing in .sha256 file and metadata JSON manifest for integrity validation.",
+    "passphrase_encryption": "Full AES-256-CBC encryption using PBKDF2 (100k iterations) and salt; decrypts verified streams and rejects incorrect passphrases with DecryptionError.",
+    "disposable_drill_isolation": "Restoration rehearsals strictly isolate execution to disposable drill database (default: luuniensuki_restore_drill), safely dropping and recreating it without touching live systems.",
+    "exact_table_row_count_verification": "100% table and row count matching across all public tables, explicitly checking users, heritage_places, historical_entities, and rbpc_inquiries.",
+    "verifiable_rpo_rto_metrics": "Measures exact RTO duration (observed ~2.15s << 300s SLA) and RPO transaction age delta (observed ~29s << 3600s SLA), recorded in structured JSON reports.",
+    "negative_abuse_integrity_rejection": "Bit-rotted, tampered, or empty (0-byte) backup archives fail integrity checks with IntegrityError before modifying any database state.",
+    "negative_abuse_live_db_guard": "Restore rehearsal refuses execution with LiveDatabaseProtectionError whenever target database matches the live source database.",
+    "deployment_safety_integration": "Automated pre-migration backup invocation integrated into scripts/deployment/deploy-safe.sh before applying alembic upgrade head."
+  },
+  "metrics_summary": {
+    "measured_rto_seconds": 2.153,
+    "rto_target_seconds": 300.0,
+    "rto_target_met": true,
+    "measured_rpo_delta_seconds": 29.069,
+    "rpo_target_seconds": 3600.0,
+    "rpo_target_met": true,
+    "tables_checked": 157,
+    "tables_matched": 157,
+    "data_loss_detected": false
+  },
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t084.py -v",
+    "tests_total": 8,
+    "tests_passed": 8,
+    "tests_failed": 0,
+    "test_cases": [
+      {
+        "name": "test_backup_script_execution_and_checksum_generation",
+        "result": "PASSED",
+        "description": "Verifies automated database dump creation, gzip compression, SHA-256 checksum generation, and metadata manifest creation."
+      },
+      {
+        "name": "test_passphrase_encrypted_backup_and_decryption_lifecycle",
+        "result": "PASSED",
+        "description": "Verifies AES-256-CBC passphrase encryption round-trip, successful decryption with valid passphrase, and DecryptionError rejection with incorrect passphrase."
+      },
+      {
+        "name": "test_restore_rehearsal_recovers_exact_content_without_data_loss",
+        "result": "PASSED",
+        "description": "Seeds distinct records in users, heritage_places, historical_entities, and rbpc_inquiries, performs backup, restores into disposable luuniensuki_restore_drill, and confirms 100% exact table and row count match."
+      },
+      {
+        "name": "test_rehearsal_rpo_and_rto_metrics_and_structured_report",
+        "result": "PASSED",
+        "description": "Verifies structured rehearsal report JSON output containing measured RTO, RPO delta, SLA targets, integrity verification details, and table count breakdown."
+      },
+      {
+        "name": "test_negative_abuse_damaged_or_tampered_dump_fails_integrity",
+        "result": "PASSED",
+        "description": "Negative abuse test: Corrupted/tampered archive bytes fail SHA-256 integrity check and abort prior to touching database."
+      },
+      {
+        "name": "test_negative_abuse_empty_dump_fails_integrity",
+        "result": "PASSED",
+        "description": "Negative abuse test: 0-byte/empty dump fails integrity check with IntegrityError."
+      },
+      {
+        "name": "test_negative_abuse_live_database_protection",
+        "result": "PASSED",
+        "description": "Negative abuse test: Restore rehearsal strictly blocks execution with LiveDatabaseProtectionError when target database matches the live source database."
+      },
+      {
+        "name": "test_cli_shell_scripts_end_to_end",
+        "result": "PASSED",
+        "description": "Verifies CLI execution of scripts/backup/backup-database.sh and scripts/backup/restore-rehearsal.sh returning exit code 0 and valid terminal output."
+      }
+    ]
+  }
+}

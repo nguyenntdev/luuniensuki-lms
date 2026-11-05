@@ -164,6 +164,7 @@ export default function VirtualTours() {
               loading="lazy"
               allow="fullscreen; accelerometer; gyroscope; xr-spatial-tracking"
               allowFullScreen
+              sandbox="allow-scripts allow-same-origin allow-popups"
               referrerPolicy="no-referrer-when-downgrade"
             />
           ) : (

@@ -649,10 +649,12 @@ def retry_ai_job(
 @router.post("/api/v1/ai/tutor", response_model=AIAnswerOut)
 def ai_tutor(
     payload: AITutorRequest,
+    request: Request,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> AIAnswerOut:
     from ..services import ai_observability
+    from ..services.rate_limiter import rate_limiter
     from ..services.ai_privacy import (
         is_minor_user,
         is_training_allowed_for_user,
@@ -660,6 +662,21 @@ def ai_tutor(
         validate_minor_prompt_safety,
     )
     from ..services.ai_tutor import apply_content_safety_filter
+    from ..services.feature_flags import assert_kill_switch_active
+
+    # Distributed rate limiting check per IP and per user
+    rate_limiter.check_ai_query_rate_limit(
+        db=db,
+        request=request,
+        user_id=current_user.id,
+    )
+
+    assert_kill_switch_active(
+        "FEATURE_FLAG_AI_TUTOR_ENABLED",
+        feature_name="Trợ lý AI Gia sư",
+        friendly_message="Hệ thống Trợ lý AI đang tạm ngưng bảo trì. Các tính năng tra cứu nội dung vẫn hoạt động bình thường.",
+        db=db,
+    )
 
     if not settings.deepseek_api_key:
         raise HTTPException(status_code=503, detail="AI not configured")
@@ -789,6 +806,15 @@ async def ai_tutor_stream(
     Streaming version of AI tutor endpoint using Server-Sent Events (SSE).
     Returns text chunks as they arrive from DeepSeek API.
     """
+    from ..services.feature_flags import assert_kill_switch_active
+
+    assert_kill_switch_active(
+        "FEATURE_FLAG_AI_TUTOR_ENABLED",
+        feature_name="Trợ lý AI Gia sư",
+        friendly_message="Hệ thống Trợ lý AI đang tạm ngưng bảo trì. Các tính năng tra cứu nội dung vẫn hoạt động bình thường.",
+        db=db,
+    )
+
     if not settings.deepseek_api_key:
         raise HTTPException(status_code=503, detail="AI not configured")
 
@@ -923,10 +949,12 @@ async def ai_tutor_stream(
 @router.post("/api/v1/ai/qa", response_model=AIAnswerOut)
 def ai_qa(
     payload: AIQuestionRequest,
+    request: Request,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> AIAnswerOut:
     from ..services import ai_observability
+    from ..services.rate_limiter import rate_limiter
     from ..services.ai_privacy import (
         is_minor_user,
         is_training_allowed_for_user,
@@ -934,6 +962,13 @@ def ai_qa(
         validate_minor_prompt_safety,
     )
     from ..services.ai_tutor import apply_content_safety_filter
+
+    # Distributed rate limiting check per IP and per user
+    rate_limiter.check_ai_query_rate_limit(
+        db=db,
+        request=request,
+        user_id=current_user.id,
+    )
 
     if not settings.deepseek_api_key:
         raise HTTPException(status_code=503, detail="AI not configured")
@@ -1169,9 +1204,18 @@ async def ai_qa_stream(
 @router.post("/api/v1/ai/summary", response_model=SummaryGenerateOut)
 def ai_summary(
     payload: SummaryGenerateIn,
+    request: Request,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> SummaryGenerateOut:
+    from ..services.rate_limiter import rate_limiter
+
+    rate_limiter.check_ai_query_rate_limit(
+        db=db,
+        request=request,
+        user_id=current_user.id,
+    )
+
     sources = _collect_ai_sources(
         db, urn_slug=payload.urn_slug, motif_id=payload.motif_id, limit=6
     )

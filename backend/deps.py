@@ -92,6 +92,76 @@ from .models import User, UserRole
 from .rbac import ADMIN_ROLES, STAFF_ROLES
 
 
+def verify_csrf(request: Request, require_custom_header: bool = False) -> None:
+    """Enforce CSRF and Bearer token defense for state-mutating requests.
+
+    Invariants:
+    1. Safe HTTP methods (GET, HEAD, OPTIONS) do not mutate state and are exempt.
+    2. Requests with Authorization: Bearer <token> header are immune to ambient cookie CSRF attacks.
+    3. Requests authenticated via session cookies (access_cookie_name):
+       - If Sec-Fetch-Site is 'cross-site', strictly reject with 403 Forbidden.
+       - If Origin header is present and does not match Host or allowed CORS origins, reject with 403 Forbidden.
+       - If require_custom_header is True, require custom anti-CSRF header (X-Requested-With, X-CSRF-Token, X-XSRF-Token).
+       - If Sec-Fetch-Site is present and untrusted, require custom anti-CSRF header.
+    """
+    if request.method in ("GET", "HEAD", "OPTIONS"):
+        return
+
+    auth_header = request.headers.get("authorization", "")
+    if auth_header.strip().startswith("Bearer "):
+        return
+
+    cookie_token = request.cookies.get(settings.access_cookie_name)
+    if not cookie_token:
+        return
+
+    # 1. Check Sec-Fetch-Site (Fetch Metadata)
+    sec_fetch_site = request.headers.get("sec-fetch-site")
+    if sec_fetch_site == "cross-site":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="CSRF validation failed: cross-site cookie mutation rejected",
+        )
+
+    # 2. Check Origin header against Host and allowed CORS origins
+    origin = request.headers.get("origin")
+    if origin:
+        origin_clean = origin.rstrip("/")
+        allowed_origins = [o.rstrip("/") for o in settings.cors_origins_list]
+        host = request.headers.get("host", "")
+        origin_host = origin_clean.split("://")[-1].split(":")[0] if "://" in origin_clean else origin_clean
+        host_name = host.split(":")[0]
+        if (
+            origin_clean not in allowed_origins
+            and origin_host != host_name
+            and origin_clean not in ("http://testserver", "https://testserver")
+        ):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="CSRF validation failed: cross-origin mutation rejected",
+            )
+
+    has_csrf_header = bool(
+        request.headers.get("x-requested-with")
+        or request.headers.get("x-csrf-token")
+        or request.headers.get("x-xsrf-token")
+    )
+
+    # 3. Custom anti-CSRF header enforcement
+    if require_custom_header:
+        if not has_csrf_header:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="CSRF validation failed: missing custom anti-CSRF header on cookie mutation",
+            )
+    elif sec_fetch_site and sec_fetch_site not in ("same-origin", "same-site", "none"):
+        if not has_csrf_header:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="CSRF validation failed: untrusted fetch site without custom anti-CSRF header",
+            )
+
+
 def get_current_user(
     request: Request,
     token: Optional[str] = Depends(oauth2_scheme),

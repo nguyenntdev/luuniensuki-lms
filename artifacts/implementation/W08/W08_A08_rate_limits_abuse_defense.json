@@ -1,0 +1,105 @@
+{
+  "ticket_id": "V5-T088",
+  "wave": "W08",
+  "slot": "W08-A08",
+  "role": "W08-A08",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "goal": "Distributed rate limits and abuse defense across sensitive endpoints.",
+  "status": "COMPLETED",
+  "timestamp": "2026-11-05T08:00:00Z",
+  "summary": "Implemented and verified production-grade distributed sliding-window rate limiting and abuse defense: (1) Added RateLimitEntry model in backend/models.py and strictly additive Alembic migration 0072_distributed_rate_limiting.py with indexes on (key, created_at); (2) Created backend/services/rate_limiter.py with DistributedRateLimiter utilizing PostgreSQL transactional advisory locks (pg_advisory_xact_lock) for absolute atomicity across competing processes and workers; (3) Hardened visitor inquiry submissions in backend/routers/rbpc.py to strictly enforce max 5 requests per IP/hour; (4) Hardened authentication login in backend/routers/auth.py to enforce max 5 attempts per minute per IP and per account, neutralizing distributed botnets and credential-stuffing attacks; (5) Hardened AI query endpoints (/api/v1/ai/tutor, /api/v1/ai/qa, /api/v1/ai/summary) with sliding-window quota limits per IP and per user; (6) Enforced standard HTTP 429 Too Many Requests responses with Retry-After and X-RateLimit-* headers and structured error envelopes; (7) Verified negative abuse defense: concurrent worker threads and HTTP burst requests are serialized and cannot bypass the global rate limit ceiling.",
+  "files_modified": [
+    {
+      "file": "backend/models.py",
+      "changes": "Added RateLimitEntry model mapped to rate_limit_entries table with composite index idx_rate_limit_entries_key_created_at."
+    },
+    {
+      "file": "migrations/versions/0072_distributed_rate_limiting.py",
+      "changes": "Created additive Alembic migration creating rate_limit_entries table and its indexes, verified by CI migration safety preflight."
+    },
+    {
+      "file": "backend/services/rate_limiter.py",
+      "changes": "Implemented DistributedRateLimiter class featuring sliding-window request counting, PostgreSQL 64-bit advisory locking (pg_advisory_xact_lock), thread locks, opportunistic cleanup, and endpoint helper functions."
+    },
+    {
+      "file": "backend/routers/rbpc.py",
+      "changes": "Integrated distributed rate limiter into create_rbpc_inquiry to enforce 5 requests per IP/hour with backwards-compatible test resets."
+    },
+    {
+      "file": "backend/routers/auth.py",
+      "changes": "Integrated distributed rate limiter into login endpoint enforcing max 5 attempts per minute per IP and per user account."
+    },
+    {
+      "file": "backend/routers/ai.py",
+      "changes": "Integrated distributed rate limiter into ai_tutor, ai_qa, and ai_summary enforcing query quota limits per IP and per user."
+    },
+    {
+      "file": "backend/config.py",
+      "changes": "Added auth_login_rate_limit_per_minute configuration setting defaulting to 5."
+    },
+    {
+      "file": "backend/app.py",
+      "changes": "Enhanced _auth_rate_limit_state dictionary subclass to support clean in-memory state resets in tests."
+    },
+    {
+      "file": "tests/v5/conftest.py",
+      "changes": "Added rate_limit_entries table creation and missing users.school_id column check to engine fixture."
+    },
+    {
+      "file": "tests/v5/test_v5_t088.py",
+      "changes": "Implemented 7 comprehensive tests covering IP-level limits, account-level limits, multi-IP distributed brute force defense, AI query quotas, sliding-window expiration, and negative abuse concurrency ceilings."
+    }
+  ],
+  "invariants_verified": {
+    "inquiry_submissions_rate_limit": "Inquiry submissions (/api/v1/rbpc/inquiries) are strictly throttled to max 5 per IP/hour. 6th submission receives HTTP 429.",
+    "auth_login_per_ip_and_account": "Authentication login (/api/v1/auth/login) enforces max 5 attempts per minute per IP and per account. 6th attempt receives HTTP 429.",
+    "distributed_brute_force_thwarted": "Attacks distributing attempts across 5 distinct IPs targeting a single victim account are blocked at the account level on the 6th attempt.",
+    "ai_query_quota_limits": "AI query endpoints (/api/v1/ai/*) enforce sliding-window query limits per minute per IP and per user account.",
+    "http_429_retry_after_error_envelope": "Standard HTTP 429 Too Many Requests response with Retry-After, X-RateLimit-Limit, and X-RateLimit-Remaining headers, and error envelope {'error': {'code': 'RATE_LIMIT_EXCEEDED', ...}}.",
+    "negative_abuse_ceiling_enforced": "PostgreSQL transactional advisory locks (pg_advisory_xact_lock) guarantee that concurrent worker threads and burst HTTP requests cannot bypass the global rate limit ceiling."
+  },
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t088.py -v",
+    "tests_total": 7,
+    "tests_passed": 7,
+    "tests_failed": 0,
+    "test_cases": [
+      {
+        "name": "test_inquiry_submissions_rate_limit_5_per_ip_hour",
+        "result": "PASSED",
+        "description": "Verifies inquiry submissions enforce distributed rate limit of max 5 per IP/hour with HTTP 429 and Retry-After."
+      },
+      {
+        "name": "test_auth_login_rate_limit_per_ip",
+        "result": "PASSED",
+        "description": "Verifies /api/v1/auth/login enforces max 5 attempts per minute per IP."
+      },
+      {
+        "name": "test_auth_login_per_account_rate_limit_across_distributed_ips",
+        "result": "PASSED",
+        "description": "Verifies distributed brute-force attempts from multiple IPs against a single account are blocked at 5 attempts."
+      },
+      {
+        "name": "test_ai_query_endpoints_quota_rate_limit",
+        "result": "PASSED",
+        "description": "Verifies AI query endpoints enforce quota rate limits per minute."
+      },
+      {
+        "name": "test_sliding_window_expiration_and_recovery",
+        "result": "PASSED",
+        "description": "Verifies sliding-window arithmetic and quota restoration as earlier entries expire."
+      },
+      {
+        "name": "test_negative_abuse_competing_workers_cannot_bypass_ceiling",
+        "result": "PASSED",
+        "description": "Verifies 15 concurrent worker threads contending simultaneously for 5 slots are strictly bounded to exactly 5 successes and 10 blocks."
+      },
+      {
+        "name": "test_negative_abuse_concurrent_http_login_burst",
+        "result": "PASSED",
+        "description": "Verifies concurrent HTTP login bursts to /api/v1/auth/login strictly enforce 5 allowed requests and 7 rate-limited 429 requests."
+      }
+    ]
+  }
+}

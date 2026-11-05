@@ -1,0 +1,139 @@
+{
+  "ticket_id": "V5-T086",
+  "wave": "W08",
+  "slot": "W08-A06",
+  "role": "W08-A06",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "goal": "Structured logs, correlation IDs, traces, and alert routing with zero PII in logs.",
+  "status": "COMPLETED",
+  "timestamp": "2026-11-05T04:00:00Z",
+  "summary": "Implemented system-wide structured JSON logging, distributed trace correlation ID propagation across HTTP headers, ASGI middleware, and async execution ContextVars, as well as automatic PII redaction and high-severity alert routing. Guaranteed negative abuse safety where contact emails, phone numbers, auth passwords, Bearer tokens, JWT tokens, and student personal identifiers are never written to log outputs or alert sinks.",
+  "files_modified": [
+    {
+      "file": "backend/logging_config.py",
+      "changes": "Created comprehensive structured logging module with ContextVars for correlation_id and request_id, regex-based PII redaction engine (masking emails, phones, passwords, tokens, JWTs, student/contact fields to [REDACTED]), PIIRedactionFilter for logging records, StructuredJsonFormatter emitting ISO8601 UTC JSON lines, AlertRouter for dispatching alerts to registered sinks with zero PII, AlertRoutingHandler intercepting ERROR/CRITICAL records, and setup_logging() initialization."
+    },
+    {
+      "file": "backend/middleware/correlation.py",
+      "changes": "Created CorrelationIdMiddleware extracting or minting X-Correlation-ID and X-Request-ID, setting ContextVars for downstream handlers and logging, storing identifiers on request.state, and setting response headers."
+    },
+    {
+      "file": "backend/middleware/logging_middleware.py",
+      "changes": "Created StructuredLoggingMiddleware measuring request latency, emitting structured access logs with method, path, status, latency_ms, and trace correlation IDs, and triggering AlertRouter on unhandled 5xx errors."
+    },
+    {
+      "file": "backend/middleware/__init__.py",
+      "changes": "Exported CorrelationIdMiddleware and StructuredLoggingMiddleware."
+    },
+    {
+      "file": "backend/app.py",
+      "changes": "Integrated setup_logging(), CorrelationIdMiddleware, and StructuredLoggingMiddleware into create_app() factory."
+    },
+    {
+      "file": "backend-rust/src/observability.rs",
+      "changes": "Added CORRELATION_ID_HEADER support ('x-correlation-id') alongside REQUEST_ID_HEADER, propagating both headers to request headers, tracing spans, structured JSON logs, and response headers."
+    },
+    {
+      "file": "nginx-lms.conf",
+      "changes": "Configured proxy_set_header and add_header for X-Request-ID and X-Correlation-ID propagation."
+    },
+    {
+      "file": "nginx-luunien-staging.conf",
+      "changes": "Updated log_format sanitized_combined to include req_id and corr_id, and added proxy_set_header / add_header for X-Request-ID and X-Correlation-ID."
+    },
+    {
+      "file": "nginx.conf",
+      "changes": "Configured proxy_set_header and add_header for X-Request-ID and X-Correlation-ID across server blocks."
+    },
+    {
+      "file": "tests/v5/test_v5_t086.py",
+      "changes": "Created 14-test suite validating correlation ID propagation across request/response headers and ContextVars, structured JSON format, PII redaction regexes, negative abuse against auth and inquiry leakage, and alert router dispatch."
+    }
+  ],
+  "invariants_verified": {
+    "correlation_id_propagation": "X-Correlation-ID and X-Request-ID headers are propagated from client requests through ASGI context to response headers and log records.",
+    "zero_pii_logging": "Emails, phone numbers, passwords, Bearer tokens, and JWT tokens/secrets are automatically redacted into [REDACTED] in all log records and formatters.",
+    "negative_abuse_auth_inquiry": "Simulated login requests with passwords and booking inquiries with emails/phones never leak raw personal information into log streams.",
+    "structured_json_trace_fields": "Log lines serialize as valid JSON containing timestamp, level, logger, message, correlation_id, request_id, module, and line number.",
+    "alert_routing_sanitization": "High-severity alerts routed via AlertRouter contain correlation context and strictly sanitized payload details with zero raw PII."
+  },
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t086.py -v",
+    "tests_total": 14,
+    "tests_passed": 14,
+    "tests_failed": 0,
+    "test_cases": [
+      {
+        "name": "test_correlation_id_propagated_from_request_headers",
+        "result": "PASSED",
+        "description": "Validates that X-Correlation-ID and X-Request-ID in request headers are reflected on response."
+      },
+      {
+        "name": "test_correlation_id_minted_when_omitted",
+        "result": "PASSED",
+        "description": "Validates that when headers are omitted, server mints fresh correlation and request IDs."
+      },
+      {
+        "name": "test_request_id_used_as_fallback_for_correlation_id",
+        "result": "PASSED",
+        "description": "Validates that single request ID header serves as fallback for correlation ID."
+      },
+      {
+        "name": "test_contextvars_propagation_in_handlers",
+        "result": "PASSED",
+        "description": "Validates ContextVars set, get, and reset behavior across async execution boundaries."
+      },
+      {
+        "name": "test_structured_json_logging_with_trace_context",
+        "result": "PASSED",
+        "description": "Validates that StructuredJsonFormatter outputs valid JSON containing correlation_id and request_id."
+      },
+      {
+        "name": "test_redact_pii_emails",
+        "result": "PASSED",
+        "description": "Validates that all email formats are redacted to [REDACTED]."
+      },
+      {
+        "name": "test_redact_pii_phones",
+        "result": "PASSED",
+        "description": "Validates that Vietnamese and international phone numbers are redacted to [REDACTED]."
+      },
+      {
+        "name": "test_redact_pii_passwords_and_secrets",
+        "result": "PASSED",
+        "description": "Validates that passwords, passphrases, secrets, and auth tokens are redacted."
+      },
+      {
+        "name": "test_redact_pii_bearer_and_jwt_tokens",
+        "result": "PASSED",
+        "description": "Validates that Bearer tokens and raw JWTs are redacted."
+      },
+      {
+        "name": "test_redact_pii_recursive_dictionary",
+        "result": "PASSED",
+        "description": "Validates recursive sanitization of nested dictionaries containing sensitive keys and strings."
+      },
+      {
+        "name": "test_negative_abuse_simulated_auth_flow",
+        "result": "PASSED",
+        "description": "Validates that simulated login with sensitive email and password leaks zero PII to logs."
+      },
+      {
+        "name": "test_negative_abuse_simulated_inquiry_flow",
+        "result": "PASSED",
+        "description": "Validates that simulated inquiry with visitor contact email/phone leaks zero PII to logs."
+      },
+      {
+        "name": "test_negative_abuse_explicit_logger_invocation",
+        "result": "PASSED",
+        "description": "Validates that developer logger calls with format arguments are intercepted and sanitized."
+      },
+      {
+        "name": "test_alert_router_receives_sanitized_payload",
+        "result": "PASSED",
+        "description": "Validates that AlertRouter dispatches alerts with correlation IDs and redacted details."
+      }
+    ]
+  }
+}

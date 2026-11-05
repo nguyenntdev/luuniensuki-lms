@@ -718,6 +718,14 @@ def issue_livekit_access_token(
     db: Session = Depends(get_db),
 ) -> schemas.LiveSessionTokenOut:
     from ..services import live_sessions as live_session_service
+    from ..services.feature_flags import assert_kill_switch_active
+
+    assert_kill_switch_active(
+        "FEATURE_FLAG_LIVEKIT_MEDIA_ENABLED",
+        feature_name="WebRTC Media Streaming",
+        friendly_message="Dịch vụ truyền phát âm thanh/hình ảnh trực tiếp đang tạm ngưng do sự cố mạng. Vui lòng thử lại sau.",
+        db=db,
+    )
 
     live_session = live_session_service.get_live_session(db, live_session_id)
     if live_session is None:
@@ -776,6 +784,14 @@ def join_live_session_room(
     db: Session = Depends(get_db),
 ) -> schemas.LiveSessionJoinOut:
     from ..services import live_sessions as live_session_service
+    from ..services.feature_flags import assert_kill_switch_active
+
+    assert_kill_switch_active(
+        "FEATURE_FLAG_LIVEKIT_MEDIA_ENABLED",
+        feature_name="WebRTC Media Streaming",
+        friendly_message="Dịch vụ truyền phát âm thanh/hình ảnh trực tiếp đang tạm ngưng do sự cố mạng. Vui lòng thử lại sau.",
+        db=db,
+    )
 
     live_session = live_session_service.get_live_session(db, live_session_id)
     if live_session is None:

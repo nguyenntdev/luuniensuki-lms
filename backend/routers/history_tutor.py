@@ -121,6 +121,14 @@ def history_tutor_ask(
     current_user: Optional[User] = Depends(get_current_user_optional),
 ) -> HistoryTutorAskOut:
     from ..services import ai_observability
+    from ..services.feature_flags import assert_kill_switch_active
+
+    assert_kill_switch_active(
+        "FEATURE_FLAG_AI_TUTOR_ENABLED",
+        feature_name="Trợ lý AI Lịch sử",
+        friendly_message="Hệ thống Trợ lý AI đang tạm ngưng bảo trì. Các tính năng tra cứu nội dung vẫn hoạt động bình thường.",
+        db=db,
+    )
 
     start_time = time.time()
     is_strict = (

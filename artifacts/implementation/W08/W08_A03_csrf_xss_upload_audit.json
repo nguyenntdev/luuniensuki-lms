@@ -1,0 +1,130 @@
+{
+  "ticket_id": "V5-T083",
+  "wave": "W08",
+  "slot": "W08-A03",
+  "role": "W08-A03",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "goal": "CSRF, XSS, iframe sandbox, and file upload security audit across backend & frontend.",
+  "status": "COMPLETED",
+  "timestamp": "2026-11-05T04:25:00Z",
+  "summary": "Completed comprehensive CSRF defense, Content-Security-Policy (CSP) headers, external iframe sandboxing, file upload scanning, and XSS/HTML neutralization audit across backend and frontend. Implemented Fetch Metadata-aware CSRF protection (Sec-Fetch-Site and Origin verification with custom header fallback for cookie-authenticated mutating requests; Bearer token immunity preserved). Enforced Content-Security-Policy containing frame-ancestors, script-src, and object-src 'none' across FastAPI response middleware and production Nginx reverse proxy configurations. Restored strict iframe sandbox attributes on external 360 and Sketchfab embeds. Hardened file upload handling against executable/script extensions (.exe, .php, .html, .sh, .js), binary signatures (MZ, ELF, #!), and embedded script payloads. Neutralized XSS vectors in user inputs (registration display names, profile updates, inquiry messages, partner notes) with strict validation.",
+  "files_modified": [
+    {
+      "file": "backend/deps.py",
+      "changes": "Added verify_csrf dependency and function to enforce Fetch Metadata (Sec-Fetch-Site: cross-site rejection), Origin header validation, custom anti-CSRF header checks (X-Requested-With, X-CSRF-Token), and Bearer token exemption for state-mutating requests."
+    },
+    {
+      "file": "backend/routers/imperial.py",
+      "changes": "Wired verify_map_admin_csrf to centralized verify_csrf(request, require_custom_header=True) ensuring cookie-authenticated map mutations require custom anti-CSRF headers."
+    },
+    {
+      "file": "backend/routers/rbpc.py",
+      "changes": "Added verify_csrf to update_partner_inquiry_status and update_creator_consent. Added SCRIPT_PATTERN validation and HTML tag stripping on partner notes to reject script injection."
+    },
+    {
+      "file": "backend/routers/auth.py",
+      "changes": "Added input validation on display_name during user registration to strictly reject script/HTML tags (<, >) and invalid characters with HTTP 400 INVALID_DISPLAY_NAME."
+    },
+    {
+      "file": "backend/domain/helpers.py",
+      "changes": "Updated _is_valid_display_name to support common punctuation in legitimate names while strictly rejecting HTML tags and non-alphanumeric/non-Latin characters."
+    },
+    {
+      "file": "backend/routers/users.py",
+      "changes": "Hardened upload_avatar against executable and script extensions (.exe, .php, .html, .js, .sh), binary executable headers (MZ, ELF, #!), and embedded script/HTML payloads."
+    },
+    {
+      "file": "backend/app.py",
+      "changes": "Updated CONTENT_SECURITY_POLICY constant to explicitly include script-src 'self' alongside frame-ancestors 'none' and object-src 'none'."
+    },
+    {
+      "file": "nginx-lms.conf",
+      "changes": "Added production Content-Security-Policy header with frame-ancestors, script-src, and object-src 'none'."
+    },
+    {
+      "file": "nginx-lms-histolab.conf",
+      "changes": "Added production Content-Security-Policy header with frame-ancestors, script-src, and object-src 'none'."
+    },
+    {
+      "file": "nginx.conf",
+      "changes": "Added Content-Security-Policy header across HTTP and HTTPS server blocks with frame-ancestors, script-src, and object-src 'none'."
+    },
+    {
+      "file": "frontend/src/components/vr360/VirtualTours.tsx",
+      "changes": "Added sandbox=\"allow-scripts allow-same-origin allow-popups\" to external 360 viewer iframe element."
+    },
+    {
+      "file": "tests/v5/test_v5_t083.py",
+      "changes": "Created complete 10-test security audit verification suite covering CSRF rejection, negative abuse forged cross-site partner mutation denial, XSS payload neutralization, malicious upload rejection, CSP headers, and iframe sandboxing."
+    }
+  ],
+  "invariants_verified": {
+    "csrf_cross_site_rejection": "State-mutating requests (POST, PATCH, DELETE) authenticated via ambient session cookies with Sec-Fetch-Site: cross-site or untrusted Origin are rejected with HTTP 403 Forbidden.",
+    "csrf_custom_header_enforcement": "Cookie-authenticated administrative operations require a custom anti-CSRF header (X-Requested-With, X-CSRF-Token, or X-XSRF-Token).",
+    "csrf_bearer_exemption": "Direct API calls carrying Authorization: Bearer <token> headers are immune to ambient browser CSRF and succeed without requiring anti-CSRF headers.",
+    "forged_partner_mutation_denied": "Forged cross-site partner status mutations attempting to advance or alter inquiry states without legitimate origin or same-site context are denied with HTTP 403 Forbidden.",
+    "csp_frame_and_script_restriction": "Content-Security-Policy response headers enforce frame-ancestors, script-src, and object-src 'none' across both API middleware and Nginx configurations.",
+    "iframe_restricted_sandbox": "External embedded iframes (Sketchfab 3D models and VR 360 tours) strictly use sandbox=\"allow-scripts allow-same-origin allow-popups\", preventing top-level navigations, form submissions, and plugin execution.",
+    "file_upload_executable_rejection": "Upload endpoints reject files with executable and script extensions (.exe, .php, .html, .sh, .js), binary executable signatures (MZ, ELF, #!), and embedded scripts.",
+    "xss_input_neutralization": "User-generated inputs (registration display names, profile updates, inquiry messages, partner notes) strictly neutralize or reject script patterns and HTML tags."
+  },
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t083.py -v",
+    "tests_total": 10,
+    "tests_passed": 10,
+    "tests_failed": 0,
+    "test_cases": [
+      {
+        "name": "test_csrf_cookie_mutation_rejection_without_headers",
+        "result": "PASSED",
+        "description": "Verifies CSRF denial on cookie mutation without custom header (403), denial on Sec-Fetch-Site cross-site (403), denial on forged Origin (403), success with X-Requested-With (201), and Bearer token exemption (200)."
+      },
+      {
+        "name": "test_negative_abuse_forged_cross_site_partner_status_mutation_denied",
+        "result": "PASSED",
+        "description": "Negative Abuse Test: Forged cross-site partner inquiry status mutation is strictly denied with HTTP 403 Forbidden; legitimate request succeeds with 200."
+      },
+      {
+        "name": "test_xss_payload_neutralization_registration_display_name",
+        "result": "PASSED",
+        "description": "Verifies registration display name rejects malicious script payloads (<script>, <img>, <svg>, javascript:) with HTTP 400 INVALID_DISPLAY_NAME while accepting legitimate Vietnamese names."
+      },
+      {
+        "name": "test_xss_payload_neutralization_profile_update",
+        "result": "PASSED",
+        "description": "Verifies PATCH /api/v1/users/me rejects script injection in display_name with HTTP 400 INVALID_DISPLAY_NAME."
+      },
+      {
+        "name": "test_xss_payload_neutralization_inquiries_and_partner_notes",
+        "result": "PASSED",
+        "description": "Verifies public inquiry submission rejects script tags with 422 RBPC_SPAM_DETECTED and partner note update rejects script patterns with 422 MALICIOUS_INPUT_DETECTED."
+      },
+      {
+        "name": "test_malicious_upload_rejection_avatar",
+        "result": "PASSED",
+        "description": "Verifies avatar upload rejects executable/script extensions (.exe, .php, .html, .sh, .js), binary executable signatures (MZ), embedded script tags, and oversized files with HTTP 400."
+      },
+      {
+        "name": "test_malicious_upload_rejection_media_cms",
+        "result": "PASSED",
+        "description": "Verifies Media CMS validator rejects forbidden extensions, script content, embedded HTML, and invalid binary magic bytes with AppError 400."
+      },
+      {
+        "name": "test_csp_security_headers_fastapi",
+        "result": "PASSED",
+        "description": "Verifies FastAPI responses carry Content-Security-Policy with default-src 'self', frame-ancestors 'none', script-src 'self', and object-src 'none', alongside HSTS and XCTO."
+      },
+      {
+        "name": "test_csp_security_headers_nginx_configs",
+        "result": "PASSED",
+        "description": "Verifies that nginx-lms.conf, nginx-lms-histolab.conf, nginx-luunien-staging.conf, and nginx.conf enforce CSP with frame-ancestors, script-src, and object-src 'none'."
+      },
+      {
+        "name": "test_iframe_sandboxing_frontend_components",
+        "result": "PASSED",
+        "description": "Verifies SketchfabExhibit.tsx and VirtualTours.tsx restrict iframe capabilities with sandbox=\"allow-scripts allow-same-origin allow-popups\"."
+      }
+    ]
+  }
+}

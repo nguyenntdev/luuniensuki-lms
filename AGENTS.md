@@ -289,6 +289,22 @@ Deploy workflow (`deploy.yml`) uses Python 3.12 and runs `pytest tests/backend` 
   - `V5-T079` (W07-A09): P11 atomic publication, cryptographic HMAC-SHA256 signed revisions, object/media cache purging, and clean rollback.
   - `V5-T080` (W07-A10): Research factory chaos & E2E acceptance verifying measured peak concurrency (10 concurrent), external provider caps (max 5), and prompt injection neutralization.
 
+### Wave W08: Harden Security / Operability / Privacy (COMPLETED)
+- **Status**: 10/10 slots complete. 127/127 tests passing.
+- **Artifacts**: `artifacts/implementation/W08/` (`W08_A01`–`W08_A10`).
+- **Verified Invariants**:
+  - `V5-T081` (W08-A01): Fail-start on unsafe production cookies (`secure=True`, `samesite=lax/strict`). No warning-only overrides.
+  - `V5-T082` (W08-A02): Role/tenant security matrix across admin, staff, teacher, learner, partner, and guest with zero metadata side-channels.
+  - `V5-T083` (W08-A03): CSRF on cookie mutations, CSP with `script-src 'self'`, magic-byte upload screening, and iframe sandboxing.
+  - `V5-T084` (W08-A04): Automated encrypted PostgreSQL backup and restore drills verifying RTO and RPO metrics without data loss.
+  - `V5-T085` (W08-A05): Safe migration release protocol enforcing single-head topology, dry-run SQL generation, and additive-only rules.
+  - `V5-T086` (W08-A06): Structured JSON logging with contextvars correlation IDs and automated recursive PII redaction.
+  - `V5-T087` (W08-A07): Secret and dependency static scanning blocking hardcoded credentials, sentinel secrets, and unpinned packages.
+  - `V5-T088` (W08-A08): Distributed sliding-window rate limiting per IP and per account on login, inquiries, and AI endpoints with HTTP 429 Retry-After.
+  - `V5-T089` (W08-A09): Granular feature flags and emergency kill switches (AI tutor, LiveKit, RBPC commerce) with independent public browse.
+  - `V5-T090` (W08-A10): Production SLO drills verifying read latency (p95 <= 300ms), upstream 502/503 resilience, 2D fallback, and zero fake success.
+
+
 
 
 

@@ -1,0 +1,94 @@
+{
+  "ticket_id": "V5-T085",
+  "wave": "W08",
+  "slot": "W08-A05",
+  "role": "W08-A05",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "goal": "Safe migration release protocol with expand/contract, dry-run, rollback, and multiple-head check.",
+  "status": "COMPLETED",
+  "timestamp": "2026-11-05T06:00:00Z",
+  "summary": "Implemented and verified the safe migration release protocol for production releases: (1) Enforced single-head topology invariant across Alembic migration graph, preventing diverging branches; (2) Enforced additive-only schema evolution rules, blocking DROP TABLE, DROP COLUMN, ALTER TYPE, RENAME, and op.drop_* in upgrade() handlers; (3) Created CLI preflight validator scripts/dev/migration_preflight.py supporting topology checks, additive source AST inspection, and complete offline SQL generation (alembic upgrade --sql) with destructive DDL regex inspection; (4) Enhanced migrations/env.py with offline inspection mock to support flawless alembic upgrade --sql dry runs across all 86 revisions; (5) Integrated migration preflight checks into scripts/ci/lint-migration-safety.sh and scripts/deployment/deploy-safe.sh; (6) Verified negative abuse invariant: 100% data and schema integrity for historical claims and inquiries is preserved across migration checks and rollbacks.",
+  "files_modified": [
+    {
+      "file": "migrations/env.py",
+      "changes": "Added offline mock inspector (_setup_offline_mock, _OfflineMockInspector, _OfflineMockResult) allowing Alembic offline SQL mode (alembic upgrade --sql) to dry-run smoothly without live connection inspection failures."
+    },
+    {
+      "file": "scripts/dev/migration_preflight.py",
+      "changes": "Implemented production migration preflight CLI with checks for single head topology, additive-only migration file AST/regex analysis, and complete offline SQL generation with destructive DDL detection. Supports --json, --strict, and --output-sql options."
+    },
+    {
+      "file": "scripts/ci/lint-migration-safety.sh",
+      "changes": "Integrated Alembic single-head topology verification and automatic execution of scripts/dev/migration_preflight.py validator into the CI safety lint suite."
+    },
+    {
+      "file": "scripts/deployment/deploy-safe.sh",
+      "changes": "Enforced migration preflight execution prior to remote database migrations, and switched remote command from 'alembic upgrade heads' to strict single-head 'alembic upgrade head'."
+    },
+    {
+      "file": "tests/v5/test_v5_t085.py",
+      "changes": "Created comprehensive 9-test integration suite covering topology verification, diverging heads rejection, additive-only rule enforcement, destructive operations detection, dry-run SQL generation, CLI execution, CI script execution, and negative abuse data integrity preservation for historical claims and inquiries."
+    }
+  ],
+  "invariants_verified": {
+    "single_head_topology": "Alembic revision tree strictly enforces exactly 1 head. Multiple or diverging branches are immediately detected and block deployment.",
+    "additive_only_migrations": "All production database migrations are strictly additive (CREATE TABLE, CREATE INDEX, ADD COLUMN). Destructive operations (DROP TABLE, DROP COLUMN, ALTER TYPE, RENAME) are rejected.",
+    "offline_sql_dry_run": "Alembic upgrade dry run (alembic upgrade --sql) successfully generates full SQL DDL and verifies zero destructive DDL statements.",
+    "expand_contract_rollback_safety": "Deploy script runs preflight verification before applying migrations to single head. Expand/contract architecture ensures previous codebase revisions remain compatible with database without destructive rollbacks.",
+    "negative_abuse_historical_claims_and_inquiries_intact": "Historical claims and RBPC inquiries remain 100% intact with zero column drops, zero row loss, unbroken foreign keys, and unmodified constraints during and after migration preflight routines."
+  },
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t085.py -v",
+    "tests_total": 9,
+    "tests_passed": 9,
+    "tests_failed": 0,
+    "test_cases": [
+      {
+        "name": "test_migration_graph_topology_single_head",
+        "result": "PASSED",
+        "description": "Verifies that the Alembic migration tree has strictly 1 head (no diverging heads)."
+      },
+      {
+        "name": "test_diverging_heads_rejection_negative",
+        "result": "PASSED",
+        "description": "Verifies that multiple or diverging heads are rejected by topology check."
+      },
+      {
+        "name": "test_additive_only_rule_enforcement_clean_codebase",
+        "result": "PASSED",
+        "description": "Verifies that all production migrations contain strictly additive upgrade operations."
+      },
+      {
+        "name": "test_additive_only_rule_detects_destructive_operations_negative",
+        "result": "PASSED",
+        "description": "Verifies that destructive operations in upgrade() are flagged with exact line numbers."
+      },
+      {
+        "name": "test_migration_dry_run_sql_generation",
+        "result": "PASSED",
+        "description": "Verifies that alembic upgrade --sql dry-run generates valid DDL with zero destructive ops."
+      },
+      {
+        "name": "test_migration_dry_run_detects_destructive_sql_negative",
+        "result": "PASSED",
+        "description": "Verifies that dangerous SQL patterns are identified if present in emitted SQL."
+      },
+      {
+        "name": "test_migration_preflight_cli_execution",
+        "result": "PASSED",
+        "description": "Verifies that scripts/dev/migration_preflight.py CLI executes cleanly and returns exit code 0."
+      },
+      {
+        "name": "test_ci_lint_migration_safety_script_passes",
+        "result": "PASSED",
+        "description": "Verifies that scripts/ci/lint-migration-safety.sh succeeds."
+      },
+      {
+        "name": "test_negative_abuse_historical_claims_and_inquiries_remain_intact",
+        "result": "PASSED",
+        "description": "Negative Abuse Test: Verify 100% data integrity for historical claims and inquiries."
+      }
+    ]
+  }
+}

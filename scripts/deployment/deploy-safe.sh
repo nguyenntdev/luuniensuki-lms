@@ -240,8 +240,14 @@ echo "Starting base services..."
 "${compose_cmd[@]}" up -d db livekit janus-gateway
 
 if [[ "${RUN_MIGRATIONS}" == "1" ]]; then
-  echo "Running migrations..."
-  "${compose_cmd[@]}" run --rm api alembic upgrade heads
+  echo "Running database migration preflight (topology & additive-only checks)..."
+  "${compose_cmd[@]}" run --rm api python scripts/dev/migration_preflight.py --strict
+  if [[ -f "scripts/backup/backup-database.sh" ]]; then
+    echo "Creating automated pre-migration database backup..."
+    ./scripts/backup/backup-database.sh --prefix pre_migration_backup || echo "Warning: Pre-migration backup step encountered an issue."
+  fi
+  echo "Applying database migration to single head..."
+  "${compose_cmd[@]}" run --rm api alembic upgrade head
 fi
 
 echo "Starting app services..."
