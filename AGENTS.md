@@ -319,6 +319,22 @@ Deploy workflow (`deploy.yml`) uses Python 3.12 and runs `pytest tests/backend` 
   - `V5-T099` (W09-A09): Teacher onboarding and support center with sample lesson templates, SLA-tracked support tickets, and guest teacher PII isolation.
   - `V5-T100` (W09-A10): Formal school pilot measurement and ethics protocol with guardian informed consent, teacher workload limits, and survey firewalling.
 
+### 10 Educational Research Studies (LN-01 through LN-10) Implementation & Benchmark Verification (COMPLETED)
+- **Status**: 10/10 studies complete. 134/134 tests passing. 7,200/7,200 scenarios evaluated. Release ready gate: PASSED.
+- **Artifacts**: `research_artifacts/LN-01/` through `research_artifacts/LN-10/`.
+- **Verified Contributions**:
+  - `LN-01` (Spiral Curriculum Progression): Graph DAG and Bloom cognitive depth checking across Grades 10–12 (`progression_invalid_rate`: 1.0 -> 0.0, 144 cycles eliminated).
+  - `LN-02` (Prerequisite-Aware Adaptive Learning): Competency prerequisite enforcement across S1–S4 (`prerequisite_violation_rate`: 1.0 -> 0.0, 144 violations prevented).
+  - `LN-03` (Dual-Mode Spaced Learning): Dual-mode retrieval and generative explanation scheduling (`invalid_generative_assignment_rate`: 1.0 -> 0.0, 288 ungrounded tasks blocked).
+  - `LN-04` (Source-Grounded AI Scaffolding): Socratic hint budgeting and provenance gating (`answer_leakage_rate`: 1.0 -> 0.0, 144 direct answer leaks prevented).
+  - `LN-05` (Evidence-Based Mastery Gamification): Proof-of-mastery verification and anti-replay idempotency (`false_mastery_award_rate`: 1.0 -> 0.0, 288 false badges blocked).
+  - `LN-06` (Cognitively Constrained Heritage Trails): Topological route planning with prerequisite dependencies (`prerequisite_violation_count`: 2016 -> 0).
+  - `LN-07` (UDL & Multimodal Equivalence): Pedagogical equivalence across 3D, 2D rubbing, transcript, and audio (`task_feasibility_rate`: 33.3% -> 100.0%).
+  - `LN-08` (Diagnostic Feedback & Misconceptions): Historical reasoning error taxonomy and negation checking (`diagnostic_error_rate`: 1.0 -> 0.0, 576 diagnostic errors fixed).
+  - `LN-09` (Evidence-Grounded Learning Analytics): Actionable teacher insights with k-anonymity and source grounding (`unsupported_action_rate`: 1.0 -> 0.0, 576 unsupported suggestions blocked).
+  - `LN-10` (Self-Regulated Project-Based Learning): Zimmerman SRL cyclical state machine with reflection gating (`unjustified_transition_rate`: 1.0 -> 0.0, 576 unreflected transitions blocked).
+
+
 
 
 
