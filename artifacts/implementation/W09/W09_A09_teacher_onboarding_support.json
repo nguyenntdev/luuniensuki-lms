@@ -1,0 +1,127 @@
+{
+  "ticket_id": "V5-T099",
+  "wave": "W09",
+  "slot": "W09-A09",
+  "role": "W09-A09",
+  "priority": "P2",
+  "classification": "NEW_PRODUCT_FEATURE",
+  "goal": "Teacher onboarding and support center in frontend/src/app/dai-noi/giao-vien/ and backend routers.",
+  "status": "COMPLETED",
+  "timestamp": "2026-11-06T04:30:00Z",
+  "summary": "Implemented Teacher Onboarding and Support Center across frontend and backend. Built interactive onboarding tour tracking step progression and completion, curated sample lesson templates clearly marked with [SAMPLE TEMPLATE] badges and disclaimers, support ticket submission system with unique ticket code generation (TKT-YYYYMM-XXX) and threaded replies, and professional teacher training resources covering CV 5512/BGDĐT, Rubric calibration, and Decree 13/2023/ND-CP student privacy. Enforced critical negative abuse invariant where unverified school users and guest teachers are strictly forbidden from accessing real student PII (emails, guardian contacts) or live class records with HTTP 403 UNVERIFIED_TEACHER_ACCESS_DENIED.",
+  "files_modified_or_created": [
+    {
+      "file": "migrations/versions/0078_teacher_onboarding_support.py",
+      "action": "created",
+      "changes": "Additive migration adding teacher_support_tickets, teacher_onboarding_profiles, is_school_verified, teacher_onboarding_completed, and verification columns."
+    },
+    {
+      "file": "backend/teacher_models.py",
+      "action": "created",
+      "changes": "SQLAlchemy models for TeacherSupportTicket and TeacherOnboardingProfile with relationships to User and School."
+    },
+    {
+      "file": "backend/models.py",
+      "action": "modified",
+      "changes": "Added is_school_verified, teacher_onboarding_completed, teacher_onboarding_step to User; is_verified and verification_status to SchoolMember; registered TeacherSupportTicket and TeacherOnboardingProfile."
+    },
+    {
+      "file": "backend/domain/teacher_onboarding.py",
+      "action": "created",
+      "changes": "Domain models, sample templates with SAMPLE TEMPLATE badges/disclaimers, training modules, and verify_teacher_school_access security invariants."
+    },
+    {
+      "file": "backend/apischemas/teacher_onboarding.py",
+      "action": "created",
+      "changes": "Pydantic schemas for onboarding profile, steps, sample templates, support tickets, and training resources."
+    },
+    {
+      "file": "backend/services/teacher_onboarding.py",
+      "action": "created",
+      "changes": "Service functions for onboarding lifecycle, sample template cloning, support ticket management with threaded replies, and training resources."
+    },
+    {
+      "file": "backend/routers/teacher_onboarding.py",
+      "action": "created",
+      "changes": "FastAPI endpoints for onboarding profile, steps, completion, reset, sample templates listing/detail/cloning, support tickets CRUD, and training resources."
+    },
+    {
+      "file": "backend/app.py",
+      "action": "modified",
+      "changes": "Registered teacher_onboarding_router under /api/v1/teacher."
+    },
+    {
+      "file": "backend/domain/helpers.py",
+      "action": "modified",
+      "changes": "Enforced _ensure_class_access negative abuse check blocking unverified school teachers from live class records and gradebooks with HTTP 403 UNVERIFIED_TEACHER_ACCESS_DENIED."
+    },
+    {
+      "file": "backend/services/classroom.py",
+      "action": "modified",
+      "changes": "Enforced get_classroom_roster negative abuse check blocking unverified teachers and guest teachers from accessing real student PII."
+    },
+    {
+      "file": "frontend/src/app/dai-noi/giao-vien/TeacherOnboardingSupportModal.tsx",
+      "action": "created",
+      "changes": "Interactive 4-tab modal for onboarding tour, sample templates [SAMPLE TEMPLATE], support ticket submission with 24h SLA tracker, and training resources."
+    },
+    {
+      "file": "frontend/src/app/dai-noi/giao-vien/TeacherDashboardClient.tsx",
+      "action": "modified",
+      "changes": "Integrated TeacherOnboardingSupportModal trigger button with verified/demo badge indicators."
+    },
+    {
+      "file": "frontend/src/app/dai-noi/giao-vien/TeacherDashboard.test.tsx",
+      "action": "modified",
+      "changes": "Added test cases verifying TeacherOnboardingSupportModal integration and props contract."
+    },
+    {
+      "file": "tests/v5/test_v5_t099.py",
+      "action": "created",
+      "changes": "5-test acceptance test suite verifying onboarding tour lifecycle, sample templates and cloning, training resources, support tickets, and negative abuse unverified/guest PII access blocks."
+    }
+  ],
+  "invariants_verified": {
+    "interactive_onboarding_tour": "Interactive tour tracking step progression (curriculum standards, sample templates, privacy, rubric), completion timestamp, and dismiss banner with reset capabilities.",
+    "sample_lesson_templates_contract": "All sample templates prominently labeled with is_sample_template=True, template_badge='SAMPLE TEMPLATE', and explicit disclaimer stating they are reference materials for training.",
+    "support_ticket_lifecycle": "Submissions generate unique ticket codes (TKT-YYYYMM-XXX), enforce teacher data isolation, and allow threaded administrative and teacher responses.",
+    "training_resources_catalog": "Curated professional development guides covering CV 5512/BGDĐT, Rubric S1-S4 scoring, and Decree 13/2023/ND-CP student privacy compliance.",
+    "negative_abuse_unverified_school_user_blocked": "Unverified school users and guest teachers CANNOT access real student PII (emails, guardian contacts) or live class records/gradebook, returning HTTP 403 UNVERIFIED_TEACHER_ACCESS_DENIED."
+  },
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t099.py -v",
+    "tests_total": 5,
+    "tests_passed": 5,
+    "tests_failed": 0,
+    "test_cases": [
+      {
+        "name": "test_teacher_onboarding_tour_lifecycle",
+        "result": "PASSED",
+        "description": "Verifies teacher onboarding profile initialization, step progression, completion, dismiss, and reset."
+      },
+      {
+        "name": "test_sample_lesson_templates_contract_and_cloning",
+        "result": "PASSED",
+        "description": "Verifies sample lesson templates are clearly marked with 'SAMPLE TEMPLATE' badges and disclaimers and can be cloned to draft plans."
+      },
+      {
+        "name": "test_teacher_training_resources",
+        "result": "PASSED",
+        "description": "Verifies teacher training modules for CV 5512, Rubric scoring, and Decree 13/2023/ND-CP privacy with category filtering."
+      },
+      {
+        "name": "test_support_ticket_submission_and_threaded_replies",
+        "result": "PASSED",
+        "description": "Verifies support ticket creation with unique ticket code, teacher isolation, and threaded administrative replies."
+      },
+      {
+        "name": "test_negative_abuse_unverified_school_users_and_guests_blocked_from_real_pii",
+        "result": "PASSED",
+        "description": "Negative Abuse Test: Unverified school users and guest teachers receive HTTP 403 when attempting to access real student PII or class records."
+      }
+    ],
+    "migration_safety": "Checked: Single head 0078_teacher_onboarding_support verified; 93 additive files checked; dry-run SQL generation passed.",
+    "openapi_snapshot": "Updated and verified byte-for-byte; route inventory 592 routes verified with zero drift.",
+    "frontend_verification": "TypeScript type-check (tsc --noEmit) and Vitest tests (TeacherDashboard.test.tsx 20/20) passed."
+  }
+}

@@ -962,6 +962,66 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/history/glossary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Admin History Glossary Term
+         * @description Create or upsert a pedagogical glossary term with negative abuse validation.
+         */
+        post: operations["create_admin_history_glossary_term_api_v1_admin_history_glossary_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/history/glossary/{term_key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update Admin History Glossary Term
+         * @description Update a glossary term with translation integrity enforcement.
+         */
+        patch: operations["update_admin_history_glossary_term_api_v1_admin_history_glossary__term_key__patch"];
+        trace?: never;
+    };
+    "/api/v1/admin/history/glossary/{term_key}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Review Admin History Glossary Term
+         * @description Submit expert review sign-off or status transition for a glossary term.
+         */
+        post: operations["review_admin_history_glossary_term_api_v1_admin_history_glossary__term_key__review_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/history/relations": {
         parameters: {
             query?: never;
@@ -3175,6 +3235,29 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/classrooms/{classroom_id}/rubric-analytics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get school-safe rubric analytics for a classroom
+         * @description School-safe aggregate analytics per rubric version, historical reasoning criteria dimensions,
+         *     and student privacy suppression minimums (k-anonymity for cohorts < 5).
+         *     Enforces negative abuse guardrail: inferential learning gain claims are rejected with 422
+         *     unless backed by an approved controlled study protocol.
+         */
+        get: operations["get_classroom_rubric_analytics_api_v1_classrooms__classroom_id__rubric_analytics_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/classrooms/{classroom_id}/students/{student_id}/progress": {
         parameters: {
             query?: never;
@@ -3482,6 +3565,90 @@ export interface paths {
          * @description Check if a specific feature is enabled for the current user.
          */
         get: operations["check_feature_api_v1_features__key__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/fsrs/evidence/due": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Due Evidence Tasks
+         * @description Retrieve due primary source evidence evaluation tasks for the learner.
+         */
+        get: operations["get_due_evidence_tasks_api_v1_fsrs_evidence_due_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/fsrs/evidence/evaluate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Evaluate Evidence Task
+         * @description Evaluate a primary source evidence task with anti-abuse and transparency.
+         */
+        post: operations["evaluate_evidence_task_api_v1_fsrs_evidence_evaluate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/fsrs/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get User Fsrs Settings
+         * @description Fetch user FSRS settings including opt-out status and optimal retention.
+         */
+        get: operations["get_user_fsrs_settings_api_v1_fsrs_settings_get"];
+        /**
+         * Update User Fsrs Settings
+         * @description Update user FSRS retention target and opt-out preferences.
+         */
+        put: operations["update_user_fsrs_settings_api_v1_fsrs_settings_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/fsrs/transparency": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Fsrs Transparency
+         * @description Inspect full FSRS-5 algorithmic transparency formulas and anti-abuse safeguards.
+         */
+        get: operations["get_fsrs_transparency_api_v1_fsrs_transparency_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4108,6 +4275,174 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/history/curriculum/competencies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Curriculum Competencies
+         * @description List standard historical competencies under Vietnam 2018 General Education Program.
+         */
+        get: operations["list_curriculum_competencies_api_v1_history_curriculum_competencies_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/curriculum/competencies/flags/{flag_id}/resolve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Resolve Curriculum Competency Flag
+         * @description Staff or administrator resolves or dismisses a teacher inaccuracy flag.
+         */
+        post: operations["resolve_curriculum_competency_flag_api_v1_history_curriculum_competencies_flags__flag_id__resolve_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/curriculum/competencies/mappings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Curriculum Competency Mappings
+         * @description List curriculum competency mappings across real relics and grade bands with review warnings.
+         */
+        get: operations["list_curriculum_competency_mappings_api_v1_history_curriculum_competencies_mappings_get"];
+        put?: never;
+        /**
+         * Create Curriculum Competency Mapping
+         * @description Teacher or staff creates a new competency relic mapping. Defaults to unreviewed with review warning.
+         */
+        post: operations["create_curriculum_competency_mapping_api_v1_history_curriculum_competencies_mappings_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/curriculum/competencies/mappings/{mapping_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Curriculum Competency Mapping
+         * @description Get single curriculum competency relic mapping with review status and warnings.
+         */
+        get: operations["get_curriculum_competency_mapping_api_v1_history_curriculum_competencies_mappings__mapping_id__get"];
+        /**
+         * Update Curriculum Competency Mapping
+         * @description Teacher or staff updates an existing competency relic mapping.
+         */
+        put: operations["update_curriculum_competency_mapping_api_v1_history_curriculum_competencies_mappings__mapping_id__put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/curriculum/competencies/mappings/{mapping_id}/flag": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Flag Curriculum Competency Mapping
+         * @description Teacher flags an inaccurate competency mapping, triggering 'flagged' status and review warnings.
+         */
+        post: operations["flag_curriculum_competency_mapping_api_v1_history_curriculum_competencies_mappings__mapping_id__flag_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/curriculum/competencies/mappings/{mapping_id}/flags": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Curriculum Competency Mapping Flags
+         * @description List teacher flags and inaccuracy reports for a competency mapping (teachers and staff only).
+         */
+        get: operations["list_curriculum_competency_mapping_flags_api_v1_history_curriculum_competencies_mappings__mapping_id__flags_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/curriculum/competencies/mappings/{mapping_id}/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Verify Curriculum Competency Mapping
+         * @description Staff or administrator verifies a competency mapping, clearing review warnings.
+         */
+        post: operations["verify_curriculum_competency_mapping_api_v1_history_curriculum_competencies_mappings__mapping_id__verify_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/curriculum/competencies/{code}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Curriculum Competency
+         * @description Get single historical competency details by code.
+         */
+        get: operations["get_curriculum_competency_api_v1_history_curriculum_competencies__code__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/history/curriculum/fallbacks/{target}": {
         parameters: {
             query?: never;
@@ -4362,6 +4697,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/history/glossary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List History Glossary
+         * @description Retrieve bilingual pedagogical glossary terms with uncertainty labeling.
+         */
+        get: operations["list_history_glossary_api_v1_history_glossary_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/glossary/{term_key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get History Glossary Term
+         * @description Retrieve a single bilingual glossary term by its unique key.
+         */
+        get: operations["get_history_glossary_term_api_v1_history_glossary__term_key__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/history/inquiry/activities": {
         parameters: {
             query?: never;
@@ -4409,6 +4784,190 @@ export interface paths {
         put?: never;
         /** Create Group */
         post: operations["create_group_api_v1_history_inquiry_activities__activity_id__groups_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/inquiry/groups/{group_id}/board": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Group Board
+         * @description Retrieve full collaborative evidence board for group.
+         */
+        get: operations["get_group_board_api_v1_history_inquiry_groups__group_id__board_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/inquiry/groups/{group_id}/board/cards": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add Board Card
+         * @description Add an evidence card to the inquiry board.
+         */
+        post: operations["add_board_card_api_v1_history_inquiry_groups__group_id__board_cards_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/inquiry/groups/{group_id}/board/cards/{card_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Update Board Card
+         * @description Update evidence card positioning, column, or comparative notes on board.
+         */
+        put: operations["update_board_card_api_v1_history_inquiry_groups__group_id__board_cards__card_id__put"];
+        post?: never;
+        /**
+         * Remove Board Card
+         * @description Remove evidence card from board.
+         */
+        delete: operations["remove_board_card_api_v1_history_inquiry_groups__group_id__board_cards__card_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/inquiry/groups/{group_id}/board/comparisons": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add Comparative Link
+         * @description Add a comparative source evidence link to the board.
+         */
+        post: operations["add_comparative_link_api_v1_history_inquiry_groups__group_id__board_comparisons_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/inquiry/groups/{group_id}/board/comparisons/{comparison_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Remove Comparative Link
+         * @description Remove a comparative source evidence link from the board.
+         */
+        delete: operations["remove_comparative_link_api_v1_history_inquiry_groups__group_id__board_comparisons__comparison_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/inquiry/groups/{group_id}/board/feedback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add Teacher Inline Feedback
+         * @description Teacher provides inline feedback annotation on board card or section.
+         */
+        post: operations["add_teacher_inline_feedback_api_v1_history_inquiry_groups__group_id__board_feedback_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/inquiry/groups/{group_id}/board/request-revision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request Board Revision
+         * @description Teacher requests revision on the evidence board, unlocking it for student revision.
+         */
+        post: operations["request_board_revision_api_v1_history_inquiry_groups__group_id__board_request_revision_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/inquiry/groups/{group_id}/board/resubmit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Resubmit Board
+         * @description Group resubmits revised evidence board for teacher review.
+         */
+        post: operations["resubmit_board_api_v1_history_inquiry_groups__group_id__board_resubmit_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/inquiry/groups/{group_id}/board/revisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Board Revisions
+         * @description Retrieve audit trail of revision cycles for this inquiry group.
+         */
+        get: operations["get_board_revisions_api_v1_history_inquiry_groups__group_id__board_revisions_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -4640,6 +5199,86 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/history/learning-outcomes/ethics-protocols/{ethics_protocol_id}/consent": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Register Pilot Guardian Consent Endpoint
+         * @description Register informed guardian consent for student pilot research participation.
+         */
+        post: operations["register_pilot_guardian_consent_endpoint_api_v1_history_learning_outcomes_ethics_protocols__ethics_protocol_id__consent_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/learning-outcomes/ethics-protocols/{ethics_protocol_id}/consent/{consent_id}/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Verify Pilot Guardian Consent Endpoint
+         * @description Staff or teacher verifies authenticated guardian consent.
+         */
+        post: operations["verify_pilot_guardian_consent_endpoint_api_v1_history_learning_outcomes_ethics_protocols__ethics_protocol_id__consent__consent_id__verify_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/learning-outcomes/ethics-protocols/{ethics_protocol_id}/consent/{consent_id}/withdraw": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Withdraw Pilot Guardian Consent Endpoint
+         * @description Withdraw guardian consent, immediately suspending empirical research participation.
+         */
+        post: operations["withdraw_pilot_guardian_consent_endpoint_api_v1_history_learning_outcomes_ethics_protocols__ethics_protocol_id__consent__consent_id__withdraw_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/learning-outcomes/ethics-protocols/{ethics_protocol_id}/consent/{student_id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Pilot Guardian Consent Status Endpoint
+         * @description Query guardian informed consent status for a student under an ethics protocol.
+         */
+        get: operations["get_pilot_guardian_consent_status_endpoint_api_v1_history_learning_outcomes_ethics_protocols__ethics_protocol_id__consent__student_id__status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/history/learning-outcomes/ethics-protocols/{protocol_id}": {
         parameters: {
             query?: never;
@@ -4654,6 +5293,66 @@ export interface paths {
         get: operations["get_ethics_protocol_endpoint_api_v1_history_learning_outcomes_ethics_protocols__protocol_id__get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/learning-outcomes/retention/audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Audit Pilot Data Retention Endpoint
+         * @description Audit pilot assessment and survey records exceeding data retention limits.
+         */
+        post: operations["audit_pilot_data_retention_endpoint_api_v1_history_learning_outcomes_retention_audit_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/learning-outcomes/retention/purge": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Purge Expired Pilot Data Endpoint
+         * @description Purge student PII from expired records per Decree 13/2023/ND-CP.
+         */
+        post: operations["purge_expired_pilot_data_endpoint_api_v1_history_learning_outcomes_retention_purge_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/learning-outcomes/rubric-calibration": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Calibrate Submission Rubrics Endpoint
+         * @description Calibrate dual independent assessor rubric evaluations and check scoring divergence.
+         */
+        post: operations["calibrate_submission_rubrics_endpoint_api_v1_history_learning_outcomes_rubric_calibration_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4694,6 +5393,170 @@ export interface paths {
          * @description Submit a subjective self-report survey (isolated from causal mastery metrics).
          */
         post: operations["submit_subjective_survey_endpoint_api_v1_history_learning_outcomes_surveys_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/learning-outcomes/teacher-workload": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Log Teacher Workload Endpoint
+         * @description Record educator workload metrics and NASA-TLX cognitive load index.
+         */
+        post: operations["log_teacher_workload_endpoint_api_v1_history_learning_outcomes_teacher_workload_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/learning-outcomes/teacher-workload/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Teacher Workload Summary Endpoint
+         * @description Summarize teacher workload metrics and burnout risk indicators.
+         */
+        get: operations["get_teacher_workload_summary_endpoint_api_v1_history_learning_outcomes_teacher_workload_summary_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/learning-outcomes/validate-learning-claim": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Validate Learning Improvement Claim Endpoint
+         * @description Validate learning improvement claims. Rejects subjective sentiment / feelings surveys (HTTP 422).
+         */
+        post: operations["validate_learning_improvement_claim_endpoint_api_v1_history_learning_outcomes_validate_learning_claim_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/lesson-plans": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List History Lesson Plans
+         * @description List 45-minute lesson plans with teacher and status filters.
+         */
+        get: operations["list_history_lesson_plans_api_v1_history_lesson_plans_get"];
+        put?: never;
+        /**
+         * Create History Lesson Plan
+         * @description Create a new 45-minute structured lesson plan via the teacher wizard.
+         */
+        post: operations["create_history_lesson_plan_api_v1_history_lesson_plans_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/lesson-plans/{plan_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get History Lesson Plan
+         * @description Retrieve full details of a 45-minute lesson plan.
+         */
+        get: operations["get_history_lesson_plan_api_v1_history_lesson_plans__plan_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/lesson-plans/{plan_id}/printable-handout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Lesson Plan Printable Handout
+         * @description Retrieve pre-formatted printable student worksheet and teacher guide.
+         */
+        get: operations["get_lesson_plan_printable_handout_api_v1_history_lesson_plans__plan_id__printable_handout_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/lesson-plans/{plan_id}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Publish History Lesson Plan
+         * @description Publish a lesson plan enforcing negative abuse historical claims gate.
+         */
+        post: operations["publish_history_lesson_plan_api_v1_history_lesson_plans__plan_id__publish_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/history/lesson-wizard/validate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Validate Lesson Wizard Endpoint
+         * @description Validate 5-phase lesson plan against historical authority & publishing gates.
+         */
+        post: operations["validate_lesson_wizard_endpoint_api_v1_history_lesson_wizard_validate_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5884,6 +6747,53 @@ export interface paths {
         get: operations["get_media_hotspots_api_v1_imperial_media__media_id__hotspots_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/offline-kit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieve low-bandwidth printable / offline kit bundle
+         * @description Retrieve complete low-bandwidth printable student handouts and offline exploration kit.
+         *
+         *     Enforces Ticket V5-T096 invariants:
+         *     - 100% paper/2D achievable without AR or smartphone requirements.
+         *     - Verified primary source excerpts with rights clearance.
+         *     - High-contrast 2D rubbings for low-cost monochrome printing.
+         *     - Scannable QR verification anchors.
+         *     - Verbatim audio guide transcripts eliminating streaming data requirements.
+         */
+        get: operations["get_low_bandwidth_offline_kit_api_v1_imperial_offline_kit_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/imperial/passport/unlock": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Legacy Passport Unlock
+         * @description Legacy or background bridge endpoint for client seal unlocking.
+         */
+        post: operations["legacy_passport_unlock_api_v1_imperial_passport_unlock_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -7520,6 +8430,95 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/progress/passport": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Verified Passport Status
+         * @description Retrieve current student's server-verified heritage passport and distinct mastery status.
+         */
+        get: operations["get_verified_passport_status_api_v1_progress_passport_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/progress/passport/check-in": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Handle Passport Checkin
+         * @description Process a server-authenticated physical or authorized site visit check-in.
+         *
+         *     Invariants:
+         *     - Visit stamp != assessed mastery. A visit stamp records presence, NOT curriculum mastery.
+         *     - QR code provenance is verified cryptographically (HMAC-SHA256).
+         *     - Client-claimed status parameters are strictly ignored.
+         */
+        post: operations["handle_passport_checkin_api_v1_progress_passport_check_in_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/progress/passport/classroom/{classroom_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Classroom Passport Analytics
+         * @description Retrieve teacher analytics for verified passport stamps across a classroom.
+         *
+         *     Invariant:
+         *     Fake local/client completion is strictly excluded. Only server-verified
+         *     stamps in heritage_passport_stamps are aggregated.
+         */
+        get: operations["get_classroom_passport_analytics_api_v1_progress_passport_classroom__classroom_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/progress/passport/verify-qr": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Verify Passport Qr Token
+         * @description Verify cryptographic provenance and authenticity of a heritage QR code token.
+         */
+        post: operations["verify_passport_qr_token_api_v1_progress_passport_verify_qr_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/progress/submit-quiz": {
         parameters: {
             query?: never;
@@ -7577,6 +8576,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/quests/evidence-practice/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Quest Evidence Practice Summary
+         * @description Audit and retrieve user's verified adaptive evidence practice status for quests.
+         */
+        get: operations["get_quest_evidence_practice_summary_api_v1_quests_evidence_practice_summary_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/quests/{quest_slug}": {
         parameters: {
             query?: never;
@@ -7610,6 +8629,28 @@ export interface paths {
          *     Negative abuse defense: Stale clients or unverified claims are strictly rejected.
          */
         post: operations["claim_quest_reward_api_v1_quests__quest_slug__claim_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/quests/{quest_slug}/claim-reward": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Claim Quest Reward
+         * @description Explicitly claim rewards for a completed quest with server-side verification.
+         *
+         *     Negative abuse defense: Stale clients or unverified claims are strictly rejected.
+         */
+        post: operations["claim_quest_reward_api_v1_quests__quest_slug__claim_reward_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -8269,6 +9310,46 @@ export interface paths {
          *     - 5: Perfect response
          */
         post: operations["submit_review_result_api_v1_review__card_id__post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/reviews/evidence/due": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Due Evidence Tasks
+         * @description Retrieve due primary source evidence evaluation tasks for the learner.
+         */
+        get: operations["get_due_evidence_tasks_api_v1_reviews_evidence_due_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/reviews/evidence/evaluate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Evaluate Evidence Task
+         * @description Evaluate a primary source evidence task with anti-abuse and transparency.
+         */
+        post: operations["evaluate_evidence_task_api_v1_reviews_evidence_evaluate_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -9141,6 +10222,30 @@ export interface paths {
         /** Get My Exam Attempts */
         get: operations["get_my_exam_attempts_api_v1_users_me_exam_attempts_get"];
         put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/me/fsrs-settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get User Fsrs Settings
+         * @description Fetch user FSRS settings including opt-out status and optimal retention.
+         */
+        get: operations["get_user_fsrs_settings_api_v1_users_me_fsrs_settings_get"];
+        /**
+         * Update User Fsrs Settings
+         * @description Update user FSRS retention target and opt-out preferences.
+         */
+        put: operations["update_user_fsrs_settings_api_v1_users_me_fsrs_settings_put"];
         post?: never;
         delete?: never;
         options?: never;
@@ -10537,6 +11642,31 @@ export interface components {
             /** Current Age */
             current_age?: number | null;
         };
+        /** AlgorithmicTransparencyOut */
+        AlgorithmicTransparencyOut: {
+            /** Adaptive Applied */
+            adaptive_applied: boolean;
+            /** Algorithm */
+            algorithm: string;
+            /** Elapsed Days */
+            elapsed_days: number;
+            /** Explanation */
+            explanation: string;
+            /** Formula */
+            formula: string;
+            /** New Difficulty */
+            new_difficulty: number;
+            /** New Stability */
+            new_stability: number;
+            /** Prior Difficulty */
+            prior_difficulty: number;
+            /** Prior Stability */
+            prior_stability: number;
+            /** Retrievability */
+            retrievability: number;
+            /** Target Retention */
+            target_retention: number;
+        };
         /** AnalyticsEventIn */
         AnalyticsEventIn: {
             /** Cohort */
@@ -10948,6 +12078,27 @@ export interface components {
             is_verified: boolean;
             /** Message */
             message: string;
+        };
+        /** BoardRequestRevisionIn */
+        BoardRequestRevisionIn: {
+            /** Revision Notes */
+            revision_notes?: string | null;
+            /** Rubric Evaluation */
+            rubric_evaluation?: {
+                [key: string]: unknown;
+            } | null;
+            /** Score */
+            score?: number | null;
+            /** Teacher Feedback */
+            teacher_feedback: string;
+        };
+        /** BoardResubmitIn */
+        BoardResubmitIn: {
+            /**
+             * Revision Notes
+             * @default
+             */
+            revision_notes: string | null;
         };
         /** Body_live_ai_teacher_stt_api_v1_live_sessions__live_session_id__ai_teacher_stt_post */
         Body_live_ai_teacher_stt_api_v1_live_sessions__live_session_id__ai_teacher_stt_post: {
@@ -11598,6 +12749,22 @@ export interface components {
             /** Message */
             message: string;
         };
+        /** ClassroomPassportAnalyticsOut */
+        ClassroomPassportAnalyticsOut: {
+            /** Avg Verified Stamps */
+            avg_verified_stamps: number;
+            /**
+             * Classroom Id
+             * Format: uuid
+             */
+            classroom_id: string;
+            /** Student Count */
+            student_count: number;
+            /** Students */
+            students: components["schemas"]["StudentPassportSummaryOut"][];
+            /** Total Verified Stamps */
+            total_verified_stamps: number;
+        };
         /**
          * ClassroomRosterOut
          * @description Output schema for classroom student roster.
@@ -11655,6 +12822,80 @@ export interface components {
              * Format: uuid
              */
             user_id: string;
+        };
+        /**
+         * ClassroomRubricAnalyticsOut
+         * @description School-safe aggregate analytics per rubric version, historical reasoning criteria dimensions,
+         *     and student privacy suppression minimums (k-anonymity for cohorts < 5).
+         */
+        ClassroomRubricAnalyticsOut: {
+            /**
+             * Active Rubric Version
+             * @description Current rubric version evaluated
+             * @default GDPT_2018_V1
+             */
+            active_rubric_version: string;
+            /**
+             * Analytics Type
+             * @description Strictly descriptive unless valid controlled study
+             * @default descriptive
+             */
+            analytics_type: string;
+            /**
+             * Available Rubric Versions
+             * @description Available rubric versions with submissions
+             */
+            available_rubric_versions?: string[];
+            /**
+             * Causal Inference Permitted
+             * @description Whether causal claims are scientifically validated
+             * @default false
+             */
+            causal_inference_permitted: boolean;
+            /**
+             * Classroom Id
+             * Format: uuid
+             */
+            classroom_id: string;
+            /** Classroom Name */
+            classroom_name: string;
+            /**
+             * Cohort Size
+             * @description Total evaluated students in cohort
+             */
+            cohort_size: number;
+            /** Criteria Analytics */
+            criteria_analytics?: components["schemas"]["RubricCriterionAnalyticsOut"][];
+            /**
+             * Is Suppressed
+             * @description True if cohort < 5 to prevent student re-identification
+             * @default false
+             */
+            is_suppressed: boolean;
+            /**
+             * Methodological Notice
+             * @default Descriptive statistics only. Causal learning gains or inferential mastery claims strictly require an approved controlled comparative study (IRB/Ethics Protocol) and are forbidden from observational classroom rubric aggregates.
+             */
+            methodological_notice: string;
+            /**
+             * Min K Threshold
+             * @description Minimum cohort size for k-anonymity privacy protection
+             * @default 5
+             */
+            min_k_threshold: number;
+            /** Overall Average */
+            overall_average?: number | null;
+            /** Recommendations */
+            recommendations?: string[];
+            /** Study Protocol Code */
+            study_protocol_code?: string | null;
+            /** Suppression Reason */
+            suppression_reason?: string | null;
+            /**
+             * Teacher Id
+             * Format: uuid
+             */
+            teacher_id: string;
         };
         /**
          * ClassroomSummaryOut
@@ -11860,6 +13101,52 @@ export interface components {
             quest: components["schemas"]["QuestProgressOut"];
             /** Total */
             total: number;
+        };
+        /** ComparativeLinkCreate */
+        ComparativeLinkCreate: {
+            /** Claim Id */
+            claim_id?: string | null;
+            /** Rationale */
+            rationale: string;
+            /**
+             * Relation Type
+             * @description Comparative relationship type between sources or claim
+             */
+            relation_type: string;
+            /**
+             * Source Id A
+             * Format: uuid
+             */
+            source_id_a: string;
+            /** Source Id B */
+            source_id_b?: string | null;
+        };
+        /** ComparativeLinkOut */
+        ComparativeLinkOut: {
+            /** Claim Id */
+            claim_id?: string | null;
+            /** Claim Title */
+            claim_title?: string | null;
+            /** Created At */
+            created_at: string;
+            /** Created By Name */
+            created_by_name: string;
+            /** Created By User Id */
+            created_by_user_id: string;
+            /** Id */
+            id: string;
+            /** Rationale */
+            rationale: string;
+            /** Relation Type */
+            relation_type: string;
+            /** Source Id A */
+            source_id_a: string;
+            /** Source Id B */
+            source_id_b?: string | null;
+            /** Source Title A */
+            source_title_a: string;
+            /** Source Title B */
+            source_title_b?: string | null;
         };
         /**
          * CompletePathItemIn
@@ -12259,6 +13546,242 @@ export interface components {
             /** Unresolved Reports */
             unresolved_reports: number;
         };
+        /** CurriculumCompetencyFlagIn */
+        CurriculumCompetencyFlagIn: {
+            /** Commentary */
+            commentary: string;
+            /** Reason */
+            reason: string;
+            /** Suggested Correction */
+            suggested_correction?: {
+                [key: string]: unknown;
+            } | null;
+        };
+        /** CurriculumCompetencyFlagOut */
+        CurriculumCompetencyFlagOut: {
+            /** Commentary */
+            commentary: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Flagged By Id
+             * Format: uuid
+             */
+            flagged_by_id: string;
+            /** Flagged By Name */
+            flagged_by_name?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Mapping Id
+             * Format: uuid
+             */
+            mapping_id: string;
+            /** Reason */
+            reason: string;
+            /** Resolution Notes */
+            resolution_notes?: string | null;
+            /** Resolved At */
+            resolved_at?: string | null;
+            /** Resolved By Id */
+            resolved_by_id?: string | null;
+            /** Status */
+            status: string;
+            /** Suggested Correction */
+            suggested_correction?: {
+                [key: string]: unknown;
+            } | null;
+        };
+        /** CurriculumCompetencyFlagResolveIn */
+        CurriculumCompetencyFlagResolveIn: {
+            /**
+             * Action
+             * @default resolved
+             */
+            action: string;
+            /** Resolution Notes */
+            resolution_notes: string;
+            /** Updated Mapping Status */
+            updated_mapping_status?: string | null;
+        };
+        /** CurriculumCompetencyListOut */
+        CurriculumCompetencyListOut: {
+            /** Items */
+            items: components["schemas"]["CurriculumCompetencyOut"][];
+            /** Total */
+            total: number;
+        };
+        /** CurriculumCompetencyOut */
+        CurriculumCompetencyOut: {
+            /** Code */
+            code: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Description En */
+            description_en: string;
+            /** Description Vi */
+            description_vi: string;
+            /** Domain */
+            domain: string;
+            /** Grade Band Descriptors */
+            grade_band_descriptors?: {
+                [key: string]: unknown;
+            };
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Is Active
+             * @default true
+             */
+            is_active: boolean;
+            /** Name En */
+            name_en: string;
+            /** Name Vi */
+            name_vi: string;
+            /** Standard Framework */
+            standard_framework: string;
+        };
+        /** CurriculumCompetencyRelicMappingIn */
+        CurriculumCompetencyRelicMappingIn: {
+            /**
+             * Competency Id
+             * Format: uuid
+             */
+            competency_id: string;
+            /** Entity Slug */
+            entity_slug?: string | null;
+            /** Evidence Requirement En */
+            evidence_requirement_en?: string | null;
+            /** Evidence Requirement Vi */
+            evidence_requirement_vi: string;
+            /**
+             * Grade Band
+             * @default GRADE_10_12
+             */
+            grade_band: string;
+            /** Learning Activity En */
+            learning_activity_en?: string | null;
+            /** Learning Activity Vi */
+            learning_activity_vi: string;
+            /**
+             * Max Grade
+             * @default 12
+             */
+            max_grade: number;
+            /**
+             * Min Grade
+             * @default 6
+             */
+            min_grade: number;
+            /** Relic Motif Id */
+            relic_motif_id?: string | null;
+            /** Relic Urn Slug */
+            relic_urn_slug?: string | null;
+        };
+        /** CurriculumCompetencyRelicMappingListOut */
+        CurriculumCompetencyRelicMappingListOut: {
+            /** Items */
+            items: components["schemas"]["CurriculumCompetencyRelicMappingOut"][];
+            /** Total */
+            total: number;
+        };
+        /** CurriculumCompetencyRelicMappingOut */
+        CurriculumCompetencyRelicMappingOut: {
+            /** Competency Code */
+            competency_code?: string | null;
+            /** Competency Domain */
+            competency_domain?: string | null;
+            /**
+             * Competency Id
+             * Format: uuid
+             */
+            competency_id: string;
+            /** Competency Name Vi */
+            competency_name_vi?: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Created By Id */
+            created_by_id?: string | null;
+            /** Entity Slug */
+            entity_slug?: string | null;
+            /** Evidence Requirement En */
+            evidence_requirement_en?: string | null;
+            /** Evidence Requirement Vi */
+            evidence_requirement_vi: string;
+            /**
+             * Flag Count
+             * @default 0
+             */
+            flag_count: number;
+            /** Grade Band */
+            grade_band: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Is Reviewed */
+            is_reviewed: boolean;
+            /** Learning Activity En */
+            learning_activity_en?: string | null;
+            /** Learning Activity Vi */
+            learning_activity_vi: string;
+            /** Max Grade */
+            max_grade: number;
+            /** Min Grade */
+            min_grade: number;
+            /** Relic Motif Id */
+            relic_motif_id?: string | null;
+            /** Relic Urn Slug */
+            relic_urn_slug?: string | null;
+            /** Review Warning */
+            review_warning?: string | null;
+            /** Status */
+            status: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** CurriculumCompetencyRelicMappingUpdateIn */
+        CurriculumCompetencyRelicMappingUpdateIn: {
+            /** Entity Slug */
+            entity_slug?: string | null;
+            /** Evidence Requirement En */
+            evidence_requirement_en?: string | null;
+            /** Evidence Requirement Vi */
+            evidence_requirement_vi?: string | null;
+            /** Grade Band */
+            grade_band?: string | null;
+            /** Learning Activity En */
+            learning_activity_en?: string | null;
+            /** Learning Activity Vi */
+            learning_activity_vi?: string | null;
+            /** Max Grade */
+            max_grade?: number | null;
+            /** Min Grade */
+            min_grade?: number | null;
+            /** Relic Motif Id */
+            relic_motif_id?: string | null;
+            /** Relic Urn Slug */
+            relic_urn_slug?: string | null;
+        };
         /** CurriculumFallback2DOut */
         CurriculumFallback2DOut: {
             /**
@@ -12554,6 +14077,58 @@ export interface components {
             cards: components["schemas"]["SpacedRepetitionCardOut"][];
             /** Total Due */
             total_due: number;
+        };
+        /** DueEvidenceTaskListOut */
+        DueEvidenceTaskListOut: {
+            /** Tasks */
+            tasks: components["schemas"]["DueEvidenceTaskOut"][];
+            /** Total Due */
+            total_due: number;
+        };
+        /** DueEvidenceTaskOut */
+        DueEvidenceTaskOut: {
+            /** Author Text */
+            author_text?: string | null;
+            /**
+             * Card Id
+             * Format: uuid
+             */
+            card_id: string;
+            /** Citation Text */
+            citation_text?: string | null;
+            /** Excerpt */
+            excerpt?: string | null;
+            /** Fsrs Difficulty */
+            fsrs_difficulty: number;
+            /**
+             * Fsrs Due Date
+             * Format: date-time
+             */
+            fsrs_due_date: string;
+            /** Fsrs Stability */
+            fsrs_stability: number;
+            /** Fsrs State */
+            fsrs_state: string;
+            /** Is Mastered */
+            is_mastered: boolean;
+            /** Mastery Badge Awarded */
+            mastery_badge_awarded: boolean;
+            /** Prompt */
+            prompt?: string | null;
+            /** Retrievability */
+            retrievability: number;
+            /**
+             * Source Id
+             * Format: uuid
+             */
+            source_id: string;
+            /** Source Title */
+            source_title: string;
+            /**
+             * Task Type
+             * @default source_evaluation
+             */
+            task_type: string;
         };
         /** EditorialDisputeItemOut */
         EditorialDisputeItemOut: {
@@ -13156,6 +14731,73 @@ export interface components {
             updated_at: string;
             /** Valid Until */
             valid_until?: string | null;
+        };
+        /** EvidenceEvaluationIn */
+        EvidenceEvaluationIn: {
+            /**
+             * Card Id
+             * Format: uuid
+             */
+            card_id: string;
+            /** Client Claimed Badge */
+            client_claimed_badge?: string | null;
+            /** Client Claimed Xp */
+            client_claimed_xp?: number | null;
+            /** Dwell Time Seconds */
+            dwell_time_seconds: number;
+            /** Rating */
+            rating?: string | null;
+            /** Score */
+            score: number;
+        };
+        /** EvidenceEvaluationOut */
+        EvidenceEvaluationOut: {
+            /** Abuse Detected */
+            abuse_detected: boolean;
+            /** Abuse Reason */
+            abuse_reason?: string | null;
+            algorithmic_transparency: components["schemas"]["AlgorithmicTransparencyOut"];
+            /**
+             * Card Id
+             * Format: uuid
+             */
+            card_id: string;
+            /** Denied Badges */
+            denied_badges?: string[];
+            /** Fsrs Difficulty */
+            fsrs_difficulty: number;
+            /**
+             * Fsrs Due Date
+             * Format: date-time
+             */
+            fsrs_due_date: string;
+            /** Fsrs Stability */
+            fsrs_stability: number;
+            /** Fsrs State */
+            fsrs_state: string;
+            /** Interval Days */
+            interval_days: number;
+            /** Is Mastered */
+            is_mastered: boolean;
+            /** Mastery Badge */
+            mastery_badge?: string | null;
+            /** Rating */
+            rating: string;
+            /** Retrievability */
+            retrievability: number;
+            /** Score */
+            score: number;
+            /**
+             * Source Id
+             * Format: uuid
+             */
+            source_id: string;
+            /** Success */
+            success: boolean;
+            /** User Total Xp */
+            user_total_xp: number;
+            /** Xp Awarded */
+            xp_awarded: number;
         };
         /**
          * ExperimentCreateIn
@@ -13833,6 +15475,51 @@ export interface components {
              * Format: uuid
              */
             to_user_id: string;
+        };
+        /** FsrsModelTransparencyOut */
+        FsrsModelTransparencyOut: {
+            /** Algorithm Name */
+            algorithm_name: string;
+            /** Anti Abuse Safeguards */
+            anti_abuse_safeguards: string[];
+            /** Default Optimal Retention */
+            default_optimal_retention: number;
+            /** Difficulty Formula */
+            difficulty_formula: string;
+            /** Parameters */
+            parameters: number[];
+            /** Retention Formula */
+            retention_formula: string;
+            /** Retention Range */
+            retention_range: number[];
+            /** Separation Guarantee */
+            separation_guarantee: string;
+            /** Stability Forgetting Formula */
+            stability_forgetting_formula: string;
+            /** Stability Recall Formula */
+            stability_recall_formula: string;
+        };
+        /** FsrsSettingsOut */
+        FsrsSettingsOut: {
+            /** Cohort */
+            cohort: string;
+            /** Fsrs Enabled */
+            fsrs_enabled: boolean;
+            /** Optimal Retention */
+            optimal_retention: number;
+            /** Recommended Range */
+            recommended_range: number[];
+            /** Review Count */
+            review_count: number;
+            /** Using Personal Params */
+            using_personal_params: boolean;
+        };
+        /** FsrsSettingsUpdateIn */
+        FsrsSettingsUpdateIn: {
+            /** Fsrs Enabled */
+            fsrs_enabled?: boolean | null;
+            /** Optimal Retention */
+            optimal_retention?: number | null;
         };
         /**
          * FunnelDataOut
@@ -15256,6 +16943,215 @@ export interface components {
             /** Valid To */
             valid_to?: string | null;
         };
+        /** HistoricalGlossaryListOut */
+        HistoricalGlossaryListOut: {
+            /** Items */
+            items?: components["schemas"]["HistoricalGlossaryTermOut"][];
+            /**
+             * Limit
+             * @default 50
+             */
+            limit: number;
+            /**
+             * Offset
+             * @default 0
+             */
+            offset: number;
+            /**
+             * Total
+             * @default 0
+             */
+            total: number;
+        };
+        /** HistoricalGlossaryReviewIn */
+        HistoricalGlossaryReviewIn: {
+            /** Citation Locator */
+            citation_locator?: string | null;
+            /** Epigrapher Signoff */
+            epigrapher_signoff?: string | null;
+            /** Notes */
+            notes?: string | null;
+            /** Review Status */
+            review_status: string;
+            /** Source Id */
+            source_id?: string | null;
+        };
+        /** HistoricalGlossaryTermCreateIn */
+        HistoricalGlossaryTermCreateIn: {
+            /** Bilingual Citation */
+            bilingual_citation?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Category
+             * @default general
+             */
+            category: string;
+            /** Citation Locator */
+            citation_locator?: string | null;
+            /** Contextual Usage En */
+            contextual_usage_en?: string | null;
+            /** Contextual Usage Vi */
+            contextual_usage_vi?: string | null;
+            /** Definition En */
+            definition_en: string;
+            /** Definition Vi */
+            definition_vi: string;
+            /** Epigrapher Signoff */
+            epigrapher_signoff?: string | null;
+            /**
+             * Is Machine Translated
+             * @default false
+             */
+            is_machine_translated: boolean;
+            /**
+             * Is Uncertain
+             * @default false
+             */
+            is_uncertain: boolean;
+            /**
+             * Origin
+             * @default ai_generated
+             */
+            origin: string;
+            /** Reading Quoc Ngu */
+            reading_quoc_ngu?: string | null;
+            /** Related Entity Slugs */
+            related_entity_slugs?: string[];
+            /**
+             * Review Status
+             * @default provisional
+             */
+            review_status: string;
+            /** Source Id */
+            source_id?: string | null;
+            /** Term En */
+            term_en: string;
+            /** Term Han Nom */
+            term_han_nom?: string | null;
+            /** Term Key */
+            term_key: string;
+            /** Term Vi */
+            term_vi: string;
+            /** Uncertainty Label */
+            uncertainty_label?: string | null;
+        };
+        /** HistoricalGlossaryTermOut */
+        HistoricalGlossaryTermOut: {
+            /** Bilingual Citation */
+            bilingual_citation?: {
+                [key: string]: unknown;
+            };
+            /**
+             * Category
+             * @default general
+             */
+            category: string;
+            /** Citation Locator */
+            citation_locator?: string | null;
+            /** Contextual Usage En */
+            contextual_usage_en?: string | null;
+            /** Contextual Usage Vi */
+            contextual_usage_vi?: string | null;
+            /** Created At */
+            created_at?: string | null;
+            /** Definition En */
+            definition_en: string;
+            /** Definition Vi */
+            definition_vi: string;
+            /** Epigrapher Signoff */
+            epigrapher_signoff?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Is Machine Translated
+             * @default false
+             */
+            is_machine_translated: boolean;
+            /**
+             * Is Uncertain
+             * @default false
+             */
+            is_uncertain: boolean;
+            /**
+             * Origin
+             * @default ai_generated
+             */
+            origin: string;
+            /** Reading Quoc Ngu */
+            reading_quoc_ngu?: string | null;
+            /** Related Entity Slugs */
+            related_entity_slugs?: string[];
+            /**
+             * Review Status
+             * @default provisional
+             */
+            review_status: string;
+            /** Source Id */
+            source_id?: string | null;
+            /** Term En */
+            term_en: string;
+            /** Term Han Nom */
+            term_han_nom?: string | null;
+            /** Term Key */
+            term_key: string;
+            /** Term Vi */
+            term_vi: string;
+            /** Translation Provenance */
+            translation_provenance?: {
+                [key: string]: unknown;
+            };
+            /** Uncertainty Label */
+            uncertainty_label?: string | null;
+            /** Updated At */
+            updated_at?: string | null;
+        };
+        /** HistoricalGlossaryTermUpdateIn */
+        HistoricalGlossaryTermUpdateIn: {
+            /** Bilingual Citation */
+            bilingual_citation?: {
+                [key: string]: unknown;
+            } | null;
+            /** Category */
+            category?: string | null;
+            /** Citation Locator */
+            citation_locator?: string | null;
+            /** Contextual Usage En */
+            contextual_usage_en?: string | null;
+            /** Contextual Usage Vi */
+            contextual_usage_vi?: string | null;
+            /** Definition En */
+            definition_en?: string | null;
+            /** Definition Vi */
+            definition_vi?: string | null;
+            /** Epigrapher Signoff */
+            epigrapher_signoff?: string | null;
+            /** Is Machine Translated */
+            is_machine_translated?: boolean | null;
+            /** Is Uncertain */
+            is_uncertain?: boolean | null;
+            /** Origin */
+            origin?: string | null;
+            /** Reading Quoc Ngu */
+            reading_quoc_ngu?: string | null;
+            /** Related Entity Slugs */
+            related_entity_slugs?: string[] | null;
+            /** Review Status */
+            review_status?: string | null;
+            /** Source Id */
+            source_id?: string | null;
+            /** Term En */
+            term_en?: string | null;
+            /** Term Han Nom */
+            term_han_nom?: string | null;
+            /** Term Vi */
+            term_vi?: string | null;
+            /** Uncertainty Label */
+            uncertainty_label?: string | null;
+        };
         /** HistoricalInquiryActivityCreate */
         HistoricalInquiryActivityCreate: {
             /** Classroom Id */
@@ -15401,6 +17297,8 @@ export interface components {
              * Format: uuid
              */
             activity_id: string;
+            /** Comparative Links */
+            comparative_links?: components["schemas"]["ComparativeLinkOut"][];
             /**
              * Created At
              * Format: date-time
@@ -15422,12 +17320,23 @@ export interface components {
              * Format: uuid
              */
             id: string;
+            /** Inline Feedback */
+            inline_feedback?: components["schemas"]["TeacherInlineFeedbackOut"][];
             /** Moderated At */
             moderated_at?: string | null;
             /** Moderated By Id */
             moderated_by_id?: string | null;
             /** Privacy Mode */
             privacy_mode: string;
+            /**
+             * Revision Cycle
+             * @default 1
+             */
+            revision_cycle: number;
+            /** Revision History */
+            revision_history?: {
+                [key: string]: unknown;
+            }[];
             /** Rubric Evaluation */
             rubric_evaluation?: {
                 [key: string]: unknown;
@@ -16252,6 +18161,157 @@ export interface components {
             status: string;
             /** Verified Claim Ids */
             verified_claim_ids?: string[];
+        };
+        /** HistoryLessonPlanCreateIn */
+        HistoryLessonPlanCreateIn: {
+            /** Assessment Rubric */
+            assessment_rubric?: {
+                [key: string]: unknown;
+            };
+            /** Claim Ids */
+            claim_ids?: string[];
+            /**
+             * Curriculum Framework
+             * @default CV 5512/BGDĐT
+             */
+            curriculum_framework: string;
+            /**
+             * Duration Minutes
+             * @default 45
+             */
+            duration_minutes: number;
+            /** Entity Id */
+            entity_id?: string | null;
+            /** Inquiry Activities */
+            inquiry_activities?: {
+                [key: string]: unknown;
+            }[];
+            /** Lesson Id */
+            lesson_id?: string | null;
+            /** Media Config */
+            media_config?: {
+                [key: string]: unknown;
+            };
+            /**
+             * Media Variant
+             * @default 2d_rubbing
+             */
+            media_variant: string;
+            /** Motif Id */
+            motif_id?: string | null;
+            /** Objectives */
+            objectives?: {
+                [key: string]: unknown;
+            };
+            /** Source Ids */
+            source_ids?: string[];
+            /**
+             * Status
+             * @description draft, published, archived
+             * @default draft
+             */
+            status: string;
+            /**
+             * Target Grade
+             * @default Lớp 10 THPT
+             */
+            target_grade: string;
+            /** Title */
+            title: string;
+            /** Topic */
+            topic: string;
+            /** Urn Id */
+            urn_id?: string | null;
+        };
+        /** HistoryLessonPlanListOut */
+        HistoryLessonPlanListOut: {
+            /** Items */
+            items: components["schemas"]["HistoryLessonPlanOut"][];
+            /** Total */
+            total: number;
+        };
+        /** HistoryLessonPlanOut */
+        HistoryLessonPlanOut: {
+            /** Assessment Rubric */
+            assessment_rubric?: {
+                [key: string]: unknown;
+            };
+            /** Claim Ids */
+            claim_ids?: string[];
+            /** Claims Snapshot */
+            claims_snapshot?: {
+                [key: string]: unknown;
+            }[];
+            /** Content Validation Status */
+            content_validation_status: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Curriculum Framework */
+            curriculum_framework: string;
+            /** Duration Minutes */
+            duration_minutes: number;
+            /** Entity Id */
+            entity_id?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Inquiry Activities */
+            inquiry_activities?: {
+                [key: string]: unknown;
+            }[];
+            /** Lesson Id */
+            lesson_id?: string | null;
+            /** Media Config */
+            media_config?: {
+                [key: string]: unknown;
+            };
+            /** Media Variant */
+            media_variant: string;
+            /** Motif Id */
+            motif_id?: string | null;
+            /** Objectives */
+            objectives?: {
+                [key: string]: unknown;
+            };
+            /** Printable Handout */
+            printable_handout?: {
+                [key: string]: unknown;
+            };
+            /** Published At */
+            published_at?: string | null;
+            /** Source Ids */
+            source_ids?: string[];
+            /** Sources Snapshot */
+            sources_snapshot?: {
+                [key: string]: unknown;
+            }[];
+            /** Status */
+            status: string;
+            /** Target Grade */
+            target_grade: string;
+            /** Teacher Id */
+            teacher_id?: string | null;
+            /** Title */
+            title: string;
+            /** Topic */
+            topic: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Urn Id */
+            urn_id?: string | null;
+            /**
+             * Version
+             * @default 1
+             */
+            version: number;
         };
         /** HistoryLessonPublishIn */
         HistoryLessonPublishIn: {
@@ -18955,6 +21015,152 @@ export interface components {
             /** Title Vi */
             title_vi: string;
         };
+        /** InquiryBoardCardCreate */
+        InquiryBoardCardCreate: {
+            /** Board Column */
+            board_column?: string | null;
+            /** Claim Id */
+            claim_id?: string | null;
+            /** Comparison Notes */
+            comparison_notes?: string | null;
+            /** Excerpt */
+            excerpt: string;
+            /** Interpretation Note */
+            interpretation_note: string;
+            /** Linked Evidence Id */
+            linked_evidence_id?: string | null;
+            /** Locator */
+            locator: string;
+            /**
+             * Position
+             * @default 0
+             */
+            position: number | null;
+            /**
+             * Source Id
+             * Format: uuid
+             */
+            source_id: string;
+            /**
+             * Support Type
+             * @default supports
+             */
+            support_type: string;
+        };
+        /** InquiryBoardCardOut */
+        InquiryBoardCardOut: {
+            /** Author */
+            author?: string | null;
+            /** Board Column */
+            board_column: string;
+            /** Claim Id */
+            claim_id?: string | null;
+            /** Claim Title */
+            claim_title?: string | null;
+            /** Comparison Notes */
+            comparison_notes?: string | null;
+            /** Contributed At */
+            contributed_at: string;
+            /** Contributed By Name */
+            contributed_by_name: string;
+            /** Contributed By User Id */
+            contributed_by_user_id: string;
+            /** Excerpt */
+            excerpt: string;
+            /** Id */
+            id: string;
+            /** Inline Feedback */
+            inline_feedback?: components["schemas"]["TeacherInlineFeedbackOut"][];
+            /** Interpretation Note */
+            interpretation_note: string;
+            /** Linked Evidence Id */
+            linked_evidence_id?: string | null;
+            /** Locator */
+            locator: string;
+            /** Position */
+            position: number;
+            /** Source Id */
+            source_id: string;
+            /** Source Title */
+            source_title: string;
+            /** Support Type */
+            support_type: string;
+        };
+        /** InquiryBoardCardUpdate */
+        InquiryBoardCardUpdate: {
+            /** Board Column */
+            board_column?: string | null;
+            /** Comparison Notes */
+            comparison_notes?: string | null;
+            /** Excerpt */
+            excerpt?: string | null;
+            /** Interpretation Note */
+            interpretation_note?: string | null;
+            /** Linked Evidence Id */
+            linked_evidence_id?: string | null;
+            /** Locator */
+            locator?: string | null;
+            /** Position */
+            position?: number | null;
+            /** Support Type */
+            support_type?: string | null;
+        };
+        /** InquiryBoardOut */
+        InquiryBoardOut: {
+            /**
+             * Activity Id
+             * Format: uuid
+             */
+            activity_id: string;
+            /** Activity Title */
+            activity_title: string;
+            /** Cards */
+            cards?: components["schemas"]["InquiryBoardCardOut"][];
+            /** Columns */
+            columns?: string[];
+            /** Comparative Links */
+            comparative_links?: components["schemas"]["ComparativeLinkOut"][];
+            /** Epistemic Rating */
+            epistemic_rating: string;
+            /**
+             * Group Id
+             * Format: uuid
+             */
+            group_id: string;
+            /** Group Name */
+            group_name: string;
+            /** Hypothesis */
+            hypothesis: string;
+            /** Inline Feedback */
+            inline_feedback?: components["schemas"]["TeacherInlineFeedbackOut"][];
+            /** Privacy Mode */
+            privacy_mode: string;
+            /** Revision Cycle */
+            revision_cycle: number;
+            /** Revision History */
+            revision_history?: {
+                [key: string]: unknown;
+            }[];
+            /** Rubric Evaluation */
+            rubric_evaluation?: {
+                [key: string]: unknown;
+            } | null;
+            /** Score */
+            score?: number | null;
+            /** Status */
+            status: string;
+            /** Synthesis Argument */
+            synthesis_argument: string;
+            /** Teacher Feedback */
+            teacher_feedback?: string | null;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Version */
+            version: number;
+        };
         /** InquiryEvidenceItemIn */
         InquiryEvidenceItemIn: {
             /** Claim Id */
@@ -19113,6 +21319,44 @@ export interface components {
             show_on_global?: boolean | null;
             /** Show Real Name */
             show_real_name?: boolean | null;
+        };
+        /** LearningImprovementClaimValidateIn */
+        LearningImprovementClaimValidateIn: {
+            /** Claim Title */
+            claim_title: string;
+            /**
+             * Claim Type
+             * @description learning_improvement, causal_mastery, subjective_satisfaction
+             * @default learning_improvement
+             */
+            claim_type: string;
+            /** Ethics Protocol Id */
+            ethics_protocol_id?: string | null;
+            /**
+             * Evidence Basis
+             * @description pre_post_inquiry_rubric, subjective_survey, sentiment_analysis, likert_scale
+             * @default pre_post_inquiry_rubric
+             */
+            evidence_basis: string;
+            /** Pre Post Metric Id */
+            pre_post_metric_id?: string | null;
+            /** Survey Id */
+            survey_id?: string | null;
+        };
+        /** LearningImprovementClaimValidateOut */
+        LearningImprovementClaimValidateOut: {
+            /** Claim Title */
+            claim_title: string;
+            /** Claim Type */
+            claim_type: string;
+            /** Evidence Basis */
+            evidence_basis: string;
+            /** Is Valid Evidence Of Learning */
+            is_valid_evidence_of_learning: boolean;
+            /** Justification */
+            justification: string;
+            /** Rejection Reason */
+            rejection_reason?: string | null;
         };
         /** LearningOutcomeAssessmentCreate */
         LearningOutcomeAssessmentCreate: {
@@ -19664,6 +21908,67 @@ export interface components {
             /** Recommended Prerequisites */
             recommended_prerequisites: components["schemas"]["PrerequisiteLessonInfo"][];
         };
+        /** LessonWizardValidateIn */
+        LessonWizardValidateIn: {
+            /** Assessment Rubric */
+            assessment_rubric?: {
+                [key: string]: unknown;
+            };
+            /** Claim Ids */
+            claim_ids?: string[];
+            /** Entity Id */
+            entity_id?: string | null;
+            /** Inquiry Activities */
+            inquiry_activities?: {
+                [key: string]: unknown;
+            }[];
+            /** Lesson Id */
+            lesson_id?: string | null;
+            /** Media Config */
+            media_config?: {
+                [key: string]: unknown;
+            };
+            /**
+             * Media Variant
+             * @default 2d_rubbing
+             */
+            media_variant: string;
+            /** Motif Id */
+            motif_id?: string | null;
+            /** Objectives */
+            objectives?: {
+                [key: string]: unknown;
+            };
+            /** Source Ids */
+            source_ids?: string[];
+            /** Title */
+            title?: string | null;
+            /** Topic */
+            topic?: string | null;
+            /** Urn Id */
+            urn_id?: string | null;
+        };
+        /** LessonWizardValidateOut */
+        LessonWizardValidateOut: {
+            /** Can Publish */
+            can_publish: boolean;
+            /**
+             * Ineligible Claims Count
+             * @default 0
+             */
+            ineligible_claims_count: number;
+            /** Issues */
+            issues?: string[];
+            /** Validation Status */
+            validation_status: string;
+            /**
+             * Verified Claims Count
+             * @default 0
+             */
+            verified_claims_count: number;
+            /** Warnings */
+            warnings?: string[];
+        };
         /**
          * LiveAITeacherActionOut
          * @description One follow-up action suggestion for learner.
@@ -20108,6 +22413,83 @@ export interface components {
             token: string;
             /** Url */
             url: string;
+        };
+        /**
+         * LowBandwidthOfflineKitResponse
+         * @description Server-authoritative low-bandwidth printable kit bundle.
+         */
+        LowBandwidthOfflineKitResponse: {
+            /**
+             * Ar Or Smartphone Mandatory
+             * @description Invariant: Zero mandatory requirement for AR, WebXR, or smartphone
+             * @default false
+             */
+            ar_or_smartphone_mandatory: boolean;
+            /**
+             * Cluster Id
+             * @description Station cluster ID (standard_4, all_16, etc.)
+             */
+            cluster_id: string;
+            /**
+             * Content Scope
+             * @description Monitored content scope
+             * @default STTT_IMPERIAL_CITY
+             */
+            content_scope: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at?: string;
+            /** Exit Ticket Questions */
+            exit_ticket_questions?: {
+                [key: string]: unknown;
+            }[];
+            /**
+             * Kit Id
+             * @description Unique kit identifier
+             */
+            kit_id: string;
+            /**
+             * Paper Achievable Percent
+             * @description Percentage of curriculum achievable offline without smartphone or AR
+             * @default 100
+             */
+            paper_achievable_percent: number;
+            /** Rubric Dimensions */
+            rubric_dimensions?: {
+                [key: string]: unknown;
+            }[];
+            /** Stations */
+            stations?: components["schemas"]["OfflineKitStation"][];
+            /**
+             * Subtitle Vi
+             * @description Kit subtitle
+             */
+            subtitle_vi: string;
+            /**
+             * Target Audience
+             * @description Intended pedagogical audience
+             * @default Học sinh THPT (Lớp 10 - Giáo dục địa phương / Lịch sử)
+             */
+            target_audience: string;
+            /**
+             * Title Vi
+             * @description Kit title
+             */
+            title_vi: string;
+            /**
+             * Version
+             * @description Kit schema version
+             * @default 1.0.0
+             */
+            version: string;
+            /**
+             * Zero Device Guarantee
+             * @description Invariant: 100% of learning outcomes achievable with paper and pencil
+             * @default true
+             */
+            zero_device_guarantee: boolean;
         };
         /** MasteryDimensionOut */
         MasteryDimensionOut: {
@@ -20769,6 +23151,151 @@ export interface components {
             weekly_digest?: boolean | null;
         };
         /**
+         * OfflineAudioTranscript
+         * @description Verbatim transcript of the audio guide eliminating audio streaming bandwidth.
+         */
+        OfflineAudioTranscript: {
+            /**
+             * Duration Seconds
+             * @description Spoken duration in seconds
+             */
+            duration_seconds: number;
+            /**
+             * Key Quotes
+             * @description Key pedagogical takeaways extracted from the transcript
+             */
+            key_quotes?: string[];
+            /**
+             * Narrator
+             * @description Voice narrator attribution
+             */
+            narrator: string;
+            /**
+             * Script Text
+             * @description Full verbatim text of the historical narration
+             */
+            script_text: string;
+            /**
+             * Track Title Vi
+             * @description Title of the audio narration
+             */
+            track_title_vi: string;
+        };
+        /**
+         * OfflineInspectionTask
+         * @description Paper-executable inspection task requiring zero digital devices.
+         */
+        OfflineInspectionTask: {
+            /**
+             * Ar Or Smartphone Required
+             * @description Strict invariant: zero smartphone or AR requirement
+             * @default false
+             */
+            ar_or_smartphone_required: boolean;
+            /**
+             * Checkpoints
+             * @description Checkpoints to physically verify on the 2D rubbing or structure
+             */
+            checkpoints?: string[];
+            /**
+             * Instructions Vi
+             * @description Direct paper instructions for students
+             */
+            instructions_vi: string;
+            /**
+             * Paper Achievable
+             * @description Strict invariant: 100% achievable with pencil and paper
+             * @default true
+             */
+            paper_achievable: boolean;
+            /**
+             * Sketch Prompt Vi
+             * @description Prompt for drawing or sketching architectural or relief features
+             */
+            sketch_prompt_vi?: string | null;
+            /**
+             * Task Title Vi
+             * @description Title of the paper inspection task
+             */
+            task_title_vi: string;
+        };
+        /**
+         * OfflineKitStation
+         * @description Complete printable station bundle for low-bandwidth learning.
+         */
+        OfflineKitStation: {
+            audio_transcript: components["schemas"]["OfflineAudioTranscript"];
+            /**
+             * Conclusion Guide Vi
+             * @description Guide for drawing historical conclusions
+             */
+            conclusion_guide_vi: string;
+            /**
+             * Construction Year
+             * @description Year of initial construction
+             */
+            construction_year?: number | null;
+            /**
+             * Mee Claim Sample Vi
+             * @description Sample claim (M) for M-E-E framework
+             */
+            mee_claim_sample_vi: string;
+            /**
+             * Mee Evidence Sample Vi
+             * @description Sample evidence (E) for M-E-E framework
+             */
+            mee_evidence_sample_vi: string;
+            /**
+             * Mee Uncertainty Sample Vi
+             * @description Sample uncertainty boundary for M-E-E
+             */
+            mee_uncertainty_sample_vi: string;
+            /**
+             * Monument Name Vi
+             * @description Vietnamese name of the monument
+             */
+            monument_name_vi: string;
+            /**
+             * Monument Slug
+             * @description Unique slug of the monument or relic
+             */
+            monument_slug: string;
+            /**
+             * Observation Prompt Vi
+             * @description Fieldwork observation prompt
+             */
+            observation_prompt_vi: string;
+            /**
+             * Observation Sample Answer Vi
+             * @description Suggested answer for teacher key
+             */
+            observation_sample_answer_vi: string;
+            offline_inspection_task: components["schemas"]["OfflineInspectionTask"];
+            offline_task?: components["schemas"]["OfflineInspectionTask"] | null;
+            primary_source: components["schemas"]["OfflinePrimarySourceItem"];
+            /**
+             * Qr Code Url
+             * @description Destination URL encoded in the printed QR code
+             */
+            qr_code_url: string;
+            /**
+             * Reign
+             * @description Dynastic reign
+             */
+            reign?: string | null;
+            rubbing_asset: components["schemas"]["OfflineRubbingAsset"];
+            /**
+             * Station Index
+             * @description Sequential station number
+             */
+            station_index: number;
+            /**
+             * Zone Name Vi
+             * @description Name of the spatial zone
+             */
+            zone_name_vi: string;
+        };
+        /**
          * OfflineOperationItem
          * @description Single queued operation item from mobile or frontend offline queue.
          */
@@ -20849,6 +23376,95 @@ export interface components {
              * @default 0
              */
             xp_awarded: number;
+        };
+        /**
+         * OfflinePrimarySourceItem
+         * @description Bibliographic source excerpt with verified rights attribution.
+         */
+        OfflinePrimarySourceItem: {
+            /**
+             * Archival Unit
+             * @description Archival collection or institution
+             */
+            archival_unit?: string | null;
+            /**
+             * Citation
+             * @description Archival excerpt or citation
+             */
+            citation: string;
+            /**
+             * License
+             * @description Educational open license terms
+             * @default CC BY 4.0 / Educational Fair Use
+             */
+            license: string;
+            /**
+             * Reliability Level
+             * @description Epistemic reliability classification
+             * @default primary_official
+             */
+            reliability_level: string;
+            /**
+             * Rights Owner
+             * @description Legal rights owner or custodian
+             * @default Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)
+             */
+            rights_owner: string;
+            /**
+             * Source Title
+             * @description Title of the primary historical source
+             */
+            source_title: string;
+            /**
+             * Volume Or Chapter
+             * @description Volume or chapter reference
+             */
+            volume_or_chapter?: string | null;
+        };
+        /**
+         * OfflineRubbingAsset
+         * @description High-contrast 2D rubbing asset with print-optimized contrast filters.
+         */
+        OfflineRubbingAsset: {
+            /**
+             * Asset Url
+             * @description URL of the 2D rubbing image
+             */
+            asset_url: string;
+            /**
+             * Format
+             * @description MIME image format
+             * @default image/jpeg
+             */
+            format: string;
+            /**
+             * High Contrast Css
+             * @description Print CSS filter to maximize relief legibility on monochrome school printers
+             * @default filter: contrast(160%) grayscale(100%) brightness(95%);
+             */
+            high_contrast_css: string;
+            /**
+             * Legal Basis
+             * @description Legal basis for reproduction
+             * @default Public Domain (1835-1837 Imperial relic) / Academic Educational Fair Use
+             */
+            legal_basis: string;
+            /**
+             * Local Path
+             * @description Relative local filesystem path
+             */
+            local_path: string;
+            /**
+             * Rights Attribution
+             * @description Attribution notice
+             * @default Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)
+             */
+            rights_attribution: string;
+            /**
+             * Sha256
+             * @description Cryptographic SHA-256 integrity hash
+             */
+            sha256?: string | null;
         };
         /**
          * OfflineSyncRequest
@@ -20960,6 +23576,143 @@ export interface components {
             /** Onboarding Goal */
             onboarding_goal?: string | null;
         };
+        /** PassportCheckInRequest */
+        PassportCheckInRequest: {
+            /** Client Claimed Status */
+            client_claimed_status?: string | null;
+            /** Device Metadata */
+            device_metadata?: {
+                [key: string]: unknown;
+            } | null;
+            /** Latitude */
+            latitude?: number | null;
+            /** Longitude */
+            longitude?: number | null;
+            /** Qr Payload */
+            qr_payload?: string | null;
+            /** Qr Token */
+            qr_token?: string | null;
+            /** Site Slug */
+            site_slug: string;
+            /**
+             * Verification Method
+             * @default qr_code
+             */
+            verification_method: string;
+        };
+        /** PassportCheckInResponse */
+        PassportCheckInResponse: {
+            /** Authority */
+            authority: string;
+            /** Checkin Count */
+            checkin_count: number;
+            /**
+             * Is Distinct From Mastery
+             * @default true
+             */
+            is_distinct_from_mastery: boolean;
+            /** Is Verified */
+            is_verified: boolean;
+            /** Message */
+            message: string;
+            /** Provenance Hash */
+            provenance_hash: string;
+            /** Site Name */
+            site_name: string;
+            /** Site Slug */
+            site_slug: string;
+            /**
+             * Stamp Id
+             * Format: uuid
+             */
+            stamp_id: string;
+            /**
+             * Stamped At
+             * Format: date-time
+             */
+            stamped_at: string;
+            /** Success */
+            success: boolean;
+            /** Verification Method */
+            verification_method: string;
+            /** Xp Awarded */
+            xp_awarded: number;
+            /** Zone Slug */
+            zone_slug: string;
+        };
+        /** PassportStampDetailOut */
+        PassportStampDetailOut: {
+            /** Authority */
+            authority: string;
+            /** Checkin Count */
+            checkin_count: number;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Is Distinct From Mastery
+             * @default true
+             */
+            is_distinct_from_mastery: boolean;
+            /** Is Verified */
+            is_verified: boolean;
+            /**
+             * Last Visited At
+             * Format: date-time
+             */
+            last_visited_at: string;
+            /** Provenance Hash */
+            provenance_hash: string;
+            /** Site Name */
+            site_name: string;
+            /** Site Slug */
+            site_slug: string;
+            /**
+             * Stamped At
+             * Format: date-time
+             */
+            stamped_at: string;
+            /** Verification Method */
+            verification_method: string;
+            /** Zone Slug */
+            zone_slug: string;
+        };
+        /** PassportVerificationRequest */
+        PassportVerificationRequest: {
+            /** Qr Token */
+            qr_token: string;
+            /** Site Slug */
+            site_slug?: string | null;
+        };
+        /** PassportVerificationResponse */
+        PassportVerificationResponse: {
+            /** Authority */
+            authority: string;
+            /** Expires At */
+            expires_at?: string | null;
+            /**
+             * Issued At
+             * Format: date-time
+             */
+            issued_at: string;
+            /**
+             * Message
+             * @default QR code verified successfully.
+             */
+            message: string;
+            /** Nonce */
+            nonce?: string | null;
+            /** Site Name */
+            site_name: string;
+            /** Site Slug */
+            site_slug: string;
+            /** Valid */
+            valid: boolean;
+            /** Zone Slug */
+            zone_slug: string;
+        };
         /** PeerFeedbackOut */
         PeerFeedbackOut: {
             /** Message */
@@ -21047,6 +23800,163 @@ export interface components {
             /** Total Count */
             total_count: number;
         };
+        /** PilotDataRetentionAuditOut */
+        PilotDataRetentionAuditOut: {
+            /**
+             * Audit Timestamp
+             * Format: date-time
+             */
+            audit_timestamp: string;
+            /** Ethics Protocol Id */
+            ethics_protocol_id?: string | null;
+            /** Expired Evaluations Count */
+            expired_evaluations_count: number;
+            /** Expired Submission Ids */
+            expired_submission_ids?: string[];
+            /** Expired Submissions Count */
+            expired_submissions_count: number;
+            /** Expired Survey Ids */
+            expired_survey_ids?: string[];
+            /** Expired Surveys Count */
+            expired_surveys_count: number;
+            /** Retention Days Limit */
+            retention_days_limit: number;
+        };
+        /** PilotDataRetentionPurgeIn */
+        PilotDataRetentionPurgeIn: {
+            /**
+             * Confirm Purge
+             * @default true
+             */
+            confirm_purge: boolean;
+            /** Ethics Protocol Id */
+            ethics_protocol_id?: string | null;
+        };
+        /** PilotDataRetentionPurgeOut */
+        PilotDataRetentionPurgeOut: {
+            /** Policy */
+            policy: string;
+            /**
+             * Purged At
+             * Format: date-time
+             */
+            purged_at: string;
+            /** Purged Evaluations Count */
+            purged_evaluations_count: number;
+            /** Purged Submissions Count */
+            purged_submissions_count: number;
+            /** Purged Surveys Count */
+            purged_surveys_count: number;
+            /** Status */
+            status: string;
+        };
+        /** PilotGuardianConsentCreate */
+        PilotGuardianConsentCreate: {
+            /**
+             * Ethics Protocol Id
+             * Format: uuid
+             */
+            ethics_protocol_id: string;
+            /** Guardian Email */
+            guardian_email: string;
+            /** Guardian Name */
+            guardian_name: string;
+            /** Guardian Phone */
+            guardian_phone?: string | null;
+            /** Notes */
+            notes?: string | null;
+            /**
+             * Relationship Type
+             * @description parent, legal_guardian, custodian
+             * @default parent
+             */
+            relationship_type: string;
+            /**
+             * Student Id
+             * Format: uuid
+             */
+            student_id: string;
+            /**
+             * Verification Method
+             * @description sms_otp, digital_signature, paper_signed, school_roster
+             * @default school_roster
+             */
+            verification_method: string;
+        };
+        /** PilotGuardianConsentOut */
+        PilotGuardianConsentOut: {
+            /** Consent Status */
+            consent_status: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Ethics Protocol Id
+             * Format: uuid
+             */
+            ethics_protocol_id: string;
+            /** Guardian Email */
+            guardian_email: string;
+            /** Guardian Name */
+            guardian_name: string;
+            /** Guardian Phone */
+            guardian_phone?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Notes */
+            notes?: string | null;
+            /** Relationship Type */
+            relationship_type: string;
+            /**
+             * Student Id
+             * Format: uuid
+             */
+            student_id: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Verification Method */
+            verification_method: string;
+            /** Verified At */
+            verified_at?: string | null;
+            /** Verified By Id */
+            verified_by_id?: string | null;
+            /** Withdrawn At */
+            withdrawn_at?: string | null;
+        };
+        /** PilotGuardianConsentStatusOut */
+        PilotGuardianConsentStatusOut: {
+            /** Consent Status */
+            consent_status: string;
+            /**
+             * Ethics Protocol Id
+             * Format: uuid
+             */
+            ethics_protocol_id: string;
+            /** Is Consent Verified */
+            is_consent_verified: boolean;
+            /**
+             * Student Id
+             * Format: uuid
+             */
+            student_id: string;
+            /** Verified At */
+            verified_at?: string | null;
+            /** Withdrawn At */
+            withdrawn_at?: string | null;
+        };
+        /** PilotGuardianConsentWithdrawIn */
+        PilotGuardianConsentWithdrawIn: {
+            /** Reason */
+            reason?: string | null;
+        };
         /**
          * PrerequisiteLessonInfo
          * @description Info about a prerequisite lesson.
@@ -21074,6 +23984,41 @@ export interface components {
             motif_name: string;
             /** Motif Slug */
             motif_slug: string;
+        };
+        /** PrintableHandoutOut */
+        PrintableHandoutOut: {
+            /** Exit Ticket */
+            exit_ticket: {
+                [key: string]: unknown;
+            };
+            /** Export Metadata */
+            export_metadata: {
+                [key: string]: unknown;
+            };
+            /** Header */
+            header: {
+                [key: string]: unknown;
+            };
+            /** Inquiry Stations */
+            inquiry_stations: {
+                [key: string]: unknown;
+            }[];
+            /** Objectives */
+            objectives: {
+                [key: string]: unknown;
+            };
+            /** Rubric */
+            rubric: {
+                [key: string]: unknown;
+            };
+            /** Sources */
+            sources: {
+                [key: string]: unknown;
+            }[];
+            /** Visual Media */
+            visual_media: {
+                [key: string]: unknown;
+            };
         };
         /**
          * ProgressResponseDto
@@ -21563,6 +24508,24 @@ export interface components {
             status: string;
             /** Steps */
             steps: components["schemas"]["QuestStepOut"][];
+        };
+        /** QuestEvidencePracticeSummaryOut */
+        QuestEvidencePracticeSummaryOut: {
+            /** Abuse Flagged Count */
+            abuse_flagged_count: number;
+            /** Active Evidence Quests */
+            active_evidence_quests: string[];
+            /** Evidence Mastery Achieved */
+            evidence_mastery_achieved: boolean;
+            /** Fsrs Adaptive Status */
+            fsrs_adaptive_status: string;
+            /** Total Verified Evaluations */
+            total_verified_evaluations: number;
+            /**
+             * User Id
+             * Format: uuid
+             */
+            user_id: string;
         };
         /** QuestListItemOut */
         QuestListItemOut: {
@@ -23767,6 +26730,22 @@ export interface components {
              */
             quality: number;
         };
+        /** RevisionCycleOut */
+        RevisionCycleOut: {
+            /**
+             * Group Id
+             * Format: uuid
+             */
+            group_id: string;
+            /** History */
+            history?: {
+                [key: string]: unknown;
+            }[];
+            /** Revision Cycle */
+            revision_cycle: number;
+            /** Status */
+            status: string;
+        };
         /** RollbackResultOut */
         RollbackResultOut: {
             /** Purged Cache Keys */
@@ -23789,6 +26768,137 @@ export interface components {
              * Format: date-time
              */
             timestamp: string;
+        };
+        /** RubricCalibrationCreate */
+        RubricCalibrationCreate: {
+            /**
+             * Assessor A Id
+             * Format: uuid
+             */
+            assessor_a_id: string;
+            /**
+             * Assessor B Id
+             * Format: uuid
+             */
+            assessor_b_id: string;
+            /**
+             * Submission Id
+             * Format: uuid
+             */
+            submission_id: string;
+            /**
+             * Tolerance Pct
+             * @default 0.15
+             */
+            tolerance_pct: number;
+        };
+        /** RubricCalibrationOut */
+        RubricCalibrationOut: {
+            /**
+             * Assessor A Id
+             * Format: uuid
+             */
+            assessor_a_id: string;
+            /**
+             * Assessor B Id
+             * Format: uuid
+             */
+            assessor_b_id: string;
+            /**
+             * Calibrated At
+             * Format: date-time
+             */
+            calibrated_at: string;
+            /** Consensus Score */
+            consensus_score?: number | null;
+            /** Criteria Breakdown */
+            criteria_breakdown?: {
+                [key: string]: unknown;
+            };
+            /** Divergence Pct */
+            divergence_pct: number;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Inter Rater Agreement */
+            inter_rater_agreement: number;
+            /** Score A */
+            score_a: number;
+            /** Score B */
+            score_b: number;
+            /** Score Difference */
+            score_difference: number;
+            /** Status */
+            status: string;
+            /**
+             * Submission Id
+             * Format: uuid
+             */
+            submission_id: string;
+            /** Tolerance Pct */
+            tolerance_pct: number;
+        };
+        /**
+         * RubricCriterionAnalyticsOut
+         * @description Analytics for a single historical reasoning rubric criterion dimension.
+         */
+        RubricCriterionAnalyticsOut: {
+            /**
+             * Criterion Key
+             * @description Criterion identifier: S1_SPATIAL, S2_TEMPORAL, S3_EVIDENCE, S4_ARGUMENT
+             */
+            criterion_key: string;
+            /**
+             * Dimension En
+             * @description English dimension title
+             */
+            dimension_en: string;
+            /**
+             * Dimension Vi
+             * @description Vietnamese dimension title
+             */
+            dimension_vi: string;
+            /**
+             * Distribution
+             * @description Counts per performance level (suppressed if n < 5)
+             */
+            distribution?: {
+                [key: string]: number;
+            } | null;
+            /**
+             * Mastery Rate
+             * @description Percentage of students achieving competent level (>= 66.7%) (suppressed if n < 5)
+             */
+            mastery_rate?: number | null;
+            /**
+             * Max Score
+             * @description Max score scale (usually 3.0)
+             * @default 3
+             */
+            max_score: number;
+            /**
+             * Mean
+             * @description Average score across cohort (suppressed if n < 5)
+             */
+            mean?: number | null;
+            /**
+             * Median
+             * @description Median score across cohort (suppressed if n < 5)
+             */
+            median?: number | null;
+            /**
+             * Sample Size
+             * @description Number of evaluated students
+             * @default 0
+             */
+            sample_size: number;
+            /**
+             * Std Dev
+             * @description Standard deviation (suppressed if n < 5)
+             */
+            std_dev?: number | null;
         };
         /** RubricEvaluationCreate */
         RubricEvaluationCreate: {
@@ -25001,6 +28111,29 @@ export interface components {
              */
             total_xp: number;
         };
+        /** StudentPassportSummaryOut */
+        StudentPassportSummaryOut: {
+            /** Assessed Mastery Count */
+            assessed_mastery_count: number;
+            /** Display Name */
+            display_name: string;
+            /** Email */
+            email: string;
+            /**
+             * Is Fake Client Claim Detected
+             * @default false
+             */
+            is_fake_client_claim_detected: boolean;
+            /** Last Stamp At */
+            last_stamp_at?: string | null;
+            /**
+             * Student Id
+             * Format: uuid
+             */
+            student_id: string;
+            /** Verified Stamps Count */
+            verified_stamps_count: number;
+        };
         /**
          * StudentProgressOut
          * @description Detailed progress for a student in a classroom.
@@ -25210,6 +28343,128 @@ export interface components {
             y: number;
             /** Z */
             z: number;
+        };
+        /** TeacherInlineFeedbackCreate */
+        TeacherInlineFeedbackCreate: {
+            /** Comment */
+            comment: string;
+            /** Target Id */
+            target_id?: string | null;
+            /**
+             * Target Type
+             * @default card
+             */
+            target_type: string;
+        };
+        /** TeacherInlineFeedbackOut */
+        TeacherInlineFeedbackOut: {
+            /** Comment */
+            comment: string;
+            /** Created At */
+            created_at: string;
+            /** Id */
+            id: string;
+            /**
+             * Resolved
+             * @default false
+             */
+            resolved: boolean;
+            /** Target Id */
+            target_id?: string | null;
+            /** Target Type */
+            target_type: string;
+            /** Teacher Id */
+            teacher_id: string;
+            /** Teacher Name */
+            teacher_name: string;
+        };
+        /** TeacherWorkloadLogCreate */
+        TeacherWorkloadLogCreate: {
+            /**
+             * Activity Type
+             * @description preparation, inquiry_instruction, rubric_grading, reflection
+             * @default rubric_grading
+             */
+            activity_type: string;
+            /** Classroom Id */
+            classroom_id?: string | null;
+            /**
+             * Cognitive Load Rating
+             * @default 50
+             */
+            cognitive_load_rating: number;
+            /** Ethics Protocol Id */
+            ethics_protocol_id?: string | null;
+            /** Minutes Spent */
+            minutes_spent: number;
+            /** Notes */
+            notes?: string | null;
+            /** School Id */
+            school_id?: string | null;
+            /**
+             * Submissions Evaluated Count
+             * @default 0
+             */
+            submissions_evaluated_count: number;
+        };
+        /** TeacherWorkloadLogOut */
+        TeacherWorkloadLogOut: {
+            /** Activity Type */
+            activity_type: string;
+            /** Classroom Id */
+            classroom_id?: string | null;
+            /** Cognitive Load Rating */
+            cognitive_load_rating: number;
+            /** Ethics Protocol Id */
+            ethics_protocol_id?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Logged At
+             * Format: date-time
+             */
+            logged_at: string;
+            /** Minutes Spent */
+            minutes_spent: number;
+            /** Notes */
+            notes?: string | null;
+            /** School Id */
+            school_id?: string | null;
+            /** Submissions Evaluated Count */
+            submissions_evaluated_count: number;
+            /**
+             * Teacher Id
+             * Format: uuid
+             */
+            teacher_id: string;
+            /** Workload Category */
+            workload_category: string;
+        };
+        /** TeacherWorkloadSummaryOut */
+        TeacherWorkloadSummaryOut: {
+            /** Avg Cognitive Load */
+            avg_cognitive_load: number;
+            /** Avg Minutes Per Submission */
+            avg_minutes_per_submission: number;
+            /** Burnout Risk Level */
+            burnout_risk_level: string;
+            /** Overall Workload Status */
+            overall_workload_status: string;
+            /** Recommendations */
+            recommendations?: string[];
+            /** School Id */
+            school_id?: string | null;
+            /** Teacher Id */
+            teacher_id?: string | null;
+            /** Threshold Exceeded */
+            threshold_exceeded: boolean;
+            /** Total Minutes Logged */
+            total_minutes_logged: number;
+            /** Total Submissions Evaluated */
+            total_submissions_evaluated: number;
         };
         /** TimedTranscriptCue */
         TimedTranscriptCue: {
@@ -25982,6 +29237,32 @@ export interface components {
             p_value?: number | null;
             /** Variant Key */
             variant_key: string;
+        };
+        /** VerifiedPassportOut */
+        VerifiedPassportOut: {
+            /** Assessed Mastery Count */
+            assessed_mastery_count: number;
+            /** Can Export Verified Certificate */
+            can_export_verified_certificate: boolean;
+            /** Display Name */
+            display_name: string;
+            /** Distinct Invariants */
+            distinct_invariants: {
+                [key: string]: boolean;
+            };
+            /** Stamps */
+            stamps: components["schemas"]["PassportStampDetailOut"][];
+            /** Total Available Seals */
+            total_available_seals: number;
+            /**
+             * User Id
+             * Format: uuid
+             */
+            user_id: string;
+            /** Verified Completion Percent */
+            verified_completion_percent: number;
+            /** Verified Stamps Count */
+            verified_stamps_count: number;
         };
         /**
          * WeeklyQuestHistoryItem
@@ -27777,6 +31058,109 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HistoricalGeographyOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_admin_history_glossary_term_api_v1_admin_history_glossary_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HistoricalGlossaryTermCreateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoricalGlossaryTermOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_admin_history_glossary_term_api_v1_admin_history_glossary__term_key__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                term_key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HistoricalGlossaryTermUpdateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoricalGlossaryTermOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    review_admin_history_glossary_term_api_v1_admin_history_glossary__term_key__review_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                term_key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HistoricalGlossaryReviewIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoricalGlossaryTermOut"];
                 };
             };
             /** @description Validation Error */
@@ -31818,6 +35202,46 @@ export interface operations {
             };
         };
     };
+    get_classroom_rubric_analytics_api_v1_classrooms__classroom_id__rubric_analytics_get: {
+        parameters: {
+            query?: {
+                /** @description Filter by rubric version, e.g. 'GDPT_2018_V1' */
+                rubric_version?: string | null;
+                /** @description Optional assignment filter */
+                assignment_id?: string | null;
+                /** @description Attempt causal learning gain claim */
+                claim_causality?: boolean;
+                /** @description Ethics/IRB protocol code for controlled study */
+                study_protocol_code?: string | null;
+            };
+            header?: never;
+            path: {
+                classroom_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClassroomRubricAnalyticsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_student_progress_api_v1_classrooms__classroom_id__students__student_id__progress_get: {
         parameters: {
             query?: never;
@@ -32263,6 +35687,143 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_due_evidence_tasks_api_v1_fsrs_evidence_due_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DueEvidenceTaskListOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    evaluate_evidence_task_api_v1_fsrs_evidence_evaluate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EvidenceEvaluationIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvidenceEvaluationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_user_fsrs_settings_api_v1_fsrs_settings_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FsrsSettingsOut"];
+                };
+            };
+        };
+    };
+    update_user_fsrs_settings_api_v1_fsrs_settings_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FsrsSettingsUpdateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FsrsSettingsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_fsrs_transparency_api_v1_fsrs_transparency_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FsrsModelTransparencyOut"];
                 };
             };
         };
@@ -33307,6 +36868,344 @@ export interface operations {
             };
         };
     };
+    list_curriculum_competencies_api_v1_history_curriculum_competencies_get: {
+        parameters: {
+            query?: {
+                /** @description Curriculum framework, e.g. VN_GDPT_2018 */
+                framework?: string | null;
+                /** @description Competency domain */
+                domain?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CurriculumCompetencyListOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    resolve_curriculum_competency_flag_api_v1_history_curriculum_competencies_flags__flag_id__resolve_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                flag_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CurriculumCompetencyFlagResolveIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CurriculumCompetencyFlagOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_curriculum_competency_mappings_api_v1_history_curriculum_competencies_mappings_get: {
+        parameters: {
+            query?: {
+                /** @description Filter by relic urn slug */
+                urn_slug?: string | null;
+                /** @description Filter by relic motif id */
+                motif_id?: string | null;
+                /** @description Filter by competency code */
+                competency_code?: string | null;
+                /** @description Filter by target grade (6-12) */
+                grade?: number | null;
+                /** @description Filter by grade band */
+                grade_band?: string | null;
+                /** @description Filter by status (unreviewed, verified, flagged) */
+                status?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CurriculumCompetencyRelicMappingListOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_curriculum_competency_mapping_api_v1_history_curriculum_competencies_mappings_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CurriculumCompetencyRelicMappingIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CurriculumCompetencyRelicMappingOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_curriculum_competency_mapping_api_v1_history_curriculum_competencies_mappings__mapping_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mapping_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CurriculumCompetencyRelicMappingOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_curriculum_competency_mapping_api_v1_history_curriculum_competencies_mappings__mapping_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mapping_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CurriculumCompetencyRelicMappingUpdateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CurriculumCompetencyRelicMappingOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    flag_curriculum_competency_mapping_api_v1_history_curriculum_competencies_mappings__mapping_id__flag_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mapping_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CurriculumCompetencyFlagIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CurriculumCompetencyFlagOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_curriculum_competency_mapping_flags_api_v1_history_curriculum_competencies_mappings__mapping_id__flags_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mapping_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CurriculumCompetencyFlagOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    verify_curriculum_competency_mapping_api_v1_history_curriculum_competencies_mappings__mapping_id__verify_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mapping_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CurriculumCompetencyRelicMappingOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_curriculum_competency_api_v1_history_curriculum_competencies__code__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                code: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CurriculumCompetencyOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_curriculum_2d_fallback_api_v1_history_curriculum_fallbacks__target__get: {
         parameters: {
             query?: never;
@@ -33704,6 +37603,79 @@ export interface operations {
             };
         };
     };
+    list_history_glossary_api_v1_history_glossary_get: {
+        parameters: {
+            query?: {
+                /** @description Filter by term category */
+                category?: string | null;
+                /** @description Search terms in Vietnamese or English */
+                search?: string | null;
+                /** @description Filter by review status (verified, unreviewed, uncertain, etc.) */
+                review_status?: string | null;
+                /** @description Filter by translation origin */
+                origin?: string | null;
+                /** @description Whether to include unreviewed or uncertain draft terms */
+                include_unreviewed?: boolean;
+                offset?: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoricalGlossaryListOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_history_glossary_term_api_v1_history_glossary__term_key__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                term_key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoricalGlossaryTermOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_activities_api_v1_history_inquiry_activities_get: {
         parameters: {
             query?: {
@@ -33853,6 +37825,343 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HistoricalInquiryGroupOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_group_board_api_v1_history_inquiry_groups__group_id__board_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                group_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InquiryBoardOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_board_card_api_v1_history_inquiry_groups__group_id__board_cards_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                group_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InquiryBoardCardCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InquiryBoardCardOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_board_card_api_v1_history_inquiry_groups__group_id__board_cards__card_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                group_id: string;
+                card_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InquiryBoardCardUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InquiryBoardCardOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    remove_board_card_api_v1_history_inquiry_groups__group_id__board_cards__card_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                group_id: string;
+                card_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_comparative_link_api_v1_history_inquiry_groups__group_id__board_comparisons_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                group_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ComparativeLinkCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ComparativeLinkOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    remove_comparative_link_api_v1_history_inquiry_groups__group_id__board_comparisons__comparison_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                group_id: string;
+                comparison_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_teacher_inline_feedback_api_v1_history_inquiry_groups__group_id__board_feedback_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                group_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TeacherInlineFeedbackCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TeacherInlineFeedbackOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    request_board_revision_api_v1_history_inquiry_groups__group_id__board_request_revision_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                group_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BoardRequestRevisionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InquiryBoardOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    resubmit_board_api_v1_history_inquiry_groups__group_id__board_resubmit_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                group_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BoardResubmitIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InquiryBoardOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_board_revisions_api_v1_history_inquiry_groups__group_id__board_revisions_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                group_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RevisionCycleOut"];
                 };
             };
             /** @description Validation Error */
@@ -34296,6 +38605,141 @@ export interface operations {
             };
         };
     };
+    register_pilot_guardian_consent_endpoint_api_v1_history_learning_outcomes_ethics_protocols__ethics_protocol_id__consent_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                ethics_protocol_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PilotGuardianConsentCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotGuardianConsentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    verify_pilot_guardian_consent_endpoint_api_v1_history_learning_outcomes_ethics_protocols__ethics_protocol_id__consent__consent_id__verify_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                ethics_protocol_id: string;
+                consent_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotGuardianConsentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    withdraw_pilot_guardian_consent_endpoint_api_v1_history_learning_outcomes_ethics_protocols__ethics_protocol_id__consent__consent_id__withdraw_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                ethics_protocol_id: string;
+                consent_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PilotGuardianConsentWithdrawIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotGuardianConsentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_pilot_guardian_consent_status_endpoint_api_v1_history_learning_outcomes_ethics_protocols__ethics_protocol_id__consent__student_id__status_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                ethics_protocol_id: string;
+                student_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotGuardianConsentStatusOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_ethics_protocol_endpoint_api_v1_history_learning_outcomes_ethics_protocols__protocol_id__get: {
         parameters: {
             query?: never;
@@ -34314,6 +38758,103 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["EthicsProtocolOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    audit_pilot_data_retention_endpoint_api_v1_history_learning_outcomes_retention_audit_post: {
+        parameters: {
+            query?: {
+                ethics_protocol_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotDataRetentionAuditOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    purge_expired_pilot_data_endpoint_api_v1_history_learning_outcomes_retention_purge_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PilotDataRetentionPurgeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotDataRetentionPurgeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    calibrate_submission_rubrics_endpoint_api_v1_history_learning_outcomes_rubric_calibration_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RubricCalibrationCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RubricCalibrationOut"];
                 };
             };
             /** @description Validation Error */
@@ -34382,6 +38923,299 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SubjectiveSurveyOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    log_teacher_workload_endpoint_api_v1_history_learning_outcomes_teacher_workload_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TeacherWorkloadLogCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TeacherWorkloadLogOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_teacher_workload_summary_endpoint_api_v1_history_learning_outcomes_teacher_workload_summary_get: {
+        parameters: {
+            query?: {
+                teacher_id?: string | null;
+                school_id?: string | null;
+                ethics_protocol_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TeacherWorkloadSummaryOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    validate_learning_improvement_claim_endpoint_api_v1_history_learning_outcomes_validate_learning_claim_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LearningImprovementClaimValidateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LearningImprovementClaimValidateOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_history_lesson_plans_api_v1_history_lesson_plans_get: {
+        parameters: {
+            query?: {
+                status?: string | null;
+                motif_id?: string | null;
+                entity_id?: string | null;
+                offset?: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoryLessonPlanListOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_history_lesson_plan_api_v1_history_lesson_plans_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HistoryLessonPlanCreateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoryLessonPlanOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_history_lesson_plan_api_v1_history_lesson_plans__plan_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plan_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoryLessonPlanOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_lesson_plan_printable_handout_api_v1_history_lesson_plans__plan_id__printable_handout_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plan_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PrintableHandoutOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    publish_history_lesson_plan_api_v1_history_lesson_plans__plan_id__publish_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plan_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoryLessonPlanOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    validate_lesson_wizard_endpoint_api_v1_history_lesson_wizard_validate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LessonWizardValidateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LessonWizardValidateOut"];
                 };
             };
             /** @description Validation Error */
@@ -36590,6 +41424,73 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ImperialMediaHotspotOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_low_bandwidth_offline_kit_api_v1_imperial_offline_kit_get: {
+        parameters: {
+            query?: {
+                /** @description Station cluster ID (standard_4, all_16, central_axis, ancestral_space, purple_forbidden, royal_living) */
+                cluster_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LowBandwidthOfflineKitResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    legacy_passport_unlock_api_v1_imperial_passport_unlock_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    [key: string]: unknown;
+                };
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */
@@ -39180,6 +44081,123 @@ export interface operations {
             };
         };
     };
+    get_verified_passport_status_api_v1_progress_passport_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VerifiedPassportOut"];
+                };
+            };
+        };
+    };
+    handle_passport_checkin_api_v1_progress_passport_check_in_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PassportCheckInRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PassportCheckInResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_classroom_passport_analytics_api_v1_progress_passport_classroom__classroom_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                classroom_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClassroomPassportAnalyticsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    verify_passport_qr_token_api_v1_progress_passport_verify_qr_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PassportVerificationRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PassportVerificationResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     submit_quiz_action_api_v1_progress_submit_quiz_post: {
         parameters: {
             query?: never;
@@ -39253,6 +44271,26 @@ export interface operations {
             };
         };
     };
+    get_quest_evidence_practice_summary_api_v1_quests_evidence_practice_summary_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuestEvidencePracticeSummaryOut"];
+                };
+            };
+        };
+    };
     get_quest_detail_api_v1_quests__quest_slug__get: {
         parameters: {
             query?: never;
@@ -39285,6 +44323,37 @@ export interface operations {
         };
     };
     claim_quest_reward_api_v1_quests__quest_slug__claim_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quest_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuestClaimRewardOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    claim_quest_reward_api_v1_quests__quest_slug__claim_reward_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -40186,6 +45255,70 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SpacedRepetitionCardOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_due_evidence_tasks_api_v1_reviews_evidence_due_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DueEvidenceTaskListOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    evaluate_evidence_task_api_v1_reviews_evidence_evaluate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EvidenceEvaluationIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvidenceEvaluationOut"];
                 };
             };
             /** @description Validation Error */
@@ -41619,6 +46752,59 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UrnExamAttemptOut"][];
+                };
+            };
+        };
+    };
+    get_user_fsrs_settings_api_v1_users_me_fsrs_settings_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FsrsSettingsOut"];
+                };
+            };
+        };
+    };
+    update_user_fsrs_settings_api_v1_users_me_fsrs_settings_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FsrsSettingsUpdateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FsrsSettingsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

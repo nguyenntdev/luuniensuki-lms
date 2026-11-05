@@ -627,7 +627,30 @@ def _objective_current_value(
             query = query.where(Motif.category == category)
         return session.execute(query).scalar_one()
 
-    if objective_type in ("source_evidence_task", "evidence_inquiry_task", "claim_evidence_task", "evidence_task"):
+    if objective_type in (
+        "adaptive_evidence_practice",
+        "fsrs_evidence_review",
+        "source_evidence_task",
+        "evidence_inquiry_task",
+        "claim_evidence_task",
+        "evidence_task",
+    ):
+        min_score = float(params.get("min_score") or 0.6)
+        adaptive_count = 0
+        try:
+            from ..models import AdaptiveEvidenceLog
+            adaptive_count = session.execute(
+                select(func.count(func.distinct(AdaptiveEvidenceLog.id)))
+                .where(
+                    AdaptiveEvidenceLog.user_id == user.id,
+                    AdaptiveEvidenceLog.abuse_detected.is_(False),
+                    AdaptiveEvidenceLog.evaluation_score >= min_score,
+                )
+            ).scalar_one() or 0
+        except Exception:
+            adaptive_count = 0
+
+        inquiry_count = 0
         try:
             from ..history_inquiry_models import (
                 HistoricalInquirySubmission,
@@ -643,7 +666,7 @@ def _objective_current_value(
             if params.get("min_status") == "approved":
                 status_filter = [InquirySubmissionStatus.approved.value]
 
-            return session.execute(
+            inquiry_count = session.execute(
                 select(func.count(func.distinct(HistoricalInquirySubmission.id)))
                 .outerjoin(
                     HistoricalInquiryGroupMember,
@@ -656,9 +679,11 @@ def _objective_current_value(
                         HistoricalInquiryGroupMember.user_id == user.id,
                     ),
                 )
-            ).scalar_one()
+            ).scalar_one() or 0
         except Exception:
-            return 0
+            inquiry_count = 0
+
+        return adaptive_count + inquiry_count
 
     if objective_type == "discover_category":
         category = _normalize_category(params.get("category"))
@@ -1134,6 +1159,21 @@ def _ensure_class_access(current_user: User, classroom: Classroom) -> None:
         current_user.role == UserRole.teacher
         and classroom.teacher_id == current_user.id
     ):
+        if not getattr(current_user, "is_school_verified", True):
+            raise HTTPException(
+                status_code=403,
+                detail="UNVERIFIED_TEACHER_ACCESS_DENIED: Unverified school users cannot access real student PII or live class records.",
+            )
+        if classroom.school_id and hasattr(current_user, "school_memberships") and current_user.school_memberships:
+            for m in current_user.school_memberships:
+                if m.school_id == classroom.school_id and (
+                    getattr(m, "is_verified", True) is False
+                    or getattr(m, "verification_status", "verified") in ("unverified", "pending", "rejected")
+                ):
+                    raise HTTPException(
+                        status_code=403,
+                        detail="UNVERIFIED_TEACHER_ACCESS_DENIED: Unverified school users cannot access real student PII or live class records.",
+                    )
         return
     raise HTTPException(status_code=403, detail="Not authorized")
 

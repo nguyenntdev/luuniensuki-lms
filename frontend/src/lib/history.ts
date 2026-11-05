@@ -1007,3 +1007,292 @@ export function reliefThumbnailUrl(
     "/assets/ban-duc-noi/CAO%20DINH/CAO%20%C4%90%E1%BB%88NH.jpg"
   );
 }
+
+// --------------------------------------------------------------------------- //
+// Multilingual Pedagogical Glossary & Epigraphy Supports (V5-T098 / W09-A08)
+// --------------------------------------------------------------------------- //
+
+export interface TranslationProvenance {
+  origin: string;
+  translator_or_reviewer?: string | null;
+  reviewed_at?: string | null;
+  citation_locator?: string | null;
+  source_title?: string | null;
+  is_machine_translated?: boolean;
+  is_uncertain?: boolean;
+  uncertainty_label?: string | null;
+  confidence?: number | null;
+  notes?: string | null;
+  [key: string]: unknown;
+}
+
+export interface BilingualCitationLink {
+  source_id?: string | null;
+  title_vi?: string | null;
+  title_en?: string | null;
+  author?: string | null;
+  publication_year?: number | string | null;
+  locator?: string | null;
+  url?: string | null;
+  [key: string]: unknown;
+}
+
+export interface HistoryGlossaryItem {
+  id?: string;
+  term_key: string;
+  term_vi: string;
+  term_en: string;
+  term_han_nom?: string | null;
+  reading_quoc_ngu?: string | null;
+  category?: string;
+  definition_vi: string;
+  definition_en: string;
+  contextual_usage_vi?: string | null;
+  contextual_usage_en?: string | null;
+  source_id?: string | null;
+  citation_locator?: string | null;
+  bilingual_citation?: BilingualCitationLink | null;
+  review_status?: string;
+  origin?: string;
+  is_machine_translated?: boolean;
+  is_uncertain?: boolean;
+  uncertainty_label?: string | null;
+  epigrapher_signoff?: string | null;
+  translation_provenance?: TranslationProvenance | null;
+  related_entity_slugs?: string[];
+  created_at?: string;
+  updated_at?: string;
+  [key: string]: unknown;
+}
+
+export type HistoricalGlossaryTerm = HistoryGlossaryItem;
+
+export const GLOSSARY_CATEGORY_LABELS: Record<string, { vi: string; en: string }> = {
+  relic: { vi: "Bảo vật / Đỉnh đồng", en: "Relic / Bronze Urn" },
+  epigraphy: { vi: "Minh văn / Văn bia", en: "Epigraphy / Inscriptions" },
+  architecture: { vi: "Kiến trúc cung đình", en: "Imperial Architecture" },
+  ritual: { vi: "Nghi lễ / Tế tự", en: "Court Rituals / Ceremonies" },
+  symbolism: { vi: "Biểu tượng học", en: "Symbolism / Cosmology" },
+  geography: { vi: "Địa lý sơn hà", en: "Geography & Sacred Landscapes" },
+  flora_fauna: { vi: "Sản vật động thực vật", en: "Flora & Fauna / Regional Produce" },
+  technique: { vi: "Kỹ nghệ / Mỹ thuật", en: "Craftsmanship & Imperial Arts" },
+  governance: { vi: "Thiết chế / Điển chế", en: "Governance & Imperial Institutions" },
+  general: { vi: "Thuật ngữ chung", en: "General Heritage Terms" },
+};
+
+export const TRANSLATION_ORIGIN_LABELS: Record<string, { vi: string; en: string }> = {
+  human_epigrapher: { vi: "Chuyên gia Hán–Nôm thẩm định", en: "Epigrapher Verified" },
+  scholarly_lexicon: { vi: "Thư tịch / Từ điển quy chuẩn", en: "Scholarly Lexicon" },
+  machine_translated: { vi: "Bản dịch máy tự động", en: "Machine Translated" },
+  ai_generated: { vi: "AI tạo lập sơ bộ", en: "AI Generated Draft" },
+  provisional_draft: { vi: "Bản thảo sơ bộ", en: "Provisional Draft" },
+  unspecified_seed: { vi: "Dữ liệu ban đầu", en: "Seed Record" },
+};
+
+export const GLOSSARY_REVIEW_STATUS_LABELS: Record<string, { vi: string; en: string }> = {
+  verified: { vi: "Đã thẩm định", en: "Verified" },
+  unreviewed: { vi: "Chưa thẩm định", en: "Unreviewed" },
+  provisional: { vi: "Tạm thời", en: "Provisional" },
+  uncertain: { vi: "Đang khảo cứu", en: "Uncertain" },
+  disputed: { vi: "Có tranh luận", en: "Disputed" },
+  rejected: { vi: "Từ chối", en: "Rejected" },
+};
+
+const DISQUALIFIED_GLOSSARY_TOKENS = new Set([
+  "unknown",
+  "none",
+  "n/a",
+  "na",
+  "null",
+  "undefined",
+  "todo",
+  "tbd",
+  "placeholder",
+  "fake",
+  "dummy",
+  "test",
+  "untranslated",
+  "translation pending",
+  "chua ro",
+  "chua co",
+  "chưa rõ",
+  "chưa dịch",
+  "dang cap nhat",
+  "đang cập nhật",
+]);
+
+export function asGlossaryList(payload: unknown): HistoryGlossaryItem[] {
+  if (!payload || typeof payload !== "object") return [];
+  if (Array.isArray(payload)) {
+    return payload.filter((item): item is HistoryGlossaryItem => Boolean(item && typeof item === "object"));
+  }
+  const obj = payload as { items?: unknown };
+  if (Array.isArray(obj.items)) {
+    return obj.items.filter((item): item is HistoryGlossaryItem => Boolean(item && typeof item === "object"));
+  }
+  return [];
+}
+
+export function asGlossaryItem(payload: unknown): HistoryGlossaryItem | null {
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) return null;
+  return payload as HistoryGlossaryItem;
+}
+
+export function validateGlossaryTranslationIntegrity(item: Partial<HistoryGlossaryItem>): {
+  isValid: boolean;
+  isUncertain: boolean;
+  flags: string[];
+  uncertaintyLabel: string | null;
+} {
+  const flags: string[] = [];
+  let isUncertain = Boolean(item.is_uncertain);
+  let uncertaintyLabel: string | null = item.uncertainty_label || null;
+
+  const termVi = String(item.term_vi || "").trim();
+  const termEn = String(item.term_en || "").trim();
+  const defVi = String(item.definition_vi || "").trim();
+  const defEn = String(item.definition_en || "").trim();
+  const origin = String(item.origin || "").toLowerCase();
+  const isMachine = item.is_machine_translated === true || origin === "machine_translated";
+
+  // Check empty
+  if (!termVi) flags.push("MISSING_TERM_VI");
+  if (!termEn) flags.push("MISSING_TERM_EN");
+  if (!defVi) flags.push("MISSING_DEF_VI");
+  if (!defEn) flags.push("MISSING_DEF_EN");
+
+  // Check placeholders
+  const normTermEn = termEn.toLowerCase();
+  const normDefEn = defEn.toLowerCase();
+  if (DISQUALIFIED_GLOSSARY_TOKENS.has(normTermEn) || normTermEn.includes("placeholder")) {
+    flags.push("PLACEHOLDER_TERM_EN");
+    isUncertain = true;
+    if (!uncertaintyLabel) uncertaintyLabel = "Thuật ngữ tiếng Anh chứa ký tự giữ chỗ hoặc chưa dịch.";
+  }
+  if (DISQUALIFIED_GLOSSARY_TOKENS.has(normDefEn) || normDefEn.includes("translation pending")) {
+    flags.push("PLACEHOLDER_DEF_EN");
+    isUncertain = true;
+    if (!uncertaintyLabel) uncertaintyLabel = "Định nghĩa tiếng Anh chứa ký tự giữ chỗ.";
+  }
+
+  // Check untranslated duplication: Vietnamese copied into English
+  if (defVi && defEn && defVi.length > 20 && defVi.toLowerCase() === defEn.toLowerCase()) {
+    flags.push("UNTRANSLATED_DUPLICATION");
+    isUncertain = true;
+    if (!uncertaintyLabel) uncertaintyLabel = "Định nghĩa tiếng Anh bị trùng lặp nguyên bản tiếng Việt (chưa dịch).";
+  }
+
+  // Machine translated without sign-off
+  if (isMachine && !item.epigrapher_signoff) {
+    flags.push("UNREVIEWED_MACHINE_TRANSLATION");
+    isUncertain = true;
+    if (!uncertaintyLabel) uncertaintyLabel = "Bản dịch máy tự động — chưa qua thẩm định chuyên gia Hán–Nôm.";
+  }
+
+  // Status unreviewed or provisional
+  const status = String(item.review_status || "").toLowerCase();
+  if (status === "unreviewed" || status === "provisional" || status === "uncertain") {
+    isUncertain = true;
+    if (!uncertaintyLabel) uncertaintyLabel = "Thuật ngữ đang trong quá trình khảo cứu và biên soạn đối chiếu.";
+  }
+
+  const isValid = flags.length === 0;
+  return {
+    isValid,
+    isUncertain,
+    flags,
+    uncertaintyLabel,
+  };
+}
+
+export function getGlossaryEpistemic(item: HistoryGlossaryItem | null | undefined): EpistemicCertaintyBadgeInfo {
+  if (!item) {
+    return {
+      code: "dang_khao_cuu",
+      label: "Đang khảo cứu",
+      tone: "uncertain",
+      description: "Không có dữ liệu thuật ngữ.",
+    };
+  }
+
+  const status = String(item.review_status || "").toLowerCase();
+  const isMachine = item.is_machine_translated === true || item.origin === "machine_translated";
+  const hasSignoff = Boolean(item.epigrapher_signoff && item.epigrapher_signoff.trim().length > 0);
+  const isUncertain = Boolean(item.is_uncertain);
+
+  // If flagged as uncertain, machine-translated without sign-off, or unreviewed status
+  if (isUncertain || isMachine || !hasSignoff || status !== "verified") {
+    return {
+      code: "dang_khao_cuu",
+      label: "Đang khảo cứu",
+      tone: "uncertain",
+      description:
+        item.uncertainty_label ||
+        (isMachine
+          ? "Bản dịch máy tự động — chưa qua thẩm định chuyên gia Hán–Nôm."
+          : "Thuật ngữ đang trong quá trình khảo cứu và thẩm định lịch sử."),
+    };
+  }
+
+  return {
+    code: "su_lieu_xac_thuc",
+    label: "Sử liệu xác thực",
+    tone: "documented",
+    description: `Đã thẩm định bởi chuyên gia (${item.epigrapher_signoff}). Nguồn: ${item.citation_locator || "Thư tịch triều Nguyễn"}.`,
+  };
+}
+
+export function formatBilingualCitation(
+  citation: BilingualCitationLink | null | undefined,
+  locale: "vi" | "en" = "vi",
+): string {
+  if (!citation) return "";
+  const parts: string[] = [];
+
+  const vi = citation.title_vi ? citation.title_vi.trim() : "";
+  const en = citation.title_en ? citation.title_en.trim() : "";
+
+  if (locale === "vi") {
+    if (vi) parts.push(vi);
+    if (en && en !== vi) parts.push(`(${en})`);
+  } else {
+    if (en) parts.push(en);
+    if (vi && vi !== en) parts.push(`(${vi})`);
+  }
+
+  if (citation.author) parts.push(`tg: ${citation.author}`);
+  if (citation.publication_year) parts.push(`(${citation.publication_year})`);
+  if (citation.locator) parts.push(citation.locator);
+
+  return parts.join(", ");
+}
+
+export function filterGlossaryTerms(
+  items: HistoryGlossaryItem[],
+  query: string,
+  options?: {
+    category?: string;
+    verifiedOnly?: boolean;
+  },
+): HistoryGlossaryItem[] {
+  if (!Array.isArray(items)) return [];
+  const q = deburr(query).trim().toLowerCase();
+  const cat = options?.category?.trim().toLowerCase();
+  const verifiedOnly = options?.verifiedOnly === true;
+
+  return items.filter((term) => {
+    if (cat && String(term.category || "").toLowerCase() !== cat) return false;
+    if (verifiedOnly && String(term.review_status || "").toLowerCase() !== "verified") return false;
+    if (!q) return true;
+
+    const matchVi = deburr(term.term_vi || "").toLowerCase().includes(q);
+    const matchEn = deburr(term.term_en || "").toLowerCase().includes(q);
+    const matchReading = deburr(term.reading_quoc_ngu || "").toLowerCase().includes(q);
+    const matchHan = String(term.term_han_nom || "").toLowerCase().includes(q);
+    const matchDefVi = deburr(term.definition_vi || "").toLowerCase().includes(q);
+    const matchDefEn = deburr(term.definition_en || "").toLowerCase().includes(q);
+
+    return matchVi || matchEn || matchReading || matchHan || matchDefVi || matchDefEn;
+  });
+}
+

@@ -49,6 +49,30 @@ class InquirySubmissionStatus(str, Enum):
     flagged = "flagged"
 
 
+class PilotConsentStatus(str, Enum):
+    pending = "pending"
+    verified = "verified"
+    withdrawn = "withdrawn"
+
+
+class TeacherWorkloadCategory(str, Enum):
+    optimal = "optimal"
+    acceptable = "acceptable"
+    excessive = "excessive"
+
+
+class TeacherActivityType(str, Enum):
+    preparation = "preparation"
+    inquiry_instruction = "inquiry_instruction"
+    rubric_grading = "rubric_grading"
+    reflection = "reflection"
+
+
+class RubricCalibrationStatus(str, Enum):
+    calibrated = "calibrated"
+    divergent_requires_review = "divergent_requires_review"
+
+
 # --------------------------------------------------------------------------- #
 # Standard Rubric Criteria for Historical Inquiry (S1-S4)
 # --------------------------------------------------------------------------- #
@@ -106,6 +130,21 @@ class InvalidRubricScoreError(LearningOutcomeError):
 
 class UnpairedAssessmentError(LearningOutcomeError):
     """Raised when pre/post assessment pairing is incomplete or misaligned."""
+    pass
+
+
+class GuardianConsentRequiredError(LearningOutcomeError):
+    """Raised when an empirical assessment or research metric lacks verified guardian consent."""
+    pass
+
+
+class GuardianConsentWithdrawnError(LearningOutcomeError):
+    """Raised when an empirical assessment is attempted after guardian consent has been withdrawn."""
+    pass
+
+
+class RubricCalibrationDivergentError(LearningOutcomeError):
+    """Raised when dual independent evaluations exceed maximum acceptable scoring divergence."""
     pass
 
 
@@ -257,3 +296,156 @@ def calculate_inter_rater_reliability(
     diff = abs(float(score_a) - float(score_b))
     agreement = max(0.0, 1.0 - (diff / max_score))
     return round(agreement, 4)
+
+
+def calculate_teacher_workload_category(
+    minutes_spent: float,
+    submissions_count: int = 0,
+    cognitive_load_rating: float = 50.0,
+) -> str:
+    """Categorize teacher workload based on time per submission and cognitive load.
+    
+    Standards:
+    - Optimal: <= 8 min/submission, cognitive load < 40, or total admin <= 60 min.
+    - Acceptable: 8-15 min/submission, cognitive load 40-70.
+    - Excessive: > 15 min/submission, cognitive load > 70, or total admin > 120 min.
+    """
+    mins = max(0.0, float(minutes_spent))
+    count = max(0, int(submissions_count))
+    c_load = max(0.0, min(100.0, float(cognitive_load_rating)))
+
+    if c_load > 70.0:
+        return TeacherWorkloadCategory.excessive.value
+
+    if count > 0:
+        mins_per_sub = mins / count
+        if mins_per_sub > 15.0:
+            return TeacherWorkloadCategory.excessive.value
+        elif mins_per_sub >= 8.0 or c_load >= 40.0:
+            return TeacherWorkloadCategory.acceptable.value
+        else:
+            return TeacherWorkloadCategory.optimal.value
+    else:
+        if mins > 120.0:
+            return TeacherWorkloadCategory.excessive.value
+        elif mins >= 60.0 or c_load >= 40.0:
+            return TeacherWorkloadCategory.acceptable.value
+        else:
+            return TeacherWorkloadCategory.optimal.value
+
+
+def calibrate_dual_rubric_scores(
+    scores_a: dict[str, float],
+    scores_b: dict[str, float],
+    max_score: float = 100.0,
+    tolerance_pct: float = 0.15,
+) -> dict[str, Any]:
+    """Perform calibration audit between two independent assessor evaluations.
+    
+    Calculates total scores, score divergence, inter-rater reliability,
+    and returns whether the evaluations meet calibration standards.
+    """
+    total_a = round(sum(float(v) for v in scores_a.values()), 2)
+    total_b = round(sum(float(v) for v in scores_b.values()), 2)
+    max_s = max(1.0, float(max_score))
+
+    diff = round(abs(total_a - total_b), 2)
+    divergence_pct = round(diff / max_s, 4)
+    agreement = calculate_inter_rater_reliability(total_a, total_b, max_s)
+
+    is_calibrated = divergence_pct <= float(tolerance_pct)
+    status = (
+        RubricCalibrationStatus.calibrated.value
+        if is_calibrated
+        else RubricCalibrationStatus.divergent_requires_review.value
+    )
+    consensus = round((total_a + total_b) / 2.0, 2) if is_calibrated else None
+
+    # Criteria breakdown
+    all_criteria = sorted(set(list(scores_a.keys()) + list(scores_b.keys())))
+    breakdown = {}
+    for crit in all_criteria:
+        ca = float(scores_a.get(crit, 0.0))
+        cb = float(scores_b.get(crit, 0.0))
+        breakdown[crit] = {
+            "score_a": ca,
+            "score_b": cb,
+            "difference": round(abs(ca - cb), 2),
+        }
+
+    return {
+        "score_a": total_a,
+        "score_b": total_b,
+        "score_difference": diff,
+        "divergence_pct": divergence_pct,
+        "inter_rater_agreement": agreement,
+        "tolerance_pct": tolerance_pct,
+        "status": status,
+        "consensus_score": consensus,
+        "criteria_breakdown": breakdown,
+    }
+
+
+def verify_guardian_consent_status(
+    consent_status: Optional[str],
+    participant_consent_required: bool = True,
+) -> None:
+    """Verify that participant has valid guardian consent when required.
+    
+    Raises:
+        GuardianConsentWithdrawnError: If consent was previously withdrawn.
+        GuardianConsentRequiredError: If consent is missing, pending, or unverified.
+    """
+    if not participant_consent_required:
+        return
+
+    status = (consent_status or "").strip().lower()
+    if status == PilotConsentStatus.withdrawn.value:
+        raise GuardianConsentWithdrawnError(
+            "Guardian informed consent has been withdrawn for this participant. Research participation is suspended."
+        )
+    if status != PilotConsentStatus.verified.value:
+        raise GuardianConsentRequiredError(
+            f"Participant requires verified guardian consent for empirical research. Current status: '{status or 'missing'}'."
+        )
+
+
+def verify_learning_improvement_claim_basis(
+    claim_type: str,
+    evidence_basis: str,
+) -> None:
+    """Enforce negative abuse invariant:
+    
+    Results based solely on subjective sentiment, feelings, or satisfaction surveys
+    CANNOT be labeled as evidence of learning improvement.
+    
+    Raises:
+        SubjectiveSurveyCannotProduceCausalMetricsError: If subjective basis is used.
+    """
+    claim = (claim_type or "").strip().lower()
+    basis = (evidence_basis or "").strip().lower()
+
+    learning_claim_types = {
+        "learning_improvement",
+        "causal_mastery",
+        "learning_gain",
+        "evidence_of_learning",
+        "academic_growth",
+    }
+    subjective_bases = {
+        "subjective_survey",
+        "sentiment_analysis",
+        "feelings_survey",
+        "likert_scale",
+        "satisfaction_rating",
+        "self_report_survey",
+        "google_forms_feelings",
+    }
+
+    if claim in learning_claim_types and basis in subjective_bases:
+        raise SubjectiveSurveyCannotProduceCausalMetricsError(
+            f"Results based solely on subjective sentiment or feelings surveys ('{evidence_basis}') "
+            f"cannot be labeled as evidence of learning improvement ('{claim_type}'). "
+            "Authoritative learning improvement evidence strictly requires objective pre/post source inquiry "
+            "assessments evaluated by independent calibrated rubric assessors."
+        )

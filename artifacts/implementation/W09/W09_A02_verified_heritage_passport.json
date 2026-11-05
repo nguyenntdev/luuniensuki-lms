@@ -1,0 +1,117 @@
+{
+  "ticket": "V5-T092",
+  "ticket_id": "V5-T092",
+  "wave": "W09",
+  "slot": "W09-A02",
+  "priority": "P2",
+  "classification": "NEW_PRODUCT_FEATURE",
+  "status": "COMPLETED",
+  "goal": "Verified heritage Passport in frontend/src/app/dai-noi/ho-chieu/ and backend/routers/progress.py.",
+  "timestamp": "2026-11-05T09:45:00Z",
+  "summary": "Implemented verified Heritage Passport architecture with server-authenticated check-in and QR code cryptographic provenance verification (HMAC-SHA256). Added database model HeritagePassportStamp and additive migration 0074_heritage_passport_stamps.py. Enforced key invariant where a physical or authorized visit stamp never grants academic curriculum mastery (UnlockStatus.mastered), which remains strictly gated by passing academic assessment quizzes (score >= 80%). Guarded against negative abuse by ensuring client-claimed statuses (client_claimed_status='mastered') and fake local client completions in browser localStorage are strictly excluded from teacher analytics and verified passport stamps.",
+  "invariants_enforced": {
+    "server_authenticated_checkin": "All passport stamps require authenticated server verification; unauthenticated check-ins return HTTP 401 Unauthorized.",
+    "qr_code_provenance_verification": "Validates HMAC-SHA256 signatures issued by authorized heritage bodies (e.g. HMCC_HUE_HERITAGE); rejects tampered signatures, expired tokens, unrecognized authorities, and mismatched sites with HTTP 400 Bad Request.",
+    "visit_stamp_distinct_from_assessed_mastery": "A verified visit stamp records physical/verified presence, generating an immutable SHA-256 provenance hash; it NEVER grants UnlockStatus.mastered or mastery XP.",
+    "negative_abuse_fake_client_claim_defense": "Client-claimed statuses (e.g. client_claimed_status='mastered') passed during check-in are strictly ignored, ensuring no shortcut past academic evaluations.",
+    "negative_abuse_fake_local_completion_excluded": "Teacher analytics (/api/v1/progress/passport/classroom/{classroom_id}) queries strictly server-persisted verified stamps (is_verified=True); fake localStorage client modifications are completely excluded.",
+    "anti_replay_idempotent_visits": "Repeated check-ins increment checkin_count and update last_visited_at, but award 0 duplicate XP.",
+    "monument_catalog_parity": "All 16 monuments in Hue Imperial City cataloged across 4 spatial zones with Vietnamese names, Han-Nom names, and historical construction metadata."
+  },
+  "changes": [
+    {
+      "file": "backend/models.py",
+      "description": "Added HeritagePassportStamp model with UUID primary key, foreign key to users.id, site_slug, zone_slug, verification_method, provenance_hash, authority, checkin_count, is_verified, and unique constraint on (user_id, site_slug)."
+    },
+    {
+      "file": "migrations/versions/0074_heritage_passport_stamps.py",
+      "description": "Created purely additive migration for heritage_passport_stamps table, unique constraints, and indexes."
+    },
+    {
+      "file": "tests/v5/conftest.py",
+      "description": "Updated test database bootstrap DDL to ensure heritage_passport_stamps table and indexes exist during isolated test executions."
+    },
+    {
+      "file": "backend/services/heritage_passport.py",
+      "description": "Created comprehensive heritage passport domain service featuring IMPERIAL_MONUMENTS_CATALOG (16 monuments across 4 zones), generate_qr_token, verify_qr_token with HMAC-SHA256 cryptographic provenance checks, process_server_checkin enforcing visit stamp != assessed mastery, get_verified_passport, and get_teacher_classroom_passport_analytics excluding fake client completions."
+    },
+    {
+      "file": "backend/apischemas/progress.py",
+      "description": "Added Pydantic schemas: PassportCheckInRequest, PassportStampDetailOut, PassportCheckInResponse, PassportVerificationRequest, PassportVerificationResponse, VerifiedPassportOut, StudentPassportSummaryOut, and ClassroomPassportAnalyticsOut."
+    },
+    {
+      "file": "backend/routers/progress.py",
+      "description": "Added endpoints: POST /api/v1/progress/passport/check-in, POST /api/v1/progress/passport/verify-qr, GET /api/v1/progress/passport, and GET /api/v1/progress/passport/classroom/{classroom_id}."
+    },
+    {
+      "file": "backend/routers/imperial.py",
+      "description": "Added backward-compatible POST /api/v1/imperial/passport/unlock bridge endpoint for legacy frontend background syncing."
+    },
+    {
+      "file": "frontend/src/app/dai-noi/ho-chieu/PassportClient.tsx",
+      "description": "Enhanced PassportClient with server-authenticated check-in dialog, QR provenance verification, verified badge indicators, distinct display of verified visit stamps vs assessed masteries, and heritage authentication policy banner."
+    },
+    {
+      "file": "tests/v5/test_v5_t092.py",
+      "description": "Created comprehensive 10-test suite verifying catalog completeness, server-authenticated check-in, anti-replay idempotency, cryptographic QR provenance verification and tamper resistance, visit stamp distinction from assessed mastery, negative abuse fake claim defense, and fake local completion exclusion from teacher analytics."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t092.py -v",
+    "tests_total": 10,
+    "tests_passed": 10,
+    "tests_failed": 0,
+    "test_cases": [
+      {
+        "name": "test_all_16_monuments_catalog_validity",
+        "result": "PASSED",
+        "description": "Verifies all 16 monuments in Hue Imperial City are cataloged across 4 spatial zones."
+      },
+      {
+        "name": "test_server_authenticated_checkin_success",
+        "result": "PASSED",
+        "description": "Verifies server-authenticated check-in with genuine QR token creates verified stamp with provenance hash."
+      },
+      {
+        "name": "test_anti_replay_and_idempotent_checkin",
+        "result": "PASSED",
+        "description": "Verifies repeated check-ins increment visit count but award 0 duplicate XP."
+      },
+      {
+        "name": "test_qr_code_provenance_verification_success_and_tampering",
+        "result": "PASSED",
+        "description": "Verifies rejection of tampered signatures, expired tokens, and site mismatches."
+      },
+      {
+        "name": "test_qr_unauthorized_authority_rejected",
+        "result": "PASSED",
+        "description": "Verifies rejection of QR tokens issued by unauthorized authorities."
+      },
+      {
+        "name": "test_visit_stamp_distinct_from_assessed_mastery",
+        "result": "PASSED",
+        "description": "Verifies physical visit stamp does NOT grant academic curriculum mastery."
+      },
+      {
+        "name": "test_negative_abuse_fake_client_claim_ignored",
+        "result": "PASSED",
+        "description": "Verifies spoofed client_claimed_status='mastered' is strictly ignored."
+      },
+      {
+        "name": "test_negative_abuse_fake_local_completion_excluded_from_teacher_analytics",
+        "result": "PASSED",
+        "description": "Verifies fake localStorage completions are excluded from teacher classroom analytics."
+      },
+      {
+        "name": "test_unauthenticated_and_cross_teacher_access_control",
+        "result": "PASSED",
+        "description": "Verifies unauthenticated calls return 401 and cross-teacher access returns 403."
+      },
+      {
+        "name": "test_legacy_unlock_route_compatibility",
+        "result": "PASSED",
+        "description": "Verifies legacy /api/v1/imperial/passport/unlock endpoint responds gracefully."
+      }
+    ]
+  }
+}

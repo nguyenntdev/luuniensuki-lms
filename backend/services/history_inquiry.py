@@ -16,11 +16,17 @@ from sqlalchemy.orm import Session, selectinload
 
 from ..apischemas.history_inquiry import (
     AddGroupMemberIn,
+    BoardRequestRevisionIn,
+    BoardResubmitIn,
+    ComparativeLinkCreate,
     HistoricalInquiryActivityCreate,
     HistoricalInquiryGroupCreate,
     HistoricalInquirySubmissionUpdate,
     HistoricalInquiryTeacherModerationIn,
+    InquiryBoardCardCreate,
+    InquiryBoardCardUpdate,
     InquiryEvidenceItemIn,
+    TeacherInlineFeedbackCreate,
 )
 from ..errors import AppError
 from ..history_inquiry_models import (
@@ -524,6 +530,16 @@ def submit_group_inquiry(
     submission.status = InquirySubmissionStatus.submitted.value
     submission.submitted_at = datetime.now(timezone.utc)
     submission.submitted_by_id = user.id
+    hist = list(submission.revision_history or [])
+    hist.append({
+        "cycle": submission.revision_cycle,
+        "action": "submitted",
+        "actor_id": str(user.id),
+        "actor_name": user.display_name or user.username or "Student",
+        "notes": "Collaborative inquiry submission",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    })
+    submission.revision_history = hist
     submission.version += 1
     submission.updated_at = datetime.now(timezone.utc)
     db.commit()
@@ -564,8 +580,611 @@ def moderate_inquiry_submission(
 
     submission.moderated_by_id = user.id
     submission.moderated_at = datetime.now(timezone.utc)
+    hist = list(submission.revision_history or [])
+    hist.append({
+        "cycle": submission.revision_cycle,
+        "action": payload.status,
+        "actor_id": str(user.id),
+        "actor_name": user.display_name or user.username or "Teacher",
+        "notes": payload.teacher_feedback,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    })
+    submission.revision_history = hist
     submission.version += 1
     submission.updated_at = datetime.now(timezone.utc)
     db.commit()
     db.refresh(submission)
     return submission
+
+
+# --------------------------------------------------------------------------- #
+# Evidence Board for Groups (V5-T093 / Wave W09, Slot A03)
+# --------------------------------------------------------------------------- #
+def get_inquiry_board(
+    db: Session,
+    user: User,
+    group_id: UUID,
+) -> dict[str, Any]:
+    """Retrieve full collaborative evidence board with support/refute cards, comparative links, and teacher feedback."""
+    group = db.get(HistoricalInquiryGroup, group_id)
+    if not group:
+        raise AppError("GROUP_NOT_FOUND", "Inquiry group not found", 404)
+
+    activity = db.get(HistoricalInquiryActivity, group.activity_id)
+    if not activity:
+        raise AppError("ACTIVITY_NOT_FOUND", "Inquiry activity not found", 404)
+
+    submission = get_group_submission(db, user, group_id)
+
+    # Collect and format cards with inline feedback
+    raw_cards = list(submission.evidence_items or [])
+    raw_feedback = list(submission.inline_feedback or [])
+
+    formatted_cards = []
+    for idx, card in enumerate(raw_cards):
+        cid = str(card.get("id", ""))
+        card_feedback = [
+            fb for fb in raw_feedback
+            if fb.get("target_type") == "card" and str(fb.get("target_id")) == cid
+        ]
+        support_type = str(card.get("support_type", "supports"))
+        default_col = "supporting" if support_type == "supports" else "refuting" if support_type == "refutes" else "unresolved"
+        formatted_cards.append({
+            "id": cid,
+            "source_id": str(card.get("source_id", "")),
+            "source_title": str(card.get("source_title", "")),
+            "author": card.get("author"),
+            "locator": str(card.get("locator", "")),
+            "excerpt": str(card.get("excerpt", "")),
+            "claim_id": str(card["claim_id"]) if card.get("claim_id") else None,
+            "claim_title": card.get("claim_title"),
+            "support_type": support_type,
+            "board_column": str(card.get("board_column", default_col)),
+            "position": int(card.get("position", idx)),
+            "linked_evidence_id": str(card["linked_evidence_id"]) if card.get("linked_evidence_id") else None,
+            "comparison_notes": card.get("comparison_notes"),
+            "inline_feedback": card_feedback,
+            "interpretation_note": str(card.get("interpretation_note", "")),
+            "contributed_by_user_id": str(card.get("contributed_by_user_id", "")),
+            "contributed_by_name": str(card.get("contributed_by_name", "Anonymous")),
+            "contributed_at": str(card.get("contributed_at", "")),
+        })
+
+    return {
+        "group_id": group.id,
+        "group_name": group.name,
+        "activity_id": activity.id,
+        "activity_title": activity.title,
+        "hypothesis": submission.hypothesis or "",
+        "synthesis_argument": submission.synthesis_argument or "",
+        "epistemic_rating": submission.epistemic_rating or "dang_khao_cuu",
+        "status": submission.status,
+        "privacy_mode": submission.privacy_mode,
+        "revision_cycle": getattr(submission, "revision_cycle", 1) or 1,
+        "version": submission.version,
+        "columns": ["supporting", "refuting", "synthesis", "unresolved"],
+        "cards": formatted_cards,
+        "comparative_links": list(submission.comparative_links or []),
+        "inline_feedback": raw_feedback,
+        "revision_history": list(submission.revision_history or []),
+        "teacher_feedback": submission.teacher_feedback,
+        "score": submission.score,
+        "rubric_evaluation": submission.rubric_evaluation or {},
+        "updated_at": submission.updated_at,
+    }
+
+
+def add_board_card(
+    db: Session,
+    user: User,
+    group_id: UUID,
+    payload: InquiryBoardCardCreate,
+) -> dict[str, Any]:
+    """Add an evidence card to the collaborative inquiry board.
+
+    Strict Negative Abuse: Students outside the group cannot edit or inject evidence into the board (403 Forbidden).
+    """
+    group = db.get(HistoricalInquiryGroup, group_id)
+    if not group:
+        raise AppError("GROUP_NOT_FOUND", "Inquiry group not found", 404)
+
+    # STRICT NEGATIVE ABUSE CHECK
+    if not is_group_member(db, user.id, group.id):
+        raise AppError(
+            "FORBIDDEN_SCOPE",
+            "Negative abuse violation: Group member cannot alter another group's collaborative inquiry submission",
+            403,
+        )
+
+    submission = db.execute(
+        select(HistoricalInquirySubmission).where(HistoricalInquirySubmission.group_id == group_id)
+    ).scalar_one_or_none()
+    if not submission:
+        raise AppError("SUBMISSION_NOT_FOUND", "Inquiry submission not found", 404)
+
+    if submission.status in (InquirySubmissionStatus.submitted.value, InquirySubmissionStatus.approved.value):
+        raise AppError("SUBMISSION_LOCKED", "Cannot alter evidence while submission is locked", 400)
+
+    # Validate source exists
+    source = db.get(HistoricalSource, payload.source_id)
+    if not source:
+        raise AppError("SOURCE_NOT_FOUND", f"Authoritative historical source '{payload.source_id}' not found", 404)
+
+    # Validate claim exists (if provided)
+    claim = None
+    if payload.claim_id:
+        claim = db.get(HistoricalClaim, payload.claim_id)
+        if not claim:
+            raise AppError("CLAIM_NOT_FOUND", f"Authoritative historical claim '{payload.claim_id}' not found", 404)
+
+    # Auto-assign column if omitted
+    col = payload.board_column
+    if not col:
+        if payload.support_type == "supports":
+            col = "supporting"
+        elif payload.support_type == "refutes":
+            col = "refuting"
+        elif payload.support_type == "disputed":
+            col = "unresolved"
+        else:
+            col = "synthesis"
+
+    card_id = str(uuid.uuid4())
+    current_items = list(submission.evidence_items or [])
+    pos = payload.position if payload.position is not None else len(current_items)
+
+    card = {
+        "id": card_id,
+        "source_id": str(source.id),
+        "source_title": source.title,
+        "author": source.author_text,
+        "locator": payload.locator,
+        "excerpt": payload.excerpt,
+        "claim_id": str(claim.id) if claim else None,
+        "claim_title": claim.statement_vi if claim else None,
+        "support_type": payload.support_type,
+        "board_column": col,
+        "position": pos,
+        "linked_evidence_id": payload.linked_evidence_id,
+        "comparison_notes": payload.comparison_notes,
+        "interpretation_note": payload.interpretation_note,
+        "contributed_by_user_id": str(user.id),
+        "contributed_by_name": user.display_name or user.username or "Anonymous Peer",
+        "contributed_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+    current_items.append(card)
+    submission.evidence_items = current_items
+    submission.version += 1
+    submission.updated_at = datetime.now(timezone.utc)
+    db.commit()
+    db.refresh(submission)
+
+    card["inline_feedback"] = []
+    return card
+
+
+def update_board_card(
+    db: Session,
+    user: User,
+    group_id: UUID,
+    card_id: str,
+    payload: InquiryBoardCardUpdate,
+) -> dict[str, Any]:
+    """Update evidence card positioning, column, comparative notes, or interpretation on the board.
+
+    Strict Negative Abuse: Only group members can alter board cards (403 Forbidden).
+    """
+    group = db.get(HistoricalInquiryGroup, group_id)
+    if not group:
+        raise AppError("GROUP_NOT_FOUND", "Inquiry group not found", 404)
+
+    if not is_group_member(db, user.id, group.id):
+        raise AppError(
+            "FORBIDDEN_SCOPE",
+            "Negative abuse violation: Group member cannot alter another group's collaborative inquiry submission",
+            403,
+        )
+
+    submission = db.execute(
+        select(HistoricalInquirySubmission).where(HistoricalInquirySubmission.group_id == group_id)
+    ).scalar_one_or_none()
+    if not submission:
+        raise AppError("SUBMISSION_NOT_FOUND", "Inquiry submission not found", 404)
+
+    if submission.status in (InquirySubmissionStatus.submitted.value, InquirySubmissionStatus.approved.value):
+        raise AppError("SUBMISSION_LOCKED", "Cannot alter evidence while submission is locked", 400)
+
+    current_items = list(submission.evidence_items or [])
+    card_index = -1
+    for idx, c in enumerate(current_items):
+        if c.get("id") == card_id:
+            card_index = idx
+            break
+
+    if card_index < 0:
+        raise AppError("EVIDENCE_NOT_FOUND", f"Evidence card '{card_id}' not found", 404)
+
+    target_card = dict(current_items[card_index])
+    if payload.support_type is not None:
+        target_card["support_type"] = payload.support_type
+    if payload.board_column is not None:
+        target_card["board_column"] = payload.board_column
+    if payload.position is not None:
+        target_card["position"] = payload.position
+    if payload.linked_evidence_id is not None:
+        target_card["linked_evidence_id"] = payload.linked_evidence_id
+    if payload.comparison_notes is not None:
+        target_card["comparison_notes"] = payload.comparison_notes
+    if payload.interpretation_note is not None:
+        target_card["interpretation_note"] = payload.interpretation_note
+    if payload.locator is not None:
+        target_card["locator"] = payload.locator
+    if payload.excerpt is not None:
+        target_card["excerpt"] = payload.excerpt
+
+    current_items[card_index] = target_card
+    submission.evidence_items = current_items
+    submission.version += 1
+    submission.updated_at = datetime.now(timezone.utc)
+    db.commit()
+    db.refresh(submission)
+
+    raw_feedback = list(submission.inline_feedback or [])
+    target_card["inline_feedback"] = [
+        fb for fb in raw_feedback
+        if fb.get("target_type") == "card" and str(fb.get("target_id")) == card_id
+    ]
+    return target_card
+
+
+def remove_board_card(
+    db: Session,
+    user: User,
+    group_id: UUID,
+    card_id: str,
+) -> bool:
+    """Delete an evidence card from the board. Only group members allowed."""
+    group = db.get(HistoricalInquiryGroup, group_id)
+    if not group:
+        raise AppError("GROUP_NOT_FOUND", "Inquiry group not found", 404)
+
+    if not is_group_member(db, user.id, group.id):
+        raise AppError(
+            "FORBIDDEN_SCOPE",
+            "Negative abuse violation: Group member cannot alter another group's collaborative inquiry submission",
+            403,
+        )
+
+    submission = db.execute(
+        select(HistoricalInquirySubmission).where(HistoricalInquirySubmission.group_id == group_id)
+    ).scalar_one_or_none()
+    if not submission:
+        raise AppError("SUBMISSION_NOT_FOUND", "Inquiry submission not found", 404)
+
+    if submission.status in (InquirySubmissionStatus.submitted.value, InquirySubmissionStatus.approved.value):
+        raise AppError("SUBMISSION_LOCKED", "Cannot alter evidence while submission is locked", 400)
+
+    current_items = list(submission.evidence_items or [])
+    filtered_items = [c for c in current_items if c.get("id") != card_id]
+    if len(filtered_items) == len(current_items):
+        raise AppError("EVIDENCE_NOT_FOUND", f"Evidence card '{card_id}' not found", 404)
+
+    submission.evidence_items = filtered_items
+    submission.version += 1
+    submission.updated_at = datetime.now(timezone.utc)
+    db.commit()
+    return True
+
+
+def add_comparative_link(
+    db: Session,
+    user: User,
+    group_id: UUID,
+    payload: ComparativeLinkCreate,
+) -> dict[str, Any]:
+    """Create a comparative source evidence link between two sources or source and claim.
+
+    Strict Negative Abuse: Students outside the group cannot create comparative links (403 Forbidden).
+    """
+    group = db.get(HistoricalInquiryGroup, group_id)
+    if not group:
+        raise AppError("GROUP_NOT_FOUND", "Inquiry group not found", 404)
+
+    if not is_group_member(db, user.id, group.id):
+        raise AppError(
+            "FORBIDDEN_SCOPE",
+            "Negative abuse violation: Group member cannot alter another group's collaborative inquiry submission",
+            403,
+        )
+
+    submission = db.execute(
+        select(HistoricalInquirySubmission).where(HistoricalInquirySubmission.group_id == group_id)
+    ).scalar_one_or_none()
+    if not submission:
+        raise AppError("SUBMISSION_NOT_FOUND", "Inquiry submission not found", 404)
+
+    if submission.status in (InquirySubmissionStatus.submitted.value, InquirySubmissionStatus.approved.value):
+        raise AppError("SUBMISSION_LOCKED", "Cannot alter evidence while submission is locked", 400)
+
+    source_a = db.get(HistoricalSource, payload.source_id_a)
+    if not source_a:
+        raise AppError("SOURCE_NOT_FOUND", f"Source A '{payload.source_id_a}' not found", 404)
+
+    source_b = None
+    if payload.source_id_b:
+        source_b = db.get(HistoricalSource, payload.source_id_b)
+        if not source_b:
+            raise AppError("SOURCE_NOT_FOUND", f"Source B '{payload.source_id_b}' not found", 404)
+
+    claim = None
+    if payload.claim_id:
+        claim = db.get(HistoricalClaim, payload.claim_id)
+        if not claim:
+            raise AppError("CLAIM_NOT_FOUND", f"Claim '{payload.claim_id}' not found", 404)
+
+    link_id = str(uuid.uuid4())
+    link = {
+        "id": link_id,
+        "source_id_a": str(source_a.id),
+        "source_title_a": source_a.title,
+        "source_id_b": str(source_b.id) if source_b else None,
+        "source_title_b": source_b.title if source_b else None,
+        "claim_id": str(claim.id) if claim else None,
+        "claim_title": claim.statement_vi if claim else None,
+        "relation_type": payload.relation_type,
+        "rationale": payload.rationale,
+        "created_by_user_id": str(user.id),
+        "created_by_name": user.display_name or user.username or "Anonymous Peer",
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+    current_links = list(submission.comparative_links or [])
+    current_links.append(link)
+    submission.comparative_links = current_links
+    submission.version += 1
+    submission.updated_at = datetime.now(timezone.utc)
+    db.commit()
+    db.refresh(submission)
+    return link
+
+
+def remove_comparative_link(
+    db: Session,
+    user: User,
+    group_id: UUID,
+    link_id: str,
+) -> bool:
+    """Remove a comparative link from the evidence board."""
+    group = db.get(HistoricalInquiryGroup, group_id)
+    if not group:
+        raise AppError("GROUP_NOT_FOUND", "Inquiry group not found", 404)
+
+    if not is_group_member(db, user.id, group.id):
+        raise AppError(
+            "FORBIDDEN_SCOPE",
+            "Negative abuse violation: Group member cannot alter another group's collaborative inquiry submission",
+            403,
+        )
+
+    submission = db.execute(
+        select(HistoricalInquirySubmission).where(HistoricalInquirySubmission.group_id == group_id)
+    ).scalar_one_or_none()
+    if not submission:
+        raise AppError("SUBMISSION_NOT_FOUND", "Inquiry submission not found", 404)
+
+    if submission.status in (InquirySubmissionStatus.submitted.value, InquirySubmissionStatus.approved.value):
+        raise AppError("SUBMISSION_LOCKED", "Cannot alter evidence while submission is locked", 400)
+
+    current_links = list(submission.comparative_links or [])
+    filtered_links = [l for l in current_links if l.get("id") != link_id]
+    if len(filtered_links) == len(current_links):
+        raise AppError("LINK_NOT_FOUND", f"Comparative link '{link_id}' not found", 404)
+
+    submission.comparative_links = filtered_links
+    submission.version += 1
+    submission.updated_at = datetime.now(timezone.utc)
+    db.commit()
+    return True
+
+
+def add_teacher_inline_feedback(
+    db: Session,
+    user: User,
+    group_id: UUID,
+    payload: TeacherInlineFeedbackCreate,
+) -> dict[str, Any]:
+    """Classroom teacher adds inline feedback annotation to an evidence card or board section.
+
+    Strict Role Check: Students cannot post teacher feedback (403 Forbidden).
+    """
+    group = db.get(HistoricalInquiryGroup, group_id)
+    if not group:
+        raise AppError("GROUP_NOT_FOUND", "Inquiry group not found", 404)
+
+    classroom = db.get(Classroom, group.classroom_id) if group.classroom_id else None
+    if not is_teacher_or_staff(user, classroom):
+        raise AppError(
+            "FORBIDDEN_SCOPE",
+            "Only classroom teacher or staff can provide inline feedback on inquiry board",
+            403,
+        )
+
+    submission = db.execute(
+        select(HistoricalInquirySubmission).where(HistoricalInquirySubmission.group_id == group_id)
+    ).scalar_one_or_none()
+    if not submission:
+        raise AppError("SUBMISSION_NOT_FOUND", "Inquiry submission not found", 404)
+
+    feedback_id = str(uuid.uuid4())
+    fb = {
+        "id": feedback_id,
+        "target_type": payload.target_type,
+        "target_id": payload.target_id,
+        "teacher_id": str(user.id),
+        "teacher_name": user.display_name or user.username or "Teacher",
+        "comment": payload.comment,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "resolved": False,
+    }
+
+    current_fb = list(submission.inline_feedback or [])
+    current_fb.append(fb)
+    submission.inline_feedback = current_fb
+    submission.version += 1
+    submission.updated_at = datetime.now(timezone.utc)
+    db.commit()
+    db.refresh(submission)
+    return fb
+
+
+def request_board_revision(
+    db: Session,
+    user: User,
+    group_id: UUID,
+    payload: BoardRequestRevisionIn,
+) -> dict[str, Any]:
+    """Classroom teacher requests revision on the evidence board, unlocking it for student revision.
+
+    Strict Role Check: Only classroom teacher or staff (403 Forbidden for students).
+    """
+    group = db.get(HistoricalInquiryGroup, group_id)
+    if not group:
+        raise AppError("GROUP_NOT_FOUND", "Inquiry group not found", 404)
+
+    classroom = db.get(Classroom, group.classroom_id) if group.classroom_id else None
+    if not is_teacher_or_staff(user, classroom):
+        raise AppError(
+            "FORBIDDEN_SCOPE",
+            "Only classroom teacher or staff can request revisions on inquiry board",
+            403,
+        )
+
+    submission = db.execute(
+        select(HistoricalInquirySubmission).where(HistoricalInquirySubmission.group_id == group_id)
+    ).scalar_one_or_none()
+    if not submission:
+        raise AppError("SUBMISSION_NOT_FOUND", "Inquiry submission not found", 404)
+
+    submission.status = InquirySubmissionStatus.revision_requested.value
+    submission.teacher_feedback = payload.teacher_feedback
+    if payload.score is not None:
+        submission.score = payload.score
+    if payload.rubric_evaluation:
+        submission.rubric_evaluation = payload.rubric_evaluation
+
+    submission.moderated_by_id = user.id
+    submission.moderated_at = datetime.now(timezone.utc)
+
+    hist = list(submission.revision_history or [])
+    hist.append({
+        "cycle": getattr(submission, "revision_cycle", 1) or 1,
+        "action": "revision_requested",
+        "actor_id": str(user.id),
+        "actor_name": user.display_name or user.username or "Teacher",
+        "notes": payload.revision_notes or payload.teacher_feedback,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    })
+    submission.revision_history = hist
+    submission.version += 1
+    submission.updated_at = datetime.now(timezone.utc)
+    db.commit()
+    db.refresh(submission)
+    return get_inquiry_board(db, user, group_id)
+
+
+def resubmit_board(
+    db: Session,
+    user: User,
+    group_id: UUID,
+    payload: BoardResubmitIn,
+) -> dict[str, Any]:
+    """Group members resubmit evidence board after addressing teacher revisions.
+
+    Strict Negative Abuse: Only group members can resubmit (403 Forbidden).
+    """
+    group = db.get(HistoricalInquiryGroup, group_id)
+    if not group:
+        raise AppError("GROUP_NOT_FOUND", "Inquiry group not found", 404)
+
+    if not is_group_member(db, user.id, group.id):
+        raise AppError(
+            "FORBIDDEN_SCOPE",
+            "Negative abuse violation: Group member cannot submit another group's inquiry",
+            403,
+        )
+
+    submission = db.execute(
+        select(HistoricalInquirySubmission).where(HistoricalInquirySubmission.group_id == group_id)
+    ).scalar_one_or_none()
+    if not submission:
+        raise AppError("SUBMISSION_NOT_FOUND", "Inquiry submission not found", 404)
+
+    if submission.status in (InquirySubmissionStatus.submitted.value, InquirySubmissionStatus.approved.value):
+        raise AppError("SUBMISSION_LOCKED", f"Board already in '{submission.status}' status", 400)
+
+    # Completeness check
+    if not (submission.hypothesis or "").strip():
+        raise AppError("INCOMPLETE_SUBMISSION", "Research hypothesis cannot be blank", 422)
+    if not (submission.synthesis_argument or "").strip():
+        raise AppError("INCOMPLETE_SUBMISSION", "Historical synthesis argument cannot be blank", 422)
+    if len(submission.evidence_items or []) == 0:
+        raise AppError("INSUFFICIENT_EVIDENCE", "Must synthesize at least one verified primary source evidence citation", 422)
+
+    current_cycle = getattr(submission, "revision_cycle", 1) or 1
+    new_cycle = current_cycle + 1
+    submission.revision_cycle = new_cycle
+    submission.status = InquirySubmissionStatus.submitted.value
+    submission.submitted_at = datetime.now(timezone.utc)
+    submission.submitted_by_id = user.id
+
+    hist = list(submission.revision_history or [])
+    hist.append({
+        "cycle": new_cycle,
+        "action": "resubmitted",
+        "actor_id": str(user.id),
+        "actor_name": user.display_name or user.username or "Student",
+        "notes": payload.revision_notes or "Board resubmitted after addressing revision feedback",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    })
+    submission.revision_history = hist
+    submission.version += 1
+    submission.updated_at = datetime.now(timezone.utc)
+    db.commit()
+    db.refresh(submission)
+    return get_inquiry_board(db, user, group_id)
+
+
+def get_board_revisions(
+    db: Session,
+    user: User,
+    group_id: UUID,
+) -> dict[str, Any]:
+    """Retrieve audit trail of revision cycles for this inquiry group."""
+    group = db.get(HistoricalInquiryGroup, group_id)
+    if not group:
+        raise AppError("GROUP_NOT_FOUND", "Inquiry group not found", 404)
+
+    classroom = db.get(Classroom, group.classroom_id) if group.classroom_id else None
+    user_is_member = is_group_member(db, user.id, group.id)
+    user_is_teacher = is_teacher_or_staff(user, classroom)
+
+    if not (user_is_member or user_is_teacher):
+        raise AppError(
+            "FORBIDDEN_SCOPE",
+            "Negative abuse violation: Access to revision audit trail restricted to group members and teachers",
+            403,
+        )
+
+    submission = db.execute(
+        select(HistoricalInquirySubmission).where(HistoricalInquirySubmission.group_id == group_id)
+    ).scalar_one_or_none()
+    if not submission:
+        raise AppError("SUBMISSION_NOT_FOUND", "Inquiry submission not found", 404)
+
+    return {
+        "group_id": group.id,
+        "revision_cycle": getattr(submission, "revision_cycle", 1) or 1,
+        "status": submission.status,
+        "history": list(submission.revision_history or []),
+    }

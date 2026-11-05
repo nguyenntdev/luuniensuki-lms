@@ -66,7 +66,11 @@ from ..services import (
     imperial_site,
     imperial_sync,
     imperial_v51,
+    offline_kit_service,
     relic_inspection,
+)
+from ..apischemas.offline_kit import (
+    LowBandwidthOfflineKitResponse,
 )
 from ..apischemas.relic_inspection import (
     RelicInspectionCompleteRequest,
@@ -744,6 +748,29 @@ def get_relic_inspection_status(
     return relic_inspection.get_relic_inspection_status(db, user=current_user, target_slug=target_slug)
 
 
+@router.get(
+    "/offline-kit",
+    response_model=LowBandwidthOfflineKitResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Retrieve low-bandwidth printable / offline kit bundle",
+)
+def get_low_bandwidth_offline_kit(
+    cluster_id: str = Query("standard_4", description="Station cluster ID (standard_4, all_16, central_axis, ancestral_space, purple_forbidden, royal_living)"),
+    request: Request = None,
+) -> LowBandwidthOfflineKitResponse:
+    """Retrieve complete low-bandwidth printable student handouts and offline exploration kit.
+
+    Enforces Ticket V5-T096 invariants:
+    - 100% paper/2D achievable without AR or smartphone requirements.
+    - Verified primary source excerpts with rights clearance.
+    - High-contrast 2D rubbings for low-cost monochrome printing.
+    - Scannable QR verification anchors.
+    - Verbatim audio guide transcripts eliminating streaming data requirements.
+    """
+    base_url = str(request.base_url).rstrip("/") if request else "https://luuniensuki.vn"
+    return offline_kit_service.build_offline_kit(cluster_id=cluster_id, base_url=base_url)
+
+
 @router.get("/sites/{slug}/art-details", response_model=list[ImperialArtDetailSummary])
 def get_site_art_details(slug: str, db: Session = Depends(get_db)):
     """Retrieve list of art details (carvings, patterns, reliefs) belonging to a site."""
@@ -1029,5 +1056,24 @@ def admin_delete_question(
     """Admin delete gamified quiz question."""
     imperial_v51.delete_question(db, question_id=question_id)
     return {"ok": True, "message": "Question deleted"}
+
+
+@router.post("/passport/unlock")
+def legacy_passport_unlock(
+    payload: dict[str, Any],
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user_optional),
+):
+    """Legacy or background bridge endpoint for client seal unlocking."""
+    site_slug = payload.get("monument_slug") or payload.get("site_slug")
+    if not site_slug:
+        return {"ok": False, "message": "Missing monument_slug"}
+    return {
+        "ok": True,
+        "site_slug": site_slug,
+        "is_verified": False,
+        "message": "Local unlock acknowledged. Authenticated server QR check-in required for official verified stamp.",
+    }
+
 
 

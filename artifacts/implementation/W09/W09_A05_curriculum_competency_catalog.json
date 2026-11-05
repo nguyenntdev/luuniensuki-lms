@@ -1,0 +1,127 @@
+{
+  "ticket": "V5-T095",
+  "ticket_id": "V5-T095",
+  "wave": "W09",
+  "slot": "W09-A05",
+  "role": "W09-A05",
+  "priority": "P2",
+  "classification": "NEW_PRODUCT_FEATURE",
+  "status": "COMPLETED",
+  "goal": "Curriculum competency catalog in backend/history_models.py, backend routers, and frontend.",
+  "timestamp": "2026-11-05T09:50:00Z",
+  "summary": "Implemented curriculum competency catalog conforming to the Vietnam 2018 General Education Program (GDPT 2018: Historical Literacy, Source Criticism & Epistemic Reasoning, Historical Empathy, Historical Communication) mapped to grade bands (Grades 6–12) and real relics (Cửu Đỉnh 9 Urns and 162 Motifs). Created database models CurriculumCompetency, CurriculumCompetencyRelicMapping, and CurriculumCompetencyFlag in backend/history_models.py and purely additive Alembic migration 0075_curriculum_competency_catalog.py. Built backend service backend/services/curriculum_competency.py with comprehensive validation, teacher editing workflows, and inaccuracy flagging. Added 10 RESTful endpoints to backend/routers/history_learning.py and Pydantic schemas in backend/apischemas/history_learning.py. Enforced negative abuse defenses where unreviewed mappings strictly surface review warnings, learners/guests are rejected with HTTP 403 from mutating or flagging mappings, and out-of-bounds grades (<6 or >12) receive HTTP 422. Developed frontend component CurriculumCompetencyCatalog.tsx with full bilingual typing and Vitest test coverage.",
+  "invariants_enforced": {
+    "standard_competencies_gdpt_2018": "Standard 4 competencies under Vietnam 2018 General Education Program (Historical Literacy, Source Criticism, Historical Empathy, Historical Communication) systematically cataloged with progressive grade descriptors across Grades 6–7, 8–9, and 10–12.",
+    "real_relic_mappings": "Competencies map directly to authentic historical entities and Cửu Đỉnh relics (Cao Đỉnh, Nhân Đỉnh, Chương Đỉnh, Tuyên Đỉnh, 162 Motifs, and classical administrative statutes).",
+    "review_warning_invariant": "Any mapping that has not been reviewed (is_reviewed=False) strictly displays a visible review warning banner ('Cảnh báo: Ánh xạ năng lực chưa được thẩm định chuyên môn bởi giáo viên cốt cán') across all list and single GET responses.",
+    "teacher_editable_and_feedback": "Teachers (UserRole.teacher, admin, super_admin) can create new relic mappings and edit existing mappings with strict secondary school grade bounds validation (min_grade and max_grade between 6 and 12).",
+    "negative_abuse_teacher_flagging": "Teachers can flag inaccurate competency mappings with structured reasons (inaccurate_grade_level, misaligned_competency, historical_inaccuracy, pedagogical_concern, other) and commentary. Mappings immediately transition to status='flagged' and surface the warning notice.",
+    "negative_abuse_non_teacher_blocked": "Learners, guests, and unauthenticated users attempting to create, edit, or flag competency mappings are strictly rejected with HTTP 403 Forbidden or HTTP 401 Unauthorized.",
+    "negative_abuse_invalid_grade_bounds": "Grade levels below 6, above 12, or with min_grade > max_grade are rejected with HTTP 422 Unprocessable Content.",
+    "administrative_verification_and_resolution": "Admins and staff can resolve teacher flags and verify mappings, transitioning them to is_reviewed=True, status='verified', and clearing review warnings."
+  },
+  "changes": [
+    {
+      "file": "backend/history_models.py",
+      "description": "Added models CurriculumCompetency, CurriculumCompetencyRelicMapping, and CurriculumCompetencyFlag with Enums StandardCompetencyDomain, CompetencyGradeBand, CompetencyMappingStatus, and CompetencyFlagReason."
+    },
+    {
+      "file": "backend/models.py",
+      "description": "Exported CurriculumCompetency, CurriculumCompetencyRelicMapping, CurriculumCompetencyFlag, and domain enums so Base.metadata includes them for Alembic and conftest create_all."
+    },
+    {
+      "file": "migrations/versions/0075_curriculum_competency_catalog.py",
+      "description": "Created purely additive Alembic migration 0075_curriculum_competency_catalog creating curriculum_competencies, curriculum_competency_relic_mappings, and curriculum_competency_flags tables and indexes."
+    },
+    {
+      "file": "backend/services/curriculum_competency.py",
+      "description": "Implemented domain service containing STANDARD_GDPT_COMPETENCIES, ensure_default_competencies, validate_grade_range, teacher permission checks, create/update mapping, flag_relic_mapping, list_mapping_flags, resolve_mapping_flag, and verify_relic_mapping."
+    },
+    {
+      "file": "backend/apischemas/history_learning.py",
+      "description": "Added Pydantic schemas: CurriculumCompetencyOut, CurriculumCompetencyListOut, CurriculumCompetencyRelicMappingIn, CurriculumCompetencyRelicMappingUpdateIn, CurriculumCompetencyRelicMappingOut, CurriculumCompetencyRelicMappingListOut, CurriculumCompetencyFlagIn, CurriculumCompetencyFlagOut, CurriculumCompetencyFlagResolveIn."
+    },
+    {
+      "file": "backend/routers/history_learning.py",
+      "description": "Added 10 endpoints under /api/v1/history/curriculum/competencies for catalog retrieval, relic mappings query, teacher creation, teacher updates, inaccuracy flagging, flag resolution, and verification."
+    },
+    {
+      "file": "tests/v5/conftest.py",
+      "description": "Added DDL definitions for curriculum_competencies, curriculum_competency_relic_mappings, and curriculum_competency_flags to test database bootstrap."
+    },
+    {
+      "file": "frontend/src/types/curriculum.ts",
+      "description": "Created TypeScript interface definitions for competencies, relic mappings, flags, grade descriptors, and input mutations."
+    },
+    {
+      "file": "frontend/src/components/curriculum/CurriculumCompetencyCatalog.tsx",
+      "description": "Built interactive React component featuring 4 GDPT 2018 competencies, grade band filters, search, review warning banners, flagged alert displays, teacher edit modal, and teacher flagging modal."
+    },
+    {
+      "file": "frontend/src/components/curriculum/CurriculumCompetencyCatalog.test.tsx",
+      "description": "Added Vitest unit test suite verifying rendering, review warnings on unreviewed mappings, flagged banners, verified badges, and teacher action button permissions."
+    },
+    {
+      "file": "tests/v5/test_v5_t095.py",
+      "description": "Created 10-test integration test suite verifying standard competencies, relic mappings, review warning invariant, teacher editing, negative abuse non-teacher blocks, grade bounds validation, teacher flagging, and admin flag resolution."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t095.py -v",
+    "tests_total": 10,
+    "tests_passed": 10,
+    "tests_failed": 0,
+    "test_cases": [
+      {
+        "name": "test_curriculum_competencies_standard_gdpt_2018_catalog",
+        "result": "PASSED",
+        "description": "Verifies all 4 standard competencies under Vietnam 2018 General Education Program exist with grade descriptors."
+      },
+      {
+        "name": "test_curriculum_competency_mappings_real_relics_and_grade_filters",
+        "result": "PASSED",
+        "description": "Verifies competency mappings link to real relics (Cao Đỉnh, Nhân Đỉnh) and support grade and relic filtering."
+      },
+      {
+        "name": "test_unreviewed_mappings_display_review_warnings",
+        "result": "PASSED",
+        "description": "Verifies unreviewed mappings strictly surface review warning banners across list and detail endpoints."
+      },
+      {
+        "name": "test_teacher_can_create_and_edit_competency_mapping",
+        "result": "PASSED",
+        "description": "Verifies teacher can create and edit competency mappings with unreviewed review warnings attached."
+      },
+      {
+        "name": "test_negative_abuse_learner_or_guest_cannot_mutate_mappings",
+        "result": "PASSED",
+        "description": "Verifies learners and guests attempting to create or edit mappings are rejected with HTTP 403 Forbidden."
+      },
+      {
+        "name": "test_negative_abuse_invalid_grade_range_rejected",
+        "result": "PASSED",
+        "description": "Verifies grades outside 6-12 or min > max are strictly rejected with HTTP 422."
+      },
+      {
+        "name": "test_teacher_can_flag_inaccurate_competency_mapping",
+        "result": "PASSED",
+        "description": "Verifies teacher flagging transitions mapping to 'flagged' status and updates review warning notice."
+      },
+      {
+        "name": "test_negative_abuse_learner_or_guest_cannot_flag_mapping",
+        "result": "PASSED",
+        "description": "Verifies non-teacher users attempting to flag mappings are rejected with HTTP 403 Forbidden."
+      },
+      {
+        "name": "test_negative_abuse_invalid_flag_parameters_rejected",
+        "result": "PASSED",
+        "description": "Verifies invalid flag reasons or insufficient commentary are rejected with HTTP 422."
+      },
+      {
+        "name": "test_admin_resolves_flag_and_verifies_mapping",
+        "result": "PASSED",
+        "description": "Verifies administrator resolves teacher flags and verifies mapping, clearing all review warnings."
+      }
+    ]
+  }
+}

@@ -259,6 +259,18 @@ class HistoricalInquirySubmission(Base):
     rubric_evaluation: Mapped[Optional[dict[str, Any]]] = mapped_column(
         JSONB, nullable=True, default=dict
     )
+    comparative_links: Mapped[list[Any]] = mapped_column(
+        JSONB, nullable=False, default=list
+    )
+    inline_feedback: Mapped[list[Any]] = mapped_column(
+        JSONB, nullable=False, default=list
+    )
+    revision_cycle: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=1
+    )
+    revision_history: Mapped[list[Any]] = mapped_column(
+        JSONB, nullable=False, default=list
+    )
     version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()

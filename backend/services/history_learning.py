@@ -16,6 +16,7 @@ import math
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Optional, Union
+import uuid
 from uuid import UUID
 
 from sqlalchemy import func, select
@@ -32,14 +33,20 @@ from ..models import (
     HistoricalSource,
     HistoryAssignmentSubmission,
     HistoryLessonAssignment,
+    HistoryLessonPlan,
     HistoryCausalLearningMetric,
     HistoryEthicsProtocol,
     HistoryLearningOutcomeAssessment,
     HistoryLearningOutcomeEvaluation,
     HistoryLearningOutcomeSubmission,
     HistorySubjectiveSurvey,
+    HistoryPilotGuardianConsent,
+    HistoryTeacherWorkloadLog,
+    HistoryRubricCalibration,
     LessonContent,
+    Motif,
     QuizQuestion,
+    Urn,
     User,
     UserSkillLevel,
 )
@@ -1814,13 +1821,20 @@ from ..domain.learning_outcome import (
     InvalidRubricScoreError,
     SubjectiveSurveyCannotProduceCausalMetricsError,
     UnpairedAssessmentError,
+    PilotConsentStatus,
+    TeacherWorkloadCategory,
+    RubricCalibrationStatus,
     calculate_effect_size_cohens_d,
     calculate_inter_rater_reliability,
     calculate_normalized_learning_gain,
+    calculate_teacher_workload_category,
+    calibrate_dual_rubric_scores,
     validate_assessor_independence,
     validate_ethics_protocol_active,
     validate_rubric_scores,
     verify_causal_learning_eligibility,
+    verify_guardian_consent_status,
+    verify_learning_improvement_claim_basis,
 )
 
 
@@ -1927,6 +1941,28 @@ def submit_learning_outcome_assessment(
         validate_ethics_protocol_active(protocol.status, protocol.valid_until)
     except EthicsProtocolRequiredError as exc:
         raise AppError("ETHICS_PROTOCOL_REQUIRED", str(exc), 422)
+
+    # Verify participant guardian informed consent if required
+    if protocol.participant_consent_required:
+        consent = db.scalar(
+            select(HistoryPilotGuardianConsent).where(
+                HistoryPilotGuardianConsent.ethics_protocol_id == protocol.id,
+                HistoryPilotGuardianConsent.student_id == student_id,
+            )
+        )
+        if consent:
+            if consent.consent_status == PilotConsentStatus.withdrawn.value:
+                raise AppError(
+                    "GUARDIAN_CONSENT_WITHDRAWN",
+                    "Guardian informed consent has been withdrawn for this participant. Research participation is suspended.",
+                    403,
+                )
+            if consent.consent_status != PilotConsentStatus.verified.value:
+                raise AppError(
+                    "GUARDIAN_CONSENT_REQUIRED",
+                    f"Participant requires verified guardian consent for research under protocol '{protocol.protocol_code}'. Current status: '{consent.consent_status}'.",
+                    403,
+                )
 
     submission = HistoryLearningOutcomeSubmission(
         assessment_id=assessment.id,
@@ -2067,6 +2103,28 @@ def compute_causal_learning_outcome(
     except EthicsProtocolRequiredError as exc:
         raise AppError("ETHICS_PROTOCOL_REQUIRED", str(exc), 422)
 
+    # Verify participant guardian informed consent if required
+    if protocol.participant_consent_required:
+        consent = db.scalar(
+            select(HistoryPilotGuardianConsent).where(
+                HistoryPilotGuardianConsent.ethics_protocol_id == protocol.id,
+                HistoryPilotGuardianConsent.student_id == student_id,
+            )
+        )
+        if consent:
+            if consent.consent_status == PilotConsentStatus.withdrawn.value:
+                raise AppError(
+                    "GUARDIAN_CONSENT_WITHDRAWN",
+                    "Guardian informed consent has been withdrawn for this participant. Causal learning metrics cannot be computed.",
+                    403,
+                )
+            if consent.consent_status != PilotConsentStatus.verified.value:
+                raise AppError(
+                    "GUARDIAN_CONSENT_REQUIRED",
+                    f"Participant requires verified guardian consent for causal learning metric calculation. Current status: '{consent.consent_status}'.",
+                    403,
+                )
+
     # Validate submissions
     pre_sub = db.get(HistoryLearningOutcomeSubmission, pre_submission_id)
     post_sub = db.get(HistoryLearningOutcomeSubmission, post_submission_id)
@@ -2193,6 +2251,19 @@ def get_cohort_causal_learning_metrics(
             )
         ).all()
     )
+
+    # Exclude students whose guardian consent was withdrawn
+    withdrawn_student_ids = set(
+        db.scalars(
+            select(HistoryPilotGuardianConsent.student_id).where(
+                HistoryPilotGuardianConsent.ethics_protocol_id == ethics_protocol_id,
+                HistoryPilotGuardianConsent.consent_status == PilotConsentStatus.withdrawn.value,
+            )
+        ).all()
+    )
+    if withdrawn_student_ids:
+        metrics = [m for m in metrics if m.student_id not in withdrawn_student_ids]
+
     if not metrics:
         return {
             "total_students": 0,
@@ -2229,6 +2300,393 @@ def get_cohort_causal_learning_metrics(
         "mean_inter_rater_agreement": round(sum(agreements) / len(agreements), 4) if agreements else 1.0,
         "competency_averages": comp_avgs,
         "ethics_protocol_code": protocol.protocol_code,
+    }
+
+
+# --------------------------------------------------------------------------- #
+# School Pilot Measurement & Ethics Services (V5-T100 / Wave W09 / Slot A10)
+# --------------------------------------------------------------------------- #
+def create_pilot_guardian_consent(
+    db: Session,
+    payload: dict[str, Any],
+    current_user_id: Optional[UUID] = None,
+) -> HistoryPilotGuardianConsent:
+    """Register informed guardian consent for student pilot research participation."""
+    protocol_id = payload["ethics_protocol_id"]
+    student_id = payload["student_id"]
+    protocol = db.get(HistoryEthicsProtocol, protocol_id)
+    if not protocol:
+        raise AppError("ETHICS_PROTOCOL_NOT_FOUND", "Specified ethics protocol not found", 404)
+    student = db.get(User, student_id)
+    if not student:
+        raise AppError("STUDENT_NOT_FOUND", "Specified student not found", 404)
+
+    existing = db.scalar(
+        select(HistoryPilotGuardianConsent).where(
+            HistoryPilotGuardianConsent.ethics_protocol_id == protocol_id,
+            HistoryPilotGuardianConsent.student_id == student_id,
+        )
+    )
+    if existing:
+        existing.guardian_name = payload["guardian_name"].strip()
+        existing.guardian_email = payload["guardian_email"].strip()
+        existing.guardian_phone = payload.get("guardian_phone")
+        existing.relationship_type = payload.get("relationship_type", "parent")
+        existing.verification_method = payload.get("verification_method", "school_roster")
+        existing.notes = payload.get("notes")
+        existing.consent_status = PilotConsentStatus.pending.value
+        existing.withdrawn_at = None
+        db.commit()
+        db.refresh(existing)
+        return existing
+
+    consent = HistoryPilotGuardianConsent(
+        ethics_protocol_id=protocol_id,
+        student_id=student_id,
+        guardian_name=payload["guardian_name"].strip(),
+        guardian_email=payload["guardian_email"].strip(),
+        guardian_phone=payload.get("guardian_phone"),
+        relationship_type=payload.get("relationship_type", "parent"),
+        consent_status=PilotConsentStatus.pending.value,
+        verification_method=payload.get("verification_method", "school_roster"),
+        notes=payload.get("notes"),
+    )
+    db.add(consent)
+    db.commit()
+    db.refresh(consent)
+    return consent
+
+
+def verify_pilot_guardian_consent(
+    db: Session,
+    consent_id: UUID,
+    verifier_id: UUID,
+) -> HistoryPilotGuardianConsent:
+    """Verify and approve guardian informed consent for a student."""
+    consent = db.get(HistoryPilotGuardianConsent, consent_id)
+    if not consent:
+        raise AppError("CONSENT_RECORD_NOT_FOUND", "Guardian consent record not found", 404)
+    consent.consent_status = PilotConsentStatus.verified.value
+    consent.verified_by_id = verifier_id
+    consent.verified_at = func.now()
+    consent.withdrawn_at = None
+    db.commit()
+    db.refresh(consent)
+    return consent
+
+
+def withdraw_pilot_guardian_consent(
+    db: Session,
+    consent_id: UUID,
+    reason: Optional[str] = None,
+) -> HistoryPilotGuardianConsent:
+    """Withdraw guardian consent, immediately suspending empirical research participation."""
+    consent = db.get(HistoryPilotGuardianConsent, consent_id)
+    if not consent:
+        raise AppError("CONSENT_RECORD_NOT_FOUND", "Guardian consent record not found", 404)
+    consent.consent_status = PilotConsentStatus.withdrawn.value
+    consent.withdrawn_at = func.now()
+    if reason:
+        consent.notes = f"{consent.notes or ''} [Withdrawal reason: {reason}]".strip()
+    db.commit()
+    db.refresh(consent)
+    return consent
+
+
+def get_pilot_guardian_consent_status(
+    db: Session,
+    protocol_id: UUID,
+    student_id: UUID,
+) -> dict[str, Any]:
+    """Check guardian consent verification status for a student under an ethics protocol."""
+    consent = db.scalar(
+        select(HistoryPilotGuardianConsent).where(
+            HistoryPilotGuardianConsent.ethics_protocol_id == protocol_id,
+            HistoryPilotGuardianConsent.student_id == student_id,
+        )
+    )
+    if not consent:
+        return {
+            "ethics_protocol_id": protocol_id,
+            "student_id": student_id,
+            "consent_status": "missing",
+            "is_consent_verified": False,
+            "verified_at": None,
+            "withdrawn_at": None,
+        }
+    return {
+        "ethics_protocol_id": protocol_id,
+        "student_id": student_id,
+        "consent_status": consent.consent_status,
+        "is_consent_verified": consent.consent_status == PilotConsentStatus.verified.value,
+        "verified_at": consent.verified_at,
+        "withdrawn_at": consent.withdrawn_at,
+    }
+
+
+def log_teacher_workload(
+    db: Session,
+    teacher_id: UUID,
+    payload: dict[str, Any],
+) -> HistoryTeacherWorkloadLog:
+    """Record educator workload metrics and cognitive load index to prevent burnout."""
+    mins = float(payload["minutes_spent"])
+    count = int(payload.get("submissions_evaluated_count", 0))
+    c_load = float(payload.get("cognitive_load_rating", 50.0))
+
+    category = calculate_teacher_workload_category(mins, count, c_load)
+
+    log_entry = HistoryTeacherWorkloadLog(
+        teacher_id=teacher_id,
+        school_id=payload.get("school_id"),
+        classroom_id=payload.get("classroom_id"),
+        ethics_protocol_id=payload.get("ethics_protocol_id"),
+        activity_type=payload.get("activity_type", "rubric_grading"),
+        minutes_spent=mins,
+        submissions_evaluated_count=count,
+        cognitive_load_rating=c_load,
+        workload_category=category,
+        notes=payload.get("notes"),
+    )
+    db.add(log_entry)
+    db.commit()
+    db.refresh(log_entry)
+    return log_entry
+
+
+def get_teacher_workload_summary(
+    db: Session,
+    teacher_id: Optional[UUID] = None,
+    school_id: Optional[UUID] = None,
+    protocol_id: Optional[UUID] = None,
+) -> dict[str, Any]:
+    """Summarize teacher workload metrics and calculate burnout risk indicators."""
+    stmt = select(HistoryTeacherWorkloadLog)
+    if teacher_id:
+        stmt = stmt.where(HistoryTeacherWorkloadLog.teacher_id == teacher_id)
+    if school_id:
+        stmt = stmt.where(HistoryTeacherWorkloadLog.school_id == school_id)
+    if protocol_id:
+        stmt = stmt.where(HistoryTeacherWorkloadLog.ethics_protocol_id == protocol_id)
+
+    logs = list(db.scalars(stmt).all())
+    total_mins = sum(l.minutes_spent for l in logs)
+    total_subs = sum(l.submissions_evaluated_count for l in logs)
+    avg_mins_sub = round(total_mins / max(1, total_subs), 2) if total_subs > 0 else 0.0
+    avg_load = round(sum(l.cognitive_load_rating for l in logs) / max(1, len(logs)), 2) if logs else 0.0
+
+    threshold_exceeded = any(l.workload_category == TeacherWorkloadCategory.excessive.value for l in logs) or avg_mins_sub > 15.0 or avg_load > 70.0
+    overall_status = (
+        TeacherWorkloadCategory.excessive.value
+        if threshold_exceeded
+        else (TeacherWorkloadCategory.acceptable.value if (avg_mins_sub >= 8.0 or avg_load >= 40.0) else TeacherWorkloadCategory.optimal.value)
+    )
+    burnout_risk = "high" if threshold_exceeded else ("moderate" if overall_status == TeacherWorkloadCategory.acceptable.value else "low")
+
+    recs = []
+    if threshold_exceeded:
+        recs.append("Grading time per submission exceeds 15 minutes safety threshold. Deploy secondary independent assessor.")
+        recs.append("Teacher cognitive load index exceeds 70/100. Reduce rubric criteria granularity or increase grading window.")
+    elif overall_status == TeacherWorkloadCategory.acceptable.value:
+        recs.append("Workload is within acceptable boundaries. Monitor for grading bottlenecks during final post-test submissions.")
+    else:
+        recs.append("Workload is optimal. Educator capacity is well-balanced.")
+
+    return {
+        "teacher_id": teacher_id,
+        "school_id": school_id,
+        "total_minutes_logged": round(total_mins, 2),
+        "total_submissions_evaluated": total_subs,
+        "avg_minutes_per_submission": avg_mins_sub,
+        "avg_cognitive_load": avg_load,
+        "overall_workload_status": overall_status,
+        "threshold_exceeded": threshold_exceeded,
+        "burnout_risk_level": burnout_risk,
+        "recommendations": recs,
+    }
+
+
+def calibrate_submission_rubrics(
+    db: Session,
+    submission_id: UUID,
+    assessor_a_id: UUID,
+    assessor_b_id: UUID,
+    tolerance_pct: float = 0.15,
+) -> HistoryRubricCalibration:
+    """Calibrate dual independent assessor rubric evaluations on a single submission."""
+    sub = db.get(HistoryLearningOutcomeSubmission, submission_id)
+    if not sub:
+        raise AppError("SUBMISSION_NOT_FOUND", "Submission not found", 404)
+
+    eval_a = db.scalar(
+        select(HistoryLearningOutcomeEvaluation).where(
+            HistoryLearningOutcomeEvaluation.submission_id == submission_id,
+            HistoryLearningOutcomeEvaluation.assessor_id == assessor_a_id,
+        )
+    )
+    eval_b = db.scalar(
+        select(HistoryLearningOutcomeEvaluation).where(
+            HistoryLearningOutcomeEvaluation.submission_id == submission_id,
+            HistoryLearningOutcomeEvaluation.assessor_id == assessor_b_id,
+        )
+    )
+
+    if not eval_a or not eval_b:
+        raise AppError("EVALUATION_MISSING", "Both independent evaluations must exist before running calibration audit", 422)
+
+    assessment = db.get(HistoryLearningOutcomeAssessment, sub.assessment_id)
+    max_score = assessment.max_score if assessment else 100.0
+
+    calib_result = calibrate_dual_rubric_scores(
+        scores_a=eval_a.rubric_scores or {},
+        scores_b=eval_b.rubric_scores or {},
+        max_score=max_score,
+        tolerance_pct=tolerance_pct,
+    )
+
+    calibration = HistoryRubricCalibration(
+        submission_id=submission_id,
+        assessor_a_id=assessor_a_id,
+        assessor_b_id=assessor_b_id,
+        evaluation_a_id=eval_a.id,
+        evaluation_b_id=eval_b.id,
+        score_a=calib_result["score_a"],
+        score_b=calib_result["score_b"],
+        score_difference=calib_result["score_difference"],
+        divergence_pct=calib_result["divergence_pct"],
+        inter_rater_agreement=calib_result["inter_rater_agreement"],
+        tolerance_pct=calib_result["tolerance_pct"],
+        status=calib_result["status"],
+        consensus_score=calib_result["consensus_score"],
+        criteria_breakdown=calib_result["criteria_breakdown"],
+    )
+    db.add(calibration)
+    db.commit()
+    db.refresh(calibration)
+    return calibration
+
+
+def audit_pilot_data_retention(
+    db: Session,
+    ethics_protocol_id: Optional[UUID] = None,
+) -> dict[str, Any]:
+    """Audit student assessment and survey records exceeding research retention limit."""
+    retention_days = 365
+    if ethics_protocol_id:
+        protocol = db.get(HistoryEthicsProtocol, ethics_protocol_id)
+        if protocol and protocol.data_retention_days:
+            retention_days = protocol.data_retention_days
+
+    from datetime import timedelta
+    cutoff_date = datetime.now(timezone.utc) - timedelta(days=retention_days)
+
+    stmt_subs = select(HistoryLearningOutcomeSubmission).where(
+        HistoryLearningOutcomeSubmission.submitted_at < cutoff_date,
+        HistoryLearningOutcomeSubmission.status != "retention_purged",
+    )
+    if ethics_protocol_id:
+        stmt_subs = stmt_subs.join(HistoryLearningOutcomeAssessment).where(
+            HistoryLearningOutcomeAssessment.ethics_protocol_id == ethics_protocol_id
+        )
+    expired_subs = list(db.scalars(stmt_subs).all())
+
+    stmt_surveys = select(HistorySubjectiveSurvey).where(
+        HistorySubjectiveSurvey.submitted_at < cutoff_date,
+        HistorySubjectiveSurvey.survey_name != "[PURGED]",
+    )
+    expired_surveys = list(db.scalars(stmt_surveys).all())
+
+    sub_ids = [s.id for s in expired_subs]
+    eval_count = 0
+    if sub_ids:
+        eval_count = db.scalar(
+            select(func.count(HistoryLearningOutcomeEvaluation.id)).where(
+                HistoryLearningOutcomeEvaluation.submission_id.in_(sub_ids)
+            )
+        ) or 0
+
+    return {
+        "ethics_protocol_id": ethics_protocol_id,
+        "retention_days_limit": retention_days,
+        "expired_submissions_count": len(expired_subs),
+        "expired_evaluations_count": int(eval_count),
+        "expired_surveys_count": len(expired_surveys),
+        "expired_submission_ids": sub_ids,
+        "expired_survey_ids": [s.id for s in expired_surveys],
+        "audit_timestamp": datetime.now(timezone.utc),
+    }
+
+
+def purge_expired_pilot_data(
+    db: Session,
+    ethics_protocol_id: Optional[UUID] = None,
+) -> dict[str, Any]:
+    """Purge PII from expired student assessment and survey records per Decree 13/2023/ND-CP."""
+    audit = audit_pilot_data_retention(db, ethics_protocol_id)
+    sub_ids = audit["expired_submission_ids"]
+    survey_ids = audit["expired_survey_ids"]
+
+    purged_subs = 0
+    purged_evals = 0
+    purged_surveys = 0
+
+    now = datetime.now(timezone.utc)
+
+    if sub_ids:
+        subs = list(db.scalars(select(HistoryLearningOutcomeSubmission).where(HistoryLearningOutcomeSubmission.id.in_(sub_ids))).all())
+        for s in subs:
+            s.responses = {"_purged": True, "policy": "Decree_13_2023_ND_CP", "purged_at": now.isoformat()}
+            s.citations_provided = []
+            s.status = "retention_purged"
+            purged_subs += 1
+
+        evals = list(db.scalars(select(HistoryLearningOutcomeEvaluation).where(HistoryLearningOutcomeEvaluation.submission_id.in_(sub_ids))).all())
+        for e in evals:
+            e.feedback_markdown = "[RETENTION_PURGED]"
+            e.evidence_notes = "[RETENTION_PURGED]"
+            purged_evals += 1
+
+    if survey_ids:
+        surveys = list(db.scalars(select(HistorySubjectiveSurvey).where(HistorySubjectiveSurvey.id.in_(survey_ids))).all())
+        for sur in surveys:
+            sur.survey_name = "[PURGED]"
+            sur.likert_responses = {}
+            sur.feedback_text = "[RETENTION_PURGED]"
+            purged_surveys += 1
+
+    db.commit()
+
+    return {
+        "purged_submissions_count": purged_subs,
+        "purged_evaluations_count": purged_evals,
+        "purged_surveys_count": purged_surveys,
+        "status": "purged",
+        "policy": "Decree_13_2023_ND_CP_compliance",
+        "purged_at": now,
+    }
+
+
+def validate_learning_improvement_claim(
+    db: Session,
+    payload: dict[str, Any],
+) -> dict[str, Any]:
+    """Validate that learning improvement claims are grounded in objective assessments, not sentiment."""
+    claim_title = payload["claim_title"].strip()
+    claim_type = payload.get("claim_type", "learning_improvement").strip()
+    evidence_basis = payload.get("evidence_basis", "pre_post_inquiry_rubric").strip()
+
+    try:
+        verify_learning_improvement_claim_basis(claim_type, evidence_basis)
+    except SubjectiveSurveyCannotProduceCausalMetricsError as exc:
+        raise AppError("CANNOT_DERIVE_CAUSAL_METRICS_FROM_SURVEY", str(exc), 422)
+
+    return {
+        "claim_title": claim_title,
+        "claim_type": claim_type,
+        "evidence_basis": evidence_basis,
+        "is_valid_evidence_of_learning": True,
+        "rejection_reason": None,
+        "justification": "Evidence is grounded in objective historical inquiry assessments evaluated by independent rubric assessors.",
     }
 
 
@@ -2604,6 +3062,516 @@ def verify_completion_badge(
         "earned_at": user_badge.earned_at,
         "message": f"Badge '{badge.name}' verified by server.",
     }
+
+
+# --------------------------------------------------------------------------- #
+# Teacher 45-Minute Lesson Wizard Service (V5-T091 / Wave W09 / Slot A01)
+# --------------------------------------------------------------------------- #
+DEFAULT_WIZARD_OBJECTIVES = {
+    "historical_competencies": [
+        {
+            "code": "S1_SPATIAL",
+            "name_vi": "Năng lực Không gian & Bối cảnh Địa lý",
+            "description_vi": "Xác định chính xác vị trí khắc chạm trên Cửu Đỉnh, không gian Kinh thành Huế và địa danh gắn liền.",
+        },
+        {
+            "code": "S2_TEMPORAL",
+            "name_vi": "Năng lực Thời gian & Tiến trình Lịch sử",
+            "description_vi": "Khảo sát niên đại đúc đỉnh (Minh Mạng 16-17 / 1835-1836) và các mốc lịch sử liên đới.",
+        },
+        {
+            "code": "S3_EVIDENCE",
+            "name_vi": "Năng lực Sử liệu & Khảo chứng Nguồn",
+            "description_vi": "Khai thác, đối chiếu chép sử chính thống (Đại Nam Thực Lục, Hội Điển) với hình tượng phù điêu.",
+        },
+        {
+            "code": "S4_ARGUMENT",
+            "name_vi": "Năng lực Lập luận & Đánh giá Di sản",
+            "description_vi": "Phân tích ý nghĩa biểu tượng quyền uy, tư tưởng độc lập tự chủ và bảo tồn giá trị di sản văn hóa.",
+        },
+    ],
+    "qualities": [
+        "Yêu nước & Tự hào về di sản Cửu Đỉnh — Ký ức thế giới UNESCO",
+        "Trung thực & Cẩn trọng trong trích dẫn chứng cứ lịch sử",
+        "Ý thức trách nhiệm gìn giữ và bảo vệ di tích Cố đô Huế",
+    ],
+    "key_takeaways": [
+        "Hiểu rõ giá trị nghệ thuật đúc đồng và chạm khắc đỉnh đồng thời Nguyễn.",
+        "Hình thành tư duy phản biện khi đọc và đối chiếu sử liệu thành văn với hiện vật bảo vật quốc gia.",
+    ],
+}
+
+DEFAULT_WIZARD_ACTIVITIES = [
+    {
+        "activity_number": 1,
+        "name_vi": "Hoạt động 1: Khởi động & Kích hoạt tri thức nền (5 phút)",
+        "duration_minutes": 5,
+        "objective_vi": "Tạo hứng thú, kết nối hiểu biết ban đầu của học sinh về Cửu Đỉnh và đặt ra câu hỏi định hướng.",
+        "teacher_actions": [
+            "Chiếu hình ảnh bản dập 2D hoặc mô hình 3D của đỉnh/hoa văn.",
+            "Nêu câu hỏi kích hoạt: Tại sao hình tượng này lại được triều đình đúc trên vị trí trang trọng của Cửu Đỉnh?",
+        ],
+        "student_actions": [
+            "Quan sát chi tiết phù điêu, thảo luận nhanh cặp đôi 2 phút.",
+            "Ghi nhận ấn tượng ban đầu vào mục Khởi động trên phiếu học tập.",
+        ],
+        "deliverables_vi": "Ghi chép 3 đặc điểm nổi bật quan sát được vào phiếu học tập.",
+        "assessment_criteria_vi": "Nhận diện được hình tượng hoa văn và cảm nhận bối cảnh mỹ thuật thời Nguyễn.",
+        "guiding_prompts_vi": [
+            "Em nhìn thấy những đường nét chi tiết nào nổi bật trên phù điêu?",
+            "Vị trí hoa văn này nằm ở tầng trên, giữa hay chân đỉnh?",
+        ],
+    },
+    {
+        "activity_number": 2,
+        "name_vi": "Hoạt động 2: Khảo sát hiện vật & Đối chiếu sử liệu gốc (15 phút)",
+        "duration_minutes": 15,
+        "objective_vi": "Học sinh trực tiếp đối chiếu hình ảnh hoa văn với trích đoạn sử liệu chính thống đã được thẩm định.",
+        "teacher_actions": [
+            "Chuyển giao trích đoạn tư liệu nguồn (Đại Nam Thực Lục, Khâm Định Hội Điển).",
+            "Hướng dẫn phương pháp đọc sử liệu: Tác giả, xuất xứ, niên đại và ý nghĩa trích đoạn.",
+        ],
+        "student_actions": [
+            "Làm việc nhóm 4 học sinh: Đọc sử liệu, gạch chân từ khóa về địa danh, sự kiện, quy cách đúc đỉnh.",
+            "Điền thông tin xuất xứ và trích dẫn cốt lõi vào bảng khảo chứng tư liệu.",
+        ],
+        "deliverables_vi": "Bảng đối chiếu 3 cột: Hiện vật quan sát — Trích chép sử liệu — Nhận định bước đầu.",
+        "assessment_criteria_vi": "Trích dẫn chính xác tập, quyển, trang của nguồn sử liệu đã được phê duyệt.",
+        "guiding_prompts_vi": [
+            "Sử sách ghi chép hình tượng này được đúc vào năm nào?",
+            "Có sự thống nhất hay khác biệt nào giữa lời văn chép sử và hình ảnh trên bản dập?",
+        ],
+    },
+    {
+        "activity_number": 3,
+        "name_vi": "Hoạt động 3: Thảo luận sâu & Giải quyết câu hỏi nghiên cứu (15 phút)",
+        "duration_minutes": 15,
+        "objective_vi": "Phát triển tư duy phân tích, lập luận lịch sử dựa trên chứng cứ đã thu thập.",
+        "teacher_actions": [
+            "Theo dõi thảo luận các nhóm, gợi mở các khía cạnh biểu tượng và tư tưởng thời Minh Mạng.",
+            "Tổ chức đối thoại giữa các nhóm học sinh.",
+        ],
+        "student_actions": [
+            "Tổng hợp luận điểm nhóm: Trả lời câu hỏi trọng tâm của bài học.",
+            "Phản biện và bổ sung góc nhìn cho nhóm bạn dựa trên chứng cứ nguồn.",
+        ],
+        "deliverables_vi": "Sơ đồ tư duy hoặc bản tóm tắt luận điểm (Evidence Brief) của nhóm.",
+        "assessment_criteria_vi": "Đạt chuẩn Rubric S3 (Chứng cứ) và S4 (Lập luận) ở mức 2 trở lên.",
+        "guiding_prompts_vi": [
+            "Hoa văn này phản ánh điều gì về chủ quyền lãnh thổ hoặc sự thịnh vượng của vương triều?",
+            "Chứng cứ xác thực nhất để chứng minh cho luận điểm của nhóm em là gì?",
+        ],
+    },
+    {
+        "activity_number": 4,
+        "name_vi": "Hoạt động 4: Đánh giá & Vé ra cửa (Exit Ticket) (10 phút)",
+        "duration_minutes": 10,
+        "objective_vi": "Đo lường mức độ đạt chuẩn mục tiêu bài học qua phiếu đánh giá cá nhân và tự lượng giá theo Rubric.",
+        "teacher_actions": [
+            "Phát lệnh làm Vé ra cửa (Exit ticket) cá nhân 5 phút.",
+            "Tổng kết nhanh tiết học, dặn dò nhiệm vụ mở rộng tại nhà.",
+        ],
+        "student_actions": [
+            "Hoàn thành câu hỏi Vé ra cửa cá nhân ngắn gọn 3-5 câu.",
+            "Tự đánh giá nhóm theo thang điểm Rubric S1-S4.",
+        ],
+        "deliverables_vi": "Phiếu Vé ra cửa cá nhân và Phiếu tự đánh giá Rubric nộp cho giáo viên.",
+        "assessment_criteria_vi": "Đạt từ 8/12 điểm Rubric chuẩn hoá hoặc hoàn thành tốt nội dung Vé ra cửa.",
+        "guiding_prompts_vi": [
+            "Bài học hôm nay giúp em thay đổi nhận thức gì về di sản Cửu Đỉnh?",
+            "Nêu 1 bằng chứng lịch sử em ấn tượng nhất và giải thích lý do.",
+        ],
+    },
+]
+
+DEFAULT_WIZARD_RUBRIC = {
+    "scale_description": "Thang đo 4 mức độ năng lực lịch sử (0 - Chưa đạt, 1 - Đạt cơ bản, 2 - Khá, 3 - Xuất sắc)",
+    "levels": [
+        {"score": 0, "label_vi": "Chưa đạt (Cần củng cố)"},
+        {"score": 1, "label_vi": "Đạt cơ sở (Mức 1)"},
+        {"score": 2, "label_vi": "Khá (Mức 2)"},
+        {"score": 3, "label_vi": "Xuất sắc (Mức 3)"},
+    ],
+    "criteria": {
+        "S1_SPATIAL": {
+            "name": "Năng lực Không gian (S1)",
+            "max_points": 3,
+            "weight": 0.25,
+            "descriptors": {
+                "0": "Không xác định được vị trí của đỉnh và phù điêu trên hiện vật.",
+                "1": "Xác định được đỉnh nhưng nhầm lẫn vị trí tầng khắc của phù điêu.",
+                "2": "Xác định chính xác vị trí trên đỉnh và liên hệ được địa danh gốc.",
+                "3": "Mô tả chuẩn xác không gian di sản, toạ độ, hướng nhìn và bối cảnh Kinh thành Huế.",
+            },
+        },
+        "S2_TEMPORAL": {
+            "name": "Năng lực Thời gian (S2)",
+            "max_points": 3,
+            "weight": 0.25,
+            "descriptors": {
+                "0": "Mơ hồ hoặc sai lệch hoàn toàn về niên đại đúc đỉnh.",
+                "1": "Nhớ được triều đại Minh Mạng nhưng không rõ năm tháng cụ thể.",
+                "2": "Nêu đúng mốc 1835-1836 và xếp đúng trình tự thời gian sự kiện.",
+                "3": "Đặt hiện vật chính xác vào tiến trình lịch sử vương triều và phân tích được bối cảnh thời đại.",
+            },
+        },
+        "S3_EVIDENCE": {
+            "name": "Năng lực Khảo chứng Sử liệu (S3)",
+            "max_points": 3,
+            "weight": 0.25,
+            "descriptors": {
+                "0": "Không sử dụng trích dẫn sử liệu hoặc đưa thông tin hư cấu.",
+                "1": "Có dẫn tư liệu nhưng thiếu xuất xứ (tập, quyển, năm xuất bản).",
+                "2": "Trích dẫn đúng nguồn sử liệu chính thức đã được thẩm định.",
+                "3": "Đối chiếu thành thạo đa nguồn, phân biệt rõ lời chép sử và nhận định chủ quan.",
+            },
+        },
+        "S4_ARGUMENT": {
+            "name": "Năng lực Lập luận & Phân tích (S4)",
+            "max_points": 3,
+            "weight": 0.25,
+            "descriptors": {
+                "0": "Diễn đạt rời rạc, không đưa ra được luận điểm rõ ràng.",
+                "1": "Có luận điểm nhưng lập luận còn đơn giản, thiếu dẫn chứng minh hoạ.",
+                "2": "Lập luận mạch lạc, có dẫn chứng phù hợp từ hiện vật và sử liệu.",
+                "3": "Lập luận sắc bén, sâu sắc, khái quát hoá được giá trị tư tưởng và biểu tượng di sản.",
+            },
+        },
+    },
+    "exit_ticket": {
+        "prompt_vi": "Dựa trên tư liệu chép trong sử sách và hình ảnh bản dập/mô hình 3D, hãy viết đoạn văn ngắn (5-7 câu) làm sáng tỏ vì sao phù điêu này được xếp vào nhóm biểu tượng quan trọng trên Cửu Đỉnh.",
+        "expected_evidence_vi": "Học sinh cần nêu được: (1) Tên đỉnh & hoa văn; (2) Trích dẫn vắn tắt từ nguồn chính sử (Đại Nam Thực Lục hoặc Hội Điển); (3) Ý nghĩa biểu tượng về chủ quyền/thống nhất non sông.",
+        "time_allowed_minutes": 5,
+    },
+}
+
+
+def validate_lesson_plan_for_publication(
+    db: Session,
+    plan_data: dict[str, Any],
+) -> tuple[bool, list[str]]:
+    """Strictly validate that a lesson plan satisfies the historical authority publishing gate.
+
+    Negative abuse invariant (Spec V5-T091 / W09-A01):
+    A lesson plan CANNOT be published without approved historical object/source.
+    Rejects:
+    - Missing historical object (both entity_id, urn_id, and motif_id are absent).
+    - Missing historical sources (source_ids is empty).
+    - Missing historical claims (claim_ids is empty).
+    - Any backing claim has an ineligible status (unreviewed, needs_source, disputed, rejected, superseded).
+    - Any non-existent claim or source ID.
+    """
+    issues: list[str] = []
+
+    entity_id = plan_data.get("entity_id")
+    urn_id = plan_data.get("urn_id")
+    motif_id = plan_data.get("motif_id")
+    lesson_id = plan_data.get("lesson_id")
+
+    # Invariant 1: Must reference at least one verified historical object
+    has_object = False
+    if entity_id:
+        ent = db.get(HistoricalEntity, UUID(str(entity_id)))
+        if ent:
+            has_object = True
+        else:
+            issues.append(f"Historical entity {entity_id} not found in database.")
+    if urn_id:
+        urn = db.get(Urn, UUID(str(urn_id)))
+        if urn:
+            has_object = True
+        else:
+            issues.append(f"Urn {urn_id} not found in database.")
+    if motif_id:
+        motif = db.get(Motif, UUID(str(motif_id)))
+        if motif:
+            has_object = True
+        else:
+            issues.append(f"Motif {motif_id} not found in database.")
+    if lesson_id:
+        lesson = db.get(LessonContent, UUID(str(lesson_id)))
+        if lesson:
+            has_object = True
+        else:
+            issues.append(f"Lesson content {lesson_id} not found in database.")
+
+    if not has_object:
+        issues.append("Lesson plan must link to an approved historical object (Entity, Urn, Motif, or Lesson).")
+
+    # Invariant 2: Must reference at least one historical source
+    source_ids = plan_data.get("source_ids") or []
+    if not source_ids:
+        issues.append("Lesson plan cannot publish without at least one approved historical source.")
+    else:
+        for sid in source_ids:
+            try:
+                s = db.get(HistoricalSource, UUID(str(sid)))
+                if not s:
+                    issues.append(f"Historical source {sid} not found in database.")
+                elif getattr(s, "verification_status", None) not in (
+                    "verified",
+                    "expert_verified",
+                    "published",
+                    "metadata_verified",
+                    "accessible",
+                ):
+                    issues.append(f"Historical source {sid} has unverified status: '{s.verification_status}'.")
+            except (ValueError, TypeError):
+                issues.append(f"Invalid source UUID: {sid}")
+
+    # Invariant 3: Must reference at least one historical claim and ALL claims MUST be verified
+    claim_ids = plan_data.get("claim_ids") or []
+    if not claim_ids:
+        issues.append("Lesson plan cannot publish without approved historical claims (claim_ids is empty).")
+    else:
+        for cid in claim_ids:
+            try:
+                c = db.get(HistoricalClaim, UUID(str(cid)))
+                if not c:
+                    issues.append(f"Historical claim {cid} not found in database.")
+                elif c.verification_status not in ELIGIBLE_CLAIM_STATUSES:
+                    issues.append(
+                        f"Historical claim {cid} has ineligible status '{c.verification_status}' "
+                        f"(rejects unreviewed, needs_source, or disputed claims)."
+                    )
+            except (ValueError, TypeError):
+                issues.append(f"Invalid claim UUID: {cid}")
+
+    # Invariant 4: Must have 45-minute lesson structure (duration >= 30 and <= 90)
+    duration = plan_data.get("duration_minutes") or 45
+    if duration != 45 and (duration < 15 or duration > 120):
+        issues.append(f"Invalid duration: {duration} minutes (standard 45-minute wizard format expected).")
+
+    return len(issues) == 0, issues
+
+
+def generate_printable_handout_payload(
+    db: Session,
+    plan: HistoryLessonPlan,
+) -> dict[str, Any]:
+    """Generate comprehensive structured A4 printable handout content for teacher and students."""
+    # Resolve entity / motif / urn titles
+    object_title = plan.topic
+    object_code = ""
+    urn_name = "Cửu Đỉnh Hoàng Cung Huế"
+    if plan.urn_id:
+        urn_row = db.get(Urn, plan.urn_id)
+        if urn_row:
+            urn_name = urn_row.name
+    if plan.motif_id:
+        motif_row = db.get(Motif, plan.motif_id)
+        if motif_row:
+            object_title = f"{motif_row.name} ({motif_row.name_en or ''})"
+            object_code = motif_row.mesh_name or ""
+    elif plan.entity_id:
+        ent_row = db.get(HistoricalEntity, plan.entity_id)
+        if ent_row:
+            object_title = ent_row.name_vi
+            object_code = ent_row.slug
+
+    # Format sources for printing
+    sources_print: list[dict[str, Any]] = []
+    for s_item in (plan.sources_snapshot or []):
+        sources_print.append({
+            "title": s_item.get("title", ""),
+            "author": s_item.get("author_text", ""),
+            "pages": s_item.get("citation_text") or s_item.get("pages", ""),
+            "publication_year": s_item.get("publication_year", ""),
+            "license": s_item.get("license", "Public Domain"),
+        })
+
+    # Visual media block
+    media_block = {
+        "media_variant": plan.media_variant,
+        "rubbing_asset_path": (plan.media_config or {}).get("rubbing_url") or "/assets/ban-duc-noi/cao_dinh/long.jpg",
+        "qr_code_verification_url": f"https://lms.histolab.icu/dai-noi/giao-vien?plan_id={plan.id}",
+        "caption_vi": f"Bản dập 2D / Hiện vật phù điêu {object_title} trên {urn_name} (Bảo vật Quốc gia)",
+    }
+
+    # Activities / Inquiry stations
+    stations: list[dict[str, Any]] = []
+    for act in (plan.inquiry_activities or DEFAULT_WIZARD_ACTIVITIES):
+        stations.append({
+            "step_number": act.get("activity_number", 1),
+            "step_title": act.get("name_vi", ""),
+            "duration": f"{act.get('duration_minutes', 10)} phút",
+            "task_instructions": act.get("objective_vi", ""),
+            "deliverable": act.get("deliverables_vi", ""),
+            "student_workspace_lines": 4,
+            "guiding_questions": act.get("guiding_prompts_vi", []),
+        })
+
+    # Exit ticket
+    rubric_obj = plan.assessment_rubric or DEFAULT_WIZARD_RUBRIC
+    exit_ticket_obj = rubric_obj.get("exit_ticket") or DEFAULT_WIZARD_RUBRIC["exit_ticket"]
+
+    handout = {
+        "header": {
+            "institution_vi": "SỞ GIÁO DỤC VÀ ĐÀO TẠO THỪA THIÊN HUẾ",
+            "school_placeholder": "TRƯỜNG THPT: .....................................................",
+            "student_fields": {
+                "name": "Họ và tên học sinh: .....................................................",
+                "class": "Lớp: ..............",
+                "group": "Nhóm: ..............",
+                "date": "Ngày: ...../...../2026",
+            },
+            "document_title": f"PHIẾU HỌC TẬP KHẢO CỨU DI SẢN (45 PHÚT)",
+            "subtitle": f"Chuyên đề: {plan.title} — {urn_name}",
+            "framework_code": plan.curriculum_framework,
+            "target_grade": plan.target_grade,
+        },
+        "objectives": plan.objectives or DEFAULT_WIZARD_OBJECTIVES,
+        "sources": sources_print,
+        "visual_media": media_block,
+        "inquiry_stations": stations,
+        "exit_ticket": exit_ticket_obj,
+        "rubric": rubric_obj,
+        "export_metadata": {
+            "plan_id": str(plan.id),
+            "version": plan.version,
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "page_setup": "A4 Portrait / 2 Pages Double-Sided",
+            "anti_abuse_seal": f"SEAL_V5_{uuid.uuid4().hex[:12].upper()}",
+        },
+    }
+    return handout
+
+
+def create_lesson_plan(
+    db: Session,
+    teacher: User,
+    payload_dict: dict[str, Any],
+) -> HistoryLessonPlan:
+    """Create a new 45-minute lesson plan via the wizard."""
+    source_ids = payload_dict.get("source_ids") or []
+    claim_ids = payload_dict.get("claim_ids") or []
+
+    # Prepare sources snapshot
+    sources_snapshot: list[dict[str, Any]] = []
+    for sid in source_ids:
+        src = db.get(HistoricalSource, UUID(str(sid)))
+        if src:
+            sources_snapshot.append({
+                "id": str(src.id),
+                "title": src.title,
+                "author_text": src.author_text,
+                "source_type": src.source_type,
+                "publication_year": src.publication_year,
+                "citation_text": src.citation_text,
+                "license": src.license,
+                "rights_status": src.rights_status,
+            })
+
+    # Prepare claims snapshot
+    claims_snapshot: list[dict[str, Any]] = []
+    for cid in claim_ids:
+        clm = db.get(HistoricalClaim, UUID(str(cid)))
+        if clm:
+            claims_snapshot.append({
+                "id": str(clm.id),
+                "claim_key": clm.claim_key,
+                "statement_vi": clm.statement_vi,
+                "verification_status": clm.verification_status,
+                "confidence": clm.confidence,
+                "claim_type": clm.claim_type,
+            })
+
+    status = payload_dict.get("status") or "draft"
+    objectives = payload_dict.get("objectives") or DEFAULT_WIZARD_OBJECTIVES
+    activities = payload_dict.get("inquiry_activities") or DEFAULT_WIZARD_ACTIVITIES
+    rubric = payload_dict.get("assessment_rubric") or DEFAULT_WIZARD_RUBRIC
+
+    plan_id = uuid.uuid4()
+    plan = HistoryLessonPlan(
+        id=plan_id,
+        teacher_id=teacher.id,
+        title=payload_dict["title"],
+        topic=payload_dict["topic"],
+        target_grade=payload_dict.get("target_grade") or "Lớp 10 THPT",
+        duration_minutes=payload_dict.get("duration_minutes") or 45,
+        curriculum_framework=payload_dict.get("curriculum_framework") or "CV 5512/BGDĐT",
+        status=status,
+        content_validation_status="valid",
+        entity_id=payload_dict.get("entity_id"),
+        urn_id=payload_dict.get("urn_id"),
+        motif_id=payload_dict.get("motif_id"),
+        lesson_id=payload_dict.get("lesson_id"),
+        media_variant=payload_dict.get("media_variant") or "2d_rubbing",
+        media_config=payload_dict.get("media_config") or {},
+        objectives=objectives,
+        source_ids=[str(s) for s in source_ids],
+        claim_ids=[str(c) for c in claim_ids],
+        sources_snapshot=sources_snapshot,
+        claims_snapshot=claims_snapshot,
+        inquiry_activities=activities,
+        assessment_rubric=rubric,
+        version=1,
+    )
+
+    # Pre-generate handout
+    plan.printable_handout = generate_printable_handout_payload(db, plan)
+
+    # Check publication gate if requested as published
+    if status == "published":
+        is_valid, issues = validate_lesson_plan_for_publication(db, payload_dict)
+        if not is_valid:
+            raise AppError(
+                "LESSON_PLAN_UNVERIFIED_CLAIMS",
+                f"Cannot publish lesson plan with unverified claims or missing sources: {'; '.join(issues)}",
+                422,
+                details={"issues": issues},
+            )
+        plan.published_at = datetime.now(timezone.utc)
+
+    db.add(plan)
+    db.commit()
+    db.refresh(plan)
+    return plan
+
+
+def publish_lesson_plan(
+    db: Session,
+    plan_id: UUID,
+    user: User,
+    is_admin: bool = False,
+) -> HistoryLessonPlan:
+    """Publish a draft lesson plan enforcing the negative abuse historical claims gate."""
+    plan = db.get(HistoryLessonPlan, plan_id)
+    if not plan:
+        raise AppError("LESSON_PLAN_NOT_FOUND", "Lesson plan not found", 404)
+
+    if not is_admin and plan.teacher_id != user.id:
+        raise AppError("FORBIDDEN", "You can only publish lesson plans you authored.", 403)
+
+    plan_data = {
+        "entity_id": plan.entity_id,
+        "urn_id": plan.urn_id,
+        "motif_id": plan.motif_id,
+        "lesson_id": plan.lesson_id,
+        "source_ids": plan.source_ids,
+        "claim_ids": plan.claim_ids,
+        "duration_minutes": plan.duration_minutes,
+    }
+
+    is_valid, issues = validate_lesson_plan_for_publication(db, plan_data)
+    if not is_valid:
+        plan.content_validation_status = "blocked_for_authoritative_learning"
+        db.commit()
+        raise AppError(
+            "LESSON_PLAN_UNVERIFIED_CLAIMS",
+            f"Cannot publish lesson plan without verified historical claims and sources: {'; '.join(issues)}",
+            422,
+            details={"issues": issues},
+        )
+
+    plan.status = "published"
+    plan.content_validation_status = "valid"
+    plan.published_at = datetime.now(timezone.utc)
+    plan.printable_handout = generate_printable_handout_payload(db, plan)
+    db.commit()
+    db.refresh(plan)
+    return plan
+
 
 
 

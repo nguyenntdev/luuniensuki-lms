@@ -17,7 +17,7 @@ These models are intentionally distinct from any same-named models in
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional
+from typing import Any, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -304,4 +304,95 @@ class ProgressionActionResponse(BaseModel):
     already_mastered: bool = False
     quiz_score: Optional[int] = None
     quiz_passed: Optional[bool] = None
+
+
+class PassportCheckInRequest(BaseModel):
+    site_slug: str
+    verification_method: str = "qr_code"
+    qr_payload: Optional[str] = None
+    qr_token: Optional[str] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    device_metadata: Optional[dict[str, Any]] = None
+    client_claimed_status: Optional[str] = None
+
+
+class PassportStampDetailOut(BaseModel):
+    id: UUID
+    site_slug: str
+    site_name: str
+    zone_slug: str
+    verification_method: str
+    provenance_hash: str
+    authority: str
+    stamped_at: datetime
+    checkin_count: int
+    last_visited_at: datetime
+    is_verified: bool
+    is_distinct_from_mastery: bool = True
+
+
+class PassportCheckInResponse(BaseModel):
+    success: bool
+    stamp_id: UUID
+    site_slug: str
+    site_name: str
+    zone_slug: str
+    verification_method: str
+    provenance_hash: str
+    authority: str
+    stamped_at: datetime
+    checkin_count: int
+    xp_awarded: int
+    is_verified: bool
+    is_distinct_from_mastery: bool = True
+    message: str
+
+
+class PassportVerificationRequest(BaseModel):
+    qr_token: str
+    site_slug: Optional[str] = None
+
+
+class PassportVerificationResponse(BaseModel):
+    valid: bool
+    site_slug: str
+    site_name: str
+    zone_slug: str
+    authority: str
+    issued_at: datetime
+    expires_at: Optional[datetime] = None
+    nonce: Optional[str] = None
+    message: str = "QR code verified successfully."
+
+
+class VerifiedPassportOut(BaseModel):
+    user_id: UUID
+    display_name: str
+    verified_stamps_count: int
+    total_available_seals: int
+    verified_completion_percent: float
+    assessed_mastery_count: int
+    can_export_verified_certificate: bool
+    distinct_invariants: dict[str, bool]
+    stamps: list[PassportStampDetailOut]
+
+
+class StudentPassportSummaryOut(BaseModel):
+    student_id: UUID
+    display_name: str
+    email: str
+    verified_stamps_count: int
+    assessed_mastery_count: int
+    last_stamp_at: Optional[datetime] = None
+    is_fake_client_claim_detected: bool = False
+
+
+class ClassroomPassportAnalyticsOut(BaseModel):
+    classroom_id: UUID
+    student_count: int
+    total_verified_stamps: int
+    avg_verified_stamps: float
+    students: list[StudentPassportSummaryOut]
+
 

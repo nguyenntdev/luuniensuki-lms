@@ -22,6 +22,7 @@ import {
   Route,
   Search,
   Send,
+  ShieldAlert,
   ShieldCheck,
   Sparkles,
   Printer,
@@ -65,6 +66,9 @@ import {
   type ClassroomGradebookResponse,
   type ClassroomGradebookStudent,
 } from "@/lib/api";
+import RubricAnalyticsDashboard from "./RubricAnalyticsDashboard";
+import LessonPlanWizardModal from "./LessonPlanWizardModal";
+import TeacherOnboardingSupportModal from "./TeacherOnboardingSupportModal";
 import {
   Dialog,
   DialogContent,
@@ -483,6 +487,8 @@ export default function TeacherDashboardClient() {
   // Assignments State & Create Modal
   const [assignments, setAssignments] = useState<AssignmentRelease[]>([]);
   const [isCreateAssignmentOpen, setIsCreateAssignmentOpen] = useState(false);
+  const [isLessonWizardOpen, setIsLessonWizardOpen] = useState(false);
+  const [isOnboardingSupportOpen, setIsOnboardingSupportOpen] = useState(false);
   const [editingAssignmentId, setEditingAssignmentId] = useState<string | null>(null);
   const [assignmentClass, setAssignmentClass] = useState("Lớp 10A1 — THPT Quốc Học Huế");
   const [assignmentTitle, setAssignmentTitle] = useState("Khảo sát trục nghi lễ Ngọ Môn — Điện Thái Hòa");
@@ -854,6 +860,17 @@ export default function TeacherDashboardClient() {
             {/* Quick Actions & Demo Switch */}
             <div className="flex flex-wrap items-center gap-2.5">
               <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsOnboardingSupportOpen(true)}
+                className="text-xs h-9 gap-1.5 border-amber-600/40 text-amber-600 dark:text-amber-400 font-semibold hover:bg-amber-500/10"
+                title="Mở Trung tâm Hỗ trợ & Cẩm nang tập huấn giáo viên"
+              >
+                <HelpCircle className="h-3.5 w-3.5 text-amber-500" />
+                <span>Hỗ Trợ & Tập Huấn</span>
+              </Button>
+
+              <Button
                 size="sm"
                 onClick={handleOpenCreateAssignment}
                 className="text-xs h-9 gap-1.5 bg-primary text-primary-foreground font-semibold shadow-sm"
@@ -1077,6 +1094,13 @@ export default function TeacherDashboardClient() {
             </div>
           </div>
         )}
+
+        {/* SECTION: Rubric Analytics Dashboard (V5-T094 / Wave W09-A04) */}
+        <RubricAnalyticsDashboard
+          classroomId={selectedClassroomId}
+          classroomName={gradebookData?.classroom_name}
+          isTeacher={user?.role === "teacher" || user?.role === "admin"}
+        />
 
         {/* SECTION: Real Classroom Gradebook & Student Roster (V5.1 / Wave W03-A06) */}
         <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-2xs space-y-6">
@@ -1411,14 +1435,26 @@ export default function TeacherDashboardClient() {
               </p>
             </div>
 
-            <Button
-              size="sm"
-              onClick={handleOpenCreateAssignment}
-              className="text-xs h-8 gap-1.5 bg-primary text-primary-foreground font-semibold shadow-xs"
-            >
-              <FileCheck2 className="h-3.5 w-3.5" />
-              <span>+ Giao bài mới</span>
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setIsLessonWizardOpen(true)}
+                className="text-xs h-8 gap-1.5 border-primary/30 text-primary font-semibold hover:bg-primary/5"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                <span>Wizard Giáo Án 45 Phút</span>
+              </Button>
+
+              <Button
+                size="sm"
+                onClick={handleOpenCreateAssignment}
+                className="text-xs h-8 gap-1.5 bg-primary text-primary-foreground font-semibold shadow-xs"
+              >
+                <FileCheck2 className="h-3.5 w-3.5" />
+                <span>+ Giao bài mới</span>
+              </Button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 pt-1">
@@ -2265,6 +2301,26 @@ export default function TeacherDashboardClient() {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* 45-Minute Lesson Plan Wizard Modal (V5-T091 / W09-A01) */}
+      <LessonPlanWizardModal
+        isOpen={isLessonWizardOpen}
+        onClose={() => setIsLessonWizardOpen(false)}
+        onSuccess={(plan) => {
+          setIsLessonWizardOpen(false);
+        }}
+      />
+
+      {/* Teacher Onboarding & Support Center Modal (V5-T099 / W09-A09) */}
+      <TeacherOnboardingSupportModal
+        isOpen={isOnboardingSupportOpen}
+        onClose={() => setIsOnboardingSupportOpen(false)}
+        isVerified={!demoMode}
+        onCloneTemplate={(tmplId) => {
+          setIsOnboardingSupportOpen(false);
+          setIsLessonWizardOpen(true);
+        }}
+      />
     </div>
   );
 }

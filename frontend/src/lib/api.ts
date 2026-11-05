@@ -1079,6 +1079,76 @@ export async function exportClassroomGradebookCsv({
   return res.text();
 }
 
+export interface RubricCriterionAnalytics {
+  criterion_key: string;
+  dimension_vi: string;
+  dimension_en: string;
+  max_score: number;
+  mean: number | null;
+  median: number | null;
+  std_dev: number | null;
+  mastery_rate: number | null;
+  sample_size: number;
+  distribution: {
+    level_0: number;
+    level_1: number;
+    level_2: number;
+    level_3: number;
+  } | null;
+}
+
+export interface ClassroomRubricAnalyticsResponse {
+  classroom_id: string;
+  classroom_name: string;
+  teacher_id: string;
+  active_rubric_version: string;
+  available_rubric_versions: string[];
+  analytics_type: string;
+  causal_inference_permitted: boolean;
+  methodological_notice: string;
+  study_protocol_code?: string | null;
+  cohort_size: number;
+  min_k_threshold: number;
+  is_suppressed: boolean;
+  suppression_reason: string | null;
+  overall_average: number | null;
+  criteria_analytics: RubricCriterionAnalytics[];
+  recommendations: string[];
+}
+
+export async function fetchClassroomRubricAnalytics({
+  classroomId,
+  rubricVersion,
+  assignmentId,
+  claimCausality,
+  studyProtocolCode,
+}: {
+  classroomId: string;
+  rubricVersion?: string;
+  assignmentId?: string;
+  claimCausality?: boolean;
+  studyProtocolCode?: string;
+}): Promise<ClassroomRubricAnalyticsResponse> {
+  const encoded = encodeURIComponent(classroomId);
+  const params = new URLSearchParams();
+  if (rubricVersion && rubricVersion !== "all") {
+    params.set("rubric_version", rubricVersion);
+  }
+  if (assignmentId) {
+    params.set("assignment_id", assignmentId);
+  }
+  if (claimCausality) {
+    params.set("claim_causality", "true");
+  }
+  if (studyProtocolCode) {
+    params.set("study_protocol_code", studyProtocolCode);
+  }
+  const query = params.toString() ? `?${params.toString()}` : "";
+  return apiRequest<ClassroomRubricAnalyticsResponse>(
+    `/api/v1/classrooms/${encoded}/rubric-analytics${query}`,
+  );
+}
+
 // =============================================================================
 // LIVE SESSIONS API
 // =============================================================================

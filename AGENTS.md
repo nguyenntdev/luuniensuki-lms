@@ -304,6 +304,22 @@ Deploy workflow (`deploy.yml`) uses Python 3.12 and runs `pytest tests/backend` 
   - `V5-T089` (W08-A09): Granular feature flags and emergency kill switches (AI tutor, LiveKit, RBPC commerce) with independent public browse.
   - `V5-T090` (W08-A10): Production SLO drills verifying read latency (p95 <= 300ms), upstream 502/503 resilience, 2D fallback, and zero fake success.
 
+### Wave W09: New B2B School Product / Learning Differentiation (COMPLETED)
+- **Status**: 10/10 slots complete. 87/87 tests passing.
+- **Artifacts**: `artifacts/implementation/W09/` (`W09_A01`–`W09_A10`).
+- **Verified Invariants**:
+  - `V5-T091` (W09-A01): Teacher 45-minute lesson wizard enforcing historical publication gates against unreviewed or disputed claims.
+  - `V5-T092` (W09-A02): Verified heritage Passport with cryptographic QR check-ins, keeping visit stamps distinct from assessed mastery.
+  - `V5-T093` (W09-A03): Collaborative evidence board for student inquiry groups with inline teacher feedback, revision cycles, and strict peer isolation.
+  - `V5-T094` (W09-A04): Rubric analytics dashboard enforcing k-anonymity privacy suppression (n < 5) and blocking causal labels derived without controlled studies.
+  - `V5-T095` (W09-A05): Vietnam 2018 General Education Program curriculum competency catalog mapped across grades 6–12 with teacher inaccuracy flagging.
+  - `V5-T096` (W09-A06): 100% paper-achievable low-bandwidth printable kit with monochrome rubbings and audio transcripts, eliminating mandatory AR/phone requirements.
+  - `V5-T097` (W09-A07): Adaptive evidence practice using FSRS-5 spaced repetition with minimum dwell time and brute-force burst abuse detection.
+  - `V5-T098` (W09-A08): Multilingual learning supports with bilingual pedagogical glossary, Hán–Nôm epigraphy reviews, and machine translation uncertainty warnings.
+  - `V5-T099` (W09-A09): Teacher onboarding and support center with sample lesson templates, SLA-tracked support tickets, and guest teacher PII isolation.
+  - `V5-T100` (W09-A10): Formal school pilot measurement and ethics protocol with guardian informed consent, teacher workload limits, and survey firewalling.
+
+
 
 
 

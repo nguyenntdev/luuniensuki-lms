@@ -1,0 +1,117 @@
+{
+  "ticket": "V5-T094",
+  "ticket_id": "V5-T094",
+  "wave": "W09",
+  "slot": "W09-A04",
+  "priority": "P2",
+  "classification": "NEW_PRODUCT_FEATURE",
+  "status": "COMPLETED",
+  "goal": "Rubric analytics dashboard in frontend/src/app/dai-noi/giao-vien/ and backend/routers/classrooms.py",
+  "timestamp": "2026-11-05T04:45:00Z",
+  "summary": "Implemented school-safe rubric analytics dashboard across backend/routers/classrooms.py, backend/schemas.py, frontend/src/lib/api.ts, and frontend/src/app/dai-noi/giao-vien/RubricAnalyticsDashboard.tsx. Computes aggregate descriptive statistics across the 4 core historical reasoning criteria dimensions (S1 Spatial, S2 Temporal, S3 Evidence, S4 Argument) per rubric version (e.g., GDPT_2018_V1, v1.0). Enforces mandatory student privacy suppression via k-anonymity for cohorts < 5 (masking all distributions, means, and individual score metrics when n < 5). Enforces strict negative abuse invariant: descriptive statistics are quarantined from causal assertions; any attempt to claim causal learning gains (claim_causality=true) without an approved controlled study ethics/IRB protocol is rejected with HTTP 422 CANNOT_CLAIM_CAUSAL_LEARNING_GAIN_WITHOUT_CONTROLLED_STUDY.",
+  "invariants_enforced": {
+    "historical_reasoning_criteria_dimensions": "Aggregates student scores across the 4 pedagogical dimensions: S1 Spatial (Năng lực Không gian), S2 Temporal (Năng lực Thời gian), S3 Evidence (Năng lực Sử liệu), and S4 Argument (Năng lực Lập luận), computing mean, median, standard deviation, mastery rate (>= 66.7%), and 4-level distribution (M0 Chưa đạt, M1 Cơ bản, M2 Khá, M3 Xuất sắc).",
+    "k_anonymity_privacy_suppression": "When the evaluated student cohort size is less than 5 (n < 5), granular distributions, means, medians, standard deviations, and mastery rates are suppressed (returned as null) to prevent student re-identification in accordance with educational data privacy standards.",
+    "negative_abuse_causal_claim_quarantine": "Descriptive statistics are strictly separated from causal assertions. Calling the endpoint with claim_causality=true without an approved HistoryEthicsProtocol is rejected with HTTP 422 CANNOT_CLAIM_CAUSAL_LEARNING_GAIN_WITHOUT_CONTROLLED_STUDY.",
+    "horizontal_privilege_escalation_block": "Teachers can only access rubric analytics for classrooms they teach (current_user.id == classroom.teacher_id or ADMIN_ROLES). Cross-teacher access attempts strictly return HTTP 403 Forbidden.",
+    "learner_and_unauthenticated_blocked": "Learners/students and guests receive HTTP 403 Forbidden; unauthenticated callers receive HTTP 401 Unauthorized."
+  },
+  "changes": [
+    {
+      "file": "backend/schemas.py",
+      "description": "Added Pydantic schemas: RubricCriterionAnalyticsOut and ClassroomRubricAnalyticsOut."
+    },
+    {
+      "file": "backend/routers/classrooms.py",
+      "description": "Implemented _compute_classroom_rubric_analytics and GET /api/v1/classrooms/{classroom_id}/rubric-analytics endpoint with k-anonymity privacy suppression (n < 5), multi-version filtering, and negative abuse guardrail rejecting causal claims without approved controlled study protocol."
+    },
+    {
+      "file": "frontend/src/lib/api.ts",
+      "description": "Added RubricCriterionAnalytics and ClassroomRubricAnalyticsResponse TypeScript interfaces and fetchClassroomRubricAnalytics API client helper."
+    },
+    {
+      "file": "frontend/src/app/dai-noi/giao-vien/RubricAnalyticsDashboard.tsx",
+      "description": "Created interactive Rubric Analytics Dashboard component featuring version selector, k-anonymity privacy status indicator, masked privacy view for n < 5, full descriptive analytics view with level distribution bars for n >= 5, pedagogical recommendations, and interactive negative abuse drill button."
+    },
+    {
+      "file": "frontend/src/app/dai-noi/giao-vien/TeacherDashboardClient.tsx",
+      "description": "Integrated RubricAnalyticsDashboard into the teacher dashboard layout."
+    },
+    {
+      "file": "frontend/src/app/dai-noi/ho-chieu/PassportClient.tsx",
+      "description": "Fixed exhaustive-deps warning by adding fetchServerPassport to useEffect dependency array."
+    },
+    {
+      "file": "tests/backend/fixtures/openapi_snapshot.json",
+      "description": "Regenerated canonical OpenAPI schema snapshot incorporating ClassroomRubricAnalyticsOut and RubricCriterionAnalyticsOut."
+    },
+    {
+      "file": "backend-rust/docs/route-inventory.json",
+      "description": "Regenerated route inventory with 565 routes."
+    },
+    {
+      "file": "tests/v5/test_v5_t094.py",
+      "description": "Created 9-test comprehensive test suite verifying 401 unauthenticated, 403 learner, 403 IDOR cross-teacher, 422 negative abuse causal claim rejection, k-anonymity privacy suppression for n < 5, full descriptive analytics for n >= 5, version filtering, admin oversight, and multi-source submission coexistence."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t094.py -v",
+    "total_tests": 9,
+    "passed_tests": 9,
+    "failed_tests": 0,
+    "test_details": [
+      {
+        "name": "test_unauthenticated_rubric_analytics_returns_401",
+        "result": "PASSED",
+        "assertion": "Unauthenticated requests to /rubric-analytics return HTTP 401 Unauthorized."
+      },
+      {
+        "name": "test_learner_access_to_rubric_analytics_returns_403",
+        "result": "PASSED",
+        "assertion": "Learners attempting to view classroom rubric analytics receive HTTP 403 Forbidden."
+      },
+      {
+        "name": "test_teacher_horizontal_privilege_escalation_blocked_returns_403",
+        "result": "PASSED",
+        "assertion": "Teacher A cannot access Classroom B rubric analytics and Teacher B cannot access Classroom A (HTTP 403 Forbidden IDOR defense)."
+      },
+      {
+        "name": "test_negative_abuse_causal_learning_gain_rejected_without_controlled_study_422",
+        "result": "PASSED",
+        "assertion": "P2 Negative Abuse Invariant: Asserting causal learning gain claims without an approved controlled study protocol returns HTTP 422 CANNOT_CLAIM_CAUSAL_LEARNING_GAIN_WITHOUT_CONTROLLED_STUDY."
+      },
+      {
+        "name": "test_privacy_suppression_k_anonymity_when_cohort_less_than_5",
+        "result": "PASSED",
+        "assertion": "When cohort size n < 5, granular distributions, means, medians, std_dev, and mastery rates are suppressed (None) with k-anonymity privacy notice."
+      },
+      {
+        "name": "test_full_descriptive_analytics_when_cohort_at_least_5",
+        "result": "PASSED",
+        "assertion": "When cohort size n >= 5, full descriptive metrics (mean, median, std_dev, mastery_rate, distribution) across all 4 criteria are computed."
+      },
+      {
+        "name": "test_rubric_version_filtering_and_multi_version_inventory",
+        "result": "PASSED",
+        "assertion": "Analytics correctly discovers multi-version rubrics and filters student evaluations by active rubric version."
+      },
+      {
+        "name": "test_admin_cross_classroom_oversight",
+        "result": "PASSED",
+        "assertion": "Admins have cross-classroom authorization to inspect rubric analytics across all schools."
+      },
+      {
+        "name": "test_imperial_and_history_submission_coexistence",
+        "result": "PASSED",
+        "assertion": "Aggregates evaluations from both HistoryLessonAssignment submissions and ImperialActivity submissions within the classroom."
+      }
+    ],
+    "regression_commands": [
+      "pytest tests/backend/test_openapi_snapshot.py -v",
+      "python scripts/dev/generate_route_inventory.py",
+      "cd frontend && npm run test -- src/app/dai-noi/giao-vien/TeacherDashboard.test.tsx",
+      "cd frontend && npm run type-check",
+      "cd frontend && npm run lint:ci"
+    ]
+  }
+}

@@ -54,6 +54,11 @@ from ..apischemas.history import (
     HistoricalSourceListOut,
     HistoricalSourceOut,
     HistoricalSourceUpdate,
+    HistoricalGlossaryListOut,
+    HistoricalGlossaryReviewIn,
+    HistoricalGlossaryTermCreateIn,
+    HistoricalGlossaryTermOut,
+    HistoricalGlossaryTermUpdateIn,
 )
 from ..db import get_db
 from ..deps import get_admin_user, get_current_user, get_current_user_optional, get_staff_user
@@ -65,6 +70,7 @@ from ..models import (
     User,
 )
 from ..rbac import STAFF_ROLES
+from ..services import history_glossary as svc_glossary
 from ..services import history_governance as gov
 
 router = APIRouter(tags=["history"])
@@ -1131,3 +1137,108 @@ def signoff_admin_editorial_rights(
         raise AppError("FORBIDDEN", str(exc), 403) from exc
     except ValueError as exc:
         raise AppError("HISTORY_RIGHTS_SIGNOFF_INVALID", str(exc), 422) from exc
+
+
+# --------------------------------------------------------------------------- #
+# Multilingual Pedagogical Glossary & Epigraphy Endpoints (V5-T098 / W09-A08)
+# --------------------------------------------------------------------------- #
+@router.get("/api/v1/history/glossary", response_model=HistoricalGlossaryListOut)
+def list_history_glossary(
+    category: Optional[str] = Query(None, description="Filter by term category"),
+    search: Optional[str] = Query(None, description="Search terms in Vietnamese or English"),
+    review_status: Optional[str] = Query(None, description="Filter by review status (verified, unreviewed, uncertain, etc.)"),
+    origin: Optional[str] = Query(None, description="Filter by translation origin"),
+    include_unreviewed: bool = Query(True, description="Whether to include unreviewed or uncertain draft terms"),
+    offset: int = Query(0, ge=0),
+    limit: int = Query(50, ge=1, le=100),
+    db: Session = Depends(get_db),
+):
+    """Retrieve bilingual pedagogical glossary terms with uncertainty labeling."""
+    items, total = svc_glossary.list_glossary_terms(
+        db=db,
+        category=category,
+        search=search,
+        review_status=review_status,
+        origin=origin,
+        include_unreviewed=include_unreviewed,
+        offset=offset,
+        limit=limit,
+    )
+    return HistoricalGlossaryListOut(
+        items=[HistoricalGlossaryTermOut.model_validate(it) for it in items],
+        total=total,
+        offset=offset,
+        limit=limit,
+    )
+
+
+@router.get("/api/v1/history/glossary/{term_key}", response_model=HistoricalGlossaryTermOut)
+def get_history_glossary_term(
+    term_key: str,
+    db: Session = Depends(get_db),
+):
+    """Retrieve a single bilingual glossary term by its unique key."""
+    term = svc_glossary.get_glossary_term(db=db, term_key=term_key)
+    return HistoricalGlossaryTermOut.model_validate(term)
+
+
+@router.post(
+    "/api/v1/admin/history/glossary",
+    response_model=HistoricalGlossaryTermOut,
+    dependencies=[Depends(get_staff_user)],
+)
+def create_admin_history_glossary_term(
+    payload: HistoricalGlossaryTermCreateIn,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Create or upsert a pedagogical glossary term with negative abuse validation."""
+    term = svc_glossary.create_or_upsert_glossary_term(
+        db=db,
+        payload=payload,
+        actor=current_user,
+    )
+    return HistoricalGlossaryTermOut.model_validate(term)
+
+
+@router.patch(
+    "/api/v1/admin/history/glossary/{term_key}",
+    response_model=HistoricalGlossaryTermOut,
+    dependencies=[Depends(get_staff_user)],
+)
+def update_admin_history_glossary_term(
+    term_key: str,
+    payload: HistoricalGlossaryTermUpdateIn,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Update a glossary term with translation integrity enforcement."""
+    term = svc_glossary.update_glossary_term(
+        db=db,
+        term_key=term_key,
+        payload=payload,
+        actor=current_user,
+    )
+    return HistoricalGlossaryTermOut.model_validate(term)
+
+
+@router.post(
+    "/api/v1/admin/history/glossary/{term_key}/review",
+    response_model=HistoricalGlossaryTermOut,
+    dependencies=[Depends(get_staff_user)],
+)
+def review_admin_history_glossary_term(
+    term_key: str,
+    payload: HistoricalGlossaryReviewIn,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Submit expert review sign-off or status transition for a glossary term."""
+    term = svc_glossary.review_glossary_term(
+        db=db,
+        term_key=term_key,
+        payload=payload,
+        actor=current_user,
+    )
+    return HistoricalGlossaryTermOut.model_validate(term)
+

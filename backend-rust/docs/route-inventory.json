@@ -313,6 +313,24 @@
   },
   {
     "method": "POST",
+    "path": "/api/v1/admin/history/glossary",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/v1/admin/history/glossary/{term_key}",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/history/glossary/{term_key}/review",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
     "path": "/api/v1/admin/history/relations",
     "group": "admin",
     "status": "gateway"
@@ -649,6 +667,12 @@
   },
   {
     "method": "GET",
+    "path": "/api/v1/quests/evidence-practice/summary",
+    "group": "badges-quests",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
     "path": "/api/v1/quests/{quest_slug}",
     "group": "badges-quests",
     "status": "gateway"
@@ -656,6 +680,12 @@
   {
     "method": "POST",
     "path": "/api/v1/quests/{quest_slug}/claim",
+    "group": "badges-quests",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/quests/{quest_slug}/claim-reward",
     "group": "badges-quests",
     "status": "gateway"
   },
@@ -800,6 +830,12 @@
   {
     "method": "GET",
     "path": "/api/v1/classrooms/{classroom_id}/roster",
+    "group": "classrooms",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/classrooms/{classroom_id}/rubric-analytics",
     "group": "classrooms",
     "status": "gateway"
   },
@@ -1465,6 +1501,36 @@
   },
   {
     "method": "GET",
+    "path": "/api/v1/fsrs/evidence/due",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/fsrs/evidence/evaluate",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/fsrs/settings",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/fsrs/settings",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/fsrs/transparency",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
     "path": "/api/v1/hearts",
     "group": "misc",
     "status": "gateway"
@@ -1657,6 +1723,66 @@
   },
   {
     "method": "GET",
+    "path": "/api/v1/history/curriculum/competencies",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/history/curriculum/competencies/flags/{flag_id}/resolve",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/curriculum/competencies/mappings",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/history/curriculum/competencies/mappings",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/curriculum/competencies/mappings/{mapping_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/history/curriculum/competencies/mappings/{mapping_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/history/curriculum/competencies/mappings/{mapping_id}/flag",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/curriculum/competencies/mappings/{mapping_id}/flags",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/history/curriculum/competencies/mappings/{mapping_id}/verify",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/curriculum/competencies/{code}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
     "path": "/api/v1/history/curriculum/fallbacks/{target}",
     "group": "misc",
     "status": "gateway"
@@ -1734,6 +1860,18 @@
     "status": "gateway"
   },
   {
+    "method": "GET",
+    "path": "/api/v1/history/glossary",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/glossary/{term_key}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
     "method": "POST",
     "path": "/api/v1/history/learning-outcomes/assessments",
     "group": "misc",
@@ -1770,8 +1908,50 @@
     "status": "gateway"
   },
   {
+    "method": "POST",
+    "path": "/api/v1/history/learning-outcomes/ethics-protocols/{ethics_protocol_id}/consent",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/history/learning-outcomes/ethics-protocols/{ethics_protocol_id}/consent/{consent_id}/verify",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/history/learning-outcomes/ethics-protocols/{ethics_protocol_id}/consent/{consent_id}/withdraw",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/learning-outcomes/ethics-protocols/{ethics_protocol_id}/consent/{student_id}/status",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
     "method": "GET",
     "path": "/api/v1/history/learning-outcomes/ethics-protocols/{protocol_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/history/learning-outcomes/retention/audit",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/history/learning-outcomes/retention/purge",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/history/learning-outcomes/rubric-calibration",
     "group": "misc",
     "status": "gateway"
   },
@@ -1784,6 +1964,60 @@
   {
     "method": "POST",
     "path": "/api/v1/history/learning-outcomes/surveys",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/history/learning-outcomes/teacher-workload",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/learning-outcomes/teacher-workload/summary",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/history/learning-outcomes/validate-learning-claim",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/lesson-plans",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/history/lesson-plans",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/lesson-plans/{plan_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/history/lesson-plans/{plan_id}/printable-handout",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/history/lesson-plans/{plan_id}/publish",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/history/lesson-wizard/validate",
     "group": "misc",
     "status": "gateway"
   },
@@ -2287,6 +2521,18 @@
   },
   {
     "method": "GET",
+    "path": "/api/v1/reviews/evidence/due",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/reviews/evidence/evaluate",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
     "path": "/api/v1/schools",
     "group": "misc",
     "status": "gateway"
@@ -2556,6 +2802,66 @@
     "status": "gateway"
   },
   {
+    "method": "GET",
+    "path": "/groups/{group_id}/board",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/groups/{group_id}/board/cards",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "DELETE",
+    "path": "/groups/{group_id}/board/cards/{card_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "PUT",
+    "path": "/groups/{group_id}/board/cards/{card_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/groups/{group_id}/board/comparisons",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "DELETE",
+    "path": "/groups/{group_id}/board/comparisons/{comparison_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/groups/{group_id}/board/feedback",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/groups/{group_id}/board/request-revision",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/groups/{group_id}/board/resubmit",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/groups/{group_id}/board/revisions",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
     "method": "POST",
     "path": "/groups/{group_id}/evidence",
     "group": "misc",
@@ -2695,6 +3001,72 @@
   },
   {
     "method": "GET",
+    "path": "/offline-kit",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/onboarding/complete",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/onboarding/dismiss",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/onboarding/profile",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/onboarding/reset",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/onboarding/step",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/passport",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/passport/check-in",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/passport/classroom/{classroom_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/passport/unlock",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/passport/verify-qr",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
     "path": "/paths",
     "group": "misc",
     "status": "gateway"
@@ -2750,6 +3122,24 @@
   {
     "method": "POST",
     "path": "/releases/{release_id}/rollback",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/sample-templates",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/sample-templates/{template_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/sample-templates/{template_id}/clone",
     "group": "misc",
     "status": "gateway"
   },
@@ -2826,6 +3216,30 @@
     "status": "gateway"
   },
   {
+    "method": "GET",
+    "path": "/support/tickets",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/support/tickets",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/support/tickets/{ticket_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/support/tickets/{ticket_id}/reply",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
     "method": "POST",
     "path": "/sync",
     "group": "misc",
@@ -2870,6 +3284,18 @@
   {
     "method": "POST",
     "path": "/teacher/submissions/{submission_id}/grade",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/training/resources",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/training/resources/{resource_id}",
     "group": "misc",
     "status": "gateway"
   },
@@ -3068,6 +3494,18 @@
   {
     "method": "GET",
     "path": "/api/v1/users/me/exam-attempts",
+    "group": "users",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/users/me/fsrs-settings",
+    "group": "users",
+    "status": "gateway"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/users/me/fsrs-settings",
     "group": "users",
     "status": "gateway"
   },

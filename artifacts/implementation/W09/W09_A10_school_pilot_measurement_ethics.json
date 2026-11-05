@@ -1,0 +1,110 @@
+{
+  "ticket_id": "V5-T100",
+  "wave": "W09",
+  "slot": "W09-A10",
+  "role": "W09-A10",
+  "priority": "P2",
+  "classification": "NEW_PRODUCT_FEATURE",
+  "goal": "School pilot measurement & ethics protocol in docs/ and backend/routers/.",
+  "status": "COMPLETED",
+  "timestamp": "2026-11-05T09:45:00Z",
+  "summary": "Implemented formal school pilot measurement and research ethics protocol spanning documentation, database models, backend domain logic, services, REST API routers, and comprehensive verification suite. Covers formal IRB/ethics protocol lifecycle governance, guardian informed consent verification and withdrawal under Decree 13/2023/ND-CP, quantitative teacher workload assessment and NASA-TLX cognitive load tracking for educator burnout prevention, 365-day student data retention and automated PII purging, and dual-assessor S1-S4 rubric calibration with inter-rater agreement and divergence detection (>15%). Enforces strict negative abuse invariant: results based solely on subjective sentiment, feelings, or satisfaction surveys (including the 1,502 survey) are strictly firewalled and cannot be labeled as evidence of learning improvement (HTTP 422 CANNOT_DERIVE_CAUSAL_METRICS_FROM_SURVEY).",
+  "files_modified_or_created": [
+    {
+      "file": "docs/research/SCHOOL_PILOT_MEASUREMENT_AND_ETHICS_PROTOCOL.md",
+      "action": "created",
+      "changes": "Authored comprehensive school pilot research ethics protocol covering IRB institutional review, guardian informed consent verification, teacher workload assessment and burnout defense, Decree 13/2023/ND-CP data retention and purging policy, dual-assessor rubric calibration, and strict separation of subjective sentiment from causal learning evidence."
+    },
+    {
+      "file": "backend/domain/learning_outcome.py",
+      "action": "modified",
+      "changes": "Added controlled vocabularies (PilotConsentStatus, TeacherWorkloadCategory, TeacherActivityType, RubricCalibrationStatus), domain exceptions (GuardianConsentRequiredError, GuardianConsentWithdrawnError, RubricCalibrationDivergentError), and algorithms for teacher workload category calculation, dual-assessor rubric calibration with criteria divergence breakdown, guardian consent validation, and negative abuse invariant checks blocking subjective sentiment from claiming learning improvement."
+    },
+    {
+      "file": "backend/history_models.py",
+      "action": "modified",
+      "changes": "Added SQLAlchemy models: HistoryPilotGuardianConsent, HistoryTeacherWorkloadLog, and HistoryRubricCalibration with foreign keys, compound indexes, and unique constraints."
+    },
+    {
+      "file": "backend/models.py",
+      "action": "modified",
+      "changes": "Re-exported HistoryPilotGuardianConsent, HistoryTeacherWorkloadLog, and HistoryRubricCalibration in Base.metadata registry."
+    },
+    {
+      "file": "backend/apischemas/history_learning.py",
+      "action": "modified",
+      "changes": "Defined Pydantic schemas: PilotGuardianConsentCreate, PilotGuardianConsentOut, PilotGuardianConsentStatusOut, PilotGuardianConsentWithdrawIn, TeacherWorkloadLogCreate, TeacherWorkloadLogOut, TeacherWorkloadSummaryOut, RubricCalibrationCreate, RubricCalibrationOut, PilotDataRetentionAuditOut, PilotDataRetentionPurgeIn, PilotDataRetentionPurgeOut, LearningImprovementClaimValidateIn, and LearningImprovementClaimValidateOut."
+    },
+    {
+      "file": "backend/services/history_learning.py",
+      "action": "modified",
+      "changes": "Implemented business logic services: create_pilot_guardian_consent, verify_pilot_guardian_consent, withdraw_pilot_guardian_consent, get_pilot_guardian_consent_status, log_teacher_workload, get_teacher_workload_summary, calibrate_submission_rubrics, audit_pilot_data_retention, purge_expired_pilot_data, and validate_learning_improvement_claim. Added guardian consent gates to submit_learning_outcome_assessment and compute_causal_learning_outcome, and consent withdrawal exclusion to get_cohort_causal_learning_metrics."
+    },
+    {
+      "file": "backend/routers/history_learning.py",
+      "action": "modified",
+      "changes": "Exposed typed REST API endpoints under /api/v1/history/learning-outcomes/* for guardian consent registration, verification, withdrawal, and status lookup; teacher workload logging and summary; dual-assessor rubric calibration; data retention audit and purging; and anti-abuse learning improvement claim validation."
+    },
+    {
+      "file": "migrations/versions/0076_school_pilot_measurement_ethics.py",
+      "action": "created",
+      "changes": "Created purely additive Alembic migration creating history_pilot_guardian_consents, history_teacher_workload_logs, and history_rubric_calibrations tables and indexes."
+    },
+    {
+      "file": "tests/v5/conftest.py",
+      "action": "modified",
+      "changes": "Added idempotent DDL creation for the 3 new pilot measurement tables in isolated test database environment."
+    },
+    {
+      "file": "tests/v5/test_v5_t100.py",
+      "action": "created",
+      "changes": "Authored 6-part test suite verifying formal IRB protocol governance, guardian consent verification/withdrawal lifecycle, teacher workload and burnout defense, dual-assessor rubric calibration, data retention audit/purge, and critical negative abuse rejection of sentiment surveys for learning improvement."
+    }
+  ],
+  "invariants_verified": {
+    "formal_irb_protocol_governance": "Inquiry assessments require active approved IRB ethics protocols (HistoryEthicsProtocol). Draft, revoked, or expired protocols block assessment authoring and submissions with HTTP 422 ETHICS_PROTOCOL_REQUIRED.",
+    "guardian_informed_consent_verification": "Under Decree 13/2023/ND-CP, minor participation in empirical research requires prior verified guardian consent. Pending consent returns HTTP 403 GUARDIAN_CONSENT_REQUIRED; verified consent allows participation; consent withdrawal returns HTTP 403 GUARDIAN_CONSENT_WITHDRAWN and excludes student data from research cohort metrics.",
+    "teacher_workload_burnout_defense": "Educator workload (preparation, instruction, grading time, NASA-TLX cognitive load index) is quantitatively tracked. Grading time exceeding 15 min/submission or TLX > 70 triggers excessive workload classification, burnout risk warnings, and recommendations to deploy secondary independent assessors.",
+    "dual_assessor_rubric_calibration": "Dual independent evaluators score S1-S4 rubric criteria. Agreement within 15% tolerance yields 'calibrated' status and consensus score. Divergence > 15% yields 'divergent_requires_review' status with criteria breakdown, preventing uncalibrated grading from polluting research metrics.",
+    "student_data_retention_and_purge": "Data retention limits (data_retention_days, default 365 days) are audited automatically. Purge execution redacts submission answers and survey text to [RETENTION_PURGED] while preserving anonymized cohort statistics for academic citation.",
+    "negative_abuse_sentiment_isolation": "Strict firewall: Results based solely on subjective sentiment, feelings, or satisfaction surveys (including the 1,502 survey) CANNOT be claimed or labeled as evidence of learning improvement. Valid learning improvement evidence strictly requires objective paired pre/post source inquiry assessments evaluated by independent calibrated rubric assessors (HTTP 422 CANNOT_DERIVE_CAUSAL_METRICS_FROM_SURVEY)."
+  },
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t100.py -v",
+    "tests_total": 6,
+    "tests_passed": 6,
+    "tests_failed": 0,
+    "test_cases": [
+      {
+        "name": "test_formal_irb_ethics_protocol_governance",
+        "result": "PASSED",
+        "description": "Verifies IRB ethics protocol registration, lifecycle states, duplicate code rejection (409), and blocking of draft protocols from assessment authoring (422)."
+      },
+      {
+        "name": "test_guardian_informed_consent_verification_and_withdrawal",
+        "result": "PASSED",
+        "description": "Verifies guardian informed consent registration (pending blocks with 403), teacher verification (verified allows submission), and guardian withdrawal (withdrawn blocks subsequent submissions with 403 and halts research)."
+      },
+      {
+        "name": "test_teacher_workload_assessment_and_burnout_prevention",
+        "result": "PASSED",
+        "description": "Verifies teacher workload logging, automated categorization (optimal, acceptable, excessive) based on time per submission and NASA-TLX load, and burnout risk alert triggering."
+      },
+      {
+        "name": "test_dual_assessor_rubric_calibration_and_agreement",
+        "result": "PASSED",
+        "description": "Verifies dual independent evaluator calibration, consensus scoring when divergence <= 15%, and divergence flagging (divergent_requires_review) when discrepancy > 15%."
+      },
+      {
+        "name": "test_student_data_retention_audit_and_purging_policy",
+        "result": "PASSED",
+        "description": "Verifies retention audit identifying records exceeding data_retention_days (90 days) and automated PII purging to [RETENTION_PURGED] per Decree 13/2023/ND-CP."
+      },
+      {
+        "name": "test_negative_abuse_sentiment_survey_cannot_claim_learning_improvement",
+        "result": "PASSED",
+        "description": "P2 Negative Abuse Test: Any attempt to label results as learning improvement or causal mastery based on subjective sentiment, feelings, or satisfaction surveys strictly fails with HTTP 422 CANNOT_DERIVE_CAUSAL_METRICS_FROM_SURVEY."
+      }
+    ]
+  }
+}

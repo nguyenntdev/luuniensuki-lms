@@ -3190,6 +3190,51 @@ class ClassroomGradebookOut(BaseModel):
 
 
 # =============================================================================
+# Rubric Analytics Schemas (V5-T094 / Wave W09-A04)
+# =============================================================================
+
+
+class RubricCriterionAnalyticsOut(BaseModel):
+    """Analytics for a single historical reasoning rubric criterion dimension."""
+
+    criterion_key: str = Field(..., description="Criterion identifier: S1_SPATIAL, S2_TEMPORAL, S3_EVIDENCE, S4_ARGUMENT")
+    dimension_vi: str = Field(..., description="Vietnamese dimension title")
+    dimension_en: str = Field(..., description="English dimension title")
+    max_score: float = Field(default=3.0, description="Max score scale (usually 3.0)")
+    mean: Optional[float] = Field(None, description="Average score across cohort (suppressed if n < 5)")
+    median: Optional[float] = Field(None, description="Median score across cohort (suppressed if n < 5)")
+    std_dev: Optional[float] = Field(None, description="Standard deviation (suppressed if n < 5)")
+    mastery_rate: Optional[float] = Field(None, description="Percentage of students achieving competent level (>= 66.7%) (suppressed if n < 5)")
+    sample_size: int = Field(default=0, description="Number of evaluated students")
+    distribution: Optional[dict[str, int]] = Field(None, description="Counts per performance level (suppressed if n < 5)")
+
+
+class ClassroomRubricAnalyticsOut(BaseModel):
+    """School-safe aggregate analytics per rubric version, historical reasoning criteria dimensions,
+    and student privacy suppression minimums (k-anonymity for cohorts < 5).
+    """
+
+    classroom_id: UUID
+    classroom_name: str
+    teacher_id: UUID
+    active_rubric_version: str = Field(default="GDPT_2018_V1", description="Current rubric version evaluated")
+    available_rubric_versions: list[str] = Field(default_factory=list, description="Available rubric versions with submissions")
+    analytics_type: str = Field(default="descriptive", description="Strictly descriptive unless valid controlled study")
+    causal_inference_permitted: bool = Field(default=False, description="Whether causal claims are scientifically validated")
+    methodological_notice: str = Field(
+        default="Descriptive statistics only. Causal learning gains or inferential mastery claims strictly require an approved controlled comparative study (IRB/Ethics Protocol) and are forbidden from observational classroom rubric aggregates."
+    )
+    study_protocol_code: Optional[str] = None
+    cohort_size: int = Field(..., description="Total evaluated students in cohort")
+    min_k_threshold: int = Field(default=5, description="Minimum cohort size for k-anonymity privacy protection")
+    is_suppressed: bool = Field(default=False, description="True if cohort < 5 to prevent student re-identification")
+    suppression_reason: Optional[str] = None
+    overall_average: Optional[float] = None
+    criteria_analytics: list[RubricCriterionAnalyticsOut] = Field(default_factory=list)
+    recommendations: list[str] = Field(default_factory=list)
+
+
+# =============================================================================
 # Quest Assignment Schemas
 # =============================================================================
 

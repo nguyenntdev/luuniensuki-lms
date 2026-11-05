@@ -26,7 +26,7 @@ class RelicInspectionCompleteRequest(BaseModel):
     )
     inspection_mode: str = Field(
         ...,
-        pattern="^(webxr_ar|quicklook_ar|turntable_3d|turntable_2d|image_fallback)$",
+        pattern="^(webxr_ar|quicklook_ar|turntable_3d|turntable_2d|image_fallback|paper_handout|offline_rubbing)$",
         description="Active inspection mode used by the client",
     )
     camera_permission_granted: bool = Field(
@@ -35,7 +35,7 @@ class RelicInspectionCompleteRequest(BaseModel):
     )
     device_tier: Optional[str] = Field(
         default="desktop",
-        pattern="^(low_end_mobile|mid_range_mobile|high_end_mobile|desktop)$",
+        pattern="^(low_end_mobile|mid_range_mobile|high_end_mobile|desktop|paper_only|none)$",
         description="Client device capability tier classification",
     )
     time_spent_seconds: int = Field(

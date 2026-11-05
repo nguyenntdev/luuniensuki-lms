@@ -60,6 +60,10 @@ export default function PrintWorksheetModal({
     include_qr: true,
     include_rubric: true,
     include_exit_ticket: true,
+    include_rubbings: true,
+    include_transcripts: true,
+    include_offline_tasks: true,
+    high_contrast_rubbings: true,
     selected_monument_slugs: STANDARD_4_STATIONS_SLUGS,
   });
 
@@ -477,6 +481,46 @@ export default function PrintWorksheetModal({
                       />
                       <CheckCircle2 className="size-3.5 text-primary" />
                       <span>In phần thu hoạch cuối giờ (Exit Ticket 5 phút)</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={config.include_rubbings !== false}
+                        onChange={(e) => setConfig((p) => ({ ...p, include_rubbings: e.target.checked }))}
+                        className="rounded border-border"
+                      />
+                      <FileSpreadsheet className="size-3.5 text-primary" />
+                      <span>In bản dập 2D độ tương phản cao (Hỗ trợ ngoại tuyến &amp; không màn hình)</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={config.include_offline_tasks !== false}
+                        onChange={(e) => setConfig((p) => ({ ...p, include_offline_tasks: e.target.checked }))}
+                        className="rounded border-border"
+                      />
+                      <Sparkles className="size-3.5 text-primary" />
+                      <span>In nhiệm vụ điền dã 100% trên giấy (Không yêu cầu smartphone / AR)</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={config.include_transcripts !== false}
+                        onChange={(e) => setConfig((p) => ({ ...p, include_transcripts: e.target.checked }))}
+                        className="rounded border-border"
+                      />
+                      <FileCheck className="size-3.5 text-primary" />
+                      <span>In toàn văn thuyết minh âm thanh (Zero audio streaming data)</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={config.high_contrast_rubbings !== false}
+                        onChange={(e) => setConfig((p) => ({ ...p, high_contrast_rubbings: e.target.checked }))}
+                        className="rounded border-border"
+                      />
+                      <Settings2 className="size-3.5 text-primary" />
+                      <span>Bộ lọc in tương phản cao (Tối ưu sắc nét trên máy in trường học)</span>
                     </label>
                   </div>
                 </div>

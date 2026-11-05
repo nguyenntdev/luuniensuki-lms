@@ -1,0 +1,72 @@
+{
+  "ticket": "V5-T093",
+  "ticket_id": "V5-T093",
+  "wave": "W09",
+  "slot": "W09-A03",
+  "priority": "P2",
+  "classification": "NEW_PRODUCT_FEATURE",
+  "status": "COMPLETED",
+  "goal": "Evidence board for collaborative inquiry groups in frontend/src/app/learn/ and backend routers.",
+  "timestamp": "2026-11-06T00:00:00Z",
+  "summary": "Implemented and verified a collaborative comparative source evidence board for peer inquiry groups with 4-column categorization (supporting, refuting, synthesis, unresolved), source-to-source and source-to-claim comparative links, teacher inline feedback annotations, revision cycles with audit history, and strict negative abuse isolation rejecting unauthorized cross-group alterations or student inspection.",
+  "invariants_enforced": [
+    "COLLABORATIVE_EVIDENCE_BOARD: Peer groups organize evidence citations into 4 distinct pedagogical columns (supporting, refuting, synthesis, unresolved) with contributor attribution and dynamic positioning.",
+    "COMPARATIVE_LINKS: Peer groups establish comparative evidence relations between sources and claims with explicit relation types (supports, refutes, corroborates, contrasts, qualifies) and reasoned rationales.",
+    "TEACHER_INLINE_FEEDBACK: Only classroom teachers and authorized staff can provide inline pedagogical commentary on board cards and sections (strictly rejected with HTTP 403 FORBIDDEN_SCOPE for students).",
+    "REVISION_CYCLES: Teacher revision requests unlock the board for subsequent student revisions, recording revision actions and notes in revision_history and incrementing revision_cycle upon resubmission.",
+    "STRICT_NEGATIVE_ABUSE_ISOLATION: Students outside the group CANNOT view private boards, inject evidence cards, update cards, delete cards, create comparative links, or access revision histories (strictly rejected with HTTP 403 FORBIDDEN_SCOPE)."
+  ],
+  "verification": {
+    "test_file": "tests/v5/test_v5_t093.py",
+    "tests_passed": 5,
+    "tests_total": 5,
+    "regression_tests": "tests/v5/test_v5_t038.py (9 passed)",
+    "openapi_snapshot_match": "PASSED (test_openapi_snapshot.py)",
+    "route_inventory_freshness": "PASSED (lint-inventory-drift.sh)",
+    "migration_safety": "PASSED (lint-migration-safety.sh)",
+    "frontend_type_check": "PASSED (tsc --noEmit)",
+    "frontend_lint_ci": "PASSED (eslint . --max-warnings=0)"
+  },
+  "changes": [
+    {
+      "file": "backend/history_inquiry_models.py",
+      "description": "Added comparative_links, inline_feedback, revision_cycle, and revision_history columns to HistoricalInquirySubmission."
+    },
+    {
+      "file": "migrations/versions/0073_evidence_board_comparative_links.py",
+      "description": "Additive migration adding comparative_links, inline_feedback, revision_cycle, and revision_history to historical_inquiry_submissions."
+    },
+    {
+      "file": "backend/apischemas/history_inquiry.py",
+      "description": "Pydantic schemas for InquiryBoardOut, InquiryBoardCardCreate, InquiryBoardCardUpdate, InquiryBoardCardOut, ComparativeLinkCreate, ComparativeLinkOut, TeacherInlineFeedbackCreate, TeacherInlineFeedbackOut, BoardRequestRevisionIn, BoardResubmitIn, and RevisionCycleOut."
+    },
+    {
+      "file": "backend/services/history_inquiry.py",
+      "description": "Implemented domain service logic for evidence board retrieval, card lifecycle, comparative links, teacher inline feedback, revision requests, resubmission, and strict negative abuse checks."
+    },
+    {
+      "file": "backend/routers/history_inquiry.py",
+      "description": "FastAPI router endpoints under /api/v1/history/inquiry/groups/{group_id}/board for board access, cards, comparisons, feedback, revision requests, resubmits, and revision history."
+    },
+    {
+      "file": "frontend/src/components/rbpc/EvidenceBoard.tsx",
+      "description": "Contemporary Huế editorial 4-column evidence board supporting drag/column changes, comparative links, teacher inline feedback modals, revision cycles, and error handling."
+    },
+    {
+      "file": "frontend/src/components/rbpc/PeerInquiryWorkspace.tsx",
+      "description": "Integrated EvidenceBoard component with view mode switcher between Synthesis Workspace and Evidence Board."
+    },
+    {
+      "file": "frontend/src/components/rbpc/index.ts",
+      "description": "Exported EvidenceBoard."
+    },
+    {
+      "file": "frontend/src/app/learn/page.tsx",
+      "description": "Imported and integrated EvidenceBoard into the Learn pathway."
+    },
+    {
+      "file": "tests/v5/test_v5_t093.py",
+      "description": "Comprehensive 5-test test suite verifying card lifecycle, comparative links, teacher inline feedback, revision cycles, and negative abuse isolation."
+    }
+  ]
+}

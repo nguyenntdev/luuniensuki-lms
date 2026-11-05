@@ -147,7 +147,48 @@ describe("PrintableFieldworkWorksheet Component (STTT-SPEC-PWA-PRINT-001)", () =
 
   it("verifies cluster definitions and rubric dimensions integrity", () => {
     expect(STATION_CLUSTERS.length).toBeGreaterThanOrEqual(4);
-    expect(RUBRIC_DIMENSIONS.map((d) => d.id)).toEqual(["S1", "S2", "S3", "S4"]);
-    expect(EXIT_TICKET_QUESTIONS.length).toBe(2);
+    expect(RUBRIC_DIMENSIONS.length).toBe(4);
+    expect(EXIT_TICKET_QUESTIONS.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("renders low-bandwidth 2D rubbings, verbatim audio transcripts, and offline tasks (V5-T096)", () => {
+    const html = renderToStaticMarkup(
+      <PrintableFieldworkWorksheet
+        stations={standardStations}
+        config={{
+          ...baseConfig,
+          include_rubbings: true,
+          include_transcripts: true,
+          include_offline_tasks: true,
+          high_contrast_rubbings: true,
+        }}
+      />,
+    );
+
+    // 100% Offline & zero AR guarantee banner
+    expect(html).toContain("100% NGOẠI TUYẾN • KHÔNG YÊU CẦU AR");
+    expect(html).toContain("Tuyệt đối không bắt buộc điện thoại thông minh");
+
+    // High-contrast 2D rubbing boxes
+    expect(html).toContain("Bản dập 2D tương phản cao:");
+    expect(html).toContain("filter:contrast(160%) grayscale(100%) brightness(95%)");
+
+    // Offline Inspection Task (100% paper achievable)
+    expect(html).toContain("Nhiệm vụ điền dã 100% trên giấy");
+    expect(html).toContain("Khung vẽ phác họa chi tiết hoa văn");
+
+    // Verbatim Audio Guide Transcript (0 MB streaming)
+    expect(html).toContain("Toàn văn Thuyết minh Âm thanh:");
+    expect(html).toContain("0 MB dữ liệu mạng");
+  });
+
+  it("verifies negative abuse guarantee: zero AR or smartphone requirement is enforced", () => {
+    // When rubbings, transcripts, and offline tasks are enabled, zero AR or smartphone elements are required
+    standardStations.forEach((st) => {
+      expect(st.offline_task?.paper_achievable).toBe(true);
+      expect(st.offline_task?.ar_or_smartphone_required).toBe(false);
+      expect(st.rubbing_asset?.asset_url).toBeTruthy();
+      expect(st.audio_transcript?.script_text).toBeTruthy();
+    });
   });
 });

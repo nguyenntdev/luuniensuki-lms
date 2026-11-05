@@ -163,15 +163,25 @@ export default function PrintableFieldworkWorksheet({
       </header>
 
       {/* ============================================================== */}
-      {/* 2. INSTRUCTIONS BOX                                             */}
+      {/* 2. INSTRUCTIONS BOX & ZERO-DEVICE GUARANTEE                    */}
       {/* ============================================================== */}
-      <section className="text-[11px] bg-neutral-100/70 border border-neutral-300 p-2.5 rounded avoid-break">
-        <p className="font-semibold text-black">
-          📌 <span className="underline">Quy tắc ghi chép điền dã theo mô hình M-E-E:</span>
-        </p>
-        <p className="text-neutral-800 mt-0.5 leading-snug">
-          Mỗi trạm quan sát gồm 4 cột bắt buộc: <strong>(1) Vị trí trên bản đồ</strong>; <strong>(2) Hiện trạng mắt thấy</strong>; <strong>(3) Tư liệu chính sử đối chiếu</strong>; <strong>(4) Em kết luận gì</strong> (chỉ rõ <em>Mệnh đề</em> khẳng định, <em>Bằng chứng</em> đối chiếu và <em>Điều cần kiểm chứng thêm</em>). Tuyệt đối tuân thủ chuẩn mực sử học &quot;nói có sách, mách có chứng&quot;.
-        </p>
+      <section className="space-y-2 avoid-break">
+        <div className="bg-emerald-50 border border-emerald-400 p-2 rounded text-[10px] text-emerald-950 flex items-center gap-2">
+          <span className="font-bold uppercase tracking-wider text-[9px] bg-emerald-700 text-white px-1.5 py-0.5 rounded shrink-0">
+            100% NGOẠI TUYẾN • KHÔNG YÊU CẦU AR
+          </span>
+          <span>
+            Học sinh hoàn thành trọn vẹn 100% mục tiêu bài học bằng phiếu in và bản dập 2D. Tuyệt đối không bắt buộc điện thoại thông minh, máy ảnh hay kính AR.
+          </span>
+        </div>
+        <div className="text-[11px] bg-neutral-100/70 border border-neutral-300 p-2.5 rounded">
+          <p className="font-semibold text-black">
+            📌 <span className="underline">Quy tắc ghi chép điền dã theo mô hình M-E-E:</span>
+          </p>
+          <p className="text-neutral-800 mt-0.5 leading-snug">
+            Mỗi trạm quan sát gồm 4 cột bắt buộc: <strong>(1) Vị trí trên bản đồ</strong>; <strong>(2) Hiện trạng mắt thấy</strong>; <strong>(3) Tư liệu chính sử đối chiếu</strong>; <strong>(4) Em kết luận gì</strong> (chỉ rõ <em>Mệnh đề</em> khẳng định, <em>Bằng chứng</em> đối chiếu và <em>Điều cần kiểm chứng thêm</em>). Tuyệt đối tuân thủ chuẩn mực sử học &quot;nói có sách, mách có chứng&quot;.
+          </p>
+        </div>
       </section>
 
       {/* ============================================================== */}
@@ -264,6 +274,35 @@ export default function PrintableFieldworkWorksheet({
                           </div>
                         </div>
                       )}
+
+                      {/* High-Contrast 2D Rubbing Box for Offline & Low-Bandwidth */}
+                      {config.include_rubbings !== false && st.rubbing_asset && (
+                        <div className="pt-1.5 border-t border-neutral-300 space-y-1">
+                          <div className="flex items-center justify-between text-[8px] font-bold uppercase tracking-wider text-neutral-800">
+                            <span>Bản dập 2D tương phản cao:</span>
+                            <span className="text-[7px] font-mono text-neutral-500">Tỉ lệ 1:1</span>
+                          </div>
+                          <div className="border border-black rounded bg-white p-0.5 flex items-center justify-center">
+                            <img
+                              src={st.rubbing_asset.asset_url}
+                              alt={st.rubbing_asset.caption_vi || `Bản dập ${st.monument_name_vi}`}
+                              className="max-h-20 w-auto object-contain filter contrast-150 grayscale"
+                              style={{
+                                filter: config.high_contrast_rubbings !== false
+                                  ? "contrast(160%) grayscale(100%) brightness(95%)"
+                                  : undefined,
+                              }}
+                              loading="lazy"
+                            />
+                          </div>
+                          <p className="text-[8px] text-neutral-600 leading-tight italic">
+                            {st.rubbing_asset.caption_vi}
+                          </p>
+                          <div className="text-[7px] text-neutral-500 font-mono">
+                            Nguồn: {st.rubbing_asset.rights_attribution || "HMCC & Lưu Niên"}
+                          </div>
+                        </div>
+                      )}
                     </td>
 
                     {/* CỘT 2: HIỆN TRẠNG MẮT THẤY */}
@@ -271,6 +310,41 @@ export default function PrintableFieldworkWorksheet({
                       <div className="text-[10px] text-neutral-800 italic bg-neutral-100 p-1 rounded border border-neutral-200">
                         <strong>Nhiệm vụ quan sát:</strong> {st.observation_prompt_vi}
                       </div>
+
+                      {/* Offline Inspection Task (100% paper/2D achievable, zero-AR required) */}
+                      {config.include_offline_tasks !== false && st.offline_task && (
+                        <div className="p-1.5 rounded border border-neutral-400 bg-neutral-50 text-[9px] space-y-1">
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-[9px] uppercase tracking-wide text-neutral-900">
+                              📋 {st.offline_task.task_title_vi}
+                            </span>
+                            <span className="text-[7px] font-semibold text-emerald-800 bg-emerald-100 px-1 py-0.2 rounded border border-emerald-300">
+                              Mắt thường / 2D
+                            </span>
+                          </div>
+                          <p className="text-[8px] text-neutral-700 leading-snug">
+                            {st.offline_task.instructions_vi}
+                          </p>
+                          <div className="space-y-0.5 text-[8px] text-neutral-800 font-medium">
+                            {st.offline_task.checkpoints.map((cp, cpIdx) => (
+                              <div key={cpIdx} className="flex items-start gap-1">
+                                <span className="font-mono text-black font-bold">[ ]</span>
+                                <span>{cp}</span>
+                              </div>
+                            ))}
+                          </div>
+                          {!isTeacher && (
+                            <div className="pt-1">
+                              <span className="text-[8px] font-semibold uppercase text-neutral-600 block">
+                                {st.offline_task.sketch_prompt_vi || "Khung phác họa thực địa / hoa văn bản dập:"}
+                              </span>
+                              <div className="h-12 border border-dashed border-neutral-400 rounded bg-white mt-0.5 flex items-center justify-center text-[8px] text-neutral-400 italic">
+                                (Phác họa sơ đồ mặt bằng hoặc chi tiết chạm khắc bằng bút chì)
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
 
                       {isTeacher ? (
                         <div className="p-1.5 rounded bg-emerald-50 border border-emerald-300 text-[10px] text-emerald-950 space-y-1">
@@ -283,11 +357,10 @@ export default function PrintableFieldworkWorksheet({
                         </div>
                       ) : (
                         /* Student handwritten writing lines */
-                        <div className="space-y-3.5 pt-1">
+                        <div className="space-y-3 pt-0.5">
                           <div className="text-[9px] text-neutral-600 uppercase font-semibold">
                             Ghi chép hiện trạng tại thực địa:
                           </div>
-                          <div className="h-4 border-b border-dotted border-black/70" />
                           <div className="h-4 border-b border-dotted border-black/70" />
                           <div className="h-4 border-b border-dotted border-black/70" />
                           <div className="h-4 border-b border-dotted border-black/70" />
@@ -311,6 +384,28 @@ export default function PrintableFieldworkWorksheet({
                       <blockquote className="p-1.5 rounded bg-neutral-100 border-l-2 border-black text-[10px] italic text-neutral-900 leading-snug">
                         &ldquo;{st.primary_source.citation}&rdquo;
                       </blockquote>
+
+                      <div className="text-[8px] text-neutral-500 font-mono">
+                        Quyền sở hữu: {st.primary_source.rights_owner || "HMCC & Quốc Sử Quán"} • {st.primary_source.license || "CC BY 4.0"}
+                      </div>
+
+                      {/* Audio Guide Transcript (Verbatim Narration, Zero Streaming Bandwidth) */}
+                      {config.include_transcripts !== false && st.audio_transcript && (
+                        <div className="p-1.5 rounded border border-neutral-300 bg-neutral-50 text-[9px] space-y-1">
+                          <div className="flex items-center justify-between text-[8px] font-bold text-neutral-800 border-b border-neutral-200 pb-0.5">
+                            <span className="flex items-center gap-1">
+                              🎙️ <span>Toàn văn Thuyết minh Âm thanh:</span>
+                            </span>
+                            <span className="font-mono text-neutral-500">{st.audio_transcript.duration_text}</span>
+                          </div>
+                          <p className="text-neutral-700 leading-tight italic line-clamp-4">
+                            &ldquo;{st.audio_transcript.script_text}&rdquo;
+                          </p>
+                          <div className="text-[7px] text-neutral-500 font-sans">
+                            Giọng đọc: {st.audio_transcript.narrator} • <em>(Đọc trực tiếp, 0 MB dữ liệu mạng)</em>
+                          </div>
+                        </div>
+                      )}
 
                       {isTeacher ? (
                         <div className="p-1.5 rounded bg-amber-100/70 border border-amber-300 text-[9px] text-amber-950">

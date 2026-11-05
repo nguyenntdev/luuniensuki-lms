@@ -534,8 +534,33 @@ def get_classroom_roster(
     - Enrolled student: peer list with PII redacted
     - External student or non-associated user: PermissionError
     """
+    role_str = getattr(viewer.role, "value", str(viewer.role))
+    if role_str == "guest":
+        raise PermissionError("UNVERIFIED_TEACHER_ACCESS_DENIED: Guest teachers cannot access real student PII or live class records.")
+
     is_admin = viewer.role in (UserRole.admin, UserRole.super_admin)
     is_teacher = (viewer.role == UserRole.teacher and classroom.teacher_id == viewer.id)
+
+    if is_teacher:
+        is_verified = bool(getattr(viewer, "is_school_verified", True))
+        if classroom.school_id:
+            sm = db.execute(
+                select(SchoolMember).where(
+                    and_(
+                        SchoolMember.school_id == classroom.school_id,
+                        SchoolMember.user_id == viewer.id,
+                    )
+                )
+            ).scalar_one_or_none()
+            if sm and (
+                getattr(sm, "is_verified", True) is False
+                or getattr(sm, "verification_status", "verified") in ("unverified", "pending", "rejected")
+            ):
+                is_verified = False
+        if not is_verified:
+            raise PermissionError(
+                "UNVERIFIED_TEACHER_ACCESS_DENIED: Unverified school users cannot access real student PII or live class records."
+            )
 
     enrolled = db.execute(
         select(ClassMember).where(

@@ -626,3 +626,96 @@ class EditorialRightsSignoffOut(BaseModel):
     signed_off_by: UUID
     signed_off_at: datetime
     message: str
+
+
+# --------------------------------------------------------------------------- #
+# Multilingual Pedagogical Glossary & Epigraphy Schemas (V5-T098 / W09-A08)
+# --------------------------------------------------------------------------- #
+class HistoricalGlossaryTermOut(BaseModel):
+    id: UUID
+    term_key: str
+    term_vi: str
+    term_en: str
+    term_han_nom: Optional[str] = None
+    reading_quoc_ngu: Optional[str] = None
+    category: str = "general"
+    definition_vi: str
+    definition_en: str
+    contextual_usage_vi: Optional[str] = None
+    contextual_usage_en: Optional[str] = None
+    source_id: Optional[UUID] = None
+    citation_locator: Optional[str] = None
+    bilingual_citation: dict[str, Any] = Field(default_factory=dict)
+    review_status: str = "provisional"
+    origin: str = "ai_generated"
+    is_machine_translated: bool = False
+    is_uncertain: bool = False
+    uncertainty_label: Optional[str] = None
+    epigrapher_signoff: Optional[str] = None
+    translation_provenance: dict[str, Any] = Field(default_factory=dict)
+    related_entity_slugs: list[str] = Field(default_factory=list)
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class HistoricalGlossaryListOut(BaseModel):
+    items: list[HistoricalGlossaryTermOut] = Field(default_factory=list)
+    total: int = 0
+    offset: int = 0
+    limit: int = 50
+
+
+class HistoricalGlossaryTermCreateIn(BaseModel):
+    term_key: str = Field(..., min_length=2, max_length=128)
+    term_vi: str = Field(..., min_length=1)
+    term_en: str = Field(..., min_length=1)
+    term_han_nom: Optional[str] = None
+    reading_quoc_ngu: Optional[str] = None
+    category: str = "general"
+    definition_vi: str = Field(..., min_length=1)
+    definition_en: str = Field(..., min_length=1)
+    contextual_usage_vi: Optional[str] = None
+    contextual_usage_en: Optional[str] = None
+    source_id: Optional[UUID] = None
+    citation_locator: Optional[str] = None
+    bilingual_citation: Optional[dict[str, Any]] = None
+    review_status: str = "provisional"
+    origin: str = "ai_generated"
+    is_machine_translated: bool = False
+    is_uncertain: bool = False
+    uncertainty_label: Optional[str] = None
+    epigrapher_signoff: Optional[str] = None
+    related_entity_slugs: list[str] = Field(default_factory=list)
+
+
+class HistoricalGlossaryTermUpdateIn(BaseModel):
+    term_vi: Optional[str] = None
+    term_en: Optional[str] = None
+    term_han_nom: Optional[str] = None
+    reading_quoc_ngu: Optional[str] = None
+    category: Optional[str] = None
+    definition_vi: Optional[str] = None
+    definition_en: Optional[str] = None
+    contextual_usage_vi: Optional[str] = None
+    contextual_usage_en: Optional[str] = None
+    source_id: Optional[UUID] = None
+    citation_locator: Optional[str] = None
+    bilingual_citation: Optional[dict[str, Any]] = None
+    review_status: Optional[str] = None
+    origin: Optional[str] = None
+    is_machine_translated: Optional[bool] = None
+    is_uncertain: Optional[bool] = None
+    uncertainty_label: Optional[str] = None
+    epigrapher_signoff: Optional[str] = None
+    related_entity_slugs: Optional[list[str]] = None
+
+
+class HistoricalGlossaryReviewIn(BaseModel):
+    review_status: str = Field(..., pattern="^(verified|unreviewed|provisional|uncertain|disputed|rejected)$")
+    epigrapher_signoff: Optional[str] = None
+    source_id: Optional[UUID] = None
+    citation_locator: Optional[str] = None
+    notes: Optional[str] = None
+

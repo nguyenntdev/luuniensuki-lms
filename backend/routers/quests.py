@@ -17,6 +17,7 @@ from ..deps import get_current_user, get_db
 from ..models import (
     Certificate,
     Quest,
+    QuestObjective,
     QuestProgress,
     QuestStep,
     User,
@@ -24,6 +25,7 @@ from ..models import (
 from ..apischemas.quests import (
     QuestClaimRewardOut,
     QuestDetailOut,
+    QuestEvidencePracticeSummaryOut,
     QuestListItemOut,
     QuestObjectiveOut,
     QuestPrerequisiteOut,
@@ -301,6 +303,7 @@ def start_quest(
 
 
 @router.post("/api/v1/quests/{quest_slug}/claim", response_model=QuestClaimRewardOut)
+@router.post("/api/v1/quests/{quest_slug}/claim-reward", response_model=QuestClaimRewardOut)
 def claim_quest_reward(
     quest_slug: str,
     current_user: User = Depends(get_current_user),
@@ -526,4 +529,82 @@ def get_quest_summary(
         progress_percent=progress_percent,
         next_step_title=next_step_title,
         next_objective=next_objective,
+    )
+
+
+@router.get(
+    "/api/v1/quests/evidence-practice/summary",
+    response_model=QuestEvidencePracticeSummaryOut,
+)
+def get_quest_evidence_practice_summary(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> QuestEvidencePracticeSummaryOut:
+    """Audit and retrieve user's verified adaptive evidence practice status for quests."""
+    from sqlalchemy import func
+    from ..models import AdaptiveEvidenceCard, AdaptiveEvidenceLog
+    from ..services.fsrs import get_or_create_user_settings
+
+    verified_count = (
+        db.execute(
+            select(func.count(func.distinct(AdaptiveEvidenceLog.id))).where(
+                AdaptiveEvidenceLog.user_id == current_user.id,
+                AdaptiveEvidenceLog.abuse_detected.is_(False),
+                AdaptiveEvidenceLog.evaluation_score >= 0.6,
+            )
+        ).scalar_one()
+        or 0
+    )
+
+    abuse_count = (
+        db.execute(
+            select(func.count(func.distinct(AdaptiveEvidenceLog.id))).where(
+                AdaptiveEvidenceLog.user_id == current_user.id,
+                AdaptiveEvidenceLog.abuse_detected.is_(True),
+            )
+        ).scalar_one()
+        or 0
+    )
+
+    mastery_exists = (
+        db.execute(
+            select(func.count(AdaptiveEvidenceCard.id)).where(
+                AdaptiveEvidenceCard.user_id == current_user.id,
+                AdaptiveEvidenceCard.is_mastered.is_(True),
+            )
+        ).scalar_one()
+        > 0
+    )
+
+    settings = get_or_create_user_settings(db, current_user.id)
+    adaptive_status = "enabled" if settings.fsrs_enabled else "opted_out"
+
+    evidence_quests = (
+        db.execute(
+            select(Quest.name)
+            .join(QuestStep, Quest.id == QuestStep.quest_id)
+            .join(QuestObjective, QuestStep.id == QuestObjective.quest_step_id)
+            .where(
+                Quest.is_active.is_(True),
+                QuestObjective.objective_type.in_(
+                    [
+                        "adaptive_evidence_practice",
+                        "fsrs_evidence_review",
+                        "source_evidence_task",
+                    ]
+                ),
+            )
+            .distinct()
+        )
+        .scalars()
+        .all()
+    )
+
+    return QuestEvidencePracticeSummaryOut(
+        user_id=current_user.id,
+        total_verified_evaluations=verified_count,
+        abuse_flagged_count=abuse_count,
+        active_evidence_quests=list(evidence_quests),
+        evidence_mastery_achieved=mastery_exists,
+        fsrs_adaptive_status=adaptive_status,
     )

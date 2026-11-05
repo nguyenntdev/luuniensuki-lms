@@ -168,6 +168,118 @@ class HistoryLessonPublishOut(BaseModel):
 
 
 # --------------------------------------------------------------------------- #
+# Curriculum Competency Catalog Schemas (V5-T095 / Wave W09 / Slot A05)
+# --------------------------------------------------------------------------- #
+class CurriculumCompetencyOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    code: str
+    standard_framework: str
+    domain: str
+    name_vi: str
+    name_en: str
+    description_vi: str
+    description_en: str
+    grade_band_descriptors: dict[str, Any] = Field(default_factory=dict)
+    is_active: bool = True
+    created_at: datetime
+
+
+class CurriculumCompetencyListOut(BaseModel):
+    items: list[CurriculumCompetencyOut]
+    total: int
+
+
+class CurriculumCompetencyRelicMappingIn(BaseModel):
+    competency_id: UUID
+    relic_urn_slug: Optional[str] = None
+    relic_motif_id: Optional[str] = None
+    entity_slug: Optional[str] = None
+    grade_band: str = "GRADE_10_12"
+    min_grade: int = Field(default=6, ge=6, le=12)
+    max_grade: int = Field(default=12, ge=6, le=12)
+    learning_activity_vi: str = Field(..., min_length=3)
+    learning_activity_en: Optional[str] = None
+    evidence_requirement_vi: str = Field(..., min_length=3)
+    evidence_requirement_en: Optional[str] = None
+
+
+class CurriculumCompetencyRelicMappingUpdateIn(BaseModel):
+    relic_urn_slug: Optional[str] = None
+    relic_motif_id: Optional[str] = None
+    entity_slug: Optional[str] = None
+    grade_band: Optional[str] = None
+    min_grade: Optional[int] = Field(default=None, ge=6, le=12)
+    max_grade: Optional[int] = Field(default=None, ge=6, le=12)
+    learning_activity_vi: Optional[str] = None
+    learning_activity_en: Optional[str] = None
+    evidence_requirement_vi: Optional[str] = None
+    evidence_requirement_en: Optional[str] = None
+
+
+class CurriculumCompetencyRelicMappingOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    competency_id: UUID
+    competency_code: Optional[str] = None
+    competency_name_vi: Optional[str] = None
+    competency_domain: Optional[str] = None
+    relic_urn_slug: Optional[str] = None
+    relic_motif_id: Optional[str] = None
+    entity_slug: Optional[str] = None
+    grade_band: str
+    min_grade: int
+    max_grade: int
+    learning_activity_vi: str
+    learning_activity_en: Optional[str] = None
+    evidence_requirement_vi: str
+    evidence_requirement_en: Optional[str] = None
+    status: str
+    is_reviewed: bool
+    review_warning: Optional[str] = None
+    flag_count: int = 0
+    created_by_id: Optional[UUID] = None
+    created_at: datetime
+    updated_at: datetime
+
+
+class CurriculumCompetencyRelicMappingListOut(BaseModel):
+    items: list[CurriculumCompetencyRelicMappingOut]
+    total: int
+
+
+class CurriculumCompetencyFlagIn(BaseModel):
+    reason: str
+    commentary: str = Field(..., min_length=5)
+    suggested_correction: Optional[dict[str, Any]] = None
+
+
+class CurriculumCompetencyFlagOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    mapping_id: UUID
+    flagged_by_id: UUID
+    flagged_by_name: Optional[str] = None
+    reason: str
+    commentary: str
+    suggested_correction: Optional[dict[str, Any]] = None
+    status: str
+    resolved_by_id: Optional[UUID] = None
+    resolution_notes: Optional[str] = None
+    created_at: datetime
+    resolved_at: Optional[datetime] = None
+
+
+class CurriculumCompetencyFlagResolveIn(BaseModel):
+    action: str = Field(default="resolved")  # "resolved" or "dismissed"
+    resolution_notes: str = Field(..., min_length=3)
+    updated_mapping_status: Optional[str] = None
+
+
+# --------------------------------------------------------------------------- #
 # Source-Locked Classroom Assignment & Rubric Schemas (V5-T033)
 # --------------------------------------------------------------------------- #
 class HistoryLessonAssignmentCreateIn(BaseModel):
@@ -526,5 +638,322 @@ class BadgeVerificationOut(BaseModel):
     is_verified: bool
     earned_at: Optional[datetime] = None
     message: str
+
+
+# --------------------------------------------------------------------------- #
+# School Pilot Measurement & Ethics Schemas (V5-T100 / Wave W09 / Slot A10)
+# --------------------------------------------------------------------------- #
+class PilotGuardianConsentCreate(BaseModel):
+    ethics_protocol_id: UUID
+    student_id: UUID
+    guardian_name: str = Field(..., min_length=2, max_length=255)
+    guardian_email: str = Field(..., min_length=5, max_length=255)
+    guardian_phone: Optional[str] = None
+    relationship_type: str = Field(default="parent", description="parent, legal_guardian, custodian")
+    verification_method: str = Field(default="school_roster", description="sms_otp, digital_signature, paper_signed, school_roster")
+    notes: Optional[str] = None
+
+
+class PilotGuardianConsentOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    ethics_protocol_id: UUID
+    student_id: UUID
+    guardian_name: str
+    guardian_email: str
+    guardian_phone: Optional[str] = None
+    relationship_type: str
+    consent_status: str
+    verification_method: str
+    verified_by_id: Optional[UUID] = None
+    notes: Optional[str] = None
+    verified_at: Optional[datetime] = None
+    withdrawn_at: Optional[datetime] = None
+    created_at: datetime
+    updated_at: datetime
+
+
+class PilotGuardianConsentStatusOut(BaseModel):
+    ethics_protocol_id: UUID
+    student_id: UUID
+    consent_status: str
+    is_consent_verified: bool
+    verified_at: Optional[datetime] = None
+    withdrawn_at: Optional[datetime] = None
+
+
+class PilotGuardianConsentWithdrawIn(BaseModel):
+    reason: Optional[str] = None
+
+
+class TeacherWorkloadLogCreate(BaseModel):
+    school_id: Optional[UUID] = None
+    classroom_id: Optional[UUID] = None
+    ethics_protocol_id: Optional[UUID] = None
+    activity_type: str = Field(default="rubric_grading", description="preparation, inquiry_instruction, rubric_grading, reflection")
+    minutes_spent: float = Field(..., ge=0.0)
+    submissions_evaluated_count: int = Field(default=0, ge=0)
+    cognitive_load_rating: float = Field(default=50.0, ge=0.0, le=100.0)
+    notes: Optional[str] = None
+
+
+class TeacherWorkloadLogOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    teacher_id: UUID
+    school_id: Optional[UUID] = None
+    classroom_id: Optional[UUID] = None
+    ethics_protocol_id: Optional[UUID] = None
+    activity_type: str
+    minutes_spent: float
+    submissions_evaluated_count: int
+    cognitive_load_rating: float
+    workload_category: str
+    notes: Optional[str] = None
+    logged_at: datetime
+
+
+class TeacherWorkloadSummaryOut(BaseModel):
+    teacher_id: Optional[UUID] = None
+    school_id: Optional[UUID] = None
+    total_minutes_logged: float
+    total_submissions_evaluated: int
+    avg_minutes_per_submission: float
+    avg_cognitive_load: float
+    overall_workload_status: str
+    threshold_exceeded: bool
+    burnout_risk_level: str
+    recommendations: list[str] = Field(default_factory=list)
+
+
+class RubricCalibrationCreate(BaseModel):
+    submission_id: UUID
+    assessor_a_id: UUID
+    assessor_b_id: UUID
+    tolerance_pct: float = Field(default=0.15, ge=0.0, le=1.0)
+
+
+class RubricCalibrationOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    submission_id: UUID
+    assessor_a_id: UUID
+    assessor_b_id: UUID
+    score_a: float
+    score_b: float
+    score_difference: float
+    divergence_pct: float
+    inter_rater_agreement: float
+    tolerance_pct: float
+    status: str
+    consensus_score: Optional[float] = None
+    criteria_breakdown: dict[str, Any] = Field(default_factory=dict)
+    calibrated_at: datetime
+
+
+class PilotDataRetentionAuditOut(BaseModel):
+    ethics_protocol_id: Optional[UUID] = None
+    retention_days_limit: int
+    expired_submissions_count: int
+    expired_evaluations_count: int
+    expired_surveys_count: int
+    expired_submission_ids: list[UUID] = Field(default_factory=list)
+    expired_survey_ids: list[UUID] = Field(default_factory=list)
+    audit_timestamp: datetime
+
+
+class PilotDataRetentionPurgeIn(BaseModel):
+    ethics_protocol_id: Optional[UUID] = None
+    confirm_purge: bool = True
+
+
+class PilotDataRetentionPurgeOut(BaseModel):
+    purged_submissions_count: int
+    purged_evaluations_count: int
+    purged_surveys_count: int
+    status: str
+    policy: str
+    purged_at: datetime
+
+
+class LearningImprovementClaimValidateIn(BaseModel):
+    claim_title: str
+    claim_type: str = Field(default="learning_improvement", description="learning_improvement, causal_mastery, subjective_satisfaction")
+    evidence_basis: str = Field(default="pre_post_inquiry_rubric", description="pre_post_inquiry_rubric, subjective_survey, sentiment_analysis, likert_scale")
+    ethics_protocol_id: Optional[UUID] = None
+    pre_post_metric_id: Optional[UUID] = None
+    survey_id: Optional[UUID] = None
+
+
+class LearningImprovementClaimValidateOut(BaseModel):
+    claim_title: str
+    claim_type: str
+    evidence_basis: str
+    is_valid_evidence_of_learning: bool
+    rejection_reason: Optional[str] = None
+    justification: str
+
+
+# --------------------------------------------------------------------------- #
+# Teacher 45-Minute Lesson Wizard Schemas (V5-T091 / Wave W09 / Slot A01)
+# --------------------------------------------------------------------------- #
+class HistoricalCompetencyItem(BaseModel):
+    code: str = Field(..., description="e.g. S1_SPATIAL, S2_TEMPORAL, S3_EVIDENCE, S4_ARGUMENT")
+    name_vi: str
+    description_vi: str
+
+
+class LessonWizardObjectivesIn(BaseModel):
+    title: Optional[str] = None
+    topic: Optional[str] = None
+    target_grade: str = Field(default="Lớp 10 THPT")
+    duration_minutes: int = Field(default=45, ge=15, le=120)
+    curriculum_framework: str = Field(default="CV 5512/BGDĐT")
+    historical_competencies: list[HistoricalCompetencyItem] = Field(default_factory=list)
+    qualities: list[str] = Field(default_factory=list)
+    key_takeaways: list[str] = Field(default_factory=list)
+
+
+class LessonWizardMediaIn(BaseModel):
+    media_variant: str = Field(default="2d_rubbing", description="2d_rubbing, 3d_model, hybrid")
+    rubbing_url: Optional[str] = None
+    model_url: Optional[str] = None
+    target_mesh_name: Optional[str] = None
+    fallback_2d_url: Optional[str] = None
+    visual_annotations: list[dict[str, Any]] = Field(default_factory=list)
+
+
+class LessonWizardInquiryActivity(BaseModel):
+    activity_number: int = Field(..., ge=1, le=10)
+    name_vi: str
+    duration_minutes: int = Field(..., ge=1, le=90)
+    objective_vi: str
+    teacher_actions: list[str] = Field(default_factory=list)
+    student_actions: list[str] = Field(default_factory=list)
+    deliverables_vi: str
+    assessment_criteria_vi: Optional[str] = None
+    guiding_prompts_vi: list[str] = Field(default_factory=list)
+
+
+class LessonWizardAssessmentIn(BaseModel):
+    criteria: dict[str, Any] = Field(default_factory=dict, description="Rubric criteria (S1-S4 0-3 scale)")
+    exit_ticket: dict[str, Any] = Field(default_factory=dict, description="Exit ticket prompt, expected evidence, time allowed")
+
+
+class HistoryLessonPlanCreateIn(BaseModel):
+    title: str = Field(..., min_length=2, max_length=255)
+    topic: str = Field(..., min_length=2, max_length=255)
+    target_grade: str = Field(default="Lớp 10 THPT")
+    duration_minutes: int = Field(default=45, ge=15, le=120)
+    curriculum_framework: str = Field(default="CV 5512/BGDĐT")
+    entity_id: Optional[UUID] = None
+    urn_id: Optional[UUID] = None
+    motif_id: Optional[UUID] = None
+    lesson_id: Optional[UUID] = None
+    media_variant: str = Field(default="2d_rubbing")
+    media_config: dict[str, Any] = Field(default_factory=dict)
+    objectives: dict[str, Any] = Field(default_factory=dict)
+    source_ids: list[UUID] = Field(default_factory=list)
+    claim_ids: list[UUID] = Field(default_factory=list)
+    inquiry_activities: list[dict[str, Any]] = Field(default_factory=list)
+    assessment_rubric: dict[str, Any] = Field(default_factory=dict)
+    status: str = Field(default="draft", description="draft, published, archived")
+
+
+class HistoryLessonPlanUpdateIn(BaseModel):
+    title: Optional[str] = None
+    topic: Optional[str] = None
+    target_grade: Optional[str] = None
+    duration_minutes: Optional[int] = None
+    curriculum_framework: Optional[str] = None
+    entity_id: Optional[UUID] = None
+    urn_id: Optional[UUID] = None
+    motif_id: Optional[UUID] = None
+    lesson_id: Optional[UUID] = None
+    media_variant: Optional[str] = None
+    media_config: Optional[dict[str, Any]] = None
+    objectives: Optional[dict[str, Any]] = None
+    source_ids: Optional[list[UUID]] = None
+    claim_ids: Optional[list[UUID]] = None
+    inquiry_activities: Optional[list[dict[str, Any]]] = None
+    assessment_rubric: Optional[dict[str, Any]] = None
+    status: Optional[str] = None
+
+
+class HistoryLessonPlanOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    teacher_id: Optional[UUID] = None
+    title: str
+    topic: str
+    target_grade: str
+    duration_minutes: int
+    curriculum_framework: str
+    status: str
+    content_validation_status: str
+    entity_id: Optional[UUID] = None
+    urn_id: Optional[UUID] = None
+    motif_id: Optional[UUID] = None
+    lesson_id: Optional[UUID] = None
+    media_variant: str
+    media_config: dict[str, Any] = Field(default_factory=dict)
+    objectives: dict[str, Any] = Field(default_factory=dict)
+    source_ids: list[str] = Field(default_factory=list)
+    claim_ids: list[str] = Field(default_factory=list)
+    sources_snapshot: list[dict[str, Any]] = Field(default_factory=list)
+    claims_snapshot: list[dict[str, Any]] = Field(default_factory=list)
+    inquiry_activities: list[dict[str, Any]] = Field(default_factory=list)
+    assessment_rubric: dict[str, Any] = Field(default_factory=dict)
+    printable_handout: dict[str, Any] = Field(default_factory=dict)
+    version: int = 1
+    created_at: datetime
+    updated_at: datetime
+    published_at: Optional[datetime] = None
+
+
+class HistoryLessonPlanListOut(BaseModel):
+    items: list[HistoryLessonPlanOut]
+    total: int
+
+
+class LessonWizardValidateIn(BaseModel):
+    title: Optional[str] = None
+    topic: Optional[str] = None
+    entity_id: Optional[UUID] = None
+    urn_id: Optional[UUID] = None
+    motif_id: Optional[UUID] = None
+    lesson_id: Optional[UUID] = None
+    source_ids: list[UUID] = Field(default_factory=list)
+    claim_ids: list[UUID] = Field(default_factory=list)
+    objectives: dict[str, Any] = Field(default_factory=dict)
+    media_variant: str = Field(default="2d_rubbing")
+    media_config: dict[str, Any] = Field(default_factory=dict)
+    inquiry_activities: list[dict[str, Any]] = Field(default_factory=list)
+    assessment_rubric: dict[str, Any] = Field(default_factory=dict)
+
+
+class LessonWizardValidateOut(BaseModel):
+    can_publish: bool
+    validation_status: str
+    issues: list[str] = Field(default_factory=list)
+    verified_claims_count: int = 0
+    ineligible_claims_count: int = 0
+    warnings: list[str] = Field(default_factory=list)
+
+
+class PrintableHandoutOut(BaseModel):
+    header: dict[str, Any]
+    objectives: dict[str, Any]
+    sources: list[dict[str, Any]]
+    visual_media: dict[str, Any]
+    inquiry_stations: list[dict[str, Any]]
+    exit_ticket: dict[str, Any]
+    rubric: dict[str, Any]
+    export_metadata: dict[str, Any]
+
 
 

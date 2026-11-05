@@ -279,11 +279,14 @@ def create_app() -> FastAPI:
     from .routers import offline as offline_router
     from .routers import quests as quests_router
     from .routers import research_factory as research_factory_router
+    from .routers import fsrs as fsrs_router
+    from .routers import teacher_onboarding as teacher_onboarding_router
 
     app.include_router(auth_router.router)
     app.include_router(users_router.router)
     app.include_router(content_router.router)
     app.include_router(quests_router.router)
+    app.include_router(fsrs_router.router)
     app.include_router(gamification_router.router)
     app.include_router(classrooms_router.router)
     app.include_router(live_router.router)
@@ -304,5 +307,6 @@ def create_app() -> FastAPI:
     app.include_router(media_cms_router.router)
     app.include_router(offline_router.router)
     app.include_router(research_factory_router.router)
+    app.include_router(teacher_onboarding_router.router)
 
     return app

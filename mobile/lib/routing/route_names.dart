@@ -126,6 +126,9 @@ abstract class RouteNames {
   /// History Atlas (public, no auth)
   static const String historyAtlas = 'history-atlas';
 
+  /// Low-Bandwidth Printable / Offline Kit
+  static const String offlineKit = 'offline-kit';
+
   /// Friends
   static const String friends = 'friends';
 
@@ -195,6 +198,7 @@ abstract class RoutePaths {
 
   // History Atlas (public)
   static const String historyAtlas = '/history-atlas';
+  static const String offlineKit = '/offline-kit';
   static const String sources = '/history-atlas/sources';
   static const String modelPackages = '/history-atlas/model-packages';
   static String atlasRelief(String urnSlug, [String? reliefSlug]) =>

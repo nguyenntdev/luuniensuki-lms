@@ -1,6 +1,7 @@
 import { PrintableStation, RubricDimensionItem, ExitTicketQuestion } from "./types";
 import zonesAndSites from "../../../../../data/imperial/zones_and_sites.json";
 import fieldworkData from "../../../../../data/imperial/fieldwork_worksheet.json";
+import audioGuidesData from "../../../../../data/imperial/audio_guides.json";
 
 interface RawSiteSource {
   source_title: string;
@@ -9,6 +10,39 @@ interface RawSiteSource {
   archival_unit?: string;
   reliability_level?: string;
 }
+
+const RUBBINGS_MAP: Record<string, { asset_url: string; local_path: string; caption_vi: string }> = {
+  "ngo-mon": {
+    asset_url: "/assets/ban-duc-noi/CAO%20DINH/CAO%20%C4%90%E1%BB%88NH.jpg",
+    local_path: "ban-duc-noi/CAO DINH/CAO ĐỈNH.jpg",
+    caption_vi: "Bản dập 2D độ tương phản cao — Hoa văn rồng mây & quy chế Ngọ Môn (Cao Đỉnh)",
+  },
+  "dien-thai-hoa": {
+    asset_url: "/assets/ban-duc-noi/NHAN%20DINH/NH%C3%82N%20%C4%90%E1%BB%88NH.jpg",
+    local_path: "ban-duc-noi/NHAN DINH/NHÂN ĐỈNH.jpg",
+    caption_vi: "Bản dập 2D độ tương phản cao — Phù điêu Điện Thái Hòa & Sân Đại Triều (Nhân Đỉnh)",
+  },
+  "hien-lam-cac": {
+    asset_url: "/assets/ban-duc-noi/CHUONG%20DINH/CH%C6%AF%C6%A0NG%20%C4%90%E1%BB%88NH.jpg",
+    local_path: "ban-duc-noi/CHUONG DINH/CHƯƠNG ĐỈNH.jpg",
+    caption_vi: "Bản dập 2D độ tương phản cao — Cấu trúc 3 tầng lầu Hiển Lâm Các (Chương Đỉnh)",
+  },
+  "cung-dien-tho": {
+    asset_url: "/assets/ban-duc-noi/ANH%20DINH/ANH%20%C4%90%E1%BB%88NH.jpg",
+    local_path: "ban-duc-noi/ANH DINH/ANH ĐỈNH.jpg",
+    caption_vi: "Bản dập 2D độ tương phản cao — Đồ án hoa văn cung đình Diên Thọ (Anh Đỉnh)",
+  },
+  "the-to-mieu": {
+    asset_url: "/assets/ban-duc-noi/NGHI%20DINH/NGHI%20DINH.jpg",
+    local_path: "ban-duc-noi/NGHI DINH/NGHI DINH.jpg",
+    caption_vi: "Bản dập 2D độ tương phản cao — Thế Tổ Miếu (Nghị Đỉnh)",
+  },
+  "duyet-thi-duong": {
+    asset_url: "/assets/ban-duc-noi/THUAN%20DINH/%C4%90%E1%BB%88NH.jpg",
+    local_path: "ban-duc-noi/THUAN DINH/ĐỈNH.jpg",
+    caption_vi: "Bản dập 2D độ tương phản cao — Nhà hát hoàng gia Duyệt Thị Đường (Thuần Đỉnh)",
+  },
+};
 
 interface RawSite {
   id: string;
@@ -95,6 +129,26 @@ export const ALL_16_PRINTABLE_STATIONS: PrintableStation[] = (
     }
   }
 
+  const rubbingInfo = RUBBINGS_MAP[site.slug] || {
+    asset_url: "/assets/ban-duc-noi/CAO%20DINH/CAO%20%C4%90%E1%BB%88NH.jpg",
+    local_path: "ban-duc-noi/CAO DINH/CAO ĐỈNH.jpg",
+    caption_vi: `Bản dập 2D độ tương phản cao — Di tích ${site.name_vi}`,
+  };
+
+  const audioGuides = (audioGuidesData as { audio_guides?: Array<{
+    monument_slug?: string;
+    site_slug?: string;
+    narrator?: string;
+    duration_seconds?: number;
+    duration?: number;
+    script_text?: string;
+    summary?: string;
+  }> }).audio_guides || [];
+
+  const foundAudio = audioGuides.find(
+    (a) => a.monument_slug === site.slug || a.site_slug === site.slug
+  );
+
   return {
     station_index: index + 1,
     monument_slug: site.slug,
@@ -110,6 +164,8 @@ export const ALL_16_PRINTABLE_STATIONS: PrintableStation[] = (
       source_title: primaryCitation.source_title,
       volume_or_chapter: primaryCitation.volume_or_chapter,
       citation: primaryCitation.citation,
+      rights_owner: "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      license: "CC BY 4.0 / Educational Fair Use",
     },
     conclusion_guide_vi:
       curated?.conclusion_guide_vi ||
@@ -119,6 +175,40 @@ export const ALL_16_PRINTABLE_STATIONS: PrintableStation[] = (
     mee_evidence_sample_vi: evidenceSample,
     mee_uncertainty_sample_vi: uncertaintySample,
     digital_coordinate_hint: `/dai-noi/cong-trinh/${site.slug}`,
+    rubbing_asset: {
+      asset_url: rubbingInfo.asset_url,
+      local_path: rubbingInfo.local_path,
+      caption_vi: rubbingInfo.caption_vi,
+      high_contrast_css: "filter: contrast(160%) grayscale(100%) brightness(95%);",
+      rights_attribution: "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC)",
+      legal_basis: "Public Domain (1835-1837 Imperial relic) / Academic Educational Fair Use",
+    },
+    offline_task: {
+      task_title_vi: `Nhiệm vụ điền dã 100% trên giấy: Khảo sát ${site.name_vi}`,
+      instructions_vi: `Quan sát trực tiếp thực địa hoặc bản dập 2D tương phản cao bên cạnh. Ghi nhận chi tiết vào phiếu bằng bút mực. Hoàn toàn không cần điện thoại thông minh hay thiết bị AR.`,
+      checkpoints: [
+        `Đếm số lượng cửa/gian, bậc cấp hoặc tầng nền của ${site.name_vi}.`,
+        `Đối chiếu chi tiết chạm khắc trên bản dập 2D với quy chuẩn kiến trúc cung đình.`,
+        `Ghi nhận chất liệu chính (gỗ lim, đá thanh, ngói lưu ly) và tình trạng bảo tồn.`,
+      ],
+      sketch_prompt_vi: `Khung vẽ phác họa chi tiết hoa văn / sơ đồ mặt bằng (bút chì/bút mực):`,
+      paper_achievable: true,
+      ar_or_smartphone_required: false,
+    },
+    audio_transcript: {
+      track_title_vi: `Thuyết minh âm thanh: ${site.name_vi}`,
+      narrator: foundAudio?.narrator || "Lưu Niên Voice Guide — Giọng Cố Đô",
+      duration_text: `${Math.round((foundAudio?.duration_seconds || foundAudio?.duration || 120) / 60)} phút (${foundAudio?.duration_seconds || foundAudio?.duration || 120}s)`,
+      duration_seconds: foundAudio?.duration_seconds || foundAudio?.duration || 120,
+      script_text:
+        foundAudio?.script_text ||
+        foundAudio?.summary ||
+        `Khám phá giá trị kiến trúc, trật tự điển chế và lịch sử triều Nguyễn của di tích ${site.name_vi}.`,
+      key_quotes_vi: [
+        `Kiến trúc ${site.name_vi} phản ánh quy chế điển lễ triều Nguyễn.`,
+        primaryCitation.citation.slice(0, 110) + "...",
+      ],
+    },
   };
 });
 

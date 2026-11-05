@@ -1,0 +1,103 @@
+{
+  "ticket": "V5-T097",
+  "ticket_id": "V5-T097",
+  "wave": "W09",
+  "slot": "W09-A07",
+  "role": "W09-A07",
+  "priority": "P2",
+  "classification": "NEW_PRODUCT_FEATURE",
+  "status": "COMPLETED",
+  "goal": "Adaptive evidence practice in backend/routers/fsrs.py and backend/routers/quests.py.",
+  "timestamp": "2026-11-05T09:45:00Z",
+  "summary": "Implemented Adaptive Evidence Practice applying FSRS-5 (Free Spaced Repetition Scheduler DSR model) to scored primary source evaluation tasks across backend/routers/fsrs.py, backend/routers/quests.py, and backend/domain/helpers.py. Created database models AdaptiveEvidenceCard, AdaptiveEvidenceLog, and UserFsrsParams in backend/models.py. Developed core FSRS-5 scheduling and anti-abuse engine in backend/services/fsrs.py with 21-weight reference vector, discrete rating mapping, retrievability decay curves, and complete algorithmic transparency. Provided user opt-out controls allowing learners to toggle adaptive scheduling on/off. Enforced strict isolation between gamification XP tokenomics and cognitive memory half-life stability. Enforced negative abuse protections against rapid clicking (< 2.0s dwell time) and brute-force burst guessing (< 3.0s interval), strictly withholding mastery badges and blocking stability inflation. Integrated adaptive evidence practice into quest objective calculations and reward verification, ensuring abusive submissions yield 0 quest progress.",
+  "invariants_enforced": {
+    "fsrs_primary_source_scheduling": "Primary source evaluation cards (backed by historical chronicles and archival sources) are scheduled via FSRS-5 DSR equations (Difficulty, Stability, Retrievability) with continuous scores mapped to Again, Hard, Good, and Easy ratings.",
+    "algorithmic_transparency": "Every task evaluation returns an algorithmic transparency payload detailing prior/new stability, difficulty, predicted retrievability R(t, S), target retention, and human-readable explanation. An API endpoint (/api/v1/fsrs/transparency) exposes the 21 default parameters and mathematical formulas.",
+    "opt_out_controls": "Learners can toggle adaptive FSRS scheduling off via /api/v1/fsrs/settings and /api/v1/users/me/fsrs-settings. When opted out, reviews bypass adaptive drift and use fixed linear 1.0 day scheduling.",
+    "gamification_xp_memory_stability_isolation": "Gamification XP (earned XP, streak multipliers, bonus events) is strictly separated from cognitive memory stability. Memory half-life stability is mathematically invariant to XP boosters or client-claimed XP.",
+    "negative_abuse_rapid_click_dwell_defense": "Evaluations submitted with dwell time under 2.0 seconds are flagged with RAPID_CLICK_DWELL_VIOLATION, strictly blocking stability inflation, withholding mastery badges, and denying client-claimed badges.",
+    "negative_abuse_brute_force_burst_defense": "Submissions occurring less than 3.0 seconds apart on the same card or multiple attempts within 10 seconds are flagged with BRUTE_FORCE_BURST_ATTEMPTS, penalizing/resetting stability to lapse levels (<= 0.5) and withholding mastery.",
+    "quest_server_verification_and_abuse_filtering": "Quests with adaptive_evidence_practice objectives strictly count genuine, non-abusive evaluations (abuse_detected=False). Cheat attempts yield 0 quest progress and return HTTP 400 when attempting to claim rewards before server-verified completion."
+  },
+  "changes": [
+    {
+      "file": "backend/models.py",
+      "description": "Extended SpacedRepetitionCard with FSRS columns (fsrs_state, fsrs_difficulty, fsrs_stability, fsrs_due_date, fsrs_last_review) and added UserFsrsParams, AdaptiveEvidenceCard, and AdaptiveEvidenceLog models."
+    },
+    {
+      "file": "backend/services/fsrs.py",
+      "description": "Implemented pure FSRS-5 scheduling math (DSR model, 21 weights, recall and forgetting stabilities, interval calculation), anti-abuse verification (dwell time and rapid burst detection), dynamic card provisioning, and user settings management."
+    },
+    {
+      "file": "backend/apischemas/fsrs.py",
+      "description": "Created Pydantic schemas for due evidence tasks, evaluation submissions, algorithmic transparency, model transparency, and user settings."
+    },
+    {
+      "file": "backend/routers/fsrs.py",
+      "description": "Created FastAPI router with endpoints for due evidence tasks (/api/v1/fsrs/evidence/due), task evaluation (/api/v1/fsrs/evidence/evaluate), algorithmic transparency (/api/v1/fsrs/transparency), and user settings (/api/v1/fsrs/settings and /api/v1/users/me/fsrs-settings)."
+    },
+    {
+      "file": "backend/routers/quests.py",
+      "description": "Added quest evidence practice summary endpoint (/api/v1/quests/evidence-practice/summary) and aliased /api/v1/quests/{quest_slug}/claim-reward."
+    },
+    {
+      "file": "backend/domain/helpers.py",
+      "description": "Updated _objective_current_value to verify genuine adaptive evidence practice and historical source review tasks while filtering out abuse-flagged attempts."
+    },
+    {
+      "file": "backend/app.py",
+      "description": "Registered fsrs_router in the FastAPI application factory create_app()."
+    },
+    {
+      "file": "tests/v5/conftest.py",
+      "description": "Added safety schema columns and imported models prior to history_models to ensure clean declarative dependency initialization."
+    },
+    {
+      "file": "tests/v5/test_v5_t097.py",
+      "description": "Created comprehensive test suite verifying due task provisioning, FSRS DSR scheduling, algorithmic transparency, opt-out controls, XP vs stability separation, rapid-click abuse blocking, brute-force burst protection, and quest reward claiming."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t097.py -v",
+    "tests_total": 7,
+    "tests_passed": 7,
+    "tests_failed": 0,
+    "test_cases": [
+      {
+        "name": "test_fsrs_due_evidence_tasks_retrieval_and_provisioning",
+        "result": "PASSED",
+        "description": "Verifies that learners receive due primary source evaluation items with authentic provenance and initial FSRS state."
+      },
+      {
+        "name": "test_fsrs_scored_evaluation_adaptive_scheduling_and_transparency",
+        "result": "PASSED",
+        "description": "Verifies that legitimate scored evaluations advance FSRS state, compute DSR, and return algorithmic transparency."
+      },
+      {
+        "name": "test_fsrs_opt_out_controls",
+        "result": "PASSED",
+        "description": "Verifies opt-out toggling disables adaptive FSRS drift and retains user target retention settings."
+      },
+      {
+        "name": "test_gamification_xp_kept_strictly_distinct_from_memory_stability",
+        "result": "PASSED",
+        "description": "Verifies that gamification XP bonuses and boosts have zero influence on memory stability calculations."
+      },
+      {
+        "name": "test_negative_abuse_rapid_clicking_dwell_violation_blocks_mastery_and_stability_inflation",
+        "result": "PASSED",
+        "description": "Negative Abuse Test: Submitting evaluations under minimum dwell time (2.0s) blocks mastery badges and stability inflation."
+      },
+      {
+        "name": "test_negative_abuse_brute_force_rapid_burst_blocks_mastery_and_resets_stability",
+        "result": "PASSED",
+        "description": "Negative Abuse Test: Repeated rapid burst submissions on the same card penalize stability and deny mastery."
+      },
+      {
+        "name": "test_quest_integration_with_adaptive_evidence_practice_and_abuse_filtering",
+        "result": "PASSED",
+        "description": "Verifies that quests requiring adaptive evidence practice ignore abused clicks and award genuine completions."
+      }
+    ]
+  }
+}

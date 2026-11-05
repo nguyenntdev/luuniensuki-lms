@@ -16,6 +16,7 @@ import math
 import re
 import secrets
 import socket
+import statistics
 import time
 import unicodedata
 import uuid as uuid_module
@@ -2118,6 +2119,350 @@ def export_classroom_gradebook_csv(
         headers={
             "Content-Disposition": f'attachment; filename="classroom_{classroom_id}_gradebook.csv"'
         },
+    )
+
+
+# =============================================================================
+# Rubric Analytics Engine (V5-T094 / Wave W09-A04)
+# =============================================================================
+
+
+def _compute_classroom_rubric_analytics(
+    db: Session,
+    classroom: Classroom,
+    rubric_version: Optional[str] = None,
+    assignment_id: Optional[UUID] = None,
+    claim_causality: bool = False,
+    study_protocol_code: Optional[str] = None,
+) -> schemas.ClassroomRubricAnalyticsOut:
+    """School-safe aggregate analytics per rubric version, historical reasoning criteria dimensions,
+    and student privacy suppression minimums (k-anonymity for cohorts < 5).
+    Enforces negative abuse guardrail: descriptive stats strictly separated from causal claims.
+    """
+    if claim_causality:
+        if not study_protocol_code or not study_protocol_code.strip():
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail={
+                    "error": {
+                        "code": "CANNOT_CLAIM_CAUSAL_LEARNING_GAIN_WITHOUT_CONTROLLED_STUDY",
+                        "message": "Cannot assert inferential learning gain claims without an approved controlled study protocol. Descriptive statistics must be strictly separated from causal claims.",
+                        "details": {
+                            "claim_causality": True,
+                            "study_protocol_code": None,
+                        },
+                    }
+                },
+            )
+        from ..history_models import HistoryEthicsProtocol
+
+        protocol = db.execute(
+            select(HistoryEthicsProtocol).where(
+                HistoryEthicsProtocol.protocol_code == study_protocol_code.strip()
+            )
+        ).scalar_one_or_none()
+
+        if not protocol or protocol.status != "approved":
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail={
+                    "error": {
+                        "code": "CANNOT_CLAIM_CAUSAL_LEARNING_GAIN_WITHOUT_CONTROLLED_STUDY",
+                        "message": f"Controlled study protocol '{study_protocol_code}' is missing or not in approved status. Causal claims forbidden.",
+                        "details": {
+                            "claim_causality": True,
+                            "study_protocol_code": study_protocol_code,
+                            "protocol_status": protocol.status if protocol else "not_found",
+                        },
+                    }
+                },
+            )
+        causal_inference_permitted = True
+        analytics_type = "controlled_experimental"
+    else:
+        causal_inference_permitted = False
+        analytics_type = "descriptive"
+
+    from ..history_models import HistoryLessonAssignment, HistoryAssignmentSubmission
+    from ..imperial_models import ImperialSubmission
+
+    # 1. Fetch History Lesson Assignments & Submissions
+    h_assignments = db.execute(
+        select(HistoryLessonAssignment).where(HistoryLessonAssignment.classroom_id == classroom.id)
+    ).scalars().all()
+    if assignment_id:
+        h_assignments = [a for a in h_assignments if a.id == assignment_id]
+
+    assignment_ids = [a.id for a in h_assignments]
+    h_submissions = []
+    if assignment_ids:
+        h_submissions = db.execute(
+            select(HistoryAssignmentSubmission).where(
+                HistoryAssignmentSubmission.assignment_id.in_(assignment_ids),
+                HistoryAssignmentSubmission.status.in_(["graded", "returned", "submitted"]),
+            )
+        ).scalars().all()
+
+    # 2. Fetch Imperial Submissions for this classroom
+    imp_stmt = select(ImperialSubmission).where(
+        ImperialSubmission.classroom_id == classroom.id,
+        ImperialSubmission.status.in_(["graded", "submitted"]),
+    )
+    if assignment_id:
+        imp_stmt = imp_stmt.where(ImperialSubmission.activity_id == assignment_id)
+    imp_submissions = db.execute(imp_stmt).scalars().all()
+
+    # Criteria metadata definition for the 4 core dimensions
+    historical_criteria = [
+        {
+            "key": "S1_SPATIAL",
+            "vi": "Năng lực Không gian (Spatial Reasoning)",
+            "en": "Spatial Reasoning",
+            "aliases": ["s1", "s1_spatial", "S1", "S1_spatial", "S1_SPATIAL", "spatial"],
+            "recommendation": "Tăng cường bài tập đối chiếu không ảnh trực giao và phân tích phương vị trục Dũng Đạo.",
+        },
+        {
+            "key": "S2_TEMPORAL",
+            "vi": "Năng lực Thời gian (Temporal Reasoning)",
+            "en": "Temporal Reasoning",
+            "aliases": ["s2", "s2_temporal", "S2", "S2_temporal", "S2_TEMPORAL", "temporal"],
+            "recommendation": "Bồi dưỡng kỹ năng lập niên biểu và liên hệ bối cảnh lịch sử thời Minh Mạng (1835-1837).",
+        },
+        {
+            "key": "S3_EVIDENCE",
+            "vi": "Năng lực Sử liệu & Bằng chứng (Primary Evidence Analysis)",
+            "en": "Source & Evidence Analysis",
+            "aliases": ["s3", "s3_evidence", "S3", "S3_evidence", "S3_EVIDENCE", "evidence", "source_evidence"],
+            "recommendation": "Rèn luyện trích dẫn trực tiếp bản dập Cửu Đỉnh, Châu bản và Khâm Định Đại Nam Hội Điển Sự Lệ.",
+        },
+        {
+            "key": "S4_ARGUMENT",
+            "vi": "Năng lực Lập luận & Giới hạn Tri thức (Historical Argumentation)",
+            "en": "Historical Argumentation & Epistemic Humility",
+            "aliases": ["s4", "s4_argument", "S4", "S4_argument", "S4_ARGUMENT", "argument", "critical_analysis"],
+            "recommendation": "Khuyến khích học sinh phân tích đa chiều về biểu tượng vương quyền và nhận thức tính bất định của sử liệu.",
+        },
+    ]
+
+    # Collect available versions
+    discovered_versions = set()
+    evaluation_records = []
+
+    # Map assignments by id
+    asgn_map = {a.id: a for a in h_assignments}
+
+    for sub in h_submissions:
+        eval_dict = sub.rubric_evaluation
+        if not eval_dict or not isinstance(eval_dict, dict):
+            continue
+        asgn = asgn_map.get(sub.assignment_id)
+        asgn_rubric = asgn.rubric if (asgn and isinstance(asgn.rubric, dict)) else {}
+        ver = (
+            eval_dict.get("rubric_version")
+            or asgn_rubric.get("rubric_version")
+            or asgn_rubric.get("version")
+            or "GDPT_2018_V1"
+        )
+        ver_str = str(ver).strip()
+        discovered_versions.add(ver_str)
+        evaluation_records.append((sub.student_id, ver_str, eval_dict))
+
+    for sub in imp_submissions:
+        eval_dict = sub.rubric_scores
+        if not eval_dict or not isinstance(eval_dict, dict):
+            continue
+        ver_str = str(eval_dict.get("rubric_version") or "v1.0").strip()
+        discovered_versions.add(ver_str)
+        evaluation_records.append((sub.student_id, ver_str, eval_dict))
+
+    available_versions = sorted(list(discovered_versions)) if discovered_versions else ["GDPT_2018_V1"]
+
+    # Determine active rubric version
+    if rubric_version and rubric_version.strip():
+        active_ver = rubric_version.strip()
+    else:
+        active_ver = available_versions[0]
+
+    # Filter evaluation records by active version
+    filtered_records = [
+        rec for rec in evaluation_records
+        if active_ver == "all" or rec[1].lower() == active_ver.lower()
+    ]
+
+    # Group scores by student_id and dimension
+    student_scores: dict[UUID, dict[str, list[float]]] = {}
+    for student_id, _, raw_eval in filtered_records:
+        target_dict = raw_eval
+        if "criteria" in raw_eval and isinstance(raw_eval["criteria"], dict):
+            target_dict = raw_eval["criteria"]
+
+        # Normalize keys in target_dict to lowercase
+        norm_keys = {str(k).lower(): v for k, v in target_dict.items()}
+
+        for criterion in historical_criteria:
+            val = None
+            for alias in criterion["aliases"]:
+                alias_lower = alias.lower()
+                if alias_lower in norm_keys and norm_keys[alias_lower] is not None:
+                    try:
+                        parsed = float(norm_keys[alias_lower])
+                        if not isinstance(norm_keys[alias_lower], bool):
+                            val = parsed
+                            break
+                    except (ValueError, TypeError):
+                        pass
+
+            if val is not None:
+                # Normalize scale: if given out of 25 (or > 3.0), scale to 0-3
+                if val > 3.0:
+                    scaled = min(3.0, round((val / 25.0) * 3.0, 2) if val <= 25.0 else round((val / 100.0) * 3.0, 2))
+                else:
+                    scaled = max(0.0, min(3.0, round(val, 2)))
+
+                student_scores.setdefault(student_id, {}).setdefault(criterion["key"], []).append(scaled)
+
+    # Average scores per student per dimension
+    student_dim_avg: dict[UUID, dict[str, float]] = {}
+    for s_id, dims in student_scores.items():
+        student_dim_avg[s_id] = {
+            dim_key: sum(scores_list) / len(scores_list)
+            for dim_key, scores_list in dims.items()
+        }
+
+    cohort_size = len(student_dim_avg)
+    min_k_threshold = 5
+    is_suppressed = cohort_size < min_k_threshold
+
+    if is_suppressed:
+        suppression_reason = (
+            f"K-anonymity privacy protection: Cohort size (n={cohort_size}) is below privacy suppression threshold "
+            f"of {min_k_threshold} students. Granular distribution and individual score metrics are withheld to prevent re-identification."
+        )
+        criteria_analytics = [
+            schemas.RubricCriterionAnalyticsOut(
+                criterion_key=c["key"],
+                dimension_vi=c["vi"],
+                dimension_en=c["en"],
+                max_score=3.0,
+                mean=None,
+                median=None,
+                std_dev=None,
+                mastery_rate=None,
+                sample_size=cohort_size,
+                distribution=None,
+            )
+            for c in historical_criteria
+        ]
+        overall_average = None
+        recommendations = []
+    else:
+        suppression_reason = None
+        criteria_analytics = []
+        overall_means = []
+        recommendations = []
+
+        for c in historical_criteria:
+            scores_for_dim = [
+                student_dim_avg[s][c["key"]]
+                for s in student_dim_avg
+                if c["key"] in student_dim_avg[s]
+            ]
+            if scores_for_dim:
+                mean_score = round(sum(scores_for_dim) / len(scores_for_dim), 2)
+                median_score = round(statistics.median(scores_for_dim), 2)
+                std_dev = round(statistics.pstdev(scores_for_dim) if len(scores_for_dim) > 1 else 0.0, 2)
+                mastery_count = sum(1 for s in scores_for_dim if s >= 2.0)
+                mastery_rate = round((mastery_count / len(scores_for_dim)) * 100.0, 1)
+
+                l0 = sum(1 for s in scores_for_dim if s < 0.75)
+                l1 = sum(1 for s in scores_for_dim if 0.75 <= s < 1.5)
+                l2 = sum(1 for s in scores_for_dim if 1.5 <= s < 2.25)
+                l3 = sum(1 for s in scores_for_dim if s >= 2.25)
+
+                dist = {"level_0": l0, "level_1": l1, "level_2": l2, "level_3": l3}
+                overall_means.append(mean_score)
+
+                if mastery_rate < 70.0:
+                    recommendations.append(c["recommendation"])
+            else:
+                mean_score = 0.0
+                median_score = 0.0
+                std_dev = 0.0
+                mastery_rate = 0.0
+                dist = {"level_0": 0, "level_1": 0, "level_2": 0, "level_3": 0}
+
+            criteria_analytics.append(
+                schemas.RubricCriterionAnalyticsOut(
+                    criterion_key=c["key"],
+                    dimension_vi=c["vi"],
+                    dimension_en=c["en"],
+                    max_score=3.0,
+                    mean=mean_score,
+                    median=median_score,
+                    std_dev=std_dev,
+                    mastery_rate=mastery_rate,
+                    sample_size=len(scores_for_dim),
+                    distribution=dist,
+                )
+            )
+
+        overall_average = round(sum(overall_means) / len(overall_means), 2) if overall_means else 0.0
+
+    return schemas.ClassroomRubricAnalyticsOut(
+        classroom_id=classroom.id,
+        classroom_name=classroom.name,
+        teacher_id=classroom.teacher_id,
+        active_rubric_version=active_ver,
+        available_rubric_versions=available_versions,
+        analytics_type=analytics_type,
+        causal_inference_permitted=causal_inference_permitted,
+        methodological_notice=(
+            "Descriptive statistics only. Causal learning gains or inferential mastery claims strictly require "
+            "an approved controlled comparative study (IRB/Ethics Protocol) and are forbidden from observational classroom rubric aggregates."
+        ),
+        study_protocol_code=study_protocol_code if causal_inference_permitted else None,
+        cohort_size=cohort_size,
+        min_k_threshold=min_k_threshold,
+        is_suppressed=is_suppressed,
+        suppression_reason=suppression_reason,
+        overall_average=overall_average,
+        criteria_analytics=criteria_analytics,
+        recommendations=recommendations,
+    )
+
+
+@router.get(
+    "/api/v1/classrooms/{classroom_id}/rubric-analytics",
+    response_model=schemas.ClassroomRubricAnalyticsOut,
+    summary="Get school-safe rubric analytics for a classroom",
+)
+def get_classroom_rubric_analytics(
+    classroom_id: UUID,
+    rubric_version: Optional[str] = Query(None, description="Filter by rubric version, e.g. 'GDPT_2018_V1'"),
+    assignment_id: Optional[UUID] = Query(None, description="Optional assignment filter"),
+    claim_causality: bool = Query(False, description="Attempt causal learning gain claim"),
+    study_protocol_code: Optional[str] = Query(None, description="Ethics/IRB protocol code for controlled study"),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_staff_user),
+) -> schemas.ClassroomRubricAnalyticsOut:
+    """School-safe aggregate analytics per rubric version, historical reasoning criteria dimensions,
+    and student privacy suppression minimums (k-anonymity for cohorts < 5).
+    Enforces negative abuse guardrail: inferential learning gain claims are rejected with 422
+    unless backed by an approved controlled study protocol.
+    """
+    classroom = db.get(Classroom, classroom_id)
+    if not classroom:
+        raise HTTPException(status_code=404, detail="Classroom not found")
+
+    _ensure_class_access(current_user, classroom)
+
+    return _compute_classroom_rubric_analytics(
+        db=db,
+        classroom=classroom,
+        rubric_version=rubric_version,
+        assignment_id=assignment_id,
+        claim_causality=claim_causality,
+        study_protocol_code=study_protocol_code,
     )
 
 

@@ -19,6 +19,7 @@ import {
 import { RbpcCard, RbpcCardHeader } from "@/components/rbpc/RbpcCard";
 import { RbpcButton } from "@/components/rbpc/RbpcButton";
 import { EpistemicBadge } from "@/components/rbpc/EpistemicBadge";
+import { EvidenceBoard } from "@/components/rbpc/EvidenceBoard";
 import type { RbpcLocale } from "@/types/rbpc";
 
 export interface InquiryEvidenceItem {
@@ -100,6 +101,7 @@ export function PeerInquiryWorkspace({
   const [groups, setGroups] = useState<InquiryGroup[]>([]);
   const [activeGroup, setActiveGroup] = useState<InquiryGroup | null>(null);
   const [submission, setSubmission] = useState<InquirySubmission | null>(null);
+  const [viewMode, setViewMode] = useState<"workspace" | "evidence_board">("evidence_board");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -370,28 +372,60 @@ export function PeerInquiryWorkspace({
         </div>
       )}
 
-      {/* Group selector tabs */}
+      {/* Group selector tabs & view mode toggle */}
       {groups.length > 0 && (
-        <div className="flex items-center gap-2 overflow-x-auto pb-2">
-          {groups.map((grp) => (
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-[var(--rbpc-divider-subtle)] pb-2">
+          <div className="flex items-center gap-2 overflow-x-auto max-w-full pb-1">
+            {groups.map((grp) => (
+              <button
+                key={grp.id}
+                type="button"
+                onClick={() => setActiveGroup(grp)}
+                className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap transition-colors ${
+                  activeGroup?.id === grp.id
+                    ? "bg-[var(--rbpc-primary)] text-white"
+                    : "bg-[var(--rbpc-surface)] text-[var(--rbpc-ink-subtle)] border border-[var(--rbpc-divider)] hover:border-[var(--rbpc-primary-border)]"
+                }`}
+              >
+                {grp.name} ({grp.members?.length || 0} TV)
+              </button>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-1 rounded-lg border border-[var(--rbpc-divider)] bg-[var(--rbpc-surface-subtle)] p-1 shrink-0">
             <button
-              key={grp.id}
               type="button"
-              onClick={() => setActiveGroup(grp)}
-              className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap transition-colors ${
-                activeGroup?.id === grp.id
-                  ? "bg-[var(--rbpc-primary)] text-white"
-                  : "bg-[var(--rbpc-surface)] text-[var(--rbpc-ink-subtle)] border border-[var(--rbpc-divider)] hover:border-[var(--rbpc-primary-border)]"
+              onClick={() => setViewMode("evidence_board")}
+              className={`px-2.5 py-1 text-xs font-semibold rounded transition-colors ${
+                viewMode === "evidence_board"
+                  ? "bg-[var(--rbpc-primary)] text-white shadow-xs"
+                  : "text-[var(--rbpc-muted)] hover:text-[var(--rbpc-ink)]"
               }`}
             >
-              {grp.name} ({grp.members?.length || 0} TV)
+              {locale === "vi" ? "Bảng bằng chứng (Board)" : "Evidence Board"}
             </button>
-          ))}
+            <button
+              type="button"
+              onClick={() => setViewMode("workspace")}
+              className={`px-2.5 py-1 text-xs font-semibold rounded transition-colors ${
+                viewMode === "workspace"
+                  ? "bg-[var(--rbpc-primary)] text-white shadow-xs"
+                  : "text-[var(--rbpc-muted)] hover:text-[var(--rbpc-ink)]"
+              }`}
+            >
+              {locale === "vi" ? "Bản thảo tổng hợp" : "Synthesis Workspace"}
+            </button>
+          </div>
         </div>
       )}
 
+      {/* Render Evidence Board if selected */}
+      {activeGroup && viewMode === "evidence_board" && (
+        <EvidenceBoard groupId={activeGroup.id} locale={locale} />
+      )}
+
       {/* Main Collaborative Workspace */}
-      {activeGroup && submission && (
+      {activeGroup && submission && viewMode === "workspace" && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left 2 Cols: Synthesis & Evidence */}
           <div className="lg:col-span-2 space-y-6">

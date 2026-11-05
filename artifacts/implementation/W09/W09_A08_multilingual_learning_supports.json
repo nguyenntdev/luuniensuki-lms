@@ -1,0 +1,163 @@
+{
+  "ticket": "V5-T098",
+  "ticket_id": "V5-T098",
+  "wave": "W09",
+  "slot": "W09-A08",
+  "role": "W09-A08",
+  "priority": "P2",
+  "classification": "NEW_PRODUCT_FEATURE",
+  "status": "COMPLETED",
+  "goal": "Multilingual learning supports in frontend/src/lib/history.ts and backend/history_models.py.",
+  "timestamp": "2026-11-05T10:30:00Z",
+  "summary": "Implemented bilingual Vietnamese/English pedagogical glossary, expert-reviewed Hán–Nôm epigraphy readings, bilingual citation links, and translation provenance metadata. Built domain invariant validation and negative abuse defenses in backend/domain/multilingual_glossary.py and backend/services/history_glossary.py. Added HistoricalGlossaryTerm ORM model to backend/history_models.py and backend/models.py with purely additive Alembic migration 0077_multilingual_glossary_supports.py. Exposed public read endpoints (/api/v1/history/glossary, /api/v1/history/glossary/{term_key}) and staff mutation endpoints under /api/v1/admin/history/glossary with immutable audit logging. Enhanced frontend/src/lib/history.ts with HistoryGlossaryItem interfaces, normalizers, epistemic certainty resolvers, and translation integrity validators.",
+  "invariants_enforced": {
+    "bilingual_pedagogical_glossary": "Structured Vietnamese terms, English translations, Hán–Nôm glyphs, Sino-Vietnamese readings, bilingual definitions, contextual usage examples, and category classifications across Cửu Đỉnh and the Imperial City.",
+    "expert_reviewed_epigraphy_readings": "Epigraphic glyphs and readings link to primary sources and expert reviewer sign-off.",
+    "translation_provenance_metadata": "Structured provenance records origin (human_epigrapher, scholarly_lexicon, machine_translated, ai_generated, provisional_draft), reviewer identification, confidence scores, and citation locators.",
+    "bilingual_citation_linkage": "Direct references to historical primary sources (Đại Nam Thực Lục, Khâm Định Đại Nam Hội Điển Sự Lệ, Đại Nam Nhất Thống Chí) with bilingual titles and volume/page locators.",
+    "negative_abuse_mismatched_translation_defense": "Mismatched, empty, placeholder ('TODO', 'unknown', 'placeholder', 'n/a'), or untranslated Vietnamese definitions copied verbatim into English are strictly blocked from verified status (HTTP 422) and flagged with uncertainty in draft mode.",
+    "negative_abuse_unreviewed_machine_translation_block": "Machine-translated or AI-generated glosses CANNOT be promoted to verified without human epigrapher sign-off and valid citation (HTTP 422); when displayed, they prominently carry explicit uncertainty warnings.",
+    "epistemic_certainty_alignment": "Verified terms resolve to documented epistemic tone ('su_lieu_xac_thuc'), whereas unreviewed, provisional, or machine-translated terms resolve to uncertain tone ('dang_khao_cuu').",
+    "rbac_access_control": "Public read access requires no authentication; staff/admin authoring, patch updates, and review endpoints enforce STAFF_ROLES with immutable audit logging."
+  },
+  "changes": [
+    {
+      "file": "backend/domain/multilingual_glossary.py",
+      "description": "Created domain service with controlled vocabularies (GlossaryCategory, GlossaryReviewStatus, TranslationOrigin), domain exceptions (GlossaryValidationError, MismatchedTranslationError, UnreviewedTranslationPromotionError), translation mismatch detection, provenance builder, invariant validators, and canonical Cửu Đỉnh glossary seed data."
+    },
+    {
+      "file": "backend/history_models.py",
+      "description": "Added HistoricalGlossaryTerm ORM model with fields for Vietnamese/English terms, Hán–Nôm glyphs, Sino-Vietnamese readings, category, bilingual definitions, contextual usage, source FK, citation locator, bilingual citation JSONB, review status, origin, machine translation flag, uncertainty flag, uncertainty label, epigrapher sign-off, translation provenance JSONB, and related entity slugs. Re-exported domain functions."
+    },
+    {
+      "file": "backend/models.py",
+      "description": "Imported HistoricalGlossaryTerm and related enums into Base.metadata."
+    },
+    {
+      "file": "migrations/versions/0077_multilingual_glossary_supports.py",
+      "description": "Created purely additive migration creating historical_glossary_terms table and indexes with safe downgrade."
+    },
+    {
+      "file": "tests/v5/conftest.py",
+      "description": "Updated database bootstrap DDL to include historical_glossary_terms and associated indexes."
+    },
+    {
+      "file": "backend/apischemas/history.py",
+      "description": "Added HistoricalGlossaryTermOut, HistoricalGlossaryListOut, HistoricalGlossaryTermCreateIn, HistoricalGlossaryTermUpdateIn, and HistoricalGlossaryReviewIn Pydantic schemas."
+    },
+    {
+      "file": "backend/services/history_glossary.py",
+      "description": "Created service layer handling seed initialization, filtered listing, search, single-term retrieval, create/upsert, patch update, expert review promotion, and immutable audit logging to historical_content_audit_log."
+    },
+    {
+      "file": "backend/routers/history.py",
+      "description": "Added endpoints: GET /api/v1/history/glossary, GET /api/v1/history/glossary/{term_key}, POST /api/v1/admin/history/glossary, PATCH /api/v1/admin/history/glossary/{term_key}, and POST /api/v1/admin/history/glossary/{term_key}/review."
+    },
+    {
+      "file": "frontend/src/lib/history.ts",
+      "description": "Added HistoryGlossaryItem, TranslationProvenance, BilingualCitationLink interfaces, label dictionaries, defensive normalizers asGlossaryList/asGlossaryItem, getGlossaryEpistemic resolver, validateGlossaryTranslationIntegrity validator, formatBilingualCitation helper, and filterGlossaryTerms search utility."
+    },
+    {
+      "file": "frontend/src/lib/history-glossary.test.ts",
+      "description": "Created 7 Vitest unit tests verifying defensive normalization, epistemic badge resolution, negative abuse placeholder/duplication detection, bilingual citation formatting, search/filtering, and label dictionary coverage."
+    },
+    {
+      "file": "tests/v5/test_v5_t098.py",
+      "description": "Created comprehensive 16-test suite verifying domain invariants, canonical seed availability, search and category filtering, single-term provenance, 404 handling, uncertainty label enforcement, RBAC access control, negative abuse machine translation blocking, negative abuse untranslated copy rejection, staff creation and audit logging, epigrapher review promotion lifecycle, and patch updates."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t098.py -v",
+    "tests_total": 16,
+    "tests_passed": 16,
+    "tests_failed": 0,
+    "test_cases": [
+      {
+        "name": "test_domain_detect_translation_mismatch",
+        "result": "PASSED",
+        "description": "Verifies domain detection of valid translations, placeholder tokens, and untranslated duplicate definitions."
+      },
+      {
+        "name": "test_domain_negative_abuse_unreviewed_promotion_blocked",
+        "result": "PASSED",
+        "description": "Verifies that machine-translated or unreviewed glosses cannot be promoted to verified without epigrapher sign-off."
+      },
+      {
+        "name": "test_domain_negative_abuse_mismatched_promotion_blocked",
+        "result": "PASSED",
+        "description": "Verifies that placeholder or dummy English translations cannot be verified."
+      },
+      {
+        "name": "test_domain_negative_abuse_verified_without_citation_blocked",
+        "result": "PASSED",
+        "description": "Verifies that verified glossary terms must include an authoritative scholarly citation."
+      },
+      {
+        "name": "test_domain_draft_placeholder_flagged_with_uncertainty",
+        "result": "PASSED",
+        "description": "Verifies that draft entries with placeholder text are strictly flagged with is_uncertain=True and uncertainty labels."
+      },
+      {
+        "name": "test_public_glossary_listing_and_canonical_seeds",
+        "result": "PASSED",
+        "description": "Verifies unauthenticated public listing and baseline canonical Cửu Đỉnh glossary seeds."
+      },
+      {
+        "name": "test_public_glossary_filtering_and_search",
+        "result": "PASSED",
+        "description": "Verifies category filtering (relic) and bilingual full-text search across Vietnamese and English."
+      },
+      {
+        "name": "test_public_glossary_single_term_and_provenance",
+        "result": "PASSED",
+        "description": "Verifies single-term detail retrieval including Hán-Nôm glyphs, Sino-Vietnamese reading, and translation provenance."
+      },
+      {
+        "name": "test_public_glossary_nonexistent_term_returns_404",
+        "result": "PASSED",
+        "description": "Verifies that non-existent glossary term returns HTTP 404 with standard error envelope."
+      },
+      {
+        "name": "test_unreviewed_and_machine_terms_carry_uncertainty_labels",
+        "result": "PASSED",
+        "description": "Verifies that machine-translated terms carry is_machine_translated=True, is_uncertain=True, and descriptive uncertainty labels."
+      },
+      {
+        "name": "test_rbac_admin_glossary_mutations_forbidden_for_learners",
+        "result": "PASSED",
+        "description": "Verifies RBAC protection: learners cannot create, patch, or review glossary terms (HTTP 403 Forbidden)."
+      },
+      {
+        "name": "test_negative_abuse_admin_rejects_unreviewed_machine_translation_promotion",
+        "result": "PASSED",
+        "description": "Verifies admin endpoint rejects machine-translated entries attempting verified status without human sign-off (HTTP 422)."
+      },
+      {
+        "name": "test_negative_abuse_admin_rejects_mismatched_untranslated_copy",
+        "result": "PASSED",
+        "description": "Verifies admin endpoint rejects untranslated Vietnamese definitions copied into English (HTTP 422)."
+      },
+      {
+        "name": "test_staff_create_provisional_glossary_term_and_verify_audit",
+        "result": "PASSED",
+        "description": "Verifies staff creation of provisional terms and recording of HistoricalContentAuditLog entries."
+      },
+      {
+        "name": "test_staff_review_promotion_lifecycle_and_public_update",
+        "result": "PASSED",
+        "description": "Verifies expert epigrapher sign-off workflow transitioning a term from provisional to verified with citation locator."
+      },
+      {
+        "name": "test_staff_patch_update_glossary_term",
+        "result": "PASSED",
+        "description": "Verifies partial PATCH updates to glossary terms while maintaining data integrity and existing fields."
+      }
+    ],
+    "frontend_verification": {
+      "command": "npm --prefix frontend test -- src/lib/history-glossary.test.ts --run",
+      "tests_total": 7,
+      "tests_passed": 7,
+      "tests_failed": 0
+    }
+  }
+}

@@ -20,6 +20,15 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from ..apischemas.history_learning import (
+    CurriculumCompetencyFlagIn,
+    CurriculumCompetencyFlagOut,
+    CurriculumCompetencyFlagResolveIn,
+    CurriculumCompetencyListOut,
+    CurriculumCompetencyOut,
+    CurriculumCompetencyRelicMappingIn,
+    CurriculumCompetencyRelicMappingListOut,
+    CurriculumCompetencyRelicMappingOut,
+    CurriculumCompetencyRelicMappingUpdateIn,
     CurriculumFallback2DOut,
     CurriculumModuleListOut,
     CurriculumModuleOut,
@@ -62,6 +71,27 @@ from ..apischemas.history_learning import (
     MobilePracticeSubmitOut,
     MobilePracticeSyncOut,
     MobileQuizQuestionOut,
+    PilotGuardianConsentCreate,
+    PilotGuardianConsentOut,
+    PilotGuardianConsentStatusOut,
+    PilotGuardianConsentWithdrawIn,
+    TeacherWorkloadLogCreate,
+    TeacherWorkloadLogOut,
+    TeacherWorkloadSummaryOut,
+    RubricCalibrationCreate,
+    RubricCalibrationOut,
+    PilotDataRetentionAuditOut,
+    PilotDataRetentionPurgeIn,
+    PilotDataRetentionPurgeOut,
+    LearningImprovementClaimValidateIn,
+    LearningImprovementClaimValidateOut,
+    HistoryLessonPlanCreateIn,
+    HistoryLessonPlanUpdateIn,
+    HistoryLessonPlanOut,
+    HistoryLessonPlanListOut,
+    LessonWizardValidateIn,
+    LessonWizardValidateOut,
+    PrintableHandoutOut,
 )
 from ..db import get_db
 from ..deps import get_current_user, get_staff_user
@@ -69,10 +99,14 @@ from ..errors import AppError
 from ..models import (
     ClassMember,
     Classroom,
+    CurriculumCompetency,
+    CurriculumCompetencyFlag,
+    CurriculumCompetencyRelicMapping,
     HistoricalClaim,
     HistoricalEntity,
     HistoryAssignmentSubmission,
     HistoryLessonAssignment,
+    HistoryLessonPlan,
     HistoryQuestionType,
     LessonContent,
     QuizQuestion,
@@ -81,6 +115,7 @@ from ..models import (
 )
 from ..rbac import ADMIN_ROLES, STAFF_ROLES
 from ..services import history_learning as hl
+from ..services import curriculum_competency as cc_svc
 
 router = APIRouter(tags=["history-learning"])
 
@@ -439,6 +474,246 @@ def publish_history_lesson(
         published_at=lesson.published_at,
         verified_claim_ids=verified_claims,
     )
+
+
+# --------------------------------------------------------------------------- #
+# Curriculum Competency Catalog Endpoints (V5-T095 / Wave W09 / Slot A05)
+# Vietnam 2018 General Education Program (GDPT 2018)
+# --------------------------------------------------------------------------- #
+def _format_mapping_out(m: CurriculumCompetencyRelicMapping) -> CurriculumCompetencyRelicMappingOut:
+    return CurriculumCompetencyRelicMappingOut(
+        id=m.id,
+        competency_id=m.competency_id,
+        competency_code=m.competency.code if m.competency else None,
+        competency_name_vi=m.competency.name_vi if m.competency else None,
+        competency_domain=m.competency.domain if m.competency else None,
+        relic_urn_slug=m.relic_urn_slug,
+        relic_motif_id=m.relic_motif_id,
+        entity_slug=m.entity_slug,
+        grade_band=m.grade_band,
+        min_grade=m.min_grade,
+        max_grade=m.max_grade,
+        learning_activity_vi=m.learning_activity_vi,
+        learning_activity_en=m.learning_activity_en,
+        evidence_requirement_vi=m.evidence_requirement_vi,
+        evidence_requirement_en=m.evidence_requirement_en,
+        status=m.status,
+        is_reviewed=m.is_reviewed,
+        review_warning=m.review_warning,
+        flag_count=m.flag_count,
+        created_by_id=m.created_by_id,
+        created_at=m.created_at,
+        updated_at=m.updated_at,
+    )
+
+
+def _format_flag_out(f: CurriculumCompetencyFlag) -> CurriculumCompetencyFlagOut:
+    return CurriculumCompetencyFlagOut(
+        id=f.id,
+        mapping_id=f.mapping_id,
+        flagged_by_id=f.flagged_by_id,
+        flagged_by_name=f.flagged_by.display_name if f.flagged_by else None,
+        reason=f.reason,
+        commentary=f.commentary,
+        suggested_correction=f.suggested_correction,
+        status=f.status,
+        resolved_by_id=f.resolved_by_id,
+        resolution_notes=f.resolution_notes,
+        created_at=f.created_at,
+        resolved_at=f.resolved_at,
+    )
+
+
+@router.get(
+    "/api/v1/history/curriculum/competencies",
+    response_model=CurriculumCompetencyListOut,
+)
+def list_curriculum_competencies(
+    framework: Optional[str] = Query(None, description="Curriculum framework, e.g. VN_GDPT_2018"),
+    domain: Optional[str] = Query(None, description="Competency domain"),
+    db: Session = Depends(get_db),
+):
+    """List standard historical competencies under Vietnam 2018 General Education Program."""
+    comps = cc_svc.list_competencies(db, framework=framework, domain=domain)
+    return CurriculumCompetencyListOut(
+        items=[CurriculumCompetencyOut.model_validate(c) for c in comps],
+        total=len(comps),
+    )
+
+
+@router.get(
+    "/api/v1/history/curriculum/competencies/mappings",
+    response_model=CurriculumCompetencyRelicMappingListOut,
+)
+def list_curriculum_competency_mappings(
+    urn_slug: Optional[str] = Query(None, description="Filter by relic urn slug"),
+    motif_id: Optional[str] = Query(None, description="Filter by relic motif id"),
+    competency_code: Optional[str] = Query(None, description="Filter by competency code"),
+    grade: Optional[int] = Query(None, ge=6, le=12, description="Filter by target grade (6-12)"),
+    grade_band: Optional[str] = Query(None, description="Filter by grade band"),
+    status: Optional[str] = Query(None, description="Filter by status (unreviewed, verified, flagged)"),
+    db: Session = Depends(get_db),
+):
+    """List curriculum competency mappings across real relics and grade bands with review warnings."""
+    mappings = cc_svc.list_relic_mappings(
+        db,
+        urn_slug=urn_slug,
+        motif_id=motif_id,
+        competency_code=competency_code,
+        grade=grade,
+        grade_band=grade_band,
+        status=status,
+    )
+    return CurriculumCompetencyRelicMappingListOut(
+        items=[_format_mapping_out(m) for m in mappings],
+        total=len(mappings),
+    )
+
+
+@router.get(
+    "/api/v1/history/curriculum/competencies/mappings/{mapping_id}",
+    response_model=CurriculumCompetencyRelicMappingOut,
+)
+def get_curriculum_competency_mapping(
+    mapping_id: UUID,
+    db: Session = Depends(get_db),
+):
+    """Get single curriculum competency relic mapping with review status and warnings."""
+    mapping = cc_svc.get_relic_mapping(db, mapping_id)
+    if not mapping:
+        raise AppError("MAPPING_NOT_FOUND", f"Mapping {mapping_id} not found", 404)
+    return _format_mapping_out(mapping)
+
+
+@router.post(
+    "/api/v1/history/curriculum/competencies/mappings",
+    response_model=CurriculumCompetencyRelicMappingOut,
+    status_code=201,
+)
+def create_curriculum_competency_mapping(
+    payload: CurriculumCompetencyRelicMappingIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Teacher or staff creates a new competency relic mapping. Defaults to unreviewed with review warning."""
+    mapping = cc_svc.create_relic_mapping(
+        db=db,
+        user=current_user,
+        data=payload.model_dump(),
+    )
+    return _format_mapping_out(mapping)
+
+
+@router.put(
+    "/api/v1/history/curriculum/competencies/mappings/{mapping_id}",
+    response_model=CurriculumCompetencyRelicMappingOut,
+)
+def update_curriculum_competency_mapping(
+    mapping_id: UUID,
+    payload: CurriculumCompetencyRelicMappingUpdateIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Teacher or staff updates an existing competency relic mapping."""
+    mapping = cc_svc.update_relic_mapping(
+        db=db,
+        user=current_user,
+        mapping_id=mapping_id,
+        data=payload.model_dump(exclude_unset=True),
+    )
+    return _format_mapping_out(mapping)
+
+
+@router.post(
+    "/api/v1/history/curriculum/competencies/mappings/{mapping_id}/flag",
+    response_model=CurriculumCompetencyFlagOut,
+    status_code=201,
+)
+def flag_curriculum_competency_mapping(
+    mapping_id: UUID,
+    payload: CurriculumCompetencyFlagIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Teacher flags an inaccurate competency mapping, triggering 'flagged' status and review warnings."""
+    flag = cc_svc.flag_relic_mapping(
+        db=db,
+        user=current_user,
+        mapping_id=mapping_id,
+        reason=payload.reason,
+        commentary=payload.commentary,
+        suggested_correction=payload.suggested_correction,
+    )
+    return _format_flag_out(flag)
+
+
+@router.get(
+    "/api/v1/history/curriculum/competencies/mappings/{mapping_id}/flags",
+    response_model=list[CurriculumCompetencyFlagOut],
+)
+def list_curriculum_competency_mapping_flags(
+    mapping_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """List teacher flags and inaccuracy reports for a competency mapping (teachers and staff only)."""
+    flags = cc_svc.list_mapping_flags(db, mapping_id, current_user)
+    return [_format_flag_out(f) for f in flags]
+
+
+@router.post(
+    "/api/v1/history/curriculum/competencies/flags/{flag_id}/resolve",
+    response_model=CurriculumCompetencyFlagOut,
+)
+def resolve_curriculum_competency_flag(
+    flag_id: UUID,
+    payload: CurriculumCompetencyFlagResolveIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Staff or administrator resolves or dismisses a teacher inaccuracy flag."""
+    flag = cc_svc.resolve_mapping_flag(
+        db=db,
+        user=current_user,
+        flag_id=flag_id,
+        action=payload.action,
+        resolution_notes=payload.resolution_notes,
+        updated_mapping_status=payload.updated_mapping_status,
+    )
+    return _format_flag_out(flag)
+
+
+@router.post(
+    "/api/v1/history/curriculum/competencies/mappings/{mapping_id}/verify",
+    response_model=CurriculumCompetencyRelicMappingOut,
+)
+def verify_curriculum_competency_mapping(
+    mapping_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Staff or administrator verifies a competency mapping, clearing review warnings."""
+    mapping = cc_svc.verify_relic_mapping(
+        db=db,
+        user=current_user,
+        mapping_id=mapping_id,
+    )
+    return _format_mapping_out(mapping)
+
+
+@router.get(
+    "/api/v1/history/curriculum/competencies/{code}",
+    response_model=CurriculumCompetencyOut,
+)
+def get_curriculum_competency(
+    code: str,
+    db: Session = Depends(get_db),
+):
+    """Get single historical competency details by code."""
+    comp = cc_svc.get_competency_by_code(db, code)
+    if not comp:
+        raise AppError("COMPETENCY_NOT_FOUND", f"Competency '{code}' not found", 404)
+    return CurriculumCompetencyOut.model_validate(comp)
 
 
 # --------------------------------------------------------------------------- #
@@ -902,6 +1177,163 @@ def get_cohort_causal_metrics_endpoint(
 
 
 # --------------------------------------------------------------------------- #
+# School Pilot Measurement & Ethics Endpoints (V5-T100 / Wave W09 / Slot A10)
+# --------------------------------------------------------------------------- #
+@router.post(
+    "/api/v1/history/learning-outcomes/ethics-protocols/{ethics_protocol_id}/consent",
+    response_model=PilotGuardianConsentOut,
+)
+def register_pilot_guardian_consent_endpoint(
+    ethics_protocol_id: UUID,
+    payload: PilotGuardianConsentCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Register informed guardian consent for student pilot research participation."""
+    consent_data = payload.model_dump()
+    consent_data["ethics_protocol_id"] = ethics_protocol_id
+    return hl.create_pilot_guardian_consent(db, consent_data, current_user_id=current_user.id)
+
+
+@router.post(
+    "/api/v1/history/learning-outcomes/ethics-protocols/{ethics_protocol_id}/consent/{consent_id}/verify",
+    response_model=PilotGuardianConsentOut,
+    dependencies=[Depends(get_staff_user)],
+)
+def verify_pilot_guardian_consent_endpoint(
+    ethics_protocol_id: UUID,
+    consent_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Staff or teacher verifies authenticated guardian consent."""
+    return hl.verify_pilot_guardian_consent(db, consent_id=consent_id, verifier_id=current_user.id)
+
+
+@router.post(
+    "/api/v1/history/learning-outcomes/ethics-protocols/{ethics_protocol_id}/consent/{consent_id}/withdraw",
+    response_model=PilotGuardianConsentOut,
+)
+def withdraw_pilot_guardian_consent_endpoint(
+    ethics_protocol_id: UUID,
+    consent_id: UUID,
+    payload: PilotGuardianConsentWithdrawIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Withdraw guardian consent, immediately suspending empirical research participation."""
+    return hl.withdraw_pilot_guardian_consent(db, consent_id=consent_id, reason=payload.reason)
+
+
+@router.get(
+    "/api/v1/history/learning-outcomes/ethics-protocols/{ethics_protocol_id}/consent/{student_id}/status",
+    response_model=PilotGuardianConsentStatusOut,
+)
+def get_pilot_guardian_consent_status_endpoint(
+    ethics_protocol_id: UUID,
+    student_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Query guardian informed consent status for a student under an ethics protocol."""
+    return hl.get_pilot_guardian_consent_status(db, protocol_id=ethics_protocol_id, student_id=student_id)
+
+
+@router.post(
+    "/api/v1/history/learning-outcomes/teacher-workload",
+    response_model=TeacherWorkloadLogOut,
+)
+def log_teacher_workload_endpoint(
+    payload: TeacherWorkloadLogCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Record educator workload metrics and NASA-TLX cognitive load index."""
+    data = payload.model_dump()
+    return hl.log_teacher_workload(db, teacher_id=current_user.id, payload=data)
+
+
+@router.get(
+    "/api/v1/history/learning-outcomes/teacher-workload/summary",
+    response_model=TeacherWorkloadSummaryOut,
+)
+def get_teacher_workload_summary_endpoint(
+    teacher_id: Optional[UUID] = Query(default=None),
+    school_id: Optional[UUID] = Query(default=None),
+    ethics_protocol_id: Optional[UUID] = Query(default=None),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Summarize teacher workload metrics and burnout risk indicators."""
+    target_teacher = teacher_id or (current_user.id if current_user.role in (UserRole.teacher, UserRole.learner) else None)
+    return hl.get_teacher_workload_summary(
+        db,
+        teacher_id=target_teacher,
+        school_id=school_id,
+        protocol_id=ethics_protocol_id,
+    )
+
+
+@router.post(
+    "/api/v1/history/learning-outcomes/rubric-calibration",
+    response_model=RubricCalibrationOut,
+    dependencies=[Depends(get_staff_user)],
+)
+def calibrate_submission_rubrics_endpoint(
+    payload: RubricCalibrationCreate,
+    db: Session = Depends(get_db),
+):
+    """Calibrate dual independent assessor rubric evaluations and check scoring divergence."""
+    return hl.calibrate_submission_rubrics(
+        db,
+        submission_id=payload.submission_id,
+        assessor_a_id=payload.assessor_a_id,
+        assessor_b_id=payload.assessor_b_id,
+        tolerance_pct=payload.tolerance_pct,
+    )
+
+
+@router.post(
+    "/api/v1/history/learning-outcomes/retention/audit",
+    response_model=PilotDataRetentionAuditOut,
+    dependencies=[Depends(get_staff_user)],
+)
+def audit_pilot_data_retention_endpoint(
+    ethics_protocol_id: Optional[UUID] = Query(default=None),
+    db: Session = Depends(get_db),
+):
+    """Audit pilot assessment and survey records exceeding data retention limits."""
+    return hl.audit_pilot_data_retention(db, ethics_protocol_id=ethics_protocol_id)
+
+
+@router.post(
+    "/api/v1/history/learning-outcomes/retention/purge",
+    response_model=PilotDataRetentionPurgeOut,
+    dependencies=[Depends(get_staff_user)],
+)
+def purge_expired_pilot_data_endpoint(
+    payload: PilotDataRetentionPurgeIn,
+    db: Session = Depends(get_db),
+):
+    """Purge student PII from expired records per Decree 13/2023/ND-CP."""
+    if not payload.confirm_purge:
+        raise HTTPException(status_code=400, detail="confirm_purge must be true to execute retention purge")
+    return hl.purge_expired_pilot_data(db, ethics_protocol_id=payload.ethics_protocol_id)
+
+
+@router.post(
+    "/api/v1/history/learning-outcomes/validate-learning-claim",
+    response_model=LearningImprovementClaimValidateOut,
+)
+def validate_learning_improvement_claim_endpoint(
+    payload: LearningImprovementClaimValidateIn,
+    db: Session = Depends(get_db),
+):
+    """Validate learning improvement claims. Rejects subjective sentiment / feelings surveys (HTTP 422)."""
+    return hl.validate_learning_improvement_claim(db, payload.model_dump())
+
+
+# --------------------------------------------------------------------------- #
 # Mobile Lesson Quiz Sync & Server Assessment Endpoints (V5-T057)
 # --------------------------------------------------------------------------- #
 @router.get(
@@ -1005,6 +1437,181 @@ def verify_badge_claim(
         badge_slug=payload.badge_slug,
         motif_id=payload.motif_id,
     )
+
+
+# --------------------------------------------------------------------------- #
+# Teacher 45-Minute Lesson Wizard Endpoints (V5-T091 / Wave W09 / Slot A01)
+# --------------------------------------------------------------------------- #
+def _lesson_plan_to_out(plan: HistoryLessonPlan) -> HistoryLessonPlanOut:
+    return HistoryLessonPlanOut(
+        id=plan.id,
+        teacher_id=plan.teacher_id,
+        title=plan.title,
+        topic=plan.topic,
+        target_grade=plan.target_grade,
+        duration_minutes=plan.duration_minutes,
+        curriculum_framework=plan.curriculum_framework,
+        status=plan.status,
+        content_validation_status=plan.content_validation_status,
+        entity_id=plan.entity_id,
+        urn_id=plan.urn_id,
+        motif_id=plan.motif_id,
+        lesson_id=plan.lesson_id,
+        media_variant=plan.media_variant,
+        media_config=plan.media_config or {},
+        objectives=plan.objectives or {},
+        source_ids=[str(s) for s in (plan.source_ids or [])],
+        claim_ids=[str(c) for c in (plan.claim_ids or [])],
+        sources_snapshot=plan.sources_snapshot or [],
+        claims_snapshot=plan.claims_snapshot or [],
+        inquiry_activities=plan.inquiry_activities or [],
+        assessment_rubric=plan.assessment_rubric or {},
+        printable_handout=plan.printable_handout or {},
+        version=plan.version,
+        created_at=plan.created_at,
+        updated_at=plan.updated_at,
+        published_at=plan.published_at,
+    )
+
+
+@router.post(
+    "/api/v1/history/lesson-wizard/validate",
+    response_model=LessonWizardValidateOut,
+)
+def validate_lesson_wizard_endpoint(
+    payload: LessonWizardValidateIn,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Validate 5-phase lesson plan against historical authority & publishing gates."""
+    plan_dict = payload.model_dump()
+    is_valid, issues = hl.validate_lesson_plan_for_publication(db, plan_dict)
+
+    verified_count = 0
+    ineligible_count = 0
+    for cid in payload.claim_ids:
+        clm = db.get(HistoricalClaim, cid)
+        if clm and clm.verification_status in hl.ELIGIBLE_CLAIM_STATUSES:
+            verified_count += 1
+        else:
+            ineligible_count += 1
+
+    return LessonWizardValidateOut(
+        can_publish=is_valid,
+        validation_status="valid" if is_valid else "blocked_for_authoritative_learning",
+        issues=issues,
+        verified_claims_count=verified_count,
+        ineligible_claims_count=ineligible_count,
+        warnings=[],
+    )
+
+
+@router.post(
+    "/api/v1/history/lesson-plans",
+    response_model=HistoryLessonPlanOut,
+    status_code=201,
+)
+def create_history_lesson_plan(
+    payload: HistoryLessonPlanCreateIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Create a new 45-minute structured lesson plan via the teacher wizard."""
+    if current_user.role not in STAFF_ROLES:
+        raise AppError("FORBIDDEN", "Only teachers or staff can create lesson plans", 403)
+
+    plan = hl.create_lesson_plan(db, current_user, payload.model_dump())
+    return _lesson_plan_to_out(plan)
+
+
+@router.get(
+    "/api/v1/history/lesson-plans",
+    response_model=HistoryLessonPlanListOut,
+)
+def list_history_lesson_plans(
+    status: Optional[str] = Query(default=None),
+    motif_id: Optional[UUID] = Query(default=None),
+    entity_id: Optional[UUID] = Query(default=None),
+    offset: int = Query(default=0, ge=0),
+    limit: int = Query(default=50, ge=1, le=200),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """List 45-minute lesson plans with teacher and status filters."""
+    query = select(HistoryLessonPlan)
+    if status:
+        query = query.where(HistoryLessonPlan.status == status)
+    if motif_id:
+        query = query.where(HistoryLessonPlan.motif_id == motif_id)
+    if entity_id:
+        query = query.where(HistoryLessonPlan.entity_id == entity_id)
+
+    if current_user.role not in ADMIN_ROLES:
+        # Teachers see their own plans plus published public plans
+        query = query.where(
+            (HistoryLessonPlan.teacher_id == current_user.id)
+            | (HistoryLessonPlan.status == "published")
+        )
+
+    total = db.scalar(select(func.count()).select_from(query.subquery())) or 0
+    items = db.scalars(query.order_by(HistoryLessonPlan.created_at.desc()).offset(offset).limit(limit)).all()
+    return HistoryLessonPlanListOut(
+        items=[_lesson_plan_to_out(p) for p in items],
+        total=total,
+    )
+
+
+@router.get(
+    "/api/v1/history/lesson-plans/{plan_id}",
+    response_model=HistoryLessonPlanOut,
+)
+def get_history_lesson_plan(
+    plan_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Retrieve full details of a 45-minute lesson plan."""
+    plan = db.get(HistoryLessonPlan, plan_id)
+    if not plan:
+        raise AppError("LESSON_PLAN_NOT_FOUND", "Lesson plan not found", 404)
+    return _lesson_plan_to_out(plan)
+
+
+@router.post(
+    "/api/v1/history/lesson-plans/{plan_id}/publish",
+    response_model=HistoryLessonPlanOut,
+)
+def publish_history_lesson_plan(
+    plan_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Publish a lesson plan enforcing negative abuse historical claims gate."""
+    if current_user.role not in STAFF_ROLES:
+        raise AppError("FORBIDDEN", "Only teachers or staff can publish lesson plans", 403)
+
+    is_admin = current_user.role in ADMIN_ROLES
+    plan = hl.publish_lesson_plan(db, plan_id, current_user, is_admin=is_admin)
+    return _lesson_plan_to_out(plan)
+
+
+@router.get(
+    "/api/v1/history/lesson-plans/{plan_id}/printable-handout",
+    response_model=PrintableHandoutOut,
+)
+def get_lesson_plan_printable_handout(
+    plan_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Retrieve pre-formatted printable student worksheet and teacher guide."""
+    plan = db.get(HistoryLessonPlan, plan_id)
+    if not plan:
+        raise AppError("LESSON_PLAN_NOT_FOUND", "Lesson plan not found", 404)
+
+    handout = plan.printable_handout or hl.generate_printable_handout_payload(db, plan)
+    return PrintableHandoutOut(**handout)
+
 
 
 

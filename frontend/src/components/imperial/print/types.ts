@@ -4,6 +4,35 @@ export interface PrimarySourceItem {
   citation: string;
   archival_unit?: string;
   reliability_level?: string;
+  rights_owner?: string;
+  license?: string;
+}
+
+export interface OfflineRubbingItem {
+  asset_url: string;
+  local_path?: string;
+  caption_vi?: string;
+  high_contrast_css?: string;
+  rights_attribution?: string;
+  legal_basis?: string;
+}
+
+export interface OfflineInspectionTaskItem {
+  task_title_vi: string;
+  instructions_vi: string;
+  checkpoints: string[];
+  sketch_prompt_vi?: string;
+  paper_achievable: boolean;
+  ar_or_smartphone_required: boolean;
+}
+
+export interface AudioGuideTranscriptItem {
+  track_title_vi: string;
+  narrator: string;
+  duration_text: string;
+  duration_seconds?: number;
+  script_text: string;
+  key_quotes_vi?: string[];
 }
 
 export interface PrintableStation {
@@ -24,6 +53,9 @@ export interface PrintableStation {
   mee_evidence_sample_vi: string;
   mee_uncertainty_sample_vi: string;
   digital_coordinate_hint?: string;
+  rubbing_asset?: OfflineRubbingItem;
+  offline_task?: OfflineInspectionTaskItem;
+  audio_transcript?: AudioGuideTranscriptItem;
 }
 
 export interface RubricDimensionItem {
@@ -55,5 +87,9 @@ export interface WorksheetPrintConfig {
   include_qr: boolean;
   include_rubric: boolean;
   include_exit_ticket: boolean;
+  include_rubbings?: boolean;
+  include_transcripts?: boolean;
+  include_offline_tasks?: boolean;
+  high_contrast_rubbings?: boolean;
   selected_monument_slugs: string[];
 }

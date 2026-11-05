@@ -19,15 +19,18 @@ import {
   MapPin,
   Maximize2,
   Printer,
+  QrCode,
   RotateCcw,
   Scroll,
   Share2,
+  ShieldCheck,
   Sparkles,
   Unlock,
   UserCheck,
   X,
   Volume2,
 } from "lucide-react";
+import toast from "react-hot-toast";
 import {
   Dialog,
   DialogContent,
@@ -89,6 +92,33 @@ export default function PassportClient() {
   const [isCertificateOpen, setIsCertificateOpen] = useState<boolean>(false);
   const [copyCodeSuccess, setCopyCodeSuccess] = useState<boolean>(false);
 
+  // Server-Verified Passport state (V5-T092 / W09-A02)
+  const [serverPassport, setServerPassport] = useState<{
+    verified_stamps_count: number;
+    total_available_seals: number;
+    assessed_mastery_count: number;
+    stamps: Array<{
+      site_slug: string;
+      site_name: string;
+      provenance_hash: string;
+      authority: string;
+      stamped_at: string;
+      is_verified: boolean;
+    }>;
+  } | null>(null);
+
+  // QR Provenance Check-in Modal
+  const [isCheckinModalOpen, setIsCheckinModalOpen] = useState<boolean>(false);
+  const [checkinSite, setCheckinSite] = useState<string>("ngo-mon");
+  const [checkinQrToken, setCheckinQrToken] = useState<string>("");
+  const [checkinLoading, setCheckinLoading] = useState<boolean>(false);
+  const [checkinResult, setCheckinResult] = useState<{
+    success: boolean;
+    provenance_hash?: string;
+    authority?: string;
+    message?: string;
+  } | null>(null);
+
   // Certificate Code identifier
   const certificateCode = useMemo(() => {
     return `LN-HN-2026-${Math.abs(
@@ -106,8 +136,23 @@ export default function PassportClient() {
     setUnlockedMap(getUnlockedSealsMap());
   }, []);
 
+  const fetchServerPassport = useCallback(async () => {
+    try {
+      const res = await fetch("/api/v1/progress/passport", {
+        headers: { "Content-Type": "application/json" },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setServerPassport(data);
+      }
+    } catch {
+      // Offline fallback
+    }
+  }, []);
+
   useEffect(() => {
     refreshProgress();
+    fetchServerPassport();
 
     // Load saved student name or user info
     if (typeof window !== "undefined") {
@@ -133,7 +178,7 @@ export default function PassportClient() {
     return () => {
       window.removeEventListener("imperial-seal-unlocked", handleSealEvent);
     };
-  }, [user, refreshProgress]);
+  }, [user, refreshProgress, fetchServerPassport]);
 
   const handleSaveStudent = () => {
     setIsEditingStudent(false);
@@ -146,6 +191,49 @@ export default function PassportClient() {
       } catch (err) {
         console.error("Failed to save student profile:", err);
       }
+    }
+  };
+
+  const handleServerCheckIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!checkinQrToken.trim()) {
+      toast.error("Vui lòng nhập hoặc quét mã QR di tích hợp lệ.");
+      return;
+    }
+    setCheckinLoading(true);
+    setCheckinResult(null);
+    try {
+      const res = await fetch("/api/v1/progress/passport/check-in", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          site_slug: checkinSite,
+          verification_method: "qr_code",
+          qr_token: checkinQrToken.trim(),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        const errMsg = data?.error?.message || data?.detail || "Điểm danh xác thực thất bại.";
+        toast.error(errMsg);
+        setCheckinResult({ success: false, message: errMsg });
+        return;
+      }
+      setCheckinResult({
+        success: true,
+        provenance_hash: data.provenance_hash,
+        authority: data.authority,
+        message: data.message,
+      });
+      toast.success(data.message || "Đã đóng dấu xác thực thành công!");
+      unlockSeal(checkinSite, "Điểm danh xác thực máy chủ có chữ ký số QR");
+      refreshProgress();
+      await fetchServerPassport();
+    } catch {
+      toast.error("Lỗi kết nối máy chủ khi xác thực điểm danh.");
+      setCheckinResult({ success: false, message: "Lỗi kết nối máy chủ." });
+    } finally {
+      setCheckinLoading(false);
     }
   };
 
@@ -196,6 +284,16 @@ export default function PassportClient() {
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Authenticated QR Check-in Trigger */}
+            <Button
+              onClick={() => setIsCheckinModalOpen(true)}
+              variant="default"
+              className="h-8 text-xs font-semibold gap-1.5 bg-[#991b1b] hover:bg-[#7f1d1d] text-white shadow-sm"
+            >
+              <QrCode className="size-3.5" />
+              <span>Quét QR Điểm Danh</span>
+            </Button>
+
             {/* Certificate Quick Trigger */}
             <Button
               onClick={() => setIsCertificateOpen(true)}
@@ -225,6 +323,34 @@ export default function PassportClient() {
               </Button>
             </Link>
           </div>
+        </div>
+
+        {/* Heritage Authentication Policy & Invariant Banner */}
+        <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 p-4 text-xs space-y-2">
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div className="flex items-center gap-2 font-bold text-amber-900 dark:text-amber-200">
+              <ShieldCheck className="size-4 text-amber-600 dark:text-amber-400" />
+              <span>Quy chế Xác thực Hộ chiếu Di sản (STTTNNĐ V5-T092)</span>
+            </div>
+            <div className="flex items-center gap-3 text-[11px]">
+              <span className="font-semibold text-foreground">
+                Dấu xác thực máy chủ:{" "}
+                <strong className="text-emerald-600 dark:text-emerald-400">
+                  {serverPassport ? `${serverPassport.verified_stamps_count}/16` : `${progress.unlockedCount}/16 (cục bộ)`}
+                </strong>
+              </span>
+              <span>•</span>
+              <span className="font-semibold text-foreground">
+                Thành thạo học thuật:{" "}
+                <strong className="text-blue-600 dark:text-blue-400">
+                  {serverPassport ? `${serverPassport.assessed_mastery_count} bài` : "Chưa đồng bộ"}
+                </strong>
+              </span>
+            </div>
+          </div>
+          <p className="text-muted-foreground leading-relaxed text-[11px]">
+            <strong>Nguyên tắc bất biến:</strong> Tem tham quan thực địa (Visit Stamp) ghi nhận sự hiện diện thực tế thông qua mã QR có chữ ký số của Ban Quản lý Di tích Cố đô Huế (HMCC), hoàn toàn tách biệt với Đánh giá Thành thạo Học thuật (Assessed Mastery - yêu cầu bài kiểm tra đạt &ge; 80%). Các con dấu tự tích trên trình duyệt (client-side) không được tính vào học bạ hay báo cáo gửi giáo viên.
+          </p>
         </div>
 
         {/* =========================================================================
@@ -1022,6 +1148,35 @@ export default function PassportClient() {
                       Nội dung: {unlockedMap[selectedSeal.slug].reason}
                     </p>
                   )}
+                  {serverPassport?.stamps?.find((s) => s.site_slug === selectedSeal.slug) ? (
+                    <div className="mt-2 pt-2 border-t border-emerald-500/30 text-[11px] space-y-0.5">
+                      <div className="font-bold flex items-center gap-1 text-emerald-800 dark:text-emerald-300">
+                        <ShieldCheck className="size-3.5" />
+                        <span>Xác thực máy chủ (Ban Quản lý Di tích Cố đô Huế)</span>
+                      </div>
+                      <div className="font-mono text-[10px] break-all opacity-85">
+                        Mã băm: {serverPassport.stamps.find((s) => s.site_slug === selectedSeal.slug)?.provenance_hash}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="mt-2 pt-2 border-t border-emerald-500/30 text-[11px] space-y-1">
+                      <p className="text-muted-foreground italic">
+                        Dấu đang lưu ở chế độ xem trước cục bộ. Để tích hợp vào báo cáo học tập chính thức của giáo viên, vui lòng quét mã QR tại di tích.
+                      </p>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-6 text-[10px] gap-1 bg-white/50 dark:bg-black/20"
+                        onClick={() => {
+                          setCheckinSite(selectedSeal.slug);
+                          setIsCheckinModalOpen(true);
+                        }}
+                      >
+                        <QrCode className="size-3" />
+                        <span>Xác thực qua mã QR di tích</span>
+                      </Button>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3.5 text-xs text-amber-950 dark:text-amber-200 space-y-1.5">
@@ -1229,6 +1384,89 @@ export default function PassportClient() {
               </Button>
             </div>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* QR Check-in Dialog (V5-T092 / W09-A02) */}
+      <Dialog open={isCheckinModalOpen} onOpenChange={setIsCheckinModalOpen}>
+        <DialogContent className="max-w-md p-6 border-2 border-[#d4af37] bg-[#fffdfa] dark:bg-[#18130f]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 font-serif text-xl font-black">
+              <QrCode className="size-5 text-[#991b1b]" />
+              Điểm Danh Xác Thực Mã QR Di Tích
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
+              Nhập mã định danh hoặc chuỗi token QR niêm yết tại di tích để nhận tem tham quan được máy chủ ký số xác thực.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleServerCheckIn} className="space-y-4 pt-2">
+            <div className="space-y-1 text-xs">
+              <label className="font-semibold text-foreground">Chọn Công Trình / Di Tích:</label>
+              <select
+                value={checkinSite}
+                onChange={(e) => setCheckinSite(e.target.value)}
+                className="w-full rounded-md border border-[#d4af37]/60 bg-background px-3 py-2 text-xs font-serif font-bold text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+              >
+                {PASSPORT_SEALS.map((s) => (
+                  <option key={s.slug} value={s.slug}>
+                    {s.name} ({s.nameHanNom}) — {s.zoneName}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="space-y-1 text-xs">
+              <label className="font-semibold text-foreground">Mã QR Token (Chữ ký số HMCC):</label>
+              <textarea
+                value={checkinQrToken}
+                onChange={(e) => setCheckinQrToken(e.target.value)}
+                placeholder="Dán chuỗi token quét từ mã QR tại công trình..."
+                rows={3}
+                className="w-full font-mono text-[11px] rounded-md border border-[#d4af37]/60 bg-background p-2 text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+              />
+            </div>
+
+            {checkinResult && (
+              <div
+                className={cn(
+                  "p-3 rounded-lg text-xs space-y-1 border",
+                  checkinResult.success
+                    ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-900 dark:text-emerald-200"
+                    : "bg-red-500/10 border-red-500/30 text-red-900 dark:text-red-200",
+                )}
+              >
+                <div className="font-bold flex items-center gap-1.5">
+                  <ShieldCheck className="size-4" />
+                  <span>{checkinResult.message}</span>
+                </div>
+                {checkinResult.provenance_hash && (
+                  <div className="font-mono text-[10px] break-all opacity-90">
+                    Băm chứng tích: {checkinResult.provenance_hash}
+                  </div>
+                )}
+              </div>
+            )}
+
+            <DialogFooter className="gap-2 sm:gap-0">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setIsCheckinModalOpen(false)}
+              >
+                Đóng
+              </Button>
+              <Button
+                type="submit"
+                size="sm"
+                disabled={checkinLoading}
+                className="bg-[#991b1b] hover:bg-[#7f1d1d] text-white"
+              >
+                {checkinLoading ? "Đang xác thực..." : "Xác Thực Điểm Danh"}
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </div>

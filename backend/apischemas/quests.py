@@ -131,3 +131,12 @@ class QuestClaimRewardOut(BaseModel):
     streak_freezes_awarded: int = 0
     certificate: Optional[QuestCertificateOut] = None
     message: str
+
+
+class QuestEvidencePracticeSummaryOut(BaseModel):
+    user_id: UUID
+    total_verified_evaluations: int
+    abuse_flagged_count: int
+    active_evidence_quests: list[str]
+    evidence_mastery_achieved: bool
+    fsrs_adaptive_status: str

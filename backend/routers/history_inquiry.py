@@ -14,6 +14,10 @@ from sqlalchemy.orm import Session
 
 from ..apischemas.history_inquiry import (
     AddGroupMemberIn,
+    BoardRequestRevisionIn,
+    BoardResubmitIn,
+    ComparativeLinkCreate,
+    ComparativeLinkOut,
     HistoricalInquiryActivityCreate,
     HistoricalInquiryActivityOut,
     HistoricalInquiryGroupCreate,
@@ -23,8 +27,15 @@ from ..apischemas.history_inquiry import (
     HistoricalInquirySubmissionUpdate,
     HistoricalInquiryTeacherModerationIn,
     HistoricalInquiryTeacherModerationOut,
+    InquiryBoardCardCreate,
+    InquiryBoardCardOut,
+    InquiryBoardCardUpdate,
+    InquiryBoardOut,
     InquiryEvidenceItemIn,
     InquiryEvidenceItemOut,
+    RevisionCycleOut,
+    TeacherInlineFeedbackCreate,
+    TeacherInlineFeedbackOut,
 )
 from ..db import get_db
 from ..deps import get_current_user
@@ -79,6 +90,36 @@ def _submission_to_out(submission) -> HistoricalInquirySubmissionOut:
         )
         for item in (submission.evidence_items or [])
     ]
+    comp_links = [
+        ComparativeLinkOut(
+            id=str(l.get("id", "")),
+            source_id_a=str(l.get("source_id_a", "")),
+            source_title_a=str(l.get("source_title_a", "")),
+            source_id_b=str(l["source_id_b"]) if l.get("source_id_b") else None,
+            source_title_b=l.get("source_title_b"),
+            claim_id=str(l["claim_id"]) if l.get("claim_id") else None,
+            claim_title=l.get("claim_title"),
+            relation_type=str(l.get("relation_type", "supports")),
+            rationale=str(l.get("rationale", "")),
+            created_by_user_id=str(l.get("created_by_user_id", "")),
+            created_by_name=str(l.get("created_by_name", "")),
+            created_at=str(l.get("created_at", "")),
+        )
+        for l in (getattr(submission, "comparative_links", None) or [])
+    ]
+    inline_fb = [
+        TeacherInlineFeedbackOut(
+            id=str(f.get("id", "")),
+            target_type=str(f.get("target_type", "card")),
+            target_id=str(f["target_id"]) if f.get("target_id") else None,
+            teacher_id=str(f.get("teacher_id", "")),
+            teacher_name=str(f.get("teacher_name", "")),
+            comment=str(f.get("comment", "")),
+            created_at=str(f.get("created_at", "")),
+            resolved=bool(f.get("resolved", False)),
+        )
+        for f in (getattr(submission, "inline_feedback", None) or [])
+    ]
     return HistoricalInquirySubmissionOut(
         id=submission.id,
         group_id=submission.group_id,
@@ -87,6 +128,10 @@ def _submission_to_out(submission) -> HistoricalInquirySubmissionOut:
         synthesis_argument=submission.synthesis_argument or "",
         epistemic_rating=submission.epistemic_rating or "dang_khao_cuu",
         evidence_items=evidence_out,
+        comparative_links=comp_links,
+        inline_feedback=inline_fb,
+        revision_cycle=getattr(submission, "revision_cycle", 1) or 1,
+        revision_history=list(getattr(submission, "revision_history", None) or []),
         status=submission.status,
         privacy_mode=submission.privacy_mode,
         submitted_at=submission.submitted_at,
@@ -285,3 +330,156 @@ def moderate_submission(
         moderated_at=submission.moderated_at or submission.updated_at,
         moderated_by_id=submission.moderated_by_id or current_user.id,
     )
+
+
+# --------------------------------------------------------------------------- #
+# Evidence Board for Groups (V5-T093 / Wave W09, Slot A03)
+# --------------------------------------------------------------------------- #
+@router.get(
+    "/groups/{group_id}/board",
+    response_model=InquiryBoardOut,
+)
+def get_group_board(
+    group_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Retrieve full collaborative evidence board for group."""
+    board_data = svc.get_inquiry_board(db, current_user, group_id)
+    return InquiryBoardOut(**board_data)
+
+
+@router.post(
+    "/groups/{group_id}/board/cards",
+    response_model=InquiryBoardCardOut,
+    status_code=status.HTTP_201_CREATED,
+)
+def add_board_card(
+    group_id: UUID,
+    payload: InquiryBoardCardCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Add an evidence card to the inquiry board."""
+    card = svc.add_board_card(db, current_user, group_id, payload)
+    return InquiryBoardCardOut(**card)
+
+
+@router.put(
+    "/groups/{group_id}/board/cards/{card_id}",
+    response_model=InquiryBoardCardOut,
+)
+def update_board_card(
+    group_id: UUID,
+    card_id: str,
+    payload: InquiryBoardCardUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Update evidence card positioning, column, or comparative notes on board."""
+    card = svc.update_board_card(db, current_user, group_id, card_id, payload)
+    return InquiryBoardCardOut(**card)
+
+
+@router.delete(
+    "/groups/{group_id}/board/cards/{card_id}",
+)
+def remove_board_card(
+    group_id: UUID,
+    card_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Remove evidence card from board."""
+    svc.remove_board_card(db, current_user, group_id, card_id)
+    return {"success": True, "removed_card_id": card_id}
+
+
+@router.post(
+    "/groups/{group_id}/board/comparisons",
+    response_model=ComparativeLinkOut,
+    status_code=status.HTTP_201_CREATED,
+)
+def add_comparative_link(
+    group_id: UUID,
+    payload: ComparativeLinkCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Add a comparative source evidence link to the board."""
+    link = svc.add_comparative_link(db, current_user, group_id, payload)
+    return ComparativeLinkOut(**link)
+
+
+@router.delete(
+    "/groups/{group_id}/board/comparisons/{comparison_id}",
+)
+def remove_comparative_link(
+    group_id: UUID,
+    comparison_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Remove a comparative source evidence link from the board."""
+    svc.remove_comparative_link(db, current_user, group_id, comparison_id)
+    return {"success": True, "removed_comparison_id": comparison_id}
+
+
+@router.post(
+    "/groups/{group_id}/board/feedback",
+    response_model=TeacherInlineFeedbackOut,
+    status_code=status.HTTP_201_CREATED,
+)
+def add_teacher_inline_feedback(
+    group_id: UUID,
+    payload: TeacherInlineFeedbackCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Teacher provides inline feedback annotation on board card or section."""
+    fb = svc.add_teacher_inline_feedback(db, current_user, group_id, payload)
+    return TeacherInlineFeedbackOut(**fb)
+
+
+@router.post(
+    "/groups/{group_id}/board/request-revision",
+    response_model=InquiryBoardOut,
+)
+def request_board_revision(
+    group_id: UUID,
+    payload: BoardRequestRevisionIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Teacher requests revision on the evidence board, unlocking it for student revision."""
+    board_data = svc.request_board_revision(db, current_user, group_id, payload)
+    return InquiryBoardOut(**board_data)
+
+
+@router.post(
+    "/groups/{group_id}/board/resubmit",
+    response_model=InquiryBoardOut,
+)
+def resubmit_board(
+    group_id: UUID,
+    payload: BoardResubmitIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Group resubmits revised evidence board for teacher review."""
+    board_data = svc.resubmit_board(db, current_user, group_id, payload)
+    return InquiryBoardOut(**board_data)
+
+
+@router.get(
+    "/groups/{group_id}/board/revisions",
+    response_model=RevisionCycleOut,
+)
+def get_board_revisions(
+    group_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Retrieve audit trail of revision cycles for this inquiry group."""
+    rev_data = svc.get_board_revisions(db, current_user, group_id)
+    return RevisionCycleOut(**rev_data)

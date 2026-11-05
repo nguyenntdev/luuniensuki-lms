@@ -31,6 +31,7 @@ import '../features/quests/presentation/screens/quests_screen.dart';
 import '../features/quests/presentation/screens/quest_detail_screen.dart';
 import '../features/profile/presentation/screens/personal_info_screen.dart';
 import '../features/onboarding/presentation/screens/onboarding_screen.dart';
+import '../features/offline_kit/presentation/screens/low_bandwidth_kit_screen.dart';
 import '../features/streak/services/streak_event_service.dart';
 import 'route_names.dart';
 import '../shared/widgets/glass/glass_bottom_nav.dart';
@@ -306,6 +307,11 @@ GoRouter appRouter(Ref ref) {
         path: RoutePaths.historyAtlas,
         name: RouteNames.historyAtlas,
         builder: (_, __) => const HistoryAtlasScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.offlineKit,
+        name: RouteNames.offlineKit,
+        builder: (_, __) => const LowBandwidthKitScreen(),
       ),
 
       GoRoute(

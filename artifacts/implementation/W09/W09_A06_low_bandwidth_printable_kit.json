@@ -1,0 +1,169 @@
+{
+  "ticket": "V5-T096",
+  "ticket_id": "V5-T096",
+  "wave": "W09",
+  "slot": "W09-A06",
+  "role": "W09-A06",
+  "priority": "P2",
+  "classification": "NEW_PRODUCT_FEATURE",
+  "status": "COMPLETED",
+  "goal": "Low-bandwidth printable / offline kit in frontend/src/components/imperial/print/ and mobile/lib/.",
+  "timestamp": "2026-11-05T09:55:00Z",
+  "summary": "Implemented comprehensive low-bandwidth printable student handouts and offline exploration kit across web and mobile. Built backend service backend/services/offline_kit_service.py and Pydantic schemas in backend/apischemas/offline_kit.py providing structured station bundles with verified primary source excerpts within rights (ĐNTL, Hội Điển Sự Lệ, Nhất Thống Chí), authentic 2D rubbings from ban-duc-noi/ with print-optimized contrast CSS filters, scannable QR verification anchors, 100% paper-achievable offline inspection tasks, and verbatim audio guide transcripts eliminating network streaming data. Added GET /api/v1/imperial/offline-kit endpoint and updated relic inspection to support paper_handout and offline_rubbing modes. Enhanced frontend components PrintableFieldworkWorksheet.tsx, PrintWorksheetModal.tsx, LowBandwidthOfflineKit.tsx, and types.ts. Developed mobile Flutter offline kit in mobile/lib/features/offline_kit/ with LowBandwidthKitModel and LowBandwidthKitScreen wired to GoRouter. Rigorously enforced the negative abuse invariant: no AR or smartphone requirement is mandatory to complete learning assignments (100% paper/2D achievable with full 12/12 Rubric and 25 XP eligibility).",
+  "invariants_enforced": {
+    "zero_device_guarantee": "100% of curriculum competencies (S1 Spatial, S2 Temporal, S3 Evidence, S4 Argument) and inspection tasks are achievable using only paper, pencil, and 2D rubbings.",
+    "negative_abuse_no_ar_mandatory": "No AR, WebXR, camera permission, or smartphone hardware is mandatory to complete learning assignments or relic inspections. Denied camera or paper handout submissions receive identical full credit (+25 XP, equivalent_learning_completed=True) without penalty.",
+    "negative_abuse_equity_enforcement": "Any system configuration or assessor attempting to penalize students for lacking AR or camera permissions strictly raises an equity violation (EQUITY_VIOLATION_AR_MANDATORY, HTTP 400).",
+    "source_excerpts_within_rights": "All primary source citations are attributed to authentic royal historical works (Quốc Sử Quán triều Nguyễn, HMCC) with open educational licensing (CC BY 4.0 / Educational Fair Use).",
+    "high_contrast_2d_rubbings": "Rubbing assets from ban-duc-noi/ are validated on disk with cryptographic SHA-256 integrity hashes and print CSS filters (contrast(160%) grayscale(100%)) to ensure crisp legibility on monochrome school printers.",
+    "zero_streaming_audio_transcripts": "Audio guide transcripts are provided verbatim as printable/readable text, allowing offline students to access full historical narrations with 0 MB data consumption.",
+    "scannable_qr_codes": "Each printable station includes a direct QR code linking to digital records and orthogonal aerial maps for optional follow-up when connectivity is available."
+  },
+  "changes": [
+    {
+      "file": "backend/apischemas/offline_kit.py",
+      "description": "Created Pydantic schemas for OfflinePrimarySourceItem, OfflineRubbingAsset, OfflineInspectionTask, OfflineAudioTranscript, OfflineKitStation, and LowBandwidthOfflineKitResponse."
+    },
+    {
+      "file": "backend/services/offline_kit_service.py",
+      "description": "Implemented domain service for building standard and comprehensive offline kit bundles, mapping authentic rubbings and audio transcripts, and validating submission fairness."
+    },
+    {
+      "file": "backend/apischemas/relic_inspection.py",
+      "description": "Extended inspection_mode regex pattern to support paper_handout and offline_rubbing modes, and device_tier to support paper_only and none."
+    },
+    {
+      "file": "backend/routers/imperial.py",
+      "description": "Added GET /api/v1/imperial/offline-kit endpoint returning server-authoritative low-bandwidth offline kit bundles."
+    },
+    {
+      "file": "backend-rust/docs/route-inventory.json",
+      "description": "Updated route inventory to register the new GET /api/v1/imperial/offline-kit endpoint (531 total routes)."
+    },
+    {
+      "file": "tests/backend/fixtures/openapi_snapshot.json",
+      "description": "Regenerated OpenAPI snapshot fixture locking the new endpoint contract byte-for-byte."
+    },
+    {
+      "file": "frontend/src/components/imperial/print/types.ts",
+      "description": "Extended PrintableStation and WorksheetPrintConfig with OfflineRubbingItem, OfflineInspectionTaskItem, AudioGuideTranscriptItem, and toggle options."
+    },
+    {
+      "file": "frontend/src/components/imperial/print/worksheetData.ts",
+      "description": "Attached authentic 2D rubbings, paper-executable offline tasks, and audio guide transcripts to all 16 printable stations."
+    },
+    {
+      "file": "frontend/src/components/imperial/print/PrintableFieldworkWorksheet.tsx",
+      "description": "Rendered 100% offline & zero AR guarantee banner, high-contrast 2D rubbings, paper inspection tasks with checkpoints and sketch area, verbatim audio transcripts, and bibliographic rights attributions."
+    },
+    {
+      "file": "frontend/src/components/imperial/print/PrintWorksheetModal.tsx",
+      "description": "Added customization toggles for 2D rubbings, offline tasks, verbatim transcripts, and high-contrast filter mode."
+    },
+    {
+      "file": "frontend/src/components/imperial/print/LowBandwidthOfflineKit.tsx",
+      "description": "Created complete standalone offline kit overview component with station preview, JSON bundle exporter, and printable worksheet launcher."
+    },
+    {
+      "file": "frontend/src/components/imperial/print/index.ts",
+      "description": "Exported LowBandwidthOfflineKit component and updated types."
+    },
+    {
+      "file": "frontend/src/components/imperial/print/PrintableFieldworkWorksheet.test.tsx",
+      "description": "Added unit tests verifying high-contrast 2D rubbings, verbatim audio transcripts, offline inspection tasks, and negative abuse zero-AR invariant."
+    },
+    {
+      "file": "mobile/lib/features/offline_kit/data/models/offline_kit_model.dart",
+      "description": "Created Flutter data models for LowBandwidthKitModel, OfflineKitStationModel, OfflineRubbingAsset, OfflineInspectionTask, and OfflineAudioTranscript."
+    },
+    {
+      "file": "mobile/lib/features/offline_kit/presentation/screens/low_bandwidth_kit_screen.dart",
+      "description": "Implemented mobile Flutter screen for offline kit exploration with 2D rubbings, audio transcripts, and offline paper inspection completion action (+25 XP)."
+    },
+    {
+      "file": "mobile/lib/routing/route_names.dart",
+      "description": "Added RouteNames.offlineKit ('offline-kit') and RoutePaths.offlineKit ('/offline-kit')."
+    },
+    {
+      "file": "mobile/lib/routing/app_router.dart",
+      "description": "Registered /offline-kit route pointing to LowBandwidthKitScreen."
+    },
+    {
+      "file": "mobile/test/features/offline_kit/offline_kit_test.dart",
+      "description": "Created Flutter unit test suite verifying model parsing, authentic default data, and zero AR/smartphone requirement invariant."
+    },
+    {
+      "file": "tests/v5/test_v5_t096.py",
+      "description": "Created 9-test pytest suite verifying offline kit data, API endpoint, disk rubbing assets, paper_handout/offline_rubbing inspection completion, negative abuse equity defense, and component contracts."
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t096.py -v",
+    "tests_total": 9,
+    "tests_passed": 9,
+    "tests_failed": 0,
+    "test_cases": [
+      {
+        "name": "test_build_offline_kit_standard_4",
+        "result": "PASSED",
+        "description": "Verifies standard 4-station offline kit bundle with sources, rubbings, tasks, transcripts, and zero-device guarantee."
+      },
+      {
+        "name": "test_build_offline_kit_all_16_monuments",
+        "result": "PASSED",
+        "description": "Verifies comprehensive 16-monument offline kit bundle with zero AR requirements across all stations."
+      },
+      {
+        "name": "test_get_offline_kit_api_endpoint",
+        "result": "PASSED",
+        "description": "Verifies GET /api/v1/imperial/offline-kit returns 200 OK with valid schema, rubbings, and transcripts."
+      },
+      {
+        "name": "test_rubbing_assets_on_disk_and_integrity",
+        "result": "PASSED",
+        "description": "Verifies that all 2D rubbing files exist on disk (>5KB) and match cryptographic SHA-256 hashes."
+      },
+      {
+        "name": "test_relic_inspection_succeeds_with_paper_handout_mode",
+        "result": "PASSED",
+        "description": "Verifies that student completing inspection via paper_handout mode with camera_permission_granted=False receives full credit (+25 XP)."
+      },
+      {
+        "name": "test_relic_inspection_succeeds_with_offline_rubbing_mode",
+        "result": "PASSED",
+        "description": "Verifies that student using offline_rubbing receives equivalent learning completion and 25 XP."
+      },
+      {
+        "name": "test_equity_violation_when_penalizing_non_ar_students",
+        "result": "PASSED",
+        "description": "Verifies that any attempt to penalize students for lacking AR or camera strictly raises EQUITY_VIOLATION_AR_MANDATORY."
+      },
+      {
+        "name": "test_frontend_print_components_exist",
+        "result": "PASSED",
+        "description": "Verifies frontend print components, exports in index.ts, equity notice, and contrast(160%) filter."
+      },
+      {
+        "name": "test_mobile_offline_kit_components_exist",
+        "result": "PASSED",
+        "description": "Verifies mobile Flutter models, screen, and route registration in app_router.dart."
+      }
+    ],
+    "flutter_tests": {
+      "command": "/home/clue/development/flutter/bin/flutter test test/features/offline_kit/offline_kit_test.dart",
+      "result": "PASSED (3/3 passed, 28/28 all mobile passed)"
+    },
+    "frontend_tests": {
+      "command": "npx vitest run src/components/imperial/print/PrintableFieldworkWorksheet.test.tsx",
+      "result": "PASSED (7/7 passed, 574/574 all frontend passed)"
+    },
+    "openapi_snapshot_test": {
+      "command": "pytest tests/backend/test_openapi_snapshot.py -v",
+      "result": "PASSED (1/1 passed)"
+    },
+    "route_inventory_lint": {
+      "command": "./scripts/ci/lint-inventory-drift.sh",
+      "result": "PASSED (zero drift, 531 routes)"
+    }
+  }
+}

@@ -22,7 +22,7 @@ from sqlalchemy import (
     text,
 )
 from sqlalchemy import Enum as SAEnum
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
@@ -347,6 +347,17 @@ class User(Base):
     # Push notification permission tracking
     push_permission_prompted: Mapped[bool] = mapped_column(
         Boolean, nullable=False, server_default=text("false")
+    )
+
+    # School verification and teacher onboarding (Spec V5-T099 / W09-A09)
+    is_school_verified: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("true")
+    )
+    teacher_onboarding_completed: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("false")
+    )
+    teacher_onboarding_step: Mapped[Optional[str]] = mapped_column(
+        String(50), nullable=True, server_default=text("'welcome'")
     )
 
     last_active_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
@@ -1716,6 +1727,12 @@ class SchoolMember(Base):
     role: Mapped[str] = mapped_column(
         String(20), nullable=False, server_default=text("'teacher'")
     )
+    is_verified: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("true")
+    )
+    verification_status: Mapped[str] = mapped_column(
+        String(20), nullable=False, server_default=text("'verified'")
+    )
     joined_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
@@ -2166,6 +2183,54 @@ class RateLimitEntry(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
+
+
+class HeritagePassportStamp(Base):
+    """Verified Heritage Passport Stamp for physical or authenticated site visit."""
+
+    __tablename__ = "heritage_passport_stamps"
+    __table_args__ = (
+        UniqueConstraint("user_id", "site_slug", name="uq_heritage_passport_user_site"),
+        Index("idx_heritage_passport_user", "user_id"),
+        Index("idx_heritage_passport_site", "site_slug"),
+        Index("idx_heritage_passport_verified", "is_verified"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    site_slug: Mapped[str] = mapped_column(String(100), nullable=False)
+    site_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    zone_slug: Mapped[str] = mapped_column(String(100), nullable=False)
+    verification_method: Mapped[str] = mapped_column(
+        String(50), nullable=False, server_default=text("'qr_code'")
+    )
+    qr_nonce: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    provenance_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    authority: Mapped[str] = mapped_column(
+        String(100), nullable=False, server_default=text("'HMCC_HUE_HERITAGE'")
+    )
+    stamped_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    checkin_count: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default=text("1")
+    )
+    last_visited_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    is_verified: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("true")
+    )
+    latitude: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    longitude: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    device_metadata: Mapped[Optional[dict[str, Any]]] = mapped_column(
+        JSONB, nullable=True
+    )
+    user: Mapped["User"] = relationship()
 
 
 class QuestAssignment(Base):
@@ -3386,6 +3451,195 @@ class SpacedRepetitionCard(Base):
     user: Mapped["User"] = relationship("User")
     motif: Mapped["Motif"] = relationship("Motif")
 
+    # FSRS fields (migration 0045_fsrs_spaced_repetition)
+    fsrs_state: Mapped[Optional[str]] = mapped_column(
+        String(32), nullable=True, server_default=text("'new'")
+    )
+    fsrs_difficulty: Mapped[Optional[float]] = mapped_column(
+        Float, nullable=True
+    )
+    fsrs_stability: Mapped[Optional[float]] = mapped_column(
+        Float, nullable=True
+    )
+    fsrs_due_date: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    fsrs_last_review: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+
+
+class UserFsrsParams(Base):
+    """Per-user FSRS parameters and opt-out preferences."""
+    __tablename__ = "user_fsrs_params"
+    __table_args__ = (
+        Index("idx_user_fsrs_params_user", "user_id"),
+        CheckConstraint("optimal_retention BETWEEN 0.70 AND 0.97", name="user_fsrs_params_retention_range"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        unique=True,
+        nullable=False,
+    )
+    parameters: Mapped[list[float]] = mapped_column(
+        ARRAY(Float), nullable=False, default=list
+    )
+    optimal_retention: Mapped[float] = mapped_column(
+        Float, nullable=False, server_default=text("0.9")
+    )
+    fsrs_enabled: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("true")
+    )
+    last_optimized_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    review_count_at_last_optimize: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default=text("0")
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
+    )
+
+    user: Mapped["User"] = relationship("User")
+
+
+class AdaptiveEvidenceCard(Base):
+    """Spaced repetition card specifically for primary source evidence evaluation tasks."""
+    __tablename__ = "adaptive_evidence_cards"
+    __table_args__ = (
+        Index("idx_aec_user", "user_id"),
+        Index("idx_aec_source", "source_id"),
+        Index("idx_aec_due", "fsrs_due_date"),
+        Index("idx_aec_user_due", "user_id", "fsrs_due_date"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    source_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("historical_sources.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    claim_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("historical_claims.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    task_type: Mapped[str] = mapped_column(
+        String(64), nullable=False, server_default=text("'source_evaluation'")
+    )
+    prompt: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    fsrs_state: Mapped[str] = mapped_column(
+        String(32), nullable=False, server_default=text("'new'")
+    )
+    fsrs_difficulty: Mapped[float] = mapped_column(
+        Float, nullable=False, server_default=text("5.0")
+    )
+    fsrs_stability: Mapped[float] = mapped_column(
+        Float, nullable=False, server_default=text("1.0")
+    )
+    fsrs_due_date: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    fsrs_last_review: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    interval_days: Mapped[float] = mapped_column(
+        Float, nullable=False, server_default=text("1.0")
+    )
+    repetitions: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default=text("0")
+    )
+    lapses: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default=text("0")
+    )
+
+    is_mastered: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("false")
+    )
+    mastery_badge_awarded: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("false")
+    )
+    review_history: Mapped[list[Any]] = mapped_column(
+        JSONB, nullable=False, server_default=text("'[]'::jsonb")
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
+    )
+
+    user: Mapped["User"] = relationship("User")
+    source: Mapped["HistoricalSource"] = relationship("HistoricalSource", foreign_keys=[source_id])
+    claim: Mapped[Optional["HistoricalClaim"]] = relationship("HistoricalClaim", foreign_keys=[claim_id])
+
+
+class AdaptiveEvidenceLog(Base):
+    """Audit and anti-abuse execution log for primary source evaluation attempts."""
+    __tablename__ = "adaptive_evidence_logs"
+    __table_args__ = (
+        Index("idx_ael_card", "card_id"),
+        Index("idx_ael_user", "user_id"),
+        Index("idx_ael_created", "created_at"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    card_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("adaptive_evidence_cards.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    source_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("historical_sources.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+
+    evaluation_score: Mapped[float] = mapped_column(Float, nullable=False)
+    rating: Mapped[str] = mapped_column(String(16), nullable=False)
+    dwell_time_seconds: Mapped[float] = mapped_column(Float, nullable=False)
+    xp_awarded: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+
+    stability_before: Mapped[float] = mapped_column(Float, nullable=False)
+    stability_after: Mapped[float] = mapped_column(Float, nullable=False)
+    difficulty_before: Mapped[float] = mapped_column(Float, nullable=False)
+    difficulty_after: Mapped[float] = mapped_column(Float, nullable=False)
+    retrievability: Mapped[float] = mapped_column(Float, nullable=False)
+
+    abuse_detected: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("false")
+    )
+    abuse_reason: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+    card: Mapped["AdaptiveEvidenceCard"] = relationship("AdaptiveEvidenceCard")
+    user: Mapped["User"] = relationship("User")
+
 
 
 class AIConversation(Base):
@@ -4355,6 +4609,7 @@ from .history_models import (  # noqa: E402,F401
     HistoricalVerificationStatus,
     HistoryStory,
     HistoryCollection,
+    HistoryLessonPlan,
     HistoryLessonAssignment,
     HistoryAssignmentSubmission,
     HistoryEthicsProtocol,
@@ -4363,6 +4618,22 @@ from .history_models import (  # noqa: E402,F401
     HistoryLearningOutcomeEvaluation,
     HistorySubjectiveSurvey,
     HistoryCausalLearningMetric,
+    HistoryPilotGuardianConsent,
+    HistoryTeacherWorkloadLog,
+    HistoryRubricCalibration,
+    CompetencyFlagReason,
+    CompetencyGradeBand,
+    CompetencyMappingStatus,
+    CurriculumCompetency,
+    CurriculumCompetencyFlag,
+    CurriculumCompetencyRelicMapping,
+    StandardCompetencyDomain,
+    HistoricalGlossaryTerm,
+)
+from .domain.multilingual_glossary import (
+    GlossaryCategory,
+    GlossaryReviewStatus,
+    TranslationOrigin,
 )
 
 # --------------------------------------------------------------------------- #
@@ -4471,4 +4742,8 @@ from .research_factory_models import (  # noqa: E402,F401
     ResearchCachePurgeEvent,
     AIPublicationRelease,
     AICorrectionEvent,
+)
+from .teacher_models import (  # noqa: E402,F401
+    TeacherSupportTicket,
+    TeacherOnboardingProfile,
 )

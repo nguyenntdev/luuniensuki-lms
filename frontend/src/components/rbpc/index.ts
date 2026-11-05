@@ -16,3 +16,4 @@ export * from "./StoryArtisanBridge";
 export * from "./PartnerInboxView";
 export * from "./CulturalBridgePanel";
 export * from "./PeerInquiryWorkspace";
+export * from "./EvidenceBoard";

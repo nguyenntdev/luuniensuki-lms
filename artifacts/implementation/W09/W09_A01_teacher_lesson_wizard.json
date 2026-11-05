@@ -1,0 +1,110 @@
+{
+  "ticket_id": "V5-T091",
+  "wave": "W09",
+  "slot": "W09-A01",
+  "role": "W09-A01",
+  "priority": "P2",
+  "classification": "NEW_PRODUCT_FEATURE",
+  "goal": "Teacher 45-minute lesson wizard in frontend/src/app/dai-noi/giao-vien/ and backend/routers/history_learning.py.",
+  "status": "COMPLETED",
+  "timestamp": "2026-11-06T02:00:00Z",
+  "summary": "Implemented Teacher 45-minute lesson wizard across backend and frontend. Structured the 5-phase wizard flow: objectives -> source -> media -> inquiry -> assessment, supporting 2D rubbing and 3D mesh variants along with printable student handout generation. Enforced strict negative abuse invariant where lessons cannot be published without approved historical objects, sources, and verified claims (rejecting unreviewed, needs_source, or disputed claims with HTTP 422 LESSON_PLAN_UNVERIFIED_CLAIMS).",
+  "files_modified_or_created": [
+    {
+      "file": "migrations/versions/0073_history_lesson_plans.py",
+      "action": "created",
+      "changes": "Added history_lesson_plans table with foreign keys, indexes, snapshots, and printable handout JSONB payloads."
+    },
+    {
+      "file": "backend/history_models.py",
+      "action": "modified",
+      "changes": "Added HistoryLessonPlan SQLAlchemy model with structured fields for 45-min duration, curriculum framework, 2D/3D media variants, inquiry activities, rubric, and printable handout."
+    },
+    {
+      "file": "backend/models.py",
+      "action": "modified",
+      "changes": "Exported HistoryLessonPlan in models namespace for Base.metadata."
+    },
+    {
+      "file": "backend/apischemas/history_learning.py",
+      "action": "modified",
+      "changes": "Added schemas for lesson plan creation, validation, output, and printable handout contracts."
+    },
+    {
+      "file": "backend/services/history_learning.py",
+      "action": "modified",
+      "changes": "Implemented create_lesson_plan, publish_lesson_plan, validate_lesson_plan_for_publication, and generate_printable_handout_payload."
+    },
+    {
+      "file": "backend/routers/history_learning.py",
+      "action": "modified",
+      "changes": "Added API endpoints for lesson wizard validation, creation, listing, details, publication, and printable handout retrieval."
+    },
+    {
+      "file": "frontend/src/app/dai-noi/giao-vien/LessonPlanWizardModal.tsx",
+      "action": "created",
+      "changes": "Interactive 5-phase teacher wizard modal component with objectives, sources, 2D/3D variants, 4-station timeline, assessment, and A4 printable preview."
+    },
+    {
+      "file": "frontend/src/app/dai-noi/giao-vien/TeacherDashboardClient.tsx",
+      "action": "modified",
+      "changes": "Integrated LessonPlanWizardModal trigger into teacher dashboard."
+    },
+    {
+      "file": "frontend/src/app/dai-noi/giao-vien/TeacherDashboard.test.tsx",
+      "action": "modified",
+      "changes": "Updated teacher dashboard test assertions to include wizard action button."
+    },
+    {
+      "file": "tests/v5/test_v5_t091.py",
+      "action": "created",
+      "changes": "Implemented 5-test comprehensive verification suite covering draft creation, negative abuse object/source gates, negative abuse unreviewed/disputed claims rejection, clean publication & handout generation, and access control."
+    }
+  ],
+  "invariants_verified": {
+    "structured_wizard_flow": "5 distinct phases (objectives, sources, media, inquiry, assessment) adhering to CV 5512/BGDĐT 45-minute lesson framework.",
+    "two_dimensional_and_3d_variants": "Supports both 2D rubbing variant (low-bandwidth/offline) and 3D model variant with guaranteed 2D rubbing fallback.",
+    "negative_abuse_historical_authority_gate": "Publication strictly rejects missing historical objects, missing bibliographic sources, or any unreviewed/needs_source/disputed claim with HTTP 422 LESSON_PLAN_UNVERIFIED_CLAIMS.",
+    "printable_handout_generation": "Precomputes and formats A4 double-sided printable student fieldwork worksheet and teacher guide with zero synthetic student data.",
+    "role_and_tenant_security": "Learners are blocked with HTTP 403; teachers can only publish lesson plans they authored."
+  },
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t091.py -v",
+    "tests_total": 5,
+    "tests_passed": 5,
+    "tests_failed": 0,
+    "test_cases": [
+      {
+        "name": "test_wizard_create_draft_lesson_plan",
+        "result": "PASSED",
+        "description": "Verifies creation of a draft 45-minute lesson plan across all 5 wizard phases."
+      },
+      {
+        "name": "test_negative_abuse_lesson_cannot_publish_without_approved_object_or_sources",
+        "result": "PASSED",
+        "description": "Negative Abuse Test: Publishing without linked historical object or source returns HTTP 422 LESSON_PLAN_UNVERIFIED_CLAIMS."
+      },
+      {
+        "name": "test_negative_abuse_lesson_cannot_publish_with_unreviewed_or_disputed_claims",
+        "result": "PASSED",
+        "description": "Negative Abuse Test: Publishing with unreviewed or disputed claims returns HTTP 422 LESSON_PLAN_UNVERIFIED_CLAIMS."
+      },
+      {
+        "name": "test_positive_publication_and_printable_handout_generation",
+        "result": "PASSED",
+        "description": "Verifies positive validation, publication, and printable handout payload generation."
+      },
+      {
+        "name": "test_access_control_and_teacher_isolation",
+        "result": "PASSED",
+        "description": "Verifies that learners cannot create plans and teachers cannot publish other teachers' drafts."
+      }
+    ],
+    "frontend_verification": {
+      "vitest_command": "npm run test -- src/app/dai-noi/giao-vien/TeacherDashboard.test.tsx",
+      "tests_passed": 19,
+      "type_check_command": "npm run type-check",
+      "result": "PASSED"
+    }
+  }
+}

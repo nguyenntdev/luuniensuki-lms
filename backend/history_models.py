@@ -988,6 +988,426 @@ class HistoryCausalLearningMetric(Base):
 
 
 # --------------------------------------------------------------------------- #
+# Teacher 45-Minute Lesson Wizard Models (V5-T091 / Wave W09 / Slot A01)
+# --------------------------------------------------------------------------- #
+class HistoryLessonPlan(Base):
+    """Teacher 45-minute structured lesson wizard plan (Spec V5-T091 / W09-A01).
+
+    Maintains 5-phase structured wizard flow:
+    1. Objectives: Historical competencies (S1-S4), grade level, 45-min duration, qualities.
+    2. Sources & Historical claims: Linked objects (Urn/Motif/Entity), sources, verified claims.
+    3. Media: 2D Rubbing variant vs 3D Mesh variant, 2D fallback assets, preview links.
+    4. Inquiry: 4 sequential activities (5m Warmup, 15m Exploration, 15m Deep Inquiry, 10m Exit ticket).
+    5. Assessment: Rubric criteria (S1-S4 0-3 scale), exit ticket prompt & expected evidence.
+    6. Precomputed/generated printable handout (student worksheet & teacher guide).
+
+    Negative abuse invariant:
+    Lesson CANNOT publish without approved historical object/source (rejects unreviewed,
+    needs_source, or disputed claims).
+    """
+
+    __tablename__ = "history_lesson_plans"
+    __table_args__ = (
+        Index("idx_hist_lesson_plans_teacher", "teacher_id"),
+        Index("idx_hist_lesson_plans_status", "status"),
+        Index("idx_hist_lesson_plans_entity", "entity_id"),
+        Index("idx_hist_lesson_plans_motif", "motif_id"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    teacher_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    title: Mapped[str] = mapped_column(Text, nullable=False)
+    topic: Mapped[str] = mapped_column(Text, nullable=False)
+    target_grade: Mapped[str] = mapped_column(Text, nullable=False, default="Lớp 10 THPT")
+    duration_minutes: Mapped[int] = mapped_column(Integer, nullable=False, default=45)
+    curriculum_framework: Mapped[str] = mapped_column(Text, nullable=False, default="CV 5512/BGDĐT")
+    status: Mapped[str] = mapped_column(Text, nullable=False, default="draft")
+    content_validation_status: Mapped[str] = mapped_column(Text, nullable=False, default="valid")
+
+    entity_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("historical_entities.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    urn_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("urns.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    motif_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("motifs.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    lesson_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("lesson_content.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+
+    media_variant: Mapped[str] = mapped_column(Text, nullable=False, default="2d_rubbing")
+    media_config: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    objectives: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    source_ids: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    claim_ids: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    sources_snapshot: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    claims_snapshot: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    inquiry_activities: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    assessment_rubric: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    printable_handout: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+    published_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+
+
+
+# --------------------------------------------------------------------------- #
+# School Pilot Measurement & Ethics Models (V5-T100 / Wave W09 / Slot A10)
+# --------------------------------------------------------------------------- #
+class HistoryPilotGuardianConsent(Base):
+    """Informed guardian consent verification for school pilot research (Spec 63.2 / V5-T100)."""
+
+    __tablename__ = "history_pilot_guardian_consents"
+    __table_args__ = (
+        UniqueConstraint("ethics_protocol_id", "student_id", name="uq_pilot_consent_protocol_student"),
+        Index("idx_pilot_consent_protocol", "ethics_protocol_id"),
+        Index("idx_pilot_consent_student", "student_id"),
+        Index("idx_pilot_consent_status", "consent_status"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    ethics_protocol_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("history_ethics_protocols.id", ondelete="CASCADE"), nullable=False
+    )
+    student_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    guardian_name: Mapped[str] = mapped_column(Text, nullable=False)
+    guardian_email: Mapped[str] = mapped_column(Text, nullable=False)
+    guardian_phone: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    relationship_type: Mapped[str] = mapped_column(Text, nullable=False, default="parent")
+    consent_status: Mapped[str] = mapped_column(Text, nullable=False, default="pending")  # pending, verified, withdrawn
+    verification_method: Mapped[str] = mapped_column(Text, nullable=False, default="school_roster")  # sms_otp, digital_signature, paper_signed, school_roster
+    verified_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    verified_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    withdrawn_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())
+
+    protocol: Mapped["HistoryEthicsProtocol"] = relationship(foreign_keys=[ethics_protocol_id])
+    student: Mapped["User"] = relationship(foreign_keys=[student_id])
+    verified_by: Mapped[Optional["User"]] = relationship(foreign_keys=[verified_by_id])
+
+
+class HistoryTeacherWorkloadLog(Base):
+    """Teacher workload tracking and burnout prevention during school pilots (V5-T100)."""
+
+    __tablename__ = "history_teacher_workload_logs"
+    __table_args__ = (
+        Index("idx_hist_tw_teacher", "teacher_id"),
+        Index("idx_hist_tw_protocol", "ethics_protocol_id"),
+        Index("idx_hist_tw_activity", "activity_type"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    teacher_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    school_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("schools.id", ondelete="SET NULL"), nullable=True
+    )
+    classroom_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("classes.id", ondelete="SET NULL"), nullable=True
+    )
+    ethics_protocol_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("history_ethics_protocols.id", ondelete="SET NULL"), nullable=True
+    )
+    activity_type: Mapped[str] = mapped_column(Text, nullable=False, default="rubric_grading")
+    minutes_spent: Mapped[float] = mapped_column(Float, nullable=False)
+    submissions_evaluated_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    cognitive_load_rating: Mapped[float] = mapped_column(Float, nullable=False, default=50.0)  # NASA-TLX 0-100
+    workload_category: Mapped[str] = mapped_column(Text, nullable=False, default="acceptable")  # optimal, acceptable, excessive
+    notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    logged_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+
+    teacher: Mapped["User"] = relationship(foreign_keys=[teacher_id])
+
+
+# --------------------------------------------------------------------------- #
+# Multilingual Learning Supports & Pedagogical Glossary (V5-T098 / W09-A08)
+# --------------------------------------------------------------------------- #
+from .domain.multilingual_glossary import (  # noqa: E402
+    CANONICAL_PEDAGOGICAL_GLOSSARY,
+    DISQUALIFIED_TRANSLATION_MARKERS,
+    GlossaryCategory,
+    GlossaryReviewStatus,
+    GlossaryValidationError,
+    MismatchedTranslationError,
+    TranslationOrigin,
+    UNREVIEWED_GLOSSARY_STATUSES,
+    UnreviewedTranslationPromotionError,
+    VERIFIED_GLOSSARY_STATUSES,
+    build_translation_provenance,
+    detect_translation_mismatch,
+    is_placeholder_text,
+    validate_glossary_term_invariants,
+)
+
+
+class HistoricalGlossaryTerm(Base):
+    """Bilingual Vietnamese/English pedagogical glossary with epigraphic readings & provenance (V5-T098)."""
+
+    __tablename__ = "historical_glossary_terms"
+    __table_args__ = (
+        Index("idx_hist_glossary_category", "category"),
+        Index("idx_hist_glossary_review_status", "review_status"),
+        Index("idx_hist_glossary_source_id", "source_id"),
+        Index("idx_hist_glossary_origin", "origin"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    term_key: Mapped[str] = mapped_column(String(128), unique=True, nullable=False)
+    term_vi: Mapped[str] = mapped_column(Text, nullable=False)
+    term_en: Mapped[str] = mapped_column(Text, nullable=False)
+    term_han_nom: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    reading_quoc_ngu: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    category: Mapped[str] = mapped_column(String(64), nullable=False, default="general")
+    definition_vi: Mapped[str] = mapped_column(Text, nullable=False)
+    definition_en: Mapped[str] = mapped_column(Text, nullable=False)
+    contextual_usage_vi: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    contextual_usage_en: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    source_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("historical_sources.id", ondelete="SET NULL"), nullable=True
+    )
+    citation_locator: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    bilingual_citation: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    review_status: Mapped[str] = mapped_column(String(64), nullable=False, default="provisional")
+    origin: Mapped[str] = mapped_column(String(64), nullable=False, default="ai_generated")
+    is_machine_translated: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    is_uncertain: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    uncertainty_label: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    epigrapher_signoff: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    translation_provenance: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    related_entity_slugs: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
+    )
+
+    source: Mapped[Optional["HistoricalSource"]] = relationship(foreign_keys=[source_id])
+
+
+class HistoryRubricCalibration(Base):
+    """Dual-assessor rubric calibration and inter-rater agreement audit (V5-T100)."""
+
+    __tablename__ = "history_rubric_calibrations"
+    __table_args__ = (
+        Index("idx_hist_rc_submission", "submission_id"),
+        Index("idx_hist_rc_status", "status"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    submission_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("history_learning_outcome_submissions.id", ondelete="CASCADE"), nullable=False
+    )
+    assessor_a_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    assessor_b_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    evaluation_a_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("history_learning_outcome_evaluations.id", ondelete="SET NULL"), nullable=True
+    )
+    evaluation_b_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("history_learning_outcome_evaluations.id", ondelete="SET NULL"), nullable=True
+    )
+    score_a: Mapped[float] = mapped_column(Float, nullable=False)
+    score_b: Mapped[float] = mapped_column(Float, nullable=False)
+    score_difference: Mapped[float] = mapped_column(Float, nullable=False)
+    divergence_pct: Mapped[float] = mapped_column(Float, nullable=False)
+    inter_rater_agreement: Mapped[float] = mapped_column(Float, nullable=False)
+    tolerance_pct: Mapped[float] = mapped_column(Float, nullable=False, default=0.15)
+    status: Mapped[str] = mapped_column(Text, nullable=False, default="calibrated")  # calibrated, divergent_requires_review
+    consensus_score: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    criteria_breakdown: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    calibrated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+
+    submission: Mapped["HistoryLearningOutcomeSubmission"] = relationship(foreign_keys=[submission_id])
+    assessor_a: Mapped["User"] = relationship(foreign_keys=[assessor_a_id])
+    assessor_b: Mapped["User"] = relationship(foreign_keys=[assessor_b_id])
+
+
+# --------------------------------------------------------------------------- #
+# Curriculum Competency Catalog Models (V5-T095 / Wave W09 / Slot A05)
+# Vietnam 2018 General Education Program (GDPT 2018)
+# --------------------------------------------------------------------------- #
+class StandardCompetencyDomain(str, Enum):
+    historical_literacy = "historical_literacy"
+    source_criticism = "source_criticism"
+    historical_empathy = "historical_empathy"
+    historical_communication = "historical_communication"
+
+
+class CompetencyGradeBand(str, Enum):
+    grade_6_7 = "GRADE_6_7"
+    grade_8_9 = "GRADE_8_9"
+    grade_10_12 = "GRADE_10_12"
+    all_grades = "ALL"
+
+
+class CompetencyMappingStatus(str, Enum):
+    unreviewed = "unreviewed"
+    verified = "verified"
+    flagged = "flagged"
+    deprecated = "deprecated"
+
+
+class CompetencyFlagReason(str, Enum):
+    inaccurate_grade_level = "inaccurate_grade_level"
+    misaligned_competency = "misaligned_competency"
+    historical_inaccuracy = "historical_inaccuracy"
+    pedagogical_concern = "pedagogical_concern"
+    other = "other"
+
+
+class CurriculumCompetency(Base):
+    """Standard historical competency descriptor under Vietnam 2018 General Education Program."""
+
+    __tablename__ = "curriculum_competencies"
+    __table_args__ = (
+        UniqueConstraint("code", name="uq_curriculum_competencies_code"),
+        Index("idx_curriculum_competency_domain", "domain"),
+        Index("idx_curriculum_competency_framework", "standard_framework"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    code: Mapped[str] = mapped_column(Text, nullable=False, unique=True)
+    standard_framework: Mapped[str] = mapped_column(Text, nullable=False, default="VN_GDPT_2018")
+    domain: Mapped[str] = mapped_column(Text, nullable=False)
+    name_vi: Mapped[str] = mapped_column(Text, nullable=False)
+    name_en: Mapped[str] = mapped_column(Text, nullable=False)
+    description_vi: Mapped[str] = mapped_column(Text, nullable=False)
+    description_en: Mapped[str] = mapped_column(Text, nullable=False)
+    grade_band_descriptors: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
+    )
+
+    relic_mappings: Mapped[list["CurriculumCompetencyRelicMapping"]] = relationship(
+        back_populates="competency", cascade="all, delete-orphan"
+    )
+
+
+class CurriculumCompetencyRelicMapping(Base):
+    """Mapping between standard historical competencies, grade bands (Grades 6-12), and real relics."""
+
+    __tablename__ = "curriculum_competency_relic_mappings"
+    __table_args__ = (
+        Index("idx_comp_mapping_competency", "competency_id"),
+        Index("idx_comp_mapping_relic_urn", "relic_urn_slug"),
+        Index("idx_comp_mapping_relic_motif", "relic_motif_id"),
+        Index("idx_comp_mapping_status", "status"),
+        Index("idx_comp_mapping_grade_band", "grade_band"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    competency_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("curriculum_competencies.id", ondelete="CASCADE"), nullable=False
+    )
+    relic_urn_slug: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    relic_motif_id: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    entity_slug: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    grade_band: Mapped[str] = mapped_column(Text, nullable=False, default="GRADE_10_12")
+    min_grade: Mapped[int] = mapped_column(Integer, nullable=False, default=6)
+    max_grade: Mapped[int] = mapped_column(Integer, nullable=False, default=12)
+    learning_activity_vi: Mapped[str] = mapped_column(Text, nullable=False)
+    learning_activity_en: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    evidence_requirement_vi: Mapped[str] = mapped_column(Text, nullable=False)
+    evidence_requirement_en: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    status: Mapped[str] = mapped_column(Text, nullable=False, default="unreviewed")
+    is_reviewed: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    review_warning: Mapped[Optional[str]] = mapped_column(
+        Text,
+        nullable=True,
+        default="Cảnh báo: Ánh xạ năng lực chưa được thẩm định chuyên môn bởi giáo viên cốt cán",
+    )
+    flag_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    created_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    updated_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
+    )
+
+    competency: Mapped["CurriculumCompetency"] = relationship(back_populates="relic_mappings")
+    created_by: Mapped[Optional["User"]] = relationship(foreign_keys=[created_by_id])
+    updated_by: Mapped[Optional["User"]] = relationship(foreign_keys=[updated_by_id])
+    flags: Mapped[list["CurriculumCompetencyFlag"]] = relationship(
+        back_populates="mapping", cascade="all, delete-orphan"
+    )
+
+
+class CurriculumCompetencyFlag(Base):
+    """Teacher feedback and inaccuracy flagging on curriculum competency mappings."""
+
+    __tablename__ = "curriculum_competency_flags"
+    __table_args__ = (
+        Index("idx_comp_flag_mapping", "mapping_id"),
+        Index("idx_comp_flag_teacher", "flagged_by_id"),
+        Index("idx_comp_flag_status", "status"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    mapping_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("curriculum_competency_relic_mappings.id", ondelete="CASCADE"), nullable=False
+    )
+    flagged_by_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    reason: Mapped[str] = mapped_column(Text, nullable=False)
+    commentary: Mapped[str] = mapped_column(Text, nullable=False)
+    suggested_correction: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
+    status: Mapped[str] = mapped_column(Text, nullable=False, default="pending")  # pending, reviewed, resolved, dismissed
+    resolved_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    resolution_notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    resolved_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    mapping: Mapped["CurriculumCompetencyRelicMapping"] = relationship(back_populates="flags")
+    flagged_by: Mapped["User"] = relationship(foreign_keys=[flagged_by_id])
+    resolved_by: Mapped[Optional["User"]] = relationship(foreign_keys=[resolved_by_id])
+
+
+# --------------------------------------------------------------------------- #
 # Canonical Urn & Motif Domain Mapping (Cửu Đỉnh 9x18 = 162)
 # --------------------------------------------------------------------------- #
 from .domain.canonical_urn_mapping import (  # noqa: E402
@@ -1185,3 +1605,6 @@ from .services.research_factory.cross_check import (  # noqa: E402
     bind_claim_source_verified,
     cross_check_entity_claims,
 )
+
+
+
