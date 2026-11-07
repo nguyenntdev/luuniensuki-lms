@@ -1,0 +1,31 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{hyperref}
+\geometry{margin=1in}
+
+\title{LN-08 \\ \large Operational Evidence and Software Policy Verification}
+\author{Lưu Niên Sứ Ký Research Consortium}
+\date{November 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This manuscript documents the reproducible software policy evaluation for LN-08 (LN-08) within the Lưu Niên Sứ Ký platform. The evaluation evaluates 720 frozen synthetic scenarios across five distinct conditions: baseline (B0), intervention (I1), and three specific architectural ablations (A1--A3). We demonstrate deterministic conformance to pedagogical domain invariants without extrapolating synthetic policy decisions to uncontrolled classroom outcomes.
+\end{abstract}
+
+\section{Research Design and Policy Invariants}
+The evaluation inspects the executable adapter \texttt{research.integrations.ln08:run_policy} across 720 fixed synthetic scenarios. Each scenario encapsulates declared fault archetypes to test boundary enforcement, cycle prevention, epistemic calibration, and data integrity.
+
+\section{Empirical Software Policy Benchmark}
+\input{results/LN-08_results.tex}
+
+All 720 scenarios per condition were evaluated deterministically. Exact run manifests, cryptographically hashed traces, and execution logs are archived in \texttt{research\_artifacts/LN-08/}.
+
+\section{Limitations and Epistemic Honesty}
+These evaluations assess automated software policy compliance on synthetically constructed historical scenarios. They verify algorithmic invariants and guardrails; they do not substitute for long-term longitudinal classroom learning measurements.
+
+\end{document}

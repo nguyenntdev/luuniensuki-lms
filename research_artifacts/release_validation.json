@@ -1,0 +1,121 @@
+{
+  "status": "SOFTWARE_EVIDENCE_TECHNICALLY_COMPLETE",
+  "is_scientific_submission_approved": false,
+  "reason": "External validation / provenance / novelty / CI reviewed separately",
+  "locked_repo_sha": "a55371a5048f25a98d47b4de85c55d2bae5d197a",
+  "verified_runs": 50,
+  "case_executions": 36000,
+  "per_study": {
+    "LN-01": {
+      "runs_verified": 5,
+      "verified_conditions": [
+        "B0",
+        "I1",
+        "A1",
+        "A2",
+        "A3"
+      ],
+      "status": "TECHNICAL_COMPLETE"
+    },
+    "LN-02": {
+      "runs_verified": 5,
+      "verified_conditions": [
+        "B0",
+        "I1",
+        "A1",
+        "A2",
+        "A3"
+      ],
+      "status": "TECHNICAL_COMPLETE"
+    },
+    "LN-03": {
+      "runs_verified": 5,
+      "verified_conditions": [
+        "B0",
+        "I1",
+        "A1",
+        "A2",
+        "A3"
+      ],
+      "status": "TECHNICAL_COMPLETE"
+    },
+    "LN-04": {
+      "runs_verified": 5,
+      "verified_conditions": [
+        "B0",
+        "I1",
+        "A1",
+        "A2",
+        "A3"
+      ],
+      "status": "TECHNICAL_COMPLETE"
+    },
+    "LN-05": {
+      "runs_verified": 5,
+      "verified_conditions": [
+        "B0",
+        "I1",
+        "A1",
+        "A2",
+        "A3"
+      ],
+      "status": "TECHNICAL_COMPLETE"
+    },
+    "LN-06": {
+      "runs_verified": 5,
+      "verified_conditions": [
+        "B0",
+        "I1",
+        "A1",
+        "A2",
+        "A3"
+      ],
+      "status": "TECHNICAL_COMPLETE"
+    },
+    "LN-07": {
+      "runs_verified": 5,
+      "verified_conditions": [
+        "B0",
+        "I1",
+        "A1",
+        "A2",
+        "A3"
+      ],
+      "status": "TECHNICAL_COMPLETE"
+    },
+    "LN-08": {
+      "runs_verified": 5,
+      "verified_conditions": [
+        "B0",
+        "I1",
+        "A1",
+        "A2",
+        "A3"
+      ],
+      "status": "TECHNICAL_COMPLETE"
+    },
+    "LN-09": {
+      "runs_verified": 5,
+      "verified_conditions": [
+        "B0",
+        "I1",
+        "A1",
+        "A2",
+        "A3"
+      ],
+      "status": "TECHNICAL_COMPLETE"
+    },
+    "LN-10": {
+      "runs_verified": 5,
+      "verified_conditions": [
+        "B0",
+        "I1",
+        "A1",
+        "A2",
+        "A3"
+      ],
+      "status": "TECHNICAL_COMPLETE"
+    }
+  },
+  "blockers": []
+}

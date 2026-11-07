@@ -1,0 +1,15 @@
+COMMAND: /usr/bin/python3 /home/clue/Documents/luuniensuki-lms/LUU_NIEN_SPEC_10_STUDIES_MODULAR_FULL_2026/LUU_NIEN_SPEC_MODULAR_10_STUDIES_2026/tools/run_benchmark.py --repo-root /home/clue/Documents/luuniensuki-lms --paper LN-04 --mode ablation --adapter research.integrations.ln04:run_policy --config /tmp/evidence_runs_20261107/LN-04/A3/config.json --run-dir /tmp/evidence_runs_20261107/LN-04/A3
+
+STDOUT:
+{"run_dir": "/tmp/evidence_runs_20261107/LN-04/A3", "cases_run": 720, "matches": 576, "mismatches": 144, "errors": 0}
+
+STDERR:
+
+EXIT_CODE: 0
+
+METRIC_STDOUT:
+{"paper_id": "LN-04", "mode": "ablation", "metric_key": "answer_leakage_rate", "numerator": 0, "denominator": 144, "value": 0.0, "direction": "lower_is_better"}
+
+METRIC_STDERR:
+
+METRIC_EXIT_CODE: 0

@@ -1,0 +1,21 @@
+\begin{table}[htbp]
+\centering
+\small
+\caption{Comparison on frozen synthetic software-policy scenarios (not student outcomes).}
+\label{tab:ln-06-policy-benchmark}
+\begin{tabular}{lrrr}
+\toprule
+Condition & Numerator & Eligible $N$ & Metric \\
+\midrule
+B0 existing baseline & 2016 & 720 & 2.8000 / route \\
+I1 new policy & 0 & 720 & 0.0000 / route \\
+A1 disable\_prerequisites & 144 & 720 & 0.2000 / route \\
+A2 disable\_budget & 0 & 720 & 0.0000 / route \\
+A3 disable\_sources & 0 & 720 & 0.0000 / route \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\begin{minipage}{0.98\linewidth}\footnotesize
+Primary measure: prerequisite\_violations\_per\_route. All conditions are executed on the same frozen synthetic policy inputs; the eligible denominator depends on the declared fault strata. These are software-policy decisions, not measured changes in learning. Read exact run IDs and SHA-256 fingerprints in the accompanying evidence registry. Source commit: \texttt{a55371a5048f}.
+\end{minipage}
+\end{table}

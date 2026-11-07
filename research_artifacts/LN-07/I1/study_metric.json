@@ -1,0 +1,41 @@
+{
+  "paper_id": "LN-07",
+  "run_id": "d0e94d62-bcc7-42b5-acbf-242adcbd1750",
+  "mode": "intervention",
+  "metric_key": "feasible_task_rate",
+  "numerator": 432,
+  "denominator": 432,
+  "value": 1.0,
+  "unit": "fraction_of_eligible_synthetic_cases",
+  "direction": "higher_is_better",
+  "eligible_faults": [
+    "nominal",
+    "no_webgl",
+    "low_bandwidth"
+  ],
+  "fault_breakdown": {
+    "nominal": {
+      "n": 144,
+      "numerator": 144
+    },
+    "no_webgl": {
+      "n": 144,
+      "numerator": 144
+    },
+    "low_bandwidth": {
+      "n": 144,
+      "numerator": 144
+    }
+  },
+  "nominal_cases": 144,
+  "nominal_oracle_matches": 144,
+  "oracle_matches_all_cases": 720,
+  "adapter_errors": 0,
+  "trace_sha256": "e1828107e382159eec1cd4d9dabafa25db17eb4f64a58eb24e071f761c6ebca7",
+  "manifest_file_sha256": "2abfad8e060ff6d4594f54ea425d1f0aa62bf7a6101c2b19c67e03409958a5c4",
+  "is_independent_holdout": false,
+  "no_real_student_learning_data": true,
+  "confidence_interval": null,
+  "scope": "synthetic_software_policy_behavior_not_learning_effectiveness",
+  "external_validation_status": "NOT_VERIFIED_BY_THIS_METRIC"
+}

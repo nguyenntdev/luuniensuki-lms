@@ -1,0 +1,51 @@
+{
+  "paper_id": "LN-06",
+  "run_id": "353cc43a-03c1-4174-8164-d9b293e81567",
+  "mode": "intervention",
+  "metric_key": "prerequisite_violations_per_route",
+  "numerator": 0,
+  "denominator": 720,
+  "value": 0.0,
+  "unit": "violations_per_synthetic_route",
+  "direction": "lower_is_better",
+  "eligible_faults": [
+    "nominal",
+    "over_budget",
+    "prerequisite_cycle",
+    "source_gap",
+    "unreachable_stop"
+  ],
+  "fault_breakdown": {
+    "nominal": {
+      "n": 144,
+      "numerator": 0
+    },
+    "unreachable_stop": {
+      "n": 144,
+      "numerator": 0
+    },
+    "source_gap": {
+      "n": 144,
+      "numerator": 0
+    },
+    "prerequisite_cycle": {
+      "n": 144,
+      "numerator": 0
+    },
+    "over_budget": {
+      "n": 144,
+      "numerator": 0
+    }
+  },
+  "nominal_cases": 144,
+  "nominal_oracle_matches": 144,
+  "oracle_matches_all_cases": 720,
+  "adapter_errors": 0,
+  "trace_sha256": "d358879f773f23cd3db5ce50bf3047ec94e8592807db64ca657b208077b01967",
+  "manifest_file_sha256": "4923c7b34879c65ae99086404a0a7e358a72ef278be1a17b835267f3f3788714",
+  "is_independent_holdout": false,
+  "no_real_student_learning_data": true,
+  "confidence_interval": null,
+  "scope": "synthetic_software_policy_behavior_not_learning_effectiveness",
+  "external_validation_status": "NOT_VERIFIED_BY_THIS_METRIC"
+}

@@ -1,0 +1,46 @@
+{
+  "paper_id": "LN-01",
+  "run_id": "95e3c09d-05a4-4bcd-a103-2202b0212964",
+  "mode": "ablation",
+  "metric_key": "false_acceptance_invalid_progression_rate",
+  "numerator": 144,
+  "denominator": 576,
+  "value": 0.25,
+  "unit": "fraction_of_eligible_synthetic_cases",
+  "direction": "lower_is_better",
+  "eligible_faults": [
+    "repeat_shallow",
+    "missing_curriculum",
+    "prerequisite_cycle",
+    "grade_reversed"
+  ],
+  "fault_breakdown": {
+    "repeat_shallow": {
+      "n": 144,
+      "numerator": 144
+    },
+    "missing_curriculum": {
+      "n": 144,
+      "numerator": 0
+    },
+    "prerequisite_cycle": {
+      "n": 144,
+      "numerator": 0
+    },
+    "grade_reversed": {
+      "n": 144,
+      "numerator": 0
+    }
+  },
+  "nominal_cases": 144,
+  "nominal_oracle_matches": 144,
+  "oracle_matches_all_cases": 576,
+  "adapter_errors": 0,
+  "trace_sha256": "4a79b35ab04dcb9f36a4891f8ff3ff9dd39bfd47434e15458a1a462c59750b3e",
+  "manifest_file_sha256": "23796f71f992ef796d6c5e50cb1cc87215054d63aeeb985cc87b48ae7e8df979",
+  "is_independent_holdout": false,
+  "no_real_student_learning_data": true,
+  "confidence_interval": null,
+  "scope": "synthetic_software_policy_behavior_not_learning_effectiveness",
+  "external_validation_status": "NOT_VERIFIED_BY_THIS_METRIC"
+}

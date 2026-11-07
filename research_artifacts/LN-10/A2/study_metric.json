@@ -1,0 +1,46 @@
+{
+  "paper_id": "LN-10",
+  "run_id": "68d3ca3c-0e85-403e-aa1d-14f7f792765b",
+  "mode": "ablation",
+  "metric_key": "unjustified_transition_rate",
+  "numerator": 144,
+  "denominator": 576,
+  "value": 0.25,
+  "unit": "fraction_of_eligible_synthetic_cases",
+  "direction": "lower_is_better",
+  "eligible_faults": [
+    "missing_rationale",
+    "unauthorized_actor",
+    "offline_conflict",
+    "skipped_reflection"
+  ],
+  "fault_breakdown": {
+    "missing_rationale": {
+      "n": 144,
+      "numerator": 0
+    },
+    "unauthorized_actor": {
+      "n": 144,
+      "numerator": 0
+    },
+    "offline_conflict": {
+      "n": 144,
+      "numerator": 144
+    },
+    "skipped_reflection": {
+      "n": 144,
+      "numerator": 0
+    }
+  },
+  "nominal_cases": 144,
+  "nominal_oracle_matches": 144,
+  "oracle_matches_all_cases": 576,
+  "adapter_errors": 0,
+  "trace_sha256": "ca280149273e1208b273abba55e7181fe08c22c1a9ef6f0322e3c48abe4d4ff1",
+  "manifest_file_sha256": "bcd620db65ca9fe5166d9c1366262944cf4dfc722d65569da1ab76f715d05341",
+  "is_independent_holdout": false,
+  "no_real_student_learning_data": true,
+  "confidence_interval": null,
+  "scope": "synthetic_software_policy_behavior_not_learning_effectiveness",
+  "external_validation_status": "NOT_VERIFIED_BY_THIS_METRIC"
+}

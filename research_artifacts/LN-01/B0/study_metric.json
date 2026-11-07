@@ -1,0 +1,46 @@
+{
+  "paper_id": "LN-01",
+  "run_id": "cae7f46b-0981-4b58-a472-676886a6c661",
+  "mode": "baseline",
+  "metric_key": "false_acceptance_invalid_progression_rate",
+  "numerator": 576,
+  "denominator": 576,
+  "value": 1.0,
+  "unit": "fraction_of_eligible_synthetic_cases",
+  "direction": "lower_is_better",
+  "eligible_faults": [
+    "repeat_shallow",
+    "missing_curriculum",
+    "prerequisite_cycle",
+    "grade_reversed"
+  ],
+  "fault_breakdown": {
+    "repeat_shallow": {
+      "n": 144,
+      "numerator": 144
+    },
+    "missing_curriculum": {
+      "n": 144,
+      "numerator": 144
+    },
+    "prerequisite_cycle": {
+      "n": 144,
+      "numerator": 144
+    },
+    "grade_reversed": {
+      "n": 144,
+      "numerator": 144
+    }
+  },
+  "nominal_cases": 144,
+  "nominal_oracle_matches": 144,
+  "oracle_matches_all_cases": 144,
+  "adapter_errors": 0,
+  "trace_sha256": "7e615ed64beb4a2ff0d352c258ceafbc408dad1070f38256351c278bc5f7bc6a",
+  "manifest_file_sha256": "cbfa2b27e863b5fd0fe5277a73dd915975fa74e701536dfc2b623d08736607ee",
+  "is_independent_holdout": false,
+  "no_real_student_learning_data": true,
+  "confidence_interval": null,
+  "scope": "synthetic_software_policy_behavior_not_learning_effectiveness",
+  "external_validation_status": "NOT_VERIFIED_BY_THIS_METRIC"
+}

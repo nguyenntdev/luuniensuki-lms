@@ -1,0 +1,29 @@
+{
+  "run_id": "d0e94d62-bcc7-42b5-acbf-242adcbd1750",
+  "status": "EXECUTED",
+  "paper_id": "LN-07",
+  "mode": "intervention",
+  "adapter": "research.integrations.ln07:run_policy",
+  "source_fixture_sha256": "7a82d5c888dcd0bb24cecc062542173447c75f8832ab637ffc05f32df6614b10",
+  "config": {},
+  "source_commit_at_runtime": "a55371a5048f25a98d47b4de85c55d2bae5d197a",
+  "repository_provenance": {
+    "repo_path": "/home/clue/Documents/luuniensuki-lms",
+    "head_sha": "a55371a5048f25a98d47b4de85c55d2bae5d197a",
+    "dirty": false,
+    "base_sha": "54da2beb71f3df70e1f00b215ae0fb1a850eb263",
+    "branch": "main"
+  },
+  "publishable_run": true,
+  "baseline_repository_commit": "54da2beb71f3df70e1f00b215ae0fb1a850eb263",
+  "time_started_utc": "2026-11-07T17:03:04.418336+00:00",
+  "time_finished_utc": "2026-11-07T17:03:04.485709+00:00",
+  "python": "3.12.3",
+  "trace_sha256": "e1828107e382159eec1cd4d9dabafa25db17eb4f64a58eb24e071f761c6ebca7",
+  "cases_run": 720,
+  "oracle_matches": 720,
+  "oracle_mismatches": 0,
+  "adapter_errors": 0,
+  "sampling_unit": "synthetic_scenario",
+  "learning_outcome_study": false
+}

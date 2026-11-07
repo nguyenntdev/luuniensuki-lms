@@ -1,0 +1,15 @@
+COMMAND: /usr/bin/python3 /home/clue/Documents/luuniensuki-lms/LUU_NIEN_SPEC_10_STUDIES_MODULAR_FULL_2026/LUU_NIEN_SPEC_MODULAR_10_STUDIES_2026/tools/run_benchmark.py --repo-root /home/clue/Documents/luuniensuki-lms --paper LN-10 --mode intervention --adapter research.integrations.ln10:run_policy --config /tmp/evidence_runs_20261107/LN-10/I1/config.json --run-dir /tmp/evidence_runs_20261107/LN-10/I1
+
+STDOUT:
+{"run_dir": "/tmp/evidence_runs_20261107/LN-10/I1", "cases_run": 720, "matches": 720, "mismatches": 0, "errors": 0}
+
+STDERR:
+
+EXIT_CODE: 0
+
+METRIC_STDOUT:
+{"paper_id": "LN-10", "mode": "intervention", "metric_key": "unjustified_transition_rate", "numerator": 0, "denominator": 576, "value": 0.0, "direction": "lower_is_better"}
+
+METRIC_STDERR:
+
+METRIC_EXIT_CODE: 0

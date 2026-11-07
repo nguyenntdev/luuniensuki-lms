@@ -1,0 +1,31 @@
+{
+  "paper_id": "LN-04",
+  "run_id": "17652646-ff2b-45fa-b551-85a3cef52e0d",
+  "mode": "ablation",
+  "metric_key": "answer_leakage_rate",
+  "numerator": 0,
+  "denominator": 144,
+  "value": 0.0,
+  "unit": "fraction_of_eligible_synthetic_cases",
+  "direction": "lower_is_better",
+  "eligible_faults": [
+    "answer_request"
+  ],
+  "fault_breakdown": {
+    "answer_request": {
+      "n": 144,
+      "numerator": 0
+    }
+  },
+  "nominal_cases": 144,
+  "nominal_oracle_matches": 144,
+  "oracle_matches_all_cases": 576,
+  "adapter_errors": 0,
+  "trace_sha256": "c733773b3afdbf59a2cc16d621cdcdc8fcab70bc809ec0df1bbc664ae5808262",
+  "manifest_file_sha256": "e198d70d5d05fb5312a907576dcc9078fc002c339a65e6114fb47f4746eee7a4",
+  "is_independent_holdout": false,
+  "no_real_student_learning_data": true,
+  "confidence_interval": null,
+  "scope": "synthetic_software_policy_behavior_not_learning_effectiveness",
+  "external_validation_status": "NOT_VERIFIED_BY_THIS_METRIC"
+}

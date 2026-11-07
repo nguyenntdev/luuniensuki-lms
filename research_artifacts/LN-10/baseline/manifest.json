@@ -1,0 +1,29 @@
+{
+  "run_id": "cf77178b-0ab5-4a22-beb5-9af8ce2bebe3",
+  "status": "EXECUTED",
+  "paper_id": "LN-10",
+  "mode": "baseline",
+  "adapter": "research.integrations.ln10:run_policy",
+  "source_fixture_sha256": "6eb1fec8b2e6b066ed1b71acb3a719619e7ad1afde7069991cf948fa88dc08ec",
+  "config": {},
+  "source_commit_at_runtime": "19556030f4d458ffd103a25fbcd3a8d1315f2cad",
+  "repository_provenance": {
+    "repo_path": "/home/clue/Documents/luuniensuki-lms",
+    "head_sha": "19556030f4d458ffd103a25fbcd3a8d1315f2cad",
+    "dirty": false,
+    "base_sha": "54da2beb71f3df70e1f00b215ae0fb1a850eb263",
+    "branch": "feat/rbpc-cultural-bridge-2026"
+  },
+  "publishable_run": true,
+  "baseline_repository_commit": "54da2beb71f3df70e1f00b215ae0fb1a850eb263",
+  "time_started_utc": "2026-11-05T11:17:30.243023+00:00",
+  "time_finished_utc": "2026-11-05T11:17:30.276635+00:00",
+  "python": "3.12.3",
+  "trace_sha256": "19dd7a771b6b637c061a33bb4df2fba36bb522a566a80183ee0341834a1eeeaa",
+  "cases_run": 720,
+  "oracle_matches": 144,
+  "oracle_mismatches": 576,
+  "adapter_errors": 0,
+  "sampling_unit": "synthetic_scenario",
+  "learning_outcome_study": false
+}

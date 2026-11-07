@@ -1,0 +1,51 @@
+{
+  "paper_id": "LN-06",
+  "run_id": "483ba5d7-f023-4fad-a36d-d6021c3d396d",
+  "mode": "ablation",
+  "metric_key": "prerequisite_violations_per_route",
+  "numerator": 0,
+  "denominator": 720,
+  "value": 0.0,
+  "unit": "violations_per_synthetic_route",
+  "direction": "lower_is_better",
+  "eligible_faults": [
+    "nominal",
+    "over_budget",
+    "prerequisite_cycle",
+    "source_gap",
+    "unreachable_stop"
+  ],
+  "fault_breakdown": {
+    "nominal": {
+      "n": 144,
+      "numerator": 0
+    },
+    "unreachable_stop": {
+      "n": 144,
+      "numerator": 0
+    },
+    "source_gap": {
+      "n": 144,
+      "numerator": 0
+    },
+    "prerequisite_cycle": {
+      "n": 144,
+      "numerator": 0
+    },
+    "over_budget": {
+      "n": 144,
+      "numerator": 0
+    }
+  },
+  "nominal_cases": 144,
+  "nominal_oracle_matches": 144,
+  "oracle_matches_all_cases": 576,
+  "adapter_errors": 0,
+  "trace_sha256": "0152bb049d17f8b2711b827fc275b91cb5b4de8b3733045e38b0f3af08a618a9",
+  "manifest_file_sha256": "23363ee0ec37ec559c25418bc2b08d4c936a5447469da269cd401e0ea940e0b9",
+  "is_independent_holdout": false,
+  "no_real_student_learning_data": true,
+  "confidence_interval": null,
+  "scope": "synthetic_software_policy_behavior_not_learning_effectiveness",
+  "external_validation_status": "NOT_VERIFIED_BY_THIS_METRIC"
+}

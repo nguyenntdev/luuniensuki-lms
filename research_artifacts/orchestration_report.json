@@ -1,0 +1,55 @@
+{
+  "status": "PASS",
+  "results": [
+    {
+      "study": "LN-01",
+      "status": "PASS",
+      "conditions": 5
+    },
+    {
+      "study": "LN-02",
+      "status": "PASS",
+      "conditions": 5
+    },
+    {
+      "study": "LN-03",
+      "status": "PASS",
+      "conditions": 5
+    },
+    {
+      "study": "LN-04",
+      "status": "PASS",
+      "conditions": 5
+    },
+    {
+      "study": "LN-05",
+      "status": "PASS",
+      "conditions": 5
+    },
+    {
+      "study": "LN-06",
+      "status": "PASS",
+      "conditions": 5
+    },
+    {
+      "study": "LN-07",
+      "status": "PASS",
+      "conditions": 5
+    },
+    {
+      "study": "LN-08",
+      "status": "PASS",
+      "conditions": 5
+    },
+    {
+      "study": "LN-09",
+      "status": "PASS",
+      "conditions": 5
+    },
+    {
+      "study": "LN-10",
+      "status": "PASS",
+      "conditions": 5
+    }
+  ]
+}

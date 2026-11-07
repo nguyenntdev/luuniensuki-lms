@@ -1,0 +1,36 @@
+{
+  "paper_id": "LN-05",
+  "run_id": "734837f0-6a29-4db2-b6a3-ba997bda40fb",
+  "mode": "baseline",
+  "metric_key": "false_mastery_award_rate",
+  "numerator": 288,
+  "denominator": 288,
+  "value": 1.0,
+  "unit": "fraction_of_eligible_synthetic_cases",
+  "direction": "lower_is_better",
+  "eligible_faults": [
+    "missing_competency",
+    "spoofed_xp"
+  ],
+  "fault_breakdown": {
+    "missing_competency": {
+      "n": 144,
+      "numerator": 144
+    },
+    "spoofed_xp": {
+      "n": 144,
+      "numerator": 144
+    }
+  },
+  "nominal_cases": 144,
+  "nominal_oracle_matches": 144,
+  "oracle_matches_all_cases": 144,
+  "adapter_errors": 0,
+  "trace_sha256": "d52ff19dfa581586f451317f4248fc5c730417fad8e22db59c8e796315479bd6",
+  "manifest_file_sha256": "88d305a20cff8ea70b096ab8d165c5b9249dba00b2f2e84c4e81d59a17811e18",
+  "is_independent_holdout": false,
+  "no_real_student_learning_data": true,
+  "confidence_interval": null,
+  "scope": "synthetic_software_policy_behavior_not_learning_effectiveness",
+  "external_validation_status": "NOT_VERIFIED_BY_THIS_METRIC"
+}
