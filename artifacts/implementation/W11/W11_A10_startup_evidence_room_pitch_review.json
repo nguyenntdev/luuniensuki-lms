@@ -1,0 +1,120 @@
+{
+  "ticket_id": "V5-T120",
+  "wave": "W11",
+  "slot": "A10",
+  "role": "W11-A10",
+  "priority": "P2",
+  "classification": "NEW_PRODUCT_FEATURE",
+  "title": "Startup evidence room + pitch review in docs/rbpc/ and artifacts/",
+  "status": "COMPLETED",
+  "verified_at": "2026-11-07T10:30:00Z",
+  "target_modules": [
+    "docs/rbpc/STARTUP_EVIDENCE_ROOM.md",
+    "docs/rbpc/PITCH_REVIEW.md",
+    "backend/services/rbpc_evidence_room.py",
+    "backend/models_rbpc.py",
+    "backend/apischemas/rbpc.py",
+    "backend/routers/rbpc.py",
+    "migrations/versions/0087_rbpc_startup_evidence_room.py",
+    "tests/v5/test_v5_t120.py"
+  ],
+  "implementation_summary": {
+    "goal": "Versioned evidence room pointers across product, customer, market, finances, impact, legal, and team; immutable pitch review evaluator enforcing negative abuse invariants against ungrounded or contradictory metrics.",
+    "domains_covered": [
+      "product",
+      "customer",
+      "market",
+      "finances",
+      "impact",
+      "legal",
+      "team"
+    ],
+    "pointers_registered": 15,
+    "breakdown": {
+      "product": 2,
+      "customer": 2,
+      "market": 2,
+      "finances": 3,
+      "impact": 2,
+      "legal": 2,
+      "team": 2
+    },
+    "key_audited_metrics": {
+      "EVID-FIN-002": {
+        "title": "Documented In-Kind Corporate Sponsorship Audit",
+        "total_in_kind_sponsorship_vnd": 202360638,
+        "bnix_cloud_vps_vnd": 1142400,
+        "pho_tue_ai_credits_vnd": 200447400,
+        "tld_domain_vnd": 770838,
+        "unverified_verbal_claim_vnd": 206000000,
+        "unverified_variance_rejected_vnd": -3639362
+      },
+      "EVID-FIN-001": {
+        "title": "Unit Economics & Sensitivity Model",
+        "average_booking_vnd": 700000,
+        "platform_fee_percent": 10.0,
+        "artisan_share_percent": 90.0,
+        "breakeven_bookings_per_month": 2.9,
+        "base_contribution_margin_percent": 92.4
+      },
+      "EVID-MKT-001": {
+        "title": "TAM / SAM / SOM Bottom-Up Market Sizing Model",
+        "tam_gbv_vnd": 28500000000,
+        "sam_gbv_vnd": 5700000000,
+        "som_year1_experiences": 1100,
+        "som_year1_gmv_vnd": 570000000
+      },
+      "EVID-IMP-001": {
+        "title": "UN SDG 8 Decent Work & Artisan Wage Retention Framework",
+        "direct_artisan_retention_percent": 90.0,
+        "commission_reinvestment_pledge_percent": 50.0,
+        "monthly_wage_uplift_min_vnd": 4200000,
+        "monthly_wage_uplift_max_vnd": 12600000
+      }
+    },
+    "negative_abuse_guardrail": {
+      "rule": "Every quantitative pitch claim must have an immutable evidence reference and status; ungrounded metrics flagged (UNGROUNDED_FLAGGED) and pitch readiness marked FLAGGED_UNREADY.",
+      "enforcements": [
+        "Quantitative claim lacking evidence pointer -> UNGROUNDED_FLAGGED, FLAGGED_UNREADY",
+        "Referencing non-existent pointer ID -> UNGROUNDED_FLAGGED, FLAGGED_UNREADY",
+        "Referencing non-active/archived pointer -> UNGROUNDED_FLAGGED, FLAGGED_UNREADY",
+        "Claimed value contradicting verified evidence payload (e.g. 206M verbal vs 202,360,638 VND audited actual) -> UNGROUNDED_FLAGGED, FLAGGED_UNREADY",
+        "Pitch readiness APPROVED_FOR_PITCH granted strictly when 100% of claims are grounded and verified."
+      ]
+    },
+    "database_schema": {
+      "pointers_table": "rbpc_evidence_room_pointers",
+      "pitch_reviews_table": "rbpc_pitch_reviews",
+      "migration": "migrations/versions/0087_rbpc_startup_evidence_room.py",
+      "migration_topology": "Unified single head verified (merges 0085 and 0086 heads)."
+    },
+    "api_endpoints": [
+      "GET /api/v1/rbpc/evidence-room/pointers",
+      "GET /api/v1/rbpc/evidence-room/pointers/{pointer_id}",
+      "POST /api/v1/rbpc/pitch-review/evaluate",
+      "GET /api/v1/rbpc/pitch-review/audits/{audit_ref}",
+      "GET /api/v1/rbpc/evidence-room/export"
+    ],
+    "export_formats": [
+      "json",
+      "markdown"
+    ]
+  },
+  "verification_results": {
+    "test_suite": "tests/v5/test_v5_t120.py",
+    "tests_total": 9,
+    "tests_passed": 9,
+    "tests_failed": 0,
+    "tests": [
+      "test_v5_t120_evidence_room_7_domain_coverage",
+      "test_v5_t120_pointer_filtering_and_key_metrics",
+      "test_v5_t120_negative_abuse_missing_evidence_pointer",
+      "test_v5_t120_negative_abuse_nonexistent_or_archived_pointer",
+      "test_v5_t120_negative_abuse_metric_contradiction_and_verbal_inflation",
+      "test_v5_t120_positive_golden_pitch_deck_evaluation",
+      "test_v5_t120_database_persistence_and_audit_history",
+      "test_v5_t120_api_endpoints_integration",
+      "test_v5_t120_documentation_parity"
+    ]
+  }
+}

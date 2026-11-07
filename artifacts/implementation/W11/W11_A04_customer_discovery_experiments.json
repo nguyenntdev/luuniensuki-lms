@@ -1,0 +1,154 @@
+{
+  "ticket_id": "V5-T114",
+  "wave": "W11",
+  "slot": "A04",
+  "role": "W11-A04",
+  "priority": "P2",
+  "classification": "NEW_PRODUCT_FEATURE",
+  "title": "Customer discovery experiments in docs/rbpc/ and frontend/src/",
+  "status": "COMPLETED",
+  "verified_at": "2026-11-07T16:42:00Z",
+  "target_modules": [
+    "docs/rbpc/CUSTOMER_DISCOVERY_PROTOCOLS_EXPERIMENTS.md",
+    "docs/rbpc/BUSINESS_PLAN_DRAFT.md",
+    "backend/services/rbpc_discovery.py",
+    "frontend/src/lib/rbpc/discoveryExperiments.ts",
+    "frontend/src/components/rbpc/DiscoveryFeedbackModal.tsx",
+    "frontend/src/components/rbpc/index.ts",
+    "tests/v5/test_v5_t114.py",
+    "frontend/src/components/rbpc/discoveryExperiments.test.ts"
+  ],
+  "implementation_summary": {
+    "goal": "Establish customer discovery experiments, standardized interview scripts, structured usability tasks, anonymized feedback store, and pre-registered success criteria thresholds.",
+    "pre_registered_experiments": {
+      "EXP-01": {
+        "title": "Inquiry Transparency & Upfront Charge Friction",
+        "cohort": "cultural_traveler",
+        "metric": "Form Completion Rate",
+        "target_threshold": 65.0,
+        "falsification_trigger": 45.0,
+        "comparison_operator": ">="
+      },
+      "EXP-02": {
+        "title": "Primary Source Footnote Trustworthiness",
+        "cohort": "cultural_traveler",
+        "metric": "Trust Rating (% rating 4 or 5)",
+        "target_threshold": 80.0,
+        "falsification_trigger": 60.0,
+        "comparison_operator": ">="
+      },
+      "EXP-03": {
+        "title": "24-Hour Advance Lead-Time Partner Friction",
+        "cohort": "artisan_partner",
+        "metric": "Partner Scheduling Conflict Rate",
+        "target_threshold": 5.0,
+        "falsification_trigger": 15.0,
+        "comparison_operator": "<="
+      },
+      "EXP-04": {
+        "title": "Educator Lesson Planning Efficiency",
+        "cohort": "heritage_educator",
+        "metric": "Task Completion Time (minutes)",
+        "target_threshold": 45.0,
+        "falsification_trigger": 60.0,
+        "comparison_operator": "<="
+      },
+      "EXP-05": {
+        "title": "Low-Bandwidth 2D Rubbing Pedagogical Equivalence",
+        "cohort": "heritage_educator",
+        "metric": "Task Feasibility & Comprehension Score",
+        "target_threshold": 85.0,
+        "falsification_trigger": 70.0,
+        "comparison_operator": ">="
+      }
+    },
+    "standardized_interview_scripts": [
+      {
+        "script_id": "ART-DISC",
+        "title": "Artisan Guild Lineage Masters & Studio Leads Protocol",
+        "cohort": "artisan_partner",
+        "questions_count": 5
+      },
+      {
+        "script_id": "FIT-DISC",
+        "title": "Cultural Independent Travelers & Museum Visitors Protocol",
+        "cohort": "cultural_traveler",
+        "questions_count": 5
+      },
+      {
+        "script_id": "EDU-DISC",
+        "title": "Secondary School Heritage Educators Protocol",
+        "cohort": "heritage_educator",
+        "questions_count": 5
+      }
+    ],
+    "structured_usability_tasks": [
+      {
+        "task_id": "TASK-01",
+        "title": "Story Citation Inspection & Transparent Inquiry Submission",
+        "max_dwell_seconds": 180,
+        "zero_upfront_check": true
+      },
+      {
+        "task_id": "TASK-02",
+        "title": "2D Rubbing Fallback & Hán-Nôm Translation Navigation",
+        "max_dwell_seconds": 120,
+        "zero_upfront_check": false
+      },
+      {
+        "task_id": "TASK-03",
+        "title": "Craft Partner 2-Click Inquiry Confirmation",
+        "max_dwell_seconds": 90,
+        "zero_upfront_check": false
+      },
+      {
+        "task_id": "TASK-04",
+        "title": "Teacher Lesson Wizard & Low-Bandwidth Printable Export",
+        "max_dwell_seconds": 150,
+        "zero_upfront_check": false
+      }
+    ],
+    "anonymized_feedback_store": {
+      "pseudo_anonymized_token_pattern": "^[A-Z]{2,4}-[A-Z0-9]{4,8}$",
+      "pii_scrubbing": "Automated server & client regex scrubbing for emails, phone numbers, IP addresses, and Vietnamese personal names.",
+      "consent_version": "rbpc-discovery-v1",
+      "likert_scale_bounds": [1, 5]
+    },
+    "negative_abuse_guardrail": {
+      "invariant": "Self-selected respondents are not labeled representative of general population without methodology disclaimer.",
+      "enforcement": "validate_methodology_disclaimer() verifies sampling methodology disclosure (convenience / self-selected / opt-in / non-probability), selection bias boundaries (early adopters / tech-literate), and explicit prohibition on extrapolating to general population without randomized stratified sampling.",
+      "canonical_disclaimers": {
+        "en": "Methodology Disclaimer: Participants in this discovery experiment were recruited via voluntary opt-in and convenience sampling (non-probability sample). The findings reflect selection bias toward technologically fluent cultural enthusiasts and early adopters, and cannot be extrapolated as statistically representative of the general population without randomized stratified sampling.",
+        "vi": "Tuyên bố Phương pháp luận: Người tham gia thử nghiệm khám phá khách hàng được tuyển chọn thông qua hình thức tự nguyện đăng ký và lấy mẫu thuận tiện (mẫu phi xác suất). Kết quả phản ánh độ lệch chọn mẫu hướng tới nhóm người đam mê văn hóa và thành thạo công nghệ, và không thể suy rộng thành đại diện thống kê cho toàn thể dân số nếu không có phương pháp lấy mẫu phân tầng ngẫu nhiên."
+      }
+    }
+  },
+  "verification_results": {
+    "backend_pytest": {
+      "test_file": "tests/v5/test_v5_t114.py",
+      "total_tests": 8,
+      "passed": 8,
+      "failed": 0,
+      "tests": [
+        "test_v5_t114_canonical_experiments_coverage_and_thresholds",
+        "test_v5_t114_canonical_interview_scripts_and_questions",
+        "test_v5_t114_usability_tasks_and_zero_upfront_criterion",
+        "test_v5_t114_anonymized_feedback_store_and_pii_scrubbing",
+        "test_v5_t114_experiment_evaluation_mechanics",
+        "test_v5_t114_negative_abuse_self_selected_representativeness_guardrail",
+        "test_v5_t114_discovery_report_validation_and_publishing",
+        "test_v5_t114_export_utilities_and_doc_parity"
+      ]
+    },
+    "frontend_vitest": {
+      "test_file": "frontend/src/components/rbpc/discoveryExperiments.test.ts",
+      "total_tests": 12,
+      "passed": 12,
+      "failed": 0
+    },
+    "frontend_eslint": {
+      "command": "npm run lint:ci",
+      "status": "PASSED"
+    }
+  }
+}

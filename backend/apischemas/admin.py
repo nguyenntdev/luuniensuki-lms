@@ -292,3 +292,90 @@ class HealthResponse(BaseModel):
     status: str
     database: str
     version: str
+
+
+# =============================================================================
+# Truth-Level Funnel Schemas (V5-T112)
+# =============================================================================
+
+
+class TruthStageMetricOut(BaseModel):
+    """Output schema for an individual stage in the truth funnel."""
+
+    stage: str
+    display_name: str
+    description: str
+    count: int
+    conversion_from_previous_pct: float
+    conversion_from_top_pct: float
+    truth_tier: str
+    measurement_method: str
+
+
+class QualityCohortMetricOut(BaseModel):
+    """Output schema for a quality cohort in the truth funnel."""
+
+    cohort_id: str
+    cohort_name: str
+    cohort_type: str
+    visitor_count: int
+    source_read_count: int
+    inquiry_count: int
+    confirm_count: int
+    completed_count: int
+    visitor_to_source_pct: float
+    source_to_inquiry_pct: float
+    inquiry_to_confirm_pct: float
+    confirm_to_completed_pct: float
+    overall_conversion_pct: float
+    avg_dwell_seconds: float = 0.0
+    source_grounding_score_pct: float = 100.0
+
+
+class TruthTierObservedOut(BaseModel):
+    """Output schema for the OBSERVED truth tier."""
+
+    truth_tier: str
+    definition: str
+    total_funnel_visitors: int
+    total_completed_experiences: int
+    stages: list[TruthStageMetricOut]
+    overall_conversion_pct: float
+    quality_cohorts: list[QualityCohortMetricOut]
+
+
+class TruthTierHypothesisOut(BaseModel):
+    """Output schema for the HYPOTHESIS truth tier."""
+
+    truth_tier: str
+    definition: str
+    epistemic_disclaimer: str
+    benchmark_assumptions: dict[str, Any]
+    modeled_monthly_funnel: dict[str, Any]
+
+
+class TruthTierForecastOut(BaseModel):
+    """Output schema for the FORECAST truth tier."""
+
+    truth_tier: str
+    definition: str
+    epistemic_disclaimer: str
+    target_period: str
+    projected_annual_bookings: int
+    projected_annual_gmv_vnd: float
+    target_partner_workshops: int
+    projected_platform_net_revenue_vnd: float
+    projected_artisan_retained_vnd: float
+    negative_abuse_guardrail: str
+
+
+class TruthFunnelDashboardOut(BaseModel):
+    """Output schema for the Truth-Level Funnel Dashboard."""
+
+    generated_at: str
+    filter_range: dict[str, Optional[str]]
+    observed: TruthTierObservedOut
+    hypothesis: TruthTierHypothesisOut
+    forecast: TruthTierForecastOut
+    anti_abuse_validation: dict[str, Any]
+

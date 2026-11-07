@@ -607,9 +607,15 @@ function InquiriesContent() {
         </div>
 
         {/* Concept Demo Notice & Tenant Boundary Ribbon */}
-        <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-2.5 text-xs text-amber-900 dark:text-amber-200">
+        <div
+          data-testid="demo-data-watermark"
+          className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-2.5 text-xs text-amber-900 dark:text-amber-200"
+        >
           <div className="flex items-center gap-2">
-            <span className="rounded bg-amber-600 px-1.5 py-0.5 text-[10px] font-black tracking-wider text-white uppercase">
+            <span
+              data-testid="demo-badge"
+              className="rounded bg-amber-600 px-1.5 py-0.5 text-[10px] font-black tracking-wider text-white uppercase"
+            >
               DEMO DATA
             </span>
             <span>

@@ -189,6 +189,36 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/analytics/truth-funnel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get conversion funnel partitioned strictly by epistemological truth level
+         * @description Get 5-stage conversion funnel separated by truth level (Ticket V5-T112).
+         *
+         *     Separates metrics strictly into:
+         *     - OBSERVED: Empirical database actuals (visitor -> source_read -> inquiry -> confirm -> completed)
+         *       with quality cohorts. When 0 closed inquiries exist, completed is strictly 0.
+         *     - HYPOTHESIS: Model conversion hypotheses from DOC-RBPC-FIN-001 §3.3.
+         *     - FORECAST: Forward commercial targets (e.g. SOM 1,100 bookings / 570M VND GMV) quarantined
+         *       with explicit epistemic disclaimers.
+         *
+         *     Negative abuse invariant:
+         *     Projected figures (e.g. 1,100 bookings) never appear as completed bookings in the truth dashboard.
+         */
+        get: operations["get_truth_funnel_dashboard_api_v1_admin_analytics_truth_funnel_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/app/versions": {
         parameters: {
             query?: never;
@@ -8305,6 +8335,194 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/pilot/activate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Activate Pilot Endpoint
+         * @description Authenticated user redeems an invitation token to activate private pilot access.
+         */
+        post: operations["activate_pilot_endpoint_api_v1_pilot_activate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pilot/health": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Pilot Health Endpoint
+         * @description Retrieve usage health, engagement telemetry, and score for current pilot user.
+         */
+        get: operations["get_pilot_health_endpoint_api_v1_pilot_health_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pilot/invitations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Invitations Endpoint
+         * @description Staff lists all pilot invitations.
+         */
+        get: operations["list_invitations_endpoint_api_v1_pilot_invitations_get"];
+        put?: never;
+        /**
+         * Create Invitation Endpoint
+         * @description Staff generates a secure pilot invitation token.
+         */
+        post: operations["create_invitation_endpoint_api_v1_pilot_invitations_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pilot/invitations/validate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Validate Invitation Endpoint
+         * @description Check whether a pilot invitation token is valid before redemption.
+         */
+        post: operations["validate_invitation_endpoint_api_v1_pilot_invitations_validate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pilot/my-activation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get My Activation Endpoint
+         * @description Get active pilot trial activation and guided checklist progress.
+         */
+        get: operations["get_my_activation_endpoint_api_v1_pilot_my_activation_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pilot/onboarding/step": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Record Onboarding Step Endpoint
+         * @description Record completion of a guided activation checklist step.
+         */
+        post: operations["record_onboarding_step_endpoint_api_v1_pilot_onboarding_step_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pilot/support": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Support Requests Endpoint
+         * @description List pilot support tickets. Staff sees all, participants see their own.
+         */
+        get: operations["list_support_requests_endpoint_api_v1_pilot_support_get"];
+        put?: never;
+        /**
+         * Create Support Request Endpoint
+         * @description Create a pilot feedback or support ticket.
+         */
+        post: operations["create_support_request_endpoint_api_v1_pilot_support_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pilot/support/{ticket_id}/reply": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Reply Support Request Endpoint
+         * @description Add a response to a pilot support ticket.
+         */
+        post: operations["reply_support_request_endpoint_api_v1_pilot_support__ticket_id__reply_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pilot/telemetry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Record Telemetry Endpoint
+         * @description Log an interaction action to maintain pilot usage health.
+         */
+        post: operations["record_telemetry_endpoint_api_v1_pilot_telemetry_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/preview/complete": {
         parameters: {
             query?: never;
@@ -8393,6 +8611,131 @@ export interface paths {
          *     allowing us to measure engagement and conversion.
          */
         post: operations["start_preview_session_api_v1_preview_start_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pricing/calculator": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Calculate Pricing Estimate
+         * @description Compute non-binding estimate for school or institution with strict 0 VND recognized revenue invariant.
+         */
+        post: operations["calculate_pricing_estimate_api_v1_pricing_calculator_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pricing/config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Pricing Experiment Config
+         * @description Retrieve pricing experiment configuration, transparent tiers, and anti-dark-pattern notices.
+         */
+        get: operations["get_pricing_experiment_config_api_v1_pricing_config_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pricing/contracts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Institutional Contract
+         * @description Draft an institutional contract for school or district partner.
+         */
+        post: operations["create_institutional_contract_api_v1_pricing_contracts_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pricing/contracts/{contract_id}/accept": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Accept And Sign Contract
+         * @description Real contract acceptance and execution with cryptographic verification.
+         *
+         *     Only this action transitions contract to signed_and_executed and establishes paying customer status.
+         */
+        post: operations["accept_and_sign_contract_api_v1_pricing_contracts__contract_id__accept_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pricing/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Record Pricing Interest Event
+         * @description Record pricing interest telemetry with user consent.
+         *
+         *     Negative abuse invariant:
+         *     Tier clicks and calculator interactions produce is_paying_customer=False and 0 VND revenue.
+         */
+        post: operations["record_pricing_interest_event_api_v1_pricing_events_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pricing/metrics/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Pricing Metrics Summary
+         * @description Get aggregated metrics verifying anti-abuse: tier views & calculator clicks = 0 revenue.
+         */
+        get: operations["get_pricing_metrics_summary_api_v1_pricing_metrics_summary_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -8895,6 +9238,94 @@ export interface paths {
         patch: operations["staff_moderate_experience_api_v1_rbpc_admin_experiences__id__moderate_patch"];
         trace?: never;
     };
+    "/api/v1/rbpc/admin/loi-vault": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Register Loi
+         * @description Register a new verified LOI/charter agreement into the evidence vault.
+         *
+         *     Requires staff or admin role.
+         */
+        post: operations["register_loi_api_v1_rbpc_admin_loi_vault_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/admin/loi-vault/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export Loi Vault
+         * @description Export the LOI vault records as Markdown table or JSON string for investor due diligence.
+         */
+        get: operations["export_loi_vault_api_v1_rbpc_admin_loi_vault_export_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/admin/loi-vault/{loi_id}/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Revoke Loi
+         * @description Revoke an active partner agreement.
+         *
+         *     NEGATIVE ABUSE INVARIANT:
+         *     Partner is immediately excluded from active discovery listings.
+         *     Requires staff or admin role.
+         */
+        post: operations["revoke_loi_api_v1_rbpc_admin_loi_vault__loi_id__revoke_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/admin/loi-vault/{loi_id}/verify-checksum": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Verify Agreement Checksum
+         * @description Verify document text or bytes against stored SHA-256 agreement digest.
+         *
+         *     Requires staff or admin role.
+         */
+        post: operations["verify_agreement_checksum_api_v1_rbpc_admin_loi_vault__loi_id__verify_checksum_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/rbpc/admin/reviews": {
         parameters: {
             query?: never;
@@ -9112,6 +9543,66 @@ export interface paths {
          *     Transitions status -> 'settled' and payout_status -> 'disbursed'.
          */
         post: operations["disburse_artisan_payout_api_v1_rbpc_editor_settlements__id__disburse_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/evidence-room/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export Evidence Room
+         * @description Export evidence room catalog as structured JSON or Markdown table.
+         */
+        get: operations["export_evidence_room_api_v1_rbpc_evidence_room_export_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/evidence-room/pointers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Evidence Pointers
+         * @description Retrieve versioned evidence room pointers with optional domain or status filter.
+         */
+        get: operations["list_evidence_pointers_api_v1_rbpc_evidence_room_pointers_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/evidence-room/pointers/{pointer_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Evidence Pointer
+         * @description Retrieve a single versioned evidence pointer by pointer_id.
+         */
+        get: operations["get_evidence_pointer_api_v1_rbpc_evidence_room_pointers__pointer_id__get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -9354,6 +9845,75 @@ export interface paths {
          *     records in `rbpc_settlement_ledger` contribute to actual revenue.
          */
         get: operations["get_ledger_financial_summary_api_v1_rbpc_ledger_summary_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/ledger/unit-economics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Unit Economics Actual Ledger
+         * @description Aggregate verified unit economics actual ledger report.
+         *
+         *     Features:
+         *     - Cash actuals strictly separated from GMV forecasts (forecasts tagged truth_tier='FORECAST').
+         *     - Cost structure inference: server hosting (BNIX in-kind subsidy vs commercial replacement),
+         *       AI token inference (Phổ Tuệ in-kind credits vs commercial replacement), take rates, and dual margins.
+         *     - Explicit separation of revenue streams: 'visitor_commerce' vs 'school_b2b'.
+         *     - Negative abuse invariant: Partner inquiries in any status create strictly 0 VND revenue
+         *       and 0 VND realized GMV without a verified payment settlement in rbpc_settlement_ledger.
+         *     - Multi-tenant isolation: Admin/staff receive global actuals; partners receive provider-scoped actuals.
+         */
+        get: operations["get_unit_economics_actual_ledger_api_v1_rbpc_ledger_unit_economics_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/loi-vault": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Loi Vault
+         * @description Retrieve full LOI vault records with breakdown counts for due diligence.
+         */
+        get: operations["list_loi_vault_api_v1_rbpc_loi_vault_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/loi-vault/{loi_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Loi Vault Item
+         * @description Retrieve specific LOI vault record by unique ID.
+         */
+        get: operations["get_loi_vault_item_api_v1_rbpc_loi_vault__loi_id__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -9741,6 +10301,96 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/rbpc/partners": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Active Partners
+         * @description Public discovery endpoint returning verified, active partner institutions.
+         *
+         *     NEGATIVE ABUSE INVARIANT:
+         *     Expired and revoked partnerships are strictly excluded and never returned.
+         */
+        get: operations["list_active_partners_api_v1_rbpc_partners_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/partners/{identifier}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Active Partner
+         * @description Public endpoint retrieving profile of an active verified partner.
+         *
+         *     NEGATIVE ABUSE INVARIANT:
+         *     If partner agreement is expired or revoked, fails with 404 RBPC_PARTNER_INACTIVE.
+         */
+        get: operations["get_active_partner_api_v1_rbpc_partners__identifier__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/pitch-review/audits/{audit_ref}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Pitch Review Audit
+         * @description Retrieve an immutable pitch review audit report by audit_ref.
+         */
+        get: operations["get_pitch_review_audit_api_v1_rbpc_pitch_review_audits__audit_ref__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/pitch-review/evaluate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Evaluate Pitch Review
+         * @description Evaluate and audit a set of pitch deck assertions against the evidence room.
+         *
+         *     Negative abuse invariant:
+         *     Every quantitative pitch claim must have an immutable evidence reference and status;
+         *     ungrounded metrics are flagged (UNGROUNDED_FLAGGED) and pitch readiness is FLAGGED_UNREADY.
+         */
+        post: operations["evaluate_pitch_review_api_v1_rbpc_pitch_review_evaluate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/rbpc/reviews": {
         parameters: {
             query?: never;
@@ -9820,6 +10470,31 @@ export interface paths {
          * @description Retrieve comprehensive story narrative with verified claims, artisan, and media.
          */
         get: operations["get_rbpc_story_detail_api_v1_rbpc_stories__slug__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rbpc/stories/{slug}/recommendations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Story Recommendations Endpoint
+         * @description Retrieve curator-controlled story recommendations linked to this story.
+         *
+         *     Invariants (V5-T105):
+         *     - Rule-based object -> craft workshop linkages with verified historical relationships.
+         *     - Negative abuse: Unverified artisan relationships or commercial claims are strictly hidden.
+         *     - Strictly no implied fake imperial lineage.
+         */
+        get: operations["get_story_recommendations_endpoint_api_v1_rbpc_stories__slug__recommendations_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -12691,10 +13366,29 @@ export interface components {
         AnalyticsEventIn: {
             /** Cohort */
             cohort?: string | null;
+            /** Consent Status */
+            consent_status?: string | null;
             /** Device Info */
             device_info?: {
                 [key: string]: unknown;
             } | null;
+            /** Idempotency Key */
+            idempotency_key?: string | null;
+            /**
+             * Is Demo
+             * @default false
+             */
+            is_demo: boolean | null;
+            /**
+             * Is Server Verified
+             * @default false
+             */
+            is_server_verified: boolean | null;
+            /**
+             * Is Synthetic
+             * @default false
+             */
+            is_synthetic: boolean | null;
             /** Name */
             name: string;
             /** Path */
@@ -12708,13 +13402,30 @@ export interface components {
         };
         /** AnalyticsEventsIn */
         AnalyticsEventsIn: {
+            /** Consent Status */
+            consent_status?: string | null;
             /** Events */
             events: components["schemas"]["AnalyticsEventIn"][];
+            /**
+             * Is Demo
+             * @default false
+             */
+            is_demo: boolean | null;
+            /**
+             * Is Synthetic
+             * @default false
+             */
+            is_synthetic: boolean | null;
         };
         /** AnalyticsEventsOut */
         AnalyticsEventsOut: {
             /** Count */
             count: number;
+            /**
+             * Deduplicated Count
+             * @default 0
+             */
+            deduplicated_count: number | null;
             /** Success */
             success: boolean;
         };
@@ -25004,6 +25715,60 @@ export interface components {
             /** Total Count */
             total_count: number;
         };
+        /** PilotActivateIn */
+        PilotActivateIn: {
+            /**
+             * Compliance Accepted
+             * @description Must explicitly accept pilot compliance terms
+             */
+            compliance_accepted: boolean;
+            /**
+             * Token
+             * @description Invitation token to redeem
+             */
+            token: string;
+        };
+        /** PilotActivationOut */
+        PilotActivationOut: {
+            /**
+             * Activated At
+             * Format: date-time
+             */
+            activated_at: string;
+            /** Completed At */
+            completed_at?: string | null;
+            /** Completed Steps */
+            completed_steps: string[];
+            /** Compliance Accepted */
+            compliance_accepted: boolean;
+            /** Compliance Accepted At */
+            compliance_accepted_at?: string | null;
+            /** Current Step */
+            current_step: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Invitation Id
+             * Format: uuid
+             */
+            invitation_id: string;
+            /** Organization Name */
+            organization_name: string;
+            /** Pilot Name */
+            pilot_name?: string | null;
+            /** Role Type */
+            role_type: string;
+            /** Status */
+            status: string;
+            /**
+             * User Id
+             * Format: uuid
+             */
+            user_id: string;
+        };
         /** PilotDataRetentionAuditOut */
         PilotDataRetentionAuditOut: {
             /**
@@ -25161,6 +25926,238 @@ export interface components {
             /** Reason */
             reason?: string | null;
         };
+        /** PilotHealthTelemetryRecordIn */
+        PilotHealthTelemetryRecordIn: {
+            /** Action Name */
+            action_name: string;
+            /** Details */
+            details?: {
+                [key: string]: unknown;
+            };
+        };
+        /** PilotInvitationCreateIn */
+        PilotInvitationCreateIn: {
+            /** Contact Email */
+            contact_email: string;
+            /**
+             * Expires In Days
+             * @default 30
+             */
+            expires_in_days: number;
+            /**
+             * Max Uses
+             * @default 1
+             */
+            max_uses: number;
+            /** Metadata Payload */
+            metadata_payload?: {
+                [key: string]: unknown;
+            };
+            /** Notes */
+            notes?: string | null;
+            /** Organization Name */
+            organization_name: string;
+            /** Partner Id */
+            partner_id?: string | null;
+            /** Pilot Name */
+            pilot_name: string;
+            /** School Id */
+            school_id?: string | null;
+            /**
+             * Target Role
+             * @description 'school_teacher' or 'artisan_partner'
+             */
+            target_role: string;
+        };
+        /** PilotInvitationOut */
+        PilotInvitationOut: {
+            /** Contact Email */
+            contact_email: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Invitation Code */
+            invitation_code: string;
+            /** Invitation Token */
+            invitation_token?: string | null;
+            /** Max Uses */
+            max_uses: number;
+            /** Metadata Payload */
+            metadata_payload?: {
+                [key: string]: unknown;
+            };
+            /** Notes */
+            notes?: string | null;
+            /** Organization Name */
+            organization_name: string;
+            /** Partner Id */
+            partner_id?: string | null;
+            /** Pilot Name */
+            pilot_name: string;
+            /** School Id */
+            school_id?: string | null;
+            /** Status */
+            status: string;
+            /** Target Role */
+            target_role: string;
+            /** Used Count */
+            used_count: number;
+        };
+        /** PilotInvitationValidationResult */
+        PilotInvitationValidationResult: {
+            /** Expires At */
+            expires_at?: string | null;
+            /** Invitation Code */
+            invitation_code?: string | null;
+            /** Is Valid */
+            is_valid: boolean;
+            /** Message */
+            message: string;
+            /** Organization Name */
+            organization_name?: string | null;
+            /** Pilot Name */
+            pilot_name?: string | null;
+            /** Status */
+            status: string;
+            /** Target Role */
+            target_role?: string | null;
+        };
+        /** PilotOnboardingStepIn */
+        PilotOnboardingStepIn: {
+            /**
+             * Completed
+             * @default true
+             */
+            completed: boolean;
+            /**
+             * Step
+             * @description Onboarding step key, e.g. welcome, tour, first_action, etc.
+             */
+            step: string;
+        };
+        /** PilotSupportRequestCreateIn */
+        PilotSupportRequestCreateIn: {
+            /**
+             * Category
+             * @description 'activation', 'onboarding_help', 'feature_feedback', 'data_privacy', 'bug_report'
+             */
+            category: string;
+            /** Message */
+            message: string;
+            /**
+             * Priority
+             * @description 'low', 'normal', 'high', 'urgent'
+             * @default normal
+             */
+            priority: string;
+            /** Subject */
+            subject: string;
+        };
+        /** PilotSupportRequestOut */
+        PilotSupportRequestOut: {
+            /** Activation Id */
+            activation_id?: string | null;
+            /** Category */
+            category: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Message */
+            message: string;
+            /** Priority */
+            priority: string;
+            /** Resolved At */
+            resolved_at?: string | null;
+            /** Responses */
+            responses?: {
+                [key: string]: unknown;
+            }[];
+            /** Status */
+            status: string;
+            /** Subject */
+            subject: string;
+            /** Ticket Code */
+            ticket_code: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /**
+             * User Id
+             * Format: uuid
+             */
+            user_id: string;
+        };
+        /** PilotSupportRequestReplyIn */
+        PilotSupportRequestReplyIn: {
+            /** Message */
+            message: string;
+        };
+        /** PilotUsageHealthOut */
+        PilotUsageHealthOut: {
+            /** Actions Count */
+            actions_count: number;
+            /**
+             * Activation Id
+             * Format: uuid
+             */
+            activation_id: string;
+            /** Health Score */
+            health_score: number;
+            /** Health Status */
+            health_status: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Last Action Name */
+            last_action_name?: string | null;
+            /**
+             * Last Active At
+             * Format: date-time
+             */
+            last_active_at: string;
+            /** Login Count */
+            login_count: number;
+            /** Telemetry Summary */
+            telemetry_summary: {
+                [key: string]: unknown;
+            };
+            /**
+             * User Id
+             * Format: uuid
+             */
+            user_id: string;
+        };
+        /** PilotValidateInvitationIn */
+        PilotValidateInvitationIn: {
+            /**
+             * Token
+             * @description Raw secret invitation token
+             */
+            token: string;
+        };
         /**
          * PrerequisiteLessonInfo
          * @description Info about a prerequisite lesson.
@@ -25188,6 +26185,342 @@ export interface components {
             motif_name: string;
             /** Motif Slug */
             motif_slug: string;
+        };
+        /**
+         * PricingCalculatorIn
+         * @description Input for real-time pricing calculator.
+         */
+        PricingCalculatorIn: {
+            /**
+             * Include Ai Tutor Credits
+             * @default false
+             */
+            include_ai_tutor_credits: boolean;
+            /**
+             * Include Teacher Training Pdu
+             * @default false
+             */
+            include_teacher_training_pdu: boolean;
+            /**
+             * Include Vr360 Interactive Lab
+             * @default false
+             */
+            include_vr360_interactive_lab: boolean;
+            /**
+             * Months Duration
+             * @description Thời hạn sử dụng theo tháng
+             * @default 12
+             */
+            months_duration: number;
+            /**
+             * Student Count
+             * @description Dự kiến số học sinh tham gia
+             */
+            student_count: number;
+            /** Tier Key */
+            tier_key: string;
+        };
+        /**
+         * PricingCalculatorOut
+         * @description Output estimate from calculator with explicit non-revenue non-binding disclaimer.
+         */
+        PricingCalculatorOut: {
+            /** Addons Subtotal Vnd */
+            addons_subtotal_vnd: number;
+            /** Base Subtotal Vnd */
+            base_subtotal_vnd: number;
+            /**
+             * Disclaimer
+             * @default Kết quả tính toán chỉ mang tính ước tính và khảo sát nhu cầu thị trường. Không cấu thành hóa đơn, không tạo doanh thu và không có hiệu lực pháp lý nếu chưa lập hợp đồng.
+             */
+            disclaimer: string;
+            /** Estimated Total Vnd */
+            estimated_total_vnd: number;
+            /**
+             * Is Binding
+             * @default false
+             */
+            is_binding: boolean;
+            /** Months Duration */
+            months_duration: number;
+            /** Per Student Month Vnd */
+            per_student_month_vnd: number;
+            /**
+             * Revenue Recognized Vnd
+             * @default 0
+             */
+            revenue_recognized_vnd: number;
+            /** Student Count */
+            student_count: number;
+            /** Tier Key */
+            tier_key: string;
+            /** Volume Discount Vnd */
+            volume_discount_vnd: number;
+        };
+        /**
+         * PricingContractCreateIn
+         * @description Create a drafted institutional contract.
+         */
+        PricingContractCreateIn: {
+            /** Contract Value Vnd */
+            contract_value_vnd: number;
+            /** Organization Name */
+            organization_name: string;
+            /** School Id */
+            school_id?: string | null;
+            /** Student Seat Capacity */
+            student_seat_capacity: number;
+            /**
+             * Terms Version
+             * @default v2026.1-edu
+             */
+            terms_version: string;
+            /** Tier Key */
+            tier_key: string;
+            /**
+             * Variant Key
+             * @default control
+             */
+            variant_key: string;
+        };
+        /**
+         * PricingContractOut
+         * @description Legitimate contract details.
+         */
+        PricingContractOut: {
+            /** Contract Number */
+            contract_number: string;
+            /** Contract Value Vnd */
+            contract_value_vnd: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Organization Name */
+            organization_name: string;
+            /** School Id */
+            school_id?: string | null;
+            /** Signed At */
+            signed_at?: string | null;
+            /**
+             * Signer User Id
+             * Format: uuid
+             */
+            signer_user_id: string;
+            /** Status */
+            status: string;
+            /** Student Seat Capacity */
+            student_seat_capacity: number;
+            /** Terms Version */
+            terms_version: string;
+            /** Tier Key */
+            tier_key: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Variant Key */
+            variant_key: string;
+            /** Verification Hash */
+            verification_hash?: string | null;
+        };
+        /**
+         * PricingContractSignAcceptIn
+         * @description Real contract acceptance requiring explicit agreement and verification token.
+         */
+        PricingContractSignAcceptIn: {
+            /**
+             * Confirmation Statement
+             * @description Tuyên bố xác nhận cam kết hợp đồng pháp lý của trường học
+             */
+            confirmation_statement: string;
+            /** Ip Address Masked */
+            ip_address_masked?: string | null;
+            /** Signer Legal Name */
+            signer_legal_name: string;
+            /** Signer Title */
+            signer_title: string;
+        };
+        /**
+         * PricingExperimentConfigOut
+         * @description Public pricing experiment configuration and variants.
+         */
+        PricingExperimentConfigOut: {
+            /**
+             * Anti Abuse Notice
+             * @default Lưu ý: Mọi thao tác tính giá hoặc xem gói chỉ mang tính chất dự toán/khảo sát nhu cầu. Không ghi nhận doanh thu hoặc ràng buộc hợp đồng cho đến khi có biên bản ký kết hợp pháp.
+             */
+            anti_abuse_notice: string;
+            /** Consent Policy Version */
+            consent_policy_version: string;
+            /**
+             * Consent Required
+             * @default true
+             */
+            consent_required: boolean;
+            /** Consent Text En */
+            consent_text_en: string;
+            /** Consent Text Vi */
+            consent_text_vi: string;
+            /** Experiment Key */
+            experiment_key: string;
+            /** Tiers */
+            tiers: components["schemas"]["PricingTierInfo"][];
+            /** Variant Key */
+            variant_key: string;
+        };
+        /**
+         * PricingExperimentEventCreateIn
+         * @description Track an interaction on pricing tier or calculator.
+         */
+        PricingExperimentEventCreateIn: {
+            /** Anonymous Session Id */
+            anonymous_session_id?: string | null;
+            /** Calculator Params */
+            calculator_params?: {
+                [key: string]: unknown;
+            } | null;
+            /** Client Metadata */
+            client_metadata?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Consent Version
+             * @default 2026.1-pricing
+             */
+            consent_version: string;
+            /** Event Type */
+            event_type: string;
+            /**
+             * Experiment Key
+             * @default school_pricing_v1
+             */
+            experiment_key: string;
+            /**
+             * Has Experiment Consent
+             * @default true
+             */
+            has_experiment_consent: boolean;
+            /** Tier Key */
+            tier_key: string;
+            /**
+             * Variant Key
+             * @default control
+             */
+            variant_key: string;
+        };
+        /**
+         * PricingExperimentEventOut
+         * @description Recorded pricing event.
+         */
+        PricingExperimentEventOut: {
+            /** Calculator Params */
+            calculator_params?: {
+                [key: string]: unknown;
+            } | null;
+            /** Consent Version */
+            consent_version: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Event Type */
+            event_type: string;
+            /** Experiment Key */
+            experiment_key: string;
+            /** Has Experiment Consent */
+            has_experiment_consent: boolean;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Is Paying Customer */
+            is_paying_customer: boolean;
+            /** Revenue Impact Vnd */
+            revenue_impact_vnd: number;
+            /** Tier Key */
+            tier_key: string;
+            /** User Id */
+            user_id?: string | null;
+            /** Variant Key */
+            variant_key: string;
+        };
+        /**
+         * PricingExperimentMetricsSummaryOut
+         * @description Strictly separated metrics verifying zero negative abuse.
+         */
+        PricingExperimentMetricsSummaryOut: {
+            /** Experiment Key */
+            experiment_key: string;
+            /**
+             * Negative Abuse Verification
+             * @default INVARIANT VERIFIED: Tier views and calculator clicks contributed 0 VND and 0 paying customers. Only signed_and_executed contracts contribute to revenue.
+             */
+            negative_abuse_verification: string;
+            /** Paying Customers Count */
+            paying_customers_count: number;
+            /** Recognized Contract Revenue Vnd */
+            recognized_contract_revenue_vnd: number;
+            /** Signed Contracts Count */
+            signed_contracts_count: number;
+            /** Total Calculator Interactions */
+            total_calculator_interactions: number;
+            /** Total Contract Attempts */
+            total_contract_attempts: number;
+            /** Total Quote Inquiries */
+            total_quote_inquiries: number;
+            /** Total Tier Views */
+            total_tier_views: number;
+            /** Unearned Calculator Projected Value Vnd */
+            unearned_calculator_projected_value_vnd: number;
+        };
+        /**
+         * PricingTierInfo
+         * @description Tier details served in pricing experiment.
+         */
+        PricingTierInfo: {
+            /**
+             * Anti Dark Pattern Notice
+             * @default Không có phí ẩn, không tự động gia hạn khi chưa có hợp đồng ký kết.
+             */
+            anti_dark_pattern_notice: string;
+            /** Base Price Vnd */
+            base_price_vnd: number;
+            /** Billing Period */
+            billing_period: string;
+            /**
+             * Calculator Supported
+             * @default true
+             */
+            calculator_supported: boolean;
+            /** Description En */
+            description_en: string;
+            /** Description Vi */
+            description_vi: string;
+            /** Features En */
+            features_en: string[];
+            /** Features Vi */
+            features_vi: string[];
+            /**
+             * Is Popular
+             * @default false
+             */
+            is_popular: boolean;
+            /** Key */
+            key: string;
+            /** Name En */
+            name_en: string;
+            /** Name Vi */
+            name_vi: string;
         };
         /** PrintableHandoutOut */
         PrintableHandoutOut: {
@@ -25515,6 +26848,48 @@ export interface components {
             message: string;
             /** Success */
             success: boolean;
+        };
+        /**
+         * QualityCohortMetricOut
+         * @description Output schema for a quality cohort in the truth funnel.
+         */
+        QualityCohortMetricOut: {
+            /**
+             * Avg Dwell Seconds
+             * @default 0
+             */
+            avg_dwell_seconds: number;
+            /** Cohort Id */
+            cohort_id: string;
+            /** Cohort Name */
+            cohort_name: string;
+            /** Cohort Type */
+            cohort_type: string;
+            /** Completed Count */
+            completed_count: number;
+            /** Confirm Count */
+            confirm_count: number;
+            /** Confirm To Completed Pct */
+            confirm_to_completed_pct: number;
+            /** Inquiry Count */
+            inquiry_count: number;
+            /** Inquiry To Confirm Pct */
+            inquiry_to_confirm_pct: number;
+            /** Overall Conversion Pct */
+            overall_conversion_pct: number;
+            /**
+             * Source Grounding Score Pct
+             * @default 100
+             */
+            source_grounding_score_pct: number;
+            /** Source Read Count */
+            source_read_count: number;
+            /** Source To Inquiry Pct */
+            source_to_inquiry_pct: number;
+            /** Visitor Count */
+            visitor_count: number;
+            /** Visitor To Source Pct */
+            visitor_to_source_pct: number;
         };
         /**
          * QuestAssignmentCreateIn
@@ -26324,6 +27699,66 @@ export interface components {
          */
         RbpcAvailabilityMode: "inquiry_only" | "disabled";
         /**
+         * RbpcCashActuals
+         * @description Realized cash actuals strictly aggregated from approved/settled transactions.
+         */
+        RbpcCashActuals: {
+            /**
+             * Approved Settlements Count
+             * @description Number of compliance-approved settlements
+             * @default 0
+             */
+            approved_settlements_count: number;
+            /**
+             * Net Cash Revenue Vnd
+             * @description Net cash platform revenue after refunds
+             * @default 0
+             */
+            net_cash_revenue_vnd: number;
+            /**
+             * Pending Settlements Count
+             * @description Settlements awaiting compliance review
+             * @default 0
+             */
+            pending_settlements_count: number;
+            /**
+             * Settled Settlements Count
+             * @description Number of fully settled/disbursed transactions
+             * @default 0
+             */
+            settled_settlements_count: number;
+            /**
+             * Total Artisan Payout Vnd
+             * @description Cash allocated/disbursed to artisans
+             * @default 0
+             */
+            total_artisan_payout_vnd: number;
+            /**
+             * Total Platform Fee Cash Vnd
+             * @description Actual cash platform fees collected
+             * @default 0
+             */
+            total_platform_fee_cash_vnd: number;
+            /**
+             * Total Refunds Vnd
+             * @description Total cash refunds processed
+             * @default 0
+             */
+            total_refunds_vnd: number;
+            /**
+             * Total Settled Gross Vnd
+             * @description Gross transacted amount settled in VND
+             * @default 0
+             */
+            total_settled_gross_vnd: number;
+            /**
+             * Total Tax Vat Vnd
+             * @description Taxes and VAT remitted/collected
+             * @default 0
+             */
+            total_tax_vat_vnd: number;
+        };
+        /**
          * RbpcClaimEvidenceOut
          * @description Grounded historical or artisanal claim supporting a story.
          */
@@ -26485,6 +27920,84 @@ export interface components {
          * @enum {string}
          */
         RbpcContactMethod: "email" | "phone" | "zalo";
+        /**
+         * RbpcCostStructureInference
+         * @description Inferred cost structure covering server hosting, AI tokens, and take rates.
+         */
+        RbpcCostStructureInference: {
+            /**
+             * Ai Sponsor
+             * @description AI sponsor
+             * @default Phổ Tuệ (AI API Credits: $7,610 USD / 201,218,238 VND)
+             */
+            ai_sponsor: string;
+            /**
+             * Ai Token Cost Is In Kind
+             * @description True if subsidized by in-kind AI credits
+             * @default true
+             */
+            ai_token_cost_is_in_kind: boolean;
+            /**
+             * Effective Take Rate
+             * @description Realized or contracted platform take rate
+             * @default 0.1
+             */
+            effective_take_rate: number;
+            /**
+             * Inferred Ai Token Cost Vnd
+             * @description Commercial AI token replacement cost
+             * @default 0
+             */
+            inferred_ai_token_cost_vnd: number;
+            /**
+             * Inferred Server Cost Vnd
+             * @description Commercial server replacement cost
+             * @default 0
+             */
+            inferred_server_cost_vnd: number;
+            /**
+             * Inferred Total Variable Cost Vnd
+             * @description Sum of inferred server and AI compute costs
+             * @default 0
+             */
+            inferred_total_variable_cost_vnd: number;
+            /**
+             * Net Contribution Margin Commercial Pct
+             * @description Commercial contribution margin percentage
+             * @default 0
+             */
+            net_contribution_margin_commercial_pct: number;
+            /**
+             * Net Contribution Margin Commercial Vnd
+             * @description Commercial contribution margin deducting replacement costs
+             * @default 0
+             */
+            net_contribution_margin_commercial_vnd: number;
+            /**
+             * Net Contribution Margin Sponsored Pct
+             * @description Cash contribution margin percentage
+             * @default 0
+             */
+            net_contribution_margin_sponsored_pct: number;
+            /**
+             * Net Contribution Margin Sponsored Vnd
+             * @description Cash contribution margin under sponsored runway
+             * @default 0
+             */
+            net_contribution_margin_sponsored_vnd: number;
+            /**
+             * Server Cost Is In Kind
+             * @description True if subsidized by in-kind corporate sponsor
+             * @default true
+             */
+            server_cost_is_in_kind: boolean;
+            /**
+             * Server Sponsor
+             * @description Hosting sponsor
+             * @default BNIX (Dedicated Cloud VPS, Value: 1,142,400 VND)
+             */
+            server_sponsor: string;
+        };
         /**
          * RbpcCreatorConsentUpdate
          * @description Editor request payload to update artisan consent state.
@@ -26925,6 +28438,69 @@ export interface components {
          */
         RbpcEpistemicCertainty: "high" | "medium" | "contested" | "insufficient_sources";
         /**
+         * RbpcEvidencePointerListOut
+         * @description List of evidence room pointers with metadata.
+         */
+        RbpcEvidencePointerListOut: {
+            /** Domains Covered */
+            domains_covered: string[];
+            /** Items */
+            items: components["schemas"]["RbpcEvidencePointerOut"][];
+            /** Total */
+            total: number;
+        };
+        /**
+         * RbpcEvidencePointerOut
+         * @description Versioned evidence pointer representation.
+         */
+        RbpcEvidencePointerOut: {
+            /** Created At */
+            created_at?: string | null;
+            /** Doc Ref */
+            doc_ref: string;
+            /** Domain */
+            domain: string;
+            /** Hash Sha256 */
+            hash_sha256: string;
+            /** Metrics Payload */
+            metrics_payload?: {
+                [key: string]: unknown;
+            };
+            /** Owner */
+            owner: string;
+            /** Pointer Id */
+            pointer_id: string;
+            /** Status */
+            status: string;
+            /** Summary */
+            summary: string;
+            /** Title */
+            title: string;
+            /** Updated At */
+            updated_at?: string | null;
+            /**
+             * Verified At
+             * Format: date-time
+             */
+            verified_at: string;
+            /** Version */
+            version: string;
+        };
+        /**
+         * RbpcEvidenceRoomExportOut
+         * @description Evidence room due diligence export.
+         */
+        RbpcEvidenceRoomExportOut: {
+            /** Content */
+            content: string;
+            /** Domains Covered */
+            domains_covered: string[];
+            /** Format */
+            format: string;
+            /** Total Pointers */
+            total_pointers: number;
+        };
+        /**
          * RbpcExperienceModerationIn
          * @description Staff moderation payload for experience listing.
          */
@@ -27051,6 +28627,54 @@ export interface components {
              * @description Experience title in Vietnamese.
              */
             title_vi: string;
+        };
+        /**
+         * RbpcGmvForecasts
+         * @description GMV and pipeline forecasts explicitly separated from cash actuals.
+         */
+        RbpcGmvForecasts: {
+            /**
+             * Annual Som Target Gmv Vnd
+             * @description SOM Year 1 Target GMV (570M VND)
+             * @default 570000000
+             */
+            annual_som_target_gmv_vnd: number;
+            /**
+             * Annual Som Target Revenue Vnd
+             * @description SOM Year 1 Target Net Revenue (57M VND)
+             * @default 57000000
+             */
+            annual_som_target_revenue_vnd: number;
+            /**
+             * Epistemic Notice
+             * @description Epistemic disclosure regarding forecasts
+             * @default Cash actuals require verified settlement records. Inquiries and pipeline forecasts are model estimates and contribute strictly 0 VND cash to recognized revenue.
+             */
+            epistemic_notice: string;
+            /**
+             * Forecast Realization Rate
+             * @description Ratio of realized gross to SOM target
+             * @default 0
+             */
+            forecast_realization_rate: number;
+            /**
+             * Pipeline Potential Gmv Forecast Vnd
+             * @description Pipeline potential GMV forecast
+             * @default 0
+             */
+            pipeline_potential_gmv_forecast_vnd: number;
+            /**
+             * Truth Tier
+             * @description Epistemic truth tier: strictly FORECAST
+             * @default FORECAST
+             */
+            truth_tier: string;
+            /**
+             * Unsettled Pipeline Inquiries Count
+             * @description Inquiries with zero settled cash
+             * @default 0
+             */
+            unsettled_pipeline_inquiries_count: number;
         };
         /**
          * RbpcImpactMetricsOut
@@ -27404,6 +29028,267 @@ export interface components {
             total_tax_vat_vnd: number;
         };
         /**
+         * RbpcLoiChecksumVerifyIn
+         * @description Payload to verify document text or bytes against stored SHA-256 agreement digest.
+         */
+        RbpcLoiChecksumVerifyIn: {
+            /**
+             * Document Content
+             * @description Raw document text content to hash and compare
+             */
+            document_content: string;
+        };
+        /**
+         * RbpcLoiChecksumVerifyOut
+         * @description Result of SHA-256 checksum comparison.
+         */
+        RbpcLoiChecksumVerifyOut: {
+            /** Computed Checksum */
+            computed_checksum: string;
+            /** Expected Checksum */
+            expected_checksum: string;
+            /** Is Match */
+            is_match: boolean;
+            /** Loi Id */
+            loi_id: string;
+        };
+        /**
+         * RbpcLoiExportOut
+         * @description Export package for pitch review due diligence.
+         */
+        RbpcLoiExportOut: {
+            /** Content */
+            content: string;
+            /** Exported At */
+            exported_at: string;
+            /** Format */
+            format: string;
+            /** Total Records */
+            total_records: number;
+        };
+        /**
+         * RbpcLoiRegisterIn
+         * @description Payload to register a new verified LOI agreement into the vault.
+         */
+        RbpcLoiRegisterIn: {
+            /** Agreement Checksum Sha256 */
+            agreement_checksum_sha256: string;
+            /**
+             * Category
+             * @description craft_guild, educational_institution, cultural_association, tourism_operator
+             */
+            category: string;
+            /** Commercial Terms */
+            commercial_terms?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Consent Type
+             * @description written_loi, bilateral_charter, signed_mou, framework_agreement
+             * @default written_loi
+             */
+            consent_type: string;
+            /** Contact Role */
+            contact_role?: string | null;
+            /**
+             * Dignity Charter Binding
+             * @default true
+             */
+            dignity_charter_binding: boolean;
+            /**
+             * Effective Date
+             * Format: date
+             */
+            effective_date: string;
+            /**
+             * Expiration Date
+             * Format: date
+             */
+            expiration_date: string;
+            /** Institution Type */
+            institution_type: string;
+            /** Lead Artisan Title */
+            lead_artisan_title?: string | null;
+            /**
+             * Loi Id
+             * @description Unique LOI reference e.g. LOI-HUE-BRONZE-001
+             */
+            loi_id: string;
+            /**
+             * Partner Id
+             * @description Partner entity ID e.g. PARTNER-BRONZE-001
+             */
+            partner_id: string;
+            /** Partner Name */
+            partner_name: string;
+            /** Partner Name En */
+            partner_name_en?: string | null;
+            /**
+             * Region
+             * @default Huế
+             */
+            region: string;
+            /** Scope Details */
+            scope_details?: {
+                [key: string]: unknown;
+            } | null;
+            /** Scope Of Partnership */
+            scope_of_partnership: string;
+            /** Slug */
+            slug: string;
+        };
+        /**
+         * RbpcLoiRevokeIn
+         * @description Payload to revoke an active partnership / LOI.
+         */
+        RbpcLoiRevokeIn: {
+            /**
+             * Reason
+             * @description Reason for agreement revocation
+             */
+            reason: string;
+        };
+        /**
+         * RbpcLoiVaultItemOut
+         * @description Detailed evidence record for Letter of Intent (LOI) Vault.
+         */
+        RbpcLoiVaultItemOut: {
+            /** Agreement Checksum Sha256 */
+            agreement_checksum_sha256: string;
+            /** Category */
+            category: string;
+            /** Commercial Terms */
+            commercial_terms?: {
+                [key: string]: unknown;
+            };
+            /** Consent Status */
+            consent_status: string;
+            /** Consent Type */
+            consent_type: string;
+            /** Contact Role */
+            contact_role?: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Dignity Charter Binding
+             * @default true
+             */
+            dignity_charter_binding: boolean;
+            /**
+             * Effective Date
+             * Format: date
+             */
+            effective_date: string;
+            /**
+             * Expiration Date
+             * Format: date
+             */
+            expiration_date: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Institution Type */
+            institution_type: string;
+            /** Is Currently Active */
+            is_currently_active: boolean;
+            /** Is Expired */
+            is_expired: boolean;
+            /** Is Verified */
+            is_verified: boolean;
+            /** Lead Artisan Title */
+            lead_artisan_title?: string | null;
+            /** Loi Id */
+            loi_id: string;
+            /** Partner Id */
+            partner_id: string;
+            /** Partner Name */
+            partner_name: string;
+            /** Partner Name En */
+            partner_name_en?: string | null;
+            /** Region */
+            region: string;
+            /** Revocation Reason */
+            revocation_reason?: string | null;
+            /** Revoked At */
+            revoked_at?: string | null;
+            /** Scope Details */
+            scope_details?: {
+                [key: string]: unknown;
+            };
+            /** Scope Of Partnership */
+            scope_of_partnership: string;
+            /** Slug */
+            slug: string;
+            /** Status */
+            status: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Verified At */
+            verified_at?: string | null;
+        };
+        /**
+         * RbpcLoiVaultListOut
+         * @description Vault evidence registry list with status aggregates.
+         */
+        RbpcLoiVaultListOut: {
+            /** Active Count */
+            active_count: number;
+            /** As Of Date */
+            as_of_date: string;
+            /** Expired Count */
+            expired_count: number;
+            /** Items */
+            items: components["schemas"]["RbpcLoiVaultItemOut"][];
+            /** Revoked Count */
+            revoked_count: number;
+            /** Total */
+            total: number;
+        };
+        /**
+         * RbpcNegativeAbuseVerification
+         * @description Auditable proof that unverified inquiries generate zero recognized revenue.
+         */
+        RbpcNegativeAbuseVerification: {
+            /**
+             * Is Compliant
+             * @description True if invariant holds with zero leakage
+             * @default true
+             */
+            is_compliant: boolean;
+            /**
+             * Rule
+             * @description Negative abuse invariant rule
+             * @default Partner inquiry creates 0 VND revenue without verified payment or settled transaction.
+             */
+            rule: string;
+            /**
+             * Unsettled Inquiries Cash Revenue Vnd
+             * @description Strictly 0.0 VND cash recognized
+             * @default 0
+             */
+            unsettled_inquiries_cash_revenue_vnd: number;
+            /**
+             * Unsettled Inquiries Count
+             * @description Count of inquiries with no settled payment
+             * @default 0
+             */
+            unsettled_inquiries_count: number;
+            /**
+             * Unsettled Inquiries Realized Gmv Vnd
+             * @description Strictly 0.0 VND realized GMV recognized
+             * @default 0
+             */
+            unsettled_inquiries_realized_gmv_vnd: number;
+        };
+        /**
          * RbpcObservedMetrics
          * @description Real, verified aggregate statistics observed in the database.
          */
@@ -27646,6 +29531,73 @@ export interface components {
             verify_by_artisan: boolean;
         };
         /**
+         * RbpcPartnerDiscoveryListOut
+         * @description Paginated list of active partners for public discovery.
+         */
+        RbpcPartnerDiscoveryListOut: {
+            /** As Of Date */
+            as_of_date: string;
+            /** Items */
+            items: components["schemas"]["RbpcPartnerDiscoveryOut"][];
+            /** Total */
+            total: number;
+        };
+        /**
+         * RbpcPartnerDiscoveryOut
+         * @description Public discovery summary for verified, active partner institutions.
+         */
+        RbpcPartnerDiscoveryOut: {
+            /** Category */
+            category: string;
+            /** Consent Type */
+            consent_type: string;
+            /** Contact Role */
+            contact_role?: string | null;
+            /**
+             * Dignity Charter Binding
+             * @default true
+             */
+            dignity_charter_binding: boolean;
+            /**
+             * Effective Date
+             * Format: date
+             */
+            effective_date: string;
+            /**
+             * Expiration Date
+             * Format: date
+             */
+            expiration_date: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Institution Type */
+            institution_type: string;
+            /**
+             * Is Active
+             * @default true
+             */
+            is_active: boolean;
+            /** Lead Artisan Title */
+            lead_artisan_title?: string | null;
+            /** Partner Id */
+            partner_id: string;
+            /** Partner Name */
+            partner_name: string;
+            /** Partner Name En */
+            partner_name_en?: string | null;
+            /** Region */
+            region: string;
+            /** Scope Of Partnership */
+            scope_of_partnership: string;
+            /** Slug */
+            slug: string;
+            /** Verified At */
+            verified_at?: string | null;
+        };
+        /**
          * RbpcPartnerExperienceCreateIn
          * @description Partner submission to create a cultural experience listing.
          */
@@ -27874,6 +29826,83 @@ export interface components {
          */
         RbpcPayoutStatus: "pending" | "approved" | "disbursed" | "withheld" | "cancelled";
         /**
+         * RbpcPitchClaimIn
+         * @description Input claim to be audited for pitch review.
+         */
+        RbpcPitchClaimIn: {
+            /** Claim Text */
+            claim_text: string;
+            /** Claimed Value */
+            claimed_value?: unknown | null;
+            /**
+             * Domain
+             * @default product
+             */
+            domain: string;
+            /** Evidence Pointer Id */
+            evidence_pointer_id?: string | null;
+            /**
+             * Is Quantitative
+             * @default true
+             */
+            is_quantitative: boolean;
+            /** Metric Key */
+            metric_key?: string | null;
+            /**
+             * Truth Tier
+             * @default OBSERVED
+             */
+            truth_tier: string | null;
+        };
+        /**
+         * RbpcPitchReviewIn
+         * @description Payload to evaluate and audit a pitch deck against evidence room.
+         */
+        RbpcPitchReviewIn: {
+            /** Claims */
+            claims: components["schemas"]["RbpcPitchClaimIn"][];
+            /**
+             * Deck Version
+             * @default 1.0.0
+             */
+            deck_version: string;
+            /** Pitch Deck Title */
+            pitch_deck_title: string;
+        };
+        /**
+         * RbpcPitchReviewOut
+         * @description Pitch review evaluation audit report.
+         */
+        RbpcPitchReviewOut: {
+            /** Audit Findings */
+            audit_findings?: {
+                [key: string]: unknown;
+            };
+            /** Audit Ref */
+            audit_ref: string;
+            /** Claims Payload */
+            claims_payload?: {
+                [key: string]: unknown;
+            }[];
+            /** Deck Version */
+            deck_version: string;
+            /** Pitch Deck Title */
+            pitch_deck_title: string;
+            /** Pitch Readiness */
+            pitch_readiness: string;
+            /**
+             * Reviewed At
+             * Format: date-time
+             */
+            reviewed_at: string;
+            /** Total Claims Audited */
+            total_claims_audited: number;
+            /** Ungrounded Claims Count */
+            ungrounded_claims_count: number;
+            /** Verified Claims Count */
+            verified_claims_count: number;
+        };
+        /**
          * RbpcProjectedMetrics
          * @description Estimated forward-looking commercial and economic impact hypotheses.
          */
@@ -27921,6 +29950,11 @@ export interface components {
              */
             reservation_id: string;
         };
+        /**
+         * RbpcRevenueStream
+         * @enum {string}
+         */
+        RbpcRevenueStream: "visitor_commerce" | "school_b2b";
         /**
          * RbpcReviewDisputeCreate
          * @description Partner or visitor filing a dispute against a published or pending review.
@@ -28112,6 +30146,11 @@ export interface components {
              */
             inquiry_id: string;
             /**
+             * @description Revenue stream category ('visitor_commerce' or 'school_b2b')
+             * @default visitor_commerce
+             */
+            revenue_stream: components["schemas"]["RbpcRevenueStream"] | null;
+            /**
              * Take Rate
              * @description Contracted platform take rate (e.g. 0.15 for 15%)
              * @default 0.15
@@ -28187,6 +30226,11 @@ export interface components {
             provider_id?: string | null;
             /** Refund Amount Vnd */
             refund_amount_vnd: number;
+            /**
+             * Revenue Stream
+             * @default visitor_commerce
+             */
+            revenue_stream: string;
             /** Settlement Ref */
             settlement_ref: string;
             status: components["schemas"]["RbpcSettlementStatus"];
@@ -28392,6 +30436,77 @@ export interface components {
             title_vi: string;
         };
         /**
+         * RbpcStreamEconomics
+         * @description Granular unit economics for an individual revenue stream.
+         */
+        RbpcStreamEconomics: {
+            /**
+             * Artisan Payout Vnd
+             * @description Artisan payout in VND
+             * @default 0
+             */
+            artisan_payout_vnd: number;
+            /**
+             * Average Order Value Vnd
+             * @description Average transaction order value
+             * @default 0
+             */
+            average_order_value_vnd: number;
+            /**
+             * Effective Take Rate
+             * @description Realized take rate for this stream
+             * @default 0.1
+             */
+            effective_take_rate: number;
+            /**
+             * Pipeline Forecast Gmv Vnd
+             * @description Pipeline potential GMV forecast in VND
+             * @default 0
+             */
+            pipeline_forecast_gmv_vnd: number;
+            /**
+             * Platform Fee Cash Vnd
+             * @description Cash platform fee collected in VND
+             * @default 0
+             */
+            platform_fee_cash_vnd: number;
+            /**
+             * Refund Amount Vnd
+             * @description Refund amount in VND
+             * @default 0
+             */
+            refund_amount_vnd: number;
+            /**
+             * Settled Gross Vnd
+             * @description Gross settled transaction volume in VND
+             * @default 0
+             */
+            settled_gross_vnd: number;
+            /**
+             * Stream
+             * @description Revenue stream key ('visitor_commerce' or 'school_b2b')
+             */
+            stream: string;
+            /**
+             * Tax Vat Vnd
+             * @description Tax and VAT in VND
+             * @default 0
+             */
+            tax_vat_vnd: number;
+            /**
+             * Transactions Count
+             * @description Count of settled transactions
+             * @default 0
+             */
+            transactions_count: number;
+            /**
+             * Unsettled Inquiries Count
+             * @description Unsettled pipeline inquiries in this stream
+             * @default 0
+             */
+            unsettled_inquiries_count: number;
+        };
+        /**
          * RbpcSupportType
          * @enum {string}
          */
@@ -28426,6 +30541,32 @@ export interface components {
              * @description Start time cue in seconds.
              */
             time_sec: number;
+        };
+        /**
+         * RbpcUnitEconomicsActualLedger
+         * @description Complete unit economics actual ledger report.
+         */
+        RbpcUnitEconomicsActualLedger: {
+            cash_actuals: components["schemas"]["RbpcCashActuals"];
+            cost_inference: components["schemas"]["RbpcCostStructureInference"];
+            /**
+             * Currency
+             * @description Accounting currency
+             * @default VND
+             */
+            currency: string;
+            /**
+             * Generated At
+             * Format: date-time
+             * @description Timestamp of report generation
+             */
+            generated_at: string;
+            gmv_forecasts: components["schemas"]["RbpcGmvForecasts"];
+            negative_abuse: components["schemas"]["RbpcNegativeAbuseVerification"];
+            /** Streams */
+            streams: {
+                [key: string]: components["schemas"]["RbpcStreamEconomics"];
+            };
         };
         /**
          * RbpcWorkshopSlotOut
@@ -31206,6 +33347,113 @@ export interface components {
             time_sec: number;
         };
         /**
+         * TruthFunnelDashboardOut
+         * @description Output schema for the Truth-Level Funnel Dashboard.
+         */
+        TruthFunnelDashboardOut: {
+            /** Anti Abuse Validation */
+            anti_abuse_validation: {
+                [key: string]: unknown;
+            };
+            /** Filter Range */
+            filter_range: {
+                [key: string]: string | null;
+            };
+            forecast: components["schemas"]["TruthTierForecastOut"];
+            /** Generated At */
+            generated_at: string;
+            hypothesis: components["schemas"]["TruthTierHypothesisOut"];
+            observed: components["schemas"]["TruthTierObservedOut"];
+        };
+        /**
+         * TruthStageMetricOut
+         * @description Output schema for an individual stage in the truth funnel.
+         */
+        TruthStageMetricOut: {
+            /** Conversion From Previous Pct */
+            conversion_from_previous_pct: number;
+            /** Conversion From Top Pct */
+            conversion_from_top_pct: number;
+            /** Count */
+            count: number;
+            /** Description */
+            description: string;
+            /** Display Name */
+            display_name: string;
+            /** Measurement Method */
+            measurement_method: string;
+            /** Stage */
+            stage: string;
+            /** Truth Tier */
+            truth_tier: string;
+        };
+        /**
+         * TruthTierForecastOut
+         * @description Output schema for the FORECAST truth tier.
+         */
+        TruthTierForecastOut: {
+            /** Definition */
+            definition: string;
+            /** Epistemic Disclaimer */
+            epistemic_disclaimer: string;
+            /** Negative Abuse Guardrail */
+            negative_abuse_guardrail: string;
+            /** Projected Annual Bookings */
+            projected_annual_bookings: number;
+            /** Projected Annual Gmv Vnd */
+            projected_annual_gmv_vnd: number;
+            /** Projected Artisan Retained Vnd */
+            projected_artisan_retained_vnd: number;
+            /** Projected Platform Net Revenue Vnd */
+            projected_platform_net_revenue_vnd: number;
+            /** Target Partner Workshops */
+            target_partner_workshops: number;
+            /** Target Period */
+            target_period: string;
+            /** Truth Tier */
+            truth_tier: string;
+        };
+        /**
+         * TruthTierHypothesisOut
+         * @description Output schema for the HYPOTHESIS truth tier.
+         */
+        TruthTierHypothesisOut: {
+            /** Benchmark Assumptions */
+            benchmark_assumptions: {
+                [key: string]: unknown;
+            };
+            /** Definition */
+            definition: string;
+            /** Epistemic Disclaimer */
+            epistemic_disclaimer: string;
+            /** Modeled Monthly Funnel */
+            modeled_monthly_funnel: {
+                [key: string]: unknown;
+            };
+            /** Truth Tier */
+            truth_tier: string;
+        };
+        /**
+         * TruthTierObservedOut
+         * @description Output schema for the OBSERVED truth tier.
+         */
+        TruthTierObservedOut: {
+            /** Definition */
+            definition: string;
+            /** Overall Conversion Pct */
+            overall_conversion_pct: number;
+            /** Quality Cohorts */
+            quality_cohorts: components["schemas"]["QualityCohortMetricOut"][];
+            /** Stages */
+            stages: components["schemas"]["TruthStageMetricOut"][];
+            /** Total Completed Experiences */
+            total_completed_experiences: number;
+            /** Total Funnel Visitors */
+            total_funnel_visitors: number;
+            /** Truth Tier */
+            truth_tier: string;
+        };
+        /**
          * UpdateMissionProgressRequest
          * @description Request to update mission progress.
          */
@@ -32358,6 +34606,46 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SessionStatsOut"];
+                };
+            };
+        };
+    };
+    get_truth_funnel_dashboard_api_v1_admin_analytics_truth_funnel_get: {
+        parameters: {
+            query?: {
+                /** @description Start date for filtering events and inquiries */
+                start_date?: string | null;
+                /** @description End date for filtering events and inquiries */
+                end_date?: string | null;
+                /** @description Cohort identifier (e.g. '2026-W44', 'pilot-cohort-1') */
+                cohort?: string | null;
+                /** @description Contact channel filter (email, phone, zalo) */
+                channel?: string | null;
+                /** @description Heritage experience UUID filter */
+                experience_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TruthFunnelDashboardOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -36670,7 +38958,9 @@ export interface operations {
     ingest_analytics_events_api_v1_analytics_events_post: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-Telemetry-Consent"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -46606,6 +48896,319 @@ export interface operations {
             };
         };
     };
+    activate_pilot_endpoint_api_v1_pilot_activate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PilotActivateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotActivationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_pilot_health_endpoint_api_v1_pilot_health_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotUsageHealthOut"];
+                };
+            };
+        };
+    };
+    list_invitations_endpoint_api_v1_pilot_invitations_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotInvitationOut"][];
+                };
+            };
+        };
+    };
+    create_invitation_endpoint_api_v1_pilot_invitations_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PilotInvitationCreateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotInvitationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    validate_invitation_endpoint_api_v1_pilot_invitations_validate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PilotValidateInvitationIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotInvitationValidationResult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_my_activation_endpoint_api_v1_pilot_my_activation_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotActivationOut"];
+                };
+            };
+        };
+    };
+    record_onboarding_step_endpoint_api_v1_pilot_onboarding_step_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PilotOnboardingStepIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotActivationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_support_requests_endpoint_api_v1_pilot_support_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotSupportRequestOut"][];
+                };
+            };
+        };
+    };
+    create_support_request_endpoint_api_v1_pilot_support_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PilotSupportRequestCreateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotSupportRequestOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reply_support_request_endpoint_api_v1_pilot_support__ticket_id__reply_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                ticket_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PilotSupportRequestReplyIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotSupportRequestOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    record_telemetry_endpoint_api_v1_pilot_telemetry_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PilotHealthTelemetryRecordIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotUsageHealthOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     complete_preview_session_api_v1_preview_complete_post: {
         parameters: {
             query?: never;
@@ -46712,6 +49315,203 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["GuestPreviewStartOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    calculate_pricing_estimate_api_v1_pricing_calculator_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PricingCalculatorIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PricingCalculatorOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_pricing_experiment_config_api_v1_pricing_config_get: {
+        parameters: {
+            query?: {
+                /** @description Experiment variant key (e.g. control, annual_flat, per_student_metered) */
+                variant?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PricingExperimentConfigOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_institutional_contract_api_v1_pricing_contracts_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PricingContractCreateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PricingContractOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    accept_and_sign_contract_api_v1_pricing_contracts__contract_id__accept_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                contract_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PricingContractSignAcceptIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PricingContractOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    record_pricing_interest_event_api_v1_pricing_events_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PricingExperimentEventCreateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PricingExperimentEventOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_pricing_metrics_summary_api_v1_pricing_metrics_summary_get: {
+        parameters: {
+            query?: {
+                experiment_key?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PricingExperimentMetricsSummaryOut"];
                 };
             };
             /** @description Validation Error */
@@ -47446,6 +50246,141 @@ export interface operations {
             };
         };
     };
+    register_loi_api_v1_rbpc_admin_loi_vault_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RbpcLoiRegisterIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcLoiVaultItemOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    export_loi_vault_api_v1_rbpc_admin_loi_vault_export_get: {
+        parameters: {
+            query?: {
+                /** @description Export format: 'markdown' or 'json' */
+                format?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcLoiExportOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    revoke_loi_api_v1_rbpc_admin_loi_vault__loi_id__revoke_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                loi_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RbpcLoiRevokeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcLoiVaultItemOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    verify_agreement_checksum_api_v1_rbpc_admin_loi_vault__loi_id__verify_checksum_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                loi_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RbpcLoiChecksumVerifyIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcLoiChecksumVerifyOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     admin_list_reviews_api_v1_rbpc_admin_reviews_get: {
         parameters: {
             query?: {
@@ -47748,6 +50683,103 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RbpcSettlementOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    export_evidence_room_api_v1_rbpc_evidence_room_export_get: {
+        parameters: {
+            query?: {
+                /** @description Export format: json or markdown */
+                format?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcEvidenceRoomExportOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_evidence_pointers_api_v1_rbpc_evidence_room_pointers_get: {
+        parameters: {
+            query?: {
+                /** @description Filter by domain: product, customer, market, finances, impact, legal, team */
+                domain?: string | null;
+                /** @description Filter by status: active_verified, archived, needs_review */
+                status?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcEvidencePointerListOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_evidence_pointer_api_v1_rbpc_evidence_room_pointers__pointer_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                pointer_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcEvidencePointerOut"];
                 };
             };
             /** @description Validation Error */
@@ -48089,6 +51121,105 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RbpcLedgerFinancialSummary"];
+                };
+            };
+        };
+    };
+    get_unit_economics_actual_ledger_api_v1_rbpc_ledger_unit_economics_get: {
+        parameters: {
+            query?: {
+                /** @description Optional stream filter: 'visitor_commerce' or 'school_b2b' */
+                stream?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcUnitEconomicsActualLedger"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_loi_vault_api_v1_rbpc_loi_vault_get: {
+        parameters: {
+            query?: {
+                /** @description Filter by agreement status (active, expired, revoked, pending_review) */
+                status?: string | null;
+                /** @description Filter by category */
+                category?: string | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcLoiVaultListOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_loi_vault_item_api_v1_rbpc_loi_vault__loi_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                loi_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcLoiVaultItemOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -48716,6 +51847,137 @@ export interface operations {
             };
         };
     };
+    list_active_partners_api_v1_rbpc_partners_get: {
+        parameters: {
+            query?: {
+                /** @description Filter by partner category (craft_guild, educational_institution, cultural_association, tourism_operator) */
+                category?: string | null;
+                /** @description Filter by region substring e.g. 'Huế' */
+                region?: string | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcPartnerDiscoveryListOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_active_partner_api_v1_rbpc_partners__identifier__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                identifier: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcPartnerDiscoveryOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_pitch_review_audit_api_v1_rbpc_pitch_review_audits__audit_ref__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                audit_ref: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcPitchReviewOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    evaluate_pitch_review_api_v1_rbpc_pitch_review_evaluate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RbpcPitchReviewIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RbpcPitchReviewOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     create_customer_review_api_v1_rbpc_reviews_post: {
         parameters: {
             query?: never;
@@ -48836,6 +52098,40 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RbpcStoryDetailOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_story_recommendations_endpoint_api_v1_rbpc_stories__slug__recommendations_get: {
+        parameters: {
+            query?: {
+                locale?: string;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */

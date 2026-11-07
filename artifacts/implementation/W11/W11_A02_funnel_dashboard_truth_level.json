@@ -1,0 +1,82 @@
+{
+  "ticket_id": "V5-T112",
+  "wave": "W11",
+  "slot": "A02",
+  "role": "W11-A02",
+  "priority": "P2",
+  "classification": "NEW_PRODUCT_FEATURE",
+  "title": "Funnel dashboard separated by truth level in frontend/src/app/admin/ and backend/routers/",
+  "status": "COMPLETED",
+  "verified_at": "2026-11-07T10:00:00Z",
+  "target_modules": [
+    "backend/services/truth_funnel.py",
+    "backend/routers/admin.py",
+    "backend/schemas.py",
+    "backend/apischemas/admin.py",
+    "frontend/src/app/admin/funnel/page.tsx",
+    "frontend/src/app/admin/funnel/FunnelDashboardClient.tsx",
+    "frontend/src/app/admin/funnel/page.test.tsx",
+    "frontend/src/app/admin/page.jsx",
+    "frontend/src/lib/api.ts",
+    "tests/v5/test_v5_t112.py"
+  ],
+  "implementation_summary": {
+    "goal": "Build conversion funnel dashboard separated strictly by epistemological truth level in frontend/src/app/admin/ and backend/routers/.",
+    "five_stage_funnel": {
+      "stage_1_visitor": "Unique eligible visitors landing on heritage pages tracked via AnalyticsEvent telemetry.",
+      "stage_2_source_read": "Engaged story readers interacting with verified historical evidence/sources >60s.",
+      "stage_3_inquiry": "Real customer booking inquiries submitted in rbpc_inquiries.",
+      "stage_4_confirm": "Partner/operator confirmed booking reservations in state confirmed or closed.",
+      "stage_5_completed": "Completed cultural experiences strictly verified by inquiries in closed state."
+    },
+    "truth_tier_system": {
+      "OBSERVED": "Real recorded events and transactions from PostgreSQL database (AnalyticsEvent and RbpcInquiry). Baseline empty DB strictly returns 0.",
+      "HYPOTHESIS": "Benchmark conversion hypotheses derived from Huế pilot field research and financial workbooks (DOC-RBPC-FIN-001 §3.3: 20% engagement, 15% inquiry, 75% accept, 88.89% complete).",
+      "FORECAST": "Forward commercial capacity targets (SOM Year 1: 1,100 bookings, 570M VND GMV, 5 workshops) strictly quarantined with epistemic disclaimers."
+    },
+    "negative_abuse_invariant": {
+      "rule": "Projected figures (e.g. 1,100 bookings or 570M VND GMV) never appear as completed bookings in the truth dashboard. Empty database displays 0 completed bookings, never fabricated pitch numbers.",
+      "enforcement": "backend/services/truth_funnel.py validate_anti_abuse_integrity() and calculate_truth_funnel() enforce strict isolation. Any attempt to pass forecast figures into observed actuals fails closed with ValueError."
+    },
+    "quality_cohorts": {
+      "dimensions": [
+        "Acquisition contact channel (Email, Phone, Zalo)",
+        "Heritage craft experience / workshop partner",
+        "Overall system baseline"
+      ],
+      "metrics": "Tracks stage counts, step-to-step conversion percentages, and verified source-grounding quality scores (100%)."
+    }
+  },
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/analytics/truth-funnel",
+      "response_model": "TruthFunnelDashboardOut",
+      "auth_required": true,
+      "roles_permitted": ["admin", "super_admin"],
+      "description": "5-stage conversion funnel partitioned into OBSERVED, HYPOTHESIS, and FORECAST truth tiers with quality cohorts and anti-abuse validation."
+    }
+  ],
+  "verification_results": {
+    "test_suite": "tests/v5/test_v5_t112.py",
+    "tests_total": 7,
+    "tests_passed": 7,
+    "tests_failed": 0,
+    "scenarios_covered": [
+      "Negative abuse: empty database renders strictly 0 for observed completed bookings and stages without pitch fabrication",
+      "Negative abuse: forecast injection attempt fails closed with ValueError",
+      "Real recorded events: tracks 5-stage progression (visitor -> source_read -> inquiry -> confirm -> completed)",
+      "Truth tier separation: isolates OBSERVED actuals, HYPOTHESIS benchmarks, and FORECAST projections",
+      "Quality cohorts: partitions actual events by contact channel and heritage experience",
+      "Role-based access control: rejects unauthenticated (401) and learner (403), permits admin (200)",
+      "Frontend contracts and testid element verification"
+    ],
+    "frontend_test_suite": "frontend/src/app/admin/funnel/page.test.tsx",
+    "frontend_tests_total": 3,
+    "frontend_tests_passed": 3,
+    "type_check": "PASSED (tsc --noEmit)",
+    "lint_check": "PASSED (eslint --max-warnings=0)",
+    "openapi_snapshot": "PASSED (byte-for-byte synced)",
+    "route_inventory": "PASSED (lint-inventory-drift.sh clean, 647 routes)"
+  }
+}

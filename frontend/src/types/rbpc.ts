@@ -515,6 +515,8 @@ export interface PartnerInboxItem {
   lastContactedAt?: IsoDateTimeString | null;
   createdAt: IsoDateTimeString;
   updatedAt: IsoDateTimeString;
+  isDemo?: boolean;
+  watermark?: string;
 }
 
 export interface PartnerFilterState {

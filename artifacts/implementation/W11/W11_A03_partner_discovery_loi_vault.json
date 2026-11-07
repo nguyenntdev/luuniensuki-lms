@@ -1,0 +1,74 @@
+{
+  "ticket_id": "V5-T113",
+  "wave": "W11",
+  "slot": "A03",
+  "role": "W11-A03",
+  "priority": "P2",
+  "classification": "NEW_PRODUCT_FEATURE",
+  "title": "Partner discovery and LOI vault in docs/rbpc/ and backend/routers/",
+  "status": "COMPLETED",
+  "verified_at": "2026-11-07T10:00:00Z",
+  "target_modules": [
+    "docs/rbpc/PARTNER_DISCOVERY_LOI_VAULT.md",
+    "backend/partner_loi_models.py",
+    "backend/apischemas/partner_loi.py",
+    "backend/services/partner_loi.py",
+    "backend/routers/partner_loi.py",
+    "migrations/versions/0089_rbpc_partner_discovery_loi_vault.py",
+    "tests/v5/test_v5_t113.py"
+  ],
+  "implementation_summary": {
+    "goal": "Establish partner discovery and Letter of Intent (LOI) vault in docs/rbpc/ and backend/routers/ with secure evidence register, consent, expiration dates, scope, and agreement checksums.",
+    "canonical_partners_registered": 8,
+    "breakdown": {
+      "active": 6,
+      "expired": 1,
+      "revoked": 1
+    },
+    "partner_categories": [
+      "craft_guild",
+      "educational_institution",
+      "cultural_association",
+      "tourism_operator"
+    ],
+    "cryptographic_checksum_provenance": {
+      "algorithm": "SHA-256",
+      "format": "64-character lowercase hexadecimal hash",
+      "anti_pii_guard": "Strictly prohibits raw biometric signatures, scanned citizen identity cards, personal phone numbers, or document data URIs/URLs in public repo and API payloads."
+    },
+    "negative_abuse_guardrail": {
+      "rule": "Revoked or expired partnerships are never displayed as active partners.",
+      "public_discovery_filter": "GET /api/v1/rbpc/partners strictly filters by status == 'active', consent_status in ('consented', 'verified_written_consent'), revoked_at is NULL, and expiration_date >= CURRENT_DATE.",
+      "fail_closed_direct_lookup": "GET /api/v1/rbpc/partners/{identifier} raises HTTP 404 NOT FOUND (RBPC_PARTNER_INACTIVE) if the partner agreement is expired or revoked.",
+      "immediate_revocation_exclusion": "Revoking an agreement via POST /api/v1/rbpc/admin/loi-vault/{loi_id}/revoke instantly drops the partner from active discovery."
+    },
+    "rbac_authorization": {
+      "public_access": "GET /api/v1/rbpc/partners, GET /api/v1/rbpc/partners/{identifier}, GET /api/v1/rbpc/loi-vault, GET /api/v1/rbpc/loi-vault/{loi_id}",
+      "staff_admin_only": "POST /api/v1/rbpc/admin/loi-vault, POST /api/v1/rbpc/admin/loi-vault/{loi_id}/revoke, POST /api/v1/rbpc/admin/loi-vault/{loi_id}/verify-checksum, GET /api/v1/rbpc/admin/loi-vault/export"
+    },
+    "export_facilities": {
+      "markdown_export": "Formatted table suitable for RBPC 2026 pitch review and diligence exhibits.",
+      "json_export": "Structured JSON payload with metadata and agreement checksums."
+    }
+  },
+  "verification_results": {
+    "test_suite": "tests/v5/test_v5_t113.py",
+    "tests_total": 9,
+    "tests_passed": 9,
+    "tests_failed": 0,
+    "tests": [
+      "test_v5_t113_canonical_register_integrity",
+      "test_v5_t113_public_partner_discovery_active_only",
+      "test_v5_t113_negative_abuse_expired_partner_excluded",
+      "test_v5_t113_negative_abuse_revoked_partner_excluded",
+      "test_v5_t113_revocation_lifecycle_and_immediate_exclusion",
+      "test_v5_t113_checksum_verification_and_anti_pii_guards",
+      "test_v5_t113_admin_role_enforcement_and_scope_security",
+      "test_v5_t113_vault_listing_and_counts",
+      "test_v5_t113_documentation_and_export_parity"
+    ],
+    "migration_check": "PASSED (0089_rbpc_partner_discovery_loi_vault, single head verified, additive-only)",
+    "route_inventory_check": "PASSED (660 routes synchronized, zero drift)",
+    "openapi_snapshot_check": "PASSED (schema matches snapshot)"
+  }
+}

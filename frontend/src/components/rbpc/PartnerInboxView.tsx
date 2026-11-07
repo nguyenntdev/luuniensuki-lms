@@ -80,6 +80,8 @@ export interface PartnerInboxViewProps {
   onUnmaskContact?: (inquiryId: string) => void;
   /** Additional container CSS class names */
   className?: string;
+  /** Explicit demo / preview mode flag */
+  isDemoMode?: boolean;
 }
 
 /**
@@ -200,6 +202,7 @@ export function PartnerInboxView({
   onSaveNotes,
   onUnmaskContact,
   className,
+  isDemoMode = false,
 }: PartnerInboxViewProps) {
   const copy = getRbpcCopy(locale);
 
@@ -827,6 +830,15 @@ export function PartnerInboxView({
                     <div className="space-y-1.5 flex-1 min-w-0">
                       {/* Top Row: Reference, Status Badge & Preferred Date */}
                       <div className="flex flex-wrap items-center gap-2">
+                        {(isDemoMode || item.isDemo) && (
+                          <span
+                            data-testid="inbox-item-demo-badge"
+                            className="rounded bg-amber-600 px-1.5 py-0.5 text-[10px] font-black tracking-wider text-white uppercase shrink-0"
+                          >
+                            DEMO DATA
+                          </span>
+                        )}
+
                         <span className="font-mono text-xs font-bold tracking-wider text-[var(--rbpc-primary)]">
                           {item.reference}
                         </span>
@@ -928,7 +940,16 @@ export function PartnerInboxView({
               {/* Detail Header */}
               <div className="flex items-start justify-between gap-3 pb-4 border-b border-[var(--rbpc-divider)]">
                 <div>
-                  <span className="font-mono text-xs font-bold tracking-widest text-[var(--rbpc-primary)]">
+                  {(isDemoMode || selectedInquiry.isDemo) && (
+                    <div
+                      data-testid="detail-demo-watermark"
+                      className="mb-2 inline-flex items-center gap-1.5 rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[10px] font-black text-amber-900 dark:text-amber-200 uppercase tracking-wider"
+                    >
+                      <span className="rounded bg-amber-600 px-1 py-0.2 text-[9px] text-white">DEMO DATA</span>
+                      <span>{locale === "vi" ? "Hồ sơ mô phỏng" : "Simulated Record"}</span>
+                    </div>
+                  )}
+                  <span className="font-mono text-xs font-bold tracking-widest text-[var(--rbpc-primary)] block">
                     {selectedInquiry.reference}
                   </span>
                   <h3 className="font-serif text-lg font-bold text-[var(--rbpc-ink)] leading-snug mt-0.5">

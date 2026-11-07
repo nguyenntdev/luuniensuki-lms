@@ -34,6 +34,7 @@ from sqlalchemy import (
     Text,
     UniqueConstraint,
     func,
+    text,
 )
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
@@ -230,6 +231,39 @@ class RbpcOralHistoryStatus(str, Enum):
     consented = "consented"
     revoked = "revoked"
     erased = "erased"
+
+
+class RbpcEvidenceDomain(str, Enum):
+    product = "product"
+    customer = "customer"
+    market = "market"
+    finances = "finances"
+    impact = "impact"
+    legal = "legal"
+    team = "team"
+
+
+class RbpcEvidencePointerStatus(str, Enum):
+    active_verified = "active_verified"
+    archived = "archived"
+    needs_review = "needs_review"
+
+
+class RbpcPitchClaimStatus(str, Enum):
+    verified_observed = "VERIFIED_OBSERVED"
+    verified_hypothesis = "VERIFIED_HYPOTHESIS"
+    verified_projection = "VERIFIED_PROJECTION"
+    ungrounded_flagged = "UNGROUNDED_FLAGGED"
+
+
+class RbpcPitchReadiness(str, Enum):
+    approved_for_pitch = "APPROVED_FOR_PITCH"
+    flagged_unready = "FLAGGED_UNREADY"
+
+
+class RbpcRevenueStream(str, Enum):
+    visitor_commerce = "visitor_commerce"
+    school_b2b = "school_b2b"
 
 
 def _validate_enum(enum_cls: type[Enum], key: str, val: Any) -> str:
@@ -1228,11 +1262,16 @@ class RbpcSettlementLedger(Base):
             "payout_status IN ('pending','approved','disbursed','withheld','cancelled')",
             name="ck_rbpc_settlement_payout_status",
         ),
+        CheckConstraint(
+            "revenue_stream IN ('visitor_commerce', 'school_b2b')",
+            name="ck_rbpc_settlement_revenue_stream",
+        ),
         Index("idx_rbpc_settlement_inquiry", "inquiry_id"),
         Index("idx_rbpc_settlement_provider", "provider_id"),
         Index("idx_rbpc_settlement_creator", "creator_id"),
         Index("idx_rbpc_settlement_status", "status"),
         Index("idx_rbpc_settlement_payout", "payout_status"),
+        Index("idx_rbpc_settlement_stream", "revenue_stream"),
         Index("idx_rbpc_settlement_created", "created_at"),
     )
 
@@ -1259,6 +1298,9 @@ class RbpcSettlementLedger(Base):
     # Financial Breakdowns (in VND)
     gross_amount_vnd: Mapped[float] = mapped_column(
         Numeric(14, 2), nullable=False, default=0.0
+    )
+    revenue_stream: Mapped[str] = mapped_column(
+        Text, nullable=False, default=RbpcRevenueStream.visitor_commerce.value, server_default=text("'visitor_commerce'")
     )
     take_rate: Mapped[float] = mapped_column(
         Numeric(5, 4), nullable=False, default=0.1500  # Default 15% platform contracted take rate
@@ -1320,6 +1362,10 @@ class RbpcSettlementLedger(Base):
     @validates("payout_status")
     def validate_payout_status(self, key: str, value: Any) -> str:
         return _validate_enum(RbpcPayoutStatus, key, value)
+
+    @validates("revenue_stream")
+    def validate_revenue_stream(self, key: str, value: Any) -> str:
+        return _validate_enum(RbpcRevenueStream, key, value)
 
 
 # --------------------------------------------------------------------------- #
@@ -1798,6 +1844,114 @@ class RbpcAudioTranscriptVersion(Base):
     recording: Mapped[RbpcOralHistoryRecording] = relationship(
         "RbpcOralHistoryRecording", back_populates="transcript_versions"
     )
+
+
+# --------------------------------------------------------------------------- #
+# Table 20: RBPC Startup Evidence Room Pointers (V5-T120 / W11-A10)
+# --------------------------------------------------------------------------- #
+class RbpcEvidencePointer(Base):
+    """Versioned evidence pointer across product, customer, market, finances, impact, legal, and team."""
+
+    __tablename__ = "rbpc_evidence_room_pointers"
+    __table_args__ = (
+        UniqueConstraint("pointer_id", name="uq_rbpc_evidence_pointer_id"),
+        Index("idx_rbpc_evid_domain", "domain"),
+        Index("idx_rbpc_evid_status", "status"),
+        Index("idx_rbpc_evid_verified", "verified_at"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    pointer_id: Mapped[str] = mapped_column(Text, nullable=False)
+    domain: Mapped[str] = mapped_column(Text, nullable=False)
+    title: Mapped[str] = mapped_column(Text, nullable=False)
+    doc_ref: Mapped[str] = mapped_column(Text, nullable=False)
+    version: Mapped[str] = mapped_column(Text, nullable=False, default="1.0")
+    status: Mapped[str] = mapped_column(
+        Text, nullable=False, default=RbpcEvidencePointerStatus.active_verified.value
+    )
+    hash_sha256: Mapped[str] = mapped_column(Text, nullable=False)
+    metrics_payload: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    summary: Mapped[str] = mapped_column(Text, nullable=False)
+    owner: Mapped[str] = mapped_column(Text, nullable=False)
+    verified_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
+    )
+
+    @validates("domain")
+    def validate_domain(self, key: str, value: Any) -> str:
+        return _validate_enum(RbpcEvidenceDomain, key, value)
+
+    @validates("status")
+    def validate_status(self, key: str, value: Any) -> str:
+        return _validate_enum(RbpcEvidencePointerStatus, key, value)
+
+
+# --------------------------------------------------------------------------- #
+# Table 21: RBPC Pitch Review Audit Records (V5-T120 / W11-A10)
+# --------------------------------------------------------------------------- #
+class RbpcPitchReview(Base):
+    """Immutable audit records for pitch review evaluations against evidence room."""
+
+    __tablename__ = "rbpc_pitch_reviews"
+    __table_args__ = (
+        UniqueConstraint("audit_ref", name="uq_rbpc_pitch_audit_ref"),
+        Index("idx_rbpc_pitch_readiness", "pitch_readiness"),
+        Index("idx_rbpc_pitch_reviewed_at", "reviewed_at"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    audit_ref: Mapped[str] = mapped_column(Text, nullable=False)
+    pitch_deck_title: Mapped[str] = mapped_column(Text, nullable=False)
+    deck_version: Mapped[str] = mapped_column(Text, nullable=False)
+    total_claims_audited: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    verified_claims_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    ungrounded_claims_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    pitch_readiness: Mapped[str] = mapped_column(
+        Text, nullable=False, default=RbpcPitchReadiness.flagged_unready.value
+    )
+    claims_payload: Mapped[list[dict]] = mapped_column(JSONB, nullable=False, default=list)
+    audit_findings: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    reviewed_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    reviewed_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
+    )
+
+    @validates("pitch_readiness")
+    def validate_pitch_readiness(self, key: str, value: Any) -> str:
+        return _validate_enum(RbpcPitchReadiness, key, value)
+
+
+# --------------------------------------------------------------------------- #
+# Table 22: RBPC Partner Discovery & LOI Vault (V5-T113 / W11-A03)
+# --------------------------------------------------------------------------- #
+from .partner_loi_models import (  # noqa: E402, F401
+    RbpcLoiConsentType,
+    RbpcPartnerCategory,
+    RbpcPartnerLoiStatus,
+    RbpcPartnerLoiVault,
+)
+
+
 
 
 

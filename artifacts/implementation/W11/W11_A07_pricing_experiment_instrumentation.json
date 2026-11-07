@@ -1,0 +1,85 @@
+{
+  "ticket_id": "V5-T117",
+  "wave": "W11",
+  "slot": "A07",
+  "role": "W11-A07",
+  "priority": "P2",
+  "classification": "NEW_PRODUCT_FEATURE",
+  "title": "Pricing experiment instrumentation in frontend/src/app/ and backend/routers/",
+  "status": "COMPLETED",
+  "verified_at": "2026-11-07T12:00:00Z",
+  "target_modules": [
+    "backend/pricing_models.py",
+    "backend/apischemas/pricing.py",
+    "backend/services/pricing.py",
+    "backend/routers/pricing.py",
+    "frontend/src/types/pricing.ts",
+    "frontend/src/app/pricing/page.tsx",
+    "migrations/versions/0085_pricing_experiment_instrumentation.py",
+    "tests/v5/test_v5_t117.py"
+  ],
+  "implementation_summary": {
+    "goal": "A/B pricing experiment instrumentation across frontend and backend routers with transparent tiers, explicit user consent, zero dark patterns, non-binding interactive calculator, and real institutional contract acceptance.",
+    "pricing_tiers": [
+      {
+        "key": "pilot",
+        "name_vi": "Gói Trường Học Thử Nghiệm",
+        "base_price_vnd": 0.0,
+        "billing_period": "per_semester"
+      },
+      {
+        "key": "standard_school",
+        "name_vi": "Gói Trường Chuẩn Hóa",
+        "base_price_vnd": 25000000.0,
+        "billing_period": "per_year"
+      },
+      {
+        "key": "district_enterprise",
+        "name_vi": "Gói Cụm Trường & Sở Giáo Dục",
+        "base_price_vnd": 75000000.0,
+        "billing_period": "per_year"
+      }
+    ],
+    "interactive_calculator": {
+      "inputs": ["student_count", "months_duration", "include_ai_tutor_credits", "include_vr360_interactive_lab", "include_teacher_training_pdu"],
+      "volume_discounts": "10% at >=1000 students, 15% at >=2000 students",
+      "non_binding_guarantee": "is_binding=False and revenue_recognized_vnd=0.0 on all calculator quotes"
+    },
+    "consent_and_telemetry": {
+      "policy_version": "2026.1-pricing",
+      "opt_in_rule": "Recording telemetry requires has_experiment_consent=True; opt-out requests are strictly honored without penalty (HTTP 400 with CONSENT_REQUIRED)",
+      "zero_dark_pattern": "No forced renewals, no auto-charges, full transparency notices displayed on all tiers"
+    },
+    "contract_acceptance": {
+      "draft_creation": "Authenticated school reps create pending_signature contracts (/api/v1/pricing/contracts)",
+      "execution": "Dual-attribution signing with legal signatory verification and SHA-256 cryptographic proof (/api/v1/pricing/contracts/{id}/accept)",
+      "double_sign_protection": "Executed contracts cannot be re-signed (fails closed with HTTP 400)"
+    },
+    "negative_abuse_guardrail": {
+      "rule": "Merely clicking on a pricing tier or calculator does NOT count as a paying customer or revenue.",
+      "enforcement": [
+        "PricingExperimentEvent tier_view, calculator_interaction, and quote_inquiry events strictly enforce is_paying_customer=False and revenue_impact_vnd=0.0",
+        "Direct telemetry submission of contract_accepted via /events is strictly rejected (HTTP 400 DIRECT_CONTRACT_ACCEPTED_PROHIBITED)",
+        "Summary metrics (/api/v1/pricing/metrics/summary) only accumulate paying customers and recognized revenue from signed_and_executed contracts with cryptographic signatures"
+      ]
+    }
+  },
+  "verification_results": {
+    "test_suite": "tests/v5/test_v5_t117.py",
+    "tests_total": 6,
+    "tests_passed": 6,
+    "tests_failed": 0,
+    "tests": [
+      "test_pricing_config_transparency_and_variants",
+      "test_pricing_calculator_estimates_and_zero_revenue_invariant",
+      "test_pricing_telemetry_with_consent_lifecycle",
+      "test_contract_drafting_and_cryptographic_execution",
+      "test_negative_abuse_invariant_clicks_never_count_as_revenue",
+      "test_contract_validation_and_not_found_guards"
+    ],
+    "frontend_verification": {
+      "type_check": "tsc --noEmit (0 errors)",
+      "lint": "eslint . --max-warnings=0 (0 warnings)"
+    }
+  }
+}

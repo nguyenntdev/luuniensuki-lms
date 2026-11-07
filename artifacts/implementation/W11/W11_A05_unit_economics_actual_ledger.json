@@ -1,0 +1,87 @@
+{
+  "ticket_id": "V5-T115",
+  "wave": "W11",
+  "slot": "A05",
+  "role": "W11-A05",
+  "priority": "P2",
+  "classification": "NEW_PRODUCT_FEATURE",
+  "title": "Unit economics actual ledger in docs/rbpc/FINANCIAL_ASSUMPTIONS.md and backend/routers/",
+  "status": "COMPLETED",
+  "verified_at": "2026-11-07T12:00:00Z",
+  "target_modules": [
+    "docs/rbpc/FINANCIAL_ASSUMPTIONS.md",
+    "backend/services/rbpc_unit_economics.py",
+    "backend/apischemas/rbpc.py",
+    "backend/routers/rbpc.py",
+    "migrations/versions/0085_rbpc_unit_economics_actual_ledger.py",
+    "tests/v5/test_v5_t115.py"
+  ],
+  "implementation_summary": {
+    "goal": "Unit economics actual ledger with strict separation between cash actuals and GMV forecasts, cost structure inference (server hosting, AI tokens, take rate), and school B2B separated from visitor cultural commerce.",
+    "core_architecture": {
+      "service": "backend/services/rbpc_unit_economics.py (compute_unit_economics_ledger)",
+      "schemas": [
+        "RbpcCashActuals",
+        "RbpcGmvForecasts",
+        "RbpcCostStructureInference",
+        "RbpcStreamEconomics",
+        "RbpcNegativeAbuseVerification",
+        "RbpcUnitEconomicsActualLedger"
+      ],
+      "endpoint": "GET /api/v1/rbpc/ledger/unit-economics"
+    },
+    "cash_actuals_vs_gmv_forecasts": {
+      "cash_actuals": "Derived strictly from rbpc_settlement_ledger where status IN ('approved', 'settled'). Tracks realized gross, collected cash platform fees, remitted taxes, and net artisan payouts.",
+      "gmv_forecasts": "Tallies unsettled pipeline inquiries and bottom-up SOM Year 1 targets (570M VND GMV, 57M VND Net Revenue). Strictly tagged with truth_tier='FORECAST' and epistemic notices."
+    },
+    "cost_structure_inference": {
+      "server_hosting": "BNIX corporate in-kind compute sponsorship (Dedicated Cloud VPS, 4 vCPU, 8GB RAM, 100GB NVMe, 1,142,400 VND/yr). Shadow commercial replacement rate: 95,200 VND/month.",
+      "ai_tokens": "Phổ Tuệ corporate in-kind AI compute credits ($7,610 USD / 201,218,238 VND). Commercial replacement rate: ~270 VND per inquiry (6 questions @ 1,500 context tokens with Gemini 3.8 Flash Tiered).",
+      "take_rate": "10.0% standard performance commission (15.0% maximum ceiling; 0 VND fixed overhead).",
+      "dual_margins": {
+        "sponsored_runway": "100.0% cash contribution margin under subsidized infrastructure.",
+        "commercial_shadow": "Deducts commercial replacement server and AI token costs to measure baseline self-sufficiency (break-even at 3 bookings/month across Huế)."
+      }
+    },
+    "revenue_stream_separation": {
+      "streams": ["visitor_commerce", "school_b2b"],
+      "visitor_commerce": "Consumer FIT and cultural traveler bookings for participatory workshops (Phường Đúc, Pháp Lam, Thanh Tiên; blended 516,667 VND).",
+      "school_b2b": "Institutional secondary school heritage cohorts, curriculum modules, and accredited micro-credentials (average ~5,000,000 VND).",
+      "query_filter": "Supports optional ?stream=school_b2b or ?stream=visitor_commerce query filtering."
+    },
+    "negative_abuse_invariant": {
+      "rule": "Partner inquiry creates 0 VND revenue without verified payment or settled transaction.",
+      "enforcement": "Inquiries in any status ('new', 'contacted', 'confirmed', 'completed') contribute exactly 0.0 VND cash revenue and 0.0 VND realized GMV. Verified and exposed via negative_abuse block."
+    }
+  },
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/ledger/unit-economics",
+      "description": "Aggregate verified unit economics actual ledger report with cash actuals, cost inferences, stream segmentation, and negative abuse audit block."
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/settlements",
+      "description": "Create verified settlement record supporting optional revenue_stream parameter ('visitor_commerce' or 'school_b2b')."
+    }
+  ],
+  "verification_results": {
+    "test_suite": "tests/v5/test_v5_t115.py",
+    "tests_total": 6,
+    "tests_passed": 6,
+    "tests_failed": 0,
+    "tests": [
+      "test_negative_abuse_partner_inquiry_produces_zero_revenue_without_settlement",
+      "test_verified_settlement_produces_cash_actuals_after_compliance",
+      "test_cost_structure_inference_server_and_ai_tokens",
+      "test_stream_separation_visitor_commerce_vs_school_b2b",
+      "test_multi_tenant_isolation_and_guest_forbidden",
+      "test_documentation_parity_financial_assumptions"
+    ],
+    "regression_suite": "tests/v5/test_v5_t108.py (6/6 passed)",
+    "openapi_snapshot": "PASSED (byte-for-byte synced)",
+    "route_inventory": "PASSED (660 routes synced without drift)",
+    "migration_safety": "PASSED (Single head verified, additive only, 0 destructive ops)"
+  }
+}

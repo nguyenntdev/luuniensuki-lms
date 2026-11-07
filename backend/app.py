@@ -281,6 +281,9 @@ def create_app() -> FastAPI:
     from .routers import research_factory as research_factory_router
     from .routers import fsrs as fsrs_router
     from .routers import teacher_onboarding as teacher_onboarding_router
+    from .routers import pilot_onboarding as pilot_onboarding_router
+    from .routers import pricing as pricing_router
+    from .routers import partner_loi as partner_loi_router
 
     app.include_router(auth_router.router)
     app.include_router(users_router.router)
@@ -301,6 +304,7 @@ def create_app() -> FastAPI:
     app.include_router(history_collections_router.router)
     app.include_router(heritage_router.router)
     app.include_router(rbpc_router.router)
+    app.include_router(partner_loi_router.router)
     app.include_router(imperial_router.router)
     app.include_router(progress_router.router)
     app.include_router(history_inquiry_router.router)
@@ -308,5 +312,7 @@ def create_app() -> FastAPI:
     app.include_router(offline_router.router)
     app.include_router(research_factory_router.router)
     app.include_router(teacher_onboarding_router.router)
+    app.include_router(pilot_onboarding_router.router)
+    app.include_router(pricing_router.router)
 
     return app

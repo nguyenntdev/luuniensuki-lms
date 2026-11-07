@@ -1,0 +1,54 @@
+{
+  "ticket_id": "V5-T118",
+  "wave": "W11",
+  "slot": "A08",
+  "role": "W11-A08",
+  "priority": "P2",
+  "classification": "NEW_PRODUCT_FEATURE",
+  "title": "Market claims evidence register in docs/rbpc/BUSINESS_PLAN_DRAFT.md and docs/rbpc/",
+  "status": "COMPLETED",
+  "verified_at": "2026-11-05T15:30:00Z",
+  "target_modules": [
+    "docs/rbpc/BUSINESS_PLAN_DRAFT.md",
+    "docs/rbpc/MARKET_CLAIMS_EVIDENCE_REGISTER.md",
+    "backend/services/rbpc_market_claims.py",
+    "tests/v5/test_v5_t118.py"
+  ],
+  "implementation_summary": {
+    "goal": "Establish a market claims evidence register categorizing every market claim with dates, methodology, sample size, and truth tier (OBSERVED / HYPOTHESIS / FORECAST), with export facilities for pitch reviews.",
+    "truth_tier_system": {
+      "OBSERVED": "Factually verified operational actual, executed contract, or empirical government statistic.",
+      "HYPOTHESIS": "Model assumption, user survey finding, or tested usability hypothesis pending longitudinal proof.",
+      "FORECAST": "Forward-looking market sizing (TAM/SAM/SOM) or financial projection for business planning."
+    },
+    "claims_registered": 15,
+    "breakdown": {
+      "OBSERVED": 6,
+      "HYPOTHESIS": 5,
+      "FORECAST": 3,
+      "OPERATIONAL_KPIS": 4
+    },
+    "negative_abuse_guardrail": {
+      "rule": "Unverified external benchmarks or TAM/SAM/SOM forward projections cannot be displayed as actual LƯU NIÊN operational KPIs. Operational KPIs must be strictly OBSERVED actuals.",
+      "enforcement": "MarketClaimEvidence.validate_integrity() and MarketClaimsEvidenceRegister.validate_claim_against_operational_kpi() fail closed with ValueError if any non-OBSERVED or market sizing claim is marked as operational KPI."
+    },
+    "pitch_review_export": {
+      "json_export": "Structured JSON containing metadata, summary counts, and full claim details.",
+      "markdown_export": "Formatted GitHub-flavored Markdown table suitable for pitch decks and investor due diligence."
+    }
+  },
+  "verification_results": {
+    "test_suite": "tests/v5/test_v5_t118.py",
+    "tests_total": 6,
+    "tests_passed": 6,
+    "tests_failed": 0,
+    "tests": [
+      "test_v5_t118_register_integrity_and_truth_tier_coverage",
+      "test_v5_t118_truth_tier_filtering_and_counts",
+      "test_v5_t118_negative_abuse_tam_or_forecast_cannot_be_operational_kpi",
+      "test_v5_t118_negative_abuse_all_registered_operational_kpis_are_observed",
+      "test_v5_t118_export_utilities_json_and_markdown",
+      "test_v5_t118_documentation_files_parity"
+    ]
+  }
+}

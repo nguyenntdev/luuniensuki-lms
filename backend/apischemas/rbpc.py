@@ -85,6 +85,11 @@ class RbpcPayoutStatus(str, Enum):
     cancelled = "cancelled"
 
 
+class RbpcRevenueStream(str, Enum):
+    visitor_commerce = "visitor_commerce"
+    school_b2b = "school_b2b"
+
+
 class RbpcReviewStatus(str, Enum):
     pending_moderation = "pending_moderation"
     published = "published"
@@ -964,6 +969,10 @@ class RbpcSettlementCreate(BaseModel):
 
     inquiry_id: UUID = Field(..., description="ID of the confirmed inquiry")
     gross_amount_vnd: float = Field(..., ge=0.0, description="Gross transacted amount in VND")
+    revenue_stream: Optional[RbpcRevenueStream] = Field(
+        default=RbpcRevenueStream.visitor_commerce,
+        description="Revenue stream category ('visitor_commerce' or 'school_b2b')",
+    )
     take_rate: Optional[float] = Field(
         default=0.1500,
         ge=0.0,
@@ -1011,6 +1020,7 @@ class RbpcSettlementOut(BaseModel):
     provider_id: Optional[UUID] = None
     creator_id: Optional[UUID] = None
     gross_amount_vnd: float
+    revenue_stream: str = "visitor_commerce"
     take_rate: float
     platform_fee_vnd: float
     tax_vat_vnd: float
@@ -1047,6 +1057,96 @@ class RbpcLedgerFinancialSummary(BaseModel):
     approved_settlements_count: int = Field(default=0, description="Number of compliance-approved settlements")
     pending_settlements_count: int = Field(default=0, description="Settlements awaiting compliance")
     contracted_take_rate_avg: float = Field(default=0.15, description="Weighted or average contracted take rate")
+
+
+# --------------------------------------------------------------------------- #
+# Unit Economics Actual Ledger Schemas (V5-T115 / W11-A05)
+# --------------------------------------------------------------------------- #
+class RbpcCashActuals(BaseModel):
+    """Realized cash actuals strictly aggregated from approved/settled transactions."""
+
+    total_settled_gross_vnd: float = Field(default=0.0, description="Gross transacted amount settled in VND")
+    total_platform_fee_cash_vnd: float = Field(default=0.0, description="Actual cash platform fees collected")
+    total_artisan_payout_vnd: float = Field(default=0.0, description="Cash allocated/disbursed to artisans")
+    total_tax_vat_vnd: float = Field(default=0.0, description="Taxes and VAT remitted/collected")
+    total_refunds_vnd: float = Field(default=0.0, description="Total cash refunds processed")
+    net_cash_revenue_vnd: float = Field(default=0.0, description="Net cash platform revenue after refunds")
+    approved_settlements_count: int = Field(default=0, description="Number of compliance-approved settlements")
+    settled_settlements_count: int = Field(default=0, description="Number of fully settled/disbursed transactions")
+    pending_settlements_count: int = Field(default=0, description="Settlements awaiting compliance review")
+
+
+class RbpcGmvForecasts(BaseModel):
+    """GMV and pipeline forecasts explicitly separated from cash actuals."""
+
+    unsettled_pipeline_inquiries_count: int = Field(default=0, description="Inquiries with zero settled cash")
+    pipeline_potential_gmv_forecast_vnd: float = Field(default=0.0, description="Pipeline potential GMV forecast")
+    annual_som_target_gmv_vnd: float = Field(default=570000000.0, description="SOM Year 1 Target GMV (570M VND)")
+    annual_som_target_revenue_vnd: float = Field(default=57000000.0, description="SOM Year 1 Target Net Revenue (57M VND)")
+    forecast_realization_rate: float = Field(default=0.0, description="Ratio of realized gross to SOM target")
+    truth_tier: str = Field(default="FORECAST", description="Epistemic truth tier: strictly FORECAST")
+    epistemic_notice: str = Field(
+        default="Cash actuals require verified settlement records. Inquiries and pipeline forecasts are model estimates and contribute strictly 0 VND cash to recognized revenue.",
+        description="Epistemic disclosure regarding forecasts",
+    )
+
+
+class RbpcCostStructureInference(BaseModel):
+    """Inferred cost structure covering server hosting, AI tokens, and take rates."""
+
+    inferred_server_cost_vnd: float = Field(default=0.0, description="Commercial server replacement cost")
+    server_cost_is_in_kind: bool = Field(default=True, description="True if subsidized by in-kind corporate sponsor")
+    server_sponsor: str = Field(default="BNIX (Dedicated Cloud VPS, Value: 1,142,400 VND)", description="Hosting sponsor")
+    inferred_ai_token_cost_vnd: float = Field(default=0.0, description="Commercial AI token replacement cost")
+    ai_token_cost_is_in_kind: bool = Field(default=True, description="True if subsidized by in-kind AI credits")
+    ai_sponsor: str = Field(default="Phổ Tuệ (AI API Credits: $7,610 USD / 201,218,238 VND)", description="AI sponsor")
+    effective_take_rate: float = Field(default=0.1000, description="Realized or contracted platform take rate")
+    inferred_total_variable_cost_vnd: float = Field(default=0.0, description="Sum of inferred server and AI compute costs")
+    net_contribution_margin_sponsored_vnd: float = Field(default=0.0, description="Cash contribution margin under sponsored runway")
+    net_contribution_margin_sponsored_pct: float = Field(default=0.0, description="Cash contribution margin percentage")
+    net_contribution_margin_commercial_vnd: float = Field(default=0.0, description="Commercial contribution margin deducting replacement costs")
+    net_contribution_margin_commercial_pct: float = Field(default=0.0, description="Commercial contribution margin percentage")
+
+
+class RbpcStreamEconomics(BaseModel):
+    """Granular unit economics for an individual revenue stream."""
+
+    stream: str = Field(..., description="Revenue stream key ('visitor_commerce' or 'school_b2b')")
+    settled_gross_vnd: float = Field(default=0.0, description="Gross settled transaction volume in VND")
+    platform_fee_cash_vnd: float = Field(default=0.0, description="Cash platform fee collected in VND")
+    artisan_payout_vnd: float = Field(default=0.0, description="Artisan payout in VND")
+    tax_vat_vnd: float = Field(default=0.0, description="Tax and VAT in VND")
+    refund_amount_vnd: float = Field(default=0.0, description="Refund amount in VND")
+    transactions_count: int = Field(default=0, description="Count of settled transactions")
+    average_order_value_vnd: float = Field(default=0.0, description="Average transaction order value")
+    effective_take_rate: float = Field(default=0.1000, description="Realized take rate for this stream")
+    unsettled_inquiries_count: int = Field(default=0, description="Unsettled pipeline inquiries in this stream")
+    pipeline_forecast_gmv_vnd: float = Field(default=0.0, description="Pipeline potential GMV forecast in VND")
+
+
+class RbpcNegativeAbuseVerification(BaseModel):
+    """Auditable proof that unverified inquiries generate zero recognized revenue."""
+
+    unsettled_inquiries_count: int = Field(default=0, description="Count of inquiries with no settled payment")
+    unsettled_inquiries_cash_revenue_vnd: float = Field(default=0.0, description="Strictly 0.0 VND cash recognized")
+    unsettled_inquiries_realized_gmv_vnd: float = Field(default=0.0, description="Strictly 0.0 VND realized GMV recognized")
+    rule: str = Field(
+        default="Partner inquiry creates 0 VND revenue without verified payment or settled transaction.",
+        description="Negative abuse invariant rule",
+    )
+    is_compliant: bool = Field(default=True, description="True if invariant holds with zero leakage")
+
+
+class RbpcUnitEconomicsActualLedger(BaseModel):
+    """Complete unit economics actual ledger report."""
+
+    generated_at: datetime = Field(..., description="Timestamp of report generation")
+    currency: str = Field(default="VND", description="Accounting currency")
+    cash_actuals: RbpcCashActuals
+    gmv_forecasts: RbpcGmvForecasts
+    cost_inference: RbpcCostStructureInference
+    streams: dict[str, RbpcStreamEconomics]
+    negative_abuse: RbpcNegativeAbuseVerification
 
 
 # --------------------------------------------------------------------------- #
@@ -1413,6 +1513,97 @@ class RbpcOralHistoryRevokeIn(BaseModel):
         default=False,
         description="Whether to scrub media references and text under right-to-erasure.",
     )
+
+
+# --------------------------------------------------------------------------- #
+# Startup Evidence Room & Pitch Review Schemas (V5-T120 / W11-A10)
+# --------------------------------------------------------------------------- #
+class RbpcEvidencePointerOut(BaseModel):
+    """Versioned evidence pointer representation."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    pointer_id: str
+    domain: str
+    title: str
+    doc_ref: str
+    version: str
+    status: str
+    hash_sha256: str
+    metrics_payload: dict[str, Any] = Field(default_factory=dict)
+    summary: str
+    owner: str
+    verified_at: datetime
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+
+class RbpcEvidencePointerListOut(BaseModel):
+    """List of evidence room pointers with metadata."""
+
+    items: list[RbpcEvidencePointerOut]
+    total: int
+    domains_covered: list[str]
+
+
+class RbpcPitchClaimIn(BaseModel):
+    """Input claim to be audited for pitch review."""
+
+    claim_text: str = Field(..., min_length=3, max_length=1000)
+    domain: str = Field(default="product")
+    evidence_pointer_id: Optional[str] = None
+    metric_key: Optional[str] = None
+    claimed_value: Optional[Any] = None
+    is_quantitative: bool = True
+    truth_tier: Optional[str] = Field(default="OBSERVED")
+
+
+class RbpcPitchReviewIn(BaseModel):
+    """Payload to evaluate and audit a pitch deck against evidence room."""
+
+    pitch_deck_title: str = Field(..., min_length=2, max_length=255)
+    deck_version: str = Field(default="1.0.0", max_length=50)
+    claims: list[RbpcPitchClaimIn] = Field(..., min_length=1)
+
+
+class RbpcPitchClaimFindingOut(BaseModel):
+    """Individual claim audit finding."""
+
+    claim_text: str
+    domain: str
+    evidence_pointer_id: Optional[str]
+    status: str
+    is_grounded: bool
+    discrepancy_notes: Optional[str] = None
+    verified_metric_value: Optional[Any] = None
+    claimed_metric_value: Optional[Any] = None
+
+
+class RbpcPitchReviewOut(BaseModel):
+    """Pitch review evaluation audit report."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    audit_ref: str
+    pitch_deck_title: str
+    deck_version: str
+    total_claims_audited: int
+    verified_claims_count: int
+    ungrounded_claims_count: int
+    pitch_readiness: str
+    claims_payload: list[dict[str, Any]] = Field(default_factory=list)
+    audit_findings: dict[str, Any] = Field(default_factory=dict)
+    reviewed_at: datetime
+
+
+class RbpcEvidenceRoomExportOut(BaseModel):
+    """Evidence room due diligence export."""
+
+    format: str
+    content: str
+    total_pointers: int
+    domains_covered: list[str]
+
 
 
 

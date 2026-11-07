@@ -1,0 +1,144 @@
+{
+  "ticket_id": "V5-T116",
+  "wave": "W11",
+  "slot": "A06",
+  "role": "W11-A06",
+  "priority": "P2",
+  "classification": "NEW_PRODUCT_FEATURE",
+  "title": "Pilot onboarding portal in frontend/src/app/ and backend/routers/",
+  "status": "COMPLETED",
+  "verified_at": "2026-11-07T12:00:00Z",
+  "target_modules": [
+    "backend/pilot_models.py",
+    "backend/apischemas/pilot_onboarding.py",
+    "backend/services/pilot_onboarding.py",
+    "backend/routers/pilot_onboarding.py",
+    "migrations/versions/0086_pilot_onboarding_portal.py",
+    "frontend/src/app/pilot/onboarding/page.tsx",
+    "frontend/src/app/pilot/onboarding/page.test.tsx",
+    "tests/v5/test_v5_t116.py"
+  ],
+  "implementation_summary": {
+    "invitation_system": {
+      "security": "Secret token (ln_pilot_*) hashed with SHA-256 (token_hash) for storage and lookup, preventing token disclosure through database exposure.",
+      "role_guard": "Only Admin/Staff can generate pilot invitations (POST /api/v1/pilot/invitations). Regular learners/guests receive HTTP 403.",
+      "quotas": "Enforces max_uses per invitation and auto-transitions status to 'exhausted' upon full redemption.",
+      "expiration": "Configurable expiration timestamp (expires_at) blocking expired invitations from redemption."
+    },
+    "guided_activation": {
+      "compliance_gate": "Requires explicit confirmation (compliance_accepted=True) of pilot research ethics and student data privacy (Decree 13/2023/ND-CP).",
+      "role_promotion": "Automatically sets user.is_school_verified=True and upgrades role to UserRole.teacher for school_teacher invitations.",
+      "step_progression": "Interactive checklist tracking completion across 7 structured onboarding milestones (welcome, curriculum alignment, lesson wizard, printable kit, roster setup, rubric practice, and completion)."
+    },
+    "usage_health_telemetry": {
+      "health_scoring": "Dynamic health score (0-100) calculated from participant login count and meaningful telemetry interaction actions.",
+      "risk_status": "Automatically flags status as 'healthy' or 'attention_needed' to enable proactive pedagogical and technical interventions."
+    },
+    "support_workflow": {
+      "ticket_codes": "Generates unique human-readable ticket codes (PILOT-REQ-XXXX) with priority and category classifications.",
+      "tenant_isolation": "Participants can only access their own support tickets; staff can view and reply to all active pilot tickets."
+    },
+    "negative_abuse_invariants": {
+      "unauthorized_access": "User without invitation token or with forged/invalid token CANNOT join private school/partner trial (HTTP 403).",
+      "revoked_or_expired": "User attempting to activate revoked, expired, or exhausted token is strictly rejected (HTTP 403).",
+      "unactivated_action_gate": "Non-activated user attempting to record onboarding steps or fetch pilot health receives HTTP 404.",
+      "non_staff_invitation_generation": "Learners or non-staff attempting to generate invitations receive HTTP 403."
+    }
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/v1/pilot/invitations",
+      "description": "Staff generates a secure pilot invitation token"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pilot/invitations",
+      "description": "Staff lists all pilot invitations"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pilot/invitations/validate",
+      "description": "Validate pilot invitation token status before redemption"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pilot/activate",
+      "description": "Authenticated user redeems invitation token and activates pilot trial"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pilot/my-activation",
+      "description": "Retrieve current user's active pilot trial and onboarding checklist progress"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pilot/onboarding/step",
+      "description": "Record completion of a guided activation checklist step"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pilot/health",
+      "description": "Retrieve usage health, engagement telemetry, and score for current pilot user"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pilot/telemetry",
+      "description": "Log an interaction action to update pilot usage health score"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pilot/support",
+      "description": "Create a pilot feedback or support ticket"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pilot/support",
+      "description": "List pilot support tickets (scoped to user, or all for staff)"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pilot/support/{id}/reply",
+      "description": "Add threaded response to a pilot support ticket"
+    }
+  ],
+  "frontend_portal": {
+    "page": "frontend/src/app/pilot/onboarding/page.tsx",
+    "test_file": "frontend/src/app/pilot/onboarding/page.test.tsx",
+    "features": [
+      "Token validation interface with instant validity check and organization preview",
+      "Mandatory ethics and student data compliance agreement toggle",
+      "Multi-tab pilot dashboard: Checklist Progression, Usage Health Telemetry, and Support Center",
+      "Dynamic step completion reporting with visual checklist badges",
+      "Dedicated support ticketing submission form"
+    ]
+  },
+  "verification_results": {
+    "backend_tests": {
+      "test_file": "tests/v5/test_v5_t116.py",
+      "total": 6,
+      "passed": 6,
+      "failed": 0,
+      "test_names": [
+        "test_invitation_generation_and_staff_guard",
+        "test_invitation_token_validation_lifecycle",
+        "test_pilot_activation_and_onboarding_progression",
+        "test_pilot_usage_health_and_telemetry",
+        "test_pilot_support_tickets_and_replies",
+        "test_negative_abuse_user_without_invitation_cannot_join_trial"
+      ]
+    },
+    "frontend_tests": {
+      "test_file": "frontend/src/app/pilot/onboarding/page.test.tsx",
+      "total": 2,
+      "passed": 2,
+      "failed": 0
+    },
+    "migration_check": {
+      "revision": "0086_pilot_onboarding_portal",
+      "status": "PASSED",
+      "single_head_verified": true,
+      "additive_only": true
+    }
+  }
+}

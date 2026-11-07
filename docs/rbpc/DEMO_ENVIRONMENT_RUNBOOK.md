@@ -290,7 +290,53 @@ The seeding script uses SQLAlchemy `upsert` (`on_conflict_do_update`). Re-runnin
 - Custom editorial reviews, verified evidence claims, and artisan inquiry logs are **strictly preserved** (`preserved_editorial`, `preserved_consent`).
 - Zero data loss or foreign key breakage.
 
-### 5.5 Optional: Seeding Cửu Đỉnh Legacy Exam & Motif Data
+### 5.5 Consented Test Accounts & Production Tenant Baseline
+For rehearsal evaluations and competition demonstrations, only consented test accounts and verified living heritage profiles are used:
+
+| Account / Role | Email / Identifier | Purpose | Tenant Scope & Boundary | Consent Reference |
+|---|---|---|---|---|
+| **Partner Workshop (Phường Đúc)** | `artisan.phuongduc@histolab.icu` (or `prov-phuong-duc-01`) | Bronze casting workshop inbox management | Strictly isolated to `prov-phuong-duc-01`; cannot view other artisans' inquiries | `CONSENT-PD-001` (Nguyễn Văn Sinh) |
+| **Partner Workshop (Pháp Lam)** | `artisan.phaplam@histolab.icu` (or `prov-phap-lam-01`) | Vitreous enamel workshop inbox management | Strictly isolated to `prov-phap-lam-01` | `CONSENT-PL-002` (Đỗ Hữu Triết) |
+| **Partner Workshop (Thanh Tiên)** | `artisan.thanhtien@histolab.icu` (or `prov-thanh-tien-02`) | Paper lotus workshop inbox management | Strictly isolated to `prov-thanh-tien-02` | `CONSENT-TT-003` (Thân Văn Huy) |
+| **Staff Heritage Curator** | `curator@histolab.icu` | Editorial review, claim verification, consent audits | Global read/write across approved claims; full audit log access | `CONSENT-CURATOR-001` |
+| **Consented Demo Visitor** | `visitor.demo@histolab.icu` | Clean test inquiry submission & tracking verification | Ephemeral client-generated UUID idempotency key; non-sequential tracking | `CONSENT-VISITOR-DEMO` |
+
+> **Consent Verification Standard:** Every creator profile (`rbpc_creators`) is linked to verified written consent (`CONSENT-PD-001`, `CONSENT-PL-002`, `CONSENT-TT-003`). Test inquiries must explicitly require opt-in consent (`consent.accepted: true`) and zero fabricated PII. Any unconsented or synthetic profile is strictly blocked from the production live tenant.
+
+#### 5.5.1 Canonical Competition Demo Script Walkthrough (Verified Heritage)
+The competition pitch demonstration adheres to a structured, reproducible 7-step walkthrough using verified UNESCO monuments and primary archival sources:
+
+1. **Step 1: UNESCO Heritage Discovery (`/explore`):**
+   - Presenter navigates the interactive spatial catalogue.
+   - Shows UNESCO Component `678-001` (Kinh thành Huế) and `678-013` (Đấu Xảo / Hổ Quyền - Đền Voi Ré) with verified coordinates and historical summaries.
+2. **Step 2: Living Craft Lineage Exploration (`/heritage/phuong-duc`):**
+   - Demonstrates the connection between the Imperial Citadel's Cửu Đỉnh (1835–1837) and the living foundry guild of Phường Đúc.
+   - Cites *Khâm Định Đại Nam Hội Điển Sự Lệ* (Quyển 223, Tủ sách Nha Văn hóa) as authoritative historical grounding.
+3. **Step 3: Master Artisan Profile (`/people/nghe-nhan-nguyen-van-sinh`):**
+   - Shows the verified profile of Artisan Nguyễn Văn Sinh with written consent badge `CONSENT-PD-001`.
+   - Explains that LƯU NIÊN preserves artisan dignity through direct craft-community attribution and transparent bio statements.
+4. **Step 4: Indicative Workshop Offering (`/experiences/workshop-duc-dong-phuong-duc`):**
+   - Details the 180-minute wax modeling and bronze alloy experience (650.000 VNĐ, 2–8 guests).
+   - Shows clear pricing, cancellation conditions, and authentic workshop imagery.
+5. **Step 5: Availability Inquiry Submission (`/rbpc/inquiries`):**
+   - Submits a booking inquiry with consensual contact details and privacy confirmation.
+   - Shows the immediate receipt of a non-sequential opaque tracking reference (e.g. `INQ-7F89-A23C`).
+6. **Step 6: Partner Console Management (`/rbpc/partner`):**
+   - Authenticates as `artisan.phuongduc@histolab.icu`.
+   - Demonstrates progressive unmasking of visitor contact details for genuine coordination.
+   - Advances inquiry lifecycle state (`new` $\rightarrow$ `contacted`), persisting immutable audit trail entries.
+7. **Step 7: Real Community Impact Transparency (`/rbpc/impact`):**
+   - Shows verified database-observed metrics (actual closed experiences and settled payouts).
+   - Proves zero conflation between observed actuals and forward-looking economic projections.
+
+#### 5.5.2 Fallback Mock Data Watermarking Standard
+Whenever the platform operates in preview mode, offline demo mode, or when unauthenticated users explore the partner console:
+- **Mandatory UI Watermark:** An amber alert banner with `data-testid="demo-data-watermark"` and `data-testid="demo-badge"` containing the prominent label `DEMO DATA` is displayed.
+- **Item-Level Tagging:** Every simulated record rendered in `PartnerInboxView` contains `data-testid="inbox-item-demo-badge"` and `data-testid="detail-demo-watermark"`.
+- **Backend Quarantine:** All fallback mock objects (`DemoMockInquiry`) carry `is_demo=True`, `watermark="DEMO DATA"`, and `tenant_boundary="TENANT_DEMO_RBPC"`.
+- **Production Isolation:** If an authenticated live partner logs in, the query strictly hits the live PostgreSQL table and returns `[]` if no inquiries exist, never injecting synthetic mock records.
+
+### 5.6 Optional: Seeding Cửu Đỉnh Legacy Exam & Motif Data
 If testing the full gamified learning path (Cửu Đỉnh 3D bronze relief lessons and quizzes):
 ```bash
 python3 -m backend.seed --seed-path data --image-path ban-duc-noi
@@ -477,6 +523,28 @@ If the laptop experiences OS freezing, display mirroring failure, or browser cra
    - **01:07.0:** Partner Console live inquiry intake and state transition (`new` $\rightarrow$ `contacted`).
    - **01:11.0:** 4-Phase Educational Roadmap (`/learn`).
    - **01:15.0:** Cut to founder narration.
+
+### 7.4 Live Network Outage & Non-Fabrication Resiliency (Negative Invariant)
+
+A critical principle of LƯU NIÊN's demonstration ethics is: **Under live network outages, the platform NEVER fabricates success or pretends a transaction went through.**
+
+1. **Inquiry Dispatch Resilience (`POST /api/v1/rbpc/inquiries`):**
+   - If the backend gateway is down, unreachable, or responds with `502/503/504`, the frontend client (`submitInquiryToApi`) strictly throws a typed `ApiError`.
+   - The UI displays an explicit error alert banner (`formErrors.submit`) indicating network or server failure.
+   - It **never** fabricates a fake `INQ-XXXX` reference code or synthetic success confirmation screen.
+   - `submissionResult` remains strictly null on the client.
+2. **Status Tracking Resilience (`GET /api/v1/rbpc/inquiries/status/{token}`):**
+   - If the network drops or status lookup fails, `fetchInquiryStatusByToken` throws `InquiryNotFoundError` / `ApiError`.
+   - The UI surfaces the error alert without synthesising fake inquiry state.
+3. **Partner Inbox State Transition Resilience (`PATCH /api/v1/rbpc/partner/inquiries/{id}/status`):**
+   - On backend rejection or network disconnect, optimistic UI state immediately rolls back to previous state and displays a persistent error alert banner.
+4. **Watermarking of Fallback Mock Data:**
+   - Any fallback preview or seed data is explicitly watermarked with `DEMO DATA` (`data-testid="demo-data-watermark"` and `data-testid="demo-badge"`).
+   - In `PartnerInboxView`, items display `data-testid="inbox-item-demo-badge"` and `data-testid="detail-demo-watermark"`.
+   - In production live tenant mode, seed mock records are never mixed into live tables.
+5. **Simulated Outage Automated Verification (`tests/v5/test_v5_t119.py`):**
+   - An automated test suite simulates network outage (connection severance, HTTP 502/503, timeout) across dispatch, lookup, and partner actions.
+   - Asserts that all endpoints fail closed, returning structured error responses and never committing phantom transactions or generating phantom codes.
 
 ---
 

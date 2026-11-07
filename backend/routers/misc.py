@@ -518,32 +518,122 @@ router = APIRouter()
 @router.post("/api/v1/analytics/events", response_model=AnalyticsEventsOut)
 def ingest_analytics_events(
     payload: AnalyticsEventsIn,
-    current_user: User = Depends(get_current_user),
+    request: Request,
+    current_user: Optional[User] = Depends(get_current_user_optional),
     db: Session = Depends(get_db),
+    x_telemetry_consent: Optional[str] = Header(None, alias="X-Telemetry-Consent"),
 ) -> AnalyticsEventsOut:
     if not payload.events:
-        return AnalyticsEventsOut(success=True, count=0)
+        return AnalyticsEventsOut(success=True, count=0, deduplicated_count=0)
 
-    # Import analytics service for event validation
-    from ..services.analytics import create_event_record
+    # Import analytics service for event validation, PII scrubbing, consent, and server verification
+    from ..services.analytics import (
+        create_event_record,
+        is_telemetry_consented,
+        verify_server_conversion_trust,
+    )
 
-    # Create validated event records
+    # 1. Global / Request-level consent check
+    batch_consent = payload.consent_status or x_telemetry_consent
+    if not is_telemetry_consented(consent_status=batch_consent, header_consent=x_telemetry_consent):
+        # Client or visitor explicitly denied/revoked telemetry consent -> drop all events
+        return AnalyticsEventsOut(success=True, count=0, deduplicated_count=0)
+
+    user_id = current_user.id if current_user else None
+    user_is_guest = getattr(current_user, "role", None) in ("guest", "learner_demo")
+    batch_is_demo = bool(payload.is_demo or user_is_guest)
+    batch_is_synthetic = bool(payload.is_synthetic)
+
     event_records = []
+    seen_idempotency_keys = set()
+    deduplicated_count = 0
+
     for event in payload.events:
+        # Check event-level consent
+        ev_consent = event.consent_status or batch_consent or "consented"
+        if not is_telemetry_consented(consent_status=ev_consent):
+            continue
+
+        # Check idempotency key (both event.idempotency_key and payload.get("idempotency_key"))
+        raw_payload = dict(event.payload or {})
+        idempotency_key = (
+            event.idempotency_key
+            or raw_payload.get("idempotency_key")
+            or raw_payload.get("client_idempotency_key")
+        )
+        if idempotency_key:
+            idempotency_key = str(idempotency_key).strip()
+            # In-batch deduplication
+            if idempotency_key in seen_idempotency_keys:
+                deduplicated_count += 1
+                continue
+            seen_idempotency_keys.add(idempotency_key)
+
+            # DB-level deduplication
+            existing = db.scalar(
+                select(AnalyticsEvent.id).where(AnalyticsEvent.idempotency_key == idempotency_key)
+            )
+            if existing:
+                deduplicated_count += 1
+                continue
+
+        # Check demo / synthetic status
+        is_demo = bool(
+            event.is_demo
+            or batch_is_demo
+            or raw_payload.get("is_demo")
+            or raw_payload.get("demo")
+        )
+        is_synthetic = bool(
+            event.is_synthetic
+            or batch_is_synthetic
+            or raw_payload.get("is_synthetic")
+            or raw_payload.get("synthetic")
+        )
+
+        # Server-trusted conversion verification
+        is_server_verified = False
+        if event.is_server_verified:
+            # Re-verify client claim against DB truth
+            is_server_verified = verify_server_conversion_trust(
+                db=db,
+                event_name=event.name,
+                payload=raw_payload,
+                current_user=current_user,
+            )
+        else:
+            is_server_verified = verify_server_conversion_trust(
+                db=db,
+                event_name=event.name,
+                payload=raw_payload,
+                current_user=current_user,
+            )
+
         event_data = create_event_record(
-            user_id=current_user.id,
+            user_id=user_id,
             event_name=event.name,
-            payload=event.payload,
+            payload=raw_payload,
             path=event.path,
             session_id=event.session_id,
             cohort=event.cohort,
             device_info=event.device_info,
+            idempotency_key=idempotency_key,
+            consent_status=ev_consent,
+            is_server_verified=is_server_verified,
+            is_demo=is_demo,
+            is_synthetic=is_synthetic,
         )
         event_records.append(AnalyticsEvent(**event_data))
 
-    db.add_all(event_records)
-    db.commit()
-    return AnalyticsEventsOut(success=True, count=len(payload.events))
+    if event_records:
+        db.add_all(event_records)
+        db.commit()
+
+    return AnalyticsEventsOut(
+        success=True,
+        count=len(event_records),
+        deduplicated_count=deduplicated_count,
+    )
 
 
 @router.post("/api/v1/content/flags", response_model=ContentFlagOut, status_code=201)

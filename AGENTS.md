@@ -334,6 +334,21 @@ Deploy workflow (`deploy.yml`) uses Python 3.12 and runs `pytest tests/backend` 
   - `V5-T109` (W10-A09): Creator oral history consent studio with versioned transcripts, per-use consent scopes, and immediate public revocation.
   - `V5-T110` (W10-A10): Public impact dashboard sourced from real completed inquiries and settled payouts; empty database displays zero metrics.
 
+### Wave W11: Startup Traction / Business Experiments / Competition Readiness (COMPLETED)
+- **Status**: 10/10 slots complete. 77/77 tests passing.
+- **Artifacts**: `artifacts/implementation/W11/` (`W11_A01`–`W11_A10`).
+- **Verified Invariants**:
+  - `V5-T111` (W11-A01): Analytics event taxonomy & ingest enforcing consent, idempotency deduplication, zero student PII, and excluding demo traffic from funnels.
+  - `V5-T112` (W11-A02): Funnel dashboard strictly separating OBSERVED, HYPOTHESIS, and FORECAST tiers; projected bookings never counted as actuals.
+  - `V5-T113` (W11-A03): Partner discovery and LOI vault with cryptographic SHA-256 agreement checksums; expired or revoked partnerships strictly hidden.
+  - `V5-T114` (W11-A04): Customer discovery experiments with pre-registered thresholds and negative abuse guardrail blocking unrepresentative generalization.
+  - `V5-T115` (W11-A05): Unit economics actual ledger separating cash actuals from GMV forecasts and B2C visitor from school B2B revenues.
+  - `V5-T116` (W11-A06): Pilot onboarding portal with invitation-gated access, onboarding checklist progression, and support ticket tracking.
+  - `V5-T117` (W11-A07): Pricing experiment instrumentation with user consent, zero dark patterns, and non-binding calculator interactions.
+  - `V5-T118` (W11-A08): Market claims evidence register categorizing 15 canonical claims into OBSERVED/HYPOTHESIS/FORECAST with pitch export.
+  - `V5-T119` (W11-A09): Competition demo data truth & resilience with consented demo accounts, watermarking, and fail-closed outage resilience.
+  - `V5-T120` (W11-A10): Startup evidence room + pitch review evaluating 15 versioned pointers across 7 domains with automated claim verification.
+
 ### 10 Educational Research Studies (LN-01 through LN-10) Implementation & Benchmark Verification (COMPLETED)
 - **Status**: 10/10 studies complete. 134/134 tests passing. 7,200/7,200 scenarios evaluated. Release ready gate: PASSED.
 - **Artifacts**: `research_artifacts/LN-01/` through `research_artifacts/LN-10/`.

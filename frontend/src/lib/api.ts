@@ -708,6 +708,14 @@ export interface AnalyticsEvent {
   path?: string | null;
   event_name?: string;
   event_category?: string;
+  idempotency_key?: string | null;
+  consent_status?: string | null;
+  is_demo?: boolean;
+  is_synthetic?: boolean;
+  is_server_verified?: boolean;
+  session_id?: string | null;
+  cohort?: string | null;
+  device_info?: unknown;
 }
 
 let analyticsQueue: AnalyticsEvent[] = [];
@@ -1721,6 +1729,123 @@ export function rebuildRagEmbeddings(): Promise<unknown> {
 
 export function getRagHealth(): Promise<unknown> {
   return apiRequest(`/api/v1/admin/rag/health`);
+}
+
+export interface TruthStageMetric {
+  stage: string;
+  display_name: string;
+  description: string;
+  count: number;
+  conversion_from_previous_pct: number;
+  conversion_from_top_pct: number;
+  truth_tier: string;
+  measurement_method: string;
+}
+
+export interface QualityCohortMetric {
+  cohort_id: string;
+  cohort_name: string;
+  cohort_type: string;
+  visitor_count: number;
+  source_read_count: number;
+  inquiry_count: number;
+  confirm_count: number;
+  completed_count: number;
+  visitor_to_source_pct: number;
+  source_to_inquiry_pct: number;
+  inquiry_to_confirm_pct: number;
+  confirm_to_completed_pct: number;
+  overall_conversion_pct: number;
+  avg_dwell_seconds: number;
+  source_grounding_score_pct: number;
+}
+
+export interface TruthTierObserved {
+  truth_tier: "OBSERVED";
+  definition: string;
+  total_funnel_visitors: number;
+  total_completed_experiences: number;
+  stages: TruthStageMetric[];
+  overall_conversion_pct: number;
+  quality_cohorts: QualityCohortMetric[];
+}
+
+export interface TruthTierHypothesis {
+  truth_tier: "HYPOTHESIS";
+  definition: string;
+  epistemic_disclaimer: string;
+  benchmark_assumptions: {
+    story_engagement_rate_pct: number;
+    inquiry_conversion_rate_pct: number;
+    partner_acceptance_rate_pct: number;
+    experience_completion_rate_pct: number;
+    benchmark_monthly_eligible_visitors: number;
+  };
+  modeled_monthly_funnel: {
+    visitors: number;
+    engaged_story_readers: number;
+    qualified_inquiries: number;
+    confirmed_bookings: number;
+    completed_experiences: number;
+  };
+}
+
+export interface TruthTierForecast {
+  truth_tier: "FORECAST";
+  definition: string;
+  epistemic_disclaimer: string;
+  target_period: string;
+  projected_annual_bookings: number;
+  projected_annual_gmv_vnd: number;
+  target_partner_workshops: number;
+  projected_platform_net_revenue_vnd: number;
+  projected_artisan_retained_vnd: number;
+  negative_abuse_guardrail: string;
+}
+
+export interface TruthFunnelDashboardData {
+  generated_at: string;
+  filter_range: {
+    start: string | null;
+    end: string | null;
+    cohort: string | null;
+    channel: string | null;
+    experience_id: string | null;
+  };
+  observed: TruthTierObserved;
+  hypothesis: TruthTierHypothesis;
+  forecast: TruthTierForecast;
+  anti_abuse_validation: {
+    status: string;
+    forecast_1100_in_completed_bookings: boolean;
+    observed_completed_matches_closed_inquiries: boolean;
+    synthetic_counts_in_observed: boolean;
+    empty_db_baseline_zero: boolean;
+    enforcement_policy: string;
+  };
+}
+
+export function getTruthFunnelDashboard({
+  startDate,
+  endDate,
+  cohort,
+  channel,
+  experienceId,
+}: {
+  startDate?: string;
+  endDate?: string;
+  cohort?: string;
+  channel?: string;
+  experienceId?: string;
+} = {}): Promise<TruthFunnelDashboardData> {
+  const params = new URLSearchParams();
+  if (startDate) params.set("start_date", startDate);
+  if (endDate) params.set("end_date", endDate);
+  if (cohort) params.set("cohort", cohort);
+  if (channel) params.set("channel", channel);
+  if (experienceId) params.set("experience_id", experienceId);
+  const qs = params.toString() ? `?${params.toString()}` : "";
+  return apiRequest<TruthFunnelDashboardData>(`/api/v1/admin/analytics/truth-funnel${qs}`);
 }
 
 export function getRecommendations(): Promise<unknown> {

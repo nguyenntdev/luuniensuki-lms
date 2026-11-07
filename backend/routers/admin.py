@@ -3120,6 +3120,59 @@ def get_funnel_data(
         raise HTTPException(status_code=400, detail=str(e))
 
 
+@router.get(
+    "/api/v1/admin/analytics/truth-funnel",
+    response_model=schemas.TruthFunnelDashboardOut,
+    summary="Get conversion funnel partitioned strictly by epistemological truth level",
+)
+def get_truth_funnel_dashboard(
+    start_date: Optional[datetime] = Query(
+        None, description="Start date for filtering events and inquiries"
+    ),
+    end_date: Optional[datetime] = Query(
+        None, description="End date for filtering events and inquiries"
+    ),
+    cohort: Optional[str] = Query(
+        None, description="Cohort identifier (e.g. '2026-W44', 'pilot-cohort-1')"
+    ),
+    channel: Optional[str] = Query(
+        None, description="Contact channel filter (email, phone, zalo)"
+    ),
+    experience_id: Optional[UUID] = Query(
+        None, description="Heritage experience UUID filter"
+    ),
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+) -> schemas.TruthFunnelDashboardOut:
+    """
+    Get 5-stage conversion funnel separated by truth level (Ticket V5-T112).
+
+    Separates metrics strictly into:
+    - OBSERVED: Empirical database actuals (visitor -> source_read -> inquiry -> confirm -> completed)
+      with quality cohorts. When 0 closed inquiries exist, completed is strictly 0.
+    - HYPOTHESIS: Model conversion hypotheses from DOC-RBPC-FIN-001 §3.3.
+    - FORECAST: Forward commercial targets (e.g. SOM 1,100 bookings / 570M VND GMV) quarantined
+      with explicit epistemic disclaimers.
+
+    Negative abuse invariant:
+    Projected figures (e.g. 1,100 bookings) never appear as completed bookings in the truth dashboard.
+    """
+    from backend.services.truth_funnel import calculate_truth_funnel
+
+    try:
+        funnel_dict = calculate_truth_funnel(
+            session=db,
+            start_date=start_date,
+            end_date=end_date,
+            cohort=cohort,
+            channel=channel,
+            experience_id=experience_id,
+        )
+        return schemas.TruthFunnelDashboardOut(**funnel_dict)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
 @router.get("/api/v1/admin/app/versions", response_model=list[schemas.AppVersionOut])
 def list_app_versions(
     platform: Optional[str] = Query(None, pattern="^(ios|android)$"),

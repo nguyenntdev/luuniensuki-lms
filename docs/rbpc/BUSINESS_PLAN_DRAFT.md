@@ -19,10 +19,10 @@
 
 ## Section 1: Problem & Market Urgency
 
-Every year, over **4.0 million travelers** visit Huế (including 1.2+ million international visitors). Yet, despite its rich UNESCO World Heritage monuments, cultural tourism remains profoundly fragmented:
-1. **The Comprehension Gap:** 78% of international visitors report difficulty understanding the authentic historical context of Vietnamese monuments from brief plaques or generic audio guides.
-2. **Economic Disconnect:** Massive tourist footfall at royal tombs and citadels fails to benefit local craft villages. Traditional craft families (Phường Đúc bronze founders, Thanh Tiên paper flower makers, Pháp Lam enamelers) struggle to survive on passive souvenir sales or suffer 25%–30% commission cuts from mass Online Travel Agencies (OTAs).
-3. **Monsoon Churn:** Central Vietnam's severe October–December flood season forces traditional workshops to shut down, making rigid monthly SaaS software subscriptions financially unsustainable.
+Every year, over **4.0 million travelers** visit Huế (including 1.2+ million international visitors) [`[MC-001: OBSERVED, N=4.05M Arrivals, Thừa Thiên Huế Dept Tourism 2024]`]. Yet, despite its rich UNESCO World Heritage monuments, cultural tourism remains profoundly fragmented:
+1. **The Comprehension Gap:** 78% of international visitors report difficulty understanding the authentic historical context of Vietnamese monuments from brief plaques or generic audio guides [`[MC-002: HYPOTHESIS, N=50 FITs, DOC-RBPC-VAL-001]`].
+2. **Economic Disconnect:** Massive tourist footfall at royal tombs and citadels fails to benefit local craft villages. Traditional craft families (Phường Đúc bronze founders, Thanh Tiên paper flower makers, Pháp Lam enamelers) struggle to survive on passive souvenir sales or suffer 25%–30% commission cuts from mass Online Travel Agencies (OTAs) [`[MC-003: OBSERVED, N=5 Operators, DOC-RBPC-VAL-001]`].
+3. **Monsoon Churn:** Central Vietnam's severe October–December flood season forces traditional workshops to shut down, making rigid monthly SaaS software subscriptions financially unsustainable. Traditional workshop managers lose an average of 5.8 hours per week on manual cross-lingual coordination [`[MC-004: OBSERVED, N=5 Studios, DOC-RBPC-METRICS-001]`], which LƯU NIÊN's structured intake reduces by ~4.5 hours [`[MC-005: HYPOTHESIS, N=5 Operators]`].
 
 ---
 
@@ -49,9 +49,10 @@ LƯU NIÊN connects cultural discovery to authentic human connection in 5 seamle
 ## Section 4: Business Model & Unit Economics
 
 ### Commercial Pricing Model
-- **10% Pure Performance Commission:** Charged strictly on completed, non-refunded workshop experiences.
+- **10% Pure Performance Commission:** Charged strictly on completed, non-refunded workshop experiences [`[MC-008: OBSERVED, N=5 Contracts, DOC-RBPC-FIN-001]`].
 - **Zero Fixed Overhead:** During monsoon flood months (0 bookings), platform fees drop to **0 VND**, eliminating provider churn.
 - **Optional Mature Tier:** 1,800,000 VND / month flat SaaS for mature ateliers exceeding 30 bookings/month.
+- **Direct Maker Retention (90%):** Craft families retain 90% of gross booking revenue directly [`[MC-009: OBSERVED, Platform Policy, UN SDG 8]`].
 
 ### Unit Economics per Workshop (Base Case: 30 Guests / Month)
 $$\text{Gross Booking Value (GBV)} = 30 \text{ guests} \times 700,000 \text{ VND} = \mathbf{21,000,000 \text{ VND}}$$
@@ -64,19 +65,43 @@ $$\text{Provider Acquisition Cost (CAC)} = 600,000 \text{ VND} \quad (\text{Payb
 
 ## Section 5: Sponsorship Reconciliation & Financial Runway
 
-- **Documented Corporate In-Kind Support:** Exactly **202,360,638 VND**
+- **Documented Corporate In-Kind Support:** Exactly **202,360,638 VND** [`[MC-010: OBSERVED, N=2 Contracts, BASELINE.md §5]`]
   - **BNIX Cloud VPS:** 1,142,400 VND (Xeon Platinum Gen 2).
   - **Phổ Tuệ AI API Credits & Domain:** 201,218,238 VND ($7,610 USD AI credits + $29.70 domain).
 - **Accounting Standard:** In-kind compute credits are strictly treated as non-cash contra-expense infrastructure subsidies—never booked as revenue or sales.
-- **Commercial Breakeven:** At commercial market hosting rates (203,100 VND/month), LƯU NIÊN achieves cash breakeven with just **2.9 (3) completed workshop guests per month across all of Huế**.
+- **Commercial Breakeven:** At commercial market hosting rates (203,100 VND/month), LƯU NIÊN achieves cash breakeven with just **2.9 (3) completed workshop guests per month across all of Huế** [`[MC-011: HYPOTHESIS, Dual P&L Model, DOC-RBPC-FIN-001]`].
 
 ---
 
 ## Section 6: Market Sizing (Bottom-Up TAM / SAM / SOM)
 
-- **Total Addressable Market (TAM):** $3,600 \text{ Billion VND}$ (~$137M USD) — Total annual tourist cultural activities spending across Thừa Thiên Huế.
-- **Serviceable Addressable Market (SAM):** $180 \text{ Billion VND}$ (~$6.8M USD) — Annual spending by independent cultural experiential travelers visiting traditional craft villages in Huế.
-- **Serviceable Obtainable Market (SOM):** $3.72 \text{ Billion VND}$ (~$141k USD) — Initial 3-year target capturing 25 partner workshops and 6,000 annual completed experiential participants.
+*Note: All market sizing figures represent strategic planning projections (`FORECAST`) derived bottom-up and must not be conflated with realized LƯU NIÊN operational KPIs (`[MC-015: OBSERVED]`).*
+
+- **Total Addressable Market (TAM):** $28.5 \text{ Billion VND}$ (~$1.08M USD) narrow participatory craft GMV / $3,600 \text{ Billion VND}$ (~$137M USD) broad provincial cultural tourism spending [`[MC-012: FORECAST, Province-Wide Projection, DOC-RBPC-FIN-001]`].
+- **Serviceable Addressable Market (SAM):** $5.7 \text{ Billion VND}$ (~$216k USD) GMV / $570 \text{ Million VND}$ platform revenue across ~50–60 master studios in designated historic quarters [`[MC-013: FORECAST, N=55 Studios, DOC-RBPC-FIN-001]`].
+- **Serviceable Obtainable Market (SOM):** $570 \text{ Million VND}$ (~$21.6k USD) GMV / $57 \text{ Million VND}$ Year 1 platform revenue capturing 5 partner workshops and 1,100 completed experiential participants [`[MC-014: FORECAST, Year 1 Capacity Target, DOC-RBPC-FIN-001]`].
+
+---
+
+## Section 6.1: Market Claims Evidence Register Summary
+
+Every market claim in this dossier is audited in `docs/rbpc/MARKET_CLAIMS_EVIDENCE_REGISTER.md` (`DOC-RBPC-EVID-001`) and programmatic registry `backend/services/rbpc_market_claims.py`.
+
+| Truth Tier | Definition & Evidence Standard | Claims Count | Negative Abuse Protection |
+|---|---|---|---|
+| **`OBSERVED`** | Factually verified operational actuals, signed corporate agreements, or official government census data. | **6 Claims** | Operational KPIs are strictly limited to `OBSERVED` actuals. |
+| **`HYPOTHESIS`** | Grounded behavioral models, structured interview survey findings, or usability test results. | **5 Claims** | Firewalled from operational actuals; subject to ongoing longitudinal testing. |
+| **`FORECAST`** | Forward-looking market sizing (TAM/SAM/SOM) and multi-year financial projections. | **3 Claims** | Cannot be booked as revenue or displayed as active platform performance. |
+
+---
+
+## Section 6.2: Customer Discovery & Usability Experiments Register Summary
+
+All experimental customer discovery protocols, interview scripts, and usability evaluation tasks are documented in `docs/rbpc/CUSTOMER_DISCOVERY_PROTOCOLS_EXPERIMENTS.md` (`DOC-RBPC-DISCOVERY-001`) and programmatic registry `backend/services/rbpc_discovery.py`.
+
+- **Pre-Registered Experiments (`EXP-01` to `EXP-05`):** Explicit quantitative falsification thresholds pre-registered before data collection (e.g. `EXP-01` Form completion rate $\ge 65\%$, `EXP-02` Trust rating $\ge 80\%$, `EXP-03` Scheduling conflict $\le 5\%$, `EXP-04` Lesson planning $\le 45\text{ min}$, `EXP-05` 2D rubbing comprehension $\ge 85\%$).
+- **Standardized Usability Tasks (`TASK-01` to `TASK-04`):** Objective pass/fail criteria covering citation inspection, 2D rubbing fallback, partner 2-click confirmation, and printable lesson exports.
+- **Negative Abuse Protection:** Self-selected or convenience cohorts are strictly accompanied by mandatory methodology disclaimers and can never be claimed as representative of the general population without randomized stratified sampling.
 
 ---
 

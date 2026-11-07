@@ -1072,6 +1072,13 @@ export default function AdminPage() {
                   Museum Operator Media CMS
                   <ArrowRight className="h-4 w-4" />
                 </Link>
+                <Link
+                  href="/admin/funnel"
+                  className="flex items-center justify-between rounded-lg border border-border bg-background/60 px-4 py-3 text-sm font-semibold text-foreground hover:bg-muted"
+                >
+                  Truth-Level Conversion Funnel
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
               </div>
             </div>
           </div>

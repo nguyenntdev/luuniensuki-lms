@@ -49,6 +49,12 @@
   },
   {
     "method": "GET",
+    "path": "/api/v1/admin/analytics/truth-funnel",
+    "group": "admin",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
     "path": "/api/v1/admin/app/versions",
     "group": "admin",
     "status": "gateway"
@@ -1028,6 +1034,12 @@
   {
     "method": "POST",
     "path": "/action",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/activate",
     "group": "misc",
     "status": "gateway"
   },
@@ -2412,6 +2424,30 @@
     "status": "gateway"
   },
   {
+    "method": "POST",
+    "path": "/api/v1/rbpc/admin/loi-vault",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/admin/loi-vault/export",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/rbpc/admin/loi-vault/{loi_id}/revoke",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/rbpc/admin/loi-vault/{loi_id}/verify-checksum",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
     "method": "GET",
     "path": "/api/v1/rbpc/admin/reviews",
     "group": "misc",
@@ -2468,6 +2504,24 @@
   {
     "method": "POST",
     "path": "/api/v1/rbpc/editor/settlements/{id}/disburse",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/evidence-room/export",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/evidence-room/pointers",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/evidence-room/pointers/{pointer_id}",
     "group": "misc",
     "status": "gateway"
   },
@@ -2534,6 +2588,24 @@
   {
     "method": "GET",
     "path": "/api/v1/rbpc/ledger/summary",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/ledger/unit-economics",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/loi-vault",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/loi-vault/{loi_id}",
     "group": "misc",
     "status": "gateway"
   },
@@ -2654,6 +2726,30 @@
   {
     "method": "POST",
     "path": "/api/v1/rbpc/partner/slots",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/partners",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/partners/{identifier}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/pitch-review/audits/{audit_ref}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/rbpc/pitch-review/evaluate",
     "group": "misc",
     "status": "gateway"
   },
@@ -2994,6 +3090,12 @@
     "status": "gateway"
   },
   {
+    "method": "POST",
+    "path": "/calculator",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
     "method": "GET",
     "path": "/clues",
     "group": "misc",
@@ -3012,8 +3114,32 @@
     "status": "gateway"
   },
   {
+    "method": "GET",
+    "path": "/config",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/contracts",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/contracts/{contract_id}/accept",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
     "method": "POST",
     "path": "/discover",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/events",
     "group": "misc",
     "status": "gateway"
   },
@@ -3139,6 +3265,24 @@
   },
   {
     "method": "GET",
+    "path": "/invitations",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/invitations",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/invitations/validate",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
     "path": "/items",
     "group": "misc",
     "status": "gateway"
@@ -3224,6 +3368,18 @@
   {
     "method": "GET",
     "path": "/media/{media_id}/hotspots",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/metrics/summary",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/my-activation",
     "group": "misc",
     "status": "gateway"
   },
@@ -3445,6 +3601,18 @@
   },
   {
     "method": "GET",
+    "path": "/support",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/support",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
     "path": "/support/tickets",
     "group": "misc",
     "status": "gateway"
@@ -3464,6 +3632,12 @@
   {
     "method": "POST",
     "path": "/support/tickets/{ticket_id}/reply",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/support/{ticket_id}/reply",
     "group": "misc",
     "status": "gateway"
   },
@@ -3512,6 +3686,12 @@
   {
     "method": "POST",
     "path": "/teacher/submissions/{submission_id}/grade",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/telemetry",
     "group": "misc",
     "status": "gateway"
   },

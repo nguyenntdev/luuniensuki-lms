@@ -1,0 +1,76 @@
+{
+  "ticket_id": "V5-T119",
+  "wave": "W11",
+  "slot": "A09",
+  "role": "W11-A09",
+  "priority": "P2",
+  "classification": "NEW_PRODUCT_FEATURE",
+  "title": "Competition demo data truth & resilience in docs/rbpc/DEMO_ENVIRONMENT_RUNBOOK.md and frontend/src/app/rbpc/",
+  "status": "COMPLETED",
+  "verified_at": "2026-11-07T16:45:00Z",
+  "target_modules": [
+    "docs/rbpc/DEMO_ENVIRONMENT_RUNBOOK.md",
+    "frontend/src/app/rbpc/inquiries/page.tsx",
+    "frontend/src/app/rbpc/partner/page.tsx",
+    "frontend/src/components/rbpc/PartnerInboxView.tsx",
+    "frontend/src/lib/rbpc/inquiries.ts",
+    "frontend/src/types/rbpc.ts",
+    "backend/services/rbpc_demo.py",
+    "tests/v5/test_v5_t119.py"
+  ],
+  "implementation_summary": {
+    "goal": "Establish competition demo data truth & demonstration resilience in docs/rbpc/DEMO_ENVIRONMENT_RUNBOOK.md, frontend/src/app/rbpc/, and backend/services/rbpc_demo.py. Enforce demo script using verified heritage + consented test accounts, fallback mock data clearly watermarked as DEMO DATA, and negative abuse live network outage resilience.",
+    "consented_test_accounts": {
+      "artisan.phuongduc@histolab.icu": "prov-phuong-duc-01, Bronze casting workshop coordinator, CONSENT-PD-001 (Artisan Nguyễn Văn Sinh)",
+      "artisan.phaplam@histolab.icu": "prov-phap-lam-01, Vitreous enamel workshop director, CONSENT-PL-002 (Artisan Đỗ Hữu Triết)",
+      "artisan.thanhtien@histolab.icu": "prov-thanh-tien-02, Paper lotus workshop master, CONSENT-TT-003 (Artisan Thân Văn Huy)",
+      "curator@histolab.icu": "global, Staff historical researcher and editorial verifier, CONSENT-CURATOR-001",
+      "visitor.demo@histolab.icu": "demo-visitor, Consented demonstration cultural traveler account, CONSENT-VISITOR-DEMO"
+    },
+    "verified_heritage_catalogue": {
+      "places": [
+        "UNESCO 678-001 (Kinh thành Huế)",
+        "UNESCO 678-002 (Chùa Thiên Mụ)",
+        "UNESCO 678-013 (Đấu Xảo / Hổ Quyền - Đền Voi Ré)",
+        "Điện Kiến Trung (Khảm sành sứ & Phục hưng)",
+        "Làng Đúc Đồng Phường Đúc",
+        "Nghệ thuật Pháp Lam Huế",
+        "Hoa Giấy Làng Thanh Tiên"
+      ],
+      "primary_sources": [
+        "Khâm Định Đại Nam Hội Điển Sự Lệ (Quyển 223)",
+        "Đại Nam Thực Lục Chính Biên (Quyển 67)",
+        "Quốc Triều Chánh Biên Toát Yếu"
+      ]
+    },
+    "watermarking_standard": {
+      "rule": "Every simulated or fallback mock record is strictly tagged with is_demo=True and watermark='DEMO DATA'. In production live tenant mode, seed mock records are never mixed into live tables.",
+      "ui_indicators": [
+        "data-testid='demo-data-watermark' banner in inquiries and partner dashboard",
+        "data-testid='demo-badge' badge containing 'DEMO DATA'",
+        "data-testid='inbox-item-demo-badge' on cards in PartnerInboxView",
+        "data-testid='detail-demo-watermark' in detail drawer of PartnerInboxView"
+      ]
+    },
+    "negative_abuse_guardrail": {
+      "rule": "Under live network outages (connection drop, HTTP 502/503/504, timeout), the platform NEVER fabricates success or pretends a transaction went through.",
+      "enforcement": "Frontend client and backend service fail closed with typed NetworkOutageError / ApiError, displaying explicit error alert banners, keeping submissionResult strictly null, never generating phantom reference codes (INQ-XXXX), and refusing to synthesize fake status."
+    }
+  },
+  "verification_results": {
+    "test_suite": "tests/v5/test_v5_t119.py",
+    "tests_total": 8,
+    "tests_passed": 8,
+    "tests_failed": 0,
+    "tests": [
+      "test_v5_t119_verified_test_accounts_and_consent_invariants",
+      "test_v5_t119_verified_heritage_and_primary_citations",
+      "test_v5_t119_fallback_mock_data_watermarking",
+      "test_v5_t119_frontend_seed_fixtures_and_watermarking",
+      "test_v5_t119_negative_abuse_network_outage_does_not_fabricate_success",
+      "test_v5_t119_negative_abuse_status_lookup_network_outage",
+      "test_v5_t119_negative_abuse_production_tenant_isolation",
+      "test_v5_t119_runbook_documentation_parity"
+    ]
+  }
+}

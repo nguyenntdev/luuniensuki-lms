@@ -18,3 +18,4 @@ export * from "./CulturalBridgePanel";
 export * from "./PeerInquiryWorkspace";
 export * from "./EvidenceBoard";
 export * from "./CuratorStoryRecommendations";
+export * from "./DiscoveryFeedbackModal";

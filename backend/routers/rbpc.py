@@ -77,6 +77,8 @@ from ..apischemas.rbpc import (
     RbpcSettlementRefund,
     RbpcSettlementStatus,
     RbpcLedgerFinancialSummary,
+    RbpcRevenueStream,
+    RbpcUnitEconomicsActualLedger,
     RbpcStoryDetailOut,
     RbpcStoryListOut,
     RbpcStoryOut,
@@ -105,6 +107,12 @@ from ..apischemas.rbpc import (
     RbpcPartnerVerificationIn,
     RbpcPartnerExperienceCreateIn,
     RbpcExperienceModerationIn,
+    RbpcEvidencePointerOut,
+    RbpcEvidencePointerListOut,
+    RbpcPitchClaimIn,
+    RbpcPitchReviewIn,
+    RbpcPitchReviewOut,
+    RbpcEvidenceRoomExportOut,
 )
 from ..config import get_settings
 from ..db import get_db
@@ -128,6 +136,12 @@ from ..models_rbpc import (
     RbpcSlotStatus,
     RbpcStory,
     RbpcWorkshopSlot,
+    RbpcEvidencePointer,
+    RbpcEvidenceDomain,
+    RbpcEvidencePointerStatus,
+    RbpcPitchClaimStatus,
+    RbpcPitchReadiness,
+    RbpcPitchReview,
 )
 from ..rbac import ADMIN_ROLES, STAFF_ROLES
 from ..services import rbpc_ai
@@ -147,6 +161,9 @@ from ..services.rbpc_notification import (
     update_inquiry_notification_preferences,
 )
 from ..services.rbpc_retention import withdraw_inquiry_consent
+from ..services.rbpc_unit_economics import compute_unit_economics_ledger
+from ..services.analytics import record_server_conversion_event
+from ..services.rbpc_evidence_room import default_evidence_room_service, PitchClaimItem
 
 logger = logging.getLogger("luuniensuki.rbpc")
 
@@ -933,6 +950,21 @@ def create_rbpc_inquiry(
         # Queue partner notification in outbox with fault-tolerant delivery
         queue_inquiry_notification(db, inquiry, event_type="inquiry_created")
 
+        # Record authoritative server-verified conversion event (zero PII)
+        record_server_conversion_event(
+            db=db,
+            event_name="inquiry_submit",
+            payload={
+                "inquiry_id": str(inquiry.id),
+                "public_ref": inquiry.public_ref,
+                "experience_id": str(inquiry.experience_id),
+                "party_size": inquiry.party_size,
+            },
+            idempotency_key=f"srv_inq_sub_{inquiry.id}",
+            is_demo=False,
+            is_synthetic=False,
+        )
+
         db.commit()
         db.refresh(inquiry)
     except IntegrityError:
@@ -1536,6 +1568,22 @@ def update_partner_inquiry_status(
         note=payload.note,
     )
 
+    # Record server-verified business conversion event when confirmed
+    if str(inquiry.state).lower() in ("confirmed", "closed"):
+        record_server_conversion_event(
+            db=db,
+            event_name="inquiry_confirm",
+            payload={
+                "inquiry_id": str(inquiry.id),
+                "public_ref": inquiry.public_ref,
+                "experience_id": str(inquiry.experience_id),
+                "state": inquiry.state,
+            },
+            idempotency_key=f"srv_inq_conf_{inquiry.id}",
+            is_demo=False,
+            is_synthetic=False,
+        )
+
     db.commit()
     db.refresh(inquiry)
 
@@ -1709,12 +1757,19 @@ def record_settlement_transaction(
     provider_id = inquiry.provider_id or (exp.provider_id if exp else current_user.id)
     settlement_ref = f"STL-{uuid_module.uuid4().hex[:6].upper()}-{datetime.now(timezone.utc).strftime('%y%m%d')}"
 
+    revenue_stream = (
+        payload.revenue_stream.value
+        if hasattr(payload.revenue_stream, "value")
+        else (payload.revenue_stream or RbpcRevenueStream.visitor_commerce.value)
+    )
+
     settlement = RbpcSettlementLedger(
         settlement_ref=settlement_ref,
         inquiry_id=inquiry.id,
         provider_id=provider_id,
         creator_id=creator_id,
         gross_amount_vnd=gross,
+        revenue_stream=revenue_stream,
         take_rate=take_rate,
         platform_fee_vnd=platform_fee,
         tax_vat_vnd=tax_vat,
@@ -1740,6 +1795,7 @@ def record_settlement_transaction(
             "settlement_ref": settlement_ref,
             "inquiry_id": str(inquiry.id),
             "gross_amount_vnd": gross,
+            "revenue_stream": revenue_stream,
             "platform_fee_vnd": platform_fee,
             "tax_vat_vnd": tax_vat,
             "artisan_payout_vnd": artisan_payout,
@@ -2053,6 +2109,40 @@ def get_ledger_financial_summary(
         pending_settlements_count=pending_count,
         contracted_take_rate_avg=round(avg_take_rate, 4),
     )
+
+
+@router.get(
+    "/api/v1/rbpc/ledger/unit-economics",
+    response_model=RbpcUnitEconomicsActualLedger,
+)
+def get_unit_economics_actual_ledger(
+    stream: Optional[str] = Query(None, description="Optional stream filter: 'visitor_commerce' or 'school_b2b'"),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Aggregate verified unit economics actual ledger report.
+
+    Features:
+    - Cash actuals strictly separated from GMV forecasts (forecasts tagged truth_tier='FORECAST').
+    - Cost structure inference: server hosting (BNIX in-kind subsidy vs commercial replacement),
+      AI token inference (Phổ Tuệ in-kind credits vs commercial replacement), take rates, and dual margins.
+    - Explicit separation of revenue streams: 'visitor_commerce' vs 'school_b2b'.
+    - Negative abuse invariant: Partner inquiries in any status create strictly 0 VND revenue
+      and 0 VND realized GMV without a verified payment settlement in rbpc_settlement_ledger.
+    - Multi-tenant isolation: Admin/staff receive global actuals; partners receive provider-scoped actuals.
+    """
+    if current_user.role == UserRole.guest:
+        raise AppError("FORBIDDEN", "Guest users cannot view financial summaries.", status.HTTP_403_FORBIDDEN)
+
+    is_admin = current_user.role in ADMIN_ROLES
+    provider_id = None if is_admin else current_user.id
+
+    ledger = compute_unit_economics_ledger(
+        db=db,
+        provider_id=provider_id,
+        stream_filter=stream,
+    )
+    return ledger
 
 
 # --------------------------------------------------------------------------- #
@@ -4064,6 +4154,205 @@ def staff_moderate_experience(
     db.commit()
     db.refresh(exp)
     return _experience_to_out(exp)
+
+
+# --------------------------------------------------------------------------- #
+# Startup Evidence Room & Pitch Review Endpoints (V5-T120 / W11-A10)
+# --------------------------------------------------------------------------- #
+@router.get(
+    "/api/v1/rbpc/evidence-room/pointers",
+    response_model=RbpcEvidencePointerListOut,
+)
+def list_evidence_pointers(
+    domain: Optional[str] = Query(None, description="Filter by domain: product, customer, market, finances, impact, legal, team"),
+    status_filter: Optional[str] = Query(None, alias="status", description="Filter by status: active_verified, archived, needs_review"),
+    db: Session = Depends(get_db),
+):
+    """Retrieve versioned evidence room pointers with optional domain or status filter."""
+    count = db.scalar(select(func.count(RbpcEvidencePointer.id)))
+    if count == 0:
+        default_evidence_room_service.seed_db(db)
+
+    stmt = select(RbpcEvidencePointer)
+    if domain:
+        stmt = stmt.where(RbpcEvidencePointer.domain == domain.strip().lower())
+    if status_filter:
+        stmt = stmt.where(RbpcEvidencePointer.status == status_filter.strip().lower())
+    stmt = stmt.order_by(RbpcEvidencePointer.domain, RbpcEvidencePointer.pointer_id)
+
+    rows = db.scalars(stmt).all()
+    items = [
+        RbpcEvidencePointerOut(
+            pointer_id=r.pointer_id,
+            domain=r.domain,
+            title=r.title,
+            doc_ref=r.doc_ref,
+            version=r.version,
+            status=r.status,
+            hash_sha256=r.hash_sha256,
+            metrics_payload=r.metrics_payload or {},
+            summary=r.summary,
+            owner=r.owner,
+            verified_at=r.verified_at,
+            created_at=r.created_at,
+            updated_at=r.updated_at,
+        )
+        for r in rows
+    ]
+    return RbpcEvidencePointerListOut(
+        items=items,
+        total=len(items),
+        domains_covered=[d.value for d in RbpcEvidenceDomain],
+    )
+
+
+@router.get(
+    "/api/v1/rbpc/evidence-room/pointers/{pointer_id}",
+    response_model=RbpcEvidencePointerOut,
+)
+def get_evidence_pointer(
+    pointer_id: str,
+    db: Session = Depends(get_db),
+):
+    """Retrieve a single versioned evidence pointer by pointer_id."""
+    pointer = db.scalar(
+        select(RbpcEvidencePointer).where(RbpcEvidencePointer.pointer_id == pointer_id.strip())
+    )
+    if not pointer:
+        canon = default_evidence_room_service.get_pointer(pointer_id.strip())
+        if not canon:
+            raise AppError("POINTER_NOT_FOUND", f"Evidence pointer '{pointer_id}' not found.", status.HTTP_404_NOT_FOUND)
+        default_evidence_room_service.seed_db(db)
+        pointer = db.scalar(
+            select(RbpcEvidencePointer).where(RbpcEvidencePointer.pointer_id == pointer_id.strip())
+        )
+    return RbpcEvidencePointerOut(
+        pointer_id=pointer.pointer_id,
+        domain=pointer.domain,
+        title=pointer.title,
+        doc_ref=pointer.doc_ref,
+        version=pointer.version,
+        status=pointer.status,
+        hash_sha256=pointer.hash_sha256,
+        metrics_payload=pointer.metrics_payload or {},
+        summary=pointer.summary,
+        owner=pointer.owner,
+        verified_at=pointer.verified_at,
+        created_at=pointer.created_at,
+        updated_at=pointer.updated_at,
+    )
+
+
+@router.post(
+    "/api/v1/rbpc/pitch-review/evaluate",
+    response_model=RbpcPitchReviewOut,
+    status_code=status.HTTP_200_OK,
+)
+def evaluate_pitch_review(
+    payload: RbpcPitchReviewIn,
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user_optional),
+):
+    """Evaluate and audit a set of pitch deck assertions against the evidence room.
+
+    Negative abuse invariant:
+    Every quantitative pitch claim must have an immutable evidence reference and status;
+    ungrounded metrics are flagged (UNGROUNDED_FLAGGED) and pitch readiness is FLAGGED_UNREADY.
+    """
+    count = db.scalar(select(func.count(RbpcEvidencePointer.id)))
+    if count == 0:
+        default_evidence_room_service.seed_db(db)
+
+    claim_items = [
+        PitchClaimItem(
+            claim_text=c.claim_text,
+            domain=c.domain,
+            evidence_pointer_id=c.evidence_pointer_id,
+            metric_key=c.metric_key,
+            claimed_value=c.claimed_value,
+            is_quantitative=c.is_quantitative,
+            truth_tier=c.truth_tier or "OBSERVED",
+        )
+        for c in payload.claims
+    ]
+
+    report = default_evidence_room_service.evaluate_pitch_claims(
+        deck_title=payload.pitch_deck_title,
+        deck_version=payload.deck_version,
+        claims=claim_items,
+    )
+
+    review_row = default_evidence_room_service.persist_pitch_review(
+        db,
+        report,
+        reviewed_by_id=current_user.id if current_user else None,
+    )
+
+    return RbpcPitchReviewOut(
+        audit_ref=review_row.audit_ref,
+        pitch_deck_title=review_row.pitch_deck_title,
+        deck_version=review_row.deck_version,
+        total_claims_audited=review_row.total_claims_audited,
+        verified_claims_count=review_row.verified_claims_count,
+        ungrounded_claims_count=review_row.ungrounded_claims_count,
+        pitch_readiness=review_row.pitch_readiness,
+        claims_payload=review_row.claims_payload or [],
+        audit_findings=review_row.audit_findings or {},
+        reviewed_at=review_row.reviewed_at,
+    )
+
+
+@router.get(
+    "/api/v1/rbpc/pitch-review/audits/{audit_ref}",
+    response_model=RbpcPitchReviewOut,
+)
+def get_pitch_review_audit(
+    audit_ref: str,
+    db: Session = Depends(get_db),
+):
+    """Retrieve an immutable pitch review audit report by audit_ref."""
+    review = db.scalar(
+        select(RbpcPitchReview).where(RbpcPitchReview.audit_ref == audit_ref.strip())
+    )
+    if not review:
+        raise AppError("AUDIT_NOT_FOUND", f"Pitch review audit '{audit_ref}' not found.", status.HTTP_404_NOT_FOUND)
+
+    return RbpcPitchReviewOut(
+        audit_ref=review.audit_ref,
+        pitch_deck_title=review.pitch_deck_title,
+        deck_version=review.deck_version,
+        total_claims_audited=review.total_claims_audited,
+        verified_claims_count=review.verified_claims_count,
+        ungrounded_claims_count=review.ungrounded_claims_count,
+        pitch_readiness=review.pitch_readiness,
+        claims_payload=review.claims_payload or [],
+        audit_findings=review.audit_findings or {},
+        reviewed_at=review.reviewed_at,
+    )
+
+
+@router.get(
+    "/api/v1/rbpc/evidence-room/export",
+    response_model=RbpcEvidenceRoomExportOut,
+)
+def export_evidence_room(
+    format: str = Query("json", description="Export format: json or markdown"),
+):
+    """Export evidence room catalog as structured JSON or Markdown table."""
+    fmt = format.strip().lower()
+    if fmt == "markdown":
+        content = default_evidence_room_service.export_evidence_room_markdown()
+    else:
+        content = default_evidence_room_service.export_evidence_room_json()
+
+    pointers = default_evidence_room_service.get_all_pointers()
+    return RbpcEvidenceRoomExportOut(
+        format=fmt,
+        content=content,
+        total_pointers=len(pointers),
+        domains_covered=[d.value for d in RbpcEvidenceDomain],
+    )
+
 
 
 

@@ -5,6 +5,7 @@
  */
 
 import { apiRequest, ApiError, type ApiErrorOptions } from "@/lib/api";
+import { trackInquirySubmit } from "@/lib/analytics";
 import type {
   InquiryFormValues,
   InquiryStatus,
@@ -107,6 +108,8 @@ export const SEED_PARTNER_INQUIRIES: PartnerInboxItemWithAudit[] = [
     createdAt: "2026-10-18T10:00:00Z",
     updatedAt: "2026-10-18T10:00:00Z",
     auditLog: [],
+    isDemo: true,
+    watermark: "DEMO DATA",
   },
   {
     id: "inq-002",
@@ -138,6 +141,8 @@ export const SEED_PARTNER_INQUIRIES: PartnerInboxItemWithAudit[] = [
         note: "Gửi email hẹn giờ và hướng dẫn trang phục xưởng đúc",
       },
     ],
+    isDemo: true,
+    watermark: "DEMO DATA",
   },
   {
     id: "inq-003",
@@ -178,6 +183,8 @@ export const SEED_PARTNER_INQUIRIES: PartnerInboxItemWithAudit[] = [
         note: "Xác nhận lịch sáng 28/10",
       },
     ],
+    isDemo: true,
+    watermark: "DEMO DATA",
   },
   {
     id: "inq-004",
@@ -209,6 +216,8 @@ export const SEED_PARTNER_INQUIRIES: PartnerInboxItemWithAudit[] = [
         note: "Trùng lịch nấu đại hồng chung chùa Thiên Mụ, hẹn khách dịp sau",
       },
     ],
+    isDemo: true,
+    watermark: "DEMO DATA",
   },
   {
     id: "inq-005",
@@ -229,6 +238,8 @@ export const SEED_PARTNER_INQUIRIES: PartnerInboxItemWithAudit[] = [
     createdAt: "2026-10-18T14:20:00Z",
     updatedAt: "2026-10-18T14:20:00Z",
     auditLog: [],
+    isDemo: true,
+    watermark: "DEMO DATA",
   },
 ];
 
@@ -319,6 +330,7 @@ export function saveStoredInquiry(item: StoredInquiryItem): void {
 
 export interface CreateInquiryApiPayload {
   experience_slug: string;
+  experience_id?: string;
   contact: {
     name: string;
     method: ContactMethod;
@@ -357,6 +369,13 @@ export async function submitInquiryToApi(
     if (!res || !res.reference) {
       throw new ApiError("Phản hồi từ máy chủ không hợp lệ.");
     }
+
+    // Fire-and-forget consent-aware business conversion telemetry (zero PII)
+    trackInquirySubmit({
+      inquiryId: res.reference,
+      experienceId: payload.experience_id,
+      idempotencyKey: payload.idempotency_key,
+    }).catch(() => null);
 
     return {
       reference: res.reference,

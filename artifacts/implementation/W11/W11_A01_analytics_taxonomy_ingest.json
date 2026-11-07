@@ -1,0 +1,99 @@
+{
+  "ticket_id": "V5-T111",
+  "wave": "W11",
+  "slot": "A01",
+  "role": "W11-A01",
+  "priority": "P2",
+  "classification": "NEW_PRODUCT_FEATURE",
+  "title": "Analytics event taxonomy & ingest in backend/routers/ and frontend/src/lib/",
+  "status": "COMPLETED",
+  "verified_at": "2026-11-07T10:30:00Z",
+  "target_modules": [
+    "backend/services/analytics.py",
+    "backend/services/analytics_funnels.py",
+    "backend/routers/misc.py",
+    "backend/routers/rbpc.py",
+    "backend/models.py",
+    "backend/apischemas/content.py",
+    "frontend/src/lib/analytics.ts",
+    "frontend/src/lib/api.ts",
+    "frontend/src/lib/rbpc/inquiries.ts",
+    "migrations/versions/0088_analytics_taxonomy_ingest.py",
+    "tests/v5/test_v5_t111.py"
+  ],
+  "implementation_summary": {
+    "goal": "Build consent-aware analytics event taxonomy and ingest pipeline across backend/routers/ and frontend/src/lib/.",
+    "event_taxonomy": {
+      "category": "business_conversion",
+      "event_types": [
+        "view",
+        "explore",
+        "inquiry_start",
+        "inquiry_submit",
+        "inquiry_confirm"
+      ],
+      "payload_model": "BusinessConversionPayload"
+    },
+    "consent_awareness": {
+      "mechanism": "Header X-Telemetry-Consent and event-level/batch-level consent_status checks.",
+      "denied_behavior": "When consent is denied, revoked, or withdrawn, events are strictly dropped (0 rows inserted in database)."
+    },
+    "idempotency_deduplication": {
+      "mechanism": "Client-supplied or auto-generated idempotency_key (RFC 4122 v4 UUID string) indexed in analytics_events.",
+      "deduplication": "In-batch and database-level checks ensure network retries and browser re-flushes never insert duplicate rows."
+    },
+    "zero_student_pii": {
+      "enforcement": "Recursive payload scrubbing in backend/services/analytics.py (sanitize_analytics_payload) and frontend/src/lib/analytics.ts (sanitizeClientPayload).",
+      "sanitized_fields": [
+        "student_name",
+        "student_email",
+        "student_id",
+        "guardian_name",
+        "guardian_phone",
+        "guardian_email",
+        "school_address",
+        "full_name",
+        "phone",
+        "email"
+      ],
+      "guarantee": "Zero plaintext student emails, phone numbers, or student names are stored in database payloads."
+    },
+    "server_trusted_conversions": {
+      "verification": "verify_server_conversion_trust() validates conversion events against authoritative DB entities (RbpcExperience, RbpcInquiry).",
+      "trust_rules": "inquiry_submit verified against existing RbpcInquiry; inquiry_confirm verified against confirmed/closed state. Spoofed confirmations flagged is_server_verified=False."
+    },
+    "negative_abuse_invariant": {
+      "rule": "Demo and synthetic traffic is never counted as real customer conversion funnel.",
+      "enforcement": "calculate_funnel_data() in backend/services/analytics_funnels.py strictly filters out is_demo=True and is_synthetic=True events. 100 demo visits produce 0 real customer conversion counts."
+    }
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/v1/analytics/events",
+      "response_model": "AnalyticsEventsOut",
+      "auth_required": false,
+      "description": "Ingest telemetry events with consent awareness, idempotency deduplication, zero student PII, and server conversion verification."
+    }
+  ],
+  "verification_results": {
+    "test_suite": "tests/v5/test_v5_t111.py",
+    "tests_total": 7,
+    "tests_passed": 7,
+    "tests_failed": 0,
+    "scenarios_covered": [
+      "Event taxonomy constants & BusinessConversionPayload schema validation",
+      "Consent-aware telemetry ingest (persists on consented; drops on denied/header)",
+      "Idempotency key deduplication (replays create 0 duplicate rows)",
+      "Strict zero student PII in payloads (recursive sanitization before DB persist)",
+      "Server-trusted business conversion events (verified vs spoofed inquiry states)",
+      "Negative abuse invariant (demo/synthetic traffic excluded from real conversion funnel)",
+      "Frontend telemetry library contract (frontend/src/lib/analytics.ts exports and sanitizers)"
+    ],
+    "migration_check": "PASSED (0088_analytics_taxonomy_ingest.py, single head, additive-only)",
+    "openapi_snapshot": "PASSED (byte-for-byte synced)",
+    "route_inventory": "PASSED (lint-inventory-drift.sh clean, 660 routes)",
+    "type_check": "PASSED (tsc --noEmit)",
+    "lint_check": "PASSED (eslint --max-warnings=0)"
+  }
+}

@@ -525,11 +525,17 @@ function PartnerDashboardContent() {
 
         {/* Preview / Offline Mode Alert Banner (If not logged in as partner or in demo mode) */}
         {isDemoMode ? (
-          <div className="flex items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-xs text-amber-900 dark:text-amber-200">
+          <div
+            data-testid="demo-data-watermark"
+            className="flex items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-xs text-amber-900 dark:text-amber-200"
+          >
             <HelpCircle className="h-4 w-4 shrink-0 mt-0.5 text-amber-600" aria-hidden="true" />
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="rounded bg-amber-600 px-1.5 py-0.5 text-[10px] font-black tracking-wider text-white uppercase">
+                <span
+                  data-testid="demo-badge"
+                  className="rounded bg-amber-600 px-1.5 py-0.5 text-[10px] font-black tracking-wider text-white uppercase"
+                >
                   DEMO DATA
                 </span>
                 <strong className="font-semibold">
@@ -687,6 +693,7 @@ function PartnerDashboardContent() {
                 locale={locale}
                 onStatusChange={handleStatusChange}
                 onSaveNotes={handleSaveNotes}
+                isDemoMode={isDemoMode}
               />
             </div>
           </>

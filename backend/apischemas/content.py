@@ -35,15 +35,24 @@ class AnalyticsEventIn(BaseModel):
     session_id: Optional[UUID] = None
     cohort: Optional[str] = Field(None, max_length=50)
     device_info: Optional[dict[str, Any]] = None
+    idempotency_key: Optional[str] = Field(None, max_length=128)
+    consent_status: Optional[str] = Field(None, max_length=50)
+    is_server_verified: Optional[bool] = False
+    is_demo: Optional[bool] = False
+    is_synthetic: Optional[bool] = False
 
 
 class AnalyticsEventsIn(BaseModel):
     events: list[AnalyticsEventIn]
+    consent_status: Optional[str] = Field(None, max_length=50)
+    is_demo: Optional[bool] = False
+    is_synthetic: Optional[bool] = False
 
 
 class AnalyticsEventsOut(BaseModel):
     success: bool
     count: int
+    deduplicated_count: Optional[int] = 0
 
 
 class MotifOut(BaseModel):

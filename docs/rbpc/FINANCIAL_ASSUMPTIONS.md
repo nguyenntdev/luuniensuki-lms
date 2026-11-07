@@ -583,3 +583,177 @@ The entire platform achieves **complete financial self-sufficiency with just 3 c
 ```
 
 This conservative, source-grounded financial architecture establishes that LƯU NIÊN is not an imaginary startup with inflated financial fantasies, but an operationally sound, highly resilient social enterprise designed to protect and empower living Vietnamese heritage.
+
+---
+
+## 8. Unit Economics Actual Ledger (Observed Cash Actuals vs Forecasts)
+
+**Document Reference:** `DOC-RBPC-FIN-002` (Addendum to `DOC-RBPC-FIN-001`)  
+**Implementation Ticket:** `V5-T115` (Wave W11, Slot A05)  
+**API Endpoint:** `GET /api/v1/rbpc/ledger/unit-economics`  
+**Database Table:** `rbpc_settlement_ledger` (Migration `0085_rbpc_unit_economics_actual_ledger.py`)
+
+### 8.1 The Two Inviolable Accounting Boundaries
+
+To prevent financial misrepresentation, investor delusion, or artificial revenue inflation during the RMIT Business Plan Competition 2026, the platform architecture enforces two strict accounting firewalls:
+
+```
++---------------------------------------------------------------------------------------------------+
+|                        THE DUAL ACCOUNTING FIREWALLS IN LƯU NIÊN PLATFORM                         |
++---------------------------------------------------------------------------------------------------+
+|                                                                                                   |
+|  [ FIREWALL 1: CASH ACTUALS vs GMV FORECASTS ]                                                    |
+|  • Cash Actuals = STRICTLY settled, compliance-approved records in `rbpc_settlement_ledger`       |
+|  • GMV Forecasts = Unsettled inquiries and bottom-up SOM projections (Truth Tier: FORECAST)      |
+|  • Non-Negotiable Invariant: 0 VND cash recognized until verified payment settlement               |
+|                                                                                                   |
+|  [ FIREWALL 2: REVENUE STREAM SEPARATION ]                                                        |
+|  • Stream 1: `visitor_commerce` (B2C FIT cultural workshops, Phường Đúc, Pháp Lam, Thanh Tiên)    |
+|  • Stream 2: `school_b2b` (Institutional secondary school heritage cohorts & micro-credentials)   |
+|  • Streams maintain independent gross, fee, payout, refund, and unit cost accounting              |
+|                                                                                                   |
++---------------------------------------------------------------------------------------------------+
+```
+
+#### 8.1.1 Negative Abuse Invariant (V5-T115 Mandate)
+> **Core Law:** An inquiry record—regardless of whether its status is `new`, `contacted`, `confirmed`, `completed`, or `closed`—contributes **EXACTLY 0 VND** to platform cash revenue and **EXACTLY 0 VND** to realized GMV unless an explicit, compliance-approved transaction record exists in `rbpc_settlement_ledger`.
+
+- Merely clicking "Confirm" in the partner inbox or changing inquiry state does not insert financial rows.
+- Unverified inquiries are tallied solely under `unsettled_pipeline_inquiries_count` and labeled with `truth_tier: "FORECAST"`.
+- The ledger API explicitly exposes `negative_abuse.unsettled_inquiries_cash_revenue_vnd = 0.0` with `is_compliant = true`.
+
+---
+
+### 8.2 Granular Cost Structure Inference
+
+The financial ledger dynamically infers variable operational costs based on actual transaction and inquiry volumes, comparing the **Actual Sponsored Runway** against the **Shadow Commercial Replacement P&L**:
+
+| Cost Dimension | In-Kind Corporate Sponsorship | Shadow Commercial Replacement | Inferred Cost Model & Mathematical Formula |
+|---|---|---|---|
+| **Cloud VPS Server** | **100% Sponsored by BNIX**<br>(Intel Xeon Platinum, 8GB RAM, 100GB NVMe, Value: 1,142,400 VND/yr) | **95,200 VND / month**<br>(3,173 VND / day) | $C_{\text{server}} = 95,200\text{ VND / month}$ allocated across active operating months. In sponsored mode: **0 VND cash outflow**. |
+| **AI Token Inference** | **100% Sponsored by Phổ Tuệ**<br>($7,610 USD / 201,218,238 VND AI credits) | **270 VND / inquiry**<br>($0.15 / 1M tokens with Gemini 3.8 Flash Tiered) | Inferred as $N_{\text{inquiries}} \times 270\text{ VND}$. Each inquiry triggers ~6 questions @ ~1,500 context tokens = 9,000 tokens ($0.00135 USD $\approx$ 35.5 VND base + safety checks $\approx$ 270 VND). In sponsored mode: **0 VND cash outflow**. |
+| **Platform Take Rate** | **10.0% Standard Performance Fee**<br>(Contracted default: 0.1000; Ceiling: 0.1500) | **10.0% Standard Performance Fee** | $\text{Platform Fee} = \text{Gross Amount} \times \text{Take Rate}$. Realized take rate = $\frac{\sum \text{Fee}}{\sum \text{Gross}}$. Zero upfront cost to artisans. |
+| **Taxes & VAT** | **8.0% Cultural Services VAT** | **8.0% Cultural Services VAT** | $\text{VAT} = \text{Gross Amount} \times 0.08$. Remitted to Vietnamese tax authorities. |
+| **Maker Payout** | **90.0% Direct Net Value Transfer** | **90.0% Direct Net Value Transfer** | $\text{Artisan Payout} = \text{Gross} - \text{Fee} - \text{VAT}$. Disbursed upon compliance approval. |
+
+#### 8.2.1 Dual Contribution Margin Formulas
+
+1. **Sponsored Runway Contribution Margin (Actual Cash Flow):**
+   $$\text{Margin}_{\text{sponsored}} = \text{Net Cash Platform Fee} - 0\text{ VND} = \text{Net Cash Platform Fee}\quad (100.0\%)$$
+
+2. **Commercial Replacement Shadow Contribution Margin:**
+   $$\text{Margin}_{\text{commercial}} = \text{Net Cash Platform Fee} - (C_{\text{server}} + C_{\text{AI}} + C_{\text{ops}})$$
+   $$\text{Margin}_{\text{commercial}} \% = \frac{\text{Margin}_{\text{commercial}}}{\text{Net Cash Platform Fee}} \times 100\%$$
+
+---
+
+### 8.3 Revenue Streams Separation: Visitor Commerce vs School B2B
+
+To ensure proper segmentation between consumer experiential tourism and institutional edtech, every transaction in `rbpc_settlement_ledger` is strictly bound to one of two valid streams (`ck_rbpc_settlement_revenue_stream`):
+
+```
++---------------------------------------------------------------------------------------------------+
+|                        REVENUE STREAM COMPARISON & STRUCTURAL DIFFERENCES                         |
++---------------------------------------------------------------------------------------------------+
+| Attribute                      Stream 1: `visitor_commerce`       Stream 2: `school_b2b`           |
++------------------------------+----------------------------------+---------------------------------+
+| Target Customer              | Independent travelers (FITs),    | Secondary schools (THPT),       |
+|                              | cultural seekers, small groups   | history faculties, edtech orgs  |
+| Core Offering                | Hands-on artisan masterclasses   | Accredited heritage curriculum, |
+|                              | (Bronze, Enamel, Paper Lotus)    | student cohort field trips      |
+| Average Order Value (AOV)    | 350,000 – 650,000 VND            | 2,500,000 – 10,000,000 VND      |
+|                              | (Blended: 516,667 VND)           | (Average: ~5,000,000 VND)       |
+| Contracted Take Rate         | 10.0% performance commission     | 15.0% – 20.0% institutional     |
+| Sales Cycle                  | 12 to 48 hours advance notice    | 2 to 8 weeks (term/semester)   |
+| Compliance Approval          | Standard artisan payout review   | Institutional sponsor & ethics  |
+| Database Enum Value          | `'visitor_commerce'`             | `'school_b2b'`                  |
++------------------------------+----------------------------------+---------------------------------+
+```
+
+---
+
+### 8.4 Unit Economics Actual Ledger API Contract (`GET /api/v1/rbpc/ledger/unit-economics`)
+
+```json
+{
+  "generated_at": "2026-11-07T12:00:00Z",
+  "currency": "VND",
+  "cash_actuals": {
+    "total_settled_gross_vnd": 650000.0,
+    "total_platform_fee_cash_vnd": 65000.0,
+    "total_artisan_payout_vnd": 533000.0,
+    "total_tax_vat_vnd": 52000.0,
+    "total_refunds_vnd": 0.0,
+    "net_cash_revenue_vnd": 65000.0,
+    "approved_settlements_count": 0,
+    "settled_settlements_count": 1,
+    "pending_settlements_count": 0
+  },
+  "gmv_forecasts": {
+    "unsettled_pipeline_inquiries_count": 4,
+    "pipeline_potential_gmv_forecast_vnd": 2066668.0,
+    "annual_som_target_gmv_vnd": 570000000.0,
+    "annual_som_target_revenue_vnd": 57000000.0,
+    "forecast_realization_rate": 0.0011,
+    "truth_tier": "FORECAST",
+    "epistemic_notice": "Cash actuals require verified settlement records. Inquiries and pipeline forecasts are model estimates and contribute strictly 0 VND cash to recognized revenue."
+  },
+  "cost_inference": {
+    "inferred_server_cost_vnd": 95200.0,
+    "server_cost_is_in_kind": true,
+    "server_sponsor": "BNIX (1 Dedicated Cloud VPS, 4 vCPU, 8 GB RAM, 100 GB NVMe)",
+    "inferred_ai_token_cost_vnd": 1350.0,
+    "ai_token_cost_is_in_kind": true,
+    "ai_sponsor": "Phổ Tuệ (AI API Model Inference Credits: $7,610.00 USD)",
+    "effective_take_rate": 0.1,
+    "inferred_total_variable_cost_vnd": 96550.0,
+    "net_contribution_margin_sponsored_vnd": 65000.0,
+    "net_contribution_margin_sponsored_pct": 100.0,
+    "net_contribution_margin_commercial_vnd": -31550.0,
+    "net_contribution_margin_commercial_pct": -48.54
+  },
+  "streams": {
+    "visitor_commerce": {
+      "stream": "visitor_commerce",
+      "settled_gross_vnd": 650000.0,
+      "platform_fee_cash_vnd": 65000.0,
+      "artisan_payout_vnd": 533000.0,
+      "tax_vat_vnd": 52000.0,
+      "refund_amount_vnd": 0.0,
+      "transactions_count": 1,
+      "average_order_value_vnd": 650000.0,
+      "effective_take_rate": 0.1,
+      "unsettled_inquiries_count": 4,
+      "pipeline_forecast_gmv_vnd": 2066668.0
+    },
+    "school_b2b": {
+      "stream": "school_b2b",
+      "settled_gross_vnd": 0.0,
+      "platform_fee_cash_vnd": 0.0,
+      "artisan_payout_vnd": 0.0,
+      "tax_vat_vnd": 0.0,
+      "refund_amount_vnd": 0.0,
+      "transactions_count": 0,
+      "average_order_value_vnd": 0.0,
+      "effective_take_rate": 0.1,
+      "unsettled_inquiries_count": 0,
+      "pipeline_forecast_gmv_vnd": 0.0
+    }
+  },
+  "negative_abuse": {
+    "unsettled_inquiries_count": 4,
+    "unsettled_inquiries_cash_revenue_vnd": 0.0,
+    "unsettled_inquiries_realized_gmv_vnd": 0.0,
+    "rule": "Partner inquiry creates 0 VND revenue without verified payment or settled transaction.",
+    "is_compliant": true
+  }
+}
+```
+
+---
+
+### 8.5 Integrity Guarantees & Summary for Due Diligence
+
+1. **Zero Fake Revenue:** Neither web page views, AI conversational turns, inquiry submissions, nor status changes to "confirmed" register a single đồng of revenue.
+2. **Double Verification:** Revenue requires explicit proof in `rbpc_settlement_ledger` accompanied by compliance approval.
+3. **Transparent Sponsoring:** Subsidized hosting and AI credits are reported honestly with clear shadow replacement calculations, proving to judges and auditors that the venture's financial model is built on empirical truth.

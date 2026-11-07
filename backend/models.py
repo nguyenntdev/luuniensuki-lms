@@ -635,15 +635,19 @@ class AnalyticsEvent(Base):
         Index("idx_analytics_session", "session_id"),
         Index("idx_analytics_category", "event_category"),
         Index("idx_analytics_cohort", "cohort"),
+        Index("idx_analytics_idempotency", "idempotency_key"),
+        Index("idx_analytics_server_verified", "is_server_verified"),
+        Index("idx_analytics_is_demo", "is_demo"),
+        Index("idx_analytics_is_synthetic", "is_synthetic"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(
         PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    user_id: Mapped[uuid.UUID] = mapped_column(
+    user_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         PG_UUID(as_uuid=True),
         ForeignKey("users.id", ondelete="CASCADE"),
-        nullable=False,
+        nullable=True,
     )
     event_name: Mapped[str] = mapped_column(String(100), nullable=False)
     path: Mapped[Optional[str]] = mapped_column(String(255))
@@ -654,11 +658,24 @@ class AnalyticsEvent(Base):
     cohort: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
     event_category: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
     device_info: Mapped[Optional[Any]] = mapped_column(JSONB, nullable=True)
+    idempotency_key: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
+    consent_status: Mapped[Optional[str]] = mapped_column(
+        String(50), nullable=True, default="consented"
+    )
+    is_server_verified: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False
+    )
+    is_demo: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False
+    )
+    is_synthetic: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
 
-    user: Mapped["User"] = relationship("User")
+    user: Mapped[Optional["User"]] = relationship("User")
 
 
 class Funnel(Base):
@@ -4672,6 +4689,16 @@ from .models_rbpc import (  # noqa: E402,F401
     RbpcStory,
     RbpcStoryStatus,
     RbpcSupportType,
+    RbpcEvidencePointer,
+    RbpcEvidenceDomain,
+    RbpcEvidencePointerStatus,
+    RbpcPitchClaimStatus,
+    RbpcPitchReadiness,
+    RbpcPitchReview,
+    RbpcLoiConsentType,
+    RbpcPartnerCategory,
+    RbpcPartnerLoiStatus,
+    RbpcPartnerLoiVault,
 )
 
 # --------------------------------------------------------------------------- #
@@ -4750,4 +4777,17 @@ from .research_factory_models import (  # noqa: E402,F401
 from .teacher_models import (  # noqa: E402,F401
     TeacherSupportTicket,
     TeacherOnboardingProfile,
+)
+from .pilot_models import (  # noqa: E402,F401
+    PilotInvitation,
+    PilotParticipantActivation,
+    PilotUsageHealth,
+    PilotSupportRequest,
+)
+from .pricing_models import (  # noqa: E402,F401
+    PricingContract,
+    PricingExperimentEvent,
+    PricingEventType,
+    PricingTierKey,
+    ContractStatus,
 )

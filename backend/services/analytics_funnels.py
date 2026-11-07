@@ -101,6 +101,37 @@ FUNNEL_DEFINITIONS = {
             },
         ],
     },
+    "business_conversion": {
+        "name": "Heritage Business Conversion Funnel",
+        "description": "Visitor journey from view to inquiry confirmation",
+        "stages": [
+            {
+                "name": "view",
+                "display_name": "Experience View",
+                "event_name": "view",
+            },
+            {
+                "name": "explore",
+                "display_name": "Experience Explore",
+                "event_name": "explore",
+            },
+            {
+                "name": "inquiry_start",
+                "display_name": "Inquiry Started",
+                "event_name": "inquiry_start",
+            },
+            {
+                "name": "inquiry_submit",
+                "display_name": "Inquiry Submitted",
+                "event_name": "inquiry_submit",
+            },
+            {
+                "name": "inquiry_confirm",
+                "display_name": "Inquiry Confirmed",
+                "event_name": "inquiry_confirm",
+            },
+        ],
+    },
 }
 
 
@@ -115,9 +146,11 @@ def _count_users_in_stage(
     start_date: Optional[datetime],
     end_date: Optional[datetime],
     cohort: Optional[str],
+    exclude_demo: bool = True,
+    trusted_only: bool = False,
 ) -> int:
     """
-    Count unique users who reached a specific funnel stage.
+    Count unique users or sessions who reached a specific funnel stage.
 
     Args:
         session: Database session
@@ -125,14 +158,18 @@ def _count_users_in_stage(
         start_date: Optional start date filter
         end_date: Optional end date filter
         cohort: Optional cohort filter
+        exclude_demo: If True, exclude demo and synthetic events (anti-abuse)
+        trusted_only: If True, only count server-verified events
 
     Returns:
-        Count of unique users
+        Count of unique users or sessions
     """
     event_name = stage["event_name"]
     stage_filter = stage.get("filter", {})
 
-    query = select(func.count(distinct(AnalyticsEvent.user_id))).where(
+    # Use coalesce(user_id, session_id) so anonymous/visitor conversion tracking works
+    distinct_target = func.coalesce(AnalyticsEvent.user_id, AnalyticsEvent.session_id)
+    query = select(func.count(distinct(distinct_target))).where(
         AnalyticsEvent.event_name == event_name
     )
 
@@ -142,6 +179,19 @@ def _count_users_in_stage(
         query = query.where(AnalyticsEvent.created_at <= end_date)
     if cohort:
         query = query.where(AnalyticsEvent.cohort == cohort)
+
+    # Negative abuse filter: strictly exclude demo and synthetic events
+    if exclude_demo:
+        query = query.where(
+            and_(
+                AnalyticsEvent.is_demo.is_(False),
+                AnalyticsEvent.is_synthetic.is_(False),
+            )
+        )
+
+    # Server-trusted conversion filter
+    if trusted_only or stage.get("trusted_only"):
+        query = query.where(AnalyticsEvent.is_server_verified.is_(True))
 
     # Apply stage-specific filters
     if "min_completion_percentage" in stage_filter:
@@ -163,16 +213,20 @@ def calculate_funnel_data(
     start_date: Optional[datetime] = None,
     end_date: Optional[datetime] = None,
     cohort: Optional[str] = None,
+    exclude_demo: bool = True,
+    trusted_only: bool = False,
 ) -> dict[str, Any]:
     """
     Calculate funnel metrics for a specific funnel type.
 
     Args:
         session: Database session
-        funnel_type: Type of funnel (onboarding, lesson, quiz)
+        funnel_type: Type of funnel (onboarding, lesson, quiz, business_conversion)
         start_date: Optional start date for filtering events
         end_date: Optional end date for filtering events
         cohort: Optional cohort identifier for filtering users
+        exclude_demo: Exclude demo/synthetic traffic from customer funnels
+        trusted_only: Exclude unverified conversions
 
     Returns:
         Dictionary with funnel metrics
@@ -186,7 +240,15 @@ def calculate_funnel_data(
     # Calculate counts for each stage
     stage_counts = []
     for stage in stages:
-        count = _count_users_in_stage(session, stage, start_date, end_date, cohort)
+        count = _count_users_in_stage(
+            session=session,
+            stage=stage,
+            start_date=start_date,
+            end_date=end_date,
+            cohort=cohort,
+            exclude_demo=exclude_demo,
+            trusted_only=trusted_only,
+        )
         stage_counts.append({
             "stage": stage["name"],
             "display_name": stage["display_name"],
@@ -228,6 +290,8 @@ def calculate_funnel_data(
         "total_users": total_users,
         "stages": stage_counts,
         "overall_conversion": overall_conversion,
+        "exclude_demo": exclude_demo,
+        "trusted_only": trusted_only,
     }
 
 

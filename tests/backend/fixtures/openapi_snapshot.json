@@ -2754,6 +2754,18 @@
             ],
             "title": "Cohort"
           },
+          "consent_status": {
+            "anyOf": [
+              {
+                "maxLength": 50,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Consent Status"
+          },
           "device_info": {
             "anyOf": [
               {
@@ -2765,6 +2777,54 @@
               }
             ],
             "title": "Device Info"
+          },
+          "idempotency_key": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Idempotency Key"
+          },
+          "is_demo": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": false,
+            "title": "Is Demo"
+          },
+          "is_server_verified": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": false,
+            "title": "Is Server Verified"
+          },
+          "is_synthetic": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": false,
+            "title": "Is Synthetic"
           },
           "name": {
             "maxLength": 100,
@@ -2816,12 +2876,48 @@
       },
       "AnalyticsEventsIn": {
         "properties": {
+          "consent_status": {
+            "anyOf": [
+              {
+                "maxLength": 50,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Consent Status"
+          },
           "events": {
             "items": {
               "$ref": "#/components/schemas/AnalyticsEventIn"
             },
             "title": "Events",
             "type": "array"
+          },
+          "is_demo": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": false,
+            "title": "Is Demo"
+          },
+          "is_synthetic": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": false,
+            "title": "Is Synthetic"
           }
         },
         "required": [
@@ -2835,6 +2931,18 @@
           "count": {
             "title": "Count",
             "type": "integer"
+          },
+          "deduplicated_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": 0,
+            "title": "Deduplicated Count"
           },
           "success": {
             "title": "Success",
@@ -34511,6 +34619,127 @@
         "title": "PendingReviewListOut",
         "type": "object"
       },
+      "PilotActivateIn": {
+        "properties": {
+          "compliance_accepted": {
+            "description": "Must explicitly accept pilot compliance terms",
+            "title": "Compliance Accepted",
+            "type": "boolean"
+          },
+          "token": {
+            "description": "Invitation token to redeem",
+            "minLength": 10,
+            "title": "Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "token",
+          "compliance_accepted"
+        ],
+        "title": "PilotActivateIn",
+        "type": "object"
+      },
+      "PilotActivationOut": {
+        "properties": {
+          "activated_at": {
+            "format": "date-time",
+            "title": "Activated At",
+            "type": "string"
+          },
+          "completed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed At"
+          },
+          "completed_steps": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Completed Steps",
+            "type": "array"
+          },
+          "compliance_accepted": {
+            "title": "Compliance Accepted",
+            "type": "boolean"
+          },
+          "compliance_accepted_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Compliance Accepted At"
+          },
+          "current_step": {
+            "title": "Current Step",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "invitation_id": {
+            "format": "uuid",
+            "title": "Invitation Id",
+            "type": "string"
+          },
+          "organization_name": {
+            "title": "Organization Name",
+            "type": "string"
+          },
+          "pilot_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pilot Name"
+          },
+          "role_type": {
+            "title": "Role Type",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "user_id": {
+            "format": "uuid",
+            "title": "User Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "user_id",
+          "invitation_id",
+          "role_type",
+          "organization_name",
+          "status",
+          "current_step",
+          "completed_steps",
+          "compliance_accepted",
+          "activated_at"
+        ],
+        "title": "PilotActivationOut",
+        "type": "object"
+      },
       "PilotDataRetentionAuditOut": {
         "properties": {
           "audit_timestamp": {
@@ -34895,6 +35124,555 @@
         "title": "PilotGuardianConsentWithdrawIn",
         "type": "object"
       },
+      "PilotHealthTelemetryRecordIn": {
+        "properties": {
+          "action_name": {
+            "maxLength": 100,
+            "minLength": 2,
+            "title": "Action Name",
+            "type": "string"
+          },
+          "details": {
+            "additionalProperties": true,
+            "title": "Details",
+            "type": "object"
+          }
+        },
+        "required": [
+          "action_name"
+        ],
+        "title": "PilotHealthTelemetryRecordIn",
+        "type": "object"
+      },
+      "PilotInvitationCreateIn": {
+        "properties": {
+          "contact_email": {
+            "maxLength": 255,
+            "minLength": 5,
+            "title": "Contact Email",
+            "type": "string"
+          },
+          "expires_in_days": {
+            "default": 30,
+            "maximum": 365.0,
+            "minimum": 1.0,
+            "title": "Expires In Days",
+            "type": "integer"
+          },
+          "max_uses": {
+            "default": 1,
+            "maximum": 100.0,
+            "minimum": 1.0,
+            "title": "Max Uses",
+            "type": "integer"
+          },
+          "metadata_payload": {
+            "additionalProperties": true,
+            "title": "Metadata Payload",
+            "type": "object"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "organization_name": {
+            "maxLength": 255,
+            "minLength": 2,
+            "title": "Organization Name",
+            "type": "string"
+          },
+          "partner_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Partner Id"
+          },
+          "pilot_name": {
+            "maxLength": 255,
+            "minLength": 3,
+            "title": "Pilot Name",
+            "type": "string"
+          },
+          "school_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "School Id"
+          },
+          "target_role": {
+            "description": "'school_teacher' or 'artisan_partner'",
+            "title": "Target Role",
+            "type": "string"
+          }
+        },
+        "required": [
+          "pilot_name",
+          "target_role",
+          "organization_name",
+          "contact_email"
+        ],
+        "title": "PilotInvitationCreateIn",
+        "type": "object"
+      },
+      "PilotInvitationOut": {
+        "properties": {
+          "contact_email": {
+            "title": "Contact Email",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "invitation_code": {
+            "title": "Invitation Code",
+            "type": "string"
+          },
+          "invitation_token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Invitation Token"
+          },
+          "max_uses": {
+            "title": "Max Uses",
+            "type": "integer"
+          },
+          "metadata_payload": {
+            "additionalProperties": true,
+            "title": "Metadata Payload",
+            "type": "object"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "organization_name": {
+            "title": "Organization Name",
+            "type": "string"
+          },
+          "partner_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Partner Id"
+          },
+          "pilot_name": {
+            "title": "Pilot Name",
+            "type": "string"
+          },
+          "school_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "School Id"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "target_role": {
+            "title": "Target Role",
+            "type": "string"
+          },
+          "used_count": {
+            "title": "Used Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "invitation_code",
+          "pilot_name",
+          "target_role",
+          "organization_name",
+          "contact_email",
+          "max_uses",
+          "used_count",
+          "status",
+          "expires_at",
+          "created_at"
+        ],
+        "title": "PilotInvitationOut",
+        "type": "object"
+      },
+      "PilotInvitationValidationResult": {
+        "properties": {
+          "expires_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
+          },
+          "invitation_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Invitation Code"
+          },
+          "is_valid": {
+            "title": "Is Valid",
+            "type": "boolean"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "organization_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Organization Name"
+          },
+          "pilot_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pilot Name"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "target_role": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Role"
+          }
+        },
+        "required": [
+          "is_valid",
+          "status",
+          "message"
+        ],
+        "title": "PilotInvitationValidationResult",
+        "type": "object"
+      },
+      "PilotOnboardingStepIn": {
+        "properties": {
+          "completed": {
+            "default": true,
+            "title": "Completed",
+            "type": "boolean"
+          },
+          "step": {
+            "description": "Onboarding step key, e.g. welcome, tour, first_action, etc.",
+            "title": "Step",
+            "type": "string"
+          }
+        },
+        "required": [
+          "step"
+        ],
+        "title": "PilotOnboardingStepIn",
+        "type": "object"
+      },
+      "PilotSupportRequestCreateIn": {
+        "properties": {
+          "category": {
+            "description": "'activation', 'onboarding_help', 'feature_feedback', 'data_privacy', 'bug_report'",
+            "title": "Category",
+            "type": "string"
+          },
+          "message": {
+            "minLength": 10,
+            "title": "Message",
+            "type": "string"
+          },
+          "priority": {
+            "default": "normal",
+            "description": "'low', 'normal', 'high', 'urgent'",
+            "title": "Priority",
+            "type": "string"
+          },
+          "subject": {
+            "maxLength": 255,
+            "minLength": 5,
+            "title": "Subject",
+            "type": "string"
+          }
+        },
+        "required": [
+          "category",
+          "subject",
+          "message"
+        ],
+        "title": "PilotSupportRequestCreateIn",
+        "type": "object"
+      },
+      "PilotSupportRequestOut": {
+        "properties": {
+          "activation_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Activation Id"
+          },
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "priority": {
+            "title": "Priority",
+            "type": "string"
+          },
+          "resolved_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resolved At"
+          },
+          "responses": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Responses",
+            "type": "array"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "subject": {
+            "title": "Subject",
+            "type": "string"
+          },
+          "ticket_code": {
+            "title": "Ticket Code",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "user_id": {
+            "format": "uuid",
+            "title": "User Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "ticket_code",
+          "user_id",
+          "category",
+          "priority",
+          "status",
+          "subject",
+          "message",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "PilotSupportRequestOut",
+        "type": "object"
+      },
+      "PilotSupportRequestReplyIn": {
+        "properties": {
+          "message": {
+            "minLength": 3,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "title": "PilotSupportRequestReplyIn",
+        "type": "object"
+      },
+      "PilotUsageHealthOut": {
+        "properties": {
+          "actions_count": {
+            "title": "Actions Count",
+            "type": "integer"
+          },
+          "activation_id": {
+            "format": "uuid",
+            "title": "Activation Id",
+            "type": "string"
+          },
+          "health_score": {
+            "title": "Health Score",
+            "type": "number"
+          },
+          "health_status": {
+            "title": "Health Status",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "last_action_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Action Name"
+          },
+          "last_active_at": {
+            "format": "date-time",
+            "title": "Last Active At",
+            "type": "string"
+          },
+          "login_count": {
+            "title": "Login Count",
+            "type": "integer"
+          },
+          "telemetry_summary": {
+            "additionalProperties": true,
+            "title": "Telemetry Summary",
+            "type": "object"
+          },
+          "user_id": {
+            "format": "uuid",
+            "title": "User Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "user_id",
+          "activation_id",
+          "login_count",
+          "actions_count",
+          "last_active_at",
+          "health_score",
+          "health_status",
+          "telemetry_summary"
+        ],
+        "title": "PilotUsageHealthOut",
+        "type": "object"
+      },
+      "PilotValidateInvitationIn": {
+        "properties": {
+          "token": {
+            "description": "Raw secret invitation token",
+            "minLength": 10,
+            "title": "Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "token"
+        ],
+        "title": "PilotValidateInvitationIn",
+        "type": "object"
+      },
       "PrerequisiteLessonInfo": {
         "description": "Info about a prerequisite lesson.",
         "properties": {
@@ -34956,6 +35734,664 @@
           "is_completed"
         ],
         "title": "PrerequisiteLessonInfo",
+        "type": "object"
+      },
+      "PricingCalculatorIn": {
+        "description": "Input for real-time pricing calculator.",
+        "properties": {
+          "include_ai_tutor_credits": {
+            "default": false,
+            "title": "Include Ai Tutor Credits",
+            "type": "boolean"
+          },
+          "include_teacher_training_pdu": {
+            "default": false,
+            "title": "Include Teacher Training Pdu",
+            "type": "boolean"
+          },
+          "include_vr360_interactive_lab": {
+            "default": false,
+            "title": "Include Vr360 Interactive Lab",
+            "type": "boolean"
+          },
+          "months_duration": {
+            "default": 12,
+            "description": "Thời hạn sử dụng theo tháng",
+            "maximum": 36.0,
+            "minimum": 1.0,
+            "title": "Months Duration",
+            "type": "integer"
+          },
+          "student_count": {
+            "description": "Dự kiến số học sinh tham gia",
+            "maximum": 100000.0,
+            "minimum": 1.0,
+            "title": "Student Count",
+            "type": "integer"
+          },
+          "tier_key": {
+            "title": "Tier Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tier_key",
+          "student_count"
+        ],
+        "title": "PricingCalculatorIn",
+        "type": "object"
+      },
+      "PricingCalculatorOut": {
+        "description": "Output estimate from calculator with explicit non-revenue non-binding disclaimer.",
+        "properties": {
+          "addons_subtotal_vnd": {
+            "title": "Addons Subtotal Vnd",
+            "type": "number"
+          },
+          "base_subtotal_vnd": {
+            "title": "Base Subtotal Vnd",
+            "type": "number"
+          },
+          "disclaimer": {
+            "default": "Kết quả tính toán chỉ mang tính ước tính và khảo sát nhu cầu thị trường. Không cấu thành hóa đơn, không tạo doanh thu và không có hiệu lực pháp lý nếu chưa lập hợp đồng.",
+            "title": "Disclaimer",
+            "type": "string"
+          },
+          "estimated_total_vnd": {
+            "title": "Estimated Total Vnd",
+            "type": "number"
+          },
+          "is_binding": {
+            "default": false,
+            "title": "Is Binding",
+            "type": "boolean"
+          },
+          "months_duration": {
+            "title": "Months Duration",
+            "type": "integer"
+          },
+          "per_student_month_vnd": {
+            "title": "Per Student Month Vnd",
+            "type": "number"
+          },
+          "revenue_recognized_vnd": {
+            "default": 0.0,
+            "title": "Revenue Recognized Vnd",
+            "type": "number"
+          },
+          "student_count": {
+            "title": "Student Count",
+            "type": "integer"
+          },
+          "tier_key": {
+            "title": "Tier Key",
+            "type": "string"
+          },
+          "volume_discount_vnd": {
+            "title": "Volume Discount Vnd",
+            "type": "number"
+          }
+        },
+        "required": [
+          "tier_key",
+          "student_count",
+          "months_duration",
+          "base_subtotal_vnd",
+          "addons_subtotal_vnd",
+          "volume_discount_vnd",
+          "estimated_total_vnd",
+          "per_student_month_vnd"
+        ],
+        "title": "PricingCalculatorOut",
+        "type": "object"
+      },
+      "PricingContractCreateIn": {
+        "description": "Create a drafted institutional contract.",
+        "properties": {
+          "contract_value_vnd": {
+            "minimum": 0.0,
+            "title": "Contract Value Vnd",
+            "type": "number"
+          },
+          "organization_name": {
+            "maxLength": 255,
+            "minLength": 3,
+            "title": "Organization Name",
+            "type": "string"
+          },
+          "school_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "School Id"
+          },
+          "student_seat_capacity": {
+            "maximum": 100000.0,
+            "minimum": 1.0,
+            "title": "Student Seat Capacity",
+            "type": "integer"
+          },
+          "terms_version": {
+            "default": "v2026.1-edu",
+            "title": "Terms Version",
+            "type": "string"
+          },
+          "tier_key": {
+            "title": "Tier Key",
+            "type": "string"
+          },
+          "variant_key": {
+            "default": "control",
+            "title": "Variant Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "organization_name",
+          "tier_key",
+          "student_seat_capacity",
+          "contract_value_vnd"
+        ],
+        "title": "PricingContractCreateIn",
+        "type": "object"
+      },
+      "PricingContractOut": {
+        "description": "Legitimate contract details.",
+        "properties": {
+          "contract_number": {
+            "title": "Contract Number",
+            "type": "string"
+          },
+          "contract_value_vnd": {
+            "title": "Contract Value Vnd",
+            "type": "number"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "organization_name": {
+            "title": "Organization Name",
+            "type": "string"
+          },
+          "school_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "School Id"
+          },
+          "signed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signed At"
+          },
+          "signer_user_id": {
+            "format": "uuid",
+            "title": "Signer User Id",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "student_seat_capacity": {
+            "title": "Student Seat Capacity",
+            "type": "integer"
+          },
+          "terms_version": {
+            "title": "Terms Version",
+            "type": "string"
+          },
+          "tier_key": {
+            "title": "Tier Key",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "variant_key": {
+            "title": "Variant Key",
+            "type": "string"
+          },
+          "verification_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verification Hash"
+          }
+        },
+        "required": [
+          "id",
+          "contract_number",
+          "organization_name",
+          "signer_user_id",
+          "tier_key",
+          "variant_key",
+          "contract_value_vnd",
+          "student_seat_capacity",
+          "status",
+          "terms_version",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "PricingContractOut",
+        "type": "object"
+      },
+      "PricingContractSignAcceptIn": {
+        "description": "Real contract acceptance requiring explicit agreement and verification token.",
+        "properties": {
+          "confirmation_statement": {
+            "description": "Tuyên bố xác nhận cam kết hợp đồng pháp lý của trường học",
+            "title": "Confirmation Statement",
+            "type": "string"
+          },
+          "ip_address_masked": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ip Address Masked"
+          },
+          "signer_legal_name": {
+            "maxLength": 100,
+            "minLength": 2,
+            "title": "Signer Legal Name",
+            "type": "string"
+          },
+          "signer_title": {
+            "maxLength": 100,
+            "minLength": 2,
+            "title": "Signer Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "confirmation_statement",
+          "signer_title",
+          "signer_legal_name"
+        ],
+        "title": "PricingContractSignAcceptIn",
+        "type": "object"
+      },
+      "PricingExperimentConfigOut": {
+        "description": "Public pricing experiment configuration and variants.",
+        "properties": {
+          "anti_abuse_notice": {
+            "default": "Lưu ý: Mọi thao tác tính giá hoặc xem gói chỉ mang tính chất dự toán/khảo sát nhu cầu. Không ghi nhận doanh thu hoặc ràng buộc hợp đồng cho đến khi có biên bản ký kết hợp pháp.",
+            "title": "Anti Abuse Notice",
+            "type": "string"
+          },
+          "consent_policy_version": {
+            "title": "Consent Policy Version",
+            "type": "string"
+          },
+          "consent_required": {
+            "default": true,
+            "title": "Consent Required",
+            "type": "boolean"
+          },
+          "consent_text_en": {
+            "title": "Consent Text En",
+            "type": "string"
+          },
+          "consent_text_vi": {
+            "title": "Consent Text Vi",
+            "type": "string"
+          },
+          "experiment_key": {
+            "title": "Experiment Key",
+            "type": "string"
+          },
+          "tiers": {
+            "items": {
+              "$ref": "#/components/schemas/PricingTierInfo"
+            },
+            "title": "Tiers",
+            "type": "array"
+          },
+          "variant_key": {
+            "title": "Variant Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "experiment_key",
+          "variant_key",
+          "consent_policy_version",
+          "consent_text_vi",
+          "consent_text_en",
+          "tiers"
+        ],
+        "title": "PricingExperimentConfigOut",
+        "type": "object"
+      },
+      "PricingExperimentEventCreateIn": {
+        "description": "Track an interaction on pricing tier or calculator.",
+        "properties": {
+          "anonymous_session_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Anonymous Session Id"
+          },
+          "calculator_params": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calculator Params"
+          },
+          "client_metadata": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Metadata"
+          },
+          "consent_version": {
+            "default": "2026.1-pricing",
+            "title": "Consent Version",
+            "type": "string"
+          },
+          "event_type": {
+            "title": "Event Type",
+            "type": "string"
+          },
+          "experiment_key": {
+            "default": "school_pricing_v1",
+            "title": "Experiment Key",
+            "type": "string"
+          },
+          "has_experiment_consent": {
+            "default": true,
+            "title": "Has Experiment Consent",
+            "type": "boolean"
+          },
+          "tier_key": {
+            "title": "Tier Key",
+            "type": "string"
+          },
+          "variant_key": {
+            "default": "control",
+            "title": "Variant Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tier_key",
+          "event_type"
+        ],
+        "title": "PricingExperimentEventCreateIn",
+        "type": "object"
+      },
+      "PricingExperimentEventOut": {
+        "description": "Recorded pricing event.",
+        "properties": {
+          "calculator_params": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calculator Params"
+          },
+          "consent_version": {
+            "title": "Consent Version",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "event_type": {
+            "title": "Event Type",
+            "type": "string"
+          },
+          "experiment_key": {
+            "title": "Experiment Key",
+            "type": "string"
+          },
+          "has_experiment_consent": {
+            "title": "Has Experiment Consent",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "is_paying_customer": {
+            "title": "Is Paying Customer",
+            "type": "boolean"
+          },
+          "revenue_impact_vnd": {
+            "title": "Revenue Impact Vnd",
+            "type": "number"
+          },
+          "tier_key": {
+            "title": "Tier Key",
+            "type": "string"
+          },
+          "user_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "User Id"
+          },
+          "variant_key": {
+            "title": "Variant Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "experiment_key",
+          "variant_key",
+          "tier_key",
+          "event_type",
+          "has_experiment_consent",
+          "consent_version",
+          "is_paying_customer",
+          "revenue_impact_vnd",
+          "created_at"
+        ],
+        "title": "PricingExperimentEventOut",
+        "type": "object"
+      },
+      "PricingExperimentMetricsSummaryOut": {
+        "description": "Strictly separated metrics verifying zero negative abuse.",
+        "properties": {
+          "experiment_key": {
+            "title": "Experiment Key",
+            "type": "string"
+          },
+          "negative_abuse_verification": {
+            "default": "INVARIANT VERIFIED: Tier views and calculator clicks contributed 0 VND and 0 paying customers. Only signed_and_executed contracts contribute to revenue.",
+            "title": "Negative Abuse Verification",
+            "type": "string"
+          },
+          "paying_customers_count": {
+            "title": "Paying Customers Count",
+            "type": "integer"
+          },
+          "recognized_contract_revenue_vnd": {
+            "title": "Recognized Contract Revenue Vnd",
+            "type": "number"
+          },
+          "signed_contracts_count": {
+            "title": "Signed Contracts Count",
+            "type": "integer"
+          },
+          "total_calculator_interactions": {
+            "title": "Total Calculator Interactions",
+            "type": "integer"
+          },
+          "total_contract_attempts": {
+            "title": "Total Contract Attempts",
+            "type": "integer"
+          },
+          "total_quote_inquiries": {
+            "title": "Total Quote Inquiries",
+            "type": "integer"
+          },
+          "total_tier_views": {
+            "title": "Total Tier Views",
+            "type": "integer"
+          },
+          "unearned_calculator_projected_value_vnd": {
+            "title": "Unearned Calculator Projected Value Vnd",
+            "type": "number"
+          }
+        },
+        "required": [
+          "experiment_key",
+          "total_tier_views",
+          "total_calculator_interactions",
+          "total_quote_inquiries",
+          "total_contract_attempts",
+          "signed_contracts_count",
+          "paying_customers_count",
+          "recognized_contract_revenue_vnd",
+          "unearned_calculator_projected_value_vnd"
+        ],
+        "title": "PricingExperimentMetricsSummaryOut",
+        "type": "object"
+      },
+      "PricingTierInfo": {
+        "description": "Tier details served in pricing experiment.",
+        "properties": {
+          "anti_dark_pattern_notice": {
+            "default": "Không có phí ẩn, không tự động gia hạn khi chưa có hợp đồng ký kết.",
+            "title": "Anti Dark Pattern Notice",
+            "type": "string"
+          },
+          "base_price_vnd": {
+            "title": "Base Price Vnd",
+            "type": "number"
+          },
+          "billing_period": {
+            "title": "Billing Period",
+            "type": "string"
+          },
+          "calculator_supported": {
+            "default": true,
+            "title": "Calculator Supported",
+            "type": "boolean"
+          },
+          "description_en": {
+            "title": "Description En",
+            "type": "string"
+          },
+          "description_vi": {
+            "title": "Description Vi",
+            "type": "string"
+          },
+          "features_en": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Features En",
+            "type": "array"
+          },
+          "features_vi": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Features Vi",
+            "type": "array"
+          },
+          "is_popular": {
+            "default": false,
+            "title": "Is Popular",
+            "type": "boolean"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "name_en": {
+            "title": "Name En",
+            "type": "string"
+          },
+          "name_vi": {
+            "title": "Name Vi",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "name_vi",
+          "name_en",
+          "description_vi",
+          "description_en",
+          "base_price_vnd",
+          "billing_period",
+          "features_vi",
+          "features_en"
+        ],
+        "title": "PricingTierInfo",
         "type": "object"
       },
       "PrintableHandoutOut": {
@@ -35686,6 +37122,90 @@
           "message"
         ],
         "title": "PushTokenRegisterOut",
+        "type": "object"
+      },
+      "QualityCohortMetricOut": {
+        "description": "Output schema for a quality cohort in the truth funnel.",
+        "properties": {
+          "avg_dwell_seconds": {
+            "default": 0.0,
+            "title": "Avg Dwell Seconds",
+            "type": "number"
+          },
+          "cohort_id": {
+            "title": "Cohort Id",
+            "type": "string"
+          },
+          "cohort_name": {
+            "title": "Cohort Name",
+            "type": "string"
+          },
+          "cohort_type": {
+            "title": "Cohort Type",
+            "type": "string"
+          },
+          "completed_count": {
+            "title": "Completed Count",
+            "type": "integer"
+          },
+          "confirm_count": {
+            "title": "Confirm Count",
+            "type": "integer"
+          },
+          "confirm_to_completed_pct": {
+            "title": "Confirm To Completed Pct",
+            "type": "number"
+          },
+          "inquiry_count": {
+            "title": "Inquiry Count",
+            "type": "integer"
+          },
+          "inquiry_to_confirm_pct": {
+            "title": "Inquiry To Confirm Pct",
+            "type": "number"
+          },
+          "overall_conversion_pct": {
+            "title": "Overall Conversion Pct",
+            "type": "number"
+          },
+          "source_grounding_score_pct": {
+            "default": 100.0,
+            "title": "Source Grounding Score Pct",
+            "type": "number"
+          },
+          "source_read_count": {
+            "title": "Source Read Count",
+            "type": "integer"
+          },
+          "source_to_inquiry_pct": {
+            "title": "Source To Inquiry Pct",
+            "type": "number"
+          },
+          "visitor_count": {
+            "title": "Visitor Count",
+            "type": "integer"
+          },
+          "visitor_to_source_pct": {
+            "title": "Visitor To Source Pct",
+            "type": "number"
+          }
+        },
+        "required": [
+          "cohort_id",
+          "cohort_name",
+          "cohort_type",
+          "visitor_count",
+          "source_read_count",
+          "inquiry_count",
+          "confirm_count",
+          "completed_count",
+          "visitor_to_source_pct",
+          "source_to_inquiry_pct",
+          "inquiry_to_confirm_pct",
+          "confirm_to_completed_pct",
+          "overall_conversion_pct"
+        ],
+        "title": "QualityCohortMetricOut",
         "type": "object"
       },
       "QuestAssignmentCreateIn": {
@@ -37652,6 +39172,67 @@
         "title": "RbpcAvailabilityMode",
         "type": "string"
       },
+      "RbpcCashActuals": {
+        "description": "Realized cash actuals strictly aggregated from approved/settled transactions.",
+        "properties": {
+          "approved_settlements_count": {
+            "default": 0,
+            "description": "Number of compliance-approved settlements",
+            "title": "Approved Settlements Count",
+            "type": "integer"
+          },
+          "net_cash_revenue_vnd": {
+            "default": 0.0,
+            "description": "Net cash platform revenue after refunds",
+            "title": "Net Cash Revenue Vnd",
+            "type": "number"
+          },
+          "pending_settlements_count": {
+            "default": 0,
+            "description": "Settlements awaiting compliance review",
+            "title": "Pending Settlements Count",
+            "type": "integer"
+          },
+          "settled_settlements_count": {
+            "default": 0,
+            "description": "Number of fully settled/disbursed transactions",
+            "title": "Settled Settlements Count",
+            "type": "integer"
+          },
+          "total_artisan_payout_vnd": {
+            "default": 0.0,
+            "description": "Cash allocated/disbursed to artisans",
+            "title": "Total Artisan Payout Vnd",
+            "type": "number"
+          },
+          "total_platform_fee_cash_vnd": {
+            "default": 0.0,
+            "description": "Actual cash platform fees collected",
+            "title": "Total Platform Fee Cash Vnd",
+            "type": "number"
+          },
+          "total_refunds_vnd": {
+            "default": 0.0,
+            "description": "Total cash refunds processed",
+            "title": "Total Refunds Vnd",
+            "type": "number"
+          },
+          "total_settled_gross_vnd": {
+            "default": 0.0,
+            "description": "Gross transacted amount settled in VND",
+            "title": "Total Settled Gross Vnd",
+            "type": "number"
+          },
+          "total_tax_vat_vnd": {
+            "default": 0.0,
+            "description": "Taxes and VAT remitted/collected",
+            "title": "Total Tax Vat Vnd",
+            "type": "number"
+          }
+        },
+        "title": "RbpcCashActuals",
+        "type": "object"
+      },
       "RbpcClaimEvidenceOut": {
         "description": "Grounded historical or artisanal claim supporting a story.",
         "properties": {
@@ -37869,6 +39450,85 @@
         ],
         "title": "RbpcContactMethod",
         "type": "string"
+      },
+      "RbpcCostStructureInference": {
+        "description": "Inferred cost structure covering server hosting, AI tokens, and take rates.",
+        "properties": {
+          "ai_sponsor": {
+            "default": "Phổ Tuệ (AI API Credits: $7,610 USD / 201,218,238 VND)",
+            "description": "AI sponsor",
+            "title": "Ai Sponsor",
+            "type": "string"
+          },
+          "ai_token_cost_is_in_kind": {
+            "default": true,
+            "description": "True if subsidized by in-kind AI credits",
+            "title": "Ai Token Cost Is In Kind",
+            "type": "boolean"
+          },
+          "effective_take_rate": {
+            "default": 0.1,
+            "description": "Realized or contracted platform take rate",
+            "title": "Effective Take Rate",
+            "type": "number"
+          },
+          "inferred_ai_token_cost_vnd": {
+            "default": 0.0,
+            "description": "Commercial AI token replacement cost",
+            "title": "Inferred Ai Token Cost Vnd",
+            "type": "number"
+          },
+          "inferred_server_cost_vnd": {
+            "default": 0.0,
+            "description": "Commercial server replacement cost",
+            "title": "Inferred Server Cost Vnd",
+            "type": "number"
+          },
+          "inferred_total_variable_cost_vnd": {
+            "default": 0.0,
+            "description": "Sum of inferred server and AI compute costs",
+            "title": "Inferred Total Variable Cost Vnd",
+            "type": "number"
+          },
+          "net_contribution_margin_commercial_pct": {
+            "default": 0.0,
+            "description": "Commercial contribution margin percentage",
+            "title": "Net Contribution Margin Commercial Pct",
+            "type": "number"
+          },
+          "net_contribution_margin_commercial_vnd": {
+            "default": 0.0,
+            "description": "Commercial contribution margin deducting replacement costs",
+            "title": "Net Contribution Margin Commercial Vnd",
+            "type": "number"
+          },
+          "net_contribution_margin_sponsored_pct": {
+            "default": 0.0,
+            "description": "Cash contribution margin percentage",
+            "title": "Net Contribution Margin Sponsored Pct",
+            "type": "number"
+          },
+          "net_contribution_margin_sponsored_vnd": {
+            "default": 0.0,
+            "description": "Cash contribution margin under sponsored runway",
+            "title": "Net Contribution Margin Sponsored Vnd",
+            "type": "number"
+          },
+          "server_cost_is_in_kind": {
+            "default": true,
+            "description": "True if subsidized by in-kind corporate sponsor",
+            "title": "Server Cost Is In Kind",
+            "type": "boolean"
+          },
+          "server_sponsor": {
+            "default": "BNIX (Dedicated Cloud VPS, Value: 1,142,400 VND)",
+            "description": "Hosting sponsor",
+            "title": "Server Sponsor",
+            "type": "string"
+          }
+        },
+        "title": "RbpcCostStructureInference",
+        "type": "object"
       },
       "RbpcCreatorConsentUpdate": {
         "description": "Editor request payload to update artisan consent state.",
@@ -38672,6 +40332,157 @@
         "title": "RbpcEpistemicCertainty",
         "type": "string"
       },
+      "RbpcEvidencePointerListOut": {
+        "description": "List of evidence room pointers with metadata.",
+        "properties": {
+          "domains_covered": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Domains Covered",
+            "type": "array"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RbpcEvidencePointerOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "domains_covered"
+        ],
+        "title": "RbpcEvidencePointerListOut",
+        "type": "object"
+      },
+      "RbpcEvidencePointerOut": {
+        "description": "Versioned evidence pointer representation.",
+        "properties": {
+          "created_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "doc_ref": {
+            "title": "Doc Ref",
+            "type": "string"
+          },
+          "domain": {
+            "title": "Domain",
+            "type": "string"
+          },
+          "hash_sha256": {
+            "title": "Hash Sha256",
+            "type": "string"
+          },
+          "metrics_payload": {
+            "additionalProperties": true,
+            "title": "Metrics Payload",
+            "type": "object"
+          },
+          "owner": {
+            "title": "Owner",
+            "type": "string"
+          },
+          "pointer_id": {
+            "title": "Pointer Id",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
+          "verified_at": {
+            "format": "date-time",
+            "title": "Verified At",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "pointer_id",
+          "domain",
+          "title",
+          "doc_ref",
+          "version",
+          "status",
+          "hash_sha256",
+          "summary",
+          "owner",
+          "verified_at"
+        ],
+        "title": "RbpcEvidencePointerOut",
+        "type": "object"
+      },
+      "RbpcEvidenceRoomExportOut": {
+        "description": "Evidence room due diligence export.",
+        "properties": {
+          "content": {
+            "title": "Content",
+            "type": "string"
+          },
+          "domains_covered": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Domains Covered",
+            "type": "array"
+          },
+          "format": {
+            "title": "Format",
+            "type": "string"
+          },
+          "total_pointers": {
+            "title": "Total Pointers",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "format",
+          "content",
+          "total_pointers",
+          "domains_covered"
+        ],
+        "title": "RbpcEvidenceRoomExportOut",
+        "type": "object"
+      },
       "RbpcExperienceModerationIn": {
         "description": "Staff moderation payload for experience listing.",
         "properties": {
@@ -38909,6 +40720,55 @@
           "area_public"
         ],
         "title": "RbpcExperienceOut",
+        "type": "object"
+      },
+      "RbpcGmvForecasts": {
+        "description": "GMV and pipeline forecasts explicitly separated from cash actuals.",
+        "properties": {
+          "annual_som_target_gmv_vnd": {
+            "default": 570000000.0,
+            "description": "SOM Year 1 Target GMV (570M VND)",
+            "title": "Annual Som Target Gmv Vnd",
+            "type": "number"
+          },
+          "annual_som_target_revenue_vnd": {
+            "default": 57000000.0,
+            "description": "SOM Year 1 Target Net Revenue (57M VND)",
+            "title": "Annual Som Target Revenue Vnd",
+            "type": "number"
+          },
+          "epistemic_notice": {
+            "default": "Cash actuals require verified settlement records. Inquiries and pipeline forecasts are model estimates and contribute strictly 0 VND cash to recognized revenue.",
+            "description": "Epistemic disclosure regarding forecasts",
+            "title": "Epistemic Notice",
+            "type": "string"
+          },
+          "forecast_realization_rate": {
+            "default": 0.0,
+            "description": "Ratio of realized gross to SOM target",
+            "title": "Forecast Realization Rate",
+            "type": "number"
+          },
+          "pipeline_potential_gmv_forecast_vnd": {
+            "default": 0.0,
+            "description": "Pipeline potential GMV forecast",
+            "title": "Pipeline Potential Gmv Forecast Vnd",
+            "type": "number"
+          },
+          "truth_tier": {
+            "default": "FORECAST",
+            "description": "Epistemic truth tier: strictly FORECAST",
+            "title": "Truth Tier",
+            "type": "string"
+          },
+          "unsettled_pipeline_inquiries_count": {
+            "default": 0,
+            "description": "Inquiries with zero settled cash",
+            "title": "Unsettled Pipeline Inquiries Count",
+            "type": "integer"
+          }
+        },
+        "title": "RbpcGmvForecasts",
         "type": "object"
       },
       "RbpcImpactMetricsOut": {
@@ -39464,6 +41324,524 @@
           }
         },
         "title": "RbpcLedgerFinancialSummary",
+        "type": "object"
+      },
+      "RbpcLoiChecksumVerifyIn": {
+        "description": "Payload to verify document text or bytes against stored SHA-256 agreement digest.",
+        "properties": {
+          "document_content": {
+            "description": "Raw document text content to hash and compare",
+            "minLength": 1,
+            "title": "Document Content",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_content"
+        ],
+        "title": "RbpcLoiChecksumVerifyIn",
+        "type": "object"
+      },
+      "RbpcLoiChecksumVerifyOut": {
+        "description": "Result of SHA-256 checksum comparison.",
+        "properties": {
+          "computed_checksum": {
+            "title": "Computed Checksum",
+            "type": "string"
+          },
+          "expected_checksum": {
+            "title": "Expected Checksum",
+            "type": "string"
+          },
+          "is_match": {
+            "title": "Is Match",
+            "type": "boolean"
+          },
+          "loi_id": {
+            "title": "Loi Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loi_id",
+          "expected_checksum",
+          "computed_checksum",
+          "is_match"
+        ],
+        "title": "RbpcLoiChecksumVerifyOut",
+        "type": "object"
+      },
+      "RbpcLoiExportOut": {
+        "description": "Export package for pitch review due diligence.",
+        "properties": {
+          "content": {
+            "title": "Content",
+            "type": "string"
+          },
+          "exported_at": {
+            "title": "Exported At",
+            "type": "string"
+          },
+          "format": {
+            "title": "Format",
+            "type": "string"
+          },
+          "total_records": {
+            "title": "Total Records",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "format",
+          "total_records",
+          "exported_at",
+          "content"
+        ],
+        "title": "RbpcLoiExportOut",
+        "type": "object"
+      },
+      "RbpcLoiRegisterIn": {
+        "description": "Payload to register a new verified LOI agreement into the vault.",
+        "properties": {
+          "agreement_checksum_sha256": {
+            "maxLength": 64,
+            "minLength": 64,
+            "title": "Agreement Checksum Sha256",
+            "type": "string"
+          },
+          "category": {
+            "description": "craft_guild, educational_institution, cultural_association, tourism_operator",
+            "title": "Category",
+            "type": "string"
+          },
+          "commercial_terms": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Commercial Terms"
+          },
+          "consent_type": {
+            "default": "written_loi",
+            "description": "written_loi, bilateral_charter, signed_mou, framework_agreement",
+            "title": "Consent Type",
+            "type": "string"
+          },
+          "contact_role": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Role"
+          },
+          "dignity_charter_binding": {
+            "default": true,
+            "title": "Dignity Charter Binding",
+            "type": "boolean"
+          },
+          "effective_date": {
+            "format": "date",
+            "title": "Effective Date",
+            "type": "string"
+          },
+          "expiration_date": {
+            "format": "date",
+            "title": "Expiration Date",
+            "type": "string"
+          },
+          "institution_type": {
+            "maxLength": 64,
+            "title": "Institution Type",
+            "type": "string"
+          },
+          "lead_artisan_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lead Artisan Title"
+          },
+          "loi_id": {
+            "description": "Unique LOI reference e.g. LOI-HUE-BRONZE-001",
+            "maxLength": 64,
+            "minLength": 3,
+            "title": "Loi Id",
+            "type": "string"
+          },
+          "partner_id": {
+            "description": "Partner entity ID e.g. PARTNER-BRONZE-001",
+            "maxLength": 64,
+            "minLength": 3,
+            "title": "Partner Id",
+            "type": "string"
+          },
+          "partner_name": {
+            "maxLength": 255,
+            "minLength": 2,
+            "title": "Partner Name",
+            "type": "string"
+          },
+          "partner_name_en": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Partner Name En"
+          },
+          "region": {
+            "default": "Huế",
+            "maxLength": 128,
+            "title": "Region",
+            "type": "string"
+          },
+          "scope_details": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scope Details"
+          },
+          "scope_of_partnership": {
+            "minLength": 10,
+            "title": "Scope Of Partnership",
+            "type": "string"
+          },
+          "slug": {
+            "maxLength": 128,
+            "minLength": 2,
+            "title": "Slug",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loi_id",
+          "partner_id",
+          "partner_name",
+          "slug",
+          "category",
+          "institution_type",
+          "scope_of_partnership",
+          "effective_date",
+          "expiration_date",
+          "agreement_checksum_sha256"
+        ],
+        "title": "RbpcLoiRegisterIn",
+        "type": "object"
+      },
+      "RbpcLoiRevokeIn": {
+        "description": "Payload to revoke an active partnership / LOI.",
+        "properties": {
+          "reason": {
+            "description": "Reason for agreement revocation",
+            "maxLength": 1000,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "RbpcLoiRevokeIn",
+        "type": "object"
+      },
+      "RbpcLoiVaultItemOut": {
+        "description": "Detailed evidence record for Letter of Intent (LOI) Vault.",
+        "properties": {
+          "agreement_checksum_sha256": {
+            "title": "Agreement Checksum Sha256",
+            "type": "string"
+          },
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "commercial_terms": {
+            "additionalProperties": true,
+            "title": "Commercial Terms",
+            "type": "object"
+          },
+          "consent_status": {
+            "title": "Consent Status",
+            "type": "string"
+          },
+          "consent_type": {
+            "title": "Consent Type",
+            "type": "string"
+          },
+          "contact_role": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Role"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "dignity_charter_binding": {
+            "default": true,
+            "title": "Dignity Charter Binding",
+            "type": "boolean"
+          },
+          "effective_date": {
+            "format": "date",
+            "title": "Effective Date",
+            "type": "string"
+          },
+          "expiration_date": {
+            "format": "date",
+            "title": "Expiration Date",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "institution_type": {
+            "title": "Institution Type",
+            "type": "string"
+          },
+          "is_currently_active": {
+            "title": "Is Currently Active",
+            "type": "boolean"
+          },
+          "is_expired": {
+            "title": "Is Expired",
+            "type": "boolean"
+          },
+          "is_verified": {
+            "title": "Is Verified",
+            "type": "boolean"
+          },
+          "lead_artisan_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lead Artisan Title"
+          },
+          "loi_id": {
+            "title": "Loi Id",
+            "type": "string"
+          },
+          "partner_id": {
+            "title": "Partner Id",
+            "type": "string"
+          },
+          "partner_name": {
+            "title": "Partner Name",
+            "type": "string"
+          },
+          "partner_name_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Partner Name En"
+          },
+          "region": {
+            "title": "Region",
+            "type": "string"
+          },
+          "revocation_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revocation Reason"
+          },
+          "revoked_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revoked At"
+          },
+          "scope_details": {
+            "additionalProperties": true,
+            "title": "Scope Details",
+            "type": "object"
+          },
+          "scope_of_partnership": {
+            "title": "Scope Of Partnership",
+            "type": "string"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "verified_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verified At"
+          }
+        },
+        "required": [
+          "id",
+          "loi_id",
+          "partner_id",
+          "partner_name",
+          "slug",
+          "category",
+          "institution_type",
+          "region",
+          "scope_of_partnership",
+          "consent_type",
+          "consent_status",
+          "status",
+          "effective_date",
+          "expiration_date",
+          "agreement_checksum_sha256",
+          "is_expired",
+          "is_currently_active",
+          "is_verified",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "RbpcLoiVaultItemOut",
+        "type": "object"
+      },
+      "RbpcLoiVaultListOut": {
+        "description": "Vault evidence registry list with status aggregates.",
+        "properties": {
+          "active_count": {
+            "title": "Active Count",
+            "type": "integer"
+          },
+          "as_of_date": {
+            "title": "As Of Date",
+            "type": "string"
+          },
+          "expired_count": {
+            "title": "Expired Count",
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RbpcLoiVaultItemOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "revoked_count": {
+            "title": "Revoked Count",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "active_count",
+          "expired_count",
+          "revoked_count",
+          "as_of_date"
+        ],
+        "title": "RbpcLoiVaultListOut",
+        "type": "object"
+      },
+      "RbpcNegativeAbuseVerification": {
+        "description": "Auditable proof that unverified inquiries generate zero recognized revenue.",
+        "properties": {
+          "is_compliant": {
+            "default": true,
+            "description": "True if invariant holds with zero leakage",
+            "title": "Is Compliant",
+            "type": "boolean"
+          },
+          "rule": {
+            "default": "Partner inquiry creates 0 VND revenue without verified payment or settled transaction.",
+            "description": "Negative abuse invariant rule",
+            "title": "Rule",
+            "type": "string"
+          },
+          "unsettled_inquiries_cash_revenue_vnd": {
+            "default": 0.0,
+            "description": "Strictly 0.0 VND cash recognized",
+            "title": "Unsettled Inquiries Cash Revenue Vnd",
+            "type": "number"
+          },
+          "unsettled_inquiries_count": {
+            "default": 0,
+            "description": "Count of inquiries with no settled payment",
+            "title": "Unsettled Inquiries Count",
+            "type": "integer"
+          },
+          "unsettled_inquiries_realized_gmv_vnd": {
+            "default": 0.0,
+            "description": "Strictly 0.0 VND realized GMV recognized",
+            "title": "Unsettled Inquiries Realized Gmv Vnd",
+            "type": "number"
+          }
+        },
+        "title": "RbpcNegativeAbuseVerification",
         "type": "object"
       },
       "RbpcObservedMetrics": {
@@ -40071,6 +42449,160 @@
           "transcript_text_vi"
         ],
         "title": "RbpcOralHistoryTranscriptUpdateIn",
+        "type": "object"
+      },
+      "RbpcPartnerDiscoveryListOut": {
+        "description": "Paginated list of active partners for public discovery.",
+        "properties": {
+          "as_of_date": {
+            "title": "As Of Date",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RbpcPartnerDiscoveryOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "as_of_date"
+        ],
+        "title": "RbpcPartnerDiscoveryListOut",
+        "type": "object"
+      },
+      "RbpcPartnerDiscoveryOut": {
+        "description": "Public discovery summary for verified, active partner institutions.",
+        "properties": {
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "consent_type": {
+            "title": "Consent Type",
+            "type": "string"
+          },
+          "contact_role": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Role"
+          },
+          "dignity_charter_binding": {
+            "default": true,
+            "title": "Dignity Charter Binding",
+            "type": "boolean"
+          },
+          "effective_date": {
+            "format": "date",
+            "title": "Effective Date",
+            "type": "string"
+          },
+          "expiration_date": {
+            "format": "date",
+            "title": "Expiration Date",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "institution_type": {
+            "title": "Institution Type",
+            "type": "string"
+          },
+          "is_active": {
+            "default": true,
+            "title": "Is Active",
+            "type": "boolean"
+          },
+          "lead_artisan_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lead Artisan Title"
+          },
+          "loi_id": {
+            "title": "Loi Id",
+            "type": "string"
+          },
+          "partner_id": {
+            "title": "Partner Id",
+            "type": "string"
+          },
+          "partner_name": {
+            "title": "Partner Name",
+            "type": "string"
+          },
+          "partner_name_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Partner Name En"
+          },
+          "region": {
+            "title": "Region",
+            "type": "string"
+          },
+          "scope_of_partnership": {
+            "title": "Scope Of Partnership",
+            "type": "string"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "verified_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verified At"
+          }
+        },
+        "required": [
+          "id",
+          "loi_id",
+          "partner_id",
+          "partner_name",
+          "slug",
+          "category",
+          "institution_type",
+          "region",
+          "scope_of_partnership",
+          "consent_type",
+          "effective_date",
+          "expiration_date"
+        ],
+        "title": "RbpcPartnerDiscoveryOut",
         "type": "object"
       },
       "RbpcPartnerExperienceCreateIn": {
@@ -40725,6 +43257,169 @@
         "title": "RbpcPayoutStatus",
         "type": "string"
       },
+      "RbpcPitchClaimIn": {
+        "description": "Input claim to be audited for pitch review.",
+        "properties": {
+          "claim_text": {
+            "maxLength": 1000,
+            "minLength": 3,
+            "title": "Claim Text",
+            "type": "string"
+          },
+          "claimed_value": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Claimed Value"
+          },
+          "domain": {
+            "default": "product",
+            "title": "Domain",
+            "type": "string"
+          },
+          "evidence_pointer_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence Pointer Id"
+          },
+          "is_quantitative": {
+            "default": true,
+            "title": "Is Quantitative",
+            "type": "boolean"
+          },
+          "metric_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Metric Key"
+          },
+          "truth_tier": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "OBSERVED",
+            "title": "Truth Tier"
+          }
+        },
+        "required": [
+          "claim_text"
+        ],
+        "title": "RbpcPitchClaimIn",
+        "type": "object"
+      },
+      "RbpcPitchReviewIn": {
+        "description": "Payload to evaluate and audit a pitch deck against evidence room.",
+        "properties": {
+          "claims": {
+            "items": {
+              "$ref": "#/components/schemas/RbpcPitchClaimIn"
+            },
+            "minItems": 1,
+            "title": "Claims",
+            "type": "array"
+          },
+          "deck_version": {
+            "default": "1.0.0",
+            "maxLength": 50,
+            "title": "Deck Version",
+            "type": "string"
+          },
+          "pitch_deck_title": {
+            "maxLength": 255,
+            "minLength": 2,
+            "title": "Pitch Deck Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "pitch_deck_title",
+          "claims"
+        ],
+        "title": "RbpcPitchReviewIn",
+        "type": "object"
+      },
+      "RbpcPitchReviewOut": {
+        "description": "Pitch review evaluation audit report.",
+        "properties": {
+          "audit_findings": {
+            "additionalProperties": true,
+            "title": "Audit Findings",
+            "type": "object"
+          },
+          "audit_ref": {
+            "title": "Audit Ref",
+            "type": "string"
+          },
+          "claims_payload": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Claims Payload",
+            "type": "array"
+          },
+          "deck_version": {
+            "title": "Deck Version",
+            "type": "string"
+          },
+          "pitch_deck_title": {
+            "title": "Pitch Deck Title",
+            "type": "string"
+          },
+          "pitch_readiness": {
+            "title": "Pitch Readiness",
+            "type": "string"
+          },
+          "reviewed_at": {
+            "format": "date-time",
+            "title": "Reviewed At",
+            "type": "string"
+          },
+          "total_claims_audited": {
+            "title": "Total Claims Audited",
+            "type": "integer"
+          },
+          "ungrounded_claims_count": {
+            "title": "Ungrounded Claims Count",
+            "type": "integer"
+          },
+          "verified_claims_count": {
+            "title": "Verified Claims Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "audit_ref",
+          "pitch_deck_title",
+          "deck_version",
+          "total_claims_audited",
+          "verified_claims_count",
+          "ungrounded_claims_count",
+          "pitch_readiness",
+          "reviewed_at"
+        ],
+        "title": "RbpcPitchReviewOut",
+        "type": "object"
+      },
       "RbpcProjectedMetrics": {
         "description": "Estimated forward-looking commercial and economic impact hypotheses.",
         "properties": {
@@ -40813,6 +43508,14 @@
         ],
         "title": "RbpcReservationConfirmIn",
         "type": "object"
+      },
+      "RbpcRevenueStream": {
+        "enum": [
+          "visitor_commerce",
+          "school_b2b"
+        ],
+        "title": "RbpcRevenueStream",
+        "type": "string"
       },
       "RbpcReviewDisputeCreate": {
         "description": "Partner or visitor filing a dispute against a published or pending review.",
@@ -41181,6 +43884,18 @@
             "title": "Inquiry Id",
             "type": "string"
           },
+          "revenue_stream": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RbpcRevenueStream"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "visitor_commerce",
+            "description": "Revenue stream category ('visitor_commerce' or 'school_b2b')"
+          },
           "take_rate": {
             "anyOf": [
               {
@@ -41369,6 +44084,11 @@
           "refund_amount_vnd": {
             "title": "Refund Amount Vnd",
             "type": "number"
+          },
+          "revenue_stream": {
+            "default": "visitor_commerce",
+            "title": "Revenue Stream",
+            "type": "string"
           },
           "settlement_ref": {
             "title": "Settlement Ref",
@@ -41901,6 +44621,81 @@
         "title": "RbpcStoryOut",
         "type": "object"
       },
+      "RbpcStreamEconomics": {
+        "description": "Granular unit economics for an individual revenue stream.",
+        "properties": {
+          "artisan_payout_vnd": {
+            "default": 0.0,
+            "description": "Artisan payout in VND",
+            "title": "Artisan Payout Vnd",
+            "type": "number"
+          },
+          "average_order_value_vnd": {
+            "default": 0.0,
+            "description": "Average transaction order value",
+            "title": "Average Order Value Vnd",
+            "type": "number"
+          },
+          "effective_take_rate": {
+            "default": 0.1,
+            "description": "Realized take rate for this stream",
+            "title": "Effective Take Rate",
+            "type": "number"
+          },
+          "pipeline_forecast_gmv_vnd": {
+            "default": 0.0,
+            "description": "Pipeline potential GMV forecast in VND",
+            "title": "Pipeline Forecast Gmv Vnd",
+            "type": "number"
+          },
+          "platform_fee_cash_vnd": {
+            "default": 0.0,
+            "description": "Cash platform fee collected in VND",
+            "title": "Platform Fee Cash Vnd",
+            "type": "number"
+          },
+          "refund_amount_vnd": {
+            "default": 0.0,
+            "description": "Refund amount in VND",
+            "title": "Refund Amount Vnd",
+            "type": "number"
+          },
+          "settled_gross_vnd": {
+            "default": 0.0,
+            "description": "Gross settled transaction volume in VND",
+            "title": "Settled Gross Vnd",
+            "type": "number"
+          },
+          "stream": {
+            "description": "Revenue stream key ('visitor_commerce' or 'school_b2b')",
+            "title": "Stream",
+            "type": "string"
+          },
+          "tax_vat_vnd": {
+            "default": 0.0,
+            "description": "Tax and VAT in VND",
+            "title": "Tax Vat Vnd",
+            "type": "number"
+          },
+          "transactions_count": {
+            "default": 0,
+            "description": "Count of settled transactions",
+            "title": "Transactions Count",
+            "type": "integer"
+          },
+          "unsettled_inquiries_count": {
+            "default": 0,
+            "description": "Unsettled pipeline inquiries in this stream",
+            "title": "Unsettled Inquiries Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "stream"
+        ],
+        "title": "RbpcStreamEconomics",
+        "type": "object"
+      },
       "RbpcSupportType": {
         "enum": [
           "direct",
@@ -41969,6 +44764,52 @@
           "text"
         ],
         "title": "RbpcTranscriptCue",
+        "type": "object"
+      },
+      "RbpcUnitEconomicsActualLedger": {
+        "description": "Complete unit economics actual ledger report.",
+        "properties": {
+          "cash_actuals": {
+            "$ref": "#/components/schemas/RbpcCashActuals"
+          },
+          "cost_inference": {
+            "$ref": "#/components/schemas/RbpcCostStructureInference"
+          },
+          "currency": {
+            "default": "VND",
+            "description": "Accounting currency",
+            "title": "Currency",
+            "type": "string"
+          },
+          "generated_at": {
+            "description": "Timestamp of report generation",
+            "format": "date-time",
+            "title": "Generated At",
+            "type": "string"
+          },
+          "gmv_forecasts": {
+            "$ref": "#/components/schemas/RbpcGmvForecasts"
+          },
+          "negative_abuse": {
+            "$ref": "#/components/schemas/RbpcNegativeAbuseVerification"
+          },
+          "streams": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/RbpcStreamEconomics"
+            },
+            "title": "Streams",
+            "type": "object"
+          }
+        },
+        "required": [
+          "generated_at",
+          "cash_actuals",
+          "gmv_forecasts",
+          "cost_inference",
+          "streams",
+          "negative_abuse"
+        ],
+        "title": "RbpcUnitEconomicsActualLedger",
         "type": "object"
       },
       "RbpcWorkshopSlotOut": {
@@ -47989,6 +50830,247 @@
         "title": "TimedTranscriptCue",
         "type": "object"
       },
+      "TruthFunnelDashboardOut": {
+        "description": "Output schema for the Truth-Level Funnel Dashboard.",
+        "properties": {
+          "anti_abuse_validation": {
+            "additionalProperties": true,
+            "title": "Anti Abuse Validation",
+            "type": "object"
+          },
+          "filter_range": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Filter Range",
+            "type": "object"
+          },
+          "forecast": {
+            "$ref": "#/components/schemas/TruthTierForecastOut"
+          },
+          "generated_at": {
+            "title": "Generated At",
+            "type": "string"
+          },
+          "hypothesis": {
+            "$ref": "#/components/schemas/TruthTierHypothesisOut"
+          },
+          "observed": {
+            "$ref": "#/components/schemas/TruthTierObservedOut"
+          }
+        },
+        "required": [
+          "generated_at",
+          "filter_range",
+          "observed",
+          "hypothesis",
+          "forecast",
+          "anti_abuse_validation"
+        ],
+        "title": "TruthFunnelDashboardOut",
+        "type": "object"
+      },
+      "TruthStageMetricOut": {
+        "description": "Output schema for an individual stage in the truth funnel.",
+        "properties": {
+          "conversion_from_previous_pct": {
+            "title": "Conversion From Previous Pct",
+            "type": "number"
+          },
+          "conversion_from_top_pct": {
+            "title": "Conversion From Top Pct",
+            "type": "number"
+          },
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "measurement_method": {
+            "title": "Measurement Method",
+            "type": "string"
+          },
+          "stage": {
+            "title": "Stage",
+            "type": "string"
+          },
+          "truth_tier": {
+            "title": "Truth Tier",
+            "type": "string"
+          }
+        },
+        "required": [
+          "stage",
+          "display_name",
+          "description",
+          "count",
+          "conversion_from_previous_pct",
+          "conversion_from_top_pct",
+          "truth_tier",
+          "measurement_method"
+        ],
+        "title": "TruthStageMetricOut",
+        "type": "object"
+      },
+      "TruthTierForecastOut": {
+        "description": "Output schema for the FORECAST truth tier.",
+        "properties": {
+          "definition": {
+            "title": "Definition",
+            "type": "string"
+          },
+          "epistemic_disclaimer": {
+            "title": "Epistemic Disclaimer",
+            "type": "string"
+          },
+          "negative_abuse_guardrail": {
+            "title": "Negative Abuse Guardrail",
+            "type": "string"
+          },
+          "projected_annual_bookings": {
+            "title": "Projected Annual Bookings",
+            "type": "integer"
+          },
+          "projected_annual_gmv_vnd": {
+            "title": "Projected Annual Gmv Vnd",
+            "type": "number"
+          },
+          "projected_artisan_retained_vnd": {
+            "title": "Projected Artisan Retained Vnd",
+            "type": "number"
+          },
+          "projected_platform_net_revenue_vnd": {
+            "title": "Projected Platform Net Revenue Vnd",
+            "type": "number"
+          },
+          "target_partner_workshops": {
+            "title": "Target Partner Workshops",
+            "type": "integer"
+          },
+          "target_period": {
+            "title": "Target Period",
+            "type": "string"
+          },
+          "truth_tier": {
+            "title": "Truth Tier",
+            "type": "string"
+          }
+        },
+        "required": [
+          "truth_tier",
+          "definition",
+          "epistemic_disclaimer",
+          "target_period",
+          "projected_annual_bookings",
+          "projected_annual_gmv_vnd",
+          "target_partner_workshops",
+          "projected_platform_net_revenue_vnd",
+          "projected_artisan_retained_vnd",
+          "negative_abuse_guardrail"
+        ],
+        "title": "TruthTierForecastOut",
+        "type": "object"
+      },
+      "TruthTierHypothesisOut": {
+        "description": "Output schema for the HYPOTHESIS truth tier.",
+        "properties": {
+          "benchmark_assumptions": {
+            "additionalProperties": true,
+            "title": "Benchmark Assumptions",
+            "type": "object"
+          },
+          "definition": {
+            "title": "Definition",
+            "type": "string"
+          },
+          "epistemic_disclaimer": {
+            "title": "Epistemic Disclaimer",
+            "type": "string"
+          },
+          "modeled_monthly_funnel": {
+            "additionalProperties": true,
+            "title": "Modeled Monthly Funnel",
+            "type": "object"
+          },
+          "truth_tier": {
+            "title": "Truth Tier",
+            "type": "string"
+          }
+        },
+        "required": [
+          "truth_tier",
+          "definition",
+          "epistemic_disclaimer",
+          "benchmark_assumptions",
+          "modeled_monthly_funnel"
+        ],
+        "title": "TruthTierHypothesisOut",
+        "type": "object"
+      },
+      "TruthTierObservedOut": {
+        "description": "Output schema for the OBSERVED truth tier.",
+        "properties": {
+          "definition": {
+            "title": "Definition",
+            "type": "string"
+          },
+          "overall_conversion_pct": {
+            "title": "Overall Conversion Pct",
+            "type": "number"
+          },
+          "quality_cohorts": {
+            "items": {
+              "$ref": "#/components/schemas/QualityCohortMetricOut"
+            },
+            "title": "Quality Cohorts",
+            "type": "array"
+          },
+          "stages": {
+            "items": {
+              "$ref": "#/components/schemas/TruthStageMetricOut"
+            },
+            "title": "Stages",
+            "type": "array"
+          },
+          "total_completed_experiences": {
+            "title": "Total Completed Experiences",
+            "type": "integer"
+          },
+          "total_funnel_visitors": {
+            "title": "Total Funnel Visitors",
+            "type": "integer"
+          },
+          "truth_tier": {
+            "title": "Truth Tier",
+            "type": "string"
+          }
+        },
+        "required": [
+          "truth_tier",
+          "definition",
+          "total_funnel_visitors",
+          "total_completed_experiences",
+          "stages",
+          "overall_conversion_pct",
+          "quality_cohorts"
+        ],
+        "title": "TruthTierObservedOut",
+        "type": "object"
+      },
       "UpdateMissionProgressRequest": {
         "description": "Request to update mission progress.",
         "properties": {
@@ -50543,6 +53625,135 @@
           }
         ],
         "summary": "Get Session Statistics"
+      }
+    },
+    "/api/v1/admin/analytics/truth-funnel": {
+      "get": {
+        "description": "Get 5-stage conversion funnel separated by truth level (Ticket V5-T112).\n\nSeparates metrics strictly into:\n- OBSERVED: Empirical database actuals (visitor -> source_read -> inquiry -> confirm -> completed)\n  with quality cohorts. When 0 closed inquiries exist, completed is strictly 0.\n- HYPOTHESIS: Model conversion hypotheses from DOC-RBPC-FIN-001 §3.3.\n- FORECAST: Forward commercial targets (e.g. SOM 1,100 bookings / 570M VND GMV) quarantined\n  with explicit epistemic disclaimers.\n\nNegative abuse invariant:\nProjected figures (e.g. 1,100 bookings) never appear as completed bookings in the truth dashboard.",
+        "operationId": "get_truth_funnel_dashboard_api_v1_admin_analytics_truth_funnel_get",
+        "parameters": [
+          {
+            "description": "Start date for filtering events and inquiries",
+            "in": "query",
+            "name": "start_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Start date for filtering events and inquiries",
+              "title": "Start Date"
+            }
+          },
+          {
+            "description": "End date for filtering events and inquiries",
+            "in": "query",
+            "name": "end_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "End date for filtering events and inquiries",
+              "title": "End Date"
+            }
+          },
+          {
+            "description": "Cohort identifier (e.g. '2026-W44', 'pilot-cohort-1')",
+            "in": "query",
+            "name": "cohort",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Cohort identifier (e.g. '2026-W44', 'pilot-cohort-1')",
+              "title": "Cohort"
+            }
+          },
+          {
+            "description": "Contact channel filter (email, phone, zalo)",
+            "in": "query",
+            "name": "channel",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Contact channel filter (email, phone, zalo)",
+              "title": "Channel"
+            }
+          },
+          {
+            "description": "Heritage experience UUID filter",
+            "in": "query",
+            "name": "experience_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Heritage experience UUID filter",
+              "title": "Experience Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TruthFunnelDashboardOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get conversion funnel partitioned strictly by epistemological truth level"
       }
     },
     "/api/v1/admin/app/versions": {
@@ -57666,6 +60877,24 @@
     "/api/v1/analytics/events": {
       "post": {
         "operationId": "ingest_analytics_events_api_v1_analytics_events_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Telemetry-Consent",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Telemetry-Consent"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -73965,6 +77194,454 @@
         "summary": "Get Onboarding Status"
       }
     },
+    "/api/v1/pilot/activate": {
+      "post": {
+        "description": "Authenticated user redeems an invitation token to activate private pilot access.",
+        "operationId": "activate_pilot_endpoint_api_v1_pilot_activate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PilotActivateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotActivationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Activate Pilot Endpoint",
+        "tags": [
+          "pilot_onboarding_portal"
+        ]
+      }
+    },
+    "/api/v1/pilot/health": {
+      "get": {
+        "description": "Retrieve usage health, engagement telemetry, and score for current pilot user.",
+        "operationId": "get_pilot_health_endpoint_api_v1_pilot_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotUsageHealthOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Pilot Health Endpoint",
+        "tags": [
+          "pilot_onboarding_portal"
+        ]
+      }
+    },
+    "/api/v1/pilot/invitations": {
+      "get": {
+        "description": "Staff lists all pilot invitations.",
+        "operationId": "list_invitations_endpoint_api_v1_pilot_invitations_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PilotInvitationOut"
+                  },
+                  "title": "Response List Invitations Endpoint Api V1 Pilot Invitations Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "List Invitations Endpoint",
+        "tags": [
+          "pilot_onboarding_portal"
+        ]
+      },
+      "post": {
+        "description": "Staff generates a secure pilot invitation token.",
+        "operationId": "create_invitation_endpoint_api_v1_pilot_invitations_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PilotInvitationCreateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotInvitationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Create Invitation Endpoint",
+        "tags": [
+          "pilot_onboarding_portal"
+        ]
+      }
+    },
+    "/api/v1/pilot/invitations/validate": {
+      "post": {
+        "description": "Check whether a pilot invitation token is valid before redemption.",
+        "operationId": "validate_invitation_endpoint_api_v1_pilot_invitations_validate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PilotValidateInvitationIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotInvitationValidationResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Validate Invitation Endpoint",
+        "tags": [
+          "pilot_onboarding_portal"
+        ]
+      }
+    },
+    "/api/v1/pilot/my-activation": {
+      "get": {
+        "description": "Get active pilot trial activation and guided checklist progress.",
+        "operationId": "get_my_activation_endpoint_api_v1_pilot_my_activation_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotActivationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get My Activation Endpoint",
+        "tags": [
+          "pilot_onboarding_portal"
+        ]
+      }
+    },
+    "/api/v1/pilot/onboarding/step": {
+      "post": {
+        "description": "Record completion of a guided activation checklist step.",
+        "operationId": "record_onboarding_step_endpoint_api_v1_pilot_onboarding_step_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PilotOnboardingStepIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotActivationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Record Onboarding Step Endpoint",
+        "tags": [
+          "pilot_onboarding_portal"
+        ]
+      }
+    },
+    "/api/v1/pilot/support": {
+      "get": {
+        "description": "List pilot support tickets. Staff sees all, participants see their own.",
+        "operationId": "list_support_requests_endpoint_api_v1_pilot_support_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PilotSupportRequestOut"
+                  },
+                  "title": "Response List Support Requests Endpoint Api V1 Pilot Support Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "List Support Requests Endpoint",
+        "tags": [
+          "pilot_onboarding_portal"
+        ]
+      },
+      "post": {
+        "description": "Create a pilot feedback or support ticket.",
+        "operationId": "create_support_request_endpoint_api_v1_pilot_support_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PilotSupportRequestCreateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotSupportRequestOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Create Support Request Endpoint",
+        "tags": [
+          "pilot_onboarding_portal"
+        ]
+      }
+    },
+    "/api/v1/pilot/support/{ticket_id}/reply": {
+      "post": {
+        "description": "Add a response to a pilot support ticket.",
+        "operationId": "reply_support_request_endpoint_api_v1_pilot_support__ticket_id__reply_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ticket_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Ticket Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PilotSupportRequestReplyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotSupportRequestOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Reply Support Request Endpoint",
+        "tags": [
+          "pilot_onboarding_portal"
+        ]
+      }
+    },
+    "/api/v1/pilot/telemetry": {
+      "post": {
+        "description": "Log an interaction action to maintain pilot usage health.",
+        "operationId": "record_telemetry_endpoint_api_v1_pilot_telemetry_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PilotHealthTelemetryRecordIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotUsageHealthOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Record Telemetry Endpoint",
+        "tags": [
+          "pilot_onboarding_portal"
+        ]
+      }
+    },
     "/api/v1/preview/complete": {
       "post": {
         "description": "Mark a guest preview session as complete (no authentication required).\n\nUpdates the preview session to track completion, which helps measure\nengagement and content quality.",
@@ -74104,6 +77781,296 @@
           }
         },
         "summary": "Start Preview Session"
+      }
+    },
+    "/api/v1/pricing/calculator": {
+      "post": {
+        "description": "Compute non-binding estimate for school or institution with strict 0 VND recognized revenue invariant.",
+        "operationId": "calculate_pricing_estimate_api_v1_pricing_calculator_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PricingCalculatorIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PricingCalculatorOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Calculate Pricing Estimate",
+        "tags": [
+          "pricing_experiment"
+        ]
+      }
+    },
+    "/api/v1/pricing/config": {
+      "get": {
+        "description": "Retrieve pricing experiment configuration, transparent tiers, and anti-dark-pattern notices.",
+        "operationId": "get_pricing_experiment_config_api_v1_pricing_config_get",
+        "parameters": [
+          {
+            "description": "Experiment variant key (e.g. control, annual_flat, per_student_metered)",
+            "in": "query",
+            "name": "variant",
+            "required": false,
+            "schema": {
+              "default": "control",
+              "description": "Experiment variant key (e.g. control, annual_flat, per_student_metered)",
+              "title": "Variant",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PricingExperimentConfigOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Pricing Experiment Config",
+        "tags": [
+          "pricing_experiment"
+        ]
+      }
+    },
+    "/api/v1/pricing/contracts": {
+      "post": {
+        "description": "Draft an institutional contract for school or district partner.",
+        "operationId": "create_institutional_contract_api_v1_pricing_contracts_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PricingContractCreateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PricingContractOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Create Institutional Contract",
+        "tags": [
+          "pricing_experiment"
+        ]
+      }
+    },
+    "/api/v1/pricing/contracts/{contract_id}/accept": {
+      "post": {
+        "description": "Real contract acceptance and execution with cryptographic verification.\n\nOnly this action transitions contract to signed_and_executed and establishes paying customer status.",
+        "operationId": "accept_and_sign_contract_api_v1_pricing_contracts__contract_id__accept_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contract_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Contract Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PricingContractSignAcceptIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PricingContractOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Accept And Sign Contract",
+        "tags": [
+          "pricing_experiment"
+        ]
+      }
+    },
+    "/api/v1/pricing/events": {
+      "post": {
+        "description": "Record pricing interest telemetry with user consent.\n\nNegative abuse invariant:\nTier clicks and calculator interactions produce is_paying_customer=False and 0 VND revenue.",
+        "operationId": "record_pricing_interest_event_api_v1_pricing_events_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PricingExperimentEventCreateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PricingExperimentEventOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Record Pricing Interest Event",
+        "tags": [
+          "pricing_experiment"
+        ]
+      }
+    },
+    "/api/v1/pricing/metrics/summary": {
+      "get": {
+        "description": "Get aggregated metrics verifying anti-abuse: tier views & calculator clicks = 0 revenue.",
+        "operationId": "get_pricing_metrics_summary_api_v1_pricing_metrics_summary_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "experiment_key",
+            "required": false,
+            "schema": {
+              "default": "school_pricing_v1",
+              "title": "Experiment Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PricingExperimentMetricsSummaryOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Pricing Metrics Summary",
+        "tags": [
+          "pricing_experiment"
+        ]
       }
     },
     "/api/v1/progress/action": {
@@ -75200,6 +79167,220 @@
         ]
       }
     },
+    "/api/v1/rbpc/admin/loi-vault": {
+      "post": {
+        "description": "Register a new verified LOI/charter agreement into the evidence vault.\n\nRequires staff or admin role.",
+        "operationId": "register_loi_api_v1_rbpc_admin_loi_vault_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcLoiRegisterIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcLoiVaultItemOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Register Loi",
+        "tags": [
+          "rbpc_partner_discovery_loi_vault"
+        ]
+      }
+    },
+    "/api/v1/rbpc/admin/loi-vault/export": {
+      "get": {
+        "description": "Export the LOI vault records as Markdown table or JSON string for investor due diligence.",
+        "operationId": "export_loi_vault_api_v1_rbpc_admin_loi_vault_export_get",
+        "parameters": [
+          {
+            "description": "Export format: 'markdown' or 'json'",
+            "in": "query",
+            "name": "format",
+            "required": false,
+            "schema": {
+              "default": "markdown",
+              "description": "Export format: 'markdown' or 'json'",
+              "title": "Format",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcLoiExportOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Export Loi Vault",
+        "tags": [
+          "rbpc_partner_discovery_loi_vault"
+        ]
+      }
+    },
+    "/api/v1/rbpc/admin/loi-vault/{loi_id}/revoke": {
+      "post": {
+        "description": "Revoke an active partner agreement.\n\nNEGATIVE ABUSE INVARIANT:\nPartner is immediately excluded from active discovery listings.\nRequires staff or admin role.",
+        "operationId": "revoke_loi_api_v1_rbpc_admin_loi_vault__loi_id__revoke_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "loi_id",
+            "required": true,
+            "schema": {
+              "title": "Loi Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcLoiRevokeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcLoiVaultItemOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Revoke Loi",
+        "tags": [
+          "rbpc_partner_discovery_loi_vault"
+        ]
+      }
+    },
+    "/api/v1/rbpc/admin/loi-vault/{loi_id}/verify-checksum": {
+      "post": {
+        "description": "Verify document text or bytes against stored SHA-256 agreement digest.\n\nRequires staff or admin role.",
+        "operationId": "verify_agreement_checksum_api_v1_rbpc_admin_loi_vault__loi_id__verify_checksum_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "loi_id",
+            "required": true,
+            "schema": {
+              "title": "Loi Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcLoiChecksumVerifyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcLoiChecksumVerifyOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Verify Agreement Checksum",
+        "tags": [
+          "rbpc_partner_discovery_loi_vault"
+        ]
+      }
+    },
     "/api/v1/rbpc/admin/reviews": {
       "get": {
         "description": "Staff/admin moderation queue for customer reviews and fraud inspection.",
@@ -75668,6 +79849,165 @@
           }
         ],
         "summary": "Disburse Artisan Payout",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/evidence-room/export": {
+      "get": {
+        "description": "Export evidence room catalog as structured JSON or Markdown table.",
+        "operationId": "export_evidence_room_api_v1_rbpc_evidence_room_export_get",
+        "parameters": [
+          {
+            "description": "Export format: json or markdown",
+            "in": "query",
+            "name": "format",
+            "required": false,
+            "schema": {
+              "default": "json",
+              "description": "Export format: json or markdown",
+              "title": "Format",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcEvidenceRoomExportOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Export Evidence Room",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/evidence-room/pointers": {
+      "get": {
+        "description": "Retrieve versioned evidence room pointers with optional domain or status filter.",
+        "operationId": "list_evidence_pointers_api_v1_rbpc_evidence_room_pointers_get",
+        "parameters": [
+          {
+            "description": "Filter by domain: product, customer, market, finances, impact, legal, team",
+            "in": "query",
+            "name": "domain",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by domain: product, customer, market, finances, impact, legal, team",
+              "title": "Domain"
+            }
+          },
+          {
+            "description": "Filter by status: active_verified, archived, needs_review",
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by status: active_verified, archived, needs_review",
+              "title": "Status"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcEvidencePointerListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Evidence Pointers",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/evidence-room/pointers/{pointer_id}": {
+      "get": {
+        "description": "Retrieve a single versioned evidence pointer by pointer_id.",
+        "operationId": "get_evidence_pointer_api_v1_rbpc_evidence_room_pointers__pointer_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pointer_id",
+            "required": true,
+            "schema": {
+              "title": "Pointer Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcEvidencePointerOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Evidence Pointer",
         "tags": [
           "rbpc"
         ]
@@ -76166,6 +80506,199 @@
         "summary": "Get Ledger Financial Summary",
         "tags": [
           "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/ledger/unit-economics": {
+      "get": {
+        "description": "Aggregate verified unit economics actual ledger report.\n\nFeatures:\n- Cash actuals strictly separated from GMV forecasts (forecasts tagged truth_tier='FORECAST').\n- Cost structure inference: server hosting (BNIX in-kind subsidy vs commercial replacement),\n  AI token inference (Phổ Tuệ in-kind credits vs commercial replacement), take rates, and dual margins.\n- Explicit separation of revenue streams: 'visitor_commerce' vs 'school_b2b'.\n- Negative abuse invariant: Partner inquiries in any status create strictly 0 VND revenue\n  and 0 VND realized GMV without a verified payment settlement in rbpc_settlement_ledger.\n- Multi-tenant isolation: Admin/staff receive global actuals; partners receive provider-scoped actuals.",
+        "operationId": "get_unit_economics_actual_ledger_api_v1_rbpc_ledger_unit_economics_get",
+        "parameters": [
+          {
+            "description": "Optional stream filter: 'visitor_commerce' or 'school_b2b'",
+            "in": "query",
+            "name": "stream",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Optional stream filter: 'visitor_commerce' or 'school_b2b'",
+              "title": "Stream"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcUnitEconomicsActualLedger"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Unit Economics Actual Ledger",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/loi-vault": {
+      "get": {
+        "description": "Retrieve full LOI vault records with breakdown counts for due diligence.",
+        "operationId": "list_loi_vault_api_v1_rbpc_loi_vault_get",
+        "parameters": [
+          {
+            "description": "Filter by agreement status (active, expired, revoked, pending_review)",
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by agreement status (active, expired, revoked, pending_review)",
+              "title": "Status"
+            }
+          },
+          {
+            "description": "Filter by category",
+            "in": "query",
+            "name": "category",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by category",
+              "title": "Category"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcLoiVaultListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Loi Vault",
+        "tags": [
+          "rbpc_partner_discovery_loi_vault"
+        ]
+      }
+    },
+    "/api/v1/rbpc/loi-vault/{loi_id}": {
+      "get": {
+        "description": "Retrieve specific LOI vault record by unique ID.",
+        "operationId": "get_loi_vault_item_api_v1_rbpc_loi_vault__loi_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "loi_id",
+            "required": true,
+            "schema": {
+              "title": "Loi Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcLoiVaultItemOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Loi Vault Item",
+        "tags": [
+          "rbpc_partner_discovery_loi_vault"
         ]
       }
     },
@@ -77121,6 +81654,232 @@
           }
         ],
         "summary": "Create Workshop Slot",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/partners": {
+      "get": {
+        "description": "Public discovery endpoint returning verified, active partner institutions.\n\nNEGATIVE ABUSE INVARIANT:\nExpired and revoked partnerships are strictly excluded and never returned.",
+        "operationId": "list_active_partners_api_v1_rbpc_partners_get",
+        "parameters": [
+          {
+            "description": "Filter by partner category (craft_guild, educational_institution, cultural_association, tourism_operator)",
+            "in": "query",
+            "name": "category",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by partner category (craft_guild, educational_institution, cultural_association, tourism_operator)",
+              "title": "Category"
+            }
+          },
+          {
+            "description": "Filter by region substring e.g. 'Huế'",
+            "in": "query",
+            "name": "region",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by region substring e.g. 'Huế'",
+              "title": "Region"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcPartnerDiscoveryListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Active Partners",
+        "tags": [
+          "rbpc_partner_discovery_loi_vault"
+        ]
+      }
+    },
+    "/api/v1/rbpc/partners/{identifier}": {
+      "get": {
+        "description": "Public endpoint retrieving profile of an active verified partner.\n\nNEGATIVE ABUSE INVARIANT:\nIf partner agreement is expired or revoked, fails with 404 RBPC_PARTNER_INACTIVE.",
+        "operationId": "get_active_partner_api_v1_rbpc_partners__identifier__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "title": "Identifier",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcPartnerDiscoveryOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Active Partner",
+        "tags": [
+          "rbpc_partner_discovery_loi_vault"
+        ]
+      }
+    },
+    "/api/v1/rbpc/pitch-review/audits/{audit_ref}": {
+      "get": {
+        "description": "Retrieve an immutable pitch review audit report by audit_ref.",
+        "operationId": "get_pitch_review_audit_api_v1_rbpc_pitch_review_audits__audit_ref__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "audit_ref",
+            "required": true,
+            "schema": {
+              "title": "Audit Ref",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcPitchReviewOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Pitch Review Audit",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/pitch-review/evaluate": {
+      "post": {
+        "description": "Evaluate and audit a set of pitch deck assertions against the evidence room.\n\nNegative abuse invariant:\nEvery quantitative pitch claim must have an immutable evidence reference and status;\nungrounded metrics are flagged (UNGROUNDED_FLAGGED) and pitch readiness is FLAGGED_UNREADY.",
+        "operationId": "evaluate_pitch_review_api_v1_rbpc_pitch_review_evaluate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcPitchReviewIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcPitchReviewOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Evaluate Pitch Review",
         "tags": [
           "rbpc"
         ]
