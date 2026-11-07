@@ -3849,6 +3849,93 @@
         "title": "BadgeVerificationOut",
         "type": "object"
       },
+      "BenchmarkRunsOut": {
+        "properties": {
+          "benchmarks": {
+            "additionalProperties": true,
+            "title": "Benchmarks",
+            "type": "object"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "benchmarks",
+          "status"
+        ],
+        "title": "BenchmarkRunsOut",
+        "type": "object"
+      },
+      "BlockingIssueItem": {
+        "properties": {
+          "description": {
+            "description": "Technical description of the problem and blast radius",
+            "title": "Description",
+            "type": "string"
+          },
+          "issue_id": {
+            "description": "Unique issue tracker reference e.g. ISSUE-P0-001",
+            "title": "Issue Id",
+            "type": "string"
+          },
+          "owner": {
+            "description": "Assigned domain lead or engineer",
+            "title": "Owner",
+            "type": "string"
+          },
+          "resolution_ref": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Resolution PR, commit SHA, or mitigation runbook",
+            "title": "Resolution Ref"
+          },
+          "resolved_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "ISO timestamp when marked resolved/mitigated",
+            "title": "Resolved At"
+          },
+          "severity": {
+            "description": "P0, P1, P2, or P3",
+            "title": "Severity",
+            "type": "string"
+          },
+          "status": {
+            "description": "OPEN, RESOLVED, MITIGATED, or ACCEPTED_RISK",
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "description": "Summary of the issue",
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "issue_id",
+          "title",
+          "severity",
+          "status",
+          "owner",
+          "description"
+        ],
+        "title": "BlockingIssueItem",
+        "type": "object"
+      },
       "BoardRequestRevisionIn": {
         "properties": {
           "revision_notes": {
@@ -11275,6 +11362,52 @@
         "title": "FeatureFlagCreateIn",
         "type": "object"
       },
+      "FeatureFlagItem": {
+        "properties": {
+          "description": {
+            "description": "Description of the feature capability",
+            "title": "Description",
+            "type": "string"
+          },
+          "flag_key": {
+            "description": "Configuration key for the feature flag",
+            "title": "Flag Key",
+            "type": "string"
+          },
+          "kill_switch_supported": {
+            "description": "Whether instant runtime kill switch is wired",
+            "title": "Kill Switch Supported",
+            "type": "boolean"
+          },
+          "owner": {
+            "description": "Responsible engineering lead",
+            "title": "Owner",
+            "type": "string"
+          },
+          "pilot_state": {
+            "description": "ENABLED, DISABLED, PILOT_ONLY, or PERCENTAGE_ROLLOUT",
+            "title": "Pilot State",
+            "type": "string"
+          },
+          "rollout_percentage": {
+            "description": "Traffic percentage",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Rollout Percentage",
+            "type": "number"
+          }
+        },
+        "required": [
+          "flag_key",
+          "description",
+          "pilot_state",
+          "rollout_percentage",
+          "kill_switch_supported",
+          "owner"
+        ],
+        "title": "FeatureFlagItem",
+        "type": "object"
+      },
       "FeatureFlagOut": {
         "description": "Output schema for feature flag.",
         "properties": {
@@ -12906,6 +13039,79 @@
         "title": "HeritageCatalogRevisionUpdateIn",
         "type": "object"
       },
+      "HeritageClaimRetractIn": {
+        "description": "Request payload to retract a wrong or contested claim.",
+        "properties": {
+          "claim_id": {
+            "format": "uuid",
+            "title": "Claim Id",
+            "type": "string"
+          },
+          "new_status": {
+            "default": "rejected",
+            "description": "Target status: rejected or disputed.",
+            "title": "New Status",
+            "type": "string"
+          },
+          "reason": {
+            "description": "Audited explanation of retraction.",
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "claim_id",
+          "reason"
+        ],
+        "title": "HeritageClaimRetractIn",
+        "type": "object"
+      },
+      "HeritageClaimRetractOut": {
+        "description": "Response payload after retracting a claim.",
+        "properties": {
+          "claim_id": {
+            "format": "uuid",
+            "title": "Claim Id",
+            "type": "string"
+          },
+          "confidence": {
+            "title": "Confidence",
+            "type": "string"
+          },
+          "is_current": {
+            "default": false,
+            "title": "Is Current",
+            "type": "boolean"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          },
+          "retracted_at": {
+            "title": "Retracted At",
+            "type": "string"
+          },
+          "status": {
+            "default": "success",
+            "title": "Status",
+            "type": "string"
+          },
+          "verification_status": {
+            "title": "Verification Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "claim_id",
+          "verification_status",
+          "confidence",
+          "retracted_at",
+          "reason"
+        ],
+        "title": "HeritageClaimRetractOut",
+        "type": "object"
+      },
       "HeritageCommercialUseStatus": {
         "enum": [
           "permitted",
@@ -13196,6 +13402,77 @@
         "title": "HeritageMediaAssetOut",
         "type": "object"
       },
+      "HeritageMediaRevokeIn": {
+        "description": "Request payload to revoke a media asset.",
+        "properties": {
+          "asset_id": {
+            "format": "uuid",
+            "title": "Asset Id",
+            "type": "string"
+          },
+          "cdn_purge": {
+            "default": true,
+            "description": "Whether to purge edge CDN cache immediately.",
+            "title": "Cdn Purge",
+            "type": "boolean"
+          },
+          "reason": {
+            "description": "Audited explanation of media revocation.",
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "asset_id",
+          "reason"
+        ],
+        "title": "HeritageMediaRevokeIn",
+        "type": "object"
+      },
+      "HeritageMediaRevokeOut": {
+        "description": "Response payload after revoking a media asset.",
+        "properties": {
+          "asset_id": {
+            "format": "uuid",
+            "title": "Asset Id",
+            "type": "string"
+          },
+          "cache_headers": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Cache Headers",
+            "type": "object"
+          },
+          "cdn_purged": {
+            "title": "Cdn Purged",
+            "type": "boolean"
+          },
+          "revocation_reason": {
+            "title": "Revocation Reason",
+            "type": "string"
+          },
+          "revoked_at": {
+            "title": "Revoked At",
+            "type": "string"
+          },
+          "status": {
+            "default": "success",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "asset_id",
+          "revoked_at",
+          "revocation_reason",
+          "cdn_purged",
+          "cache_headers"
+        ],
+        "title": "HeritageMediaRevokeOut",
+        "type": "object"
+      },
       "HeritageMediaType": {
         "enum": [
           "photo",
@@ -13207,6 +13484,38 @@
         ],
         "title": "HeritageMediaType",
         "type": "string"
+      },
+      "HeritageMotifClaimsOut": {
+        "description": "Collection of verified claims for a canonical motif.",
+        "properties": {
+          "claims": {
+            "items": {
+              "$ref": "#/components/schemas/HeritagePublicClaimOut"
+            },
+            "title": "Claims",
+            "type": "array"
+          },
+          "motif_id": {
+            "title": "Motif Id",
+            "type": "string"
+          },
+          "motif_name_vi": {
+            "title": "Motif Name Vi",
+            "type": "string"
+          },
+          "total_claims": {
+            "title": "Total Claims",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "motif_id",
+          "motif_name_vi",
+          "total_claims",
+          "claims"
+        ],
+        "title": "HeritageMotifClaimsOut",
+        "type": "object"
       },
       "HeritageMuseumTrailOut": {
         "description": "Full museum QR guided trail payload linking verified context, sources, and access info.",
@@ -13886,6 +14195,177 @@
         "title": "HeritagePlaceOut",
         "type": "object"
       },
+      "HeritagePublicClaimOut": {
+        "description": "Publicly safe atomic historical claim (only approved and verified).",
+        "properties": {
+          "claim_type": {
+            "title": "Claim Type",
+            "type": "string"
+          },
+          "confidence": {
+            "title": "Confidence",
+            "type": "string"
+          },
+          "entity_id": {
+            "format": "uuid",
+            "title": "Entity Id",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "is_approved": {
+            "default": true,
+            "title": "Is Approved",
+            "type": "boolean"
+          },
+          "statement_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Statement En"
+          },
+          "statement_vi": {
+            "title": "Statement Vi",
+            "type": "string"
+          },
+          "verification_status": {
+            "title": "Verification Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "entity_id",
+          "claim_type",
+          "statement_vi",
+          "confidence",
+          "verification_status"
+        ],
+        "title": "HeritagePublicClaimOut",
+        "type": "object"
+      },
+      "HeritagePublicationGateReportOut": {
+        "description": "Full 9 Urns & 162 Motifs publication gate completeness report.",
+        "properties": {
+          "blocked_count": {
+            "title": "Blocked Count",
+            "type": "integer"
+          },
+          "criteria_summary": {
+            "additionalProperties": true,
+            "title": "Criteria Summary",
+            "type": "object"
+          },
+          "generated_at": {
+            "title": "Generated At",
+            "type": "string"
+          },
+          "publication_ready": {
+            "title": "Publication Ready",
+            "type": "boolean"
+          },
+          "ready_count": {
+            "title": "Ready Count",
+            "type": "integer"
+          },
+          "retracted_claims_count": {
+            "default": 0,
+            "title": "Retracted Claims Count",
+            "type": "integer"
+          },
+          "revoked_media_count": {
+            "default": 0,
+            "title": "Revoked Media Count",
+            "type": "integer"
+          },
+          "slot": {
+            "default": "W12-A01",
+            "title": "Slot",
+            "type": "string"
+          },
+          "status": {
+            "default": "COMPLETED",
+            "title": "Status",
+            "type": "string"
+          },
+          "ticket": {
+            "default": "V5-T121",
+            "title": "Ticket",
+            "type": "string"
+          },
+          "total_motifs": {
+            "default": 162,
+            "title": "Total Motifs",
+            "type": "integer"
+          },
+          "total_urns": {
+            "default": 9,
+            "title": "Total Urns",
+            "type": "integer"
+          },
+          "unapproved_claims_count": {
+            "default": 0,
+            "title": "Unapproved Claims Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "ready_count",
+          "blocked_count",
+          "publication_ready",
+          "criteria_summary",
+          "generated_at"
+        ],
+        "title": "HeritagePublicationGateReportOut",
+        "type": "object"
+      },
+      "HeritageRandomAuditOut": {
+        "description": "Random audit result ensuring zero unapproved claims and zero revoked media.",
+        "properties": {
+          "audited_at": {
+            "title": "Audited At",
+            "type": "string"
+          },
+          "iterations": {
+            "title": "Iterations",
+            "type": "integer"
+          },
+          "message": {
+            "default": "Zero unapproved claims or revoked media assets detected on public audit.",
+            "title": "Message",
+            "type": "string"
+          },
+          "passed": {
+            "default": true,
+            "title": "Passed",
+            "type": "boolean"
+          },
+          "revoked_media_leaked": {
+            "default": 0,
+            "title": "Revoked Media Leaked",
+            "type": "integer"
+          },
+          "unapproved_claims_leaked": {
+            "default": 0,
+            "title": "Unapproved Claims Leaked",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "iterations",
+          "audited_at"
+        ],
+        "title": "HeritageRandomAuditOut",
+        "type": "object"
+      },
       "HeritageRecordStatus": {
         "enum": [
           "candidate",
@@ -14012,6 +14492,53 @@
         ],
         "title": "HeritageReuseRights",
         "type": "string"
+      },
+      "HeritageSamplingVerificationOut": {
+        "description": "Response payload for sampling verification across urns & motifs.",
+        "properties": {
+          "revoked_media_detected": {
+            "default": 0,
+            "title": "Revoked Media Detected",
+            "type": "integer"
+          },
+          "sample_size": {
+            "title": "Sample Size",
+            "type": "integer"
+          },
+          "sampled_identifiers": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Sampled Identifiers",
+            "type": "array"
+          },
+          "sampling_passed": {
+            "default": true,
+            "title": "Sampling Passed",
+            "type": "boolean"
+          },
+          "unapproved_claims_detected": {
+            "default": 0,
+            "title": "Unapproved Claims Detected",
+            "type": "integer"
+          },
+          "verified_at": {
+            "title": "Verified At",
+            "type": "string"
+          },
+          "violations_found": {
+            "default": 0,
+            "title": "Violations Found",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "sample_size",
+          "sampled_identifiers",
+          "verified_at"
+        ],
+        "title": "HeritageSamplingVerificationOut",
+        "type": "object"
       },
       "HeritageSearchItemOut": {
         "description": "Individual search hit with highlight metadata and relevance score.",
@@ -31406,6 +31933,69 @@
         "title": "LowBandwidthOfflineKitResponse",
         "type": "object"
       },
+      "ManuscriptAuditOut": {
+        "properties": {
+          "anomaly_a_verified": {
+            "title": "Anomaly A Verified",
+            "type": "boolean"
+          },
+          "anomaly_b_verified": {
+            "title": "Anomaly B Verified",
+            "type": "boolean"
+          },
+          "audit_id": {
+            "title": "Audit Id",
+            "type": "string"
+          },
+          "claims_checked": {
+            "title": "Claims Checked",
+            "type": "integer"
+          },
+          "claims_passed": {
+            "title": "Claims Passed",
+            "type": "integer"
+          },
+          "figures_checked": {
+            "title": "Figures Checked",
+            "type": "integer"
+          },
+          "figures_passed": {
+            "title": "Figures Passed",
+            "type": "integer"
+          },
+          "manuscript_sha256": {
+            "title": "Manuscript Sha256",
+            "type": "string"
+          },
+          "paper_code": {
+            "title": "Paper Code",
+            "type": "string"
+          },
+          "perf_benchmarks_verified": {
+            "title": "Perf Benchmarks Verified",
+            "type": "boolean"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "audit_id",
+          "paper_code",
+          "manuscript_sha256",
+          "status",
+          "claims_checked",
+          "claims_passed",
+          "figures_checked",
+          "figures_passed",
+          "anomaly_a_verified",
+          "anomaly_b_verified",
+          "perf_benchmarks_verified"
+        ],
+        "title": "ManuscriptAuditOut",
+        "type": "object"
+      },
       "MasteryDimensionOut": {
         "properties": {
           "correct_answers": {
@@ -34068,6 +34658,238 @@
         "title": "OnboardingStatusResponse",
         "type": "object"
       },
+      "OwnerDecisionItem": {
+        "properties": {
+          "attestation": {
+            "description": "Attestation statement or signed notes",
+            "title": "Attestation",
+            "type": "string"
+          },
+          "commit_sha": {
+            "description": "Commit SHA locked at time of sign-off",
+            "title": "Commit Sha",
+            "type": "string"
+          },
+          "decision": {
+            "description": "GO, NO_GO, or CONDITIONAL_GO",
+            "title": "Decision",
+            "type": "string"
+          },
+          "owner_id": {
+            "description": "Unique identifier for the domain owner",
+            "title": "Owner Id",
+            "type": "string"
+          },
+          "owner_name": {
+            "description": "Full name of the decision maker",
+            "title": "Owner Name",
+            "type": "string"
+          },
+          "role": {
+            "description": "Role title e.g. S1 Integrator, Lead Historian",
+            "title": "Role",
+            "type": "string"
+          },
+          "signed_at": {
+            "description": "ISO-8601 timestamp of formal sign-off",
+            "title": "Signed At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "owner_id",
+          "owner_name",
+          "role",
+          "decision",
+          "signed_at",
+          "commit_sha",
+          "attestation"
+        ],
+        "title": "OwnerDecisionItem",
+        "type": "object"
+      },
+      "PaperClaimIn": {
+        "properties": {
+          "claim_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Claim Id"
+          },
+          "claim_text": {
+            "title": "Claim Text",
+            "type": "string"
+          },
+          "cohort_type": {
+            "default": "secondary_students",
+            "title": "Cohort Type",
+            "type": "string"
+          },
+          "evidence_basis": {
+            "default": "survey_1502",
+            "title": "Evidence Basis",
+            "type": "string"
+          }
+        },
+        "required": [
+          "claim_text"
+        ],
+        "title": "PaperClaimIn",
+        "type": "object"
+      },
+      "PaperClaimVerifyIn": {
+        "properties": {
+          "claims": {
+            "items": {
+              "$ref": "#/components/schemas/PaperClaimIn"
+            },
+            "title": "Claims",
+            "type": "array"
+          },
+          "paper_code": {
+            "default": "LUUNIEN_Q2_EN_REVISED",
+            "title": "Paper Code",
+            "type": "string"
+          }
+        },
+        "required": [
+          "claims"
+        ],
+        "title": "PaperClaimVerifyIn",
+        "type": "object"
+      },
+      "PaperClaimVerifyOut": {
+        "properties": {
+          "checked": {
+            "title": "Checked",
+            "type": "integer"
+          },
+          "flagged": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Flagged",
+            "type": "array"
+          },
+          "passed": {
+            "title": "Passed",
+            "type": "integer"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "checked",
+          "passed"
+        ],
+        "title": "PaperClaimVerifyOut",
+        "type": "object"
+      },
+      "PaperFigureItemIn": {
+        "properties": {
+          "item_id": {
+            "title": "Item Id",
+            "type": "string"
+          },
+          "positive_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Positive Count"
+          },
+          "positive_percentage": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Positive Percentage"
+          },
+          "valid_respondents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid Respondents"
+          }
+        },
+        "required": [
+          "item_id"
+        ],
+        "title": "PaperFigureItemIn",
+        "type": "object"
+      },
+      "PaperFigureVerifyIn": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/PaperFigureItemIn"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "table_number": {
+            "default": "Table 1",
+            "title": "Table Number",
+            "type": "string"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "PaperFigureVerifyIn",
+        "type": "object"
+      },
+      "PaperFigureVerifyOut": {
+        "properties": {
+          "checked": {
+            "title": "Checked",
+            "type": "integer"
+          },
+          "discrepancies": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Discrepancies",
+            "type": "array"
+          },
+          "passed": {
+            "title": "Passed",
+            "type": "integer"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "checked",
+          "passed"
+        ],
+        "title": "PaperFigureVerifyOut",
+        "type": "object"
+      },
       "PassportCheckInRequest": {
         "properties": {
           "client_claimed_status": {
@@ -34862,6 +35684,259 @@
           "purged_at"
         ],
         "title": "PilotDataRetentionPurgeOut",
+        "type": "object"
+      },
+      "PilotGoNoGoBoardOut": {
+        "properties": {
+          "blocking_issues": {
+            "description": "Blocking issue register",
+            "items": {
+              "$ref": "#/components/schemas/BlockingIssueItem"
+            },
+            "title": "Blocking Issues",
+            "type": "array"
+          },
+          "blocking_reasons": {
+            "description": "List of reasons blocking launch",
+            "items": {
+              "type": "string"
+            },
+            "title": "Blocking Reasons",
+            "type": "array"
+          },
+          "board_ref": {
+            "description": "Unique board evaluation reference",
+            "title": "Board Ref",
+            "type": "string"
+          },
+          "evaluated_at": {
+            "description": "Evaluation timestamp",
+            "title": "Evaluated At",
+            "type": "string"
+          },
+          "evaluated_by": {
+            "description": "Evaluator name",
+            "title": "Evaluated By",
+            "type": "string"
+          },
+          "feature_flags": {
+            "description": "Feature flag rollout plan",
+            "items": {
+              "$ref": "#/components/schemas/FeatureFlagItem"
+            },
+            "title": "Feature Flags",
+            "type": "array"
+          },
+          "is_launch_blocked": {
+            "description": "True if any P0 issue is OPEN or required sign-off is missing/rejected",
+            "title": "Is Launch Blocked",
+            "type": "boolean"
+          },
+          "open_p0_count": {
+            "description": "Number of unresolved P0 issues",
+            "title": "Open P0 Count",
+            "type": "integer"
+          },
+          "open_p1_count": {
+            "description": "Number of unresolved P1 issues",
+            "title": "Open P1 Count",
+            "type": "integer"
+          },
+          "open_p2_count": {
+            "description": "Number of unresolved P2 issues",
+            "title": "Open P2 Count",
+            "type": "integer"
+          },
+          "owner_decisions": {
+            "description": "Signed owner decisions",
+            "items": {
+              "$ref": "#/components/schemas/OwnerDecisionItem"
+            },
+            "title": "Owner Decisions",
+            "type": "array"
+          },
+          "release_version": {
+            "description": "Release version tag",
+            "title": "Release Version",
+            "type": "string"
+          },
+          "rollback_triggers": {
+            "description": "Automated rollback triggers",
+            "items": {
+              "$ref": "#/components/schemas/RollbackTriggerItem"
+            },
+            "title": "Rollback Triggers",
+            "type": "array"
+          },
+          "signed_owners_count": {
+            "description": "Number of signed owner decisions",
+            "title": "Signed Owners Count",
+            "type": "integer"
+          },
+          "support_contacts": {
+            "description": "Support contacts & escalation matrix",
+            "items": {
+              "$ref": "#/components/schemas/SupportContactItem"
+            },
+            "title": "Support Contacts",
+            "type": "array"
+          },
+          "target_environment": {
+            "description": "Target environment",
+            "title": "Target Environment",
+            "type": "string"
+          },
+          "verdict": {
+            "description": "Overall launch verdict: GO, BLOCKED, NO_GO, CONDITIONAL_GO",
+            "title": "Verdict",
+            "type": "string"
+          }
+        },
+        "required": [
+          "board_ref",
+          "release_version",
+          "target_environment",
+          "verdict",
+          "is_launch_blocked",
+          "open_p0_count",
+          "open_p1_count",
+          "open_p2_count",
+          "signed_owners_count",
+          "evaluated_at",
+          "evaluated_by"
+        ],
+        "title": "PilotGoNoGoBoardOut",
+        "type": "object"
+      },
+      "PilotGoNoGoEvaluateIn": {
+        "properties": {
+          "blocking_issues": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/BlockingIssueItem"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Custom blocking issues list",
+            "title": "Blocking Issues"
+          },
+          "evaluator_name": {
+            "default": "SRE Release Orchestrator",
+            "description": "Name of evaluating orchestrator",
+            "title": "Evaluator Name",
+            "type": "string"
+          },
+          "feature_flags": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/FeatureFlagItem"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Custom feature flags plan",
+            "title": "Feature Flags"
+          },
+          "owner_decisions": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/OwnerDecisionItem"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Custom owner decisions list",
+            "title": "Owner Decisions"
+          },
+          "release_version": {
+            "default": "v2026.1.0-rbpc",
+            "description": "Target release version tag",
+            "title": "Release Version",
+            "type": "string"
+          },
+          "rollback_triggers": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/RollbackTriggerItem"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Custom rollback triggers",
+            "title": "Rollback Triggers"
+          },
+          "support_contacts": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/SupportContactItem"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Custom support contacts",
+            "title": "Support Contacts"
+          },
+          "target_environment": {
+            "default": "staging",
+            "description": "Target environment (staging, production)",
+            "title": "Target Environment",
+            "type": "string"
+          }
+        },
+        "title": "PilotGoNoGoEvaluateIn",
+        "type": "object"
+      },
+      "PilotGoNoGoExportOut": {
+        "properties": {
+          "board_ref": {
+            "description": "Board reference",
+            "title": "Board Ref",
+            "type": "string"
+          },
+          "content": {
+            "description": "Rendered board report content",
+            "title": "Content",
+            "type": "string"
+          },
+          "format": {
+            "description": "Export format: markdown or json",
+            "title": "Format",
+            "type": "string"
+          },
+          "verdict": {
+            "description": "Launch verdict",
+            "title": "Verdict",
+            "type": "string"
+          }
+        },
+        "required": [
+          "format",
+          "board_ref",
+          "verdict",
+          "content"
+        ],
+        "title": "PilotGoNoGoExportOut",
         "type": "object"
       },
       "PilotGuardianConsentCreate": {
@@ -39027,6 +40102,119 @@
         "title": "RankOut",
         "type": "object"
       },
+      "RbpcAssetClearanceIn": {
+        "description": "Input payload to evaluate 3D or media asset rights clearance.",
+        "properties": {
+          "accuracy_grade": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "unreviewed",
+            "title": "Accuracy Grade"
+          },
+          "asset_id": {
+            "maxLength": 100,
+            "minLength": 2,
+            "title": "Asset Id",
+            "type": "string"
+          },
+          "displayed_license": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "NOT STATED",
+            "title": "Displayed License"
+          },
+          "is_commercial_context": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": false,
+            "title": "Is Commercial Context"
+          },
+          "noai": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": false,
+            "title": "Noai"
+          }
+        },
+        "required": [
+          "asset_id"
+        ],
+        "title": "RbpcAssetClearanceIn",
+        "type": "object"
+      },
+      "RbpcAssetClearanceOut": {
+        "description": "Evaluation result for media asset clearance under governance gates.",
+        "properties": {
+          "ai_training_allowed": {
+            "title": "Ai Training Allowed",
+            "type": "boolean"
+          },
+          "asset_id": {
+            "title": "Asset Id",
+            "type": "string"
+          },
+          "commercial_use_allowed": {
+            "title": "Commercial Use Allowed",
+            "type": "boolean"
+          },
+          "embed_allowed": {
+            "title": "Embed Allowed",
+            "type": "boolean"
+          },
+          "fallback_required": {
+            "title": "Fallback Required",
+            "type": "boolean"
+          },
+          "is_cleared": {
+            "title": "Is Cleared",
+            "type": "boolean"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "asset_id",
+          "is_cleared",
+          "status",
+          "embed_allowed",
+          "commercial_use_allowed",
+          "ai_training_allowed",
+          "fallback_required",
+          "reason"
+        ],
+        "title": "RbpcAssetClearanceOut",
+        "type": "object"
+      },
       "RbpcAudioConsentScope": {
         "enum": [
           "full_public",
@@ -39302,6 +40490,52 @@
           "source_title"
         ],
         "title": "RbpcClaimEvidenceOut",
+        "type": "object"
+      },
+      "RbpcCommerceGateIn": {
+        "description": "Input payload to evaluate commercial feature flag gate.",
+        "properties": {
+          "creator_consent_status": {
+            "default": "pending_review",
+            "title": "Creator Consent Status",
+            "type": "string"
+          },
+          "has_unapproved_assets": {
+            "default": false,
+            "title": "Has Unapproved Assets",
+            "type": "boolean"
+          }
+        },
+        "title": "RbpcCommerceGateIn",
+        "type": "object"
+      },
+      "RbpcCommerceGateOut": {
+        "description": "Result of commercial feature gate evaluation.",
+        "properties": {
+          "commerce_allowed": {
+            "title": "Commerce Allowed",
+            "type": "boolean"
+          },
+          "feature_flag_status": {
+            "title": "Feature Flag Status",
+            "type": "string"
+          },
+          "gate_verdict": {
+            "title": "Gate Verdict",
+            "type": "string"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "commerce_allowed",
+          "feature_flag_status",
+          "gate_verdict",
+          "reason"
+        ],
+        "title": "RbpcCommerceGateOut",
         "type": "object"
       },
       "RbpcConfigOut": {
@@ -41324,6 +42558,135 @@
           }
         },
         "title": "RbpcLedgerFinancialSummary",
+        "type": "object"
+      },
+      "RbpcLegalSignoffAuditOut": {
+        "description": "Comprehensive legal signoff compliance audit report.",
+        "properties": {
+          "all_approved": {
+            "title": "All Approved",
+            "type": "boolean"
+          },
+          "compliance_verdict": {
+            "title": "Compliance Verdict",
+            "type": "string"
+          },
+          "domains_count": {
+            "title": "Domains Count",
+            "type": "integer"
+          },
+          "expected_domains_count": {
+            "title": "Expected Domains Count",
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RbpcLegalSignoffRecordOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "master_fingerprint_sha256": {
+            "title": "Master Fingerprint Sha256",
+            "type": "string"
+          },
+          "missing_domains": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Missing Domains",
+            "type": "array"
+          },
+          "status_by_domain": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Status By Domain",
+            "type": "object"
+          }
+        },
+        "required": [
+          "all_approved",
+          "domains_count",
+          "expected_domains_count",
+          "master_fingerprint_sha256",
+          "compliance_verdict"
+        ],
+        "title": "RbpcLegalSignoffAuditOut",
+        "type": "object"
+      },
+      "RbpcLegalSignoffRecordOut": {
+        "description": "Canonical legal signoff record across 5 core domains.",
+        "properties": {
+          "checksum_sha256": {
+            "title": "Checksum Sha256",
+            "type": "string"
+          },
+          "conditions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Conditions",
+            "type": "array"
+          },
+          "document_ref": {
+            "title": "Document Ref",
+            "type": "string"
+          },
+          "domain": {
+            "title": "Domain",
+            "type": "string"
+          },
+          "governing_regulations": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Governing Regulations",
+            "type": "array"
+          },
+          "signatory_name": {
+            "title": "Signatory Name",
+            "type": "string"
+          },
+          "signatory_role": {
+            "title": "Signatory Role",
+            "type": "string"
+          },
+          "signed_at": {
+            "title": "Signed At",
+            "type": "string"
+          },
+          "signoff_ref": {
+            "title": "Signoff Ref",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "domain",
+          "signoff_ref",
+          "title",
+          "status",
+          "signatory_role",
+          "signatory_name",
+          "document_ref",
+          "governing_regulations",
+          "checksum_sha256",
+          "signed_at",
+          "summary"
+        ],
+        "title": "RbpcLegalSignoffRecordOut",
         "type": "object"
       },
       "RbpcLoiChecksumVerifyIn": {
@@ -46531,6 +47894,50 @@
         "title": "RollbackResultOut",
         "type": "object"
       },
+      "RollbackTriggerItem": {
+        "properties": {
+          "automated_action": {
+            "description": "Automated remediation or rollback SOP",
+            "title": "Automated Action",
+            "type": "string"
+          },
+          "measurement_window": {
+            "description": "Sliding evaluation window",
+            "title": "Measurement Window",
+            "type": "string"
+          },
+          "metric_name": {
+            "description": "Measurable operational metric",
+            "title": "Metric Name",
+            "type": "string"
+          },
+          "severity": {
+            "description": "Severity category e.g. P0_CRITICAL, P1_HIGH",
+            "title": "Severity",
+            "type": "string"
+          },
+          "threshold": {
+            "description": "Quantitative tripwire threshold",
+            "title": "Threshold",
+            "type": "string"
+          },
+          "trigger_id": {
+            "description": "Trigger identifier e.g. TRG-01",
+            "title": "Trigger Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "trigger_id",
+          "metric_name",
+          "threshold",
+          "measurement_window",
+          "automated_action",
+          "severity"
+        ],
+        "title": "RollbackTriggerItem",
+        "type": "object"
+      },
       "RubricCalibrationCreate": {
         "properties": {
           "assessor_a_id": {
@@ -49943,6 +51350,174 @@
           "summary"
         ],
         "title": "SummaryGenerateOut",
+        "type": "object"
+      },
+      "SupportContactItem": {
+        "properties": {
+          "contact_channel": {
+            "description": "Communication channel e.g. Telegram, Hotline",
+            "title": "Contact Channel",
+            "type": "string"
+          },
+          "contact_value": {
+            "description": "Channel handle, phone, or alias",
+            "title": "Contact Value",
+            "type": "string"
+          },
+          "escalation_sla": {
+            "description": "Maximum response SLA e.g. 15 minutes",
+            "title": "Escalation Sla",
+            "type": "string"
+          },
+          "role_name": {
+            "description": "Role or team name",
+            "title": "Role Name",
+            "type": "string"
+          },
+          "tier": {
+            "description": "Support tier e.g. Tier 1 Support, Tier 2 Incident Commander",
+            "title": "Tier",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tier",
+          "role_name",
+          "contact_channel",
+          "contact_value",
+          "escalation_sla"
+        ],
+        "title": "SupportContactItem",
+        "type": "object"
+      },
+      "SurveyAuditReportOut": {
+        "properties": {
+          "anomalies_audited": {
+            "additionalProperties": true,
+            "title": "Anomalies Audited",
+            "type": "object"
+          },
+          "anonymization_standard": {
+            "title": "Anonymization Standard",
+            "type": "string"
+          },
+          "batch_code": {
+            "title": "Batch Code",
+            "type": "string"
+          },
+          "dataset_sha256": {
+            "title": "Dataset Sha256",
+            "type": "string"
+          },
+          "epistemic_rule": {
+            "title": "Epistemic Rule",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SurveyItemAuditOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "school_count": {
+            "title": "School Count",
+            "type": "integer"
+          },
+          "study_title": {
+            "title": "Study Title",
+            "type": "string"
+          },
+          "total_respondents": {
+            "title": "Total Respondents",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "batch_code",
+          "study_title",
+          "total_respondents",
+          "school_count",
+          "dataset_sha256",
+          "anonymization_standard",
+          "items",
+          "anomalies_audited",
+          "epistemic_rule"
+        ],
+        "title": "SurveyAuditReportOut",
+        "type": "object"
+      },
+      "SurveyItemAuditOut": {
+        "properties": {
+          "allowed_max_choices": {
+            "title": "Allowed Max Choices",
+            "type": "integer"
+          },
+          "analysis_group": {
+            "title": "Analysis Group",
+            "type": "string"
+          },
+          "epistemic_limitation": {
+            "title": "Epistemic Limitation",
+            "type": "string"
+          },
+          "is_subjective_self_report": {
+            "title": "Is Subjective Self Report",
+            "type": "boolean"
+          },
+          "item_id": {
+            "title": "Item Id",
+            "type": "string"
+          },
+          "missing_count": {
+            "title": "Missing Count",
+            "type": "integer"
+          },
+          "positive_count": {
+            "title": "Positive Count",
+            "type": "integer"
+          },
+          "positive_percentage": {
+            "title": "Positive Percentage",
+            "type": "number"
+          },
+          "question_text_en": {
+            "title": "Question Text En",
+            "type": "string"
+          },
+          "question_text_vi": {
+            "title": "Question Text Vi",
+            "type": "string"
+          },
+          "response_type": {
+            "title": "Response Type",
+            "type": "string"
+          },
+          "table_number": {
+            "title": "Table Number",
+            "type": "string"
+          },
+          "valid_respondents": {
+            "title": "Valid Respondents",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "item_id",
+          "table_number",
+          "question_text_vi",
+          "question_text_en",
+          "response_type",
+          "allowed_max_choices",
+          "valid_respondents",
+          "missing_count",
+          "positive_count",
+          "positive_percentage",
+          "analysis_group",
+          "is_subjective_self_report",
+          "epistemic_limitation"
+        ],
+        "title": "SurveyItemAuditOut",
         "type": "object"
       },
       "TagCreateIn": {
@@ -63990,6 +65565,54 @@
         "summary": "Use Streak Freeze For Hearts Endpoint"
       }
     },
+    "/api/v1/heritage/audit/random-audit": {
+      "get": {
+        "description": "Public random audit verifying zero unapproved claims and zero revoked media assets.\n\nNegative abuse invariant: MUST confirm 0 unapproved claims or revoked media assets are visible.",
+        "operationId": "get_heritage_random_audit_api_v1_heritage_audit_random_audit_get",
+        "parameters": [
+          {
+            "description": "Random audit iterations to execute.",
+            "in": "query",
+            "name": "iterations",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "description": "Random audit iterations to execute.",
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Iterations",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HeritageRandomAuditOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Heritage Random Audit",
+        "tags": [
+          "heritage"
+        ]
+      }
+    },
     "/api/v1/heritage/catalog": {
       "get": {
         "description": "Retrieve canonical heritage catalog (9 Urns & 162 Motifs) with ETag caching.\n\nSupports conditional GET requests via If-None-Match header:\n- Returns HTTP 304 Not Modified if client cache ETag matches server catalog ETag.\n- Returns HTTP 200 OK with full metadata and ETag header on initial request or when catalog is updated.",
@@ -64093,6 +65716,49 @@
         ]
       }
     },
+    "/api/v1/heritage/catalog/motifs/{motif_id}/claims": {
+      "get": {
+        "description": "Retrieve approved, verified atomic historical claims for a canonical motif.\n\nNegative abuse invariant: Unapproved, draft, disputed, or retracted claims\nare strictly filtered out from public response.",
+        "operationId": "get_heritage_catalog_motif_claims_api_v1_heritage_catalog_motifs__motif_id__claims_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "motif_id",
+            "required": true,
+            "schema": {
+              "title": "Motif Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HeritageMotifClaimsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Heritage Catalog Motif Claims",
+        "tags": [
+          "heritage"
+        ]
+      }
+    },
     "/api/v1/heritage/catalog/revision": {
       "post": {
         "description": "Staff editorial endpoint to update an approved revision of an urn or motif.\n\nUpdates revision number and evidence status, strictly invalidating older client ETags.",
@@ -64190,6 +65856,124 @@
           }
         },
         "summary": "Get Heritage Catalog Urn",
+        "tags": [
+          "heritage"
+        ]
+      }
+    },
+    "/api/v1/heritage/claims/{claim_id}/retract": {
+      "post": {
+        "description": "Staff editorial endpoint to retract an erroneous, outdated, or disputed historical claim.\n\nImmediately demotes claim from publication, marks it as unapproved/retracted,\nand records an immutable audit log entry.",
+        "operationId": "retract_heritage_claim_api_v1_heritage_claims__claim_id__retract_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "claim_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Claim Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HeritageClaimRetractIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HeritageClaimRetractOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Retract Heritage Claim",
+        "tags": [
+          "heritage"
+        ]
+      }
+    },
+    "/api/v1/heritage/media/{asset_id}/revoke": {
+      "post": {
+        "description": "Staff editorial endpoint to revoke licensing/rights for a media asset.\n\nImmediately invalidates public display, purges CDN cache, sets anti-stale headers,\nand records immutable revocation entry.",
+        "operationId": "revoke_heritage_media_asset_api_v1_heritage_media__asset_id__revoke_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "asset_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Asset Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HeritageMediaRevokeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HeritageMediaRevokeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Revoke Heritage Media Asset",
         "tags": [
           "heritage"
         ]
@@ -64611,6 +66395,104 @@
           }
         ],
         "summary": "Get Heritage Place Trail",
+        "tags": [
+          "heritage"
+        ]
+      }
+    },
+    "/api/v1/heritage/publication-gate/report": {
+      "get": {
+        "description": "Retrieve 9 Urns & 162 Motifs publication gate completeness report.\n\nEnforces all 5 publication quality criteria, checks database readiness,\nand returns exact totals of ready, blocked, revoked media, and retracted claims.",
+        "operationId": "get_heritage_publication_gate_report_api_v1_heritage_publication_gate_report_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HeritagePublicationGateReportOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Heritage Publication Gate Report",
+        "tags": [
+          "heritage"
+        ]
+      }
+    },
+    "/api/v1/heritage/publication-gate/sampling-verify": {
+      "get": {
+        "description": "Perform sampling verification across relics ensuring source/rights gates are intact.\n\nVerifies 2D rubbing asset on disk, 3D coordinate bounds, and that zero unapproved\nclaims or revoked media are exposed publicly.",
+        "operationId": "verify_heritage_sampling_api_v1_heritage_publication_gate_sampling_verify_get",
+        "parameters": [
+          {
+            "description": "Sample size of relics to verify.",
+            "in": "query",
+            "name": "sample_size",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "description": "Sample size of relics to verify.",
+              "maximum": 162,
+              "minimum": 1,
+              "title": "Sample Size",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Optional deterministic seed for audit reproducibility.",
+            "in": "query",
+            "name": "seed",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Optional deterministic seed for audit reproducibility.",
+              "title": "Seed"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HeritageSamplingVerificationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Verify Heritage Sampling",
         "tags": [
           "heritage"
         ]
@@ -70448,6 +72330,205 @@
         "summary": "Relief Hotspot",
         "tags": [
           "history"
+        ]
+      }
+    },
+    "/api/v1/history/research/truth-gate/audit-manuscript": {
+      "post": {
+        "description": "Audit LuuNien_Q2_EN_Revised.tex on the filesystem and record the cryptographic audit.",
+        "operationId": "audit_manuscript_api_v1_history_research_truth_gate_audit_manuscript_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManuscriptAuditOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Audit Manuscript",
+        "tags": [
+          "research-truth-gate"
+        ]
+      }
+    },
+    "/api/v1/history/research/truth-gate/benchmarks": {
+      "get": {
+        "description": "Retrieve real measured performance runs (PERF-RESEARCH-01, PERF-API-01, PERF-AI-01).",
+        "operationId": "get_benchmarks_api_v1_history_research_truth_gate_benchmarks_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BenchmarkRunsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Benchmarks",
+        "tags": [
+          "research-truth-gate"
+        ]
+      }
+    },
+    "/api/v1/history/research/truth-gate/survey-1502/audit": {
+      "get": {
+        "description": "Retrieve authoritative audit report for the n=1,502 secondary student survey.\n\nIncludes Table 1 items with exact denominators, numerators, and percentages,\nas well as full reconciliation of the two anomalies (4,506 multi-select and 544 vs 812).",
+        "operationId": "get_survey_1502_audit_report_api_v1_history_research_truth_gate_survey_1502_audit_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SurveyAuditReportOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Survey 1502 Audit Report",
+        "tags": [
+          "research-truth-gate"
+        ]
+      }
+    },
+    "/api/v1/history/research/truth-gate/survey-1502/reproduce": {
+      "get": {
+        "description": "Execute end-to-end de-identified survey dataset reproduction and return checksums.",
+        "operationId": "reproduce_survey_1502_dataset_api_v1_history_research_truth_gate_survey_1502_reproduce_get",
+        "parameters": [
+          {
+            "description": "RNG seed for deterministic dataset permutation",
+            "in": "query",
+            "name": "seed",
+            "required": false,
+            "schema": {
+              "default": 1502,
+              "description": "RNG seed for deterministic dataset permutation",
+              "title": "Seed",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reproduce Survey 1502 Dataset",
+        "tags": [
+          "research-truth-gate"
+        ]
+      }
+    },
+    "/api/v1/history/research/truth-gate/validate-paper-claims": {
+      "post": {
+        "description": "Validate research claims against overclaiming invariants.\n\nNegative abuse defense: Subjective sentiment CANNOT be used to assert causal learning gains.\n1,502 secondary students CANNOT be labeled as tourists or commercial customers.",
+        "operationId": "validate_paper_claims_api_v1_history_research_truth_gate_validate_paper_claims_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaperClaimVerifyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaperClaimVerifyOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Validate Paper Claims",
+        "tags": [
+          "research-truth-gate"
+        ]
+      }
+    },
+    "/api/v1/history/research/truth-gate/verify-paper-figures": {
+      "post": {
+        "description": "Verify submitted paper table items against authoritative survey metrics.\n\nNegative abuse defense: Any deviation in count, denominator, or percentage is rejected.",
+        "operationId": "verify_paper_figures_api_v1_history_research_truth_gate_verify_paper_figures_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaperFigureVerifyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaperFigureVerifyOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Verify Paper Figures",
+        "tags": [
+          "research-truth-gate"
         ]
       }
     },
@@ -80176,6 +82257,173 @@
         ]
       }
     },
+    "/api/v1/rbpc/go-no-go/board": {
+      "get": {
+        "description": "Retrieve the current authoritative Pilot Go/No-Go Board state.\n\nIncludes 5 signed owner decisions, blocking issue register,\nfeature flag plan, rollback triggers, and 24/7 on-call contacts.",
+        "operationId": "get_canonical_go_no_go_board_api_v1_rbpc_go_no_go_board_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotGoNoGoBoardOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Canonical Go No Go Board",
+        "tags": [
+          "rbpc_pilot_go_no_go"
+        ]
+      }
+    },
+    "/api/v1/rbpc/go-no-go/evaluate": {
+      "post": {
+        "description": "Evaluate a proposed or updated Pilot Go/No-Go Board.\n\nNEGATIVE ABUSE INVARIANT:\nLaunch is strictly BLOCKED if any P0 issue remains unresolved in the\nblocking issue register, regardless of votes or approvals.",
+        "operationId": "evaluate_go_no_go_board_api_v1_rbpc_go_no_go_evaluate_post",
+        "parameters": [
+          {
+            "description": "Whether to persist evaluation to database",
+            "in": "query",
+            "name": "persist",
+            "required": false,
+            "schema": {
+              "default": true,
+              "description": "Whether to persist evaluation to database",
+              "title": "Persist",
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PilotGoNoGoEvaluateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotGoNoGoBoardOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Evaluate Go No Go Board",
+        "tags": [
+          "rbpc_pilot_go_no_go"
+        ]
+      }
+    },
+    "/api/v1/rbpc/go-no-go/evaluations/{board_ref}": {
+      "get": {
+        "description": "Retrieve a previously audited evaluation by its unique board_ref.",
+        "operationId": "get_saved_go_no_go_evaluation_api_v1_rbpc_go_no_go_evaluations__board_ref__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "board_ref",
+            "required": true,
+            "schema": {
+              "title": "Board Ref",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotGoNoGoBoardOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Saved Go No Go Evaluation",
+        "tags": [
+          "rbpc_pilot_go_no_go"
+        ]
+      }
+    },
+    "/api/v1/rbpc/go-no-go/export": {
+      "get": {
+        "description": "Export the current Pilot Go/No-Go Board report in Markdown or JSON format.",
+        "operationId": "export_go_no_go_board_api_v1_rbpc_go_no_go_export_get",
+        "parameters": [
+          {
+            "description": "Export format: 'markdown' or 'json'",
+            "in": "query",
+            "name": "format",
+            "required": false,
+            "schema": {
+              "default": "markdown",
+              "description": "Export format: 'markdown' or 'json'",
+              "title": "Format",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotGoNoGoExportOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Export Go No Go Board",
+        "tags": [
+          "rbpc_pilot_go_no_go"
+        ]
+      }
+    },
     "/api/v1/rbpc/impact": {
       "get": {
         "description": "Retrieve aggregate platform metrics.\n\nSeparates real database-observed statistics from forward commercial projections.\nIncludes verified 202,360,638 VND sponsor in-kind support.",
@@ -80561,6 +82809,112 @@
           }
         ],
         "summary": "Get Unit Economics Actual Ledger",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/legal/evaluate-asset": {
+      "post": {
+        "description": "Evaluate 3D or media asset rights clearance against copyright and accuracy gates.\n\nNegative abuse invariants:\n- Speculative or fantasy geometry (SF-020) is permanently rejected.\n- Non-commercial (SF-010) and NoAI (SF-017) assets are barred from commercial & AI flows.\n- Third-party 3D models are strictly prohibited from commercial workshop cards.",
+        "operationId": "evaluate_asset_clearance_endpoint_api_v1_rbpc_legal_evaluate_asset_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcAssetClearanceIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcAssetClearanceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Evaluate Asset Clearance Endpoint",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/legal/evaluate-commerce-gate": {
+      "post": {
+        "description": "Evaluate whether commercial features (inquiry booking, reservations, payouts) are permitted.\n\nNegative abuse invariant:\n- Unapproved assets or unconsented commerce features strictly keep feature flags OFF.",
+        "operationId": "evaluate_commerce_gate_endpoint_api_v1_rbpc_legal_evaluate_commerce_gate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RbpcCommerceGateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcCommerceGateOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Evaluate Commerce Gate Endpoint",
+        "tags": [
+          "rbpc"
+        ]
+      }
+    },
+    "/api/v1/rbpc/legal/signoff-audit": {
+      "get": {
+        "description": "Retrieve canonical 5-domain legal and creator agreement sign-off audit.\n\nConfirms software IP, photos/3D rights, school consent, artisan agreement,\nand consumer/tax terms with SHA-256 verification fingerprints.",
+        "operationId": "get_legal_signoff_audit_api_v1_rbpc_legal_signoff_audit_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RbpcLegalSignoffAuditOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Legal Signoff Audit",
         "tags": [
           "rbpc"
         ]

@@ -1,0 +1,193 @@
+{
+  "ticket_id": "V5-T122",
+  "wave": "W12",
+  "slot": "A02",
+  "role": "W12-A02",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "title": "Zero-fake-success full-site sweep across frontend/src/, mobile/lib/, and backend/",
+  "status": "COMPLETED",
+  "verified_at": "2026-11-07T10:20:00Z",
+  "target_modules": [
+    "backend/services/zero_fake_success_sweep.py",
+    "tests/v5/test_v5_t122.py",
+    "frontend/src/lib/rbpc/inquiries.ts",
+    "frontend/src/lib/imperial/submissions-api.ts",
+    "frontend/src/lib/imperial/map-api.ts",
+    "mobile/lib/features/urn_viewer/presentation/widgets/rubbing_fallback_view.dart",
+    "mobile/lib/features/practice/presentation/providers/practice_provider.dart"
+  ],
+  "implementation_summary": {
+    "goal": "Site-wide zero-fake-success audit traversing reachable routes under empty DB, 5xx, 403, and offline states across web frontend, Flutter mobile, and FastAPI backend.",
+    "sweeps_conducted": [
+      "Static codebase inspection across frontend/src/, mobile/lib/, and backend/ for prohibited mock/fake success indicators",
+      "Reachable route traversal under clean / empty DB state verifying zero synthetic records or unearned confirmations",
+      "Error state resilience traversal under 5xx and 403 Forbidden verifying honest error envelopes without masqueraded 200 OK success",
+      "Negative abuse verification proving 0 artificial inquiries, 0 artificial grades, and 0 artificial annotations accepted",
+      "3D relic asset audit verifying 100% 2D rubbing fallback coverage and zero phantom geometric primitives",
+      "Offline write queue idempotency and anti-replay audit verifying reconnection retries award 0 duplicate XP"
+    ],
+    "gate_status": "GATE_PASSED"
+  },
+  "invariants_verified": {
+    "INV-W12-A02-01": {
+      "invariant": "Zero Synthetic Bookings & Fake Payments",
+      "details": "Platform provides honest inquiry-only request routing without simulated instant payment mocks. Realized GMV strictly requires verified settlement records in rbpc_settlement_ledger."
+    },
+    "INV-W12-A02-02": {
+      "invariant": "Zero Fabricated Student Grades",
+      "details": "Student submissions require genuine teacher rubric evaluation across S1-S4 criteria on a strict 0-3 scale. Learner grading attempts return 403 Forbidden. Out-of-bounds or negative scores are rejected."
+    },
+    "INV-W12-A02-03": {
+      "invariant": "Zero Artificial Map Annotations",
+      "details": "Map annotation creation, coordinate modification, and publishing require privileged staff roles. Normalized UV coordinates are strictly validated within [0.0, 1.0]. Non-existent sites or map assets return 404."
+    },
+    "INV-W12-A02-04": {
+      "invariant": "Zero Phantom Assets",
+      "details": "All 9 Imperial Urns and all 162 motif relief records maintain verified 2D rubbing fallback assets in ban-duc-noi/. Missing 3D models cleanly degrade to archival photographs without synthetic 3D primitives."
+    },
+    "INV-W12-A02-05": {
+      "invariant": "Offline Anti-Replay Idempotency",
+      "details": "Offline operation queues require client idempotency keys. Replay attempts on network reconnection return status 'acknowledged' with exactly 0 duplicate XP."
+    }
+  },
+  "negative_abuse_test_matrix": [
+    {
+      "test_case": "Non-existent experience booking inquiry",
+      "expected_status": 404,
+      "actual_status": 404,
+      "result": "PASSED"
+    },
+    {
+      "test_case": "Inquiry missing explicit terms consent",
+      "expected_status": 422,
+      "actual_status": 422,
+      "result": "PASSED"
+    },
+    {
+      "test_case": "Inquiry missing privacy policy agreement",
+      "expected_status": 422,
+      "actual_status": 422,
+      "result": "PASSED"
+    },
+    {
+      "test_case": "Inquiry with preferred date in the past",
+      "expected_status": 422,
+      "actual_status": 422,
+      "result": "PASSED"
+    },
+    {
+      "test_case": "Inquiry with malformed non-UUID idempotency key",
+      "expected_status": 422,
+      "actual_status": 422,
+      "result": "PASSED"
+    },
+    {
+      "test_case": "Inquiry status lookup with forged / non-existent bearer token",
+      "expected_status": 404,
+      "actual_status": 404,
+      "result": "PASSED"
+    },
+    {
+      "test_case": "Learner attempting to grade a submission",
+      "expected_status": 403,
+      "actual_status": 403,
+      "result": "PASSED"
+    },
+    {
+      "test_case": "Teacher grading non-existent submission ID",
+      "expected_status": 404,
+      "actual_status": 404,
+      "result": "PASSED"
+    },
+    {
+      "test_case": "Rubric score exceeding maximum scale (score = 4 > 3)",
+      "expected_status": 400,
+      "actual_status": 400,
+      "result": "PASSED"
+    },
+    {
+      "test_case": "Rubric score negative (score = -1 < 0)",
+      "expected_status": 400,
+      "actual_status": 400,
+      "result": "PASSED"
+    },
+    {
+      "test_case": "Non-staff user attempting to create map annotation",
+      "expected_status": 403,
+      "actual_status": 403,
+      "result": "PASSED"
+    },
+    {
+      "test_case": "Annotation with normalized U coordinate out of bounds (u = 1.5)",
+      "expected_status": 422,
+      "actual_status": 422,
+      "result": "PASSED"
+    },
+    {
+      "test_case": "Annotation with normalized V coordinate out of bounds (v = -0.2)",
+      "expected_status": 422,
+      "actual_status": 422,
+      "result": "PASSED"
+    },
+    {
+      "test_case": "Annotation referencing non-existent site ID",
+      "expected_status": 404,
+      "actual_status": 404,
+      "result": "PASSED"
+    }
+  ],
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t122.py -v",
+    "tests_total": 9,
+    "tests_passed": 9,
+    "tests_failed": 0,
+    "test_cases": [
+      {
+        "name": "test_v5_t122_static_codebase_sweep",
+        "result": "PASSED",
+        "description": "Verifies frontend/src/, mobile/lib/, and backend/ codebase files adhere to zero-fake-success standards."
+      },
+      {
+        "name": "test_v5_t122_empty_db_route_traversal",
+        "result": "PASSED",
+        "description": "Traverses reachable routes under empty DB state and confirms zero synthetic records are returned."
+      },
+      {
+        "name": "test_v5_t122_403_and_error_route_traversal",
+        "result": "PASSED",
+        "description": "Verifies that unauthorized actors strictly receive HTTP 403 without fabricated success."
+      },
+      {
+        "name": "test_v5_t122_negative_abuse_inquiry_rejections",
+        "result": "PASSED",
+        "description": "Negative Abuse Test: Proves 0 artificial inquiries accepted (non-existent experience, missing consent, past date, bad idempotency key)."
+      },
+      {
+        "name": "test_v5_t122_negative_abuse_grade_rejections",
+        "result": "PASSED",
+        "description": "Negative Abuse Test: Proves 0 artificial grades accepted (unauthorized grader, non-existent submission, out-of-scale rubric)."
+      },
+      {
+        "name": "test_v5_t122_negative_abuse_annotation_rejections",
+        "result": "PASSED",
+        "description": "Negative Abuse Test: Proves 0 artificial annotations accepted (non-staff role, UV out-of-bounds, non-existent site)."
+      },
+      {
+        "name": "test_v5_t122_phantom_assets_and_2d_fallback",
+        "result": "PASSED",
+        "description": "Verifies 100% 2D rubbing fallback presence across all 9 Urns and 162 motifs with zero phantom 3D meshes."
+      },
+      {
+        "name": "test_v5_t122_offline_sync_idempotency_and_anti_replay",
+        "result": "PASSED",
+        "description": "Verifies offline sync idempotency and proves reconnection retries award exactly 0 duplicate XP."
+      },
+      {
+        "name": "test_v5_t122_sweep_report_assembly_and_gate_status",
+        "result": "PASSED",
+        "description": "Assembles the zero-fake-success sweep report, verifies SHA-256 seal integrity, and verifies GATE_BLOCKED on simulated leaks."
+      }
+    ]
+  }
+}

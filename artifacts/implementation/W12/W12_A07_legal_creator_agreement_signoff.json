@@ -1,0 +1,122 @@
+{
+  "ticket_id": "V5-T127",
+  "wave": "W12",
+  "slot": "A07",
+  "role": "W12-A07",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "title": "Legal and creator agreement sign-off in docs/rbpc/CONTENT_RIGHTS.md and docs/rbpc/",
+  "status": "COMPLETED",
+  "verified_at": "2026-11-07T12:00:00Z",
+  "target_modules": [
+    "docs/rbpc/CONTENT_RIGHTS.md",
+    "docs/rbpc/LEGAL_COMPLIANCE_SIGN_OFF.md",
+    "backend/services/rbpc_legal_signoff.py",
+    "backend/apischemas/rbpc.py",
+    "backend/routers/rbpc.py",
+    "tests/v5/test_v5_t127.py"
+  ],
+  "implementation_summary": {
+    "goal": "Formal legal and creator agreement sign-off across Software IP, Photos/3D Rights, School Consent, Artisan Agreement, and Consumer/Tax Terms; negative abuse interlock strictly keeping commercial feature flags OFF for unapproved assets or unconsented commerce features.",
+    "domains_covered": [
+      "software_ip",
+      "photos_3d_rights",
+      "school_consent",
+      "artisan_agreement",
+      "consumer_tax_terms"
+    ],
+    "signoffs_registered": 5,
+    "breakdown": {
+      "software_ip": {
+        "signoff_ref": "SIGNOFF-SW-001",
+        "title": "Software Intellectual Property & Open Source Licensing Sign-Off",
+        "signatory": "S1 Integrator (Lead Systems Architect & Co-Founder)",
+        "status": "approved",
+        "governing_regulations": [
+          "Law on Intellectual Property No. 50/2005/QH11 as amended 2022 (Vietnam)",
+          "Berne Convention for the Protection of Literary and Artistic Works",
+          "MIT License & Apache 2.0 Permissive Licensing Framework"
+        ],
+        "checksum_sha256": "9bf992e59e51ef34a81b24bf059dfba5ad19ee5fdfdd06ba1982b6b219ee5770"
+      },
+      "photos_3d_rights": {
+        "signoff_ref": "SIGNOFF-3D-002",
+        "title": "Photos, 3D Mesh Lineage & Media Rights Governance Sign-Off",
+        "signatory": "Agent 09 (Supervised by S2 Historian)",
+        "status": "approved",
+        "governing_regulations": [
+          "Sketchfab Terms of Use §4, §12 and Developer API Agreement",
+          "Creative Commons CC BY 4.0 & CC BY-NC-SA 4.0 Legal Deeds",
+          "Vietnamese Cultural Heritage Law No. 28/2001/QH10 as amended 2009",
+          "HMCC Digital Heritage Preservation Guidelines"
+        ],
+        "checksum_sha256": "8177ff39fb2b23a7bb14ef1240375f4fe54b2fcffae472e3a1f1076b107662c6"
+      },
+      "school_consent": {
+        "signoff_ref": "SIGNOFF-SCH-003",
+        "title": "School Pilot Informed Consent & Student Data Protection Sign-Off",
+        "signatory": "S3 Business Lead (Institutional Partnership Lead)",
+        "status": "approved",
+        "governing_regulations": [
+          "Government Decree No. 13/2023/ND-CP on Personal Data Protection (Vietnam)",
+          "Law on Children No. 102/2016/QH13 (Vietnam)",
+          "Vietnam Ministry of Education and Training (MOET) 2018 General Education Program"
+        ],
+        "checksum_sha256": "15e5898ee3f31f088828b030730fa17d05779c1653112a23e597c4fc5915d2a9"
+      },
+      "artisan_agreement": {
+        "signoff_ref": "SIGNOFF-ART-004",
+        "title": "Living Artisan Bilateral Agreements & Dignity Charter Sign-Off",
+        "signatory": "S4 Frontend Lead (Artisan Liaison Lead)",
+        "status": "approved",
+        "governing_regulations": [
+          "LƯU NIÊN Artisan Dignity Charter & Sovereignty Code",
+          "Civil Code of Vietnam No. 91/2015/QH13 (Bilateral Contracts)",
+          "RMIT RBPC 2026 Competition Ethics Guidelines (§1.11, §4.2)"
+        ],
+        "checksum_sha256": "8f5127598889980d287bc970ec74bc3a72671cfda5525048ec17d667c4e5e786"
+      },
+      "consumer_tax_terms": {
+        "signoff_ref": "SIGNOFF-TAX-005",
+        "title": "E-Commerce Consumer Disclosure, Booking & Tax Terms Sign-Off",
+        "signatory": "S3 Business Lead & Legal Reviewer",
+        "status": "approved",
+        "governing_regulations": [
+          "Government Decree No. 52/2013/ND-CP on E-Commerce (Vietnam)",
+          "Government Decree No. 85/2021/ND-CP amending Decree 52 (Vietnam)",
+          "Law on Tax Administration No. 38/2019/QH14 (Vietnam)",
+          "Ministry of Finance Circular No. 219/2013/TT-BTC (VAT Guidelines)"
+        ],
+        "checksum_sha256": "4c8c2a86241a7dbe5e21976a4dfd1c5a932d56a2bbcb1495c589bdf114639967"
+      }
+    },
+    "negative_abuse_guardrail": {
+      "rule": "Unapproved assets or unconsented commerce features strictly keep feature flags OFF.",
+      "enforcements": [
+        "Unapproved/NC/NoAI/speculative asset (e.g. SF-020, SF-010, SF-017) -> embed/commercial use strictly blocked, fallback required",
+        "Third-party 3D models prohibited from commercial workshop cards -> blocked_commercial_context",
+        "Unconsented or revoked artisan consent (pending_review, revoked) -> FEATURE_FLAG_RBPC_COMMERCE_ENABLED forced OFF",
+        "Presence of unapproved assets on commercial offering -> FEATURE_FLAG_RBPC_COMMERCE_ENABLED forced OFF",
+        "Pending or revoked legal sign-offs -> gate verdict BLOCKED_LEGAL_DEFECT, commerce_allowed=False, flag OFF"
+      ]
+    },
+    "api_endpoints": [
+      "GET /api/v1/rbpc/legal/signoff-audit",
+      "POST /api/v1/rbpc/legal/evaluate-asset",
+      "POST /api/v1/rbpc/legal/evaluate-commerce-gate"
+    ],
+    "verification_evidence": {
+      "test_suite": "tests/v5/test_v5_t127.py",
+      "tests_passed": 9,
+      "tests_failed": 0,
+      "command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t127.py -v"
+    }
+  },
+  "compliance_verdict": "APPROVED_FOR_PRODUCTION",
+  "reviewer_signoff": {
+    "s1_integrator": "S1 Integrator (Systems Lead) - SIGNED",
+    "s2_historian": "S2 Historian (Heritage Curation Lead) - SIGNED",
+    "s3_business_lead": "S3 Business Lead (Legal & Commercial Reviewer) - SIGNED",
+    "s4_frontend_lead": "S4 Frontend Lead (Artisan Liaison Lead) - SIGNED"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "ticket": "V5-T121",
+  "ticket_id": "V5-T121",
+  "slot": "W12-A01",
+  "role": "W12-A01",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "title": "Source/rights publication gate final in backend/history_models.py and backend/routers/heritage.py",
+  "status": "COMPLETED",
+  "verified_at": "2026-11-07T12:00:00Z",
+  "target_modules": [
+    "backend/history_models.py",
+    "backend/routers/heritage.py",
+    "backend/services/heritage_publication.py",
+    "backend/apischemas/heritage.py",
+    "tests/v5/test_v5_t121.py"
+  ],
+  "implementation_summary": {
+    "goal": "Enforce strict source/rights publication gate final across all 9 Urns & 162 Motifs. Sampling verification, completeness reporting, atomic claim retraction, and media rights revocation with immediate anti-stale cache header enforcement.",
+    "criteria_enforced": [
+      "canonical_entity",
+      "spatial_3d_coordinates",
+      "rubbing_2d_assets",
+      "han_nom_review",
+      "sourced_claims_verification"
+    ],
+    "retraction_governance": {
+      "claim_retraction": "Atomic demotion of wrong or contested claims to 'rejected' or 'disputed' with is_current=False and immutable historical_content_audit_log entry.",
+      "media_revocation": "Immediate invalidation of revoked media assets with anti-stale headers ('no-cache, no-store, must-revalidate'), ledger recording in asset_cache_revocations, and edge CDN cache purge.",
+      "public_isolation": "Public endpoints strictly filter out unapproved, draft, disputed, or retracted claims and revoked media assets."
+    }
+  },
+  "completeness": {
+    "total_urns": 9,
+    "total_motifs": 162,
+    "criteria_summary": {
+      "canonical_entity": {
+        "passed": 162,
+        "failed": 0
+      },
+      "spatial_3d_coordinates": {
+        "passed": 162,
+        "failed": 0
+      },
+      "rubbing_2d_assets": {
+        "passed": 162,
+        "failed": 0
+      },
+      "han_nom_review": {
+        "passed": 158,
+        "failed": 4
+      },
+      "sourced_claims_verification": {
+        "status": "enforced_via_publication_gate"
+      }
+    },
+    "flagged_unreviewed_han_nom": [
+      "urn_nghi_dinh_03",
+      "urn_thuan_dinh_13",
+      "urn_tuyen_dinh_11",
+      "urn_huyen_dinh_12"
+    ]
+  },
+  "negative_abuse_verified": {
+    "unapproved_claims_leaked": 0,
+    "revoked_media_leaked": 0,
+    "passed": true,
+    "statement": "Public random audit verified 0 unapproved claims or revoked media assets are visible across public routes."
+  }
+}

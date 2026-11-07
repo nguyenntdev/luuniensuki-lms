@@ -1952,6 +1952,18 @@ from .partner_loi_models import (  # noqa: E402, F401
 )
 
 
+# --------------------------------------------------------------------------- #
+# Table 23: RBPC Pilot Go/No-Go Board (V5-T129 / W12-A09)
+# --------------------------------------------------------------------------- #
+from .pilot_go_no_go_models import (  # noqa: E402, F401
+    RbpcGoNoGoVerdict,
+    RbpcIssueSeverity,
+    RbpcIssueStatus,
+    RbpcPilotGoNoGoEvaluation,
+)
+
+
+
 
 
 

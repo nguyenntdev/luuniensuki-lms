@@ -284,6 +284,8 @@ def create_app() -> FastAPI:
     from .routers import pilot_onboarding as pilot_onboarding_router
     from .routers import pricing as pricing_router
     from .routers import partner_loi as partner_loi_router
+    from .routers import pilot_go_no_go as pilot_go_no_go_router
+    from .routers import research_truth_gate as research_truth_gate_router
 
     app.include_router(auth_router.router)
     app.include_router(users_router.router)
@@ -314,5 +316,7 @@ def create_app() -> FastAPI:
     app.include_router(teacher_onboarding_router.router)
     app.include_router(pilot_onboarding_router.router)
     app.include_router(pricing_router.router)
+    app.include_router(pilot_go_no_go_router.router)
+    app.include_router(research_truth_gate_router.router)
 
     return app

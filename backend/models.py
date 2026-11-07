@@ -4791,3 +4791,9 @@ from .pricing_models import (  # noqa: E402,F401
     PricingTierKey,
     ContractStatus,
 )
+from .models_research_truth_gate import (  # noqa: E402,F401
+    ResearchSurveyBatch,
+    ResearchSurveyItemAudit,
+    ResearchPaperTruthAudit,
+)
+

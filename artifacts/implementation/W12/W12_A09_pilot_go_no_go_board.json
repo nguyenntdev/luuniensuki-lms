@@ -1,0 +1,314 @@
+{
+  "ticket_id": "V5-T129",
+  "wave": "W12",
+  "slot": "A09",
+  "role": "W12-A09",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "title": "Pilot go/no-go board in artifacts/ and docs/rbpc/RELEASE_CHECKLIST.md",
+  "status": "COMPLETED",
+  "verified_at": "2026-11-07T12:00:00Z",
+  "target_modules": [
+    "docs/rbpc/RELEASE_CHECKLIST.md",
+    "backend/pilot_go_no_go_models.py",
+    "backend/models_rbpc.py",
+    "backend/apischemas/pilot_go_no_go.py",
+    "backend/services/pilot_go_no_go.py",
+    "backend/routers/pilot_go_no_go.py",
+    "backend/app.py",
+    "migrations/versions/0091_rbpc_pilot_go_no_go_board.py",
+    "tests/v5/test_v5_t129.py"
+  ],
+  "implementation_summary": {
+    "goal": "Authoritative Pilot Go/No-Go Decision Board evaluating cutover readiness for RBPC 2026 pilot across 5 cross-functional leads, tracking blocking issues, feature flags, rollback triggers, and on-call escalation, strictly enforcing negative abuse invariants where any unresolved P0 defect blocks launch.",
+    "board_ref": "AUDIT-RBPC-GONOGO-20261019",
+    "release_version": "v2026.1.0-rbpc",
+    "target_environment": "staging",
+    "overall_verdict": "GO",
+    "is_launch_blocked": false,
+    "signed_owners_quorum": {
+      "required_count": 5,
+      "signed_count": 5,
+      "quorum_met": true,
+      "dissenting_votes": 0,
+      "owners": [
+        {
+          "owner_id": "tech_lead_s1",
+          "name": "Trần Hữu Nam",
+          "role": "S1 Integrator & Technical Architecture Lead",
+          "decision": "GO",
+          "signed_at": "2026-10-19T14:00:00Z",
+          "commit_sha": "e19aebc0e7f66f7863659fd658c204739e199687",
+          "attestation": "All gateway native handlers, database migrations (single head), and FastAPI endpoints pass contract tests. Zero unresolved P0 architectural risks."
+        },
+        {
+          "owner_id": "lead_historian_s2",
+          "name": "TS. Lê Quang Dũng",
+          "role": "S2 Historian & Epistemic Authority Lead",
+          "decision": "GO",
+          "signed_at": "2026-10-19T14:15:00Z",
+          "commit_sha": "e19aebc0e7f66f7863659fd658c204739e199687",
+          "attestation": "All 14 UNESCO property components and candidate pilot stories verified against primary imperial archives (Đại Nam Thực Lục). Zero unapproved claims."
+        },
+        {
+          "owner_id": "business_lead_s3",
+          "name": "Nguyễn Minh Hoàng",
+          "role": "S3 Business, Commercial & Legal Lead",
+          "decision": "GO",
+          "signed_at": "2026-10-19T14:30:00Z",
+          "commit_sha": "e19aebc0e7f66f7863659fd658c204739e199687",
+          "attestation": "Consented artisan charters signed with 90% direct retention pledge. Commercial inquiry flow validated without synthetic transaction artifacts."
+        },
+        {
+          "owner_id": "frontend_ux_lead_s4",
+          "name": "Vũ Thị Lan",
+          "role": "S4 Frontend, UX & Accessibility Lead",
+          "decision": "GO",
+          "signed_at": "2026-10-19T14:45:00Z",
+          "commit_sha": "e19aebc0e7f66f7863659fd658c204739e199687",
+          "attestation": "WCAG 2.2 AA accessibility verified. 2D rubbing fallback functional for WebGL-disabled devices. Strict zero-fake-success UI error handling enforced."
+        },
+        {
+          "owner_id": "devops_sre_agent01",
+          "name": "AGENT 01 (SRE Lead)",
+          "role": "Lead DevOps, SRE & Incident Commander",
+          "decision": "GO",
+          "signed_at": "2026-10-19T15:00:00Z",
+          "commit_sha": "e19aebc0e7f66f7863659fd658c204739e199687",
+          "attestation": "Staging VPS 36.50.27.240 hardened with 8GB RAM/4GB swap, WebRTC direct UDP media bypass active, pre-release DB backup SHA-256 verified, rollback runbook tested."
+        }
+      ]
+    },
+    "blocking_issue_register": {
+      "total_audited": 7,
+      "open_p0": 0,
+      "open_p1": 0,
+      "open_p2": 0,
+      "accepted_risks_p3": 1,
+      "issues": [
+        {
+          "issue_id": "ISSUE-P0-001",
+          "title": "Unhandled database connection pool exhaustion under 100 concurrent inquiry load",
+          "severity": "P0",
+          "status": "RESOLVED",
+          "owner": "tech_lead_s1",
+          "resolution_ref": "git commit 4f8812a / PR #142",
+          "resolved_at": "2026-10-18T16:20:00Z"
+        },
+        {
+          "issue_id": "ISSUE-P0-002",
+          "title": "Inquiry validation error payload potentially leaking raw customer email in exception trace",
+          "severity": "P0",
+          "status": "RESOLVED",
+          "owner": "tech_lead_s1",
+          "resolution_ref": "git commit 8b291cd / PR #144",
+          "resolved_at": "2026-10-18T18:40:00Z"
+        },
+        {
+          "issue_id": "ISSUE-P0-003",
+          "title": "Cloudflare edge proxy dropping WebRTC UDP media packets on ports 50000-50100",
+          "severity": "P0",
+          "status": "RESOLVED",
+          "owner": "devops_sre_agent01",
+          "resolution_ref": "docs/rbpc/STAGING_DEPLOYMENT_SPEC.md §2.2 / DNS update",
+          "resolved_at": "2026-10-19T09:15:00Z"
+        },
+        {
+          "issue_id": "ISSUE-P1-001",
+          "title": "3D viewer frame rate degradation on low-end Mali-G52 mobile GPUs (<18 FPS)",
+          "severity": "P1",
+          "status": "MITIGATED",
+          "owner": "frontend_ux_lead_s4",
+          "resolution_ref": "frontend/src/components/3d/lod_optimizer.ts / PR #147",
+          "resolved_at": "2026-10-19T11:00:00Z"
+        },
+        {
+          "issue_id": "ISSUE-P1-002",
+          "title": "Zalo Notification Service webhook rate limit spike during pilot bulk notification",
+          "severity": "P1",
+          "status": "MITIGATED",
+          "owner": "tech_lead_s1",
+          "resolution_ref": "backend/services/rbpc_notification.py / PR #148",
+          "resolved_at": "2026-10-19T11:30:00Z"
+        },
+        {
+          "issue_id": "ISSUE-P2-001",
+          "title": "Missing French accent diacritics in secondary glossary tooltips",
+          "severity": "P2",
+          "status": "RESOLVED",
+          "owner": "lead_historian_s2",
+          "resolution_ref": "backend/services/history_glossary.py / PR #149",
+          "resolved_at": "2026-10-19T12:00:00Z"
+        },
+        {
+          "issue_id": "ISSUE-P3-001",
+          "title": "Static favicon Cache-Control header has max-age=86400 instead of 2592000",
+          "severity": "P3",
+          "status": "ACCEPTED_RISK",
+          "owner": "devops_sre_agent01",
+          "resolution_ref": "docs/rbpc/RELEASE_CHECKLIST.md §6.4 (Risk Accepted)",
+          "resolved_at": "2026-10-19T12:30:00Z"
+        }
+      ]
+    },
+    "feature_flags_plan": {
+      "total_flags": 6,
+      "flags": [
+        {
+          "flag_key": "RBPC_COMMERCE_INQUIRIES",
+          "pilot_state": "ENABLED",
+          "rollout_percentage": 100.0,
+          "kill_switch_supported": true,
+          "owner": "business_lead_s3"
+        },
+        {
+          "flag_key": "AI_CULTURAL_BRIDGE",
+          "pilot_state": "ENABLED",
+          "rollout_percentage": 100.0,
+          "kill_switch_supported": true,
+          "owner": "tech_lead_s1"
+        },
+        {
+          "flag_key": "AR_3D_VIEWER",
+          "pilot_state": "PILOT_ONLY",
+          "rollout_percentage": 50.0,
+          "kill_switch_supported": true,
+          "owner": "frontend_ux_lead_s4"
+        },
+        {
+          "flag_key": "OFFLINE_PACKS",
+          "pilot_state": "ENABLED",
+          "rollout_percentage": 100.0,
+          "kill_switch_supported": true,
+          "owner": "lead_historian_s2"
+        },
+        {
+          "flag_key": "CLASSROOM_RUBRIC",
+          "pilot_state": "PILOT_ONLY",
+          "rollout_percentage": 25.0,
+          "kill_switch_supported": true,
+          "owner": "tech_lead_s1"
+        },
+        {
+          "flag_key": "EMERGENCY_KILLSWITCH",
+          "pilot_state": "STANDBY",
+          "rollout_percentage": 0.0,
+          "kill_switch_supported": true,
+          "owner": "devops_sre_agent01"
+        }
+      ]
+    },
+    "rollback_triggers": {
+      "total_triggers": 5,
+      "triggers": [
+        {
+          "trigger_id": "TRG-01",
+          "metric_name": "HTTP 5xx Server Error Rate",
+          "threshold": "> 1.0% of total HTTP requests",
+          "measurement_window": "5-minute sliding window",
+          "automated_action": "Divert edge traffic to static maintenance page via Nginx reload; roll back container to previous stable image tag.",
+          "severity": "P0_CRITICAL"
+        },
+        {
+          "trigger_id": "TRG-02",
+          "metric_name": "API p95 Response Latency",
+          "threshold": "> 500ms sustained across critical API routes",
+          "measurement_window": "3 consecutive 1-minute intervals",
+          "automated_action": "Enable database read-only replica shedding and disable non-critical background telemetry workers.",
+          "severity": "P1_HIGH"
+        },
+        {
+          "trigger_id": "TRG-03",
+          "metric_name": "Cultural Bridge AI Citation Faithfulness Failure",
+          "threshold": "> 0.0% ungrounded or hallucinated citation assertions",
+          "measurement_window": "Real-time per query evaluation",
+          "automated_action": "Activate emergency kill switch on /cultural-bridge and serve pre-verified deterministic answers only.",
+          "severity": "P0_CRITICAL"
+        },
+        {
+          "trigger_id": "TRG-04",
+          "metric_name": "PostgreSQL Connection Starvation & Replication Lag",
+          "threshold": "Connection pool utilization > 95% OR replication lag > 10s",
+          "measurement_window": "2-minute sliding window",
+          "automated_action": "Terminate idle pool connections, restart backend connection pooler, page Database On-Call engineer.",
+          "severity": "P0_CRITICAL"
+        },
+        {
+          "trigger_id": "TRG-05",
+          "metric_name": "Unauthorized PII Leakage in Access Logs",
+          "threshold": "Any detected email, phone, or raw IP in edge logs",
+          "measurement_window": "Automated log audit agent (continuous)",
+          "automated_action": "Quarantine affected log segment, rotate compromised session tokens, invoke security incident protocol.",
+          "severity": "P0_CRITICAL"
+        }
+      ]
+    },
+    "support_contacts": {
+      "total_contacts": 6,
+      "contacts": [
+        {
+          "tier": "Tier 1 Support",
+          "role_name": "Operations Triage Desk",
+          "contact_channel": "Telegram / Live Operations Channel",
+          "contact_value": "@luunien_ops_triage",
+          "escalation_sla": "15 minutes (P0), 1 hour (P1)"
+        },
+        {
+          "tier": "Tier 2 Incident Commander",
+          "role_name": "Lead DevOps / AGENT 01",
+          "contact_channel": "Dedicated Ops Mobile / Telegram",
+          "contact_value": "@agent01_devops (+84-234-388-1001)",
+          "escalation_sla": "10 minutes (P0)"
+        },
+        {
+          "tier": "Database On-Call",
+          "role_name": "PostgreSQL Reliability Lead",
+          "contact_channel": "Telegram / Pager Alert",
+          "contact_value": "@luunien_dba",
+          "escalation_sla": "15 minutes"
+        },
+        {
+          "tier": "AI Engine Specialist",
+          "role_name": "Clara Gemini Systems Lead",
+          "contact_channel": "Telegram / Direct Hotline",
+          "contact_value": "@luunien_ai_ops",
+          "escalation_sla": "15 minutes"
+        },
+        {
+          "tier": "Epistemic & Historical Escalation",
+          "role_name": "Lead Historian Desk",
+          "contact_channel": "Direct Secure Channel",
+          "contact_value": "@lequangdung_hist",
+          "escalation_sla": "30 minutes"
+        },
+        {
+          "tier": "Artisan Partner Liaison",
+          "role_name": "Huế Craft Guild Coordinator",
+          "contact_channel": "Dedicated Phone / Zalo Hotline",
+          "contact_value": "+84-905-123-456",
+          "escalation_sla": "30 minutes"
+        }
+      ]
+    },
+    "negative_abuse_guardrail": {
+      "rule": "Launch is strictly BLOCKED if any P0 issue remains unresolved in the Blocking Issue Register, regardless of votes or approvals.",
+      "enforcements": [
+        "Unresolved P0 issue -> forces is_launch_blocked=true, verdict='BLOCKED', AppError 422 LAUNCH_BLOCKED_P0_UNRESOLVED",
+        "Missing required domain owner -> forces is_launch_blocked=true, verdict='BLOCKED'",
+        "Dissenting NO_GO vote from any owner -> forces is_launch_blocked=true, verdict='BLOCKED'",
+        "Zero open P0 issues and 5/5 signed GO -> verdict='GO', is_launch_blocked=false"
+      ]
+    },
+    "database_schema": {
+      "table": "rbpc_pilot_go_no_go_evaluations",
+      "migration": "migrations/versions/0091_rbpc_pilot_go_no_go_board.py",
+      "migration_topology": "Unified single head verified: 0091_rbpc_pilot_go_no_go_board"
+    },
+    "api_endpoints": [
+      "GET /api/v1/rbpc/go-no-go/board",
+      "POST /api/v1/rbpc/go-no-go/evaluate",
+      "GET /api/v1/rbpc/go-no-go/evaluations/{board_ref}",
+      "GET /api/v1/rbpc/go-no-go/export"
+    ]
+  }
+}

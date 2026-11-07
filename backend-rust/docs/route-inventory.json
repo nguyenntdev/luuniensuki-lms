@@ -1573,6 +1573,12 @@
   },
   {
     "method": "GET",
+    "path": "/api/v1/heritage/audit/random-audit",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
     "path": "/api/v1/heritage/catalog",
     "group": "misc",
     "status": "gateway"
@@ -1580,6 +1586,12 @@
   {
     "method": "GET",
     "path": "/api/v1/heritage/catalog/motifs/{motif_id}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/heritage/catalog/motifs/{motif_id}/claims",
     "group": "misc",
     "status": "gateway"
   },
@@ -1592,6 +1604,18 @@
   {
     "method": "GET",
     "path": "/api/v1/heritage/catalog/{urn_slug}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/heritage/claims/{claim_id}/retract",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/heritage/media/{asset_id}/revoke",
     "group": "misc",
     "status": "gateway"
   },
@@ -1628,6 +1652,18 @@
   {
     "method": "GET",
     "path": "/api/v1/heritage/places/{slug}/trail",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/heritage/publication-gate/report",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/heritage/publication-gate/sampling-verify",
     "group": "misc",
     "status": "gateway"
   },
@@ -2545,6 +2581,30 @@
   },
   {
     "method": "GET",
+    "path": "/api/v1/rbpc/go-no-go/board",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/rbpc/go-no-go/evaluate",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/go-no-go/evaluations/{board_ref}",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/go-no-go/export",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
     "path": "/api/v1/rbpc/impact",
     "group": "misc",
     "status": "gateway"
@@ -2594,6 +2654,24 @@
   {
     "method": "GET",
     "path": "/api/v1/rbpc/ledger/unit-economics",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/rbpc/legal/evaluate-asset",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/rbpc/legal/evaluate-commerce-gate",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/rbpc/legal/signoff-audit",
     "group": "misc",
     "status": "gateway"
   },
@@ -3085,7 +3163,19 @@
   },
   {
     "method": "POST",
+    "path": "/audit-manuscript",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
     "path": "/batch-sync",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/benchmarks",
     "group": "misc",
     "status": "gateway"
   },
@@ -3642,6 +3732,18 @@
     "status": "gateway"
   },
   {
+    "method": "GET",
+    "path": "/survey-1502/audit",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "GET",
+    "path": "/survey-1502/reproduce",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
     "method": "POST",
     "path": "/sync",
     "group": "misc",
@@ -3710,6 +3812,18 @@
   {
     "method": "POST",
     "path": "/upload",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/validate-paper-claims",
+    "group": "misc",
+    "status": "gateway"
+  },
+  {
+    "method": "POST",
+    "path": "/verify-paper-figures",
     "group": "misc",
     "status": "gateway"
   },

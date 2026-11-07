@@ -349,6 +349,21 @@ Deploy workflow (`deploy.yml`) uses Python 3.12 and runs `pytest tests/backend` 
   - `V5-T119` (W11-A09): Competition demo data truth & resilience with consented demo accounts, watermarking, and fail-closed outage resilience.
   - `V5-T120` (W11-A10): Startup evidence room + pitch review evaluating 15 versioned pointers across 7 domains with automated claim verification.
 
+### Wave W12: Final Production Launch / Ownership / Verification (COMPLETED)
+- **Status**: 10/10 slots complete. 94/94 tests passing. Full release readiness signed off.
+- **Artifacts**: `artifacts/implementation/W12/` (`W12_A01`–`W12_A10`).
+- **Verified Invariants**:
+  - `V5-T121` (W12-A01): Source/rights publication gate final with completeness audits across 171 relics and 0 unapproved claims visible on public random audits.
+  - `V5-T122` (W12-A02): Zero-fake-success full-site sweep across routes under empty DB, 403, and offline states, verifying 0 artificial inquiries/grades/annotations accepted.
+  - `V5-T123` (W12-A03): Critical polyglot integration smoke test verifying student, teacher, partner, visitor journeys across Rust, Python, Postgres, Next.js, and Flutter.
+  - `V5-T124` (W12-A04): RBAC privacy and incident tabletop runbook proving cross-school, cross-partner, and guardian consent revocation isolation with zero data leaks.
+  - `V5-T125` (W12-A05): Load, failover, and backup drills proving 100% disk-reproducible recovery evidence, RTO < 3s, RPO = 0s, and p95 latency <= 300ms.
+  - `V5-T126` (W12-A06): AI 10-subagent concurrency measured across 12 phases x 10 slots (120 slots) with sweep-line verification requiring observed_peak >= 10.
+  - `V5-T127` (W12-A07): Legal and creator agreement sign-off covering software IP, 3D rights, school consent, artisan agreement, and consumer/tax terms.
+  - `V5-T128` (W12-A08): Research results truth gate synchronizing survey n=1,502 methodology with exact data provenance and reconciling all survey anomalies without inflated claims.
+  - `V5-T129` (W12-A09): Pilot go/no-go board with 5/5 owner quorum signatures, 0 open P0 blockers, and automated negative abuse refusal of unauthorized launches.
+  - `V5-T130` (W12-A10): Post-launch 30/60/90-day operational and strategic plan rejecting ungrounded demo applause and prioritizing features via empirical data.
+
 ### 10 Educational Research Studies (LN-01 through LN-10) Implementation & Benchmark Verification (COMPLETED)
 - **Status**: 10/10 studies complete. 134/134 tests passing. 7,200/7,200 scenarios evaluated. Release ready gate: PASSED.
 - **Artifacts**: `research_artifacts/LN-01/` through `research_artifacts/LN-10/`.

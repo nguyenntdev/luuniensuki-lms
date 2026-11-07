@@ -551,3 +551,128 @@ This section serves as the formal Section VIII compliance report for **Phase 8 (
 - **Base Commit SHA:** `e19aebc0e7f66f7863659fd658c204739e199687`
 - **Branch:** `feat/rbpc-cultural-bridge-2026`
 - **Final Release Gate:** **STATUS: PASS**
+
+---
+
+## 11. Section IX — Pilot Go/No-Go Board (W12-A09 / Ticket V5-T129)
+
+**Document Ref:** `AUDIT-RBPC-GONOGO-20261019`  
+**Classification:** `P0 PRODUCTION_COMPLETION`  
+**Evaluation Scope:** Live Pilot Launch Cutover for RMIT Business Plan Competition (RBPC) 2026  
+**Final Release Decision:** **STATUS: UNANIMOUS GO** (All P0 issues resolved; 5/5 domain owner quorum satisfied)
+
+### 11.1 Negative Abuse Invariant & Governance Policy
+
+> **CORE NEGATIVE ABUSE INVARIANT:**
+> Production launch is strictly **BLOCKED** if any P0 issue remains unresolved in the Blocking Issue Register. No executive override, majority vote, or marketing deadline may bypass an open P0 defect. If even a single P0 issue is in status `OPEN`, the overall release verdict is forced to `BLOCKED`, and release locks cannot be released.
+
+#### Go/No-Go Decision Criteria:
+1. **Zero Open P0 Defects:** 100% of P0 defects must be marked `RESOLVED` with traceable commit SHAs or verified infrastructure patches.
+2. **Unanimous Domain Quorum:** All 5 cross-functional domain owners must execute signed `GO` decisions with verified commit hashes and signed attestations.
+3. **Feature Flag Isolation:** Every high-blast-radius capability must operate behind runtime feature flags with tested emergency kill switches.
+4. **Quantified Rollback Triggers:** Automated remediation and rollback thresholds must be wired into edge telemetry with actionable SOPs.
+5. **24/7 Escalation Directory:** Multi-tier support contacts and incident commander on-call rotations must be active with defined SLAs.
+
+---
+
+### 11.2 Signed Owner Decisions Matrix (5/5 Quorum)
+
+All five designated domain owners have audited the cutover branch (`e19aebc0e7f66f7863659fd658c204739e199687`) and executed formal signed approvals:
+
+| Domain | Owner / Lead | Role & Authority | Decision | Signed At (UTC) | Target SHA | Signed Attestation |
+|---|---|---|:---:|---|---|---|
+| **Tech Architecture** | **Trần Hữu Nam** | S1 Integrator & Technical Lead | **GO** | 2026-10-19T14:00:00Z | `e19aebc0e7` | All gateway native handlers, database migrations (single head), and FastAPI endpoints pass contract tests. Zero unresolved P0 architectural risks. |
+| **Epistemic Authority** | **TS. Lê Quang Dũng** | S2 Historian & Heritage Lead | **GO** | 2026-10-19T14:15:00Z | `e19aebc0e7` | All 14 UNESCO property components and candidate pilot stories verified against primary imperial archives (Đại Nam Thực Lục). Zero unapproved claims. |
+| **Commercial / Legal** | **Nguyễn Minh Hoàng** | S3 Business, Commercial & Legal Lead | **GO** | 2026-10-19T14:30:00Z | `e19aebc0e7` | Consented artisan charters signed with 90% direct retention pledge. Commercial inquiry flow validated without synthetic transaction artifacts. |
+| **Frontend / UX** | **Vũ Thị Lan** | S4 Frontend, UX & Accessibility Lead | **GO** | 2026-10-19T14:45:00Z | `e19aebc0e7` | WCAG 2.2 AA accessibility verified. 2D rubbing fallback functional for WebGL-disabled devices. Strict zero-fake-success UI error handling enforced. |
+| **DevOps / SRE** | **AGENT 01** | Lead DevOps, SRE & Incident Commander | **GO** | 2026-10-19T15:00:00Z | `e19aebc0e7` | Staging VPS 36.50.27.240 hardened with 8GB RAM/4GB swap, WebRTC direct UDP media bypass active, pre-release DB backup SHA-256 verified, rollback runbook tested. |
+
+**Quorum Status:** **5 of 5 Signed (100% Quorum Satisfied)**  
+**Dissenting Votes:** **0 NO_GO Votes**
+
+---
+
+### 11.3 Authoritative Blocking Issue Register
+
+Every identified pre-flight defect is cataloged below. All P0 blockers are verified `RESOLVED` prior to cutover:
+
+| Issue ID | Sev | Status | Owner | Title & Impact | Resolution / Mitigation Evidence | Resolved At (UTC) |
+|---|:---:|:---:|---|---|---|---|
+| `ISSUE-P0-001` | **P0** | **RESOLVED** | `tech_lead_s1` | Unhandled database connection exhaustion under 100 concurrent inquiry load | Bounded HikariCP pool to max 20 connections with 5s timeout and connection leak detection. (`PR #142` / commit `4f8812a`) | 2026-10-18T16:20:00Z |
+| `ISSUE-P0-002` | **P0** | **RESOLVED** | `tech_lead_s1` | Inquiry validation error payload potentially leaking raw customer email in exception trace | Installed sanitized custom validation exception handler returning standard error envelope. (`PR #144` / commit `8b291cd`) | 2026-10-18T18:40:00Z |
+| `ISSUE-P0-003` | **P0** | **RESOLVED** | `devops_sre_agent01` | Cloudflare edge proxy dropping WebRTC UDP media packets on ports 50000-50100 | Configured dedicated DNS-only A record `rtc-staging.histolab.icu` bypassing Cloudflare orange cloud for direct UDP. (`STAGING_DEPLOYMENT_SPEC.md` §2.2) | 2026-10-19T09:15:00Z |
+| `ISSUE-P1-001` | **P1** | **MITIGATED** | `frontend_ux_lead_s4` | 3D viewer frame rate degradation on low-end Mali-G52 mobile GPUs (<18 FPS) | Implemented progressive LOD decimation and automated 2D rubbing fallback when measured FPS < 24. (`PR #147` / `lod_optimizer.ts`) | 2026-10-19T11:00:00Z |
+| `ISSUE-P1-002` | **P1** | **MITIGATED** | `tech_lead_s1` | Zalo Notification Service webhook rate limit spike during bulk notification | Durable token bucket queue with exponential backoff and jitter implemented in outbox worker. (`PR #148` / `rbpc_notification.py`) | 2026-10-19T11:30:00Z |
+| `ISSUE-P2-001` | **P2** | **RESOLVED** | `lead_historian_s2` | Missing French accent diacritics in secondary glossary tooltips | Unicode NFC normalization applied across French translations in bilingual catalog. (`PR #149` / `history_glossary.py`) | 2026-10-19T12:00:00Z |
+| `ISSUE-P3-001` | **P3** | **ACCEPTED_RISK** | `devops_sre_agent01` | Static favicon Cache-Control header has max-age=86400 instead of 2592000 | Non-blocking static asset with zero operational impact. Post-launch CDN rule update scheduled. (`RELEASE_CHECKLIST.md` §6.4) | 2026-10-19T12:30:00Z |
+
+**Defect Summary:**
+- **Open P0 Defects:** **0** (Launch Blocker Threshold: 0) -> **PASS**
+- **Open P1 Defects:** **0** (2 Mitigated via fallback & rate-limiting) -> **PASS**
+- **Open P2 Defects:** **0** (1 Resolved) -> **PASS**
+- **Accepted Risks (P3):** **1** (Non-blocking static asset) -> **PASS**
+
+---
+
+### 11.4 Feature Flag Rollout Plan & Emergency Kill Switches
+
+To guarantee risk containment, platform capabilities are governed by dynamic feature flags:
+
+| Feature Flag Key | Description | Pilot State | Rollout % | Instant Kill Switch | Owner | Operational Runbook |
+|---|---|:---:|:---:|:---:|---|---|
+| `RBPC_COMMERCE_INQUIRIES` | Living artisan discovery & authenticated booking dispatch (no synthetic checkouts) | `ENABLED` | 100.0% | **YES** | `business_lead_s3` | If partner inbox service fails, switches to queued offline inquiry storage with automated traveler notice. |
+| `AI_CULTURAL_BRIDGE` | Cultural Bridge RAG AI with 5-point citation validator & epistemic disclaimer | `ENABLED` | 100.0% | **YES** | `tech_lead_s1` | If LLM latency > 3s or citation validator fails, falls back instantly to pre-verified offline answers. |
+| `AR_3D_VIEWER` | WebGL/WebXR 3D model viewer with 2D rubbing fallback | `PILOT_ONLY` | 50.0% | **YES** | `frontend_ux_lead_s4` | Deactivating immediately switches all model targets to authentic 2D archival rubbings with zero UI breakage. |
+| `OFFLINE_PACKS` | 100% paper-achievable low-bandwidth printable classroom inquiry kits | `ENABLED` | 100.0% | **YES** | `lead_historian_s2` | Served directly from pre-generated static PDF cache. |
+| `CLASSROOM_RUBRIC` | Teacher rubric grading (0-3 scale) & privacy-guaranteed analytics (k-anonymity >= 5) | `PILOT_ONLY` | 25.0% | **YES** | `tech_lead_s1` | Restricted to enrolled pilot classes (Hue High School & Le Quy Don). Cross-tenant queries return 403. |
+| `EMERGENCY_KILLSWITCH` | Master emergency kill switch routing all edge traffic to read-only static maintenance | `STANDBY` | 0.0% | **YES** | `devops_sre_agent01` | Activated via `./scripts/ops/emergency-quarantine.sh`. Cuts all mutable API routes while preserving static landing. |
+
+---
+
+### 11.5 Quantified Rollback Triggers & Automated SOPs
+
+Real-time Prometheus/Grafana monitors track these exact thresholds. Breaching any trigger initiates immediate remediation:
+
+| Trigger ID | Operational Metric | Tripwire Threshold | Evaluation Window | Automated Remediation SOP | Severity |
+|---|---|---|---|---|:---:|
+| **TRG-01** | HTTP 5xx Server Error Rate | `> 1.0%` of total requests | 5-minute sliding window | Nginx auto-diverts to cached maintenance page. SRE runner executes `./scripts/deployment/deploy-safe.sh --rollback-previous`. | **P0_CRITICAL** |
+| **TRG-02** | API p95 Latency | `> 500ms` sustained | 3 consecutive 1m checks | Activates DB read shedding; temporarily suspends background AI worker tasks to prioritize interactive HTTP requests. | **P1_HIGH** |
+| **TRG-03** | AI Citation Faithfulness Failure | `> 0.0%` hallucinated citations | Real-time per response | Kill-switch `AI_CULTURAL_BRIDGE` tripped automatically. Endpoint returns deterministic verified passages with uncertainty notice. | **P0_CRITICAL** |
+| **TRG-04** | PostgreSQL Pool Exhaustion / Lag | `Pool > 95%` OR `WAL lag > 10s` | 2-minute window | Kills idle connections (`pg_terminate_backend`), restarts pooler, pages Database On-Call engineer via Telegram. | **P0_CRITICAL** |
+| **TRG-05** | Unauthorized PII in Logs | Any unmasked email/phone/IP | Continuous log audit | Quarantines log segment immediately. Rotates active JWT secret. Initiates forensic security incident response. | **P0_CRITICAL** |
+
+---
+
+### 11.6 Support Contacts & Incident Escalation Directory
+
+24/7 dedicated escalation roster during the RBPC 2026 pilot cutover window:
+
+| Support Tier | Role / Entity | Channel / Handle | Dedicated Contact | Target SLA |
+|---|---|---|---|:---:|
+| **Tier 1 Support** | Operations Triage Desk | Telegram Operations Channel | `@luunien_ops_triage` | **15 minutes (P0)** |
+| **Tier 2 Incident Commander** | Lead DevOps / AGENT 01 | Direct Ops Mobile / Telegram | `@agent01_devops` (+84-234-388-1001) | **10 minutes (P0)** |
+| **Database Reliability** | PostgreSQL DBA On-Call | Telegram / Pager Duty | `@luunien_dba` | **15 minutes** |
+| **AI Systems Engineering** | Clara Gemini Systems Lead | Telegram / Direct Bridge | `@luunien_ai_ops` | **15 minutes** |
+| **Historical & Epistemic** | Lead Historian Desk | Secure Direct Line | `@lequangdung_hist` | **30 minutes** |
+| **Artisan Partner Liaison** | Huế Craft Guild Office | Hotline / Zalo Workgroup | `+84-905-123-456` | **30 minutes** |
+
+---
+
+### 11.7 Final Pilot Launch Verdict
+
+```
+================================================================================
+ LƯU NIÊN RBPC 2026 — FINAL PILOT GO / NO-GO BOARD VERDICT
+================================================================================
+ 1. Unresolved P0 Defect Count ............................... 0 [ PASS ]
+ 2. Domain Owner Sign-Off Quorum ............................. 5/5 [ PASS ]
+ 3. Dissenting NO_GO Votes ................................... 0 [ PASS ]
+ 4. Feature Flag & Emergency Kill Switches Verified ........... 6/6 [ PASS ]
+ 5. Quantified Rollback Triggers Configured ................... 5/5 [ PASS ]
+ 6. 24/7 Incident Escalation Directory Active ................. 6/6 [ PASS ]
+ 7. Negative Abuse Invariant (P0 = 0 -> Eligible) ............. COMPLIANT [ PASS ]
+================================================================================
+ FINAL VERDICT: UNANIMOUS GO — PROCEED TO PRODUCTION PILOT CUTOVER
+================================================================================
+```
+

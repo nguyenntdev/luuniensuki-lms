@@ -37,9 +37,16 @@ from .discovery import SourceDiscoveryScout, canonicalize_url, compute_candidate
 from .providers.base import BaseProviderConnector
 from .providers.registry import ProviderRegistry, provider_registry
 from .concurrency import (
+    DEFAULT_PROVIDER_PRICING,
     ConcurrencyMeasurementError,
     ConcurrencyTracker,
+    MultiPhaseAuditReport,
+    PhaseConcurrencySummary,
+    ResearchFactoryConcurrencyAuditor,
+    SubagentExecutionTrace,
     TaskExecutionRecord,
+    TokenCostCalculator,
+    assert_strictly_10_concurrent,
     label_concurrency_level,
     measure_active_concurrency,
     measure_overlapping_tasks,

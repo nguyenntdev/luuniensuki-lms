@@ -1,0 +1,113 @@
+{
+  "ticket_id": "V5-T130",
+  "wave": "W12",
+  "slot": "A10",
+  "role": "W12-A10",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "title": "Post-launch 30/60/90-day plan in docs/plan/ and artifacts/",
+  "status": "COMPLETED",
+  "verified_at": "2026-11-07T11:00:00Z",
+  "target_modules": [
+    "docs/plan/POST_LAUNCH_30_60_90_PLAN.md",
+    "backend/services/post_launch_plan.py",
+    "artifacts/implementation/W12/W12_A10_post_launch_plan.json",
+    "tests/v5/test_v5_t130.py"
+  ],
+  "implementation_summary": {
+    "goal": "Formalize post-launch 30/60/90-day operational and strategic plan across Days 1-30, Days 31-60, and Days 61-90, with weekly review cadence, 5 validated value hypotheses, RICE-grounded feature prioritization, and strict negative abuse enforcement.",
+    "milestones_breakdown": {
+      "days_1_30": {
+        "focus": "Operational Stabilization & Trust Verification",
+        "milestones_count": 4,
+        "key_items": [
+          "M30-01: API Gateway Availability >= 99.9%, p95 Latency <= 300ms",
+          "M30-02: 24h Partner Inquiry Response SLA Enforcement (>= 98.0%)",
+          "M30-03: 162 Relics Source Lock Audit (100.0% coverage, zero unreviewed/disputed claims)",
+          "M30-04: In-kind infrastructure sponsorship burn monitoring against 202,360,638 VND cap"
+        ]
+      },
+      "days_31_60": {
+        "focus": "Learning Depth & Cohort Retention",
+        "milestones_count": 3,
+        "key_items": [
+          "M60-01: FSRS Spaced Repetition Tuning & Anti-Burst Audit (Day-14 Retention >= 65.0%)",
+          "M60-02: Artisan Booking Settlement Turnaround (<= 48h, 90.0% payout)",
+          "M60-03: Mobile Offline Rubbing Sync Reliability (>= 99.0% success)"
+        ]
+      },
+      "days_61_90": {
+        "focus": "Sustainable Expansion & Value Scaling",
+        "milestones_count": 3,
+        "key_items": [
+          "M90-01: B2B School Pilot Rollout (3 High Schools, >= 9 classrooms, >= 250 students)",
+          "M90-02: Post-launch actual GMV ledger reconciliation (10.0% platform take rate)",
+          "M90-03: Empirical audit of 10 Educational Research Studies (LN-01 to LN-10)"
+        ]
+      }
+    },
+    "weekly_review_cadence": {
+      "schedule": "Weekly every Monday at 09:00 ICT",
+      "mandatory_pillars": [
+        "PLATFORM_QUALITY",
+        "COHORT_RETENTION",
+        "PARTNER_SUPPORT"
+      ],
+      "validation_rules": "Scores must be within [0, 100], and omitting any pillar strictly raises ValueError."
+    },
+    "validated_value_hypotheses": [
+      {
+        "hypothesis_id": "HYP-PL-01",
+        "title": "Socratic Hint-First AI Learning Retention",
+        "target_metric": "Day-14 Retention >= 65.0%",
+        "falsification_trigger": "Day-14 Retention < 45.0%",
+        "sample_size_target": 100,
+        "evidence_pointer_id": "EVID-PRD-001"
+      },
+      {
+        "hypothesis_id": "HYP-PL-02",
+        "title": "Low-Bandwidth Printable Rubbing Parity",
+        "target_metric": "Rubric Pass Rate Delta <= 5.0%",
+        "falsification_trigger": "Rubric Pass Rate Delta > 12.0%",
+        "sample_size_target": 80,
+        "evidence_pointer_id": "EVID-PRD-002"
+      },
+      {
+        "hypothesis_id": "HYP-PL-03",
+        "title": "Artisan Direct Wage Retention & Uplift",
+        "target_metric": "Monthly Artisan Uplift >= 4,200,000 VND",
+        "falsification_trigger": "Monthly Artisan Uplift < 2,000,000 VND",
+        "sample_size_target": 5,
+        "evidence_pointer_id": "EVID-IMP-001"
+      },
+      {
+        "hypothesis_id": "HYP-PL-04",
+        "title": "Teacher 45-Minute Lesson Wizard Preparation Efficiency",
+        "target_metric": "Preparation Time <= 25 mins",
+        "falsification_trigger": "Preparation Time > 40 mins",
+        "sample_size_target": 15,
+        "evidence_pointer_id": "EVID-CST-002"
+      },
+      {
+        "hypothesis_id": "HYP-PL-05",
+        "title": "Cultural Inquiry Visitor Conversion Rate",
+        "target_metric": "Conversion Multiplier >= 3.0x",
+        "falsification_trigger": "Conversion Multiplier < 1.5x",
+        "sample_size_target": 500,
+        "evidence_pointer_id": "EVID-CST-001"
+      }
+    ],
+    "negative_abuse_guardrail": {
+      "invariant": "No feature scale-up or investment expansion based solely on ungrounded demo applause or verbal feedback.",
+      "rejection_code": "UNGROUNDED_DEMO_APPLAUSE_REJECTED",
+      "enforcement_mechanism": "Proposals flagged with demo_applause_basis=True or verbal_feedback_only=True without a verified evidence pointer (EVID-* or ANALYTICS-*) have confidence capped at 0.20 and are immediately marked REJECTED_UNGROUNDED."
+    }
+  },
+  "verification_results": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t130.py -v",
+    "tests_collected": 9,
+    "tests_passed": 9,
+    "tests_failed": 0,
+    "status": "PASSED"
+  }
+}

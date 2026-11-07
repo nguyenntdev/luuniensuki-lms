@@ -580,3 +580,109 @@ class HeritageTrailQRVerifyOut(BaseModel):
     expires_at: int
     nonce: str
 
+
+# --------------------------------------------------------------------------- #
+# Publication Gate & Rights Governance Schemas (Ticket V5-T121 / Wave W12 Slot A01)
+# --------------------------------------------------------------------------- #
+class HeritagePublicationGateReportOut(BaseModel):
+    """Full 9 Urns & 162 Motifs publication gate completeness report."""
+
+    ticket: str = "V5-T121"
+    slot: str = "W12-A01"
+    status: str = "COMPLETED"
+    total_urns: int = 9
+    total_motifs: int = 162
+    ready_count: int
+    blocked_count: int
+    publication_ready: bool
+    criteria_summary: dict[str, Any]
+    revoked_media_count: int = 0
+    retracted_claims_count: int = 0
+    unapproved_claims_count: int = 0
+    generated_at: str
+
+
+class HeritageSamplingVerificationOut(BaseModel):
+    """Response payload for sampling verification across urns & motifs."""
+
+    sample_size: int
+    sampled_identifiers: list[str]
+    violations_found: int = 0
+    unapproved_claims_detected: int = 0
+    revoked_media_detected: int = 0
+    sampling_passed: bool = True
+    verified_at: str
+
+
+class HeritageRandomAuditOut(BaseModel):
+    """Random audit result ensuring zero unapproved claims and zero revoked media."""
+
+    iterations: int
+    unapproved_claims_leaked: int = 0
+    revoked_media_leaked: int = 0
+    passed: bool = True
+    audited_at: str
+    message: str = "Zero unapproved claims or revoked media assets detected on public audit."
+
+
+class HeritageClaimRetractIn(BaseModel):
+    """Request payload to retract a wrong or contested claim."""
+
+    claim_id: UUID
+    reason: str = Field(..., min_length=5, description="Audited explanation of retraction.")
+    new_status: str = Field(default="rejected", description="Target status: rejected or disputed.")
+
+
+class HeritageClaimRetractOut(BaseModel):
+    """Response payload after retracting a claim."""
+
+    status: str = "success"
+    claim_id: UUID
+    is_current: bool = False
+    verification_status: str
+    confidence: str
+    retracted_at: str
+    reason: str
+
+
+class HeritageMediaRevokeIn(BaseModel):
+    """Request payload to revoke a media asset."""
+
+    asset_id: UUID
+    reason: str = Field(..., min_length=5, description="Audited explanation of media revocation.")
+    cdn_purge: bool = Field(default=True, description="Whether to purge edge CDN cache immediately.")
+
+
+class HeritageMediaRevokeOut(BaseModel):
+    """Response payload after revoking a media asset."""
+
+    status: str = "success"
+    asset_id: UUID
+    revoked_at: str
+    revocation_reason: str
+    cdn_purged: bool
+    cache_headers: dict[str, str]
+
+
+class HeritagePublicClaimOut(BaseModel):
+    """Publicly safe atomic historical claim (only approved and verified)."""
+
+    id: UUID
+    entity_id: UUID
+    claim_type: str
+    statement_vi: str
+    statement_en: Optional[str] = None
+    confidence: str
+    verification_status: str
+    is_approved: bool = True
+
+
+class HeritageMotifClaimsOut(BaseModel):
+    """Collection of verified claims for a canonical motif."""
+
+    motif_id: str
+    motif_name_vi: str
+    total_claims: int
+    claims: list[HeritagePublicClaimOut]
+
+

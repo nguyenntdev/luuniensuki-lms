@@ -1,0 +1,85 @@
+{
+  "ticket_id": "V5-T124",
+  "wave": "W12",
+  "slot": "A04",
+  "role": "W12-A04",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "title": "RBAC privacy and incident tabletop rehearsal across backend/ and docs/",
+  "status": "COMPLETED",
+  "verified_at": "2026-11-07T10:20:00Z",
+  "target_modules": [
+    "docs/runbooks/INCIDENT_RUNBOOK_RBAC_PRIVACY_TABLETOP.md",
+    "tests/v5/test_v5_t124.py",
+    "artifacts/implementation/W12/W12_A04_rbac_privacy_incident_tabletop.json"
+  ],
+  "implementation_summary": {
+    "goal": "Multi-tenant RBAC privacy and security incident tabletop rehearsal across school and marketplace partner domains, verifying consent revocation and zero sensitive cross-account or cross-tenant leakage under adversarial conditions.",
+    "runbook_created": "docs/runbooks/INCIDENT_RUNBOOK_RBAC_PRIVACY_TABLETOP.md",
+    "rehearsal_scenarios": [
+      {
+        "scenario": "Two-school malicious actor isolation",
+        "description": "Adversarial Teacher B and rogue Student B from School B attempt unauthorized access, data harvesting, and cross-submission into School A.",
+        "defense_verified": "Strict 403 Forbidden with empty details on School management, Class Roster, Gradebook, and Assignment Submission; unverified teachers blocked with UNVERIFIED_TEACHER_ACCESS_DENIED."
+      },
+      {
+        "scenario": "Two-tenant marketplace partner boundary",
+        "description": "Adversarial craft partner (Partner B) attempts to view or hijack inquiries belonging to Partner A via API and ?provider query param poisoning.",
+        "defense_verified": "Non-admin calls scoped strictly to own inquiries; ?provider parameter ignored; cross-tenant PATCH rejected with 403 FORBIDDEN_SCOPE; non-existent UUID returns 404 NOT_FOUND."
+      },
+      {
+        "scenario": "School pilot guardian consent revocation drill",
+        "description": "Legal guardian invokes right-of-withdrawal under Decree 13/2023/ND-CP Article 11 for a minor student under an ethics protocol.",
+        "defense_verified": "Consent status transitions to withdrawn; subsequent empirical assessment submissions fail with 403 GUARDIAN_CONSENT_WITHDRAWN; student data automatically excluded from research metrics."
+      },
+      {
+        "scenario": "Marketplace inquiry consent withdrawal and PII scrubbing",
+        "description": "Visitor invokes right to erasure using high-entropy bearer token.",
+        "defense_verified": "Opaque token lookup enforces zero-PII; withdrawal scrubs name to '[ANONYMIZED]' and contact to '[REDACTED]'; state becomes 'closed'; partner inquiry list shows redacted details with zero leak."
+      },
+      {
+        "scenario": "Security incident containment & kill switch rehearsal",
+        "description": "SEV-1 incident activation tripping emergency kill switches for AI Tutor and RBPC Commerce.",
+        "defense_verified": "Admin-only kill switch management; immediate runtime override disabling affected subservices; Golden Rule 1 preserved: public heritage catalog (Heritage Places, Stories) remains 100% online; recovery restores normal operations."
+      }
+    ],
+    "negative_abuse_invariants": {
+      "zero_cross_tenant_leakage": "PASSED - Zero sensitive foreign student names, emails, guardian contacts, or scores leaked to adversarial actors.",
+      "zero_cross_partner_leakage": "PASSED - Zero customer booking contact details, notes, or inquiry IDs leaked to foreign craft partners.",
+      "decree_13_erasure_enforcement": "PASSED - Immediate synchronous redaction of visitor PII and complete revocation of minor student consent in research evaluations."
+    }
+  },
+  "verification": {
+    "test_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t124.py -v",
+    "tests_total": 5,
+    "tests_passed": 5,
+    "tests_failed": 0,
+    "test_cases": [
+      {
+        "name": "test_tabletop_two_school_malicious_actor_isolation",
+        "result": "PASSED",
+        "duration_seconds": 0.45
+      },
+      {
+        "name": "test_tabletop_two_tenant_marketplace_partner_boundary",
+        "result": "PASSED",
+        "duration_seconds": 0.12
+      },
+      {
+        "name": "test_tabletop_guardian_consent_revocation_drill",
+        "result": "PASSED",
+        "duration_seconds": 0.65
+      },
+      {
+        "name": "test_tabletop_marketplace_inquiry_consent_withdrawal",
+        "result": "PASSED",
+        "duration_seconds": 0.15
+      },
+      {
+        "name": "test_tabletop_incident_containment_and_kill_switches",
+        "result": "PASSED",
+        "duration_seconds": 0.08
+      }
+    ]
+  }
+}

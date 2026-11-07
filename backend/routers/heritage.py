@@ -31,15 +31,24 @@ from ..apischemas.heritage import (
     HeritageCatalogOut,
     HeritageCatalogRevisionUpdateIn,
     HeritageCatalogUrnOut,
+    HeritageClaimRetractIn,
+    HeritageClaimRetractOut,
     HeritageEngagementOut,
     HeritageEntityType,
     HeritageMediaAssetOut,
+    HeritageMediaRevokeIn,
+    HeritageMediaRevokeOut,
+    HeritageMotifClaimsOut,
     HeritageMuseumTrailOut,
     HeritagePlaceDetailOut,
     HeritagePlaceListOut,
     HeritagePlaceOut,
+    HeritagePublicClaimOut,
+    HeritagePublicationGateReportOut,
+    HeritageRandomAuditOut,
     HeritageRecordStatus,
     HeritageRelationOut,
+    HeritageSamplingVerificationOut,
     HeritageSearchItemOut,
     HeritageSearchOut,
     HeritageSourceEvidenceOut,
@@ -48,7 +57,14 @@ from ..apischemas.heritage import (
 )
 from ..db import get_db
 from ..deps import get_current_user_optional, get_staff_user
+from ..domain.canonical_urn_mapping import (
+    CANONICAL_RELIEFS,
+    STABLE_MOTIF_IDS,
+    resolve_canonical_motif_id,
+    resolve_canonical_relief_slug,
+)
 from ..errors import AppError
+from ..history_models import HistoricalClaim, HistoricalEntity
 from ..models import User
 from ..models_rbpc import (
     HeritageAccuracyGrade,
@@ -59,7 +75,7 @@ from ..models_rbpc import (
     RbpcStory,
 )
 from ..rbac import STAFF_ROLES
-from ..services import heritage_catalog, heritage_trails
+from ..services import heritage_catalog, heritage_publication, heritage_trails
 
 logger = logging.getLogger("luuniensuki.heritage")
 
@@ -106,8 +122,8 @@ def _has_cleared_3d_asset(place: HeritagePlace) -> bool:
         if m.content_scope != "RBPC_HUE":
             continue
         if m.media_type in ("sketchfab_embed", "glb"):
-            if m.accuracy_grade != "rejected_accuracy" and m.content_status != "rejected_accuracy":
-                if m.embed_permission_status != "blocked" and m.commercial_use_status != "blocked_nc":
+            if m.accuracy_grade != "rejected_accuracy" and m.content_status not in ("rejected_accuracy", "blocked", "withdrawn", "revoked"):
+                if m.embed_permission_status not in ("blocked", "needs_rights_review") and m.commercial_use_status != "blocked_nc":
                     return True
     return False
 
@@ -226,8 +242,8 @@ def _place_to_detail_out(place: HeritagePlace) -> HeritagePlaceDetailOut:
         for m in (place.media_assets or [])
         if m.content_scope == "RBPC_HUE"
         and m.accuracy_grade != "rejected_accuracy"
-        and m.content_status not in ("rejected_accuracy", "blocked", "withdrawn")
-        and m.embed_permission_status != "blocked"
+        and m.content_status not in ("rejected_accuracy", "blocked", "withdrawn", "revoked")
+        and m.embed_permission_status not in ("blocked", "needs_rights_review")
         and m.commercial_use_status != "blocked_nc"
     ]
 
@@ -327,8 +343,8 @@ def list_heritage_places(
                 HeritageMediaAsset.content_scope == "RBPC_HUE",
                 HeritageMediaAsset.media_type.in_(["sketchfab_embed", "glb"]),
                 HeritageMediaAsset.accuracy_grade != "rejected_accuracy",
-                HeritageMediaAsset.content_status != "rejected_accuracy",
-                HeritageMediaAsset.embed_permission_status != "blocked",
+                HeritageMediaAsset.content_status.not_in(["rejected_accuracy", "blocked", "withdrawn", "revoked"]),
+                HeritageMediaAsset.embed_permission_status.not_in(["blocked", "needs_rights_review"]),
                 HeritageMediaAsset.commercial_use_status != "blocked_nc",
             )
             .distinct()
@@ -573,8 +589,8 @@ def get_heritage_place_media(
             HeritageMediaAsset.place_id == place.id,
             HeritageMediaAsset.content_scope == "RBPC_HUE",
             HeritageMediaAsset.accuracy_grade != "rejected_accuracy",
-            HeritageMediaAsset.content_status.not_in(["rejected_accuracy", "blocked", "withdrawn"]),
-            HeritageMediaAsset.embed_permission_status != "blocked",
+            HeritageMediaAsset.content_status.not_in(["rejected_accuracy", "blocked", "withdrawn", "revoked"]),
+            HeritageMediaAsset.embed_permission_status.not_in(["blocked", "needs_rights_review"]),
             HeritageMediaAsset.commercial_use_status != "blocked_nc",
         )
         .order_by(HeritageMediaAsset.created_at.desc())
@@ -619,8 +635,8 @@ def get_heritage_place_3d_models(
             HeritageMediaAsset.content_scope == "RBPC_HUE",
             HeritageMediaAsset.media_type.in_(["sketchfab_embed", "glb"]),
             HeritageMediaAsset.accuracy_grade != "rejected_accuracy",
-            HeritageMediaAsset.content_status != "rejected_accuracy",
-            HeritageMediaAsset.embed_permission_status != "blocked",
+            HeritageMediaAsset.content_status.not_in(["rejected_accuracy", "blocked", "withdrawn", "revoked"]),
+            HeritageMediaAsset.embed_permission_status.not_in(["blocked", "needs_rights_review"]),
             HeritageMediaAsset.commercial_use_status != "blocked_nc",
         )
     )
@@ -818,4 +834,189 @@ def verify_heritage_trail_qr_token(
         expires_at=verified_payload["exp"],
         nonce=verified_payload["nonce"],
     )
+
+
+# --------------------------------------------------------------------------- #
+# Publication Gate & Rights Governance Endpoints (Ticket V5-T121 / Wave W12 Slot A01)
+# --------------------------------------------------------------------------- #
+@router.get(
+    "/api/v1/heritage/publication-gate/report",
+    response_model=HeritagePublicationGateReportOut,
+)
+def get_heritage_publication_gate_report(
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user_optional),
+):
+    """Retrieve 9 Urns & 162 Motifs publication gate completeness report.
+
+    Enforces all 5 publication quality criteria, checks database readiness,
+    and returns exact totals of ready, blocked, revoked media, and retracted claims.
+    """
+    report = heritage_publication.generate_completeness_report(db=db)
+    return HeritagePublicationGateReportOut.model_validate(report)
+
+
+@router.get(
+    "/api/v1/heritage/publication-gate/sampling-verify",
+    response_model=HeritageSamplingVerificationOut,
+)
+def verify_heritage_sampling(
+    sample_size: int = Query(default=20, ge=1, le=162, description="Sample size of relics to verify."),
+    seed: Optional[int] = Query(default=None, description="Optional deterministic seed for audit reproducibility."),
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user_optional),
+):
+    """Perform sampling verification across relics ensuring source/rights gates are intact.
+
+    Verifies 2D rubbing asset on disk, 3D coordinate bounds, and that zero unapproved
+    claims or revoked media are exposed publicly.
+    """
+    result = heritage_publication.run_sampling_verification(
+        db=db,
+        sample_size=sample_size,
+        seed=seed,
+    )
+    return HeritageSamplingVerificationOut.model_validate(result)
+
+
+@router.get(
+    "/api/v1/heritage/audit/random-audit",
+    response_model=HeritageRandomAuditOut,
+)
+def get_heritage_random_audit(
+    iterations: int = Query(default=50, ge=1, le=500, description="Random audit iterations to execute."),
+    db: Session = Depends(get_db),
+):
+    """Public random audit verifying zero unapproved claims and zero revoked media assets.
+
+    Negative abuse invariant: MUST confirm 0 unapproved claims or revoked media assets are visible.
+    """
+    audit_res = heritage_publication.execute_random_public_audit(db=db, iterations=iterations)
+    return HeritageRandomAuditOut.model_validate(audit_res)
+
+
+@router.get(
+    "/api/v1/heritage/catalog/motifs/{motif_id}/claims",
+    response_model=HeritageMotifClaimsOut,
+)
+def get_heritage_catalog_motif_claims(
+    motif_id: str,
+    db: Session = Depends(get_db),
+):
+    """Retrieve approved, verified atomic historical claims for a canonical motif.
+
+    Negative abuse invariant: Unapproved, draft, disputed, or retracted claims
+    are strictly filtered out from public response.
+    """
+    stable_id = resolve_canonical_motif_id(motif_id)
+    relief_info = STABLE_MOTIF_IDS.get(stable_id) if stable_id else None
+    if not relief_info:
+        slug = resolve_canonical_relief_slug(motif_id)
+        if slug and slug in CANONICAL_RELIEFS:
+            relief_info = CANONICAL_RELIEFS[slug]
+            stable_id = relief_info.stable_id
+
+    if not relief_info or not stable_id:
+        raise AppError("MOTIF_NOT_FOUND", f"Motif identifier '{motif_id}' not found in canonical dataset.", 404)
+
+    # Lookup historical entity
+    ent = db.scalar(
+        select(HistoricalEntity).where(
+            or_(
+                HistoricalEntity.slug == relief_info.slug,
+                HistoricalEntity.slug == stable_id,
+            )
+        )
+    )
+
+    claims_out = []
+    if ent:
+        approved_claims = heritage_publication.filter_public_claims(ent.claims)
+        claims_out = [
+            HeritagePublicClaimOut(
+                id=c.id,
+                entity_id=c.entity_id,
+                claim_type=c.claim_type,
+                statement_vi=c.statement_vi,
+                statement_en=c.statement_en,
+                confidence=c.confidence,
+                verification_status=c.verification_status,
+                is_approved=True,
+            )
+            for c in approved_claims
+        ]
+
+    return HeritageMotifClaimsOut(
+        motif_id=stable_id,
+        motif_name_vi=relief_info.name_vi,
+        total_claims=len(claims_out),
+        claims=claims_out,
+    )
+
+
+@router.post(
+    "/api/v1/heritage/claims/{claim_id}/retract",
+    response_model=HeritageClaimRetractOut,
+)
+def retract_heritage_claim(
+    claim_id: UUID,
+    payload: HeritageClaimRetractIn,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_staff_user),
+):
+    """Staff editorial endpoint to retract an erroneous, outdated, or disputed historical claim.
+
+    Immediately demotes claim from publication, marks it as unapproved/retracted,
+    and records an immutable audit log entry.
+    """
+    if str(claim_id) != str(payload.claim_id):
+        raise AppError("INVALID_INPUT", "Path claim_id does not match payload claim_id.", 400)
+
+    claim = heritage_publication.retract_claim(
+        db=db,
+        claim_id=claim_id,
+        reason=payload.reason,
+        actor_id=current_user.id,
+        new_status=payload.new_status,
+    )
+
+    return HeritageClaimRetractOut(
+        status="success",
+        claim_id=claim.id,
+        is_current=claim.is_current,
+        verification_status=claim.verification_status,
+        confidence=claim.confidence,
+        retracted_at=datetime.now(timezone.utc).isoformat(),
+        reason=payload.reason,
+    )
+
+
+@router.post(
+    "/api/v1/heritage/media/{asset_id}/revoke",
+    response_model=HeritageMediaRevokeOut,
+)
+def revoke_heritage_media_asset(
+    asset_id: UUID,
+    payload: HeritageMediaRevokeIn,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_staff_user),
+):
+    """Staff editorial endpoint to revoke licensing/rights for a media asset.
+
+    Immediately invalidates public display, purges CDN cache, sets anti-stale headers,
+    and records immutable revocation entry.
+    """
+    if str(asset_id) != str(payload.asset_id):
+        raise AppError("INVALID_INPUT", "Path asset_id does not match payload asset_id.", 400)
+
+    rev_res = heritage_publication.revoke_media_asset(
+        db=db,
+        asset_id=asset_id,
+        reason=payload.reason,
+        actor_id=current_user.id,
+        cdn_purge=payload.cdn_purge,
+    )
+
+    return HeritageMediaRevokeOut.model_validate(rev_res)
+
 

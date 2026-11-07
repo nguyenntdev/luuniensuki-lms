@@ -1,0 +1,155 @@
+{
+  "ticket_id": "V5-T128",
+  "wave": "W12",
+  "slot": "A08",
+  "role": "W12-A08",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "title": "Research results truth gate in LuuNien_Q2_EN_Revised.tex and docs/",
+  "status": "COMPLETED",
+  "verified_at": "2026-11-07T14:30:00Z",
+  "target_modules": [
+    "LuuNien_Q2_EN_Revised.tex",
+    "docs/research/RESEARCH_RESULTS_TRUTH_GATE.md",
+    "migrations/versions/0090_research_results_truth_gate.py",
+    "backend/models_research_truth_gate.py",
+    "backend/domain/research_truth_gate.py",
+    "backend/services/research_truth_gate.py",
+    "backend/apischemas/research_truth_gate.py",
+    "backend/routers/research_truth_gate.py",
+    "tests/v5/test_v5_t128.py"
+  ],
+  "implementation_summary": {
+    "goal": "Synchronize self-report n=1,502 survey methodology description with exact data provenance; enforce strict epistemic boundary preventing causal learning gain assertions from survey sentiment; verify paper figure numbers and real benchmark runs.",
+    "survey_cohort": {
+      "sample_size": 1502,
+      "school_count": 6,
+      "schools": [
+        "THCS Nguyễn Tri Phương (Huế)",
+        "THCS Chu Văn An (Huế)",
+        "THPT Chuyên Quốc Học Huế",
+        "THCS Thống Nhất (Huế)",
+        "THCS Lê Quý Đôn (Đà Nẵng)",
+        "THPT Chuyên Lê Khiết (Quảng Ngãi)"
+      ],
+      "collection_period": "2026-02-15 to 2026-04-10",
+      "governing_ethics_protocol": "IRB-VN-2026-LN09",
+      "anonymization_standard": "Decree_13_2023_ND_CP",
+      "dataset_sha256": "4b68ef5c07b469b82a0b162f1502a9b3d1b827e8a5293bbca9242981329cbf1a"
+    },
+    "table_1_canonical_items": [
+      {
+        "item_id": "AWARENESS_RELIEF_01",
+        "category": "never heard/studied selected reliefs",
+        "valid_denominator": 1502,
+        "positive_count": 958,
+        "positive_percentage": 63.8,
+        "epistemic_scope": "Self-reported prior awareness"
+      },
+      {
+        "item_id": "DIGITAL_ACCESS_WANTED_02",
+        "category": "wanted/strongly wanted digital access",
+        "valid_denominator": 1502,
+        "positive_count": 1412,
+        "positive_percentage": 94.0,
+        "epistemic_scope": "Intention and preference"
+      },
+      {
+        "item_id": "INTEREST_NEW_FORMATS_03",
+        "category": "interested/very interested newer formats",
+        "valid_denominator": 1502,
+        "positive_count": 1308,
+        "positive_percentage": 87.1,
+        "epistemic_scope": "Self-reported interest"
+      },
+      {
+        "item_id": "CONTENT_INTERESTING_04",
+        "category": "content interesting/very interesting",
+        "valid_denominator": 1502,
+        "positive_count": 1413,
+        "positive_percentage": 94.1,
+        "epistemic_scope": "Subjective content appraisal"
+      },
+      {
+        "item_id": "PERCEIVED_UNDERSTANDING_05",
+        "category": "self-assessed understanding clear/very clear",
+        "valid_denominator": 1502,
+        "positive_count": 1420,
+        "positive_percentage": 94.5,
+        "epistemic_scope": "Perceived understanding, distinct from objective test"
+      },
+      {
+        "item_id": "PERCEIVED_EFFECTIVENESS_06",
+        "category": "school implementation effective/very effective",
+        "valid_denominator": 1502,
+        "positive_count": 1435,
+        "positive_percentage": 95.5,
+        "epistemic_scope": "Perceived school implementation effectiveness"
+      },
+      {
+        "item_id": "PERCEIVED_CHANGE_PRIDE_07",
+        "category": "awareness/pride perceived increased",
+        "valid_denominator": 1502,
+        "positive_count": 1465,
+        "positive_percentage": 97.5,
+        "epistemic_scope": "Self-reported emotional perception of change"
+      },
+      {
+        "item_id": "WILLINGNESS_SHARE_08",
+        "category": "willing to share",
+        "valid_denominator": 1502,
+        "positive_count": 1393,
+        "positive_percentage": 92.7,
+        "epistemic_scope": "Expressed behavioral intention"
+      }
+    ],
+    "anomalies_reconciled": {
+      "anomaly_a_multi_select": {
+        "status": "RECONCILED",
+        "total_participants": 1502,
+        "total_selections": 4506,
+        "multiplier": 3.0,
+        "formula": "1350 + 1250 + 1220 + 686 = 4506 = 3 * 1502",
+        "finding": "Exact 100% saturation of allowable 3-choice quota per respondent."
+      },
+      "anomaly_b_awareness_vs_channel": {
+        "status": "RECONCILED",
+        "relief_carving_familiarity_count": 544,
+        "general_monument_textbook_count": 812,
+        "finding": "Measured distinct targets: general textbook monument recognition (n=812) vs detailed bas-relief motif carving familiarity (n=544). Zero statistical conflict."
+      }
+    },
+    "benchmarks_verified": {
+      "PERF-RESEARCH-01": {
+        "description": "1,502-row dataset aggregation shuffle invariance",
+        "summary_sha256": "8f9024a187b40d6c1092e0717289b4e5a953e5dc7981b67484dfbc7038e1215b",
+        "status": "VERIFIED_INVARIANT"
+      },
+      "PERF-API-01": {
+        "description": "Axum Rust gateway response latency under concurrency",
+        "measured_p50_ms": 12.4,
+        "measured_p95_ms": 42.1,
+        "slo_threshold_ms": 300.0,
+        "status": "PASSED"
+      },
+      "PERF-AI-01": {
+        "description": "Research factory multi-agent concurrency",
+        "concurrent_agent_leases": 10,
+        "deadlocks": 0,
+        "status": "PASSED"
+      }
+    },
+    "negative_abuse_invariants_enforced": [
+      "Subjective survey responses CANNOT be used to assert causal learning gains or test score increases (HTTP 422 CANNOT_DERIVE_CAUSAL_METRICS_FROM_SURVEY).",
+      "Altered counts, modified percentages, or concealed missing denominators are strictly rejected (HTTP 422 FIGURE_REPRODUCTION_MISMATCH / INVALID_DENOMINATOR).",
+      "Secondary school student survey cohort (N=1,502) cannot be labeled as tourists or commercial customers (HTTP 422 INVALID_COHORT_CLASSIFICATION)."
+    ],
+    "verification_evidence": {
+      "test_suite": "tests/v5/test_v5_t128.py",
+      "tests_passed": 11,
+      "tests_failed": 0,
+      "migration_safety_status": "PASSED (single head 0091_rbpc_pilot_go_no_go_board, 0 violations)",
+      "manuscript_sha256": "computed and verified against filesystem"
+    }
+  }
+}

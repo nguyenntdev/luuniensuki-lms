@@ -1605,5 +1605,74 @@ class RbpcEvidenceRoomExportOut(BaseModel):
     domains_covered: list[str]
 
 
+# --------------------------------------------------------------------------- #
+# Legal & Creator Agreement Sign-Off Schemas (V5-T127 / W12-A07)
+# --------------------------------------------------------------------------- #
+class RbpcLegalSignoffRecordOut(BaseModel):
+    """Canonical legal signoff record across 5 core domains."""
 
+    domain: str
+    signoff_ref: str
+    title: str
+    status: str
+    signatory_role: str
+    signatory_name: str
+    document_ref: str
+    governing_regulations: list[str]
+    checksum_sha256: str
+    signed_at: str
+    summary: str
+    conditions: list[str] = Field(default_factory=list)
+
+
+class RbpcLegalSignoffAuditOut(BaseModel):
+    """Comprehensive legal signoff compliance audit report."""
+
+    all_approved: bool
+    domains_count: int
+    expected_domains_count: int
+    missing_domains: list[str] = Field(default_factory=list)
+    status_by_domain: dict[str, str] = Field(default_factory=dict)
+    master_fingerprint_sha256: str
+    compliance_verdict: str
+    items: list[RbpcLegalSignoffRecordOut] = Field(default_factory=list)
+
+
+class RbpcAssetClearanceIn(BaseModel):
+    """Input payload to evaluate 3D or media asset rights clearance."""
+
+    asset_id: str = Field(..., min_length=2, max_length=100)
+    displayed_license: Optional[str] = Field(default="NOT STATED")
+    accuracy_grade: Optional[str] = Field(default="unreviewed")
+    noai: Optional[bool] = Field(default=False)
+    is_commercial_context: Optional[bool] = Field(default=False)
+
+
+class RbpcAssetClearanceOut(BaseModel):
+    """Evaluation result for media asset clearance under governance gates."""
+
+    asset_id: str
+    is_cleared: bool
+    status: str
+    embed_allowed: bool
+    commercial_use_allowed: bool
+    ai_training_allowed: bool
+    fallback_required: bool
+    reason: str
+
+
+class RbpcCommerceGateIn(BaseModel):
+    """Input payload to evaluate commercial feature flag gate."""
+
+    creator_consent_status: str = Field(default="pending_review")
+    has_unapproved_assets: bool = Field(default=False)
+
+
+class RbpcCommerceGateOut(BaseModel):
+    """Result of commercial feature gate evaluation."""
+
+    commerce_allowed: bool
+    feature_flag_status: str
+    gate_verdict: str
+    reason: str
 

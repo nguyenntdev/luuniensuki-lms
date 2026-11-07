@@ -12,7 +12,7 @@ DB types are stored as TEXT with Python enums for the controlled vocabularies
 from __future__ import annotations
 
 import uuid
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from enum import Enum
 from typing import Any, Optional
 
@@ -278,6 +278,11 @@ class HistoricalEntity(Base):
     deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     content_scope: Mapped[Optional[str]] = mapped_column(Text, nullable=True, default=None)
 
+    @property
+    def is_published(self) -> bool:
+        """Indicate whether this entity is published and active."""
+        return self.publication_status in ("published", "verified") and self.deleted_at is None
+
     claims: Mapped[list["HistoricalClaim"]] = relationship(
         "HistoricalClaim", back_populates="entity", cascade="all, delete-orphan"
     )
@@ -434,6 +439,31 @@ class HistoricalClaim(Base):
             or self.claim_type == "disputed"
         )
 
+    @property
+    def is_retracted(self) -> bool:
+        """Indicate whether this claim has been retracted, rejected, or demoted from publication."""
+        return (
+            self.verification_status in ("rejected", "disputed", "superseded", "archived")
+            or not getattr(self, "is_current", True)
+            or self.claim_type == "disputed"
+            or self.confidence in ("disputed", "contested")
+        )
+
+    def retract(
+        self,
+        reason: str,
+        actor_id: Optional[uuid.UUID] = None,
+        new_status: str = "rejected",
+    ) -> None:
+        """Retract a wrong or contested claim immediately from publication."""
+        self.is_current = False
+        self.verification_status = new_status
+        self.confidence = "contested"
+        self.reviewed_by = actor_id
+        self.reviewed_at = datetime.now(timezone.utc)
+        note = f"[RETRACTED] {reason}"
+        self.review_notes = f"{self.review_notes}\n{note}" if self.review_notes else note
+
     entity: Mapped["HistoricalEntity"] = relationship("HistoricalEntity", back_populates="claims")
     source_bindings: Mapped[list["HistoricalClaimSource"]] = relationship(
         "HistoricalClaimSource", back_populates="claim", cascade="all, delete-orphan"
@@ -561,6 +591,37 @@ class HistoricalAsset(Base):
         PG_UUID(as_uuid=True), ForeignKey("media_cms_items.id", ondelete="SET NULL"), nullable=True
     )
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+
+    @property
+    def is_revoked(self) -> bool:
+        """Indicate whether asset license or rights have been revoked."""
+        return (
+            self.revoked_at is not None
+            or self.rights_status in ("revoked", "withdrawn", "restricted", "blocked", "disputed")
+        )
+
+    @property
+    def is_approved(self) -> bool:
+        """Indicate whether asset is approved and rights-cleared for public display."""
+        if self.is_revoked:
+            return False
+        if getattr(self, "is_private", False):
+            return False
+        if self.public_display_allowed is False:
+            return False
+        return self.rights_status in ("cleared", "verified", "approved", "public_domain")
+
+    def revoke(
+        self,
+        reason: str,
+        actor: str = "system",
+    ) -> None:
+        """Revoke rights for an asset, immediately invalidating public display and CDN cache."""
+        self.revoked_at = datetime.now(timezone.utc)
+        self.revocation_reason = reason
+        self.rights_status = "revoked"
+        self.public_display_allowed = False
+        self.cache_control_policy = "no-cache, no-store, must-revalidate, max-age=0"
 
 
 class AssetCacheRevocation(Base):

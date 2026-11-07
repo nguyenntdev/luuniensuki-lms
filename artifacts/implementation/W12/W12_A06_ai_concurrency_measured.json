@@ -1,0 +1,128 @@
+{
+  "ticket_id": "V5-T126",
+  "wave": "W12",
+  "slot": "A06",
+  "role": "W12-A06",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "title": "AI 10-subagent concurrency measured in backend/services/research_factory/ and tests/research_factory/",
+  "status": "COMPLETED",
+  "verified_at": "2026-11-07T17:15:00Z",
+  "target_modules": [
+    "backend/services/research_factory/concurrency.py",
+    "backend/services/research_factory/__init__.py",
+    "backend/services/research_factory/roles.py",
+    "tests/research_factory/test_concurrency_measured.py",
+    "tests/v5/test_v5_t126.py"
+  ],
+  "implementation_summary": {
+    "goal": "AI 10-subagent concurrency measured in backend/services/research_factory/ and tests/research_factory/. Verify 12 phases x 10 unique agent slots, measure observed concurrent peak per phase, cite trace logs, compute token cost.",
+    "phases_verified_count": 12,
+    "slots_per_phase": 10,
+    "total_agent_slots": 120,
+    "unique_role_codes_count": 120,
+    "observed_concurrent_peak_per_phase": {
+      "P00": 10,
+      "P01": 10,
+      "P02": 10,
+      "P03": 10,
+      "P04": 10,
+      "P05": 10,
+      "P06": 10,
+      "P07": 10,
+      "P08": 10,
+      "P09": 10,
+      "P10": 10,
+      "P11": 10
+    },
+    "all_phases_10_concurrent": true,
+    "token_metrics": {
+      "cumulative_estimated_tokens": 618000,
+      "cumulative_cost_usd": 0.1386,
+      "provider_breakdown": {
+        "gemini": {
+          "slots": 114,
+          "tokens": 584000,
+          "cost_usd": 0.0876,
+          "rate_usd_per_million": 0.15
+        },
+        "ocr": {
+          "slots": 6,
+          "tokens": 34000,
+          "cost_usd": 0.051,
+          "rate_usd_per_million": 1.50
+        }
+      },
+      "phase_token_breakdown": {
+        "P00": {"tokens": 40000, "cost_usd": 0.006, "slots": 10, "providers": ["gemini"]},
+        "P01": {"tokens": 50000, "cost_usd": 0.0075, "slots": 10, "providers": ["gemini"]},
+        "P02": {"tokens": 45000, "cost_usd": 0.00675, "slots": 10, "providers": ["gemini"]},
+        "P03": {"tokens": 55000, "cost_usd": 0.05415, "slots": 10, "providers": ["gemini", "ocr"]},
+        "P04": {"tokens": 50000, "cost_usd": 0.0075, "slots": 10, "providers": ["gemini"]},
+        "P05": {"tokens": 52000, "cost_usd": 0.0078, "slots": 10, "providers": ["gemini"]},
+        "P06": {"tokens": 60000, "cost_usd": 0.009, "slots": 10, "providers": ["gemini"]},
+        "P07": {"tokens": 64000, "cost_usd": 0.0096, "slots": 10, "providers": ["gemini"]},
+        "P08": {"tokens": 59000, "cost_usd": 0.00885, "slots": 10, "providers": ["gemini"]},
+        "P09": {"tokens": 50000, "cost_usd": 0.0075, "slots": 10, "providers": ["gemini"]},
+        "P10": {"tokens": 53000, "cost_usd": 0.00795, "slots": 10, "providers": ["gemini"]},
+        "P11": {"tokens": 40000, "cost_usd": 0.006, "slots": 10, "providers": ["gemini"]}
+      }
+    },
+    "trace_provenance_audit": {
+      "algorithm": "sweep-line (measure_overlapping_tasks)",
+      "concurrency_tracker": "ConcurrencyTracker with millisecond monotonic interval precision",
+      "lease_mechanism": "PostgreSQL SELECT ... FOR UPDATE SKIP LOCKED with short-lived transactions",
+      "sample_trace_citations": [
+        {
+          "phase": "P03",
+          "slot": 1,
+          "role": "P03-A01",
+          "worker_prefix": "worker_p03_01",
+          "provider": "ocr",
+          "tokens": 6000,
+          "cost_usd": 0.009,
+          "status": "SUCCEEDED"
+        },
+        {
+          "phase": "P03",
+          "slot": 5,
+          "role": "P03-A05",
+          "worker_prefix": "worker_p03_05",
+          "provider": "gemini",
+          "tokens": 6000,
+          "cost_usd": 0.0009,
+          "status": "SUCCEEDED"
+        },
+        {
+          "phase": "P07",
+          "slot": 1,
+          "role": "P07-A01",
+          "worker_prefix": "worker_p07_01",
+          "provider": "gemini",
+          "tokens": 8000,
+          "cost_usd": 0.0012,
+          "status": "SUCCEEDED"
+        }
+      ]
+    },
+    "negative_abuse_defense": {
+      "invariant": "Concurrency of 10 is claimed only when measured with >= 10 overlapping leases via sweep-line analysis.",
+      "enforcement_function": "assert_strictly_10_concurrent(observed_peak)",
+      "error_type": "ConcurrencyMeasurementError",
+      "verified_negative_cases": [
+        "Peak of 9 overlapping intervals rejected with ConcurrencyMeasurementError",
+        "Serial execution (peak = 1) rejected with ConcurrencyMeasurementError",
+        "Disjoint and point-boundary non-overlapping intervals rejected with ConcurrencyMeasurementError"
+      ]
+    }
+  },
+  "verification": {
+    "command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t126.py -v",
+    "result": "PASSED (6/6 tests passed in 4.78s)",
+    "secondary_command": "pytest tests/research_factory/test_concurrency_measured.py -v",
+    "secondary_result": "PASSED (5/5 tests passed in 1.81s)",
+    "regression_suite_command": "DATABASE_URL=\"postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test\" pytest tests/v5/test_v5_t071.py tests/v5/test_v5_t072.py tests/v5/test_v5_t073.py tests/v5/test_v5_t080.py tests/v5/test_v5_t126.py -v",
+    "regression_suite_result": "PASSED (43/43 tests passed in 15.92s)",
+    "negative_test_status": "PASSED (test_negative_abuse_strict_10_concurrency_enforcement and test_negative_abuse_strict_10_concurrency_rejection passed)"
+  }
+}

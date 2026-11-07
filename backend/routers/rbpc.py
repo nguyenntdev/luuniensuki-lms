@@ -113,6 +113,12 @@ from ..apischemas.rbpc import (
     RbpcPitchReviewIn,
     RbpcPitchReviewOut,
     RbpcEvidenceRoomExportOut,
+    RbpcLegalSignoffRecordOut,
+    RbpcLegalSignoffAuditOut,
+    RbpcAssetClearanceIn,
+    RbpcAssetClearanceOut,
+    RbpcCommerceGateIn,
+    RbpcCommerceGateOut,
 )
 from ..config import get_settings
 from ..db import get_db
@@ -4354,6 +4360,108 @@ def export_evidence_room(
     )
 
 
+# --------------------------------------------------------------------------- #
+# Legal & Creator Agreement Sign-Off Endpoints (V5-T127 / Wave W12 Slot A07)
+# --------------------------------------------------------------------------- #
+@router.get(
+    "/api/v1/rbpc/legal/signoff-audit",
+    response_model=RbpcLegalSignoffAuditOut,
+)
+def get_legal_signoff_audit():
+    """Retrieve canonical 5-domain legal and creator agreement sign-off audit.
+
+    Confirms software IP, photos/3D rights, school consent, artisan agreement,
+    and consumer/tax terms with SHA-256 verification fingerprints.
+    """
+    from ..services.rbpc_legal_signoff import default_legal_signoff_service
+
+    records = default_legal_signoff_service.get_all_records()
+    comp = default_legal_signoff_service.verify_overall_legal_compliance()
+
+    items = [
+        RbpcLegalSignoffRecordOut(
+            domain=r.domain.value,
+            signoff_ref=r.signoff_ref,
+            title=r.title,
+            status=r.status.value,
+            signatory_role=r.signatory_role,
+            signatory_name=r.signatory_name,
+            document_ref=r.document_ref,
+            governing_regulations=r.governing_regulations,
+            checksum_sha256=r.checksum_sha256,
+            signed_at=r.signed_at,
+            summary=r.summary,
+            conditions=r.conditions,
+        )
+        for r in records
+    ]
+
+    return RbpcLegalSignoffAuditOut(
+        all_approved=comp["all_approved"],
+        domains_count=comp["domains_count"],
+        expected_domains_count=comp["expected_domains_count"],
+        missing_domains=comp["missing_domains"],
+        status_by_domain=comp["status_by_domain"],
+        master_fingerprint_sha256=comp["master_fingerprint_sha256"],
+        compliance_verdict=comp["compliance_verdict"],
+        items=items,
+    )
 
 
+@router.post(
+    "/api/v1/rbpc/legal/evaluate-asset",
+    response_model=RbpcAssetClearanceOut,
+)
+def evaluate_asset_clearance_endpoint(payload: RbpcAssetClearanceIn):
+    """Evaluate 3D or media asset rights clearance against copyright and accuracy gates.
 
+    Negative abuse invariants:
+    - Speculative or fantasy geometry (SF-020) is permanently rejected.
+    - Non-commercial (SF-010) and NoAI (SF-017) assets are barred from commercial & AI flows.
+    - Third-party 3D models are strictly prohibited from commercial workshop cards.
+    """
+    from ..services.rbpc_legal_signoff import default_legal_signoff_service
+
+    res = default_legal_signoff_service.evaluate_asset_clearance({
+        "id": payload.asset_id,
+        "displayed_license": payload.displayed_license,
+        "accuracy_grade": payload.accuracy_grade,
+        "noai": payload.noai,
+        "is_commercial_context": payload.is_commercial_context,
+    })
+
+    return RbpcAssetClearanceOut(
+        asset_id=res["asset_id"],
+        is_cleared=res["is_cleared"],
+        status=res["status"],
+        embed_allowed=res["embed_allowed"],
+        commercial_use_allowed=res["commercial_use_allowed"],
+        ai_training_allowed=res["ai_training_allowed"],
+        fallback_required=res["fallback_required"],
+        reason=res["reason"],
+    )
+
+
+@router.post(
+    "/api/v1/rbpc/legal/evaluate-commerce-gate",
+    response_model=RbpcCommerceGateOut,
+)
+def evaluate_commerce_gate_endpoint(payload: RbpcCommerceGateIn):
+    """Evaluate whether commercial features (inquiry booking, reservations, payouts) are permitted.
+
+    Negative abuse invariant:
+    - Unapproved assets or unconsented commerce features strictly keep feature flags OFF.
+    """
+    from ..services.rbpc_legal_signoff import default_legal_signoff_service
+
+    res = default_legal_signoff_service.evaluate_commerce_gate(
+        creator_consent_status=payload.creator_consent_status,
+        has_unapproved_assets=payload.has_unapproved_assets,
+    )
+
+    return RbpcCommerceGateOut(
+        commerce_allowed=res["commerce_allowed"],
+        feature_flag_status=res["feature_flag_status"],
+        gate_verdict=res["gate_verdict"],
+        reason=res["reason"],
+    )

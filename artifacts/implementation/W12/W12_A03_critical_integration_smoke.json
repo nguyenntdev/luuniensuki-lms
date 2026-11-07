@@ -1,0 +1,230 @@
+{
+  "ticket_id": "V5-T123",
+  "wave": "W12",
+  "slot": "A03",
+  "priority": "P0",
+  "classification": "PRODUCTION_COMPLETION",
+  "title": "Critical integration smoke test across Rust/Python/Postgres/Next.js/Flutter",
+  "gate_status": "GATE_PASSED",
+  "verified_at": "2026-11-07T10:28:21.533832+00:00",
+  "persona_flow_results": [
+    {
+      "persona": "visitor",
+      "action": "browse_experience",
+      "status": "success",
+      "reference_id": "exp-duc-dong",
+      "http_status": 200,
+      "details": {
+        "title": "Đúc Đồng"
+      },
+      "passed": true
+    },
+    {
+      "persona": "visitor",
+      "action": "submit_inquiry",
+      "status": "accepted",
+      "reference_id": "INQ-20261107",
+      "http_status": 202,
+      "details": {
+        "status": "new"
+      },
+      "passed": true
+    },
+    {
+      "persona": "visitor",
+      "action": "check_status_zero_pii",
+      "status": "verified_zero_pii",
+      "reference_id": "INQ-20261107",
+      "http_status": 200,
+      "details": {
+        "zero_pii": true
+      },
+      "passed": true
+    },
+    {
+      "persona": "partner",
+      "action": "view_inbox",
+      "status": "found",
+      "reference_id": "6e9cbb10-208e-4e31-9e30-abddb8eaf4a2",
+      "http_status": 200,
+      "details": {
+        "inbox_count": 1
+      },
+      "passed": true
+    },
+    {
+      "persona": "partner",
+      "action": "confirm_inquiry_and_chain_audit",
+      "status": "confirmed_and_chained",
+      "reference_id": "6e9cbb10-208e-4e31-9e30-abddb8eaf4a2",
+      "http_status": 200,
+      "details": {
+        "audit_chain_valid": true
+      },
+      "passed": true
+    },
+    {
+      "persona": "teacher",
+      "action": "create_classroom",
+      "status": "created",
+      "reference_id": "d5ad9e49-882b-429f-88f1-8fc821d3315e",
+      "http_status": 201,
+      "details": {
+        "class_code": "GDAFRL49"
+      },
+      "passed": true
+    },
+    {
+      "persona": "teacher",
+      "action": "publish_source_locked_assignment",
+      "status": "published",
+      "reference_id": "5d3192b2-7a4a-4ba8-920c-3ef0ac666463",
+      "http_status": 200,
+      "details": {
+        "locked_claims": 1
+      },
+      "passed": true
+    },
+    {
+      "persona": "student",
+      "action": "join_classroom",
+      "status": "enrolled",
+      "reference_id": "d5ad9e49-882b-429f-88f1-8fc821d3315e",
+      "http_status": 200,
+      "details": {
+        "enrolled": true
+      },
+      "passed": true
+    },
+    {
+      "persona": "student",
+      "action": "submit_assignment",
+      "status": "submitted",
+      "reference_id": "27162f6b-b6d6-45b9-9544-869234537f97",
+      "http_status": 200,
+      "details": {
+        "evidence_grounded": true
+      },
+      "passed": true
+    },
+    {
+      "persona": "teacher",
+      "action": "grade_submission_rubric",
+      "status": "graded",
+      "reference_id": "27162f6b-b6d6-45b9-9544-869234537f97",
+      "http_status": 200,
+      "details": {
+        "score": 9.5
+      },
+      "passed": true
+    },
+    {
+      "persona": "student",
+      "action": "inspect_feedback_and_score",
+      "status": "verified",
+      "reference_id": "27162f6b-b6d6-45b9-9544-869234537f97",
+      "http_status": 200,
+      "details": {
+        "score": 9.5
+      },
+      "passed": true
+    },
+    {
+      "persona": "teacher",
+      "action": "export_gradebook_csv",
+      "status": "exported",
+      "reference_id": "d5ad9e49-882b-429f-88f1-8fc821d3315e",
+      "http_status": 200,
+      "details": {
+        "csv": true
+      },
+      "passed": true
+    }
+  ],
+  "cross_stack_results": [
+    {
+      "check_name": "rust_route_modes_pinning",
+      "component_a": "backend-rust",
+      "component_b": "FastAPI",
+      "passed": true,
+      "details": {
+        "pinned": 14
+      }
+    },
+    {
+      "check_name": "rust_token_accepted_by_python_verifier",
+      "component_a": "Rust HS256",
+      "component_b": "Python Verifier",
+      "passed": true,
+      "details": {
+        "sub": "27801d5f-0b40-4989-bac1-35e96c38547a"
+      }
+    },
+    {
+      "check_name": "dual_auth_mobile_bearer_and_web_cookie_parity",
+      "component_a": "Mobile Bearer",
+      "component_b": "Next.js Cookie",
+      "passed": true,
+      "details": {
+        "parity": true
+      }
+    },
+    {
+      "check_name": "cross_device_sync_anti_replay_gamification",
+      "component_a": "Device A",
+      "component_b": "Device B",
+      "passed": true,
+      "details": {
+        "zero_duplicate_xp": true
+      }
+    }
+  ],
+  "negative_abuse_results": [
+    {
+      "scenario": "cross_tenant_teacher_tamper_grading",
+      "target_role": "teacher",
+      "expected_error_code": 403,
+      "observed_status_code": 403,
+      "abuse_prevented": true,
+      "details": "Forbidden"
+    },
+    {
+      "scenario": "student_role_escalation_self_grading",
+      "target_role": "learner",
+      "expected_error_code": 403,
+      "observed_status_code": 403,
+      "abuse_prevented": true,
+      "details": "Forbidden"
+    },
+    {
+      "scenario": "zero_fake_success_nonexistent_status_token",
+      "target_role": "visitor",
+      "expected_error_code": 404,
+      "observed_status_code": 404,
+      "abuse_prevented": true,
+      "details": "NotFound"
+    },
+    {
+      "scenario": "cryptographic_audit_hash_chain_tamper_detection",
+      "target_role": "system",
+      "expected_error_code": 0,
+      "observed_status_code": 0,
+      "abuse_prevented": true,
+      "details": "Detected"
+    }
+  ],
+  "persistence_restart_verified": true,
+  "audit_chain_verified": true,
+  "zero_fake_success_verified": true,
+  "zero_pii_leakage_verified": true,
+  "summary": {
+    "total_persona_steps": 12,
+    "passed_persona_steps": 12,
+    "total_cross_stack_checks": 4,
+    "passed_cross_stack_checks": 4,
+    "total_negative_abuse_checks": 4,
+    "passed_negative_abuse_checks": 4,
+    "persistence_restart_passed": true,
+    "all_invariants_met": true
+  }
+}
