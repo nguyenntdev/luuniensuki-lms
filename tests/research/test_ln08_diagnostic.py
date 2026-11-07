@@ -336,14 +336,18 @@ def test_pure_function_determinism(base_scenario_input):
 def test_concrete_fixture_conformance():
     fixture_path = (
         Path(__file__).resolve().parents[2]
+        / "research"
+        / "fixtures"
+        / "LN-08_concrete.jsonl"
+        if (Path(__file__).resolve().parents[2] / "research" / "fixtures" / "LN-08_concrete.jsonl").exists()
+        else Path(__file__).resolve().parents[2]
         / "LUU_NIEN_SPEC_10_STUDIES_MODULAR_FULL_2026"
         / "LUU_NIEN_SPEC_MODULAR_10_STUDIES_2026"
         / "04_FIXTURES"
         / "CONCRETE"
         / "LN-08_concrete.jsonl"
     )
-    if not fixture_path.exists():
-        pytest.skip(f"Fixture not found at {fixture_path}")
+    assert fixture_path.exists(), f"Mandatory fixture missing (fail-closed): {fixture_path}"
 
     total = 0
     intervention_matches = 0

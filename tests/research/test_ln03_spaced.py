@@ -339,8 +339,7 @@ FIXTURE_PATH = _resolve_fixture_path()
 
 def test_concrete_fixture_100_percent_intervention():
     fixture_path = FIXTURE_PATH
-    if not fixture_path.exists():
-        pytest.skip("Concrete fixture not found")
+    assert fixture_path.exists(), f"Mandatory fixture missing (fail-closed): {fixture_path}"
 
     matches = 0
     total = 0

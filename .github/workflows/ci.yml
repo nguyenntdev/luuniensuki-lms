@@ -51,7 +51,7 @@ jobs:
       - run: npm run lint:ci
       - run: npm run build
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+        run: npx playwright install chromium --with-deps || npx playwright install chromium
       - name: Run E2E Smoke Tests
         run: npx playwright test
         env:

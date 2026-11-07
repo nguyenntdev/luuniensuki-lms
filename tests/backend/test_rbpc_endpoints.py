@@ -368,6 +368,7 @@ def test_rbpc_config_and_published_story(client, db_session):
         craft_tradition="Đúc đồng Phường Đúc",
         approved_bio_vi="Hơn 40 năm kinh nghiệm gìn giữ lửa nghề.",
         consent_status=RbpcConsentStatus.consented.value,
+        is_verified=True,
         public_region="Phường Đúc, Huế",
     )
     db_session.add(creator)

@@ -1,5 +1,5 @@
+import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:vibration/vibration.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../features/settings/presentation/providers/settings_provider.dart';
@@ -87,60 +87,43 @@ class SoundService {
   /// Play haptic feedback as fallback or complement
   Future<void> _playHaptic(SoundEffect effect) async {
     try {
-      // Check if device supports vibration
-      final hasVibrator = await Vibration.hasVibrator() ?? false;
-      if (!hasVibrator) return;
-
       switch (effect) {
         case SoundEffect.correct:
-          // Light success vibration
-          await Vibration.vibrate(duration: 50, amplitude: 128);
+          await HapticFeedback.lightImpact();
           break;
-        
         case SoundEffect.wrong:
-          // Double tap for error
-          await Vibration.vibrate(duration: 100, amplitude: 200);
+          await HapticFeedback.heavyImpact();
           await Future.delayed(const Duration(milliseconds: 100));
-          await Vibration.vibrate(duration: 100, amplitude: 200);
+          await HapticFeedback.heavyImpact();
           break;
-        
         case SoundEffect.tap:
-          // Very light tap
-          await Vibration.vibrate(duration: 30, amplitude: 64);
+          await HapticFeedback.selectionClick();
           break;
-        
         case SoundEffect.xpGain:
-          // Medium celebration
-          await Vibration.vibrate(duration: 80, amplitude: 150);
+          await HapticFeedback.mediumImpact();
           break;
-        
         case SoundEffect.levelUp:
-          // Strong celebration pattern
-          await Vibration.vibrate(duration: 100, amplitude: 255);
+          await HapticFeedback.heavyImpact();
           await Future.delayed(const Duration(milliseconds: 50));
-          await Vibration.vibrate(duration: 100, amplitude: 255);
+          await HapticFeedback.heavyImpact();
           await Future.delayed(const Duration(milliseconds: 50));
-          await Vibration.vibrate(duration: 200, amplitude: 255);
+          await HapticFeedback.vibrate();
           break;
-        
         case SoundEffect.streakComplete:
-          // Ascending pattern
-          await Vibration.vibrate(duration: 60, amplitude: 128);
+          await HapticFeedback.lightImpact();
           await Future.delayed(const Duration(milliseconds: 40));
-          await Vibration.vibrate(duration: 60, amplitude: 180);
+          await HapticFeedback.mediumImpact();
           await Future.delayed(const Duration(milliseconds: 40));
-          await Vibration.vibrate(duration: 80, amplitude: 230);
+          await HapticFeedback.heavyImpact();
           break;
-        
         case SoundEffect.lessonComplete:
-          // Success sequence
-          await Vibration.vibrate(duration: 80, amplitude: 180);
+          await HapticFeedback.mediumImpact();
           await Future.delayed(const Duration(milliseconds: 60));
-          await Vibration.vibrate(duration: 150, amplitude: 200);
+          await HapticFeedback.heavyImpact();
           break;
       }
     } catch (e) {
-      // Vibration not supported or error occurred
+      // Haptic feedback not supported or error occurred
       print('Haptic feedback error: $e');
     }
   }

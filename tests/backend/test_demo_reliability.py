@@ -86,6 +86,14 @@ def seeded_demo_data(db_session):
         )
     )
 
+    # 2b. Verify claims for the demo stories so Cultural Bridge returns supported answers
+    from backend.models_rbpc import RbpcClaimEvidence
+    db_session.execute(
+        update(RbpcClaimEvidence).values(
+            review_status="verified",
+        )
+    )
+
     # 3. Add verified bibliographic source citations for Lăng Tự Đức (lang-tu-duc)
     tu_duc = db_session.scalar(
         select(HeritagePlace).where(HeritagePlace.slug == "lang-tu-duc")

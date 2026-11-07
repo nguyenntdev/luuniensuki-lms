@@ -57,6 +57,7 @@ def _jwt_decode_kwargs() -> dict[str, Any]:
         # this override any legacy token (or foreign test token) without
         # iss/aud would fail validation even with validate_new_claims=False.
         kwargs["options"] = {
+            "require_exp": True,
             "verify_aud": False,
             "verify_iss": False,
         }

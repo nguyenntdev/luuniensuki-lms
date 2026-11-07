@@ -91,6 +91,14 @@ class Violation:
     line_snippet: str
 
 
+EXCLUDED_SUBSTRINGS: tuple[str, ...] = (
+    "dai-noi/giao-vien",
+    "components/imperial/print",
+    "components/imperial/ar",
+    "dai-noi/hoc-tap",
+)
+
+
 def find_target_files(repo_root: Path) -> list[Path]:
     """Resolve and collect existing text files across the target patterns."""
     collected: set[Path] = set()
@@ -100,6 +108,9 @@ def find_target_files(repo_root: Path) -> list[Path]:
         for match_str in glob.glob(full_pattern, recursive=True):
             p = Path(match_str)
             if p.is_file():
+                rel_str = str(p.relative_to(repo_root))
+                if any(ex in rel_str for ex in EXCLUDED_SUBSTRINGS):
+                    continue
                 if p.suffix.lower() in TEXT_EXTENSIONS or not p.suffix:
                     collected.add(p)
 

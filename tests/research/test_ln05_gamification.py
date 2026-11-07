@@ -264,8 +264,7 @@ def test_run_policy_adapter_contract():
 
 def test_concrete_fixture_conformance():
     """Verify that intervention matches 100% of the 720 concrete scenarios."""
-    if not FIXTURE_PATH.exists():
-        pytest.skip("Concrete fixtures not found")
+    assert FIXTURE_PATH.exists(), f"Mandatory fixture missing (fail-closed): {FIXTURE_PATH}"
 
     with open(FIXTURE_PATH, encoding="utf-8") as f:
         for line in f:

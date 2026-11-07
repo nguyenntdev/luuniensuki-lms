@@ -188,9 +188,13 @@ def test_upload_persists_iff_allowed_and_matching(authed_client, avatar_tmp_dir,
 
     expected_accept = _reference_accepts(raw, declared)
 
+    # Determine filename extension matching declared MIME type
+    ext_map = {"image/jpeg": ".jpg", "image/png": ".png", "image/webp": ".webp"}
+    filename = f"upload{ext_map.get(declared, '.dat')}"
+
     response = authed_client.post(
         AVATAR_URL,
-        files={"file": ("upload.bin", raw, declared)},
+        files={"file": (filename, raw, declared)},
     )
 
     persisted = list(avatar_tmp_dir.iterdir())
@@ -209,5 +213,7 @@ def test_upload_persists_iff_allowed_and_matching(authed_client, avatar_tmp_dir,
             "INVALID_IMAGE_CONTENT",
             "INVALID_IMAGE_TYPE",
             "IMAGE_TYPE_MISMATCH",
+            "FORBIDDEN_FILE_TYPE",
+            "MALICIOUS_CONTENT_DETECTED",
         }
         assert persisted == [], persisted

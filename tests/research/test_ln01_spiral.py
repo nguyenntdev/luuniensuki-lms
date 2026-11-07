@@ -236,8 +236,7 @@ def test_metamorphic_property_content_invariance():
 
 def test_concrete_fixture_conformance_all_720():
     """Verify that intervention matches 100% of the 720 concrete scenarios."""
-    if not FIXTURE_PATH.exists():
-        pytest.skip("Concrete fixtures not found")
+    assert FIXTURE_PATH.exists(), f"Mandatory fixture missing (fail-closed): {FIXTURE_PATH}"
 
     matches = 0
     total = 0

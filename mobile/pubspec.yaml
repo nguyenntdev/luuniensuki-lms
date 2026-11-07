@@ -45,7 +45,6 @@ dependencies:
 
   # Animations & Effects
   confetti: ^0.7.0
-  vibration: ^1.8.4
 
   # Utilities
   dartz: ^0.10.1
@@ -54,6 +53,7 @@ dependencies:
   intl: ^0.19.0
   equatable: ^2.0.5
   path_provider: ^2.1.1
+  device_info_plus: ^10.1.0
   crypto: ^3.0.3
   url_launcher: ^6.2.3
 

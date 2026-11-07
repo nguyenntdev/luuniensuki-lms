@@ -277,8 +277,7 @@ def test_ablation_disable_ownership():
 # --------------------------------------------------------------------------- #
 def test_concrete_fixture_sample_conformance():
     """Test intervention agreement with oracle over a sample of concrete fixtures."""
-    if not FIXTURE_PATH.exists():
-        pytest.skip(f"Fixture file {FIXTURE_PATH} not found")
+    assert FIXTURE_PATH.exists(), f"Mandatory fixture missing (fail-closed): {FIXTURE_PATH}"
 
     with open(FIXTURE_PATH, encoding="utf-8") as f:
         lines = [json.loads(line) for line in f]
@@ -333,8 +332,7 @@ def test_metamorphic_insensitivity_to_irrelevant_fields():
 
 def test_all_720_concrete_fixture_conformance():
     """Verify 100% agreement (720/720) on concrete test fixtures in intervention mode."""
-    if not FIXTURE_PATH.is_file():
-        pytest.skip(f"Fixture file {FIXTURE_PATH} not found")
+    assert FIXTURE_PATH.is_file(), f"Mandatory fixture missing (fail-closed): {FIXTURE_PATH}"
 
     with open(FIXTURE_PATH, encoding="utf-8") as f:
         cases = [json.loads(line) for line in f if line.strip()]

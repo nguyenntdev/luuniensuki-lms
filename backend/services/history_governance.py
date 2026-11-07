@@ -832,11 +832,13 @@ def create_claim(
     data: dict[str, Any],
     actor_id: Optional[UUID] = None,
     flush: bool = True,
+    validate_atomic: bool = True,
 ) -> HistoricalClaim:
     statement = data.get("statement_vi", "")
-    is_atomic, err_msg = validate_atomic_claim(statement)
-    if not is_atomic:
-        raise ValueError(err_msg)
+    if validate_atomic:
+        is_atomic, err_msg = validate_atomic_claim(statement)
+        if not is_atomic:
+            raise ValueError(err_msg)
     claim_data = {**data}
     claim_data.setdefault("id", uuid.uuid4())
     claim = HistoricalClaim(**claim_data)

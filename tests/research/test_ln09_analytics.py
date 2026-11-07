@@ -385,14 +385,18 @@ def test_concrete_fixture_sample_conformance():
     """Test against actual concrete fixtures from 04_FIXTURES/CONCRETE/LN-09_concrete.jsonl across all 720 scenarios."""
     fixture_path = (
         Path(__file__).resolve().parents[2]
+        / "research"
+        / "fixtures"
+        / "LN-09_concrete.jsonl"
+        if (Path(__file__).resolve().parents[2] / "research" / "fixtures" / "LN-09_concrete.jsonl").exists()
+        else Path(__file__).resolve().parents[2]
         / "LUU_NIEN_SPEC_10_STUDIES_MODULAR_FULL_2026"
         / "LUU_NIEN_SPEC_MODULAR_10_STUDIES_2026"
         / "04_FIXTURES"
         / "CONCRETE"
         / "LN-09_concrete.jsonl"
     )
-    if not fixture_path.exists():
-        pytest.skip("Concrete fixtures file not found")
+    assert fixture_path.exists(), f"Mandatory fixture missing (fail-closed): {fixture_path}"
 
     with fixture_path.open(encoding="utf-8") as f:
         total = 0

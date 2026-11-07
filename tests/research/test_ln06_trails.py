@@ -253,8 +253,7 @@ def test_edge_cases_and_null_defense(sample_stops):
 
 def test_concrete_corpus_conformance():
     """Verify intervention on concrete fixture file matches oracle decisions."""
-    if not FIXTURE_PATH.exists():
-        pytest.skip(f"Fixture file not found: {FIXTURE_PATH}")
+    assert FIXTURE_PATH.exists(), f"Mandatory fixture missing (fail-closed): {FIXTURE_PATH}"
 
     count = 0
     with FIXTURE_PATH.open("r", encoding="utf-8") as f:

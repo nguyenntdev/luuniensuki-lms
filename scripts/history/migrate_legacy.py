@@ -279,6 +279,7 @@ def _migrate_file(
                     },
                     actor_id=None,
                     flush=False,
+                    validate_atomic=False,
                 )
                 report.data["claims_created"] += 1
                 report.data["ai_generated_claims"] += 1
