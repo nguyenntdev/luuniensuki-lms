@@ -181,11 +181,28 @@ def test_baseline_naive_behavior():
 def test_ablation_modes():
     scenario_no_webgl = _sample_scenario(webgl=False)
 
-    # url_existence_only
+    # url_existence_only / 3d_only
     abl_url = evaluate_modality_ablation(
         scenario_no_webgl, config={"ablation_type": "url_existence_only"}
     )
     assert abl_url.decision == "choose_feasible_modality"
+
+    abl_3d_only = evaluate_modality_ablation(
+        scenario_no_webgl, config={"ablation_type": "3d_only"}
+    )
+    assert abl_3d_only.decision == "choose_feasible_modality"
+
+    # disable_cognitive_affordances / no_text_equivalence
+    scenario_affordance = _sample_scenario()
+    abl_affordance = evaluate_modality_ablation(
+        scenario_affordance, config={"ablation_type": "disable_cognitive_affordances"}
+    )
+    assert abl_affordance.missing_affordance_count == 0
+
+    abl_no_text = evaluate_modality_ablation(
+        scenario_affordance, config={"ablation_type": "no_text_equivalence"}
+    )
+    assert abl_no_text.missing_affordance_count == 0
 
     # disable_accessibility
     scenario_kb = _sample_scenario(
@@ -197,8 +214,87 @@ def test_ablation_modes():
     abl_acc = evaluate_modality_ablation(
         scenario_kb, config={"ablation_type": "disable_accessibility"}
     )
-    # With accessibility disabled, it chooses 3D instead of rejecting
     assert abl_acc.decision == "choose_feasible_modality"
+
+    # ignore_network_constraints
+    scenario_low_bw = _sample_scenario(network_kbps=80)
+    abl_net = evaluate_modality_ablation(
+        scenario_low_bw, config={"ablation_type": "ignore_network_constraints"}
+    )
+    assert abl_net.decision == "choose_feasible_modality"
+
+
+def test_five_study_conditions_configs_experiments():
+    """Verify all 5 conditions specified in configs/experiments.json:
+    - B0: baseline
+    - I1: intervention
+    - A1: ablation url_existence_only (alias: 3d_only)
+    - A2: ablation disable_cognitive_affordances (alias: no_text_equivalence)
+    - A3: ablation disable_accessibility (alias: ignore_network_constraints)
+    """
+    # 1. B0: Baseline (blind to WebGL/bandwidth constraints)
+    scenario_b0 = _sample_scenario(webgl=False)
+    res_b0 = run_policy(scenario_b0, mode="baseline", config={})
+    assert res_b0["decision"] == "choose_feasible_modality"
+    assert res_b0["task_feasible"] is False
+    assert res_b0["policy_version"] == BASELINE_POLICY_VERSION
+
+    # 2. I1: Intervention (falls back safely to 2D rubbing)
+    scenario_i1 = _sample_scenario(webgl=False)
+    res_i1 = run_policy(scenario_i1, mode="intervention", config={})
+    assert res_i1["decision"] == "choose_accessible_fallback"
+    assert res_i1["task_feasible"] is True
+    assert res_i1["policy_version"] == POLICY_VERSION
+
+    # 3. A1: Ablation url_existence_only / 3d_only
+    res_a1 = run_policy(scenario_b0, mode="ablation", config={"ablation_type": "url_existence_only"})
+    assert res_a1["decision"] == "choose_feasible_modality"
+    assert res_a1["task_feasible"] is False
+
+    res_a1_alias = run_policy(scenario_b0, mode="ablation", config={"ablation_type": "3d_only"})
+    assert res_a1_alias["decision"] == "choose_feasible_modality"
+    assert res_a1_alias["task_feasible"] is False
+
+    # 4. A2: Ablation disable_cognitive_affordances / no_text_equivalence
+    scenario_a2 = _sample_scenario(webgl=False)
+    res_a2 = run_policy(scenario_a2, mode="ablation", config={"ablation_type": "disable_cognitive_affordances"})
+    assert res_a2["missing_affordance_count"] == 0
+
+    res_a2_alias = run_policy(scenario_a2, mode="ablation", config={"ablation_type": "no_text_equivalence"})
+    assert res_a2_alias["missing_affordance_count"] == 0
+
+    # 5. A3: Ablation disable_accessibility / ignore_network_constraints
+    scenario_a3_kb = _sample_scenario(
+        keyboard_only=True,
+        requested_modality="3d",
+        validate_requested_only=True,
+        option_3d_keyboard=False,
+    )
+    res_a3 = run_policy(scenario_a3_kb, mode="ablation", config={"ablation_type": "disable_accessibility"})
+    assert res_a3["decision"] == "choose_feasible_modality"
+
+    scenario_a3_net = _sample_scenario(network_kbps=80)
+    res_a3_net = run_policy(scenario_a3_net, mode="ablation", config={"ablation_type": "ignore_network_constraints"})
+    assert res_a3_net["decision"] == "choose_feasible_modality"
+
+
+def test_edge_cases_and_missing_inputs():
+    """Verify graceful handling of edge cases (empty options, missing device attributes)."""
+    # Empty options
+    empty_opts = {"content": {"id": "test"}, "device": {}, "options": [], "task": {}}
+    res_base = run_policy(empty_opts, mode="baseline", config={})
+    assert isinstance(res_base, dict)
+    assert res_base["decision"] == "choose_feasible_modality"
+
+    res_inter = run_policy(empty_opts, mode="intervention", config={})
+    assert isinstance(res_inter, dict)
+    assert "task_feasible" in res_inter
+    assert "fallback_failure" in res_inter
+    assert "missing_affordance_count" in res_inter
+
+    # Unknown mode raises ValueError
+    with pytest.raises(ValueError, match="Unknown mode"):
+        run_policy(empty_opts, mode="invalid_mode", config={})
 
 
 def test_run_policy_adapter_contract():

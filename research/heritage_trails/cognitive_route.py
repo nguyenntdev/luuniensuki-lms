@@ -187,13 +187,25 @@ def evaluate_route_intervention(
         if sid not in ordered_sequence:
             ordered_sequence.append(sid)
 
+    # Count prerequisite violations along ordered_sequence
+    acquired_outcomes: set[str] = set()
+    stop_lookup = {s.id: s for s in stops}
+    violations = 0
+    for sid in ordered_sequence:
+        if sid in stop_lookup:
+            s = stop_lookup[sid]
+            for req in s.requires:
+                if req not in acquired_outcomes:
+                    violations += 1
+            acquired_outcomes.update(s.provides)
+
     return RoutePlan(
         decision="find_valid_route",
         reason_codes=["nominal"],
         stop_sequence=ordered_sequence,
         route_cost=total_cost,
         outcome_coverage=1.0,
-        prerequisite_violation_count=0,
+        prerequisite_violation_count=violations,
         unreachable_checkpoint_rate=0.0,
         policy_version=POLICY_VERSION,
     )

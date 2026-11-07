@@ -384,22 +384,23 @@ def evaluate_intervention(
 def evaluate_ablation(scenario_input: dict[str, Any], config: Optional[dict[str, Any]] = None) -> dict[str, Any]:
     """Ablation studies: isolate specific diagnostic components.
 
-    Supported variants via config['ablation']:
+    Supported variants via config['ablation'] or config['ablation_type']:
     - 'keyword_only': degrades to naive keyword matcher
     - 'disable_negation': intervention engine with negation analysis disabled
-    - 'disable_source_link': intervention engine with source validation disabled
+    - 'disable_source_link' / 'no_source_grounding': intervention engine with source validation disabled
     """
-    ablation_type = (config or {}).get("ablation", "keyword_only")
+    cfg = config or {}
+    ablation_type = cfg.get("ablation") or cfg.get("ablation_type") or "keyword_only"
 
-    if ablation_type == "keyword_only":
+    if ablation_type in ("keyword_only",):
         res = evaluate_baseline(scenario_input, config)
         res["policy_version"] = "ablation-v1-keyword-only"
         return res
-    elif ablation_type == "disable_negation":
+    elif ablation_type in ("disable_negation", "no_negation"):
         res = evaluate_intervention(scenario_input, config, skip_negation_check=True)
         res["policy_version"] = "ablation-v1-no-negation"
         return res
-    elif ablation_type == "disable_source_link":
+    elif ablation_type in ("disable_source_link", "no_source_grounding", "disable_source_grounding"):
         res = evaluate_intervention(scenario_input, config, skip_source_check=True)
         res["policy_version"] = "ablation-v1-no-source-link"
         return res

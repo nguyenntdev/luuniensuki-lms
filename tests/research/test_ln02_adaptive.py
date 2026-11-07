@@ -277,6 +277,37 @@ class TestAblationVariants:
         assert result["decision"] == RecommendationDecision.remediate_first.value
         assert ReasonCode.ABLATION_COLLAPSED_LATENT.value in result["reason_codes"]
 
+    def test_ablation_ignore_prerequisites_alias(self, missing_prereq_scenario):
+        result = evaluate_ablation(missing_prereq_scenario, config={"variant": "ignore_prerequisites"})
+        assert result["decision"] == RecommendationDecision.recommend_eligible.value
+        assert result["prerequisite_violated"] is True
+
+    def test_ablation_fixed_target_s3(self, nominal_scenario, missing_prereq_scenario):
+        # In nominal_scenario, S3 is 0.2, threshold defaults to 0.4 -> remediate_first
+        res1 = evaluate_ablation(nominal_scenario, config={"variant": "fixed_target_s3"})
+        assert res1["decision"] == RecommendationDecision.remediate_first.value
+        # If S3 >= 0.4, recommends eligible
+        scenario_s3_met = dict(nominal_scenario)
+        scenario_s3_met["mastery"] = dict(nominal_scenario["mastery"])
+        scenario_s3_met["mastery"]["S3"] = 0.6
+        res2 = evaluate_ablation(scenario_s3_met, config={"variant": "fixed_target_s3"})
+        assert res2["decision"] == RecommendationDecision.recommend_eligible.value
+
+    def test_ablation_disable_remediation(self, missing_prereq_scenario):
+        result = evaluate_ablation(missing_prereq_scenario, config={"variant": "disable_remediation"})
+        assert result["decision"] == RecommendationDecision.recommend_eligible.value
+        assert result["prerequisite_violated"] is True
+
+    def test_none_score_observed_handled_gracefully(self, nominal_scenario):
+        scenario = dict(nominal_scenario)
+        scenario["score_observed"] = None
+        # baseline should not crash on None score_observed
+        res_base = evaluate_baseline(scenario)
+        assert res_base["decision"] in [RecommendationDecision.recommend_eligible.value, RecommendationDecision.remediate_first.value]
+        # ablation should not crash on None score_observed
+        res_ab = evaluate_ablation(scenario, config={"variant": "no_prerequisites"})
+        assert res_ab["decision"] in [RecommendationDecision.recommend_eligible.value, RecommendationDecision.remediate_first.value]
+
 
 # --------------------------------------------------------------------------- #
 # Adapter Interface Compliance (research.integrations.ln02:run_policy)

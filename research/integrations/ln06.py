@@ -36,12 +36,14 @@ def run_policy(
             route_cost (int)
             unreachable_checkpoint_rate (float)
     """
-    raw_stops = scenario_input.get("stops", [])
+    raw_stops = scenario_input.get("stops", []) or []
     stops = [HeritageStop.from_dict(s) for s in raw_stops]
-    available_stops = scenario_input.get("available_stops", [])
-    target_outcomes = scenario_input.get("target_outcomes", [])
-    time_budget_minutes = scenario_input.get("time_budget_minutes", 60)
-    checkpoint_claim_verified = scenario_input.get("checkpoint_claim_verified", True)
+    available_stops = scenario_input.get("available_stops", []) or []
+    target_outcomes = scenario_input.get("target_outcomes", []) or []
+    time_budget_raw = scenario_input.get("time_budget_minutes")
+    time_budget_minutes = 60 if time_budget_raw is None else int(time_budget_raw)
+    checkpoint_claim_raw = scenario_input.get("checkpoint_claim_verified")
+    checkpoint_claim_verified = True if checkpoint_claim_raw is None else bool(checkpoint_claim_raw)
 
     if mode == "baseline":
         plan = evaluate_route_baseline(
@@ -65,10 +67,46 @@ def run_policy(
         )
     elif mode == "ablation":
         # Ablation mode can disable specific constraints via config
+        ablation_type = str(
+            config.get("ablation_type")
+            or config.get("label")
+            or config.get("variant")
+            or ""
+        )
+
         enforce_prereq = config.get("enforce_prerequisites", True)
+        if (
+            config.get("ignore_prerequisites") is True
+            or config.get("disable_prerequisites") is True
+            or config.get("shortest_distance_only") is True
+            or ablation_type in ("ignore_prerequisites", "disable_prerequisites", "shortest_distance_only")
+        ):
+            enforce_prereq = False
+
         enforce_budget = config.get("enforce_budget", True)
+        if (
+            config.get("disable_budget") is True
+            or config.get("ignore_budget") is True
+            or ablation_type in ("disable_budget", "ignore_budget")
+        ):
+            enforce_budget = False
+
         enforce_reach = config.get("enforce_reachability", True)
+        if (
+            config.get("disable_reachability") is True
+            or config.get("ignore_reachability") is True
+            or ablation_type in ("disable_reachability", "ignore_reachability")
+        ):
+            enforce_reach = False
+
         enforce_src = config.get("enforce_sources", True)
+        if (
+            config.get("disable_sources") is True
+            or config.get("ignore_sources") is True
+            or config.get("no_theme_filter") is True
+            or ablation_type in ("disable_sources", "ignore_sources", "no_theme_filter")
+        ):
+            enforce_src = False
 
         plan = evaluate_route_intervention(
             stops=stops,

@@ -130,7 +130,7 @@ def detect_dependency_cycle(edges: list[list[str]] | list[tuple[str, str]]) -> b
 
     adj: dict[str, list[str]] = {}
     for edge in edges:
-        if len(edge) < 2:
+        if not isinstance(edge, (list, tuple)) or len(edge) < 2:
             continue
         u, v = str(edge[0]), str(edge[1])
         adj.setdefault(u, []).append(v)
@@ -303,13 +303,14 @@ def evaluate_baseline(scenario_input: dict[str, Any], config: Optional[dict[str,
     completely ignoring specific prerequisite competencies (S1-S4).
     """
     threshold = (config or {}).get("aggregate_score_threshold", 0.5)
-    score_observed = scenario_input.get("score_observed", 0.0)
+    score_observed = scenario_input.get("score_observed")
+    score_val = float(score_observed) if validate_score_value(score_observed) else 0.0
     mastery = scenario_input.get("mastery", {})
     target_task = scenario_input.get("target_task", {})
     prerequisites = target_task.get("prerequisites", {})
 
     # In baseline, recommend_eligible is greedily chosen if aggregate score >= threshold
-    recommended = bool(score_observed >= threshold)
+    recommended = bool(score_val >= threshold)
     decision = RecommendationDecision.recommend_eligible.value if recommended else RecommendationDecision.remediate_first.value
 
     # Check whether a prerequisite violation actually occurred:
@@ -336,13 +337,26 @@ def evaluate_baseline(scenario_input: dict[str, Any], config: Optional[dict[str,
 
 def evaluate_ablation(scenario_input: dict[str, Any], config: Optional[dict[str, Any]] = None) -> dict[str, Any]:
     """Ablation Mode:
-    Supports three variants specified via config:
-    1. 'no_prerequisites': Removes prerequisite checks; uses aggregate score after graph/score checks.
+    Supports variants specified via config:
+    1. 'no_prerequisites' / 'ignore_prerequisites': Removes prerequisite checks; uses aggregate score after graph/score checks.
     2. 'single_latent_skill': Collapses S1-S4 into a single scalar average.
-    3. 'no_abstention': Disables abstention; defaults missing data to 0.0.
+    3. 'fixed_target_s3': Constrains verification solely to S3 evidence competency.
+    4. 'no_abstention': Disables abstention; defaults missing data to 0.0.
+    5. 'disable_remediation': Bypasses remediation guidance on unmet prerequisites.
     """
     cfg = config or {}
-    variant = cfg.get("variant") or cfg.get("ablation_type") or "no_prerequisites"
+    variant = cfg.get("variant") or cfg.get("ablation_type")
+    if not variant:
+        if cfg.get("ignore_prerequisites") is True:
+            variant = "no_prerequisites"
+        elif cfg.get("fixed_target_s3") is True:
+            variant = "fixed_target_s3"
+        elif cfg.get("disable_remediation") is True:
+            variant = "disable_remediation"
+        else:
+            variant = "no_prerequisites"
+    if variant == "ignore_prerequisites":
+        variant = "no_prerequisites"
 
     edges = scenario_input.get("graph_edges", [])
     if detect_dependency_cycle(edges):
@@ -426,10 +440,64 @@ def evaluate_ablation(scenario_input: dict[str, Any], config: Optional[dict[str,
             "research_only": True,
         }
 
+    elif variant in ("fixed_target_s3", "fixed_s3"):
+        # Evaluates only S3 prerequisite, ignoring all other dimensional requirements
+        s3_threshold = prerequisites.get("S3", 0.4)
+        if "S3" not in mastery or mastery["S3"] is None:
+            return {
+                "decision": RecommendationDecision.abstain_insufficient_data.value,
+                "reason_codes": [ReasonCode.INSUFFICIENT_COMPETENCY_DATA.value],
+                "policy_version": f"ln02-ablation-{variant}-v1.0",
+                "prerequisite_violated": False,
+                "competency_coverage": calculate_competency_coverage(mastery),
+                "unjustified_recommendation": False,
+                "research_only": True,
+            }
+        s3_val = mastery.get("S3", 0.0)
+        recommended = s3_val >= s3_threshold
+        decision = RecommendationDecision.recommend_eligible.value if recommended else RecommendationDecision.remediate_first.value
+        has_dim_deficit = any(mastery.get(k) is None or mastery.get(k, 0.0) < thresh for k, thresh in prerequisites.items())
+        prereq_violated = bool(recommended and has_dim_deficit)
+        return {
+            "decision": decision,
+            "reason_codes": [ReasonCode.ABLATION_COLLAPSED_LATENT.value],
+            "policy_version": f"ln02-ablation-{variant}-v1.0",
+            "prerequisite_violated": prereq_violated,
+            "competency_coverage": calculate_competency_coverage(mastery),
+            "unjustified_recommendation": prereq_violated,
+            "research_only": True,
+        }
+
+    elif variant in ("disable_remediation", "no_remediation"):
+        # Disables remediation path; recommends eligible directly even if prerequisites unmet
+        for req_dim in prerequisites.keys():
+            if req_dim not in mastery or mastery[req_dim] is None:
+                return {
+                    "decision": RecommendationDecision.abstain_insufficient_data.value,
+                    "reason_codes": [ReasonCode.INSUFFICIENT_COMPETENCY_DATA.value],
+                    "policy_version": f"ln02-ablation-{variant}-v1.0",
+                    "prerequisite_violated": False,
+                    "competency_coverage": calculate_competency_coverage(mastery),
+                    "unjustified_recommendation": False,
+                    "research_only": True,
+                }
+        unmet = [k for k, thresh in prerequisites.items() if mastery.get(k, 0.0) < thresh]
+        has_dim_deficit = bool(unmet)
+        return {
+            "decision": RecommendationDecision.recommend_eligible.value,
+            "reason_codes": [ReasonCode.ABLATION_NO_PREREQUISITES.value],
+            "policy_version": f"ln02-ablation-{variant}-v1.0",
+            "prerequisite_violated": has_dim_deficit,
+            "competency_coverage": calculate_competency_coverage(mastery),
+            "unjustified_recommendation": has_dim_deficit,
+            "research_only": True,
+        }
+
     else:  # "no_prerequisites"
         # Bỏ điều kiện tiên quyết và chỉ dùng điểm tổng
-        score_observed = scenario_input.get("score_observed", 0.0)
-        recommended = score_observed >= 0.5
+        score_observed = scenario_input.get("score_observed")
+        score_val = float(score_observed) if validate_score_value(score_observed) else 0.0
+        recommended = score_val >= 0.5
         decision = RecommendationDecision.recommend_eligible.value if recommended else RecommendationDecision.remediate_first.value
         has_dim_deficit = any(mastery.get(k) is None or mastery.get(k, 0.0) < thresh for k, thresh in prerequisites.items())
 

@@ -235,6 +235,8 @@ def evaluate_srl_cycle(
     policy_version: str = "study-ln10-v1",
 ) -> TransitionEvaluationResult:
     """Pure domain evaluation of an SRL transition request."""
+    if not isinstance(scenario_input, dict):
+        scenario_input = {}
     actor = scenario_input.get("actor", {})
     project = scenario_input.get("project", {})
     transition = scenario_input.get("transition", {})

@@ -12,6 +12,7 @@ Validates:
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 import pytest
 
@@ -216,6 +217,94 @@ def test_ablation_modes(base_scenario_input):
     assert res_a3["decision"] == "schedule_eligible"
     assert res_a3["review_burden"] == 5.0
 
+    # Ablation: no_burden_cap (alias for omit_workload_limit)
+    res_burden = run_policy(base_scenario_input, mode="ablation", config={"ablation_type": "no_burden_cap"})
+    assert res_burden["decision"] == "schedule_eligible"
+    assert res_burden["review_burden"] == 5.0
+
+    # Ablation: retrieval_only
+    res_retrieval = run_policy(base_scenario_input, mode="ablation", config={"ablation_type": "retrieval_only"})
+    assert res_retrieval["decision"] == "assign_fact_retrieval"
+    assert res_retrieval["generative_assigned"] is False
+    assert res_retrieval["review_burden"] == 1.0
+
+
+def test_five_study_conditions_configs_experiments(base_scenario_input):
+    """Verify all 5 conditions specified in configs/experiments.json and aliases:
+    - B0: baseline (mode='baseline', config={})
+    - I1: intervention (mode='intervention', config={})
+    - A1: generic_fsrs / retrieval_only
+    - A2: omit_source_check / no_burden_cap
+    - A3: omit_workload_limit / generic_fsrs
+    """
+    # 1. B0: Baseline
+    res_b0 = run_policy(base_scenario_input, mode="baseline", config={})
+    assert res_b0["decision"] == "schedule_eligible"
+    assert res_b0["policy_version"] == "baseline-v1"
+    assert res_b0["generative_assigned"] is True
+
+    # 2. I1: Intervention
+    res_i1 = run_policy(base_scenario_input, mode="intervention", config={})
+    assert res_i1["decision"] == "schedule_eligible"
+    assert res_i1["policy_version"] == POLICY_VERSION
+    assert res_i1["generative_assigned"] is True
+
+    # 3. A1: generic_fsrs (from configs/experiments.json) & retrieval_only alias
+    res_a1_fsrs = run_policy(base_scenario_input, mode="ablation", config={"ablation_type": "generic_fsrs"})
+    assert res_a1_fsrs["decision"] == "schedule_eligible"
+    assert res_a1_fsrs["policy_version"] == "baseline-v1"
+
+    res_a1_retrieval = run_policy(base_scenario_input, mode="ablation", config={"ablation_type": "retrieval_only"})
+    assert res_a1_retrieval["decision"] == "assign_fact_retrieval"
+    assert res_a1_retrieval["generative_assigned"] is False
+
+    # 4. A2: omit_source_check (from configs/experiments.json) & no_burden_cap alias
+    unverified = dict(base_scenario_input)
+    card_unv = dict(unverified["review_card"])
+    card_unv["source_verified"] = False
+    unverified["review_card"] = card_unv
+    res_a2_source = run_policy(unverified, mode="ablation", config={"ablation_type": "omit_source_check"})
+    assert res_a2_source["decision"] == "schedule_eligible"
+    assert res_a2_source["generative_assigned"] is True
+
+    res_a2_burden = run_policy(base_scenario_input, mode="ablation", config={"ablation_type": "no_burden_cap"})
+    assert res_a2_burden["decision"] == "schedule_eligible"
+    assert res_a2_burden["review_burden"] == 5.0
+
+    # 5. A3: omit_workload_limit (from configs/experiments.json)
+    res_a3_workload = run_policy(base_scenario_input, mode="ablation", config={"ablation_type": "omit_workload_limit"})
+    assert res_a3_workload["decision"] == "schedule_eligible"
+    assert res_a3_workload["review_burden"] == 5.0
+
+
+def test_edge_cases_empty_and_malformed():
+    """Verify robust handling of empty, malformed, or missing input fields."""
+    # Completely empty scenario
+    res_empty = run_policy({}, mode="intervention", config={})
+    assert res_empty["decision"] == "reject_invalid_scheduler"
+    assert res_empty["generative_assigned"] is False
+
+    # Missing review_card but valid weight
+    res_no_card = run_policy({"scheduler_weight": 1.0, "now_utc": "2026-11-05T08:00:00Z"}, mode="intervention", config={})
+    assert res_no_card["decision"] == "postpone"
+    assert res_no_card["generative_assigned"] is False
+
+    # Factual recall task (not historical_explanation) with unmastered prerequisite
+    fact_task_scenario = {
+        "scheduler_weight": 1.0,
+        "now_utc": "2026-11-05T08:00:00Z",
+        "task_type": "factual_recall",
+        "fact_prerequisite_mastered": False,
+        "review_card": {
+            "due_utc": "2026-11-01T08:00:00Z",
+            "source_verified": True,
+        },
+    }
+    res_fact = run_policy(fact_task_scenario, mode="intervention", config={})
+    assert res_fact["decision"] == "schedule_eligible"
+    assert res_fact["generative_assigned"] is False
+    assert res_fact["review_burden"] == 1.0
+
 
 def test_invalid_adapter_mode(base_scenario_input):
     with pytest.raises(ValueError, match="Unknown mode"):
@@ -226,8 +315,30 @@ def test_invalid_adapter_mode(base_scenario_input):
 # Concrete Fixture Evaluation
 # ---------------------------------------------------------------------------
 
+def _resolve_fixture_path() -> Path:
+    if os.environ.get("RESEARCH_FIXTURE_DIR"):
+        p = Path(os.environ["RESEARCH_FIXTURE_DIR"]) / "LN-03_concrete.jsonl"
+        if p.exists():
+            return p
+    if os.environ.get("SPEC"):
+        p = Path(os.environ["SPEC"]) / "04_FIXTURES" / "CONCRETE" / "LN-03_concrete.jsonl"
+        if p.exists():
+            return p
+    return (
+        Path(__file__).resolve().parents[2]
+        / "LUU_NIEN_SPEC_10_STUDIES_MODULAR_FULL_2026"
+        / "LUU_NIEN_SPEC_MODULAR_10_STUDIES_2026"
+        / "04_FIXTURES"
+        / "CONCRETE"
+        / "LN-03_concrete.jsonl"
+    )
+
+
+FIXTURE_PATH = _resolve_fixture_path()
+
+
 def test_concrete_fixture_100_percent_intervention():
-    fixture_path = Path("/home/clue/Documents/luuniensuki-lms/LUU_NIEN_SPEC_10_STUDIES_MODULAR_FULL_2026/LUU_NIEN_SPEC_MODULAR_10_STUDIES_2026/04_FIXTURES/CONCRETE/LN-03_concrete.jsonl")
+    fixture_path = FIXTURE_PATH
     if not fixture_path.exists():
         pytest.skip("Concrete fixture not found")
 

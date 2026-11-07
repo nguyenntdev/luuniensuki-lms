@@ -20,7 +20,7 @@ POLICY_VERSION = "study-v1"
 
 # Patterns detecting explicit requests for complete direct answers / solutions
 DIRECT_ANSWER_REQUEST_PATTERNS: tuple[re.Pattern, ...] = (
-    re.compile(r"\b(?:viết|cho|xin|tiết lộ|cung cấp)\s+(?:đáp án|lời giải|kết quả)\s+(?:hoàn chỉnh|đầy đủ|chi tiết)?\s*(?:để em chép|ngay)?\b", re.IGNORECASE),
+    re.compile(r"\b(?:viết|cho|xin|tiết lộ|cung cấp)\s+(?:đáp án|lời giải|kết quả)(?:\s+(?:hoàn chỉnh|đầy đủ|chi tiết))?\s*(?:để em chép|ngay)?\b", re.IGNORECASE),
     re.compile(r"\b(?:give me|tell me|show me|reveal)\s+(?:the\s+)?(?:full\s+)?(?:answer|solution|result)\b", re.IGNORECASE),
     re.compile(r"\b(?:chép đáp án|làm hộ em|giải hộ em)\b", re.IGNORECASE),
 )
@@ -111,14 +111,19 @@ def evaluate_scaffolding_policy(
     retrieval = scenario_input.get("retrieval", {})
     if not isinstance(retrieval, dict):
         retrieval = {}
-    source_ids = retrieval.get("source_ids", [])
-    source_status = retrieval.get("source_status", "unverified")
+    raw_source_ids = retrieval.get("source_ids") or []
+    source_ids = raw_source_ids if isinstance(raw_source_ids, list) else [str(raw_source_ids)]
+    source_status = str(retrieval.get("source_status", "unverified") or "unverified")
     
     task = scenario_input.get("task", {})
     if not isinstance(task, dict):
         task = {}
     answer_release_allowed = bool(task.get("answer_release_allowed", False))
-    hint_level = int(task.get("hint_level", 1))
+    try:
+        raw_hint_level = task.get("hint_level", 1)
+        hint_level = int(raw_hint_level) if raw_hint_level is not None else 1
+    except (ValueError, TypeError):
+        hint_level = 1
 
     # -------------------------------------------------------------
     # BASELINE MODE: Direct answer bot, unconstrained source release
@@ -143,9 +148,27 @@ def evaluate_scaffolding_policy(
     # ABLATION MODE
     # -------------------------------------------------------------
     if mode == "ablation":
-        disable_hint_budget = cfg.get("disable_hint_budget", False)
-        disable_source_refusal = cfg.get("disable_source_refusal", False)
-        disable_injection_check = cfg.get("disable_injection_check", False)
+        disable_hint_budget = bool(
+            cfg.get("disable_hint_budget")
+            or cfg.get("no_hint_budget")
+            or cfg.get("ablation_type") in ("disable_hint_budget", "no_hint_budget")
+        )
+        disable_source_refusal = bool(
+            cfg.get("disable_source_refusal")
+            or cfg.get("allow_unverified_sources")
+            or cfg.get("ablation_type") in ("disable_source_refusal", "allow_unverified_sources")
+        )
+        disable_injection_check = bool(
+            cfg.get("disable_injection_check")
+            or cfg.get("allow_injection")
+            or cfg.get("allow_injections")
+            or cfg.get("ablation_type") in ("disable_injection_check", "allow_injection")
+        )
+        direct_answer_allowed = bool(
+            cfg.get("direct_answer_allowed")
+            or cfg.get("allow_direct_answers")
+            or cfg.get("ablation_type") in ("direct_answer_allowed", "allow_direct_answers")
+        )
 
         if not provider_available:
             return ScaffoldingResult(
@@ -158,7 +181,8 @@ def evaluate_scaffolding_policy(
                 details={"mode": "ablation", "fallback": True},
             )
 
-        if not disable_injection_check and detect_scaffolding_injection(question):
+        is_injection = detect_scaffolding_injection(question)
+        if not disable_injection_check and is_injection:
             return ScaffoldingResult(
                 decision=ScaffoldingDecision.REJECT_INJECTION.value,
                 reason_codes=["prompt_injection"],
@@ -181,7 +205,7 @@ def evaluate_scaffolding_policy(
                 details={"mode": "ablation", "abstention": True},
             )
 
-        if disable_hint_budget:
+        if disable_hint_budget or direct_answer_allowed:
             # Direct answers without hint budget
             return ScaffoldingResult(
                 decision="direct_answer",
@@ -192,6 +216,47 @@ def evaluate_scaffolding_policy(
                 appropriate_abstention=False,
                 details={"mode": "ablation", "hint_budget_disabled": True},
             )
+
+        is_answer_request = detect_answer_request(question)
+        if is_answer_request and not answer_release_allowed:
+            if disable_injection_check and is_injection:
+                return ScaffoldingResult(
+                    decision="direct_answer",
+                    reason_codes=["ablation_injection_bypass"],
+                    policy_version=POLICY_VERSION,
+                    answer_leakage=True,
+                    citation_integrity=has_verified_source,
+                    appropriate_abstention=False,
+                    details={"mode": "ablation", "injection_bypass": True},
+                )
+            return ScaffoldingResult(
+                decision=ScaffoldingDecision.RESTRICT_LEAKAGE.value,
+                reason_codes=["answer_request"],
+                policy_version=POLICY_VERSION,
+                answer_leakage=False,
+                citation_integrity=has_verified_source,
+                appropriate_abstention=True,
+                details={
+                    "mode": "ablation",
+                    "scaffold_step": "restrict_early_solution",
+                    "socratic_redirection": True,
+                },
+            )
+
+        return ScaffoldingResult(
+            decision=ScaffoldingDecision.HINT_THEN_FADE.value,
+            reason_codes=["nominal"] if has_verified_source else ["unverified_source_permitted"],
+            policy_version=POLICY_VERSION,
+            answer_leakage=False,
+            citation_integrity=has_verified_source,
+            appropriate_abstention=False,
+            details={
+                "mode": "ablation",
+                "hint_level": hint_level,
+                "scaffold_stage": "observation" if hint_level == 1 else "evidence" if hint_level == 2 else "reasoning",
+                "cited_source_ids": source_ids,
+            },
+        )
 
     # -------------------------------------------------------------
     # INTERVENTION MODE: Standard rigorous scaffolding policy

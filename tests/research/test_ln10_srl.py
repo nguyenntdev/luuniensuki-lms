@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 import pytest
 
@@ -23,14 +24,38 @@ from backend.domain.reflection_cycle import (
 from research.integrations.ln10 import run_policy
 from research.srl.project_state_machine import SRLProjectStateMachine
 
-FIXTURE_PATH = (
-    Path(__file__).resolve().parents[2]
-    / "LUU_NIEN_SPEC_10_STUDIES_MODULAR_FULL_2026"
-    / "LUU_NIEN_SPEC_MODULAR_10_STUDIES_2026"
-    / "04_FIXTURES"
-    / "CONCRETE"
-    / "LN-10_concrete.jsonl"
-)
+
+def get_fixture_path() -> Path:
+    candidates = [
+        Path(os.environ.get("LN10_FIXTURE_PATH", "")),
+        Path(__file__).resolve().parents[2]
+        / "LUU_NIEN_SPEC_10_STUDIES_MODULAR_FULL_2026"
+        / "LUU_NIEN_SPEC_MODULAR_10_STUDIES_2026"
+        / "04_FIXTURES"
+        / "CONCRETE"
+        / "LN-10_concrete.jsonl",
+        Path("LUU_NIEN_SPEC_10_STUDIES_MODULAR_FULL_2026/LUU_NIEN_SPEC_MODULAR_10_STUDIES_2026/04_FIXTURES/CONCRETE/LN-10_concrete.jsonl"),
+    ]
+    for c in candidates:
+        if c.is_file():
+            return c
+    return candidates[1]
+
+
+def get_experiments_config_path() -> Path:
+    candidates = [
+        Path("configs/experiments.json"),
+        Path("LUU_NIEN_RESEARCH_MASTER_EXECUTION_2026_11_07/configs/experiments.json"),
+        Path(__file__).resolve().parents[2] / "configs" / "experiments.json",
+        Path(__file__).resolve().parents[2] / "LUU_NIEN_RESEARCH_MASTER_EXECUTION_2026_11_07" / "configs" / "experiments.json",
+    ]
+    for c in candidates:
+        if c.is_file():
+            return c
+    return candidates[0]
+
+
+FIXTURE_PATH = get_fixture_path()
 
 
 # --------------------------------------------------------------------------- #
@@ -304,3 +329,161 @@ def test_metamorphic_insensitivity_to_irrelevant_fields():
     assert res_base["decision"] == res_extras["decision"]
     assert res_base["transition_applied"] == res_extras["transition_applied"]
     assert res_base["conflict_detected"] == res_extras["conflict_detected"]
+
+
+def test_all_720_concrete_fixture_conformance():
+    """Verify 100% agreement (720/720) on concrete test fixtures in intervention mode."""
+    if not FIXTURE_PATH.is_file():
+        pytest.skip(f"Fixture file {FIXTURE_PATH} not found")
+
+    with open(FIXTURE_PATH, encoding="utf-8") as f:
+        cases = [json.loads(line) for line in f if line.strip()]
+
+    assert len(cases) == 720, f"Expected 720 cases in fixture, found {len(cases)}"
+    matches = 0
+    for case in cases:
+        inp = case["input"]
+        expected = case["oracle"]["expected_decision"]
+        res = run_policy(inp, mode="intervention", config={})
+        assert res["decision"] == expected, f"Mismatch on {case['case_id']} ({case['fault_id']})"
+        assert isinstance(res["transition_applied"], bool)
+        assert isinstance(res["conflict_detected"], bool)
+        assert isinstance(res["reflection_completed"], bool)
+        assert isinstance(res["ownership_verified"], bool)
+        if case["fault_id"] == "nominal":
+            assert res["transition_applied"] is True
+        else:
+            assert res["transition_applied"] is False
+        matches += 1
+
+    assert matches == 720
+
+
+def test_five_study_conditions_configs_experiments():
+    """Verify all 5 conditions specified in configs/experiments.json:
+    - B0: baseline (linear checklist auto-advance)
+    - I1: intervention (SRL cyclical reflection state machine)
+    - A1: ablation disable_reflection (and alias free_navigation)
+    - A2: ablation disable_concurrency (and alias no_reflection_gate)
+    - A3: ablation disable_ownership (and alias skip_forethought)
+    """
+    cfg_file = get_experiments_config_path()
+    assert cfg_file.is_file(), f"experiments.json not found at {cfg_file}"
+    matrix = json.loads(cfg_file.read_text(encoding="utf-8"))
+    assert "LN-10" in matrix["studies"], "LN-10 study missing from experiments.json"
+    ln10_entry = matrix["studies"]["LN-10"]
+    assert ln10_entry["adapter"] == "research.integrations.ln10:run_policy"
+
+    runs = {r["id"]: r for r in ln10_entry["runs"]}
+    assert set(runs.keys()) == {"B0", "I1", "A1", "A2", "A3"}
+
+    # Base nominal scenario
+    nominal_input = {
+        "actor": {"role": "student", "owns_project": True},
+        "project": {
+            "goal": "evidence_based_conservation_proposal",
+            "reflection_completed": True,
+            "state": "monitoring",
+            "version": 3,
+        },
+        "transition": {
+            "action": "revise_plan",
+            "expected_version": 3,
+            "new_goal": "heritage_learning_campaign",
+            "rationale": "Nguồn mới làm thay đổi phạm vi đề xuất",
+        },
+    }
+
+    # 1. B0: Baseline (mode="baseline", config={})
+    b0_run = runs["B0"]
+    assert b0_run["mode"] == "baseline"
+    res_b0 = run_policy(nominal_input, mode=b0_run["mode"], config=b0_run["config"])
+    assert res_b0["decision"] == DecisionCode.ALLOW_AUTHORIZED_TRANSITION.value
+    assert res_b0["transition_applied"] is True
+    assert res_b0["policy_version"] == "ln10-baseline-v1"
+
+    # 2. I1: Intervention (mode="intervention", config={})
+    i1_run = runs["I1"]
+    assert i1_run["mode"] == "intervention"
+    res_i1 = run_policy(nominal_input, mode=i1_run["mode"], config=i1_run["config"])
+    assert res_i1["decision"] == DecisionCode.ALLOW_AUTHORIZED_TRANSITION.value
+    assert res_i1["transition_applied"] is True
+    assert res_i1["policy_version"] == "ln10-intervention-srl-v1"
+
+    # 3. A1: Ablation disable_reflection (config={"disable_reflection": true}) & alias free_navigation
+    a1_run = runs["A1"]
+    assert a1_run["mode"] == "ablation"
+    assert a1_run["config"].get("disable_reflection") is True
+    no_rationale_input = {
+        "actor": {"role": "student", "owns_project": True},
+        "project": {"reflection_completed": True, "version": 3},
+        "transition": {"action": "revise_plan", "expected_version": 3, "rationale": ""},
+    }
+    res_a1_spec = run_policy(no_rationale_input, mode="ablation", config=a1_run["config"])
+    assert res_a1_spec["decision"] == DecisionCode.ALLOW_AUTHORIZED_TRANSITION.value
+    assert res_a1_spec["transition_applied"] is True
+    # Test alias free_navigation
+    res_a1_alias = run_policy(no_rationale_input, mode="ablation", config={"free_navigation": True})
+    assert res_a1_alias["decision"] == DecisionCode.ALLOW_AUTHORIZED_TRANSITION.value
+    assert res_a1_alias["transition_applied"] is True
+
+    # 4. A2: Ablation disable_concurrency (config={"disable_concurrency": true}) & alias no_reflection_gate
+    a2_run = runs["A2"]
+    assert a2_run["mode"] == "ablation"
+    assert a2_run["config"].get("disable_concurrency") is True
+    stale_input = {
+        "actor": {"role": "student", "owns_project": True},
+        "project": {"reflection_completed": True, "version": 3},
+        "transition": {"action": "revise_plan", "expected_version": 1, "rationale": "Valid"},
+    }
+    res_a2_spec = run_policy(stale_input, mode="ablation", config=a2_run["config"])
+    assert res_a2_spec["decision"] == DecisionCode.ALLOW_AUTHORIZED_TRANSITION.value
+    assert res_a2_spec["transition_applied"] is True
+    # Test alias no_reflection_gate
+    unreflected_input = {
+        "actor": {"role": "student", "owns_project": True},
+        "project": {"reflection_completed": False, "version": 3},
+        "transition": {"action": "submit", "expected_version": 3, "rationale": "Valid"},
+    }
+    res_a2_alias = run_policy(unreflected_input, mode="ablation", config={"no_reflection_gate": True})
+    assert res_a2_alias["decision"] == DecisionCode.ALLOW_AUTHORIZED_TRANSITION.value
+    assert res_a2_alias["transition_applied"] is True
+
+    # 5. A3: Ablation disable_ownership (config={"disable_ownership": true}) & alias skip_forethought
+    a3_run = runs["A3"]
+    assert a3_run["mode"] == "ablation"
+    assert a3_run["config"].get("disable_ownership") is True
+    nonowner_input = {
+        "actor": {"role": "student", "owns_project": False},
+        "project": {"reflection_completed": True, "version": 3},
+        "transition": {"action": "revise_plan", "expected_version": 3, "rationale": "Valid"},
+    }
+    res_a3_spec = run_policy(nonowner_input, mode="ablation", config=a3_run["config"])
+    assert res_a3_spec["decision"] == DecisionCode.ALLOW_AUTHORIZED_TRANSITION.value
+    assert res_a3_spec["transition_applied"] is True
+    # Test alias skip_forethought
+    res_a3_alias = run_policy(no_rationale_input, mode="ablation", config={"skip_forethought": True})
+    assert res_a3_alias["decision"] == DecisionCode.ALLOW_AUTHORIZED_TRANSITION.value
+    assert res_a3_alias["transition_applied"] is True
+
+
+def test_edge_cases_empty_and_malformed_inputs():
+    """Verify policy handles empty/missing/malformed inputs safely without uncaught exceptions."""
+    # 1. Completely empty dict
+    res_empty = run_policy({}, mode="intervention", config={})
+    assert res_empty["decision"] == DecisionCode.DENY_TRANSITION.value
+    assert res_empty["transition_applied"] is False
+
+    # 2. None input (gracefully coerced)
+    res_none = run_policy(None, mode="intervention", config={})  # type: ignore
+    assert res_none["decision"] == DecisionCode.DENY_TRANSITION.value
+    assert res_none["transition_applied"] is False
+
+    # 3. Baseline mode with empty input
+    res_b0_empty = run_policy({}, mode="baseline", config={})
+    assert res_b0_empty["decision"] == DecisionCode.ALLOW_AUTHORIZED_TRANSITION.value
+    assert res_b0_empty["transition_applied"] is True
+
+    # 4. Unknown mode raises ValueError
+    with pytest.raises(ValueError, match="Unknown mode"):
+        run_policy({}, mode="unsupported_mode", config={})

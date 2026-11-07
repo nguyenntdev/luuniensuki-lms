@@ -38,7 +38,14 @@ def run_policy(
     elif mode == "intervention":
         return schedule_dual_mode_intervention(scenario_input, config)
     elif mode == "ablation":
-        ablation_type = config.get("ablation_type", "generic_fsrs")
+        ablation_type = (
+            config.get("ablation_type")
+            or config.get("variant")
+            or config.get("ablation")
+            or ("retrieval_only" if config.get("retrieval_only") else None)
+            or ("no_burden_cap" if config.get("no_burden_cap") else None)
+            or "generic_fsrs"
+        )
         return schedule_ablation(scenario_input, ablation_type=ablation_type, config=config)
     else:
         raise ValueError(f"Unknown mode '{mode}'. Expected 'baseline', 'intervention', or 'ablation'.")

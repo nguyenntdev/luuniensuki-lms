@@ -191,9 +191,10 @@ def schedule_ablation(
 
     - generic_fsrs: Treat all items as generic flashcards (identical to baseline).
     - omit_source_check: Check prerequisites and due, but do NOT check source verification.
-    - omit_workload_limit: Full checks but infinite workload budget (burdens unconstrained).
+    - omit_workload_limit / no_burden_cap: Full checks but infinite workload budget (burdens unconstrained).
+    - retrieval_only: Route all tasks strictly to retrieval; never assign generative explanations.
     """
-    if ablation_type in ("generic_fsrs", "ablation-1"):
+    if ablation_type in ("generic_fsrs", "ablation-1", "ablation-3"):
         return schedule_baseline(scenario_input, config)
 
     card = scenario_input.get("review_card", {})
@@ -223,6 +224,17 @@ def schedule_ablation(
             "generative_assigned": False,
             "review_burden": 0.0,
             "task_type_coverage": 0.0,
+            "research_only": True,
+        }
+
+    if ablation_type in ("retrieval_only", "retrieval-only"):
+        return {
+            "decision": "assign_fact_retrieval",
+            "reason_codes": ["retrieval_only_ablation", "RULE-LN-03-RETRIEVAL-ONLY"],
+            "policy_version": f"ablation-{ablation_type}",
+            "generative_assigned": False,
+            "review_burden": 1.0,
+            "task_type_coverage": 0.5,
             "research_only": True,
         }
 
@@ -267,7 +279,7 @@ def schedule_ablation(
         "reason_codes": ["schedule_eligible"],
         "policy_version": f"ablation-{ablation_type}",
         "generative_assigned": is_generative,
-        "review_burden": 5.0 if ablation_type == "omit_workload_limit" else 2.0,
+        "review_burden": 5.0 if ablation_type in ("omit_workload_limit", "no_burden_cap") else 2.0,
         "task_type_coverage": 1.0,
         "research_only": True,
     }

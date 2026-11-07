@@ -10,10 +10,15 @@ Covers:
 - Partial reasoning classification (RULE-LN-08-05)
 - Baseline naive keyword matcher vulnerabilities (false positives on negation, false negatives on synonyms)
 - Intervention vs Baseline contrast
-- Ablation experiments
+- All 5 conditions: B0, I1, A1 (keyword_only), A2 (disable_negation), A3 (no_source_grounding / disable_source_link)
+- Metamorphic pair transformations
+- Edge cases and boundary robustness
+- 720-scenario concrete fixture conformance
 """
 from __future__ import annotations
 
+import json
+from pathlib import Path
 import pytest
 
 from backend.domain.history_error_taxonomy import (
@@ -99,7 +104,6 @@ def test_synonym_equivalence_detection():
     assert has_synonym_equivalence(synonym_text)
 
     canonical_text = "Ngọ Môn thuộc trục nghi lễ được mô tả trong nguồn."
-    # Canonical text uses canonical phrase, not synonym phrase
     assert not has_synonym_equivalence(canonical_text)
 
 
@@ -197,7 +201,6 @@ def test_baseline_fooled_by_negation(base_scenario_input):
     base_scenario_input["answer"] = "Ngọ Môn không thuộc trục nghi lễ, trái với thông tin được cung cấp."
 
     result = run_policy(base_scenario_input, mode="baseline", config={})
-    # Baseline naively sees "trục nghi lễ" and grants feedback_supported!
     assert result["decision"] == DiagnosticDecision.FEEDBACK_SUPPORTED.value
     assert result["false_keyword_match"] is True
     assert result["diagnostic_category"] == DiagnosticCategory.KEYWORD_MATCH.value
@@ -218,7 +221,6 @@ def test_baseline_fails_synonym_equivalence(base_scenario_input):
     base_scenario_input["answer"] = "Theo tư liệu, vị trí Ngọ Môn nằm trên tuyến không gian phục vụ nghi thức."
 
     result = run_policy(base_scenario_input, mode="baseline", config={})
-    # Misses exact keyword "trục nghi lễ" -> incorrectly rejected
     assert result["decision"] == DiagnosticDecision.FEEDBACK_INCOMPLETE.value
     assert result["diagnostic_category"] == DiagnosticCategory.KEYWORD_MISSING.value
 
@@ -258,26 +260,48 @@ def test_metamorphic_pair_source_swap(base_scenario_input):
 
 
 # --------------------------------------------------------------------------- #
-# Ablation Experiments
+# All 5 Conditions: B0, I1, A1, A2, A3
 # --------------------------------------------------------------------------- #
 
-def test_ablation_disable_negation(base_scenario_input):
-    """When negation check is ablated, negated answer slips through."""
+def test_condition_b0_baseline(base_scenario_input):
+    base_scenario_input["answer"] = "Ngọ Môn thuộc trục nghi lễ được mô tả trong nguồn."
+    res = run_policy(base_scenario_input, mode="baseline", config={})
+    assert "diagnostic_category" in res
+    assert res["policy_version"].startswith("baseline")
+
+
+def test_condition_i1_intervention(base_scenario_input):
+    base_scenario_input["answer"] = "Ngọ Môn thuộc trục nghi lễ được mô tả trong nguồn."
+    res = run_policy(base_scenario_input, mode="intervention", config={})
+    assert res["decision"] == DiagnosticDecision.FEEDBACK_SUPPORTED.value
+    assert res["diagnostic_category"] == DiagnosticCategory.SUPPORTED.value
+
+
+def test_condition_a1_keyword_only(base_scenario_input):
+    base_scenario_input["answer"] = "Ngọ Môn không thuộc trục nghi lễ."
+    res = run_policy(base_scenario_input, mode="ablation", config={"ablation": "keyword_only"})
+    assert res["decision"] == DiagnosticDecision.FEEDBACK_SUPPORTED.value
+
+
+def test_condition_a2_disable_negation(base_scenario_input):
     base_scenario_input["answer"] = "Ngọ Môn không thuộc trục nghi lễ, trái với thông tin được cung cấp."
     base_scenario_input["evidence"]["source_id"] = "SOURCE-SYN-001"
-
-    result = run_policy(base_scenario_input, mode="ablation", config={"ablation": "disable_negation"})
-    # Without negation check, it sees canonical keywords and accepts
-    assert result["decision"] == DiagnosticDecision.FEEDBACK_SUPPORTED.value
+    res = run_policy(base_scenario_input, mode="ablation", config={"ablation": "disable_negation"})
+    assert res["decision"] == DiagnosticDecision.FEEDBACK_SUPPORTED.value
 
 
-def test_ablation_disable_source_link(base_scenario_input):
-    """When source linkage is ablated, wrong source slips through."""
+def test_condition_a3_disable_source_link(base_scenario_input):
     base_scenario_input["answer"] = "Ngọ Môn thuộc trục nghi lễ được mô tả trong nguồn."
     base_scenario_input["evidence"]["source_id"] = "SOURCE-SYN-WRONG"
+    res = run_policy(base_scenario_input, mode="ablation", config={"ablation": "disable_source_link"})
+    assert res["decision"] == DiagnosticDecision.FEEDBACK_SUPPORTED.value
 
-    result = run_policy(base_scenario_input, mode="ablation", config={"ablation": "disable_source_link"})
-    assert result["decision"] == DiagnosticDecision.FEEDBACK_SUPPORTED.value
+
+def test_condition_a3_no_source_grounding_alias(base_scenario_input):
+    base_scenario_input["answer"] = "Ngọ Môn thuộc trục nghi lễ được mô tả trong nguồn."
+    base_scenario_input["evidence"]["source_id"] = "SOURCE-SYN-WRONG"
+    res = run_policy(base_scenario_input, mode="ablation", config={"ablation": "no_source_grounding"})
+    assert res["decision"] == DiagnosticDecision.FEEDBACK_SUPPORTED.value
 
 
 # --------------------------------------------------------------------------- #
@@ -299,7 +323,6 @@ def test_unknown_gibberish_abstains(base_scenario_input):
 
 
 def test_pure_function_determinism(base_scenario_input):
-    """Repeated calls with identical input yield identical results."""
     base_scenario_input["answer"] = "Ngọ Môn thuộc trục nghi lễ được mô tả trong nguồn."
     res1 = run_policy(base_scenario_input, mode="intervention", config={})
     res2 = run_policy(base_scenario_input, mode="intervention", config={})
@@ -311,10 +334,6 @@ def test_pure_function_determinism(base_scenario_input):
 # --------------------------------------------------------------------------- #
 
 def test_concrete_fixture_conformance():
-    """Verify intervention matches oracle 100% across all 720 scenarios in LN-08_concrete.jsonl."""
-    import json
-    from pathlib import Path
-
     fixture_path = (
         Path(__file__).resolve().parents[2]
         / "LUU_NIEN_SPEC_10_STUDIES_MODULAR_FULL_2026"
@@ -338,12 +357,10 @@ def test_concrete_fixture_conformance():
             expected = row["oracle"]["expected_decision"]
             fault_id = row["fault_id"]
 
-            # Run intervention
             int_res = run_policy(row["input"], mode="intervention", config={})
             if int_res["decision"] == expected:
                 intervention_matches += 1
 
-            # Run baseline
             base_res = run_policy(row["input"], mode="baseline", config={})
             if fault_id == "logical_negation" and base_res["decision"] == DiagnosticDecision.FEEDBACK_SUPPORTED.value:
                 baseline_negation_fooled += 1
@@ -354,4 +371,3 @@ def test_concrete_fixture_conformance():
     assert intervention_matches == 720, f"Expected 720/720 matches, got {intervention_matches}"
     assert baseline_negation_fooled == 144, "All 144 negation cases should fool baseline"
     assert baseline_synonym_rejected == 144, "All 144 synonym cases should fail in baseline"
-

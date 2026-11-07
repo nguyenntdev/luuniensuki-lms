@@ -335,7 +335,7 @@ def evaluate_modality_ablation(
     config = config or {}
     ablation_type = config.get("ablation_type", "url_existence_only")
 
-    if ablation_type == "url_existence_only":
+    if ablation_type in ("url_existence_only", "3d_only") or config.get("3d_only"):
         res = evaluate_modality_baseline(scenario_input, config)
         return PolicyEvaluationResult(
             decision=res.decision,
@@ -347,7 +347,7 @@ def evaluate_modality_ablation(
             observables={"ablation_type": ablation_type, **res.observables},
         )
 
-    if ablation_type == "disable_accessibility":
+    if ablation_type in ("disable_accessibility",) or config.get("disable_accessibility"):
         # Run intervention without keyboard and transcript checks
         sanitized_input = dict(scenario_input)
         device = dict(sanitized_input.get("device", {}))
@@ -371,7 +371,11 @@ def evaluate_modality_ablation(
             observables={"ablation_type": ablation_type, **res.observables},
         )
 
-    if ablation_type == "disable_cognitive_affordances":
+    if (
+        ablation_type in ("disable_cognitive_affordances", "no_text_equivalence")
+        or config.get("no_text_equivalence")
+        or config.get("disable_cognitive_affordances")
+    ):
         # Disregard required affordances
         sanitized_input = dict(scenario_input)
         task = dict(sanitized_input.get("task", {}))
@@ -386,6 +390,27 @@ def evaluate_modality_ablation(
             task_feasible=res.task_feasible,
             fallback_failure=res.fallback_failure,
             missing_affordance_count=0,
+            observables={"ablation_type": ablation_type, **res.observables},
+        )
+
+    if (
+        ablation_type in ("ignore_network_constraints",)
+        or config.get("ignore_network_constraints")
+    ):
+        # Ignore network bandwidth constraints (bypass low-bandwidth fallback)
+        sanitized_input = dict(scenario_input)
+        device = dict(sanitized_input.get("device", {}))
+        device["network_kbps"] = 100000
+        sanitized_input["device"] = device
+
+        res = evaluate_modality_intervention(sanitized_input, config)
+        return PolicyEvaluationResult(
+            decision=res.decision,
+            reason_codes=["ablation_ignore_network_constraints"] + res.reason_codes,
+            policy_version=ABLATION_POLICY_VERSION,
+            task_feasible=res.task_feasible,
+            fallback_failure=res.fallback_failure,
+            missing_affordance_count=res.missing_affordance_count,
             observables={"ablation_type": ablation_type, **res.observables},
         )
 

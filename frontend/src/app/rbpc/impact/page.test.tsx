@@ -2,6 +2,7 @@ import React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import RbpcImpactDashboardPage from "./page";
+import { RbpcImpactDashboardClient } from "@/components/rbpc/RbpcImpactDashboardClient";
 import * as inquiriesApi from "@/lib/rbpc/inquiries";
 import type { RbpcImpactMetricsOut } from "@/types/rbpc";
 
@@ -36,7 +37,7 @@ describe("RBPC Public Impact Dashboard Page", () => {
   });
 
   it("renders static structure with header and observed vs projected separation", () => {
-    const html = renderToStaticMarkup(<RbpcImpactDashboardPage initialMetrics={mockImpactMetrics} />);
+    const html = renderToStaticMarkup(<RbpcImpactDashboardClient initialMetrics={mockImpactMetrics} />);
 
     // Header & Titles
     expect(html).toContain("Bảng Tác Động Thực Tế &amp; Đối Soát Minh Bạch");
@@ -84,7 +85,7 @@ describe("RBPC Public Impact Dashboard Page", () => {
       generated_at: "2026-11-05T12:00:00Z",
     };
 
-    const html = renderToStaticMarkup(<RbpcImpactDashboardPage initialMetrics={emptyMetrics} />);
+    const html = renderToStaticMarkup(<RbpcImpactDashboardClient initialMetrics={emptyMetrics} />);
     expect(html).toContain("data-testid=\"completed-experiences-count\"");
     expect(html).toContain("data-testid=\"artisan-payout-settled\"");
     expect(html).toContain("data-testid=\"total-inquiries-count\"");

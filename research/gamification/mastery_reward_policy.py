@@ -191,8 +191,9 @@ def evaluate_mastery_reward_ablation(
     """Ablation policy: Configurable ablations:
 
     - ablation_type = 'xp_only': awards badge purely on XP.
-    - ablation_type = 'disable_anti_replay': bypasses deduplication check.
+    - ablation_type = 'disable_anti_replay' (or 'allow_replay'): bypasses deduplication check.
     - ablation_type = 'disable_provenance': ignores untrusted client actor check.
+    - ablation_type = 'no_proof_requirement' (or 'disable_proof'): bypasses competency/verified task check.
     """
     config = config or {}
     ablation_type = config.get("ablation_type", "xp_only")
@@ -219,7 +220,7 @@ def evaluate_mastery_reward_ablation(
             observables={"badge_awarded": False},
         )
         
-    if ablation_type != "disable_provenance":
+    if ablation_type not in ("disable_provenance",):
         for ev in reward_events:
             if ev.get("actor") != "server":
                 return PolicyEvaluationResult(
@@ -230,7 +231,7 @@ def evaluate_mastery_reward_ablation(
                     observables={"badge_awarded": False},
                 )
                 
-    if ablation_type != "disable_anti_replay":
+    if ablation_type not in ("disable_anti_replay", "allow_replay"):
         event_ids = [ev.get("event_id") for ev in reward_events if "event_id" in ev]
         if len(event_ids) != len(set(event_ids)):
             return PolicyEvaluationResult(
@@ -241,17 +242,18 @@ def evaluate_mastery_reward_ablation(
                 observables={"badge_awarded": False},
             )
             
-    verified_task = skill_evidence.get("verified_task", False)
-    competency_score = skill_evidence.get(req_competency, 0.0)
-    
-    if not verified_task or competency_score < min_level:
-        return PolicyEvaluationResult(
-            decision="deny_mastery_badge",
-            reason_codes=["missing_competency_evidence"],
-            policy_version="2.0-ablation",
-            badge_awarded=False,
-            observables={"badge_awarded": False},
-        )
+    if ablation_type not in ("no_proof_requirement", "no_proof", "disable_proof"):
+        verified_task = skill_evidence.get("verified_task", False)
+        competency_score = skill_evidence.get(req_competency, 0.0)
+        
+        if not verified_task or competency_score < min_level:
+            return PolicyEvaluationResult(
+                decision="deny_mastery_badge",
+                reason_codes=["missing_competency_evidence"],
+                policy_version="2.0-ablation",
+                badge_awarded=False,
+                observables={"badge_awarded": False},
+            )
         
     return PolicyEvaluationResult(
         decision="grant_if_eligible",

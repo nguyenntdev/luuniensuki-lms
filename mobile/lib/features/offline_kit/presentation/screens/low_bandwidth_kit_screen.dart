@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_typography.dart';
 import '../../data/models/offline_kit_model.dart';
 
 /// Low-Bandwidth Printable / Offline Kit Screen (Ticket V5-T096).
@@ -74,9 +73,9 @@ class _LowBandwidthKitScreenState extends State<LowBandwidthKitScreen> {
           Container(
             padding: const EdgeInsets.all(AppSpacing.md),
             decoration: BoxDecoration(
-              color: const Color(0xFF064E3B).withOpacity(0.4),
+              color: const Color(0xFF064E3B).withValues(alpha: 0.4),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFF10B981).withOpacity(0.6)),
+              border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.6)),
             ),
             child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,8 +125,8 @@ class _LowBandwidthKitScreenState extends State<LowBandwidthKitScreen> {
                 borderRadius: BorderRadius.circular(16),
                 side: BorderSide(
                   color: isCompleted
-                      ? const Color(0xFF10B981).withOpacity(0.6)
-                      : AppColors.primary.withOpacity(0.2),
+                      ? const Color(0xFF10B981).withValues(alpha: 0.6)
+                      : AppColors.primary.withValues(alpha: 0.2),
                 ),
               ),
               child: Padding(
@@ -322,7 +321,7 @@ class _LowBandwidthKitScreenState extends State<LowBandwidthKitScreen> {
                     Container(
                       padding: const EdgeInsets.all(AppSpacing.sm),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.04),
+                        color: Colors.white.withValues(alpha: 0.04),
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(color: Colors.white12),
                       ),

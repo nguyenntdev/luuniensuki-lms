@@ -173,15 +173,20 @@ def test_baseline_descriptive_only_mode(nominal_input):
 # Unit Tests: Ablations
 # --------------------------------------------------------------------------- #
 def test_ablation_descriptive_only(nominal_input):
-    """Ablation 1: Dashboard with no suggestions."""
+    """Ablation 1: Dashboard with no suggestions (supports raw_metrics_only alias)."""
     res = evaluate_ablation_rules(nominal_input, config={"ablation_type": "descriptive_only"})
     assert res.decision == DecisionCode.descriptive_summary_only.value
     assert res.action_proposed is False
     assert res.policy_version == POLICY_VERSION_ABLATION
 
+    # Test alias raw_metrics_only
+    res_alias = evaluate_ablation_rules(nominal_input, config={"ablation_type": "raw_metrics_only"})
+    assert res_alias.decision == DecisionCode.descriptive_summary_only.value
+    assert res_alias.action_proposed is False
+
 
 def test_ablation_no_freshness_source(unverified_task_input, stale_mastery_input):
-    """Ablation 2: Removes freshness and source verification constraints."""
+    """Ablation 2: Removes freshness and source verification constraints (supports unsupported_interventions)."""
     config = {"ablation_type": "no_freshness_source"}
     res_unverified = evaluate_ablation_rules(unverified_task_input, config=config)
     assert res_unverified.decision == DecisionCode.propose_explained_action.value
@@ -190,6 +195,34 @@ def test_ablation_no_freshness_source(unverified_task_input, stale_mastery_input
     res_stale = evaluate_ablation_rules(stale_mastery_input, config=config)
     assert res_stale.decision == DecisionCode.propose_explained_action.value
     assert res_stale.action_proposed is True
+
+    # Test alias unsupported_interventions
+    cfg_unsup = {"ablation_type": "unsupported_interventions"}
+    res_unsup = evaluate_ablation_rules(unverified_task_input, config=cfg_unsup)
+    assert res_unsup.decision == DecisionCode.propose_explained_action.value
+    assert res_unsup.action_proposed is True
+
+
+def test_ablation_no_k_anonymity():
+    """Ablation variant: no_k_anonymity bypasses cohort size suppression."""
+    small_cohort_input = {
+        "cohort_size": 2,
+        "learning_evidence": [
+            {"outcome": "spatial", "score": 0.2, "type": "quiz", "verified": True}
+        ],
+        "observation_age_days": 1,
+        "signals_conflict": False,
+        "candidate_intervention": "additional_spatial_orientation_activity",
+    }
+    # With intervention rules, it abstains due to k-anonymity (n < 5)
+    res_inter = evaluate_intervention_rules(small_cohort_input)
+    assert res_inter.decision == DecisionCode.abstain_missing_evidence.value
+    assert res_inter.action_proposed is False
+
+    # With no_k_anonymity ablation, it proposes action despite small cohort
+    res_abl = evaluate_ablation_rules(small_cohort_input, config={"ablation_type": "no_k_anonymity"})
+    assert res_abl.decision == DecisionCode.propose_explained_action.value
+    assert res_abl.action_proposed is True
 
 
 def test_ablation_no_rationale(nominal_input):
@@ -349,7 +382,7 @@ def test_run_policy_adapter_contract(nominal_input):
 
 
 def test_concrete_fixture_sample_conformance():
-    """Test against actual concrete fixtures from 04_FIXTURES/CONCRETE/LN-09_concrete.jsonl."""
+    """Test against actual concrete fixtures from 04_FIXTURES/CONCRETE/LN-09_concrete.jsonl across all 720 scenarios."""
     fixture_path = (
         Path(__file__).resolve().parents[2]
         / "LUU_NIEN_SPEC_10_STUDIES_MODULAR_FULL_2026"
@@ -362,10 +395,10 @@ def test_concrete_fixture_sample_conformance():
         pytest.skip("Concrete fixtures file not found")
 
     with fixture_path.open(encoding="utf-8") as f:
-        # Test first 20 records
-        for i, line in enumerate(f):
-            if i >= 20:
-                break
+        total = 0
+        for line in f:
+            if not line.strip():
+                continue
             record = json.loads(line)
             scenario_input = record["input"]
             expected = record["oracle"]["expected_decision"]
@@ -374,3 +407,46 @@ def test_concrete_fixture_sample_conformance():
             assert (
                 result["decision"] == expected
             ), f"Mismatch in {record['case_id']} ({record['fault_id']}): expected {expected}, got {result['decision']}"
+            total += 1
+
+    assert total == 720, f"Expected 720 test cases, found {total}"
+
+
+def test_five_experiment_conditions_contract(nominal_input, unverified_task_input):
+    """Verify all 5 conditions matching configs/experiments.json:
+
+    B0 (baseline): ungrounded heuristics, proposes without validation
+    I1 (intervention): grounded pedagogical policy with abstention
+    A1 (descriptive_only / raw_metrics_only): descriptive dashboard without actions
+    A2 (no_freshness_source): relaxes freshness and verification constraints
+    A3 (no_rationale / unsupported_interventions): removes rationale & anchor link
+    """
+    # B0: baseline
+    r_b0 = run_policy(unverified_task_input, mode="baseline", config={})
+    assert r_b0["action_proposed"] is True
+    assert r_b0["intervention_traceable"] is False
+
+    # I1: intervention
+    r_i1 = run_policy(unverified_task_input, mode="intervention", config={})
+    assert r_i1["action_proposed"] is False
+    assert r_i1["abstention_appropriate"] is True
+    assert r_i1["decision"] == DecisionCode.abstain_unverified_source.value
+
+    # A1: descriptive_only / raw_metrics_only
+    r_a1_desc = run_policy(nominal_input, mode="ablation", config={"ablation_type": "descriptive_only"})
+    assert r_a1_desc["action_proposed"] is False
+    assert r_a1_desc["decision"] == DecisionCode.descriptive_summary_only.value
+    r_a1_raw = run_policy(nominal_input, mode="ablation", config={"ablation_type": "raw_metrics_only"})
+    assert r_a1_raw["action_proposed"] is False
+    assert r_a1_raw["decision"] == DecisionCode.descriptive_summary_only.value
+
+    # A2: no_freshness_source
+    r_a2_fresh = run_policy(unverified_task_input, mode="ablation", config={"ablation_type": "no_freshness_source"})
+    assert r_a2_fresh["action_proposed"] is True
+    assert r_a2_fresh["decision"] == DecisionCode.propose_explained_action.value
+
+    # A3: no_rationale
+    r_a3_rat = run_policy(nominal_input, mode="ablation", config={"ablation_type": "no_rationale"})
+    assert r_a3_rat["action_proposed"] is True
+    assert r_a3_rat["intervention_traceable"] is False
+    assert r_a3_rat["rationale"] == ""

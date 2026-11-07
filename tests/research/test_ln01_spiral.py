@@ -140,19 +140,27 @@ def test_ablation_modes():
     res_cycle_partial = evaluate_spiral_progression_ablation(cycle_inp, config={"skip_cycle_check": True})
     assert res_cycle_partial.decision == "reject_grade_order"
 
-    # 2. Skip cognitive check
+    # 2. Skip cognitive check (via ablation_type or disable_depth_gate)
     shallow_inp = _sample_nominal_input()
     shallow_inp["nodes"][1]["cognitive_level"] = 1
     res_cog = evaluate_spiral_progression_ablation(shallow_inp, config={"ablation_type": "no_cognitive_check"})
     assert res_cog.decision == "accept"
     assert res_cog.progression_valid is True
 
-    # 3. Skip anchor check
+    res_cog_alias = evaluate_spiral_progression_ablation(shallow_inp, config={"disable_depth_gate": True})
+    assert res_cog_alias.decision == "accept"
+    assert res_cog_alias.progression_valid is True
+
+    # 3. Skip anchor check (via skip_anchor_check, ablation_type, or disable_crosswalk)
     missing_anchor_inp = _sample_nominal_input()
     del missing_anchor_inp["curriculum_anchor"]["grade11"]
     res_anchor = evaluate_spiral_progression_ablation(missing_anchor_inp, config={"skip_anchor_check": True})
     assert res_anchor.decision == "accept"
     assert res_anchor.progression_valid is True
+
+    res_anchor_alias = evaluate_spiral_progression_ablation(missing_anchor_inp, config={"disable_crosswalk": True})
+    assert res_anchor_alias.decision == "accept"
+    assert res_anchor_alias.progression_valid is True
 
     # 4. Skip grade order check
     reversed_grade_inp = _sample_nominal_input()
@@ -248,3 +256,56 @@ def test_concrete_fixture_conformance_all_720():
 
     assert total == 720
     assert matches == 720
+
+
+def test_five_study_conditions_configs_experiments():
+    """Verify all 5 conditions specified in configs/experiments.json:
+    - B0: baseline
+    - I1: intervention
+    - A1: ablation no_cognitive_check (disable_depth_gate)
+    - A2: ablation no_anchor_check (disable_crosswalk)
+    - A3: ablation no_cycle_check (allow_cycles)
+    """
+    # 1. B0: Baseline
+    res_b0 = run_policy(_sample_nominal_input(), mode="baseline", config={})
+    assert res_b0["decision"] == "accept"
+    assert res_b0["policy_version"] == "1.0-baseline"
+
+    # 2. I1: Intervention
+    res_i1 = run_policy(_sample_nominal_input(), mode="intervention", config={})
+    assert res_i1["decision"] == "accept"
+    assert res_i1["policy_version"] == "2.0-intervention"
+
+    # 3. A1: no_cognitive_check / disable_depth_gate
+    shallow = _sample_nominal_input()
+    shallow["nodes"][1]["cognitive_level"] = 1
+    res_a1_spec = run_policy(shallow, mode="ablation", config={"ablation_type": "no_cognitive_check"})
+    assert res_a1_spec["decision"] == "accept"
+    res_a1_alias = run_policy(shallow, mode="ablation", config={"disable_depth_gate": True})
+    assert res_a1_alias["decision"] == "accept"
+
+    # 4. A2: no_anchor_check / disable_crosswalk
+    missing_anchor = _sample_nominal_input()
+    del missing_anchor["curriculum_anchor"]["grade11"]
+    res_a2_spec = run_policy(missing_anchor, mode="ablation", config={"ablation_type": "no_anchor_check"})
+    assert res_a2_spec["decision"] == "accept"
+    res_a2_alias = run_policy(missing_anchor, mode="ablation", config={"disable_crosswalk": True})
+    assert res_a2_alias["decision"] == "accept"
+
+    # 5. A3: no_cycle_check / allow_cycles
+    # Under A3, cycle check is skipped; when remaining structural checks are also bypassed, cyclic graph is accepted
+    cycle_graph = _sample_nominal_input()
+    cycle_graph["prerequisites"] = [[0, 1], [1, 2], [2, 0]]
+    res_a3_spec = run_policy(
+        cycle_graph,
+        mode="ablation",
+        config={"ablation_type": "no_cycle_check", "skip_grade_order_check": True, "skip_cognitive_check": True},
+    )
+    assert res_a3_spec["decision"] == "accept"
+    res_a3_alias = run_policy(
+        cycle_graph,
+        mode="ablation",
+        config={"allow_cycles": True, "skip_grade_order_check": True, "skip_cognitive_check": True},
+    )
+    assert res_a3_alias["decision"] == "accept"
+

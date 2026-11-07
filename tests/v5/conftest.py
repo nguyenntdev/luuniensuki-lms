@@ -34,8 +34,6 @@ import backend.pricing_models  # noqa: F401
 import backend.partner_loi_models  # noqa: F401
 import backend.main as main  # noqa: F401
 
-pytest_plugins = ["tests.backend.conftest"]
-
 
 @pytest.fixture(scope="session")
 def engine():

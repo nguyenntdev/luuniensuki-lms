@@ -347,10 +347,30 @@ def evaluate_spiral_progression_ablation(
     config = config or {}
     ablation_type = str(config.get("ablation_type", "")).lower()
 
-    skip_cycle = config.get("skip_cycle_check", False) or (ablation_type == "no_cycle_check")
-    skip_grade = config.get("skip_grade_order_check", False) or (ablation_type == "no_grade_check")
-    skip_anchor = config.get("skip_anchor_check", False) or (ablation_type == "no_anchor_check")
-    skip_cognitive = config.get("skip_cognitive_check", False) or (ablation_type == "no_cognitive_check")
+    skip_cycle = (
+        bool(config.get("skip_cycle_check", False))
+        or bool(config.get("allow_cycles", False))
+        or bool(config.get("disable_cycle_check", False))
+        or (ablation_type in ("no_cycle_check", "allow_cycles", "disable_cycle_check"))
+    )
+    skip_grade = (
+        bool(config.get("skip_grade_order_check", False))
+        or bool(config.get("disable_grade_check", False))
+        or bool(config.get("allow_grade_reversal", False))
+        or (ablation_type in ("no_grade_check", "disable_grade_check", "no_grade_order_check", "allow_grade_reversal"))
+    )
+    skip_anchor = (
+        bool(config.get("skip_anchor_check", False))
+        or bool(config.get("disable_crosswalk", False))
+        or bool(config.get("disable_anchor_check", False))
+        or (ablation_type in ("no_anchor_check", "disable_crosswalk", "disable_anchor_check"))
+    )
+    skip_cognitive = (
+        bool(config.get("skip_cognitive_check", False))
+        or bool(config.get("disable_depth_gate", False))
+        or bool(config.get("disable_cognitive_check", False))
+        or (ablation_type in ("no_cognitive_check", "disable_depth_gate", "disable_cognitive_check"))
+    )
 
     raw_nodes = scenario_input.get("nodes", [])
     prerequisites = scenario_input.get("prerequisites", [])

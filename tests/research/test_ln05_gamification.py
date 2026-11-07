@@ -9,6 +9,7 @@ Verifies invariants:
 """
 
 import json
+import os
 from pathlib import Path
 import pytest
 
@@ -20,13 +21,18 @@ from research.gamification.mastery_reward_policy import (
 from research.integrations.ln05 import run_policy
 
 
-FIXTURE_PATH = (
+DEFAULT_FIXTURE_PATH = (
     Path(__file__).resolve().parents[2]
     / "LUU_NIEN_SPEC_10_STUDIES_MODULAR_FULL_2026"
     / "LUU_NIEN_SPEC_MODULAR_10_STUDIES_2026"
     / "04_FIXTURES"
     / "CONCRETE"
     / "LN-05_concrete.jsonl"
+)
+FIXTURE_PATH = Path(
+    os.environ.get("LN05_FIXTURE_PATH")
+    or os.environ.get("LN_05_FIXTURE_PATH")
+    or DEFAULT_FIXTURE_PATH
 )
 
 
@@ -136,6 +142,100 @@ def test_baseline_always_awards():
         ],
     }
     res = evaluate_mastery_reward_baseline(scenario)
+    assert res.decision == "grant_if_eligible"
+    assert res.badge_awarded is True
+
+
+def test_ablation_xp_only():
+    scenario = {
+        "badge": {
+            "id": "historical_reasoning_mastery",
+            "min_level": 0.75,
+            "policy_version": 2,
+            "requires_competency": "S3",
+        },
+        "event_policy_version": 2,
+        "reward_events": [
+            {"actor": "client", "event_id": "EVT-A", "kind": "task_mastery", "xp": 100}
+        ],
+        "skill_evidence": {"S3": 0.1, "verified_task": False},
+    }
+    # In A1 (xp_only), badge is awarded based on XP even if competency is missing
+    res = evaluate_mastery_reward_ablation(scenario, {"ablation_type": "xp_only"})
+    assert res.decision == "grant_if_eligible"
+    assert res.badge_awarded is True
+
+
+def test_ablation_disable_anti_replay_and_allow_replay():
+    scenario = {
+        "badge": {
+            "id": "historical_reasoning_mastery",
+            "min_level": 0.75,
+            "policy_version": 2,
+            "requires_competency": "S3",
+        },
+        "event_policy_version": 2,
+        "reward_events": [
+            {"actor": "server", "event_id": "EVT-A", "kind": "task_mastery", "xp": 20},
+            {"actor": "server", "event_id": "EVT-A", "kind": "task_mastery", "xp": 20},
+        ],
+        "skill_evidence": {"S3": 0.9, "verified_task": True},
+    }
+    # With disable_anti_replay, duplicate event check is bypassed
+    res_disable = evaluate_mastery_reward_ablation(
+        scenario, {"ablation_type": "disable_anti_replay"}
+    )
+    assert res_disable.decision == "grant_if_eligible"
+    assert res_disable.badge_awarded is True
+
+    # With alias allow_replay
+    res_allow = evaluate_mastery_reward_ablation(
+        scenario, {"ablation_type": "allow_replay"}
+    )
+    assert res_allow.decision == "grant_if_eligible"
+    assert res_allow.badge_awarded is True
+
+
+def test_ablation_disable_provenance():
+    scenario = {
+        "badge": {
+            "id": "historical_reasoning_mastery",
+            "min_level": 0.75,
+            "policy_version": 2,
+            "requires_competency": "S3",
+        },
+        "event_policy_version": 2,
+        "reward_events": [
+            {"actor": "client", "event_id": "EVT-A", "kind": "task_mastery", "xp": 20}
+        ],
+        "skill_evidence": {"S3": 0.9, "verified_task": True},
+    }
+    # With disable_provenance, client actor is accepted
+    res = evaluate_mastery_reward_ablation(
+        scenario, {"ablation_type": "disable_provenance"}
+    )
+    assert res.decision == "grant_if_eligible"
+    assert res.badge_awarded is True
+
+
+def test_ablation_no_proof_requirement():
+    scenario = {
+        "badge": {
+            "id": "historical_reasoning_mastery",
+            "min_level": 0.75,
+            "policy_version": 2,
+            "requires_competency": "S3",
+        },
+        "event_policy_version": 2,
+        "reward_events": [
+            {"actor": "server", "event_id": "EVT-A", "kind": "task_mastery", "xp": 20}
+        ],
+        "skill_evidence": {"S3": 0.1, "verified_task": False},
+    }
+    # With no_proof_requirement, missing competency score does not block badge
+    res = evaluate_mastery_reward_ablation(
+        scenario, {"ablation_type": "no_proof_requirement"}
+    )
     assert res.decision == "grant_if_eligible"
     assert res.badge_awarded is True
 

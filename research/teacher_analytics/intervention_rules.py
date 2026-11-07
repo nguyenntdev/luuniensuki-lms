@@ -176,20 +176,36 @@ def evaluate_ablation_rules(
 ) -> InterventionEvaluationResult:
     """Ablation policy testing specific policy components:
 
-    - 'descriptive_only' (A1): Dashboard without any suggestions.
+    - 'descriptive_only' / 'raw_metrics_only' (A1): Dashboard without any suggestions.
     - 'no_freshness_source' (A2): Removes freshness and source verification constraints.
+    - 'no_k_anonymity' (A2 variant): Removes k-anonymity privacy constraints.
     - 'no_rationale' (A3): Removes pedagogical explanation and curriculum anchoring.
+    - 'unsupported_interventions' (A3 variant): Proposes actions without evidence verification.
     """
     config = config or {}
     ablation_type = config.get("ablation_type", "no_freshness_source")
 
-    if ablation_type == "descriptive_only" or config.get("descriptive_only", False):
+    if (
+        ablation_type in ("descriptive_only", "raw_metrics_only")
+        or config.get("descriptive_only", False)
+        or config.get("raw_metrics_only", False)
+    ):
         card = evaluate_instructional_recommendation(
             scenario_input,
             descriptive_only=True,
         )
-    elif ablation_type == "no_freshness_source" or config.get("no_freshness_source", False):
-        # Ignore staleness and unverified sources
+    elif ablation_type == "no_k_anonymity" or config.get("no_k_anonymity", False):
+        card = evaluate_instructional_recommendation(
+            scenario_input,
+            k_threshold=0,
+            include_rationale=True,
+        )
+    elif (
+        ablation_type in ("no_freshness_source", "unsupported_interventions")
+        or config.get("no_freshness_source", False)
+        or config.get("unsupported_interventions", False)
+    ):
+        # Ignore staleness and unverified sources (unsupported interventions)
         card = evaluate_instructional_recommendation(
             scenario_input,
             allow_unverified=True,

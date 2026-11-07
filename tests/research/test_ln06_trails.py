@@ -192,6 +192,63 @@ def test_ablation_mode(sample_stops):
     # Ablation: disable prerequisite check
     res = run_policy(scenario, mode="ablation", config={"enforce_prerequisites": False})
     assert res["decision"] == "find_valid_route"
+    assert res["prerequisite_violation_count"] == 1
+
+
+def test_ablation_variants_aliases(sample_stops):
+    """Verify alias configs: shortest_distance_only, ignore_prerequisites, no_theme_filter."""
+    stops_with_cycle = [
+        HeritageStop(id="ngo-mon", cost=15, provides=["spatial_layout"], requires=["heritage_interpretation"]),
+        HeritageStop(id="dien-thai-hoa", cost=15, provides=["ritual_context"], requires=["spatial_layout"]),
+        HeritageStop(id="the-mieu", cost=15, provides=["commemoration"], requires=["ritual_context"]),
+        HeritageStop(id="cuu-dinh", cost=15, provides=["heritage_interpretation"], requires=["commemoration"]),
+    ]
+    scenario = {
+        "stops": [s.to_dict() for s in stops_with_cycle],
+        "available_stops": ["ngo-mon", "dien-thai-hoa", "the-mieu", "cuu-dinh"],
+        "target_outcomes": ["spatial_layout", "ritual_context", "commemoration", "heritage_interpretation"],
+        "time_budget_minutes": 65,
+        "checkpoint_claim_verified": False,
+    }
+    # A1 alias: shortest_distance_only bypasses prerequisite enforcement
+    res_a1_1 = run_policy(scenario, mode="ablation", config={"shortest_distance_only": True, "enforce_sources": False})
+    assert res_a1_1["decision"] == "find_valid_route"
+
+    # A1 alias: ignore_prerequisites
+    res_a1_2 = run_policy(scenario, mode="ablation", config={"ignore_prerequisites": True, "enforce_sources": False})
+    assert res_a1_2["decision"] == "find_valid_route"
+
+    # A3 alias: no_theme_filter / disable_sources
+    res_a3 = run_policy(scenario, mode="ablation", config={"no_theme_filter": True})
+    # Sources disabled, but cycle is still caught by intervention logic
+    assert res_a3["decision"] == "reject_cycle"
+
+
+def test_edge_cases_and_null_defense(sample_stops):
+    """Verify robust handling of empty stops, None fields, and negative budgets."""
+    scenario_empty = {
+        "stops": [],
+        "available_stops": [],
+        "target_outcomes": [],
+        "time_budget_minutes": None,
+        "checkpoint_claim_verified": None,
+    }
+    res = run_policy(scenario_empty, mode="intervention", config={})
+    assert res["decision"] == "find_valid_route"
+    assert res["prerequisite_violation_count"] == 0
+    assert res["route_cost"] == 0
+
+    # Negative/zero budget with stops needed
+    scenario_zero_budget = {
+        "stops": [s.to_dict() for s in sample_stops],
+        "available_stops": ["ngo-mon"],
+        "target_outcomes": ["spatial_layout"],
+        "time_budget_minutes": 0,
+        "checkpoint_claim_verified": True,
+    }
+    res = run_policy(scenario_zero_budget, mode="intervention", config={})
+    assert res["decision"] == "cost_exceeded"
+    assert "over_budget" in res["reason_codes"]
 
 
 def test_concrete_corpus_conformance():
