@@ -28,6 +28,8 @@ from research.srl.project_state_machine import SRLProjectStateMachine
 def get_fixture_path() -> Path:
     candidates = [
         Path(os.environ.get("LN10_FIXTURE_PATH", "")),
+        Path(os.environ.get("RESEARCH_FIXTURE_DIR", "")) / "LN-10_concrete.jsonl",
+        Path(__file__).resolve().parents[2] / "research" / "fixtures" / "LN-10_concrete.jsonl",
         Path(__file__).resolve().parents[2]
         / "LUU_NIEN_SPEC_10_STUDIES_MODULAR_FULL_2026"
         / "LUU_NIEN_SPEC_MODULAR_10_STUDIES_2026"
@@ -39,11 +41,13 @@ def get_fixture_path() -> Path:
     for c in candidates:
         if c.is_file():
             return c
-    return candidates[1]
+    return candidates[2]
 
 
 def get_experiments_config_path() -> Path:
     candidates = [
+        Path(__file__).resolve().parents[2] / "research" / "configs" / "experiments.json",
+        Path("research/configs/experiments.json"),
         Path("configs/experiments.json"),
         Path("LUU_NIEN_RESEARCH_MASTER_EXECUTION_2026_11_07/configs/experiments.json"),
         Path(__file__).resolve().parents[2] / "configs" / "experiments.json",

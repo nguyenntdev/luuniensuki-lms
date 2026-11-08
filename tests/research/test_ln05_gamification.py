@@ -21,19 +21,24 @@ from research.gamification.mastery_reward_policy import (
 from research.integrations.ln05 import run_policy
 
 
-DEFAULT_FIXTURE_PATH = (
-    Path(__file__).resolve().parents[2]
-    / "LUU_NIEN_SPEC_10_STUDIES_MODULAR_FULL_2026"
-    / "LUU_NIEN_SPEC_MODULAR_10_STUDIES_2026"
-    / "04_FIXTURES"
-    / "CONCRETE"
-    / "LN-05_concrete.jsonl"
-)
-FIXTURE_PATH = Path(
-    os.environ.get("LN05_FIXTURE_PATH")
-    or os.environ.get("LN_05_FIXTURE_PATH")
-    or DEFAULT_FIXTURE_PATH
-)
+def _resolve_fixture_path() -> Path:
+    candidates = [
+        Path(os.environ.get("RESEARCH_FIXTURE_DIR", "")) / "LN-05_concrete.jsonl",
+        Path(__file__).resolve().parents[2] / "research" / "fixtures" / "LN-05_concrete.jsonl",
+        Path(__file__).resolve().parents[2]
+        / "LUU_NIEN_SPEC_10_STUDIES_MODULAR_FULL_2026"
+        / "LUU_NIEN_SPEC_MODULAR_10_STUDIES_2026"
+        / "04_FIXTURES"
+        / "CONCRETE"
+        / "LN-05_concrete.jsonl",
+    ]
+    for c in candidates:
+        if c.is_file():
+            return c
+    return candidates[1]
+
+
+FIXTURE_PATH = _resolve_fixture_path()
 
 
 def test_nominal_intervention():

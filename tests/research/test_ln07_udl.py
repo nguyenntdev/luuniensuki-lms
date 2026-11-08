@@ -12,6 +12,7 @@ Verifies invariants:
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 import pytest
 
@@ -25,14 +26,24 @@ from research.udl.modality_equivalence import (
 from research.integrations.ln07 import run_policy
 
 
-FIXTURE_PATH = (
-    Path(__file__).resolve().parents[2]
-    / "LUU_NIEN_SPEC_10_STUDIES_MODULAR_FULL_2026"
-    / "LUU_NIEN_SPEC_MODULAR_10_STUDIES_2026"
-    / "04_FIXTURES"
-    / "CONCRETE"
-    / "LN-07_concrete.jsonl"
-)
+def _resolve_fixture_path() -> Path:
+    candidates = [
+        Path(os.environ.get("RESEARCH_FIXTURE_DIR", "")) / "LN-07_concrete.jsonl",
+        Path(__file__).resolve().parents[2] / "research" / "fixtures" / "LN-07_concrete.jsonl",
+        Path(__file__).resolve().parents[2]
+        / "LUU_NIEN_SPEC_10_STUDIES_MODULAR_FULL_2026"
+        / "LUU_NIEN_SPEC_MODULAR_10_STUDIES_2026"
+        / "04_FIXTURES"
+        / "CONCRETE"
+        / "LN-07_concrete.jsonl",
+    ]
+    for c in candidates:
+        if c.is_file():
+            return c
+    return candidates[1]
+
+
+FIXTURE_PATH = _resolve_fixture_path()
 
 
 def _sample_scenario(

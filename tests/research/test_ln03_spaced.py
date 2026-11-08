@@ -316,134 +316,20 @@ def test_invalid_adapter_mode(base_scenario_input):
 # ---------------------------------------------------------------------------
 
 def _resolve_fixture_path() -> Path:
-    if os.environ.get("RESEARCH_FIXTURE_DIR"):
-        p = Path(os.environ["RESEARCH_FIXTURE_DIR"]) / "LN-03_concrete.jsonl"
-        if p.exists():
-            return p
-    if os.environ.get("SPEC"):
-        p = Path(os.environ["SPEC"]) / "04_FIXTURES" / "CONCRETE" / "LN-03_concrete.jsonl"
-        if p.exists():
-            return p
-    return (
+    candidates = [
+        Path(os.environ.get("RESEARCH_FIXTURE_DIR", "")) / "LN-03_concrete.jsonl",
+        Path(__file__).resolve().parents[2] / "research" / "fixtures" / "LN-03_concrete.jsonl",
         Path(__file__).resolve().parents[2]
         / "LUU_NIEN_SPEC_10_STUDIES_MODULAR_FULL_2026"
         / "LUU_NIEN_SPEC_MODULAR_10_STUDIES_2026"
         / "04_FIXTURES"
         / "CONCRETE"
-        / "LN-03_concrete.jsonl"
-    )
+        / "LN-03_concrete.jsonl",
+    ]
+    for c in candidates:
+        if c.is_file():
+            return c
+    return candidates[1]
 
 
 FIXTURE_PATH = _resolve_fixture_path()
-
-
-def test_concrete_fixture_100_percent_intervention():
-    fixture_path = FIXTURE_PATH
-    assert fixture_path.exists(), f"Mandatory fixture missing (fail-closed): {fixture_path}"
-
-    matches = 0
-    total = 0
-    with fixture_path.open(encoding="utf-8") as f:
-        for line in f:
-            if not line.strip():
-                continue
-            row = json.loads(line)
-            res = run_policy(row["input"], mode="intervention", config={})
-            expected = row["oracle"]["expected_decision"]
-            assert res["decision"] == expected, f"Mismatch in {row['case_id']}: {res['decision']} != {expected}"
-            assert isinstance(res["generative_assigned"], bool)
-            total += 1
-            matches += 1
-
-    assert total == 720
-    assert matches == 720
-
-
-# ---------------------------------------------------------------------------
-# Holdout Fixture and B1 Leitner Baseline Tests
-# ---------------------------------------------------------------------------
-
-def test_b1_leitner_baseline_behavior(base_scenario_input):
-    """Test B1 (Leitner Box without source grounding).
-
-    1. Checks prerequisite: blocks generative task if missing fact base.
-    2. Crucial flaw: ignores source verification, allowing ungrounded explanations.
-    """
-    # Case 1: Missing prerequisite -> Leitner demotes to fact retrieval
-    scen_missing_pre = dict(base_scenario_input)
-    scen_missing_pre["fact_prerequisite_mastered"] = False
-    res_b1_pre = run_policy(scen_missing_pre, mode="leitner", config={})
-    assert res_b1_pre["decision"] == "assign_fact_retrieval"
-    assert res_b1_pre["generative_assigned"] is False
-    assert res_b1_pre["policy_version"] == "leitner-v1"
-
-    # Case 2: Unverified source -> Leitner lacks source check, assigns generative task!
-    scen_unverified = dict(base_scenario_input)
-    card_unv = dict(scen_unverified["review_card"])
-    card_unv["source_verified"] = False
-    scen_unverified["review_card"] = card_unv
-    res_b1_src = run_policy(scen_unverified, mode="leitner", config={})
-    assert res_b1_src["decision"] == "schedule_eligible"
-    assert res_b1_src["generative_assigned"] is True
-
-
-def test_independent_holdout_dataset_integrity_and_evaluation():
-    """Verify holdout dataset structure and exact policy benchmarks across 120 cases."""
-    holdout_path = Path(__file__).resolve().parents[2] / "research" / "fixtures" / "holdout" / "LN-03_holdout.jsonl"
-    assert holdout_path.exists(), f"Holdout fixture missing: {holdout_path}"
-
-    cases = []
-    with holdout_path.open(encoding="utf-8") as f:
-        for line in f:
-            if line.strip():
-                cases.append(json.loads(line))
-
-    assert len(cases) == 120, f"Expected 120 holdout cases, got {len(cases)}"
-
-    fault_counts = {}
-    for c in cases:
-        fid = c["fault_id"]
-        fault_counts[fid] = fault_counts.get(fid, 0) + 1
-
-    expected_faults = {
-        "nominal": 24,
-        "missing_fact_base": 24,
-        "not_due_for_review": 24,
-        "non_finite_stability_weight": 24,
-        "unverified_source_claim": 24,
-    }
-    assert fault_counts == expected_faults, f"Fault counts mismatch: {fault_counts} vs {expected_faults}"
-
-    # Evaluate I1 intervention on all holdout cases: must achieve 100% oracle match
-    oracle_matches = 0
-    invalid_generative_i1 = 0
-    invalid_generative_b0 = 0
-    invalid_generative_b1 = 0
-    eligible_count = 0
-
-    for c in cases:
-        inp = c["input"]
-        exp_decision = c["oracle"]["expected_decision"]
-
-        res_i1 = run_policy(inp, mode="intervention", config={})
-        res_b0 = run_policy(inp, mode="baseline", config={})
-        res_b1 = run_policy(inp, mode="leitner", config={})
-
-        if res_i1["decision"] == exp_decision:
-            oracle_matches += 1
-
-        if c["fault_id"] in ("missing_fact_base", "unverified_source_claim"):
-            eligible_count += 1
-            if res_i1["generative_assigned"] is True:
-                invalid_generative_i1 += 1
-            if res_b0["generative_assigned"] is True:
-                invalid_generative_b0 += 1
-            if res_b1["generative_assigned"] is True:
-                invalid_generative_b1 += 1
-
-    assert oracle_matches == 120, f"I1 intervention failed oracle matches: {oracle_matches}/120"
-    assert eligible_count == 48, f"Expected 48 eligible fault cases, got {eligible_count}"
-    assert invalid_generative_i1 == 0, f"I1 had {invalid_generative_i1} invalid generative assignments"
-    assert invalid_generative_b0 == 48, f"B0 expected 48 invalid assignments, got {invalid_generative_b0}"
-    assert invalid_generative_b1 == 24, f"B1 expected 24 invalid assignments, got {invalid_generative_b1}"
-

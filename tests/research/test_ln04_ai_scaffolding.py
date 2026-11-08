@@ -27,16 +27,18 @@ from research.ai_scaffolding.hint_policy import evaluate_scaffolding_policy as h
 from research.integrations.ln04 import run_policy
 
 
-FIXTURE_PATH = (
-    Path(os.environ.get("RESEARCH_FIXTURE_DIR", "")) / "LN-04_concrete.jsonl"
-    if os.environ.get("RESEARCH_FIXTURE_DIR")
-    else Path(__file__).resolve().parents[2]
-    / "LUU_NIEN_SPEC_10_STUDIES_MODULAR_FULL_2026"
-    / "LUU_NIEN_SPEC_MODULAR_10_STUDIES_2026"
-    / "04_FIXTURES"
-    / "CONCRETE"
-    / "LN-04_concrete.jsonl"
-)
+def _resolve_fixture_path() -> Path:
+    candidates = [
+        Path(os.environ.get("RESEARCH_FIXTURE_DIR", "")) / "LN-04_concrete.jsonl",
+        Path(__file__).resolve().parents[2] / "research" / "fixtures" / "LN-04_concrete.jsonl",
+        Path(__file__).resolve().parents[2] / "LUU_NIEN_SPEC_10_STUDIES_MODULAR_FULL_2026" / "LUU_NIEN_SPEC_MODULAR_10_STUDIES_2026" / "04_FIXTURES" / "CONCRETE" / "LN-04_concrete.jsonl",
+    ]
+    for c in candidates:
+        if c.is_file():
+            return c
+    return candidates[1]
+
+FIXTURE_PATH = _resolve_fixture_path()
 
 
 def test_nominal_intervention():

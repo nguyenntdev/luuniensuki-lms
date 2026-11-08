@@ -11,6 +11,7 @@ Pedagogical Invariants:
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 import pytest
 
@@ -27,14 +28,24 @@ from research.spiral.progression_graph import (
 )
 
 
-FIXTURE_PATH = (
-    Path(__file__).resolve().parents[2]
-    / "LUU_NIEN_SPEC_10_STUDIES_MODULAR_FULL_2026"
-    / "LUU_NIEN_SPEC_MODULAR_10_STUDIES_2026"
-    / "04_FIXTURES"
-    / "CONCRETE"
-    / "LN-01_concrete.jsonl"
-)
+def _resolve_fixture_path() -> Path:
+    candidates = [
+        Path(os.environ.get("RESEARCH_FIXTURE_DIR", "")) / "LN-01_concrete.jsonl",
+        Path(__file__).resolve().parents[2] / "research" / "fixtures" / "LN-01_concrete.jsonl",
+        Path(__file__).resolve().parents[2]
+        / "LUU_NIEN_SPEC_10_STUDIES_MODULAR_FULL_2026"
+        / "LUU_NIEN_SPEC_MODULAR_10_STUDIES_2026"
+        / "04_FIXTURES"
+        / "CONCRETE"
+        / "LN-01_concrete.jsonl",
+    ]
+    for c in candidates:
+        if c.is_file():
+            return c
+    return candidates[1]
+
+
+FIXTURE_PATH = _resolve_fixture_path()
 
 
 def _sample_nominal_input():

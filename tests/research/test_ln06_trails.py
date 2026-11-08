@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Unit tests for Study LN-06: Cognitive Heritage Trails."""
 import json
+import os
 import sys
 from pathlib import Path
 import pytest
@@ -21,14 +22,24 @@ from research.heritage_trails.cognitive_route import (
 )
 from research.integrations.ln06 import run_policy
 
-FIXTURE_PATH = (
-    Path(__file__).resolve().parents[2]
-    / "LUU_NIEN_SPEC_10_STUDIES_MODULAR_FULL_2026"
-    / "LUU_NIEN_SPEC_MODULAR_10_STUDIES_2026"
-    / "04_FIXTURES"
-    / "CONCRETE"
-    / "LN-06_concrete.jsonl"
-)
+def _resolve_fixture_path() -> Path:
+    candidates = [
+        Path(os.environ.get("RESEARCH_FIXTURE_DIR", "")) / "LN-06_concrete.jsonl",
+        Path(__file__).resolve().parents[2] / "research" / "fixtures" / "LN-06_concrete.jsonl",
+        Path(__file__).resolve().parents[2]
+        / "LUU_NIEN_SPEC_10_STUDIES_MODULAR_FULL_2026"
+        / "LUU_NIEN_SPEC_MODULAR_10_STUDIES_2026"
+        / "04_FIXTURES"
+        / "CONCRETE"
+        / "LN-06_concrete.jsonl",
+    ]
+    for c in candidates:
+        if c.is_file():
+            return c
+    return candidates[1]
+
+
+FIXTURE_PATH = _resolve_fixture_path()
 
 
 @pytest.fixture
