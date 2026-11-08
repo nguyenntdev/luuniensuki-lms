@@ -1,0 +1,344 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "catalog_id": "GDPT_2018_HUE_HERITAGE_CURRICULUM_CATALOG",
+  "version": "1.0.0",
+  "curriculum_framework": "Chương trình Giáo dục Phổ thông 2018 (Thông tư 32/2018/TT-BGDĐT & Công văn 5512/BGDĐT-GDTrH)",
+  "local_curriculum_scope": "Giáo dục địa phương tỉnh Thừa Thiên Huế & Lịch sử - Địa lý cấp THCS/THPT",
+  "heritage_anchor_scope": "Quần thể Di tích Cố đô Huế & Di sản Tư liệu Cửu Đỉnh (Đại Nội Huế, 1802-1945)",
+  "core_competency_framework": {
+    "S1": {
+      "code": "S1_SPATIAL",
+      "name_vi": "Năng lực nhận thức và tư duy không gian lịch sử",
+      "name_en": "Spatial Reasoning Competency",
+      "focus": "Đọc bản đồ trực giao, giải mã trật tự trục Thần đạo Nam - Bắc, phân cấp thành quách và thứ bậc không gian cung đình Đại Nội."
+    },
+    "S2": {
+      "code": "S2_TEMPORAL",
+      "name_vi": "Năng lực nhận thức tiến trình thời gian và biến đổi lịch sử",
+      "name_en": "Temporal Reasoning Competency",
+      "focus": "Xác lập biên niên vương triều Nguyễn (1802-1945), đối sánh hiện trạng di tích với diện mạo khởi dựng, nhận diện tính liên tục và biến đổi."
+    },
+    "S3": {
+      "code": "S3_EVIDENCE",
+      "name_vi": "Năng lực khảo chứng và xử lý sử liệu di sản",
+      "name_en": "Historical Evidence & Source Criticism",
+      "focus": "Truy cứu chính sử (Đại Nam Thực Lục, Hội Điển Sự Lệ, Đại Nam Nhất Thống Chí), văn khắc Hán-Nôm trên bia đá, phù điêu đồng Cửu Đỉnh."
+    },
+    "S4": {
+      "code": "S4_ARGUMENT",
+      "name_vi": "Năng lực lập luận lịch sử và đánh giá ý nghĩa di sản",
+      "name_en": "Historical Argumentation & Significance",
+      "focus": "Đánh giá di sản vương triều, chủ quyền lãnh thổ biển đảo, trách nhiệm bảo tồn nguyên bản và nhận định có giới hạn bằng chứng (không suy đoán)."
+    }
+  },
+  "rubric_framework_standard": {
+    "scale": "0_to_3",
+    "levels": [
+      { "score": 0, "label_vi": "Chưa đạt", "descriptor": "Không nhận diện hoặc đưa ra thông tin sai lệch, không có căn cứ sử liệu." },
+      { "score": 1, "label_vi": "Nhận biết đơn lẻ", "descriptor": "Nêu được dữ kiện rời rạc, chưa kết nối logic không gian/thời gian hoặc chưa trích dẫn nguồn cụ thể." },
+      { "score": 2, "label_vi": "Thông hiểu & vận dụng", "descriptor": "Xác định đúng yếu tố, liên kết được hiện trạng với tư liệu chính sử có dẫn chứng số quyển/niên đại." },
+      { "score": 3, "label_vi": "Phân tích & phản biện sâu", "descriptor": "Lập luận sắc bén, đối chiếu đa nguồn, chỉ rõ ranh giới giữa điều chắc chắn và điều còn cần kiểm chứng." }
+    ]
+  },
+  "units": [
+    {
+      "unit_id": "UNIT_GRADE_07_HUE_01",
+      "grade": 7,
+      "subject": "Lịch sử & Địa lý 7 (Phân môn Lịch sử) & Giáo dục địa phương tỉnh Thừa Thiên Huế",
+      "title_vi": "Bài học lịch sử điền dã: Khám phá kiến trúc thành lũy và quy hoạch Kinh thành Huế thời Nguyễn",
+      "duration_minutes": 45,
+      "pedagogical_model": "Inquiry-based Learning (5512/BGDĐT-GDTrH: Khởi động - Khám phá - Luyện tập - Vận dụng)",
+      "competency_targets": {
+        "S1": "Định vị được 3 vòng thành (Kinh thành, Hoàng thành, Tử Cấm thành) trên lược đồ và xác định vị trí Kỳ Đài, sông Hương, núi Ngự Bình.",
+        "S2": "Nhận biết niên đại khởi dựng Kinh thành từ thời vua Gia Long (1805) và hoàn thiện kiên cố hóa dưới thời vua Minh Mạng (1832).",
+        "S3": "Đối chiếu đoạn chép trong Đại Nam Thực Lục (Đệ nhất kỷ) về việc huy động binh lính đắp đất và khảo sát tường gạch vồ thực tế.",
+        "S4": "Trình bày được vai trò phòng thủ và trung tâm quyền lực của Kinh thành, nhận thức được sự vất vả của quân dân trong xây dựng."
+      },
+      "relics_covered": [
+        { "slug": "kinh-thanh-hue", "name_vi": "Kinh thành Huế & Hệ thống pháo đài Vauban", "entity_type": "architectural_complex" },
+        { "slug": "ky-dai", "name_vi": "Kỳ Đài (Cột cờ Huế)", "entity_type": "monument" },
+        { "slug": "cua-ngo-mon", "name_vi": "Cửa Ngọ Môn (Hoàng thành)", "entity_type": "gate" }
+      ],
+      "primary_sources": [
+        {
+          "code": "ĐNTL-K1-Q26",
+          "title": "Đại Nam Thực Lục Chính Biên - Đệ nhất kỷ (Quyển 26)",
+          "excerpt_vi": "Ất Sửu, năm Gia Long thứ 4 [1805]... Định việc xây đắp Kinh thành: chu vi hơn 2.400 trượng, đắp bằng đất, mở 10 cửa..."
+        }
+      ],
+      "activities_5512": [
+        {
+          "step": 1,
+          "name_vi": "Khởi động: Nhận diện sông Hương - núi Ngự và bức thành Huế",
+          "time_minutes": 5,
+          "student_task": "Quan sát không ảnh trực giao, chỉ ra đường bao của hào nước và vị trí Cột cờ Kỳ Đài.",
+          "product": "Xác định đúng tọa độ Kỳ Đài hướng nhìn ra sông Hương."
+        },
+        {
+          "step": 2,
+          "name_vi": "Khám phá: Giải mã hệ thống phòng thủ 'Thành trong thành'",
+          "time_minutes": 15,
+          "student_task": "Làm việc theo nhóm 4 em: tô màu 3 vòng thành trên sơ đồ học tập và ghi chú kích thước chu vi.",
+          "product": "Lược đồ phân vùng 3 cấp thành lũy hoàn chỉnh."
+        },
+        {
+          "step": 3,
+          "name_vi": "Luyện tập: Đối chiếu sử liệu và hiện trạng gạch đá",
+          "time_minutes": 15,
+          "student_task": "Đọc trích đoạn ĐNTL Quyển 26 và ghi vào phiếu điền dã: Năm bắt đầu xây, vật liệu ban đầu (đất) và năm ốp gạch đá (Minh Mạng).",
+          "product": "Bảng so sánh niên đại và vật liệu qua hai triều vua Gia Long - Minh Mạng."
+        },
+        {
+          "step": 4,
+          "name_vi": "Vận dụng & Exit Ticket: Bảo vệ tường thành ngày nay",
+          "time_minutes": 10,
+          "student_task": "Viết câu trả lời 3 dòng: Vì sao chúng ta không được khắc vẽ lên tường thành và vai trò của hào bao bọc quanh thành?",
+          "product": "Phiếu Exit Ticket cá nhân nộp cuối giờ."
+        }
+      ],
+      "rubric_0_3": {
+        "S1": { "0": "Không chỉ được các vòng thành.", "1": "Chỉ ra được Hoàng thành nhưng nhầm lẫn ranh giới Kinh thành.", "2": "Định vị đúng 3 vòng thành và Kỳ Đài.", "3": "Phân tích được thế đất 'tả Thanh Long, hữu Bạch Hổ' (Cồn Hến, Cồn Dã Viên) gắn với sông Hương." },
+        "S2": { "0": "Nhầm lẫn năm xây dựng sang triều đại khác.", "1": "Nêu được năm 1805 nhưng không biết mốc hoàn thiện kiên cố hóa.", "2": "Nêu đúng hai giai đoạn: đắp đất (1805) và ốp gạch (thời Minh Mạng).", "3": "Giải thích rõ ý nghĩa tiến trình củng cố vương triều từ khởi đầu đến đỉnh cao hành chính." },
+        "S3": { "0": "Không sử dụng tư liệu được cung cấp.", "1": "Chỉ đọc lại câu chữ mà không hiểu nghĩa.", "2": "Trích dẫn đúng tên sách ĐNTL và số liệu chu vi Kinh thành.", "3": "Nhận xét được tính xác thực của sử liệu khi đối chiếu với hiện trạng khảo cổ gạch vồ." },
+        "S4": { "0": "Không đưa ra nhận định.", "1": "Nhận định chung chung.", "2": "Nêu được sự đóng góp to lớn của cư dân lao động trong việc đào hào đắp lũy.", "3": "Lập luận sâu sắc về bài học huy động sức dân và ý thức giữ gìn di sản kiến trúc quân sự cổ." }
+      },
+      "exit_ticket_prompt": "Dựa vào tư liệu bài học, em hãy nêu 1 chứng cứ chứng minh Kinh thành Huế vừa là trung tâm chính trị vừa là công trình quân sự phòng thủ kiên cố."
+    },
+    {
+      "unit_id": "UNIT_GRADE_08_HUE_02",
+      "grade": 8,
+      "subject": "Lịch sử & Địa lý 8 (Lịch sử Việt Nam thế kỷ XIX) & Giáo dục địa phương tỉnh Thừa Thiên Huế",
+      "title_vi": "Bài học khảo cứu di sản: Cửu Đỉnh và biểu tượng chủ quyền non sông thời Minh Mạng",
+      "duration_minutes": 45,
+      "pedagogical_model": "Inquiry-based Learning (5512/BGDĐT-GDTrH: Khởi động - Khám phá - Luyện tập - Vận dụng)",
+      "competency_targets": {
+        "S1": "Xác định được vị trí đặt Cửu Đỉnh trước sân Thế Miếu và vị trí của các ngọn núi, dòng sông, vùng biển (Biển Đông, Nam Hải, Tây Hải) khắc trên 9 đỉnh.",
+        "S2": "Nắm vững mốc thời gian đúc Cửu Đỉnh (khởi công mùa đông năm 1835, hoàn thành năm 1837) dưới triều vua Minh Mạng.",
+        "S3": "Đọc và giải nghĩa bản dập Hán-Nôm hoa văn bản đúc nổi; đối chiếu với Khâm Định Đại Nam Hội Điển Sự Lệ (Quyển 160).",
+        "S4": "Lập luận khẳng định Cửu Đỉnh là bộ 'Địa dư chí bằng đồng' thể hiện ý chí thống nhất non sông và chủ quyền biển đảo thiêng liêng của Việt Nam."
+      },
+      "relics_covered": [
+        { "slug": "cao-dinh", "name_vi": "Cao Đỉnh (Đỉnh đỉnh tối cao, tượng trưng vua Gia Long)", "entity_type": "urn" },
+        { "slug": "motif-dong-hai-cao-dinh", "name_vi": "Hoa văn Đông Hải (Biển Đông) khắc trên Cao Đỉnh", "entity_type": "motif" },
+        { "slug": "nhan-dinh", "name_vi": "Nhân Đỉnh (Tượng trưng vua Minh Mạng - khắc Nam Hải)", "entity_type": "urn" }
+      ],
+      "primary_sources": [
+        {
+          "code": "ĐNTL-K2-Q162",
+          "title": "Đại Nam Thực Lục Chính Biên - Đệ nhị kỷ (Quyển 162)",
+          "excerpt_vi": "Ất Mùi, năm Minh Mạng thứ 16 [1835] mùa đông tháng 10... Đúc chín đỉnh... khắc các hình sông, núi, biển, đảo, chim muông, cây cỏ của nước ta vào đỉnh..."
+        },
+        {
+          "code": "HDLS-Q160",
+          "title": "Khâm Định Đại Nam Hội Điển Sự Lệ (Quyển 160 - Công bộ)",
+          "excerpt_vi": "Đúc chín đỉnh đặt ở sân trước Thế Miếu: Đỉnh giữa là Cao Đỉnh, bên tả thứ nhất là Nhân Đỉnh, bên hữu thứ nhất là Chương Đỉnh..."
+        }
+      ],
+      "activities_5512": [
+        {
+          "step": 1,
+          "name_vi": "Khởi động: Bí ẩn 153 hình tượng khắc trên 9 chiếc đỉnh đồng",
+          "time_minutes": 5,
+          "student_task": "Quan sát hình chụp Cao Đỉnh và trả lời: Em nhận ra hình ảnh thiên nhiên hoặc địa danh nào trên thân đỉnh?",
+          "product": "Phát hiện chữ Hán 'Đông Hải' (東海) và hình tượng sóng nước biển Đông."
+        },
+        {
+          "step": 2,
+          "name_vi": "Khám phá: Giải mã trật tự sắp đặt Cửu Đỉnh trước Thế Miếu",
+          "time_minutes": 15,
+          "student_task": "Học sinh sử dụng sơ đồ sân Thế Miếu: điền tên 9 chiếc đỉnh theo thứ tự Tả - Hữu và phân tích vì sao Cao Đỉnh được đặt nhích lên phía trước ở chính giữa.",
+          "product": "Sơ đồ bố trí 9 đỉnh chuẩn xác theo nguyên tắc Tả Chiêu Hữu Mục."
+        },
+        {
+          "step": 3,
+          "name_vi": "Luyện tập: Truy chứng sử liệu biển đảo trên Cửu Đỉnh",
+          "time_minutes": 15,
+          "student_task": "Đối chiếu bản dập hoa văn Đông Hải (Cao Đỉnh), Nam Hải (Nhân Đỉnh), Tây Hải (Chương Đỉnh) với ghi chép Hội Điển Sự Lệ. Hoàn thành bảng phân loại danh thắng.",
+          "product": "Bảng tổng hợp chứng cứ lịch sử về 3 vùng biển thiêng liêng khắc trên 3 đỉnh lớn nhất."
+        },
+        {
+          "step": 4,
+          "name_vi": "Vận dụng & Exit Ticket: Giá trị Di sản Tư liệu Ký ức Thế giới",
+          "time_minutes": 10,
+          "student_task": "Viết đoạn văn 4-5 câu: Vì sao Cửu Đỉnh Huế được UNESCO ghi danh là Di sản Tư liệu khu vực châu Á - Thái Bình Dương năm 2024?",
+          "product": "Bài Exit Ticket nộp trên hệ thống hoặc phiếu in."
+        }
+      ],
+      "rubric_0_3": {
+        "S1": { "0": "Không nhận diện được vị trí Cửu Đỉnh.", "1": "Chỉ ra được Cửu Đỉnh nằm ở Đại Nội nhưng không rõ sân Thế Miếu.", "2": "Xác định đúng vị trí sân Thế Miếu và thứ tự Tả Hữu của 9 đỉnh.", "3": "Phân tích sâu sắc trục không gian kết nối Hiển Lâm Các - Cửu Đỉnh - Thế Miếu." },
+        "S2": { "0": "Không rõ năm đúc Cửu Đỉnh.", "1": "Nhớ khoảng thế kỷ XIX nhưng sai niên hiệu.", "2": "Nêu đúng thời điểm đúc (1835-1837) triều Minh Mạng.", "3": "Đặt sự kiện đúc Cửu Đỉnh trong bối cảnh cải cách hành chính và xác lập chủ quyền toàn diện của vua Minh Mạng." },
+        "S3": { "0": "Không đọc được thông tin trên bản dập.", "1": "Nhận biết được chữ Đông Hải nhưng không đối chiếu được sử liệu.", "2": "Khai thác tốt đoạn trích ĐNTL và Hội Điển Sự Lệ để xác thực danh sách hoa văn.", "3": "Khảo chứng thành thạo chữ Hán bản khắc, niên đại và độ nguyên bản độc bản của bảo vật quốc gia." },
+        "S4": { "0": "Kết luận thiếu căn cứ.", "1": "Khẳng định có giá trị nhưng lý lẽ sơ sài.", "2": "Lập luận được Cửu Đỉnh là biểu tượng khẳng định chủ quyền cương vực lãnh thổ và biển đảo.", "3": "Lập luận xuất sắc về giá trị bách khoa thư bằng đồng, tính chân xác lịch sử và trách nhiệm bảo tồn di sản tư liệu thế giới." }
+      },
+      "exit_ticket_prompt": "Dựa vào tư liệu chữ khắc trên Cao Đỉnh và Nhân Đỉnh, em hãy chỉ ra 2 chứng cứ cụ thể khẳng định triều Nguyễn đã khắc ghi chủ quyền biển đảo vào bảo vật quốc gia."
+    },
+    {
+      "unit_id": "UNIT_GRADE_10_HUE_03",
+      "grade": 10,
+      "subject": "Lịch sử 10 (Chuyên đề 10.2: Bảo tồn và phát huy giá trị di sản văn hóa) & Giáo dục địa phương 10",
+      "title_vi": "Bài học nghiên cứu lịch sử: Trục thần đạo Đại Nội và tổ chức không gian vương quyền triều Nguyễn",
+      "duration_minutes": 45,
+      "pedagogical_model": "Inquiry-based Learning (5512/BGDĐT-GDTrH: Khởi động - Khám phá - Luyện tập - Vận dụng)",
+      "competency_targets": {
+        "S1": "Phân tích cấu trúc trực giao và mối liên hệ không gian giữa trục nghi lễ (Ngọ Môn - Điện Thái Hòa), trục thờ tự (Thế Miếu) và cung điện sinh hoạt (Cung Diên Thọ).",
+        "S2": "Theo dõi tiến trình lịch sử: từ quy hoạch ban đầu của Gia Long (1804), chuẩn hóa quy chế thời Minh Mạng (1833), sự tàn phá của chiến tranh (1947, 1968) đến trùng tu đương đại.",
+        "S3": "Phân tích so sánh Châu bản triều Nguyễn, bản dịch Đại Nam Thực Lục Chính Biên (Đệ nhị kỷ, Q.98) và báo cáo hạ giải trùng tu khảo cổ Điện Thái Hòa (2021-2024).",
+        "S4": "Xây dựng lập luận khoa học về tính nguyên bản (authenticity) và tính toàn vẹn (integrity) của quần thể di tích cố đô Huế theo chuẩn UNESCO."
+      },
+      "relics_covered": [
+        { "slug": "dien-thai-hoa", "name_vi": "Điện Thái Hòa & Sân Đại Triều Nghi", "entity_type": "palace" },
+        { "slug": "ngo-mon", "name_vi": "Ngọ Môn & Cầu Trung Đạo", "entity_type": "gate_bridge" },
+        { "slug": "the-mieu", "name_vi": "Tổ hợp Thế Miếu & Hiển Lâm Các", "entity_type": "ancestral_temple" }
+      ],
+      "primary_sources": [
+        {
+          "code": "ĐNTL-K2-Q98",
+          "title": "Đại Nam Thực Lục Chính Biên - Đệ nhị kỷ (Quyển 98)",
+          "excerpt_vi": "Quý Tỵ, năm Minh Mạng thứ 14 [1833]... Dời Điện Thái Hòa về phía nam, quy hoạch lại sân Đại Triều, dựng Ngọ Môn lầu Ngũ Phụng trổ 5 cửa, phân chia đường đi cho hoàng đế và quan lại..."
+        },
+        {
+          "code": "HDLS-Q65",
+          "title": "Khâm Định Đại Nam Hội Điển Sự Lệ (Quyển 65 - Lễ Triều nghi)",
+          "excerpt_vi": "Vào ngày thiết đại triều: quan từ tứ phẩm trở lên đứng tầng sân trên, quan ngũ phẩm xuống đến cửu phẩm đứng tầng sân dưới..."
+        }
+      ],
+      "activities_5512": [
+        {
+          "step": 1,
+          "name_vi": "Khởi động: Câu hỏi kiến trúc trục Thần đạo",
+          "time_minutes": 5,
+          "student_task": "Quan sát bản đồ không ảnh: Tại sao đứng từ giữa cửa Ngọ Môn có thể nhìn thẳng xuyên qua cầu Trung Đạo tới ngai vàng trong Điện Thái Hòa?",
+          "product": "Phát biểu giả thuyết về ý niệm trục quyền lực trung tâm của thiên tử."
+        },
+        {
+          "step": 2,
+          "name_vi": "Khám phá không gian: Giải mã 4 phân khu chức năng",
+          "time_minutes": 15,
+          "student_task": "Nhóm 1 khảo sát Trục nghi lễ; Nhóm 2 khảo sát Khu thờ tự Thế Miếu; Nhóm 3 khảo sát Tử Cấm thành; Nhóm 4 khảo sát Cung Diên Thọ. Ghi chép cột 1 & 2 phiếu điền dã.",
+          "product": "Bảng dữ liệu mô tả hiện trạng kiến trúc và quan hệ phân tầng không gian."
+        },
+        {
+          "step": 3,
+          "name_vi": "Luyện tập: Phê bình sử liệu và đối chiếu thực địa",
+          "time_minutes": 15,
+          "student_task": "Đối chiếu quy chế phẩm sơn trên sân Đại Triều (Hội Điển Sự Lệ) và sự kiện dời điện năm 1833 (ĐNTL Q.98). Phân biệt ranh giới: 'Điều biết chắc chắn' vs 'Điều suy đoán cần kiểm chứng'.",
+          "product": "Phần lập luận chứng cứ hoàn chỉnh ở cột 3 & 4 của phiếu điền dã."
+        },
+        {
+          "step": 4,
+          "name_vi": "Vận dụng & Exit Ticket: Bảo tồn sự chân xác lịch sử",
+          "time_minutes": 10,
+          "student_task": "Hoàn thành Exit Ticket: Trong công tác hạ giải trùng tu Điện Thái Hòa (2021-2024), căn cứ sử liệu nào bắt buộc các nhà bảo tồn phải tuân thủ để không làm sai lệch di tích?",
+          "product": "Bài thu hoạch cá nhân theo Rubric 0-3 điểm."
+        }
+      ],
+      "rubric_0_3": {
+        "S1": { "0": "Không mô tả được trục thần đạo.", "1": "Nhận ra trục Bắc - Nam nhưng chưa nêu được tính đăng đối.", "2": "Phân tích được trật tự không gian hai bên tả hữu và phân tầng sân Đại Triều.", "3": "Luận giải uyên bác triết lý dịch lý, phong thủy và trật tự vương quyền thể hiện qua đồ án quy hoạch Đại Nội." },
+        "S2": { "0": "Nhầm lẫn năm 1805 và 1833.", "1": "Chỉ nhớ thời vua Minh Mạng có sửa chữa.", "2": "Trình bày rõ mốc đại quy hoạch năm 1833 và biến cố chiến tranh thế kỷ XX.", "3": "Đối chiếu sắc sảo giữa diện mạo nguyên bản, biến thiên qua các thời kỳ và tiêu chuẩn trùng tu khoa học hiện đại." },
+        "S3": { "0": "Không trích dẫn được chính sử.", "1": "Dẫn sai số quyển hoặc nội dung chung chung.", "2": "Trích dẫn chuẩn xác văn bản ĐNTL Q.98 và Hội Điển Q.65 kèm nội dung minh chứng.", "3": "Phê phán và đánh giá độ tin cậy của các nguồn sử liệu (Châu bản, Thực lục, khảo cổ học thực địa)." },
+        "S4": { "0": "Lập luận võ đoán không có chứng cứ.", "1": "Nhận định còn lẫn lộn giữa cảm xúc và sự thật khoa học.", "2": "Phân định minh bạch điều đã được chứng minh qua văn bản sử liệu và điều cần kiểm chứng thêm.", "3": "Lập luận độc lập, thuyết phục về nguyên tắc bảo tồn nguyên vẹn tính chân xác của di sản kiến trúc gỗ cung đình." }
+      },
+      "exit_ticket_prompt": "Dựa vào Hội Điển Sự Lệ và thực tế sân Đại Triều Nghi, hãy giải thích cơ sở phân tầng hai cấp sân và ý nghĩa của các bia phẩm sơn đối với việc vận hành nghi lễ triều đình."
+    },
+    {
+      "unit_id": "UNIT_GRADE_11_HUE_04",
+      "grade": 11,
+      "subject": "Lịch sử 11 (Chủ đề: Cuộc cải cách của Minh Mạng & Di sản văn hóa Thừa Thiên Huế) & Giáo dục địa phương 11",
+      "title_vi": "Bài học hội thảo lịch sử: Văn khắc Hán-Nôm và cải cách thể chế triều Minh Mạng qua di sản Cố đô",
+      "duration_minutes": 45,
+      "pedagogical_model": "Inquiry-based Learning (5512/BGDĐT-GDTrH: Khởi động - Khám phá - Luyện tập - Vận dụng)",
+      "competency_targets": {
+        "S1": "Khảo sát không gian phân bố của hệ thống thơ văn chữ Hán trên kiến trúc cung đình Huế (kiểu thức 'nhất thi nhất họa') tại Điện Thái Hòa, Thế Miếu, Ngọ Môn.",
+        "S2": "Đặt di sản văn khắc trong tiến trình cải cách hành chính đỉnh cao (1831-1832) và củng cố thể chế quân chủ trung ương tập quyền của vua Minh Mạng.",
+        "S3": "Dịch nghĩa và khảo chứng văn bản thơ ngự chế trên ô hộc gỗ; đối chiếu với Minh Mạng Chính Yếu và Đại Nam Thực Lục.",
+        "S4": "Đánh giá vai trò của hệ thống văn khắc như một tuyên ngôn độc lập, tự cường dân tộc, quản trị quốc gia và phân tích bài học cho công cuộc xây dựng nhà nước pháp quyền hiện nay."
+      },
+      "relics_covered": [
+        { "slug": "tho-van-dien-thai-hoa", "name_vi": "Hệ thống thơ văn chữ Hán trên kiến trúc cung đình Huế", "entity_type": "inscription_documentary_heritage" },
+        { "slug": "van-khac-hien-lam-cac", "name_vi": "Văn bia và biển ngạch tại Hiển Lâm Các - Thế Miếu", "entity_type": "inscriptions_stele" },
+        { "slug": "chu-dinh-minh-mang", "name_vi": "Hệ thống chữ Hán danh xưng khắc trên Cửu Đỉnh", "entity_type": "bronze_epigraphy" }
+      ],
+      "primary_sources": [
+        {
+          "code": "MMCY-Q1",
+          "title": "Minh Mạng Chính Yếu (Quyển 1 - Trị thể)",
+          "excerpt_vi": "Lời vua dụ: 'Trị nước trước hết phải chăm lo lễ nhạc pháp độ, định danh phận, rõ cõi bờ... Văn hiến nước Nam ta cùng với phương Bắc cùng đứng vững...'"
+        },
+        {
+          "code": "ĐNTL-K2-Q178",
+          "title": "Đại Nam Thực Lục Chính Biên - Đệ nhị kỷ (Quyển 178)",
+          "excerpt_vi": "Đinh Dậu, năm Minh Mạng thứ 18 [1837]... Đúc xong 9 đỉnh khánh thành... ban chiếu ghi rõ danh mục các ngọn núi, con sông, biển lớn để con cháu muôn đời biết cương giới nước nhà..."
+        }
+      ],
+      "activities_5512": [
+        {
+          "step": 1,
+          "name_vi": "Khởi động: Giải mã bức hoành phi 'Thái Hòa Điện' và bài thơ ngự chế",
+          "time_minutes": 5,
+          "student_task": "Quan sát hình ảnh ô hộc thơ chữ Hán thếp vàng trên bờ nóc và liên môn Điện Thái Hòa. Đọc câu thơ: 'Nước lớn nghìn năm mở cõi / Văn hiến muôn thuở rạng ngời'.",
+          "product": "Xác định chủ đề tự hào văn hiến dân tộc trong thơ văn cung đình."
+        },
+        {
+          "step": 2,
+          "name_vi": "Khám phá: Khảo sát hình thức 'Nhất thi nhất họa' độc bản",
+          "time_minutes": 15,
+          "student_task": "Hoạt động chuyên gia: 4 nhóm phân tích 4 chủ đề thơ văn trên công trình: (1) Ca ngợi cảnh thái bình thịnh trị, (2) Khẳng định độc lập chủ quyền, (3) Răn dạy đạo đức trị quốc, (4) Miêu tả danh thắng non sông.",
+          "product": "Bản báo cáo trích đoạn chữ Hán và bản dịch nghĩa của nhóm."
+        },
+        {
+          "step": 3,
+          "name_vi": "Luyện tập: Đối chiếu văn khắc với cải cách thể chế Minh Mạng",
+          "time_minutes": 15,
+          "student_task": "Đối chiếu nội dung thơ văn với các sắc lệnh cải cách hành chính (chia đặt các tỉnh 1831-1832, thành lập Cơ Mật Viện, Nội Các). Trả lời: Văn khắc phản ánh tư tưởng chính trị gì của nhà vua?",
+          "product": "Sơ đồ liên kết giữa biểu tượng nghệ thuật trang trí và tư tưởng cai trị nhà nước tập quyền."
+        },
+        {
+          "step": 4,
+          "name_vi": "Vận dụng & Exit Ticket: Trách nhiệm với Di sản Ký ức Thế giới",
+          "time_minutes": 10,
+          "student_task": "Viết đoạn văn 6-8 dòng trên Exit Ticket: Tại sao hệ thống Thơ văn trên kiến trúc cung đình Huế lại được UNESCO công nhận là Di sản Tư liệu Ký ức Thế giới? Cần làm gì để bảo tồn lớp chữ sơn thếp vàng đang bị xuống cấp do khí hậu ẩm ướt của Huế?",
+          "product": "Bài Exit Ticket nộp trên LMS."
+        }
+      ],
+      "rubric_0_3": {
+        "S1": { "0": "Không nhận biết được vị trí các ô thơ.", "1": "Chỉ thấy chữ trang trí nhưng không biết cách sắp xếp xen kẽ tranh vẽ.", "2": "Xác định đúng hình thức phân bố 'nhất thi nhất họa' trên các cấu kiện gỗ.", "3": "Phân tích không gian thị giác cung đình: sự hòa quyện giữa chữ Hán thư pháp, sơn thếp và kiến trúc gỗ hoàng gia." },
+        "S2": { "0": "Không nắm được mốc thời gian thời Minh Mạng.", "1": "Nhớ triều Nguyễn chung chung.", "2": "Gắn kết chính xác thời kỳ hoàng kim thơ văn với giai đoạn cải cách Minh Mạng thập niên 1830.", "3": "Làm rõ tính tiếp nối tư tưởng độc lập từ thời Lý - Trần - Lê đến sự thăng hoa của văn hóa bác học thời Nguyễn." },
+        "S3": { "0": "Không trích dẫn được câu thơ hoặc sử liệu.", "1": "Trích dịch thiếu chính xác.", "2": "Khai thác tốt bản dịch bài thơ, dẫn đúng xuất xứ Minh Mạng Chính Yếu và ĐNTL.", "3": "Phân tích sâu sắc từ ngữ Hán-Nôm (từ khóa: văn hiến, thanh danh, cương vực) và chỉ ra giá trị chứng cứ gốc của hiện vật tại chỗ (in-situ)." },
+        "S4": { "0": "Nhận xét cảm tính, thiếu lập luận khoa học.", "1": "Đánh giá đơn giản là thơ đẹp.", "2": "Lập luận được giá trị tư tưởng tự chủ và thông điệp răn dạy đạo đức của bậc trị quốc.", "3": "Lập luận sắc bén về tầm vóc di sản nhân loại, liên hệ thực tiễn về thách thức bảo tồn vật liệu hữu cơ trong điều kiện biến đổi khí hậu." }
+      },
+      "exit_ticket_prompt": "Hãy phân tích ngắn gọn ý nghĩa của câu thơ ngự chế tại Điện Thái Hòa khẳng định nền văn hiến và chủ quyền dân tộc, đối chiếu với tư tưởng quản trị đất nước của vua Minh Mạng."
+    }
+  ],
+  "field_study_worksheet_template": {
+    "template_id": "WS_HUE_5512_FIELD_STUDY",
+    "header": {
+      "school_name": "TRƯỜNG THPT / THCS....................................................",
+      "subject": "LỊCH SỬ & ĐỊA LÝ / GIÁO DỤC ĐỊA PHƯƠNG TỈNH THỪA THIÊN HUẾ",
+      "worksheet_title": "PHIẾU HỌC TẬP KHẢO CỨU DI SẢN ĐẠI NỘI HUẾ (THEO CÔNG VĂN 5512)",
+      "student_info": "Họ và tên: ....................................... Lớp: ............. Nhóm: .......... Ngày khảo sát: ...../...../202..."
+    },
+    "structure_4_columns": [
+      {
+        "col_idx": 1,
+        "title_vi": "CỘT 1: TRẠM KHẢO SÁT & VỊ TRÍ",
+        "description_vi": "Ghi tên công trình, trạm điền dã, phân khu chức năng (Nghi lễ / Thờ tự / Tử Cấm thành / Sinh hoạt) và phương vị trên bản đồ Đại Nội."
+      },
+      {
+        "col_idx": 2,
+        "title_vi": "CỘT 2: HIỆN TRẠNG MẮT THẤY (QUAN SÁT THỰC ĐỊA / BẢN ĐỒ SỐ)",
+        "description_vi": "Mô tả chi tiết: hình dáng, vật liệu chính (gỗ lim, đá thanh, gạch vồ, đồng), số tầng nền, hoa văn trang trí hoặc chữ Hán quan sát được."
+      },
+      {
+        "col_idx": 3,
+        "title_vi": "CỘT 3: TƯ LIỆU ĐỐI CHIẾU (CHÍNH SỬ & BIA KÝ)",
+        "description_vi": "Trích dẫn bằng chứng: Tên tài liệu (ĐNTL, Hội Điển Sự Lệ, bia đá...), số tập, số quyển, niên đại hoặc câu trích nguyên văn."
+      },
+      {
+        "col_idx": 4,
+        "title_vi": "CỘT 4: EM KẾT LUẬN GÌ? (RANH GIỚI BẰNG CHỨNG)",
+        "description_vi": "Ghi rõ 2 phần: (A) Điều em khẳng định chắc chắn dựa trên chứng cứ sử liệu; (B) Điều còn cần kiểm chứng hoặc giả thuyết cần nghiên cứu thêm."
+      }
+    ],
+    "verification_rule": "Quy tắc đạo đức học thuật: Tuyệt đối không suy đoán tùy tiện không có bằng chứng; tôn trọng sự chân xác và tính nguyên bản của di sản."
+  }
+}

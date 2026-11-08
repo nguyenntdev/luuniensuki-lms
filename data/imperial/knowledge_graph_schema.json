@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://histolab.icu/schemas/imperial-city-knowledge-graph.json",
+  "title": "Hue Imperial City Relational Knowledge Graph Schema",
+  "description": "Formal schema for nodes, edges, relational predicates, and primary source grounding across the Imperial City of Huế (Hoàng Thành & Tử Cấm Thành).",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "authority",
+    "content_scope",
+    "title",
+    "ontology",
+    "nodes",
+    "edges"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "authority": {
+      "type": "string"
+    },
+    "content_scope": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "ontology": {
+      "type": "object",
+      "required": ["node_types", "predicates"],
+      "properties": {
+        "node_types": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "zone",
+              "monument",
+              "historical_era",
+              "artifact",
+              "source",
+              "craft_guild"
+            ]
+          }
+        },
+        "predicates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["predicate", "category", "description_vi", "description_en"],
+            "properties": {
+              "predicate": {
+                "type": "string",
+                "enum": [
+                  "contains",
+                  "leads_to",
+                  "oriented_to",
+                  "ceremonial_axis",
+                  "ancestral_veneration",
+                  "architectural_twin",
+                  "reconstructed_with",
+                  "associated_craft",
+                  "source_grounded_by"
+                ]
+              },
+              "category": { "type": "string" },
+              "domain": { "type": "array", "items": { "type": "string" } },
+              "range": { "type": "array", "items": { "type": "string" } },
+              "description_vi": { "type": "string" },
+              "description_en": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "nodes": {
+      "type": "array",
+      "minItems": 35,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "slug",
+          "entity_type",
+          "name_vi",
+          "name_en",
+          "short_description_vi",
+          "short_description_en"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "slug": { "type": "string" },
+          "entity_type": {
+            "type": "string",
+            "enum": [
+              "zone",
+              "monument",
+              "historical_era",
+              "artifact",
+              "source",
+              "craft_guild"
+            ]
+          },
+          "name_vi": { "type": "string" },
+          "name_en": { "type": "string" },
+          "name_han_nom": { "type": ["string", "null"] },
+          "short_description_vi": { "type": "string" },
+          "short_description_en": { "type": "string" },
+          "attributes": { "type": "object" }
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "minItems": 40,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "source",
+          "target",
+          "predicate",
+          "predicate_category",
+          "epistemic_certainty",
+          "description_vi",
+          "description_en"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "source": { "type": "string" },
+          "target": { "type": "string" },
+          "predicate": {
+            "type": "string",
+            "enum": [
+              "contains",
+              "leads_to",
+              "oriented_to",
+              "ceremonial_axis",
+              "ancestral_veneration",
+              "architectural_twin",
+              "reconstructed_with",
+              "associated_craft",
+              "source_grounded_by"
+            ]
+          },
+          "predicate_category": { "type": "string" },
+          "epistemic_certainty": {
+            "type": "string",
+            "enum": ["high", "medium", "disputed"]
+          },
+          "source_grounding": {
+            "type": ["object", "null"],
+            "properties": {
+              "source_id": { "type": "string" },
+              "locator": { "type": "string" },
+              "claim_summary": { "type": "string" }
+            }
+          },
+          "description_vi": { "type": "string" },
+          "description_en": { "type": "string" }
+        }
+      }
+    },
+    "stats": {
+      "type": "object"
+    }
+  }
+}

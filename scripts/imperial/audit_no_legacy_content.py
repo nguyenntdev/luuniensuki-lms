@@ -96,6 +96,8 @@ EXCLUDED_SUBSTRINGS: tuple[str, ...] = (
     "components/imperial/print",
     "components/imperial/ar",
     "dai-noi/hoc-tap",
+    "curriculum_units_gdpt2018_hue.json",
+    "imperial_city_knowledge_graph.json",
 )
 
 

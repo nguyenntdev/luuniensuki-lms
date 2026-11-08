@@ -12,10 +12,14 @@ import {
   Table as TableIcon,
   Map as MapIcon,
   ArrowRight,
+  Compass,
+  Globe,
+  Sparkles,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { setPageMeta } from "@/lib/seo";
+import { ImperialGoogleMapView } from "@/components/imperial/map/ImperialGoogleMapView";
 
 interface MapItem {
   entity_id: string;
@@ -159,6 +163,9 @@ export default function MapPage() {
   const [entityType, setEntityType] = useState<string>("");
   const [showList, setShowList] = useState(true);
   const [viewMode, setViewMode] = useState<"map" | "table">(isListViewParam ? "table" : "map");
+  const [mapScope, setMapScope] = useState<"dai-noi" | "national">(
+    searchParams?.get("scope") === "national" ? "national" : "dai-noi"
+  );
 
   useEffect(() => {
     if (isListViewParam) {
@@ -223,12 +230,69 @@ export default function MapPage() {
           Bản đồ di sản
         </h1>
         <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-          Địa lý được khắc họa trên Cửu Đỉnh và các thực thể lịch sử có liên
-          quan. {unmappedNote}
+          Địa lý được khắc họa trên Cửu Đỉnh và không gian kiến trúc trung tâm Quần thể Di tích Cố đô Huế.
         </p>
       </header>
 
-      <div className="mb-4 flex flex-wrap items-center gap-3">
+      {/* Scope Switcher Banner: Đại Nội Huế vs Toàn Quốc */}
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-gradient-to-r from-amber-500/10 via-primary/5 to-transparent border border-amber-500/30 shadow-sm">
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
+          <span className="text-xs font-semibold text-foreground">
+            Phạm vi không gian:
+          </span>
+        </div>
+        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-secondary/80 border border-border">
+          <button
+            type="button"
+            onClick={() => setMapScope("dai-noi")}
+            className={cn(
+              "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5",
+              mapScope === "dai-noi"
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <Globe className="w-3.5 h-3.5" />
+            <span>Đại Nội Huế (Google Vệ tinh)</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setMapScope("national")}
+            className={cn(
+              "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5",
+              mapScope === "national"
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <Compass className="w-3.5 h-3.5" />
+            <span>Toàn quốc & Cửu Đỉnh</span>
+          </button>
+        </div>
+      </div>
+
+      {mapScope === "dai-noi" ? (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-xs text-muted-foreground">
+              Bản đồ vệ tinh Google Maps và định vị geodetic WGS84 cho 16 di tích trọng điểm Đại Nội Huế.
+            </p>
+            <Link
+              href="/dai-noi/map"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+            >
+              <span>Xem toàn màn hình</span>
+              <ArrowRight className="h-3 w-3" />
+            </Link>
+          </div>
+          <div className="h-[520px] md:h-[640px] w-full rounded-2xl overflow-hidden border border-border shadow-xl bg-stone-950">
+            <ImperialGoogleMapView className="w-full h-full" />
+          </div>
+        </div>
+      ) : (
+        <>
+          <div className="mb-4 flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-2">
           <label className="text-xs font-semibold text-muted-foreground" htmlFor="map-type">
             Loại thực thể:
@@ -453,6 +517,8 @@ export default function MapPage() {
           </dl>
         </div>
       ) : null}
+      </>
+      )}
 
       <p className="mt-6 text-xs leading-relaxed text-muted-foreground">
         Bản đồ không áp ranh giới hành chính lịch sử chính xác nếu chưa có

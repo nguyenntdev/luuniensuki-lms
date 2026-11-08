@@ -44,7 +44,10 @@
       "zone_slug": "central-ceremonial-axis",
       "name_vi": "Ngọ Môn",
       "name_en": "Meridian Gate",
-      "alternative_names": ["Cửa Ngọ Môn", "Lầu Ngũ Phụng"],
+      "alternative_names": [
+        "Cửa Ngọ Môn",
+        "Lầu Ngũ Phụng"
+      ],
       "learning_level": "L2_LEARNING_READY",
       "condition": "extant",
       "condition_description_vi": "Còn nguyên vẹn qua các đợt đại trùng tu (1990 - 2021)",
@@ -82,7 +85,13 @@
         "S3_evidence": "Trích dẫn được đoạn chép trong Đại Nam Thực Lục về quy chế 5 cửa ra vào và chức năng lầu Ngũ Phụng.",
         "S4_argument": "Lập luận thuyết phục về vai trò biểu tượng vương quyền gắn liền với công năng thực tế của cổng nghi môn hoàng gia."
       },
-      "published": true
+      "published": true,
+      "gps_coordinates": {
+        "crs": "EPSG:4326 (WGS84)",
+        "latitude": 16.4678,
+        "longitude": 107.5786,
+        "google_maps_url": "https://www.google.com/maps/search/?api=1&query=16.4678,107.5786"
+      }
     },
     {
       "id": "site-cau-trung-dao",
@@ -90,7 +99,9 @@
       "zone_slug": "central-ceremonial-axis",
       "name_vi": "Cầu Trung Đạo",
       "name_en": "Trung Dao Bridge",
-      "alternative_names": ["Cầu bắc qua hồ Thái Dịch"],
+      "alternative_names": [
+        "Cầu bắc qua hồ Thái Dịch"
+      ],
       "learning_level": "L1_DOCUMENTED",
       "condition": "extant",
       "condition_description_vi": "Bắc qua hồ Thái Dịch, đã trùng tu phục hồi lan can đá cẩm thạch",
@@ -107,7 +118,13 @@
           "reliability_level": "verified_primary_source"
         }
       ],
-      "published": true
+      "published": true,
+      "gps_coordinates": {
+        "crs": "EPSG:4326 (WGS84)",
+        "latitude": 16.4688,
+        "longitude": 107.5786,
+        "google_maps_url": "https://www.google.com/maps/search/?api=1&query=16.4688,107.5786"
+      }
     },
     {
       "id": "site-san-dai-trieu-nghi",
@@ -115,7 +132,10 @@
       "zone_slug": "central-ceremonial-axis",
       "name_vi": "Sân Đại Triều Nghi",
       "name_en": "Grand Ceremony Court",
-      "alternative_names": ["Sân Bái Mạng", "Long Trì"],
+      "alternative_names": [
+        "Sân Bái Mạng",
+        "Long Trì"
+      ],
       "learning_level": "L2_LEARNING_READY",
       "condition": "extant",
       "condition_description_vi": "Hai tầng sân lát gạch và đá thanh, hai hàng phẩm tán giữ nguyên vị trí",
@@ -153,7 +173,13 @@
         "S3_evidence": "Trích dẫn chính xác quy chế sắp hàng từ Khâm Định Đại Nam Hội Điển Sự Lệ.",
         "S4_argument": "Rút ra kết luận về việc kiến trúc không gian trực tiếp phục vụ việc củng cố quyền uy phong kiến và kỷ cương Nho giáo."
       },
-      "published": true
+      "published": true,
+      "gps_coordinates": {
+        "crs": "EPSG:4326 (WGS84)",
+        "latitude": 16.4693,
+        "longitude": 107.5786,
+        "google_maps_url": "https://www.google.com/maps/search/?api=1&query=16.4693,107.5786"
+      }
     },
     {
       "id": "site-dien-thai-hoa",
@@ -161,7 +187,9 @@
       "zone_slug": "central-ceremonial-axis",
       "name_vi": "Điện Thái Hòa",
       "name_en": "Supreme Harmony Palace",
-      "alternative_names": ["Thái Hòa Điện"],
+      "alternative_names": [
+        "Thái Hòa Điện"
+      ],
       "learning_level": "L2_LEARNING_READY",
       "condition": "extant",
       "condition_description_vi": "Hoàn tất đại trùng tu bảo tồn tổng thể toàn diện giai đoạn 2021 - 2025",
@@ -199,7 +227,13 @@
         "S3_evidence": "Dẫn chứng được các ô thơ 'nhất thi nhất họa' ngự chế trên hệ thống liên ba nội điện.",
         "S4_argument": "Đánh giá được chiều sâu tư tưởng độc lập, tự chủ văn hóa của triều Nguyễn thông qua kiến trúc cung đình."
       },
-      "published": true
+      "published": true,
+      "gps_coordinates": {
+        "crs": "EPSG:4326 (WGS84)",
+        "latitude": 16.4697,
+        "longitude": 107.5786,
+        "google_maps_url": "https://www.google.com/maps/search/?api=1&query=16.4697,107.5786"
+      }
     },
     {
       "id": "site-the-to-mieu",
@@ -207,7 +241,9 @@
       "zone_slug": "ancestral-worship-space",
       "name_vi": "Thế Tổ Miếu",
       "name_en": "The To Ancestral Temple",
-      "alternative_names": ["Thế Miếu"],
+      "alternative_names": [
+        "Thế Miếu"
+      ],
       "learning_level": "L2_LEARNING_READY",
       "condition": "extant",
       "condition_description_vi": "Được bảo tồn nguyên vẹn kiến trúc gỗ truyền thống và hệ thống khám thờ",
@@ -245,7 +281,13 @@
         "S3_evidence": "Sử dụng đúng tư liệu ghi chép về lễ tế bốn mùa Hưởng tiến từ điển lệ triều đình.",
         "S4_argument": "Lập luận sâu sắc về vai trò của đạo hiếu Nho giáo kết hợp thể chế pháp quyền gia tộc thời Nguyễn."
       },
-      "published": true
+      "published": true,
+      "gps_coordinates": {
+        "crs": "EPSG:4326 (WGS84)",
+        "latitude": 16.4685,
+        "longitude": 107.5772,
+        "google_maps_url": "https://www.google.com/maps/search/?api=1&query=16.4685,107.5772"
+      }
     },
     {
       "id": "site-hien-lam-cac",
@@ -253,7 +295,9 @@
       "zone_slug": "ancestral-worship-space",
       "name_vi": "Hiển Lâm Các",
       "name_en": "Hien Lam Pavilion",
-      "alternative_names": ["Các Hiển Lâm"],
+      "alternative_names": [
+        "Các Hiển Lâm"
+      ],
       "learning_level": "L2_LEARNING_READY",
       "condition": "extant",
       "condition_description_vi": "Tòa lầu gỗ ba tầng cổ kính cao nhất trong Hoàng Thành, cấu trúc nguyên bản",
@@ -291,7 +335,13 @@
         "S3_evidence": "Dẫn chứng từ Đại Nam Nhất Thống Chí về chức năng biểu dương công trạng tiết liệt.",
         "S4_argument": "Đánh giá được chính sách thu phục nhân tâm và duy trì liên minh giai cấp thống trị thời Nguyễn."
       },
-      "published": true
+      "published": true,
+      "gps_coordinates": {
+        "crs": "EPSG:4326 (WGS84)",
+        "latitude": 16.4687,
+        "longitude": 107.5776,
+        "google_maps_url": "https://www.google.com/maps/search/?api=1&query=16.4687,107.5776"
+      }
     },
     {
       "id": "site-hung-to-mieu",
@@ -299,7 +349,9 @@
       "zone_slug": "ancestral-worship-space",
       "name_vi": "Hưng Tổ Miếu",
       "name_en": "Hung To Ancestral Temple",
-      "alternative_names": ["Hưng Miếu"],
+      "alternative_names": [
+        "Hưng Miếu"
+      ],
       "learning_level": "L1_DOCUMENTED",
       "condition": "extant",
       "condition_description_vi": "Công trình kiến trúc gỗ được phục dựng lại sau hỏa hoạn năm 1951",
@@ -316,7 +368,13 @@
           "reliability_level": "verified_primary_source"
         }
       ],
-      "published": true
+      "published": true,
+      "gps_coordinates": {
+        "crs": "EPSG:4326 (WGS84)",
+        "latitude": 16.4692,
+        "longitude": 107.5772,
+        "google_maps_url": "https://www.google.com/maps/search/?api=1&query=16.4692,107.5772"
+      }
     },
     {
       "id": "site-trieu-to-mieu",
@@ -324,7 +382,9 @@
       "zone_slug": "ancestral-worship-space",
       "name_vi": "Triệu Tổ Miếu",
       "name_en": "Trieu To Ancestral Temple",
-      "alternative_names": ["Triệu Miếu"],
+      "alternative_names": [
+        "Triệu Miếu"
+      ],
       "learning_level": "L1_DOCUMENTED",
       "condition": "extant",
       "condition_description_vi": "Bảo tồn tương đối nguyên trạng kết cấu gỗ truyền thống và án thờ thủy tổ",
@@ -341,7 +401,13 @@
           "reliability_level": "verified_primary_source"
         }
       ],
-      "published": true
+      "published": true,
+      "gps_coordinates": {
+        "crs": "EPSG:4326 (WGS84)",
+        "latitude": 16.4685,
+        "longitude": 107.5802,
+        "google_maps_url": "https://www.google.com/maps/search/?api=1&query=16.4685,107.5802"
+      }
     },
     {
       "id": "site-dai-cung-mon",
@@ -349,7 +415,9 @@
       "zone_slug": "purple-forbidden-city",
       "name_vi": "Đại Cung Môn",
       "name_en": "Great Palace Gate",
-      "alternative_names": ["Cửa chính Tử Cấm Thành"],
+      "alternative_names": [
+        "Cửa chính Tử Cấm Thành"
+      ],
       "learning_level": "L1_DOCUMENTED",
       "condition": "foundation_ruin",
       "condition_description_vi": "Phá hủy năm 1947 trong chiến tranh, hiện còn lại nền móng gạch và hệ thống bậc đá",
@@ -366,7 +434,13 @@
           "reliability_level": "verified_primary_source"
         }
       ],
-      "published": true
+      "published": true,
+      "gps_coordinates": {
+        "crs": "EPSG:4326 (WGS84)",
+        "latitude": 16.4704,
+        "longitude": 107.5786,
+        "google_maps_url": "https://www.google.com/maps/search/?api=1&query=16.4704,107.5786"
+      }
     },
     {
       "id": "site-dien-can-chanh",
@@ -374,7 +448,9 @@
       "zone_slug": "purple-forbidden-city",
       "name_vi": "Điện Cần Chánh",
       "name_en": "Can Chanh Palace",
-      "alternative_names": ["Cần Chánh Điện"],
+      "alternative_names": [
+        "Cần Chánh Điện"
+      ],
       "learning_level": "L2_LEARNING_READY",
       "condition": "foundation_ruin",
       "condition_description_vi": "Phá hủy năm 1947, nền móng đá thanh được gia cố bảo tồn, dự án phục dựng đang nghiên cứu chi tiết",
@@ -412,7 +488,13 @@
         "S3_evidence": "Khai thác sử liệu Hội Điển chứng minh vai trò hành chính thực quyền.",
         "S4_argument": "Đưa ra nhận định có bằng chứng về tầm quan trọng của việc bảo tồn khảo cổ trước khi tiến hành phục dựng kiến trúc."
       },
-      "published": true
+      "published": true,
+      "gps_coordinates": {
+        "crs": "EPSG:4326 (WGS84)",
+        "latitude": 16.471,
+        "longitude": 107.5786,
+        "google_maps_url": "https://www.google.com/maps/search/?api=1&query=16.471,107.5786"
+      }
     },
     {
       "id": "site-dien-kien-trung",
@@ -420,7 +502,9 @@
       "zone_slug": "purple-forbidden-city",
       "name_vi": "Điện Kiến Trung",
       "name_en": "Kien Trung Palace",
-      "alternative_names": ["Kiến Trung Điện"],
+      "alternative_names": [
+        "Kiến Trung Điện"
+      ],
       "learning_level": "L2_LEARNING_READY",
       "condition": "restored_2023",
       "condition_description_vi": "Phục hồi hoàn thành năm 2023 dựa trên hồ sơ lưu trữ và ảnh tư liệu lịch sử sau khi bị phá hủy năm 1947",
@@ -458,7 +542,13 @@
         "S3_evidence": "Trích dẫn tài liệu phục hồi khoa học và ảnh tư liệu hoàng gia thời kỳ 1923 - 1945.",
         "S4_argument": "Đánh giá đa chiều về nghệ thuật kiến trúc giao thoa Đông - Tây mà không định kiến chủ quan."
       },
-      "published": true
+      "published": true,
+      "gps_coordinates": {
+        "crs": "EPSG:4326 (WGS84)",
+        "latitude": 16.4736,
+        "longitude": 107.5786,
+        "google_maps_url": "https://www.google.com/maps/search/?api=1&query=16.4736,107.5786"
+      }
     },
     {
       "id": "site-duyet-thi-duong",
@@ -466,7 +556,9 @@
       "zone_slug": "purple-forbidden-city",
       "name_vi": "Duyệt Thị Đường",
       "name_en": "Duyet Thi Duong Royal Theater",
-      "alternative_names": ["Nhà hát hoàng gia Duyệt Thị Đường"],
+      "alternative_names": [
+        "Nhà hát hoàng gia Duyệt Thị Đường"
+      ],
       "learning_level": "L2_LEARNING_READY",
       "condition": "extant",
       "condition_description_vi": "Nhà hát cổ được trùng tu bảo tồn, hiện là không gian diễn xướng Nhã nhạc cung đình Huế",
@@ -504,7 +596,13 @@
         "S3_evidence": "Dẫn đúng quy định Hội Điển về vai trò giáo hóa đạo đức của nghệ thuật sân khấu cung đình.",
         "S4_argument": "Lập luận mối liên hệ giữa cấu trúc âm học truyền thống của tòa nhà gỗ với nghệ thuật ca múa nhạc cung đình."
       },
-      "published": true
+      "published": true,
+      "gps_coordinates": {
+        "crs": "EPSG:4326 (WGS84)",
+        "latitude": 16.4714,
+        "longitude": 107.5798,
+        "google_maps_url": "https://www.google.com/maps/search/?api=1&query=16.4714,107.5798"
+      }
     },
     {
       "id": "site-thai-binh-lau",
@@ -512,7 +610,10 @@
       "zone_slug": "purple-forbidden-city",
       "name_vi": "Thái Bình Lâu",
       "name_en": "Thai Binh Lau Library",
-      "alternative_names": ["Lầu Thái Bình", "Thư viện hoàng gia"],
+      "alternative_names": [
+        "Lầu Thái Bình",
+        "Thư viện hoàng gia"
+      ],
       "learning_level": "L1_DOCUMENTED",
       "condition": "extant",
       "condition_description_vi": "Bảo tồn tương đối nguyên vẹn, phục hồi trang trí sành sứ và hồ cảnh năm 2015",
@@ -529,7 +630,13 @@
           "reliability_level": "verified_primary_source"
         }
       ],
-      "published": true
+      "published": true,
+      "gps_coordinates": {
+        "crs": "EPSG:4326 (WGS84)",
+        "latitude": 16.4725,
+        "longitude": 107.5796,
+        "google_maps_url": "https://www.google.com/maps/search/?api=1&query=16.4725,107.5796"
+      }
     },
     {
       "id": "site-cung-dien-tho",
@@ -537,7 +644,10 @@
       "zone_slug": "royal-living-gardens",
       "name_vi": "Cung Diên Thọ",
       "name_en": "Dien Tho Palace",
-      "alternative_names": ["Cung Trường Thọ", "Cung Gia Thọ"],
+      "alternative_names": [
+        "Cung Trường Thọ",
+        "Cung Gia Thọ"
+      ],
       "learning_level": "L2_LEARNING_READY",
       "condition": "extant",
       "condition_description_vi": "Khuôn viên cung điện quy mô lớn còn nguyên vẹn nhất, gồm chính điện, lầu Tịnh Minh, nhà Tạ Trường Du",
@@ -575,7 +685,13 @@
         "S3_evidence": "Sử dụng sử liệu Thực Lục để chứng minh tầm quan trọng của chữ Hiếu trong luật tục hoàng gia.",
         "S4_argument": "Đánh giá giải pháp vi khí hậu trong việc thiết kế nhà tạ, hồ nước và hành lang nối tạo môi trường sống tĩnh dưỡng cho người cao tuổi."
       },
-      "published": true
+      "published": true,
+      "gps_coordinates": {
+        "crs": "EPSG:4326 (WGS84)",
+        "latitude": 16.4714,
+        "longitude": 107.576,
+        "google_maps_url": "https://www.google.com/maps/search/?api=1&query=16.4714,107.576"
+      }
     },
     {
       "id": "site-cung-truong-sanh",
@@ -583,7 +699,9 @@
       "zone_slug": "royal-living-gardens",
       "name_vi": "Cung Trường Sanh",
       "name_en": "Truong Sanh Palace",
-      "alternative_names": ["Cung Trường Ninh"],
+      "alternative_names": [
+        "Cung Trường Ninh"
+      ],
       "learning_level": "L1_DOCUMENTED",
       "condition": "extant",
       "condition_description_vi": "Được trùng tu toàn diện năm 2007, cảnh quan hồ Đào Thái và hòn non bộ bảo tồn đẹp",
@@ -600,7 +718,13 @@
           "reliability_level": "verified_primary_source"
         }
       ],
-      "published": true
+      "published": true,
+      "gps_coordinates": {
+        "crs": "EPSG:4326 (WGS84)",
+        "latitude": 16.473,
+        "longitude": 107.5756,
+        "google_maps_url": "https://www.google.com/maps/search/?api=1&query=16.473,107.5756"
+      }
     },
     {
       "id": "site-dien-phung-tien",
@@ -608,7 +732,9 @@
       "zone_slug": "ancestral-worship-space",
       "name_vi": "Điện Phụng Tiên",
       "name_en": "Phung Tien Palace",
-      "alternative_names": ["Phụng Tiên Điện"],
+      "alternative_names": [
+        "Phụng Tiên Điện"
+      ],
       "learning_level": "L1_DOCUMENTED",
       "condition": "foundation_ruin",
       "condition_description_vi": "Bị phá hủy năm 1947, hiện còn cổng Tam Quan, tường gác bảo vệ và dấu tích nền móng khảo cổ",
@@ -625,7 +751,13 @@
           "reliability_level": "verified_primary_source"
         }
       ],
-      "published": true
+      "published": true,
+      "gps_coordinates": {
+        "crs": "EPSG:4326 (WGS84)",
+        "latitude": 16.4702,
+        "longitude": 107.5768,
+        "google_maps_url": "https://www.google.com/maps/search/?api=1&query=16.4702,107.5768"
+      }
     }
   ]
 }

@@ -10,10 +10,13 @@ import {
   Camera,
   Compass,
   Crown,
+  ExternalLink,
   FileText,
+  Globe,
   Headphones,
   HelpCircle,
   Landmark,
+  Navigation,
   Pause,
   Play,
   ShieldCheck,
@@ -34,6 +37,7 @@ import { cn } from "@/lib/utils";
 import type { ImperialMapAnnotation, ImperialSite } from "@/lib/imperial/map-types";
 import { useAudioPlayerStore } from "@/stores/imperialAudioStore";
 import { getPrimaryHeritageImage, HERITAGE_IMAGE_TYPES } from "@/lib/imperial/heritage-images";
+import { getMonumentGps, getGoogleMapsDirectionsUrl } from "@/lib/imperial/gps-coordinates";
 
 export interface MonumentDrawerProps {
   annotation: ImperialMapAnnotation | null;
@@ -69,6 +73,7 @@ export function MonumentDrawer({
 
   const site = (siteDetail || annotation.site) as any;
   const slug = site?.slug || annotation.site_id;
+  const gps = getMonumentGps(slug);
   const heritageImage = slug ? getPrimaryHeritageImage(slug) : null;
   const nameVi = site?.name_vi || annotation.label || "Công trình";
   const hanNom = site?.name_han_nom || site?.chinese_name;
@@ -135,10 +140,13 @@ export function MonumentDrawer({
         className={cn(
           "bg-card/95 backdrop-blur-2xl border-border/70 p-6 shadow-2xl flex flex-col overflow-y-auto no-scrollbar",
           isMobile
-            ? "max-h-[85vh] rounded-t-3xl border-t"
+            ? "max-h-[88vh] rounded-t-3xl border-t"
             : "w-full sm:max-w-lg border-l",
         )}
       >
+        {isMobile && (
+          <div className="mx-auto w-12 h-1.5 rounded-full bg-muted-foreground/30 mb-2 shrink-0" />
+        )}
         <SheetHeader className="space-y-2 text-left">
           {/* Spatial Zone & Verification Badges */}
           <div className="flex flex-wrap items-center gap-2">
@@ -163,8 +171,10 @@ export function MonumentDrawer({
             <SheetTitle className="text-2xl font-bold font-serif tracking-tight text-foreground">
               {nameVi}
             </SheetTitle>
-            <SheetDescription className="text-xs text-muted-foreground mt-0.5">
-              Tọa độ chuẩn hóa UV: [{annotation.u.toFixed(4)}, {annotation.v.toFixed(4)}]
+            <SheetDescription className="text-xs text-muted-foreground mt-0.5 flex flex-wrap items-center gap-x-2">
+              <span>UV: [{annotation.u.toFixed(4)}, {annotation.v.toFixed(4)}]</span>
+              <span>•</span>
+              <span className="text-amber-500 font-mono">GPS: {gps.lat.toFixed(4)}°N, {gps.lng.toFixed(4)}°E</span>
             </SheetDescription>
           </div>
         </SheetHeader>
@@ -277,36 +287,54 @@ export function MonumentDrawer({
         </div>
 
           {/* Action Footer */}
-        <div className="pt-5 mt-auto border-t border-border/60 flex flex-col sm:flex-row items-center gap-2.5">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleAudioClick}
-            className={cn(
-              "w-full sm:w-auto px-4 py-2 text-xs font-semibold flex items-center justify-center gap-2 border transition-all",
-              isAudioPlaying
-                ? "bg-primary text-primary-foreground border-primary hover:bg-primary/90"
-                : "bg-secondary/60 hover:bg-secondary text-foreground border-border/80 hover:border-primary/50",
-            )}
-          >
-            <Headphones className={cn("w-4 h-4", isAudioPlaying && "animate-bounce text-primary-foreground")} />
-            <span>
-              {isAudioPlaying
-                ? "Đang nghe thuyết minh"
-                : isCurrentSiteActive
-                ? "Tiếp tục thuyết minh"
-                : "Nghe thuyết minh di sản"}
-            </span>
-            {isAudioPlaying ? (
-              <Pause className="w-3.5 h-3.5 fill-current ml-0.5" />
-            ) : (
-              <Play className="w-3.5 h-3.5 fill-current ml-0.5" />
-            )}
-          </Button>
+        <div className="pt-5 mt-auto border-t border-border/60 flex flex-col gap-2.5">
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleAudioClick}
+              className={cn(
+                "flex-1 px-3 py-2 text-xs font-semibold flex items-center justify-center gap-1.5 border transition-all h-9 rounded-xl",
+                isAudioPlaying
+                  ? "bg-primary text-primary-foreground border-primary hover:bg-primary/90"
+                  : "bg-secondary/60 hover:bg-secondary text-foreground border-border/80 hover:border-primary/50",
+              )}
+            >
+              <Headphones className={cn("w-4 h-4", isAudioPlaying && "animate-bounce text-primary-foreground")} />
+              <span>
+                {isAudioPlaying
+                  ? "Đang nghe"
+                  : isCurrentSiteActive
+                  ? "Tiếp tục"
+                  : "Thuyết minh"}
+              </span>
+              {isAudioPlaying ? (
+                <Pause className="w-3.5 h-3.5 fill-current ml-0.5" />
+              ) : (
+                <Play className="w-3.5 h-3.5 fill-current ml-0.5" />
+              )}
+            </Button>
+
+            <Button
+              asChild
+              variant="outline"
+              className="px-3.5 py-2 text-xs font-semibold flex items-center justify-center gap-1.5 border border-border/80 text-foreground hover:bg-secondary h-9 rounded-xl"
+            >
+              <a
+                href={getGoogleMapsDirectionsUrl(gps.lat, gps.lng, nameVi)}
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Chỉ đường trên Google Maps"
+              >
+                <Navigation className="w-3.5 h-3.5 text-emerald-500" />
+                <span>Chỉ đường</span>
+              </a>
+            </Button>
+          </div>
 
           <Button
             asChild
-            className="w-full flex-1 bg-gradient-to-r from-primary via-amber-500 to-amber-600 hover:brightness-110 text-primary-foreground font-semibold shadow-lg text-xs tracking-wider"
+            className="w-full bg-gradient-to-r from-primary via-amber-500 to-amber-600 hover:brightness-110 text-primary-foreground font-semibold shadow-lg text-xs tracking-wider h-9 rounded-xl"
           >
             <Link href={`/dai-noi/cong-trinh/${slug}`}>
               Xem hồ sơ công trình & tư liệu

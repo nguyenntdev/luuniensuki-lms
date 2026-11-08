@@ -19,6 +19,9 @@ import {
   Play,
   Pause,
   Volume2,
+  Globe,
+  Navigation,
+  ExternalLink,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -26,6 +29,12 @@ import { cn } from "@/lib/utils";
 import type { ImperialMapAnnotation, ImperialSite, ImperialZone } from "@/lib/imperial/map-types";
 import { useAudioPlayerStore } from "@/stores/imperialAudioStore";
 import { getPrimaryHeritageImage, HERITAGE_IMAGE_TYPES } from "@/lib/imperial/heritage-images";
+import {
+  getMonumentGps,
+  getGoogleMapsDirectionsUrl,
+  getGoogleMapsEmbedUrl,
+  getGoogleMapsUrl,
+} from "@/lib/imperial/gps-coordinates";
 
 interface MonumentHeroProps {
   site: ImperialSite;
@@ -106,8 +115,9 @@ export default function MonumentHero({
   const v = annotation?.v ?? 0.5;
 
   const heritageImage = getPrimaryHeritageImage(site.slug);
-  const [viewMode, setViewMode] = useState<"photo" | "aerial">(
-    heritageImage ? "photo" : "aerial",
+  const gps = getMonumentGps(site.slug);
+  const [viewMode, setViewMode] = useState<"photo" | "aerial" | "satellite">(
+    heritageImage ? "photo" : "satellite",
   );
 
   return (
@@ -210,6 +220,10 @@ export default function MonumentHero({
                 <span>UV: ({annotation.u.toFixed(4)}, {annotation.v.toFixed(4)})</span>
               </div>
             )}
+            <div className="flex items-center gap-1.5 font-mono text-[11px]">
+              <Globe className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+              <span>GPS: {gps.lat.toFixed(4)}°N, {gps.lng.toFixed(4)}°E</span>
+            </div>
           </div>
 
           {/* Heritage Audio Guide Player Trigger Button */}
@@ -249,38 +263,51 @@ export default function MonumentHero({
           )}
         </div>
 
-        {/* Right column: Photo / Mini Aerial Map Locator Preview */}
+        {/* Right column: Photo / Mini Aerial Map / Google Maps Satellite Preview */}
         <div className="lg:col-span-4 flex flex-col items-center">
-          {heritageImage && (
-            <div className="flex items-center gap-1 p-1 mb-2 rounded-lg bg-secondary/60 border border-border/60 text-xs">
+          <div className="flex items-center gap-1 p-1 mb-2 rounded-lg bg-secondary/60 border border-border/60 text-xs">
+            {heritageImage && (
               <button
                 type="button"
                 onClick={() => setViewMode("photo")}
                 className={cn(
-                  "flex items-center gap-1.5 px-2.5 py-1 rounded-md font-medium transition-all",
+                  "flex items-center gap-1.5 px-2.5 py-1 rounded-md font-medium transition-all text-[11px]",
                   viewMode === "photo"
                     ? "bg-card text-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground",
                 )}
               >
                 <Camera className="h-3 w-3" />
-                Ảnh chụp thực tế
+                Ảnh thực tế
               </button>
-              <button
-                type="button"
-                onClick={() => setViewMode("aerial")}
-                className={cn(
-                  "flex items-center gap-1.5 px-2.5 py-1 rounded-md font-medium transition-all",
-                  viewMode === "aerial"
-                    ? "bg-card text-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground",
-                )}
-              >
-                <MapPin className="h-3 w-3" />
-                Định vị không ảnh
-              </button>
-            </div>
-          )}
+            )}
+            <button
+              type="button"
+              onClick={() => setViewMode("aerial")}
+              className={cn(
+                "flex items-center gap-1.5 px-2.5 py-1 rounded-md font-medium transition-all text-[11px]",
+                viewMode === "aerial"
+                  ? "bg-card text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              <MapPin className="h-3 w-3" />
+              Không ảnh UV
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode("satellite")}
+              className={cn(
+                "flex items-center gap-1.5 px-2.5 py-1 rounded-md font-medium transition-all text-[11px]",
+                viewMode === "satellite"
+                  ? "bg-card text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              <Globe className="h-3 w-3 text-amber-500" />
+              Vệ tinh Google
+            </button>
+          </div>
 
           {viewMode === "photo" && heritageImage ? (
             <div className="relative w-full max-w-[280px] aspect-[4/3] rounded-xl overflow-hidden border-2 border-primary/30 shadow-md group bg-neutral-900">
@@ -307,6 +334,31 @@ export default function MonumentHero({
                   className="text-primary-foreground font-semibold hover:underline shrink-0"
                 >
                   Xem thêm
+                </a>
+              </div>
+            </div>
+          ) : viewMode === "satellite" ? (
+            <div className="relative w-full max-w-[280px] aspect-[4/3] rounded-xl overflow-hidden border-2 border-amber-500/40 shadow-md group bg-neutral-950">
+              {/* Interactive Google Maps Satellite View */}
+              <iframe
+                title={`Bản đồ vệ tinh Google Maps ${site.name_vi}`}
+                src={getGoogleMapsEmbedUrl(gps.lat, gps.lng, 19)}
+                className="w-full h-full border-0 filter contrast-105"
+                loading="lazy"
+              />
+              <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between text-[10px] text-white/95 bg-black/75 backdrop-blur-md px-2.5 py-1 rounded-md border border-white/10">
+                <span className="flex items-center gap-1 font-medium truncate">
+                  <Globe className="h-3 w-3 text-amber-400 shrink-0" />
+                  Google Vệ tinh
+                </span>
+                <a
+                  href={getGoogleMapsDirectionsUrl(gps.lat, gps.lng, site.name_vi)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-amber-300 font-semibold hover:underline flex items-center gap-1 shrink-0"
+                >
+                  <Navigation className="h-2.5 w-2.5" />
+                  Chỉ đường
                 </a>
               </div>
             </div>
@@ -356,6 +408,8 @@ export default function MonumentHero({
           <p className="mt-1.5 text-[11px] text-muted-foreground text-center">
             {viewMode === "photo" && heritageImage
               ? `Nguồn: ${heritageImage.creditLine}`
+              : viewMode === "satellite"
+              ? `Tọa độ GPS: [${gps.lat.toFixed(4)}°N, ${gps.lng.toFixed(4)}°E]`
               : `Tọa độ chuẩn hóa UV: [${u.toFixed(4)}, ${v.toFixed(4)}]`}
           </p>
         </div>

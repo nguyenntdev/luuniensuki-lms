@@ -19,6 +19,7 @@ import {
   ChevronDownIcon,
   PrinterIcon,
   CameraIcon,
+  PaletteIcon,
 } from "lucide-react";
 
 import { useAuthStore } from "@/stores/authStore";
@@ -43,10 +44,10 @@ interface NavItem {
 
 const IMPERIAL_NAV: NavItem[] = [
   { label: "Khám phá", href: "/dai-noi", icon: CompassIcon },
+  { label: "Mỹ thuật", href: "/dai-noi/my-thuat", icon: PaletteIcon },
   { label: "Tuyến học", href: "/dai-noi/tuyen-duong", icon: RouteIcon },
   { label: "Trò chơi", href: "/dai-noi/tro-choi", icon: TrophyIcon },
   { label: "Hộ chiếu di sản", href: "/dai-noi/ho-chieu", icon: StampIcon },
-  { label: "Học tập", href: "/dai-noi/hoc-tap", icon: GraduationCapIcon },
 ];
 
 function isRouteActive(pathname: string | null, href: string): boolean {
@@ -181,6 +182,16 @@ export default function ImperialHeader() {
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator />
+
+                <DropdownMenuItem asChild>
+                  <Link href="/dai-noi/hoc-tap" className="flex items-center gap-2.5 cursor-pointer">
+                    <GraduationCapIcon className="h-4 w-4 text-primary shrink-0" aria-hidden="true" />
+                    <div className="flex flex-col">
+                      <span className="font-medium text-foreground">Không gian học tập</span>
+                      <span className="text-[11px] text-muted-foreground">Bài tập nghiên cứu & Rubric</span>
+                    </div>
+                  </Link>
+                </DropdownMenuItem>
 
                 <DropdownMenuItem asChild>
                   <Link href="/dai-noi/giao-vien" className="flex items-center gap-2.5 cursor-pointer">

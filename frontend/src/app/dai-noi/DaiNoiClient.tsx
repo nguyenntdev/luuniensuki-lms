@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   Compass,
   FileText,
+  Globe,
   Info,
   Layers,
   List,
@@ -17,6 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AerialMapViewer } from "@/components/imperial/map/AerialMapViewer";
+import { ImperialGoogleMapView } from "@/components/imperial/map/ImperialGoogleMapView";
 import { MapZoneFilter } from "@/components/imperial/map/MapZoneFilter";
 import { MonumentDrawer } from "@/components/imperial/map/MonumentDrawer";
 import { MapListFallback } from "@/components/imperial/map/MapListFallback";
@@ -67,6 +69,7 @@ export function DaiNoiClient({
     null,
   );
   const [viewMode, setViewMode] = useState<"map" | "list">("map");
+  const [mapEngine, setMapEngine] = useState<"orthomosaic" | "google-satellite">("orthomosaic");
   const [isDetectiveOpen, setIsDetectiveOpen] = useState(false);
 
   // Fetch initial data if not passed from SSR
@@ -190,6 +193,30 @@ export function DaiNoiClient({
           </div>
 
           <div className="flex items-center gap-2 pointer-events-auto">
+            {/* Map Engine Switcher: Không ảnh di sản vs Google Maps Vệ tinh */}
+            <div className="flex items-center p-1 rounded-xl bg-card/90 backdrop-blur-xl border border-border/80 text-xs shadow-xl">
+              <Button
+                type="button"
+                variant={mapEngine === "orthomosaic" ? "default" : "ghost"}
+                size="xs"
+                onClick={() => setMapEngine("orthomosaic")}
+                className="rounded-lg text-[11px] font-semibold h-7 px-2.5"
+              >
+                <Compass className="w-3.5 h-3.5 mr-1" />
+                Không ảnh di sản
+              </Button>
+              <Button
+                type="button"
+                variant={mapEngine === "google-satellite" ? "default" : "ghost"}
+                size="xs"
+                onClick={() => setMapEngine("google-satellite")}
+                className="rounded-lg text-[11px] font-semibold h-7 px-2.5"
+              >
+                <Globe className="w-3.5 h-3.5 mr-1 text-primary" />
+                Google Vệ tinh
+              </Button>
+            </div>
+
             <Button
               asChild
               variant="secondary"
@@ -204,22 +231,39 @@ export function DaiNoiClient({
           </div>
         </div>
 
-        {/* Aerial Map Canvas */}
-        <AerialMapViewer
-          mapImage={{
-            url: mapData.map.image.url,
-            width: mapData.map.image.width,
-            height: mapData.map.image.height,
-            credit: mapData.map.credit,
-            title_vi: mapData.map.title_vi,
-          }}
-          annotations={mapData.annotations}
-          selectedAnnotationId={selectedAnnotation?.id}
-          activeZoneSlug={selectedZoneSlug}
-          focusAnnotationId={focusAnnotationId}
-          onSelectAnnotation={setSelectedAnnotation}
-          className="w-full h-full"
-        />
+        {/* Map Viewport Canvas */}
+        {mapEngine === "orthomosaic" ? (
+          <AerialMapViewer
+            mapImage={{
+              url: mapData.map.image.url,
+              width: mapData.map.image.width,
+              height: mapData.map.image.height,
+              credit: mapData.map.credit,
+              title_vi: mapData.map.title_vi,
+            }}
+            annotations={mapData.annotations}
+            selectedAnnotationId={selectedAnnotation?.id}
+            activeZoneSlug={selectedZoneSlug}
+            focusAnnotationId={focusAnnotationId}
+            onSelectAnnotation={setSelectedAnnotation}
+            className="w-full h-full"
+          />
+        ) : (
+          <ImperialGoogleMapView
+            annotations={mapData.annotations}
+            selectedSlug={selectedAnnotation?.site?.slug}
+            activeZoneSlug={selectedZoneSlug}
+            onSelectMonument={(slug) => {
+              const matchingAnno = mapData.annotations.find(
+                (a) => a.site?.slug === slug || a.site_id === slug,
+              );
+              if (matchingAnno) {
+                setSelectedAnnotation(matchingAnno);
+              }
+            }}
+            className="w-full h-full"
+          />
+        )}
 
         {/* Monument Inspector Drawer */}
         <MonumentDrawer
@@ -272,13 +316,29 @@ export function DaiNoiClient({
           <div className="p-1 rounded-xl bg-secondary/80 border border-border/60 flex items-center gap-1 shadow-sm">
             <Button
               type="button"
-              variant={viewMode === "map" ? "default" : "ghost"}
+              variant={viewMode === "map" && mapEngine === "orthomosaic" ? "default" : "ghost"}
               size="xs"
-              onClick={() => setViewMode("map")}
+              onClick={() => {
+                setViewMode("map");
+                setMapEngine("orthomosaic");
+              }}
               className="rounded-lg text-xs font-semibold"
             >
               <Compass className="w-3.5 h-3.5 mr-1" />
-              Bản đồ
+              Không ảnh
+            </Button>
+            <Button
+              type="button"
+              variant={viewMode === "map" && mapEngine === "google-satellite" ? "default" : "ghost"}
+              size="xs"
+              onClick={() => {
+                setViewMode("map");
+                setMapEngine("google-satellite");
+              }}
+              className="rounded-lg text-xs font-semibold"
+            >
+              <Globe className="w-3.5 h-3.5 mr-1 text-amber-500" />
+              Google Vệ tinh
             </Button>
             <Button
               type="button"
@@ -353,27 +413,46 @@ export function DaiNoiClient({
       {/* Main Viewport Container */}
       {viewMode === "map" ? (
         <div id="aerial-map-workspace" className="relative w-full h-[620px] md:h-[760px] lg:h-[820px] rounded-3xl border border-border/80 shadow-2xl overflow-hidden bg-stone-950 scroll-mt-20">
-          <AerialMapViewer
-            mapImage={{
-              url: mapData.map.image.url,
-              width: mapData.map.image.width,
-              height: mapData.map.image.height,
-              credit: mapData.map.credit,
-              title_vi: mapData.map.title_vi,
-            }}
-            annotations={mapData.annotations}
-            selectedAnnotationId={selectedAnnotation?.id}
-            activeZoneSlug={selectedZoneSlug}
-            focusAnnotationId={focusAnnotationId}
-            onSelectAnnotation={setSelectedAnnotation}
-            className="w-full h-full"
-          />
+          {mapEngine === "orthomosaic" ? (
+            <>
+              <AerialMapViewer
+                mapImage={{
+                  url: mapData.map.image.url,
+                  width: mapData.map.image.width,
+                  height: mapData.map.image.height,
+                  credit: mapData.map.credit,
+                  title_vi: mapData.map.title_vi,
+                }}
+                annotations={mapData.annotations}
+                selectedAnnotationId={selectedAnnotation?.id}
+                activeZoneSlug={selectedZoneSlug}
+                focusAnnotationId={focusAnnotationId}
+                onSelectAnnotation={setSelectedAnnotation}
+                className="w-full h-full"
+              />
 
-          {/* Quick Info Chip */}
-          <div className="absolute top-4 left-4 z-20 pointer-events-none hidden sm:flex items-center gap-2 p-2 px-3 rounded-xl bg-card/80 backdrop-blur-md border border-border/70 text-xs text-muted-foreground shadow-lg">
-            <Info className="w-3.5 h-3.5 text-primary" />
-            <span>Kéo chuột để di chuyển • Cuộn để phóng to • Nhấp vào điểm ghim để xem tư liệu</span>
-          </div>
+              {/* Quick Info Chip */}
+              <div className="absolute top-4 left-4 z-20 pointer-events-none hidden sm:flex items-center gap-2 p-2 px-3 rounded-xl bg-card/80 backdrop-blur-md border border-border/70 text-xs text-muted-foreground shadow-lg">
+                <Info className="w-3.5 h-3.5 text-primary" />
+                <span>Kéo chuột để di chuyển • Cuộn để phóng to • Nhấp vào điểm ghim để xem tư liệu</span>
+              </div>
+            </>
+          ) : (
+            <ImperialGoogleMapView
+              annotations={mapData.annotations}
+              selectedSlug={selectedAnnotation?.site?.slug}
+              activeZoneSlug={selectedZoneSlug}
+              onSelectMonument={(slug) => {
+                const matchingAnno = mapData.annotations.find(
+                  (a) => a.site?.slug === slug || a.site_id === slug,
+                );
+                if (matchingAnno) {
+                  setSelectedAnnotation(matchingAnno);
+                }
+              }}
+              className="w-full h-full"
+            />
+          )}
         </div>
       ) : (
         /* Accessible List & Card View Fallback */

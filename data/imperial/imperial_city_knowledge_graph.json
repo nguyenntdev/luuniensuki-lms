@@ -1,0 +1,1964 @@
+{
+  "": "https://histolab.icu/schemas/imperial-city-knowledge-graph.json",
+  "schema_version": "2.0.0",
+  "authority": "Trung tâm Bảo tồn Di tích Cố đô Huế (HMCC) & Viện Sử học / Lưu Niên LMS",
+  "content_scope": "IMPERIAL_CITY_HUE_KG",
+  "title": "Hoàng Thành & Tử Cấm Thành Huế — Relational Knowledge Graph",
+  "description": "Đồ thị tri thức quan hệ liên kết Di tích, Khu vực, Triều đại lịch sử, Hiện vật kiến trúc, Thư tịch cổ chính sử và Phường nghề truyền thống Hoàng Cung Huế.",
+  "updated_at": "2026-11-08T00:00:00Z",
+  "ontology": {
+    "node_types": [
+      "zone",
+      "monument",
+      "historical_era",
+      "artifact",
+      "source",
+      "craft_guild"
+    ],
+    "predicates": [
+      {
+        "predicate": "contains",
+        "category": "spatial_containment",
+        "domain": [
+          "zone",
+          "monument"
+        ],
+        "range": [
+          "monument",
+          "artifact"
+        ],
+        "description_vi": "Quan hệ không gian chứa đựng: khu vực hoặc di tích bao bọc cấu trúc/hiện vật bên trong.",
+        "description_en": "Spatial structural containment where a parent zone or site encloses a child site or artifact."
+      },
+      {
+        "predicate": "leads_to",
+        "category": "spatial_topology",
+        "domain": [
+          "monument"
+        ],
+        "range": [
+          "monument"
+        ],
+        "description_vi": "Quan hệ dẫn lối trực tiếp theo tuyến tuần tự giao thông hoặc trục di chuyển.",
+        "description_en": "Direct sequential physical or pedestrian walkway leading from one site to another."
+      },
+      {
+        "predicate": "oriented_to",
+        "category": "geomantic_alignment",
+        "domain": [
+          "monument",
+          "zone"
+        ],
+        "range": [
+          "monument",
+          "zone"
+        ],
+        "description_vi": "Hướng tọa lạc và định hướng phong thủy (ví dụ nhìn về núi Ngự Bình hoặc theo trục Tọa Tý Hướng Ngọ).",
+        "description_en": "Geomantic, cosmological or cardinal orientation towards a significant landmark or direction."
+      },
+      {
+        "predicate": "ceremonial_axis",
+        "category": "ritual_hierarchy",
+        "domain": [
+          "monument"
+        ],
+        "range": [
+          "monument"
+        ],
+        "description_vi": "Quan hệ trên trục Thần đạo nghi lễ kết nối các công trình trung tâm biểu trưng vương quyền.",
+        "description_en": "Ritual and cosmological axis connecting the sacred central line of imperial authority."
+      },
+      {
+        "predicate": "ancestral_veneration",
+        "category": "dynastic_ritual",
+        "domain": [
+          "monument"
+        ],
+        "range": [
+          "historical_era",
+          "monument"
+        ],
+        "description_vi": "Phụng thờ liệt tổ liệt tông và các hoàng đế tiền triều.",
+        "description_en": "Ritual practice of dynastic ancestor worship enshrining predecessor emperors and royal lineage."
+      },
+      {
+        "predicate": "architectural_twin",
+        "category": "stylistic_typology",
+        "domain": [
+          "monument"
+        ],
+        "range": [
+          "monument"
+        ],
+        "description_vi": "Quan hệ đối ứng đăng đối, song sinh kiến trúc hoặc trùng lặp mô thức đồ án quy chuẩn.",
+        "description_en": "Architectural symmetry, morphological twinning or paired complementary layout."
+      },
+      {
+        "predicate": "reconstructed_with",
+        "category": "restoration_and_materials",
+        "domain": [
+          "monument",
+          "artifact"
+        ],
+        "range": [
+          "craft_guild",
+          "historical_era"
+        ],
+        "description_vi": "Được đại trùng tu, phục chế hoặc hoàn thiện bởi kỹ nghệ của làng nghề truyền thống.",
+        "description_en": "Reconstructed, restored or embellished through the specialized techniques of traditional craft guilds."
+      },
+      {
+        "predicate": "associated_craft",
+        "category": "intangible_heritage",
+        "domain": [
+          "monument",
+          "artifact"
+        ],
+        "range": [
+          "craft_guild"
+        ],
+        "description_vi": "Mối liên kết hữu cơ giữa công trình/hiện vật với phường hội thợ thủ công cung đình.",
+        "description_en": "Direct technical and material reliance on traditional craft guilds and living masters."
+      },
+      {
+        "predicate": "source_grounded_by",
+        "category": "epistemic_provenance",
+        "domain": [
+          "monument",
+          "artifact",
+          "historical_era"
+        ],
+        "range": [
+          "source"
+        ],
+        "description_vi": "Được chứng thực và đối chiếu bởi văn bản thư tịch cổ, chính sử hoặc điển chế triều đình.",
+        "description_en": "Epistemically substantiated and cited by authoritative dynastic primary records and chronicles."
+      }
+    ]
+  },
+  "nodes": [
+    {
+      "id": "zone-central-ceremonial-axis",
+      "slug": "central-ceremonial-axis",
+      "entity_type": "zone",
+      "name_vi": "Trục Chính Đạo Hoàng Thành",
+      "name_en": "Central Ceremonial Axis",
+      "name_han_nom": "皇城中道軸",
+      "short_description_vi": "Trục quyền lực tối cao Nam - Bắc của Kinh sư Huế, kéo dài từ Ngọ Môn qua cầu Trung Đạo, sân Đại Triều Nghi đến điện Thái Hòa.",
+      "short_description_en": "The principal ceremonial and sovereignty axis running South to North from Meridian Gate to the Hall of Supreme Harmony.",
+      "attributes": {
+        "orientation": "South-North",
+        "cardinal_direction": "South",
+        "spatial_order": 1
+      }
+    },
+    {
+      "id": "zone-ancestral-worship-space",
+      "slug": "ancestral-worship-space",
+      "entity_type": "zone",
+      "name_vi": "Khu Vực Tôn Miếu Hoàng Gia",
+      "name_en": "Ancestral Shrines and Memorial Precinct",
+      "name_han_nom": "宗廟祭祀區",
+      "short_description_vi": "Cụm đền miếu thờ phụng tiên vương và tiền nhân họ Nguyễn nằm ở góc nam và tây nam Hoàng Thành (Thế Miếu, Triệu Miếu, Hưng Miếu, Phụng Tiên).",
+      "short_description_en": "Sacred dynastic ancestral temple complex in the southern and southwestern sectors of the Imperial City.",
+      "attributes": {
+        "location_quadrant": "Southwest",
+        "spiritual_function": "Ancestral Veneration",
+        "spatial_order": 2
+      }
+    },
+    {
+      "id": "zone-purple-forbidden-city",
+      "slug": "purple-forbidden-city",
+      "entity_type": "zone",
+      "name_vi": "Tử Cấm Thành",
+      "name_en": "Purple Forbidden City",
+      "name_han_nom": "紫禁城",
+      "short_description_vi": "Cung cấm trung tâm sau Đại Cung Môn dành riêng cho sinh hoạt thường nhật, thiết triều nội vụ và trước tác của hoàng đế cùng hoàng gia.",
+      "short_description_en": "The innermost imperial sanctuary reserved for the sovereign and imperial family daily governance and residences.",
+      "attributes": {
+        "location_quadrant": "Core Center",
+        "access_level": "Imperial Family & Mandarins Only",
+        "spatial_order": 3
+      }
+    },
+    {
+      "id": "zone-royal-living-gardens",
+      "slug": "royal-living-gardens",
+      "entity_type": "zone",
+      "name_vi": "Khu Cung Cẩm & Vườn Ngự",
+      "name_en": "Living Palaces & Royal Gardens",
+      "name_han_nom": "寢宮御苑區",
+      "short_description_vi": "Không gian cư ngụ của các Hoàng Thái Hậu (Cung Diên Thọ, Cung Trường Sanh) cùng các vườn ngự cảnh quan phía tây bắc Hoàng Thành.",
+      "short_description_en": "Northwestern domestic residences of the Queen Mothers (Diên Thọ, Trường Sanh) and leisure gardens.",
+      "attributes": {
+        "location_quadrant": "Northwest",
+        "primary_residents": "Queen Mothers & Imperial Ladies",
+        "spatial_order": 4
+      }
+    },
+    {
+      "id": "site-ngo-mon",
+      "slug": "ngo-mon",
+      "entity_type": "monument",
+      "name_vi": "Ngọ Môn",
+      "name_en": "Meridian Gate",
+      "name_han_nom": "午門",
+      "short_description_vi": "Cổng chính phía nam của Hoàng Thành Huế, được xây dựng năm Minh Mạng thứ 14 (1833) trên vị trí đài Nam Sách cũ. Công trình có cấu trúc dưới đài đá hình chữ U trổ năm cửa ngõ, trên là lầu Ngũ Phụng mái chồng diềm, là nơi hoàng đế ban bố lịch Sóc, truyền loa vinh quy tiến sĩ và ngự kiến lễ thoái vị năm 1945.",
+      "short_description_en": "Meridian Gate erected in 1833 (Minh Mạng) within the Imperial Citadel of Huế.",
+      "attributes": {
+        "zone_slug": "central-ceremonial-axis",
+        "construction_year": 1833,
+        "reign": "Minh Mạng",
+        "condition": "extant",
+        "condition_description_vi": "Còn nguyên vẹn qua các đợt đại trùng tu (1990 - 2021)"
+      }
+    },
+    {
+      "id": "site-cau-trung-dao",
+      "slug": "cau-trung-dao",
+      "entity_type": "monument",
+      "name_vi": "Cầu Trung Đạo",
+      "name_en": "Trung Dao Bridge",
+      "name_han_nom": "中道橋",
+      "short_description_vi": "Chiếc cầu bắc qua hồ Thái Dịch, nằm trên trục thần đạo nối liền Ngọ Môn và sân Đại Triều Nghi, xây dựng thời Minh Mạng (1833). Mặt cầu lát đá thanh, hai đầu cầu có hai cửa đồng quán (vọng lâu bằng đồng).",
+      "short_description_en": "Trung Dao Bridge erected in 1833 (Minh Mạng) within the Imperial Citadel of Huế.",
+      "attributes": {
+        "zone_slug": "central-ceremonial-axis",
+        "construction_year": 1833,
+        "reign": "Minh Mạng",
+        "condition": "extant",
+        "condition_description_vi": "Bắc qua hồ Thái Dịch, đã trùng tu phục hồi lan can đá cẩm thạch"
+      }
+    },
+    {
+      "id": "site-san-dai-trieu-nghi",
+      "slug": "san-dai-trieu-nghi",
+      "entity_type": "monument",
+      "name_vi": "Sân Đại Triều Nghi",
+      "name_en": "Grand Ceremony Court",
+      "name_han_nom": "大朝儀庭",
+      "short_description_vi": "Khoảng sân rộng hai tầng trước điện Thái Hòa, nơi bách quan văn võ đứng dự lễ Đại triều (mỗi tháng vào ngày mùng 1 và rằm). Sân được chia làm hai tầng: tầng trên dành cho quan tứ phẩm trở lên và tầng dưới dành cho quan ngũ phẩm đến cửu phẩm. Hai bên sân dựng hai hàng bia đá nhỏ ghi rõ phẩm trật từ chánh nhất phẩm đến tòng cửu phẩm, quan văn đứng bên tả, quan võ đứng bên hữu.",
+      "short_description_en": "Grand Ceremony Court erected in 1805 (Gia Long) within the Imperial Citadel of Huế.",
+      "attributes": {
+        "zone_slug": "central-ceremonial-axis",
+        "construction_year": 1805,
+        "reign": "Gia Long",
+        "condition": "extant",
+        "condition_description_vi": "Hai tầng sân lát gạch và đá thanh, hai hàng phẩm tán giữ nguyên vị trí"
+      }
+    },
+    {
+      "id": "site-dien-thai-hoa",
+      "slug": "dien-thai-hoa",
+      "entity_type": "monument",
+      "name_vi": "Điện Thái Hòa",
+      "name_en": "Supreme Harmony Palace",
+      "name_han_nom": "太和殿",
+      "short_description_vi": "Tòa điện quan trọng bậc nhất trong Hoàng Thành Huế, biểu trưng cho quyền lực tối cao của hoàng triều. Điện xây theo thức 'trùng thiềm điệp ốc' với 80 cột gỗ lim sơn son thếp vàng thế thiếp long vân, mái lợp ngói hoàng lưu ly. Nơi tổ chức các nghi lễ đăng quang, vạn thọ, tiếp sứ thần và lễ Đại triều thường kỳ. Bên trong đặt ngai vàng thiên tử dưới bửu tán tinh xảo.",
+      "short_description_en": "Supreme Harmony Palace erected in 1805 (Gia Long (chuyển dời và mở rộng thời Minh Mạng năm 1833)) within the Imperial Citadel of Huế.",
+      "attributes": {
+        "zone_slug": "central-ceremonial-axis",
+        "construction_year": 1805,
+        "reign": "Gia Long (chuyển dời và mở rộng thời Minh Mạng năm 1833)",
+        "condition": "extant",
+        "condition_description_vi": "Hoàn tất đại trùng tu bảo tồn tổng thể toàn diện giai đoạn 2021 - 2025"
+      }
+    },
+    {
+      "id": "site-the-to-mieu",
+      "slug": "the-to-mieu",
+      "entity_type": "monument",
+      "name_vi": "Thế Tổ Miếu",
+      "name_en": "The To Ancestral Temple",
+      "name_han_nom": "世祖廟",
+      "short_description_vi": "Tổ hợp đền miếu phụng thờ các vị hoàng đế triều Nguyễn, do vua Minh Mạng khởi dựng năm 1821 theo quy tắc cổ truyền 'tả chiêu hữu mục'. Tòa miếu chính có 9 gian 2 chái, thiết kế theo kiểu 'trùng thiềm điệp ốc', phía trước là tiền điện. Gian chính giữa thờ Thế Tổ Cao Hoàng Đế (Gia Long), các gian bên sắp đặt bài vị các vị vua kế vị.",
+      "short_description_en": "The To Ancestral Temple erected in 1821 (Minh Mạng) within the Imperial Citadel of Huế.",
+      "attributes": {
+        "zone_slug": "ancestral-worship-space",
+        "construction_year": 1821,
+        "reign": "Minh Mạng",
+        "condition": "extant",
+        "condition_description_vi": "Được bảo tồn nguyên vẹn kiến trúc gỗ truyền thống và hệ thống khám thờ"
+      }
+    },
+    {
+      "id": "site-hien-lam-cac",
+      "slug": "hien-lam-cac",
+      "entity_type": "monument",
+      "name_vi": "Hiển Lâm Các",
+      "name_en": "Hien Lam Pavilion",
+      "name_han_nom": "顯臨閣",
+      "short_description_vi": "Tòa lầu ba tầng bằng gỗ dựng năm Minh Mạng thứ 2 (1821 - 1822) trong khuôn viên Thế Miếu, cao 17m, là công trình kiến trúc cao nhất trong Hoàng Thành Huế. Hiển Lâm Các được coi là đài tưởng niệm ghi nhớ công đức của các đấng tiên vương và các công thần khai quốc giúp triều Nguyễn lập nên cơ nghiệp. Tầng dưới có 3 gian 2 chái, hai bên có hai nhà Tả Vu và Hữu Vu phụng thờ các danh thần văn võ có công lớn.",
+      "short_description_en": "Hien Lam Pavilion erected in 1821 (Minh Mạng) within the Imperial Citadel of Huế.",
+      "attributes": {
+        "zone_slug": "ancestral-worship-space",
+        "construction_year": 1821,
+        "reign": "Minh Mạng",
+        "condition": "extant",
+        "condition_description_vi": "Tòa lầu gỗ ba tầng cổ kính cao nhất trong Hoàng Thành, cấu trúc nguyên bản"
+      }
+    },
+    {
+      "id": "site-hung-to-mieu",
+      "slug": "hung-to-mieu",
+      "entity_type": "monument",
+      "name_vi": "Hưng Tổ Miếu",
+      "name_en": "Hung To Ancestral Temple",
+      "name_han_nom": "興祖廟",
+      "short_description_vi": "Ngôi miếu phụng thờ phụ thân và mẫu thân của vua Gia Long là Thế tử Nguyễn Phúc Luân (được truy tôn Hưng Tổ Hiếu Khang Hoàng đế) và Hoàng thái hậu Thoại Thánh. Xây dựng năm Gia Long thứ 3 (1804), nằm phía sau Thế Tổ Miếu.",
+      "short_description_en": "Hung To Ancestral Temple erected in 1804 (Gia Long) within the Imperial Citadel of Huế.",
+      "attributes": {
+        "zone_slug": "ancestral-worship-space",
+        "construction_year": 1804,
+        "reign": "Gia Long",
+        "condition": "extant",
+        "condition_description_vi": "Công trình kiến trúc gỗ được phục dựng lại sau hỏa hoạn năm 1951"
+      }
+    },
+    {
+      "id": "site-trieu-to-mieu",
+      "slug": "trieu-to-mieu",
+      "entity_type": "monument",
+      "name_vi": "Triệu Tổ Miếu",
+      "name_en": "Trieu To Ancestral Temple",
+      "name_han_nom": "肇祖廟",
+      "short_description_vi": "Miếu thờ vị khởi tổ khai sáng dòng chúa Nguyễn là Triệu Tổ Tĩnh Hoàng đế Nguyễn Kim và phu nhân, xây dựng năm Gia Long thứ 3 (1804) tại góc đông nam Hoàng Thành.",
+      "short_description_en": "Trieu To Ancestral Temple erected in 1804 (Gia Long) within the Imperial Citadel of Huế.",
+      "attributes": {
+        "zone_slug": "ancestral-worship-space",
+        "construction_year": 1804,
+        "reign": "Gia Long",
+        "condition": "extant",
+        "condition_description_vi": "Bảo tồn tương đối nguyên trạng kết cấu gỗ truyền thống và án thờ thủy tổ"
+      }
+    },
+    {
+      "id": "site-dai-cung-mon",
+      "slug": "dai-cung-mon",
+      "entity_type": "monument",
+      "name_vi": "Đại Cung Môn",
+      "name_en": "Great Palace Gate",
+      "name_han_nom": "大宮門",
+      "short_description_vi": "Cửa chính diện ở mặt nam dẫn vào Tử Cấm Thành, làm năm Minh Mạng thứ 14 (1833), gồm 5 gian có 3 cửa, sơn son thếp vàng lộng lẫy, chỉ dành riêng cho hoàng đế ra vào. Công trình bị tàn phá năm 1947, hiện nay Trung tâm Bảo tồn Di tích Cố đô Huế đang thực hiện công tác khảo cổ học và chuẩn bị dự án phục hồi.",
+      "short_description_en": "Great Palace Gate erected in 1833 (Minh Mạng) within the Imperial Citadel of Huế.",
+      "attributes": {
+        "zone_slug": "purple-forbidden-city",
+        "construction_year": 1833,
+        "reign": "Minh Mạng",
+        "condition": "foundation_ruin",
+        "condition_description_vi": "Phá hủy năm 1947 trong chiến tranh, hiện còn lại nền móng gạch và hệ thống bậc đá"
+      }
+    },
+    {
+      "id": "site-dien-can-chanh",
+      "slug": "dien-can-chanh",
+      "entity_type": "monument",
+      "name_vi": "Điện Cần Chánh",
+      "name_en": "Can Chanh Palace",
+      "name_han_nom": "勤政殿",
+      "short_description_vi": "Ngôi điện nằm ngay sau Đại Cung Môn trên trục chính Tử Cấm Thành, xây dựng năm Gia Long thứ 3 (1804). Đây là nơi vua thiết triều thường nhật (thường triều), xử lý chính sự hàng ngày với viện Cơ Mật và lục Bộ, cũng như thiết yến tiếp đãi sứ bộ quan trọng. Điện có kiến trúc gỗ lim tinh xảo với 5 gian 2 chái nhà kép. Tòa điện bị chiến tranh tàn phá năm 1947, hiện chỉ còn lại hệ thống nền móng đá thanh cùng dấu tích chân cột.",
+      "short_description_en": "Can Chanh Palace erected in 1804 (Gia Long (trùng tu mở rộng thời Minh Mạng năm 1827)) within the Imperial Citadel of Huế.",
+      "attributes": {
+        "zone_slug": "purple-forbidden-city",
+        "construction_year": 1804,
+        "reign": "Gia Long (trùng tu mở rộng thời Minh Mạng năm 1827)",
+        "condition": "foundation_ruin",
+        "condition_description_vi": "Phá hủy năm 1947, nền móng đá thanh được gia cố bảo tồn, dự án phục dựng đang nghiên cứu chi tiết"
+      }
+    },
+    {
+      "id": "site-dien-kien-trung",
+      "slug": "dien-kien-trung",
+      "entity_type": "monument",
+      "name_vi": "Điện Kiến Trung",
+      "name_en": "Kien Trung Palace",
+      "name_han_nom": "建中殿",
+      "short_description_vi": "Cung điện tọa lạc tại điểm cực bắc của Tử Cấm Thành, xây dựng dưới thời vua Khải Định (1921 - 1923) trên nền lầu Du Cửu cũ. Tòa nhà hai tầng mang phong cách kiến trúc hỗn hợp Á - Âu, kết hợp giữa phong cách cổ điển Pháp, phong cách Phục hưng Ý với nghệ thuật khảm sành sứ cung đình Việt Nam. Đây là nơi sinh sống và làm việc của vua Khải Định và sau đó là gia đình vua Bảo Đại cùng Hoàng hậu Nam Phương. Công trình bị san phẳng trong chiến sự năm 1947 và được phục hồi nguyên mẫu thành công vào năm 2023.",
+      "short_description_en": "Kien Trung Palace erected in 1923 (Khải Định (hoàn tất thời Khải Định, sử dụng thời Bảo Đại)) within the Imperial Citadel of Huế.",
+      "attributes": {
+        "zone_slug": "purple-forbidden-city",
+        "construction_year": 1923,
+        "reign": "Khải Định (hoàn tất thời Khải Định, sử dụng thời Bảo Đại)",
+        "condition": "restored_2023",
+        "condition_description_vi": "Phục hồi hoàn thành năm 2023 dựa trên hồ sơ lưu trữ và ảnh tư liệu lịch sử sau khi bị phá hủy năm 1947"
+      }
+    },
+    {
+      "id": "site-duyet-thi-duong",
+      "slug": "duyet-thi-duong",
+      "entity_type": "monument",
+      "name_vi": "Duyệt Thị Đường",
+      "name_en": "Duyet Thi Duong Royal Theater",
+      "name_han_nom": "閱是堂",
+      "short_description_vi": "Nhà hát hoàng gia nằm trong khuôn viên Tử Cấm Thành, được xây dựng năm Minh Mạng thứ 7 (1826). Đây là nhà hát cổ nhất còn tồn tại của Việt Nam, nơi chuyên tổ chức các buổi biểu diễn Nhã nhạc cung đình và Tuồng cung đình phục vụ vua, hoàng thân quốc thích và các sứ thần. Nhà hát có diện tích hơn 11.000m2 bao gồm cả khuôn viên, sàn diễn ở chính giữa, trần nhà vẽ hình trăng sao và mây trời, xung quanh có các tầng khán đài phân định vị trí ngồi nghiêm ngặt theo phẩm cấp.",
+      "short_description_en": "Duyet Thi Duong Royal Theater erected in 1826 (Minh Mạng) within the Imperial Citadel of Huế.",
+      "attributes": {
+        "zone_slug": "purple-forbidden-city",
+        "construction_year": 1826,
+        "reign": "Minh Mạng",
+        "condition": "extant",
+        "condition_description_vi": "Nhà hát cổ được trùng tu bảo tồn, hiện là không gian diễn xướng Nhã nhạc cung đình Huế"
+      }
+    },
+    {
+      "id": "site-thai-binh-lau",
+      "slug": "thai-binh-lau",
+      "entity_type": "monument",
+      "name_vi": "Thái Bình Lâu",
+      "name_en": "Thai Binh Lau Library",
+      "name_han_nom": "太平樓",
+      "short_description_vi": "Tòa lầu thư viện hai tầng bằng gỗ nằm ở phía đông bắc Tử Cấm Thành, được khởi dựng thời vua Khải Định (1919 - 1921) trên nền đình sách thời Thiệu Trị. Đây là nơi nhà vua tĩnh dưỡng, đọc sách báo, ngâm thơ và viết văn.",
+      "short_description_en": "Thai Binh Lau Library erected in 1921 (Khải Định (khởi đầu từ thời Khải Định trên nền đình Tiêu Nhàn thời Thiệu Trị)) within the Imperial Citadel of Huế.",
+      "attributes": {
+        "zone_slug": "purple-forbidden-city",
+        "construction_year": 1921,
+        "reign": "Khải Định (khởi đầu từ thời Khải Định trên nền đình Tiêu Nhàn thời Thiệu Trị)",
+        "condition": "extant",
+        "condition_description_vi": "Bảo tồn tương đối nguyên vẹn, phục hồi trang trí sành sứ và hồ cảnh năm 2015"
+      }
+    },
+    {
+      "id": "site-cung-dien-tho",
+      "slug": "cung-dien-tho",
+      "entity_type": "monument",
+      "name_vi": "Cung Diên Thọ",
+      "name_en": "Dien Tho Palace",
+      "name_han_nom": "延壽宮",
+      "short_description_vi": "Quần thể cung điện tọa lạc ở phía tây bắc Hoàng Thành, được xây dựng năm Gia Long thứ 3 (1804) với tên ban đầu là cung Trường Thọ, sau đổi thành Cung Diên Thọ. Đây là nơi ở của Hoàng Thái Hậu hoặc Thái Hoàng Thái Hậu dưới các triều vua Nguyễn. Quần thể gồm hơn 10 công trình kiến trúc liên kết bằng hệ thống hành lang có mái che, hồ bán nguyệt, lầu Tịnh Minh (xây năm 1927 kiểu Pháp) và nhà Tạ Trường Du bên hồ nước tĩnh lặng.",
+      "short_description_en": "Dien Tho Palace erected in 1804 (Gia Long (trùng tu lớn các thời Tự Đức, Thành Thái, Khải Định)) within the Imperial Citadel of Huế.",
+      "attributes": {
+        "zone_slug": "royal-living-gardens",
+        "construction_year": 1804,
+        "reign": "Gia Long (trùng tu lớn các thời Tự Đức, Thành Thái, Khải Định)",
+        "condition": "extant",
+        "condition_description_vi": "Khuôn viên cung điện quy mô lớn còn nguyên vẹn nhất, gồm chính điện, lầu Tịnh Minh, nhà Tạ Trường Du"
+      }
+    },
+    {
+      "id": "site-cung-truong-sanh",
+      "slug": "cung-truong-sanh",
+      "entity_type": "monument",
+      "name_vi": "Cung Trường Sanh",
+      "name_en": "Truong Sanh Palace",
+      "name_han_nom": "長生宮",
+      "short_description_vi": "Quần thể hoa viên và cung điện nằm ở góc tây bắc Hoàng Thành, xây dựng năm Minh Mạng thứ 2 (1821) với tên Cung Trường Ninh, sau đổi thành Cung Trường Sanh. Ban đầu là hoa viên nghỉ ngơi thư giãn của vua, về sau trở thành nơi cư trú của một số Thái Hoàng Thái Hậu.",
+      "short_description_en": "Truong Sanh Palace erected in 1821 (Minh Mạng) within the Imperial Citadel of Huế.",
+      "attributes": {
+        "zone_slug": "royal-living-gardens",
+        "construction_year": 1821,
+        "reign": "Minh Mạng",
+        "condition": "extant",
+        "condition_description_vi": "Được trùng tu toàn diện năm 2007, cảnh quan hồ Đào Thái và hòn non bộ bảo tồn đẹp"
+      }
+    },
+    {
+      "id": "site-dien-phung-tien",
+      "slug": "dien-phung-tien",
+      "entity_type": "monument",
+      "name_vi": "Điện Phụng Tiên",
+      "name_en": "Phung Tien Palace",
+      "name_han_nom": "奉先殿",
+      "short_description_vi": "Ngôi điện phụng thờ tổ tiên dành riêng cho các phi tần và nữ giới hoàng tộc đến dâng hương lễ bái (do phụ nữ không được vào Thế Miếu), xây dựng thời Minh Mạng thứ 10 (1829) ở phía tây Hoàng Thành, đối xứng với Thế Miếu. Điện bị hủy hoại năm 1947, hiện nay Trung tâm Bảo tồn Di tích Cố đô Huế đã tiến hành phục hồi hệ thống tường bao, cổng ngõ và đang bảo tồn dấu tích nền móng.",
+      "short_description_en": "Phung Tien Palace erected in 1829 (Minh Mạng) within the Imperial Citadel of Huế.",
+      "attributes": {
+        "zone_slug": "ancestral-worship-space",
+        "construction_year": 1829,
+        "reign": "Minh Mạng",
+        "condition": "foundation_ruin",
+        "condition_description_vi": "Bị phá hủy năm 1947, hiện còn cổng Tam Quan, tường gác bảo vệ và dấu tích nền móng khảo cổ"
+      }
+    },
+    {
+      "id": "era-gia-long",
+      "slug": "gia-long-era",
+      "entity_type": "historical_era",
+      "name_vi": "Triều Vua Gia Long",
+      "name_en": "Emperor Gia Long Reign",
+      "name_han_nom": "嘉隆朝 (世祖高皇帝)",
+      "short_description_vi": "1802–1819: Thời kỳ sáng lập vương triều Nguyễn, quy hoạch định đô Phú Xuân, xây dựng Kinh thành Huế theo hình mẫu kết hợp phương Đông và Vauban.",
+      "short_description_en": "1802–1819: Foundation of the Nguyễn dynasty, establishment of Phú Xuân capital and layout of Huế Citadel.",
+      "attributes": {
+        "start_year": 1802,
+        "end_year": 1819,
+        "dynastic_title": "Thế Tổ Cao Hoàng Đế"
+      }
+    },
+    {
+      "id": "era-minh-mang",
+      "slug": "minh-mang-era",
+      "entity_type": "historical_era",
+      "name_vi": "Triều Vua Minh Mạng",
+      "name_en": "Emperor Minh Mạng Reign",
+      "name_han_nom": "明命朝 (聖祖仁皇帝)",
+      "short_description_vi": "1820–1840: Đỉnh cao thể chế tập quyền, quy hoạch hoàn chỉnh Hoàng Thành & Tử Cấm Thành, đúc Cửu Đỉnh, lập Quốc Sử Quán và ban hành điển chế.",
+      "short_description_en": "1820–1840: Apex of centralized imperial state, major architectural expansion (Ngọ Môn, Cửu Đỉnh, Duyệt Thị Đường), compilation of national annals.",
+      "attributes": {
+        "start_year": 1820,
+        "end_year": 1840,
+        "dynastic_title": "Thánh Tổ Nhân Hoàng Đế"
+      }
+    },
+    {
+      "id": "era-thieu-tri",
+      "slug": "thieu-tri-era",
+      "entity_type": "historical_era",
+      "name_vi": "Triều Vua Thiệu Trị",
+      "name_en": "Emperor Thiệu Trị Reign",
+      "name_han_nom": "紹治朝 (憲祖章皇帝)",
+      "short_description_vi": "1841–1847: Thời kỳ hưng thịnh của thi ca và cảnh quan cung đình, sáng tác chùm thơ Thần kinh nhị thập cảnh ca ngợi 20 thắng cảnh đất thần kinh.",
+      "short_description_en": "1841–1847: Flourishing of royal poetry and palace garden culture, composing the Twenty Sceneries of the Imperial Capital.",
+      "attributes": {
+        "start_year": 1841,
+        "end_year": 1847,
+        "dynastic_title": "Hiến Tổ Chương Hoàng Đế"
+      }
+    },
+    {
+      "id": "era-tu-duc",
+      "slug": "tu-duc-era",
+      "entity_type": "historical_era",
+      "name_vi": "Triều Vua Tự Đức",
+      "name_en": "Emperor Tự Đức Reign",
+      "name_han_nom": "嗣德朝 (翼宗純皇帝)",
+      "short_description_vi": "1847–1883: Thời kỳ trị vì dài nhất triều Nguyễn, hoàn tất biên soạn Đại Nam Thực Lục, Hội Điển Sự Lệ và Đại Nam Nhất Thống Chí trước biến cố thực dân Pháp.",
+      "short_description_en": "1847–1883: Longest reign in the dynasty, completion of monumental historical chronicles and encyclopedias.",
+      "attributes": {
+        "start_year": 1847,
+        "end_year": 1883,
+        "dynastic_title": "Dực Tông Thuần Hoàng Đế"
+      }
+    },
+    {
+      "id": "era-dong-khanh",
+      "slug": "dong-khanh-era",
+      "entity_type": "historical_era",
+      "name_vi": "Triều Vua Đồng Khánh",
+      "name_en": "Emperor Đồng Khánh Reign",
+      "name_han_nom": "同慶朝 (景宗純皇帝)",
+      "short_description_vi": "1885–1889: Giai đoạn chuyển tiếp sau biến cố thất thủ Kinh đô (1885), biên soạn Đồng Khánh Địa Dư Chí, bắt đầu tiếp xúc yếu tố mỹ thuật Tây phương.",
+      "short_description_en": "1885–1889: Post-1885 transitional period, compilation of Đồng Khánh Geography and early European artistic contacts.",
+      "attributes": {
+        "start_year": 1885,
+        "end_year": 1889,
+        "dynastic_title": "Cảnh Tông Thuần Hoàng Đế"
+      }
+    },
+    {
+      "id": "era-khai-dinh",
+      "slug": "khai-dinh-era",
+      "entity_type": "historical_era",
+      "name_vi": "Triều Vua Khải Định",
+      "name_en": "Emperor Khải Định Reign",
+      "name_han_nom": "啓定朝 (弘宗宣皇帝)",
+      "short_description_vi": "1916–1925: Giai đoạn giao thoa Đông - Tây rực rỡ, kiến tạo điện Kiến Trung, trùng tu Thái Bình Lâu và lăng Khải Định với nghệ thuật khảm sành sứ độc đáo.",
+      "short_description_en": "1916–1925: Peak of East-West eclectic architectural synthesis, creation of Kiến Trung Palace and porcelain mosaic artistry.",
+      "attributes": {
+        "start_year": 1916,
+        "end_year": 1925,
+        "dynastic_title": "Hoằng Tông Tuyên Hoàng Đế"
+      }
+    },
+    {
+      "id": "era-bao-dai",
+      "slug": "bao-dai-era",
+      "entity_type": "historical_era",
+      "name_vi": "Triều Vua Bảo Đại",
+      "name_en": "Emperor Bảo Đại Reign",
+      "name_han_nom": "保大朝 (Mạt đế triều Nguyễn)",
+      "short_description_vi": "1926–1945: Vị hoàng đế cuối cùng của chế độ phong kiến Việt Nam; sinh sống tại điện Kiến Trung và tuyên chiếu thoái vị tại lầu Ngũ Phụng (Ngọ Môn) tháng 8/1945.",
+      "short_description_en": "1926–1945: Final reign of the Nguyễn monarchy; resided in Kiến Trung Palace and abdicated at Ngọ Môn in August 1945.",
+      "attributes": {
+        "start_year": 1926,
+        "end_year": 1945,
+        "dynastic_title": "Hoàng đế cuối cùng"
+      }
+    },
+    {
+      "id": "art-cuu-dinh",
+      "slug": "cuu-dinh-hue",
+      "entity_type": "artifact",
+      "name_vi": "Cửu Đỉnh Hoàng Thành Huế",
+      "name_en": "The Nine Dynastic Urns of Huế",
+      "name_han_nom": "大南九鼎",
+      "short_description_vi": "Chín chiếc đỉnh đồng đúc năm 1835-1837 thời Minh Mạng đặt trước sân Thế Miếu; bảo vật quốc gia và Di sản Tư liệu Ký ức Thế giới Khu vực Châu Á - Thái Bình Dương.",
+      "short_description_en": "Nine monumental bronze urns cast in 1835–1837 under Emperor Minh Mạng outside Thế Miếu; UNESCO Memory of the World inscribed.",
+      "attributes": {
+        "classification": "Bảo vật Quốc gia / UNESCO MOWCAP",
+        "cast_years": "1835-1837",
+        "location_site": "site-the-to-mieu"
+      }
+    },
+    {
+      "id": "art-ngai-vang",
+      "slug": "ngai-vang-hoang-de",
+      "entity_type": "artifact",
+      "name_vi": "Ngai Vàng Hoàng Đế Triều Nguyễn",
+      "name_en": "Imperial Throne of the Nguyễn Dynasty",
+      "name_han_nom": "太和殿皇帝寶座",
+      "short_description_vi": "Ngai vàng gỗ quý sơn then dát vàng chạm khắc Cửu Long tranh châu đặt trang trọng giữa điện Thái Hòa, chứng kiến 13 triều vua trị vì.",
+      "short_description_en": "Lacquered and gilded imperial wooden throne sculpted with nine dragons, positioned at the cosmic center of Điện Thái Hòa.",
+      "attributes": {
+        "classification": "Bảo vật Quốc gia (2015)",
+        "origin_year": 1805,
+        "location_site": "site-dien-thai-hoa"
+      }
+    },
+    {
+      "id": "art-cuu-vi-than-cong",
+      "slug": "cuu-vi-than-cong",
+      "entity_type": "artifact",
+      "name_vi": "Cửu Vị Thần Công",
+      "name_en": "The Nine Holy Cannons",
+      "name_han_nom": "神威無敵上將軍 (九位神功)",
+      "short_description_vi": "Chín cỗ súng thần công bằng đồng đúc năm 1803–1804 thời Gia Long, sắc phong Thần Oai Vô Địch Thượng Tướng Quân, chia hai nhóm Tứ Thời và Ngũ Hành đặt tại Ngọ Môn.",
+      "short_description_en": "Nine colossal bronze ceremonial cannons cast in 1803–1804 under Emperor Gia Long, designated National Treasures.",
+      "attributes": {
+        "classification": "Bảo vật Quốc gia (2012)",
+        "cast_years": "1803-1804",
+        "location_site": "site-ngo-mon"
+      }
+    },
+    {
+      "id": "art-kim-bao-truyen-quoc",
+      "slug": "kim-bao-hoang-de-chi-bao",
+      "entity_type": "artifact",
+      "name_vi": "Kim Bảo Hoàng Đế Chi Bảo",
+      "name_en": "Imperial Gold Seal \"Hoàng Đế Chi Bảo\"",
+      "name_han_nom": "皇帝之寶金印",
+      "short_description_vi": "Bảo ấn bằng vàng ròng đúc năm Minh Mạng thứ 4 (1823) nặng 10,78 kg; ấn tín truyền quốc trao trả cho chính quyền cách mạng trong lễ thoái vị 1945 tại Ngọ Môn.",
+      "short_description_en": "Dynastic gold seal cast in 1823 weighing 10.78 kg, transferred by Emperor Bảo Đại to the revolutionary government in August 1945.",
+      "attributes": {
+        "classification": "Bảo vật Quốc gia",
+        "cast_year": 1823,
+        "weight_kg": 10.78
+      }
+    },
+    {
+      "id": "src-dai-nam-thuc-luc",
+      "slug": "dai-nam-thuc-luc",
+      "entity_type": "source",
+      "name_vi": "Đại Nam Thực Lục Chính Biên",
+      "name_en": "Veritable Records of the Great South (Đại Nam Thực Lục)",
+      "name_han_nom": "大南實錄正編",
+      "short_description_vi": "Bộ chính sử quy mô lớn nhất triều Nguyễn do Quốc Sử Quán biên soạn qua các triều đại, ghi chép tường tận niên biểu, kiến thiết cung điện và thể chế.",
+      "short_description_en": "The official grand imperial chronicles compiled by the Nguyễn Dynasty National History Bureau, primary source for all palace constructions.",
+      "attributes": {
+        "compiler": "Quốc Sử Quán triều Nguyễn",
+        "type": "Imperial Annals / Chronicle",
+        "reliability": "verified_primary_source"
+      }
+    },
+    {
+      "id": "src-kham-dinh-hoi-dien",
+      "slug": "kham-dinh-hoi-dien-su-le",
+      "entity_type": "source",
+      "name_vi": "Khâm Định Đại Nam Hội Điển Sự Lệ",
+      "name_en": "Administrative Statutes and Precedents of Đại Nam",
+      "name_han_nom": "欽定大南會典事例",
+      "short_description_vi": "Bộ điển chế và quy thức tổ chức nhà nước do Nội các triều Nguyễn san định thời Thiệu Trị và Tự Đức, quy định chi tiết nghi lễ thiết triều, phẩm trật và kiến trúc.",
+      "short_description_en": "The official administrative compendium compiled by the Grand Secretariat detailing palace rites, court etiquette, and architectural standards.",
+      "attributes": {
+        "compiler": "Nội các triều Nguyễn",
+        "type": "Administrative Statutes / Code",
+        "reliability": "verified_primary_source"
+      }
+    },
+    {
+      "id": "src-dai-nam-nhat-thong-chi",
+      "slug": "dai-nam-nhat-thong-chi",
+      "entity_type": "source",
+      "name_vi": "Đại Nam Nhất Thống Chí",
+      "name_en": "Comprehensive Gazetteer of Đại Nam",
+      "name_han_nom": "大南一統志",
+      "short_description_vi": "Bộ toàn thư địa chí quốc gia lớn nhất thời Nguyễn biên soạn về địa lý, phong thổ, ranh giới, danh lam thắng cảnh và quy cách thành trì Kinh sư.",
+      "short_description_en": "Comprehensive national gazetteer compiled by the National History Bureau detailing imperial geography and architectural monuments of the capital.",
+      "attributes": {
+        "compiler": "Quốc Sử Quán triều Nguyễn",
+        "type": "National Imperial Gazetteer",
+        "reliability": "verified_primary_source"
+      }
+    },
+    {
+      "id": "guild-duc-dong-phuong-duc",
+      "slug": "duc-dong-phuong-duc",
+      "entity_type": "craft_guild",
+      "name_vi": "Phường Đúc Đồng Xứ Huế",
+      "name_en": "Phường Đúc Bronze Casting Guild",
+      "name_han_nom": "坊鑄銅匠行",
+      "short_description_vi": "Phường thợ đúc đồng truyền thống hình thành từ thế kỷ 17 bên bờ sông Hương; nơi các nghệ nhân tài hoa đúc nên Cửu Đỉnh, Cửu Vị Thần Công và đại hồng chung cổ tự.",
+      "short_description_en": "Historic royal bronze foundry quarter along the Perfume River, creators of the Nine Dynastic Urns and Nine Holy Cannons.",
+      "attributes": {
+        "origin_century": "17th Century",
+        "primary_craft": "Bronze Casting",
+        "village_location": "Phường Đúc, TP. Huế"
+      }
+    },
+    {
+      "id": "guild-phap-lam-hue",
+      "slug": "nghe-thuat-phap-lam-hue",
+      "entity_type": "craft_guild",
+      "name_vi": "Cục Pháp Lam Hoàng Cung Huế",
+      "name_en": "Huế Imperial Vitreous Enamel Guild (Pháp Lam)",
+      "name_han_nom": "琺瑯官局",
+      "short_description_vi": "Kỹ nghệ pháp lam hoàng cung du nhập và phát triển rực rỡ từ thời Minh Mạng (1827), chế tác pháp lam trang trí bờ nóc điện Thái Hòa, Hiển Lâm Các, Kiến Trung.",
+      "short_description_en": "Imperial vitreous enamel on copper guild established in 1827, adorning roof ridges across Thái Hòa, Hiển Lâm Các, and Kiến Trung.",
+      "attributes": {
+        "established_year": 1827,
+        "reign": "Minh Mạng",
+        "technique": "Vitreous Cloisonné/Champlevé Enamel on Copper"
+      }
+    },
+    {
+      "id": "guild-moc-my-nghe-kim-bong",
+      "slug": "moc-my-nghe-kim-bong-dong-ky",
+      "entity_type": "craft_guild",
+      "name_vi": "Phường Thợ Mộc Cung Đình & Chạm Khắc Hoàng Gia",
+      "name_en": "Imperial Master Carpenters & Woodcarving Guild",
+      "name_han_nom": "宮廷木匠行",
+      "short_description_vi": "Hội đoàn thợ mộc và nghệ nhân chạm lộng sơn thếp quy tụ các danh sư Kim Bồng, Đồng Kỵ, Nam Định về Kinh sư kiến tạo rường cột, vách khám Thế Miếu và ngai vàng.",
+      "short_description_en": "Guild of imperial master carpenters and carvers who crafted the intricate timber frames, throne, and shrines of the Imperial City.",
+      "attributes": {
+        "primary_technique": "Chạm lộng kênh bong, kết cấu mộc truyền thống chồng rường giả thủ"
+      }
+    },
+    {
+      "id": "guild-kham-sanh-su-hue",
+      "slug": "nghe-kham-sanh-su-cung-dinh",
+      "entity_type": "craft_guild",
+      "name_vi": "Phường Nghệ Nhân Khảm Sành Sứ Cung Đình",
+      "name_en": "Imperial Porcelain and Glass Mosaic Guild",
+      "name_han_nom": "嵌瓷瓦匠行",
+      "short_description_vi": "Kỹ nghệ cắt ghép mảnh sành, sứ, thủy tinh màu tạo nên những bức tranh phù điêu tráng lệ trên bờ nóc di tích, đỉnh cao tại điện Kiến Trung và Thái Bình Lâu.",
+      "short_description_en": "Guild of master mosaic artisans crafting intricate decorative murals from porcelain shards and colored glass.",
+      "attributes": {
+        "peak_era": "Khải Định (1916-1925)",
+        "primary_material": "Broken Porcelain Shards, Colored Glass, Cement"
+      }
+    },
+    {
+      "id": "guild-ngoc-hoang-cung-kim-hoan",
+      "slug": "ngoc-hoang-cung-kim-hoan",
+      "entity_type": "craft_guild",
+      "name_vi": "Ty Kim Ngân & Ngọc Tác Triều Nguyễn",
+      "name_en": "Imperial Goldsmiths & Gemcutters Bureau",
+      "name_han_nom": "金銀玉作司",
+      "short_description_vi": "Cơ quan chế tác bảo vật của triều đình chuyên đúc kim bảo, kim sách, ngọc tỷ, chế tác mũ bình thiên và trang hoàng bửu tán ngai vàng hoàng đế.",
+      "short_description_en": "Royal bureau of goldsmiths and gem carvers who produced imperial gold seals, books of investiture, and regalia.",
+      "attributes": {
+        "bureau_name": "Ty Kim Ngân / Nội Hóa",
+        "primary_output": "Kim bảo, ngọc ấn, bửu tán dát vàng"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-001",
+      "source": "zone-central-ceremonial-axis",
+      "target": "site-ngo-mon",
+      "predicate": "contains",
+      "predicate_category": "spatial_containment",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Kinh sư",
+        "claim_summary": "Quy hoạch phân khu chức năng Kinh sư và Hoàng thành theo điển chế."
+      },
+      "description_vi": "zone-central-ceremonial-axis bao chứa di tích kiến trúc site-ngo-mon.",
+      "description_en": "zone-central-ceremonial-axis contains monument site-ngo-mon."
+    },
+    {
+      "id": "edge-002",
+      "source": "zone-central-ceremonial-axis",
+      "target": "site-cau-trung-dao",
+      "predicate": "contains",
+      "predicate_category": "spatial_containment",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Kinh sư",
+        "claim_summary": "Quy hoạch phân khu chức năng Kinh sư và Hoàng thành theo điển chế."
+      },
+      "description_vi": "zone-central-ceremonial-axis bao chứa di tích kiến trúc site-cau-trung-dao.",
+      "description_en": "zone-central-ceremonial-axis contains monument site-cau-trung-dao."
+    },
+    {
+      "id": "edge-003",
+      "source": "zone-central-ceremonial-axis",
+      "target": "site-san-dai-trieu-nghi",
+      "predicate": "contains",
+      "predicate_category": "spatial_containment",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Kinh sư",
+        "claim_summary": "Quy hoạch phân khu chức năng Kinh sư và Hoàng thành theo điển chế."
+      },
+      "description_vi": "zone-central-ceremonial-axis bao chứa di tích kiến trúc site-san-dai-trieu-nghi.",
+      "description_en": "zone-central-ceremonial-axis contains monument site-san-dai-trieu-nghi."
+    },
+    {
+      "id": "edge-004",
+      "source": "zone-central-ceremonial-axis",
+      "target": "site-dien-thai-hoa",
+      "predicate": "contains",
+      "predicate_category": "spatial_containment",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Kinh sư",
+        "claim_summary": "Quy hoạch phân khu chức năng Kinh sư và Hoàng thành theo điển chế."
+      },
+      "description_vi": "zone-central-ceremonial-axis bao chứa di tích kiến trúc site-dien-thai-hoa.",
+      "description_en": "zone-central-ceremonial-axis contains monument site-dien-thai-hoa."
+    },
+    {
+      "id": "edge-005",
+      "source": "zone-ancestral-worship-space",
+      "target": "site-the-to-mieu",
+      "predicate": "contains",
+      "predicate_category": "spatial_containment",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Kinh sư",
+        "claim_summary": "Quy hoạch phân khu chức năng Kinh sư và Hoàng thành theo điển chế."
+      },
+      "description_vi": "zone-ancestral-worship-space bao chứa di tích kiến trúc site-the-to-mieu.",
+      "description_en": "zone-ancestral-worship-space contains monument site-the-to-mieu."
+    },
+    {
+      "id": "edge-006",
+      "source": "zone-ancestral-worship-space",
+      "target": "site-hien-lam-cac",
+      "predicate": "contains",
+      "predicate_category": "spatial_containment",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Kinh sư",
+        "claim_summary": "Quy hoạch phân khu chức năng Kinh sư và Hoàng thành theo điển chế."
+      },
+      "description_vi": "zone-ancestral-worship-space bao chứa di tích kiến trúc site-hien-lam-cac.",
+      "description_en": "zone-ancestral-worship-space contains monument site-hien-lam-cac."
+    },
+    {
+      "id": "edge-007",
+      "source": "zone-ancestral-worship-space",
+      "target": "site-hung-to-mieu",
+      "predicate": "contains",
+      "predicate_category": "spatial_containment",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Kinh sư",
+        "claim_summary": "Quy hoạch phân khu chức năng Kinh sư và Hoàng thành theo điển chế."
+      },
+      "description_vi": "zone-ancestral-worship-space bao chứa di tích kiến trúc site-hung-to-mieu.",
+      "description_en": "zone-ancestral-worship-space contains monument site-hung-to-mieu."
+    },
+    {
+      "id": "edge-008",
+      "source": "zone-ancestral-worship-space",
+      "target": "site-trieu-to-mieu",
+      "predicate": "contains",
+      "predicate_category": "spatial_containment",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Kinh sư",
+        "claim_summary": "Quy hoạch phân khu chức năng Kinh sư và Hoàng thành theo điển chế."
+      },
+      "description_vi": "zone-ancestral-worship-space bao chứa di tích kiến trúc site-trieu-to-mieu.",
+      "description_en": "zone-ancestral-worship-space contains monument site-trieu-to-mieu."
+    },
+    {
+      "id": "edge-009",
+      "source": "zone-ancestral-worship-space",
+      "target": "site-dien-phung-tien",
+      "predicate": "contains",
+      "predicate_category": "spatial_containment",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Kinh sư",
+        "claim_summary": "Quy hoạch phân khu chức năng Kinh sư và Hoàng thành theo điển chế."
+      },
+      "description_vi": "zone-ancestral-worship-space bao chứa di tích kiến trúc site-dien-phung-tien.",
+      "description_en": "zone-ancestral-worship-space contains monument site-dien-phung-tien."
+    },
+    {
+      "id": "edge-010",
+      "source": "zone-purple-forbidden-city",
+      "target": "site-dai-cung-mon",
+      "predicate": "contains",
+      "predicate_category": "spatial_containment",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Kinh sư",
+        "claim_summary": "Quy hoạch phân khu chức năng Kinh sư và Hoàng thành theo điển chế."
+      },
+      "description_vi": "zone-purple-forbidden-city bao chứa di tích kiến trúc site-dai-cung-mon.",
+      "description_en": "zone-purple-forbidden-city contains monument site-dai-cung-mon."
+    },
+    {
+      "id": "edge-011",
+      "source": "zone-purple-forbidden-city",
+      "target": "site-dien-can-chanh",
+      "predicate": "contains",
+      "predicate_category": "spatial_containment",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Kinh sư",
+        "claim_summary": "Quy hoạch phân khu chức năng Kinh sư và Hoàng thành theo điển chế."
+      },
+      "description_vi": "zone-purple-forbidden-city bao chứa di tích kiến trúc site-dien-can-chanh.",
+      "description_en": "zone-purple-forbidden-city contains monument site-dien-can-chanh."
+    },
+    {
+      "id": "edge-012",
+      "source": "zone-purple-forbidden-city",
+      "target": "site-dien-kien-trung",
+      "predicate": "contains",
+      "predicate_category": "spatial_containment",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Kinh sư",
+        "claim_summary": "Quy hoạch phân khu chức năng Kinh sư và Hoàng thành theo điển chế."
+      },
+      "description_vi": "zone-purple-forbidden-city bao chứa di tích kiến trúc site-dien-kien-trung.",
+      "description_en": "zone-purple-forbidden-city contains monument site-dien-kien-trung."
+    },
+    {
+      "id": "edge-013",
+      "source": "zone-purple-forbidden-city",
+      "target": "site-duyet-thi-duong",
+      "predicate": "contains",
+      "predicate_category": "spatial_containment",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Kinh sư",
+        "claim_summary": "Quy hoạch phân khu chức năng Kinh sư và Hoàng thành theo điển chế."
+      },
+      "description_vi": "zone-purple-forbidden-city bao chứa di tích kiến trúc site-duyet-thi-duong.",
+      "description_en": "zone-purple-forbidden-city contains monument site-duyet-thi-duong."
+    },
+    {
+      "id": "edge-014",
+      "source": "zone-purple-forbidden-city",
+      "target": "site-thai-binh-lau",
+      "predicate": "contains",
+      "predicate_category": "spatial_containment",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Kinh sư",
+        "claim_summary": "Quy hoạch phân khu chức năng Kinh sư và Hoàng thành theo điển chế."
+      },
+      "description_vi": "zone-purple-forbidden-city bao chứa di tích kiến trúc site-thai-binh-lau.",
+      "description_en": "zone-purple-forbidden-city contains monument site-thai-binh-lau."
+    },
+    {
+      "id": "edge-015",
+      "source": "zone-royal-living-gardens",
+      "target": "site-cung-dien-tho",
+      "predicate": "contains",
+      "predicate_category": "spatial_containment",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Kinh sư",
+        "claim_summary": "Quy hoạch phân khu chức năng Kinh sư và Hoàng thành theo điển chế."
+      },
+      "description_vi": "zone-royal-living-gardens bao chứa di tích kiến trúc site-cung-dien-tho.",
+      "description_en": "zone-royal-living-gardens contains monument site-cung-dien-tho."
+    },
+    {
+      "id": "edge-016",
+      "source": "zone-royal-living-gardens",
+      "target": "site-cung-truong-sanh",
+      "predicate": "contains",
+      "predicate_category": "spatial_containment",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Kinh sư",
+        "claim_summary": "Quy hoạch phân khu chức năng Kinh sư và Hoàng thành theo điển chế."
+      },
+      "description_vi": "zone-royal-living-gardens bao chứa di tích kiến trúc site-cung-truong-sanh.",
+      "description_en": "zone-royal-living-gardens contains monument site-cung-truong-sanh."
+    },
+    {
+      "id": "edge-017",
+      "source": "site-ngo-mon",
+      "target": "art-cuu-vi-than-cong",
+      "predicate": "contains",
+      "predicate_category": "spatial_containment",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-thuc-luc",
+        "locator": "Chính biên",
+        "claim_summary": "Ghi chép vị trí an vị hiện vật bảo vật hoàng cung."
+      },
+      "description_vi": "Cửu Vị Thần Công được đặt trong hai nhà pháo tả hữu phía trước Ngọ Môn.",
+      "description_en": "Monument site-ngo-mon houses artifact art-cuu-vi-than-cong."
+    },
+    {
+      "id": "edge-018",
+      "source": "site-dien-thai-hoa",
+      "target": "art-ngai-vang",
+      "predicate": "contains",
+      "predicate_category": "spatial_containment",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-thuc-luc",
+        "locator": "Chính biên",
+        "claim_summary": "Ghi chép vị trí an vị hiện vật bảo vật hoàng cung."
+      },
+      "description_vi": "Ngai vàng hoàng đế đặt tại vị trí trung tâm trang trọng của điện Thái Hòa.",
+      "description_en": "Monument site-dien-thai-hoa houses artifact art-ngai-vang."
+    },
+    {
+      "id": "edge-019",
+      "source": "site-the-to-mieu",
+      "target": "art-cuu-dinh",
+      "predicate": "contains",
+      "predicate_category": "spatial_containment",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-thuc-luc",
+        "locator": "Chính biên",
+        "claim_summary": "Ghi chép vị trí an vị hiện vật bảo vật hoàng cung."
+      },
+      "description_vi": "Cửu Đỉnh được đặt thẳng hàng trước sân Thế Tổ Miếu đối diện Hiển Lâm Các.",
+      "description_en": "Monument site-the-to-mieu houses artifact art-cuu-dinh."
+    },
+    {
+      "id": "edge-020",
+      "source": "site-dien-can-chanh",
+      "target": "art-kim-bao-truyen-quoc",
+      "predicate": "contains",
+      "predicate_category": "spatial_containment",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-thuc-luc",
+        "locator": "Chính biên",
+        "claim_summary": "Ghi chép vị trí an vị hiện vật bảo vật hoàng cung."
+      },
+      "description_vi": "Kim bảo Hoàng Đế Chi Bảo được cất giữ và đóng dấu sắc dụ tại cung cấm điện Cần Chánh.",
+      "description_en": "Monument site-dien-can-chanh houses artifact art-kim-bao-truyen-quoc."
+    },
+    {
+      "id": "edge-021",
+      "source": "site-ngo-mon",
+      "target": "site-cau-trung-dao",
+      "predicate": "leads_to",
+      "predicate_category": "spatial_topology",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-kham-dinh-hoi-dien",
+        "locator": "Quyển 168: Lễ bộ nghi thức",
+        "claim_summary": "Quy chuẩn lộ trình ngự giá và phân luồng bá quan trên trục trung tâm."
+      },
+      "description_vi": "Từ lầu Ngọ Môn theo đường ngự đạo dẫn lối qua cầu Trung Đạo bắc trên hồ Thái Dịch.",
+      "description_en": "Passage leading from site-ngo-mon to site-cau-trung-dao."
+    },
+    {
+      "id": "edge-022",
+      "source": "site-ngo-mon",
+      "target": "site-cau-trung-dao",
+      "predicate": "ceremonial_axis",
+      "predicate_category": "ritual_hierarchy",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Kinh sư",
+        "claim_summary": "Trục thần đạo trung tâm thiết lập trật tự vũ trụ quan Kinh sư."
+      },
+      "description_vi": "Liên kết nghi lễ tối cao trên trục chính đạo giữa site-ngo-mon và site-cau-trung-dao.",
+      "description_en": "Ceremonial royal axis binding site-ngo-mon and site-cau-trung-dao."
+    },
+    {
+      "id": "edge-023",
+      "source": "site-cau-trung-dao",
+      "target": "site-san-dai-trieu-nghi",
+      "predicate": "leads_to",
+      "predicate_category": "spatial_topology",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-kham-dinh-hoi-dien",
+        "locator": "Quyển 168: Lễ bộ nghi thức",
+        "claim_summary": "Quy chuẩn lộ trình ngự giá và phân luồng bá quan trên trục trung tâm."
+      },
+      "description_vi": "Từ cầu Trung Đạo bước qua hai cửa đồng quán dẫn lối vào sân Đại Triều Nghi.",
+      "description_en": "Passage leading from site-cau-trung-dao to site-san-dai-trieu-nghi."
+    },
+    {
+      "id": "edge-024",
+      "source": "site-cau-trung-dao",
+      "target": "site-san-dai-trieu-nghi",
+      "predicate": "ceremonial_axis",
+      "predicate_category": "ritual_hierarchy",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Kinh sư",
+        "claim_summary": "Trục thần đạo trung tâm thiết lập trật tự vũ trụ quan Kinh sư."
+      },
+      "description_vi": "Liên kết nghi lễ tối cao trên trục chính đạo giữa site-cau-trung-dao và site-san-dai-trieu-nghi.",
+      "description_en": "Ceremonial royal axis binding site-cau-trung-dao and site-san-dai-trieu-nghi."
+    },
+    {
+      "id": "edge-025",
+      "source": "site-san-dai-trieu-nghi",
+      "target": "site-dien-thai-hoa",
+      "predicate": "leads_to",
+      "predicate_category": "spatial_topology",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-kham-dinh-hoi-dien",
+        "locator": "Quyển 168: Lễ bộ nghi thức",
+        "claim_summary": "Quy chuẩn lộ trình ngự giá và phân luồng bá quan trên trục trung tâm."
+      },
+      "description_vi": "Từ sân Đại Triều Nghi dẫn thẳng lên thềm rồng tam cấp bước vào điện Thái Hòa.",
+      "description_en": "Passage leading from site-san-dai-trieu-nghi to site-dien-thai-hoa."
+    },
+    {
+      "id": "edge-026",
+      "source": "site-san-dai-trieu-nghi",
+      "target": "site-dien-thai-hoa",
+      "predicate": "ceremonial_axis",
+      "predicate_category": "ritual_hierarchy",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Kinh sư",
+        "claim_summary": "Trục thần đạo trung tâm thiết lập trật tự vũ trụ quan Kinh sư."
+      },
+      "description_vi": "Liên kết nghi lễ tối cao trên trục chính đạo giữa site-san-dai-trieu-nghi và site-dien-thai-hoa.",
+      "description_en": "Ceremonial royal axis binding site-san-dai-trieu-nghi and site-dien-thai-hoa."
+    },
+    {
+      "id": "edge-027",
+      "source": "site-dien-thai-hoa",
+      "target": "site-dai-cung-mon",
+      "predicate": "leads_to",
+      "predicate_category": "spatial_topology",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-kham-dinh-hoi-dien",
+        "locator": "Quyển 168: Lễ bộ nghi thức",
+        "claim_summary": "Quy chuẩn lộ trình ngự giá và phân luồng bá quan trên trục trung tâm."
+      },
+      "description_vi": "Từ sau điện Thái Hòa, trục thần đạo dẫn qua sân bái mạng tới Đại Cung Môn của Tử Cấm Thành.",
+      "description_en": "Passage leading from site-dien-thai-hoa to site-dai-cung-mon."
+    },
+    {
+      "id": "edge-028",
+      "source": "site-dien-thai-hoa",
+      "target": "site-dai-cung-mon",
+      "predicate": "ceremonial_axis",
+      "predicate_category": "ritual_hierarchy",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Kinh sư",
+        "claim_summary": "Trục thần đạo trung tâm thiết lập trật tự vũ trụ quan Kinh sư."
+      },
+      "description_vi": "Liên kết nghi lễ tối cao trên trục chính đạo giữa site-dien-thai-hoa và site-dai-cung-mon.",
+      "description_en": "Ceremonial royal axis binding site-dien-thai-hoa and site-dai-cung-mon."
+    },
+    {
+      "id": "edge-029",
+      "source": "site-dai-cung-mon",
+      "target": "site-dien-can-chanh",
+      "predicate": "leads_to",
+      "predicate_category": "spatial_topology",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-kham-dinh-hoi-dien",
+        "locator": "Quyển 168: Lễ bộ nghi thức",
+        "claim_summary": "Quy chuẩn lộ trình ngự giá và phân luồng bá quan trên trục trung tâm."
+      },
+      "description_vi": "Đại Cung Môn là cửa ngõ chính dẫn lối trực tiếp vào nội điện Cần Chánh.",
+      "description_en": "Passage leading from site-dai-cung-mon to site-dien-can-chanh."
+    },
+    {
+      "id": "edge-030",
+      "source": "site-dai-cung-mon",
+      "target": "site-dien-can-chanh",
+      "predicate": "ceremonial_axis",
+      "predicate_category": "ritual_hierarchy",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Kinh sư",
+        "claim_summary": "Trục thần đạo trung tâm thiết lập trật tự vũ trụ quan Kinh sư."
+      },
+      "description_vi": "Liên kết nghi lễ tối cao trên trục chính đạo giữa site-dai-cung-mon và site-dien-can-chanh.",
+      "description_en": "Ceremonial royal axis binding site-dai-cung-mon and site-dien-can-chanh."
+    },
+    {
+      "id": "edge-031",
+      "source": "site-dien-can-chanh",
+      "target": "site-dien-kien-trung",
+      "predicate": "leads_to",
+      "predicate_category": "spatial_topology",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-kham-dinh-hoi-dien",
+        "locator": "Quyển 168: Lễ bộ nghi thức",
+        "claim_summary": "Quy chuẩn lộ trình ngự giá và phân luồng bá quan trên trục trung tâm."
+      },
+      "description_vi": "Từ điện Cần Chánh qua sân nội đình dẫn lối tới cung điện Kiến Trung ở điểm cực bắc Tử Cấm Thành.",
+      "description_en": "Passage leading from site-dien-can-chanh to site-dien-kien-trung."
+    },
+    {
+      "id": "edge-032",
+      "source": "site-dien-can-chanh",
+      "target": "site-dien-kien-trung",
+      "predicate": "ceremonial_axis",
+      "predicate_category": "ritual_hierarchy",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Kinh sư",
+        "claim_summary": "Trục thần đạo trung tâm thiết lập trật tự vũ trụ quan Kinh sư."
+      },
+      "description_vi": "Liên kết nghi lễ tối cao trên trục chính đạo giữa site-dien-can-chanh và site-dien-kien-trung.",
+      "description_en": "Ceremonial royal axis binding site-dien-can-chanh and site-dien-kien-trung."
+    },
+    {
+      "id": "edge-033",
+      "source": "site-dien-can-chanh",
+      "target": "site-duyet-thi-duong",
+      "predicate": "leads_to",
+      "predicate_category": "spatial_topology",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1",
+        "claim_summary": "Sơ đồ đường đi lối lại trong cung thành."
+      },
+      "description_vi": "Hành lang phía đông điện Cần Chánh dẫn lối sang nhà hát hoàng gia Duyệt Thị Đường.",
+      "description_en": "Internal walkway leading from site-dien-can-chanh to site-duyet-thi-duong."
+    },
+    {
+      "id": "edge-034",
+      "source": "site-duyet-thi-duong",
+      "target": "site-thai-binh-lau",
+      "predicate": "leads_to",
+      "predicate_category": "spatial_topology",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1",
+        "claim_summary": "Sơ đồ đường đi lối lại trong cung thành."
+      },
+      "description_vi": "Từ Duyệt Thị Đường qua ngự hoa viên dẫn lối sang thư phòng Thái Bình Lâu.",
+      "description_en": "Internal walkway leading from site-duyet-thi-duong to site-thai-binh-lau."
+    },
+    {
+      "id": "edge-035",
+      "source": "site-cung-dien-tho",
+      "target": "site-cung-truong-sanh",
+      "predicate": "leads_to",
+      "predicate_category": "spatial_topology",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1",
+        "claim_summary": "Sơ đồ đường đi lối lại trong cung thành."
+      },
+      "description_vi": "Con đường nội bộ phía tây bắc nối liền cung Diên Thọ sang hoa viên cung Trường Sanh.",
+      "description_en": "Internal walkway leading from site-cung-dien-tho to site-cung-truong-sanh."
+    },
+    {
+      "id": "edge-036",
+      "source": "site-hien-lam-cac",
+      "target": "site-the-to-mieu",
+      "predicate": "leads_to",
+      "predicate_category": "spatial_topology",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1",
+        "claim_summary": "Sơ đồ đường đi lối lại trong cung thành."
+      },
+      "description_vi": "Khoảng sân giữa Hiển Lâm Các và Cửu Đỉnh dẫn lối trang nghiêm vào chính điện Thế Tổ Miếu.",
+      "description_en": "Internal walkway leading from site-hien-lam-cac to site-the-to-mieu."
+    },
+    {
+      "id": "edge-037",
+      "source": "site-ngo-mon",
+      "target": "zone-central-ceremonial-axis",
+      "predicate": "oriented_to",
+      "predicate_category": "geomantic_alignment",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Hình thể phong thủy Kinh thành",
+        "claim_summary": "Định hướng kiến trúc theo trục phong thủy núi sông đất Thần kinh."
+      },
+      "description_vi": "Ngọ Môn tọa lạc nhìn thẳng về hướng chính Nam theo nguyên lý \"Thánh nhân nam diện nhi thính thiên hạ\".",
+      "description_en": "Geomantic orientation of site-ngo-mon relative to zone-central-ceremonial-axis."
+    },
+    {
+      "id": "edge-038",
+      "source": "site-dien-thai-hoa",
+      "target": "zone-central-ceremonial-axis",
+      "predicate": "oriented_to",
+      "predicate_category": "geomantic_alignment",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Hình thể phong thủy Kinh thành",
+        "claim_summary": "Định hướng kiến trúc theo trục phong thủy núi sông đất Thần kinh."
+      },
+      "description_vi": "Điện Thái Hòa nằm trên trục thần đạo Tọa Tý Hướng Ngọ (Bắc - Nam), nhìn ra núi Ngự Bình làm tiền án.",
+      "description_en": "Geomantic orientation of site-dien-thai-hoa relative to zone-central-ceremonial-axis."
+    },
+    {
+      "id": "edge-039",
+      "source": "site-hien-lam-cac",
+      "target": "site-the-to-mieu",
+      "predicate": "oriented_to",
+      "predicate_category": "geomantic_alignment",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Hình thể phong thủy Kinh thành",
+        "claim_summary": "Định hướng kiến trúc theo trục phong thủy núi sông đất Thần kinh."
+      },
+      "description_vi": "Hiển Lâm Các được thiết kế quay mặt về hướng Bắc nhìn thẳng vào điện thờ Thế Miếu để tưởng niệm công thần.",
+      "description_en": "Geomantic orientation of site-hien-lam-cac relative to site-the-to-mieu."
+    },
+    {
+      "id": "edge-040",
+      "source": "site-the-to-mieu",
+      "target": "zone-central-ceremonial-axis",
+      "predicate": "oriented_to",
+      "predicate_category": "geomantic_alignment",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Hình thể phong thủy Kinh thành",
+        "claim_summary": "Định hướng kiến trúc theo trục phong thủy núi sông đất Thần kinh."
+      },
+      "description_vi": "Thế Miếu nằm ở góc Tây Nam nhưng cửa chính quay về hướng Nam hợp quy thức thờ tự.",
+      "description_en": "Geomantic orientation of site-the-to-mieu relative to zone-central-ceremonial-axis."
+    },
+    {
+      "id": "edge-041",
+      "source": "site-the-to-mieu",
+      "target": "era-gia-long",
+      "predicate": "ancestral_veneration",
+      "predicate_category": "dynastic_ritual",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-thuc-luc",
+        "locator": "Đệ nhị kỷ & Hội Điển Quyển 105",
+        "claim_summary": "Quy định thờ phụng các án gian tổ tiên họ Nguyễn."
+      },
+      "description_vi": "Thế Tổ Miếu tôn nghiêm phụng thờ Thế Tổ Cao Hoàng Đế (Gia Long) và các vị hoàng đế kế nghiệp triều Nguyễn.",
+      "description_en": "Ancestral veneration rites linking site-the-to-mieu to era-gia-long."
+    },
+    {
+      "id": "edge-042",
+      "source": "site-hung-to-mieu",
+      "target": "era-gia-long",
+      "predicate": "ancestral_veneration",
+      "predicate_category": "dynastic_ritual",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-thuc-luc",
+        "locator": "Đệ nhị kỷ & Hội Điển Quyển 105",
+        "claim_summary": "Quy định thờ phụng các án gian tổ tiên họ Nguyễn."
+      },
+      "description_vi": "Hưng Tổ Miếu phụng thờ phụ thân và mẫu thân của vua Gia Long (Thế Tử Nguyễn Phúc Luân và bà Nguyễn Thị Hoàn).",
+      "description_en": "Ancestral veneration rites linking site-hung-to-mieu to era-gia-long."
+    },
+    {
+      "id": "edge-043",
+      "source": "site-trieu-to-mieu",
+      "target": "era-gia-long",
+      "predicate": "ancestral_veneration",
+      "predicate_category": "dynastic_ritual",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-thuc-luc",
+        "locator": "Đệ nhị kỷ & Hội Điển Quyển 105",
+        "claim_summary": "Quy định thờ phụng các án gian tổ tiên họ Nguyễn."
+      },
+      "description_vi": "Triệu Tổ Miếu phụng thờ cụ tổ Nguyễn Kim (Triệu Tổ Tĩnh Hoàng Đế), thủy tổ mở mang cơ nghiệp họ Nguyễn.",
+      "description_en": "Ancestral veneration rites linking site-trieu-to-mieu to era-gia-long."
+    },
+    {
+      "id": "edge-044",
+      "source": "site-dien-phung-tien",
+      "target": "era-minh-mang",
+      "predicate": "ancestral_veneration",
+      "predicate_category": "dynastic_ritual",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-thuc-luc",
+        "locator": "Đệ nhị kỷ & Hội Điển Quyển 105",
+        "claim_summary": "Quy định thờ phụng các án gian tổ tiên họ Nguyễn."
+      },
+      "description_vi": "Điện Phụng Tiên là nơi dành riêng cho các bà trong hoàng cung cúng bái tiên đế theo nghi thức nội cung.",
+      "description_en": "Ancestral veneration rites linking site-dien-phung-tien to era-minh-mang."
+    },
+    {
+      "id": "edge-045",
+      "source": "site-the-to-mieu",
+      "target": "site-trieu-to-mieu",
+      "predicate": "architectural_twin",
+      "predicate_category": "stylistic_typology",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Quy chế cung miếu",
+        "claim_summary": "Nguyên lý đăng đối Đông Tây: Tả Chiêu Hữu Mục trong quy hoạch thành quách phương Đông."
+      },
+      "description_vi": "Thế Miếu (Tây Nam, thờ các vua) đối xứng hoàn hảo với Triệu Miếu (Đông Nam, thờ thủy tổ) qua trục thần đạo trung tâm Hoàng Thành.",
+      "description_en": "Architectural twinning and symmetry between site-the-to-mieu and site-trieu-to-mieu."
+    },
+    {
+      "id": "edge-046",
+      "source": "site-hung-to-mieu",
+      "target": "site-dien-phung-tien",
+      "predicate": "architectural_twin",
+      "predicate_category": "stylistic_typology",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Quy chế cung miếu",
+        "claim_summary": "Nguyên lý đăng đối Đông Tây: Tả Chiêu Hữu Mục trong quy hoạch thành quách phương Đông."
+      },
+      "description_vi": "Hưng Miếu và Điện Phụng Tiên tạo nên cặp điện thờ phụ trợ đối xứng hài hòa trong cấu trúc tôn miếu.",
+      "description_en": "Architectural twinning and symmetry between site-hung-to-mieu and site-dien-phung-tien."
+    },
+    {
+      "id": "edge-047",
+      "source": "site-cung-dien-tho",
+      "target": "site-cung-truong-sanh",
+      "predicate": "architectural_twin",
+      "predicate_category": "stylistic_typology",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Quy chế cung miếu",
+        "claim_summary": "Nguyên lý đăng đối Đông Tây: Tả Chiêu Hữu Mục trong quy hoạch thành quách phương Đông."
+      },
+      "description_vi": "Cung Diên Thọ và Cung Trường Sanh là hai cung điện sinh hoạt hoàng gia song sinh kề cận dành cho Hoàng Thái Hậu và Thái Hoàng Thái Hậu.",
+      "description_en": "Architectural twinning and symmetry between site-cung-dien-tho and site-cung-truong-sanh."
+    },
+    {
+      "id": "edge-048",
+      "source": "art-cuu-dinh",
+      "target": "guild-duc-dong-phuong-duc",
+      "predicate": "associated_craft",
+      "predicate_category": "intangible_heritage",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-kham-dinh-hoi-dien",
+        "locator": "Công bộ: Chế tác tự khí & tượng cụ",
+        "claim_summary": "Quy chế huy động nghệ nhân và thợ thủ công các làng nghề phục vụ cung đình."
+      },
+      "description_vi": "Cửu Đỉnh được đúc bằng bàn tay tài hoa của các nghệ nhân đúc đồng Phường Đúc bên sông Hương (1835-1837).",
+      "description_en": "Associated traditional craft guild guild-duc-dong-phuong-duc for monument/artifact art-cuu-dinh."
+    },
+    {
+      "id": "edge-049",
+      "source": "art-cuu-vi-than-cong",
+      "target": "guild-duc-dong-phuong-duc",
+      "predicate": "associated_craft",
+      "predicate_category": "intangible_heritage",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-kham-dinh-hoi-dien",
+        "locator": "Công bộ: Chế tác tự khí & tượng cụ",
+        "claim_summary": "Quy chế huy động nghệ nhân và thợ thủ công các làng nghề phục vụ cung đình."
+      },
+      "description_vi": "Cửu Vị Thần Công được các hiệp thợ đúc đồng Phường Đúc thực hiện quy mô đúc đồng nguyên khối năm 1803-1804.",
+      "description_en": "Associated traditional craft guild guild-duc-dong-phuong-duc for monument/artifact art-cuu-vi-than-cong."
+    },
+    {
+      "id": "edge-050",
+      "source": "site-dien-thai-hoa",
+      "target": "guild-phap-lam-hue",
+      "predicate": "associated_craft",
+      "predicate_category": "intangible_heritage",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-kham-dinh-hoi-dien",
+        "locator": "Công bộ: Chế tác tự khí & tượng cụ",
+        "claim_summary": "Quy chế huy động nghệ nhân và thợ thủ công các làng nghề phục vụ cung đình."
+      },
+      "description_vi": "Hệ thống thơ văn chữ Hán và hoa văn trang trí pháp lam men màu rực rỡ trên bờ nóc điện Thái Hòa.",
+      "description_en": "Associated traditional craft guild guild-phap-lam-hue for monument/artifact site-dien-thai-hoa."
+    },
+    {
+      "id": "edge-051",
+      "source": "site-hien-lam-cac",
+      "target": "guild-phap-lam-hue",
+      "predicate": "associated_craft",
+      "predicate_category": "intangible_heritage",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-kham-dinh-hoi-dien",
+        "locator": "Công bộ: Chế tác tự khí & tượng cụ",
+        "claim_summary": "Quy chế huy động nghệ nhân và thợ thủ công các làng nghề phục vụ cung đình."
+      },
+      "description_vi": "Bầu rượu pháp lam và hoa văn mây lửa đỉnh nóc lầu Hiển Lâm Các do nghệ nhân pháp lam hoàng cung chế tác.",
+      "description_en": "Associated traditional craft guild guild-phap-lam-hue for monument/artifact site-hien-lam-cac."
+    },
+    {
+      "id": "edge-052",
+      "source": "site-dien-kien-trung",
+      "target": "guild-phap-lam-hue",
+      "predicate": "associated_craft",
+      "predicate_category": "intangible_heritage",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-kham-dinh-hoi-dien",
+        "locator": "Công bộ: Chế tác tự khí & tượng cụ",
+        "claim_summary": "Quy chế huy động nghệ nhân và thợ thủ công các làng nghề phục vụ cung đình."
+      },
+      "description_vi": "Điện Kiến Trung kết hợp hoa văn pháp lam men nhiều màu với gốm sứ ngoại thất.",
+      "description_en": "Associated traditional craft guild guild-phap-lam-hue for monument/artifact site-dien-kien-trung."
+    },
+    {
+      "id": "edge-053",
+      "source": "site-the-to-mieu",
+      "target": "guild-moc-my-nghe-kim-bong",
+      "predicate": "associated_craft",
+      "predicate_category": "intangible_heritage",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-kham-dinh-hoi-dien",
+        "locator": "Công bộ: Chế tác tự khí & tượng cụ",
+        "claim_summary": "Quy chế huy động nghệ nhân và thợ thủ công các làng nghề phục vụ cung đình."
+      },
+      "description_vi": "Hệ thống vách khám thờ chạm lộng kênh bong dát vàng lộng lẫy do thợ mộc tài hoa Kim Bồng và thợ cung đình điêu khắc.",
+      "description_en": "Associated traditional craft guild guild-moc-my-nghe-kim-bong for monument/artifact site-the-to-mieu."
+    },
+    {
+      "id": "edge-054",
+      "source": "art-ngai-vang",
+      "target": "guild-moc-my-nghe-kim-bong",
+      "predicate": "associated_craft",
+      "predicate_category": "intangible_heritage",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-kham-dinh-hoi-dien",
+        "locator": "Công bộ: Chế tác tự khí & tượng cụ",
+        "claim_summary": "Quy chế huy động nghệ nhân và thợ thủ công các làng nghề phục vụ cung đình."
+      },
+      "description_vi": "Thân ngai chạm lộng chín con rồng vàng uốn lượn được tạo tác bởi các danh sư đồ mộc và sơn thếp hoàng gia.",
+      "description_en": "Associated traditional craft guild guild-moc-my-nghe-kim-bong for monument/artifact art-ngai-vang."
+    },
+    {
+      "id": "edge-055",
+      "source": "site-dien-thai-hoa",
+      "target": "guild-moc-my-nghe-kim-bong",
+      "predicate": "associated_craft",
+      "predicate_category": "intangible_heritage",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-kham-dinh-hoi-dien",
+        "locator": "Công bộ: Chế tác tự khí & tượng cụ",
+        "claim_summary": "Quy chế huy động nghệ nhân và thợ thủ công các làng nghề phục vụ cung đình."
+      },
+      "description_vi": "Bộ khung nhà rường gỗ lim 80 cột sơn son thếp vàng do các phường thợ mộc lớn của đất nước thi công.",
+      "description_en": "Associated traditional craft guild guild-moc-my-nghe-kim-bong for monument/artifact site-dien-thai-hoa."
+    },
+    {
+      "id": "edge-056",
+      "source": "site-dien-kien-trung",
+      "target": "guild-kham-sanh-su-hue",
+      "predicate": "associated_craft",
+      "predicate_category": "intangible_heritage",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-kham-dinh-hoi-dien",
+        "locator": "Công bộ: Chế tác tự khí & tượng cụ",
+        "claim_summary": "Quy chế huy động nghệ nhân và thợ thủ công các làng nghề phục vụ cung đình."
+      },
+      "description_vi": "Đỉnh cao nghệ thuật khảm ghép sành sứ và thủy tinh màu tạo nên diện mạo tân cổ điển tráng lệ của điện Kiến Trung.",
+      "description_en": "Associated traditional craft guild guild-kham-sanh-su-hue for monument/artifact site-dien-kien-trung."
+    },
+    {
+      "id": "edge-057",
+      "source": "site-thai-binh-lau",
+      "target": "guild-kham-sanh-su-hue",
+      "predicate": "associated_craft",
+      "predicate_category": "intangible_heritage",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-kham-dinh-hoi-dien",
+        "locator": "Công bộ: Chế tác tự khí & tượng cụ",
+        "claim_summary": "Quy chế huy động nghệ nhân và thợ thủ công các làng nghề phục vụ cung đình."
+      },
+      "description_vi": "Các đồ án đắp nổi sành sứ tinh tế hình rồng, mây và hoa lá quanh bờ nóc, mái hiên thư phòng Thái Bình Lâu.",
+      "description_en": "Associated traditional craft guild guild-kham-sanh-su-hue for monument/artifact site-thai-binh-lau."
+    },
+    {
+      "id": "edge-058",
+      "source": "art-ngai-vang",
+      "target": "guild-ngoc-hoang-cung-kim-hoan",
+      "predicate": "associated_craft",
+      "predicate_category": "intangible_heritage",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-kham-dinh-hoi-dien",
+        "locator": "Công bộ: Chế tác tự khí & tượng cụ",
+        "claim_summary": "Quy chế huy động nghệ nhân và thợ thủ công các làng nghề phục vụ cung đình."
+      },
+      "description_vi": "Bửu tán đính đăng ten dệt kim tuyến cùng các lá vàng quỳ 9999 dát ngai do Ty Kim Ngân hoàng gia chế tác.",
+      "description_en": "Associated traditional craft guild guild-ngoc-hoang-cung-kim-hoan for monument/artifact art-ngai-vang."
+    },
+    {
+      "id": "edge-059",
+      "source": "art-kim-bao-truyen-quoc",
+      "target": "guild-ngoc-hoang-cung-kim-hoan",
+      "predicate": "associated_craft",
+      "predicate_category": "intangible_heritage",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-kham-dinh-hoi-dien",
+        "locator": "Công bộ: Chế tác tự khí & tượng cụ",
+        "claim_summary": "Quy chế huy động nghệ nhân và thợ thủ công các làng nghề phục vụ cung đình."
+      },
+      "description_vi": "Kim bảo Hoàng Đế Chi Bảo được Ty Kim Ngân triều Nguyễn đúc bằng vàng ròng nguyên khối năm Minh Mạng thứ 4.",
+      "description_en": "Associated traditional craft guild guild-ngoc-hoang-cung-kim-hoan for monument/artifact art-kim-bao-truyen-quoc."
+    },
+    {
+      "id": "edge-060",
+      "source": "site-dien-thai-hoa",
+      "target": "guild-phap-lam-hue",
+      "predicate": "reconstructed_with",
+      "predicate_category": "restoration_and_materials",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-thuc-luc",
+        "locator": "Hồ sơ bảo tồn di tích HMCC",
+        "claim_summary": "Bảo tồn thích ứng phục hồi di sản với sự tham gia của các nghệ nhân truyền thừa."
+      },
+      "description_vi": "Dự án đại trùng tu điện Thái Hòa (2021-2025) ứng dụng kỹ nghệ phục hồi pháp lam truyền thống giải mã từ mẫu cổ.",
+      "description_en": "Reconstruction and restoration of site-dien-thai-hoa employing techniques from guild-phap-lam-hue."
+    },
+    {
+      "id": "edge-061",
+      "source": "site-dien-kien-trung",
+      "target": "guild-kham-sanh-su-hue",
+      "predicate": "reconstructed_with",
+      "predicate_category": "restoration_and_materials",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-thuc-luc",
+        "locator": "Hồ sơ bảo tồn di tích HMCC",
+        "claim_summary": "Bảo tồn thích ứng phục hồi di sản với sự tham gia của các nghệ nhân truyền thừa."
+      },
+      "description_vi": "Đại trùng tu phục hồi nguyên vẹn điện Kiến Trung (hoàn thành 2024) huy động hàng chục nghệ nhân khảm sành sứ tài hoa.",
+      "description_en": "Reconstruction and restoration of site-dien-kien-trung employing techniques from guild-kham-sanh-su-hue."
+    },
+    {
+      "id": "edge-062",
+      "source": "site-thai-binh-lau",
+      "target": "guild-kham-sanh-su-hue",
+      "predicate": "reconstructed_with",
+      "predicate_category": "restoration_and_materials",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-thuc-luc",
+        "locator": "Hồ sơ bảo tồn di tích HMCC",
+        "claim_summary": "Bảo tồn thích ứng phục hồi di sản với sự tham gia của các nghệ nhân truyền thừa."
+      },
+      "description_vi": "Trùng tu phục chế các mảng tường khảm sành sứ hoa lá cổ truyền tại Thái Bình Lâu.",
+      "description_en": "Reconstruction and restoration of site-thai-binh-lau employing techniques from guild-kham-sanh-su-hue."
+    },
+    {
+      "id": "edge-063",
+      "source": "site-the-to-mieu",
+      "target": "guild-moc-my-nghe-kim-bong",
+      "predicate": "reconstructed_with",
+      "predicate_category": "restoration_and_materials",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-thuc-luc",
+        "locator": "Hồ sơ bảo tồn di tích HMCC",
+        "claim_summary": "Bảo tồn thích ứng phục hồi di sản với sự tham gia của các nghệ nhân truyền thừa."
+      },
+      "description_vi": "Trùng tu bảo tồn gỗ sơn son thếp vàng hệ thống án thờ Thế Miếu với kỹ thuật truyền thống.",
+      "description_en": "Reconstruction and restoration of site-the-to-mieu employing techniques from guild-moc-my-nghe-kim-bong."
+    },
+    {
+      "id": "edge-064",
+      "source": "site-ngo-mon",
+      "target": "src-dai-nam-thuc-luc",
+      "predicate": "source_grounded_by",
+      "predicate_category": "epistemic_provenance",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-thuc-luc",
+        "locator": "Đệ nhị kỷ, Quyển 98",
+        "claim_summary": "Tháng 3 năm 1833 khởi công xây dựng Ngọ Môn trên vị trí đài Nam Sách cũ."
+      },
+      "description_vi": "Tư liệu src-dai-nam-thuc-luc (Đệ nhị kỷ, Quyển 98) xác nhận: Tháng 3 năm 1833 khởi công xây dựng Ngọ Môn trên vị trí đài Nam Sách cũ.",
+      "description_en": "Historical source src-dai-nam-thuc-luc (Đệ nhị kỷ, Quyển 98) corroborates: Tháng 3 năm 1833 khởi công xây dựng Ngọ Môn trên vị trí đài Nam Sách cũ."
+    },
+    {
+      "id": "edge-065",
+      "source": "site-dien-thai-hoa",
+      "target": "src-dai-nam-thuc-luc",
+      "predicate": "source_grounded_by",
+      "predicate_category": "epistemic_provenance",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-thuc-luc",
+        "locator": "Đệ nhất kỷ Quyển 26; Đệ nhị kỷ Quyển 136",
+        "claim_summary": "Khởi dựng năm 1805 thời Gia Long và đại chuyển dịch mở rộng năm 1833 thời Minh Mạng."
+      },
+      "description_vi": "Tư liệu src-dai-nam-thuc-luc (Đệ nhất kỷ Quyển 26; Đệ nhị kỷ Quyển 136) xác nhận: Khởi dựng năm 1805 thời Gia Long và đại chuyển dịch mở rộng năm 1833 thời Minh Mạng.",
+      "description_en": "Historical source src-dai-nam-thuc-luc (Đệ nhất kỷ Quyển 26; Đệ nhị kỷ Quyển 136) corroborates: Khởi dựng năm 1805 thời Gia Long và đại chuyển dịch mở rộng năm 1833 thời Minh Mạng."
+    },
+    {
+      "id": "edge-066",
+      "source": "site-the-to-mieu",
+      "target": "src-dai-nam-thuc-luc",
+      "predicate": "source_grounded_by",
+      "predicate_category": "epistemic_provenance",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-thuc-luc",
+        "locator": "Đệ nhị kỷ, Quyển 8",
+        "claim_summary": "Xây dựng Thế Miếu vào năm Minh Mạng thứ 2 (1821) thờ phụng liệt tổ."
+      },
+      "description_vi": "Tư liệu src-dai-nam-thuc-luc (Đệ nhị kỷ, Quyển 8) xác nhận: Xây dựng Thế Miếu vào năm Minh Mạng thứ 2 (1821) thờ phụng liệt tổ.",
+      "description_en": "Historical source src-dai-nam-thuc-luc (Đệ nhị kỷ, Quyển 8) corroborates: Xây dựng Thế Miếu vào năm Minh Mạng thứ 2 (1821) thờ phụng liệt tổ."
+    },
+    {
+      "id": "edge-067",
+      "source": "site-hien-lam-cac",
+      "target": "src-dai-nam-thuc-luc",
+      "predicate": "source_grounded_by",
+      "predicate_category": "epistemic_provenance",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-thuc-luc",
+        "locator": "Đệ nhị kỷ, Quyển 14",
+        "claim_summary": "Dựng Hiển Lâm Các cao 17m tôn vinh công thần khai quốc."
+      },
+      "description_vi": "Tư liệu src-dai-nam-thuc-luc (Đệ nhị kỷ, Quyển 14) xác nhận: Dựng Hiển Lâm Các cao 17m tôn vinh công thần khai quốc.",
+      "description_en": "Historical source src-dai-nam-thuc-luc (Đệ nhị kỷ, Quyển 14) corroborates: Dựng Hiển Lâm Các cao 17m tôn vinh công thần khai quốc."
+    },
+    {
+      "id": "edge-068",
+      "source": "site-duyet-thi-duong",
+      "target": "src-dai-nam-thuc-luc",
+      "predicate": "source_grounded_by",
+      "predicate_category": "epistemic_provenance",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-thuc-luc",
+        "locator": "Đệ nhị kỷ, Quyển 41",
+        "claim_summary": "Xây dựng nhà hát Duyệt Thị Đường năm Minh Mạng thứ 7 (1826)."
+      },
+      "description_vi": "Tư liệu src-dai-nam-thuc-luc (Đệ nhị kỷ, Quyển 41) xác nhận: Xây dựng nhà hát Duyệt Thị Đường năm Minh Mạng thứ 7 (1826).",
+      "description_en": "Historical source src-dai-nam-thuc-luc (Đệ nhị kỷ, Quyển 41) corroborates: Xây dựng nhà hát Duyệt Thị Đường năm Minh Mạng thứ 7 (1826)."
+    },
+    {
+      "id": "edge-069",
+      "source": "art-cuu-dinh",
+      "target": "src-dai-nam-thuc-luc",
+      "predicate": "source_grounded_by",
+      "predicate_category": "epistemic_provenance",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-thuc-luc",
+        "locator": "Đệ nhị kỷ, Quyển 162",
+        "claim_summary": "Đúc Cửu Đỉnh mùa đông năm 1835 và khánh thành an vị năm 1837."
+      },
+      "description_vi": "Tư liệu src-dai-nam-thuc-luc (Đệ nhị kỷ, Quyển 162) xác nhận: Đúc Cửu Đỉnh mùa đông năm 1835 và khánh thành an vị năm 1837.",
+      "description_en": "Historical source src-dai-nam-thuc-luc (Đệ nhị kỷ, Quyển 162) corroborates: Đúc Cửu Đỉnh mùa đông năm 1835 và khánh thành an vị năm 1837."
+    },
+    {
+      "id": "edge-070",
+      "source": "art-cuu-vi-than-cong",
+      "target": "src-dai-nam-thuc-luc",
+      "predicate": "source_grounded_by",
+      "predicate_category": "epistemic_provenance",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-thuc-luc",
+        "locator": "Đệ nhất kỷ, Quyển 20",
+        "claim_summary": "Thu gom đồ đồng đúc chín cỗ súng thần công năm Gia Long thứ 2 (1803)."
+      },
+      "description_vi": "Tư liệu src-dai-nam-thuc-luc (Đệ nhất kỷ, Quyển 20) xác nhận: Thu gom đồ đồng đúc chín cỗ súng thần công năm Gia Long thứ 2 (1803).",
+      "description_en": "Historical source src-dai-nam-thuc-luc (Đệ nhất kỷ, Quyển 20) corroborates: Thu gom đồ đồng đúc chín cỗ súng thần công năm Gia Long thứ 2 (1803)."
+    },
+    {
+      "id": "edge-071",
+      "source": "site-ngo-mon",
+      "target": "src-kham-dinh-hoi-dien",
+      "predicate": "source_grounded_by",
+      "predicate_category": "epistemic_provenance",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-kham-dinh-hoi-dien",
+        "locator": "Quyển 168: Lễ bộ nghi lễ",
+        "claim_summary": "Quy chế phân luồng 5 cửa Ngọ Môn và nghi thức lầu Ngũ Phụng."
+      },
+      "description_vi": "Tư liệu src-kham-dinh-hoi-dien (Quyển 168: Lễ bộ nghi lễ) xác nhận: Quy chế phân luồng 5 cửa Ngọ Môn và nghi thức lầu Ngũ Phụng.",
+      "description_en": "Historical source src-kham-dinh-hoi-dien (Quyển 168: Lễ bộ nghi lễ) corroborates: Quy chế phân luồng 5 cửa Ngọ Môn và nghi thức lầu Ngũ Phụng."
+    },
+    {
+      "id": "edge-072",
+      "source": "site-dien-thai-hoa",
+      "target": "src-kham-dinh-hoi-dien",
+      "predicate": "source_grounded_by",
+      "predicate_category": "epistemic_provenance",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-kham-dinh-hoi-dien",
+        "locator": "Quyển 102: Lễ thiết triều",
+        "claim_summary": "Nghi thức thiết Đại triều, ngũ bái tam khấu và vị trí ngai vàng."
+      },
+      "description_vi": "Tư liệu src-kham-dinh-hoi-dien (Quyển 102: Lễ thiết triều) xác nhận: Nghi thức thiết Đại triều, ngũ bái tam khấu và vị trí ngai vàng.",
+      "description_en": "Historical source src-kham-dinh-hoi-dien (Quyển 102: Lễ thiết triều) corroborates: Nghi thức thiết Đại triều, ngũ bái tam khấu và vị trí ngai vàng."
+    },
+    {
+      "id": "edge-073",
+      "source": "art-cuu-dinh",
+      "target": "src-kham-dinh-hoi-dien",
+      "predicate": "source_grounded_by",
+      "predicate_category": "epistemic_provenance",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-kham-dinh-hoi-dien",
+        "locator": "Quyển 162: Công bộ đúc vạc đỉnh",
+        "claim_summary": "Quy cách khắc 153 họa tiết danh sơn đại xuyên lên Cửu Đỉnh."
+      },
+      "description_vi": "Tư liệu src-kham-dinh-hoi-dien (Quyển 162: Công bộ đúc vạc đỉnh) xác nhận: Quy cách khắc 153 họa tiết danh sơn đại xuyên lên Cửu Đỉnh.",
+      "description_en": "Historical source src-kham-dinh-hoi-dien (Quyển 162: Công bộ đúc vạc đỉnh) corroborates: Quy cách khắc 153 họa tiết danh sơn đại xuyên lên Cửu Đỉnh."
+    },
+    {
+      "id": "edge-074",
+      "source": "zone-central-ceremonial-axis",
+      "target": "src-dai-nam-nhat-thong-chi",
+      "predicate": "source_grounded_by",
+      "predicate_category": "epistemic_provenance",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Kinh sư",
+        "claim_summary": "Quy hoạch trục chính đạo và bố cục phong thủy Kinh thành."
+      },
+      "description_vi": "Tư liệu src-dai-nam-nhat-thong-chi (Quyển 1: Kinh sư) xác nhận: Quy hoạch trục chính đạo và bố cục phong thủy Kinh thành.",
+      "description_en": "Historical source src-dai-nam-nhat-thong-chi (Quyển 1: Kinh sư) corroborates: Quy hoạch trục chính đạo và bố cục phong thủy Kinh thành."
+    },
+    {
+      "id": "edge-075",
+      "source": "site-cau-trung-dao",
+      "target": "src-dai-nam-nhat-thong-chi",
+      "predicate": "source_grounded_by",
+      "predicate_category": "epistemic_provenance",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-nhat-thong-chi",
+        "locator": "Quyển 1: Cầu cống Kinh sư",
+        "claim_summary": "Cầu Trung Đạo bắc qua hồ Thái Dịch nối Ngọ Môn tới sân rồng."
+      },
+      "description_vi": "Tư liệu src-dai-nam-nhat-thong-chi (Quyển 1: Cầu cống Kinh sư) xác nhận: Cầu Trung Đạo bắc qua hồ Thái Dịch nối Ngọ Môn tới sân rồng.",
+      "description_en": "Historical source src-dai-nam-nhat-thong-chi (Quyển 1: Cầu cống Kinh sư) corroborates: Cầu Trung Đạo bắc qua hồ Thái Dịch nối Ngọ Môn tới sân rồng."
+    },
+    {
+      "id": "edge-076",
+      "source": "site-dien-can-chanh",
+      "target": "src-dai-nam-thuc-luc",
+      "predicate": "source_grounded_by",
+      "predicate_category": "epistemic_provenance",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-thuc-luc",
+        "locator": "Đệ nhất kỷ Quyển 24",
+        "claim_summary": "Điện Cần Chánh dựng năm Gia Long thứ 3 làm nơi thường triều."
+      },
+      "description_vi": "Tư liệu src-dai-nam-thuc-luc (Đệ nhất kỷ Quyển 24) xác nhận: Điện Cần Chánh dựng năm Gia Long thứ 3 làm nơi thường triều.",
+      "description_en": "Historical source src-dai-nam-thuc-luc (Đệ nhất kỷ Quyển 24) corroborates: Điện Cần Chánh dựng năm Gia Long thứ 3 làm nơi thường triều."
+    },
+    {
+      "id": "edge-077",
+      "source": "site-dien-kien-trung",
+      "target": "src-dai-nam-thuc-luc",
+      "predicate": "source_grounded_by",
+      "predicate_category": "epistemic_provenance",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-thuc-luc",
+        "locator": "Đệ thất kỷ Quyển 8",
+        "claim_summary": "Điện Kiến Trung khởi công thời Khải Định giao hòa kiến trúc Đông Tây."
+      },
+      "description_vi": "Tư liệu src-dai-nam-thuc-luc (Đệ thất kỷ Quyển 8) xác nhận: Điện Kiến Trung khởi công thời Khải Định giao hòa kiến trúc Đông Tây.",
+      "description_en": "Historical source src-dai-nam-thuc-luc (Đệ thất kỷ Quyển 8) corroborates: Điện Kiến Trung khởi công thời Khải Định giao hòa kiến trúc Đông Tây."
+    },
+    {
+      "id": "edge-078",
+      "source": "site-thai-binh-lau",
+      "target": "src-dai-nam-thuc-luc",
+      "predicate": "source_grounded_by",
+      "predicate_category": "epistemic_provenance",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-thuc-luc",
+        "locator": "Đệ thất kỷ Quyển 6",
+        "claim_summary": "Trùng tu Thái Bình Lâu làm ngự thư phòng hoàng đế."
+      },
+      "description_vi": "Tư liệu src-dai-nam-thuc-luc (Đệ thất kỷ Quyển 6) xác nhận: Trùng tu Thái Bình Lâu làm ngự thư phòng hoàng đế.",
+      "description_en": "Historical source src-dai-nam-thuc-luc (Đệ thất kỷ Quyển 6) corroborates: Trùng tu Thái Bình Lâu làm ngự thư phòng hoàng đế."
+    },
+    {
+      "id": "edge-079",
+      "source": "site-cung-dien-tho",
+      "target": "src-dai-nam-thuc-luc",
+      "predicate": "source_grounded_by",
+      "predicate_category": "epistemic_provenance",
+      "epistemic_certainty": "high",
+      "source_grounding": {
+        "source_id": "src-dai-nam-thuc-luc",
+        "locator": "Đệ nhất kỷ Quyển 24",
+        "claim_summary": "Làm cung Trường Thọ (sau đổi Diên Thọ) phụng dưỡng Hoàng Thái Hậu."
+      },
+      "description_vi": "Tư liệu src-dai-nam-thuc-luc (Đệ nhất kỷ Quyển 24) xác nhận: Làm cung Trường Thọ (sau đổi Diên Thọ) phụng dưỡng Hoàng Thái Hậu.",
+      "description_en": "Historical source src-dai-nam-thuc-luc (Đệ nhất kỷ Quyển 24) corroborates: Làm cung Trường Thọ (sau đổi Diên Thọ) phụng dưỡng Hoàng Thái Hậu."
+    }
+  ],
+  "stats": {
+    "total_nodes": 39,
+    "total_edges": 79,
+    "nodes_by_type": {
+      "zone": 4,
+      "monument": 16,
+      "historical_era": 7,
+      "artifact": 4,
+      "source": 3,
+      "craft_guild": 5
+    },
+    "edges_by_predicate": {
+      "contains": 20,
+      "leads_to": 10,
+      "ceremonial_axis": 6,
+      "oriented_to": 4,
+      "ancestral_veneration": 4,
+      "architectural_twin": 3,
+      "associated_craft": 12,
+      "reconstructed_with": 4,
+      "source_grounded_by": 16
+    }
+  }
+}
