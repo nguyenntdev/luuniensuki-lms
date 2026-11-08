@@ -1,7 +1,9 @@
 import json
 import pathlib
 import pytest
-import numpy as np
+
+np = pytest.importorskip("numpy")
+scipy = pytest.importorskip("scipy")
 
 from research.tools.statistical_meta_analysis import (
     bootstrap_ci,
