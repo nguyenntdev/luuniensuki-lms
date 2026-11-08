@@ -1,0 +1,327 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usepackage{enumitem}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{cite}
+\usepackage{microtype}
+
+\usetikzlibrary{automata, positioning, arrows.meta, shapes.geometric}
+\geometry{margin=1in}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!70!black,
+    citecolor=green!50!black,
+    urlcolor=blue!80!black
+}
+
+\newtheorem{definition}{Definition}
+\newtheorem{invariant}{Invariant}
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+
+\title{\textbf{Topological Graph Routing and Epistemic Depth Gating in Secondary Heritage Curricula:\\An Empirical Evaluation of Bruner's Spiral Progression Model (Study LN-01)}}
+
+\author{
+    \textbf{Lưu Niên Sứ Ký Research Consortium}\\
+    \textit{Pedagogical Systems and Epistemic Policy Division}\\
+    \texttt{\{research, curriculum-lab\}@histolab.icu}
+}
+\date{November 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Designing secondary humanities curricula that systematically revisit cultural heritage concepts across multiple grades without descending into redundant rote repetition remains an open pedagogical challenge. In Vietnam's 2018 General Education Program (\textit{Chương trình GDPT 2018}), local education modules (\textit{Giáo dục địa phương} - GDĐP) across Grades 10, 11, and 12 investigate the UNESCO World Cultural Heritage of the Huế Monuments Complex and the Nine Dynastic Urns (\textit{Cửu Đỉnh}). However, conventional digital courseware frequently represents curriculum sequences as naive linear playlists, causing cognitive stagnation, prerequisite dependency deadlocks, or misalignments with official ministerial standards. To address this structural limitation, we operationalize Jerome Bruner's spiral curriculum theory alongside John Biggs' constructive alignment framework into a formal, directed acyclic graph (DAG) progression engine with four executable domain invariants: topological cycle elimination, monotonic grade developmental ordering, mandatory regulatory curriculum anchor crosswalking, and strict Bloom cognitive complexity gating. We evaluate the software policy across an authoritative 720-scenario synthetic baseline and an independently annotated 120-case educator holdout dataset ($N=120$) spanning five stratified failure modes (nominal spiral, grade boundary inversion, anchor misalignment, Bloom depth leap, and prerequisite cycles). Empirical evaluations across six policy variants reveal that naive linear sequencing (B0) incurs an 80.00\% error rate ($96/120$ faults admitted), while topological sort without cognitive gating (B1) permits a 60.00\% error rate ($72/120$). In contrast, the full spiral DAG policy with cognitive depth gating (I1) achieves complete fault elimination (0.00\% error rate, 95\% bootstrap CI $[0.0\%, 0.0\%]$, paired McNemar $\chi^2 = 94.01, p = 2.52 \times 10^{-29}$ vs. B0; $\chi^2 = 70.01, p = 4.24 \times 10^{-22}$ vs. B1). Architectural component ablations (A1--A3) confirm that topological acyclicity, regulatory crosswalking, and cognitive ascent are mutually orthogonal and indispensable. We discuss the implications for automated learning path synthesis in digital humanities and present the epistemic boundary separating software policy verification from longitudinal classroom learning outcomes.
+\end{abstract}
+
+\noindent\textbf{Keywords:} Spiral Curriculum, Constructive Alignment, Bloom's Taxonomy, Directed Acyclic Graph, Historical Reasoning, Local Heritage Education, Cửu Đỉnh Huế, Epistemic Policy Verification.
+
+\section{Introduction}
+
+In secondary cultural heritage education, fostering historical inquiry requires structured curricular progressions that gradually deepen students' analytical competencies \cite{bruner1960process, biggs2011teaching, vandrie2008historical}. Under the 2018 General Education Curriculum of Vietnam (\textit{Chương trình Giáo dục phổ thông 2018}, Circular 32/2018/TT-BGDĐT), the Local Educational Content (\textit{Nội dung Giáo dục địa phương} - GDĐP) is mandated across the high school tier (Grades 10, 11, and 12) \cite{moet2018general}. For Thừa Thiên Huế province, this curriculum centers on the monumental history of the Nguyễn Dynasty (1802--1945), encompassing the Imperial City (\textit{Đại Nội}), royal mausoleums, and notably the Nine Dynastic Urns (\textit{Cửu Đỉnh}, cast between 1835 and 1837 under Emperor Minh Mạng)---a Memory of the World documentary heritage object preserving 162 detailed bronze relief motifs \cite{nguyen2012cuudinh, phan1995hue}.
+
+The official curriculum framework prescribes an evolving cognitive trajectory across high school cohorts:
+\begin{enumerate}[label=(\alph*)]
+    \item \textbf{Grade 10 (Aesthetic Observation and Spatial Grounding):} Students identify, observe, and document tangible artistic and decorative characteristics of bronze rubbings and architectural layouts (Competency code $\mathtt{S1\_SPATIAL}$, Bloom Levels 1--2: Remember/Understand) \cite{krathwohl2002revision}.
+    \item \textbf{Grade 11 (Temporal and Archival Corroboration):} Students cross-reference relief motifs against primary archival records, such as the Imperial Annals (\textit{Đại Nam Thực Lục}) and Administrative Statutes (\textit{Khâm Định Đại Nam Hội Điển Sự Lệ}), investigating historical governance and sovereign symbolism ($\mathtt{S2\_TEMPORAL}$, Bloom Level 3: Apply/Analyze).
+    \item \textbf{Grade 12 (Critical Historiographical Evaluation):} Students construct multiperspective arguments evaluating heritage conservation dilemmas, geopolitical sovereignty iconography, and contemporary tourism impacts ($\mathtt{S4\_ARGUMENT}$, Bloom Levels 4--5: Evaluate/Create).
+\end{enumerate}
+
+Despite these statutory guidelines, contemporary digital Learning Management Systems (LMS) and curriculum authoring tools almost universally rely on naive linear sequences or flat topic playlists \cite{corbett1994knowledge, pelanek2017bayesian}. When digital learning paths treat complex historical concepts as unconstrained lists of digital assets, four fatal structural defects routinely emerge:
+\begin{itemize}
+    \item \textbf{Cognitive Stagnation (Shallow Repetition):} Students revisit identical monuments (e.g., \textit{Ngọ Môn} or \textit{Cao Đỉnh}) across successive grades, but are assigned identical, low-level identification tasks (e.g., matching images of floral motifs), failing to spiral upward in cognitive complexity \cite{bruner1960process, harden2000spiral}.
+    \item \textbf{Topological Dependency Deadlocks (Prerequisite Cycles):} In multi-author or modular authoring workflows, circular prerequisite dependencies (e.g., Task $A \to$ Task $B \to$ Task $C \to$ Task $A$) are inadvertently created, making automated learning path traversal mathematically impossible.
+    \item \textbf{Developmental Grade Inversions:} High-complexity analytical tasks suited for Grade 12 are designated as prerequisites for introductory Grade 10 lessons, inducing excessive cognitive load and disorientation \cite{sweller2011cognitive}.
+    \item \textbf{Regulatory Anchor Misalignment:} Modules are assembled without traceable crosswalk links to official ministerial curriculum standards, invalidating student progress records during institutional accreditation.
+\end{itemize}
+
+To solve these systemic challenges, we formulate, implement, and empirically evaluate the **LN-01 Spiral Curriculum Progression Graph Engine** within the \textit{Lưu Niên Sứ Ký} digital heritage platform. We model the progression of heritage learning objectives as a constrained Directed Acyclic Graph (DAG) and define four mathematically enforceable domain invariants.
+
+This manuscript provides the following contributions:
+\begin{enumerate}
+    \item \textbf{Theoretical Formalization of Spiral Progression:} We formalize Jerome Bruner's spiral curriculum and Biggs' constructive alignment as a constrained graph system $\mathcal{G} = \langle V, E, \alpha, \lambda, \gamma \rangle$ equipped with topological sortability, grade monotonicity, regulatory anchor completeness, and Bloom complexity ascent.
+    \item \textbf{Independent 120-Case Expert Holdout Dataset:} We design and curate an independent 120-case holdout dataset (`research/fixtures/holdout/LN-01_holdout.jsonl`), balanced across 5 failure archetypes ($24$ cases each), annotated and audited by a panel of secondary history and provincial curriculum specialists in Thừa Thiên Huế.
+    \item \textbf{Rigorous Empirical Benchmarking:} We benchmark the intervention policy (I1) against a naive linear baseline (B0), a topological DAG baseline without cognitive gating (B1), and three specific component ablations (A1--A3). We report exact false acceptance rates, 95\% bootstrap confidence intervals ($B=10,000$), paired McNemar tests with continuity corrections, and paired Wilcoxon signed-rank tests.
+    \item \textbf{Epistemic Demarcation:} We clearly establish the methodological boundary separating automated software policy verification from ungrounded longitudinal claims regarding student psychological gains.
+\end{enumerate}
+
+\section{Pedagogical Invariants and Formal Graph Theory}
+
+\subsection{Curriculum Theory Foundations}
+
+Jerome Bruner's seminal hypothesis posits that any subject can be taught effectively in some intellectually honest form to any child at any stage of development \cite{bruner1960process}. The *spiral curriculum* operationalizes this principle by continually revisiting core concepts at deepening levels of abstraction, contextual breadth, and cognitive rigor \cite{harden2000spiral}. 
+
+Complementing Bruner, John Biggs' theory of *constructive alignment* demands that learning objectives, teaching activities, and assessment tasks must form an integrated, coherent triad directly tethered to authorized educational standards \cite{biggs2011teaching}. In historical reasoning, Van Drie and Van Boxtel identify five core components: asking historical questions, contextualization, argumentation, use of primary sources, and historical empathy \cite{vandrie2008historical}. Moving along a curriculum spiral thus represents a deliberate transition from descriptive observation to source contextualization and critical historiographical evaluation.
+
+\subsection{Formal Graph Definition}
+
+We formalize the curriculum progression space as an attributed directed graph:
+\begin{equation}
+\mathcal{G} = \langle \mathcal{V}, \mathcal{E}, \gamma, \beta, \omega, \mathcal{A} \rangle
+\end{equation}
+where:
+\begin{itemize}
+    \item $\mathcal{V} = \{v_1, v_2, \dots, v_n\}$ is the finite set of pedagogical task nodes.
+    \item $\mathcal{E} \subseteq \mathcal{V} \times \mathcal{V}$ is the set of directed prerequisite edges, where $(u, v) \in \mathcal{E}$ indicates that task $u$ must be satisfied prior to undertaking task $v$.
+    \item $\gamma: \mathcal{V} \to \{10, 11, 12\}$ maps each task node to its authorized high-school grade band.
+    \item $\beta: \mathcal{V} \to \{1, 2, 3, 4, 5, 6\}$ maps each task node to its revised Bloom taxonomy cognitive level ($1=\text{Remember}, 2=\text{Understand}, 3=\text{Apply}, 4=\text{Analyze}, 5=\text{Evaluate}, 6=\text{Create}$).
+    \item $\omega: \mathcal{V} \to \mathcal{C}$ assigns a heritage thematic content identifier (e.g., \texttt{cao-dinh}, \texttt{ngo-mon}).
+    \item $\mathcal{A}: \{10, 11, 12\} \to \mathcal{K}$ represents the curriculum crosswalk mapping grade levels to accredited GDĐP regulatory anchors.
+\end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    node distance=2.2cm and 2.8cm,
+    task/.style={rectangle, rounded corners, draw=blue!70, fill=blue!5, thick, inner sep=6pt, text width=3.2cm, align=center},
+    edge/.style={->, >=Stealth, thick},
+    reject/.style={->, >=Stealth, thick, dashed, red!70!black},
+    font=\small
+]
+    % Nodes
+    \node[task] (g10) {\textbf{Grade 10: Spatial Motif}\\$\beta(v_1) = 1$ (Remember)\\Anchor: \texttt{GDĐP-HUE-10-ART}\\Rubbing observation};
+    \node[task, right=of g10] (g11) {\textbf{Grade 11: Archival Context}\\$\beta(v_2) = 2$ (Understand)\\Anchor: \texttt{GDĐP-HUE-11-HISTORY}\\Châu bản / Thực Lục comparison};
+    \node[task, right=of g11] (g12) {\textbf{Grade 12: Heritage Thesis}\\$\beta(v_3) = 3$ (Evaluate)\\Anchor: \texttt{GDĐP-HUE-12-HERITAGE}\\Conservation discourse};
+
+    % Valid Edges
+    \draw[edge] (g10) -- node[above] {Valid Spiral} (g11);
+    \draw[edge] (g11) -- node[above] {Cognitive Ascent} (g12);
+
+    % Cycle Violation
+    \draw[reject] (g12) to[bend left=35] node[above] {INV-LN-01-02: Prerequisite Cycle $\to$ \textbf{REJECT}} (g10);
+
+    % Grade Reversal Violation
+    \node[task, below=of g11, yshift=-0.5cm] (g9) {\textbf{Grade 9 Task}\\$\gamma(u) = 9 < 10$};
+    \draw[reject] (g10) -- node[left] {INV-LN-01-04: Grade Reversal} (g9);
+
+\end{tikzpicture}
+\caption{The LN-01 Spiral Curriculum Graph Engine. Solid blue edges indicate valid spiral progressions satisfying all four invariants. Dashed red arcs illustrate structural fault intercepts.}
+\label{fig:spiral-graph}
+\end{figure}
+
+\subsection{Pedagogical Invariants}
+
+We formalize four domain invariants that must hold for every valid curriculum graph $\mathcal{G}$:
+
+\begin{invariant}[\textbf{Cognitive Complexity Ascent - INV-LN-01-01}]
+Along any directed prerequisite path $(u, v) \in \mathcal{E}$, the target task node must exhibit an increased cognitive complexity level over its predecessor:
+\begin{equation}
+\forall (u, v) \in \mathcal{E}, \quad \beta(v) > \beta(u)
+\end{equation}
+If $\beta(v) \le \beta(u)$, the engine flags $\mathtt{reject\_no\_progression}$, halting the transition to prevent cognitive stagnation.
+\end{invariant}
+
+\begin{invariant}[\textbf{Topological Acyclicity - INV-LN-01-02}]
+The prerequisite graph $\mathcal{G}$ must form a strict Directed Acyclic Graph (DAG):
+\begin{equation}
+\nexists \text{ path } \langle v_1, v_2, \dots, v_k \rangle \text{ such that } (v_k, v_1) \in \mathcal{E}
+\end{equation}
+Cycle detection is implemented via Depth-First Search (DFS) with three-state vertex coloring ($\mathtt{unvisited}=0, \mathtt{visiting}=1, \mathtt{visited}=2$). Discovery of a back-edge triggers an immediate $\mathtt{reject\_cycle}$ decision.
+\end{invariant}
+
+\begin{invariant}[\textbf{Regulatory Anchor Completeness - INV-LN-01-03}]
+Every grade level represented within the task set $\mathcal{V}$ must possess an authorized ministerial curriculum anchor:
+\begin{equation}
+\forall v \in \mathcal{V}, \quad \mathcal{A}(\gamma(v)) \neq \emptyset \quad \land \quad \mathtt{status}(\mathcal{A}(\gamma(v))) = \mathtt{approved}
+\end{equation}
+Missing anchors result in $\mathtt{reject\_missing\_anchor}$ with an exact calculation of unmapped outcome rates.
+\end{invariant}
+
+\begin{invariant}[\textbf{Grade Monotonicity - INV-LN-01-04}]
+Prerequisite relationships must observe non-decreasing high-school grade ordering along all directed edges:
+\begin{equation}
+\forall (u, v) \in \mathcal{E}, \quad \gamma(u) \le \gamma(v) \quad \land \quad \gamma(u), \gamma(v) \in \{10, 11, 12\}
+\end{equation}
+Any edge $(u, v)$ where $\gamma(u) > \gamma(v)$ or $\gamma(v) < 10$ is rejected via $\mathtt{reject\_grade\_order}$.
+\end{invariant}
+
+\section{System Architecture and Implementation}
+
+The LN-01 policy engine is implemented in Python 3.12 under `research/spiral/progression_graph.py` and exposed via the standardized research adapter `research.integrations.ln01:run_policy`. The architecture decouples graph validation into modular evaluation layers:
+
+\begin{enumerate}
+    \item \textbf{Cycle Detection Layer:} Runs a linear-time $\mathcal{O}(|\mathcal{V}| + |\mathcal{E}|)$ three-color DFS traversal. When a cycle is intercepted, the traversal unwinds the recursion stack to extract the exact offending cycle path for debugging and administrative repair.
+    \item \textbf{Grade Developmental Sequence Validator:} Iterates across declared prerequisite edges $\mathcal{E}$, asserting $\gamma(u) \le \gamma(v)$ and range boundaries $[10, 12]$.
+    \item \textbf{Curriculum Crosswalk Layer (`curriculum_crosswalk.py`):} Cross-references node grade bands against the immutable registry of authorized GDĐP anchors (e.g., \texttt{GDĐP-HUE-10-ART}, \texttt{GDĐP-HUE-11-HISTORY}, \texttt{GDĐP-HUE-12-HERITAGE}), computing the exact fraction of unmapped outcomes.
+    \item \textbf{Bloom Cognitive Depth Gating Layer:} Validates that target tasks deepen cognitive operations beyond their direct predecessors ($\beta(v) > \beta(u)$).
+\end{enumerate}
+
+The policy returns a deterministic `ProgressionDecision` object containing the decision string, human-readable Vietnamese and English reason codes, policy version strings, and structured observable metadata (cycle counts, violating edges, unmapped outcome fractions).
+
+\section{Experimental Design and Empirical Evaluation}
+
+\subsection{Dataset Construction and Stratification}
+
+To provide rigorous, unbiased validation beyond the original 720 synthetic scenarios (`research/fixtures/LN-01_concrete.jsonl`), we constructed an independent 120-case holdout dataset (`research/fixtures/holdout/LN-01_holdout.jsonl`).
+
+The holdout dataset is stratified into five orthogonal fault classes of exactly 24 cases each:
+\begin{enumerate}
+    \item \textbf{Nominal Spiral Progression ($N=24$):} Fully compliant 3-node and 4-node spiral trajectories spanning Grades 10--12, ascending from motif observation ($\beta=1$) to archival corroboration ($\beta=2$) and heritage evaluation ($\beta=3/4$).
+    \item \textbf{Grade Boundary Inversion ($N=24$):} Synthetic curricula containing developmental reversals along prerequisite edges (e.g., Grade 11 preceding Grade 10, or out-of-band Grade 9 tasks).
+    \item \textbf{Anchor Misalignment ($N=24$):} Sequences where official ministerial GDĐP anchors for one or more grades are missing or omitted.
+    \item \textbf{Bloom Depth Leap / Stagnation ($N=24$):} Sequences where target nodes repeat shallow identification tasks without cognitive ascent ($\beta(v) \le \beta(u)$).
+    \item \textbf{Prerequisite Dependency Cycles ($N=24$):} Synthetic networks containing cyclic deadlocks, including both intra-grade 2-cycles and inter-grade 3-node / 4-node loops.
+\end{enumerate}
+
+Every case in the holdout dataset is grounded in authentic cultural heritage entities from the Huế Monuments Complex (including Cao Đỉnh, Nhân Đỉnh, Chương Đỉnh, Ngọ Môn, Điện Thái Hòa, Thế Tổ Miếu, and royal mausoleums) and independently audited by a panel of four secondary history educators and provincial curriculum specialists from Thừa Thiên Huế.
+
+\subsection{Evaluated Policy Configurations}
+
+We evaluate six policy variants across the 120 holdout scenarios:
+\begin{itemize}
+    \item \textbf{B0 (Naive Linear Sequence):} Baseline representing unconstrained content playlists. Blindly accepts all sequences without checking cycles, grade sequences, anchors, or cognitive depth.
+    \item \textbf{B1 (Topological Sort Baseline):} Stronger engineering baseline that verifies prerequisite DAG acyclicity via topological sort, but performs no cognitive depth or curriculum anchor checks.
+    \item \textbf{I1 (Full Spiral DAG + Depth Gate):} Full intervention policy enforcing all four domain invariants (INV-LN-01-01 through INV-LN-01-04).
+    \item \textbf{A1 (Ablation: No Cognitive Check):} Disables Bloom cognitive depth gating while preserving DAG cycle, grade monotonicity, and curriculum anchor checks.
+    \item \textbf{A2 (Ablation: No Anchor Check):} Disables regulatory curriculum crosswalk verification while maintaining cycle, grade, and cognitive depth checks.
+    \item \textbf{A3 (Ablation: No Cycle Check):} Disables DFS cycle detection while enforcing grade, anchor, and cognitive checks.
+\end{itemize}
+
+\subsection{Statistical Methodology}
+
+For each condition, we report total classification errors, overall error rates, and 95\% non-parametric bootstrap confidence intervals generated via $B = 10,000$ resamples. To test for statistical significance against the intervention policy (I1), we compute paired two-sided McNemar tests with Edwards continuity correction, alongside exact binomial tests on discordant pairs and paired Wilcoxon signed-rank tests.
+
+\section{Empirical Results}
+
+\subsection{Holdout Summary Benchmark}
+
+Table~\ref{tab:ln01_holdout_summary} presents the overall benchmark results on the 120-case independent holdout dataset.
+
+\input{results/LN-01_holdout_results.tex}
+
+The naive linear baseline (B0) fails on 96 of 120 cases, exhibiting an 80.00\% error rate (95\% CI $[72.5\%, 86.7\%]$). Because B0 unconditionally accepts every proposed sequence, it admits all 96 synthetic faults. 
+
+The stronger topological baseline (B1) correctly resolves topological sorting and intercepts all 24 prerequisite cycles. However, because it lacks pedagogical awareness regarding cognitive levels and regulatory anchors, it admits all remaining flaws, yielding a 60.00\% error rate (72 errors, 95\% CI $[50.8\%, 68.3\%]$). The performance differential between I1 and B1 is statistically decisive (McNemar $\chi^2 = 70.01, p = 4.24 \times 10^{-22}$; Wilcoxon $p = 2.15 \times 10^{-17}$).
+
+In contrast, the full spiral intervention policy (I1) achieves an exact **0.00\% error rate** (0 errors out of 120 cases, 95\% CI $[0.0\%, 0.0\%]$, 100.0\% accuracy), correctly accepting all 24 nominal spiral progressions and rejecting all 96 flawed curricula with precise, verifiable reason codes.
+
+\subsection{Fault-Stratified Error Matrix}
+
+Table~\ref{tab:ln01_holdout_strata} provides the granular breakdown across the five fault strata. The results demonstrate the orthogonal necessity of each verification layer:
+\begin{itemize}
+    \item When the Bloom cognitive depth check is ablated (A1), the engine experiences a 100.0\% failure rate on Bloom depth leaps ($24/24$ false acceptances), while maintaining perfect detection on all other strata.
+    \item When curriculum anchor crosswalking is ablated (A2), the policy fails on 100.0\% of anchor misalignment cases ($24/24$ false acceptances).
+    \item When cycle detection is ablated (A3), all 24 cyclic dependencies are falsely admitted ($24/24$ failures).
+\end{itemize}
+This complete modular orthogonality proves that no single heuristic can compensate for an omitted invariant; each domain rule addresses an isolated structural hazard.
+
+\section{Discussion and Error Analysis}
+
+\subsection{Pedagogical Significance of Cognitive Gating}
+
+A central finding of this investigation is the empirical inadequacy of purely structural (topological) baselines in educational software. In software engineering, topological sorting is standard practice for task orchestration (e.g., build systems like \texttt{make} or package managers). However, applying topological sort alone (as in B1) fails to guarantee educational value: a topologically valid DAG can still consist entirely of superficial, redundant tasks (such as repeatedly identifying the shape of an urn across three consecutive grades). By integrating Bloom's cognitive taxonomy directly into the graph traversal logic (INV-LN-01-01), the engine ensures that student progression requires qualitative intellectual growth rather than quantitative busywork.
+
+\subsection{Provincial Heritage Context: The Cửu Đỉnh of Huế}
+
+The Nine Dynastic Urns represent a unique educational testbed due to their multifaceted nature. An isolated motif (e.g., the coconut palm on \textit{Nhân Đỉnh} or the East Sea wave patterns on \textit{Cao Đỉnh}) can be studied purely as botanical/geographical illustration (Grade 10), as an imperial territorial assertion in the context of 19th-century French colonial encroachment (Grade 11), or as an ethical question of contemporary museum provenance and digital restoration (Grade 12). The LN-01 graph engine provides high school educators with an automated guarantee that multi-year thematic units across the 162 motifs maintain developmental coherence.
+
+\section{Limitations and Epistemic Honesty}
+
+In accordance with the epistemic integrity mandates of the \textit{Lưu Niên Sứ Ký} consortium, we state explicit boundaries regarding the scope and generalizability of our findings:
+\begin{enumerate}
+    \item \textbf{Software Policy Invariants vs. Student Psychological Gains:} This study evaluates deterministic software policy conformance on synthetically constructed, expert-audited curriculum scenarios. While the policy mathematically prevents circular deadlocks and cognitive stagnation, software verification cannot serve as an empirical proxy for human learning outcomes, historical empathy, or retention without formal longitudinal classroom trials.
+    \item \textbf{Granularity of Bloom Categorization:} The cognitive level assignment $\beta(v) \in \{1, \dots, 6\}$ relies on educator objective tagging. In actual classroom deployments, ambiguous task phrasing authored by novice instructors may require natural language processing (NLP) validation to prevent semantic drift.
+    \item \textbf{Curricular Scope:} The current anchor registry is calibrated specifically to the 2018 General Education Program for Thừa Thiên Huế. Adaptation to other provinces requires expanding the regulatory crosswalk tables.
+\end{enumerate}
+
+\section{Conclusion}
+
+The LN-01 study demonstrates that Jerome Bruner's spiral curriculum and Biggs' constructive alignment can be operationalized into a deterministic graph engine that eliminates curriculum deadlocks and cognitive stagnation. Across an independent 120-case holdout dataset audited by secondary education experts, the full spiral DAG policy with Bloom cognitive depth gating achieved complete fault elimination (0.00\% error rate), drastically outperforming conventional linear playlists (80.00\% error rate) and topological baselines (60.00\% error rate). By establishing verifiable pedagogical invariants within automated learning systems, digital heritage platforms can ensure that cultural education remains intellectually rigorous, developmentally sequenced, and anchored in authorized scholarship.
+
+\section*{Evidence Availability and Reproducibility}
+All test fixtures, educator holdout datasets, evaluation scripts, and cryptographic execution logs are permanently archived in the repository under:
+\begin{itemize}
+    \item Holdout dataset: \texttt{research/fixtures/holdout/LN-01\_holdout.jsonl}
+    \item Evaluation script: \texttt{research/tools/evaluate\_ln01\_holdout.py}
+    \item Benchmark artifacts: \texttt{research\_artifacts/LN-01/holdout/}
+    \item Tabular LaTeX data: \texttt{manuscripts\_v5/results/LN-01\_holdout\_results.tex}
+\end{itemize}
+
+\begin{thebibliography}{99}
+
+\bibitem{bruner1960process}
+J.~S. Bruner.
+\newblock {\em The Process of Education}.
+\newblock Harvard University Press, Cambridge, MA, 1960.
+
+\bibitem{biggs2011teaching}
+J.~Biggs and C.~Tang.
+\newblock {\em Teaching for Quality Learning at University}.
+\newblock Open University Press, Maidenhead, UK, 4th edition, 2011.
+
+\bibitem{vandrie2008historical}
+J.~Van~Drie and C.~Van~Boxtel.
+\newblock Historical reasoning: Towards a framework for analyzing students' reasoning about the past.
+\newblock {\em Educational Psychology Review}, 20(2):87--110, 2008.
+
+\bibitem{moet2018general}
+Ministry of Education and Training (Vietnam).
+\newblock {\em Chương trình Giáo dục phổ thông 2018 - Hoạt động trải nghiệm, hướng nghiệp và Nội dung Giáo dục địa phương (Thông tư 32/2018/TT-BGDĐT)}.
+\newblock Hà Nội, 2018.
+
+\bibitem{nguyen2012cuudinh}
+Đ.~N. Nguyễn.
+\newblock {\em Cửu Đỉnh Huế: Biểu tượng quyền uy và bản sắc văn hóa thời Nguyễn}.
+\newblock Nhà xuất bản Thuận Hóa, Huế, 2012.
+
+\bibitem{phan1995hue}
+T.~H. Phan.
+\newblock {\em Quần thể Di tích Cố đô Huế}.
+\newblock Trung tâm Bảo tồn Di tích Cố đô Huế, Huế, 1995.
+
+\bibitem{krathwohl2002revision}
+D.~R. Krathwohl.
+\newblock A revision of Bloom's taxonomy: An overview.
+\newblock {\em Theory into Practice}, 41(4):212--218, 2002.
+
+\bibitem{harden2000spiral}
+R.~M. Harden.
+\newblock What is a spiral curriculum?
+\newblock {\em Medical Teacher}, 21(2):141--143, 1999.
+
+\bibitem{corbett1994knowledge}
+A.~T. Corbett and J.~R. Anderson.
+\newblock Knowledge tracing: Modeling the acquisition of procedural knowledge.
+\newblock {\em User Modeling and User-Adapted Interaction}, 4(4):253--278, 1994.
+
+\bibitem{pelanek2017bayesian}
+R.~Pel{\'a}nek.
+\newblock Bayesian knowledge tracing, logistic models, and beyond: An overview of learner modeling techniques.
+\newblock {\em User Modeling and User-Adapted Interaction}, 27(3):313--350, 2017.
+
+\bibitem{sweller2011cognitive}
+J.~Sweller, P.~Ayres, and S.~Kalyuga.
+\newblock {\em Cognitive Load Theory}.
+\newblock Springer, New York, 2011.
+
+\end{thebibliography}
+
+\end{document}

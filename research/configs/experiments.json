@@ -1,0 +1,422 @@
+{
+  "revision": "2026-11-07",
+  "repo": "https://github.com/nguyenntdev/luuniensuki-lms",
+  "audited_main_sha": "43baaec4955cfdb8e32a1be37ece5b63077608e6",
+  "old_spec_ancestral_commit": "54da2beb71f3df70e1f00b215ae0fb1a850eb263",
+  "cases_per_study": 720,
+  "conditions_per_study": 5,
+  "total_primary_case_executions": 36000,
+  "scope": "SYNTHETIC SOFTWARE POLICY BENCHMARK; NO HUMAN LEARNING OUTCOMES",
+  "studies": {
+    "LN-01": {
+      "adapter": "research.integrations.ln01:run_policy",
+      "runs": [
+        {
+          "id": "B0",
+          "mode": "baseline",
+          "config": {},
+          "label": "existing baseline"
+        },
+        {
+          "id": "I1",
+          "mode": "intervention",
+          "config": {},
+          "label": "new policy"
+        },
+        {
+          "id": "A1",
+          "mode": "ablation",
+          "label": "no_cognitive_check",
+          "config": {
+            "ablation_type": "no_cognitive_check"
+          }
+        },
+        {
+          "id": "A2",
+          "mode": "ablation",
+          "label": "no_anchor_check",
+          "config": {
+            "ablation_type": "no_anchor_check"
+          }
+        },
+        {
+          "id": "A3",
+          "mode": "ablation",
+          "label": "no_cycle_check",
+          "config": {
+            "ablation_type": "no_cycle_check"
+          }
+        }
+      ]
+    },
+    "LN-02": {
+      "adapter": "research.integrations.ln02:run_policy",
+      "runs": [
+        {
+          "id": "B0",
+          "mode": "baseline",
+          "config": {},
+          "label": "existing baseline"
+        },
+        {
+          "id": "I1",
+          "mode": "intervention",
+          "config": {},
+          "label": "new policy"
+        },
+        {
+          "id": "A1",
+          "mode": "ablation",
+          "label": "no_prerequisites",
+          "config": {
+            "variant": "no_prerequisites"
+          }
+        },
+        {
+          "id": "A2",
+          "mode": "ablation",
+          "label": "single_latent_skill",
+          "config": {
+            "variant": "single_latent_skill"
+          }
+        },
+        {
+          "id": "A3",
+          "mode": "ablation",
+          "label": "no_abstention",
+          "config": {
+            "variant": "no_abstention"
+          }
+        }
+      ]
+    },
+    "LN-03": {
+      "adapter": "research.integrations.ln03:run_policy",
+      "runs": [
+        {
+          "id": "B0",
+          "mode": "baseline",
+          "config": {},
+          "label": "existing baseline"
+        },
+        {
+          "id": "I1",
+          "mode": "intervention",
+          "config": {},
+          "label": "new policy"
+        },
+        {
+          "id": "A1",
+          "mode": "ablation",
+          "label": "generic_fsrs_label_not_real_fsrs",
+          "config": {
+            "ablation_type": "generic_fsrs"
+          }
+        },
+        {
+          "id": "A2",
+          "mode": "ablation",
+          "label": "omit_source_check",
+          "config": {
+            "ablation_type": "omit_source_check"
+          }
+        },
+        {
+          "id": "A3",
+          "mode": "ablation",
+          "label": "omit_workload_limit",
+          "config": {
+            "ablation_type": "omit_workload_limit"
+          }
+        }
+      ]
+    },
+    "LN-04": {
+      "adapter": "research.integrations.ln04:run_policy",
+      "runs": [
+        {
+          "id": "B0",
+          "mode": "baseline",
+          "config": {},
+          "label": "existing baseline"
+        },
+        {
+          "id": "I1",
+          "mode": "intervention",
+          "config": {},
+          "label": "new policy"
+        },
+        {
+          "id": "A1",
+          "mode": "ablation",
+          "label": "disable_hint_budget",
+          "config": {
+            "disable_hint_budget": true
+          }
+        },
+        {
+          "id": "A2",
+          "mode": "ablation",
+          "label": "disable_source_refusal",
+          "config": {
+            "disable_source_refusal": true
+          }
+        },
+        {
+          "id": "A3",
+          "mode": "ablation",
+          "label": "disable_injection_check",
+          "config": {
+            "disable_injection_check": true
+          }
+        }
+      ]
+    },
+    "LN-05": {
+      "adapter": "research.integrations.ln05:run_policy",
+      "runs": [
+        {
+          "id": "B0",
+          "mode": "baseline",
+          "config": {},
+          "label": "existing baseline"
+        },
+        {
+          "id": "I1",
+          "mode": "intervention",
+          "config": {},
+          "label": "new policy"
+        },
+        {
+          "id": "A1",
+          "mode": "ablation",
+          "label": "xp_only",
+          "config": {
+            "ablation_type": "xp_only"
+          }
+        },
+        {
+          "id": "A2",
+          "mode": "ablation",
+          "label": "disable_anti_replay",
+          "config": {
+            "ablation_type": "disable_anti_replay"
+          }
+        },
+        {
+          "id": "A3",
+          "mode": "ablation",
+          "label": "disable_provenance",
+          "config": {
+            "ablation_type": "disable_provenance"
+          }
+        }
+      ]
+    },
+    "LN-06": {
+      "adapter": "research.integrations.ln06:run_policy",
+      "runs": [
+        {
+          "id": "B0",
+          "mode": "baseline",
+          "config": {},
+          "label": "existing baseline"
+        },
+        {
+          "id": "I1",
+          "mode": "intervention",
+          "config": {},
+          "label": "new policy"
+        },
+        {
+          "id": "A1",
+          "mode": "ablation",
+          "label": "disable_prerequisites",
+          "config": {
+            "enforce_prerequisites": false
+          }
+        },
+        {
+          "id": "A2",
+          "mode": "ablation",
+          "label": "disable_budget",
+          "config": {
+            "enforce_budget": false
+          }
+        },
+        {
+          "id": "A3",
+          "mode": "ablation",
+          "label": "disable_sources",
+          "config": {
+            "enforce_sources": false
+          }
+        }
+      ]
+    },
+    "LN-07": {
+      "adapter": "research.integrations.ln07:run_policy",
+      "runs": [
+        {
+          "id": "B0",
+          "mode": "baseline",
+          "config": {},
+          "label": "existing baseline"
+        },
+        {
+          "id": "I1",
+          "mode": "intervention",
+          "config": {},
+          "label": "new policy"
+        },
+        {
+          "id": "A1",
+          "mode": "ablation",
+          "label": "url_existence_only",
+          "config": {
+            "ablation_type": "url_existence_only"
+          }
+        },
+        {
+          "id": "A2",
+          "mode": "ablation",
+          "label": "disable_cognitive_affordances",
+          "config": {
+            "ablation_type": "disable_cognitive_affordances"
+          }
+        },
+        {
+          "id": "A3",
+          "mode": "ablation",
+          "label": "disable_accessibility",
+          "config": {
+            "ablation_type": "disable_accessibility"
+          }
+        }
+      ]
+    },
+    "LN-08": {
+      "adapter": "research.integrations.ln08:run_policy",
+      "runs": [
+        {
+          "id": "B0",
+          "mode": "baseline",
+          "config": {},
+          "label": "existing baseline"
+        },
+        {
+          "id": "I1",
+          "mode": "intervention",
+          "config": {},
+          "label": "new policy"
+        },
+        {
+          "id": "A1",
+          "mode": "ablation",
+          "label": "keyword_only",
+          "config": {
+            "ablation": "keyword_only"
+          }
+        },
+        {
+          "id": "A2",
+          "mode": "ablation",
+          "label": "disable_negation",
+          "config": {
+            "ablation": "disable_negation"
+          }
+        },
+        {
+          "id": "A3",
+          "mode": "ablation",
+          "label": "disable_source_link",
+          "config": {
+            "ablation": "disable_source_link"
+          }
+        }
+      ]
+    },
+    "LN-09": {
+      "adapter": "research.integrations.ln09:run_policy",
+      "runs": [
+        {
+          "id": "B0",
+          "mode": "baseline",
+          "config": {},
+          "label": "existing baseline"
+        },
+        {
+          "id": "I1",
+          "mode": "intervention",
+          "config": {},
+          "label": "new policy"
+        },
+        {
+          "id": "A1",
+          "mode": "ablation",
+          "label": "descriptive_only",
+          "config": {
+            "ablation_type": "descriptive_only"
+          }
+        },
+        {
+          "id": "A2",
+          "mode": "ablation",
+          "label": "no_freshness_source",
+          "config": {
+            "ablation_type": "no_freshness_source"
+          }
+        },
+        {
+          "id": "A3",
+          "mode": "ablation",
+          "label": "no_rationale",
+          "config": {
+            "ablation_type": "no_rationale"
+          }
+        }
+      ]
+    },
+    "LN-10": {
+      "adapter": "research.integrations.ln10:run_policy",
+      "runs": [
+        {
+          "id": "B0",
+          "mode": "baseline",
+          "config": {},
+          "label": "existing baseline"
+        },
+        {
+          "id": "I1",
+          "mode": "intervention",
+          "config": {},
+          "label": "new policy"
+        },
+        {
+          "id": "A1",
+          "mode": "ablation",
+          "label": "disable_reflection",
+          "config": {
+            "disable_reflection": true
+          }
+        },
+        {
+          "id": "A2",
+          "mode": "ablation",
+          "label": "disable_concurrency",
+          "config": {
+            "disable_concurrency": true
+          }
+        },
+        {
+          "id": "A3",
+          "mode": "ablation",
+          "label": "disable_ownership",
+          "config": {
+            "disable_ownership": true
+          }
+        }
+      ]
+    }
+  }
+}

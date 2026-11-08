@@ -1,0 +1,177 @@
+{
+  "dataset": "research/fixtures/holdout/LN-05_holdout.jsonl",
+  "total_cases": 120,
+  "fault_breakdown": {
+    "nominal": 24,
+    "duplicate_events_replay": 24,
+    "missing_competency_evidence": 24,
+    "spoofed_client_xp": 24,
+    "stale_policy_version": 24
+  },
+  "results": {
+    "B0 (XP-only threshold)": {
+      "tp": 24,
+      "fp": 96,
+      "tn": 0,
+      "fn": 0,
+      "false_mastery_rate": 1.0,
+      "ci_fmr": [
+        0.9615244121423243,
+        1.0
+      ],
+      "precision": 0.2,
+      "ci_prec": [
+        0.13824476478840259,
+        0.28036673506281956
+      ],
+      "fault_fp": {
+        "duplicate_events_replay": 24,
+        "missing_competency_evidence": 24,
+        "spoofed_client_xp": 24,
+        "stale_policy_version": 24
+      }
+    },
+    "B1 (Streak + basic dedup)": {
+      "tp": 24,
+      "fp": 72,
+      "tn": 24,
+      "fn": 0,
+      "false_mastery_rate": 0.75,
+      "ci_fmr": [
+        0.654901889760503,
+        0.8258603163106593
+      ],
+      "precision": 0.25,
+      "ci_prec": [
+        0.17413968368934077,
+        0.3450981102394971
+      ],
+      "fault_fp": {
+        "duplicate_events_replay": 0,
+        "missing_competency_evidence": 24,
+        "spoofed_client_xp": 24,
+        "stale_policy_version": 24
+      }
+    },
+    "I1 (Intervention proof-of-mastery)": {
+      "tp": 24,
+      "fp": 0,
+      "tn": 96,
+      "fn": 0,
+      "false_mastery_rate": 0.0,
+      "ci_fmr": [
+        3.469446951953614e-18,
+        0.038475587857675686
+      ],
+      "precision": 1.0,
+      "ci_prec": [
+        0.8620237953250198,
+        1.0
+      ],
+      "fault_fp": {
+        "duplicate_events_replay": 0,
+        "missing_competency_evidence": 0,
+        "spoofed_client_xp": 0,
+        "stale_policy_version": 0
+      }
+    },
+    "A1 (xp_only ablation)": {
+      "tp": 24,
+      "fp": 96,
+      "tn": 0,
+      "fn": 0,
+      "false_mastery_rate": 1.0,
+      "ci_fmr": [
+        0.9615244121423243,
+        1.0
+      ],
+      "precision": 0.2,
+      "ci_prec": [
+        0.13824476478840259,
+        0.28036673506281956
+      ],
+      "fault_fp": {
+        "duplicate_events_replay": 24,
+        "missing_competency_evidence": 24,
+        "spoofed_client_xp": 24,
+        "stale_policy_version": 24
+      }
+    },
+    "A2 (disable_anti_replay ablation)": {
+      "tp": 24,
+      "fp": 24,
+      "tn": 72,
+      "fn": 0,
+      "false_mastery_rate": 0.25,
+      "ci_fmr": [
+        0.17413968368934077,
+        0.3450981102394971
+      ],
+      "precision": 0.5,
+      "ci_prec": [
+        0.36389330502679385,
+        0.6361066949732062
+      ],
+      "fault_fp": {
+        "duplicate_events_replay": 24,
+        "missing_competency_evidence": 0,
+        "spoofed_client_xp": 0,
+        "stale_policy_version": 0
+      }
+    },
+    "A3 (disable_provenance ablation)": {
+      "tp": 24,
+      "fp": 24,
+      "tn": 72,
+      "fn": 0,
+      "false_mastery_rate": 0.25,
+      "ci_fmr": [
+        0.17413968368934077,
+        0.3450981102394971
+      ],
+      "precision": 0.5,
+      "ci_prec": [
+        0.36389330502679385,
+        0.6361066949732062
+      ],
+      "fault_fp": {
+        "duplicate_events_replay": 0,
+        "missing_competency_evidence": 0,
+        "spoofed_client_xp": 24,
+        "stale_policy_version": 0
+      }
+    }
+  },
+  "paired_tests_vs_i1": {
+    "B0 (XP-only threshold)": {
+      "b": 96,
+      "c": 0,
+      "chi2": 94.01041666666667,
+      "p_value": 3.1386774031298143e-22
+    },
+    "B1 (Streak + basic dedup)": {
+      "b": 72,
+      "c": 0,
+      "chi2": 70.01388888888889,
+      "p_value": 5.888836294943976e-17
+    },
+    "A1 (xp_only ablation)": {
+      "b": 96,
+      "c": 0,
+      "chi2": 94.01041666666667,
+      "p_value": 3.1386774031298143e-22
+    },
+    "A2 (disable_anti_replay ablation)": {
+      "b": 24,
+      "c": 0,
+      "chi2": 22.041666666666668,
+      "p_value": 2.667954593624791e-06
+    },
+    "A3 (disable_provenance ablation)": {
+      "b": 24,
+      "c": 0,
+      "chi2": 22.041666666666668,
+      "p_value": 2.667954593624791e-06
+    }
+  }
+}

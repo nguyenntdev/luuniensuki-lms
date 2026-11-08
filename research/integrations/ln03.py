@@ -11,6 +11,7 @@ from typing import Any, Dict
 
 from research.spaced_learning.dual_mode_policy import (
     schedule_baseline,
+    schedule_leitner_baseline,
     schedule_dual_mode_intervention,
     schedule_ablation,
 )
@@ -33,8 +34,12 @@ def run_policy(
         Result dictionary containing decision, reason_codes, policy_version,
         and domain observables (generative_assigned, review_burden, task_type_coverage).
     """
-    if mode == "baseline":
+    if mode in ("baseline", "b0"):
+        if config.get("baseline_type") in ("leitner", "b1", "strong") or config.get("variant") == "leitner":
+            return schedule_leitner_baseline(scenario_input, config)
         return schedule_baseline(scenario_input, config)
+    elif mode in ("leitner", "baseline_leitner", "b1", "B1"):
+        return schedule_leitner_baseline(scenario_input, config)
     elif mode == "intervention":
         return schedule_dual_mode_intervention(scenario_input, config)
     elif mode == "ablation":

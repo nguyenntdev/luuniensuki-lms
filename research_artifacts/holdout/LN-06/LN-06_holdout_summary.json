@@ -1,0 +1,385 @@
+{
+  "study": "LN-06",
+  "title": "Cognitively Constrained Heritage Trails & Route Optimization",
+  "dataset": "research/fixtures/holdout/LN-06_holdout.jsonl",
+  "n_cases": 120,
+  "results": {
+    "B0": {
+      "mode": "b0",
+      "config": {},
+      "n_total": 120,
+      "n_correct": 24,
+      "accuracy": 0.2,
+      "accuracy_ci_95": [
+        0.1382,
+        0.2804
+      ],
+      "mean_prerequisite_violations": 2.8,
+      "total_prerequisite_violations": 336,
+      "violations_ci_95": [
+        2.7281,
+        2.8719
+      ],
+      "mean_outcome_coverage": 0.95,
+      "coverage_ci_95": [
+        0.932,
+        0.968
+      ],
+      "mean_route_cost": 67.5,
+      "cost_ci_95": [
+        66.0939,
+        68.9061
+      ],
+      "fault_breakdown": {
+        "nominal": {
+          "n": 24,
+          "correct": 24,
+          "accuracy": 1.0
+        },
+        "unreachable_checkpoint": {
+          "n": 24,
+          "correct": 0,
+          "accuracy": 0.0
+        },
+        "source_gap_in_monument": {
+          "n": 24,
+          "correct": 0,
+          "accuracy": 0.0
+        },
+        "prerequisite_cycle": {
+          "n": 24,
+          "correct": 0,
+          "accuracy": 0.0
+        },
+        "over_time_budget": {
+          "n": 24,
+          "correct": 0,
+          "accuracy": 0.0
+        }
+      }
+    },
+    "B1": {
+      "mode": "b1",
+      "config": {},
+      "n_total": 120,
+      "n_correct": 24,
+      "accuracy": 0.2,
+      "accuracy_ci_95": [
+        0.1382,
+        0.2804
+      ],
+      "mean_prerequisite_violations": 0.4,
+      "total_prerequisite_violations": 48,
+      "violations_ci_95": [
+        0.312,
+        0.488
+      ],
+      "mean_outcome_coverage": 0.95,
+      "coverage_ci_95": [
+        0.932,
+        0.968
+      ],
+      "mean_route_cost": 67.5,
+      "cost_ci_95": [
+        66.0939,
+        68.9061
+      ],
+      "fault_breakdown": {
+        "nominal": {
+          "n": 24,
+          "correct": 24,
+          "accuracy": 1.0
+        },
+        "unreachable_checkpoint": {
+          "n": 24,
+          "correct": 0,
+          "accuracy": 0.0
+        },
+        "source_gap_in_monument": {
+          "n": 24,
+          "correct": 0,
+          "accuracy": 0.0
+        },
+        "prerequisite_cycle": {
+          "n": 24,
+          "correct": 0,
+          "accuracy": 0.0
+        },
+        "over_time_budget": {
+          "n": 24,
+          "correct": 0,
+          "accuracy": 0.0
+        }
+      }
+    },
+    "I1": {
+      "mode": "intervention",
+      "config": {},
+      "n_total": 120,
+      "n_correct": 120,
+      "accuracy": 1.0,
+      "accuracy_ci_95": [
+        0.969,
+        1.0
+      ],
+      "mean_prerequisite_violations": 0.0,
+      "total_prerequisite_violations": 0,
+      "violations_ci_95": [
+        0.0,
+        0.0
+      ],
+      "mean_outcome_coverage": 0.55,
+      "coverage_ci_95": [
+        0.4677,
+        0.6323
+      ],
+      "mean_route_cost": 28.5,
+      "cost_ci_95": [
+        22.2238,
+        34.7762
+      ],
+      "fault_breakdown": {
+        "nominal": {
+          "n": 24,
+          "correct": 24,
+          "accuracy": 1.0
+        },
+        "unreachable_checkpoint": {
+          "n": 24,
+          "correct": 24,
+          "accuracy": 1.0
+        },
+        "source_gap_in_monument": {
+          "n": 24,
+          "correct": 24,
+          "accuracy": 1.0
+        },
+        "prerequisite_cycle": {
+          "n": 24,
+          "correct": 24,
+          "accuracy": 1.0
+        },
+        "over_time_budget": {
+          "n": 24,
+          "correct": 24,
+          "accuracy": 1.0
+        }
+      }
+    },
+    "A1": {
+      "mode": "ablation",
+      "config": {
+        "enforce_prerequisites": false
+      },
+      "n_total": 120,
+      "n_correct": 96,
+      "accuracy": 0.8,
+      "accuracy_ci_95": [
+        0.7196,
+        0.8618
+      ],
+      "mean_prerequisite_violations": 0.2,
+      "total_prerequisite_violations": 24,
+      "violations_ci_95": [
+        0.1281,
+        0.2719
+      ],
+      "mean_outcome_coverage": 0.75,
+      "coverage_ci_95": [
+        0.6804,
+        0.8196
+      ],
+      "mean_route_cost": 42.75,
+      "cost_ci_95": [
+        36.4714,
+        49.0286
+      ],
+      "fault_breakdown": {
+        "nominal": {
+          "n": 24,
+          "correct": 24,
+          "accuracy": 1.0
+        },
+        "unreachable_checkpoint": {
+          "n": 24,
+          "correct": 24,
+          "accuracy": 1.0
+        },
+        "source_gap_in_monument": {
+          "n": 24,
+          "correct": 24,
+          "accuracy": 1.0
+        },
+        "prerequisite_cycle": {
+          "n": 24,
+          "correct": 0,
+          "accuracy": 0.0
+        },
+        "over_time_budget": {
+          "n": 24,
+          "correct": 24,
+          "accuracy": 1.0
+        }
+      }
+    },
+    "A2": {
+      "mode": "ablation",
+      "config": {
+        "enforce_budget": false
+      },
+      "n_total": 120,
+      "n_correct": 96,
+      "accuracy": 0.8,
+      "accuracy_ci_95": [
+        0.7196,
+        0.8618
+      ],
+      "mean_prerequisite_violations": 0.0,
+      "total_prerequisite_violations": 0,
+      "violations_ci_95": [
+        0.0,
+        0.0
+      ],
+      "mean_outcome_coverage": 0.55,
+      "coverage_ci_95": [
+        0.4677,
+        0.6323
+      ],
+      "mean_route_cost": 28.5,
+      "cost_ci_95": [
+        22.2238,
+        34.7762
+      ],
+      "fault_breakdown": {
+        "nominal": {
+          "n": 24,
+          "correct": 24,
+          "accuracy": 1.0
+        },
+        "unreachable_checkpoint": {
+          "n": 24,
+          "correct": 24,
+          "accuracy": 1.0
+        },
+        "source_gap_in_monument": {
+          "n": 24,
+          "correct": 24,
+          "accuracy": 1.0
+        },
+        "prerequisite_cycle": {
+          "n": 24,
+          "correct": 24,
+          "accuracy": 1.0
+        },
+        "over_time_budget": {
+          "n": 24,
+          "correct": 0,
+          "accuracy": 0.0
+        }
+      }
+    },
+    "A3": {
+      "mode": "ablation",
+      "config": {
+        "enforce_sources": false
+      },
+      "n_total": 120,
+      "n_correct": 96,
+      "accuracy": 0.8,
+      "accuracy_ci_95": [
+        0.7196,
+        0.8618
+      ],
+      "mean_prerequisite_violations": 0.0,
+      "total_prerequisite_violations": 0,
+      "violations_ci_95": [
+        0.0,
+        0.0
+      ],
+      "mean_outcome_coverage": 0.75,
+      "coverage_ci_95": [
+        0.6804,
+        0.8196
+      ],
+      "mean_route_cost": 42.75,
+      "cost_ci_95": [
+        36.4714,
+        49.0286
+      ],
+      "fault_breakdown": {
+        "nominal": {
+          "n": 24,
+          "correct": 24,
+          "accuracy": 1.0
+        },
+        "unreachable_checkpoint": {
+          "n": 24,
+          "correct": 24,
+          "accuracy": 1.0
+        },
+        "source_gap_in_monument": {
+          "n": 24,
+          "correct": 0,
+          "accuracy": 0.0
+        },
+        "prerequisite_cycle": {
+          "n": 24,
+          "correct": 24,
+          "accuracy": 1.0
+        },
+        "over_time_budget": {
+          "n": 24,
+          "correct": 24,
+          "accuracy": 1.0
+        }
+      }
+    }
+  },
+  "statistical_comparisons": {
+    "I1_vs_B0": {
+      "comparison": "I1 vs B0",
+      "mcnemar_b": 96,
+      "mcnemar_c": 0,
+      "mcnemar_stat": 94.0104,
+      "mcnemar_p_value": 3.1386774031298533e-22,
+      "paired_t_violations_stat": 76.361,
+      "paired_t_violations_p_value": 0.0
+    },
+    "I1_vs_B1": {
+      "comparison": "I1 vs B1",
+      "mcnemar_b": 96,
+      "mcnemar_c": 0,
+      "mcnemar_stat": 94.0104,
+      "mcnemar_p_value": 3.1386774031298533e-22,
+      "paired_t_violations_stat": 8.9069,
+      "paired_t_violations_p_value": 5.246698542253611e-19
+    },
+    "I1_vs_A1": {
+      "comparison": "I1 vs A1",
+      "mcnemar_b": 24,
+      "mcnemar_c": 0,
+      "mcnemar_stat": 22.0417,
+      "mcnemar_p_value": 2.667954593624791e-06,
+      "paired_t_violations_stat": 5.4544,
+      "paired_t_violations_p_value": 4.9150630171582864e-08
+    },
+    "I1_vs_A2": {
+      "comparison": "I1 vs A2",
+      "mcnemar_b": 24,
+      "mcnemar_c": 0,
+      "mcnemar_stat": 22.0417,
+      "mcnemar_p_value": 2.667954593624791e-06,
+      "paired_t_violations_stat": 0.0,
+      "paired_t_violations_p_value": 1.0
+    },
+    "I1_vs_A3": {
+      "comparison": "I1 vs A3",
+      "mcnemar_b": 24,
+      "mcnemar_c": 0,
+      "mcnemar_stat": 22.0417,
+      "mcnemar_p_value": 2.667954593624791e-06,
+      "paired_t_violations_stat": 0.0,
+      "paired_t_violations_p_value": 1.0
+    }
+  }
+}

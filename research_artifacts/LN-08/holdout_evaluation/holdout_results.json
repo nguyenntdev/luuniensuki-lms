@@ -1,0 +1,348 @@
+{
+  "holdout_n": 120,
+  "summary_metrics": {
+    "B0": {
+      "condition": "B0",
+      "total_cases": 120,
+      "total_errors": 72,
+      "overall_error_rate": 0.6,
+      "overall_ci_95": [
+        0.5105604304424707,
+        0.6832357607156918
+      ],
+      "eligible_fault_cases": 96,
+      "eligible_fault_errors": 72,
+      "eligible_error_rate": 0.75,
+      "eligible_ci_95": [
+        0.654902096571505,
+        0.8258601847096091
+      ],
+      "false_positive_negation_count": 24,
+      "false_positive_negation_total": 24,
+      "false_positive_negation_rate": 1.0,
+      "fp_negation_ci_95": [
+        0.8620242789217465,
+        1.0
+      ],
+      "fault_breakdown": {
+        "nominal_correct": {
+          "total": 24,
+          "errors": 0,
+          "error_rate": 0.0
+        },
+        "logical_negation_misconception": {
+          "total": 24,
+          "errors": 24,
+          "error_rate": 1.0
+        },
+        "synonym_variation": {
+          "total": 24,
+          "errors": 24,
+          "error_rate": 1.0
+        },
+        "partial_reasoning": {
+          "total": 24,
+          "errors": 0,
+          "error_rate": 0.0
+        },
+        "unverified_historical_assertion": {
+          "total": 24,
+          "errors": 24,
+          "error_rate": 1.0
+        }
+      }
+    },
+    "B1": {
+      "condition": "B1",
+      "total_cases": 120,
+      "total_errors": 48,
+      "overall_error_rate": 0.4,
+      "overall_ci_95": [
+        0.3167642392843083,
+        0.4894395695575293
+      ],
+      "eligible_fault_cases": 96,
+      "eligible_fault_errors": 48,
+      "eligible_error_rate": 0.5,
+      "eligible_ci_95": [
+        0.40192421624354496,
+        0.598075783756455
+      ],
+      "false_positive_negation_count": 20,
+      "false_positive_negation_total": 24,
+      "false_positive_negation_rate": 0.8333333333333334,
+      "fp_negation_ci_95": [
+        0.6414697357497665,
+        0.9332131168647311
+      ],
+      "fault_breakdown": {
+        "nominal_correct": {
+          "total": 24,
+          "errors": 0,
+          "error_rate": 0.0
+        },
+        "logical_negation_misconception": {
+          "total": 24,
+          "errors": 24,
+          "error_rate": 1.0
+        },
+        "synonym_variation": {
+          "total": 24,
+          "errors": 0,
+          "error_rate": 0.0
+        },
+        "partial_reasoning": {
+          "total": 24,
+          "errors": 0,
+          "error_rate": 0.0
+        },
+        "unverified_historical_assertion": {
+          "total": 24,
+          "errors": 24,
+          "error_rate": 1.0
+        }
+      }
+    },
+    "I1": {
+      "condition": "I1",
+      "total_cases": 120,
+      "total_errors": 0,
+      "overall_error_rate": 0.0,
+      "overall_ci_95": [
+        0.0,
+        0.031019044209187396
+      ],
+      "eligible_fault_cases": 96,
+      "eligible_fault_errors": 0,
+      "eligible_error_rate": 0.0,
+      "eligible_ci_95": [
+        0.0,
+        0.03847543743777172
+      ],
+      "false_positive_negation_count": 0,
+      "false_positive_negation_total": 24,
+      "false_positive_negation_rate": 0.0,
+      "fp_negation_ci_95": [
+        0.0,
+        0.13797572107825354
+      ],
+      "fault_breakdown": {
+        "nominal_correct": {
+          "total": 24,
+          "errors": 0,
+          "error_rate": 0.0
+        },
+        "logical_negation_misconception": {
+          "total": 24,
+          "errors": 0,
+          "error_rate": 0.0
+        },
+        "synonym_variation": {
+          "total": 24,
+          "errors": 0,
+          "error_rate": 0.0
+        },
+        "partial_reasoning": {
+          "total": 24,
+          "errors": 0,
+          "error_rate": 0.0
+        },
+        "unverified_historical_assertion": {
+          "total": 24,
+          "errors": 0,
+          "error_rate": 0.0
+        }
+      }
+    },
+    "A1": {
+      "condition": "A1",
+      "total_cases": 120,
+      "total_errors": 72,
+      "overall_error_rate": 0.6,
+      "overall_ci_95": [
+        0.5105604304424707,
+        0.6832357607156918
+      ],
+      "eligible_fault_cases": 96,
+      "eligible_fault_errors": 72,
+      "eligible_error_rate": 0.75,
+      "eligible_ci_95": [
+        0.654902096571505,
+        0.8258601847096091
+      ],
+      "false_positive_negation_count": 24,
+      "false_positive_negation_total": 24,
+      "false_positive_negation_rate": 1.0,
+      "fp_negation_ci_95": [
+        0.8620242789217465,
+        1.0
+      ],
+      "fault_breakdown": {
+        "nominal_correct": {
+          "total": 24,
+          "errors": 0,
+          "error_rate": 0.0
+        },
+        "logical_negation_misconception": {
+          "total": 24,
+          "errors": 24,
+          "error_rate": 1.0
+        },
+        "synonym_variation": {
+          "total": 24,
+          "errors": 24,
+          "error_rate": 1.0
+        },
+        "partial_reasoning": {
+          "total": 24,
+          "errors": 0,
+          "error_rate": 0.0
+        },
+        "unverified_historical_assertion": {
+          "total": 24,
+          "errors": 24,
+          "error_rate": 1.0
+        }
+      }
+    },
+    "A2": {
+      "condition": "A2",
+      "total_cases": 120,
+      "total_errors": 24,
+      "overall_error_rate": 0.2,
+      "overall_ci_95": [
+        0.13824487050953088,
+        0.28036655601598165
+      ],
+      "eligible_fault_cases": 96,
+      "eligible_fault_errors": 24,
+      "eligible_error_rate": 0.25,
+      "eligible_ci_95": [
+        0.1741398152903909,
+        0.345097903428495
+      ],
+      "false_positive_negation_count": 24,
+      "false_positive_negation_total": 24,
+      "false_positive_negation_rate": 1.0,
+      "fp_negation_ci_95": [
+        0.8620242789217465,
+        1.0
+      ],
+      "fault_breakdown": {
+        "nominal_correct": {
+          "total": 24,
+          "errors": 0,
+          "error_rate": 0.0
+        },
+        "logical_negation_misconception": {
+          "total": 24,
+          "errors": 24,
+          "error_rate": 1.0
+        },
+        "synonym_variation": {
+          "total": 24,
+          "errors": 0,
+          "error_rate": 0.0
+        },
+        "partial_reasoning": {
+          "total": 24,
+          "errors": 0,
+          "error_rate": 0.0
+        },
+        "unverified_historical_assertion": {
+          "total": 24,
+          "errors": 0,
+          "error_rate": 0.0
+        }
+      }
+    },
+    "A3": {
+      "condition": "A3",
+      "total_cases": 120,
+      "total_errors": 24,
+      "overall_error_rate": 0.2,
+      "overall_ci_95": [
+        0.13824487050953088,
+        0.28036655601598165
+      ],
+      "eligible_fault_cases": 96,
+      "eligible_fault_errors": 24,
+      "eligible_error_rate": 0.25,
+      "eligible_ci_95": [
+        0.1741398152903909,
+        0.345097903428495
+      ],
+      "false_positive_negation_count": 0,
+      "false_positive_negation_total": 24,
+      "false_positive_negation_rate": 0.0,
+      "fp_negation_ci_95": [
+        0.0,
+        0.13797572107825354
+      ],
+      "fault_breakdown": {
+        "nominal_correct": {
+          "total": 24,
+          "errors": 0,
+          "error_rate": 0.0
+        },
+        "logical_negation_misconception": {
+          "total": 24,
+          "errors": 0,
+          "error_rate": 0.0
+        },
+        "synonym_variation": {
+          "total": 24,
+          "errors": 0,
+          "error_rate": 0.0
+        },
+        "partial_reasoning": {
+          "total": 24,
+          "errors": 0,
+          "error_rate": 0.0
+        },
+        "unverified_historical_assertion": {
+          "total": 24,
+          "errors": 24,
+          "error_rate": 1.0
+        }
+      }
+    }
+  },
+  "paired_tests": {
+    "I1_vs_B0": {
+      "chi2": 70.01388888888889,
+      "p_value": 4.235164736271502e-22,
+      "b": 72,
+      "c": 0,
+      "discordant": 72
+    },
+    "I1_vs_B1": {
+      "chi2": 46.020833333333336,
+      "p_value": 7.105427357601002e-15,
+      "b": 48,
+      "c": 0,
+      "discordant": 48
+    },
+    "I1_vs_A1": {
+      "chi2": 70.01388888888889,
+      "p_value": 4.235164736271502e-22,
+      "b": 72,
+      "c": 0,
+      "discordant": 72
+    },
+    "I1_vs_A2": {
+      "chi2": 22.041666666666668,
+      "p_value": 1.1920928955078125e-07,
+      "b": 24,
+      "c": 0,
+      "discordant": 24
+    },
+    "I1_vs_A3": {
+      "chi2": 22.041666666666668,
+      "p_value": 1.1920928955078125e-07,
+      "b": 24,
+      "c": 0,
+      "discordant": 24
+    }
+  }
+}

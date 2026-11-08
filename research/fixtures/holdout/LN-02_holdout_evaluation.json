@@ -1,0 +1,430 @@
+{
+  "summary": {
+    "B0": {
+      "condition": "B0",
+      "total_cases": 120,
+      "oracle_matches": 24,
+      "accuracy": 0.2,
+      "accuracy_95ci": [
+        0.1382,
+        0.2804
+      ],
+      "prereq_violations_on_missing_stratum": 24,
+      "prereq_violation_rate_missing_stratum": 1.0,
+      "prereq_violation_rate_missing_stratum_95ci": [
+        0.862,
+        1.0
+      ],
+      "overall_violations": 54,
+      "overall_violation_rate": 0.45,
+      "overall_violation_rate_95ci": [
+        0.3639,
+        0.5392
+      ],
+      "overall_unjustified_recommendations": 84,
+      "mean_competency_coverage": 0.9125,
+      "std_competency_coverage": 0.1437,
+      "fault_breakdown": {
+        "nominal": {
+          "n": 24,
+          "oracle_matches": 24,
+          "oracle_accuracy": 1.0,
+          "violations": 0
+        },
+        "missing_prerequisite": {
+          "n": 24,
+          "oracle_matches": 0,
+          "oracle_accuracy": 0.0,
+          "violations": 24
+        },
+        "latent_dimension_unobserved": {
+          "n": 24,
+          "oracle_matches": 0,
+          "oracle_accuracy": 0.0,
+          "violations": 24
+        },
+        "cyclic_prerequisite": {
+          "n": 24,
+          "oracle_matches": 0,
+          "oracle_accuracy": 0.0,
+          "violations": 0
+        },
+        "out_of_range_score": {
+          "n": 24,
+          "oracle_matches": 0,
+          "oracle_accuracy": 0.0,
+          "violations": 6
+        }
+      }
+    },
+    "B1": {
+      "condition": "B1",
+      "total_cases": 120,
+      "oracle_matches": 24,
+      "accuracy": 0.2,
+      "accuracy_95ci": [
+        0.1382,
+        0.2804
+      ],
+      "prereq_violations_on_missing_stratum": 24,
+      "prereq_violation_rate_missing_stratum": 1.0,
+      "prereq_violation_rate_missing_stratum_95ci": [
+        0.862,
+        1.0
+      ],
+      "overall_violations": 48,
+      "overall_violation_rate": 0.4,
+      "overall_violation_rate_95ci": [
+        0.3168,
+        0.4894
+      ],
+      "overall_unjustified_recommendations": 90,
+      "mean_competency_coverage": 0.9125,
+      "std_competency_coverage": 0.1437,
+      "fault_breakdown": {
+        "nominal": {
+          "n": 24,
+          "oracle_matches": 24,
+          "oracle_accuracy": 1.0,
+          "violations": 0
+        },
+        "missing_prerequisite": {
+          "n": 24,
+          "oracle_matches": 0,
+          "oracle_accuracy": 0.0,
+          "violations": 24
+        },
+        "latent_dimension_unobserved": {
+          "n": 24,
+          "oracle_matches": 0,
+          "oracle_accuracy": 0.0,
+          "violations": 24
+        },
+        "cyclic_prerequisite": {
+          "n": 24,
+          "oracle_matches": 0,
+          "oracle_accuracy": 0.0,
+          "violations": 0
+        },
+        "out_of_range_score": {
+          "n": 24,
+          "oracle_matches": 0,
+          "oracle_accuracy": 0.0,
+          "violations": 0
+        }
+      }
+    },
+    "I1": {
+      "condition": "I1",
+      "total_cases": 120,
+      "oracle_matches": 120,
+      "accuracy": 1.0,
+      "accuracy_95ci": [
+        0.969,
+        1.0
+      ],
+      "prereq_violations_on_missing_stratum": 0,
+      "prereq_violation_rate_missing_stratum": 0.0,
+      "prereq_violation_rate_missing_stratum_95ci": [
+        0.0,
+        0.138
+      ],
+      "overall_violations": 0,
+      "overall_violation_rate": 0.0,
+      "overall_violation_rate_95ci": [
+        0.0,
+        0.031
+      ],
+      "overall_unjustified_recommendations": 0,
+      "mean_competency_coverage": 0.9125,
+      "std_competency_coverage": 0.1437,
+      "fault_breakdown": {
+        "nominal": {
+          "n": 24,
+          "oracle_matches": 24,
+          "oracle_accuracy": 1.0,
+          "violations": 0
+        },
+        "missing_prerequisite": {
+          "n": 24,
+          "oracle_matches": 24,
+          "oracle_accuracy": 1.0,
+          "violations": 0
+        },
+        "latent_dimension_unobserved": {
+          "n": 24,
+          "oracle_matches": 24,
+          "oracle_accuracy": 1.0,
+          "violations": 0
+        },
+        "cyclic_prerequisite": {
+          "n": 24,
+          "oracle_matches": 24,
+          "oracle_accuracy": 1.0,
+          "violations": 0
+        },
+        "out_of_range_score": {
+          "n": 24,
+          "oracle_matches": 24,
+          "oracle_accuracy": 1.0,
+          "violations": 0
+        }
+      }
+    },
+    "A1": {
+      "condition": "A1",
+      "total_cases": 120,
+      "oracle_matches": 72,
+      "accuracy": 0.6,
+      "accuracy_95ci": [
+        0.5106,
+        0.6832
+      ],
+      "prereq_violations_on_missing_stratum": 24,
+      "prereq_violation_rate_missing_stratum": 1.0,
+      "prereq_violation_rate_missing_stratum_95ci": [
+        0.862,
+        1.0
+      ],
+      "overall_violations": 48,
+      "overall_violation_rate": 0.4,
+      "overall_violation_rate_95ci": [
+        0.3168,
+        0.4894
+      ],
+      "overall_unjustified_recommendations": 48,
+      "mean_competency_coverage": 0.9125,
+      "std_competency_coverage": 0.1437,
+      "fault_breakdown": {
+        "nominal": {
+          "n": 24,
+          "oracle_matches": 24,
+          "oracle_accuracy": 1.0,
+          "violations": 0
+        },
+        "missing_prerequisite": {
+          "n": 24,
+          "oracle_matches": 0,
+          "oracle_accuracy": 0.0,
+          "violations": 24
+        },
+        "latent_dimension_unobserved": {
+          "n": 24,
+          "oracle_matches": 0,
+          "oracle_accuracy": 0.0,
+          "violations": 24
+        },
+        "cyclic_prerequisite": {
+          "n": 24,
+          "oracle_matches": 24,
+          "oracle_accuracy": 1.0,
+          "violations": 0
+        },
+        "out_of_range_score": {
+          "n": 24,
+          "oracle_matches": 24,
+          "oracle_accuracy": 1.0,
+          "violations": 0
+        }
+      }
+    },
+    "A2": {
+      "condition": "A2",
+      "total_cases": 120,
+      "oracle_matches": 96,
+      "accuracy": 0.8,
+      "accuracy_95ci": [
+        0.7196,
+        0.8618
+      ],
+      "prereq_violations_on_missing_stratum": 24,
+      "prereq_violation_rate_missing_stratum": 1.0,
+      "prereq_violation_rate_missing_stratum_95ci": [
+        0.862,
+        1.0
+      ],
+      "overall_violations": 24,
+      "overall_violation_rate": 0.2,
+      "overall_violation_rate_95ci": [
+        0.1382,
+        0.2804
+      ],
+      "overall_unjustified_recommendations": 24,
+      "mean_competency_coverage": 0.9125,
+      "std_competency_coverage": 0.1437,
+      "fault_breakdown": {
+        "nominal": {
+          "n": 24,
+          "oracle_matches": 24,
+          "oracle_accuracy": 1.0,
+          "violations": 0
+        },
+        "missing_prerequisite": {
+          "n": 24,
+          "oracle_matches": 0,
+          "oracle_accuracy": 0.0,
+          "violations": 24
+        },
+        "latent_dimension_unobserved": {
+          "n": 24,
+          "oracle_matches": 24,
+          "oracle_accuracy": 1.0,
+          "violations": 0
+        },
+        "cyclic_prerequisite": {
+          "n": 24,
+          "oracle_matches": 24,
+          "oracle_accuracy": 1.0,
+          "violations": 0
+        },
+        "out_of_range_score": {
+          "n": 24,
+          "oracle_matches": 24,
+          "oracle_accuracy": 1.0,
+          "violations": 0
+        }
+      }
+    },
+    "A3": {
+      "condition": "A3",
+      "total_cases": 120,
+      "oracle_matches": 96,
+      "accuracy": 0.8,
+      "accuracy_95ci": [
+        0.7196,
+        0.8618
+      ],
+      "prereq_violations_on_missing_stratum": 0,
+      "prereq_violation_rate_missing_stratum": 0.0,
+      "prereq_violation_rate_missing_stratum_95ci": [
+        0.0,
+        0.138
+      ],
+      "overall_violations": 0,
+      "overall_violation_rate": 0.0,
+      "overall_violation_rate_95ci": [
+        0.0,
+        0.031
+      ],
+      "overall_unjustified_recommendations": 0,
+      "mean_competency_coverage": 0.9125,
+      "std_competency_coverage": 0.1437,
+      "fault_breakdown": {
+        "nominal": {
+          "n": 24,
+          "oracle_matches": 24,
+          "oracle_accuracy": 1.0,
+          "violations": 0
+        },
+        "missing_prerequisite": {
+          "n": 24,
+          "oracle_matches": 24,
+          "oracle_accuracy": 1.0,
+          "violations": 0
+        },
+        "latent_dimension_unobserved": {
+          "n": 24,
+          "oracle_matches": 0,
+          "oracle_accuracy": 0.0,
+          "violations": 0
+        },
+        "cyclic_prerequisite": {
+          "n": 24,
+          "oracle_matches": 24,
+          "oracle_accuracy": 1.0,
+          "violations": 0
+        },
+        "out_of_range_score": {
+          "n": 24,
+          "oracle_matches": 24,
+          "oracle_accuracy": 1.0,
+          "violations": 0
+        }
+      }
+    }
+  },
+  "mcnemar_accuracy_comparisons": {
+    "I1_vs_B0": {
+      "b_modelA_correct_modelB_wrong": 96,
+      "c_modelA_wrong_modelB_correct": 0,
+      "chi2": 94.0104,
+      "p_value": 3.1386774031298044e-22,
+      "significant_p001": true,
+      "significant_p05": true
+    },
+    "I1_vs_B1": {
+      "b_modelA_correct_modelB_wrong": 96,
+      "c_modelA_wrong_modelB_correct": 0,
+      "chi2": 94.0104,
+      "p_value": 3.1386774031298044e-22,
+      "significant_p001": true,
+      "significant_p05": true
+    },
+    "I1_vs_A1": {
+      "b_modelA_correct_modelB_wrong": 48,
+      "c_modelA_wrong_modelB_correct": 0,
+      "chi2": 46.0208,
+      "p_value": 1.1700213117066249e-11,
+      "significant_p001": true,
+      "significant_p05": true
+    },
+    "I1_vs_A2": {
+      "b_modelA_correct_modelB_wrong": 24,
+      "c_modelA_wrong_modelB_correct": 0,
+      "chi2": 22.0417,
+      "p_value": 2.6679545936247906e-06,
+      "significant_p001": true,
+      "significant_p05": true
+    },
+    "I1_vs_A3": {
+      "b_modelA_correct_modelB_wrong": 24,
+      "c_modelA_wrong_modelB_correct": 0,
+      "chi2": 22.0417,
+      "p_value": 2.6679545936247906e-06,
+      "significant_p001": true,
+      "significant_p05": true
+    }
+  },
+  "mcnemar_prereq_safety_comparisons": {
+    "I1_vs_B0_safety": {
+      "b_modelA_correct_modelB_wrong": 24,
+      "c_modelA_wrong_modelB_correct": 0,
+      "chi2": 22.0417,
+      "p_value": 2.6679545936247906e-06,
+      "significant_p001": true,
+      "significant_p05": true
+    },
+    "I1_vs_B1_safety": {
+      "b_modelA_correct_modelB_wrong": 24,
+      "c_modelA_wrong_modelB_correct": 0,
+      "chi2": 22.0417,
+      "p_value": 2.6679545936247906e-06,
+      "significant_p001": true,
+      "significant_p05": true
+    },
+    "I1_vs_A1_safety": {
+      "b_modelA_correct_modelB_wrong": 24,
+      "c_modelA_wrong_modelB_correct": 0,
+      "chi2": 22.0417,
+      "p_value": 2.6679545936247906e-06,
+      "significant_p001": true,
+      "significant_p05": true
+    },
+    "I1_vs_A2_safety": {
+      "b_modelA_correct_modelB_wrong": 24,
+      "c_modelA_wrong_modelB_correct": 0,
+      "chi2": 22.0417,
+      "p_value": 2.6679545936247906e-06,
+      "significant_p001": true,
+      "significant_p05": true
+    },
+    "I1_vs_A3_safety": {
+      "b_modelA_correct_modelB_wrong": 0,
+      "c_modelA_wrong_modelB_correct": 0,
+      "chi2": 0.0,
+      "p_value": 1.0,
+      "significant_p001": false,
+      "significant_p05": false
+    }
+  }
+}

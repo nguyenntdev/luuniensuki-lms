@@ -330,3 +330,57 @@ def test_concrete_fixture_conformance():
 
     assert total == 720
     assert matched == 720
+
+
+def test_b1_baseline_missing_affordance():
+    """Verify B1 static image fallback fails when cognitive affordances are not preserved."""
+    from research.udl.modality_equivalence import evaluate_modality_b1
+    
+    # Task requires spatial relation and visual detail, but static image only provides visual_detail
+    scenario = {
+        "fault_id": "webgl_context_loss",
+        "device": {"webgl": False, "network_kbps": 3000, "keyboard_only": False, "screen_reader": False},
+        "options": [
+            {"modality": "3d", "kb": 1800, "affordances": ["visual_detail", "spatial_relation"], "available": True},
+            {"modality": "static_image", "kb": 300, "affordances": ["visual_detail"], "available": True},
+            {"modality": "2d", "sub_type": "rubbing", "kb": 95, "affordances": ["visual_detail", "spatial_relation"], "available": True},
+        ],
+        "task": {"required_affordances": ["visual_detail", "spatial_relation"], "type": "identify_relief_relation"},
+    }
+    res_b1 = evaluate_modality_b1(scenario)
+    assert res_b1.task_feasible is False
+    assert res_b1.fallback_failure is True
+    assert res_b1.missing_affordance_count == 1
+    assert "unverified_cognitive_affordances" in res_b1.reason_codes
+
+    # But intervention safely falls back to rubbing and preserves affordances
+    res_i1 = evaluate_modality_intervention(scenario)
+    assert res_i1.task_feasible is True
+    assert res_i1.fallback_failure is False
+    assert res_i1.missing_affordance_count == 0
+
+
+def test_independent_holdout_conformance():
+    """Verify 120-case independent holdout dataset exists and matches oracle decisions."""
+    holdout_path = Path(__file__).resolve().parents[2] / "research" / "fixtures" / "holdout" / "LN-07_holdout.jsonl"
+    assert holdout_path.exists(), f"Holdout fixture missing: {holdout_path}"
+
+    with open(holdout_path, encoding="utf-8") as f:
+        cases = [json.loads(line) for line in f if line.strip()]
+
+    assert len(cases) == 120
+    fault_counts = {}
+    for c in cases:
+        fault_counts[c["fault_id"]] = fault_counts.get(c["fault_id"], 0) + 1
+        res = run_policy(c["input"], mode="intervention", config={})
+        expected = c["oracle"]["expected_decision"]
+        assert res["decision"] == expected, f"Mismatch on {c['case_id']}: got {res['decision']}, expected {expected}"
+        assert res["task_feasible"] is True
+
+    assert fault_counts == {
+        "nominal_3d_available": 24,
+        "webgl_context_loss": 24,
+        "low_bandwidth_device": 24,
+        "visual_impairment_screen_reader": 24,
+        "missing_monument_asset": 24,
+    }

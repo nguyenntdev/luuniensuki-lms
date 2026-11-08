@@ -32,10 +32,11 @@ jobs:
       - name: Run tests
         env:
           DATABASE_URL: postgresql+psycopg://postgres:password@localhost:5432/luuniensuki
-        run: pytest
+          JWT_SECRET_KEY: test-secret-key-for-ci
+        run: pytest tests/backend tests/research -v --tb=short
 
   frontend:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     defaults:
       run:
         working-directory: ./frontend
@@ -51,7 +52,7 @@ jobs:
       - run: npm run lint:ci
       - run: npm run build
       - name: Install Playwright Browsers
-        run: npx playwright install chromium --with-deps || npx playwright install chromium
+        run: npx playwright install chromium --with-deps
       - name: Run E2E Smoke Tests
         run: npx playwright test
         env:

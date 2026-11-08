@@ -41,7 +41,7 @@ class SRLProjectStateMachine:
         """Evaluate a project transition request under specified mode."""
         cfg = config or {}
 
-        if mode == "baseline":
+        if mode in ("baseline", "b0"):
             # Naive linear checklist: advances regardless of reflection, ownership, or concurrency
             project = scenario_input.get("project", {}) if isinstance(scenario_input, dict) else {}
             return {
@@ -52,6 +52,29 @@ class SRLProjectStateMachine:
                 "conflict_detected": False,
                 "reflection_completed": bool(project.get("reflection_completed", False)),
                 "ownership_verified": False,
+                "research_only": True,
+            }
+
+        elif mode in ("baseline_progress_tracker", "b1", "baseline_b1"):
+            # B1: Timestamp-based progress tracker without reflection verification
+            # Enforces ownership and concurrency, but skips reflection gate and revision rationale
+            res = evaluate_srl_cycle(
+                scenario_input,
+                enforce_ownership=True,
+                enforce_concurrency=True,
+                enforce_reflection_gate=False,
+                enforce_rationale=False,
+                policy_version="ln10-baseline-b1-v1",
+            )
+            return {
+                "decision": res.decision.value,
+                "reason_codes": res.reason_codes,
+                "policy_version": res.policy_version,
+                "transition_applied": res.transition_applied,
+                "conflict_detected": res.conflict_detected,
+                "reflection_completed": res.reflection_completed,
+                "ownership_verified": res.ownership_verified,
+                "explanation": res.explanation,
                 "research_only": True,
             }
 

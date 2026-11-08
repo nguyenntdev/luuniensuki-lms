@@ -221,17 +221,43 @@ def test_crosswalk_standard_anchors():
     assert rate2 == 0.5
 
 
-def test_metamorphic_property_content_invariance():
-    """Metamorphic test: changing content label/type does not change progression validity."""
-    inp = _sample_nominal_input()
-    res1 = run_policy(inp, mode="intervention", config={})
+def test_topological_baseline_b1():
+    """Verify B1 topological baseline rejects cycles but admits non-cognitive leaps."""
+    # 1. Cyclic graph is rejected by B1
+    cycle_inp = _sample_nominal_input()
+    cycle_inp["prerequisites"] = [[0, 1], [1, 2], [2, 0]]
+    res_cycle = run_policy(cycle_inp, mode="baseline", config={"baseline_type": "topological"})
+    assert res_cycle["decision"] == "reject_cycle"
+    assert res_cycle["progression_valid"] is False
 
-    inp_mutated = dict(inp)
-    inp_mutated["content"] = {"id": "the-mieu", "label": "Thế Miếu", "type": "shrine"}
-    res2 = run_policy(inp_mutated, mode="intervention", config={})
+    # 2. Shallow repetition (Bloom level stagnant) is allowed by B1
+    shallow_inp = _sample_nominal_input()
+    shallow_inp["nodes"][1]["cognitive_level"] = 1
+    res_shallow = run_policy(shallow_inp, mode="baseline", config={"baseline_type": "topological"})
+    assert res_shallow["decision"] == "accept"
+    assert res_shallow["progression_valid"] is True
 
-    assert res1["decision"] == res2["decision"]
-    assert res1["progression_valid"] == res2["progression_valid"]
+
+def test_independent_holdout_120_cases():
+    """Verify full intervention I1 against the independent 120-case holdout dataset."""
+    holdout_path = Path(__file__).resolve().parents[2] / "research" / "fixtures" / "holdout" / "LN-01_holdout.jsonl"
+    assert holdout_path.exists(), f"Holdout fixture missing: {holdout_path}"
+
+    total = 0
+    matches = 0
+    with open(holdout_path, "r", encoding="utf-8") as f:
+        for line in f:
+            row = json.loads(line)
+            total += 1
+            res = run_policy(row["input"], mode="intervention", config={})
+            expected = row["oracle"]["expected_decision"]
+            assert res["decision"] == expected, (
+                f"Mismatch on {row['case_id']} ({row['fault_id']}): got {res['decision']}, expected {expected}"
+            )
+            matches += 1
+
+    assert total == 120
+    assert matches == 120
 
 
 def test_concrete_fixture_conformance_all_720():

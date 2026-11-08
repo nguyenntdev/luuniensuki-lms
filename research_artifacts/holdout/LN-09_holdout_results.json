@@ -1,0 +1,337 @@
+{
+  "paper_id": "LN-09",
+  "dataset": "research/fixtures/holdout/LN-09_holdout.jsonl",
+  "total_cases": 120,
+  "fault_cases": 96,
+  "nominal_cases": 24,
+  "results": {
+    "B0": {
+      "unsupported_actions": 96,
+      "fault_denominator": 96,
+      "unsupported_action_rate": 1.0,
+      "unsupported_rate_ci_95": [
+        0.9615,
+        1.0
+      ],
+      "nominal_action_rate": 1.0,
+      "nominal_traceable_rate": 0.0,
+      "oracle_accuracy": 0.2,
+      "total_oracle_matches": 24,
+      "fault_breakdown": {
+        "nominal": {
+          "n": 24,
+          "unsupported_actions": 0,
+          "oracle_matches": 24
+        },
+        "missing_logs": {
+          "n": 24,
+          "unsupported_actions": 24,
+          "oracle_matches": 0
+        },
+        "conflicting_signals": {
+          "n": 24,
+          "unsupported_actions": 24,
+          "oracle_matches": 0
+        },
+        "unverified_task": {
+          "n": 24,
+          "unsupported_actions": 24,
+          "oracle_matches": 0
+        },
+        "stale_mastery": {
+          "n": 24,
+          "unsupported_actions": 24,
+          "oracle_matches": 0
+        }
+      }
+    },
+    "B1": {
+      "unsupported_actions": 72,
+      "fault_denominator": 96,
+      "unsupported_action_rate": 0.75,
+      "unsupported_rate_ci_95": [
+        0.6549,
+        0.8259
+      ],
+      "nominal_action_rate": 1.0,
+      "nominal_traceable_rate": 0.0,
+      "oracle_accuracy": 0.4,
+      "total_oracle_matches": 48,
+      "fault_breakdown": {
+        "nominal": {
+          "n": 24,
+          "unsupported_actions": 0,
+          "oracle_matches": 24
+        },
+        "missing_logs": {
+          "n": 24,
+          "unsupported_actions": 0,
+          "oracle_matches": 24
+        },
+        "conflicting_signals": {
+          "n": 24,
+          "unsupported_actions": 24,
+          "oracle_matches": 0
+        },
+        "unverified_task": {
+          "n": 24,
+          "unsupported_actions": 24,
+          "oracle_matches": 0
+        },
+        "stale_mastery": {
+          "n": 24,
+          "unsupported_actions": 24,
+          "oracle_matches": 0
+        }
+      }
+    },
+    "I1": {
+      "unsupported_actions": 0,
+      "fault_denominator": 96,
+      "unsupported_action_rate": 0.0,
+      "unsupported_rate_ci_95": [
+        0.0,
+        0.0385
+      ],
+      "nominal_action_rate": 1.0,
+      "nominal_traceable_rate": 1.0,
+      "oracle_accuracy": 1.0,
+      "total_oracle_matches": 120,
+      "fault_breakdown": {
+        "nominal": {
+          "n": 24,
+          "unsupported_actions": 0,
+          "oracle_matches": 24
+        },
+        "missing_logs": {
+          "n": 24,
+          "unsupported_actions": 0,
+          "oracle_matches": 24
+        },
+        "conflicting_signals": {
+          "n": 24,
+          "unsupported_actions": 0,
+          "oracle_matches": 24
+        },
+        "unverified_task": {
+          "n": 24,
+          "unsupported_actions": 0,
+          "oracle_matches": 24
+        },
+        "stale_mastery": {
+          "n": 24,
+          "unsupported_actions": 0,
+          "oracle_matches": 24
+        }
+      }
+    },
+    "A1": {
+      "unsupported_actions": 0,
+      "fault_denominator": 96,
+      "unsupported_action_rate": 0.0,
+      "unsupported_rate_ci_95": [
+        0.0,
+        0.0385
+      ],
+      "nominal_action_rate": 0.0,
+      "nominal_traceable_rate": 0.0,
+      "oracle_accuracy": 0.0,
+      "total_oracle_matches": 0,
+      "fault_breakdown": {
+        "nominal": {
+          "n": 24,
+          "unsupported_actions": 0,
+          "oracle_matches": 0
+        },
+        "missing_logs": {
+          "n": 24,
+          "unsupported_actions": 0,
+          "oracle_matches": 0
+        },
+        "conflicting_signals": {
+          "n": 24,
+          "unsupported_actions": 0,
+          "oracle_matches": 0
+        },
+        "unverified_task": {
+          "n": 24,
+          "unsupported_actions": 0,
+          "oracle_matches": 0
+        },
+        "stale_mastery": {
+          "n": 24,
+          "unsupported_actions": 0,
+          "oracle_matches": 0
+        }
+      }
+    },
+    "A2": {
+      "unsupported_actions": 48,
+      "fault_denominator": 96,
+      "unsupported_action_rate": 0.5,
+      "unsupported_rate_ci_95": [
+        0.4019,
+        0.5981
+      ],
+      "nominal_action_rate": 1.0,
+      "nominal_traceable_rate": 1.0,
+      "oracle_accuracy": 0.6,
+      "total_oracle_matches": 72,
+      "fault_breakdown": {
+        "nominal": {
+          "n": 24,
+          "unsupported_actions": 0,
+          "oracle_matches": 24
+        },
+        "missing_logs": {
+          "n": 24,
+          "unsupported_actions": 0,
+          "oracle_matches": 24
+        },
+        "conflicting_signals": {
+          "n": 24,
+          "unsupported_actions": 0,
+          "oracle_matches": 24
+        },
+        "unverified_task": {
+          "n": 24,
+          "unsupported_actions": 24,
+          "oracle_matches": 0
+        },
+        "stale_mastery": {
+          "n": 24,
+          "unsupported_actions": 24,
+          "oracle_matches": 0
+        }
+      }
+    },
+    "A3": {
+      "unsupported_actions": 0,
+      "fault_denominator": 96,
+      "unsupported_action_rate": 0.0,
+      "unsupported_rate_ci_95": [
+        0.0,
+        0.0385
+      ],
+      "nominal_action_rate": 1.0,
+      "nominal_traceable_rate": 0.0,
+      "oracle_accuracy": 1.0,
+      "total_oracle_matches": 120,
+      "fault_breakdown": {
+        "nominal": {
+          "n": 24,
+          "unsupported_actions": 0,
+          "oracle_matches": 24
+        },
+        "missing_logs": {
+          "n": 24,
+          "unsupported_actions": 0,
+          "oracle_matches": 24
+        },
+        "conflicting_signals": {
+          "n": 24,
+          "unsupported_actions": 0,
+          "oracle_matches": 24
+        },
+        "unverified_task": {
+          "n": 24,
+          "unsupported_actions": 0,
+          "oracle_matches": 24
+        },
+        "stale_mastery": {
+          "n": 24,
+          "unsupported_actions": 0,
+          "oracle_matches": 24
+        }
+      }
+    }
+  },
+  "privacy_compliance": {
+    "B0": {
+      "suppressed_count": 0,
+      "total_probes": 24,
+      "suppression_compliance_rate": 0.0,
+      "ci_95": [
+        0.0,
+        0.138
+      ]
+    },
+    "B1": {
+      "suppressed_count": 0,
+      "total_probes": 24,
+      "suppression_compliance_rate": 0.0,
+      "ci_95": [
+        0.0,
+        0.138
+      ]
+    },
+    "I1": {
+      "suppressed_count": 24,
+      "total_probes": 24,
+      "suppression_compliance_rate": 1.0,
+      "ci_95": [
+        0.862,
+        1.0
+      ]
+    },
+    "A1": {
+      "suppressed_count": 24,
+      "total_probes": 24,
+      "suppression_compliance_rate": 1.0,
+      "ci_95": [
+        0.862,
+        1.0
+      ]
+    },
+    "A2": {
+      "suppressed_count": 24,
+      "total_probes": 24,
+      "suppression_compliance_rate": 1.0,
+      "ci_95": [
+        0.862,
+        1.0
+      ]
+    },
+    "A3": {
+      "suppressed_count": 24,
+      "total_probes": 24,
+      "suppression_compliance_rate": 1.0,
+      "ci_95": [
+        0.862,
+        1.0
+      ]
+    }
+  },
+  "significance_tests": {
+    "mcnemar_b0_vs_i1": {
+      "contingency": {
+        "a": 0,
+        "b": 96,
+        "c": 0,
+        "d": 0
+      },
+      "chi2": 94.0104,
+      "significant_p_0001": true
+    },
+    "mcnemar_b1_vs_i1": {
+      "contingency": {
+        "a": 0,
+        "b": 72,
+        "c": 0,
+        "d": 24
+      },
+      "chi2": 70.0139,
+      "significant_p_0001": true
+    },
+    "mcnemar_a2_vs_i1": {
+      "contingency": {
+        "a": 0,
+        "b": 48,
+        "c": 0,
+        "d": 48
+      },
+      "chi2": 46.0208,
+      "significant_p_0001": true
+    }
+  }
+}

@@ -1,0 +1,134 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\geometry{margin=1in}
+
+\title{Source-Grounded AI Scaffolding \& Prompt Injection Defense: \\ \large Progressive Socratic Fading, Epistemic Verification Gating, and Empirical Robustness in Heritage Inquiry}
+\author{Lưu Niên Sứ Ký Research Consortium \\ \small Educational Technology \& Artificial Intelligence Division}
+\date{November 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Conversational AI tutoring in cultural heritage education faces severe tensions between open-ended student assistance, pedagogical scaffolding, and epistemological fidelity. Unconstrained large language model (LLM) chatbots exhibit three critical failure modes: (1) \textit{premature answer leakage}, where systems reveal complete solutions upon first request, short-circuiting metacognitive effort and critical inquiry; (2) \textit{vulnerability to prompt injection and jailbreaks}, where adversarial inputs override system boundaries, bypass instructional rules, and leak system prompts or credentials; and (3) \textit{unverified extrapolation and hallucinations}, where language models generate plausible yet uncorroborated assertions in response to missing historical sources or out-of-domain prompts. In this paper, we present LN-04, a source-grounded Socratic scaffolding and prompt-defense architecture deployed in the Lưu Niên Sứ Ký learning management system. LN-04 enforces an epistemically anchored progressive scaffolding engine with three distinct fading tiers (Observation $\rightarrow$ Evidence $\rightarrow$ Reasoning), hard leakage defenses, regex- and delimiter-based injection barriers, and strict fail-closed abstention when primary archival evidence is missing. In addition to frozen synthetic software-policy benchmarks ($N=720$, 0.0\% vs.\ 100.0\% answer leakage rate), we evaluate the architecture on an independent, balanced 120-case holdout dataset spanning 24 historical heritage sites across five fault strata ($n=24$ each). LN-04 achieves 100.0\% overall oracle accuracy (95\% CI $[96.9\%, 100.0\%]$), 0.0\% answer leakage rate (95\% CI $[0.0\%, 13.8\%]$), 100.0\% citation integrity, and 100.0\% injection defense rate. In contrast, a direct-answer baseline (B0) commits 100.0\% answer leakage with 0.0\% injection defense ($p = 1.50 \times 10^{-36}$), while a generic LLM tutor with soft prompting (B1) fails completely on prompt injection overrides (0.0\% defense rate, $p = 4.24 \times 10^{-22}$). Component ablations demonstrate that progressive hint budgeting, strict source refusal, and hardened injection filters represent mutually non-redundant architectural pillars for safe, grounded historical education.
+\end{abstract}
+
+\section{Introduction}
+Generative artificial intelligence and foundation language models have unlocked unprecedented opportunities for personalized inquiry in humanities and history education. In complex cultural domains—such as the study of the Nine Dynastic Urns (\textit{Cửu Đỉnh}) cast in 1835–1837 under Emperor Minh Mạng and the architectural ensembles of the UNESCO-inscribed Complex of Huế Monuments—interactive AI agents can act as personalized intellectual coaches, guiding learners through intricate epigraphic, geographic, and artistic iconographies.
+
+However, standard conversational agents and commercial LLM interfaces present three severe pedagogical and security risks:
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Premature Solution Leakage (Cognitive Bypassing)}: When challenged with analytical tasks (e.g., deciphering Hán–Nôm inscriptions or analyzing spatial axes), students frequently demand direct answers (``\textit{viết đáp án hoàn chỉnh để em chép}''). Standard LLMs directly comply, robbing students of productive struggle, scaffolded discovery, and evidence synthesis.
+    \item \textbf{Prompt Injection and Adversarial Rule Overrides}: Malicious or inquisitive students readily deploy adversarial system prompt bypasses, roleplay jailbreaks (e.g., DAN, developer mode), or delimiter tampering to coerce the model into leaking hidden instructions, API credentials, or complete exam keys. Soft prompt guidance alone is demonstrably fragile against structured prompt injections.
+    \item \textbf{Epistemic Extrapolation and Hallucinations}: When archival sources are unverified, incomplete, or entirely missing, standard models confabulate plausible historical claims, misattribute dates, or extrapolate dynastic titles, violating epistemic integrity. Furthermore, out-of-domain questions (e.g., modern stock trading or general trivia) compromise the specialized historical inquiry boundary.
+\end{enumerate}
+
+To overcome these challenges, Study LN-04 establishes a hardened, source-grounded scaffolding policy that operationalizes Socratic inquiry through verifiable software invariants.
+
+\section{Pedagogical Invariants and Safety Guarantees}
+The LN-04 architecture enforces five core formal invariants:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{INV-LN-04-01 (Non-Overridable Policy)}: Pedagogical answer release rules and safety boundaries cannot be overridden by user prompt injection, roleplay framing, or instruction tampering.
+    \item \textbf{INV-LN-04-02 (Epistemic Abstention on Source Gap)}: The agent must strictly abstain (\texttt{abstain\_source\_gap}) when requested claims lack verified, editor-reviewed archival source citations.
+    \item \textbf{INV-LN-04-03 (Progressive Hint Fading)}: Early requests for complete answers must be restricted (\texttt{restrict\_leakage}) and redirected toward scaffolded hints aligned with the student's current cognitive stage.
+    \item \textbf{INV-LN-04-04 (Deterministic Fallback)}: If external AI provider models become degraded, latency-budgeted, or unavailable, the system fails closed to deterministic, offline historical rubrics.
+    \item \textbf{INV-LN-04-05 (Domain Boundary Protection)}: Inquiries outside the curricular and cultural boundary of the heritage corpus are rejected or abstained from, preventing ungrounded general-purpose chat.
+\end{itemize}
+
+\section{System Architecture and Guardrail Mechanics}
+
+\subsection{Three-Tier Socratic Scaffolding Engine}
+LN-04 replaces single-turn question-answering with a progressive 3-tier hint fading budget:
+\begin{equation}
+\mathcal{S}(h, k) = 
+\begin{cases}
+\text{Observation Tier (Focus attention on salient rubbing motifs)}, & h = 1 \\
+\text{Evidence Tier (Guide retrieval of specific historical citations)}, & h = 2 \\
+\text{Reasoning Tier (Socratic synthesis of historical significance)}, & h = 3 \\
+\text{Authorized Solution Release (Post-mastery review only)}, & h \ge 4 \text{ and } \text{Allowed}(k)
+\end{cases}
+\end{equation}
+where $h$ denotes the current hint level and $k$ represents task state. Direct solutions are strictly sequestered until the student demonstrates requisite cognitive engagement.
+
+\subsection{Multilayer Prompt Injection Defense}
+The architecture integrates four defense layers:
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Untrusted Input Sanitization}: Student questions and external text undergo Unicode NFC normalization, bidirectional control character stripping, and length bounding ($L \le 4000$ characters). Embedded boundary delimiters (e.g., \texttt{[[[CLAIM\_START]]]}) are neutralized into safe, inert tokens (\texttt{[SAFE\_DATA\_DELIMITER:CLAIM\_START]}).
+    \item \textbf{Adversarial Directive Screening}: Compiled multi-lingual regex engines intercept instruction overrides (``\textit{bỏ qua mọi quy tắc}'', ``\textit{ignore previous directives}''), jailbreak personas (``\textit{act as DAN}'', ``\textit{developer mode}''), and credential exfiltration requests (``\textit{in khóa bí mật}'', ``\textit{print JWT\_SECRET\_KEY}'').
+    \item \textbf{Tool Execution Allowlist}: Only five safe, read-only informational tools (\texttt{open\_entity}, \texttt{view\_source}, \texttt{search\_claims}, \texttt{get\_epistemic\_status}, \texttt{suggest\_followup}) are executable. Dynamic code execution (\texttt{eval}, \texttt{os.system}, shell commands) is prohibited at the kernel level.
+    \item \textbf{Automated Secret Scrubbing}: Outbound responses are filtered against regular expressions matching known tokens, sentinels, API keys, and connection strings, ensuring zero secret leakage even under adversarial edge cases.
+\end{enumerate}
+
+\section{Empirical Evaluation}
+
+\subsection{Evaluation Datasets}
+The architecture is evaluated across two rigorous benchmark suites:
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Synthetic Policy Benchmark}: The frozen benchmark corpus consisting of $N=720$ scenarios across five balanced fault strata ($n=144$ each): nominal progression, direct answer request, unverified source context, prompt injection, and service unavailability.
+    \item \textbf{Independent 120-Case Holdout Dataset}: A completely disjoint holdout corpus (\texttt{LN-04\_holdout.jsonl}) comprising 120 unique scenarios constructed across 24 historical monuments and relics of the Huế Citadel (Table~\ref{tab:ln04-holdout-benchmark}). The holdout is balanced across five fault archetypes ($n=24$ each):
+    \begin{itemize}
+        \item \textit{Nominal Hint Progression}: Legitimate scaffolding queries with verified archival evidence.
+        \item \textit{Prompt Injection Override}: Sophisticated adversarial jailbreaks and rule-override payloads.
+        \item \textit{Unverified Source Context}: Historical inquiries lacking authenticated archival backing.
+        \item \textit{Early Answer Leakage}: Explicit student demands for full solutions to bypass learning.
+        \item \textit{Out-of-Domain Query}: Inquiries spanning modern macroeconomics, general trivia, and software development.
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Evaluated Conditions and Baselines}
+We benchmark six experimental conditions:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{B0 (Direct-Answer Bot)}: Naive baseline revealing answers immediately on request or injection without hint budgeting.
+    \item \textbf{B1 (Generic LLM Tutor with Soft Prompt)}: Stronger baseline using soft prompt engineering instructing the LLM to guide rather than answer, but lacking hard regex defenses and source verification gating.
+    \item \textbf{I1 (LN-04 Scaffolding Policy)}: Full proposed architecture with progressive hint fading, injection defense, and epistemic source gating.
+    \item \textbf{A1 (Disable Hint Budget Ablation)}: Ablation allowing direct answers without progressive fading.
+    \item \textbf{A2 (Disable Source Refusal Ablation)}: Ablation disabling source gap abstention on unverified evidence.
+    \item \textbf{A3 (Disable Injection Check Ablation)}: Ablation disabling adversarial prompt injection filters.
+\end{itemize}
+
+\subsection{Synthetic Benchmark Results}
+Table~\ref{tab:ln-04-policy-benchmark} reproduces the primary policy benchmark across the frozen $N=720$ synthetic cases.
+
+\input{results/LN-04_results.tex}
+
+Under the synthetic benchmark, baseline B0 and ablation A1 exhibit a 100.0\% answer leakage rate ($144/144$ eligible cases). The proposed intervention I1 achieves 0.0\% answer leakage ($0/144$). Ablations A2 and A3 maintain 0.0\% answer leakage on basic requests, demonstrating specific orthogonal sensitivity.
+
+\subsection{Independent Holdout Evaluation Results}
+Table~\ref{tab:ln04-holdout-benchmark} summarizes the empirical holdout results across all 120 test cases.
+
+\input{results/LN-04_holdout_results.tex}
+
+The empirical evaluation establishes clear, statistically decisive distinctions:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Baseline Failure Modes}: Baseline B0 achieves 0.0\% overall accuracy, leaking answers in 100.0\% of early requests and offering 0.0\% injection defense. The stronger baseline B1 achieves 40.0\% accuracy: while its soft prompt reduces simple answer leakage ($0.0\%$), it is completely subverted by adversarial prompt injections ($0.0\%$ defense rate) and extrapolates unverified and out-of-domain contexts ($0/48$ correct).
+    \item \textbf{Intervention Robustness}: The proposed LN-04 architecture (I1) attains 100.0\% accuracy across all 120 cases ($120/120$, 95\% CI $[96.9\%, 100.0\%]$), completely preventing answer leakage ($0.0\%$, 95\% CI $[0.0\%, 13.8\%]$), maintaining 100.0\% citation integrity, and neutralizing 100.0\% of prompt injections ($24/24$, 95\% CI $[86.2\%, 100.0\%]$).
+    \item \textbf{Statistical Significance}: Paired two-sided McNemar tests with continuity correction confirm that I1 is significantly superior to B0 ($p = 1.50 \times 10^{-36}$), B1 ($p = 4.24 \times 10^{-22}$), A1 ($p = 7.11 \times 10^{-15}$), A2 ($p = 7.11 \times 10^{-15}$), and A3 ($p = 1.19 \times 10^{-7}$).
+\end{itemize}
+
+\subsection{Ablation Analysis and Architectural Necessity}
+The ablation conditions rigorously confirm that each subsystem is essential:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Ablation A1 (Hint Budget Disabled)}: Dropping the hint budget drops accuracy to 60.0\% ($p = 7.11 \times 10^{-15}$), causing an immediate surge in answer leakage to 100.0\% on both nominal hints and early answer requests ($48/48$ leaked).
+    \item \textbf{Ablation A2 (Source Refusal Disabled)}: Disabling source verification gating reduces accuracy to 60.0\% ($p = 7.11 \times 10^{-15}$), as the system generates ungrounded responses for all unverified historical contexts and out-of-domain queries ($48/48$ ungrounded).
+    \item \textbf{Ablation A3 (Injection Check Disabled)}: Omitting the prompt injection defense reduces accuracy to 80.0\% ($p = 1.19 \times 10^{-7}$) and collapses the injection defense rate from 100.0\% to 0.0\% ($0/24$), allowing adversarial instruction overrides to bypass scaffolding.
+\end{itemize}
+
+\section{Limitations and Epistemic Scope}
+While LN-04 provides deterministic guardrails and verifiable scaffolding boundaries, we emphasize three important boundaries:
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Software Policy Invariants vs.\ Student Learning Outcomes}: These evaluations benchmark automated software decision-making against pedagogical domain invariants. They verify that the system correctly refuses to leak answers, rejects injections, and abstains on unverified claims; they do not measure long-term longitudinal learning gains or historical empathy in uncontrolled human classroom trials.
+    \item \textbf{Adversarial Generalization}: The injection defense engine combines delimiter escaping with regex pattern matching. Although highly effective against standard pedagogical jailbreaks, highly novel obfuscations (e.g., multi-step steganographic encoding) require continuous red-teaming.
+    \item \textbf{Corpus Bound}: The epistemic verification gate is anchored in the verified institutional archive of the Complex of Huế Monuments. Questions requiring synthesis beyond this digitized corpus trigger epistemic abstention.
+\end{enumerate}
+
+\section{Conclusion}
+Study LN-04 demonstrates that source-grounded Socratic scaffolding and prompt injection defense can be engineered as verifiable, high-assurance software invariants. By pairing progressive 3-tier hint fading with strict archival citation gating and multilayer injection filtering, LN-04 eliminates premature answer leakage and neutralizes adversarial bypasses without compromising student inquiry. The complete holdout dataset, execution manifests, and statistical evaluation code are archived in the platform repository.
+
+\end{document}

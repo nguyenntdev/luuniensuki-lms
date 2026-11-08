@@ -555,7 +555,7 @@ def test_anti_replay_and_idempotency_protection(client: TestClient, db_session):
 
 def test_mobile_practice_provider_clean_parity():
     """Verifies mobile practice provider has eliminated mock data in real flow and uses real API constants."""
-    root_dir = Path("/home/clue/Documents/luuniensuki-lms")
+    root_dir = Path(__file__).resolve().parents[2]
     practice_provider_path = root_dir / "mobile/lib/features/practice/presentation/providers/practice_provider.dart"
     api_constants_path = root_dir / "mobile/lib/core/constants/api_constants.dart"
 

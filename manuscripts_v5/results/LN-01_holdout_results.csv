@@ -1,0 +1,7 @@
+condition_id,condition_name,total_cases,total_errors,error_rate,ci_95_low,ci_95_high,accuracy,nominal_errors,nominal_total,grade_boundary_inversion_errors,grade_boundary_inversion_total,anchor_misalignment_errors,anchor_misalignment_total,bloom_depth_leap_errors,bloom_depth_leap_total,prerequisite_cycle_errors,prerequisite_cycle_total
+B0,B0: Naive Linear Sequence,120,96,0.8,0.725,0.8667,0.2,0,24,24,24,24,24,24,24,24,24
+B1,B1: Topological Sort Baseline,120,72,0.6,0.5083,0.6833,0.4,0,24,24,24,24,24,24,24,0,24
+I1,I1: Full Spiral DAG + Bloom Gate,120,0,0.0,0.0,0.0,1.0,0,24,0,24,0,24,0,24,0,24
+A1,A1: Ablation (no cognitive check),120,24,0.2,0.1331,0.275,0.8,0,24,0,24,0,24,24,24,0,24
+A2,A2: Ablation (no anchor check),120,24,0.2,0.1333,0.275,0.8,0,24,0,24,24,24,0,24,0,24
+A3,A3: Ablation (no cycle check),120,24,0.2,0.1333,0.275,0.8,0,24,0,24,0,24,0,24,24,24

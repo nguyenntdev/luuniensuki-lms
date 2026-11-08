@@ -10,6 +10,7 @@ from typing import Any
 
 from backend.domain.heritage_checkpoints import HeritageStop
 from research.heritage_trails.cognitive_route import (
+    evaluate_route_b1,
     evaluate_route_baseline,
     evaluate_route_intervention,
 )
@@ -45,8 +46,26 @@ def run_policy(
     checkpoint_claim_raw = scenario_input.get("checkpoint_claim_verified")
     checkpoint_claim_verified = True if checkpoint_claim_raw is None else bool(checkpoint_claim_raw)
 
-    if mode == "baseline":
-        plan = evaluate_route_baseline(
+    if mode in ("baseline", "b0"):
+        baseline_type = str(config.get("baseline_type", "")).lower()
+        if baseline_type in ("b1", "astar", "strong"):
+            plan = evaluate_route_b1(
+                stops=stops,
+                available_stops=available_stops,
+                target_outcomes=target_outcomes,
+                time_budget_minutes=time_budget_minutes,
+                checkpoint_claim_verified=checkpoint_claim_verified,
+            )
+        else:
+            plan = evaluate_route_baseline(
+                stops=stops,
+                available_stops=available_stops,
+                target_outcomes=target_outcomes,
+                time_budget_minutes=time_budget_minutes,
+                checkpoint_claim_verified=checkpoint_claim_verified,
+            )
+    elif mode in ("b1", "baseline_b1", "astar"):
+        plan = evaluate_route_b1(
             stops=stops,
             available_stops=available_stops,
             target_outcomes=target_outcomes,

@@ -1,0 +1,7 @@
+condition,description,unjustified_numerator,eligible_fault_denom,unjustified_rate,ci_95_low,ci_95_high,reflection_compliance,nominal_preservation,p_vs_I1
+B0,"Linear checklist without state gating",96,96,1.0000,0.9615,1.0000,0.0000,1.0000,3.14e-22
+B1,"Timestamp-based progress tracker without reflection verification",48,96,0.5000,0.4019,0.5981,0.0000,1.0000,1.17e-11
+I1,"Zimmerman cyclical SRL state machine with atomic reflection gates",0,96,0.0000,0.0000,0.0385,1.0000,1.0000,ref
+A1,"Ablation: disabled reflection gate and rationale",48,96,0.5000,0.4019,0.5981,0.0000,1.0000,1.17e-11
+A2,"Ablation: disabled optimistic concurrency control",24,96,0.2500,0.1741,0.3451,1.0000,1.0000,2.67e-06
+A3,"Ablation: disabled learner ownership verification",24,96,0.2500,0.1741,0.3451,1.0000,1.0000,2.67e-06

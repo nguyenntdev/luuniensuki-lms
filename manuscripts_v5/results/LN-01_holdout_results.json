@@ -1,0 +1,347 @@
+{
+  "metadata": {
+    "paper_id": "LN-01",
+    "study_title": "Spiral Curriculum Progression (Liên thông học liệu xoắn ốc GDĐP 10-11-12)",
+    "holdout_fixture": "/home/clue/Documents/luuniensuki-lms/research/fixtures/holdout/LN-01_holdout.jsonl",
+    "total_cases": 120,
+    "bootstrap_samples": 10000
+  },
+  "conditions": {
+    "B0": {
+      "name": "B0: Naive Linear Sequence",
+      "total_cases": 120,
+      "total_correct": 24,
+      "total_errors": 96,
+      "error_rate": 0.8,
+      "accuracy": 0.2,
+      "ci_95": [
+        0.725,
+        0.8667
+      ],
+      "fault_breakdown": {
+        "nominal": {
+          "total": 24,
+          "correct": 24,
+          "errors": 0
+        },
+        "grade_boundary_inversion": {
+          "total": 24,
+          "correct": 0,
+          "errors": 24
+        },
+        "anchor_misalignment": {
+          "total": 24,
+          "correct": 0,
+          "errors": 24
+        },
+        "bloom_depth_leap": {
+          "total": 24,
+          "correct": 0,
+          "errors": 24
+        },
+        "prerequisite_cycle": {
+          "total": 24,
+          "correct": 0,
+          "errors": 24
+        }
+      }
+    },
+    "B1": {
+      "name": "B1: Topological Sort Baseline",
+      "total_cases": 120,
+      "total_correct": 48,
+      "total_errors": 72,
+      "error_rate": 0.6,
+      "accuracy": 0.4,
+      "ci_95": [
+        0.5083,
+        0.6833
+      ],
+      "fault_breakdown": {
+        "nominal": {
+          "total": 24,
+          "correct": 24,
+          "errors": 0
+        },
+        "grade_boundary_inversion": {
+          "total": 24,
+          "correct": 0,
+          "errors": 24
+        },
+        "anchor_misalignment": {
+          "total": 24,
+          "correct": 0,
+          "errors": 24
+        },
+        "bloom_depth_leap": {
+          "total": 24,
+          "correct": 0,
+          "errors": 24
+        },
+        "prerequisite_cycle": {
+          "total": 24,
+          "correct": 24,
+          "errors": 0
+        }
+      }
+    },
+    "I1": {
+      "name": "I1: Full Spiral DAG + Bloom Gate",
+      "total_cases": 120,
+      "total_correct": 120,
+      "total_errors": 0,
+      "error_rate": 0.0,
+      "accuracy": 1.0,
+      "ci_95": [
+        0.0,
+        0.0
+      ],
+      "fault_breakdown": {
+        "nominal": {
+          "total": 24,
+          "correct": 24,
+          "errors": 0
+        },
+        "grade_boundary_inversion": {
+          "total": 24,
+          "correct": 24,
+          "errors": 0
+        },
+        "anchor_misalignment": {
+          "total": 24,
+          "correct": 24,
+          "errors": 0
+        },
+        "bloom_depth_leap": {
+          "total": 24,
+          "correct": 24,
+          "errors": 0
+        },
+        "prerequisite_cycle": {
+          "total": 24,
+          "correct": 24,
+          "errors": 0
+        }
+      }
+    },
+    "A1": {
+      "name": "A1: Ablation (no cognitive check)",
+      "total_cases": 120,
+      "total_correct": 96,
+      "total_errors": 24,
+      "error_rate": 0.2,
+      "accuracy": 0.8,
+      "ci_95": [
+        0.1331,
+        0.275
+      ],
+      "fault_breakdown": {
+        "nominal": {
+          "total": 24,
+          "correct": 24,
+          "errors": 0
+        },
+        "grade_boundary_inversion": {
+          "total": 24,
+          "correct": 24,
+          "errors": 0
+        },
+        "anchor_misalignment": {
+          "total": 24,
+          "correct": 24,
+          "errors": 0
+        },
+        "bloom_depth_leap": {
+          "total": 24,
+          "correct": 0,
+          "errors": 24
+        },
+        "prerequisite_cycle": {
+          "total": 24,
+          "correct": 24,
+          "errors": 0
+        }
+      }
+    },
+    "A2": {
+      "name": "A2: Ablation (no anchor check)",
+      "total_cases": 120,
+      "total_correct": 96,
+      "total_errors": 24,
+      "error_rate": 0.2,
+      "accuracy": 0.8,
+      "ci_95": [
+        0.1333,
+        0.275
+      ],
+      "fault_breakdown": {
+        "nominal": {
+          "total": 24,
+          "correct": 24,
+          "errors": 0
+        },
+        "grade_boundary_inversion": {
+          "total": 24,
+          "correct": 24,
+          "errors": 0
+        },
+        "anchor_misalignment": {
+          "total": 24,
+          "correct": 0,
+          "errors": 24
+        },
+        "bloom_depth_leap": {
+          "total": 24,
+          "correct": 24,
+          "errors": 0
+        },
+        "prerequisite_cycle": {
+          "total": 24,
+          "correct": 24,
+          "errors": 0
+        }
+      }
+    },
+    "A3": {
+      "name": "A3: Ablation (no cycle check)",
+      "total_cases": 120,
+      "total_correct": 96,
+      "total_errors": 24,
+      "error_rate": 0.2,
+      "accuracy": 0.8,
+      "ci_95": [
+        0.1333,
+        0.275
+      ],
+      "fault_breakdown": {
+        "nominal": {
+          "total": 24,
+          "correct": 24,
+          "errors": 0
+        },
+        "grade_boundary_inversion": {
+          "total": 24,
+          "correct": 24,
+          "errors": 0
+        },
+        "anchor_misalignment": {
+          "total": 24,
+          "correct": 24,
+          "errors": 0
+        },
+        "bloom_depth_leap": {
+          "total": 24,
+          "correct": 24,
+          "errors": 0
+        },
+        "prerequisite_cycle": {
+          "total": 24,
+          "correct": 0,
+          "errors": 24
+        }
+      }
+    }
+  },
+  "pairwise_comparisons": {
+    "I1_vs_B0": {
+      "mcnemar": {
+        "contingency": {
+          "n11": 24,
+          "n10": 96,
+          "n01": 0,
+          "n00": 0
+        },
+        "discordant": 96,
+        "chi2": 94.01041666666667,
+        "chi2_p_value": 3.1386774031298044e-22,
+        "exact_p_value": 2.524354896707238e-29,
+        "odds_ratio": Infinity
+      },
+      "wilcoxon": {
+        "statistic": 0.0,
+        "p_value": 1.1488347954122318e-22,
+        "n_nonzero": 96
+      }
+    },
+    "I1_vs_B1": {
+      "mcnemar": {
+        "contingency": {
+          "n11": 48,
+          "n10": 72,
+          "n01": 0,
+          "n00": 0
+        },
+        "discordant": 72,
+        "chi2": 70.01388888888889,
+        "chi2_p_value": 5.888836294943992e-17,
+        "exact_p_value": 4.235164736271502e-22,
+        "odds_ratio": Infinity
+      },
+      "wilcoxon": {
+        "statistic": 0.0,
+        "p_value": 2.1519736712498913e-17,
+        "n_nonzero": 72
+      }
+    },
+    "I1_vs_A1": {
+      "mcnemar": {
+        "contingency": {
+          "n11": 96,
+          "n10": 24,
+          "n01": 0,
+          "n00": 0
+        },
+        "discordant": 24,
+        "chi2": 22.041666666666668,
+        "chi2_p_value": 2.6679545936247906e-06,
+        "exact_p_value": 1.1920928955078125e-07,
+        "odds_ratio": Infinity
+      },
+      "wilcoxon": {
+        "statistic": 0.0,
+        "p_value": 9.633570086430965e-07,
+        "n_nonzero": 24
+      }
+    },
+    "I1_vs_A2": {
+      "mcnemar": {
+        "contingency": {
+          "n11": 96,
+          "n10": 24,
+          "n01": 0,
+          "n00": 0
+        },
+        "discordant": 24,
+        "chi2": 22.041666666666668,
+        "chi2_p_value": 2.6679545936247906e-06,
+        "exact_p_value": 1.1920928955078125e-07,
+        "odds_ratio": Infinity
+      },
+      "wilcoxon": {
+        "statistic": 0.0,
+        "p_value": 9.633570086430965e-07,
+        "n_nonzero": 24
+      }
+    },
+    "I1_vs_A3": {
+      "mcnemar": {
+        "contingency": {
+          "n11": 96,
+          "n10": 24,
+          "n01": 0,
+          "n00": 0
+        },
+        "discordant": 24,
+        "chi2": 22.041666666666668,
+        "chi2_p_value": 2.6679545936247906e-06,
+        "exact_p_value": 1.1920928955078125e-07,
+        "odds_ratio": Infinity
+      },
+      "wilcoxon": {
+        "statistic": 0.0,
+        "p_value": 9.633570086430965e-07,
+        "n_nonzero": 24
+      }
+    }
+  }
+}

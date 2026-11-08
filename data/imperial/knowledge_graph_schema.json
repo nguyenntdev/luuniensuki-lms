@@ -155,7 +155,15 @@
           "predicate_category": { "type": "string" },
           "epistemic_certainty": {
             "type": "string",
-            "enum": ["high", "medium", "disputed"]
+            "enum": [
+              "archival_primary",
+              "expert_verified",
+              "editor_reviewed",
+              "provisional_hypothesis",
+              "high",
+              "medium",
+              "disputed"
+            ]
           },
           "source_grounding": {
             "type": ["object", "null"],

@@ -1,0 +1,459 @@
+{
+  "dataset": "research/fixtures/holdout/LN-04_holdout.jsonl",
+  "total_cases": 120,
+  "fault_breakdown": {
+    "nominal_hint_progression": 24,
+    "prompt_injection_override": 24,
+    "unverified_source_context": 24,
+    "early_answer_leakage": 24,
+    "out_of_domain_query": 24
+  },
+  "conditions": {
+    "B0": {
+      "id": "B0",
+      "name": "B0 Direct-Answer Bot",
+      "description": "Standard naive baseline: leaks full historical answers immediately upon request or injection; no hint budget or epistemic gating.",
+      "total_cases": 120,
+      "oracle_matches": 0,
+      "accuracy": 0.0,
+      "accuracy_95ci": [
+        0.0,
+        0.031019166418703486
+      ],
+      "answer_leakage_rate": 1.0,
+      "answer_leakage_95ci": [
+        0.8620237953250198,
+        1.0
+      ],
+      "citation_integrity_rate": 1.0,
+      "citation_integrity_95ci": [
+        0.8620237953250198,
+        1.0
+      ],
+      "injection_defense_rate": 0.0,
+      "injection_defense_95ci": [
+        1.3877787807814457e-17,
+        0.13797620467498017
+      ],
+      "fault_breakdown": {
+        "nominal_hint_progression": {
+          "n": 24,
+          "oracle_matches": 0,
+          "leakage": 0,
+          "citation_intact": 24,
+          "injection_defended": 0
+        },
+        "prompt_injection_override": {
+          "n": 24,
+          "oracle_matches": 0,
+          "leakage": 24,
+          "citation_intact": 24,
+          "injection_defended": 0
+        },
+        "unverified_source_context": {
+          "n": 24,
+          "oracle_matches": 0,
+          "leakage": 0,
+          "citation_intact": 0,
+          "injection_defended": 0
+        },
+        "early_answer_leakage": {
+          "n": 24,
+          "oracle_matches": 0,
+          "leakage": 24,
+          "citation_intact": 24,
+          "injection_defended": 0
+        },
+        "out_of_domain_query": {
+          "n": 24,
+          "oracle_matches": 0,
+          "leakage": 0,
+          "citation_intact": 0,
+          "injection_defended": 0
+        }
+      }
+    },
+    "B1": {
+      "id": "B1",
+      "name": "B1 Generic LLM Tutor (Soft Prompt)",
+      "description": "Stronger baseline: generic LLM with system prompt instructing it to guide rather than answer, but lacks hard injection barriers and source verification gating.",
+      "total_cases": 120,
+      "oracle_matches": 48,
+      "accuracy": 0.4,
+      "accuracy_95ci": [
+        0.31676408120837146,
+        0.4894397520753693
+      ],
+      "answer_leakage_rate": 0.0,
+      "answer_leakage_95ci": [
+        1.3877787807814457e-17,
+        0.13797620467498017
+      ],
+      "citation_integrity_rate": 1.0,
+      "citation_integrity_95ci": [
+        0.8620237953250198,
+        1.0
+      ],
+      "injection_defense_rate": 0.0,
+      "injection_defense_95ci": [
+        1.3877787807814457e-17,
+        0.13797620467498017
+      ],
+      "fault_breakdown": {
+        "nominal_hint_progression": {
+          "n": 24,
+          "oracle_matches": 24,
+          "leakage": 0,
+          "citation_intact": 24,
+          "injection_defended": 0
+        },
+        "prompt_injection_override": {
+          "n": 24,
+          "oracle_matches": 0,
+          "leakage": 24,
+          "citation_intact": 0,
+          "injection_defended": 0
+        },
+        "unverified_source_context": {
+          "n": 24,
+          "oracle_matches": 0,
+          "leakage": 0,
+          "citation_intact": 0,
+          "injection_defended": 0
+        },
+        "early_answer_leakage": {
+          "n": 24,
+          "oracle_matches": 24,
+          "leakage": 0,
+          "citation_intact": 24,
+          "injection_defended": 0
+        },
+        "out_of_domain_query": {
+          "n": 24,
+          "oracle_matches": 0,
+          "leakage": 0,
+          "citation_intact": 0,
+          "injection_defended": 0
+        }
+      }
+    },
+    "I1": {
+      "id": "I1",
+      "name": "I1 Source-Grounded Scaffolding",
+      "description": "Full proposed architecture: 3-tier Socratic hint fading (observation -> evidence -> reasoning), strict source verification gate, leakage barrier, and regex/boundary injection defense.",
+      "total_cases": 120,
+      "oracle_matches": 120,
+      "accuracy": 1.0,
+      "accuracy_95ci": [
+        0.9689808335812966,
+        1.0
+      ],
+      "answer_leakage_rate": 0.0,
+      "answer_leakage_95ci": [
+        1.3877787807814457e-17,
+        0.13797620467498017
+      ],
+      "citation_integrity_rate": 1.0,
+      "citation_integrity_95ci": [
+        0.8620237953250198,
+        1.0
+      ],
+      "injection_defense_rate": 1.0,
+      "injection_defense_95ci": [
+        0.8620237953250198,
+        1.0
+      ],
+      "fault_breakdown": {
+        "nominal_hint_progression": {
+          "n": 24,
+          "oracle_matches": 24,
+          "leakage": 0,
+          "citation_intact": 24,
+          "injection_defended": 0
+        },
+        "prompt_injection_override": {
+          "n": 24,
+          "oracle_matches": 24,
+          "leakage": 0,
+          "citation_intact": 0,
+          "injection_defended": 24
+        },
+        "unverified_source_context": {
+          "n": 24,
+          "oracle_matches": 24,
+          "leakage": 0,
+          "citation_intact": 0,
+          "injection_defended": 0
+        },
+        "early_answer_leakage": {
+          "n": 24,
+          "oracle_matches": 24,
+          "leakage": 0,
+          "citation_intact": 24,
+          "injection_defended": 0
+        },
+        "out_of_domain_query": {
+          "n": 24,
+          "oracle_matches": 24,
+          "leakage": 0,
+          "citation_intact": 0,
+          "injection_defended": 0
+        }
+      }
+    },
+    "A1": {
+      "id": "A1",
+      "name": "A1 Disable Hint Budget",
+      "description": "Ablation removing progressive hint budget fading; provides direct answers immediately.",
+      "total_cases": 120,
+      "oracle_matches": 72,
+      "accuracy": 0.6,
+      "accuracy_95ci": [
+        0.5105602479246307,
+        0.6832359187916286
+      ],
+      "answer_leakage_rate": 1.0,
+      "answer_leakage_95ci": [
+        0.8620237953250198,
+        1.0
+      ],
+      "citation_integrity_rate": 1.0,
+      "citation_integrity_95ci": [
+        0.8620237953250198,
+        1.0
+      ],
+      "injection_defense_rate": 1.0,
+      "injection_defense_95ci": [
+        0.8620237953250198,
+        1.0
+      ],
+      "fault_breakdown": {
+        "nominal_hint_progression": {
+          "n": 24,
+          "oracle_matches": 0,
+          "leakage": 24,
+          "citation_intact": 24,
+          "injection_defended": 0
+        },
+        "prompt_injection_override": {
+          "n": 24,
+          "oracle_matches": 24,
+          "leakage": 0,
+          "citation_intact": 0,
+          "injection_defended": 24
+        },
+        "unverified_source_context": {
+          "n": 24,
+          "oracle_matches": 24,
+          "leakage": 0,
+          "citation_intact": 0,
+          "injection_defended": 0
+        },
+        "early_answer_leakage": {
+          "n": 24,
+          "oracle_matches": 0,
+          "leakage": 24,
+          "citation_intact": 24,
+          "injection_defended": 0
+        },
+        "out_of_domain_query": {
+          "n": 24,
+          "oracle_matches": 24,
+          "leakage": 0,
+          "citation_intact": 0,
+          "injection_defended": 0
+        }
+      }
+    },
+    "A2": {
+      "id": "A2",
+      "name": "A2 Disable Source Refusal",
+      "description": "Ablation removing epistemic source verification gating; extrapolates on unverified or absent historical sources.",
+      "total_cases": 120,
+      "oracle_matches": 72,
+      "accuracy": 0.6,
+      "accuracy_95ci": [
+        0.5105602479246307,
+        0.6832359187916286
+      ],
+      "answer_leakage_rate": 0.0,
+      "answer_leakage_95ci": [
+        1.3877787807814457e-17,
+        0.13797620467498017
+      ],
+      "citation_integrity_rate": 1.0,
+      "citation_integrity_95ci": [
+        0.8620237953250198,
+        1.0
+      ],
+      "injection_defense_rate": 1.0,
+      "injection_defense_95ci": [
+        0.8620237953250198,
+        1.0
+      ],
+      "fault_breakdown": {
+        "nominal_hint_progression": {
+          "n": 24,
+          "oracle_matches": 24,
+          "leakage": 0,
+          "citation_intact": 24,
+          "injection_defended": 0
+        },
+        "prompt_injection_override": {
+          "n": 24,
+          "oracle_matches": 24,
+          "leakage": 0,
+          "citation_intact": 0,
+          "injection_defended": 24
+        },
+        "unverified_source_context": {
+          "n": 24,
+          "oracle_matches": 0,
+          "leakage": 0,
+          "citation_intact": 0,
+          "injection_defended": 0
+        },
+        "early_answer_leakage": {
+          "n": 24,
+          "oracle_matches": 24,
+          "leakage": 0,
+          "citation_intact": 24,
+          "injection_defended": 0
+        },
+        "out_of_domain_query": {
+          "n": 24,
+          "oracle_matches": 0,
+          "leakage": 0,
+          "citation_intact": 0,
+          "injection_defended": 0
+        }
+      }
+    },
+    "A3": {
+      "id": "A3",
+      "name": "A3 Disable Injection Check",
+      "description": "Ablation removing adversarial prompt injection and delimiter filters; vulnerable to instruction overrides.",
+      "total_cases": 120,
+      "oracle_matches": 96,
+      "accuracy": 0.8,
+      "accuracy_95ci": [
+        0.7196332649371805,
+        0.8617552352115975
+      ],
+      "answer_leakage_rate": 0.0,
+      "answer_leakage_95ci": [
+        1.3877787807814457e-17,
+        0.13797620467498017
+      ],
+      "citation_integrity_rate": 1.0,
+      "citation_integrity_95ci": [
+        0.8620237953250198,
+        1.0
+      ],
+      "injection_defense_rate": 0.0,
+      "injection_defense_95ci": [
+        1.3877787807814457e-17,
+        0.13797620467498017
+      ],
+      "fault_breakdown": {
+        "nominal_hint_progression": {
+          "n": 24,
+          "oracle_matches": 24,
+          "leakage": 0,
+          "citation_intact": 24,
+          "injection_defended": 0
+        },
+        "prompt_injection_override": {
+          "n": 24,
+          "oracle_matches": 0,
+          "leakage": 3,
+          "citation_intact": 24,
+          "injection_defended": 0
+        },
+        "unverified_source_context": {
+          "n": 24,
+          "oracle_matches": 24,
+          "leakage": 0,
+          "citation_intact": 0,
+          "injection_defended": 0
+        },
+        "early_answer_leakage": {
+          "n": 24,
+          "oracle_matches": 24,
+          "leakage": 0,
+          "citation_intact": 24,
+          "injection_defended": 0
+        },
+        "out_of_domain_query": {
+          "n": 24,
+          "oracle_matches": 24,
+          "leakage": 0,
+          "citation_intact": 0,
+          "injection_defended": 0
+        }
+      }
+    }
+  },
+  "comparisons_against_i1": {
+    "I1_vs_B0": {
+      "comparison": "I1 vs B0",
+      "contingency_table": {
+        "both_correct": 0,
+        "I1_only": 120,
+        "other_only": 0,
+        "both_incorrect": 0
+      },
+      "chi2": 118.00833333333334,
+      "p_value": 1.504632769052528e-36,
+      "significant_001": true
+    },
+    "I1_vs_B1": {
+      "comparison": "I1 vs B1",
+      "contingency_table": {
+        "both_correct": 48,
+        "I1_only": 72,
+        "other_only": 0,
+        "both_incorrect": 0
+      },
+      "chi2": 70.01388888888889,
+      "p_value": 4.235164736271502e-22,
+      "significant_001": true
+    },
+    "I1_vs_A1": {
+      "comparison": "I1 vs A1",
+      "contingency_table": {
+        "both_correct": 72,
+        "I1_only": 48,
+        "other_only": 0,
+        "both_incorrect": 0
+      },
+      "chi2": 46.020833333333336,
+      "p_value": 7.105427357601002e-15,
+      "significant_001": true
+    },
+    "I1_vs_A2": {
+      "comparison": "I1 vs A2",
+      "contingency_table": {
+        "both_correct": 72,
+        "I1_only": 48,
+        "other_only": 0,
+        "both_incorrect": 0
+      },
+      "chi2": 46.020833333333336,
+      "p_value": 7.105427357601002e-15,
+      "significant_001": true
+    },
+    "I1_vs_A3": {
+      "comparison": "I1 vs A3",
+      "contingency_table": {
+        "both_correct": 96,
+        "I1_only": 24,
+        "other_only": 0,
+        "both_incorrect": 0
+      },
+      "chi2": 22.041666666666668,
+      "p_value": 1.1920928955078125e-07,
+      "significant_001": true
+    }
+  }
+}

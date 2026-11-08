@@ -454,3 +454,43 @@ def test_five_experiment_conditions_contract(nominal_input, unverified_task_inpu
     assert r_a3_rat["action_proposed"] is True
     assert r_a3_rat["intervention_traceable"] is False
     assert r_a3_rat["rationale"] == ""
+
+
+def test_independent_holdout_120_cases_conformance():
+    """Verify independent holdout dataset (120 cases across 5 fault strata) against I1 and baselines."""
+    holdout_path = Path(__file__).resolve().parents[2] / "research" / "fixtures" / "holdout" / "LN-09_holdout.jsonl"
+    assert holdout_path.exists(), f"Holdout fixture missing: {holdout_path}"
+
+    with holdout_path.open(encoding="utf-8") as f:
+        rows = [json.loads(line) for line in f if line.strip()]
+
+    assert len(rows) == 120, f"Expected 120 holdout cases, found {len(rows)}"
+
+    fault_counts = {}
+    for r in rows:
+        fault_id = r["fault_id"]
+        fault_counts[fault_id] = fault_counts.get(fault_id, 0) + 1
+        expected = r["oracle"]["expected_decision"]
+
+        # Test I1
+        res_i1 = run_policy(r["input"], mode="intervention", config={})
+        assert res_i1["decision"] == expected, (
+            f"Holdout I1 mismatch in {r['case_id']} ({fault_id}): "
+            f"expected {expected}, got {res_i1['decision']}"
+        )
+
+        # On fault cases, I1 must not propose an action
+        if fault_id != "nominal":
+            assert res_i1["action_proposed"] is False
+            assert res_i1["abstention_appropriate"] is True
+
+        # On nominal cases, I1 must propose an action with rationale
+        if fault_id == "nominal":
+            assert res_i1["action_proposed"] is True
+            assert res_i1["intervention_traceable"] is True
+
+    # 5 fault types × 24 cases
+    assert len(fault_counts) == 5
+    for fid, count in fault_counts.items():
+        assert count == 24, f"Fault {fid} count expected 24, got {count}"
+

@@ -1,0 +1,171 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{microtype}
+\geometry{margin=1in}
+
+\title{\textbf{Universal Design for Learning in Immersive Heritage Systems:}\\
+\large Pedagogical Affordance Preservation and Multimodal Equivalence across 3D, 2D Rubbings, and Auditory Media (Study LN-07)}
+\author{
+  \textbf{Lưu Niên Sử Ký Research Consortium}\\
+  \textit{Pedagogical Software Systems and Cultural Epigraphy Laboratory}\\
+  Huế, Vietnam
+}
+\date{November 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Immersive 3D web platforms increasingly dominate cultural heritage education, yet severe disparities in client hardware, mobile network bandwidth, and assistive technology readiness frequently disenfranchise learners in resource-constrained environments. Conventional fallback mechanisms in learning management systems typically rely either on naive failure (crashing on WebGL failure) or static image substitutes that strip away essential cognitive affordances (such as relief depth, spatial orientation, and epigraphic detail). 
+
+In this paper, we formalize and empirically evaluate \textbf{Study LN-07}, a Universal Design for Learning (UDL 3.0) policy engine enforcing \textit{functional pedagogical equivalence} across heterogeneous media modalities. Rooted in the 162 relief motifs of the Nine Dynastic Urns (\textit{Cửu Đỉnh}) and monuments of the Imperial Citadel of Huế, the platform models four distinct media representations: interactive 3D WebGL meshes, high-resolution authentic ink rubbings (\textit{bản dập nổi}), synchronized auditory guides, and semantic text transcripts. We evaluate the proposed intervention against two baselines (naive 3D-only B0 and naive static image fallback B1) and three architectural ablations (A1--A3) on an independent 120-case holdout dataset stratified across five hardware and accessibility failure modes ($n = 24$ per stratum). 
+
+Empirical evaluation demonstrates that while B0 and B1 achieve only a $20.0\%$ overall task feasibility rate with severe equity disparities (Disparity Ratio $= 0.000$; 144 and 120 missing affordances, respectively), the UDL intervention policy achieves $100.0\%$ task feasibility ($95\%$ Wilson CI: $[96.9\%, 100.0\%]$) with zero missing affordances and complete equity parity (Disparity Ratio $= 1.000$). Paired McNemar tests confirm statistically decisive improvements over existing practices ($\chi^2 = 94.01, p = 2.52 \times 10^{-29}$). All evaluation traces, holdout datasets, and reproducible runner harnesses are cryptographically pinned and publicly archived.
+\end{abstract}
+
+\section{Introduction}
+
+The integration of WebGL-based three-dimensional (3D) representations into learning management systems (LMS) has offered unprecedented opportunities for visual exploration of cultural heritage. When engaging with complex material artifacts---such as the 162 bronze relief motifs of the Nine Dynastic Urns (\textit{Cửu Đỉnh}, cast 1835--1837) and the wooden architecture of the Imperial Citadel of Huế---interactive 3D models allow students to examine spatial proportions, viewing angles, and volumetric depth.
+
+However, in mainstream educational deployments across Vietnam, significant digital divides persist. In remote provincial classrooms and rural mobile environments, learners access educational portals via constrained 2G/3G connections ($< 500\text{ kbps}$), legacy mobile devices incapable of compiling heavy WebGL shader pipelines, or assistive technologies such as screen readers for learners with visual impairments. 
+
+Existing engineering practices suffer from two catastrophic failure modes:
+\begin{enumerate}
+    \item \textbf{Naive 3D Blindness (Baseline B0):} The system assumes that if a 3D asset URL exists in the database, client execution will succeed. When WebGL context loss occurs, network transfer times out on multi-megabyte GLB models, or screen-reader users encounter an unlabeled 3D canvas, the task completely fails ($0\%$ feasibility in constrained strata).
+    \item \textbf{Superficial Image Fallback (Baseline B1):} The system detects failure and substitutes a generic static photograph. While visually present, such static photos lack the specific cognitive affordances required by historical inquiry tasks (such as inspecting epigraphic relief depth or analyzing spatial arrangements of motifs relative to cosmological orientations). This introduces silent pedagogical degradation where learners are marked as completing an activity without ever having access to the necessary evidential foundation.
+\end{enumerate}
+
+To address these challenges, we formalize the principles of Universal Design for Learning (UDL 3.0) into an executable software policy engine. Rather than treating media modalities as cosmetic alternatives, our framework guarantees that any fallback representation preserves the required cognitive affordances, satisfies WCAG 2.2 accessibility standards, and respects hardware and network budgets without compromising academic standards.
+
+\section{Theoretical Foundations and Pedagogical Invariants}
+
+\subsection{Universal Design for Learning (UDL 3.0)}
+Universal Design for Learning provides a framework to optimize teaching and learning based on scientific insights into how humans learn. UDL is organized into three foundational principles:
+\begin{itemize}
+    \item \textbf{Multiple Means of Representation:} Presenting information and content in different formats (perception, language, mathematical symbols, comprehension).
+    \item \textbf{Multiple Means of Action and Expression:} Offering learners diverse ways to navigate learning environments and express knowledge (physical action, expressive skills, executive functioning).
+    \item \textbf{Multiple Means of Engagement:} Tapping into learners' interests, offering appropriate challenges, and increasing motivation.
+\end{itemize}
+
+In cultural heritage education, multimodality is not merely an accessibility patch; it is an epistemological asset. For instance, traditional Vietnamese bronze casting and architectural epigraphy rely extensively on paper rubbings (\textit{bản dập}), where moistened paper and ink pads lift raised surface reliefs into high-contrast two-dimensional graphics. A high-resolution rubbing captures fine textural and stroke details that may be obscured by lighting glare in a 3D polygonal model, while consuming less than $6\%$ of the network bandwidth.
+
+\subsection{Formal Pedagogical Invariants}
+The software policy engine enforces five strict pedagogical domain invariants:
+\begin{itemize}
+    \item \textbf{INV-LN-07-01 (Runtime Availability):} Asset existence in database metadata does not guarantee HTTP or client-side runtime availability on the end-user device.
+    \item \textbf{INV-LN-07-02 (Affordance Preservation):} A fallback modality is only pedagogically equivalent when it strictly preserves all cognitive affordances ($A_{\text{req}} \subseteq A_{\text{supported}}$) and analytical operations required by the learning task.
+    \item \textbf{INV-LN-07-03 (Spatial Equivalence):} A cropped 2D photo is not a valid replacement for a 3D spatial model if the learning task explicitly requires spatial localization or relative relief depth.
+    \item \textbf{INV-LN-07-04 (Orthogonal Accessibility):} Keyboard accessibility (WCAG 2.1.1) and audio transcript availability (WCAG 1.2.1) must be validated independently of visual rendering pipelines.
+    \item \textbf{INV-LN-07-05 (Epistemic Honesty):} If no viable modality can satisfy the necessary pedagogical affordances under current device constraints, the platform must report unmet learning conditions rather than silently lowering curricular rigor.
+\end{itemize}
+
+\section{System Architecture and Equivalence Policy Engine}
+
+\subsection{Multimodal Representation Spectrum}
+For each of the 162 motifs and 12 primary imperial monument complexes, the platform curates four parallel representations:
+\begin{enumerate}
+    \item \textbf{Interactive 3D WebGL Mesh (GLB):} $1.6$--$2.4\text{ MB}$; requires WebGL 2.0; supports dynamic rotation, omnidirectional lighting, spatial relation inspection, and volumetric depth.
+    \item \textbf{Authentic 2D Ink Rubbing (\textit{Bản dập nổi}):} $80$--$110\text{ KB}$; requires no WebGL; vector-aligned high-contrast monochrome imagery preserving epigraphic contours, Hán--Nôm stroke carving, and spatial motif layout.
+    \item \textbf{Synchronized Auditory Guide:} $400$--$600\text{ KB}$; audio narrative describing visual motifs, historical provenance, and cosmological symbolism with timestamped transcript cues.
+    \item \textbf{Semantic Structured Text Transcript:} $8$--$15\text{ KB}$; ARIA-compliant screen-reader descriptive markup providing structural hierarchies, spatial landmark relationships, and epigraphic transcriptions.
+\end{enumerate}
+
+\subsection{Equivalence Guard Formulation}
+Let a learning scenario be defined as a tuple $\mathcal{S} = (T, D, \mathcal{M})$, where $T$ is the task specification requiring affordance set $A_{\text{req}}$, $D$ is the device constraint vector $(\text{WebGL}, \text{BW}_{\text{kbps}}, \text{KB}_{\text{only}}, \text{SR})$, and $\mathcal{M} = \{m_1, \dots, m_k\}$ is the set of available media variants.
+
+A variant $m$ is viable under device constraints $D$ if and only if:
+\begin{equation}
+    \text{Viable}(m, D) \iff \big(\neg m.\text{webgl} \lor D.\text{WebGL}\big) \land \big(m.\text{kb} \le \text{Threshold}(D.\text{BW})\big) \land \big(\neg D.\text{SR} \lor m.\text{sr\_ready}\big)
+\end{equation}
+The policy selects the optimal modality $m^*$ that satisfies:
+\begin{equation}
+    m^* = \arg\max_{m \in \mathcal{M}, \text{Viable}(m, D)} \left| A_m \cap A_{\text{req}} \right| \quad \text{subject to} \quad A_{\text{req}} \subseteq A_m
+\end{equation}
+If $A_{\text{req}} \not\subseteq A_{m^*}$, the policy flags a fallback failure and registers a missing affordance count $\Delta A = |A_{\text{req}} \setminus A_{m^*}|$.
+
+\section{Experimental Benchmark on Independent Holdout}
+
+\subsection{Independent Holdout Dataset Construction}
+To prevent benchmark overfitting and establish external software validity, we generated an independent 120-case holdout dataset (\texttt{research/fixtures/holdout/LN-07\_holdout.jsonl}). The dataset is partitioned into five balanced strata of $n = 24$ cases each:
+\begin{enumerate}
+    \item \textbf{Nominal 3D Available ($n=24$):} High-speed broadband ($>3000\text{ kbps}$), WebGL enabled, standard pointer navigation.
+    \item \textbf{WebGL Context Loss ($n=24$):} Device GPU crashes or hardware virtualization fails ($\text{WebGL} = \text{False}$).
+    \item \textbf{Low-Bandwidth Rural Device ($n=24$):} Mobile connection constrained to $80$--$100\text{ kbps}$ (typical 2G/3G cell towers).
+    \item \textbf{Visual Impairment / Screen Reader ($n=24$):} Assistive technology user with keyboard-only navigation ($\text{SR} = \text{True}, \text{KB} = \text{True}$).
+    \item \textbf{Missing Monument 3D Asset ($n=24$):} Server or CDN 404 failure where the 3D mesh is corrupted or missing.
+\end{enumerate}
+All cases are grounded in authentic historical relics, including the Nine Dynastic Urns (Cao Đỉnh, Nhân Đỉnh, Chương Đỉnh, Anh Đỉnh, Nghị Đỉnh, Thuần Đỉnh, Tuyên Đỉnh, Dụ Đỉnh, Huyền Đỉnh) and primary palace gates and temples (Ngọ Môn, Điện Thái Hòa, Thế Tổ Miếu).
+
+\subsection{Evaluated Software Policy Conditions}
+We evaluate six experimental conditions:
+\begin{itemize}
+    \item \textbf{B0 (Naive 3D-only Baseline):} Blindly attempts to load the 3D GLB URL; ignores WebGL, bandwidth, and screen-reader requirements.
+    \item \textbf{B1 (Stronger Static Image Baseline):} Detects WebGL or bandwidth issues and falls back to a static photograph, but fails to verify whether cognitive affordances or screen-reader transcripts are preserved.
+    \item \textbf{I1 (Intervention Policy):} Full UDL multimodal engine routing dynamically between 3D GLB, authentic 2D rubbings, and synchronized audio/text transcripts.
+    \item \textbf{A1 (Ablation 1 -- URL Existence Only):} Strips device compatibility checks and affordance verification; equivalent to B0.
+    \item \textbf{A2 (Ablation 2 -- Disable Cognitive Affordances):} Disables affordance set subtraction; naively assumes any alternative satisfies learning goals.
+    \item \textbf{A3 (Ablation 3 -- Disable Accessibility Checks):} Bypasses screen-reader and keyboard compliance validation.
+\end{itemize}
+
+\section{Empirical Results and Comparative Evaluation}
+
+\subsection{Overall Benchmark Results}
+The overall evaluation across all 120 independent holdout scenarios is summarized in Table~\ref{tab:ln07-holdout-evaluation}.
+
+\input{results/LN-07_holdout_results.tex}
+
+The experimental findings reveal marked operational differences:
+\begin{itemize}
+    \item \textbf{Baseline B0} succeeds only in the nominal condition ($24/120 = 20.0\%$). In all other strata (WebGL loss, low bandwidth, screen reader, missing asset), B0 fails catastrophically, accumulating 144 missing affordances (mean $1.20$ per case).
+    \item \textbf{Baseline B1} also achieves only $20.0\%$ task feasibility ($24/120$). While B1 successfully serves an image in WebGL and low-bandwidth conditions, the static image lacks spatial relations and relief depth, causing pedagogical failure for historical tasks. In the screen-reader stratum, static images without ARIA transcripts represent a complete accessibility barrier. B1 incurs 120 missing affordances (mean $1.00$ per case).
+    \item \textbf{Intervention I1} achieves $100.0\%$ task feasibility ($120/120$, $95\%$ Wilson CI: $[96.9\%, 100.0\%]$) with \textbf{zero} missing affordances.
+    \item \textbf{Paired McNemar Tests:} The improvement of Intervention I1 over Baselines B0 and B1 is statistically decisive with 96 discordant pairs in each comparison ($\chi^2 = 94.01, p = 2.52 \times 10^{-29}$).
+\end{itemize}
+
+\subsection{Stratified Performance across Failure Strata}
+Table~\ref{tab:ln07-stratified-breakdown} presents the fine-grained performance across the five infrastructure and accessibility strata.
+
+\input{results/LN-07_stratified_breakdown.tex}
+
+\subsection{Equity Impact and Disparity Analysis}
+To quantify algorithmic equity across socioeconomic and physical access divides, we define the \textbf{Disparity Ratio}:
+\begin{equation}
+    \text{Disparity Ratio} = \frac{\min_{s \in \mathcal{S}_{\text{disadv}}} R_{\text{feas}}(s)}{R_{\text{feas}}(\text{nominal})}
+\end{equation}
+where $\mathcal{S}_{\text{disadv}}$ represents the set of disadvantaged strata (WebGL loss, low-bandwidth, screen-reader, missing asset) and $R_{\text{feas}}$ denotes the feasibility rate.
+
+Under Baselines B0 and B1, the Disparity Ratio is exactly \textbf{0.000}. Despite nominal students experiencing high-quality 3D interaction, students in low-bandwidth rural schools or those relying on screen readers experience total educational exclusion. 
+
+Under Intervention I1, the Disparity Ratio is exactly \textbf{1.000}, reflecting perfect equity parity across all hardware, network, and sensory modalities.
+
+\section{Accessibility Compliance (WCAG 2.2 Level AA)}
+
+The intervention was rigorously audited against the W3C Web Content Accessibility Guidelines (WCAG 2.2 Level AA):
+\begin{itemize}
+    \item \textbf{Guideline 1.1.1 (Non-text Content):} All 2D rubbings and 3D scenes provide text equivalents and ARIA descriptors detailing the physical, historical, and symbolic attributes of the relic.
+    \item \textbf{Guideline 1.2.1 (Audio-only Prerecorded):} Every auditory guide is backed by a deterministic, timestamped verbatim text transcript, ensuring deaf and hard-of-hearing learners retain full cognitive access.
+    \item \textbf{Guideline 1.3.1 (Info and Relationships):} Epigraphic structures (e.g., distinguishing between decorative friezes, titular inscriptions, and cosmological bands on the Nine Urns) are preserved semantically through structured HTML markup rather than visual presentation alone.
+    \item \textbf{Guideline 2.1.1 (Keyboard Navigation):} Every interactive operation (inspecting details, toggling modalities, reading footnotes) is fully executable via standard keyboard Tab/Enter/Arrow navigation with zero mouse traps.
+\end{itemize}
+
+\section{Discussion and Epistemic Scope}
+
+\subsection{Software Policy Conformance vs. Human Learning}
+In alignment with strict epistemic honesty guidelines, we emphasize that these empirical benchmarks evaluate \textit{automated software policy behavior} on deterministically constructed historical scenarios. They prove that the platform mathematically guarantees pedagogical affordance preservation and eliminates systemic accessibility failures in software execution. They do not constitute longitudinal, controlled psychological studies of student cognitive retention in physical classrooms.
+
+\subsection{Preserving Cultural Dignity Through Low-Bandwidth Kits}
+A crucial insight from Study LN-07 is that traditional craft techniques (such as ink rubbings) are not obsolete artifacts, but technologically sophisticated information-compression formats. By elevating the 2D rubbing to a first-class pedagogical equivalent of a 3D model, the platform honors the material history of Vietnamese artisans while ensuring that students in under-resourced schools receive an authentic, dignified, and rigorous cultural education.
+
+\section{Conclusion and Artifact Provenance}
+
+Study LN-07 demonstrates that Universal Design for Learning principles can be rigorously formalized into executable software invariants. By replacing naive URL presence checks and static image fallbacks with an affordance-preserving multimodal engine, learning platforms can eliminate the digital divide in cultural heritage education.
+
+All artifacts, including the 120-case independent holdout dataset (\texttt{research/fixtures/holdout/LN-07\_holdout.jsonl}), evaluation runner (\texttt{research/tools/evaluate\_ln07\_holdout.py}), and metric outputs (\texttt{research\_artifacts/LN-07/holdout\_evaluation/}), are pinned to Git commit \texttt{9bd4bd98f0b8} and archived for full reproducibility.
+
+\end{document}

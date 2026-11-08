@@ -1,0 +1,227 @@
+{
+  "study": "LN-07",
+  "dataset": "research/fixtures/holdout/LN-07_holdout.jsonl",
+  "total_cases": 120,
+  "results": {
+    "B0 (3D-only naive URL)": {
+      "feasible_count": 24,
+      "total_cases": 120,
+      "feasible_rate": 0.2,
+      "ci_95": [
+        0.1382448705095309,
+        0.2803665560159816
+      ],
+      "total_missing_affordances": 144,
+      "mean_missing_affordances": 1.2,
+      "per_fault_feasible": {
+        "nominal_3d_available": 24,
+        "webgl_context_loss": 0,
+        "low_bandwidth_device": 0,
+        "visual_impairment_screen_reader": 0,
+        "missing_monument_asset": 0
+      },
+      "per_fault_missing": {
+        "nominal_3d_available": 0,
+        "webgl_context_loss": 48,
+        "low_bandwidth_device": 0,
+        "visual_impairment_screen_reader": 48,
+        "missing_monument_asset": 48
+      }
+    },
+    "B1 (Static image fallback)": {
+      "feasible_count": 24,
+      "total_cases": 120,
+      "feasible_rate": 0.2,
+      "ci_95": [
+        0.1382448705095309,
+        0.2803665560159816
+      ],
+      "total_missing_affordances": 120,
+      "mean_missing_affordances": 1.0,
+      "per_fault_feasible": {
+        "nominal_3d_available": 24,
+        "webgl_context_loss": 0,
+        "low_bandwidth_device": 0,
+        "visual_impairment_screen_reader": 0,
+        "missing_monument_asset": 0
+      },
+      "per_fault_missing": {
+        "nominal_3d_available": 0,
+        "webgl_context_loss": 24,
+        "low_bandwidth_device": 24,
+        "visual_impairment_screen_reader": 48,
+        "missing_monument_asset": 24
+      }
+    },
+    "I1 (Multimodal affordance fallback)": {
+      "feasible_count": 120,
+      "total_cases": 120,
+      "feasible_rate": 1.0,
+      "ci_95": [
+        0.9689809557908127,
+        1.0
+      ],
+      "total_missing_affordances": 0,
+      "mean_missing_affordances": 0.0,
+      "per_fault_feasible": {
+        "nominal_3d_available": 24,
+        "webgl_context_loss": 24,
+        "low_bandwidth_device": 24,
+        "visual_impairment_screen_reader": 24,
+        "missing_monument_asset": 24
+      },
+      "per_fault_missing": {
+        "nominal_3d_available": 0,
+        "webgl_context_loss": 0,
+        "low_bandwidth_device": 0,
+        "visual_impairment_screen_reader": 0,
+        "missing_monument_asset": 0
+      }
+    },
+    "A1 (url_existence_only)": {
+      "feasible_count": 24,
+      "total_cases": 120,
+      "feasible_rate": 0.2,
+      "ci_95": [
+        0.1382448705095309,
+        0.2803665560159816
+      ],
+      "total_missing_affordances": 144,
+      "mean_missing_affordances": 1.2,
+      "per_fault_feasible": {
+        "nominal_3d_available": 24,
+        "webgl_context_loss": 0,
+        "low_bandwidth_device": 0,
+        "visual_impairment_screen_reader": 0,
+        "missing_monument_asset": 0
+      },
+      "per_fault_missing": {
+        "nominal_3d_available": 0,
+        "webgl_context_loss": 48,
+        "low_bandwidth_device": 0,
+        "visual_impairment_screen_reader": 48,
+        "missing_monument_asset": 48
+      }
+    },
+    "A2 (disable_cognitive_affordances)": {
+      "feasible_count": 120,
+      "total_cases": 120,
+      "feasible_rate": 1.0,
+      "ci_95": [
+        0.9689809557908127,
+        1.0
+      ],
+      "total_missing_affordances": 0,
+      "mean_missing_affordances": 0.0,
+      "per_fault_feasible": {
+        "nominal_3d_available": 24,
+        "webgl_context_loss": 24,
+        "low_bandwidth_device": 24,
+        "visual_impairment_screen_reader": 24,
+        "missing_monument_asset": 24
+      },
+      "per_fault_missing": {
+        "nominal_3d_available": 0,
+        "webgl_context_loss": 0,
+        "low_bandwidth_device": 0,
+        "visual_impairment_screen_reader": 0,
+        "missing_monument_asset": 0
+      }
+    },
+    "A3 (disable_accessibility)": {
+      "feasible_count": 120,
+      "total_cases": 120,
+      "feasible_rate": 1.0,
+      "ci_95": [
+        0.9689809557908127,
+        1.0
+      ],
+      "total_missing_affordances": 0,
+      "mean_missing_affordances": 0.0,
+      "per_fault_feasible": {
+        "nominal_3d_available": 24,
+        "webgl_context_loss": 24,
+        "low_bandwidth_device": 24,
+        "visual_impairment_screen_reader": 24,
+        "missing_monument_asset": 24
+      },
+      "per_fault_missing": {
+        "nominal_3d_available": 0,
+        "webgl_context_loss": 0,
+        "low_bandwidth_device": 0,
+        "visual_impairment_screen_reader": 0,
+        "missing_monument_asset": 0
+      }
+    }
+  },
+  "mcnemar_vs_i1": {
+    "B0 (3D-only naive URL)": {
+      "b": 96,
+      "c": 0,
+      "chi2": 94.01041666666667,
+      "p_value": 2.524354896707238e-29
+    },
+    "B1 (Static image fallback)": {
+      "b": 96,
+      "c": 0,
+      "chi2": 94.01041666666667,
+      "p_value": 2.524354896707238e-29
+    },
+    "A1 (url_existence_only)": {
+      "b": 96,
+      "c": 0,
+      "chi2": 94.01041666666667,
+      "p_value": 2.524354896707238e-29
+    },
+    "A2 (disable_cognitive_affordances)": {
+      "b": 0,
+      "c": 0,
+      "chi2": 0.0,
+      "p_value": 1.0
+    },
+    "A3 (disable_accessibility)": {
+      "b": 0,
+      "c": 0,
+      "chi2": 0.0,
+      "p_value": 1.0
+    }
+  },
+  "equity_analysis": {
+    "B0 (3D-only naive URL)": {
+      "nominal_rate": 1.0,
+      "min_disadvantaged_rate": 0.0,
+      "avg_disadvantaged_rate": 0.0,
+      "disparity_ratio": 0.0
+    },
+    "B1 (Static image fallback)": {
+      "nominal_rate": 1.0,
+      "min_disadvantaged_rate": 0.0,
+      "avg_disadvantaged_rate": 0.0,
+      "disparity_ratio": 0.0
+    },
+    "I1 (Multimodal affordance fallback)": {
+      "nominal_rate": 1.0,
+      "min_disadvantaged_rate": 1.0,
+      "avg_disadvantaged_rate": 1.0,
+      "disparity_ratio": 1.0
+    },
+    "A1 (url_existence_only)": {
+      "nominal_rate": 1.0,
+      "min_disadvantaged_rate": 0.0,
+      "avg_disadvantaged_rate": 0.0,
+      "disparity_ratio": 0.0
+    },
+    "A2 (disable_cognitive_affordances)": {
+      "nominal_rate": 1.0,
+      "min_disadvantaged_rate": 1.0,
+      "avg_disadvantaged_rate": 1.0,
+      "disparity_ratio": 1.0
+    },
+    "A3 (disable_accessibility)": {
+      "nominal_rate": 1.0,
+      "min_disadvantaged_rate": 1.0,
+      "avg_disadvantaged_rate": 1.0,
+      "disparity_ratio": 1.0
+    }
+  }
+}

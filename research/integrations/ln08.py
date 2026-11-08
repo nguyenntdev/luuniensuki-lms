@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from research.baselines.strong_baselines import run_ln08_b1
 from research.feedback.diagnostic_feedback import (
     evaluate_ablation,
     evaluate_baseline,
@@ -25,6 +26,7 @@ def run_policy(
 
     Modes:
     - 'baseline': Naive keyword matcher blind to negation and source attribution.
+    - 'b1': TF-IDF / Cosine semantic similarity matcher without negation parsing.
     - 'intervention': Full historical misconception taxonomy diagnostic pipeline.
     - 'ablation': Component-isolated variants (keyword_only, disable_negation, disable_source_link).
     """
@@ -33,7 +35,11 @@ def run_policy(
 
     cfg = config or {}
 
-    if mode == "baseline":
+    if mode in ("b1", "baseline_b1", "tfidf", "cosine"):
+        return run_ln08_b1(scenario_input, cfg)
+    if mode in ("baseline", "b0"):
+        if str(cfg.get("baseline_type", "")).lower() in ("b1", "tfidf", "cosine", "strong"):
+            return run_ln08_b1(scenario_input, cfg)
         return evaluate_baseline(scenario_input, cfg)
     elif mode == "intervention":
         return evaluate_intervention(scenario_input, cfg)

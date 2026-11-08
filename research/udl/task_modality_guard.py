@@ -14,6 +14,7 @@ from research.udl.modality_equivalence import (
     ModalityDecision,
     PolicyEvaluationResult,
     evaluate_modality_ablation,
+    evaluate_modality_b1,
     evaluate_modality_baseline,
     evaluate_modality_intervention,
 )
@@ -28,6 +29,7 @@ __all__ = [
     "ModalityDecision",
     "PolicyEvaluationResult",
     "evaluate_modality_baseline",
+    "evaluate_modality_b1",
     "evaluate_modality_intervention",
     "evaluate_modality_ablation",
 ]

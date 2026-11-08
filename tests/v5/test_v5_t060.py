@@ -35,11 +35,11 @@ import subprocess
 from pathlib import Path
 import pytest
 
-WORKSPACE_ROOT = Path("/home/clue/Documents/luuniensuki-lms")
+WORKSPACE_ROOT = Path(__file__).resolve().parents[2]
 MOBILE_DIR = WORKSPACE_ROOT / "mobile"
-FLUTTER_BIN = Path("/home/clue/development/flutter/bin/flutter")
-JAVA_HOME = Path("/home/clue/development/jdk/jdk-17.0.2")
-ANDROID_SDK = Path("/home/clue/Android/Sdk")
+FLUTTER_BIN = Path(os.environ.get("FLUTTER_BIN", shutil.which("flutter") or "/home/clue/development/flutter/bin/flutter"))
+JAVA_HOME = Path(os.environ.get("JAVA_HOME", "/home/clue/development/jdk/jdk-17.0.2"))
+ANDROID_SDK = Path(os.environ.get("ANDROID_HOME", os.environ.get("ANDROID_SDK_ROOT", "/home/clue/Android/Sdk")))
 
 
 # --------------------------------------------------------------------------- #

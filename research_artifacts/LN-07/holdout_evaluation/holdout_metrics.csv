@@ -1,0 +1,7 @@
+condition,feasible_count,total_cases,feasible_rate,ci_low,ci_high,missing_affordances,disparity_ratio
+B0 (3D-only naive URL),24,120,0.2000,0.1382,0.2804,144,0.0000
+B1 (Static image fallback),24,120,0.2000,0.1382,0.2804,120,0.0000
+I1 (Multimodal affordance fallback),120,120,1.0000,0.9690,1.0000,0,1.0000
+A1 (url_existence_only),24,120,0.2000,0.1382,0.2804,144,0.0000
+A2 (disable_cognitive_affordances),120,120,1.0000,0.9690,1.0000,0,1.0000
+A3 (disable_accessibility),120,120,1.0000,0.9690,1.0000,0,1.0000

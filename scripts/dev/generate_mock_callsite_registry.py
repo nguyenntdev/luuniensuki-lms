@@ -9,7 +9,7 @@ import os
 import re
 from pathlib import Path
 
-ROOT_DIR = Path("/home/clue/Documents/luuniensuki-lms")
+ROOT_DIR = Path(__file__).resolve().parents[2]
 ARTIFACT_PATH = ROOT_DIR / "artifacts/implementation/W00/W00_A03_mock_callsite_registry.json"
 
 SCAN_SPECS = [

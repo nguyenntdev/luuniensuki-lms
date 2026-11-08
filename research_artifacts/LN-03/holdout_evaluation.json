@@ -1,0 +1,284 @@
+[
+  {
+    "condition_id": "B0",
+    "name": "Interval Heuristic",
+    "description": "Standard simple interval scheduler ignoring task modality and source verification",
+    "eligible_N": 48,
+    "invalid_generative_num": 48,
+    "invalid_generative_rate": 1.0,
+    "invalid_generative_ci95": [
+      0.9258998703338824,
+      0.9999999999999999
+    ],
+    "mean_review_burden": 1.2,
+    "sd_review_burden": 0.9839040740289453,
+    "burden_ci95": [
+      1.0221518989190235,
+      1.3778481010809764
+    ],
+    "mcnemar_chi2": 46.020833333333336,
+    "mcnemar_p_value": 7.105427357601002e-15,
+    "paired_t_stat": 8.181534085976786,
+    "paired_t_p_value": 3.5216274341109965e-13,
+    "cohen_d": 0.7468684623144828,
+    "oracle_matches": 72,
+    "oracle_match_pct": 60.0,
+    "fault_breakdown": {
+      "missing_fact_base": {
+        "n": 24,
+        "generative_assigned_count": 24
+      },
+      "nominal": {
+        "n": 24,
+        "generative_assigned_count": 24
+      },
+      "non_finite_stability_weight": {
+        "n": 24,
+        "generative_assigned_count": 0
+      },
+      "not_due_for_review": {
+        "n": 24,
+        "generative_assigned_count": 0
+      },
+      "unverified_source_claim": {
+        "n": 24,
+        "generative_assigned_count": 24
+      }
+    }
+  },
+  {
+    "condition_id": "B1",
+    "name": "Leitner Box (No Source Grounding)",
+    "description": "Classical Leitner box requiring fact recall but lacking source verification",
+    "eligible_N": 48,
+    "invalid_generative_num": 24,
+    "invalid_generative_rate": 0.5,
+    "invalid_generative_ci95": [
+      0.36389330502679385,
+      0.6361066949732062
+    ],
+    "mean_review_burden": 1.0,
+    "sd_review_burden": 0.8981774262781437,
+    "burden_ci95": [
+      0.8376476387141505,
+      1.1623523612858495
+    ],
+    "mcnemar_chi2": 22.041666666666668,
+    "mcnemar_p_value": 1.1920928955078125e-07,
+    "paired_t_stat": 5.454356057317858,
+    "paired_t_p_value": 2.711747288941524e-07,
+    "cohen_d": 0.4979123082096552,
+    "oracle_matches": 96,
+    "oracle_match_pct": 80.0,
+    "fault_breakdown": {
+      "missing_fact_base": {
+        "n": 24,
+        "generative_assigned_count": 0
+      },
+      "nominal": {
+        "n": 24,
+        "generative_assigned_count": 24
+      },
+      "non_finite_stability_weight": {
+        "n": 24,
+        "generative_assigned_count": 0
+      },
+      "not_due_for_review": {
+        "n": 24,
+        "generative_assigned_count": 0
+      },
+      "unverified_source_claim": {
+        "n": 24,
+        "generative_assigned_count": 24
+      }
+    }
+  },
+  {
+    "condition_id": "I1",
+    "name": "Dual-Mode Spaced Learning",
+    "description": "Dual-mode policy gating explanations on prerequisite mastery, source verification, and workload",
+    "eligible_N": 48,
+    "invalid_generative_num": 0,
+    "invalid_generative_rate": 0.0,
+    "invalid_generative_ci95": [
+      6.938893903907228e-18,
+      0.07410012966611748
+    ],
+    "mean_review_burden": 0.6,
+    "sd_review_burden": 0.803354312405494,
+    "burden_ci95": [
+      0.4547876335428941,
+      0.7452123664571059
+    ],
+    "mcnemar_chi2": 0.0,
+    "mcnemar_p_value": 1.0,
+    "paired_t_stat": 0.0,
+    "paired_t_p_value": 1.0,
+    "cohen_d": 0.0,
+    "oracle_matches": 120,
+    "oracle_match_pct": 100.0,
+    "fault_breakdown": {
+      "missing_fact_base": {
+        "n": 24,
+        "generative_assigned_count": 0
+      },
+      "nominal": {
+        "n": 24,
+        "generative_assigned_count": 24
+      },
+      "non_finite_stability_weight": {
+        "n": 24,
+        "generative_assigned_count": 0
+      },
+      "not_due_for_review": {
+        "n": 24,
+        "generative_assigned_count": 0
+      },
+      "unverified_source_claim": {
+        "n": 24,
+        "generative_assigned_count": 0
+      }
+    }
+  },
+  {
+    "condition_id": "A1",
+    "name": "Ablation: Generic FSRS",
+    "description": "Treats all tasks as uniform flashcards without modality separation",
+    "eligible_N": 48,
+    "invalid_generative_num": 48,
+    "invalid_generative_rate": 1.0,
+    "invalid_generative_ci95": [
+      0.9258998703338824,
+      0.9999999999999999
+    ],
+    "mean_review_burden": 1.2,
+    "sd_review_burden": 0.9839040740289453,
+    "burden_ci95": [
+      1.0221518989190235,
+      1.3778481010809764
+    ],
+    "mcnemar_chi2": 46.020833333333336,
+    "mcnemar_p_value": 7.105427357601002e-15,
+    "paired_t_stat": 8.181534085976786,
+    "paired_t_p_value": 3.5216274341109965e-13,
+    "cohen_d": 0.7468684623144828,
+    "oracle_matches": 72,
+    "oracle_match_pct": 60.0,
+    "fault_breakdown": {
+      "missing_fact_base": {
+        "n": 24,
+        "generative_assigned_count": 24
+      },
+      "nominal": {
+        "n": 24,
+        "generative_assigned_count": 24
+      },
+      "non_finite_stability_weight": {
+        "n": 24,
+        "generative_assigned_count": 0
+      },
+      "not_due_for_review": {
+        "n": 24,
+        "generative_assigned_count": 0
+      },
+      "unverified_source_claim": {
+        "n": 24,
+        "generative_assigned_count": 24
+      }
+    }
+  },
+  {
+    "condition_id": "A2",
+    "name": "Ablation: Omit Source Check",
+    "description": "Prerequisite checking enabled, but source verification gate bypassed",
+    "eligible_N": 48,
+    "invalid_generative_num": 24,
+    "invalid_generative_rate": 0.5,
+    "invalid_generative_ci95": [
+      0.36389330502679385,
+      0.6361066949732062
+    ],
+    "mean_review_burden": 1.0,
+    "sd_review_burden": 0.8981774262781437,
+    "burden_ci95": [
+      0.8376476387141505,
+      1.1623523612858495
+    ],
+    "mcnemar_chi2": 22.041666666666668,
+    "mcnemar_p_value": 1.1920928955078125e-07,
+    "paired_t_stat": 5.454356057317858,
+    "paired_t_p_value": 2.711747288941524e-07,
+    "cohen_d": 0.4979123082096552,
+    "oracle_matches": 96,
+    "oracle_match_pct": 80.0,
+    "fault_breakdown": {
+      "missing_fact_base": {
+        "n": 24,
+        "generative_assigned_count": 0
+      },
+      "nominal": {
+        "n": 24,
+        "generative_assigned_count": 24
+      },
+      "non_finite_stability_weight": {
+        "n": 24,
+        "generative_assigned_count": 0
+      },
+      "not_due_for_review": {
+        "n": 24,
+        "generative_assigned_count": 0
+      },
+      "unverified_source_claim": {
+        "n": 24,
+        "generative_assigned_count": 24
+      }
+    }
+  },
+  {
+    "condition_id": "A3",
+    "name": "Ablation: Omit Workload Limit",
+    "description": "Prerequisite and source checks enabled, but cognitive workload cap removed",
+    "eligible_N": 48,
+    "invalid_generative_num": 0,
+    "invalid_generative_rate": 0.0,
+    "invalid_generative_ci95": [
+      6.938893903907228e-18,
+      0.07410012966611748
+    ],
+    "mean_review_burden": 1.2,
+    "sd_review_burden": 1.9472022593083294,
+    "burden_ci95": [
+      0.8480284680390646,
+      1.5519715319609353
+    ],
+    "mcnemar_chi2": 0.0,
+    "mcnemar_p_value": 1.0,
+    "paired_t_stat": 5.454356057317858,
+    "paired_t_p_value": 2.711747288941524e-07,
+    "cohen_d": 0.4979123082096552,
+    "oracle_matches": 120,
+    "oracle_match_pct": 100.0,
+    "fault_breakdown": {
+      "missing_fact_base": {
+        "n": 24,
+        "generative_assigned_count": 0
+      },
+      "nominal": {
+        "n": 24,
+        "generative_assigned_count": 24
+      },
+      "non_finite_stability_weight": {
+        "n": 24,
+        "generative_assigned_count": 0
+      },
+      "not_due_for_review": {
+        "n": 24,
+        "generative_assigned_count": 0
+      },
+      "unverified_source_claim": {
+        "n": 24,
+        "generative_assigned_count": 0
+      }
+    }
+  }
+]

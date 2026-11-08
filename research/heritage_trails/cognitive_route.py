@@ -263,3 +263,81 @@ def evaluate_route_baseline(
         unreachable_checkpoint_rate=0.0,
         policy_version="LN-06-baseline-v1.0",
     )
+
+
+def evaluate_route_b1(
+    stops: Sequence[HeritageStop],
+    available_stops: Sequence[str],
+    target_outcomes: Sequence[str],
+    time_budget_minutes: int,
+    checkpoint_claim_verified: bool = True,
+) -> RoutePlan:
+    """Stronger baseline B1: Greedy topological search without time-budget bounds.
+
+    Attempts topological ordering to respect prerequisites where possible,
+    but does NOT bound routes by time budget, does NOT reject unverified source
+    claims, and fails to resolve cycles safely (appending remaining nodes).
+    """
+    available_set = set(available_stops)
+    target_set = set(target_outcomes)
+
+    avail_stops = [s for s in stops if s.id in available_set]
+    order_map = {s.id: s for s in avail_stops}
+
+    in_deg: dict[str, int] = defaultdict(int)
+    dep_adj: dict[str, list[str]] = defaultdict(list)
+    for sid in order_map:
+        in_deg[sid] = 0
+
+    prov_map: dict[str, str] = {}
+    for s in avail_stops:
+        for p in s.provides:
+            prov_map[p] = s.id
+
+    for s in avail_stops:
+        for req in s.requires:
+            if req in prov_map:
+                p_id = prov_map[req]
+                if p_id != s.id and p_id in order_map:
+                    dep_adj[p_id].append(s.id)
+                    in_deg[s.id] += 1
+
+    q = deque([sid for sid in order_map if in_deg[sid] == 0])
+    ordered_sequence: list[str] = []
+    while q:
+        curr = q.popleft()
+        ordered_sequence.append(curr)
+        for nxt in dep_adj[curr]:
+            in_deg[nxt] -= 1
+            if in_deg[nxt] == 0:
+                q.append(nxt)
+
+    for sid in order_map:
+        if sid not in ordered_sequence:
+            ordered_sequence.append(sid)
+
+    total_cost = sum(s.cost for s in avail_stops if s.id in ordered_sequence)
+
+    acquired_outcomes: set[str] = set()
+    stop_lookup = {s.id: s for s in stops}
+    violations = 0
+    for sid in ordered_sequence:
+        s = stop_lookup[sid]
+        for req in s.requires:
+            if req not in acquired_outcomes:
+                violations += 1
+        acquired_outcomes.update(s.provides)
+
+    coverage = len(target_set & acquired_outcomes) / len(target_set) if target_set else 0.0
+
+    return RoutePlan(
+        decision="find_valid_route",
+        reason_codes=["b1_greedy_topological_no_budget"],
+        stop_sequence=ordered_sequence,
+        route_cost=total_cost,
+        outcome_coverage=round(coverage, 4),
+        prerequisite_violation_count=violations,
+        unreachable_checkpoint_rate=0.0,
+        policy_version="LN-06-b1-v1.0",
+    )
+

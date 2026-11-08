@@ -1,0 +1,7 @@
+condition,description,fault_n,unsupported_n,unsupported_rate,ci_lower,ci_upper,oracle_accuracy,privacy_compliance
+B0,"Descriptive dashboard heuristic (ungrounded)",96,96,1.0000,0.9615,1.0000,0.2000,0.0000
+B1,"Statistical thresholding without k-anonymity/source audit",96,72,0.7500,0.6549,0.8259,0.4000,0.0000
+I1,"Evidence-grounded teacher decision-support policy",96,0,0.0000,0.0000,0.0385,1.0000,1.0000
+A1,"Ablation: descriptive_only (no actions)",96,0,0.0000,0.0000,0.0385,0.0000,1.0000
+A2,"Ablation: no_freshness_source (bypasses source audit)",96,48,0.5000,0.4019,0.5981,0.6000,1.0000
+A3,"Ablation: no_rationale (no pedagogical explanation)",96,0,0.0000,0.0000,0.0385,1.0000,1.0000

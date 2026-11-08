@@ -30,6 +30,7 @@ from research.spiral.curriculum_crosswalk import check_anchor_coverage
 
 POLICY_VERSION_INTERVENTION = "2.0-intervention"
 POLICY_VERSION_BASELINE = "1.0-baseline"
+POLICY_VERSION_TOPOLOGICAL_BASELINE = "1.1-topological-baseline"
 POLICY_VERSION_ABLATION = "2.0-ablation"
 
 
@@ -458,5 +459,56 @@ def evaluate_spiral_progression_ablation(
             "prerequisite_cycle_count": 0,
             "unmapped_outcome_rate": 0.0,
             "ablation_active": True,
+        },
+    )
+
+
+def evaluate_spiral_progression_topological_baseline(
+    scenario_input: Dict[str, Any],
+    config: Optional[Dict[str, Any]] = None,
+) -> ProgressionDecision:
+    """Stronger baseline policy (B1): Topological sort prerequisite DAG validation.
+
+    Verifies prerequisite DAG acyclicity (topological sort feasibility).
+    Does NOT verify Bloom cognitive level ascent (INV-LN-01-01) or regulatory curriculum anchors (INV-LN-01-03).
+    Does NOT verify grade developmental ordering (INV-LN-01-04) unless explicitly configured.
+    """
+    config = config or {}
+    raw_nodes = scenario_input.get("nodes", [])
+    prerequisites = scenario_input.get("prerequisites", [])
+    num_nodes = len(raw_nodes)
+
+    # 1. Topological sort / cycle detection (DAG feasibility)
+    cycles = detect_prerequisite_cycles(num_nodes, prerequisites)
+    if cycles:
+        return ProgressionDecision(
+            decision="reject_cycle",
+            reason_codes=["prerequisite_cycle_detected", "Chu trình tiền đề không hợp lệ"],
+            policy_version=POLICY_VERSION_TOPOLOGICAL_BASELINE,
+            progression_valid=False,
+            observables={
+                "progression_valid": False,
+                "prerequisite_cycle_count": len(cycles),
+                "unmapped_outcome_rate": 0.0,
+                "cycles_detected": cycles,
+                "violations": ["cycle_detected_in_prerequisites"],
+                "mode": "topological_baseline",
+                "node_count": num_nodes,
+                "edge_count": len(prerequisites),
+            },
+        )
+
+    return ProgressionDecision(
+        decision="accept",
+        reason_codes=["topological_sort_valid", "Đồ thị tiền đề thỏa mãn trật tự tô-pô"],
+        policy_version=POLICY_VERSION_TOPOLOGICAL_BASELINE,
+        progression_valid=True,
+        observables={
+            "progression_valid": True,
+            "prerequisite_cycle_count": 0,
+            "unmapped_outcome_rate": 0.0,
+            "mode": "topological_baseline",
+            "node_count": num_nodes,
+            "edge_count": len(prerequisites),
         },
     )

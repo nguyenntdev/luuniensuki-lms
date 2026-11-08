@@ -1,0 +1,140 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\geometry{margin=1in}
+
+\title{Diagnostic Feedback \& Historical Misconceptions: \\ \large Taxonomic Reasoning, Logical Negation Checking, and Empirical Evaluation in Cultural Heritage Learning}
+\author{Lưu Niên Sứ Ký Research Consortium \\ \small Educational Technology \& Historical Computing Division}
+\date{November 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Automated assessment in historical domain learning frequently degenerates into superficial keyword matching or vector embedding similarity. Such approaches suffer from fundamental epistemological failure modes: superficial matchers accept keyword-dense historical claims that negate propositional truth (e.g., ``\textit{Ngọ Môn không thuộc trục nghi lễ}''), reject legitimate historical claims phrased through diverse vernacular or formal synonyms, and fail to scrutinize the evidential provenance of cited archival sources. In this paper, we introduce LN-08, a source-grounded diagnostic reasoning architecture for historical inquiry. LN-08 operationalizes a formal historical error taxonomy that distinguishes logical negation, source fabrication, synonym equivalence, and incomplete spatial-ritual explanations. We formulate five core domain invariants and provide formal algorithms for negation-preserving tokenization, assertion verification, and formative feedback generation that targets task and process levels without conferring stigmatizing ability labels. In addition to frozen synthetic policy benchmarks ($N=720$, 0.0\% vs.\ 100.0\% diagnostic error rate), we evaluate LN-08 on an independent, balanced 120-case holdout dataset spanning 24 historical heritage sites across five distinct fault categories. LN-08 demonstrates zero diagnostic errors ($0/96$ eligible errors, 95\% CI $[0.0\%, 3.8\%]$), significantly outperforming both an exact keyword matcher (B0, $75.0\%$ error rate, $p = 4.24 \times 10^{-22}$) and an embedding cosine similarity baseline (B1, $50.0\%$ error rate, $p = 7.11 \times 10^{-15}$). Component ablations demonstrate that explicit negation parsing and archival source linkage are both necessary and mutually indispensable for robust automated historical diagnostics.
+\end{abstract}
+
+\section{Introduction}
+Evaluating student argumentation in history education requires assessing not merely the presence of topical vocabulary, but the logical validity of historical claims, spatial-ritual relationships, and evidentiary provenance. When students learn about complex architectural complexes—such as the Imperial City of Huế and the Cửu Đỉnh (Nine Dynastic Urns)—they must synthesize historical texts (e.g., \textit{Đại Nam Thực Lục}, \textit{Khâm Định Đại Nam Hội Điển Sự Lệ}) with spatial layout rules.
+
+Conventional automated grading systems and naive language-model evaluators commonly rely on lexical overlap or semantic vector similarity. However, these paradigms exhibit catastrophic failure modes in domain-specific historical reasoning:
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Keyword Blindness to Negation}: A sentence such as ``\textit{Ngọ Môn không thuộc trục nghi lễ theo điển chế}'' (Ngọ Môn does \textbf{not} belong to the ritual axis) contains all keywords required by a naive rubric (``\textit{Ngọ Môn}'', ``\textit{trục nghi lễ}''). Surface keyword matchers accept this diametrical contradiction as fully supported.
+    \item \textbf{Semantic Rigidity Against Valid Synonyms}: When an advanced learner uses historiographical synonyms—such as ``\textit{tuyến không gian phục vụ nghi thức}'' or ``\textit{trục trung tâm nghi thức}''—lexical matchers penalize the student with false incomplete scores due to the absence of the exact string ``\textit{trục nghi lễ}''.
+    \item \textbf{Evidential Hallucination / Source Fabrication}: Students (or automated assistants) frequently append unverified or fabricated citations (e.g., citing non-existent archival registers or mismatched folios). Without strict locator grounding, automated systems grant unearned epistemic authority to groundless assertions.
+    \item \textbf{Formative Feedback Deficits}: When errors are detected, generic feedback often confers person-level competence judgments (e.g., ``You are not good at spatial analysis'') rather than actionable, task-oriented scaffolding directing students back to primary evidence.
+\end{enumerate}
+
+To resolve these challenges, Study LN-08 establishes a domain-grounded diagnostic engine that decouples reasoning validation from superficial lexical density. We formalize domain invariants, specify an error taxonomy, and conduct rigorous evaluations across baseline, embedding, intervention, and ablation models.
+
+\section{Historical Misconception Error Taxonomy}
+The LN-08 architecture is grounded in a five-tier taxonomy of reasoning faults specifically tailored to Vietnamese historical epigraphy and architectural heritage:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Nominal Correct ($\mathcal{F}_{\text{nom}}$)}: Claims that correctly assert historical facts, maintain valid syntactic polarity, and cite verified archival sources in the institutional repository.
+    \item \textbf{Logical Negation Misconception ($\mathcal{F}_{\text{neg}}$)}: Statements that invert historical reality through propositional negation operators (e.g., \textit{không thuộc}, \textit{trái với}, \textit{bác bỏ}, \textit{chưa từng}), reversing truth value despite high topical lexical density.
+    \item \textbf{Synonym Equivalence ($\mathcal{F}_{\text{syn}}$)}: Formulations that vary lexical presentation through rich historical synonyms (e.g., \textit{trục thần đạo}, \textit{tuyến không gian nghi thức}) without altering the propositional truth of the ritual axis relationship.
+    \item \textbf{Partial / Incomplete Reasoning ($\mathcal{F}_{\text{part}}$)}: Answers that identify generic architectural categories (e.g., ``\textit{là một công trình kiến trúc thời Nguyễn}'') but fail to articulate the functional spatial-ritual relationship required by the inquiry prompt.
+    \item \textbf{Unverified Historical Assertion ($\mathcal{F}_{\text{unver}}$)}: Claims that assert valid historical propositions but link them to unverified, untrusted, or fabricated source locators (e.g., \texttt{SOURCE-FABRICATED}).
+\end{itemize}
+
+\section{System Architecture and Invariant Guarantees}
+The diagnostic engine enforces five non-negotiable architectural invariants:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{INV-LN-08-01 (Anti-Keyword Invariant)}: Keyword matching alone must \textit{never} grant assessment correctness. Syntactic negation and semantic polarity must be verified.
+    \item \textbf{INV-LN-08-02 (Epistemic Abstention)}: Uncertain, ambiguous, or unclassified input patterns must yield an explicit \texttt{ABSTAIN} decision, escalating to human teacher review without conferring personal competence judgments.
+    \item \textbf{INV-LN-08-03 (Archival Provenance Gating)}: No claim of source support is granted without a cryptographically verified and approved locator in the bibliographic registry.
+    \item \textbf{INV-LN-08-04 (Task-Oriented Formative Scaffolding)}: Formative feedback is restricted to task and process boundaries (what evidence to inspect, which locator to re-check), strictly prohibiting person-level cognitive labels.
+    \item \textbf{INV-LN-08-05 (Evaluation Isolation)}: Synthetic benchmarks and holdout evaluation suites are strictly segregated from real learner production records.
+\end{itemize}
+
+\subsection{Algorithmic Execution Pipeline}
+The diagnostic evaluation executes sequentially through four stages:
+\begin{equation}
+\mathcal{P}(x, e) = 
+\begin{cases}
+\text{\texttt{classify\_source\_error}}, & \text{if } \neg \text{VerifySource}(e) \\
+\text{\texttt{classify\_contradiction}}, & \text{if } \text{HasNegation}(x) \\
+\text{\texttt{feedback\_incomplete}}, & \text{if } \text{IsPartialReasoning}(x) \\
+\text{\texttt{preserve\_semantics}}, & \text{if } \text{HasSynonymEquivalence}(x) \\
+\text{\texttt{feedback\_supported}}, & \text{if } \text{HasCanonicalKeywords}(x) \\
+\text{\texttt{abstain}}, & \text{otherwise}
+\end{cases}
+\end{equation}
+where $x$ represents the normalized learner text (Unicode NFC) and $e$ represents the metadata of the cited evidence item.
+
+\section{Experimental Evaluation}
+
+\subsection{Evaluation Datasets}
+We evaluate the architecture on two distinct datasets:
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Synthetic Policy Benchmark}: The frozen benchmark corpus consisting of $N=720$ scenarios across four balanced fault strata ($n=144$ each) and nominal controls ($n=144$), executed under commit \texttt{a55371a5048f}.
+    \item \textbf{Independent 120-Case Holdout Dataset}: A newly generated, fully disjoint holdout dataset (\texttt{LN-08\_holdout.jsonl}) comprising 120 unique historical scenarios across 24 monuments of the Huế Imperial Citadel (Ngọ Môn, Điện Thái Hòa, Thế Tổ Miếu, Hiển Lâm Các, and the Nine Bronze Urns). The holdout is strictly balanced across five fault types ($n=24$ cases each, Table~\ref{tab:ln08-fault-breakdown}).
+\end{enumerate}
+
+\subsection{Evaluated Models and Conditions}
+We compare six configurations:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{B0 (Exact Keyword Matcher)}: Naive baseline checking presence of canonical keywords (``\textit{trục nghi lễ}'').
+    \item \textbf{B1 (Embedding Cosine Similarity)}: Stronger semantic baseline computing $n$-gram TF-IDF vector embeddings and cosine similarity against reference historical target assertions, without negation or source validation.
+    \item \textbf{I1 (LN-08 Diagnostic Engine)}: Full diagnostic reasoner with negation parsing, semantic equivalence, and source provenance validation.
+    \item \textbf{A1 (Keyword-Only Ablation)}: Ablation stripping negation and source checking.
+    \item \textbf{A2 (Disable Negation Parser Ablation)}: Strips syntactic negation checks while retaining source validation.
+    \item \textbf{A3 (Disable Source Validator Ablation)}: Strips source provenance checks while retaining negation parsing.
+\end{itemize}
+
+\subsection{Synthetic Benchmark Results}
+Table~\ref{tab:ln-08-policy-benchmark} reproduces the primary policy benchmark across the frozen $N=720$ synthetic cases.
+
+\input{results/LN-08_results.tex}
+
+Under the synthetic benchmark, the baseline B0 and ablation A1 suffer a 100.0\% diagnostic error rate ($576/576$). The proposed intervention I1 achieves 0.0\% error rate ($0/576$). Ablations A2 and A3 each exhibit 25.0\% error rates ($144/576$), directly isolating their respective sub-mechanisms.
+
+\subsection{Independent Holdout Evaluation Results}
+Table~\ref{tab:ln08-holdout-benchmark} presents the empirical results on the independent 120-case holdout dataset.
+
+\input{results/LN-08_holdout_results.tex}
+
+On the holdout evaluation, the exact keyword matcher (B0) fails on 72 of 96 eligible fault cases (75.0\% diagnostic error rate, 95\% CI $[65.5\%, 82.6\%]$). It exhibits a 100.0\% false positive negation rate ($24/24$), erroneously validating negated assertions.
+
+The embedding cosine similarity baseline (B1) reduces overall errors by capturing synonym variations (0/24 errors on $\mathcal{F}_{\text{syn}}$). However, because vector cosine similarity is insensitive to logical polarity operators, B1 falsely accepts 20 of 24 negated assertions (83.3\% false positive negation rate). Furthermore, lacking archival grounding, B1 fails completely on unverified citations ($24/24$). In total, B1 commits 48 errors on 96 eligible cases (50.0\% diagnostic error rate, 95\% CI $[40.2\%, 59.8\%]$).
+
+In contrast, the proposed LN-08 diagnostic engine (I1) achieves flawless performance across all 120 cases ($0/96$ eligible errors, 0.0\% error rate, 95\% CI $[0.0\%, 3.8\%]$). Paired two-sided McNemar tests confirm that I1's superiority is statistically significant against B0 ($p = 4.24 \times 10^{-22}$), B1 ($p = 7.11 \times 10^{-15}$), A1 ($p = 4.24 \times 10^{-22}$), A2 ($p = 1.19 \times 10^{-7}$), and A3 ($p = 1.19 \times 10^{-7}$).
+
+\subsection{Fault-Stratified Error Breakdown}
+Table~\ref{tab:ln08-fault-breakdown} provides a detailed breakdown across the five fault archetypes.
+
+\input{results/LN-08_holdout_breakdown.tex}
+
+The breakdown reveals clear architectural trade-offs:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Negation Vulnerability}: Both B0 (100.0\%) and B1 (83.3\%) fail on negated assertions. A2 demonstrates that omitting the negation parser causes a catastrophic 100.0\% failure on $\mathcal{F}_{\text{neg}}$.
+    \item \textbf{Synonym Rigidity}: B0 and A1 fail on 100.0\% of synonym variations. Both B1 and I1 successfully generalize across domain synonyms.
+    \item \textbf{Source Fabrication}: B0, B1, and A3 fail on 100.0\% of unverified historical assertions because they lack bibliographic registry cross-referencing.
+\end{itemize}
+
+\section{Pedagogical Feedback Loops}
+A core contribution of LN-08 is formative feedback generation that guides student inquiry without negative competence labeling. When an error is classified, the engine emits structured feedback templates:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{On Negation ($\mathcal{F}_{\text{neg}}$)}: ``\textit{Câu trả lời chứa mệnh đề phủ định làm sai lệch quan hệ không gian nghi lễ được ghi trong sử liệu. Hãy xem lại sơ đồ trục thần đạo.}''
+    \item \textbf{On Source Mismatch ($\mathcal{F}_{\text{unver}}$)}: ``\textit{Nguồn tư liệu dẫn chứng không hỗ trợ nhận định này. Hãy đối chiếu lại mã nguồn chuẩn từ Thư viện Sử liệu.}''
+    \item \textbf{On Partial Reasoning ($\mathcal{F}_{\text{part}}$)}: ``\textit{Câu trả lời đúng một phần nhưng còn thiếu mối quan hệ không gian - nghi lễ cốt lõi. Hãy bổ sung vị trí của công trình trên trục nghi lễ.}''
+\end{itemize}
+These prompts maintain a growth-mindset orientation by directing attention to textual evidence rather than student capability.
+
+\section{Limitations and Epistemic Scope}
+While LN-08 demonstrates high diagnostic fidelity on synthetically controlled and holdout reasoning benchmarks, several boundaries apply:
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Epistemic Scope}: The evaluation measures software policy behavior and diagnostic classification accuracy on declared reasoning archetypes. It does not measure long-term longitudinal learning gains in human classrooms.
+    \item \textbf{Domain Specificity}: The epigraphic and spatial rules are parameterized for the Imperial Citadel of Huế and the Nguyễn Dynasty. Adapting LN-08 to other cultural heritage domains requires authoring corresponding domain lexicons and source registries.
+\end{enumerate}
+
+\section{Conclusion}
+Study LN-08 demonstrates that automated diagnostic evaluation in historical education cannot rely on surface keyword presence or unconstrained embedding similarity. By integrating logical negation parsing, semantic equivalence dictionaries, and archival source verification into a unified taxonomic pipeline, LN-08 eliminates false positive acceptances and provides actionable formative feedback for historical inquiry learning.
+
+\end{document}

@@ -250,6 +250,11 @@ def restore_sql_into_db(
     container_name: Optional[str] = None,
 ) -> None:
     """Stream SQL statements into target database."""
+    # Sanitize dump: Strip PostgreSQL 17-specific parameters (like transaction_timeout)
+    # when restoring onto PG 15/16 targets (e.g. GitHub Actions CI runner)
+    if b"transaction_timeout" in sql_data:
+        sql_data = re.sub(rb"(?i)SET\s+transaction_timeout\s*=[^;]*;\s*", b"", sql_data)
+
     native_psql = shutil.which("psql")
     container = detect_docker_container(container_name)
 

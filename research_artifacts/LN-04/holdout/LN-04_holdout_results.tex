@@ -1,0 +1,22 @@
+\begin{table}[htbp]
+\centering
+\small
+\caption{Performance on 120-case independent holdout evaluation across 5 fault strata ($n=24$ each).}
+\label{tab:ln04-holdout-benchmark}
+\begin{tabular}{lrrrrr}
+\toprule
+Condition & Accuracy (95\% CI) & Leakage Rate & Citation Int. & Injection Def. & McNemar $p$ vs I1 \\
+\midrule
+B0 Direct-Answer Bot & 0.0\% [0.0, 3.1] & 100.0\% & 100.0\% & 0.0\% & $p < 0.001$ \\
+B1 Generic LLM Tutor (Soft Prompt) & 40.0\% [31.7, 48.9] & 0.0\% & 100.0\% & 0.0\% & $p < 0.001$ \\
+I1 Source-Grounded Scaffolding & 100.0\% [96.9, 100.0] & 0.0\% & 100.0\% & 100.0\% & -- \\
+A1 Disable Hint Budget & 60.0\% [51.1, 68.3] & 100.0\% & 100.0\% & 100.0\% & $p < 0.001$ \\
+A2 Disable Source Refusal & 60.0\% [51.1, 68.3] & 0.0\% & 100.0\% & 100.0\% & $p < 0.001$ \\
+A3 Disable Injection Check & 80.0\% [72.0, 86.2] & 0.0\% & 100.0\% & 0.0\% & $p < 0.001$ \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\begin{minipage}{0.98\linewidth}\footnotesize
+Evaluation on $N=120$ holdout cases across 5 fault archetypes: nominal Socratic progression, prompt injection override, unverified historical source context, early direct answer requests, and out-of-domain queries ($n=24$ each). All confidence intervals are Wilson score intervals at 95\% confidence. McNemar tests evaluate paired discordant classifications against the proposed intervention (I1).
+\end{minipage}
+\end{table}

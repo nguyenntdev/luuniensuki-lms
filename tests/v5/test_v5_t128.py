@@ -77,7 +77,7 @@ from backend.services.research_truth_gate import (
 )
 
 
-WORKSPACE_ROOT = Path("/home/clue/Documents/luuniensuki-lms")
+WORKSPACE_ROOT = Path(__file__).resolve().parents[2]
 
 
 # --------------------------------------------------------------------------- #

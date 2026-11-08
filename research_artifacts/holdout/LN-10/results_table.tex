@@ -1,0 +1,22 @@
+\begin{table}[htbp]
+\centering
+\small
+\caption{Empirical Evaluation on Independent 120-Case Holdout Dataset (LN-10 SRL State Machine)}
+\label{tab:ln-10-holdout-benchmark}
+\begin{tabular}{lcrcccc}
+\toprule
+Condition & Description & \multicolumn{1}{c}{Unjustified / $N$} & Rate & 95\% CI & Refl. Compl. & McNemar $p$ \\
+\midrule
+B0 & Linear checklist & 96 / 96 & 100.0\% & [96.2\%, 100.0\%] & 0.0\% & $p < 10^{-20}$ \\
+B1 & Timestamp progress tracker & 48 / 96 & 50.0\% & [40.1\%, 59.9\%] & 0.0\% & $p < 10^{-10}$ \\
+I1 & Zimmerman Cyclical SRL & 0 / 96 & 0.0\% & [0.0\%, 3.8\%] & 100.0\% & \textit{ref} \\
+A1 & Ablation: no reflection gate & 48 / 96 & 50.0\% & [40.1\%, 59.9\%] & 0.0\% & $p < 10^{-10}$ \\
+A2 & Ablation: no concurrency & 24 / 96 & 25.0\% & [17.4\%, 34.4\%] & 100.0\% & $p < 10^{-5}$ \\
+A3 & Ablation: no ownership & 24 / 96 & 25.0\% & [17.4\%, 34.4\%] & 100.0\% & $p < 10^{-5}$ \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\begin{minipage}{0.98\linewidth}\footnotesize
+Evaluation on $N=120$ independent holdout cases (24 nominal cases, 96 fault cases across 4 orthogonal fault archetypes: missing forethought rationale, unauthorized actor, offline version conflict, and skipped reflection gate). Unjustified transition rate measures transitions erroneously granted in the presence of violations. Reflection compliance denotes adherence to mandatory self-reflection verification prior to project milestones.
+\end{minipage}
+\end{table}

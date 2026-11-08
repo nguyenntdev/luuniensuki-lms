@@ -15,6 +15,7 @@ from __future__ import annotations
 from typing import Any
 
 from research.adaptive.prerequisite_policy import PrerequisitePolicy
+from research.baselines.strong_baselines import run_ln02_b1
 
 
 def run_policy(
@@ -28,7 +29,7 @@ def run_policy(
     Args:
         scenario_input: Pedagogical scenario dictionary containing graph_edges,
                         mastery, score_observed, learner, and target_task.
-        mode: Policy mode ('baseline', 'intervention', 'ablation').
+        mode: Policy mode ('baseline', 'b1', 'intervention', 'ablation').
         config: Configuration dictionary for policy options or ablation variants.
 
     Returns:
@@ -41,4 +42,9 @@ def run_policy(
             - unjustified_recommendation (bool)
             - research_only (bool)
     """
-    return PrerequisitePolicy.evaluate(scenario_input, mode=mode, config=config)
+    cfg = config or {}
+    if mode in ("b1", "baseline_b1", "irt"):
+        return run_ln02_b1(scenario_input, cfg)
+    if mode in ("baseline", "b0") and str(cfg.get("baseline_type", "")).lower() in ("b1", "irt", "strong"):
+        return run_ln02_b1(scenario_input, cfg)
+    return PrerequisitePolicy.evaluate(scenario_input, mode=mode, config=cfg)

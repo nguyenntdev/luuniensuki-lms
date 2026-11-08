@@ -15,6 +15,7 @@ from __future__ import annotations
 
 from typing import Any, Dict
 
+from research.baselines.strong_baselines import run_ln09_b1
 from research.teacher_analytics.intervention_rules import (
     evaluate_ablation_rules,
     evaluate_baseline_rules,
@@ -29,12 +30,17 @@ def run_policy(
     config: Dict[str, Any],
 ) -> Dict[str, Any]:
     """Execute the policy adapter for Study LN-09."""
-    if mode == "baseline":
-        result = evaluate_baseline_rules(scenario_input, config)
+    cfg = config or {}
+    if mode in ("b1", "baseline_b1", "ema"):
+        return run_ln09_b1(scenario_input, cfg)
+    if mode in ("baseline", "b0"):
+        if str(cfg.get("baseline_type", "")).lower() in ("b1", "ema", "strong"):
+            return run_ln09_b1(scenario_input, cfg)
+        result = evaluate_baseline_rules(scenario_input, cfg)
     elif mode == "intervention":
-        result = evaluate_intervention_rules(scenario_input, config)
+        result = evaluate_intervention_rules(scenario_input, cfg)
     elif mode == "ablation":
-        result = evaluate_ablation_rules(scenario_input, config)
+        result = evaluate_ablation_rules(scenario_input, cfg)
     else:
         raise ValueError(f"Unknown mode: {mode}")
 

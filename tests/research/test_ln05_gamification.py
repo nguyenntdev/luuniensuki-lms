@@ -274,3 +274,22 @@ def test_concrete_fixture_conformance():
             assert res["decision"] == expected, f"Failed on {row['case_id']} ({row['fault_id']}): got {res['decision']} expected {expected}"
             # Observable check for derive_study_metrics
             assert "badge_awarded" in res
+
+
+def test_holdout_fixture_conformance():
+    """Verify that intervention matches 100% of the 120 independent holdout scenarios."""
+    holdout_path = Path(__file__).resolve().parents[2] / "research" / "fixtures" / "holdout" / "LN-05_holdout.jsonl"
+    assert holdout_path.exists(), f"Holdout fixture missing: {holdout_path}"
+
+    with open(holdout_path, encoding="utf-8") as f:
+        lines = f.readlines()
+    assert len(lines) == 120, f"Expected 120 holdout cases, got {len(lines)}"
+
+    for line in lines:
+        row = json.loads(line)
+        res = run_policy(row["input"], mode="intervention", config={})
+        expected_decision = row["oracle"]["expected_decision"]
+        expected_award = row["oracle"]["expected_badge_awarded"]
+        assert res["decision"] == expected_decision, f"Decision mismatch on {row['case_id']} ({row['fault_id']}): got {res['decision']}, expected {expected_decision}"
+        assert res["badge_awarded"] == expected_award, f"Award mismatch on {row['case_id']} ({row['fault_id']}): got {res['badge_awarded']}, expected {expected_award}"
+

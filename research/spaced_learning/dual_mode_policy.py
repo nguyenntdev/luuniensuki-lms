@@ -182,6 +182,75 @@ def schedule_baseline(
     }
 
 
+def schedule_leitner_baseline(
+    scenario_input: Dict[str, Any],
+    config: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """Stronger baseline B1: Classical Leitner box scheduler without source grounding.
+
+    Enforces prerequisite fact mastery before permitting generative explanation
+    (routing unmastered cards back to Box 1 fact retrieval), BUT lacks epistemic
+    source verification (source_verified is ignored). Consequently, schedules
+    ungrounded historical explanations when sources are absent or unreviewed.
+    """
+    card = scenario_input.get("review_card", {})
+    scheduler_weight = scenario_input.get("scheduler_weight")
+    now_utc = scenario_input.get("now_utc", "")
+    due_utc = card.get("due_utc", "")
+    task_type = scenario_input.get("task_type", "historical_explanation")
+    fact_prerequisite_mastered = scenario_input.get("fact_prerequisite_mastered", False)
+
+    # 1. Parameter validity check
+    if not is_valid_finite_number(scheduler_weight):
+        return {
+            "decision": "reject_invalid_scheduler",
+            "reason_codes": ["nonfinite_weight"],
+            "policy_version": "leitner-v1",
+            "generative_assigned": False,
+            "review_burden": 0.0,
+            "task_type_coverage": 0.0,
+            "research_only": True,
+        }
+
+    # 2. Due check
+    if not is_item_due(due_utc, now_utc):
+        return {
+            "decision": "postpone",
+            "reason_codes": ["not_due"],
+            "policy_version": "leitner-v1",
+            "generative_assigned": False,
+            "review_burden": 0.0,
+            "task_type_coverage": 0.0,
+            "research_only": True,
+        }
+
+    is_generative = task_type == "historical_explanation"
+
+    # 3. Leitner prerequisite check: requires fact recall mastery before explanation
+    if is_generative and not fact_prerequisite_mastered:
+        return {
+            "decision": "assign_fact_retrieval",
+            "reason_codes": ["missing_fact_base", "leitner_box_prerequisite_demotion"],
+            "policy_version": "leitner-v1",
+            "generative_assigned": False,
+            "review_burden": 1.0,
+            "task_type_coverage": 0.5,
+            "research_only": True,
+        }
+
+    # 4. Crucial B1 characteristic: NO source grounding check!
+    # Schedules generative explanation regardless of whether card source_verified is False!
+    return {
+        "decision": "schedule_eligible",
+        "reason_codes": ["leitner_box_due_unverified_source"],
+        "policy_version": "leitner-v1",
+        "generative_assigned": is_generative,
+        "review_burden": 2.0 if is_generative else 1.0,
+        "task_type_coverage": 1.0,
+        "research_only": True,
+    }
+
+
 def schedule_ablation(
     scenario_input: Dict[str, Any],
     ablation_type: str = "generic_fsrs",

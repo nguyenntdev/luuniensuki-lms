@@ -1,0 +1,23 @@
+% Empirical evaluation table on independent holdout dataset
+\begin{table}[htbp]
+\centering
+\small
+\caption{Empirical Evaluation on Independent 120-Case Holdout Dataset (LN-05 Evidence-Based Mastery Gamification)}
+\label{tab:ln-05-holdout-benchmark}
+\begin{tabular}{llcccccc}
+\toprule
+Condition & Policy Architecture & False / Denom & False Rate & 95\% CI & Precision & 95\% CI & McNemar $p$ \\
+\midrule
+B0 & XP-only threshold baseline & 96 / 96 & 100.0\% & [96.2\%, 100.0\%] & 20.0\% & [13.8\%, 28.0\%] & $p < 10^{-15}$ \\
+B1 & Streak counter with basic deduplication & 72 / 96 & 75.0\% & [65.5\%, 82.6\%] & 25.0\% & [17.4\%, 34.5\%] & $p < 10^{-15}$ \\
+I1 & Proof-of-mastery with event deduplication & 0 / 96 & 0.0\% & [0.0\%, 3.8\%] & 100.0\% & [86.2\%, 100.0\%] & \textit{ref} \\
+A1 & Ablation: xp\_only (bypass proof \& dedup) & 96 / 96 & 100.0\% & [96.2\%, 100.0\%] & 20.0\% & [13.8\%, 28.0\%] & $p < 10^{-15}$ \\
+A2 & Ablation: disable\_anti\_replay (bypass event dedup) & 24 / 96 & 25.0\% & [17.4\%, 34.5\%] & 50.0\% & [36.4\%, 63.6\%] & $p < 10^{-4}$ \\
+A3 & Ablation: disable\_provenance (accept client actor) & 24 / 96 & 25.0\% & [17.4\%, 34.5\%] & 50.0\% & [36.4\%, 63.6\%] & $p < 10^{-4}$ \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\begin{minipage}{0.98\linewidth}\footnotesize
+Evaluation on $N=120$ independent holdout cases (24 nominal cases with genuine competency evidence, 96 fault cases across 4 orthogonal fault archetypes: event replay duplicates, missing/insufficient competency evidence, client-spoofed XP injections, and stale policy version revalidation). False Rate denotes false mastery award rate on eligible fault cases (lower is better; ideal: 0\%). Precision denotes genuine competency masteries among total badges awarded (higher is better; ideal: 100\%). Paired McNemar tests evaluate fault blocking discordant pairs against Intervention I1 (df = 1, continuity-corrected).
+\end{minipage}
+\end{table}

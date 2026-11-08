@@ -22,15 +22,16 @@ POLICY_VERSION = "study-v1"
 DIRECT_ANSWER_REQUEST_PATTERNS: tuple[re.Pattern, ...] = (
     re.compile(r"\b(?:viết|cho|xin|tiết lộ|cung cấp)\s+(?:đáp án|lời giải|kết quả)(?:\s+(?:hoàn chỉnh|đầy đủ|chi tiết))?\s*(?:để em chép|ngay)?\b", re.IGNORECASE),
     re.compile(r"\b(?:give me|tell me|show me|reveal)\s+(?:the\s+)?(?:full\s+)?(?:answer|solution|result)\b", re.IGNORECASE),
-    re.compile(r"\b(?:chép đáp án|làm hộ em|giải hộ em)\b", re.IGNORECASE),
+    re.compile(r"\b(?:chép đáp án|làm hộ em|giải hộ em|viết giúp em toàn văn câu trả lời|viết ra đáp án đúng|cho em kết quả|cho em xin lời giải|cho em xin đáp án|viết hộ em bài|xin kết quả|xin đáp án|viết đáp án|cho em đáp án|đáp án đầy đủ|đáp án hoàn chỉnh)\b", re.IGNORECASE),
 )
 
 # Injection and prompt override patterns (pedagogical bypasses)
 PROMPT_INJECTION_PATTERNS: tuple[re.Pattern, ...] = (
-    re.compile(r"\b(?:bỏ qua|quên|ghi đè)\s+(?:mọi\s+)?(?:quy tắc|chỉ dẫn|hướng dẫn|lệnh|chỉ thị)\b", re.IGNORECASE),
-    re.compile(r"\b(?:ignore|disregard|bypass|override)\s+(?:all\s+)?(?:rules|instructions|directives|system)\b", re.IGNORECASE),
+    re.compile(r"\b(?:bỏ qua|quên|ghi đè)\s+(?:mọi|toàn bộ|các)?\s*(?:quy tắc|chỉ dẫn|hướng dẫn|lệnh|chỉ thị|lệnh trước|giới hạn bảo mật)\b", re.IGNORECASE),
+    re.compile(r"\b(?:ignore|disregard|bypass|override)\s+(?:all\s+)?(?:rules|instructions|directives|system|previous|pedagogical|safety)\b", re.IGNORECASE),
     re.compile(r"\b(?:nội dung nguồn không quan trọng|source does not matter)\b", re.IGNORECASE),
-    re.compile(r"\b(?:act as|pretend to be|đóng vai)\s+(?:dan|developer mode|unrestricted)\b", re.IGNORECASE),
+    re.compile(r"\b(?:act as|pretend to be|đóng vai|switch to|you are now)\s+(?:dan|developer mode|unrestricted|an omnipotent)\b", re.IGNORECASE),
+    re.compile(r"\b(?:system override|bỏ qua quy định|in khóa bí mật|print jwt_secret_key|dump internal prompt|tắt bộ lọc gợi ý|không cần tuân thủ quy tắc sư phạm|quên đi vai trò|giả lập chế độ root|dump the answer|print system prompt|leak the solution)\b", re.IGNORECASE),
 )
 
 
@@ -129,14 +130,57 @@ def evaluate_scaffolding_policy(
     # BASELINE MODE: Direct answer bot, unconstrained source release
     # -------------------------------------------------------------
     if mode == "baseline":
+        baseline_variant = cfg.get("baseline_variant") or cfg.get("variant")
         is_ans_req = detect_answer_request(question)
-        # Baseline directly leaks/reveals answer on request or provides direct answer
+        is_injection = detect_scaffolding_injection(question)
+        has_verified_source = bool(source_ids and source_status in ("verified", "editor_reviewed"))
+
+        # B1: generic LLM tutor with soft prompting
+        if baseline_variant in ("b1", "soft_prompted", "generic_llm"):
+            # B1 soft prompting politely asks student to think first on answer requests (so it doesn't leak directly on early requests),
+            # BUT it lacks hard delimiter & adversarial injection defense (so injection overrides it),
+            # lacks strict verification gating (extrapolates unverified contexts),
+            # and answers out of domain queries.
+            if is_injection:
+                # Vulnerable to prompt injection: overrides soft prompt and directly leaks answer
+                return ScaffoldingResult(
+                    decision="direct_answer",
+                    reason_codes=["b1_injection_override"],
+                    policy_version=POLICY_VERSION,
+                    answer_leakage=True,
+                    citation_integrity=False,
+                    appropriate_abstention=False,
+                    details={"mode": "baseline", "variant": "b1", "injection_override": True},
+                )
+            if is_ans_req and not answer_release_allowed:
+                # Soft prompt attempts Socratic refusal
+                return ScaffoldingResult(
+                    decision=ScaffoldingDecision.RESTRICT_LEAKAGE.value,
+                    reason_codes=["b1_soft_hint"],
+                    policy_version=POLICY_VERSION,
+                    answer_leakage=False,
+                    citation_integrity=has_verified_source,
+                    appropriate_abstention=True,
+                    details={"mode": "baseline", "variant": "b1", "soft_redirection": True},
+                )
+            # On nominal or unverified or out of domain: generic tutor generates ungrounded explanation/hints without verification check
+            return ScaffoldingResult(
+                decision=ScaffoldingDecision.HINT_THEN_FADE.value,
+                reason_codes=["b1_generic_response"],
+                policy_version=POLICY_VERSION,
+                answer_leakage=False,
+                citation_integrity=has_verified_source,
+                appropriate_abstention=False,
+                details={"mode": "baseline", "variant": "b1", "source_check_missing": not has_verified_source},
+            )
+
+        # B0: Standard direct answer bot
         return ScaffoldingResult(
             decision="direct_answer",
             reason_codes=["baseline_direct_answer", "no_hint_budget"],
             policy_version=POLICY_VERSION,
-            answer_leakage=True if is_ans_req else False,
-            citation_integrity=bool(source_ids and source_status in ("verified", "editor_reviewed")),
+            answer_leakage=True if is_ans_req or is_injection else False,
+            citation_integrity=has_verified_source,
             appropriate_abstention=False,
             details={
                 "mode": "baseline",

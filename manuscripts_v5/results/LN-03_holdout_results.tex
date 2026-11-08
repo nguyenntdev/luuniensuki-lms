@@ -1,0 +1,24 @@
+\begin{table*}[t]
+\centering
+\small
+\caption{Empirical Evaluation of LN-03 Dual-Mode Spaced Learning on 120-Case Independent Holdout Benchmark.}
+\label{tab:ln03-holdout-benchmark}
+\begin{tabular}{llcccccc}
+\toprule
+Condition & Description & \multicolumn{2}{c}{Invalid Generative Rate} & 95\% CI & Mean Burden & Paired $t$ vs I1 & $p$-value \\
+\cmidrule(lr){3-4} \cmidrule(lr){5-5} \cmidrule(lr){6-6} \cmidrule(lr){7-8}
+ & & Numerator & Rate (\%) & Wilson CI & $\mu \pm \sigma$ & $t$-stat ($d$) & (vs I1) \\
+\midrule
+B0 & Interval Heuristic & 48/48 & 100.0\% & [92.6, 100.0]\% & 1.20 $\pm$ 0.98 & 8.18 (0.75) & $< 0.001$ \\
+B1 & Leitner Box (No Source Grounding) & 24/48 & 50.0\% & [36.4, 63.6]\% & 1.00 $\pm$ 0.90 & 5.45 (0.50) & $< 0.001$ \\
+I1 & Dual-Mode Spaced Learning & 0/48 & 0.0\% & [0.0, 7.4]\% & 0.60 $\pm$ 0.80 & --- & --- \\
+A1 & Ablation: Generic FSRS & 48/48 & 100.0\% & [92.6, 100.0]\% & 1.20 $\pm$ 0.98 & 8.18 (0.75) & $< 0.001$ \\
+A2 & Ablation: Omit Source Check & 24/48 & 50.0\% & [36.4, 63.6]\% & 1.00 $\pm$ 0.90 & 5.45 (0.50) & $< 0.001$ \\
+A3 & Ablation: Omit Workload Limit & 0/48 & 0.0\% & [0.0, 7.4]\% & 1.20 $\pm$ 1.95 & 5.45 (0.50) & $< 0.001$ \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\begin{minipage}{0.98\textwidth}\footnotesize
+\textbf{Note:} Primary measure is \textit{invalid\_generative\_assignment\_rate} evaluated on eligible fault scenarios ($N=48$ out of 120 holdout cases, consisting of 24 \texttt{missing\_fact\_base} and 24 \texttt{unverified\_source\_claim} cases). Review burden is evaluated across all $N=120$ cases. Statistical significance tested via paired two-tailed $t$-test (with Cohen's $d$) and exact McNemar test against intervention I1 ($p < 10^{-10}$ for B0, B1, A1, A2).
+\end{minipage}
+\end{table*}

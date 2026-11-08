@@ -26,6 +26,7 @@ from research.spiral.progression_graph import (
     evaluate_spiral_progression_ablation,
     evaluate_spiral_progression_baseline,
     evaluate_spiral_progression_intervention,
+    evaluate_spiral_progression_topological_baseline,
 )
 
 
@@ -36,8 +37,14 @@ def run_policy(
     config: Dict[str, Any],
 ) -> Dict[str, Any]:
     """Execute the policy adapter for Study LN-01."""
-    if mode == "baseline":
-        result = evaluate_spiral_progression_baseline(scenario_input, config)
+    if mode in ("baseline", "b0"):
+        baseline_type = str(config.get("baseline_type", "")).lower()
+        if baseline_type in ("topological", "b1", "topological_sort"):
+            result = evaluate_spiral_progression_topological_baseline(scenario_input, config)
+        else:
+            result = evaluate_spiral_progression_baseline(scenario_input, config)
+    elif mode in ("topological_baseline", "b1"):
+        result = evaluate_spiral_progression_topological_baseline(scenario_input, config)
     elif mode == "intervention":
         result = evaluate_spiral_progression_intervention(scenario_input, config)
     elif mode == "ablation":

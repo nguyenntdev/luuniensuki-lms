@@ -1,0 +1,23 @@
+\begin{table*}[t]
+\centering
+\small
+\caption{Granular fault breakdown error counts across reasoning archetypes ($n=24$ cases per column).}
+\label{tab:ln08-fault-breakdown}
+\begin{tabular}{lccccc}
+\toprule
+Condition & Nominal Correct & Logical Negation & Synonym Variation & Partial Reasoning & Unverified Assertion \\
+ & ($n=24$) & ($n=24$) & ($n=24$) & ($n=24$) & ($n=24$) \\
+\midrule
+B0 (Exact keyword matcher) & 0/24 & 24/24 & 24/24 & 0/24 & 24/24 \\
+B1 (Embedding cosine similarity) & 0/24 & 24/24 & 0/24 & 0/24 & 24/24 \\
+I1 (LN-08 taxonomic diagnostic reasoner) & 0/24 & 0/24 & 0/24 & 0/24 & 0/24 \\
+A1 (Ablation: keyword-only) & 0/24 & 24/24 & 24/24 & 0/24 & 24/24 \\
+A2 (Ablation: disable negation parser) & 0/24 & 24/24 & 0/24 & 0/24 & 0/24 \\
+A3 (Ablation: disable source linkage validator) & 0/24 & 0/24 & 0/24 & 0/24 & 24/24 \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\begin{minipage}{0.98\linewidth}\footnotesize
+\textbf{Summary}: Naive keyword matcher (B0) fails completely on negation (false positive), synonym variation (false negative), and unverified sources (false positive). Embedding baseline (B1) resolves synonyms via semantic vector proximity but retains high vulnerability to negation and citation fabrication. Component ablations confirm that negation parsing (A2) and source validation (A3) are individually necessary and collectively sufficient (I1) to eliminate diagnostic errors.
+\end{minipage}
+\end{table*}

@@ -1,0 +1,48 @@
+{
+  "description": "NOT REAL LEARNER DATA",
+  "source_commit": "54da2beb71f3df70e1f00b215ae0fb1a850eb263",
+  "seed": 20261105,
+  "cohorts": {
+    "LN-01": {
+      "cases": 720,
+      "sha256": "ea813607379f4692f2372a818debc8e6178c2743c0f4da330623b5194f917eef"
+    },
+    "LN-02": {
+      "cases": 720,
+      "sha256": "c8ec9ceee4168a8d70464659efa3711c1c66dc5f982b114752afc67fac65a39e"
+    },
+    "LN-03": {
+      "cases": 720,
+      "sha256": "fd6c32ed84bb225a5e1f2016215726eced0fcb9ba58aba08b5689e73b6c2e8af"
+    },
+    "LN-04": {
+      "cases": 720,
+      "sha256": "c15c070d9969fdfdaef5ad323d3e8b9bcd325493cbdabfea0f904b1a0ea4509d"
+    },
+    "LN-05": {
+      "cases": 720,
+      "sha256": "3f1d5f77fccda2d66a53011418a2ce127868ba0ab0a60f3ce280897b22ada4be"
+    },
+    "LN-06": {
+      "cases": 720,
+      "sha256": "9edd98b9dae61a72b47328139ca76b052ba5fbc99a963b1a17224c291ea62102"
+    },
+    "LN-07": {
+      "cases": 720,
+      "sha256": "7a82d5c888dcd0bb24cecc062542173447c75f8832ab637ffc05f32df6614b10"
+    },
+    "LN-08": {
+      "cases": 720,
+      "sha256": "9b2fc21216d3547516f18b96bc238d4f755150dd399852d9671e39597d6526a1"
+    },
+    "LN-09": {
+      "cases": 720,
+      "sha256": "7deec3696228aabdde56808c4188bb87907577d1369d9ecb5ed6bca8853979c9"
+    },
+    "LN-10": {
+      "cases": 720,
+      "sha256": "6eb1fec8b2e6b066ed1b71acb3a719619e7ad1afde7069991cf948fa88dc08ec"
+    }
+  },
+  "created_utc": "2026-11-05T09:16:48.236788+00:00"
+}

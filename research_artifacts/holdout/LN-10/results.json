@@ -1,0 +1,279 @@
+{
+  "study": "LN-10",
+  "dataset": "research/fixtures/holdout/LN-10_holdout.jsonl",
+  "cases_total": 120,
+  "conditions": {
+    "B0": {
+      "mode": "baseline",
+      "config": {},
+      "cases_evaluated": 120,
+      "total_fault_cases": 96,
+      "total_unjustified_transitions": 96,
+      "unjustified_transition_rate": 1.0,
+      "ci_95": [
+        0.9615,
+        1.0
+      ],
+      "reflection_compliance_rate": 0.0,
+      "reflection_gate_tested": 48,
+      "reflection_gate_passed": 0,
+      "nominal_cases": 24,
+      "nominal_preserved": 24,
+      "nominal_preservation_rate": 1.0,
+      "fault_breakdown": {
+        "missing_forethought_rationale": {
+          "n": 24,
+          "unjustified": 24
+        },
+        "unauthorized_actor": {
+          "n": 24,
+          "unjustified": 24
+        },
+        "offline_version_conflict": {
+          "n": 24,
+          "unjustified": 24
+        },
+        "skipped_reflection_gate": {
+          "n": 24,
+          "unjustified": 24
+        }
+      },
+      "condition_id": "B0",
+      "description": "Linear checklist without state gating"
+    },
+    "B1": {
+      "mode": "baseline_progress_tracker",
+      "config": {},
+      "cases_evaluated": 120,
+      "total_fault_cases": 96,
+      "total_unjustified_transitions": 48,
+      "unjustified_transition_rate": 0.5,
+      "ci_95": [
+        0.4019,
+        0.5981
+      ],
+      "reflection_compliance_rate": 0.0,
+      "reflection_gate_tested": 48,
+      "reflection_gate_passed": 0,
+      "nominal_cases": 24,
+      "nominal_preserved": 24,
+      "nominal_preservation_rate": 1.0,
+      "fault_breakdown": {
+        "missing_forethought_rationale": {
+          "n": 24,
+          "unjustified": 24
+        },
+        "unauthorized_actor": {
+          "n": 24,
+          "unjustified": 0
+        },
+        "offline_version_conflict": {
+          "n": 24,
+          "unjustified": 0
+        },
+        "skipped_reflection_gate": {
+          "n": 24,
+          "unjustified": 24
+        }
+      },
+      "condition_id": "B1",
+      "description": "Timestamp-based progress tracker without reflection verification"
+    },
+    "I1": {
+      "mode": "intervention",
+      "config": {},
+      "cases_evaluated": 120,
+      "total_fault_cases": 96,
+      "total_unjustified_transitions": 0,
+      "unjustified_transition_rate": 0.0,
+      "ci_95": [
+        0.0,
+        0.0385
+      ],
+      "reflection_compliance_rate": 1.0,
+      "reflection_gate_tested": 48,
+      "reflection_gate_passed": 48,
+      "nominal_cases": 24,
+      "nominal_preserved": 24,
+      "nominal_preservation_rate": 1.0,
+      "fault_breakdown": {
+        "missing_forethought_rationale": {
+          "n": 24,
+          "unjustified": 0
+        },
+        "unauthorized_actor": {
+          "n": 24,
+          "unjustified": 0
+        },
+        "offline_version_conflict": {
+          "n": 24,
+          "unjustified": 0
+        },
+        "skipped_reflection_gate": {
+          "n": 24,
+          "unjustified": 0
+        }
+      },
+      "condition_id": "I1",
+      "description": "Zimmerman cyclical SRL state machine with atomic reflection gates"
+    },
+    "A1": {
+      "mode": "ablation",
+      "config": {
+        "disable_reflection": true
+      },
+      "cases_evaluated": 120,
+      "total_fault_cases": 96,
+      "total_unjustified_transitions": 48,
+      "unjustified_transition_rate": 0.5,
+      "ci_95": [
+        0.4019,
+        0.5981
+      ],
+      "reflection_compliance_rate": 0.0,
+      "reflection_gate_tested": 48,
+      "reflection_gate_passed": 0,
+      "nominal_cases": 24,
+      "nominal_preserved": 24,
+      "nominal_preservation_rate": 1.0,
+      "fault_breakdown": {
+        "missing_forethought_rationale": {
+          "n": 24,
+          "unjustified": 24
+        },
+        "unauthorized_actor": {
+          "n": 24,
+          "unjustified": 0
+        },
+        "offline_version_conflict": {
+          "n": 24,
+          "unjustified": 0
+        },
+        "skipped_reflection_gate": {
+          "n": 24,
+          "unjustified": 24
+        }
+      },
+      "condition_id": "A1",
+      "description": "Ablation: disabled reflection gate and rationale"
+    },
+    "A2": {
+      "mode": "ablation",
+      "config": {
+        "disable_concurrency": true
+      },
+      "cases_evaluated": 120,
+      "total_fault_cases": 96,
+      "total_unjustified_transitions": 24,
+      "unjustified_transition_rate": 0.25,
+      "ci_95": [
+        0.1741,
+        0.3451
+      ],
+      "reflection_compliance_rate": 1.0,
+      "reflection_gate_tested": 48,
+      "reflection_gate_passed": 48,
+      "nominal_cases": 24,
+      "nominal_preserved": 24,
+      "nominal_preservation_rate": 1.0,
+      "fault_breakdown": {
+        "missing_forethought_rationale": {
+          "n": 24,
+          "unjustified": 0
+        },
+        "unauthorized_actor": {
+          "n": 24,
+          "unjustified": 0
+        },
+        "offline_version_conflict": {
+          "n": 24,
+          "unjustified": 24
+        },
+        "skipped_reflection_gate": {
+          "n": 24,
+          "unjustified": 0
+        }
+      },
+      "condition_id": "A2",
+      "description": "Ablation: disabled optimistic concurrency control"
+    },
+    "A3": {
+      "mode": "ablation",
+      "config": {
+        "disable_ownership": true
+      },
+      "cases_evaluated": 120,
+      "total_fault_cases": 96,
+      "total_unjustified_transitions": 24,
+      "unjustified_transition_rate": 0.25,
+      "ci_95": [
+        0.1741,
+        0.3451
+      ],
+      "reflection_compliance_rate": 1.0,
+      "reflection_gate_tested": 48,
+      "reflection_gate_passed": 48,
+      "nominal_cases": 24,
+      "nominal_preserved": 24,
+      "nominal_preservation_rate": 1.0,
+      "fault_breakdown": {
+        "missing_forethought_rationale": {
+          "n": 24,
+          "unjustified": 0
+        },
+        "unauthorized_actor": {
+          "n": 24,
+          "unjustified": 24
+        },
+        "offline_version_conflict": {
+          "n": 24,
+          "unjustified": 0
+        },
+        "skipped_reflection_gate": {
+          "n": 24,
+          "unjustified": 0
+        }
+      },
+      "condition_id": "A3",
+      "description": "Ablation: disabled learner ownership verification"
+    }
+  },
+  "paired_tests_vs_I1": {
+    "I1_vs_B0": {
+      "b_i1_better": 96,
+      "c_other_better": 0,
+      "mcnemar_chi2": 94.0104,
+      "p_value": 3.1386774031298533e-22,
+      "significant": true
+    },
+    "I1_vs_B1": {
+      "b_i1_better": 48,
+      "c_other_better": 0,
+      "mcnemar_chi2": 46.0208,
+      "p_value": 1.170021311706631e-11,
+      "significant": true
+    },
+    "I1_vs_A1": {
+      "b_i1_better": 48,
+      "c_other_better": 0,
+      "mcnemar_chi2": 46.0208,
+      "p_value": 1.170021311706631e-11,
+      "significant": true
+    },
+    "I1_vs_A2": {
+      "b_i1_better": 24,
+      "c_other_better": 0,
+      "mcnemar_chi2": 22.0417,
+      "p_value": 2.667954593624791e-06,
+      "significant": true
+    },
+    "I1_vs_A3": {
+      "b_i1_better": 24,
+      "c_other_better": 0,
+      "mcnemar_chi2": 22.0417,
+      "p_value": 2.667954593624791e-06,
+      "significant": true
+    }
+  },
+  "timestamp": "2026-11-08T05:22:01Z"
+}

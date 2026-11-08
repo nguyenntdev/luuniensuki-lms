@@ -1,0 +1,22 @@
+\begin{table*}[t]
+\centering
+\small
+\caption{Empirical evaluation on independent holdout dataset ($N=120$, 24 cases per fault stratum) comparing diagnostic reasoning architectures against the ground-truth historical oracle.}
+\label{tab:ln08-holdout-benchmark}
+\begin{tabular}{llrrrrrc}
+\toprule
+Condition & Architecture & Errors (All) & Overall Err & Errors (Elig.) & Diagnostic Err (95\% CI) & FP Neg. Rate & McNemar $p$ vs.\ I1 \\
+\midrule
+B0 & Exact keyword matcher & 72/120 & 60.0\% & 72/96 & 75.0\% [65.5\%, 82.6\%] & 100.0\% & 4.24e-22 \\
+B1 & Embedding cosine similarity (no negation parser) & 48/120 & 40.0\% & 48/96 & 50.0\% [40.2\%, 59.8\%] & 83.3\% & 7.11e-15 \\
+I1 & LN-08 taxonomic diagnostic reasoner & 0/120 & 0.0\% & 0/96 & 0.0\% [0.0\%, 3.8\%] & 0.0\% & \textit{ref} \\
+A1 & Ablation: keyword-only & 72/120 & 60.0\% & 72/96 & 75.0\% [65.5\%, 82.6\%] & 100.0\% & 4.24e-22 \\
+A2 & Ablation: disable negation parser & 24/120 & 20.0\% & 24/96 & 25.0\% [17.4\%, 34.5\%] & 100.0\% & 1.19e-07 \\
+A3 & Ablation: disable source linkage validator & 24/120 & 20.0\% & 24/96 & 25.0\% [17.4\%, 34.5\%] & 0.0\% & 1.19e-07 \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\begin{minipage}{0.98\linewidth}\footnotesize
+\textbf{Notes}: $N=120$ independent holdout cases partitioned across five balanced strata (24 cases each): \textit{nominal\_correct}, \textit{logical\_negation\_misconception}, \textit{synonym\_variation}, \textit{partial\_reasoning}, and \textit{unverified\_historical\_assertion}. Eligible fault denominator ($N=96$) excludes nominal cases. Confidence intervals denote Wilson 95\% score intervals. Paired differences against intervention I1 are computed via two-sided McNemar's test with continuity correction.
+\end{minipage}
+\end{table*}

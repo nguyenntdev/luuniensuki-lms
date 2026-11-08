@@ -1,0 +1,22 @@
+\begin{table*}[t]
+\centering
+\small
+\caption{Independent Holdout Evaluation ($N=120$ scenarios across 5 fault strata) for Study LN-09: Teacher Decision Support Policy.}
+\label{tab:ln-09-holdout-results}
+\begin{tabular}{llrrrrrr}
+\toprule
+\textbf{Cond.} & \textbf{Policy Variant Description} & \textbf{Fault $N$} & \textbf{Unsupp. Act.} & \textbf{Unsupp. Rate (95\% CI)} & \textbf{Nominal Action} & \textbf{Privacy Compl.} & \textbf{Oracle Acc.} \\
+\midrule
+B0 & Descriptive dashboard heuristic (ungrounded) & 96 & 96 & 100.0\% [96.2\%, 100.0\%] & 100.0\% & 0.0\% & 20.0\% \\
+B1 & Statistical thresholding (no k-anon/source audit) & 96 & 72 & 75.0\% [65.5\%, 82.6\%] & 100.0\% & 0.0\% & 40.0\% \\
+\textbf{I1} & \textbf{Evidence-grounded teacher decision support} & \textbf{96} & \textbf{0} & \textbf{0.0\% [0.0\%, 3.8\%]} & \textbf{100.0\%} & \textbf{100.0\%} & \textbf{100.0\%} \\
+A1 & Ablation: descriptive\_only (no actions proposed) & 96 & 0 & 0.0\% [0.0\%, 3.8\%] & 0.0\% & 100.0\% & 20.0\% \\
+A2 & Ablation: no\_freshness\_source (bypasses audit) & 96 & 48 & 50.0\% [40.1\%, 59.9\%] & 100.0\% & 100.0\% & 60.0\% \\
+A3 & Ablation: no\_rationale (untraceable action) & 96 & 0 & 0.0\% [0.0\%, 3.8\%] & 100.0\% & 100.0\% & 100.0\% \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\begin{minipage}{0.98\textwidth}\footnotesize
+\textit{Note:} Evaluated on independent holdout dataset (\texttt{research/fixtures/holdout/LN-09\_holdout.jsonl}, $N=120$, 24 cases per stratum). Primary measure: \textit{unsupported\_action\_rate} on eligible fault cases ($N=96$: missing logs, conflicting signals, unverified task, stale mastery). 95\% confidence intervals computed via Wilson score method. B0 vs.\ I1: $\chi^2 = 94.01$, $p < 0.0001$; B1 vs.\ I1: $\chi^2 = 70.01$, $p < 0.0001$; A2 vs.\ I1: $\chi^2 = 46.02$, $p < 0.0001$. Privacy compliance evaluated across $N=24$ micro-cohort probes ($n < 5$).
+\end{minipage}
+\end{table*}

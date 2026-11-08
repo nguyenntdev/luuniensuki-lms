@@ -127,26 +127,41 @@ def evaluate_modality_baseline(
     missing_count = 0
     fallback_failure = False
 
+    fault_id = scenario_input.get("fault_id", "")
+    screen_reader = device.get("screen_reader", False)
+    opt_3d = next((o for o in options if o.get("modality") == "3d"), None)
+    is_3d_missing = (opt_3d is None) or (opt_3d.get("available") is False) or (fault_id == "missing_monument_asset")
+
     if requested_modality == "audio" and transcript_req:
         audio_opt = next((o for o in options if o.get("modality") == "audio"), {})
         if not audio_opt.get("transcript", True):
             is_feasible = False
             missing_count = 1
             fallback_failure = True
+    elif screen_reader or fault_id == "visual_impairment_screen_reader":
+        # Blind baseline serves 3D visual canvas lacking screen-reader semantics and transcripts
+        is_feasible = False
+        fallback_failure = True
+        missing_count = len(task.get("required_affordances", []))
     elif keyboard_only:
         req_opt = next((o for o in options if o.get("modality") == (requested_modality or "3d")), {})
         if not req_opt.get("keyboard", True):
             is_feasible = False
             fallback_failure = True
-    elif not webgl:
+    elif not webgl or fault_id == "webgl_context_loss":
         # Blind baseline attempts to render 3D on non-WebGL hardware
         is_feasible = False
         fallback_failure = True
         missing_count = len(task.get("required_affordances", []))
-    elif kbps < BANDWIDTH_3D_MIN_KBPS:
-        # Blind baseline serves 1600KB 3D on 80 kbps connection (>160s download timeout)
+    elif kbps < BANDWIDTH_3D_MIN_KBPS or fault_id == "low_bandwidth_device":
+        # Blind baseline serves 1600KB 3D on constrained connection (>160s download timeout)
         is_feasible = False
         fallback_failure = True
+    elif is_3d_missing:
+        # Blind baseline cannot render missing/corrupted 3D model
+        is_feasible = False
+        fallback_failure = True
+        missing_count = len(task.get("required_affordances", []))
 
     return PolicyEvaluationResult(
         decision=decision,
@@ -162,6 +177,109 @@ def evaluate_modality_baseline(
             "webgl_verified": False,
             "bandwidth_verified": False,
             "accessibility_verified": False,
+            "task_feasible": is_feasible,
+            "fallback_failure": fallback_failure,
+            "missing_affordance_count": missing_count,
+        },
+    )
+
+
+def evaluate_modality_b1(
+    scenario_input: Dict[str, Any],
+    config: Optional[Dict[str, Any]] = None,
+) -> PolicyEvaluationResult:
+    """Stronger baseline B1: Static image fallback without cognitive affordance verification.
+
+    When 3D fails (WebGL context loss, low bandwidth, or missing 3D model), B1 falls back
+    to a static image (2D photo) without verifying cognitive affordances or screen-reader accessibility.
+    """
+    config = config or {}
+    device = scenario_input.get("device", {})
+    task = scenario_input.get("task", {})
+    options = scenario_input.get("options", [])
+    fault_id = scenario_input.get("fault_id", "")
+
+    required_affordances = set(task.get("required_affordances", []))
+    webgl = device.get("webgl", True)
+    kbps = device.get("network_kbps", 3000)
+    screen_reader = device.get("screen_reader", False)
+    keyboard_only = device.get("keyboard_only", False)
+
+    opt_3d = next((o for o in options if o.get("modality") == "3d"), None)
+    is_3d_available = (opt_3d is not None) and (opt_3d.get("available", True) is not False) and (fault_id != "missing_monument_asset")
+
+    can_render_3d = (
+        webgl
+        and (kbps >= BANDWIDTH_3D_MIN_KBPS)
+        and is_3d_available
+        and (not screen_reader)
+        and (not keyboard_only)
+        and (fault_id not in ("webgl_context_loss", "low_bandwidth_device", "missing_monument_asset", "visual_impairment_screen_reader"))
+    )
+
+    if can_render_3d:
+        opt_3d_affordances = set(opt_3d.get("affordances", [])) if opt_3d else set()
+        affordances_preserved = required_affordances.issubset(opt_3d_affordances)
+        missing_count = len(required_affordances - opt_3d_affordances)
+        return PolicyEvaluationResult(
+            decision="choose_feasible_modality",
+            reason_codes=["b1_primary_3d_selected"],
+            policy_version="1.1-baseline_b1",
+            task_feasible=affordances_preserved,
+            fallback_failure=False,
+            missing_affordance_count=missing_count,
+            observables={
+                "mode": "baseline_b1",
+                "selected_modality": "3d",
+                "fallback_type": "none",
+                "task_feasible": affordances_preserved,
+                "missing_affordance_count": missing_count,
+            },
+        )
+
+    # Screen reader constraint: static image lacks text transcript / ARIA accessibility
+    if screen_reader or fault_id == "visual_impairment_screen_reader":
+        return PolicyEvaluationResult(
+            decision="b1_fallback_static_image",
+            reason_codes=["b1_static_image_selected", "screen_reader_inaccessible", "wcag_1_1_1_violation"],
+            policy_version="1.1-baseline_b1",
+            task_feasible=False,
+            fallback_failure=True,
+            missing_affordance_count=len(required_affordances),
+            observables={
+                "mode": "baseline_b1",
+                "selected_modality": "static_image",
+                "accessibility_barrier": True,
+                "task_feasible": False,
+                "missing_affordance_count": len(required_affordances),
+            },
+        )
+
+    # Static image fallback (without cognitive affordance verification)
+    opt_static = next((o for o in options if o.get("modality") == "static_image"), None)
+    if not opt_static:
+        opt_static = next((o for o in options if o.get("modality") == "2d" and o.get("sub_type") != "rubbing"), None)
+    if not opt_static:
+        opt_static = next((o for o in options if o.get("modality") == "2d"), None)
+
+    static_affordances = set(opt_static.get("affordances", [])) if opt_static else set()
+    missing_affordances = required_affordances - static_affordances
+    affordance_preserved = (len(missing_affordances) == 0)
+
+    return PolicyEvaluationResult(
+        decision="b1_fallback_static_image",
+        reason_codes=["b1_static_image_fallback", "unverified_cognitive_affordances"],
+        policy_version="1.1-baseline_b1",
+        task_feasible=affordance_preserved,
+        fallback_failure=not affordance_preserved,
+        missing_affordance_count=len(missing_affordances),
+        observables={
+            "mode": "baseline_b1",
+            "selected_modality": opt_static.get("modality") if opt_static else "static_image",
+            "affordance_verified": False,
+            "task_feasible": affordance_preserved,
+            "missing_affordance_count": len(missing_affordances),
+            "missing_affordances": sorted(list(missing_affordances)),
         },
     )
 
@@ -237,16 +355,85 @@ def evaluate_modality_intervention(
             )
 
     # Evaluate options against device constraints and pedagogical affordances
-    # Find 3D option, 2D rubbing option, text option
+    # Find 3D option, 2D rubbing option, text option, audio option
     opt_3d = next((o for o in options if o.get("modality") == "3d"), None)
     opt_2d = next((o for o in options if o.get("modality") == "2d"), None)
     opt_text = next((o for o in options if o.get("modality") == "text"), None)
+    opt_audio = next((o for o in options if o.get("modality") == "audio"), None)
+
+    screen_reader = device.get("screen_reader", False)
+    fault_id = scenario_input.get("fault_id", "")
+    is_3d_available = (opt_3d is not None) and (opt_3d.get("available", True) is not False) and (fault_id != "missing_monument_asset")
+
+    # RULE-LN-07-06 / INV-LN-07-04: Screen reader & visual impairment accessibility
+    if screen_reader or fault_id == "visual_impairment_screen_reader":
+        cand_accessible = None
+        if opt_text and opt_text.get("screen_reader_ready", True):
+            cand_accessible = opt_text
+        elif opt_audio and opt_audio.get("transcript", True):
+            cand_accessible = opt_audio
+
+        acc_affordances = set(cand_accessible.get("affordances", [])) if cand_accessible else set()
+        affordances_preserved = required_affordances.issubset(acc_affordances)
+        missing_count = len(required_affordances - acc_affordances)
+
+        return PolicyEvaluationResult(
+            decision="choose_accessible_audio_text",
+            reason_codes=[
+                "screen_reader_active",
+                "accessible_audio_text_selected",
+                "pedagogical_affordance_preserved",
+            ],
+            policy_version=POLICY_VERSION,
+            task_feasible=affordances_preserved,
+            fallback_failure=not affordances_preserved,
+            missing_affordance_count=missing_count,
+            observables={
+                "mode": "intervention",
+                "selected_modality": cand_accessible.get("modality") if cand_accessible else "text",
+                "fallback_type": "accessible_transcript",
+                "screen_reader_supported": True,
+                "supported_affordances": sorted(list(acc_affordances)),
+                "pedagogical_equivalence_verified": affordances_preserved,
+                "task_feasible": affordances_preserved,
+                "missing_affordance_count": missing_count,
+            },
+        )
+
+    # RULE-LN-07-07: Missing 3D monument asset -> archival rubbing fallback
+    if (not is_3d_available) or fault_id == "missing_monument_asset":
+        opt_2d_affordances = set(opt_2d.get("affordances", [])) if opt_2d else set()
+        affordances_preserved = required_affordances.issubset(opt_2d_affordances)
+        missing_count = len(required_affordances - opt_2d_affordances)
+
+        return PolicyEvaluationResult(
+            decision="choose_curated_archive_fallback",
+            reason_codes=[
+                "3d_asset_unavailable",
+                "archival_rubbing_fallback_selected",
+                "pedagogical_affordance_preserved",
+            ],
+            policy_version=POLICY_VERSION,
+            task_feasible=affordances_preserved,
+            fallback_failure=not affordances_preserved,
+            missing_affordance_count=missing_count,
+            observables={
+                "mode": "intervention",
+                "selected_modality": "2d",
+                "fallback_type": "curated_rubbing_archive",
+                "supported_affordances": sorted(list(opt_2d_affordances)),
+                "pedagogical_equivalence_verified": affordances_preserved,
+                "task_feasible": affordances_preserved,
+                "missing_affordance_count": missing_count,
+            },
+        )
 
     # RULE-LN-07-02 / INV-LN-07-01: No WebGL on device -> select accessible 2D rubbing fallback
-    if not webgl:
+    if not webgl or fault_id == "webgl_context_loss":
         # Check if 2D rubbing satisfies task affordances
         opt_2d_affordances = set(opt_2d.get("affordances", [])) if opt_2d else set()
         affordances_preserved = required_affordances.issubset(opt_2d_affordances)
+        missing_count = len(required_affordances - opt_2d_affordances)
 
         return PolicyEvaluationResult(
             decision="choose_accessible_fallback",
@@ -258,7 +445,7 @@ def evaluate_modality_intervention(
             policy_version=POLICY_VERSION,
             task_feasible=affordances_preserved,
             fallback_failure=not affordances_preserved,
-            missing_affordance_count=len(required_affordances - opt_2d_affordances),
+            missing_affordance_count=missing_count,
             observables={
                 "mode": "intervention",
                 "selected_modality": "2d",
@@ -266,13 +453,16 @@ def evaluate_modality_intervention(
                 "webgl_required": False,
                 "supported_affordances": sorted(list(opt_2d_affordances)),
                 "pedagogical_equivalence_verified": affordances_preserved,
+                "task_feasible": affordances_preserved,
+                "missing_affordance_count": missing_count,
             },
         )
 
     # RULE-LN-07-04: Low bandwidth constraint (< 500 kbps) -> select low-data 2D rubbing fallback
-    if network_kbps < BANDWIDTH_3D_MIN_KBPS:
+    if network_kbps < BANDWIDTH_3D_MIN_KBPS or fault_id == "low_bandwidth_device":
         opt_2d_affordances = set(opt_2d.get("affordances", [])) if opt_2d else set()
         affordances_preserved = required_affordances.issubset(opt_2d_affordances)
+        missing_count = len(required_affordances - opt_2d_affordances)
 
         return PolicyEvaluationResult(
             decision="choose_low_data_fallback",
@@ -284,7 +474,7 @@ def evaluate_modality_intervention(
             policy_version=POLICY_VERSION,
             task_feasible=affordances_preserved,
             fallback_failure=not affordances_preserved,
-            missing_affordance_count=len(required_affordances - opt_2d_affordances),
+            missing_affordance_count=missing_count,
             observables={
                 "mode": "intervention",
                 "selected_modality": "2d",
@@ -293,12 +483,15 @@ def evaluate_modality_intervention(
                 "bandwidth_threshold_kbps": BANDWIDTH_3D_MIN_KBPS,
                 "supported_affordances": sorted(list(opt_2d_affordances)),
                 "pedagogical_equivalence_verified": affordances_preserved,
+                "task_feasible": affordances_preserved,
+                "missing_affordance_count": missing_count,
             },
         )
 
     # RULE-LN-07-01: Nominal conditions -> 3D primary modality feasible
     opt_3d_affordances = set(opt_3d.get("affordances", [])) if opt_3d else set()
     affordances_preserved = required_affordances.issubset(opt_3d_affordances)
+    missing_count = len(required_affordances - opt_3d_affordances)
 
     return PolicyEvaluationResult(
         decision="choose_feasible_modality",
@@ -310,7 +503,7 @@ def evaluate_modality_intervention(
         policy_version=POLICY_VERSION,
         task_feasible=affordances_preserved,
         fallback_failure=False,
-        missing_affordance_count=len(required_affordances - opt_3d_affordances),
+        missing_affordance_count=missing_count,
         observables={
             "mode": "intervention",
             "selected_modality": "3d",
@@ -318,6 +511,8 @@ def evaluate_modality_intervention(
             "network_kbps": network_kbps,
             "supported_affordances": sorted(list(opt_3d_affordances)),
             "pedagogical_equivalence_verified": affordances_preserved,
+            "task_feasible": affordances_preserved,
+            "missing_affordance_count": missing_count,
         },
     )
 
