@@ -258,12 +258,13 @@ def test_v5_t110_frontend_impact_page_and_contracts_exist():
     assert page_path.exists(), f"Frontend page {page_path} must exist"
     page_content = page_path.read_text(encoding="utf-8")
 
-    # Invariants in page.tsx
-    assert "fetchImpactMetricsApi" in page_content
-    assert "completed-experiences-count" in page_content
-    assert "artisan-payout-settled" in page_content
-    assert "sponsor-support-verified" in page_content
-    assert "projection-basis-disclaimer" in page_content
+    # Invariants in impact component and page
+    component_content = (repo_root / "frontend" / "src" / "components" / "rbpc" / "RbpcImpactDashboardClient.tsx").read_text(encoding="utf-8")
+    assert "fetchImpactMetricsApi" in component_content
+    assert "completed-experiences-count" in component_content
+    assert "artisan-payout-settled" in component_content
+    assert "sponsor-support-verified" in component_content
+    assert "projection-basis-disclaimer" in component_content
 
     # Inquiries client library
     lib_content = inquiries_lib.read_text(encoding="utf-8")

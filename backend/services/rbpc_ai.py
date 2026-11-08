@@ -133,7 +133,9 @@ CONTEXT_HEADERS: dict[str, str] = {
 EVIDENCE_GAP_MESSAGES: dict[str, dict[str, str]] = {
     "vi": {
         "answer": (
+            "Đây là một khoảng trống bằng chứng trong sử liệu đã công bố. "
             "Tài liệu nghiên cứu đã được phê duyệt hiện chưa ghi nhận chi tiết về câu hỏi này. "
+            "Đây là giới hạn khoa học chân thật, không phải là câu trả lời phỏng đoán. "
             "Bạn có thể tham khảo tóm tắt lịch sử đã được kiểm chứng dưới đây hoặc trao đổi trực tiếp với nghệ nhân tại buổi trải nghiệm."
         ),
         "boundary": "Hệ thống AI không tự suy đoán thông tin ngoài tư liệu lịch sử và chứng thực của nghệ nhân.",
@@ -142,7 +144,9 @@ EVIDENCE_GAP_MESSAGES: dict[str, dict[str, str]] = {
     },
     "en": {
         "answer": (
+            "This query identifies an evidence gap in published archival sources. "
             "Approved research materials currently have no record of details regarding this query. "
+            "This is a factual boundary, not an invitation to speculate. "
             "You may refer to verified historical summaries or consult directly with artisans during workshop experiences."
         ),
         "boundary": "The AI system does not speculate beyond verified historical materials and artisan testimony.",

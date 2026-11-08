@@ -465,11 +465,13 @@ def test_negative_abuse_live_database_protection(
         )
         archive_path = Path(backup_res["archive_path"])
 
-    # Attempt to target the live database "luuniensuki_test"
+    # Attempt to target the live database
+    from scripts.backup.backup_engine import DatabaseConfig
+    source_cfg = DatabaseConfig.from_url(db_url)
     with pytest.raises(LiveDatabaseProtectionError) as exc_info:
         restore_rehearsal(
             archive_path=archive_path,
-            target_dbname="luuniensuki_test",  # Same as source DB!
+            target_dbname=source_cfg.dbname,  # Same as source DB!
             source_db_url=db_url,
         )
 

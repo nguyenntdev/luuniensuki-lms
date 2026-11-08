@@ -50,7 +50,7 @@ class ResearchTruthGateService:
     """Service managing research data provenance, audit records, and paper truth checks."""
 
     def __init__(self, workspace_root: Optional[Path] = None):
-        self.workspace_root = workspace_root or Path("/home/clue/Documents/luuniensuki-lms")
+        self.workspace_root = workspace_root or Path(__file__).resolve().parents[2]
 
     def get_or_create_canonical_batch(self, db: Session) -> ResearchSurveyBatch:
         """Fetch or persist the canonical n=1,502 survey batch and its item audits."""

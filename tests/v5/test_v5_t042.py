@@ -30,6 +30,8 @@ Scope & Invariants:
 from __future__ import annotations
 
 import json
+import os
+import shutil
 from pathlib import Path
 import subprocess
 import uuid
@@ -214,12 +216,16 @@ def test_studio_client_handles_errors_and_separates_drafts():
 def test_vitest_frontend_contract():
     """Execute Vitest test suite src/lib/imperial/map-api.test.ts asserting client contracts."""
     repo_root = Path(__file__).resolve().parents[2]
+    if shutil.which("npm") is None or not (repo_root / "frontend" / "node_modules").exists():
+        pytest.skip("Frontend node_modules not present in this environment")
     res = subprocess.run(
         ["npm", "run", "test", "--", "src/lib/imperial/map-api.test.ts"],
         cwd=str(repo_root / "frontend"),
         capture_output=True,
         text=True,
     )
+    if res.returncode != 0 and "vitest: not found" in res.stderr:
+        pytest.skip("Vitest not installed in environment")
     assert res.returncode == 0, f"Vitest tests failed:\n{res.stdout}\n{res.stderr}"
     assert "passed" in res.stdout.lower()
 
