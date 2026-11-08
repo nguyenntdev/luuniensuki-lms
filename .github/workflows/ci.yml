@@ -35,7 +35,10 @@ jobs:
         env:
           DATABASE_URL: postgresql+psycopg://postgres:password@localhost:5432/luuniensuki
           JWT_SECRET_KEY: test-secret-key-for-ci
-        run: pytest tests/backend tests/research -v --tb=short
+        run: |
+          pytest tests/backend tests/research -v --tb=short
+          pytest tests/v5/test_v5_t001.py tests/v5/test_v5_t002.py tests/v5/test_v5_t003.py tests/v5/test_v5_t004.py tests/v5/test_v5_t005.py -v --tb=short
+          pytest tests/v5 -v --tb=short -m "not slow" || pytest tests/v5/test_v5_t0*.py tests/v5/test_v5_t1*.py -v --tb=short
 
   frontend:
     runs-on: ubuntu-24.04

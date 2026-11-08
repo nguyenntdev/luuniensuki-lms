@@ -279,18 +279,25 @@ def run_ln03_b1(scenario_input: Dict[str, Any], config: Optional[Dict[str, Any]]
 
 
 # =============================================================================
-# LN-04: Prompted generic LLM tutor without progressive Socratic fading or injection sanitizer
+# LN-04: Rule-based simulated heuristic proxy for a generic unconstrained LLM tutor
+# (Simulated generic LLM proxy without progressive Socratic fading or injection sanitizer)
 # =============================================================================
 
 def run_ln04_b1(scenario_input: Dict[str, Any], config: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-    """B1 for LN-04: Prompted Generic LLM Tutor.
+    """B1 for LN-04: Rule-Based Simulated Generic LLM Proxy.
 
-    Simulates a standard commercial LLM with system prompt instructing it to answer
-    student queries directly and helpfully.
-    Lacks:
-    - Progressive Socratic hint budgeting (reveals direct answer when asked).
-    - Prompt injection / jailbreak sanitization (blindly follows override prompts).
-    - Source provenance citation verification gate (answers even if source is unverified).
+    IMPORTANT SCIENTIFIC LABELING NOTE:
+    This baseline is a deterministic rule-based heuristic proxy designed to simulate
+    the characteristic failure modes of an unconstrained, commercially prompted LLM tutor.
+    It is NOT an empirical execution of an external open-weight or commercial LLM API.
+    It models the typical conversational behavior where standard LLMs prioritize helpfulness
+    by directly fulfilling solution requests without Socratic hint budgeting, prompt injection
+    defenses, or archival source verification gates.
+
+    Simulated limitations:
+    - No progressive Socratic hint budgeting (heuristic triggers direct answer on request).
+    - No prompt injection / jailbreak sanitization (simulates standard LLM following instruction override).
+    - No source provenance citation verification gate (answers even if source is unverified).
     """
     provider = scenario_input.get("provider", {}) or {}
     provider_available = provider.get("available", True) if isinstance(provider, dict) else True
@@ -298,7 +305,8 @@ def run_ln04_b1(scenario_input: Dict[str, Any], config: Optional[Dict[str, Any]]
         return {
             "decision": "deterministic_fallback",
             "reason_codes": ["b1_provider_down", "service_unavailable"],
-            "policy_version": "ln04-b1-prompted-llm-v1.0",
+            "policy_version": "ln04-b1-simulated-llm-proxy-v1.0",
+            "baseline_type": "simulated_heuristic_llm_proxy",
             "answer_leakage": False,
             "citation_integrity": False,
             "appropriate_abstention": True,
@@ -310,7 +318,7 @@ def run_ln04_b1(scenario_input: Dict[str, Any], config: Optional[Dict[str, Any]]
     source_ids = retrieval.get("source_ids") or []
     source_status = str(retrieval.get("source_status", "unverified") or "unverified")
 
-    # Detect if user asks for direct solution
+    # Detect if user asks for direct solution (rule-based proxy pattern matching)
     direct_patterns = [
         r"\b(?:viết|cho|xin|tiết lộ|cung cấp)\s+(?:đáp án|lời giải|kết quả)",
         r"\b(?:give me|tell me|show me|reveal)\s+(?:the\s+)?(?:full\s+)?(?:answer|solution|result)",
@@ -318,14 +326,15 @@ def run_ln04_b1(scenario_input: Dict[str, Any], config: Optional[Dict[str, Any]]
     ]
     is_answer_request = any(re.search(p, question, re.IGNORECASE) for p in direct_patterns)
 
-    # Generic LLM tutor provides helpful direct answers whenever requested or inquired
+    # Heuristic proxy provides direct answers whenever requested or asked
     decision = "direct_answer" if is_answer_request else "direct_answer"
     answer_leakage = is_answer_request
 
     return {
         "decision": decision,
-        "reason_codes": ["b1_prompted_llm_helpful_response"],
-        "policy_version": "ln04-b1-prompted-llm-v1.0",
+        "reason_codes": ["b1_simulated_llm_proxy_response"],
+        "policy_version": "ln04-b1-simulated-llm-proxy-v1.0",
+        "baseline_type": "simulated_heuristic_llm_proxy",
         "answer_leakage": answer_leakage,
         "citation_integrity": bool(source_ids and source_status in ("verified", "editor_reviewed")),
         "appropriate_abstention": False,

@@ -128,7 +128,10 @@ def _get_test_db_url() -> str:
     """Resolve database URL for V5-T002 local dev test target."""
     return os.environ.get(
         "TEST_DATABASE_URL",
-        "postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_t002",
+        os.environ.get(
+            "DATABASE_URL",
+            "postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test",
+        ),
     )
 
 

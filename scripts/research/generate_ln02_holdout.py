@@ -125,7 +125,8 @@ def generate_holdout_cases() -> list[dict[str, Any]]:
             "learner": {
                 "profile_id": f"HOLD-LEARNER-{i+1:03d}",
                 "cohort": "HOLD-NOMINAL",
-                "synthetic": False,
+                "synthetic": True,
+                "evaluation_mode": "programmatic_synthetic_scenario",
                 "competencies": dict(mastery),
             },
             "mastery": dict(mastery),
@@ -202,7 +203,8 @@ def generate_holdout_cases() -> list[dict[str, Any]]:
             "learner": {
                 "profile_id": f"HOLD-LEARNER-{i+25:03d}",
                 "cohort": "HOLD-MISSING-PREREQUISITE",
-                "synthetic": False,
+                "synthetic": True,
+                "evaluation_mode": "programmatic_synthetic_scenario",
                 "competencies": dict(mastery),
             },
             "mastery": dict(mastery),
@@ -280,7 +282,8 @@ def generate_holdout_cases() -> list[dict[str, Any]]:
             "learner": {
                 "profile_id": f"HOLD-LEARNER-{i+49:03d}",
                 "cohort": "HOLD-UNOBSERVED-DIMENSION",
-                "synthetic": False,
+                "synthetic": True,
+                "evaluation_mode": "programmatic_synthetic_scenario",
                 "competencies": dict(mastery),
             },
             "mastery": dict(mastery),
@@ -353,7 +356,8 @@ def generate_holdout_cases() -> list[dict[str, Any]]:
             "learner": {
                 "profile_id": f"HOLD-LEARNER-{i+73:03d}",
                 "cohort": "HOLD-CYCLIC-DEPENDENCY",
-                "synthetic": False,
+                "synthetic": True,
+                "evaluation_mode": "programmatic_synthetic_scenario",
                 "competencies": dict(mastery),
             },
             "mastery": dict(mastery),
@@ -429,7 +433,8 @@ def generate_holdout_cases() -> list[dict[str, Any]]:
             "learner": {
                 "profile_id": f"HOLD-LEARNER-{i+97:03d}",
                 "cohort": "HOLD-INVALID-SCORE",
-                "synthetic": False,
+                "synthetic": True,
+                "evaluation_mode": "programmatic_synthetic_scenario",
                 "competencies": dict(mastery),
             },
             "mastery": dict(mastery),

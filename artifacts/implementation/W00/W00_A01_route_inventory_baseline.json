@@ -2,43 +2,44 @@
   "ticket_id": "V5-T001",
   "slot": "W00-A01",
   "baseline_sha": "54da2beb71f3df70e1f00b215ae0fb1a850eb263",
-  "recorded_at": "2026-10-21T10:57:58.767600+00:00",
+  "recorded_at": "2026-11-08T15:31:01.986150+00:00",
   "source_lock_reference": "artifacts/implementation/SOURCE_LOCK.json",
   "summary": {
-    "total_unified_endpoints": 494,
-    "fastapi_endpoints_count": 412,
+    "total_unified_endpoints": 761,
+    "fastapi_endpoints_count": 681,
     "rust_endpoints_count": 165,
     "owner_counts": {
-      "rust-native": 164,
-      "python-gateway": 330
+      "rust-native": 165,
+      "python-gateway": 596
     },
     "auth_counts": {
-      "auth_required": 341,
-      "auth_optional": 14,
-      "public": 139
+      "auth_required": 534,
+      "auth_optional": 33,
+      "public": 194
     },
     "group_counts": {
-      "admin": 113,
-      "ai": 20,
+      "admin": 144,
+      "ai": 23,
       "ai-tutor": 14,
       "auth": 7,
-      "badges-quests": 15,
-      "classrooms": 34,
+      "badges-quests": 18,
+      "classrooms": 38,
       "crash-reports": 1,
       "foundations": 4,
-      "fsrs": 6,
+      "fsrs": 8,
       "gamification": 13,
-      "heritage": 6,
-      "history": 35,
-      "imperial": 57,
+      "heritage": 18,
+      "history": 124,
+      "imperial": 66,
       "leaderboards": 6,
       "lessons": 23,
       "live": 26,
-      "notifications": 6,
-      "progress": 28,
+      "misc": 44,
+      "notifications": 8,
+      "progress": 38,
       "public-reads": 3,
       "quizzes": 8,
-      "rbpc": 12,
+      "rbpc": 70,
       "search": 1,
       "sessions": 3,
       "social": 16,
@@ -47,10 +48,10 @@
       "users": 28
     },
     "role_counts": {
-      "admin,super_admin": 69,
-      "public": 153,
-      "teacher,admin,super_admin": 85,
-      "guest,learner,teacher,admin,super_admin": 185,
+      "admin,super_admin": 78,
+      "public": 227,
+      "teacher,admin,super_admin": 147,
+      "guest,learner,teacher,admin,super_admin": 307,
       "learner,teacher,admin,super_admin": 2
     }
   },
@@ -243,6 +244,25 @@
       "rust_handler": "get(routes::sessions::get_session_stats),",
       "gateway_pinned": false,
       "summary": "Get detailed session statistics.",
+      "tags": []
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/analytics/truth-funnel",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.admin.get_truth_funnel_dashboard",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Get conversion funnel partitioned strictly by epistemological truth level",
       "tags": []
     },
     {
@@ -532,6 +552,116 @@
       "gateway_pinned": false,
       "summary": "Mark a crash report as resolved.",
       "tags": []
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/editorial/disputes",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history.get_admin_editorial_disputes",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "",
+      "tags": [
+        "history"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/editorial/disputes/resolve",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history.resolve_admin_editorial_dispute",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "",
+      "tags": [
+        "history"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/editorial/queue",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history.get_admin_editorial_queue",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "",
+      "tags": [
+        "history"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/editorial/review",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history.submit_editorial_review",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "",
+      "tags": [
+        "history"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/editorial/rights-signoff",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history.signoff_admin_editorial_rights",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "",
+      "tags": [
+        "history"
+      ]
     },
     {
       "method": "GET",
@@ -1072,6 +1202,72 @@
     },
     {
       "method": "POST",
+      "path": "/api/v1/admin/history/glossary",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history.create_admin_history_glossary_term",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Create or upsert a pedagogical glossary term with negative abuse validation.",
+      "tags": [
+        "history"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/admin/history/glossary/{term_key}",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history.update_admin_history_glossary_term",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Update a glossary term with translation integrity enforcement.",
+      "tags": [
+        "history"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/history/glossary/{term_key}/review",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history.review_admin_history_glossary_term",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Submit expert review sign-off or status transition for a glossary term.",
+      "tags": [
+        "history"
+      ]
+    },
+    {
+      "method": "POST",
       "path": "/api/v1/admin/history/relations",
       "group": "admin",
       "owner": "python-gateway",
@@ -1137,6 +1333,28 @@
       ]
     },
     {
+      "method": "GET",
+      "path": "/api/v1/admin/history/sources/{source_id}",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history.get_admin_history_source",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "",
+      "tags": [
+        "history"
+      ]
+    },
+    {
       "method": "PATCH",
       "path": "/api/v1/admin/history/sources/{source_id}",
       "group": "admin",
@@ -1157,6 +1375,44 @@
       "tags": [
         "history"
       ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/kill-switches",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.admin.get_kill_switches_status",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Get active status and runtime overrides for all system kill switches.",
+      "tags": []
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/kill-switches/{flag_key}/toggle",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.admin.toggle_kill_switch",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Toggle a kill switch / release flag at runtime (admin only).",
+      "tags": []
     },
     {
       "method": "GET",
@@ -1294,6 +1550,265 @@
       "gateway_pinned": false,
       "summary": "",
       "tags": []
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/media-cms/items",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.media_cms.list_media_items",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "List museum media assets with filter and search criteria.",
+      "tags": [
+        "admin-media-cms"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/admin/media-cms/items/{item_id}",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.media_cms.delete_media",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Delete a draft or rejected media asset.",
+      "tags": [
+        "admin-media-cms"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/media-cms/items/{item_id}",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.media_cms.get_media_item",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve details of a single media item.",
+      "tags": [
+        "admin-media-cms"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/admin/media-cms/items/{item_id}",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.media_cms.update_media_item",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Update metadata and licensing properties of a media asset.",
+      "tags": [
+        "admin-media-cms"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/media-cms/items/{item_id}/approve",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.media_cms.approve_media",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Approve a media asset in review status (admin/curator only).",
+      "tags": [
+        "admin-media-cms"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/media-cms/items/{item_id}/archive",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.media_cms.archive_media",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Archive a media asset (admin only).",
+      "tags": [
+        "admin-media-cms"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/media-cms/items/{item_id}/publish",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.media_cms.publish_media",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Publish an approved media asset and sync to historical assets catalog.",
+      "tags": [
+        "admin-media-cms"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/media-cms/items/{item_id}/reject",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.media_cms.reject_media",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Reject a media asset with mandatory review explanation.",
+      "tags": [
+        "admin-media-cms"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/media-cms/items/{item_id}/submit-review",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.media_cms.submit_media_review",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Submit a draft or rejected media asset for editorial review.",
+      "tags": [
+        "admin-media-cms"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/media-cms/items/{item_id}/version",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.media_cms.upload_media_version",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Upload a new binary version for an existing media asset.",
+      "tags": [
+        "admin-media-cms"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/media-cms/preview/{item_id}",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.media_cms.preview_media",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Get staged preview configuration and rights summary for operator preview.",
+      "tags": [
+        "admin-media-cms"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/media-cms/upload",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.media_cms.upload_media_asset",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Securely upload a museum media asset in draft status.",
+      "tags": [
+        "admin-media-cms"
+      ]
     },
     {
       "method": "POST",
@@ -1867,6 +2382,160 @@
       "gateway_pinned": false,
       "summary": "Resolve an abuse report.",
       "tags": []
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/research-factory/releases",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.research_factory.create_publication_release",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Atomically publish a collection of approved stories with signed revision and cache purge.",
+      "tags": [
+        "research-factory-admin"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/research-factory/releases/active",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.research_factory.get_active_release",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve the currently active published release manifest.",
+      "tags": [
+        "research-factory-admin"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/research-factory/releases/preflight",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.research_factory.check_release_preflight",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Run two-phase preflight validation against editorial, rights, and asset gates.",
+      "tags": [
+        "research-factory-admin"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/research-factory/releases/{release_id}",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.research_factory.get_release_by_id",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve detailed snapshot and signed manifest for a specific release.",
+      "tags": [
+        "research-factory-admin"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/research-factory/releases/{release_id}/audit",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.research_factory.get_release_audit_trail",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve correction events and cache purge records for a release.",
+      "tags": [
+        "research-factory-admin"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/research-factory/releases/{release_id}/invalidate",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.research_factory.invalidate_release",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Invalidate a specific story, claim, or entire release and immediately purge caches.",
+      "tags": [
+        "research-factory-admin"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/research-factory/releases/{release_id}/rollback",
+      "group": "admin",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.research_factory.rollback_release",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Atomically roll back a published release to a prior state and purge caches.",
+      "tags": [
+        "research-factory-admin"
+      ]
     },
     {
       "method": "GET",
@@ -2552,6 +3221,68 @@
       "rust_handler": null,
       "gateway_pinned": false,
       "summary": "",
+      "tags": []
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ai/observability/budget",
+      "group": "ai",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.ai.get_budget_status",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Check current user's AI token and cost budget allowance and remaining headroom.",
+      "tags": []
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ai/observability/budget/caps",
+      "group": "ai",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.ai.set_budget_cap",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Set custom daily token and cost budget ceilings for a user or classroom (Staff/Admin only).",
+      "tags": []
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ai/observability/metrics",
+      "group": "ai",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.ai.get_observability_metrics",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve system-wide AI observability metrics, token counts, cost, and latency percentiles (Staff only).",
       "tags": []
     },
     {
@@ -3291,10 +4022,32 @@
       ],
       "status": "ready",
       "reachable": true,
-      "fastapi_endpoint": "backend.routers.gamification.list_quests",
+      "fastapi_endpoint": "backend.routers.quests.list_quests",
       "rust_handler": "get(routes::quests::list_quests)",
       "gateway_pinned": false,
       "summary": "",
+      "tags": []
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/quests/evidence-practice/summary",
+      "group": "badges-quests",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.quests.get_quest_evidence_practice_summary",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Audit and retrieve user's verified adaptive evidence practice status for quests.",
       "tags": []
     },
     {
@@ -3331,10 +4084,54 @@
       ],
       "status": "ready",
       "reachable": true,
-      "fastapi_endpoint": "backend.routers.gamification.get_quest_detail",
+      "fastapi_endpoint": "backend.routers.quests.get_quest_detail",
       "rust_handler": "get(routes::quests::get_quest_detail),",
       "gateway_pinned": false,
       "summary": "",
+      "tags": []
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/quests/{quest_slug}/claim",
+      "group": "badges-quests",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.quests.claim_quest_reward",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Explicitly claim rewards for a completed quest with server-side verification.",
+      "tags": []
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/quests/{quest_slug}/claim-reward",
+      "group": "badges-quests",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.quests.claim_quest_reward",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Explicitly claim rewards for a completed quest with server-side verification.",
       "tags": []
     },
     {
@@ -3353,7 +4150,7 @@
       ],
       "status": "ready",
       "reachable": true,
-      "fastapi_endpoint": "backend.routers.gamification.start_quest",
+      "fastapi_endpoint": "backend.routers.quests.start_quest",
       "rust_handler": "post(routes::quests::start_quest),",
       "gateway_pinned": false,
       "summary": "",
@@ -3397,7 +4194,7 @@
       ],
       "status": "ready",
       "reachable": true,
-      "fastapi_endpoint": "backend.routers.gamification.get_quest_summary",
+      "fastapi_endpoint": "backend.routers.quests.get_quest_summary",
       "rust_handler": "get(routes::quests::get_quest_summary),",
       "gateway_pinned": false,
       "summary": "",
@@ -3745,6 +4542,8 @@
       "auth_required": true,
       "auth_optional": false,
       "roles_required": [
+        "guest",
+        "learner",
         "teacher",
         "admin",
         "super_admin"
@@ -3899,6 +4698,46 @@
     },
     {
       "method": "GET",
+      "path": "/api/v1/classrooms/{classroom_id}/gradebook",
+      "group": "classrooms",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.classrooms.get_classroom_gradebook",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Get classroom gradebook with real student roster, scores, missing/pending statuses.",
+      "tags": []
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/classrooms/{classroom_id}/gradebook/export",
+      "group": "classrooms",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.classrooms.export_classroom_gradebook_csv",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Export classroom gradebook to CSV with UTF-8 BOM encoding for Excel.",
+      "tags": []
+    },
+    {
+      "method": "GET",
       "path": "/api/v1/classrooms/{classroom_id}/leaderboard",
       "group": "classrooms",
       "owner": "python-gateway",
@@ -3997,6 +4836,48 @@
       "rust_handler": null,
       "gateway_pinned": false,
       "summary": "Get class-wide progress summary with average metrics.",
+      "tags": []
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/classrooms/{classroom_id}/roster",
+      "group": "classrooms",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.classrooms.get_classroom_roster",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Get student roster for a classroom.",
+      "tags": []
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/classrooms/{classroom_id}/rubric-analytics",
+      "group": "classrooms",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.classrooms.get_classroom_rubric_analytics",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Get school-safe rubric analytics for a classroom",
       "tags": []
     },
     {
@@ -4340,6 +5221,54 @@
       ]
     },
     {
+      "method": "GET",
+      "path": "/api/v1/reviews/evidence/due",
+      "group": "fsrs",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.fsrs.get_due_evidence_tasks",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve due primary source evidence evaluation tasks for the learner.",
+      "tags": [
+        "fsrs"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/reviews/evidence/evaluate",
+      "group": "fsrs",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.fsrs.evaluate_evidence_task",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Evaluate a primary source evidence task with anti-abuse and transparency.",
+      "tags": [
+        "fsrs"
+      ]
+    },
+    {
       "method": "POST",
       "path": "/api/v1/reviews/{card_id}/rate",
       "group": "fsrs",
@@ -4635,6 +5564,162 @@
     },
     {
       "method": "GET",
+      "path": "/api/v1/heritage/audit/random-audit",
+      "group": "heritage",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.heritage.get_heritage_random_audit",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Public random audit verifying zero unapproved claims and zero revoked media assets.",
+      "tags": [
+        "heritage"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/heritage/catalog",
+      "group": "heritage",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.heritage.get_heritage_catalog",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve canonical heritage catalog (9 Urns & 162 Motifs) with ETag caching.",
+      "tags": [
+        "heritage"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/heritage/catalog/motifs/{motif_id}",
+      "group": "heritage",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.heritage.get_heritage_catalog_motif",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve canonical catalog details for a single Motif by stable ID or slug with ETag caching.",
+      "tags": [
+        "heritage"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/heritage/catalog/motifs/{motif_id}/claims",
+      "group": "heritage",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.heritage.get_heritage_catalog_motif_claims",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve approved, verified atomic historical claims for a canonical motif.",
+      "tags": [
+        "heritage"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/heritage/catalog/revision",
+      "group": "heritage",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.heritage.update_heritage_catalog_revision",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Staff editorial endpoint to update an approved revision of an urn or motif.",
+      "tags": [
+        "heritage"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/heritage/catalog/{urn_slug}",
+      "group": "heritage",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.heritage.get_heritage_catalog_urn",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve canonical catalog details for a single Urn with ETag caching.",
+      "tags": [
+        "heritage"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/heritage/claims/{claim_id}/retract",
+      "group": "heritage",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.heritage.retract_heritage_claim",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Staff editorial endpoint to retract an erroneous, outdated, or disputed historical claim.",
+      "tags": [
+        "heritage"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/heritage/media/{asset_id}/revoke",
+      "group": "heritage",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.heritage.revoke_heritage_media_asset",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Staff editorial endpoint to revoke licensing/rights for a media asset.",
+      "tags": [
+        "heritage"
+      ]
+    },
+    {
+      "method": "GET",
       "path": "/api/v1/heritage/places",
       "group": "heritage",
       "owner": "python-gateway",
@@ -4725,6 +5810,60 @@
     },
     {
       "method": "GET",
+      "path": "/api/v1/heritage/places/{slug}/trail",
+      "group": "heritage",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": true,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.heritage.get_heritage_place_trail",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve curated museum QR guided trail for a heritage place.",
+      "tags": [
+        "heritage"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/heritage/publication-gate/report",
+      "group": "heritage",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": true,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.heritage.get_heritage_publication_gate_report",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve 9 Urns & 162 Motifs publication gate completeness report.",
+      "tags": [
+        "heritage"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/heritage/publication-gate/sampling-verify",
+      "group": "heritage",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": true,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.heritage.verify_heritage_sampling",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Perform sampling verification across relics ensuring source/rights gates are intact.",
+      "tags": [
+        "heritage"
+      ]
+    },
+    {
+      "method": "GET",
       "path": "/api/v1/heritage/search",
       "group": "heritage",
       "owner": "python-gateway",
@@ -4739,6 +5878,258 @@
       "summary": "Accent-tolerant, diacritic-insensitive search across heritage places.",
       "tags": [
         "heritage"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/heritage/trail/verify-qr",
+      "group": "heritage",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.heritage.verify_heritage_trail_qr_token",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Verify cryptographic authenticity of a museum trail station QR code.",
+      "tags": [
+        "heritage"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/assignments",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.list_history_assignments",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "List historical lesson assignments.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/assignments",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.create_history_assignment",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Create a classroom lesson assignment with source-locked lesson snapshot and rubric.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/assignments/{assignment_id}",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.get_history_assignment",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Get single history lesson assignment.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/assignments/{assignment_id}/assessment-basis",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.get_history_assignment_assessment_basis",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve the immutable assessment basis for an assignment (Spec V5-T033).",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/assignments/{assignment_id}/publish",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.publish_history_assignment_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Publish an assignment enforcing the negative abuse claim verification gate.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/assignments/{assignment_id}/submissions",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.list_history_assignment_submissions",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "List submissions for an assignment (teacher or admin).",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/assignments/{assignment_id}/submissions/{submission_id}",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.get_history_assignment_submission",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Get a single submission (by student owner or teacher/admin).",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/assignments/{assignment_id}/submissions/{submission_id}/grade",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.grade_history_assignment_submission_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Grade a submission using rubric criteria (teacher or admin).",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/assignments/{assignment_id}/submit",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.submit_history_assignment_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Submit student work against a source-locked assignment with validation and idempotency.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/citations/{slug_or_id}",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": true,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history.get_entity_citations",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve full bibliographic citations, public locators, translations, and epistemic uncertainty.",
+      "tags": [
+        "history"
       ]
     },
     {
@@ -4765,7 +6156,7 @@
       "group": "history",
       "owner": "python-gateway",
       "auth_required": false,
-      "auth_optional": false,
+      "auth_optional": true,
       "roles_required": [],
       "status": "ready",
       "reachable": true,
@@ -4883,6 +6274,294 @@
       "summary": "",
       "tags": [
         "history-collections"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/curriculum/competencies",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.list_curriculum_competencies",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "List standard historical competencies under Vietnam 2018 General Education Program.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/curriculum/competencies/flags/{flag_id}/resolve",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.resolve_curriculum_competency_flag",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Staff or administrator resolves or dismisses a teacher inaccuracy flag.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/curriculum/competencies/mappings",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.list_curriculum_competency_mappings",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "List curriculum competency mappings across real relics and grade bands with review warnings.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/curriculum/competencies/mappings",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.create_curriculum_competency_mapping",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Teacher or staff creates a new competency relic mapping. Defaults to unreviewed with review warning.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/curriculum/competencies/mappings/{mapping_id}",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.get_curriculum_competency_mapping",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Get single curriculum competency relic mapping with review status and warnings.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/history/curriculum/competencies/mappings/{mapping_id}",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.update_curriculum_competency_mapping",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Teacher or staff updates an existing competency relic mapping.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/curriculum/competencies/mappings/{mapping_id}/flag",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.flag_curriculum_competency_mapping",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Teacher flags an inaccurate competency mapping, triggering 'flagged' status and review warnings.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/curriculum/competencies/mappings/{mapping_id}/flags",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.list_curriculum_competency_mapping_flags",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "List teacher flags and inaccuracy reports for a competency mapping (teachers and staff only).",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/curriculum/competencies/mappings/{mapping_id}/verify",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.verify_curriculum_competency_mapping",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Staff or administrator verifies a competency mapping, clearing review warnings.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/curriculum/competencies/{code}",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.get_curriculum_competency",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Get single historical competency details by code.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/curriculum/fallbacks/{target}",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.get_curriculum_2d_fallback",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Resolve 2D rubbing asset fallback for low-bandwidth educational environments.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/curriculum/modules",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.list_curriculum_modules",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "List curriculum learning modules mapped to verified entities, claims, and 2D fallbacks.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/curriculum/modules/{slug}",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.get_curriculum_module",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Get single curriculum module with verified claim linkage and 2D rubbing fallback.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/curriculum/validate-publish",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.validate_curriculum_publication",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Validate whether a learning module or lesson satisfies the historical claim publishing gate.",
+      "tags": [
+        "history-learning"
       ]
     },
     {
@@ -5013,6 +6692,24 @@
     },
     {
       "method": "GET",
+      "path": "/api/v1/history/entities/{slug_or_id}/citations",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": true,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history.get_entity_citations",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve full bibliographic citations, public locators, translations, and epistemic uncertainty.",
+      "tags": [
+        "history"
+      ]
+    },
+    {
+      "method": "GET",
       "path": "/api/v1/history/events",
       "group": "history",
       "owner": "python-gateway",
@@ -5031,6 +6728,1162 @@
     },
     {
       "method": "GET",
+      "path": "/api/v1/history/glossary",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history.list_history_glossary",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve bilingual pedagogical glossary terms with uncertainty labeling.",
+      "tags": [
+        "history"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/glossary/{term_key}",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history.get_history_glossary_term",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve a single bilingual glossary term by its unique key.",
+      "tags": [
+        "history"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/inquiry/activities",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_inquiry.list_activities",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "",
+      "tags": [
+        "history-inquiry"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/inquiry/activities",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_inquiry.create_activity",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "",
+      "tags": [
+        "history-inquiry"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/inquiry/activities/{activity_id}",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_inquiry.get_activity",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "",
+      "tags": [
+        "history-inquiry"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/inquiry/activities/{activity_id}/groups",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_inquiry.list_groups",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "",
+      "tags": [
+        "history-inquiry"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/inquiry/activities/{activity_id}/groups",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_inquiry.create_group",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "",
+      "tags": [
+        "history-inquiry"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/board",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_inquiry.get_group_board",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve full collaborative evidence board for group.",
+      "tags": [
+        "history-inquiry"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/board/cards",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_inquiry.add_board_card",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Add an evidence card to the inquiry board.",
+      "tags": [
+        "history-inquiry"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/board/cards/{card_id}",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_inquiry.remove_board_card",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Remove evidence card from board.",
+      "tags": [
+        "history-inquiry"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/board/cards/{card_id}",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_inquiry.update_board_card",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Update evidence card positioning, column, or comparative notes on board.",
+      "tags": [
+        "history-inquiry"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/board/comparisons",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_inquiry.add_comparative_link",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Add a comparative source evidence link to the board.",
+      "tags": [
+        "history-inquiry"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/board/comparisons/{comparison_id}",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_inquiry.remove_comparative_link",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Remove a comparative source evidence link from the board.",
+      "tags": [
+        "history-inquiry"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/board/feedback",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_inquiry.add_teacher_inline_feedback",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Teacher provides inline feedback annotation on board card or section.",
+      "tags": [
+        "history-inquiry"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/board/request-revision",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_inquiry.request_board_revision",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Teacher requests revision on the evidence board, unlocking it for student revision.",
+      "tags": [
+        "history-inquiry"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/board/resubmit",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_inquiry.resubmit_board",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Group resubmits revised evidence board for teacher review.",
+      "tags": [
+        "history-inquiry"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/board/revisions",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_inquiry.get_board_revisions",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve audit trail of revision cycles for this inquiry group.",
+      "tags": [
+        "history-inquiry"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/evidence",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_inquiry.add_evidence",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "",
+      "tags": [
+        "history-inquiry"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/evidence/{evidence_id}",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_inquiry.remove_evidence",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "",
+      "tags": [
+        "history-inquiry"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/members",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_inquiry.add_member",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "",
+      "tags": [
+        "history-inquiry"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/submission",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_inquiry.get_submission",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "",
+      "tags": [
+        "history-inquiry"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/submission",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_inquiry.update_submission",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "",
+      "tags": [
+        "history-inquiry"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/submit",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_inquiry.submit_inquiry",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "",
+      "tags": [
+        "history-inquiry"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/inquiry/submissions/{submission_id}/moderate",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_inquiry.moderate_submission",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "",
+      "tags": [
+        "history-inquiry"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/learning-outcomes/assessments",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.create_learning_outcome_assessment_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Create a source-based inquiry assessment task (pre/post/delayed) linked to an approved ethics protocol.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/learning-outcomes/assessments/{assessment_id}",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.get_learning_outcome_assessment_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve an assessment task with prompt and rubric.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/learning-outcomes/assessments/{assessment_id}/submit",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.submit_learning_outcome_assessment_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Student submits answers to an objective source inquiry assessment.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/learning-outcomes/causal-metrics",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.compute_causal_learning_outcome_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Compute causal learning gain between pre/post objective inquiry assessments.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/learning-outcomes/cohort-metrics/{ethics_protocol_id}",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.get_cohort_causal_metrics_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Get aggregated cohort causal learning metrics (mean gain, Cohen's d, inter-rater reliability).",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/learning-outcomes/ethics-protocols",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.create_ethics_protocol_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Register an ethics / IRB protocol for learning outcome measurement research (staff/admin).",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/learning-outcomes/ethics-protocols/{ethics_protocol_id}/consent",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.register_pilot_guardian_consent_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Register informed guardian consent for student pilot research participation.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/learning-outcomes/ethics-protocols/{ethics_protocol_id}/consent/{consent_id}/verify",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.verify_pilot_guardian_consent_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Staff or teacher verifies authenticated guardian consent.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/learning-outcomes/ethics-protocols/{ethics_protocol_id}/consent/{consent_id}/withdraw",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.withdraw_pilot_guardian_consent_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Withdraw guardian consent, immediately suspending empirical research participation.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/learning-outcomes/ethics-protocols/{ethics_protocol_id}/consent/{student_id}/status",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.get_pilot_guardian_consent_status_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Query guardian informed consent status for a student under an ethics protocol.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/learning-outcomes/ethics-protocols/{protocol_id}",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.get_ethics_protocol_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Get ethics protocol details.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/learning-outcomes/retention/audit",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.audit_pilot_data_retention_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Audit pilot assessment and survey records exceeding data retention limits.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/learning-outcomes/retention/purge",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.purge_expired_pilot_data_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Purge student PII from expired records per Decree 13/2023/ND-CP.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/learning-outcomes/rubric-calibration",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.calibrate_submission_rubrics_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Calibrate dual independent assessor rubric evaluations and check scoring divergence.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/learning-outcomes/submissions/{submission_id}/evaluate",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.evaluate_learning_outcome_submission_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Independent assessor evaluates a student submission against objective rubric criteria.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/learning-outcomes/surveys",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.submit_subjective_survey_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Submit a subjective self-report survey (isolated from causal mastery metrics).",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/learning-outcomes/teacher-workload",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.log_teacher_workload_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Record educator workload metrics and NASA-TLX cognitive load index.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/learning-outcomes/teacher-workload/summary",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.get_teacher_workload_summary_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Summarize teacher workload metrics and burnout risk indicators.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/learning-outcomes/validate-learning-claim",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.validate_learning_improvement_claim_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Validate learning improvement claims. Rejects subjective sentiment / feelings surveys (HTTP 422).",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/lesson-plans",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.list_history_lesson_plans",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "List 45-minute lesson plans with teacher and status filters.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/lesson-plans",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.create_history_lesson_plan",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Create a new 45-minute structured lesson plan via the teacher wizard.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/lesson-plans/{plan_id}",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.get_history_lesson_plan",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve full details of a 45-minute lesson plan.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/lesson-plans/{plan_id}/printable-handout",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.get_lesson_plan_printable_handout",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve pre-formatted printable student worksheet and teacher guide.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/lesson-plans/{plan_id}/publish",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.publish_history_lesson_plan",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Publish a lesson plan enforcing negative abuse historical claims gate.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/lesson-wizard/validate",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.validate_lesson_wizard_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Validate 5-phase lesson plan against historical authority & publishing gates.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/lessons/{lesson_id}/publish",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.publish_history_lesson",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Publish a lesson enforcing the historical claim verification gate (staff/admin only).",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/lessons/{lesson_id}/quiz-sync",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.sync_lesson_quiz",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Sync real published quiz questions for a specific historical lesson.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "GET",
       "path": "/api/v1/history/map",
       "group": "history",
       "owner": "python-gateway",
@@ -5045,6 +7898,72 @@
       "summary": "Heritage map data contract (Spec section 24.3).",
       "tags": [
         "history"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/practice/submit",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.submit_mobile_practice",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Submit mobile practice assessment answers with server-authoritative grading.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/practice/sync",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.sync_mobile_practice",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Sync real published quiz questions for mobile practice modes.",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/practice/verify-badge",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.verify_badge_claim",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Verify that a completion badge was awarded via legitimate server evaluation.",
+      "tags": [
+        "history-learning"
       ]
     },
     {
@@ -5166,6 +8085,120 @@
       ]
     },
     {
+      "method": "POST",
+      "path": "/api/v1/history/research/truth-gate/audit-manuscript",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.research_truth_gate.audit_manuscript",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Audit LuuNien_Q2_EN_Revised.tex on the filesystem and record the cryptographic audit.",
+      "tags": [
+        "research-truth-gate"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/research/truth-gate/benchmarks",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.research_truth_gate.get_benchmarks",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve real measured performance runs (PERF-RESEARCH-01, PERF-API-01, PERF-AI-01).",
+      "tags": [
+        "research-truth-gate"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/research/truth-gate/survey-1502/audit",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.research_truth_gate.get_survey_1502_audit_report",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve authoritative audit report for the n=1,502 secondary student survey.",
+      "tags": [
+        "research-truth-gate"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/research/truth-gate/survey-1502/reproduce",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.research_truth_gate.reproduce_survey_1502_dataset",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Execute end-to-end de-identified survey dataset reproduction and return checksums.",
+      "tags": [
+        "research-truth-gate"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/research/truth-gate/validate-paper-claims",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.research_truth_gate.validate_paper_claims",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Validate research claims against overclaiming invariants.",
+      "tags": [
+        "research-truth-gate"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/research/truth-gate/verify-paper-figures",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.research_truth_gate.verify_paper_figures",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Verify submitted paper table items against authoritative survey metrics.",
+      "tags": [
+        "research-truth-gate"
+      ]
+    },
+    {
       "method": "GET",
       "path": "/api/v1/history/search",
       "group": "history",
@@ -5213,7 +8246,7 @@
       "group": "history",
       "owner": "rust-native",
       "auth_required": false,
-      "auth_optional": false,
+      "auth_optional": true,
       "roles_required": [],
       "status": "ready",
       "reachable": true,
@@ -5227,11 +8260,29 @@
     },
     {
       "method": "GET",
-      "path": "/api/v1/history/sources/{source_id}",
+      "path": "/api/v1/history/sources/check-duplicate",
       "group": "history",
       "owner": "rust-native",
       "auth_required": false,
       "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history.check_duplicate_source",
+      "rust_handler": "get(routes::history::get_source_by_id),",
+      "gateway_pinned": false,
+      "summary": "",
+      "tags": [
+        "history"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/sources/{source_id}",
+      "group": "history",
+      "owner": "rust-native",
+      "auth_required": false,
+      "auth_optional": true,
       "roles_required": [],
       "status": "ready",
       "reachable": true,
@@ -5346,6 +8397,30 @@
       ]
     },
     {
+      "method": "GET",
+      "path": "/api/v1/history/submissions",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_learning.list_all_history_submissions",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Historical inquiry submissions endpoint for teachers and students (Spec V5-T031).",
+      "tags": [
+        "history-learning"
+      ]
+    },
+    {
       "method": "POST",
       "path": "/api/v1/history/tutor/ask",
       "group": "history",
@@ -5365,6 +8440,24 @@
     },
     {
       "method": "GET",
+      "path": "/api/v1/history/tutor/citations/{source_id}/provenance",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_tutor.history_tutor_citation_provenance",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Inspect exact primary source reference and cryptographic provenance chain.",
+      "tags": [
+        "history-tutor"
+      ]
+    },
+    {
+      "method": "GET",
       "path": "/api/v1/history/tutor/entities",
       "group": "history",
       "owner": "python-gateway",
@@ -5377,6 +8470,24 @@
       "rust_handler": null,
       "gateway_pinned": false,
       "summary": "",
+      "tags": [
+        "history-tutor"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/tutor/provenance/{source_id}",
+      "group": "history",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.history_tutor.history_tutor_citation_provenance",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Inspect exact primary source reference and cryptographic provenance chain.",
       "tags": [
         "history-tutor"
       ]
@@ -5457,7 +8568,7 @@
       "fastapi_endpoint": "backend.routers.imperial.delete_annotation",
       "rust_handler": null,
       "gateway_pinned": false,
-      "summary": "Soft-delete / archive annotation with audit log.",
+      "summary": "Soft-delete / archive annotation with audit log and editor ownership check.",
       "tags": [
         "imperial"
       ]
@@ -5479,7 +8590,7 @@
       "fastapi_endpoint": "backend.routers.imperial.update_annotation",
       "rust_handler": null,
       "gateway_pinned": false,
-      "summary": "Update annotation coordinates or metadata with optimistic locking check.",
+      "summary": "Update annotation coordinates or metadata with optimistic locking and editor ownership checks.",
       "tags": [
         "imperial"
       ]
@@ -6049,14 +9160,75 @@
       "group": "imperial",
       "owner": "python-gateway",
       "auth_required": false,
-      "auth_optional": false,
+      "auth_optional": true,
       "roles_required": [],
       "status": "ready",
       "reachable": true,
       "fastapi_endpoint": "backend.routers.imperial.get_map_asset_image",
       "rust_handler": null,
       "gateway_pinned": false,
-      "summary": "Serve map asset image with caching headers.",
+      "summary": "Serve map asset image with strict cache headers and offline licensing validation.",
+      "tags": [
+        "imperial"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/imperial/assets/{asset_id}/license-check",
+      "group": "imperial",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.imperial.check_asset_license_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Check offline licensing status and caching policy for an asset.",
+      "tags": [
+        "imperial"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/imperial/assets/{asset_id}/revoke",
+      "group": "imperial",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.imperial.revoke_asset_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Revoke an asset and emit immediate CDN cache invalidation.",
+      "tags": [
+        "imperial"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/imperial/assets/{asset_id}/signed-token",
+      "group": "imperial",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.imperial.create_asset_signed_token",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Generate tamper-proof HMAC-SHA256 signed token for private asset access.",
       "tags": [
         "imperial"
       ]
@@ -6152,6 +9324,54 @@
       ]
     },
     {
+      "method": "POST",
+      "path": "/api/v1/imperial/inspections/complete",
+      "group": "imperial",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.imperial.complete_relic_inspection",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Record a verified relic inspection task with camera/WebXR or 2D turntable fallback.",
+      "tags": [
+        "imperial"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/imperial/inspections/{target_slug}",
+      "group": "imperial",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.imperial.get_relic_inspection_status",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Check whether a user has already completed inspection on a heritage target.",
+      "tags": [
+        "imperial"
+      ]
+    },
+    {
       "method": "GET",
       "path": "/api/v1/imperial/learning-paths",
       "group": "imperial",
@@ -6237,6 +9457,42 @@
       "rust_handler": null,
       "gateway_pinned": false,
       "summary": "Retrieve published interactive hotspots placed on a learning media asset.",
+      "tags": [
+        "imperial"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/imperial/offline-kit",
+      "group": "imperial",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.imperial.get_low_bandwidth_offline_kit",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve low-bandwidth printable / offline kit bundle",
+      "tags": [
+        "imperial"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/imperial/passport/unlock",
+      "group": "imperial",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": true,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.imperial.legacy_passport_unlock",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Legacy or background bridge endpoint for client seal unlocking.",
       "tags": [
         "imperial"
       ]
@@ -6528,6 +9784,50 @@
       "rust_handler": null,
       "gateway_pinned": false,
       "summary": "List student submissions for teacher evaluation with optional activity filtering (requires staff/teacher role).",
+      "tags": [
+        "imperial"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/imperial/teacher/submissions/{submission_id}",
+      "group": "imperial",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.imperial.get_submission_detail",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Get single student submission detail for evaluation (requires staff/teacher role).",
+      "tags": [
+        "imperial"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/imperial/teacher/submissions/{submission_id}/audit",
+      "group": "imperial",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.imperial.get_submission_audit",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve audit history and grading revisions for a submission (requires staff/teacher role).",
       "tags": [
         "imperial"
       ]
@@ -7722,6 +11022,1016 @@
     },
     {
       "method": "GET",
+      "path": "/api/v1/fsrs/evidence/due",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.fsrs.get_due_evidence_tasks",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve due primary source evidence evaluation tasks for the learner.",
+      "tags": [
+        "fsrs"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/fsrs/evidence/evaluate",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.fsrs.evaluate_evidence_task",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Evaluate a primary source evidence task with anti-abuse and transparency.",
+      "tags": [
+        "fsrs"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/fsrs/settings",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.fsrs.get_user_fsrs_settings",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Fetch user FSRS settings including opt-out status and optimal retention.",
+      "tags": [
+        "fsrs"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/fsrs/settings",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.fsrs.update_user_fsrs_settings",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Update user FSRS retention target and opt-out preferences.",
+      "tags": [
+        "fsrs"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/fsrs/transparency",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.fsrs.get_fsrs_transparency",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Inspect full FSRS-5 algorithmic transparency formulas and anti-abuse safeguards.",
+      "tags": [
+        "fsrs"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/offline/batch-sync",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.offline.batch_sync_offline_operations",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Batch synchronize multiple offline operations",
+      "tags": [
+        "offline"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/offline/sync",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.offline.sync_offline_operations",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Synchronize offline write operations idempotently",
+      "tags": [
+        "offline"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pilot/activate",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.pilot_onboarding.activate_pilot_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Authenticated user redeems an invitation token to activate private pilot access.",
+      "tags": [
+        "pilot_onboarding_portal"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pilot/health",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.pilot_onboarding.get_pilot_health_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve usage health, engagement telemetry, and score for current pilot user.",
+      "tags": [
+        "pilot_onboarding_portal"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pilot/invitations",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.pilot_onboarding.list_invitations_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Staff lists all pilot invitations.",
+      "tags": [
+        "pilot_onboarding_portal"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pilot/invitations",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.pilot_onboarding.create_invitation_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Staff generates a secure pilot invitation token.",
+      "tags": [
+        "pilot_onboarding_portal"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pilot/invitations/validate",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.pilot_onboarding.validate_invitation_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Check whether a pilot invitation token is valid before redemption.",
+      "tags": [
+        "pilot_onboarding_portal"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pilot/my-activation",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.pilot_onboarding.get_my_activation_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Get active pilot trial activation and guided checklist progress.",
+      "tags": [
+        "pilot_onboarding_portal"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pilot/onboarding/step",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.pilot_onboarding.record_onboarding_step_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Record completion of a guided activation checklist step.",
+      "tags": [
+        "pilot_onboarding_portal"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pilot/support",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.pilot_onboarding.list_support_requests_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "List pilot support tickets. Staff sees all, participants see their own.",
+      "tags": [
+        "pilot_onboarding_portal"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pilot/support",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.pilot_onboarding.create_support_request_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Create a pilot feedback or support ticket.",
+      "tags": [
+        "pilot_onboarding_portal"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pilot/support/{ticket_id}/reply",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.pilot_onboarding.reply_support_request_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Add a response to a pilot support ticket.",
+      "tags": [
+        "pilot_onboarding_portal"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pilot/telemetry",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.pilot_onboarding.record_telemetry_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Log an interaction action to maintain pilot usage health.",
+      "tags": [
+        "pilot_onboarding_portal"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pricing/calculator",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.pricing.calculate_pricing_estimate",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Compute non-binding estimate for school or institution with strict 0 VND recognized revenue invariant.",
+      "tags": [
+        "pricing_experiment"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pricing/config",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.pricing.get_pricing_experiment_config",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve pricing experiment configuration, transparent tiers, and anti-dark-pattern notices.",
+      "tags": [
+        "pricing_experiment"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pricing/contracts",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.pricing.create_institutional_contract",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Draft an institutional contract for school or district partner.",
+      "tags": [
+        "pricing_experiment"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pricing/contracts/{contract_id}/accept",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.pricing.accept_and_sign_contract",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Real contract acceptance and execution with cryptographic verification.",
+      "tags": [
+        "pricing_experiment"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pricing/events",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": true,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.pricing.record_pricing_interest_event",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Record pricing interest telemetry with user consent.",
+      "tags": [
+        "pricing_experiment"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pricing/metrics/summary",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": true,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.pricing.get_pricing_metrics_summary",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Get aggregated metrics verifying anti-abuse: tier views & calculator clicks = 0 revenue.",
+      "tags": [
+        "pricing_experiment"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": true,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.classrooms.list_schools",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "List schools with optional filters.",
+      "tags": []
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/schools",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.classrooms.create_school",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Create a new school (staff/admin only).",
+      "tags": []
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/{school_id}",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": true,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.classrooms.get_school",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Get school details.",
+      "tags": []
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/schools/{school_id}",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.classrooms.update_school",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Update school details (staff/admin only).",
+      "tags": []
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/{school_id}/classrooms",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.classrooms.list_school_classrooms",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "List classrooms associated with a school.",
+      "tags": []
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/schools/{school_id}/members",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.classrooms.add_school_member",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Add a teacher or staff member to a school.",
+      "tags": []
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/teacher/onboarding/complete",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.teacher_onboarding.complete_teacher_onboarding",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Mark onboarding tour as completely finished.",
+      "tags": [
+        "teacher_onboarding_support"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/teacher/onboarding/dismiss",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.teacher_onboarding.dismiss_teacher_tour",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Dismiss or re-enable the interactive onboarding tour banner.",
+      "tags": [
+        "teacher_onboarding_support"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/teacher/onboarding/profile",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.teacher_onboarding.get_teacher_onboarding_profile",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve teacher onboarding profile, school verification status, and demo mode.",
+      "tags": [
+        "teacher_onboarding_support"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/teacher/onboarding/reset",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.teacher_onboarding.reset_teacher_onboarding",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Reset onboarding tour progress for re-training or demo restart.",
+      "tags": [
+        "teacher_onboarding_support"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/teacher/onboarding/step",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.teacher_onboarding.record_teacher_onboarding_step",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Record an onboarding tour step completion.",
+      "tags": [
+        "teacher_onboarding_support"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/teacher/sample-templates",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.teacher_onboarding.list_sample_templates",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "List verified sample lesson templates clearly marked as 'SAMPLE TEMPLATE'.",
+      "tags": [
+        "teacher_onboarding_support"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/teacher/sample-templates/{template_id}",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.teacher_onboarding.get_sample_template",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve details for a specific sample lesson template.",
+      "tags": [
+        "teacher_onboarding_support"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/teacher/sample-templates/{template_id}/clone",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.teacher_onboarding.clone_sample_template",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Clone a verified sample template into an editable personal draft lesson plan.",
+      "tags": [
+        "teacher_onboarding_support"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/teacher/support/tickets",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.teacher_onboarding.list_support_tickets",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "List submitted support tickets.",
+      "tags": [
+        "teacher_onboarding_support"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/teacher/support/tickets",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.teacher_onboarding.create_support_ticket",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Submit a teacher support ticket for pedagogical, technical, curriculum, or verification help.",
+      "tags": [
+        "teacher_onboarding_support"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/teacher/support/tickets/{ticket_id}",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.teacher_onboarding.get_support_ticket",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Get details of a specific support ticket.",
+      "tags": [
+        "teacher_onboarding_support"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/teacher/support/tickets/{ticket_id}/reply",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.teacher_onboarding.reply_support_ticket",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Add a follow-up reply or teacher comment to an existing support ticket.",
+      "tags": [
+        "teacher_onboarding_support"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/teacher/training/resources",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.teacher_onboarding.list_training_resources",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "List curated professional development and teacher training resources.",
+      "tags": [
+        "teacher_onboarding_support"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/teacher/training/resources/{resource_id}",
+      "group": "misc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.teacher_onboarding.get_training_resource",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve details of a specific teacher training resource.",
+      "tags": [
+        "teacher_onboarding_support"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/notifications/consent",
+      "group": "notifications",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.users.get_push_consent",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Get the current user's push notification consent status.",
+      "tags": []
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/notifications/consent",
+      "group": "notifications",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.users.update_push_consent",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Explicitly grant or revoke push notification consent.",
+      "tags": []
+    },
+    {
+      "method": "GET",
       "path": "/api/v1/notifications/history",
       "group": "notifications",
       "owner": "rust-native",
@@ -7761,7 +12071,7 @@
       "fastapi_endpoint": "backend.routers.users.register_push_token",
       "rust_handler": "post(routes::notifications::register_push),",
       "gateway_pinned": false,
-      "summary": "Register or update push notification token.",
+      "summary": "Register or update push notification token with explicit user opt-in consent.",
       "tags": []
     },
     {
@@ -7849,7 +12159,7 @@
       "fastapi_endpoint": "backend.routers.users.unregister_push_token",
       "rust_handler": "axum::routing::delete(routes::notifications::unregister_push),",
       "gateway_pinned": false,
-      "summary": "Unregister push notification token.",
+      "summary": "Unregister push notification token and promptly stop delivery.",
       "tags": []
     },
     {
@@ -8071,6 +12381,246 @@
       "gateway_pinned": false,
       "summary": "Mark a milestone as celebrated.",
       "tags": []
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/progress/action",
+      "group": "progress",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.progress.handle_progression_action",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Process a server-verified progression action (discover, complete_lesson, submit_quiz).",
+      "tags": [
+        "progress"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/progress/complete-lesson",
+      "group": "progress",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.progress.complete_lesson_action",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Record verified lesson completion.",
+      "tags": [
+        "progress"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/progress/discover",
+      "group": "progress",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.progress.discover_motif",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Record genuine discovery (hotspot / 3D exploration).",
+      "tags": [
+        "progress"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/progress/motifs/{motif_id}",
+      "group": "progress",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.progress.get_motif_progress",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve individual motif progression.",
+      "tags": [
+        "progress"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/progress/passport",
+      "group": "progress",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.progress.get_verified_passport_status",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve current student's server-verified heritage passport and distinct mastery status.",
+      "tags": [
+        "progress"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/progress/passport/check-in",
+      "group": "progress",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.progress.handle_passport_checkin",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Process a server-authenticated physical or authorized site visit check-in.",
+      "tags": [
+        "progress"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/progress/passport/classroom/{classroom_id}",
+      "group": "progress",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.progress.get_classroom_passport_analytics",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve teacher analytics for verified passport stamps across a classroom.",
+      "tags": [
+        "progress"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/progress/passport/verify-qr",
+      "group": "progress",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.progress.verify_passport_qr_token",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Verify cryptographic provenance and authenticity of a heritage QR code token.",
+      "tags": [
+        "progress"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/progress/submit-quiz",
+      "group": "progress",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.progress.submit_quiz_action",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Record quiz submission and evaluate mastery.",
+      "tags": [
+        "progress"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/progress/summary",
+      "group": "progress",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.progress.get_progression_summary",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve full student learning progression summary.",
+      "tags": [
+        "progress"
+      ]
     },
     {
       "method": "POST",
@@ -8639,6 +13189,250 @@
       ]
     },
     {
+      "method": "POST",
+      "path": "/api/v1/rbpc/admin/creators/{id}/verify",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.staff_verify_creator",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Staff endpoint to verify partner identity, display consent, and rights.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/rbpc/admin/disputes/{id}/resolve",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.resolve_review_dispute",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Staff/admin resolves a review dispute.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/rbpc/admin/experiences/{id}/moderate",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.staff_moderate_experience",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Staff endpoint to review and moderate experience listing and rights clearance.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/admin/loi-vault",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.partner_loi.register_loi",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Register a new verified LOI/charter agreement into the evidence vault.",
+      "tags": [
+        "rbpc_partner_discovery_loi_vault"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/admin/loi-vault/export",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.partner_loi.export_loi_vault",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Export the LOI vault records as Markdown table or JSON string for investor due diligence.",
+      "tags": [
+        "rbpc_partner_discovery_loi_vault"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/admin/loi-vault/{loi_id}/revoke",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.partner_loi.revoke_loi",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Revoke an active partner agreement.",
+      "tags": [
+        "rbpc_partner_discovery_loi_vault"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/admin/loi-vault/{loi_id}/verify-checksum",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.partner_loi.verify_agreement_checksum",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Verify document text or bytes against stored SHA-256 agreement digest.",
+      "tags": [
+        "rbpc_partner_discovery_loi_vault"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/admin/reviews",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.admin_list_reviews",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Staff/admin moderation queue for customer reviews and fraud inspection.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/rbpc/admin/reviews/{id}/moderate",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.moderate_customer_review",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Moderate a review: approve/publish, reject, or archive.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/availability/reservations/{ref}",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.get_reservation_status",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Visitor lookup of reservation status and remaining hold timeout.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/availability/reserve",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.reserve_workshop_seats",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Temporarily hold seat capacity in a workshop slot with a reserve timeout.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
       "method": "GET",
       "path": "/api/v1/rbpc/config",
       "group": "rbpc",
@@ -8717,6 +13511,108 @@
       ]
     },
     {
+      "method": "POST",
+      "path": "/api/v1/rbpc/editor/settlements/{id}/compliance",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.review_settlement_compliance",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Review and approve or hold a settlement for compliance and artisan payout.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/editor/settlements/{id}/disburse",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.disburse_artisan_payout",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Mark artisan payout as disbursed once banking transfer is complete.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/evidence-room/export",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.export_evidence_room",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Export evidence room catalog as structured JSON or Markdown table.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/evidence-room/pointers",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.list_evidence_pointers",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve versioned evidence room pointers with optional domain or status filter.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/evidence-room/pointers/{pointer_id}",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.get_evidence_pointer",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve a single versioned evidence pointer by pointer_id.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
       "method": "GET",
       "path": "/api/v1/rbpc/experiences/{slug}",
       "group": "rbpc",
@@ -8732,6 +13628,114 @@
       "summary": "Retrieve details of a cultural workshop offering with honest inquiry-only notice.",
       "tags": [
         "rbpc"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/experiences/{slug}/availability",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.get_experience_availability",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve workshop slots and real seat availability calendar for an experience.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/experiences/{slug}/reviews",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.list_experience_reviews",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Public endpoint to fetch verified published reviews for an experience.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/go-no-go/board",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.pilot_go_no_go.get_canonical_go_no_go_board",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve the current authoritative Pilot Go/No-Go Board state.",
+      "tags": [
+        "rbpc_pilot_go_no_go"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/go-no-go/evaluate",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.pilot_go_no_go.evaluate_go_no_go_board",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Evaluate a proposed or updated Pilot Go/No-Go Board.",
+      "tags": [
+        "rbpc_pilot_go_no_go"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/go-no-go/evaluations/{board_ref}",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.pilot_go_no_go.get_saved_go_no_go_evaluation",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve a previously audited evaluation by its unique board_ref.",
+      "tags": [
+        "rbpc_pilot_go_no_go"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/go-no-go/export",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.pilot_go_no_go.export_go_no_go_board",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Export the current Pilot Go/No-Go Board report in Markdown or JSON format.",
+      "tags": [
+        "rbpc_pilot_go_no_go"
       ]
     },
     {
@@ -8789,6 +13793,306 @@
       ]
     },
     {
+      "method": "POST",
+      "path": "/api/v1/rbpc/inquiries/status/{opaqueToken}/escalate",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.escalate_inquiry_by_token",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Customer Notification Center: Escalate late partner response when SLA (24h) is overdue.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/inquiries/status/{opaqueToken}/preferences",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.update_inquiry_preferences_by_token",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Customer Notification Center: Update notification channels (Email / SMS) opt-in preferences.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/inquiries/status/{opaqueToken}/unsubscribe",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.unsubscribe_inquiry_by_token",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Customer Notification Center: Unsubscribe from all optional email and SMS notifications.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/inquiries/status/{opaqueToken}/withdraw",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.withdraw_inquiry_status_consent",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Allow visitor to withdraw consent and redact contact details immediately.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/ledger/summary",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.get_ledger_financial_summary",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Aggregate financial summary from the verified settlement ledger.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/ledger/unit-economics",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.get_unit_economics_actual_ledger",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Aggregate verified unit economics actual ledger report.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/legal/evaluate-asset",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.evaluate_asset_clearance_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Evaluate 3D or media asset rights clearance against copyright and accuracy gates.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/legal/evaluate-commerce-gate",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.evaluate_commerce_gate_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Evaluate whether commercial features (inquiry booking, reservations, payouts) are permitted.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/legal/signoff-audit",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.get_legal_signoff_audit",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve canonical 5-domain legal and creator agreement sign-off audit.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/loi-vault",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.partner_loi.list_loi_vault",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve full LOI vault records with breakdown counts for due diligence.",
+      "tags": [
+        "rbpc_partner_discovery_loi_vault"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/loi-vault/{loi_id}",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.partner_loi.get_loi_vault_item",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve specific LOI vault record by unique ID.",
+      "tags": [
+        "rbpc_partner_discovery_loi_vault"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/oral-history/{recording_id}",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": true,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.get_oral_history_public",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Public / student access to an oral history recording and its verified transcript.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/availability/cancel",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.cancel_workshop_reservation",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Cancel a reservation or hold, restoring seat capacity to the available pool.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/availability/confirm",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.confirm_workshop_reservation",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Partner confirmation of a reserved workshop seat hold.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/experiences",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.partner_create_experience",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Allow an authenticated partner to submit an experience listing.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
       "method": "GET",
       "path": "/api/v1/rbpc/partner/inquiries",
       "group": "rbpc",
@@ -8837,6 +14141,450 @@
       ]
     },
     {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/onboarding",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.partner_self_onboard",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Allow an authenticated partner/artisan to register a craft profile.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/partner/oral-history",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.list_partner_oral_history",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "List oral history recordings for partner studio with role-based scoping.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/oral-history",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.create_oral_history_recording",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Create a new oral history recording draft with cultural context and initial transcript.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/oral-history/{recording_id}/consent",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.update_recording_consent",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Grant or update per-use media consent for an oral history recording.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/oral-history/{recording_id}/revoke",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.revoke_oral_history_recording",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Revoke consent or request erasure (right-to-erasure / GDPR / Decree 13/2023/ND-CP).",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/oral-history/{recording_id}/versions",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.add_transcript_version",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Add a new versioned transcript with timecode cues to an oral history recording.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/partner/profile",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.get_partner_profile",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve the authenticated partner's artisan profile.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/rbpc/partner/profile",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.update_partner_profile",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Allow an artisan partner to edit their profile details.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/partner/settlements",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.list_settlements",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "List settlements scoped to the authenticated partner/provider or all if admin/staff.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/settlements",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.record_settlement_transaction",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Record an actual confirmed financial settlement for an inquiry.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/partner/settlements/{id}",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.get_settlement_detail",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Get single settlement detail with multi-tenant access control.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/settlements/{id}/refund",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.process_settlement_refund",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Process a full or partial refund against a settlement.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/partner/slots",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.list_partner_workshop_slots",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "List workshop slots for experiences owned by the authenticated partner.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/slots",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": true,
+      "auth_optional": false,
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.create_workshop_slot",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Partner endpoint to open a new calendar workshop slot with seat capacity.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/partners",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.partner_loi.list_active_partners",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Public discovery endpoint returning verified, active partner institutions.",
+      "tags": [
+        "rbpc_partner_discovery_loi_vault"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/partners/{identifier}",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.partner_loi.get_active_partner",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Public endpoint retrieving profile of an active verified partner.",
+      "tags": [
+        "rbpc_partner_discovery_loi_vault"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/pitch-review/audits/{audit_ref}",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.get_pitch_review_audit",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve an immutable pitch review audit report by audit_ref.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/pitch-review/evaluate",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": true,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.evaluate_pitch_review",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Evaluate and audit a set of pitch deck assertions against the evidence room.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/reviews",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": true,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.create_customer_review",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Submit a verified customer review for a completed inquiry.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/reviews/{id}/dispute",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": true,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.file_review_dispute",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "File a dispute against a review.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
       "method": "GET",
       "path": "/api/v1/rbpc/stories",
       "group": "rbpc",
@@ -8874,6 +14622,24 @@
     },
     {
       "method": "GET",
+      "path": "/api/v1/rbpc/stories/{slug}/recommendations",
+      "group": "rbpc",
+      "owner": "python-gateway",
+      "auth_required": false,
+      "auth_optional": false,
+      "roles_required": [],
+      "status": "ready",
+      "reachable": true,
+      "fastapi_endpoint": "backend.routers.rbpc.get_story_recommendations_endpoint",
+      "rust_handler": null,
+      "gateway_pinned": false,
+      "summary": "Retrieve curator-controlled story recommendations linked to this story.",
+      "tags": [
+        "rbpc"
+      ]
+    },
+    {
+      "method": "GET",
       "path": "/api/v1/search",
       "group": "search",
       "owner": "python-gateway",
@@ -8893,15 +14659,9 @@
       "path": "/api/v1/analytics/events",
       "group": "sessions",
       "owner": "rust-native",
-      "auth_required": true,
-      "auth_optional": false,
-      "roles_required": [
-        "guest",
-        "learner",
-        "teacher",
-        "admin",
-        "super_admin"
-      ],
+      "auth_required": false,
+      "auth_optional": true,
+      "roles_required": [],
       "status": "ready",
       "reachable": true,
       "fastapi_endpoint": "backend.routers.misc.ingest_analytics_events",
@@ -9837,17 +15597,23 @@
       "path": "/api/v1/users/me/fsrs-settings",
       "group": "users",
       "owner": "rust-native",
-      "auth_required": false,
+      "auth_required": true,
       "auth_optional": false,
-      "roles_required": [],
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
       "status": "ready",
       "reachable": true,
-      "fastapi_endpoint": null,
+      "fastapi_endpoint": "backend.routers.fsrs.get_user_fsrs_settings",
       "rust_handler": "get(routes::reviews::get_fsrs_settings).put(routes::reviews::update_fsrs_settings),",
       "gateway_pinned": false,
-      "summary": "Native Axum route",
+      "summary": "Fetch user FSRS settings including opt-out status and optimal retention.",
       "tags": [
-        "users"
+        "fsrs"
       ]
     },
     {
@@ -9855,17 +15621,23 @@
       "path": "/api/v1/users/me/fsrs-settings",
       "group": "users",
       "owner": "rust-native",
-      "auth_required": false,
+      "auth_required": true,
       "auth_optional": false,
-      "roles_required": [],
+      "roles_required": [
+        "guest",
+        "learner",
+        "teacher",
+        "admin",
+        "super_admin"
+      ],
       "status": "ready",
       "reachable": true,
-      "fastapi_endpoint": null,
+      "fastapi_endpoint": "backend.routers.fsrs.update_user_fsrs_settings",
       "rust_handler": "get(routes::reviews::get_fsrs_settings).put(routes::reviews::update_fsrs_settings),",
       "gateway_pinned": false,
-      "summary": "Native Axum route",
+      "summary": "Update user FSRS retention target and opt-out preferences.",
       "tags": [
-        "users"
+        "fsrs"
       ]
     },
     {

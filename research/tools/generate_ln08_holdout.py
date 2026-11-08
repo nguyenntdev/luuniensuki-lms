@@ -128,7 +128,8 @@ def generate_holdout() -> list[dict]:
             "learner": {
                 "profile_id": f"HOLDOUT-STUDENT-{i+1:03d}",
                 "competencies": {"S1": 0.8, "S2": 0.8, "S3": 0.8, "S4": 0.8},
-                "synthetic": False,
+                "synthetic": True,
+                "evaluation_mode": "programmatic_synthetic_scenario",
                 "holdout": True,
             },
             "score_scale": "rubric_s1_s4",
@@ -171,7 +172,8 @@ def generate_holdout() -> list[dict]:
             "learner": {
                 "profile_id": f"HOLDOUT-STUDENT-{i+1:03d}",
                 "competencies": {"S1": 0.5, "S2": 0.4, "S3": 0.6, "S4": 0.3},
-                "synthetic": False,
+                "synthetic": True,
+                "evaluation_mode": "programmatic_synthetic_scenario",
                 "holdout": True,
             },
             "score_scale": "rubric_s1_s4",
@@ -214,7 +216,8 @@ def generate_holdout() -> list[dict]:
             "learner": {
                 "profile_id": f"HOLDOUT-STUDENT-{i+1:03d}",
                 "competencies": {"S1": 0.9, "S2": 0.8, "S3": 0.8, "S4": 0.9},
-                "synthetic": False,
+                "synthetic": True,
+                "evaluation_mode": "programmatic_synthetic_scenario",
                 "holdout": True,
             },
             "score_scale": "rubric_s1_s4",
@@ -257,7 +260,8 @@ def generate_holdout() -> list[dict]:
             "learner": {
                 "profile_id": f"HOLDOUT-STUDENT-{i+1:03d}",
                 "competencies": {"S1": 0.4, "S2": 0.3, "S3": 0.4, "S4": 0.2},
-                "synthetic": False,
+                "synthetic": True,
+                "evaluation_mode": "programmatic_synthetic_scenario",
                 "holdout": True,
             },
             "score_scale": "rubric_s1_s4",
@@ -299,7 +303,8 @@ def generate_holdout() -> list[dict]:
             "learner": {
                 "profile_id": f"HOLDOUT-STUDENT-{i+1:03d}",
                 "competencies": {"S1": 0.6, "S2": 0.2, "S3": 0.2, "S4": 0.4},
-                "synthetic": False,
+                "synthetic": True,
+                "evaluation_mode": "programmatic_synthetic_scenario",
                 "holdout": True,
             },
             "score_scale": "rubric_s1_s4",

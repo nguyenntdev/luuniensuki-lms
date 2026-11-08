@@ -92,16 +92,36 @@ jobs:
 
             cd /opt/dainoisuky || cd /opt/luuniensuki-lms
 
-            echo "=== Reloading Application Services ==="
-            systemctl restart dainoisuky-web || true
-            docker compose --env-file .env.prod -f docker-compose.prod.yml restart api || true
-            systemctl reload nginx || true
+            echo "=== Fetching and Checking Out Target Commit: ${{ github.sha }} ==="
+            git fetch origin main --depth=50
+            git checkout -f ${{ github.sha }}
+            echo "Current deployed commit: $(git rev-parse HEAD)"
 
-            echo "=== Health check ==="
+            echo "=== Building and Updating Backend Container ==="
+            docker build -t dainoisuky-api:latest -f backend/Dockerfile .
+            docker compose --env-file .env.prod -f docker-compose.prod.yml -f docker-compose.override.yml up -d --no-deps api
+
+            echo "=== Building Frontend Standalone Bundle ==="
+            cd frontend
+            npm ci
+            npx next build --no-lint
+            cd ..
+            rm -rf standalone/*
+            cp -r frontend/.next/standalone/* standalone/
+            cp -r frontend/.next/static standalone/.next/
+            cp -r frontend/public standalone/
+
+            echo "=== Reloading Web and Webserver Services ==="
+            systemctl restart dainoisuky-web
+            systemctl reload nginx
+
+            echo "=== Health check and Commit Verification ==="
             sleep 5
-            curl -skf https://127.0.0.1/health || curl -skf http://127.0.0.1:8000/api/v1/rbpc/config || exit 1
+            curl -skf -H 'Host: dainoisuky.histolab.icu' https://127.0.0.1/health || exit 1
+            curl -skf http://127.0.0.1:8000/api/v1/rbpc/config || exit 1
+            curl -skf http://127.0.0.1:3000/ | head -n 5 || exit 1
 
-            echo "=== Deployment complete! ==="
+            echo "=== Deployment of ${{ github.sha }} successfully verified! ==="
 
       - name: Notify on success
         if: success()

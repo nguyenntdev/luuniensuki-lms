@@ -2,6 +2,7 @@
   "metadata": {
     "title": "Comprehensive Statistical Meta-Analysis of 10 Educational Research Studies",
     "scope": "FROZEN SYNTHETIC SOFTWARE POLICY BENCHMARK (7,200 SCENARIOS, 36,000 EXECUTIONS) + 10 HOLDOUTS (1,200 SCENARIOS)",
+    "aggregation_methodology_note": "Unstandardized raw differences are NOT averaged across studies because metric units vary (rates vs counts per route). Only scale-free standardized effect sizes (Cliff's delta) and study-specific effects are reported.",
     "bootstrap_resamples": 2000,
     "random_seed": 42,
     "total_studies": 10,
@@ -16,7 +17,7 @@
   },
   "meta_summary": {
     "all_10_studies_statistically_significant_i1_vs_b0": true,
-    "mean_absolute_difference_i1_vs_b0": 1.1466666666666667,
+    "cross_study_aggregation_note": "Averaging raw unstandardized differences across incompatible metric units (rates vs counts) is deliberately omitted to preserve scientific validity. See study-specific comparisons below.",
     "mean_cohens_d_pooled_i1_vs_b0": 5.9451508713503065,
     "mean_cliffs_delta_i1_vs_b0": 0.9666666666666666,
     "all_cliffs_delta_interpretation_i1_vs_b0": "Large",
@@ -835,7 +836,7 @@
               "statistic": 574.0017361111111,
               "p_value": 7.56548578460134e-127,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 1153.0
             },
             "wilcoxon_details": null
@@ -849,7 +850,7 @@
               "statistic": 574.0017361111111,
               "p_value": 7.56548578460134e-127,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 1153.0
             },
             "diff": {
@@ -908,7 +909,7 @@
               "statistic": 142.00694444444446,
               "p_value": 9.690872592435802e-33,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 289.0
             },
             "wilcoxon_details": null
@@ -922,7 +923,7 @@
               "statistic": 142.00694444444446,
               "p_value": 9.690872592435802e-33,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 289.0
             },
             "diff": {
@@ -981,7 +982,7 @@
               "statistic": 142.00694444444446,
               "p_value": 9.690872592435802e-33,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 289.0
             },
             "wilcoxon_details": null
@@ -995,7 +996,7 @@
               "statistic": 142.00694444444446,
               "p_value": 9.690872592435802e-33,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 289.0
             },
             "diff": {
@@ -1068,7 +1069,7 @@
               "statistic": 142.00694444444446,
               "p_value": 9.690872592435802e-33,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 289.0
             },
             "diff": {
@@ -1804,7 +1805,7 @@
               "statistic": 142.00694444444446,
               "p_value": 9.690872592435802e-33,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 289.0
             },
             "wilcoxon_details": null
@@ -1818,7 +1819,7 @@
               "statistic": 574.0017361111111,
               "p_value": 7.56548578460134e-127,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 1153.0
             },
             "diff": {
@@ -1877,7 +1878,7 @@
               "statistic": 142.00694444444446,
               "p_value": 9.690872592435802e-33,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 289.0
             },
             "wilcoxon_details": null
@@ -1891,7 +1892,7 @@
               "statistic": 286.00347222222223,
               "p_value": 3.6930404900642985e-64,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 577.0
             },
             "diff": {
@@ -2037,7 +2038,7 @@
               "statistic": 142.00694444444446,
               "p_value": 9.690872592435802e-33,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 289.0
             },
             "diff": {
@@ -2881,7 +2882,7 @@
               "statistic": 286.00347222222223,
               "p_value": 3.6930404900642985e-64,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 577.0
             },
             "wilcoxon_details": null
@@ -2895,7 +2896,7 @@
               "statistic": 286.00347222222223,
               "p_value": 3.6930404900642985e-64,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 577.0
             },
             "diff": {
@@ -2954,7 +2955,7 @@
               "statistic": 286.00347222222223,
               "p_value": 3.6930404900642985e-64,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 577.0
             },
             "wilcoxon_details": null
@@ -2968,7 +2969,7 @@
               "statistic": 286.00347222222223,
               "p_value": 3.6930404900642985e-64,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 577.0
             },
             "diff": {
@@ -3027,7 +3028,7 @@
               "statistic": 142.00694444444446,
               "p_value": 9.690872592435802e-33,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 289.0
             },
             "wilcoxon_details": null
@@ -3041,7 +3042,7 @@
               "statistic": 142.00694444444446,
               "p_value": 9.690872592435802e-33,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 289.0
             },
             "diff": {
@@ -3852,7 +3853,7 @@
               "statistic": 142.00694444444446,
               "p_value": 9.690872592435802e-33,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 289.0
             },
             "wilcoxon_details": null
@@ -3866,7 +3867,7 @@
               "statistic": 718.0013888888889,
               "p_value": 3.641279772512292e-158,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 1441.0
             },
             "diff": {
@@ -3925,7 +3926,7 @@
               "statistic": 142.00694444444446,
               "p_value": 9.690872592435802e-33,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 289.0
             },
             "wilcoxon_details": null
@@ -3939,7 +3940,7 @@
               "statistic": 286.00347222222223,
               "p_value": 3.6930404900642985e-64,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 577.0
             },
             "diff": {
@@ -4012,7 +4013,7 @@
               "statistic": 142.00694444444446,
               "p_value": 9.690872592435802e-33,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 289.0
             },
             "diff": {
@@ -4085,7 +4086,7 @@
               "statistic": 142.00694444444446,
               "p_value": 9.690872592435802e-33,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 289.0
             },
             "diff": {
@@ -4905,7 +4906,7 @@
               "statistic": 286.00347222222223,
               "p_value": 3.6930404900642985e-64,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 577.0
             },
             "wilcoxon_details": null
@@ -4919,7 +4920,7 @@
               "statistic": 574.0017361111111,
               "p_value": 7.56548578460134e-127,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 1153.0
             },
             "diff": {
@@ -4978,7 +4979,7 @@
               "statistic": 286.00347222222223,
               "p_value": 3.6930404900642985e-64,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 577.0
             },
             "wilcoxon_details": null
@@ -4992,7 +4993,7 @@
               "statistic": 574.0017361111111,
               "p_value": 7.56548578460134e-127,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 1153.0
             },
             "diff": {
@@ -5065,7 +5066,7 @@
               "statistic": 142.00694444444446,
               "p_value": 9.690872592435802e-33,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 289.0
             },
             "diff": {
@@ -5124,7 +5125,7 @@
               "statistic": 142.00694444444446,
               "p_value": 9.690872592435802e-33,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 289.0
             },
             "wilcoxon_details": null
@@ -5138,7 +5139,7 @@
               "statistic": 142.00694444444446,
               "p_value": 9.690872592435802e-33,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 289.0
             },
             "diff": {
@@ -5808,7 +5809,7 @@
               "statistic": 574.0017361111111,
               "p_value": 7.56548578460134e-127,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 1153.0
             },
             "diff": {
@@ -5876,7 +5877,7 @@
               "statistic": 142.00694444444446,
               "p_value": 9.690872592435802e-33,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 289.0
             },
             "diff": {
@@ -5944,7 +5945,7 @@
               "statistic": 142.00694444444446,
               "p_value": 9.690872592435802e-33,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 289.0
             },
             "diff": {
@@ -6012,7 +6013,7 @@
               "statistic": 142.00694444444446,
               "p_value": 9.690872592435802e-33,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 289.0
             },
             "diff": {
@@ -6886,7 +6887,7 @@
               "statistic": 286.00347222222223,
               "p_value": 3.6930404900642985e-64,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 577.0
             },
             "wilcoxon_details": null
@@ -6900,7 +6901,7 @@
               "statistic": 574.0017361111111,
               "p_value": 7.56548578460134e-127,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 1153.0
             },
             "diff": {
@@ -6959,7 +6960,7 @@
               "statistic": 286.00347222222223,
               "p_value": 3.6930404900642985e-64,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 577.0
             },
             "wilcoxon_details": null
@@ -6973,7 +6974,7 @@
               "statistic": 574.0017361111111,
               "p_value": 7.56548578460134e-127,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 1153.0
             },
             "diff": {
@@ -7119,7 +7120,7 @@
               "statistic": 286.00347222222223,
               "p_value": 3.6930404900642985e-64,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 577.0
             },
             "diff": {
@@ -8240,7 +8241,7 @@
               "statistic": 430.00231481481484,
               "p_value": 1.6232455607442916e-95,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 865.0
             },
             "diff": {
@@ -8313,7 +8314,7 @@
               "statistic": 430.00231481481484,
               "p_value": 1.6232455607442916e-95,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 865.0
             },
             "diff": {
@@ -8386,7 +8387,7 @@
               "statistic": 142.00694444444446,
               "p_value": 9.690872592435802e-33,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 289.0
             },
             "diff": {
@@ -8459,7 +8460,7 @@
               "statistic": 142.00694444444446,
               "p_value": 9.690872592435802e-33,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 289.0
             },
             "diff": {
@@ -9510,7 +9511,7 @@
               "statistic": 574.0017361111111,
               "p_value": 7.56548578460134e-127,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 1153.0
             },
             "wilcoxon_details": null
@@ -9524,7 +9525,7 @@
               "statistic": 574.0017361111111,
               "p_value": 7.56548578460134e-127,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 1153.0
             },
             "diff": {
@@ -9597,7 +9598,7 @@
               "statistic": 718.0013888888889,
               "p_value": 3.641279772512292e-158,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 1441.0
             },
             "diff": {
@@ -9656,7 +9657,7 @@
               "statistic": 286.00347222222223,
               "p_value": 3.6930404900642985e-64,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 577.0
             },
             "wilcoxon_details": null
@@ -9670,7 +9671,7 @@
               "statistic": 286.00347222222223,
               "p_value": 3.6930404900642985e-64,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 577.0
             },
             "diff": {
@@ -10814,7 +10815,7 @@
               "statistic": 574.0017361111111,
               "p_value": 7.56548578460134e-127,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 1153.0
             },
             "wilcoxon_details": null
@@ -10828,7 +10829,7 @@
               "statistic": 574.0017361111111,
               "p_value": 7.56548578460134e-127,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 1153.0
             },
             "diff": {
@@ -10887,7 +10888,7 @@
               "statistic": 286.00347222222223,
               "p_value": 3.6930404900642985e-64,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 577.0
             },
             "wilcoxon_details": null
@@ -10901,7 +10902,7 @@
               "statistic": 286.00347222222223,
               "p_value": 3.6930404900642985e-64,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 577.0
             },
             "diff": {
@@ -10960,7 +10961,7 @@
               "statistic": 142.00694444444446,
               "p_value": 9.690872592435802e-33,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 289.0
             },
             "wilcoxon_details": null
@@ -10974,7 +10975,7 @@
               "statistic": 142.00694444444446,
               "p_value": 9.690872592435802e-33,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 289.0
             },
             "diff": {
@@ -11033,7 +11034,7 @@
               "statistic": 142.00694444444446,
               "p_value": 9.690872592435802e-33,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 289.0
             },
             "wilcoxon_details": null
@@ -11047,7 +11048,7 @@
               "statistic": 142.00694444444446,
               "p_value": 9.690872592435802e-33,
               "method": "mcnemar_continuity_corrected",
-              "odds_ratio_paired": Infinity,
+              "odds_ratio_paired": null,
               "odds_ratio_haldane": 289.0
             },
             "diff": {
@@ -11335,7 +11336,7 @@
         "statistic": 94.01041666666667,
         "p_value": 3.1386774031298044e-22,
         "method": "mcnemar_continuity_corrected",
-        "odds_ratio_paired": Infinity,
+        "odds_ratio_paired": null,
         "odds_ratio_haldane": 193.0
       },
       "odds_ratio_haldane": 193.0,
@@ -11441,7 +11442,7 @@
         "statistic": 94.01041666666667,
         "p_value": 3.1386774031298044e-22,
         "method": "mcnemar_continuity_corrected",
-        "odds_ratio_paired": Infinity,
+        "odds_ratio_paired": null,
         "odds_ratio_haldane": 193.0
       },
       "odds_ratio_haldane": 193.0,
@@ -11548,7 +11549,7 @@
         "statistic": 46.020833333333336,
         "p_value": 1.1700213117066249e-11,
         "method": "mcnemar_continuity_corrected",
-        "odds_ratio_paired": Infinity,
+        "odds_ratio_paired": null,
         "odds_ratio_haldane": 97.0
       },
       "odds_ratio_haldane": 97.0,
@@ -11654,7 +11655,7 @@
         "statistic": 118.00833333333334,
         "p_value": 1.726610659220206e-27,
         "method": "mcnemar_continuity_corrected",
-        "odds_ratio_paired": Infinity,
+        "odds_ratio_paired": null,
         "odds_ratio_haldane": 241.0
       },
       "odds_ratio_haldane": 241.0,
@@ -11760,7 +11761,7 @@
         "statistic": 94.01041666666667,
         "p_value": 3.1386774031298044e-22,
         "method": "mcnemar_continuity_corrected",
-        "odds_ratio_paired": Infinity,
+        "odds_ratio_paired": null,
         "odds_ratio_haldane": 193.0
       },
       "odds_ratio_haldane": 193.0,
@@ -11866,7 +11867,7 @@
         "statistic": 94.01041666666667,
         "p_value": 3.1386774031298044e-22,
         "method": "mcnemar_continuity_corrected",
-        "odds_ratio_paired": Infinity,
+        "odds_ratio_paired": null,
         "odds_ratio_haldane": 193.0
       },
       "odds_ratio_haldane": 193.0,
@@ -11972,7 +11973,7 @@
         "statistic": 94.01041666666667,
         "p_value": 3.1386774031298044e-22,
         "method": "mcnemar_continuity_corrected",
-        "odds_ratio_paired": Infinity,
+        "odds_ratio_paired": null,
         "odds_ratio_haldane": 193.0
       },
       "odds_ratio_haldane": 193.0,
@@ -12078,7 +12079,7 @@
         "statistic": 70.01388888888889,
         "p_value": 5.888836294943992e-17,
         "method": "mcnemar_continuity_corrected",
-        "odds_ratio_paired": Infinity,
+        "odds_ratio_paired": null,
         "odds_ratio_haldane": 145.0
       },
       "odds_ratio_haldane": 145.0,
@@ -12184,7 +12185,7 @@
         "statistic": 94.01041666666667,
         "p_value": 3.1386774031298044e-22,
         "method": "mcnemar_continuity_corrected",
-        "odds_ratio_paired": Infinity,
+        "odds_ratio_paired": null,
         "odds_ratio_haldane": 193.0
       },
       "odds_ratio_haldane": 193.0,
@@ -12290,7 +12291,7 @@
         "statistic": 94.01041666666667,
         "p_value": 3.1386774031298044e-22,
         "method": "mcnemar_continuity_corrected",
-        "odds_ratio_paired": Infinity,
+        "odds_ratio_paired": null,
         "odds_ratio_haldane": 193.0
       },
       "odds_ratio_haldane": 193.0,

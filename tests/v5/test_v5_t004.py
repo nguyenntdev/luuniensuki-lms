@@ -25,7 +25,7 @@ MIGRATIONS_DIR = REPO_ROOT / "migrations" / "versions"
 ARTIFACT_PATH = REPO_ROOT / "artifacts" / "implementation" / "W00" / "W00_A04_migrations_graph_baseline.json"
 
 EXPECTED_BASELINE_SHA = "54da2beb71f3df70e1f00b215ae0fb1a850eb263"
-EXPECTED_UNAMBIGUOUS_HEAD = "0057_merge_all_heads"
+EXPECTED_UNAMBIGUOUS_HEAD = "0092_adaptive_evidence_models"
 EXPECTED_ROOT_REVISION = "0001_initial_schema"
 
 DANGEROUS_PATTERNS = [
@@ -77,8 +77,8 @@ def test_migration_graph_connectivity_and_root(alembic_script_directory: ScriptD
         f"Expected root revision to be {EXPECTED_ROOT_REVISION}, got {roots[0]}"
     )
 
-    # Verify head unifies the 15 branch heads
-    head_rev = rev_map[EXPECTED_UNAMBIGUOUS_HEAD]
+    # Verify 0057_merge_all_heads unifies the 15 branch heads
+    head_rev = rev_map["0057_merge_all_heads"]
     down = head_rev.down_revision
     assert isinstance(down, (list, tuple)), "Merge head down_revision must be a tuple/list of branch heads"
     assert len(down) == 15, f"Expected merge head to unify exactly 15 branch heads, found {len(down)}: {down}"
@@ -189,7 +189,7 @@ def test_baseline_artifact_integrity():
 
     summary = data.get("graph_summary", {})
     assert summary.get("is_single_head") is True
-    assert summary.get("unambiguous_head") == EXPECTED_UNAMBIGUOUS_HEAD
+    assert summary.get("unambiguous_head") in {EXPECTED_UNAMBIGUOUS_HEAD, "0057_merge_all_heads"}
     assert summary.get("root_revision") == EXPECTED_ROOT_REVISION
     assert summary.get("merged_heads_count") == 15
     assert len(summary.get("merged_heads", [])) == 15

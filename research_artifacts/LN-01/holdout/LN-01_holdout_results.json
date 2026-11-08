@@ -255,7 +255,7 @@
         "chi2": 94.01041666666667,
         "chi2_p_value": 3.1386774031298044e-22,
         "exact_p_value": 2.524354896707238e-29,
-        "odds_ratio": Infinity
+        "odds_ratio": null
       },
       "wilcoxon": {
         "statistic": 0.0,
@@ -275,7 +275,7 @@
         "chi2": 70.01388888888889,
         "chi2_p_value": 5.888836294943992e-17,
         "exact_p_value": 4.235164736271502e-22,
-        "odds_ratio": Infinity
+        "odds_ratio": null
       },
       "wilcoxon": {
         "statistic": 0.0,
@@ -295,7 +295,7 @@
         "chi2": 22.041666666666668,
         "chi2_p_value": 2.6679545936247906e-06,
         "exact_p_value": 1.1920928955078125e-07,
-        "odds_ratio": Infinity
+        "odds_ratio": null
       },
       "wilcoxon": {
         "statistic": 0.0,
@@ -315,7 +315,7 @@
         "chi2": 22.041666666666668,
         "chi2_p_value": 2.6679545936247906e-06,
         "exact_p_value": 1.1920928955078125e-07,
-        "odds_ratio": Infinity
+        "odds_ratio": null
       },
       "wilcoxon": {
         "statistic": 0.0,
@@ -335,7 +335,7 @@
         "chi2": 22.041666666666668,
         "chi2_p_value": 2.6679545936247906e-06,
         "exact_p_value": 1.1920928955078125e-07,
-        "odds_ratio": Infinity
+        "odds_ratio": null
       },
       "wilcoxon": {
         "statistic": 0.0,

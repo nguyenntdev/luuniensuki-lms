@@ -142,7 +142,8 @@ def generate_cases():
                 "learner": {
                     "profile_id": f"HOLD-LEARNER-{case_idx:03d}",
                     "competencies": {"S1": 0.5 + (i * 0.015), "S2": 0.45 + (i * 0.018), "S3": 0.4 + (i * 0.02), "S4": 0.35 + (i * 0.022)},
-                    "synthetic": False,
+                    "synthetic": True,
+                    "evaluation_mode": "programmatic_synthetic_scenario",
                     "holdout": True,
                 },
                 "seed": seed,

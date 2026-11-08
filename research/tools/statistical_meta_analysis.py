@@ -228,8 +228,8 @@ def compute_mcnemar(x_binary: np.ndarray, y_binary: np.ndarray) -> Dict[str, Any
             "odds_ratio_haldane": 1.0,
         }
 
-    # Paired odds ratio
-    or_paired = float(b / c) if c > 0 else float("inf")
+    # Paired odds ratio (use None or capped value for strict JSON compliance)
+    or_paired = float(b / c) if c > 0 else None
     or_haldane = float((b + 0.5) / (c + 0.5))
 
     if total_discordant < 25:
@@ -933,20 +933,20 @@ def run_meta_analysis(
     )
     all_table_rows.extend(holdout_table_rows)
 
-    # Compute overall meta-analytic summaries
-    primary_i1_vs_b0_diffs = []
+    # Compute study-specific effect summaries without invalid cross-unit averaging
+    # Different studies employ different units: error rates [0, 1], violation counts per route (e.g. LN-06), etc.
+    # We strictly report study-specific effects, and only aggregate scale-free standardized effect sizes (Cliff's delta).
     primary_i1_vs_b0_cohens = []
     primary_i1_vs_b0_cliffs = []
 
     for sid, sdata in studies_results.items():
         comp_b0 = sdata["comparisons"].get("I1_vs_B0", {}).get("primary_metric", {})
         if comp_b0:
-            primary_i1_vs_b0_diffs.append(abs(comp_b0["diff_point"]))
             if comp_b0.get("cohens_d_pooled") is not None:
                 primary_i1_vs_b0_cohens.append(abs(comp_b0["cohens_d_pooled"]))
             primary_i1_vs_b0_cliffs.append(abs(comp_b0["cliffs_delta"]))
 
-    # Holdout meta summary
+    # Holdout meta summary (holdout accuracy is consistently on [0, 1] proportion scale)
     holdout_diffs = [h["diff_accuracy"]["diff_point"] for h in holdout_results.values()]
     holdout_cliffs = [abs(h["cliffs_delta"]) for h in holdout_results.values()]
 
@@ -954,6 +954,7 @@ def run_meta_analysis(
         "metadata": {
             "title": "Comprehensive Statistical Meta-Analysis of 10 Educational Research Studies",
             "scope": "FROZEN SYNTHETIC SOFTWARE POLICY BENCHMARK (7,200 SCENARIOS, 36,000 EXECUTIONS) + 10 HOLDOUTS (1,200 SCENARIOS)",
+            "aggregation_methodology_note": "Unstandardized raw differences are NOT averaged across studies because metric units vary (rates vs counts per route). Only scale-free standardized effect sizes (Cliff's delta) and study-specific effects are reported.",
             "bootstrap_resamples": resamples,
             "random_seed": seed,
             "total_studies": len(studies_results),
@@ -968,7 +969,7 @@ def run_meta_analysis(
         },
         "meta_summary": {
             "all_10_studies_statistically_significant_i1_vs_b0": True,
-            "mean_absolute_difference_i1_vs_b0": float(np.mean(primary_i1_vs_b0_diffs)),
+            "cross_study_aggregation_note": "Averaging raw unstandardized differences across incompatible metric units (rates vs counts) is deliberately omitted to preserve scientific validity. See study-specific comparisons below.",
             "mean_cohens_d_pooled_i1_vs_b0": float(np.mean(primary_i1_vs_b0_cohens)) if primary_i1_vs_b0_cohens else "infinite_separation_across_all_binary_benchmarks",
             "mean_cliffs_delta_i1_vs_b0": float(np.mean(primary_i1_vs_b0_cliffs)),
             "all_cliffs_delta_interpretation_i1_vs_b0": "Large",

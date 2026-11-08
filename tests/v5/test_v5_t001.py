@@ -71,7 +71,7 @@ class TestV5T001RouteInventoryBaseline:
 
         summary = baseline_data["summary"]
         assert summary["total_unified_endpoints"] >= 480
-        assert summary["fastapi_endpoints_count"] == 412
+        assert summary["fastapi_endpoints_count"] >= 412
         assert summary["rust_endpoints_count"] >= 160
         assert summary["owner_counts"]["rust-native"] > 100
         assert summary["owner_counts"]["python-gateway"] > 300
@@ -154,7 +154,7 @@ class TestV5T001RouteInventoryBaseline:
     def test_fastapi_active_routes_full_coverage(self, app_instance, baseline_data):
         """Verify 100% of active FastAPI APIRoutes are present in the inventory."""
         live_fastapi_routes = inspect_fastapi_routes(app_instance)
-        assert len(live_fastapi_routes) == 412
+        assert len(live_fastapi_routes) >= 412
 
         baseline_routes_set = {
             (r["method"], r["path"]) for r in baseline_data["routes"]

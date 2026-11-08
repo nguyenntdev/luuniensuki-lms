@@ -3,28 +3,28 @@
     "ticket_id": "V5-T005",
     "slot": "W00-A05",
     "baseline_source_sha": "54da2beb71f3df70e1f00b215ae0fb1a850eb263",
-    "generated_at": "2026-10-21T10:35:35.786019+00:00",
+    "generated_at": "2026-11-08T15:35:06.516629+00:00",
     "openapi_version": "3.1.0",
     "api_title": "Luuniensuki API",
     "api_version": "0.1.0",
-    "contract_fingerprint": "sha256:367paths_408ops"
+    "contract_fingerprint": "sha256:610paths_674ops"
   },
   "summary": {
-    "total_paths": 367,
-    "total_operations": 408,
+    "total_paths": 610,
+    "total_operations": 674,
     "operations_by_method": {
-      "POST": 158,
-      "GET": 201,
-      "PUT": 12,
-      "DELETE": 20,
-      "PATCH": 17
+      "POST": 287,
+      "GET": 322,
+      "PUT": 18,
+      "DELETE": 24,
+      "PATCH": 23
     },
     "paths_by_partition": {
-      "public": 37,
-      "admin": 95,
-      "partner": 12,
-      "teacher": 18,
-      "student_core": 205
+      "public": 52,
+      "admin": 121,
+      "partner": 66,
+      "teacher": 24,
+      "student_core": 347
     }
   },
   "error_envelope_standard": {
@@ -55,8 +55,8 @@
     "typescript_frontend": {
       "file": "frontend/src/types/api.ts",
       "status": "PASS",
-      "paths_in_types": 367,
-      "paths_in_openapi": 367,
+      "paths_in_types": 610,
+      "paths_in_openapi": 610,
       "unmapped_paths": []
     },
     "mobile_client_contracts": {
@@ -204,8 +204,8 @@
           "spec_path": "/api/v1/offline/sync",
           "domain": "offline",
           "spec_status": "[TARGET/VERIFY_ROUTER]",
-          "match_type": "EXISTING_EQUIVALENT_MATCH",
-          "effective_backend_endpoint": "/api/v1/imperial/submissions/batch-sync"
+          "match_type": "EXACT_PATH_MATCH",
+          "effective_backend_endpoint": "/api/v1/offline/sync"
         },
         {
           "method": "POST",
@@ -260,7 +260,7 @@
   },
   "partitions": {
     "public": {
-      "count": 37,
+      "count": 52,
       "paths": [
         "/api/v1/auth/forgot-password",
         "/api/v1/auth/login",
@@ -268,15 +268,30 @@
         "/api/v1/auth/register",
         "/api/v1/auth/reset-password",
         "/api/v1/content/ratings",
+        "/api/v1/heritage/audit/random-audit",
+        "/api/v1/heritage/catalog",
+        "/api/v1/heritage/catalog/motifs/{motif_id}",
+        "/api/v1/heritage/catalog/motifs/{motif_id}/claims",
+        "/api/v1/heritage/catalog/revision",
+        "/api/v1/heritage/catalog/{urn_slug}",
+        "/api/v1/heritage/claims/{claim_id}/retract",
+        "/api/v1/heritage/media/{asset_id}/revoke",
         "/api/v1/heritage/places",
         "/api/v1/heritage/places/{slug}",
         "/api/v1/heritage/places/{slug}/3d",
         "/api/v1/heritage/places/{slug}/detail",
         "/api/v1/heritage/places/{slug}/media",
+        "/api/v1/heritage/places/{slug}/trail",
+        "/api/v1/heritage/publication-gate/report",
+        "/api/v1/heritage/publication-gate/sampling-verify",
         "/api/v1/heritage/search",
+        "/api/v1/heritage/trail/verify-qr",
         "/api/v1/history/urns",
         "/api/v1/imperial/art-details/{detail_id_or_slug}",
         "/api/v1/imperial/assets/{asset_id}/image",
+        "/api/v1/imperial/assets/{asset_id}/license-check",
+        "/api/v1/imperial/assets/{asset_id}/revoke",
+        "/api/v1/imperial/assets/{asset_id}/signed-token",
         "/api/v1/imperial/audio-guides",
         "/api/v1/imperial/maps/active",
         "/api/v1/imperial/paths",
@@ -302,7 +317,7 @@
       ]
     },
     "admin": {
-      "count": 95,
+      "count": 121,
       "paths": [
         "/api/v1/admin/ai/urns/{urn_slug}/seed",
         "/api/v1/admin/analytics/funnels",
@@ -312,6 +327,7 @@
         "/api/v1/admin/analytics/retention/curve",
         "/api/v1/admin/analytics/sessions/active",
         "/api/v1/admin/analytics/sessions/stats",
+        "/api/v1/admin/analytics/truth-funnel",
         "/api/v1/admin/app/versions",
         "/api/v1/admin/app/versions/{version_id}",
         "/api/v1/admin/content/flags",
@@ -325,6 +341,11 @@
         "/api/v1/admin/crash-reports/stats",
         "/api/v1/admin/crash-reports/{report_id}",
         "/api/v1/admin/crash-reports/{report_id}/resolve",
+        "/api/v1/admin/editorial/disputes",
+        "/api/v1/admin/editorial/disputes/resolve",
+        "/api/v1/admin/editorial/queue",
+        "/api/v1/admin/editorial/review",
+        "/api/v1/admin/editorial/rights-signoff",
         "/api/v1/admin/email-templates",
         "/api/v1/admin/email-templates/{template_id}",
         "/api/v1/admin/experiments",
@@ -345,6 +366,9 @@
         "/api/v1/admin/history/entities",
         "/api/v1/admin/history/entities/{entity_id}",
         "/api/v1/admin/history/entities/{entity_id}/geography",
+        "/api/v1/admin/history/glossary",
+        "/api/v1/admin/history/glossary/{term_key}",
+        "/api/v1/admin/history/glossary/{term_key}/review",
         "/api/v1/admin/history/relations",
         "/api/v1/admin/history/relations/{relation_id}",
         "/api/v1/admin/history/sources",
@@ -355,6 +379,16 @@
         "/api/v1/admin/lessons/{lesson_id}/reject",
         "/api/v1/admin/lessons/{lesson_id}/submit-review",
         "/api/v1/admin/live-sessions/maintenance/cleanup",
+        "/api/v1/admin/media-cms/items",
+        "/api/v1/admin/media-cms/items/{item_id}",
+        "/api/v1/admin/media-cms/items/{item_id}/approve",
+        "/api/v1/admin/media-cms/items/{item_id}/archive",
+        "/api/v1/admin/media-cms/items/{item_id}/publish",
+        "/api/v1/admin/media-cms/items/{item_id}/reject",
+        "/api/v1/admin/media-cms/items/{item_id}/submit-review",
+        "/api/v1/admin/media-cms/items/{item_id}/version",
+        "/api/v1/admin/media-cms/preview/{item_id}",
+        "/api/v1/admin/media-cms/upload",
         "/api/v1/admin/push-notifications",
         "/api/v1/admin/push-notifications/broadcast",
         "/api/v1/admin/push-notifications/send",
@@ -379,6 +413,13 @@
         "/api/v1/admin/reports/abuse/{report_id}",
         "/api/v1/admin/reports/abuse/{report_id}/assign",
         "/api/v1/admin/reports/abuse/{report_id}/resolve",
+        "/api/v1/admin/research-factory/releases",
+        "/api/v1/admin/research-factory/releases/active",
+        "/api/v1/admin/research-factory/releases/preflight",
+        "/api/v1/admin/research-factory/releases/{release_id}",
+        "/api/v1/admin/research-factory/releases/{release_id}/audit",
+        "/api/v1/admin/research-factory/releases/{release_id}/invalidate",
+        "/api/v1/admin/research-factory/releases/{release_id}/rollback",
         "/api/v1/admin/scheduled-emails",
         "/api/v1/admin/scheduled-emails/send-test",
         "/api/v1/admin/tags",
@@ -402,24 +443,78 @@
       ]
     },
     "partner": {
-      "count": 12,
+      "count": 66,
       "paths": [
+        "/api/v1/rbpc/admin/creators/{id}/verify",
+        "/api/v1/rbpc/admin/disputes/{id}/resolve",
+        "/api/v1/rbpc/admin/experiences/{id}/moderate",
+        "/api/v1/rbpc/admin/loi-vault",
+        "/api/v1/rbpc/admin/loi-vault/export",
+        "/api/v1/rbpc/admin/loi-vault/{loi_id}/revoke",
+        "/api/v1/rbpc/admin/loi-vault/{loi_id}/verify-checksum",
+        "/api/v1/rbpc/admin/reviews",
+        "/api/v1/rbpc/admin/reviews/{id}/moderate",
+        "/api/v1/rbpc/availability/reservations/{ref}",
+        "/api/v1/rbpc/availability/reserve",
         "/api/v1/rbpc/config",
         "/api/v1/rbpc/creators/{slug}",
         "/api/v1/rbpc/cultural-bridge",
         "/api/v1/rbpc/editor/creators/{id}/consent",
+        "/api/v1/rbpc/editor/settlements/{id}/compliance",
+        "/api/v1/rbpc/editor/settlements/{id}/disburse",
+        "/api/v1/rbpc/evidence-room/export",
+        "/api/v1/rbpc/evidence-room/pointers",
+        "/api/v1/rbpc/evidence-room/pointers/{pointer_id}",
         "/api/v1/rbpc/experiences/{slug}",
+        "/api/v1/rbpc/experiences/{slug}/availability",
+        "/api/v1/rbpc/experiences/{slug}/reviews",
+        "/api/v1/rbpc/go-no-go/board",
+        "/api/v1/rbpc/go-no-go/evaluate",
+        "/api/v1/rbpc/go-no-go/evaluations/{board_ref}",
+        "/api/v1/rbpc/go-no-go/export",
         "/api/v1/rbpc/impact",
         "/api/v1/rbpc/inquiries",
         "/api/v1/rbpc/inquiries/status/{opaqueToken}",
+        "/api/v1/rbpc/inquiries/status/{opaqueToken}/escalate",
+        "/api/v1/rbpc/inquiries/status/{opaqueToken}/preferences",
+        "/api/v1/rbpc/inquiries/status/{opaqueToken}/unsubscribe",
+        "/api/v1/rbpc/inquiries/status/{opaqueToken}/withdraw",
+        "/api/v1/rbpc/ledger/summary",
+        "/api/v1/rbpc/ledger/unit-economics",
+        "/api/v1/rbpc/legal/evaluate-asset",
+        "/api/v1/rbpc/legal/evaluate-commerce-gate",
+        "/api/v1/rbpc/legal/signoff-audit",
+        "/api/v1/rbpc/loi-vault",
+        "/api/v1/rbpc/loi-vault/{loi_id}",
+        "/api/v1/rbpc/oral-history/{recording_id}",
+        "/api/v1/rbpc/partner/availability/cancel",
+        "/api/v1/rbpc/partner/availability/confirm",
+        "/api/v1/rbpc/partner/experiences",
         "/api/v1/rbpc/partner/inquiries",
         "/api/v1/rbpc/partner/inquiries/{id}",
+        "/api/v1/rbpc/partner/onboarding",
+        "/api/v1/rbpc/partner/oral-history",
+        "/api/v1/rbpc/partner/oral-history/{recording_id}/consent",
+        "/api/v1/rbpc/partner/oral-history/{recording_id}/revoke",
+        "/api/v1/rbpc/partner/oral-history/{recording_id}/versions",
+        "/api/v1/rbpc/partner/profile",
+        "/api/v1/rbpc/partner/settlements",
+        "/api/v1/rbpc/partner/settlements/{id}",
+        "/api/v1/rbpc/partner/settlements/{id}/refund",
+        "/api/v1/rbpc/partner/slots",
+        "/api/v1/rbpc/partners",
+        "/api/v1/rbpc/partners/{identifier}",
+        "/api/v1/rbpc/pitch-review/audits/{audit_ref}",
+        "/api/v1/rbpc/pitch-review/evaluate",
+        "/api/v1/rbpc/reviews",
+        "/api/v1/rbpc/reviews/{id}/dispute",
         "/api/v1/rbpc/stories",
-        "/api/v1/rbpc/stories/{slug}"
+        "/api/v1/rbpc/stories/{slug}",
+        "/api/v1/rbpc/stories/{slug}/recommendations"
       ]
     },
     "teacher": {
-      "count": 18,
+      "count": 24,
       "paths": [
         "/api/v1/classrooms",
         "/api/v1/classrooms/enrolled",
@@ -429,20 +524,26 @@
         "/api/v1/classrooms/{classroom_id}/assignments",
         "/api/v1/classrooms/{classroom_id}/assignments/{assignment_id}",
         "/api/v1/classrooms/{classroom_id}/export",
+        "/api/v1/classrooms/{classroom_id}/gradebook",
+        "/api/v1/classrooms/{classroom_id}/gradebook/export",
         "/api/v1/classrooms/{classroom_id}/leaderboard",
         "/api/v1/classrooms/{classroom_id}/live-sessions",
         "/api/v1/classrooms/{classroom_id}/members/{member_id}",
         "/api/v1/classrooms/{classroom_id}/progress",
+        "/api/v1/classrooms/{classroom_id}/roster",
+        "/api/v1/classrooms/{classroom_id}/rubric-analytics",
         "/api/v1/classrooms/{classroom_id}/students/{student_id}/progress",
         "/api/v1/classrooms/{classroom_id}/unarchive",
         "/api/v1/imperial/teacher/assignments",
         "/api/v1/imperial/teacher/assignments/{assignment_id}",
         "/api/v1/imperial/teacher/submissions",
+        "/api/v1/imperial/teacher/submissions/{submission_id}",
+        "/api/v1/imperial/teacher/submissions/{submission_id}/audit",
         "/api/v1/imperial/teacher/submissions/{submission_id}/grade"
       ]
     },
     "student_core": {
-      "count": 205,
+      "count": 347,
       "paths": [
         "/api/v1/ai/coach",
         "/api/v1/ai/conversations",
@@ -455,6 +556,9 @@
         "/api/v1/ai/insights",
         "/api/v1/ai/insights/{user_id}",
         "/api/v1/ai/lessons/generate",
+        "/api/v1/ai/observability/budget",
+        "/api/v1/ai/observability/budget/caps",
+        "/api/v1/ai/observability/metrics",
         "/api/v1/ai/qa",
         "/api/v1/ai/qa/stream",
         "/api/v1/ai/quizzes/generate",
@@ -487,17 +591,42 @@
         "/api/v1/experiments/{experiment_key}/events",
         "/api/v1/features",
         "/api/v1/features/{key}",
+        "/api/v1/fsrs/evidence/due",
+        "/api/v1/fsrs/evidence/evaluate",
+        "/api/v1/fsrs/settings",
+        "/api/v1/fsrs/transparency",
         "/api/v1/hearts",
         "/api/v1/hearts/refill",
         "/api/v1/hearts/transactions",
         "/api/v1/hearts/use",
         "/api/v1/hearts/use-streak-freeze",
+        "/api/v1/history/assignments",
+        "/api/v1/history/assignments/{assignment_id}",
+        "/api/v1/history/assignments/{assignment_id}/assessment-basis",
+        "/api/v1/history/assignments/{assignment_id}/publish",
+        "/api/v1/history/assignments/{assignment_id}/submissions",
+        "/api/v1/history/assignments/{assignment_id}/submissions/{submission_id}",
+        "/api/v1/history/assignments/{assignment_id}/submissions/{submission_id}/grade",
+        "/api/v1/history/assignments/{assignment_id}/submit",
+        "/api/v1/history/citations/{slug_or_id}",
         "/api/v1/history/claims/{claim_id}",
         "/api/v1/history/claims/{claim_id}/sources",
         "/api/v1/history/collections",
         "/api/v1/history/collections/{collection_id}",
         "/api/v1/history/collections/{collection_id}/publish",
         "/api/v1/history/collections/{slug}",
+        "/api/v1/history/curriculum/competencies",
+        "/api/v1/history/curriculum/competencies/flags/{flag_id}/resolve",
+        "/api/v1/history/curriculum/competencies/mappings",
+        "/api/v1/history/curriculum/competencies/mappings/{mapping_id}",
+        "/api/v1/history/curriculum/competencies/mappings/{mapping_id}/flag",
+        "/api/v1/history/curriculum/competencies/mappings/{mapping_id}/flags",
+        "/api/v1/history/curriculum/competencies/mappings/{mapping_id}/verify",
+        "/api/v1/history/curriculum/competencies/{code}",
+        "/api/v1/history/curriculum/fallbacks/{target}",
+        "/api/v1/history/curriculum/modules",
+        "/api/v1/history/curriculum/modules/{slug}",
+        "/api/v1/history/curriculum/validate-publish",
         "/api/v1/history/entities",
         "/api/v1/history/entities/by-slug/{slug}",
         "/api/v1/history/entities/{entity_id}",
@@ -505,30 +634,93 @@
         "/api/v1/history/entities/{entity_id}/geography",
         "/api/v1/history/entities/{entity_id}/graph",
         "/api/v1/history/entities/{entity_id}/relations",
+        "/api/v1/history/entities/{slug_or_id}/citations",
         "/api/v1/history/events",
+        "/api/v1/history/glossary",
+        "/api/v1/history/glossary/{term_key}",
+        "/api/v1/history/inquiry/activities",
+        "/api/v1/history/inquiry/activities/{activity_id}",
+        "/api/v1/history/inquiry/activities/{activity_id}/groups",
+        "/api/v1/history/inquiry/groups/{group_id}/board",
+        "/api/v1/history/inquiry/groups/{group_id}/board/cards",
+        "/api/v1/history/inquiry/groups/{group_id}/board/cards/{card_id}",
+        "/api/v1/history/inquiry/groups/{group_id}/board/comparisons",
+        "/api/v1/history/inquiry/groups/{group_id}/board/comparisons/{comparison_id}",
+        "/api/v1/history/inquiry/groups/{group_id}/board/feedback",
+        "/api/v1/history/inquiry/groups/{group_id}/board/request-revision",
+        "/api/v1/history/inquiry/groups/{group_id}/board/resubmit",
+        "/api/v1/history/inquiry/groups/{group_id}/board/revisions",
+        "/api/v1/history/inquiry/groups/{group_id}/evidence",
+        "/api/v1/history/inquiry/groups/{group_id}/evidence/{evidence_id}",
+        "/api/v1/history/inquiry/groups/{group_id}/members",
+        "/api/v1/history/inquiry/groups/{group_id}/submission",
+        "/api/v1/history/inquiry/groups/{group_id}/submit",
+        "/api/v1/history/inquiry/submissions/{submission_id}/moderate",
+        "/api/v1/history/learning-outcomes/assessments",
+        "/api/v1/history/learning-outcomes/assessments/{assessment_id}",
+        "/api/v1/history/learning-outcomes/assessments/{assessment_id}/submit",
+        "/api/v1/history/learning-outcomes/causal-metrics",
+        "/api/v1/history/learning-outcomes/cohort-metrics/{ethics_protocol_id}",
+        "/api/v1/history/learning-outcomes/ethics-protocols",
+        "/api/v1/history/learning-outcomes/ethics-protocols/{ethics_protocol_id}/consent",
+        "/api/v1/history/learning-outcomes/ethics-protocols/{ethics_protocol_id}/consent/{consent_id}/verify",
+        "/api/v1/history/learning-outcomes/ethics-protocols/{ethics_protocol_id}/consent/{consent_id}/withdraw",
+        "/api/v1/history/learning-outcomes/ethics-protocols/{ethics_protocol_id}/consent/{student_id}/status",
+        "/api/v1/history/learning-outcomes/ethics-protocols/{protocol_id}",
+        "/api/v1/history/learning-outcomes/retention/audit",
+        "/api/v1/history/learning-outcomes/retention/purge",
+        "/api/v1/history/learning-outcomes/rubric-calibration",
+        "/api/v1/history/learning-outcomes/submissions/{submission_id}/evaluate",
+        "/api/v1/history/learning-outcomes/surveys",
+        "/api/v1/history/learning-outcomes/teacher-workload",
+        "/api/v1/history/learning-outcomes/teacher-workload/summary",
+        "/api/v1/history/learning-outcomes/validate-learning-claim",
+        "/api/v1/history/lesson-plans",
+        "/api/v1/history/lesson-plans/{plan_id}",
+        "/api/v1/history/lesson-plans/{plan_id}/printable-handout",
+        "/api/v1/history/lesson-plans/{plan_id}/publish",
+        "/api/v1/history/lesson-wizard/validate",
+        "/api/v1/history/lessons/{lesson_id}/publish",
+        "/api/v1/history/lessons/{lesson_id}/quiz-sync",
         "/api/v1/history/map",
+        "/api/v1/history/practice/submit",
+        "/api/v1/history/practice/sync",
+        "/api/v1/history/practice/verify-badge",
         "/api/v1/history/questions",
         "/api/v1/history/questions/{question_id}",
         "/api/v1/history/questions/{question_id}/grade",
         "/api/v1/history/reliefs/{urn_slug}/{relief_slug}/hotspot",
+        "/api/v1/history/research/truth-gate/audit-manuscript",
+        "/api/v1/history/research/truth-gate/benchmarks",
+        "/api/v1/history/research/truth-gate/survey-1502/audit",
+        "/api/v1/history/research/truth-gate/survey-1502/reproduce",
+        "/api/v1/history/research/truth-gate/validate-paper-claims",
+        "/api/v1/history/research/truth-gate/verify-paper-figures",
         "/api/v1/history/search",
         "/api/v1/history/skills/{user_id}",
         "/api/v1/history/sources",
+        "/api/v1/history/sources/check-duplicate",
         "/api/v1/history/sources/{source_id}",
         "/api/v1/history/stories",
         "/api/v1/history/stories/{slug}",
         "/api/v1/history/stories/{story_id}",
         "/api/v1/history/stories/{story_id}/publish",
         "/api/v1/history/tutor/ask",
+        "/api/v1/history/tutor/citations/{source_id}/provenance",
         "/api/v1/history/tutor/entities",
+        "/api/v1/history/tutor/provenance/{source_id}",
         "/api/v1/imperial/activities/{activity_id}/submissions",
         "/api/v1/imperial/ai/ask",
         "/api/v1/imperial/clues",
         "/api/v1/imperial/clues/{clue_id}/attempt",
         "/api/v1/imperial/games/questions",
         "/api/v1/imperial/games/submit",
+        "/api/v1/imperial/inspections/complete",
+        "/api/v1/imperial/inspections/{target_slug}",
         "/api/v1/imperial/maps/{map_id}/annotations",
         "/api/v1/imperial/media/{media_id}/hotspots",
+        "/api/v1/imperial/offline-kit",
+        "/api/v1/imperial/passport/unlock",
         "/api/v1/imperial/submissions/batch-sync",
         "/api/v1/leaderboard",
         "/api/v1/leaderboard/friends",
@@ -572,16 +764,47 @@
         "/api/v1/motifs/{motif_id}",
         "/api/v1/motifs/{motif_id}/complete-lesson",
         "/api/v1/motifs/{motif_id}/quiz",
+        "/api/v1/notifications/consent",
         "/api/v1/notifications/history",
         "/api/v1/notifications/register-push",
         "/api/v1/notifications/settings",
         "/api/v1/notifications/should-prompt-permission",
         "/api/v1/notifications/unregister-push",
+        "/api/v1/offline/batch-sync",
+        "/api/v1/offline/sync",
         "/api/v1/onboarding/complete",
         "/api/v1/onboarding/goals",
         "/api/v1/onboarding/status",
+        "/api/v1/pilot/activate",
+        "/api/v1/pilot/health",
+        "/api/v1/pilot/invitations",
+        "/api/v1/pilot/invitations/validate",
+        "/api/v1/pilot/my-activation",
+        "/api/v1/pilot/onboarding/step",
+        "/api/v1/pilot/support",
+        "/api/v1/pilot/support/{ticket_id}/reply",
+        "/api/v1/pilot/telemetry",
+        "/api/v1/pricing/calculator",
+        "/api/v1/pricing/config",
+        "/api/v1/pricing/contracts",
+        "/api/v1/pricing/contracts/{contract_id}/accept",
+        "/api/v1/pricing/events",
+        "/api/v1/pricing/metrics/summary",
+        "/api/v1/progress/action",
+        "/api/v1/progress/complete-lesson",
+        "/api/v1/progress/discover",
+        "/api/v1/progress/motifs/{motif_id}",
+        "/api/v1/progress/passport",
+        "/api/v1/progress/passport/check-in",
+        "/api/v1/progress/passport/classroom/{classroom_id}",
+        "/api/v1/progress/passport/verify-qr",
+        "/api/v1/progress/submit-quiz",
+        "/api/v1/progress/summary",
         "/api/v1/quests",
+        "/api/v1/quests/evidence-practice/summary",
         "/api/v1/quests/{quest_slug}",
+        "/api/v1/quests/{quest_slug}/claim",
+        "/api/v1/quests/{quest_slug}/claim-reward",
         "/api/v1/quests/{quest_slug}/start",
         "/api/v1/quiz/adaptive",
         "/api/v1/quiz/questions/{question_id}/hint",
@@ -597,6 +820,12 @@
         "/api/v1/review/due",
         "/api/v1/review/stats",
         "/api/v1/review/{card_id}",
+        "/api/v1/reviews/evidence/due",
+        "/api/v1/reviews/evidence/evaluate",
+        "/api/v1/schools",
+        "/api/v1/schools/{school_id}",
+        "/api/v1/schools/{school_id}/classrooms",
+        "/api/v1/schools/{school_id}/members",
         "/api/v1/search",
         "/api/v1/sessions/end",
         "/api/v1/sessions/heartbeat",
@@ -619,6 +848,19 @@
         "/api/v1/streak/claim-daily",
         "/api/v1/streak/freeze",
         "/api/v1/streak/use-freeze",
+        "/api/v1/teacher/onboarding/complete",
+        "/api/v1/teacher/onboarding/dismiss",
+        "/api/v1/teacher/onboarding/profile",
+        "/api/v1/teacher/onboarding/reset",
+        "/api/v1/teacher/onboarding/step",
+        "/api/v1/teacher/sample-templates",
+        "/api/v1/teacher/sample-templates/{template_id}",
+        "/api/v1/teacher/sample-templates/{template_id}/clone",
+        "/api/v1/teacher/support/tickets",
+        "/api/v1/teacher/support/tickets/{ticket_id}",
+        "/api/v1/teacher/support/tickets/{ticket_id}/reply",
+        "/api/v1/teacher/training/resources",
+        "/api/v1/teacher/training/resources/{resource_id}",
         "/api/v1/u/{username_or_id}",
         "/api/v1/urns/{urn_slug}",
         "/api/v1/urns/{urn_slug}/exam",
@@ -635,6 +877,7 @@
         "/api/v1/users/me/change-password",
         "/api/v1/users/me/collection",
         "/api/v1/users/me/exam-attempts",
+        "/api/v1/users/me/fsrs-settings",
         "/api/v1/users/me/quest-summary",
         "/api/v1/users/me/recommendations",
         "/api/v1/users/me/recommendations/refresh",
@@ -721,6 +964,15 @@
       "path": "/api/v1/admin/analytics/sessions/stats",
       "operation_id": "get_session_statistics_api_v1_admin_analytics_sessions_stats_get",
       "summary": "Get Session Statistics",
+      "tags": [],
+      "partition": "admin",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/analytics/truth-funnel",
+      "operation_id": "get_truth_funnel_dashboard_api_v1_admin_analytics_truth_funnel_get",
+      "summary": "Get conversion funnel partitioned strictly by epistemological truth level",
       "tags": [],
       "partition": "admin",
       "error_envelope_guaranteed": true
@@ -848,6 +1100,61 @@
       "operation_id": "resolve_crash_report_api_v1_admin_crash_reports__report_id__resolve_post",
       "summary": "Resolve Crash Report",
       "tags": [],
+      "partition": "admin",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/editorial/disputes",
+      "operation_id": "get_admin_editorial_disputes_api_v1_admin_editorial_disputes_get",
+      "summary": "Get Admin Editorial Disputes",
+      "tags": [
+        "history"
+      ],
+      "partition": "admin",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/editorial/disputes/resolve",
+      "operation_id": "resolve_admin_editorial_dispute_api_v1_admin_editorial_disputes_resolve_post",
+      "summary": "Resolve Admin Editorial Dispute",
+      "tags": [
+        "history"
+      ],
+      "partition": "admin",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/editorial/queue",
+      "operation_id": "get_admin_editorial_queue_api_v1_admin_editorial_queue_get",
+      "summary": "Get Admin Editorial Queue",
+      "tags": [
+        "history"
+      ],
+      "partition": "admin",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/editorial/review",
+      "operation_id": "submit_editorial_review_api_v1_admin_editorial_review_post",
+      "summary": "Submit Editorial Review",
+      "tags": [
+        "history"
+      ],
+      "partition": "admin",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/editorial/rights-signoff",
+      "operation_id": "signoff_admin_editorial_rights_api_v1_admin_editorial_rights_signoff_post",
+      "summary": "Signoff Admin Editorial Rights",
+      "tags": [
+        "history"
+      ],
       "partition": "admin",
       "error_envelope_guaranteed": true
     },
@@ -1096,6 +1403,39 @@
     },
     {
       "method": "POST",
+      "path": "/api/v1/admin/history/glossary",
+      "operation_id": "create_admin_history_glossary_term_api_v1_admin_history_glossary_post",
+      "summary": "Create Admin History Glossary Term",
+      "tags": [
+        "history"
+      ],
+      "partition": "admin",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/admin/history/glossary/{term_key}",
+      "operation_id": "update_admin_history_glossary_term_api_v1_admin_history_glossary__term_key__patch",
+      "summary": "Update Admin History Glossary Term",
+      "tags": [
+        "history"
+      ],
+      "partition": "admin",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/history/glossary/{term_key}/review",
+      "operation_id": "review_admin_history_glossary_term_api_v1_admin_history_glossary__term_key__review_post",
+      "summary": "Review Admin History Glossary Term",
+      "tags": [
+        "history"
+      ],
+      "partition": "admin",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
       "path": "/api/v1/admin/history/relations",
       "operation_id": "create_history_relation_api_v1_admin_history_relations_post",
       "summary": "Create History Relation",
@@ -1121,6 +1461,17 @@
       "path": "/api/v1/admin/history/sources",
       "operation_id": "create_history_source_api_v1_admin_history_sources_post",
       "summary": "Create History Source",
+      "tags": [
+        "history"
+      ],
+      "partition": "admin",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/history/sources/{source_id}",
+      "operation_id": "get_admin_history_source_api_v1_admin_history_sources__source_id__get",
+      "summary": "Get Admin History Source",
       "tags": [
         "history"
       ],
@@ -1198,6 +1549,138 @@
       "operation_id": "admin_live_sessions_cleanup_api_v1_admin_live_sessions_maintenance_cleanup_post",
       "summary": "Admin Live Sessions Cleanup",
       "tags": [],
+      "partition": "admin",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/media-cms/items",
+      "operation_id": "list_media_items_api_v1_admin_media_cms_items_get",
+      "summary": "List Media Items",
+      "tags": [
+        "admin-media-cms"
+      ],
+      "partition": "admin",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/admin/media-cms/items/{item_id}",
+      "operation_id": "delete_media_api_v1_admin_media_cms_items__item_id__delete",
+      "summary": "Delete Media",
+      "tags": [
+        "admin-media-cms"
+      ],
+      "partition": "admin",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/media-cms/items/{item_id}",
+      "operation_id": "get_media_item_api_v1_admin_media_cms_items__item_id__get",
+      "summary": "Get Media Item",
+      "tags": [
+        "admin-media-cms"
+      ],
+      "partition": "admin",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/admin/media-cms/items/{item_id}",
+      "operation_id": "update_media_item_api_v1_admin_media_cms_items__item_id__patch",
+      "summary": "Update Media Item",
+      "tags": [
+        "admin-media-cms"
+      ],
+      "partition": "admin",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/media-cms/items/{item_id}/approve",
+      "operation_id": "approve_media_api_v1_admin_media_cms_items__item_id__approve_post",
+      "summary": "Approve Media",
+      "tags": [
+        "admin-media-cms"
+      ],
+      "partition": "admin",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/media-cms/items/{item_id}/archive",
+      "operation_id": "archive_media_api_v1_admin_media_cms_items__item_id__archive_post",
+      "summary": "Archive Media",
+      "tags": [
+        "admin-media-cms"
+      ],
+      "partition": "admin",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/media-cms/items/{item_id}/publish",
+      "operation_id": "publish_media_api_v1_admin_media_cms_items__item_id__publish_post",
+      "summary": "Publish Media",
+      "tags": [
+        "admin-media-cms"
+      ],
+      "partition": "admin",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/media-cms/items/{item_id}/reject",
+      "operation_id": "reject_media_api_v1_admin_media_cms_items__item_id__reject_post",
+      "summary": "Reject Media",
+      "tags": [
+        "admin-media-cms"
+      ],
+      "partition": "admin",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/media-cms/items/{item_id}/submit-review",
+      "operation_id": "submit_media_review_api_v1_admin_media_cms_items__item_id__submit_review_post",
+      "summary": "Submit Media Review",
+      "tags": [
+        "admin-media-cms"
+      ],
+      "partition": "admin",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/media-cms/items/{item_id}/version",
+      "operation_id": "upload_media_version_api_v1_admin_media_cms_items__item_id__version_post",
+      "summary": "Upload Media Version",
+      "tags": [
+        "admin-media-cms"
+      ],
+      "partition": "admin",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/media-cms/preview/{item_id}",
+      "operation_id": "preview_media_api_v1_admin_media_cms_preview__item_id__get",
+      "summary": "Preview Media",
+      "tags": [
+        "admin-media-cms"
+      ],
+      "partition": "admin",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/media-cms/upload",
+      "operation_id": "upload_media_asset_api_v1_admin_media_cms_upload_post",
+      "summary": "Upload Media Asset",
+      "tags": [
+        "admin-media-cms"
+      ],
       "partition": "admin",
       "error_envelope_guaranteed": true
     },
@@ -1463,6 +1946,83 @@
       "error_envelope_guaranteed": true
     },
     {
+      "method": "POST",
+      "path": "/api/v1/admin/research-factory/releases",
+      "operation_id": "create_publication_release_api_v1_admin_research_factory_releases_post",
+      "summary": "Create Publication Release",
+      "tags": [
+        "research-factory-admin"
+      ],
+      "partition": "admin",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/research-factory/releases/active",
+      "operation_id": "get_active_release_api_v1_admin_research_factory_releases_active_get",
+      "summary": "Get Active Release",
+      "tags": [
+        "research-factory-admin"
+      ],
+      "partition": "admin",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/research-factory/releases/preflight",
+      "operation_id": "check_release_preflight_api_v1_admin_research_factory_releases_preflight_post",
+      "summary": "Check Release Preflight",
+      "tags": [
+        "research-factory-admin"
+      ],
+      "partition": "admin",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/research-factory/releases/{release_id}",
+      "operation_id": "get_release_by_id_api_v1_admin_research_factory_releases__release_id__get",
+      "summary": "Get Release By Id",
+      "tags": [
+        "research-factory-admin"
+      ],
+      "partition": "admin",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/research-factory/releases/{release_id}/audit",
+      "operation_id": "get_release_audit_trail_api_v1_admin_research_factory_releases__release_id__audit_get",
+      "summary": "Get Release Audit Trail",
+      "tags": [
+        "research-factory-admin"
+      ],
+      "partition": "admin",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/research-factory/releases/{release_id}/invalidate",
+      "operation_id": "invalidate_release_api_v1_admin_research_factory_releases__release_id__invalidate_post",
+      "summary": "Invalidate Release",
+      "tags": [
+        "research-factory-admin"
+      ],
+      "partition": "admin",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/research-factory/releases/{release_id}/rollback",
+      "operation_id": "rollback_release_api_v1_admin_research_factory_releases__release_id__rollback_post",
+      "summary": "Rollback Release",
+      "tags": [
+        "research-factory-admin"
+      ],
+      "partition": "admin",
+      "error_envelope_guaranteed": true
+    },
+    {
       "method": "GET",
       "path": "/api/v1/admin/scheduled-emails",
       "operation_id": "list_scheduled_emails_api_v1_admin_scheduled_emails_get",
@@ -1602,6 +2162,33 @@
       "path": "/api/v1/ai/lessons/generate",
       "operation_id": "ai_generate_lesson_api_v1_ai_lessons_generate_post",
       "summary": "Ai Generate Lesson",
+      "tags": [],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ai/observability/budget",
+      "operation_id": "get_budget_status_api_v1_ai_observability_budget_get",
+      "summary": "Get Budget Status",
+      "tags": [],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ai/observability/budget/caps",
+      "operation_id": "set_budget_cap_api_v1_ai_observability_budget_caps_post",
+      "summary": "Set Budget Cap",
+      "tags": [],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ai/observability/metrics",
+      "operation_id": "get_observability_metrics_api_v1_ai_observability_metrics_get",
+      "summary": "Get Observability Metrics",
       "tags": [],
       "partition": "student_core",
       "error_envelope_guaranteed": true
@@ -1959,6 +2546,24 @@
     },
     {
       "method": "GET",
+      "path": "/api/v1/classrooms/{classroom_id}/gradebook",
+      "operation_id": "get_classroom_gradebook_api_v1_classrooms__classroom_id__gradebook_get",
+      "summary": "Get Classroom Gradebook",
+      "tags": [],
+      "partition": "teacher",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/classrooms/{classroom_id}/gradebook/export",
+      "operation_id": "export_classroom_gradebook_csv_api_v1_classrooms__classroom_id__gradebook_export_get",
+      "summary": "Export Classroom Gradebook Csv",
+      "tags": [],
+      "partition": "teacher",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
       "path": "/api/v1/classrooms/{classroom_id}/leaderboard",
       "operation_id": "get_class_leaderboard_api_v1_classrooms__classroom_id__leaderboard_get",
       "summary": "Get Class Leaderboard",
@@ -1998,6 +2603,24 @@
       "path": "/api/v1/classrooms/{classroom_id}/progress",
       "operation_id": "get_class_progress_summary_api_v1_classrooms__classroom_id__progress_get",
       "summary": "Get Class Progress Summary",
+      "tags": [],
+      "partition": "teacher",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/classrooms/{classroom_id}/roster",
+      "operation_id": "get_classroom_roster_api_v1_classrooms__classroom_id__roster_get",
+      "summary": "Get Classroom Roster",
+      "tags": [],
+      "partition": "teacher",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/classrooms/{classroom_id}/rubric-analytics",
+      "operation_id": "get_classroom_rubric_analytics_api_v1_classrooms__classroom_id__rubric_analytics_get",
+      "summary": "Get school-safe rubric analytics for a classroom",
       "tags": [],
       "partition": "teacher",
       "error_envelope_guaranteed": true
@@ -2148,6 +2771,61 @@
     },
     {
       "method": "GET",
+      "path": "/api/v1/fsrs/evidence/due",
+      "operation_id": "get_due_evidence_tasks_api_v1_fsrs_evidence_due_get",
+      "summary": "Get Due Evidence Tasks",
+      "tags": [
+        "fsrs"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/fsrs/evidence/evaluate",
+      "operation_id": "evaluate_evidence_task_api_v1_fsrs_evidence_evaluate_post",
+      "summary": "Evaluate Evidence Task",
+      "tags": [
+        "fsrs"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/fsrs/settings",
+      "operation_id": "get_user_fsrs_settings_api_v1_fsrs_settings_get",
+      "summary": "Get User Fsrs Settings",
+      "tags": [
+        "fsrs"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/fsrs/settings",
+      "operation_id": "update_user_fsrs_settings_api_v1_fsrs_settings_put",
+      "summary": "Update User Fsrs Settings",
+      "tags": [
+        "fsrs"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/fsrs/transparency",
+      "operation_id": "get_fsrs_transparency_api_v1_fsrs_transparency_get",
+      "summary": "Get Fsrs Transparency",
+      "tags": [
+        "fsrs"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
       "path": "/api/v1/hearts",
       "operation_id": "get_hearts_status_api_v1_hearts_get",
       "summary": "Get Hearts Status",
@@ -2189,6 +2867,94 @@
       "summary": "Use Streak Freeze For Hearts Endpoint",
       "tags": [],
       "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/heritage/audit/random-audit",
+      "operation_id": "get_heritage_random_audit_api_v1_heritage_audit_random_audit_get",
+      "summary": "Get Heritage Random Audit",
+      "tags": [
+        "heritage"
+      ],
+      "partition": "public",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/heritage/catalog",
+      "operation_id": "get_heritage_catalog_api_v1_heritage_catalog_get",
+      "summary": "Get Heritage Catalog",
+      "tags": [
+        "heritage"
+      ],
+      "partition": "public",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/heritage/catalog/motifs/{motif_id}",
+      "operation_id": "get_heritage_catalog_motif_api_v1_heritage_catalog_motifs__motif_id__get",
+      "summary": "Get Heritage Catalog Motif",
+      "tags": [
+        "heritage"
+      ],
+      "partition": "public",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/heritage/catalog/motifs/{motif_id}/claims",
+      "operation_id": "get_heritage_catalog_motif_claims_api_v1_heritage_catalog_motifs__motif_id__claims_get",
+      "summary": "Get Heritage Catalog Motif Claims",
+      "tags": [
+        "heritage"
+      ],
+      "partition": "public",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/heritage/catalog/revision",
+      "operation_id": "update_heritage_catalog_revision_api_v1_heritage_catalog_revision_post",
+      "summary": "Update Heritage Catalog Revision",
+      "tags": [
+        "heritage"
+      ],
+      "partition": "public",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/heritage/catalog/{urn_slug}",
+      "operation_id": "get_heritage_catalog_urn_api_v1_heritage_catalog__urn_slug__get",
+      "summary": "Get Heritage Catalog Urn",
+      "tags": [
+        "heritage"
+      ],
+      "partition": "public",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/heritage/claims/{claim_id}/retract",
+      "operation_id": "retract_heritage_claim_api_v1_heritage_claims__claim_id__retract_post",
+      "summary": "Retract Heritage Claim",
+      "tags": [
+        "heritage"
+      ],
+      "partition": "public",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/heritage/media/{asset_id}/revoke",
+      "operation_id": "revoke_heritage_media_asset_api_v1_heritage_media__asset_id__revoke_post",
+      "summary": "Revoke Heritage Media Asset",
+      "tags": [
+        "heritage"
+      ],
+      "partition": "public",
       "error_envelope_guaranteed": true
     },
     {
@@ -2248,6 +3014,39 @@
     },
     {
       "method": "GET",
+      "path": "/api/v1/heritage/places/{slug}/trail",
+      "operation_id": "get_heritage_place_trail_api_v1_heritage_places__slug__trail_get",
+      "summary": "Get Heritage Place Trail",
+      "tags": [
+        "heritage"
+      ],
+      "partition": "public",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/heritage/publication-gate/report",
+      "operation_id": "get_heritage_publication_gate_report_api_v1_heritage_publication_gate_report_get",
+      "summary": "Get Heritage Publication Gate Report",
+      "tags": [
+        "heritage"
+      ],
+      "partition": "public",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/heritage/publication-gate/sampling-verify",
+      "operation_id": "verify_heritage_sampling_api_v1_heritage_publication_gate_sampling_verify_get",
+      "summary": "Verify Heritage Sampling",
+      "tags": [
+        "heritage"
+      ],
+      "partition": "public",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
       "path": "/api/v1/heritage/search",
       "operation_id": "search_heritage_places_api_v1_heritage_search_get",
       "summary": "Search Heritage Places",
@@ -2255,6 +3054,127 @@
         "heritage"
       ],
       "partition": "public",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/heritage/trail/verify-qr",
+      "operation_id": "verify_heritage_trail_qr_token_api_v1_heritage_trail_verify_qr_post",
+      "summary": "Verify Heritage Trail Qr Token",
+      "tags": [
+        "heritage"
+      ],
+      "partition": "public",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/assignments",
+      "operation_id": "list_history_assignments_api_v1_history_assignments_get",
+      "summary": "List History Assignments",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/assignments",
+      "operation_id": "create_history_assignment_api_v1_history_assignments_post",
+      "summary": "Create History Assignment",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/assignments/{assignment_id}",
+      "operation_id": "get_history_assignment_api_v1_history_assignments__assignment_id__get",
+      "summary": "Get History Assignment",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/assignments/{assignment_id}/assessment-basis",
+      "operation_id": "get_history_assignment_assessment_basis_api_v1_history_assignments__assignment_id__assessment_basis_get",
+      "summary": "Get History Assignment Assessment Basis",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/assignments/{assignment_id}/publish",
+      "operation_id": "publish_history_assignment_endpoint_api_v1_history_assignments__assignment_id__publish_post",
+      "summary": "Publish History Assignment Endpoint",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/assignments/{assignment_id}/submissions",
+      "operation_id": "list_history_assignment_submissions_api_v1_history_assignments__assignment_id__submissions_get",
+      "summary": "List History Assignment Submissions",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/assignments/{assignment_id}/submissions/{submission_id}",
+      "operation_id": "get_history_assignment_submission_api_v1_history_assignments__assignment_id__submissions__submission_id__get",
+      "summary": "Get History Assignment Submission",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/assignments/{assignment_id}/submissions/{submission_id}/grade",
+      "operation_id": "grade_history_assignment_submission_endpoint_api_v1_history_assignments__assignment_id__submissions__submission_id__grade_post",
+      "summary": "Grade History Assignment Submission Endpoint",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/assignments/{assignment_id}/submit",
+      "operation_id": "submit_history_assignment_endpoint_api_v1_history_assignments__assignment_id__submit_post",
+      "summary": "Submit History Assignment Endpoint",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/citations/{slug_or_id}",
+      "operation_id": "get_entity_citations_api_v1_history_citations__slug_or_id__get",
+      "summary": "Get Entity Citations",
+      "tags": [
+        "history"
+      ],
+      "partition": "student_core",
       "error_envelope_guaranteed": true
     },
     {
@@ -2330,6 +3250,160 @@
       "summary": "Get History Collection",
       "tags": [
         "history-collections"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/curriculum/competencies",
+      "operation_id": "list_curriculum_competencies_api_v1_history_curriculum_competencies_get",
+      "summary": "List Curriculum Competencies",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/curriculum/competencies/flags/{flag_id}/resolve",
+      "operation_id": "resolve_curriculum_competency_flag_api_v1_history_curriculum_competencies_flags__flag_id__resolve_post",
+      "summary": "Resolve Curriculum Competency Flag",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/curriculum/competencies/mappings",
+      "operation_id": "list_curriculum_competency_mappings_api_v1_history_curriculum_competencies_mappings_get",
+      "summary": "List Curriculum Competency Mappings",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/curriculum/competencies/mappings",
+      "operation_id": "create_curriculum_competency_mapping_api_v1_history_curriculum_competencies_mappings_post",
+      "summary": "Create Curriculum Competency Mapping",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/curriculum/competencies/mappings/{mapping_id}",
+      "operation_id": "get_curriculum_competency_mapping_api_v1_history_curriculum_competencies_mappings__mapping_id__get",
+      "summary": "Get Curriculum Competency Mapping",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/history/curriculum/competencies/mappings/{mapping_id}",
+      "operation_id": "update_curriculum_competency_mapping_api_v1_history_curriculum_competencies_mappings__mapping_id__put",
+      "summary": "Update Curriculum Competency Mapping",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/curriculum/competencies/mappings/{mapping_id}/flag",
+      "operation_id": "flag_curriculum_competency_mapping_api_v1_history_curriculum_competencies_mappings__mapping_id__flag_post",
+      "summary": "Flag Curriculum Competency Mapping",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/curriculum/competencies/mappings/{mapping_id}/flags",
+      "operation_id": "list_curriculum_competency_mapping_flags_api_v1_history_curriculum_competencies_mappings__mapping_id__flags_get",
+      "summary": "List Curriculum Competency Mapping Flags",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/curriculum/competencies/mappings/{mapping_id}/verify",
+      "operation_id": "verify_curriculum_competency_mapping_api_v1_history_curriculum_competencies_mappings__mapping_id__verify_post",
+      "summary": "Verify Curriculum Competency Mapping",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/curriculum/competencies/{code}",
+      "operation_id": "get_curriculum_competency_api_v1_history_curriculum_competencies__code__get",
+      "summary": "Get Curriculum Competency",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/curriculum/fallbacks/{target}",
+      "operation_id": "get_curriculum_2d_fallback_api_v1_history_curriculum_fallbacks__target__get",
+      "summary": "Get Curriculum 2D Fallback",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/curriculum/modules",
+      "operation_id": "list_curriculum_modules_api_v1_history_curriculum_modules_get",
+      "summary": "List Curriculum Modules",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/curriculum/modules/{slug}",
+      "operation_id": "get_curriculum_module_api_v1_history_curriculum_modules__slug__get",
+      "summary": "Get Curriculum Module",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/curriculum/validate-publish",
+      "operation_id": "validate_curriculum_publication_api_v1_history_curriculum_validate_publish_post",
+      "summary": "Validate Curriculum Publication",
+      "tags": [
+        "history-learning"
       ],
       "partition": "student_core",
       "error_envelope_guaranteed": true
@@ -2413,6 +3487,17 @@
     },
     {
       "method": "GET",
+      "path": "/api/v1/history/entities/{slug_or_id}/citations",
+      "operation_id": "get_entity_citations_api_v1_history_entities__slug_or_id__citations_get",
+      "summary": "Get Entity Citations",
+      "tags": [
+        "history"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
       "path": "/api/v1/history/events",
       "operation_id": "list_history_events_api_v1_history_events_get",
       "summary": "List History Events",
@@ -2424,11 +3509,605 @@
     },
     {
       "method": "GET",
+      "path": "/api/v1/history/glossary",
+      "operation_id": "list_history_glossary_api_v1_history_glossary_get",
+      "summary": "List History Glossary",
+      "tags": [
+        "history"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/glossary/{term_key}",
+      "operation_id": "get_history_glossary_term_api_v1_history_glossary__term_key__get",
+      "summary": "Get History Glossary Term",
+      "tags": [
+        "history"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/inquiry/activities",
+      "operation_id": "list_activities_api_v1_history_inquiry_activities_get",
+      "summary": "List Activities",
+      "tags": [
+        "history-inquiry"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/inquiry/activities",
+      "operation_id": "create_activity_api_v1_history_inquiry_activities_post",
+      "summary": "Create Activity",
+      "tags": [
+        "history-inquiry"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/inquiry/activities/{activity_id}",
+      "operation_id": "get_activity_api_v1_history_inquiry_activities__activity_id__get",
+      "summary": "Get Activity",
+      "tags": [
+        "history-inquiry"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/inquiry/activities/{activity_id}/groups",
+      "operation_id": "list_groups_api_v1_history_inquiry_activities__activity_id__groups_get",
+      "summary": "List Groups",
+      "tags": [
+        "history-inquiry"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/inquiry/activities/{activity_id}/groups",
+      "operation_id": "create_group_api_v1_history_inquiry_activities__activity_id__groups_post",
+      "summary": "Create Group",
+      "tags": [
+        "history-inquiry"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/board",
+      "operation_id": "get_group_board_api_v1_history_inquiry_groups__group_id__board_get",
+      "summary": "Get Group Board",
+      "tags": [
+        "history-inquiry"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/board/cards",
+      "operation_id": "add_board_card_api_v1_history_inquiry_groups__group_id__board_cards_post",
+      "summary": "Add Board Card",
+      "tags": [
+        "history-inquiry"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/board/cards/{card_id}",
+      "operation_id": "remove_board_card_api_v1_history_inquiry_groups__group_id__board_cards__card_id__delete",
+      "summary": "Remove Board Card",
+      "tags": [
+        "history-inquiry"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/board/cards/{card_id}",
+      "operation_id": "update_board_card_api_v1_history_inquiry_groups__group_id__board_cards__card_id__put",
+      "summary": "Update Board Card",
+      "tags": [
+        "history-inquiry"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/board/comparisons",
+      "operation_id": "add_comparative_link_api_v1_history_inquiry_groups__group_id__board_comparisons_post",
+      "summary": "Add Comparative Link",
+      "tags": [
+        "history-inquiry"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/board/comparisons/{comparison_id}",
+      "operation_id": "remove_comparative_link_api_v1_history_inquiry_groups__group_id__board_comparisons__comparison_id__delete",
+      "summary": "Remove Comparative Link",
+      "tags": [
+        "history-inquiry"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/board/feedback",
+      "operation_id": "add_teacher_inline_feedback_api_v1_history_inquiry_groups__group_id__board_feedback_post",
+      "summary": "Add Teacher Inline Feedback",
+      "tags": [
+        "history-inquiry"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/board/request-revision",
+      "operation_id": "request_board_revision_api_v1_history_inquiry_groups__group_id__board_request_revision_post",
+      "summary": "Request Board Revision",
+      "tags": [
+        "history-inquiry"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/board/resubmit",
+      "operation_id": "resubmit_board_api_v1_history_inquiry_groups__group_id__board_resubmit_post",
+      "summary": "Resubmit Board",
+      "tags": [
+        "history-inquiry"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/board/revisions",
+      "operation_id": "get_board_revisions_api_v1_history_inquiry_groups__group_id__board_revisions_get",
+      "summary": "Get Board Revisions",
+      "tags": [
+        "history-inquiry"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/evidence",
+      "operation_id": "add_evidence_api_v1_history_inquiry_groups__group_id__evidence_post",
+      "summary": "Add Evidence",
+      "tags": [
+        "history-inquiry"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/evidence/{evidence_id}",
+      "operation_id": "remove_evidence_api_v1_history_inquiry_groups__group_id__evidence__evidence_id__delete",
+      "summary": "Remove Evidence",
+      "tags": [
+        "history-inquiry"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/members",
+      "operation_id": "add_member_api_v1_history_inquiry_groups__group_id__members_post",
+      "summary": "Add Member",
+      "tags": [
+        "history-inquiry"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/submission",
+      "operation_id": "get_submission_api_v1_history_inquiry_groups__group_id__submission_get",
+      "summary": "Get Submission",
+      "tags": [
+        "history-inquiry"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/submission",
+      "operation_id": "update_submission_api_v1_history_inquiry_groups__group_id__submission_put",
+      "summary": "Update Submission",
+      "tags": [
+        "history-inquiry"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/inquiry/groups/{group_id}/submit",
+      "operation_id": "submit_inquiry_api_v1_history_inquiry_groups__group_id__submit_post",
+      "summary": "Submit Inquiry",
+      "tags": [
+        "history-inquiry"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/inquiry/submissions/{submission_id}/moderate",
+      "operation_id": "moderate_submission_api_v1_history_inquiry_submissions__submission_id__moderate_post",
+      "summary": "Moderate Submission",
+      "tags": [
+        "history-inquiry"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/learning-outcomes/assessments",
+      "operation_id": "create_learning_outcome_assessment_endpoint_api_v1_history_learning_outcomes_assessments_post",
+      "summary": "Create Learning Outcome Assessment Endpoint",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/learning-outcomes/assessments/{assessment_id}",
+      "operation_id": "get_learning_outcome_assessment_endpoint_api_v1_history_learning_outcomes_assessments__assessment_id__get",
+      "summary": "Get Learning Outcome Assessment Endpoint",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/learning-outcomes/assessments/{assessment_id}/submit",
+      "operation_id": "submit_learning_outcome_assessment_endpoint_api_v1_history_learning_outcomes_assessments__assessment_id__submit_post",
+      "summary": "Submit Learning Outcome Assessment Endpoint",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/learning-outcomes/causal-metrics",
+      "operation_id": "compute_causal_learning_outcome_endpoint_api_v1_history_learning_outcomes_causal_metrics_post",
+      "summary": "Compute Causal Learning Outcome Endpoint",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/learning-outcomes/cohort-metrics/{ethics_protocol_id}",
+      "operation_id": "get_cohort_causal_metrics_endpoint_api_v1_history_learning_outcomes_cohort_metrics__ethics_protocol_id__get",
+      "summary": "Get Cohort Causal Metrics Endpoint",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/learning-outcomes/ethics-protocols",
+      "operation_id": "create_ethics_protocol_endpoint_api_v1_history_learning_outcomes_ethics_protocols_post",
+      "summary": "Create Ethics Protocol Endpoint",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/learning-outcomes/ethics-protocols/{ethics_protocol_id}/consent",
+      "operation_id": "register_pilot_guardian_consent_endpoint_api_v1_history_learning_outcomes_ethics_protocols__ethics_protocol_id__consent_post",
+      "summary": "Register Pilot Guardian Consent Endpoint",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/learning-outcomes/ethics-protocols/{ethics_protocol_id}/consent/{consent_id}/verify",
+      "operation_id": "verify_pilot_guardian_consent_endpoint_api_v1_history_learning_outcomes_ethics_protocols__ethics_protocol_id__consent__consent_id__verify_post",
+      "summary": "Verify Pilot Guardian Consent Endpoint",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/learning-outcomes/ethics-protocols/{ethics_protocol_id}/consent/{consent_id}/withdraw",
+      "operation_id": "withdraw_pilot_guardian_consent_endpoint_api_v1_history_learning_outcomes_ethics_protocols__ethics_protocol_id__consent__consent_id__withdraw_post",
+      "summary": "Withdraw Pilot Guardian Consent Endpoint",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/learning-outcomes/ethics-protocols/{ethics_protocol_id}/consent/{student_id}/status",
+      "operation_id": "get_pilot_guardian_consent_status_endpoint_api_v1_history_learning_outcomes_ethics_protocols__ethics_protocol_id__consent__student_id__status_get",
+      "summary": "Get Pilot Guardian Consent Status Endpoint",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/learning-outcomes/ethics-protocols/{protocol_id}",
+      "operation_id": "get_ethics_protocol_endpoint_api_v1_history_learning_outcomes_ethics_protocols__protocol_id__get",
+      "summary": "Get Ethics Protocol Endpoint",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/learning-outcomes/retention/audit",
+      "operation_id": "audit_pilot_data_retention_endpoint_api_v1_history_learning_outcomes_retention_audit_post",
+      "summary": "Audit Pilot Data Retention Endpoint",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/learning-outcomes/retention/purge",
+      "operation_id": "purge_expired_pilot_data_endpoint_api_v1_history_learning_outcomes_retention_purge_post",
+      "summary": "Purge Expired Pilot Data Endpoint",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/learning-outcomes/rubric-calibration",
+      "operation_id": "calibrate_submission_rubrics_endpoint_api_v1_history_learning_outcomes_rubric_calibration_post",
+      "summary": "Calibrate Submission Rubrics Endpoint",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/learning-outcomes/submissions/{submission_id}/evaluate",
+      "operation_id": "evaluate_learning_outcome_submission_endpoint_api_v1_history_learning_outcomes_submissions__submission_id__evaluate_post",
+      "summary": "Evaluate Learning Outcome Submission Endpoint",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/learning-outcomes/surveys",
+      "operation_id": "submit_subjective_survey_endpoint_api_v1_history_learning_outcomes_surveys_post",
+      "summary": "Submit Subjective Survey Endpoint",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/learning-outcomes/teacher-workload",
+      "operation_id": "log_teacher_workload_endpoint_api_v1_history_learning_outcomes_teacher_workload_post",
+      "summary": "Log Teacher Workload Endpoint",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/learning-outcomes/teacher-workload/summary",
+      "operation_id": "get_teacher_workload_summary_endpoint_api_v1_history_learning_outcomes_teacher_workload_summary_get",
+      "summary": "Get Teacher Workload Summary Endpoint",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/learning-outcomes/validate-learning-claim",
+      "operation_id": "validate_learning_improvement_claim_endpoint_api_v1_history_learning_outcomes_validate_learning_claim_post",
+      "summary": "Validate Learning Improvement Claim Endpoint",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/lesson-plans",
+      "operation_id": "list_history_lesson_plans_api_v1_history_lesson_plans_get",
+      "summary": "List History Lesson Plans",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/lesson-plans",
+      "operation_id": "create_history_lesson_plan_api_v1_history_lesson_plans_post",
+      "summary": "Create History Lesson Plan",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/lesson-plans/{plan_id}",
+      "operation_id": "get_history_lesson_plan_api_v1_history_lesson_plans__plan_id__get",
+      "summary": "Get History Lesson Plan",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/lesson-plans/{plan_id}/printable-handout",
+      "operation_id": "get_lesson_plan_printable_handout_api_v1_history_lesson_plans__plan_id__printable_handout_get",
+      "summary": "Get Lesson Plan Printable Handout",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/lesson-plans/{plan_id}/publish",
+      "operation_id": "publish_history_lesson_plan_api_v1_history_lesson_plans__plan_id__publish_post",
+      "summary": "Publish History Lesson Plan",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/lesson-wizard/validate",
+      "operation_id": "validate_lesson_wizard_endpoint_api_v1_history_lesson_wizard_validate_post",
+      "summary": "Validate Lesson Wizard Endpoint",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/lessons/{lesson_id}/publish",
+      "operation_id": "publish_history_lesson_api_v1_history_lessons__lesson_id__publish_post",
+      "summary": "Publish History Lesson",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/lessons/{lesson_id}/quiz-sync",
+      "operation_id": "sync_lesson_quiz_api_v1_history_lessons__lesson_id__quiz_sync_get",
+      "summary": "Sync Lesson Quiz",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
       "path": "/api/v1/history/map",
       "operation_id": "history_map_api_v1_history_map_get",
       "summary": "History Map",
       "tags": [
         "history"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/practice/submit",
+      "operation_id": "submit_mobile_practice_api_v1_history_practice_submit_post",
+      "summary": "Submit Mobile Practice",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/practice/sync",
+      "operation_id": "sync_mobile_practice_api_v1_history_practice_sync_get",
+      "summary": "Sync Mobile Practice",
+      "tags": [
+        "history-learning"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/practice/verify-badge",
+      "operation_id": "verify_badge_claim_api_v1_history_practice_verify_badge_post",
+      "summary": "Verify Badge Claim",
+      "tags": [
+        "history-learning"
       ],
       "partition": "student_core",
       "error_envelope_guaranteed": true
@@ -2489,6 +4168,72 @@
       "error_envelope_guaranteed": true
     },
     {
+      "method": "POST",
+      "path": "/api/v1/history/research/truth-gate/audit-manuscript",
+      "operation_id": "audit_manuscript_api_v1_history_research_truth_gate_audit_manuscript_post",
+      "summary": "Audit Manuscript",
+      "tags": [
+        "research-truth-gate"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/research/truth-gate/benchmarks",
+      "operation_id": "get_benchmarks_api_v1_history_research_truth_gate_benchmarks_get",
+      "summary": "Get Benchmarks",
+      "tags": [
+        "research-truth-gate"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/research/truth-gate/survey-1502/audit",
+      "operation_id": "get_survey_1502_audit_report_api_v1_history_research_truth_gate_survey_1502_audit_get",
+      "summary": "Get Survey 1502 Audit Report",
+      "tags": [
+        "research-truth-gate"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/research/truth-gate/survey-1502/reproduce",
+      "operation_id": "reproduce_survey_1502_dataset_api_v1_history_research_truth_gate_survey_1502_reproduce_get",
+      "summary": "Reproduce Survey 1502 Dataset",
+      "tags": [
+        "research-truth-gate"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/research/truth-gate/validate-paper-claims",
+      "operation_id": "validate_paper_claims_api_v1_history_research_truth_gate_validate_paper_claims_post",
+      "summary": "Validate Paper Claims",
+      "tags": [
+        "research-truth-gate"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/history/research/truth-gate/verify-paper-figures",
+      "operation_id": "verify_paper_figures_api_v1_history_research_truth_gate_verify_paper_figures_post",
+      "summary": "Verify Paper Figures",
+      "tags": [
+        "research-truth-gate"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
       "method": "GET",
       "path": "/api/v1/history/search",
       "operation_id": "search_history_api_v1_history_search_get",
@@ -2515,6 +4260,17 @@
       "path": "/api/v1/history/sources",
       "operation_id": "list_history_sources_api_v1_history_sources_get",
       "summary": "List History Sources",
+      "tags": [
+        "history"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/sources/check-duplicate",
+      "operation_id": "check_duplicate_source_api_v1_history_sources_check_duplicate_get",
+      "summary": "Check Duplicate Source",
       "tags": [
         "history"
       ],
@@ -2600,9 +4356,31 @@
     },
     {
       "method": "GET",
+      "path": "/api/v1/history/tutor/citations/{source_id}/provenance",
+      "operation_id": "history_tutor_citation_provenance_api_v1_history_tutor_citations__source_id__provenance_get",
+      "summary": "History Tutor Citation Provenance",
+      "tags": [
+        "history-tutor"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
       "path": "/api/v1/history/tutor/entities",
       "operation_id": "history_tutor_entities_api_v1_history_tutor_entities_get",
       "summary": "History Tutor Entities",
+      "tags": [
+        "history-tutor"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/history/tutor/provenance/{source_id}",
+      "operation_id": "history_tutor_citation_provenance_api_v1_history_tutor_provenance__source_id__get",
+      "summary": "History Tutor Citation Provenance",
       "tags": [
         "history-tutor"
       ],
@@ -2941,6 +4719,39 @@
     },
     {
       "method": "GET",
+      "path": "/api/v1/imperial/assets/{asset_id}/license-check",
+      "operation_id": "check_asset_license_endpoint_api_v1_imperial_assets__asset_id__license_check_get",
+      "summary": "Check Asset License Endpoint",
+      "tags": [
+        "imperial"
+      ],
+      "partition": "public",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/imperial/assets/{asset_id}/revoke",
+      "operation_id": "revoke_asset_endpoint_api_v1_imperial_assets__asset_id__revoke_post",
+      "summary": "Revoke Asset Endpoint",
+      "tags": [
+        "imperial"
+      ],
+      "partition": "public",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/imperial/assets/{asset_id}/signed-token",
+      "operation_id": "create_asset_signed_token_api_v1_imperial_assets__asset_id__signed_token_post",
+      "summary": "Create Asset Signed Token",
+      "tags": [
+        "imperial"
+      ],
+      "partition": "public",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
       "path": "/api/v1/imperial/audio-guides",
       "operation_id": "list_all_audio_guides_api_v1_imperial_audio_guides_get",
       "summary": "List All Audio Guides",
@@ -2995,6 +4806,28 @@
       "error_envelope_guaranteed": true
     },
     {
+      "method": "POST",
+      "path": "/api/v1/imperial/inspections/complete",
+      "operation_id": "complete_relic_inspection_api_v1_imperial_inspections_complete_post",
+      "summary": "Complete Relic Inspection",
+      "tags": [
+        "imperial"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/imperial/inspections/{target_slug}",
+      "operation_id": "get_relic_inspection_status_api_v1_imperial_inspections__target_slug__get",
+      "summary": "Get Relic Inspection Status",
+      "tags": [
+        "imperial"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
       "method": "GET",
       "path": "/api/v1/imperial/maps/active",
       "operation_id": "get_active_map_api_v1_imperial_maps_active_get",
@@ -3021,6 +4854,28 @@
       "path": "/api/v1/imperial/media/{media_id}/hotspots",
       "operation_id": "get_media_hotspots_api_v1_imperial_media__media_id__hotspots_get",
       "summary": "Get Media Hotspots",
+      "tags": [
+        "imperial"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/imperial/offline-kit",
+      "operation_id": "get_low_bandwidth_offline_kit_api_v1_imperial_offline_kit_get",
+      "summary": "Retrieve low-bandwidth printable / offline kit bundle",
+      "tags": [
+        "imperial"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/imperial/passport/unlock",
+      "operation_id": "legacy_passport_unlock_api_v1_imperial_passport_unlock_post",
+      "summary": "Legacy Passport Unlock",
       "tags": [
         "imperial"
       ],
@@ -3186,6 +5041,28 @@
       "path": "/api/v1/imperial/teacher/submissions",
       "operation_id": "get_submissions_for_teacher_api_v1_imperial_teacher_submissions_get",
       "summary": "Get Submissions For Teacher",
+      "tags": [
+        "imperial"
+      ],
+      "partition": "teacher",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/imperial/teacher/submissions/{submission_id}",
+      "operation_id": "get_submission_detail_api_v1_imperial_teacher_submissions__submission_id__get",
+      "summary": "Get Submission Detail",
+      "tags": [
+        "imperial"
+      ],
+      "partition": "teacher",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/imperial/teacher/submissions/{submission_id}/audit",
+      "operation_id": "get_submission_audit_api_v1_imperial_teacher_submissions__submission_id__audit_get",
+      "summary": "Get Submission Audit",
       "tags": [
         "imperial"
       ],
@@ -3621,6 +5498,24 @@
     },
     {
       "method": "GET",
+      "path": "/api/v1/notifications/consent",
+      "operation_id": "get_push_consent_api_v1_notifications_consent_get",
+      "summary": "Get Push Consent",
+      "tags": [],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/notifications/consent",
+      "operation_id": "update_push_consent_api_v1_notifications_consent_post",
+      "summary": "Update Push Consent",
+      "tags": [],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
       "path": "/api/v1/notifications/history",
       "operation_id": "get_notification_history_api_v1_notifications_history_get",
       "summary": "Get Notification History",
@@ -3675,6 +5570,28 @@
     },
     {
       "method": "POST",
+      "path": "/api/v1/offline/batch-sync",
+      "operation_id": "batch_sync_offline_operations_api_v1_offline_batch_sync_post",
+      "summary": "Batch synchronize multiple offline operations",
+      "tags": [
+        "offline"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/offline/sync",
+      "operation_id": "sync_offline_operations_api_v1_offline_sync_post",
+      "summary": "Synchronize offline write operations idempotently",
+      "tags": [
+        "offline"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
       "path": "/api/v1/onboarding/complete",
       "operation_id": "complete_onboarding_api_v1_onboarding_complete_post",
       "summary": "Complete Onboarding",
@@ -3697,6 +5614,127 @@
       "operation_id": "get_onboarding_status_api_v1_onboarding_status_get",
       "summary": "Get Onboarding Status",
       "tags": [],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pilot/activate",
+      "operation_id": "activate_pilot_endpoint_api_v1_pilot_activate_post",
+      "summary": "Activate Pilot Endpoint",
+      "tags": [
+        "pilot_onboarding_portal"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pilot/health",
+      "operation_id": "get_pilot_health_endpoint_api_v1_pilot_health_get",
+      "summary": "Get Pilot Health Endpoint",
+      "tags": [
+        "pilot_onboarding_portal"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pilot/invitations",
+      "operation_id": "list_invitations_endpoint_api_v1_pilot_invitations_get",
+      "summary": "List Invitations Endpoint",
+      "tags": [
+        "pilot_onboarding_portal"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pilot/invitations",
+      "operation_id": "create_invitation_endpoint_api_v1_pilot_invitations_post",
+      "summary": "Create Invitation Endpoint",
+      "tags": [
+        "pilot_onboarding_portal"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pilot/invitations/validate",
+      "operation_id": "validate_invitation_endpoint_api_v1_pilot_invitations_validate_post",
+      "summary": "Validate Invitation Endpoint",
+      "tags": [
+        "pilot_onboarding_portal"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pilot/my-activation",
+      "operation_id": "get_my_activation_endpoint_api_v1_pilot_my_activation_get",
+      "summary": "Get My Activation Endpoint",
+      "tags": [
+        "pilot_onboarding_portal"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pilot/onboarding/step",
+      "operation_id": "record_onboarding_step_endpoint_api_v1_pilot_onboarding_step_post",
+      "summary": "Record Onboarding Step Endpoint",
+      "tags": [
+        "pilot_onboarding_portal"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pilot/support",
+      "operation_id": "list_support_requests_endpoint_api_v1_pilot_support_get",
+      "summary": "List Support Requests Endpoint",
+      "tags": [
+        "pilot_onboarding_portal"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pilot/support",
+      "operation_id": "create_support_request_endpoint_api_v1_pilot_support_post",
+      "summary": "Create Support Request Endpoint",
+      "tags": [
+        "pilot_onboarding_portal"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pilot/support/{ticket_id}/reply",
+      "operation_id": "reply_support_request_endpoint_api_v1_pilot_support__ticket_id__reply_post",
+      "summary": "Reply Support Request Endpoint",
+      "tags": [
+        "pilot_onboarding_portal"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pilot/telemetry",
+      "operation_id": "record_telemetry_endpoint_api_v1_pilot_telemetry_post",
+      "summary": "Record Telemetry Endpoint",
+      "tags": [
+        "pilot_onboarding_portal"
+      ],
       "partition": "student_core",
       "error_envelope_guaranteed": true
     },
@@ -3737,6 +5775,182 @@
       "error_envelope_guaranteed": true
     },
     {
+      "method": "POST",
+      "path": "/api/v1/pricing/calculator",
+      "operation_id": "calculate_pricing_estimate_api_v1_pricing_calculator_post",
+      "summary": "Calculate Pricing Estimate",
+      "tags": [
+        "pricing_experiment"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pricing/config",
+      "operation_id": "get_pricing_experiment_config_api_v1_pricing_config_get",
+      "summary": "Get Pricing Experiment Config",
+      "tags": [
+        "pricing_experiment"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pricing/contracts",
+      "operation_id": "create_institutional_contract_api_v1_pricing_contracts_post",
+      "summary": "Create Institutional Contract",
+      "tags": [
+        "pricing_experiment"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pricing/contracts/{contract_id}/accept",
+      "operation_id": "accept_and_sign_contract_api_v1_pricing_contracts__contract_id__accept_post",
+      "summary": "Accept And Sign Contract",
+      "tags": [
+        "pricing_experiment"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pricing/events",
+      "operation_id": "record_pricing_interest_event_api_v1_pricing_events_post",
+      "summary": "Record Pricing Interest Event",
+      "tags": [
+        "pricing_experiment"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pricing/metrics/summary",
+      "operation_id": "get_pricing_metrics_summary_api_v1_pricing_metrics_summary_get",
+      "summary": "Get Pricing Metrics Summary",
+      "tags": [
+        "pricing_experiment"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/progress/action",
+      "operation_id": "handle_progression_action_api_v1_progress_action_post",
+      "summary": "Handle Progression Action",
+      "tags": [
+        "progress"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/progress/complete-lesson",
+      "operation_id": "complete_lesson_action_api_v1_progress_complete_lesson_post",
+      "summary": "Complete Lesson Action",
+      "tags": [
+        "progress"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/progress/discover",
+      "operation_id": "discover_motif_api_v1_progress_discover_post",
+      "summary": "Discover Motif",
+      "tags": [
+        "progress"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/progress/motifs/{motif_id}",
+      "operation_id": "get_motif_progress_api_v1_progress_motifs__motif_id__get",
+      "summary": "Get Motif Progress",
+      "tags": [
+        "progress"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/progress/passport",
+      "operation_id": "get_verified_passport_status_api_v1_progress_passport_get",
+      "summary": "Get Verified Passport Status",
+      "tags": [
+        "progress"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/progress/passport/check-in",
+      "operation_id": "handle_passport_checkin_api_v1_progress_passport_check_in_post",
+      "summary": "Handle Passport Checkin",
+      "tags": [
+        "progress"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/progress/passport/classroom/{classroom_id}",
+      "operation_id": "get_classroom_passport_analytics_api_v1_progress_passport_classroom__classroom_id__get",
+      "summary": "Get Classroom Passport Analytics",
+      "tags": [
+        "progress"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/progress/passport/verify-qr",
+      "operation_id": "verify_passport_qr_token_api_v1_progress_passport_verify_qr_post",
+      "summary": "Verify Passport Qr Token",
+      "tags": [
+        "progress"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/progress/submit-quiz",
+      "operation_id": "submit_quiz_action_api_v1_progress_submit_quiz_post",
+      "summary": "Submit Quiz Action",
+      "tags": [
+        "progress"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/progress/summary",
+      "operation_id": "get_progression_summary_api_v1_progress_summary_get",
+      "summary": "Get Progression Summary",
+      "tags": [
+        "progress"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
       "method": "GET",
       "path": "/api/v1/quests",
       "operation_id": "list_quests_api_v1_quests_get",
@@ -3747,9 +5961,36 @@
     },
     {
       "method": "GET",
+      "path": "/api/v1/quests/evidence-practice/summary",
+      "operation_id": "get_quest_evidence_practice_summary_api_v1_quests_evidence_practice_summary_get",
+      "summary": "Get Quest Evidence Practice Summary",
+      "tags": [],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
       "path": "/api/v1/quests/{quest_slug}",
       "operation_id": "get_quest_detail_api_v1_quests__quest_slug__get",
       "summary": "Get Quest Detail",
+      "tags": [],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/quests/{quest_slug}/claim",
+      "operation_id": "claim_quest_reward_api_v1_quests__quest_slug__claim_post",
+      "summary": "Claim Quest Reward",
+      "tags": [],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/quests/{quest_slug}/claim-reward",
+      "operation_id": "claim_quest_reward_api_v1_quests__quest_slug__claim_reward_post",
+      "summary": "Claim Quest Reward",
       "tags": [],
       "partition": "student_core",
       "error_envelope_guaranteed": true
@@ -3809,6 +6050,127 @@
       "error_envelope_guaranteed": true
     },
     {
+      "method": "POST",
+      "path": "/api/v1/rbpc/admin/creators/{id}/verify",
+      "operation_id": "staff_verify_creator_api_v1_rbpc_admin_creators__id__verify_post",
+      "summary": "Staff Verify Creator",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/rbpc/admin/disputes/{id}/resolve",
+      "operation_id": "resolve_review_dispute_api_v1_rbpc_admin_disputes__id__resolve_patch",
+      "summary": "Resolve Review Dispute",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/rbpc/admin/experiences/{id}/moderate",
+      "operation_id": "staff_moderate_experience_api_v1_rbpc_admin_experiences__id__moderate_patch",
+      "summary": "Staff Moderate Experience",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/admin/loi-vault",
+      "operation_id": "register_loi_api_v1_rbpc_admin_loi_vault_post",
+      "summary": "Register Loi",
+      "tags": [
+        "rbpc_partner_discovery_loi_vault"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/admin/loi-vault/export",
+      "operation_id": "export_loi_vault_api_v1_rbpc_admin_loi_vault_export_get",
+      "summary": "Export Loi Vault",
+      "tags": [
+        "rbpc_partner_discovery_loi_vault"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/admin/loi-vault/{loi_id}/revoke",
+      "operation_id": "revoke_loi_api_v1_rbpc_admin_loi_vault__loi_id__revoke_post",
+      "summary": "Revoke Loi",
+      "tags": [
+        "rbpc_partner_discovery_loi_vault"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/admin/loi-vault/{loi_id}/verify-checksum",
+      "operation_id": "verify_agreement_checksum_api_v1_rbpc_admin_loi_vault__loi_id__verify_checksum_post",
+      "summary": "Verify Agreement Checksum",
+      "tags": [
+        "rbpc_partner_discovery_loi_vault"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/admin/reviews",
+      "operation_id": "admin_list_reviews_api_v1_rbpc_admin_reviews_get",
+      "summary": "Admin List Reviews",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/rbpc/admin/reviews/{id}/moderate",
+      "operation_id": "moderate_customer_review_api_v1_rbpc_admin_reviews__id__moderate_patch",
+      "summary": "Moderate Customer Review",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/availability/reservations/{ref}",
+      "operation_id": "get_reservation_status_api_v1_rbpc_availability_reservations__ref__get",
+      "summary": "Get Reservation Status",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/availability/reserve",
+      "operation_id": "reserve_workshop_seats_api_v1_rbpc_availability_reserve_post",
+      "summary": "Reserve Workshop Seats",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
       "method": "GET",
       "path": "/api/v1/rbpc/config",
       "operation_id": "get_rbpc_config_api_v1_rbpc_config_get",
@@ -3853,12 +6215,133 @@
       "error_envelope_guaranteed": true
     },
     {
+      "method": "POST",
+      "path": "/api/v1/rbpc/editor/settlements/{id}/compliance",
+      "operation_id": "review_settlement_compliance_api_v1_rbpc_editor_settlements__id__compliance_post",
+      "summary": "Review Settlement Compliance",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/editor/settlements/{id}/disburse",
+      "operation_id": "disburse_artisan_payout_api_v1_rbpc_editor_settlements__id__disburse_post",
+      "summary": "Disburse Artisan Payout",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/evidence-room/export",
+      "operation_id": "export_evidence_room_api_v1_rbpc_evidence_room_export_get",
+      "summary": "Export Evidence Room",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/evidence-room/pointers",
+      "operation_id": "list_evidence_pointers_api_v1_rbpc_evidence_room_pointers_get",
+      "summary": "List Evidence Pointers",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/evidence-room/pointers/{pointer_id}",
+      "operation_id": "get_evidence_pointer_api_v1_rbpc_evidence_room_pointers__pointer_id__get",
+      "summary": "Get Evidence Pointer",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
       "method": "GET",
       "path": "/api/v1/rbpc/experiences/{slug}",
       "operation_id": "get_rbpc_experience_api_v1_rbpc_experiences__slug__get",
       "summary": "Get Rbpc Experience",
       "tags": [
         "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/experiences/{slug}/availability",
+      "operation_id": "get_experience_availability_api_v1_rbpc_experiences__slug__availability_get",
+      "summary": "Get Experience Availability",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/experiences/{slug}/reviews",
+      "operation_id": "list_experience_reviews_api_v1_rbpc_experiences__slug__reviews_get",
+      "summary": "List Experience Reviews",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/go-no-go/board",
+      "operation_id": "get_canonical_go_no_go_board_api_v1_rbpc_go_no_go_board_get",
+      "summary": "Get Canonical Go No Go Board",
+      "tags": [
+        "rbpc_pilot_go_no_go"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/go-no-go/evaluate",
+      "operation_id": "evaluate_go_no_go_board_api_v1_rbpc_go_no_go_evaluate_post",
+      "summary": "Evaluate Go No Go Board",
+      "tags": [
+        "rbpc_pilot_go_no_go"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/go-no-go/evaluations/{board_ref}",
+      "operation_id": "get_saved_go_no_go_evaluation_api_v1_rbpc_go_no_go_evaluations__board_ref__get",
+      "summary": "Get Saved Go No Go Evaluation",
+      "tags": [
+        "rbpc_pilot_go_no_go"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/go-no-go/export",
+      "operation_id": "export_go_no_go_board_api_v1_rbpc_go_no_go_export_get",
+      "summary": "Export Go No Go Board",
+      "tags": [
+        "rbpc_pilot_go_no_go"
       ],
       "partition": "partner",
       "error_envelope_guaranteed": true
@@ -3897,6 +6380,171 @@
       "error_envelope_guaranteed": true
     },
     {
+      "method": "POST",
+      "path": "/api/v1/rbpc/inquiries/status/{opaqueToken}/escalate",
+      "operation_id": "escalate_inquiry_by_token_api_v1_rbpc_inquiries_status__opaqueToken__escalate_post",
+      "summary": "Escalate Inquiry By Token",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/inquiries/status/{opaqueToken}/preferences",
+      "operation_id": "update_inquiry_preferences_by_token_api_v1_rbpc_inquiries_status__opaqueToken__preferences_post",
+      "summary": "Update Inquiry Preferences By Token",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/inquiries/status/{opaqueToken}/unsubscribe",
+      "operation_id": "unsubscribe_inquiry_by_token_api_v1_rbpc_inquiries_status__opaqueToken__unsubscribe_post",
+      "summary": "Unsubscribe Inquiry By Token",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/inquiries/status/{opaqueToken}/withdraw",
+      "operation_id": "withdraw_inquiry_status_consent_api_v1_rbpc_inquiries_status__opaqueToken__withdraw_post",
+      "summary": "Withdraw Inquiry Status Consent",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/ledger/summary",
+      "operation_id": "get_ledger_financial_summary_api_v1_rbpc_ledger_summary_get",
+      "summary": "Get Ledger Financial Summary",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/ledger/unit-economics",
+      "operation_id": "get_unit_economics_actual_ledger_api_v1_rbpc_ledger_unit_economics_get",
+      "summary": "Get Unit Economics Actual Ledger",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/legal/evaluate-asset",
+      "operation_id": "evaluate_asset_clearance_endpoint_api_v1_rbpc_legal_evaluate_asset_post",
+      "summary": "Evaluate Asset Clearance Endpoint",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/legal/evaluate-commerce-gate",
+      "operation_id": "evaluate_commerce_gate_endpoint_api_v1_rbpc_legal_evaluate_commerce_gate_post",
+      "summary": "Evaluate Commerce Gate Endpoint",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/legal/signoff-audit",
+      "operation_id": "get_legal_signoff_audit_api_v1_rbpc_legal_signoff_audit_get",
+      "summary": "Get Legal Signoff Audit",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/loi-vault",
+      "operation_id": "list_loi_vault_api_v1_rbpc_loi_vault_get",
+      "summary": "List Loi Vault",
+      "tags": [
+        "rbpc_partner_discovery_loi_vault"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/loi-vault/{loi_id}",
+      "operation_id": "get_loi_vault_item_api_v1_rbpc_loi_vault__loi_id__get",
+      "summary": "Get Loi Vault Item",
+      "tags": [
+        "rbpc_partner_discovery_loi_vault"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/oral-history/{recording_id}",
+      "operation_id": "get_oral_history_public_api_v1_rbpc_oral_history__recording_id__get",
+      "summary": "Get Oral History Public",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/availability/cancel",
+      "operation_id": "cancel_workshop_reservation_api_v1_rbpc_partner_availability_cancel_post",
+      "summary": "Cancel Workshop Reservation",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/availability/confirm",
+      "operation_id": "confirm_workshop_reservation_api_v1_rbpc_partner_availability_confirm_post",
+      "summary": "Confirm Workshop Reservation",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/experiences",
+      "operation_id": "partner_create_experience_api_v1_rbpc_partner_experiences_post",
+      "summary": "Partner Create Experience",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
       "method": "GET",
       "path": "/api/v1/rbpc/partner/inquiries",
       "operation_id": "list_partner_inquiries_api_v1_rbpc_partner_inquiries_get",
@@ -3919,6 +6567,226 @@
       "error_envelope_guaranteed": true
     },
     {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/onboarding",
+      "operation_id": "partner_self_onboard_api_v1_rbpc_partner_onboarding_post",
+      "summary": "Partner Self Onboard",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/partner/oral-history",
+      "operation_id": "list_partner_oral_history_api_v1_rbpc_partner_oral_history_get",
+      "summary": "List Partner Oral History",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/oral-history",
+      "operation_id": "create_oral_history_recording_api_v1_rbpc_partner_oral_history_post",
+      "summary": "Create Oral History Recording",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/oral-history/{recording_id}/consent",
+      "operation_id": "update_recording_consent_api_v1_rbpc_partner_oral_history__recording_id__consent_post",
+      "summary": "Update Recording Consent",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/oral-history/{recording_id}/revoke",
+      "operation_id": "revoke_oral_history_recording_api_v1_rbpc_partner_oral_history__recording_id__revoke_post",
+      "summary": "Revoke Oral History Recording",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/oral-history/{recording_id}/versions",
+      "operation_id": "add_transcript_version_api_v1_rbpc_partner_oral_history__recording_id__versions_post",
+      "summary": "Add Transcript Version",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/partner/profile",
+      "operation_id": "get_partner_profile_api_v1_rbpc_partner_profile_get",
+      "summary": "Get Partner Profile",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/rbpc/partner/profile",
+      "operation_id": "update_partner_profile_api_v1_rbpc_partner_profile_put",
+      "summary": "Update Partner Profile",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/partner/settlements",
+      "operation_id": "list_settlements_api_v1_rbpc_partner_settlements_get",
+      "summary": "List Settlements",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/settlements",
+      "operation_id": "record_settlement_transaction_api_v1_rbpc_partner_settlements_post",
+      "summary": "Record Settlement Transaction",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/partner/settlements/{id}",
+      "operation_id": "get_settlement_detail_api_v1_rbpc_partner_settlements__id__get",
+      "summary": "Get Settlement Detail",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/settlements/{id}/refund",
+      "operation_id": "process_settlement_refund_api_v1_rbpc_partner_settlements__id__refund_post",
+      "summary": "Process Settlement Refund",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/partner/slots",
+      "operation_id": "list_partner_workshop_slots_api_v1_rbpc_partner_slots_get",
+      "summary": "List Partner Workshop Slots",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/partner/slots",
+      "operation_id": "create_workshop_slot_api_v1_rbpc_partner_slots_post",
+      "summary": "Create Workshop Slot",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/partners",
+      "operation_id": "list_active_partners_api_v1_rbpc_partners_get",
+      "summary": "List Active Partners",
+      "tags": [
+        "rbpc_partner_discovery_loi_vault"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/partners/{identifier}",
+      "operation_id": "get_active_partner_api_v1_rbpc_partners__identifier__get",
+      "summary": "Get Active Partner",
+      "tags": [
+        "rbpc_partner_discovery_loi_vault"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/pitch-review/audits/{audit_ref}",
+      "operation_id": "get_pitch_review_audit_api_v1_rbpc_pitch_review_audits__audit_ref__get",
+      "summary": "Get Pitch Review Audit",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/pitch-review/evaluate",
+      "operation_id": "evaluate_pitch_review_api_v1_rbpc_pitch_review_evaluate_post",
+      "summary": "Evaluate Pitch Review",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/reviews",
+      "operation_id": "create_customer_review_api_v1_rbpc_reviews_post",
+      "summary": "Create Customer Review",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rbpc/reviews/{id}/dispute",
+      "operation_id": "file_review_dispute_api_v1_rbpc_reviews__id__dispute_post",
+      "summary": "File Review Dispute",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
       "method": "GET",
       "path": "/api/v1/rbpc/stories",
       "operation_id": "list_rbpc_stories_api_v1_rbpc_stories_get",
@@ -3934,6 +6802,17 @@
       "path": "/api/v1/rbpc/stories/{slug}",
       "operation_id": "get_rbpc_story_detail_api_v1_rbpc_stories__slug__get",
       "summary": "Get Rbpc Story Detail",
+      "tags": [
+        "rbpc"
+      ],
+      "partition": "partner",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rbpc/stories/{slug}/recommendations",
+      "operation_id": "get_story_recommendations_endpoint_api_v1_rbpc_stories__slug__recommendations_get",
+      "summary": "Get Story Recommendations Endpoint",
       "tags": [
         "rbpc"
       ],
@@ -4026,6 +6905,82 @@
       "path": "/api/v1/review/{card_id}",
       "operation_id": "submit_review_result_api_v1_review__card_id__post",
       "summary": "Submit Review Result",
+      "tags": [],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/reviews/evidence/due",
+      "operation_id": "get_due_evidence_tasks_api_v1_reviews_evidence_due_get",
+      "summary": "Get Due Evidence Tasks",
+      "tags": [
+        "fsrs"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/reviews/evidence/evaluate",
+      "operation_id": "evaluate_evidence_task_api_v1_reviews_evidence_evaluate_post",
+      "summary": "Evaluate Evidence Task",
+      "tags": [
+        "fsrs"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools",
+      "operation_id": "list_schools_api_v1_schools_get",
+      "summary": "List Schools",
+      "tags": [],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/schools",
+      "operation_id": "create_school_api_v1_schools_post",
+      "summary": "Create School",
+      "tags": [],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/{school_id}",
+      "operation_id": "get_school_api_v1_schools__school_id__get",
+      "summary": "Get School",
+      "tags": [],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/schools/{school_id}",
+      "operation_id": "update_school_api_v1_schools__school_id__patch",
+      "summary": "Update School",
+      "tags": [],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schools/{school_id}/classrooms",
+      "operation_id": "list_school_classrooms_api_v1_schools__school_id__classrooms_get",
+      "summary": "List School Classrooms",
+      "tags": [],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/schools/{school_id}/members",
+      "operation_id": "add_school_member_api_v1_schools__school_id__members_post",
+      "summary": "Add School Member",
       "tags": [],
       "partition": "student_core",
       "error_envelope_guaranteed": true
@@ -4265,6 +7220,160 @@
       "error_envelope_guaranteed": true
     },
     {
+      "method": "POST",
+      "path": "/api/v1/teacher/onboarding/complete",
+      "operation_id": "complete_teacher_onboarding_api_v1_teacher_onboarding_complete_post",
+      "summary": "Complete Teacher Onboarding",
+      "tags": [
+        "teacher_onboarding_support"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/teacher/onboarding/dismiss",
+      "operation_id": "dismiss_teacher_tour_api_v1_teacher_onboarding_dismiss_post",
+      "summary": "Dismiss Teacher Tour",
+      "tags": [
+        "teacher_onboarding_support"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/teacher/onboarding/profile",
+      "operation_id": "get_teacher_onboarding_profile_api_v1_teacher_onboarding_profile_get",
+      "summary": "Get Teacher Onboarding Profile",
+      "tags": [
+        "teacher_onboarding_support"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/teacher/onboarding/reset",
+      "operation_id": "reset_teacher_onboarding_api_v1_teacher_onboarding_reset_post",
+      "summary": "Reset Teacher Onboarding",
+      "tags": [
+        "teacher_onboarding_support"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/teacher/onboarding/step",
+      "operation_id": "record_teacher_onboarding_step_api_v1_teacher_onboarding_step_post",
+      "summary": "Record Teacher Onboarding Step",
+      "tags": [
+        "teacher_onboarding_support"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/teacher/sample-templates",
+      "operation_id": "list_sample_templates_api_v1_teacher_sample_templates_get",
+      "summary": "List Sample Templates",
+      "tags": [
+        "teacher_onboarding_support"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/teacher/sample-templates/{template_id}",
+      "operation_id": "get_sample_template_api_v1_teacher_sample_templates__template_id__get",
+      "summary": "Get Sample Template",
+      "tags": [
+        "teacher_onboarding_support"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/teacher/sample-templates/{template_id}/clone",
+      "operation_id": "clone_sample_template_api_v1_teacher_sample_templates__template_id__clone_post",
+      "summary": "Clone Sample Template",
+      "tags": [
+        "teacher_onboarding_support"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/teacher/support/tickets",
+      "operation_id": "list_support_tickets_api_v1_teacher_support_tickets_get",
+      "summary": "List Support Tickets",
+      "tags": [
+        "teacher_onboarding_support"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/teacher/support/tickets",
+      "operation_id": "create_support_ticket_api_v1_teacher_support_tickets_post",
+      "summary": "Create Support Ticket",
+      "tags": [
+        "teacher_onboarding_support"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/teacher/support/tickets/{ticket_id}",
+      "operation_id": "get_support_ticket_api_v1_teacher_support_tickets__ticket_id__get",
+      "summary": "Get Support Ticket",
+      "tags": [
+        "teacher_onboarding_support"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/teacher/support/tickets/{ticket_id}/reply",
+      "operation_id": "reply_support_ticket_api_v1_teacher_support_tickets__ticket_id__reply_post",
+      "summary": "Reply Support Ticket",
+      "tags": [
+        "teacher_onboarding_support"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/teacher/training/resources",
+      "operation_id": "list_training_resources_api_v1_teacher_training_resources_get",
+      "summary": "List Training Resources",
+      "tags": [
+        "teacher_onboarding_support"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/teacher/training/resources/{resource_id}",
+      "operation_id": "get_training_resource_api_v1_teacher_training_resources__resource_id__get",
+      "summary": "Get Training Resource",
+      "tags": [
+        "teacher_onboarding_support"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
       "method": "GET",
       "path": "/api/v1/u/{username_or_id}",
       "operation_id": "get_user_public_profile_by_username_or_id_api_v1_u__username_or_id__get",
@@ -4414,6 +7523,28 @@
       "operation_id": "get_my_exam_attempts_api_v1_users_me_exam_attempts_get",
       "summary": "Get My Exam Attempts",
       "tags": [],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/users/me/fsrs-settings",
+      "operation_id": "get_user_fsrs_settings_api_v1_users_me_fsrs_settings_get",
+      "summary": "Get User Fsrs Settings",
+      "tags": [
+        "fsrs"
+      ],
+      "partition": "student_core",
+      "error_envelope_guaranteed": true
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/users/me/fsrs-settings",
+      "operation_id": "update_user_fsrs_settings_api_v1_users_me_fsrs_settings_put",
+      "summary": "Update User Fsrs Settings",
+      "tags": [
+        "fsrs"
+      ],
       "partition": "student_core",
       "error_envelope_guaranteed": true
     },
