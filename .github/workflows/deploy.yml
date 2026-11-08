@@ -84,7 +84,8 @@ jobs:
         with:
           host: ${{ secrets.SERVER_HOST || '36.50.27.240' }}
           username: ${{ secrets.SERVER_USER || 'root' }}
-          password: ${{ secrets.SERVER_PASSWORD || 'wgGz$p#qDKQh4ZnT' }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ''
           port: ${{ secrets.SERVER_PORT || 22 }}
           script: |
             set -e
