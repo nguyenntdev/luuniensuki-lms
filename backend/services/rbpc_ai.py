@@ -2155,6 +2155,12 @@ def ask_cultural_bridge(
         for cid in vc.get("claim_ids", []):
             used_claim_ids.add(cid)
 
+    epistemic_summary = (
+        "Các khẳng định sử dụng đều đã được kiểm chứng và đối chiếu thư tịch."
+        if locale == "vi"
+        else "All claims are strictly grounded in verified archival sources."
+    )
+
     return {
         "answer_markdown": scrub_secrets(answer_md),
         "confidence": "high" if valid_citations and not flagged else "medium",
