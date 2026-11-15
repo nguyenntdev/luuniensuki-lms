@@ -103,34 +103,10 @@ jobs:
             echo "=== Updating Backend Container (new image) ==="
             docker compose --env-file .env.prod -f docker-compose.prod.yml -f docker-compose.override.yml up -d --no-deps api
 
-            echo "=== Locating the live database container and network ==="
-            DB_CONTAINER=$(docker ps --format '{{.Names}}' | grep -E '(^|-)db(-[0-9]+)?$' | head -n 1)
-            if [ -z "$DB_CONTAINER" ]; then
-              echo "FATAL: no running database container found for migrations." >&2
-              exit 1
-            fi
-            DB_NETWORK=$(docker inspect "$DB_CONTAINER" --format '{{.HostConfig.NetworkMode}}')
-            echo "Database container: $DB_CONTAINER  network: $DB_NETWORK"
-
-            echo "=== Ensuring database is attached to its compose network ==="
-            docker network connect "$DB_NETWORK" "$DB_CONTAINER" 2>/dev/null || true
-
             echo "=== Applying Safe Database Migrations (alembic upgrade head) ==="
-            if docker compose --env-file .env.prod -f docker-compose.prod.yml -f docker-compose.override.yml exec -T api alembic upgrade head; then
-              echo "Migrations applied inside the api container."
-            else
-              echo "api container cannot reach the database; applying migrations on the live db network."
-              docker run --rm --network "$DB_NETWORK" --env-file .env.prod \
-                -e DATABASE_URL="$(grep -E '^DATABASE_URL=' .env.prod | cut -d= -f2-)" \
-                dainoisuky-api:latest alembic upgrade head
-            fi
-
+            docker compose --env-file .env.prod -f docker-compose.prod.yml -f docker-compose.override.yml exec -T api alembic upgrade head
             echo "=== Verifying Applied Migration Revision (alembic current) ==="
-            if ! docker compose --env-file .env.prod -f docker-compose.prod.yml -f docker-compose.override.yml exec -T api alembic current; then
-              docker run --rm --network "$DB_NETWORK" --env-file .env.prod \
-                -e DATABASE_URL="$(grep -E '^DATABASE_URL=' .env.prod | cut -d= -f2-)" \
-                dainoisuky-api:latest alembic current
-            fi
+            docker compose --env-file .env.prod -f docker-compose.prod.yml -f docker-compose.override.yml exec -T api alembic current
 
             echo "=== Building Frontend Standalone Bundle ==="
             cd frontend

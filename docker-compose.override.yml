@@ -1,7 +1,10 @@
 services:
   db:
+    # NOTE: 127.0.0.1:5432 is already bound by another stack (clara-postgres).
+    # The application reaches Postgres over the compose network, so we do not
+    # publish 5432 on the host; 55432 is an emergency-only access port.
     ports:
-      - "127.0.0.1:5432:5432"
+      - "127.0.0.1:55432:5432"
   api:
     ports:
       - "127.0.0.1:8000:8000"
