@@ -18,10 +18,24 @@ branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
+def _column_exists(table_name: str, column_name: str) -> bool:
+    inspector = sa.inspect(op.get_bind())
+    if table_name not in inspector.get_table_names():
+        return False
+    return column_name in {c['name'] for c in inspector.get_columns(table_name)}
+
+
+def _add_column_if_missing(table_name: str, column: sa.Column) -> None:
+    if not _column_exists(table_name, column.name):
+        op.add_column(table_name, column)
+
+
 def upgrade() -> None:
     # Add new columns to quest_assignments table
-    op.add_column('quest_assignments', sa.Column('points_override', sa.Integer(), nullable=True))
-    op.add_column('quest_assignments', sa.Column('notes', sa.Text(), nullable=True))
+    _add_column_if_missing(
+        'quest_assignments', sa.Column('points_override', sa.Integer(), nullable=True)
+    )
+    _add_column_if_missing('quest_assignments', sa.Column('notes', sa.Text(), nullable=True))
 
 
 def downgrade() -> None:

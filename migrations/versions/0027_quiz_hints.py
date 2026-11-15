@@ -42,6 +42,18 @@ def _enum_value_exists(enum_name: str, enum_value: str) -> bool:
     ).first() is not None
 
 
+def _table_exists(table_name: str) -> bool:
+    inspector = sa.inspect(op.get_bind())
+    return table_name in inspector.get_table_names()
+
+
+def _index_exists(table_name: str, index_name: str) -> bool:
+    inspector = sa.inspect(op.get_bind())
+    if table_name not in inspector.get_table_names():
+        return False
+    return index_name in {i['name'] for i in inspector.get_indexes(table_name)}
+
+
 def upgrade() -> None:
     # Create HintType enum
     if not _enum_exists("hint_type"):
@@ -51,26 +63,30 @@ def upgrade() -> None:
     if not _enum_value_exists("heart_transaction_reason", "quiz_hint"):
         op.execute("ALTER TYPE heart_transaction_reason ADD VALUE 'quiz_hint'")
 
-    # Create quiz_hint_requests table
-    op.create_table(
-        'quiz_hint_requests',
-        sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column('user_id', postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column('question_id', postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column('hint_type', sa.String(length=20), nullable=False),
-        sa.Column('hint_text', sa.Text(), nullable=False),
-        sa.Column('heart_cost', sa.Integer(), server_default=sa.text('0'), nullable=False),
-        sa.Column('rag_sources', postgresql.JSONB(), nullable=True),
-        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
-        sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
-        sa.ForeignKeyConstraint(['question_id'], ['quiz_questions.id'], ondelete='CASCADE'),
-        sa.PrimaryKeyConstraint('id')
-    )
+    if not _table_exists('quiz_hint_requests'):
+        # Create quiz_hint_requests table
+        op.create_table(
+            'quiz_hint_requests',
+            sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
+            sa.Column('user_id', postgresql.UUID(as_uuid=True), nullable=False),
+            sa.Column('question_id', postgresql.UUID(as_uuid=True), nullable=False),
+            sa.Column('hint_type', sa.String(length=20), nullable=False),
+            sa.Column('hint_text', sa.Text(), nullable=False),
+            sa.Column('heart_cost', sa.Integer(), server_default=sa.text('0'), nullable=False),
+            sa.Column('rag_sources', postgresql.JSONB(), nullable=True),
+            sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
+            sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
+            sa.ForeignKeyConstraint(['question_id'], ['quiz_questions.id'], ondelete='CASCADE'),
+            sa.PrimaryKeyConstraint('id')
+        )
 
     # Create indexes
-    op.create_index('idx_quiz_hints_user', 'quiz_hint_requests', ['user_id'])
-    op.create_index('idx_quiz_hints_question', 'quiz_hint_requests', ['question_id'])
-    op.create_index('idx_quiz_hints_created', 'quiz_hint_requests', ['created_at'])
+    if not _index_exists('quiz_hint_requests', 'idx_quiz_hints_user'):
+        op.create_index('idx_quiz_hints_user', 'quiz_hint_requests', ['user_id'])
+    if not _index_exists('quiz_hint_requests', 'idx_quiz_hints_question'):
+        op.create_index('idx_quiz_hints_question', 'quiz_hint_requests', ['question_id'])
+    if not _index_exists('quiz_hint_requests', 'idx_quiz_hints_created'):
+        op.create_index('idx_quiz_hints_created', 'quiz_hint_requests', ['created_at'])
 
 
 def downgrade() -> None:

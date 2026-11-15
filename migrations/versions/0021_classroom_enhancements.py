@@ -27,42 +27,76 @@ def generate_class_code(length: int = 8) -> str:
     return ''.join(random.choice(chars) for _ in range(length))
 
 
+def _column_exists(table_name: str, column_name: str) -> bool:
+    inspector = sa.inspect(op.get_bind())
+    if table_name not in inspector.get_table_names():
+        return False
+    return column_name in {c['name'] for c in inspector.get_columns(table_name)}
+
+
+def _add_column_if_missing(table_name: str, column: sa.Column) -> None:
+    if not _column_exists(table_name, column.name):
+        op.add_column(table_name, column)
+
+
+def _index_exists(table_name: str, index_name: str) -> bool:
+    inspector = sa.inspect(op.get_bind())
+    if table_name not in inspector.get_table_names():
+        return False
+    return index_name in {i['name'] for i in inspector.get_indexes(table_name)}
+
+
+def _constraint_exists(table_name: str, constraint_name: str) -> bool:
+    inspector = sa.inspect(op.get_bind())
+    if table_name not in inspector.get_table_names():
+        return False
+    fks = {fk['name'] for fk in inspector.get_foreign_keys(table_name)}
+    uqs = {uq['name'] for uq in inspector.get_unique_constraints(table_name)}
+    cks = {ck['name'] for ck in inspector.get_check_constraints(table_name)}
+    return constraint_name in (fks | uqs | cks)
+
+
 def upgrade() -> None:
     """Add new fields to classrooms table."""
 
+    fresh_column = not _column_exists('classes', 'class_code')
+
     # Add new columns
-    op.add_column('classes', sa.Column('class_code', sa.String(length=8), nullable=True))
-    op.add_column('classes', sa.Column('max_students', sa.Integer(), nullable=True))
-    op.add_column('classes', sa.Column('is_archived', sa.Boolean(), server_default=sa.text('false'), nullable=False))
-    op.add_column('classes', sa.Column('settings', postgresql.JSONB(astext_type=sa.Text()), nullable=True))
-    op.add_column('classes', sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False))
+    _add_column_if_missing('classes', sa.Column('class_code', sa.String(length=8), nullable=True))
+    _add_column_if_missing('classes', sa.Column('max_students', sa.Integer(), nullable=True))
+    _add_column_if_missing('classes', sa.Column('is_archived', sa.Boolean(), server_default=sa.text('false'), nullable=False))
+    _add_column_if_missing('classes', sa.Column('settings', postgresql.JSONB(astext_type=sa.Text()), nullable=True))
+    _add_column_if_missing('classes', sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False))
 
-    # Generate unique class codes for existing classrooms
-    connection = op.get_bind()
-    result = connection.execute(sa.text("SELECT id FROM classes"))
-    existing_classes = result.fetchall()
+    if fresh_column:
+        # Generate unique class codes for existing classrooms
+        connection = op.get_bind()
+        result = connection.execute(sa.text("SELECT id FROM classes"))
+        existing_classes = result.fetchall()
 
-    used_codes = set()
-    for row in existing_classes:
-        class_id = row[0]
-        # Generate unique code
-        while True:
-            code = generate_class_code()
-            if code not in used_codes:
-                used_codes.add(code)
-                break
+        used_codes = set()
+        for row in existing_classes:
+            class_id = row[0]
+            # Generate unique code
+            while True:
+                code = generate_class_code()
+                if code not in used_codes:
+                    used_codes.add(code)
+                    break
 
-        connection.execute(
-            sa.text("UPDATE classes SET class_code = :code WHERE id = :id"),
-            {"code": code, "id": class_id}
-        )
+            connection.execute(
+                sa.text("UPDATE classes SET class_code = :code WHERE id = :id"),
+                {"code": code, "id": class_id}
+            )
 
-    # Make class_code non-nullable after populating
-    op.alter_column('classes', 'class_code', nullable=False)
+        # Make class_code non-nullable after populating
+        op.alter_column('classes', 'class_code', nullable=False)
 
     # Create unique constraint and index
-    op.create_unique_constraint('uq_classes_class_code', 'classes', ['class_code'])
-    op.create_index('idx_classes_class_code', 'classes', ['class_code'])
+    if not _constraint_exists('classes', 'uq_classes_class_code'):
+        op.create_unique_constraint('uq_classes_class_code', 'classes', ['class_code'])
+    if not _index_exists('classes', 'idx_classes_class_code'):
+        op.create_index('idx_classes_class_code', 'classes', ['class_code'])
 
 
 def downgrade() -> None:

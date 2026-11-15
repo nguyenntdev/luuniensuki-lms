@@ -113,7 +113,6 @@ def _ensure_alembic_version_length(connection) -> None:
             metadata,
             sa.Column("version_num", sa.String(64), primary_key=True),
         ).create(bind=connection)
-        connection.commit()
         return
 
     for column in inspector.get_columns("alembic_version"):
@@ -125,7 +124,6 @@ def _ensure_alembic_version_length(connection) -> None:
         connection.execute(
             sa.text("ALTER TABLE alembic_version ALTER COLUMN version_num TYPE VARCHAR(64)")
         )
-        connection.commit()
         return
 
 
@@ -137,11 +135,19 @@ def run_migrations_online() -> None:
         poolclass=pool.NullPool,
     )
 
+    # IMPORTANT: SQLAlchemy 2.x (and 2.1 in particular) does not autocommit a
+    # plain ``engine.connect()``. Wrapping migrations in an explicit
+    # ``begin()`` block is what makes the DDL and the ``alembic_version``
+    # bump durable; without it every migration is silently rolled back.
     with connectable.connect() as connection:
         _ensure_alembic_version_length(connection)
-        context.configure(connection=connection, target_metadata=target_metadata)
-
-        with context.begin_transaction():
+        connection.commit()
+        context.configure(
+            connection=connection,
+            target_metadata=target_metadata,
+            transactional_ddl=True,
+        )
+        with connection.begin():
             context.run_migrations()
 
 

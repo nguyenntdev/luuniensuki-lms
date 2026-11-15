@@ -16,32 +16,60 @@ branch_labels = None
 depends_on = None
 
 
+def _table_exists(table_name: str) -> bool:
+    inspector = sa.inspect(op.get_bind())
+    return table_name in inspector.get_table_names()
+
+
+def _column_exists(table_name: str, column_name: str) -> bool:
+    inspector = sa.inspect(op.get_bind())
+    if table_name not in inspector.get_table_names():
+        return False
+    return column_name in {c['name'] for c in inspector.get_columns(table_name)}
+
+
+def _add_column_if_missing(table_name: str, column: sa.Column) -> None:
+    if not _column_exists(table_name, column.name):
+        op.add_column(table_name, column)
+
+
+def _index_exists(table_name: str, index_name: str) -> bool:
+    inspector = sa.inspect(op.get_bind())
+    if table_name not in inspector.get_table_names():
+        return False
+    return index_name in {i['name'] for i in inspector.get_indexes(table_name)}
+
+
 def upgrade() -> None:
     # Add preview_eligible column to lesson_content table
-    op.add_column(
+    _add_column_if_missing(
         'lesson_content',
         sa.Column('preview_eligible', sa.Boolean(), nullable=False, server_default='false')
     )
-    
-    # Create guest_previews table
-    op.create_table(
-        'guest_previews',
-        sa.Column('id', postgresql.UUID(as_uuid=True), primary_key=True),
-        sa.Column('session_id', sa.String(255), nullable=False, index=True),
-        sa.Column('preview_lesson_id', postgresql.UUID(as_uuid=True), nullable=True),
-        sa.Column('started_at', sa.DateTime(timezone=True), nullable=False, server_default=sa.func.now()),
-        sa.Column('completed_at', sa.DateTime(timezone=True), nullable=True),
-        sa.Column('converted_to_user_id', postgresql.UUID(as_uuid=True), nullable=True),
-        sa.Column('device_info', postgresql.JSONB(), nullable=True),
-        sa.Column('created_at', sa.DateTime(timezone=True), nullable=False, server_default=sa.func.now()),
-        sa.ForeignKeyConstraint(['preview_lesson_id'], ['lesson_content.id'], ondelete='SET NULL'),
-        sa.ForeignKeyConstraint(['converted_to_user_id'], ['users.id'], ondelete='SET NULL'),
-    )
-    
+
+    if not _table_exists('guest_previews'):
+        # Create guest_previews table
+        op.create_table(
+            'guest_previews',
+            sa.Column('id', postgresql.UUID(as_uuid=True), primary_key=True),
+            sa.Column('session_id', sa.String(255), nullable=False, index=True),
+            sa.Column('preview_lesson_id', postgresql.UUID(as_uuid=True), nullable=True),
+            sa.Column('started_at', sa.DateTime(timezone=True), nullable=False, server_default=sa.func.now()),
+            sa.Column('completed_at', sa.DateTime(timezone=True), nullable=True),
+            sa.Column('converted_to_user_id', postgresql.UUID(as_uuid=True), nullable=True),
+            sa.Column('device_info', postgresql.JSONB(), nullable=True),
+            sa.Column('created_at', sa.DateTime(timezone=True), nullable=False, server_default=sa.func.now()),
+            sa.ForeignKeyConstraint(['preview_lesson_id'], ['lesson_content.id'], ondelete='SET NULL'),
+            sa.ForeignKeyConstraint(['converted_to_user_id'], ['users.id'], ondelete='SET NULL'),
+        )
+
     # Create indexes for guest_previews
-    op.create_index('idx_guest_previews_session_id', 'guest_previews', ['session_id'])
-    op.create_index('idx_guest_previews_started_at', 'guest_previews', ['started_at'])
-    op.create_index('idx_guest_previews_converted_user', 'guest_previews', ['converted_to_user_id'])
+    if not _index_exists('guest_previews', 'idx_guest_previews_session_id'):
+        op.create_index('idx_guest_previews_session_id', 'guest_previews', ['session_id'])
+    if not _index_exists('guest_previews', 'idx_guest_previews_started_at'):
+        op.create_index('idx_guest_previews_started_at', 'guest_previews', ['started_at'])
+    if not _index_exists('guest_previews', 'idx_guest_previews_converted_user'):
+        op.create_index('idx_guest_previews_converted_user', 'guest_previews', ['converted_to_user_id'])
 
 
 def downgrade() -> None:

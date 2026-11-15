@@ -19,32 +19,48 @@ branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
+def _table_exists(table_name: str) -> bool:
+    inspector = sa.inspect(op.get_bind())
+    return table_name in inspector.get_table_names()
+
+
+def _index_exists(table_name: str, index_name: str) -> bool:
+    inspector = sa.inspect(op.get_bind())
+    if table_name not in inspector.get_table_names():
+        return False
+    return index_name in {i['name'] for i in inspector.get_indexes(table_name)}
+
+
 def upgrade() -> None:
-    # Create student_progress_snapshots table
-    op.create_table(
-        'student_progress_snapshots',
-        sa.Column('id', postgresql.UUID(as_uuid=True), primary_key=True),
-        sa.Column('student_id', postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column('classroom_id', postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column('snapshot_date', sa.Date(), nullable=False),
-        sa.Column('lessons_completed', sa.Integer(), nullable=False, server_default='0'),
-        sa.Column('quizzes_passed', sa.Integer(), nullable=False, server_default='0'),
-        sa.Column('average_quiz_score', sa.Float(), nullable=False, server_default='0.0'),
-        sa.Column('motifs_discovered', sa.Integer(), nullable=False, server_default='0'),
-        sa.Column('current_streak', sa.Integer(), nullable=False, server_default='0'),
-        sa.Column('xp_earned', sa.Integer(), nullable=False, server_default='0'),
-        sa.Column('time_spent_minutes', sa.Integer(), nullable=False, server_default='0'),
-        sa.Column('created_at', sa.DateTime(timezone=True), nullable=False, server_default=sa.text('now()')),
-        sa.ForeignKeyConstraint(['student_id'], ['users.id'], ondelete='CASCADE'),
-        sa.ForeignKeyConstraint(['classroom_id'], ['classes.id'], ondelete='CASCADE'),
-        sa.UniqueConstraint('student_id', 'classroom_id', 'snapshot_date', 
-                          name='uq_progress_snapshot_student_classroom_date'),
-    )
-    
+    if not _table_exists('student_progress_snapshots'):
+        # Create student_progress_snapshots table
+        op.create_table(
+            'student_progress_snapshots',
+            sa.Column('id', postgresql.UUID(as_uuid=True), primary_key=True),
+            sa.Column('student_id', postgresql.UUID(as_uuid=True), nullable=False),
+            sa.Column('classroom_id', postgresql.UUID(as_uuid=True), nullable=False),
+            sa.Column('snapshot_date', sa.Date(), nullable=False),
+            sa.Column('lessons_completed', sa.Integer(), nullable=False, server_default='0'),
+            sa.Column('quizzes_passed', sa.Integer(), nullable=False, server_default='0'),
+            sa.Column('average_quiz_score', sa.Float(), nullable=False, server_default='0.0'),
+            sa.Column('motifs_discovered', sa.Integer(), nullable=False, server_default='0'),
+            sa.Column('current_streak', sa.Integer(), nullable=False, server_default='0'),
+            sa.Column('xp_earned', sa.Integer(), nullable=False, server_default='0'),
+            sa.Column('time_spent_minutes', sa.Integer(), nullable=False, server_default='0'),
+            sa.Column('created_at', sa.DateTime(timezone=True), nullable=False, server_default=sa.text('now()')),
+            sa.ForeignKeyConstraint(['student_id'], ['users.id'], ondelete='CASCADE'),
+            sa.ForeignKeyConstraint(['classroom_id'], ['classes.id'], ondelete='CASCADE'),
+            sa.UniqueConstraint('student_id', 'classroom_id', 'snapshot_date',
+                              name='uq_progress_snapshot_student_classroom_date'),
+        )
+
     # Create indexes
-    op.create_index('idx_progress_snapshots_student', 'student_progress_snapshots', ['student_id'])
-    op.create_index('idx_progress_snapshots_classroom', 'student_progress_snapshots', ['classroom_id'])
-    op.create_index('idx_progress_snapshots_date', 'student_progress_snapshots', ['snapshot_date'])
+    if not _index_exists('student_progress_snapshots', 'idx_progress_snapshots_student'):
+        op.create_index('idx_progress_snapshots_student', 'student_progress_snapshots', ['student_id'])
+    if not _index_exists('student_progress_snapshots', 'idx_progress_snapshots_classroom'):
+        op.create_index('idx_progress_snapshots_classroom', 'student_progress_snapshots', ['classroom_id'])
+    if not _index_exists('student_progress_snapshots', 'idx_progress_snapshots_date'):
+        op.create_index('idx_progress_snapshots_date', 'student_progress_snapshots', ['snapshot_date'])
 
 
 def downgrade() -> None:

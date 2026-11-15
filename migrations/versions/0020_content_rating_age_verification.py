@@ -24,6 +24,25 @@ def _enum_exists(enum_name: str) -> bool:
     ).first() is not None
 
 
+def _column_exists(table_name: str, column_name: str) -> bool:
+    inspector = sa.inspect(op.get_bind())
+    if table_name not in inspector.get_table_names():
+        return False
+    return column_name in {c["name"] for c in inspector.get_columns(table_name)}
+
+
+def _add_column_if_missing(table_name: str, column: sa.Column) -> None:
+    if not _column_exists(table_name, column.name):
+        op.add_column(table_name, column)
+
+
+def _index_exists(table_name: str, index_name: str) -> bool:
+    inspector = sa.inspect(op.get_bind())
+    if table_name not in inspector.get_table_names():
+        return False
+    return index_name in {i["name"] for i in inspector.get_indexes(table_name)}
+
+
 def upgrade() -> None:
     # Create content_rating enum type
     if not _enum_exists("content_rating"):
@@ -34,43 +53,47 @@ def upgrade() -> None:
         )
 
     # Add content_rating field to motifs table
-    op.add_column('motifs',
+    _add_column_if_missing('motifs',
         sa.Column('content_rating',
                   postgresql.ENUM('everyone', 'teen', 'mature', name='content_rating', create_type=False),
                   nullable=False,
                   server_default='everyone'))
 
     # Add content_rating field to lesson_content table
-    op.add_column('lesson_content',
+    _add_column_if_missing('lesson_content',
         sa.Column('content_rating',
                   postgresql.ENUM('everyone', 'teen', 'mature', name='content_rating', create_type=False),
                   nullable=False,
                   server_default='everyone'))
 
     # Add content_rating field to quests table
-    op.add_column('quests',
+    _add_column_if_missing('quests',
         sa.Column('content_rating',
                   postgresql.ENUM('everyone', 'teen', 'mature', name='content_rating', create_type=False),
                   nullable=False,
                   server_default='everyone'))
 
     # Add age verification fields to users table
-    op.add_column('users',
+    _add_column_if_missing('users',
         sa.Column('birth_year', sa.Integer(), nullable=True))
 
-    op.add_column('users',
+    _add_column_if_missing('users',
         sa.Column('age_verified', sa.Boolean(), nullable=False, server_default='false'))
 
-    op.add_column('users',
+    _add_column_if_missing('users',
         sa.Column('age_verified_at', sa.DateTime(timezone=True), nullable=True))
 
     # Create index on content_rating fields for better query performance
-    op.create_index('idx_motifs_content_rating', 'motifs', ['content_rating'])
-    op.create_index('idx_lesson_content_rating', 'lesson_content', ['content_rating'])
-    op.create_index('idx_quests_content_rating', 'quests', ['content_rating'])
+    if not _index_exists('motifs', 'idx_motifs_content_rating'):
+        op.create_index('idx_motifs_content_rating', 'motifs', ['content_rating'])
+    if not _index_exists('lesson_content', 'idx_lesson_content_rating'):
+        op.create_index('idx_lesson_content_rating', 'lesson_content', ['content_rating'])
+    if not _index_exists('quests', 'idx_quests_content_rating'):
+        op.create_index('idx_quests_content_rating', 'quests', ['content_rating'])
 
     # Create indexes on age verification fields
-    op.create_index('idx_users_age_verified', 'users', ['age_verified'])
+    if not _index_exists('users', 'idx_users_age_verified'):
+        op.create_index('idx_users_age_verified', 'users', ['age_verified'])
 
 
 def downgrade() -> None:

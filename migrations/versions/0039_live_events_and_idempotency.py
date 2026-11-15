@@ -19,66 +19,107 @@ branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
+def _table_exists(table_name: str) -> bool:
+    inspector = sa.inspect(op.get_bind())
+    return table_name in inspector.get_table_names()
+
+
+def _column_exists(table_name: str, column_name: str) -> bool:
+    inspector = sa.inspect(op.get_bind())
+    if table_name not in inspector.get_table_names():
+        return False
+    return column_name in {c["name"] for c in inspector.get_columns(table_name)}
+
+
+def _add_column_if_missing(table_name: str, column: sa.Column) -> None:
+    if not _column_exists(table_name, column.name):
+        op.add_column(table_name, column)
+
+
+def _index_exists(table_name: str, index_name: str) -> bool:
+    inspector = sa.inspect(op.get_bind())
+    if table_name not in inspector.get_table_names():
+        return False
+    return index_name in {i["name"] for i in inspector.get_indexes(table_name)}
+
+
+def _constraint_exists(table_name: str, constraint_name: str) -> bool:
+    inspector = sa.inspect(op.get_bind())
+    if table_name not in inspector.get_table_names():
+        return False
+    fks = {fk["name"] for fk in inspector.get_foreign_keys(table_name)}
+    uqs = {uq["name"] for uq in inspector.get_unique_constraints(table_name)}
+    cks = {ck["name"] for ck in inspector.get_check_constraints(table_name)}
+    return constraint_name in (fks | uqs | cks)
+
+
 def upgrade() -> None:
-    op.add_column(
+    _add_column_if_missing(
         "live_sessions",
         sa.Column("idempotency_key", sa.String(length=128), nullable=True),
     )
-    op.create_unique_constraint(
-        "uq_live_sessions_idempotency_key",
-        "live_sessions",
-        ["idempotency_key"],
-    )
-    op.create_index(
-        "idx_live_sessions_idempotency_key",
-        "live_sessions",
-        ["idempotency_key"],
-    )
+    if not _constraint_exists("live_sessions", "uq_live_sessions_idempotency_key"):
+        op.create_unique_constraint(
+            "uq_live_sessions_idempotency_key",
+            "live_sessions",
+            ["idempotency_key"],
+        )
+    if not _index_exists("live_sessions", "idx_live_sessions_idempotency_key"):
+        op.create_index(
+            "idx_live_sessions_idempotency_key",
+            "live_sessions",
+            ["idempotency_key"],
+        )
 
-    op.create_table(
-        "live_events",
-        sa.Column("id", postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column("live_session_id", postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column("event_type", sa.String(length=80), nullable=False),
-        sa.Column(
-            "event_source",
-            sa.String(length=40),
-            server_default=sa.text("'app'"),
-            nullable=False,
-        ),
-        sa.Column("participant_identity", sa.String(length=191), nullable=True),
-        sa.Column("participant_user_id", postgresql.UUID(as_uuid=True), nullable=True),
-        sa.Column(
-            "payload",
-            postgresql.JSONB(astext_type=sa.Text()),
-            nullable=True,
-        ),
-        sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.func.now(),
-            nullable=False,
-        ),
-        sa.ForeignKeyConstraint(
-            ["live_session_id"],
-            ["live_sessions.id"],
-            ondelete="CASCADE",
-        ),
-        sa.ForeignKeyConstraint(
-            ["participant_user_id"],
-            ["users.id"],
-            ondelete="SET NULL",
-        ),
-        sa.PrimaryKeyConstraint("id"),
-    )
-    op.create_index("idx_live_events_session", "live_events", ["live_session_id"])
-    op.create_index("idx_live_events_type", "live_events", ["event_type"])
-    op.create_index("idx_live_events_created_at", "live_events", ["created_at"])
-    op.create_index(
-        "idx_live_events_session_created_at",
-        "live_events",
-        ["live_session_id", "created_at"],
-    )
+    if not _table_exists("live_events"):
+        op.create_table(
+            "live_events",
+            sa.Column("id", postgresql.UUID(as_uuid=True), nullable=False),
+            sa.Column("live_session_id", postgresql.UUID(as_uuid=True), nullable=False),
+            sa.Column("event_type", sa.String(length=80), nullable=False),
+            sa.Column(
+                "event_source",
+                sa.String(length=40),
+                server_default=sa.text("'app'"),
+                nullable=False,
+            ),
+            sa.Column("participant_identity", sa.String(length=191), nullable=True),
+            sa.Column("participant_user_id", postgresql.UUID(as_uuid=True), nullable=True),
+            sa.Column(
+                "payload",
+                postgresql.JSONB(astext_type=sa.Text()),
+                nullable=True,
+            ),
+            sa.Column(
+                "created_at",
+                sa.DateTime(timezone=True),
+                server_default=sa.func.now(),
+                nullable=False,
+            ),
+            sa.ForeignKeyConstraint(
+                ["live_session_id"],
+                ["live_sessions.id"],
+                ondelete="CASCADE",
+            ),
+            sa.ForeignKeyConstraint(
+                ["participant_user_id"],
+                ["users.id"],
+                ondelete="SET NULL",
+            ),
+            sa.PrimaryKeyConstraint("id"),
+        )
+    if not _index_exists("live_events", "idx_live_events_session"):
+        op.create_index("idx_live_events_session", "live_events", ["live_session_id"])
+    if not _index_exists("live_events", "idx_live_events_type"):
+        op.create_index("idx_live_events_type", "live_events", ["event_type"])
+    if not _index_exists("live_events", "idx_live_events_created_at"):
+        op.create_index("idx_live_events_created_at", "live_events", ["created_at"])
+    if not _index_exists("live_events", "idx_live_events_session_created_at"):
+        op.create_index(
+            "idx_live_events_session_created_at",
+            "live_events",
+            ["live_session_id", "created_at"],
+        )
 
 
 def downgrade() -> None:

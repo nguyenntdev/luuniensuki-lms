@@ -24,56 +24,78 @@ def _enum_exists(enum_name: str) -> bool:
     ).first() is not None
 
 
+def _table_exists(table_name: str) -> bool:
+    inspector = sa.inspect(op.get_bind())
+    return table_name in inspector.get_table_names()
+
+
+def _index_exists(table_name: str, index_name: str) -> bool:
+    inspector = sa.inspect(op.get_bind())
+    if table_name not in inspector.get_table_names():
+        return False
+    return index_name in {i['name'] for i in inspector.get_indexes(table_name)}
+
+
 def upgrade():
     # Create email_status enum
     if not _enum_exists("email_status"):
         op.execute("CREATE TYPE email_status AS ENUM ('pending', 'sent', 'failed', 'cancelled')")
 
-    # Create email_templates table
-    op.create_table(
-        'email_templates',
-        sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column('key', sa.String(100), nullable=False),
-        sa.Column('name', sa.String(200), nullable=False),
-        sa.Column('subject_template', sa.String(500), nullable=False),
-        sa.Column('body_html', sa.Text(), nullable=False),
-        sa.Column('body_text', sa.Text(), nullable=True),
-        sa.Column('is_active', sa.Boolean(), server_default=sa.text('true'), nullable=False),
-        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
-        sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
-        sa.PrimaryKeyConstraint('id'),
-        sa.UniqueConstraint('key', name='uq_email_templates_key')
-    )
+    if not _table_exists('email_templates'):
+        # Create email_templates table
+        op.create_table(
+            'email_templates',
+            sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
+            sa.Column('key', sa.String(100), nullable=False),
+            sa.Column('name', sa.String(200), nullable=False),
+            sa.Column('subject_template', sa.String(500), nullable=False),
+            sa.Column('body_html', sa.Text(), nullable=False),
+            sa.Column('body_text', sa.Text(), nullable=True),
+            sa.Column('is_active', sa.Boolean(), server_default=sa.text('true'), nullable=False),
+            sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+            sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+            sa.PrimaryKeyConstraint('id'),
+            sa.UniqueConstraint('key', name='uq_email_templates_key')
+        )
 
     # Create indexes for email_templates
-    op.create_index('idx_email_templates_key', 'email_templates', ['key'])
-    op.create_index('idx_email_templates_active', 'email_templates', ['is_active'])
+    if not _index_exists('email_templates', 'idx_email_templates_key'):
+        op.create_index('idx_email_templates_key', 'email_templates', ['key'])
+    if not _index_exists('email_templates', 'idx_email_templates_active'):
+        op.create_index('idx_email_templates_active', 'email_templates', ['is_active'])
 
-    # Create scheduled_emails table
-    op.create_table(
-        'scheduled_emails',
-        sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column('user_id', postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column('template_id', postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column('scheduled_for', sa.DateTime(timezone=True), nullable=False),
-        sa.Column('status', postgresql.ENUM('pending', 'sent', 'failed', 'cancelled', name='email_status', create_type=False),
-                  server_default=sa.text("'pending'"), nullable=False),
-        sa.Column('context_data', postgresql.JSONB(astext_type=sa.Text()), nullable=True),
-        sa.Column('sent_at', sa.DateTime(timezone=True), nullable=True),
-        sa.Column('error_message', sa.Text(), nullable=True),
-        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
-        sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
-        sa.ForeignKeyConstraint(['template_id'], ['email_templates.id'], ondelete='CASCADE'),
-        sa.PrimaryKeyConstraint('id')
-    )
+    if not _table_exists('scheduled_emails'):
+        # Create scheduled_emails table
+        op.create_table(
+            'scheduled_emails',
+            sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
+            sa.Column('user_id', postgresql.UUID(as_uuid=True), nullable=False),
+            sa.Column('template_id', postgresql.UUID(as_uuid=True), nullable=False),
+            sa.Column('scheduled_for', sa.DateTime(timezone=True), nullable=False),
+            sa.Column('status', postgresql.ENUM('pending', 'sent', 'failed', 'cancelled', name='email_status', create_type=False),
+                      server_default=sa.text("'pending'"), nullable=False),
+            sa.Column('context_data', postgresql.JSONB(astext_type=sa.Text()), nullable=True),
+            sa.Column('sent_at', sa.DateTime(timezone=True), nullable=True),
+            sa.Column('error_message', sa.Text(), nullable=True),
+            sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+            sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
+            sa.ForeignKeyConstraint(['template_id'], ['email_templates.id'], ondelete='CASCADE'),
+            sa.PrimaryKeyConstraint('id')
+        )
 
     # Create indexes for scheduled_emails
-    op.create_index('idx_scheduled_emails_user', 'scheduled_emails', ['user_id'])
-    op.create_index('idx_scheduled_emails_template', 'scheduled_emails', ['template_id'])
-    op.create_index('idx_scheduled_emails_status', 'scheduled_emails', ['status'])
-    op.create_index('idx_scheduled_emails_scheduled_for', 'scheduled_emails', ['scheduled_for'])
-    op.create_index('idx_scheduled_emails_sent_at', 'scheduled_emails', ['sent_at'])
-    op.create_index('idx_scheduled_emails_user_template', 'scheduled_emails', ['user_id', 'template_id'])
+    if not _index_exists('scheduled_emails', 'idx_scheduled_emails_user'):
+        op.create_index('idx_scheduled_emails_user', 'scheduled_emails', ['user_id'])
+    if not _index_exists('scheduled_emails', 'idx_scheduled_emails_template'):
+        op.create_index('idx_scheduled_emails_template', 'scheduled_emails', ['template_id'])
+    if not _index_exists('scheduled_emails', 'idx_scheduled_emails_status'):
+        op.create_index('idx_scheduled_emails_status', 'scheduled_emails', ['status'])
+    if not _index_exists('scheduled_emails', 'idx_scheduled_emails_scheduled_for'):
+        op.create_index('idx_scheduled_emails_scheduled_for', 'scheduled_emails', ['scheduled_for'])
+    if not _index_exists('scheduled_emails', 'idx_scheduled_emails_sent_at'):
+        op.create_index('idx_scheduled_emails_sent_at', 'scheduled_emails', ['sent_at'])
+    if not _index_exists('scheduled_emails', 'idx_scheduled_emails_user_template'):
+        op.create_index('idx_scheduled_emails_user_template', 'scheduled_emails', ['user_id', 'template_id'])
 
 
 def downgrade():

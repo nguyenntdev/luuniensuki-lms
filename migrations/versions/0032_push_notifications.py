@@ -16,51 +16,69 @@ branch_label = None
 depends_on = None
 
 
+def _table_exists(table_name: str) -> bool:
+    inspector = sa.inspect(op.get_bind())
+    return table_name in inspector.get_table_names()
+
+
+def _index_exists(table_name: str, index_name: str) -> bool:
+    inspector = sa.inspect(op.get_bind())
+    if table_name not in inspector.get_table_names():
+        return False
+    return index_name in {i['name'] for i in inspector.get_indexes(table_name)}
+
+
 def upgrade() -> None:
-    # Create push_notifications table
-    op.create_table(
-        'push_notifications',
-        sa.Column('id', UUID(as_uuid=True), primary_key=True),
-        sa.Column('user_id', UUID(as_uuid=True), nullable=False),
-        sa.Column('title', sa.String(255), nullable=False),
-        sa.Column('body', sa.Text(), nullable=False),
-        sa.Column('notification_type', sa.String(50), nullable=False),
-        sa.Column('data_payload', JSONB, nullable=True),
-        sa.Column('status', sa.String(20), nullable=False, server_default=sa.text("'pending'")),
-        sa.Column('scheduled_for', sa.DateTime(timezone=True), nullable=True),
-        sa.Column('sent_at', sa.DateTime(timezone=True), nullable=True),
-        sa.Column('delivered_at', sa.DateTime(timezone=True), nullable=True),
-        sa.Column('error_message', sa.Text(), nullable=True),
-        sa.Column('created_at', sa.DateTime(timezone=True), nullable=False, server_default=sa.text('now()')),
-        sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
-    )
+    if not _table_exists('push_notifications'):
+        # Create push_notifications table
+        op.create_table(
+            'push_notifications',
+            sa.Column('id', UUID(as_uuid=True), primary_key=True),
+            sa.Column('user_id', UUID(as_uuid=True), nullable=False),
+            sa.Column('title', sa.String(255), nullable=False),
+            sa.Column('body', sa.Text(), nullable=False),
+            sa.Column('notification_type', sa.String(50), nullable=False),
+            sa.Column('data_payload', JSONB, nullable=True),
+            sa.Column('status', sa.String(20), nullable=False, server_default=sa.text("'pending'")),
+            sa.Column('scheduled_for', sa.DateTime(timezone=True), nullable=True),
+            sa.Column('sent_at', sa.DateTime(timezone=True), nullable=True),
+            sa.Column('delivered_at', sa.DateTime(timezone=True), nullable=True),
+            sa.Column('error_message', sa.Text(), nullable=True),
+            sa.Column('created_at', sa.DateTime(timezone=True), nullable=False, server_default=sa.text('now()')),
+            sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
+        )
 
     # Create indexes
-    op.create_index(
-        'idx_push_notifications_user',
-        'push_notifications',
-        ['user_id']
-    )
-    op.create_index(
-        'idx_push_notifications_status',
-        'push_notifications',
-        ['status']
-    )
-    op.create_index(
-        'idx_push_notifications_scheduled',
-        'push_notifications',
-        ['scheduled_for']
-    )
-    op.create_index(
-        'idx_push_notifications_user_created',
-        'push_notifications',
-        ['user_id', 'created_at']
-    )
-    op.create_index(
-        'idx_push_notifications_type',
-        'push_notifications',
-        ['notification_type']
-    )
+    if not _index_exists('push_notifications', 'idx_push_notifications_user'):
+        op.create_index(
+            'idx_push_notifications_user',
+            'push_notifications',
+            ['user_id']
+        )
+    if not _index_exists('push_notifications', 'idx_push_notifications_status'):
+        op.create_index(
+            'idx_push_notifications_status',
+            'push_notifications',
+            ['status']
+        )
+    if not _index_exists('push_notifications', 'idx_push_notifications_scheduled'):
+        op.create_index(
+            'idx_push_notifications_scheduled',
+            'push_notifications',
+            ['scheduled_for']
+        )
+    if not _index_exists('push_notifications', 'idx_push_notifications_user_created'):
+        op.create_index(
+            'idx_push_notifications_user_created',
+            'push_notifications',
+            ['user_id', 'created_at']
+        )
+    if not _index_exists('push_notifications', 'idx_push_notifications_type'):
+        op.create_index(
+            'idx_push_notifications_type',
+            'push_notifications',
+            ['notification_type']
+        )
 
 
 def downgrade() -> None:

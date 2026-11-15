@@ -18,32 +18,49 @@ branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
+def _table_exists(table_name: str) -> bool:
+    inspector = sa.inspect(op.get_bind())
+    return table_name in inspector.get_table_names()
+
+
+def _index_exists(table_name: str, index_name: str) -> bool:
+    inspector = sa.inspect(op.get_bind())
+    if table_name not in inspector.get_table_names():
+        return False
+    return index_name in {i['name'] for i in inspector.get_indexes(table_name)}
+
+
 def upgrade() -> None:
-    # Create spaced_repetition_cards table
-    op.create_table(
-        'spaced_repetition_cards',
-        sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column('user_id', postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column('motif_id', postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column('ease_factor', sa.Float(), server_default=sa.text('2.5'), nullable=False),
-        sa.Column('interval_days', sa.Integer(), server_default=sa.text('0'), nullable=False),
-        sa.Column('repetitions', sa.Integer(), server_default=sa.text('0'), nullable=False),
-        sa.Column('next_review_at', sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
-        sa.Column('last_reviewed_at', sa.DateTime(timezone=True), nullable=True),
-        sa.Column('review_history', postgresql.JSONB(astext_type=sa.Text()), server_default=sa.text("'[]'::jsonb"), nullable=False),
-        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
-        sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
-        sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
-        sa.ForeignKeyConstraint(['motif_id'], ['motifs.id'], ondelete='CASCADE'),
-        sa.PrimaryKeyConstraint('id'),
-        sa.UniqueConstraint('user_id', 'motif_id', name='uq_sr_cards_user_motif')
-    )
-    
+    if not _table_exists('spaced_repetition_cards'):
+        # Create spaced_repetition_cards table
+        op.create_table(
+            'spaced_repetition_cards',
+            sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
+            sa.Column('user_id', postgresql.UUID(as_uuid=True), nullable=False),
+            sa.Column('motif_id', postgresql.UUID(as_uuid=True), nullable=False),
+            sa.Column('ease_factor', sa.Float(), server_default=sa.text('2.5'), nullable=False),
+            sa.Column('interval_days', sa.Integer(), server_default=sa.text('0'), nullable=False),
+            sa.Column('repetitions', sa.Integer(), server_default=sa.text('0'), nullable=False),
+            sa.Column('next_review_at', sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
+            sa.Column('last_reviewed_at', sa.DateTime(timezone=True), nullable=True),
+            sa.Column('review_history', postgresql.JSONB(astext_type=sa.Text()), server_default=sa.text("'[]'::jsonb"), nullable=False),
+            sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
+            sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
+            sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
+            sa.ForeignKeyConstraint(['motif_id'], ['motifs.id'], ondelete='CASCADE'),
+            sa.PrimaryKeyConstraint('id'),
+            sa.UniqueConstraint('user_id', 'motif_id', name='uq_sr_cards_user_motif')
+        )
+
     # Create indexes
-    op.create_index('idx_sr_cards_user', 'spaced_repetition_cards', ['user_id'])
-    op.create_index('idx_sr_cards_motif', 'spaced_repetition_cards', ['motif_id'])
-    op.create_index('idx_sr_cards_next_review', 'spaced_repetition_cards', ['next_review_at'])
-    op.create_index('idx_sr_cards_user_next_review', 'spaced_repetition_cards', ['user_id', 'next_review_at'])
+    if not _index_exists('spaced_repetition_cards', 'idx_sr_cards_user'):
+        op.create_index('idx_sr_cards_user', 'spaced_repetition_cards', ['user_id'])
+    if not _index_exists('spaced_repetition_cards', 'idx_sr_cards_motif'):
+        op.create_index('idx_sr_cards_motif', 'spaced_repetition_cards', ['motif_id'])
+    if not _index_exists('spaced_repetition_cards', 'idx_sr_cards_next_review'):
+        op.create_index('idx_sr_cards_next_review', 'spaced_repetition_cards', ['next_review_at'])
+    if not _index_exists('spaced_repetition_cards', 'idx_sr_cards_user_next_review'):
+        op.create_index('idx_sr_cards_user_next_review', 'spaced_repetition_cards', ['user_id', 'next_review_at'])
 
 
 def downgrade() -> None:

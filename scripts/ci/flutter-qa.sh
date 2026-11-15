@@ -9,20 +9,32 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WORKSPACE_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 MOBILE_DIR="$WORKSPACE_ROOT/mobile"
 
-# Locate Flutter binary
-FLUTTER_BIN="${FLUTTER_BIN:-/home/clue/development/flutter/bin/flutter}"
-if ! command -v "$FLUTTER_BIN" >/dev/null 2>&1; then
+# Locate Flutter binary (env override -> PATH -> common $HOME SDK layout).
+# No developer username is hardcoded; the script stays portable across machines.
+FLUTTER_BIN="${FLUTTER_BIN:-}"
+if [ -z "$FLUTTER_BIN" ]; then
   if command -v flutter >/dev/null 2>&1; then
-    FLUTTER_BIN="flutter"
+    FLUTTER_BIN="$(command -v flutter)"
+  elif [ -x "$HOME/development/flutter/bin/flutter" ]; then
+    FLUTTER_BIN="$HOME/development/flutter/bin/flutter"
   else
-    echo "❌ Error: Flutter binary not found at $FLUTTER_BIN or on PATH"
+    echo "❌ Error: Flutter binary not found on PATH, in \$FLUTTER_BIN, or at \$HOME/development/flutter/bin/flutter"
     exit 1
   fi
+elif ! command -v "$FLUTTER_BIN" >/dev/null 2>&1 && [ ! -x "$FLUTTER_BIN" ]; then
+  echo "❌ Error: FLUTTER_BIN=$FLUTTER_BIN is not executable and is not on PATH"
+  exit 1
 fi
 
-# Locate Java & Android SDK
-JAVA_HOME="${JAVA_HOME:-/home/clue/development/jdk/jdk-17.0.2}"
-ANDROID_HOME="${ANDROID_HOME:-/home/clue/Android/Sdk}"
+# Locate Java & Android SDK (env override -> common $HOME layout, if present).
+if [ -z "${JAVA_HOME:-}" ] && [ -d "$HOME/development/jdk/jdk-17.0.2" ]; then
+  JAVA_HOME="$HOME/development/jdk/jdk-17.0.2"
+fi
+if [ -z "${ANDROID_HOME:-}" ] && [ -d "$HOME/Android/Sdk" ]; then
+  ANDROID_HOME="$HOME/Android/Sdk"
+fi
+JAVA_HOME="${JAVA_HOME:-}"
+ANDROID_HOME="${ANDROID_HOME:-}"
 if [ -d "$JAVA_HOME/bin" ]; then
   export PATH="$JAVA_HOME/bin:$PATH"
   export JAVA_HOME

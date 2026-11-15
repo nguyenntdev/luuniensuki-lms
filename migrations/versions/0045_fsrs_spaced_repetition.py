@@ -82,7 +82,7 @@ def upgrade() -> None:
             CONSTRAINT user_fsrs_params_retention_range
                 CHECK (optimal_retention BETWEEN 0.70 AND 0.97)
         );
-        CREATE INDEX idx_user_fsrs_params_user ON user_fsrs_params(user_id);
+        CREATE INDEX IF NOT EXISTS idx_user_fsrs_params_user ON user_fsrs_params(user_id);
         """
     )
 

@@ -24,7 +24,37 @@ def _enum_exists(enum_name: str) -> bool:
     ).first() is not None
 
 
+def _table_exists(table_name: str) -> bool:
+    inspector = sa.inspect(op.get_bind())
+    return table_name in inspector.get_table_names()
+
+
+def _column_exists(table_name: str, column_name: str) -> bool:
+    inspector = sa.inspect(op.get_bind())
+    if table_name not in inspector.get_table_names():
+        return False
+    return column_name in {c["name"] for c in inspector.get_columns(table_name)}
+
+
+def _add_column_if_missing(table_name: str, column: sa.Column) -> None:
+    if not _column_exists(table_name, column.name):
+        op.add_column(table_name, column)
+
+
+def _constraint_exists(table_name: str, constraint_name: str) -> bool:
+    inspector = sa.inspect(op.get_bind())
+    if table_name not in inspector.get_table_names():
+        return False
+    fks = {fk["name"] for fk in inspector.get_foreign_keys(table_name)}
+    uqs = {uq["name"] for uq in inspector.get_unique_constraints(table_name)}
+    cks = {ck["name"] for ck in inspector.get_check_constraints(table_name)}
+    return constraint_name in (fks | uqs | cks)
+
+
 def upgrade() -> None:
+    if not _table_exists("lesson_content") or not _table_exists("quiz_questions"):
+        return
+
     # Create content_status enum type
     if not _enum_exists("content_status"):
         op.execute(
@@ -34,7 +64,7 @@ def upgrade() -> None:
         )
 
     # Add review workflow fields to lesson_content
-    op.add_column(
+    _add_column_if_missing(
         "lesson_content",
         sa.Column(
             "status",
@@ -47,7 +77,7 @@ def upgrade() -> None:
             server_default="draft",
         ),
     )
-    op.add_column(
+    _add_column_if_missing(
         "lesson_content",
         sa.Column(
             "submitted_for_review_at",
@@ -55,7 +85,7 @@ def upgrade() -> None:
             nullable=True,
         ),
     )
-    op.add_column(
+    _add_column_if_missing(
         "lesson_content",
         sa.Column(
             "reviewed_by_id",
@@ -63,7 +93,7 @@ def upgrade() -> None:
             nullable=True,
         ),
     )
-    op.add_column(
+    _add_column_if_missing(
         "lesson_content",
         sa.Column(
             "reviewed_at",
@@ -71,7 +101,7 @@ def upgrade() -> None:
             nullable=True,
         ),
     )
-    op.add_column(
+    _add_column_if_missing(
         "lesson_content",
         sa.Column(
             "review_notes",
@@ -79,17 +109,18 @@ def upgrade() -> None:
             nullable=True,
         ),
     )
-    op.create_foreign_key(
-        "fk_lesson_content_reviewed_by",
-        "lesson_content",
-        "users",
-        ["reviewed_by_id"],
-        ["id"],
-        ondelete="SET NULL",
-    )
+    if not _constraint_exists("lesson_content", "fk_lesson_content_reviewed_by"):
+        op.create_foreign_key(
+            "fk_lesson_content_reviewed_by",
+            "lesson_content",
+            "users",
+            ["reviewed_by_id"],
+            ["id"],
+            ondelete="SET NULL",
+        )
 
     # Add review workflow fields to quiz_questions
-    op.add_column(
+    _add_column_if_missing(
         "quiz_questions",
         sa.Column(
             "status",
@@ -102,7 +133,7 @@ def upgrade() -> None:
             server_default="draft",
         ),
     )
-    op.add_column(
+    _add_column_if_missing(
         "quiz_questions",
         sa.Column(
             "submitted_for_review_at",
@@ -110,7 +141,7 @@ def upgrade() -> None:
             nullable=True,
         ),
     )
-    op.add_column(
+    _add_column_if_missing(
         "quiz_questions",
         sa.Column(
             "reviewed_by_id",
@@ -118,7 +149,7 @@ def upgrade() -> None:
             nullable=True,
         ),
     )
-    op.add_column(
+    _add_column_if_missing(
         "quiz_questions",
         sa.Column(
             "reviewed_at",
@@ -126,7 +157,7 @@ def upgrade() -> None:
             nullable=True,
         ),
     )
-    op.add_column(
+    _add_column_if_missing(
         "quiz_questions",
         sa.Column(
             "review_notes",
@@ -134,7 +165,7 @@ def upgrade() -> None:
             nullable=True,
         ),
     )
-    op.add_column(
+    _add_column_if_missing(
         "quiz_questions",
         sa.Column(
             "created_by_id",
@@ -142,22 +173,24 @@ def upgrade() -> None:
             nullable=True,
         ),
     )
-    op.create_foreign_key(
-        "fk_quiz_questions_reviewed_by",
-        "quiz_questions",
-        "users",
-        ["reviewed_by_id"],
-        ["id"],
-        ondelete="SET NULL",
-    )
-    op.create_foreign_key(
-        "fk_quiz_questions_created_by",
-        "quiz_questions",
-        "users",
-        ["created_by_id"],
-        ["id"],
-        ondelete="SET NULL",
-    )
+    if not _constraint_exists("quiz_questions", "fk_quiz_questions_reviewed_by"):
+        op.create_foreign_key(
+            "fk_quiz_questions_reviewed_by",
+            "quiz_questions",
+            "users",
+            ["reviewed_by_id"],
+            ["id"],
+            ondelete="SET NULL",
+        )
+    if not _constraint_exists("quiz_questions", "fk_quiz_questions_created_by"):
+        op.create_foreign_key(
+            "fk_quiz_questions_created_by",
+            "quiz_questions",
+            "users",
+            ["created_by_id"],
+            ["id"],
+            ondelete="SET NULL",
+        )
 
 
 def downgrade() -> None:

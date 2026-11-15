@@ -4,8 +4,8 @@
 Wave W05, Slot A10 (Priority: P1, Classification: PRODUCTION_COMPLETION).
 Verifies:
 1. Flutter SDK Verification:
-   - Binary at /home/clue/development/flutter/bin/flutter is installed, executable, and reports Flutter 3.29.x / Dart 3.7.x.
-   - Android SDK at /home/clue/Android/Sdk and JDK 17 at /home/clue/development/jdk/jdk-17.0.2 are configured and available.
+   - Flutter binary resolved from FLUTTER_BIN, PATH, or the common local dev location; it must be installed, executable, and report Flutter 3.29.x / Dart 3.7.x.
+   - Android SDK and JDK 17 resolved from the environment (ANDROID_HOME / JAVA_HOME) and available.
 2. Mobile Dependencies & Asset Tree:
    - pubspec.yaml declares luuniensuki_lms, flutter_localizations, riverpod, dio, hive_flutter, and asset bindings.
    - Asset directories (images, icons, animations, data, models, sounds) exist and are bound.
@@ -37,9 +37,42 @@ import pytest
 
 WORKSPACE_ROOT = Path(__file__).resolve().parents[2]
 MOBILE_DIR = WORKSPACE_ROOT / "mobile"
-FLUTTER_BIN = Path(os.environ.get("FLUTTER_BIN", shutil.which("flutter") or "/home/clue/development/flutter/bin/flutter"))
-JAVA_HOME = Path(os.environ.get("JAVA_HOME", shutil.which("java") and Path(shutil.which("java")).resolve().parents[1] or "/home/clue/development/jdk/jdk-17.0.2"))
-ANDROID_SDK = Path(os.environ.get("ANDROID_HOME", os.environ.get("ANDROID_SDK_ROOT", "/home/clue/Android/Sdk")))
+
+
+def _resolve_flutter() -> Path:
+    """Resolve the Flutter binary without hardcoding a developer username."""
+    env = os.environ.get("FLUTTER_BIN")
+    if env:
+        return Path(env)
+    found = shutil.which("flutter")
+    if found:
+        return Path(found)
+    # Last resort: common Flutter SDK layout under $HOME (portable, no username).
+    return Path.home() / "development" / "flutter" / "bin" / "flutter"
+
+
+def _resolve_java_home() -> Path | None:
+    env = os.environ.get("JAVA_HOME")
+    if env:
+        return Path(env)
+    java = shutil.which("java")
+    if java:
+        return Path(java).resolve().parents[1]
+    candidate = Path.home() / "development" / "jdk" / "jdk-17.0.2"
+    return candidate if candidate.exists() else None
+
+
+def _resolve_android_sdk() -> Path | None:
+    env = os.environ.get("ANDROID_HOME") or os.environ.get("ANDROID_SDK_ROOT")
+    if env:
+        return Path(env)
+    candidate = Path.home() / "Android" / "Sdk"
+    return candidate if candidate.exists() else None
+
+
+FLUTTER_BIN = _resolve_flutter()
+JAVA_HOME = _resolve_java_home()
+ANDROID_SDK = _resolve_android_sdk()
 
 
 # --------------------------------------------------------------------------- #
@@ -64,12 +97,12 @@ def test_flutter_sdk_installed_and_valid():
 
 def test_android_sdk_and_jdk_toolchains():
     """Verify that Android SDK and JDK 17 are installed and ready for mobile build."""
-    if not ANDROID_SDK.exists():
-        pytest.skip(f"Android SDK not found at {ANDROID_SDK}")
+    if ANDROID_SDK is None or not ANDROID_SDK.exists():
+        pytest.skip(f"Android SDK not configured or not found (ANDROID_HOME={ANDROID_SDK})")
     assert (ANDROID_SDK / "platform-tools").exists(), "Android SDK platform-tools missing"
 
-    if not JAVA_HOME.exists():
-        pytest.skip(f"JDK not found at {JAVA_HOME}")
+    if JAVA_HOME is None or not JAVA_HOME.exists():
+        pytest.skip(f"JDK not configured or not found (JAVA_HOME={JAVA_HOME}")
     java_bin = JAVA_HOME / "bin" / "java"
     assert java_bin.exists() and os.access(java_bin, os.X_OK), "Java binary missing or not executable"
 

@@ -15,12 +15,21 @@ branch_labels = None
 depends_on = None
 
 
+def _add_column_if_missing(table_name: str, column: sa.Column) -> None:
+    inspector = sa.inspect(op.get_bind())
+    if table_name not in inspector.get_table_names():
+        return
+    if column.name in {c["name"] for c in inspector.get_columns(table_name)}:
+        return
+    op.add_column(table_name, column)
+
+
 def upgrade() -> None:
-    op.add_column(
+    _add_column_if_missing(
         "users",
         sa.Column("onboarding_goal", sa.String(length=50), nullable=True),
     )
-    op.add_column(
+    _add_column_if_missing(
         "users",
         sa.Column(
             "onboarding_completed",
@@ -29,7 +38,7 @@ def upgrade() -> None:
             server_default=sa.text("false"),
         ),
     )
-    op.add_column(
+    _add_column_if_missing(
         "users",
         sa.Column("onboarding_completed_at", sa.DateTime(timezone=True), nullable=True),
     )
