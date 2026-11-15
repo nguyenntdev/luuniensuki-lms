@@ -98,4 +98,6 @@ research_v3/datasets/sanitized/*/raw/
 # committed run manifests + scripts; keep the repo lightweight.
 research_artifacts_v3/runs/*/predictions/
 research_artifacts_v3/runs/*/splits_manifest.json
-research_v3/config/split_protocols/*.json
+# Frozen split protocols are small, deterministic manifests that CI re-verifies,
+# so they ARE committed (only large per-case regenerable dumps stay ignored).
+research_v3/config/split_protocols/*.tmp.json
